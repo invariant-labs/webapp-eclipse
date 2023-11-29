@@ -72,20 +72,25 @@ export const Header: React.FC<IHeader> = ({
   const mainnetRPCs = [
     {
       networkType: NetworkType.MAINNET,
-      rpc: SolanaNetworks.MAIN_ALCHEMY,
-      rpcName: 'Alchemy'
-    },
-    {
-      networkType: NetworkType.MAINNET,
-      rpc: SolanaNetworks.MAIN_QUICKNODE,
-      rpcName: 'Quicknode'
-    },
-    {
-      networkType: NetworkType.MAINNET,
-      rpc: SolanaNetworks.MAIN_HELLOMOON,
-      rpcName: 'Hello Moon'
-    },
-    { networkType: NetworkType.MAINNET, rpc: SolanaNetworks.MAIN, rpcName: 'Solana' }
+      rpc: SolanaNetworks.DEV_ECLIPSE,
+      rpcName: 'Eclipse' 
+    }
+    // {
+    //   networkType: NetworkType.MAINNET,
+    //   rpc: SolanaNetworks.MAIN_ALCHEMY,
+    //   rpcName: 'Alchemy'
+    // },
+    // {
+    //   networkType: NetworkType.MAINNET,
+    //   rpc: SolanaNetworks.MAIN_QUICKNODE,
+    //   rpcName: 'Quicknode'
+    // },
+    // {
+    //   networkType: NetworkType.MAINNET,
+    //   rpc: SolanaNetworks.MAIN_HELLOMOON,
+    //   rpcName: 'Hello Moon'
+    // },
+    // { networkType: NetworkType.MAINNET, rpc: SolanaNetworks.MAIN, rpcName: 'Solana' }
   ]
 
   return (
