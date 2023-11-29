@@ -27,7 +27,7 @@ import {
   // PublicKey
 } from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { WRAPPED_SOL_ADDRESS } from '@consts/static'
+import { WRAPPED_ETH_ADDRESS } from '@consts/static'
 import { positionsWithPoolsData, singlePositionData } from '@selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 // import { createClaimAllPositionRewardsTx } from './farms'
@@ -62,7 +62,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
       fromPubkey: wallet.publicKey,
       toPubkey: wrappedSolAccount.publicKey,
       lamports:
-        allTokens[data.tokenX.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+        allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
           ? data.xAmount
           : data.yAmount
     })
@@ -83,7 +83,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
     )
 
     let userTokenX =
-      allTokens[data.tokenX.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedSolAccount.publicKey
         : tokensAccounts[data.tokenX.toString()]
         ? tokensAccounts[data.tokenX.toString()].address
@@ -94,7 +94,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
     }
 
     let userTokenY =
-      allTokens[data.tokenY.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[data.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedSolAccount.publicKey
         : tokensAccounts[data.tokenY.toString()]
         ? tokensAccounts[data.tokenY.toString()].address
@@ -275,8 +275,8 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     const allTokens = yield* select(tokens)
 
     if (
-      allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_SOL_ADDRESS ||
-      allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
+      allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
       return yield* call(handleInitPositionWithSOL, action.payload)
     }
@@ -536,7 +536,7 @@ export function* handleClaimFeeWithSOL(positionIndex: number) {
     const positionForIndex = allPositionsData[positionIndex].poolData
 
     let userTokenX =
-      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedSolAccount.publicKey
         : tokensAccounts[positionForIndex.tokenX.toString()]
         ? tokensAccounts[positionForIndex.tokenX.toString()].address
@@ -547,7 +547,7 @@ export function* handleClaimFeeWithSOL(positionIndex: number) {
     }
 
     let userTokenY =
-      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedSolAccount.publicKey
         : tokensAccounts[positionForIndex.tokenY.toString()]
         ? tokensAccounts[positionForIndex.tokenY.toString()].address
@@ -620,8 +620,8 @@ export function* handleClaimFee(action: PayloadAction<number>) {
     const positionForIndex = allPositionsData[action.payload].poolData
 
     if (
-      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_SOL_ADDRESS ||
-      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
+      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
       return yield* call(handleClaimFeeWithSOL, action.payload)
     }
@@ -745,7 +745,7 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
     const positionForIndex = allPositionsData[data.positionIndex].poolData
 
     let userTokenX =
-      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedSolAccount.publicKey
         : tokensAccounts[positionForIndex.tokenX.toString()]
         ? tokensAccounts[positionForIndex.tokenX.toString()].address
@@ -756,7 +756,7 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
     }
 
     let userTokenY =
-      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedSolAccount.publicKey
         : tokensAccounts[positionForIndex.tokenY.toString()]
         ? tokensAccounts[positionForIndex.tokenY.toString()].address
@@ -858,8 +858,8 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     const positionForIndex = allPositionsData[action.payload.positionIndex].poolData
 
     if (
-      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_SOL_ADDRESS ||
-      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
+      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
       return yield* call(handleClosePositionWithSOL, action.payload)
     }

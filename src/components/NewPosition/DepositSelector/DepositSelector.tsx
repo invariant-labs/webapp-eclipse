@@ -11,9 +11,9 @@ import SwapList from '@static/svg/swap-list.svg'
 import useStyles from './style'
 import { PublicKey } from '@solana/web3.js'
 import {
-  WRAPPED_SOL_ADDRESS,
-  WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
-  WSOL_POOL_INIT_LAMPORTS
+  WRAPPED_ETH_ADDRESS,
+  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
+  WETH_POOL_INIT_LAMPORTS
 } from '@consts/static'
 import { BN } from '@project-serum/anchor'
 
@@ -235,12 +235,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               return
             }
 
-            if (tokens[tokenAIndex].assetAddress.equals(new PublicKey(WRAPPED_SOL_ADDRESS))) {
+            if (tokens[tokenAIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
               if (tokenBIndex !== null && poolIndex === null) {
                 tokenAInputState.setValue(
                   printBN(
-                    tokens[tokenAIndex].balance.gt(WSOL_POOL_INIT_LAMPORTS)
-                      ? tokens[tokenAIndex].balance.sub(WSOL_POOL_INIT_LAMPORTS)
+                    tokens[tokenAIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
+                      ? tokens[tokenAIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
                       : new BN(0),
                     tokens[tokenAIndex].decimals
                   )
@@ -251,8 +251,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
               tokenAInputState.setValue(
                 printBN(
-                  tokens[tokenAIndex].balance.gt(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                    ? tokens[tokenAIndex].balance.sub(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                  tokens[tokenAIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                    ? tokens[tokenAIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
                     : new BN(0),
                   tokens[tokenAIndex].decimals
                 )
@@ -296,12 +296,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               return
             }
 
-            if (tokens[tokenBIndex].assetAddress.equals(new PublicKey(WRAPPED_SOL_ADDRESS))) {
+            if (tokens[tokenBIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
               if (tokenAIndex !== null && poolIndex === null) {
                 tokenBInputState.setValue(
                   printBN(
-                    tokens[tokenBIndex].balance.gt(WSOL_POOL_INIT_LAMPORTS)
-                      ? tokens[tokenBIndex].balance.sub(WSOL_POOL_INIT_LAMPORTS)
+                    tokens[tokenBIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
+                      ? tokens[tokenBIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
                       : new BN(0),
                     tokens[tokenBIndex].decimals
                   )
@@ -312,8 +312,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
               tokenBInputState.setValue(
                 printBN(
-                  tokens[tokenBIndex].balance.gt(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                    ? tokens[tokenBIndex].balance.sub(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                  tokens[tokenBIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                    ? tokens[tokenBIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
                     : new BN(0),
                   tokens[tokenBIndex].decimals
                 )

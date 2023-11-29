@@ -1,6 +1,6 @@
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
-import { WRAPPED_SOL_ADDRESS, WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT } from '@consts/static'
+import { WRAPPED_ETH_ADDRESS, WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT } from '@consts/static'
 import {
   printBN,
   printBNtoBN,
@@ -286,9 +286,9 @@ const BuyBondModal: React.FC<IBuyBondModal> = ({
             setLastTouchedInput(InputType.QUOTE)
             setAmountQuote(
               printBN(
-                quoteToken.assetAddress.equals(new PublicKey(WRAPPED_SOL_ADDRESS))
-                  ? quoteToken.balance.gt(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                    ? quoteToken.balance.sub(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                quoteToken.assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))
+                  ? quoteToken.balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                    ? quoteToken.balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
                     : new BN(0)
                   : quoteToken.balance,
                 quoteToken.decimals
@@ -313,9 +313,9 @@ const BuyBondModal: React.FC<IBuyBondModal> = ({
             setLastTouchedInput(InputType.QUOTE)
             setAmountQuote(
               printBN(
-                quoteToken.assetAddress.equals(new PublicKey(WRAPPED_SOL_ADDRESS))
-                  ? quoteToken.balance.gt(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                    ? quoteToken.balance.sub(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                quoteToken.assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))
+                  ? quoteToken.balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                    ? quoteToken.balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
                     : new BN(0)
                   : quoteToken.balance,
                 quoteToken.decimals

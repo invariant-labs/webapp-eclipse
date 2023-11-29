@@ -10,7 +10,7 @@ import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getConnection } from './connection'
 import { Keypair, sendAndConfirmRawTransaction, SystemProgram, Transaction } from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { WRAPPED_SOL_ADDRESS } from '@consts/static'
+import { WRAPPED_ETH_ADDRESS } from '@consts/static'
 import { network, rpcAddress } from '@selectors/solanaConnection'
 
 export function* handleSwapWithSOL(): Generator {
@@ -60,7 +60,7 @@ export function* handleSwapWithSOL(): Generator {
       fromPubkey: wallet.publicKey,
       toPubkey: wrappedSolAccount.publicKey,
       lamports:
-        allTokens[tokenFrom.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+        allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
           ? amountIn.toNumber()
           : 0
     })
@@ -73,7 +73,7 @@ export function* handleSwapWithSOL(): Generator {
     )
 
     const initialTx =
-      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? new Transaction().add(createIx).add(transferIx).add(initIx)
         : new Transaction().add(createIx).add(initIx)
     const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
@@ -89,7 +89,7 @@ export function* handleSwapWithSOL(): Generator {
     )
 
     let fromAddress =
-      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedSolAccount.publicKey
         : tokensAccounts[tokenFrom.toString()]
         ? tokensAccounts[tokenFrom.toString()].address
@@ -98,7 +98,7 @@ export function* handleSwapWithSOL(): Generator {
       fromAddress = yield* call(createAccount, tokenFrom)
     }
     let toAddress =
-      allTokens[tokenTo.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[tokenTo.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedSolAccount.publicKey
         : tokensAccounts[tokenTo.toString()]
         ? tokensAccounts[tokenTo.toString()].address
@@ -252,8 +252,8 @@ export function* handleSwap(): Generator {
     } = yield* select(swap)
 
     if (
-      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_SOL_ADDRESS ||
-      allTokens[tokenTo.toString()].address.toString() === WRAPPED_SOL_ADDRESS
+      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
+      allTokens[tokenTo.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
       return yield* call(handleSwapWithSOL)
     }

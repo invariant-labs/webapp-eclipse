@@ -14,7 +14,7 @@ import { blurContent, unblurContent } from '@consts/uiUtils'
 import { Grid, Typography, Box, CardMedia, Button } from '@material-ui/core'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
-import { WRAPPED_SOL_ADDRESS, WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT } from '@consts/static'
+import { WRAPPED_ETH_ADDRESS, WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT } from '@consts/static'
 import { Swap as SwapData } from '@reducers/swap'
 import { Status } from '@reducers/solanaWallet'
 import SwapArrows from '@static/svg/swap-arrows.svg'
@@ -489,9 +489,9 @@ export const Swap: React.FC<ISwap> = ({
                 setInputRef(inputTarget.FROM)
                 setAmountFrom(
                   printBN(
-                    tokens[tokenFromIndex].assetAddress.equals(new PublicKey(WRAPPED_SOL_ADDRESS))
-                      ? tokens[tokenFromIndex].balance.gt(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                        ? tokens[tokenFromIndex].balance.sub(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                    tokens[tokenFromIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))
+                      ? tokens[tokenFromIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                        ? tokens[tokenFromIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
                         : new BN(0)
                       : tokens[tokenFromIndex].balance,
                     tokens[tokenFromIndex].decimals
@@ -566,9 +566,9 @@ export const Swap: React.FC<ISwap> = ({
                 setInputRef(inputTarget.FROM)
                 setAmountFrom(
                   printBN(
-                    tokens[tokenFromIndex].assetAddress.equals(new PublicKey(WRAPPED_SOL_ADDRESS))
-                      ? tokens[tokenFromIndex].balance.gt(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                        ? tokens[tokenFromIndex].balance.sub(WSOL_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                    tokens[tokenFromIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))
+                      ? tokens[tokenFromIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                        ? tokens[tokenFromIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
                         : new BN(0)
                       : tokens[tokenFromIndex].balance,
                     tokens[tokenFromIndex].decimals

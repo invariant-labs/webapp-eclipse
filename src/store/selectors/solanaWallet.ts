@@ -3,12 +3,11 @@ import { createSelector } from '@reduxjs/toolkit'
 import { ISolanaWallet, solanaWalletSliceName, ITokenAccount } from '@reducers/solanaWallet'
 import { keySelectors, AnyProps } from './helpers'
 import { PublicKey } from '@solana/web3.js'
-import { MOCK_TOKENS } from '@invariant-labs/sdk-eclipse'
 import { tokens } from './pools'
 import {
-  WRAPPED_SOL_ADDRESS,
-  WSOL_POOL_INIT_LAMPORTS,
-  WSOL_POSITION_INIT_LAMPORTS
+  WRAPPED_ETH_ADDRESS,
+  WETH_POOL_INIT_LAMPORTS,
+  WETH_POSITION_INIT_LAMPORTS
 } from '@consts/static'
 
 const store = (s: AnyProps) => s[solanaWalletSliceName] as ISolanaWallet
@@ -21,10 +20,7 @@ export const { address, balance, accounts, status } = keySelectors(store, [
 ])
 
 export const tokenBalance = (tokenAddress: PublicKey) =>
-  createSelector(accounts, balance, (tokensAccounts, solBalance) => {
-    if (tokenAddress.equals(new PublicKey(MOCK_TOKENS.SOL))) {
-      return { balance: solBalance, decimals: 9 }
-    } else {
+  createSelector(accounts, (tokensAccounts) => {
       if (!tokensAccounts[tokenAddress.toString()]) {
         return { balance: new BN(0), decimals: 9 }
       }
@@ -32,7 +28,6 @@ export const tokenBalance = (tokenAddress: PublicKey) =>
         balance: tokensAccounts[tokenAddress.toString()].balance,
         decimals: tokensAccounts[tokenAddress.toString()].decimals
       }
-    }
   })
 export const tokenAccount = (tokenAddress: PublicKey) =>
   createSelector(accounts, tokensAccounts => {
@@ -67,7 +62,7 @@ export const swapTokens = createSelector(
       ...token,
       assetAddress: token.address,
       balance:
-        token.address.toString() === WRAPPED_SOL_ADDRESS
+        token.address.toString() === WRAPPED_ETH_ADDRESS
           ? solBalance
           : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
@@ -86,7 +81,7 @@ export const swapTokensDict = createSelector(
         ...val,
         assetAddress: val.address,
         balance:
-          val.address.toString() === WRAPPED_SOL_ADDRESS
+          val.address.toString() === WRAPPED_ETH_ADDRESS
             ? solBalance
             : allAccounts[val.address.toString()]?.balance ?? new BN(0)
       }
@@ -97,11 +92,11 @@ export const swapTokensDict = createSelector(
 )
 
 export const canCreateNewPool = createSelector(balance, solBalance =>
-  solBalance.gte(WSOL_POOL_INIT_LAMPORTS)
+  solBalance.gte(WETH_POOL_INIT_LAMPORTS)
 )
 
 export const canCreateNewPosition = createSelector(balance, solBalance =>
-  solBalance.gte(WSOL_POSITION_INIT_LAMPORTS)
+  solBalance.gte(WETH_POSITION_INIT_LAMPORTS)
 )
 
 export type TokenAccounts = ITokenAccount & {
