@@ -1,0 +1,14 @@
+{
+  "redirects": [
+    {
+      "source": "/contact",
+      "destination": "mailto:contact@invariant.app"
+    }
+  ],
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/"
+    }
+  ]
+}
