@@ -15,9 +15,9 @@ import { status } from '@selectors/solanaWallet'
 import { SinglePositionPage } from './SinglePositionPage/SinglePositionPage'
 import SingleFarmPage from './SingleFarmPage/SingleFarmPage'
 import Footer from '@components/Footer/Footer'
-import FarmsPage from './FarmsPage/FarmsPage'
-import StatsPage from './StatsPage/StatsPage'
-import BondsPage from './BondsPage/BondsPage'
+// import FarmsPage from './FarmsPage/FarmsPage'
+// import StatsPage from './StatsPage/StatsPage'
+// import BondsPage from './BondsPage/BondsPage'
 import PerformanceWarning from '@containers/PerformanceWarning/PerformanceWarning'
 
 export const PagesRouter: React.FC = () => {
@@ -46,13 +46,13 @@ export const PagesRouter: React.FC = () => {
           <Route path='/swap' component={SwapPage} />
           <Route path={'/newPosition'} component={NewPositionPage} />
           <Route path={'/pool'} component={ListPage} />
-          <Route path={'/farms'} component={FarmsPage} />
+          {/* <Route path={'/farms'} component={FarmsPage} /> */}
           <Route
             path={'/farm/:id'}
             render={({ match }) => <SingleFarmPage id={match.params.id} />}
           />
-          <Route path={'/stats'} component={StatsPage} />
-          <Route path={'/bonds'} component={BondsPage} />
+          {/* <Route path={'/stats'} component={StatsPage} /> */}
+          {/* <Route path={'/bonds'} component={BondsPage} /> */}
           <Route
             path={'/position/:id'}
             render={({ match }) => <SinglePositionPage id={match.params.id} />}

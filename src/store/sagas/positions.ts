@@ -23,19 +23,19 @@ import {
   Transaction,
   sendAndConfirmRawTransaction,
   Keypair,
-  SystemProgram,
-  PublicKey
+  SystemProgram
+  // PublicKey
 } from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { WRAPPED_SOL_ADDRESS } from '@consts/static'
 import { positionsWithPoolsData, singlePositionData } from '@selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
-import { createClaimAllPositionRewardsTx } from './farms'
+// import { createClaimAllPositionRewardsTx } from './farms'
 import { network, rpcAddress } from '@selectors/solanaConnection'
-import { actions as farmsActions } from '@reducers/farms'
-import { stakesForPosition } from '@selectors/farms'
-import { getStakerProgram } from '@web3/programs/staker'
-import { Staker } from '@invariant-labs/staker-sdk'
+// import { actions as farmsActions } from '@reducers/farms'
+// import { stakesForPosition } from '@selectors/farms'
+// import { getStakerProgram } from '@web3/programs/staker'
+// import { Staker } from '@invariant-labs/staker-sdk'
 
 export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
   try {
@@ -766,13 +766,13 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
       userTokenY = yield* call(createAccount, positionForIndex.tokenY)
     }
 
-    const positionStakes = yield* select(
-      stakesForPosition(allPositionsData[data.positionIndex].address)
-    )
-    const stakerProgram = yield* call(getStakerProgram, networkType, rpc)
-    for (const stake of positionStakes) {
-      yield* call(unsub, stakerProgram, stake.address)
-    }
+    // const positionStakes = yield* select(
+    //   stakesForPosition(allPositionsData[data.positionIndex].address)
+    // )
+    // const stakerProgram = yield* call(getStakerProgram, networkType, rpc)
+    // for (const stake of positionStakes) {
+    //   yield* call(unsub, stakerProgram, stake.address)
+    // }
 
     const ix = yield* call([marketProgram, marketProgram.removePositionInstruction], {
       pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
@@ -785,15 +785,15 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
       userTokenY
     })
 
-    let tx: Transaction
+    // let tx: Transaction
 
-    if (data.claimFarmRewards) {
-      const claimTx = yield* call(createClaimAllPositionRewardsTx, data.positionIndex)
+    // if (data.claimFarmRewards) {
+    //   const claimTx = yield* call(createClaimAllPositionRewardsTx, data.positionIndex)
 
-      tx = claimTx.add(createIx).add(initIx).add(ix).add(unwrapIx)
-    } else {
-      tx = new Transaction().add(createIx).add(initIx).add(ix).add(unwrapIx)
-    }
+    //   tx = claimTx.add(createIx).add(initIx).add(ix).add(unwrapIx)
+    // } else {
+    const tx: Transaction = new Transaction().add(createIx).add(initIx).add(ix).add(unwrapIx)
+    // }
 
     const blockhash = yield* call([connection, connection.getRecentBlockhash])
     tx.recentBlockhash = blockhash.blockhash
@@ -828,7 +828,7 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
     }
 
     yield put(actions.getPositionsList())
-    yield* put(farmsActions.getUserStakes())
+    // yield* put(farmsActions.getUserStakes())
 
     data.onSuccess()
   } catch (error) {
@@ -843,13 +843,13 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
   }
 }
 
-const unsub = async (stakerProgram: Staker, key: PublicKey) => {
-  try {
-    await stakerProgram.program.account.userStake.unsubscribe(key)
-  } catch (error) {
-    console.log(error)
-  }
-}
+// const unsub = async (stakerProgram: Staker, key: PublicKey) => {
+//   try {
+//     await stakerProgram.program.account.userStake.unsubscribe(key)
+//   } catch (error) {
+//     console.log(error)
+//   }
+// }
 
 export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
   try {
@@ -888,14 +888,14 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       userTokenY = yield* call(createAccount, positionForIndex.tokenY)
     }
 
-    const positionStakes = yield* select(
-      stakesForPosition(allPositionsData[action.payload.positionIndex].address)
-    )
-    const stakerProgram = yield* call(getStakerProgram, networkType, rpc)
+    // const positionStakes = yield* select(
+    //   stakesForPosition(allPositionsData[action.payload.positionIndex].address)
+    // )
+    // const stakerProgram = yield* call(getStakerProgram, networkType, rpc)
 
-    for (const stake of positionStakes) {
-      yield* call(unsub, stakerProgram, stake.address)
-    }
+    // for (const stake of positionStakes) {
+    //   yield* call(unsub, stakerProgram, stake.address)
+    // }
 
     const ix = yield* call([marketProgram, marketProgram.removePositionInstruction], {
       pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
@@ -908,15 +908,15 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       userTokenY
     })
 
-    let tx: Transaction
+    // let tx: Transaction
 
-    if (action.payload.claimFarmRewards) {
-      const claimTx = yield* call(createClaimAllPositionRewardsTx, action.payload.positionIndex)
+    // if (action.payload.claimFarmRewards) {
+    //   const claimTx = yield* call(createClaimAllPositionRewardsTx, action.payload.positionIndex)
 
-      tx = claimTx.add(ix)
-    } else {
-      tx = new Transaction().add(ix)
-    }
+    //   tx = claimTx.add(ix)
+    // } else {
+    const tx: Transaction = new Transaction().add(ix)
+    // }
 
     const blockhash = yield* call([connection, connection.getRecentBlockhash])
     tx.recentBlockhash = blockhash.blockhash
@@ -950,7 +950,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     }
 
     yield* put(actions.getPositionsList())
-    yield* put(farmsActions.getUserStakes())
+    // yield* put(farmsActions.getUserStakes())
 
     action.payload.onSuccess()
   } catch (error) {

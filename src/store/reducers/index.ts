@@ -13,8 +13,8 @@ import { poolsSliceName, reducer as poolsReducer } from './pools'
 import { swapSliceName, reducer as swapReducer } from './swap'
 import { positionsSliceName, reducer as positionsReducer } from './positions'
 import { statsSliceName, reducer as statsReducer } from './stats'
-import { farmsSliceName, reducer as farmsReducer } from './farms'
-import { bondsSliceName, reducer as bondsReducer } from './bonds'
+// import { farmsSliceName, reducer as farmsReducer } from './farms'
+// import { bondsSliceName, reducer as bondsReducer } from './bonds'
 
 const transformNetwork = createTransform(
   (inboundState: any, _key) => {
@@ -77,9 +77,9 @@ const combinedReducers = combineReducers({
   [poolsSliceName]: poolsReducer,
   [swapSliceName]: swapReducer,
   [positionsSliceName]: positionsReducer,
-  [statsSliceName]: statsReducer,
-  [farmsSliceName]: farmsReducer,
-  [bondsSliceName]: bondsReducer
+  [statsSliceName]: statsReducer
+  // [farmsSliceName]: farmsReducer
+  // [bondsSliceName]: bondsReducer
 })
 
 export default combinedReducers

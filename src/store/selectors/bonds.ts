@@ -1,28 +1,31 @@
-import { IBondsStore, bondsSliceName } from '../reducers/bonds'
-import { keySelectors, AnyProps } from './helpers'
+export {}
+// TODO: commented until eclipse bonds sdk will be available
 
-const store = (s: AnyProps) => s[bondsSliceName] as IBondsStore
+// import { IBondsStore, bondsSliceName } from '../reducers/bonds'
+// import { keySelectors, AnyProps } from './helpers'
 
-export const {
-  bondsList,
-  isLoadingBondsList,
-  userVested,
-  isLoadingUserVested,
-  buyTransactionStatus
-} = keySelectors(store, [
-  'bondsList',
-  'isLoadingBondsList',
-  'userVested',
-  'isLoadingUserVested',
-  'buyTransactionStatus'
-])
+// const store = (s: AnyProps) => s[bondsSliceName] as IBondsStore
 
-export const bondsSelectors = {
-  bondsList,
-  isLoadingBondsList,
-  userVested,
-  isLoadingUserVested,
-  buyTransactionStatus
-}
+// export const {
+//   bondsList,
+//   isLoadingBondsList,
+//   userVested,
+//   isLoadingUserVested,
+//   buyTransactionStatus
+// } = keySelectors(store, [
+//   'bondsList',
+//   'isLoadingBondsList',
+//   'userVested',
+//   'isLoadingUserVested',
+//   'buyTransactionStatus'
+// ])
 
-export default bondsSelectors
+// export const bondsSelectors = {
+//   bondsList,
+//   isLoadingBondsList,
+//   userVested,
+//   isLoadingUserVested,
+//   buyTransactionStatus
+// }
+
+// export default bondsSelectors

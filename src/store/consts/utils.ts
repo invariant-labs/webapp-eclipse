@@ -35,12 +35,12 @@ import { PoolWithAddress } from '@reducers/pools'
 import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios, { AxiosResponse } from 'axios'
 import { getMaxTick, getMinTick, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { Staker } from '@invariant-labs/staker-sdk'
-import { ExtendedStake } from '@reducers/farms'
-import { Stake } from '@invariant-labs/staker-sdk/lib/staker'
+// import { Staker } from '@invariant-labs/staker-sdk'
+// import { ExtendedStake } from '@reducers/farms'
+// import { Stake } from '@invariant-labs/staker-sdk/lib/staker'
 import bs58 from 'bs58'
-import { calculateSellPrice } from '@invariant-labs/bonds-sdk/lib/math'
-import { BondSaleStruct } from '@invariant-labs/bonds-sdk/lib/sale'
+// import { calculateSellPrice } from '@invariant-labs/bonds-sdk/lib/math'
+// import { BondSaleStruct } from '@invariant-labs/bonds-sdk/lib/sale'
 
 export const transformBN = (amount: BN): string => {
   // eslint-disable-next-line new-cap
@@ -896,37 +896,38 @@ export const getNewTokenOrThrow = async (
   }
 }
 
-export const getUserStakesForFarm = async (
-  stakerProgram: Staker,
-  incentive: PublicKey,
-  pool: PublicKey,
-  ids: BN[],
-  positionsAdresses: PublicKey[]
-) => {
-  const promises = ids.map(async id => {
-    const [userStakeAddress] = await stakerProgram.getUserStakeAddressAndBump(incentive, pool, id)
+// TODO: commented until eclipse staker sdk will be available
+// export const getUserStakesForFarm = async (
+//   stakerProgram: Staker,
+//   incentive: PublicKey,
+//   pool: PublicKey,
+//   ids: BN[],
+//   positionsAdresses: PublicKey[]
+// ) => {
+//   const promises = ids.map(async id => {
+//     const [userStakeAddress] = await stakerProgram.getUserStakeAddressAndBump(incentive, pool, id)
 
-    return userStakeAddress
-  })
+//     return userStakeAddress
+//   })
 
-  const addresses = await Promise.all(promises)
+//   const addresses = await Promise.all(promises)
 
-  const stakes = await stakerProgram.program.account.userStake.fetchMultiple(addresses)
+//   const stakes = await stakerProgram.program.account.userStake.fetchMultiple(addresses)
 
-  const fullStakes: ExtendedStake[] = []
+//   const fullStakes: ExtendedStake[] = []
 
-  stakes.forEach((stake, index) => {
-    if (stake !== null) {
-      fullStakes.push({
-        ...(stake as Stake),
-        address: addresses[index],
-        position: positionsAdresses[index]
-      })
-    }
-  })
+//   stakes.forEach((stake, index) => {
+//     if (stake !== null) {
+//       fullStakes.push({
+//         ...(stake as Stake),
+//         address: addresses[index],
+//         position: positionsAdresses[index]
+//       })
+//     }
+//   })
 
-  return fullStakes
-}
+//   return fullStakes
+// }
 
 export const getPositionsForPool = async (marketProgram: Market, pool: PublicKey) => {
   return (
@@ -963,34 +964,35 @@ export const getPositionsAddressesFromRange = async (
   )
 }
 
-export const calculateEstBondPriceForQuoteAmount = (bondSale: BondSaleStruct, amount: BN) => {
-  let lowerBondAmount = new BN(0)
-  let upperBondAmount = MAX_U64
-  let price = calculateSellPrice(bondSale, upperBondAmount)
+// TODO: commented until eclipse bonds sdk will be available
+// export const calculateEstBondPriceForQuoteAmount = (bondSale: BondSaleStruct, amount: BN) => {
+//   let lowerBondAmount = new BN(0)
+//   let upperBondAmount = MAX_U64
+//   let price = calculateSellPrice(bondSale, upperBondAmount)
 
-  while (upperBondAmount.sub(lowerBondAmount).abs().gt(new BN(1))) {
-    const middleBondAmount = upperBondAmount.add(lowerBondAmount).div(new BN(2))
-    price = calculateSellPrice(bondSale, middleBondAmount)
-    const middleQuoteAmount = middleBondAmount.mul(price).div(new BN(10 ** DECIMAL))
+//   while (upperBondAmount.sub(lowerBondAmount).abs().gt(new BN(1))) {
+//     const middleBondAmount = upperBondAmount.add(lowerBondAmount).div(new BN(2))
+//     price = calculateSellPrice(bondSale, middleBondAmount)
+//     const middleQuoteAmount = middleBondAmount.mul(price).div(new BN(10 ** DECIMAL))
 
-    if (middleQuoteAmount.sub(amount).abs().lte(new BN(1))) {
-      break
-    }
+//     if (middleQuoteAmount.sub(amount).abs().lte(new BN(1))) {
+//       break
+//     }
 
-    if (middleQuoteAmount.lt(amount)) {
-      lowerBondAmount = middleBondAmount
-    } else {
-      upperBondAmount = middleBondAmount
-    }
-  }
+//     if (middleQuoteAmount.lt(amount)) {
+//       lowerBondAmount = middleBondAmount
+//     } else {
+//       upperBondAmount = middleBondAmount
+//     }
+//   }
 
-  return price
-}
+//   return price
+// }
 
-export const calculateBondPrice = (bondSale: BondSaleStruct, amount: BN, byAmountBond: boolean) =>
-  byAmountBond
-    ? calculateSellPrice(bondSale, amount)
-    : calculateEstBondPriceForQuoteAmount(bondSale, amount)
+// export const calculateBondPrice = (bondSale: BondSaleStruct, amount: BN, byAmountBond: boolean) =>
+//   byAmountBond
+//     ? calculateSellPrice(bondSale, amount)
+//     : calculateEstBondPriceForQuoteAmount(bondSale, amount)
 
 export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
   {

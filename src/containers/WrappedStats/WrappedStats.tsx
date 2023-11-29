@@ -1,4 +1,7 @@
-import React, { useEffect, useMemo } from 'react'
+import React, {
+  useEffect
+  // useMemo
+} from 'react'
 import { Grid, Typography } from '@material-ui/core'
 import Liquidity from '@components/Stats/Liquidity/Liquidity'
 import Volume from '@components/Stats/Volume/Volume'
@@ -19,8 +22,8 @@ import {
 import { actions } from '@reducers/stats'
 import loader from '@static/gif/loader.gif'
 import useStyles from './styles'
-import { farms } from '@selectors/farms'
-import { actions as farmsActions } from '@reducers/farms'
+// import { farms } from '@selectors/farms'
+// import { actions as farmsActions } from '@reducers/farms'
 
 export const WrappedStats: React.FC = () => {
   const classes = useStyles()
@@ -35,51 +38,51 @@ export const WrappedStats: React.FC = () => {
   const volumePlotData = useSelector(volumePlot)
   const liquidityPlotData = useSelector(liquidityPlot)
   const isLoadingStats = useSelector(isLoading)
-  const allFarms = useSelector(farms)
+  // const allFarms = useSelector(farms)
 
-  useEffect(() => {
-    if (tokensList.length > 0 && Object.values(allFarms).length === 0) {
-      dispatch(farmsActions.getFarms())
-    }
-  }, [tokensList.length])
+  // useEffect(() => {
+  //   if (tokensList.length > 0 && Object.values(allFarms).length === 0) {
+  //     dispatch(farmsActions.getFarms())
+  //   }
+  // }, [tokensList.length])
 
   useEffect(() => {
     dispatch(actions.getCurrentStats())
   }, [])
 
-  const accumulatedAverageAPY = useMemo(() => {
-    const acc: Record<string, number> = {}
-    const now = Date.now() / 1000
+  // const accumulatedAverageAPY = useMemo(() => {
+  //   const acc: Record<string, number> = {}
+  //   const now = Date.now() / 1000
 
-    Object.values(allFarms).forEach(farm => {
-      if (!acc[farm.pool.toString()]) {
-        acc[farm.pool.toString()] = 0
-      }
+  //   Object.values(allFarms).forEach(farm => {
+  //     if (!acc[farm.pool.toString()]) {
+  //       acc[farm.pool.toString()] = 0
+  //     }
 
-      if (farm.endTime.v.toNumber() > now) {
-        acc[farm.pool.toString()] += farm.averageApy ?? 0
-      }
-    })
+  //     if (farm.endTime.v.toNumber() > now) {
+  //       acc[farm.pool.toString()] += farm.averageApy ?? 0
+  //     }
+  //   })
 
-    return acc
-  }, [allFarms])
+  //   return acc
+  // }, [allFarms])
 
-  const accumulatedSingleTickAPY = useMemo(() => {
-    const acc: Record<string, number> = {}
-    const now = Date.now() / 1000
+  // const accumulatedSingleTickAPY = useMemo(() => {
+  //   const acc: Record<string, number> = {}
+  //   const now = Date.now() / 1000
 
-    Object.values(allFarms).forEach(farm => {
-      if (!acc[farm.pool.toString()]) {
-        acc[farm.pool.toString()] = 0
-      }
+  //   Object.values(allFarms).forEach(farm => {
+  //     if (!acc[farm.pool.toString()]) {
+  //       acc[farm.pool.toString()] = 0
+  //     }
 
-      if (farm.endTime.v.toNumber() > now) {
-        acc[farm.pool.toString()] += farm.singleTickApy ?? 0
-      }
-    })
+  //     if (farm.endTime.v.toNumber() > now) {
+  //       acc[farm.pool.toString()] += farm.singleTickApy ?? 0
+  //     }
+  //   })
 
-    return acc
-  }, [allFarms])
+  //   return acc
+  // }, [allFarms])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -136,14 +139,20 @@ export const WrappedStats: React.FC = () => {
               volume: poolData.volume24,
               TVL: poolData.tvl,
               fee: poolData.fee,
-              apy:
-                poolData.apy + (accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0),
+              apy: poolData.apy,
               apyData: {
                 fees: poolData.apy,
-                accumulatedFarmsSingleTick:
-                  accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0,
-                accumulatedFarmsAvg: accumulatedAverageAPY?.[poolData.poolAddress.toString()] ?? 0
+                accumulatedFarmsSingleTick: 0,
+                accumulatedFarmsAvg: 0
               }
+              // apy:
+              //   poolData.apy + (accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0),
+              // apyData: {
+              //   fees: poolData.apy,
+              //   accumulatedFarmsSingleTick:
+              //     accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0,
+              //   accumulatedFarmsAvg: accumulatedAverageAPY?.[poolData.poolAddress.toString()] ?? 0
+              // }
             }))}
           />
         </>

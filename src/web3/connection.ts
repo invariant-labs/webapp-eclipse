@@ -1,8 +1,8 @@
 import { Connection } from '@solana/web3.js'
 import { NetworkType, SolanaNetworks } from '@consts/static'
 import { Network } from '@invariant-labs/sdk-eclipse'
-import { Network as StakerNetwork } from '@invariant-labs/staker-sdk'
-import { Network as BondsNetwork } from '@invariant-labs/bonds-sdk'
+// import { Network as StakerNetwork } from '@invariant-labs/staker-sdk'
+// import { Network as BondsNetwork } from '@invariant-labs/bonds-sdk'
 
 let _connection: Connection | null = null
 let _network: string
@@ -32,35 +32,35 @@ const networkTypetoProgramNetwork = (type: NetworkType): Network => {
   }
 }
 
-const networkTypetoStakerNetwork = (type: NetworkType): StakerNetwork => {
-  switch (type) {
-    case NetworkType.DEVNET:
-      return StakerNetwork.DEV
-    case NetworkType.LOCALNET:
-      return StakerNetwork.LOCAL
-    // case SolanaNetworks.TEST:
-    //   return StakerNetwork.TEST
-    case NetworkType.MAINNET:
-      return StakerNetwork.MAIN
-    default:
-      return StakerNetwork.DEV
-  }
-}
+// const networkTypetoStakerNetwork = (type: NetworkType): StakerNetwork => {
+//   switch (type) {
+//     case NetworkType.DEVNET:
+//       return StakerNetwork.DEV
+//     case NetworkType.LOCALNET:
+//       return StakerNetwork.LOCAL
+//     // case SolanaNetworks.TEST:
+//     //   return StakerNetwork.TEST
+//     case NetworkType.MAINNET:
+//       return StakerNetwork.MAIN
+//     default:
+//       return StakerNetwork.DEV
+//   }
+// }
 
-const networkTypetoBondsNetwork = (type: NetworkType): BondsNetwork => {
-  switch (type) {
-    case NetworkType.DEVNET:
-      return BondsNetwork.DEV
-    case NetworkType.LOCALNET:
-      return BondsNetwork.LOCAL
-    // case SolanaNetworks.TEST:
-    //   return StakerNetwork.TEST
-    // case NetworkType.MAINNET:
-    //   return BondsNetwork.MAIN
-    default:
-      return BondsNetwork.DEV
-  }
-}
+// const networkTypetoBondsNetwork = (type: NetworkType): BondsNetwork => {
+//   switch (type) {
+//     case NetworkType.DEVNET:
+//       return BondsNetwork.DEV
+//     case NetworkType.LOCALNET:
+//       return BondsNetwork.LOCAL
+//     // case SolanaNetworks.TEST:
+//     //   return StakerNetwork.TEST
+//     // case NetworkType.MAINNET:
+//     //   return BondsNetwork.MAIN
+//     default:
+//       return BondsNetwork.DEV
+//   }
+// }
 
 const getCurrentSolanaConnection = (): Connection | null => {
   return _connection
@@ -70,7 +70,7 @@ export {
   getSolanaConnection,
   SolanaNetworks,
   getCurrentSolanaConnection,
-  networkTypetoStakerNetwork,
-  networkTypetoProgramNetwork,
-  networkTypetoBondsNetwork
+  // networkTypetoStakerNetwork,
+  networkTypetoProgramNetwork
+  // networkTypetoBondsNetwork
 }
