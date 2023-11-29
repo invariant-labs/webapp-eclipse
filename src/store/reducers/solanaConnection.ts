@@ -19,9 +19,9 @@ export interface ISolanaConnectionStore {
 export const defaultState: ISolanaConnectionStore = {
   status: Status.Uninitialized,
   message: '',
-  network: NetworkType.MAINNET,
+  network: NetworkType.DEVNET,
   slot: 0,
-  rpcAddress: SolanaNetworks.MAIN_ALCHEMY
+  rpcAddress: SolanaNetworks.DEV
 }
 export const solanaConnectionSliceName = 'solanaConnection'
 const solanaConnectionSlice = createSlice({

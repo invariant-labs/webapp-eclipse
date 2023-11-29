@@ -58,22 +58,22 @@ storiesOf('buttons/newHeaderButton', module)
   .add('selectRPC', () => (
     <div style={{ backgroundColor: colors.black.header, padding: '100px' }}>
       <SelectRPCButton
-        rpc={SolanaNetworks.MAIN_NIGHTLY}
+        rpc={SolanaNetworks.MAIN}
         networks={[
           {
             networkType: NetworkType.MAINNET,
-            rpc: SolanaNetworks.MAIN_NIGHTLY,
+            rpc: SolanaNetworks.MAIN,
             rpcName: 'Nightly'
           },
           { networkType: NetworkType.MAINNET, rpc: SolanaNetworks.MAIN, rpcName: 'Solana' },
           {
             networkType: NetworkType.MAINNET,
-            rpc: SolanaNetworks.MAIN_SERUM,
+            rpc: SolanaNetworks.MAIN,
             rpcName: 'Serum'
           },
           {
             networkType: NetworkType.MAINNET,
-            rpc: SolanaNetworks.MAIN_GENESYSGO,
+            rpc: SolanaNetworks.MAIN,
             rpcName: 'GenesysGo'
           }
         ]}

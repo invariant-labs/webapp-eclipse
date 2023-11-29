@@ -8,18 +8,18 @@ import { ISelectNetwork } from '../SelectNetwork/SelectNetwork'
 const networks: ISelectNetwork[] = [
   {
     networkType: NetworkType.MAINNET,
-    rpc: SolanaNetworks.MAIN_NIGHTLY,
+    rpc: SolanaNetworks.MAIN,
     rpcName: 'Nightly'
   },
   { networkType: NetworkType.MAINNET, rpc: SolanaNetworks.MAIN, rpcName: 'Solana' },
   {
     networkType: NetworkType.MAINNET,
-    rpc: SolanaNetworks.MAIN_SERUM,
+    rpc: SolanaNetworks.MAIN,
     rpcName: 'Serum'
   },
   {
     networkType: NetworkType.MAINNET,
-    rpc: SolanaNetworks.MAIN_GENESYSGO,
+    rpc: SolanaNetworks.MAIN,
     rpcName: 'GenesysGo'
   }
 ]
@@ -31,6 +31,6 @@ storiesOf('modals/selectMainnetRpc', module).add('default', () => (
     handleClose={() => {}}
     onSelect={(networkType, rpc) => action('chosen: ' + networkType + ' ' + rpc)()}
     anchorEl={null}
-    activeRPC={SolanaNetworks.MAIN_SERUM}
+    activeRPC={SolanaNetworks.MAIN}
   />
 ))

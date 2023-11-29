@@ -17,6 +17,7 @@ import classNames from 'classnames'
 import useStyles from './style'
 import SelectRPCButton from '@components/HeaderButton/SelectRPCButton'
 import SelectMainnetRPC from '@components/Modals/SelectMainnetRPC/SelectMainnetRPC'
+import { ISelectNetwork } from '@components/Modals/SelectNetwork/SelectNetwork'
 
 export interface IHeader {
   address: PublicKey
@@ -40,8 +41,7 @@ export const Header: React.FC<IHeader> = ({
   typeOfNetwork,
   rpc,
   onFaucet,
-  onDisconnectWallet,
-  defaultMainnetRPC
+  onDisconnectWallet
 }) => {
   const classes = useStyles()
   const buttonClasses = useButtonStyles()
@@ -66,29 +66,7 @@ export const Header: React.FC<IHeader> = ({
     setActive(landing)
   }, [landing])
 
-  const mainnetRPCs = [
-    {
-      networkType: NetworkType.MAINNET,
-      rpc: SolanaNetworks.DEV_ECLIPSE,
-      rpcName: 'Eclipse'
-    }
-    // {
-    //   networkType: NetworkType.MAINNET,
-    //   rpc: SolanaNetworks.MAIN_ALCHEMY,
-    //   rpcName: 'Alchemy'
-    // },
-    // {
-    //   networkType: NetworkType.MAINNET,
-    //   rpc: SolanaNetworks.MAIN_QUICKNODE,
-    //   rpcName: 'Quicknode'
-    // },
-    // {
-    //   networkType: NetworkType.MAINNET,
-    //   rpc: SolanaNetworks.MAIN_HELLOMOON,
-    //   rpcName: 'Hello Moon'
-    // },
-    // { networkType: NetworkType.MAINNET, rpc: SolanaNetworks.MAIN, rpcName: 'Solana' }
-  ]
+  const mainnetRPCs: ISelectNetwork[] = []
 
   return (
     <Grid container>
@@ -150,12 +128,12 @@ export const Header: React.FC<IHeader> = ({
           <SelectNetworkButton
             name={typeOfNetwork}
             networks={[
-              {
-                networkType: NetworkType.MAINNET,
-                rpc: defaultMainnetRPC,
-                rpcName:
-                  mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
-              },
+              // {
+              //   networkType: NetworkType.MAINNET,
+              //   rpc: defaultMainnetRPC,
+              //   rpcName:
+              //     mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
+              // },
               { networkType: NetworkType.DEVNET, rpc: SolanaNetworks.DEV }
             ]}
             onSelect={onNetworkSelect}
