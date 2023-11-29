@@ -148,8 +148,8 @@ export const HBB_DEV: Token = {
 }
 
 enum SolanaNetworks {
-  TEST = 'https://api.testnet.solana.com', // TODO: TEST and MAIN temporarily left as they are; they are unvailable on frontend
-  MAIN = 'https://api.mainnet-beta.solana.com',
+  TEST = 'https://staging-rpc.dev.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
+  MAIN = 'https://staging-rpc.dev.eclipsenetwork.xyz',
   DEV = 'https://staging-rpc.dev.eclipsenetwork.xyz',
   LOCAL = 'http://127.0.0.1:8899'
 }
