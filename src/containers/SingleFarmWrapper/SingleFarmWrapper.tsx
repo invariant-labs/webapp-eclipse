@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/restrict-plus-operands */
 import SelectedFarmList from '@components/FarmsList/SelectedFarmList/SelectedFarmList'
 import { calcYPerXPrice, printBN } from '@consts/utils'
-import { calculatePriceSqrt } from '@invariant-labs/sdk'
-import { getX, getY } from '@invariant-labs/sdk/lib/math'
-import { DECIMAL } from '@invariant-labs/sdk/lib/utils'
+import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
+import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import {
   farms,
   howManyPositionsForFarm,

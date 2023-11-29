@@ -14,7 +14,7 @@ import { PublicKey } from '@solana/web3.js'
 import { getMarketProgram } from '@web3/programs/amm'
 import { PoolWithAddress, actions as poolsActions } from '@reducers/pools'
 import { Token } from '@consts/static'
-import { DECIMAL } from '@invariant-labs/sdk/lib/utils'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { getConnection } from './connection'
 
 export function* getStats(): Generator {

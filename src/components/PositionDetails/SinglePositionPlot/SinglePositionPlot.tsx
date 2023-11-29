@@ -4,7 +4,7 @@ import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot
 import LiquidationRangeInfo from '@components/PositionDetails/LiquidationRangeInfo/LiquidationRangeInfo'
 import { calcPrice, spacingMultiplicityGte, calcTicksAmountInRange } from '@consts/utils'
 import { PlotTickData } from '@reducers/positions'
-import { MIN_TICK } from '@invariant-labs/sdk'
+import { MIN_TICK } from '@invariant-labs/sdk-eclipse'
 import { ILiquidityToken } from '../SinglePositionInfo/consts'
 import PlotTypeSwitch from '@components/PlotTypeSwitch/PlotTypeSwitch'
 import activeLiquidity from '@static/svg/activeLiquidity.svg'

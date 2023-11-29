@@ -6,7 +6,7 @@ import { SwapToken } from '@selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { MemoryRouter } from 'react-router'
 import { calcPrice } from '@consts/utils'
-import { MAX_TICK, MIN_TICK } from '@invariant-labs/sdk'
+import { MAX_TICK, MIN_TICK } from '@invariant-labs/sdk-eclipse'
 import { colors } from '@static/theme'
 import { useState } from '@storybook/addons'
 

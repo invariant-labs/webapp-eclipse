@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react'
 import RangeSelector from './RangeSelector'
 import { action } from '@storybook/addon-actions'
 import { calcPrice } from '@consts/utils'
-import { MAX_TICK, MIN_TICK } from '@invariant-labs/sdk'
+import { MAX_TICK, MIN_TICK } from '@invariant-labs/sdk-eclipse'
 
 const data = [
   {

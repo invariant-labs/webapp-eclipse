@@ -11,7 +11,7 @@ import {
   getScaleFromString,
   CoingeckoPriceData
 } from '@consts/utils'
-import { DECIMAL } from '@invariant-labs/sdk/lib/utils'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Button, Grid, Input, Popover, Typography } from '@material-ui/core'
 import { BN } from '@project-serum/anchor'
 import { SwapToken } from '@selectors/solanaWallet'

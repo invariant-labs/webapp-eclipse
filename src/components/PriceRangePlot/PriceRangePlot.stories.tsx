@@ -5,7 +5,7 @@ import PriceRangePlot from './PriceRangePlot'
 import { useState } from '@storybook/client-api'
 import { action } from '@storybook/addon-actions'
 import { calcPrice } from '@consts/utils'
-import { MIN_TICK, MAX_TICK } from '@invariant-labs/sdk'
+import { MIN_TICK, MAX_TICK } from '@invariant-labs/sdk-eclipse'
 
 const data = [
   {

@@ -14,7 +14,7 @@ import {
 import { pools, tokens } from '@selectors/pools'
 import { calcYPerXPrice, printBN } from '@consts/utils'
 import { actions } from '@reducers/farms'
-import { DECIMAL } from '@invariant-labs/sdk/lib/utils'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import loader from '@static/gif/loader.gif'
 import { positionsList } from '@selectors/positions'
 

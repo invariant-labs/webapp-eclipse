@@ -3,7 +3,7 @@ import { storiesOf } from '@storybook/react'
 import PositionDetails from './PositionDetails'
 import { MemoryRouter } from 'react-router'
 import { calcPrice } from '@consts/utils'
-import { MIN_TICK, MAX_TICK } from '@invariant-labs/sdk'
+import { MIN_TICK, MAX_TICK } from '@invariant-labs/sdk-eclipse'
 
 export interface liqTokens {
   symbol: string

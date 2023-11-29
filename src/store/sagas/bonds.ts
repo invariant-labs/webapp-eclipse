@@ -20,7 +20,7 @@ import { bondsList, userVested } from '@selectors/bonds'
 import { WRAPPED_SOL_ADDRESS } from '@consts/static'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { BN } from '@project-serum/anchor'
-import { DECIMAL } from '@invariant-labs/sdk/lib/utils'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { network, rpcAddress } from '@selectors/solanaConnection'
 
 export function* handleGetBondsList() {

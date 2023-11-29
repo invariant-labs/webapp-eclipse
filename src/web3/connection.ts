@@ -1,6 +1,6 @@
 import { Connection } from '@solana/web3.js'
 import { NetworkType, SolanaNetworks } from '@consts/static'
-import { Network } from '@invariant-labs/sdk'
+import { Network } from '@invariant-labs/sdk-eclipse'
 import { Network as StakerNetwork } from '@invariant-labs/staker-sdk'
 import { Network as BondsNetwork } from '@invariant-labs/bonds-sdk'
 

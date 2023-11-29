@@ -1,5 +1,5 @@
-import { Decimal, DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk/lib/market'
-import { fromFee } from '@invariant-labs/sdk/lib/utils'
+import { Decimal, DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk-eclipse/lib/market'
+import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@project-serum/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'

@@ -18,9 +18,9 @@ import {
   getCoingeckoTokenPrice,
   printBN
 } from '@consts/utils'
-import { calculatePriceSqrt } from '@invariant-labs/sdk'
-import { calculateClaimAmount, DECIMAL } from '@invariant-labs/sdk/src/utils'
-import { getX, getY, MAX_TICK } from '@invariant-labs/sdk/lib/math'
+import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
+import { calculateClaimAmount, DECIMAL } from '@invariant-labs/sdk-eclipse/src/utils'
+import { getX, getY, MAX_TICK } from '@invariant-labs/sdk-eclipse/lib/math'
 import loader from '@static/gif/loader.gif'
 import useStyles from './style'
 import { hasTokens, volumeRanges } from '@selectors/pools'

@@ -11,7 +11,7 @@ import {
 import SimpleInput from '@components/Inputs/SimpleInput/SimpleInput'
 import useStyles from './style'
 import AnimatedNumber from '@components/AnimatedNumber'
-import { getMinTick, getMaxTick } from '@invariant-labs/sdk/lib/utils'
+import { getMinTick, getMaxTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 export interface IPoolInit {
   tokenASymbol: string

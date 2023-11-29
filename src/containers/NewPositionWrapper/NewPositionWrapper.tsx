@@ -3,7 +3,7 @@ import NewPosition from '@components/NewPosition/NewPosition'
 import { actions } from '@reducers/positions'
 import { useDispatch, useSelector } from 'react-redux'
 import { swapTokens, status, canCreateNewPool, canCreateNewPosition } from '@selectors/solanaWallet'
-import { DECIMAL } from '@invariant-labs/sdk/lib/utils'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import {
   addNewTokenToLocalStorage,
   calcPrice,
@@ -19,16 +19,16 @@ import {
   poolsArraySortedByFees,
   volumeRanges
 } from '@selectors/pools'
-import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk/src/math'
-import { Decimal } from '@invariant-labs/sdk/lib/market'
+import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/src/math'
+import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import { initPosition, plotTicks } from '@selectors/positions'
 import { BN } from '@project-serum/anchor'
 import { ALL_FEE_TIERS_DATA, bestTiers, commonTokensForNetworks } from '@consts/static'
 import { Status } from '@reducers/solanaWallet'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import { calculatePriceSqrt, MAX_TICK, Pair } from '@invariant-labs/sdk'
-import { feeToTickSpacing } from '@invariant-labs/sdk/src/utils'
+import { calculatePriceSqrt, MAX_TICK, Pair } from '@invariant-labs/sdk-eclipse'
+import { feeToTickSpacing } from '@invariant-labs/sdk-eclipse/src/utils'
 import { actions as poolsActions } from '@reducers/pools'
 import { network } from '@selectors/solanaConnection'
 import { getCurrentSolanaConnection } from '@web3/connection'

@@ -1,4 +1,4 @@
-import { getMarketAddress, Market } from '@invariant-labs/sdk'
+import { getMarketAddress, Market } from '@invariant-labs/sdk-eclipse'
 import { getSolanaConnection, networkTypetoProgramNetwork } from '@web3/connection'
 import { getSolanaWallet } from '@web3/wallet'
 import { PublicKey } from '@solana/web3.js'

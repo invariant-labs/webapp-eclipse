@@ -1,12 +1,12 @@
-import { calculatePriceSqrt, MAX_TICK, MIN_TICK, Pair } from '@invariant-labs/sdk'
-import { Decimal, PoolStructure, Tick } from '@invariant-labs/sdk/src/market'
+import { calculatePriceSqrt, MAX_TICK, MIN_TICK, Pair } from '@invariant-labs/sdk-eclipse'
+import { Decimal, PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
   calculateTickDelta,
   DECIMAL,
   parseLiquidityOnTicks,
   simulateSwap,
   SimulationStatus
-} from '@invariant-labs/sdk/src/utils'
+} from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@project-serum/anchor'
 import { PlotTickData, PositionWithAddress } from '@reducers/positions'
 import { Token as SPLToken, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -32,9 +32,9 @@ import {
 import mainnetList from './tokenLists/mainnet.json'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
 import { PoolWithAddress } from '@reducers/pools'
-import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk/lib/market'
+import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios, { AxiosResponse } from 'axios'
-import { getMaxTick, getMinTick, Range } from '@invariant-labs/sdk/lib/utils'
+import { getMaxTick, getMinTick, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Staker } from '@invariant-labs/staker-sdk'
 import { ExtendedStake } from '@reducers/farms'
 import { Stake } from '@invariant-labs/staker-sdk/lib/staker'

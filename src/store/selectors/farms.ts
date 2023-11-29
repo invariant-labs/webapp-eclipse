@@ -1,5 +1,5 @@
 import { printBN } from '@consts/utils'
-import { calculatePriceSqrt, getX, getY } from '@invariant-labs/sdk/lib/math'
+import { calculatePriceSqrt, getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { createSelector } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { IFarmsStore, farmsSliceName, ExtendedIncentive, ExtendedStake } from '../reducers/farms'

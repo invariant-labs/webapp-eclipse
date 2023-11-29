@@ -3,7 +3,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import { ISolanaWallet, solanaWalletSliceName, ITokenAccount } from '@reducers/solanaWallet'
 import { keySelectors, AnyProps } from './helpers'
 import { PublicKey } from '@solana/web3.js'
-import { MOCK_TOKENS } from '@invariant-labs/sdk'
+import { MOCK_TOKENS } from '@invariant-labs/sdk-eclipse'
 import { tokens } from './pools'
 import {
   WRAPPED_SOL_ADDRESS,

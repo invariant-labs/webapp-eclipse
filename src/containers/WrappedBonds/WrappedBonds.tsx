@@ -20,7 +20,7 @@ import {
   getCoingeckoTokenPrice,
   printBN
 } from '@consts/utils'
-import { fromFee } from '@invariant-labs/sdk/lib/utils'
+import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import useStyles from './styles'
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import EmptyPlaceholder from '@components/EmptyPlaceholder/EmptyPlaceholder'

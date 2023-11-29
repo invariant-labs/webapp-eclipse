@@ -24,7 +24,7 @@ import {
   PositionWithPoolData,
   singlePositionData
 } from '@selectors/positions'
-import { getMarketAddress, Pair } from '@invariant-labs/sdk'
+import { getMarketAddress, Pair } from '@invariant-labs/sdk-eclipse'
 import {
   AccountInfo,
   Keypair,
@@ -52,13 +52,13 @@ import {
 } from '@consts/utils'
 import { pools, tokens } from '@selectors/pools'
 import { BN } from '@project-serum/anchor'
-import { calculatePriceSqrt, getX, getY } from '@invariant-labs/sdk/lib/math'
+import { calculatePriceSqrt, getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { GuardPredicate } from '@redux-saga/types'
 import {
   calculateUserDailyRewards,
   positionsRewardAPY,
   rewardsAPY
-} from '@invariant-labs/sdk/lib/utils'
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PositionWithAddress } from '@reducers/positions'
 
 export function* getFarmsTotals() {

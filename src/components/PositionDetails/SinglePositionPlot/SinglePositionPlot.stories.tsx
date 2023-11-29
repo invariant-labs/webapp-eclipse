@@ -2,7 +2,7 @@ import React from 'react'
 import { storiesOf } from '@storybook/react'
 import SinglePositionPlot from './SinglePositionPlot'
 import { calcPrice } from '@consts/utils'
-import { MIN_TICK, MAX_TICK } from '@invariant-labs/sdk'
+import { MIN_TICK, MAX_TICK } from '@invariant-labs/sdk-eclipse'
 
 const data = [
   {

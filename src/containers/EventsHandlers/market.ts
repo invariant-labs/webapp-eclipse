@@ -12,7 +12,7 @@ import {
   getPoolsVolumeRanges
 } from '@consts/utils'
 import { swap } from '@selectors/swap'
-import { findTickmapChanges, Pair } from '@invariant-labs/sdk'
+import { findTickmapChanges, Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { getCurrentSolanaConnection } from '@web3/connection'
 

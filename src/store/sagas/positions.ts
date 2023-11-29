@@ -12,7 +12,7 @@ import {
 } from '@reducers/positions'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@selectors/pools'
-import { Pair } from '@invariant-labs/sdk'
+import { Pair } from '@invariant-labs/sdk-eclipse'
 import {
   createLiquidityPlot,
   createPlaceholderLiquidityPlot,

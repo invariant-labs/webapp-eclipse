@@ -6,10 +6,10 @@ import { BN } from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { toBlur } from '@consts/uiUtils'
 import { Status } from '@reducers/solanaWallet'
-import { DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk/lib/market'
+import { DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PoolWithAddress } from '@reducers/pools'
-import { Decimal } from '@invariant-labs/sdk/src/market'
-import { fromFee } from '@invariant-labs/sdk/lib/utils'
+import { Decimal } from '@invariant-labs/sdk-eclipse/src/market'
+import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 const pools: PoolWithAddress[] = [
   {
