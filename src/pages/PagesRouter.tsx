@@ -18,7 +18,6 @@ import Footer from '@components/Footer/Footer'
 // import FarmsPage from './FarmsPage/FarmsPage'
 // import StatsPage from './StatsPage/StatsPage'
 // import BondsPage from './BondsPage/BondsPage'
-import PerformanceWarning from '@containers/PerformanceWarning/PerformanceWarning'
 
 export const PagesRouter: React.FC = () => {
   const dispatch = useDispatch()
@@ -40,7 +39,6 @@ export const PagesRouter: React.FC = () => {
     <Router>
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
-        <PerformanceWarning />
         <HeaderWrapper />
         <Switch>
           <Route path='/swap' component={SwapPage} />
