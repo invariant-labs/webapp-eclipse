@@ -48,10 +48,7 @@ export const Header: React.FC<IHeader> = ({
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
 
-  const routes =
-    typeOfNetwork === NetworkType.MAINNET
-      ? ['swap', 'pool', 'stats', 'farms']
-      : ['swap', 'pool', 'stats', 'farms', 'bonds']
+  const routes = ['swap', 'pool']
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     pool: [/^newPosition$/, /^position\/*/],
@@ -73,7 +70,7 @@ export const Header: React.FC<IHeader> = ({
     {
       networkType: NetworkType.MAINNET,
       rpc: SolanaNetworks.DEV_ECLIPSE,
-      rpcName: 'Eclipse' 
+      rpcName: 'Eclipse'
     }
     // {
     //   networkType: NetworkType.MAINNET,
