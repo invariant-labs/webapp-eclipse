@@ -37,7 +37,7 @@ import { network, rpcAddress } from '@selectors/solanaConnection'
 // import { getStakerProgram } from '@web3/programs/staker'
 // import { Staker } from '@invariant-labs/staker-sdk'
 
-export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
+export function* handleInitPositionWithETH(data: InitPositionData): Generator {
   try {
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
@@ -48,11 +48,11 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
 
-    const wrappedSolAccount = Keypair.generate()
+    const wrappedEthAccount = Keypair.generate()
 
     const createIx = SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedSolAccount.publicKey,
+      newAccountPubkey: wrappedEthAccount.publicKey,
       lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
       space: 165,
       programId: TOKEN_PROGRAM_ID
@@ -60,7 +60,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
 
     const transferIx = SystemProgram.transfer({
       fromPubkey: wallet.publicKey,
-      toPubkey: wrappedSolAccount.publicKey,
+      toPubkey: wrappedEthAccount.publicKey,
       lamports:
         allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
           ? data.xAmount
@@ -70,13 +70,13 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
     const initIx = Token.createInitAccountInstruction(
       TOKEN_PROGRAM_ID,
       NATIVE_MINT,
-      wrappedSolAccount.publicKey,
+      wrappedEthAccount.publicKey,
       wallet.publicKey
     )
 
     const unwrapIx = Token.createCloseAccountInstruction(
       TOKEN_PROGRAM_ID,
-      wrappedSolAccount.publicKey,
+      wrappedEthAccount.publicKey,
       wallet.publicKey,
       wallet.publicKey,
       []
@@ -84,7 +84,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
 
     let userTokenX =
       allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? wrappedSolAccount.publicKey
+        ? wrappedEthAccount.publicKey
         : tokensAccounts[data.tokenX.toString()]
         ? tokensAccounts[data.tokenX.toString()].address
         : null
@@ -95,7 +95,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
 
     let userTokenY =
       allTokens[data.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? wrappedSolAccount.publicKey
+        ? wrappedEthAccount.publicKey
         : tokensAccounts[data.tokenY.toString()]
         ? tokensAccounts[data.tokenY.toString()].address
         : null
@@ -163,7 +163,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
       [initialTx, initPositionTx, unwrapTx]
     )
 
-    initialSignedTx.partialSign(wrappedSolAccount)
+    initialSignedTx.partialSign(wrappedEthAccount)
 
     if (poolSigners.length) {
       initPositionSignedTx.partialSign(...poolSigners)
@@ -239,7 +239,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
     if (!unwrapTxid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Wrapped SOL unwrap failed. Try to unwrap it in your wallet.',
+          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
           variant: 'warning',
           persist: false,
           txid: unwrapTxid
@@ -248,7 +248,7 @@ export function* handleInitPositionWithSOL(data: InitPositionData): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'SOL unwrapped successfully.',
+          message: 'ETH unwrapped successfully.',
           variant: 'success',
           persist: false,
           txid: unwrapTxid
@@ -278,7 +278,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
       allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
       allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
-      return yield* call(handleInitPositionWithSOL, action.payload)
+      return yield* call(handleInitPositionWithETH, action.payload)
     }
 
     const connection = yield* call(getConnection)
@@ -496,7 +496,7 @@ export function* handleGetPositionsList() {
   }
 }
 
-export function* handleClaimFeeWithSOL(positionIndex: number) {
+export function* handleClaimFeeWithETH(positionIndex: number) {
   try {
     const connection = yield* call(getConnection)
     const networkType = yield* select(network)
@@ -508,11 +508,11 @@ export function* handleClaimFeeWithSOL(positionIndex: number) {
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
 
-    const wrappedSolAccount = Keypair.generate()
+    const wrappedEthAccount = Keypair.generate()
 
     const createIx = SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedSolAccount.publicKey,
+      newAccountPubkey: wrappedEthAccount.publicKey,
       lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
       space: 165,
       programId: TOKEN_PROGRAM_ID
@@ -521,13 +521,13 @@ export function* handleClaimFeeWithSOL(positionIndex: number) {
     const initIx = Token.createInitAccountInstruction(
       TOKEN_PROGRAM_ID,
       NATIVE_MINT,
-      wrappedSolAccount.publicKey,
+      wrappedEthAccount.publicKey,
       wallet.publicKey
     )
 
     const unwrapIx = Token.createCloseAccountInstruction(
       TOKEN_PROGRAM_ID,
-      wrappedSolAccount.publicKey,
+      wrappedEthAccount.publicKey,
       wallet.publicKey,
       wallet.publicKey,
       []
@@ -537,7 +537,7 @@ export function* handleClaimFeeWithSOL(positionIndex: number) {
 
     let userTokenX =
       allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? wrappedSolAccount.publicKey
+        ? wrappedEthAccount.publicKey
         : tokensAccounts[positionForIndex.tokenX.toString()]
         ? tokensAccounts[positionForIndex.tokenX.toString()].address
         : null
@@ -548,7 +548,7 @@ export function* handleClaimFeeWithSOL(positionIndex: number) {
 
     let userTokenY =
       allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? wrappedSolAccount.publicKey
+        ? wrappedEthAccount.publicKey
         : tokensAccounts[positionForIndex.tokenY.toString()]
         ? tokensAccounts[positionForIndex.tokenY.toString()].address
         : null
@@ -574,7 +574,7 @@ export function* handleClaimFeeWithSOL(positionIndex: number) {
     tx.recentBlockhash = blockhash.blockhash
     tx.feePayer = wallet.publicKey
     const signedTx = yield* call([wallet, wallet.signTransaction], tx)
-    signedTx.partialSign(wrappedSolAccount)
+    signedTx.partialSign(wrappedEthAccount)
 
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
@@ -623,7 +623,7 @@ export function* handleClaimFee(action: PayloadAction<number>) {
       allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
       allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
-      return yield* call(handleClaimFeeWithSOL, action.payload)
+      return yield* call(handleClaimFeeWithETH, action.payload)
     }
 
     const connection = yield* call(getConnection)
@@ -705,7 +705,7 @@ export function* handleClaimFee(action: PayloadAction<number>) {
   }
 }
 
-export function* handleClosePositionWithSOL(data: ClosePositionData) {
+export function* handleClosePositionWithETH(data: ClosePositionData) {
   try {
     const connection = yield* call(getConnection)
     const networkType = yield* select(network)
@@ -717,11 +717,11 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
 
-    const wrappedSolAccount = Keypair.generate()
+    const wrappedEthAccount = Keypair.generate()
 
     const createIx = SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedSolAccount.publicKey,
+      newAccountPubkey: wrappedEthAccount.publicKey,
       lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
       space: 165,
       programId: TOKEN_PROGRAM_ID
@@ -730,13 +730,13 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
     const initIx = Token.createInitAccountInstruction(
       TOKEN_PROGRAM_ID,
       NATIVE_MINT,
-      wrappedSolAccount.publicKey,
+      wrappedEthAccount.publicKey,
       wallet.publicKey
     )
 
     const unwrapIx = Token.createCloseAccountInstruction(
       TOKEN_PROGRAM_ID,
-      wrappedSolAccount.publicKey,
+      wrappedEthAccount.publicKey,
       wallet.publicKey,
       wallet.publicKey,
       []
@@ -746,7 +746,7 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
 
     let userTokenX =
       allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? wrappedSolAccount.publicKey
+        ? wrappedEthAccount.publicKey
         : tokensAccounts[positionForIndex.tokenX.toString()]
         ? tokensAccounts[positionForIndex.tokenX.toString()].address
         : null
@@ -757,7 +757,7 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
 
     let userTokenY =
       allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? wrappedSolAccount.publicKey
+        ? wrappedEthAccount.publicKey
         : tokensAccounts[positionForIndex.tokenY.toString()]
         ? tokensAccounts[positionForIndex.tokenY.toString()].address
         : null
@@ -799,7 +799,7 @@ export function* handleClosePositionWithSOL(data: ClosePositionData) {
     tx.recentBlockhash = blockhash.blockhash
     tx.feePayer = wallet.publicKey
     const signedTx = yield* call([wallet, wallet.signTransaction], tx)
-    signedTx.partialSign(wrappedSolAccount)
+    signedTx.partialSign(wrappedEthAccount)
 
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
@@ -861,7 +861,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
       allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
-      return yield* call(handleClosePositionWithSOL, action.payload)
+      return yield* call(handleClosePositionWithETH, action.payload)
     }
 
     const connection = yield* call(getConnection)

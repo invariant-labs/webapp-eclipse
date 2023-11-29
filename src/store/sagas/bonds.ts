@@ -19,7 +19,7 @@ export {}
 // import { accounts, address } from '@selectors/solanaWallet'
 // import { createAccount, getWallet } from './wallet'
 // import { bondsList, userVested } from '@selectors/bonds'
-// import { WRAPPED_SOL_ADDRESS } from '@consts/static'
+// import { WRAPPED_ETH_ADDRESS } from '@consts/static'
 // import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 // import { BN } from '@project-serum/anchor'
 // import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -85,7 +85,7 @@ export {}
 //   }
 // }
 
-// export function* handleBuyBondWithWSOL(data: BuyBond) {
+// export function* handleBuyBondWithETH(data: BuyBond) {
 //   try {
 //     const connection = yield* call(getConnection)
 //     const wallet = yield* call(getWallet)
@@ -93,11 +93,11 @@ export {}
 //     const rpc = yield* select(rpcAddress)
 //     const bondsProgram = yield* call(getBondsProgram, networkType, rpc)
 
-//     const wrappedSolAccount = Keypair.generate()
+//     const wrappedEthAccount = Keypair.generate()
 
 //     const createIx = SystemProgram.createAccount({
 //       fromPubkey: wallet.publicKey,
-//       newAccountPubkey: wrappedSolAccount.publicKey,
+//       newAccountPubkey: wrappedEthAccount.publicKey,
 //       lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
 //       space: 165,
 //       programId: TOKEN_PROGRAM_ID
@@ -107,20 +107,20 @@ export {}
 
 //     const transferIx = SystemProgram.transfer({
 //       fromPubkey: wallet.publicKey,
-//       toPubkey: wrappedSolAccount.publicKey,
+//       toPubkey: wrappedEthAccount.publicKey,
 //       lamports: solAmount.toNumber()
 //     })
 
 //     const initIx = Token.createInitAccountInstruction(
 //       TOKEN_PROGRAM_ID,
 //       NATIVE_MINT,
-//       wrappedSolAccount.publicKey,
+//       wrappedEthAccount.publicKey,
 //       wallet.publicKey
 //     )
 
 //     const unwrapIx = Token.createCloseAccountInstruction(
 //       TOKEN_PROGRAM_ID,
-//       wrappedSolAccount.publicKey,
+//       wrappedEthAccount.publicKey,
 //       wallet.publicKey,
 //       wallet.publicKey,
 //       []
@@ -137,7 +137,7 @@ export {}
 //       [bondsProgram, bondsProgram.createBondTransaction],
 //       {
 //         ...data,
-//         ownerQuoteAccount: wrappedSolAccount.publicKey
+//         ownerQuoteAccount: wrappedEthAccount.publicKey
 //       },
 //       bondKeypair.publicKey
 //     )
@@ -155,7 +155,7 @@ export {}
 //       [initialTx, bondTx, unwrapTx]
 //     )
 
-//     initialSignedTx.partialSign(wrappedSolAccount)
+//     initialSignedTx.partialSign(wrappedEthAccount)
 //     bondSignedTx.partialSign(bondKeypair)
 
 //     const initialTxid = yield* call(
@@ -224,7 +224,7 @@ export {}
 //     if (!unwrapTxid.length) {
 //       yield* put(
 //         snackbarsActions.add({
-//           message: 'Wrapped SOL unwrap failed. Try to unwrap it in your wallet.',
+//           message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
 //           variant: 'warning',
 //           persist: false,
 //           txid: unwrapTxid
@@ -233,7 +233,7 @@ export {}
 //     } else {
 //       yield* put(
 //         snackbarsActions.add({
-//           message: 'SOL unwrapped successfully.',
+//           message: 'ETH unwrapped successfully.',
 //           variant: 'success',
 //           persist: false,
 //           txid: unwrapTxid
@@ -258,9 +258,9 @@ export {}
 //     const allBonds = yield* select(bondsList)
 
 //     if (
-//       allBonds[action.payload.bondSale.toString()].tokenQuote.toString() === WRAPPED_SOL_ADDRESS
+//       allBonds[action.payload.bondSale.toString()].tokenQuote.toString() === WRAPPED_ETH_ADDRESS
 //     ) {
-//       return yield* call(handleBuyBondWithWSOL, action.payload)
+//       return yield* call(handleBuyBondWithETH, action.payload)
 //     }
 
 //     const connection = yield* call(getConnection)
@@ -339,7 +339,7 @@ export {}
 //   }
 // }
 
-// export function* handleRedeemBondWithWSOL(data: RedeemBond) {
+// export function* handleRedeemBondWithETH(data: RedeemBond) {
 //   try {
 //     const allUserVested = yield* select(userVested)
 
@@ -349,11 +349,11 @@ export {}
 //     const rpc = yield* select(rpcAddress)
 //     const bondsProgram = yield* call(getBondsProgram, networkType, rpc)
 
-//     const wrappedSolAccount = Keypair.generate()
+//     const wrappedEthAccount = Keypair.generate()
 
 //     const createIx = SystemProgram.createAccount({
 //       fromPubkey: wallet.publicKey,
-//       newAccountPubkey: wrappedSolAccount.publicKey,
+//       newAccountPubkey: wrappedEthAccount.publicKey,
 //       lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
 //       space: 165,
 //       programId: TOKEN_PROGRAM_ID
@@ -362,13 +362,13 @@ export {}
 //     const initIx = Token.createInitAccountInstruction(
 //       TOKEN_PROGRAM_ID,
 //       NATIVE_MINT,
-//       wrappedSolAccount.publicKey,
+//       wrappedEthAccount.publicKey,
 //       wallet.publicKey
 //     )
 
 //     const unwrapIx = Token.createCloseAccountInstruction(
 //       TOKEN_PROGRAM_ID,
-//       wrappedSolAccount.publicKey,
+//       wrappedEthAccount.publicKey,
 //       wallet.publicKey,
 //       wallet.publicKey,
 //       []
@@ -383,7 +383,7 @@ export {}
 //     const redeemTx = yield* call([bondsProgram, bondsProgram.claimBondTransaction], {
 //       bondSale: data.bondSale,
 //       bondId: data.bondId,
-//       ownerBondAccount: wrappedSolAccount.publicKey
+//       ownerBondAccount: wrappedEthAccount.publicKey
 //     })
 //     const blockhash = yield* call([connection, connection.getRecentBlockhash])
 //     redeemTx.recentBlockhash = blockhash.blockhash
@@ -399,7 +399,7 @@ export {}
 //       [initialTx, redeemTx, unwrapTx]
 //     )
 
-//     initialSignedTx.partialSign(wrappedSolAccount)
+//     initialSignedTx.partialSign(wrappedEthAccount)
 
 //     const initialTxid = yield* call(
 //       sendAndConfirmRawTransaction,
@@ -466,7 +466,7 @@ export {}
 //     if (!unwrapTxid.length) {
 //       yield* put(
 //         snackbarsActions.add({
-//           message: 'Wrapped SOL unwrap failed. Try to unwrap it in your wallet.',
+//           message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
 //           variant: 'warning',
 //           persist: false,
 //           txid: unwrapTxid
@@ -475,7 +475,7 @@ export {}
 //     } else {
 //       yield* put(
 //         snackbarsActions.add({
-//           message: 'SOL unwrapped successfully.',
+//           message: 'ETH unwrapped successfully.',
 //           variant: 'success',
 //           persist: false,
 //           txid: unwrapTxid
@@ -499,8 +499,8 @@ export {}
 //     const allBonds = yield* select(bondsList)
 //     const allUserVested = yield* select(userVested)
 
-//     if (allBonds[action.payload.bondSale.toString()].tokenBond.toString() === WRAPPED_SOL_ADDRESS) {
-//       return yield* call(handleRedeemBondWithWSOL, action.payload)
+//     if (allBonds[action.payload.bondSale.toString()].tokenBond.toString() === WRAPPED_ETH_ADDRESS) {
+//       return yield* call(handleRedeemBondWithETH, action.payload)
 //     }
 
 //     const connection = yield* call(getConnection)

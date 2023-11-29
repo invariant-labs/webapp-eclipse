@@ -13,7 +13,7 @@ import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { WRAPPED_ETH_ADDRESS } from '@consts/static'
 import { network, rpcAddress } from '@selectors/solanaConnection'
 
-export function* handleSwapWithSOL(): Generator {
+export function* handleSwapWithETH(): Generator {
   try {
     const allTokens = yield* select(tokens)
     const allPools = yield* select(poolsArraySortedByFees)
@@ -46,11 +46,11 @@ export function* handleSwapWithSOL(): Generator {
 
     const isXtoY = tokenFrom.equals(swapPool.tokenX)
 
-    const wrappedSolAccount = Keypair.generate()
+    const wrappedEthAccount = Keypair.generate()
 
     const createIx = SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedSolAccount.publicKey,
+      newAccountPubkey: wrappedEthAccount.publicKey,
       lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
       space: 165,
       programId: TOKEN_PROGRAM_ID
@@ -58,7 +58,7 @@ export function* handleSwapWithSOL(): Generator {
 
     const transferIx = SystemProgram.transfer({
       fromPubkey: wallet.publicKey,
-      toPubkey: wrappedSolAccount.publicKey,
+      toPubkey: wrappedEthAccount.publicKey,
       lamports:
         allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
           ? amountIn.toNumber()
@@ -68,7 +68,7 @@ export function* handleSwapWithSOL(): Generator {
     const initIx = Token.createInitAccountInstruction(
       TOKEN_PROGRAM_ID,
       NATIVE_MINT,
-      wrappedSolAccount.publicKey,
+      wrappedEthAccount.publicKey,
       wallet.publicKey
     )
 
@@ -82,7 +82,7 @@ export function* handleSwapWithSOL(): Generator {
 
     const unwrapIx = Token.createCloseAccountInstruction(
       TOKEN_PROGRAM_ID,
-      wrappedSolAccount.publicKey,
+      wrappedEthAccount.publicKey,
       wallet.publicKey,
       wallet.publicKey,
       []
@@ -90,7 +90,7 @@ export function* handleSwapWithSOL(): Generator {
 
     let fromAddress =
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? wrappedSolAccount.publicKey
+        ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenFrom.toString()]
         ? tokensAccounts[tokenFrom.toString()].address
         : null
@@ -99,7 +99,7 @@ export function* handleSwapWithSOL(): Generator {
     }
     let toAddress =
       allTokens[tokenTo.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? wrappedSolAccount.publicKey
+        ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenTo.toString()]
         ? tokensAccounts[tokenTo.toString()].address
         : null
@@ -134,7 +134,7 @@ export function* handleSwapWithSOL(): Generator {
       [initialTx, swapTx, unwrapTx]
     )
 
-    initialSignedTx.partialSign(wrappedSolAccount)
+    initialSignedTx.partialSign(wrappedEthAccount)
 
     const initialTxid = yield* call(
       sendAndConfirmRawTransaction,
@@ -204,7 +204,7 @@ export function* handleSwapWithSOL(): Generator {
     if (!unwrapTxid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Wrapped SOL unwrap failed. Try to unwrap it in your wallet.',
+          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
           variant: 'warning',
           persist: false,
           txid: unwrapTxid
@@ -213,7 +213,7 @@ export function* handleSwapWithSOL(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'SOL unwrapped successfully.',
+          message: 'ETH unwrapped successfully.',
           variant: 'success',
           persist: false,
           txid: unwrapTxid
@@ -255,7 +255,7 @@ export function* handleSwap(): Generator {
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
       allTokens[tokenTo.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
-      return yield* call(handleSwapWithSOL)
+      return yield* call(handleSwapWithETH)
     }
 
     const wallet = yield* call(getWallet)

@@ -40,7 +40,7 @@ export {}
 // import { farms, stakesForPosition, userStakes } from '@selectors/farms'
 // import { accounts } from '@selectors/solanaWallet'
 // import { getConnection } from './connection'
-// import { WRAPPED_SOL_ADDRESS } from '@consts/static'
+// import { WRAPPED_ETH_ADDRESS } from '@consts/static'
 // import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 // import {
 //   getCoingeckoTokenPrice,
@@ -647,7 +647,7 @@ export {}
 //   }
 // }
 
-// export function* handleWithdrawRewardsWithWSOL(data: FarmPositionData) {
+// export function* handleWithdrawRewardsWithETH(data: FarmPositionData) {
 //   try {
 //     const allFarms = yield* select(farms)
 
@@ -666,11 +666,11 @@ export {}
 //       return
 //     }
 
-//     const wrappedSolAccount = Keypair.generate()
+//     const wrappedEthAccount = Keypair.generate()
 
 //     const createIx = SystemProgram.createAccount({
 //       fromPubkey: wallet.publicKey,
-//       newAccountPubkey: wrappedSolAccount.publicKey,
+//       newAccountPubkey: wrappedEthAccount.publicKey,
 //       lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
 //       space: 165,
 //       programId: TOKEN_PROGRAM_ID
@@ -679,13 +679,13 @@ export {}
 //     const initIx = Token.createInitAccountInstruction(
 //       TOKEN_PROGRAM_ID,
 //       NATIVE_MINT,
-//       wrappedSolAccount.publicKey,
+//       wrappedEthAccount.publicKey,
 //       wallet.publicKey
 //     )
 
 //     const unwrapIx = Token.createCloseAccountInstruction(
 //       TOKEN_PROGRAM_ID,
-//       wrappedSolAccount.publicKey,
+//       wrappedEthAccount.publicKey,
 //       wallet.publicKey,
 //       wallet.publicKey,
 //       []
@@ -719,7 +719,7 @@ export {}
 //       owner: wallet.publicKey,
 //       index: positionData.positionIndex,
 //       incentiveTokenAccount: allFarms[data.farm.toString()].tokenAccount,
-//       ownerTokenAcc: wrappedSolAccount.publicKey
+//       ownerTokenAcc: wrappedEthAccount.publicKey
 //     })
 
 //     const withdrawTx = new Transaction().add(updateIx).add(withdrawIx)
@@ -737,7 +737,7 @@ export {}
 //       [initialTx, withdrawTx, unwrapTx]
 //     )
 
-//     initialSignedTx.partialSign(wrappedSolAccount)
+//     initialSignedTx.partialSign(wrappedEthAccount)
 
 //     const initialTxid = yield* call(
 //       sendAndConfirmRawTransaction,
@@ -800,7 +800,7 @@ export {}
 //     if (!unwrapTxid.length) {
 //       yield* put(
 //         snackbarsActions.add({
-//           message: 'Wrapped SOL unwrap failed. Try to unwrap it in your wallet.',
+//           message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
 //           variant: 'warning',
 //           persist: false,
 //           txid: unwrapTxid
@@ -809,7 +809,7 @@ export {}
 //     } else {
 //       yield* put(
 //         snackbarsActions.add({
-//           message: 'SOL unwrapped successfully.',
+//           message: 'ETH unwrapped successfully.',
 //           variant: 'success',
 //           persist: false,
 //           txid: unwrapTxid
@@ -834,8 +834,8 @@ export {}
 //     const allFarms = yield* select(farms)
 //     const rewardToken = allFarms[action.payload.farm.toString()].rewardToken
 
-//     if (rewardToken.toString() === WRAPPED_SOL_ADDRESS) {
-//       return yield* call(handleWithdrawRewardsWithWSOL, action.payload)
+//     if (rewardToken.toString() === WRAPPED_ETH_ADDRESS) {
+//       return yield* call(handleWithdrawRewardsWithETH, action.payload)
 //     }
 
 //     const networkType = yield* select(network)

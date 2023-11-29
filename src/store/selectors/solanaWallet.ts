@@ -57,13 +57,13 @@ export const swapTokens = createSelector(
   accounts,
   tokens,
   balance,
-  (allAccounts, tokens, solBalance) => {
+  (allAccounts, tokens, ethBalance) => {
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
-          ? solBalance
+          ? ethBalance
           : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
   }
@@ -73,7 +73,7 @@ export const swapTokensDict = createSelector(
   accounts,
   tokens,
   balance,
-  (allAccounts, tokens, solBalance) => {
+  (allAccounts, tokens, ethBalance) => {
     const swapTokens: Record<string, SwapToken> = {}
 
     Object.entries(tokens).forEach(([key, val]) => {
@@ -82,7 +82,7 @@ export const swapTokensDict = createSelector(
         assetAddress: val.address,
         balance:
           val.address.toString() === WRAPPED_ETH_ADDRESS
-            ? solBalance
+            ? ethBalance
             : allAccounts[val.address.toString()]?.balance ?? new BN(0)
       }
     })
@@ -91,12 +91,12 @@ export const swapTokensDict = createSelector(
   }
 )
 
-export const canCreateNewPool = createSelector(balance, solBalance =>
-  solBalance.gte(WETH_POOL_INIT_LAMPORTS)
+export const canCreateNewPool = createSelector(balance, ethBalance =>
+  ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
 )
 
-export const canCreateNewPosition = createSelector(balance, solBalance =>
-  solBalance.gte(WETH_POSITION_INIT_LAMPORTS)
+export const canCreateNewPosition = createSelector(balance, ethBalance =>
+  ethBalance.gte(WETH_POSITION_INIT_LAMPORTS)
 )
 
 export type TokenAccounts = ITokenAccount & {
