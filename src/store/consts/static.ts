@@ -45,8 +45,8 @@ export const WETH_DEV: Token = {
   decimals: 9,
   name: 'Wrapped Ethereum',
   logoURI:
-    'https://raw.githubusercontent.com/wormhole-foundation/wormhole-token-list/main/assets/ETH_wh.png',
-  coingeckoId: 'ethereum-wormhole'
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+  coingeckoId: 'ethereum'
 }
 
 enum SolanaNetworks {
