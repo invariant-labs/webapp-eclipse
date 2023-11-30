@@ -1082,3 +1082,11 @@ export const getPoolsVolumeRanges = async (name: string): Promise<Record<string,
     return {}
   }
 }
+
+export const getExplorer = (networkType: NetworkType) => {
+  switch (networkType) {
+    case NetworkType.DEVNET:
+    default:
+      return 'https://explorer.dev.eclipsenetwork.xyz/'
+  }
+}

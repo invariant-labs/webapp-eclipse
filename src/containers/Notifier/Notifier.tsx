@@ -6,6 +6,7 @@ import { actions } from '@reducers/snackbars'
 import { snackbars } from '@selectors/snackbars'
 import { network } from '@selectors/solanaConnection'
 import useStyles from './style'
+import { getExplorer } from '@consts/utils'
 
 let displayed: string[] = []
 
@@ -22,7 +23,7 @@ const Notifier = () => {
   const removeDisplayed = (id: string) => {
     displayed = [...displayed.filter(key => id !== key)]
   }
-  const currentNetwork: string = useSelector(network)
+  const currentNetwork = useSelector(network)
 
   React.useEffect(() => {
     notifications.forEach(
@@ -40,32 +41,10 @@ const Notifier = () => {
               <button
                 className={classes.button}
                 onClick={() => {
-                  if (
-                    currentNetwork.toLocaleLowerCase() !== 'mainnet' &&
-                    txid !== undefined &&
-                    !isAccount
-                  ) {
-                    window.open(
-                      'https://explorer.solana.com/tx/' +
-                        txid +
-                        '?cluster=' +
-                        currentNetwork.toLowerCase()
-                    )
-                  } else if (
-                    currentNetwork.toLocaleLowerCase() === 'mainnet' &&
-                    txid !== undefined &&
-                    !isAccount
-                  ) {
-                    window.open('https://explorer.solana.com/tx/' + txid)
-                  } else if (currentNetwork.toLocaleLowerCase() !== 'mainnet' && isAccount) {
-                    window.open(
-                      'https://explorer.solana.com/address/' +
-                        txid +
-                        '?cluster=' +
-                        currentNetwork.toLowerCase()
-                    )
-                  } else if (currentNetwork.toLocaleLowerCase() === 'mainnet' && isAccount) {
-                    window.open('https://explorer.solana.com/address/' + txid)
+                  if (txid !== undefined && !isAccount) {
+                    window.open(getExplorer(currentNetwork) + 'tx/' + txid)
+                  } else if (isAccount) {
+                    window.open(getExplorer(currentNetwork) + 'address/' + txid)
                   }
                 }}>
                 <span>Details</span>
