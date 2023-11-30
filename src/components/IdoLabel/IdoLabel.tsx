@@ -43,7 +43,7 @@ const IdoLabel: React.FC<IdoLabelInterface> = ({
         </Box>
       </Grid>
       <Grid className={classes.lightLabelContainer}>
-        <Typography component='p'>SOL Contibuted</Typography>
+        <Typography component='p'>ETH Contibuted</Typography>
         <Box className={classes.timeContainer}>
           <CardMedia className={classNames(classes.image, classes.Token)} image={solToken} />
           <Typography component='h1'>{sol}</Typography>

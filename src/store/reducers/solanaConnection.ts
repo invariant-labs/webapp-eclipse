@@ -1,4 +1,4 @@
-import { NetworkType, SolanaNetworks } from '@consts/static'
+import { NetworkType, EclipseNetworks } from '@consts/static'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from './types'
 
@@ -21,7 +21,7 @@ export const defaultState: ISolanaConnectionStore = {
   message: '',
   network: NetworkType.DEVNET,
   slot: 0,
-  rpcAddress: SolanaNetworks.DEV
+  rpcAddress: EclipseNetworks.DEV
 }
 export const solanaConnectionSliceName = 'solanaConnection'
 const solanaConnectionSlice = createSlice({

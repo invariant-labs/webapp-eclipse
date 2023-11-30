@@ -171,7 +171,7 @@ export {}
 //       yield* put(actions.setBuyBondSuccess(false))
 //       return yield* put(
 //         snackbarsActions.add({
-//           message: 'SOL wrapping failed. Please try again.',
+//           message: 'ETH wrapping failed. Please try again.',
 //           variant: 'error',
 //           persist: false,
 //           txid: initialTxid
@@ -192,7 +192,7 @@ export {}
 //       yield* put(actions.setBuyBondSuccess(false))
 //       yield* put(
 //         snackbarsActions.add({
-//           message: 'Failed to buy bond. Please unwrap wrapped SOL in your wallet and try again.',
+//           message: 'Failed to buy bond. Please unwrap wrapped ETH in your wallet and try again.',
 //           variant: 'error',
 //           persist: false,
 //           txid: bondTxid
@@ -413,7 +413,7 @@ export {}
 //     if (!initialTxid.length) {
 //       return yield* put(
 //         snackbarsActions.add({
-//           message: 'SOL wrapping failed. Please try again.',
+//           message: 'ETH wrapping failed. Please try again.',
 //           variant: 'error',
 //           persist: false,
 //           txid: initialTxid

@@ -1,6 +1,6 @@
 import React from 'react'
 import { PublicKey } from '@solana/web3.js'
-import { DEFAULT_PUBLICKEY, NetworkType, SolanaNetworks } from '@consts/static'
+import { DEFAULT_PUBLICKEY, NetworkType, EclipseNetworks } from '@consts/static'
 import { storiesOf } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
 import { withKnobs } from '@storybook/addon-knobs'
@@ -36,8 +36,8 @@ storiesOf('ui/newHeader', module)
             landing='staking'
             onDisconnectWallet={action('disconnect')}
             typeOfNetwork={NetworkType.DEVNET}
-            rpc={SolanaNetworks.DEV}
-            defaultMainnetRPC={SolanaNetworks.MAIN}
+            rpc={EclipseNetworks.DEV}
+            defaultMainnetRPC={EclipseNetworks.MAIN}
             onFaucet={() => {
               console.log('Faucet')
             }}
@@ -70,8 +70,8 @@ storiesOf('ui/newHeader', module)
             landing='staking'
             onDisconnectWallet={action('disconnect')}
             typeOfNetwork={NetworkType.DEVNET}
-            rpc={SolanaNetworks.DEV}
-            defaultMainnetRPC={SolanaNetworks.MAIN}
+            rpc={EclipseNetworks.DEV}
+            defaultMainnetRPC={EclipseNetworks.MAIN}
           />
         </div>
       </div>

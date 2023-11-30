@@ -751,7 +751,7 @@ export {}
 //     if (!initialTxid.length) {
 //       return yield* put(
 //         snackbarsActions.add({
-//           message: 'SOL wrapping failed. Please try again.',
+//           message: 'ETH wrapping failed. Please try again.',
 //           variant: 'error',
 //           persist: false,
 //           txid: initialTxid

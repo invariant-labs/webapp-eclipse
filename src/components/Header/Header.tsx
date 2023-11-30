@@ -3,7 +3,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Grid, CardMedia, Button, Hidden, useMediaQuery, IconButton } from '@material-ui/core'
 import NavbarButton from '@components/Navbar/Button'
 import ChangeWalletButton from '@components/HeaderButton/ChangeWalletButton'
-import { NetworkType, SolanaNetworks } from '@consts/static'
+import { NetworkType, EclipseNetworks } from '@consts/static'
 import { Link } from 'react-router-dom'
 import useButtonStyles from '@components/HeaderButton/style'
 import icons from '@static/icons'
@@ -134,7 +134,7 @@ export const Header: React.FC<IHeader> = ({
               //   rpcName:
               //     mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
               // },
-              { networkType: NetworkType.DEVNET, rpc: SolanaNetworks.DEV }
+              { networkType: NetworkType.DEVNET, rpc: EclipseNetworks.DEV }
             ]}
             onSelect={onNetworkSelect}
           />

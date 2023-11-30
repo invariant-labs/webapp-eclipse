@@ -1,7 +1,7 @@
 import { combineReducers } from 'redux'
 import storage from 'redux-persist/lib/storage'
 import { persistReducer, createTransform, createMigrate, MigrationManifest } from 'redux-persist'
-import { NetworkType, SolanaNetworks } from '@consts/static'
+import { NetworkType, EclipseNetworks } from '@consts/static'
 import { reducer as snackbarsReducer, snackbarsSliceName } from './snackbars'
 import { reducer as solanaWalletReducer, solanaWalletSliceName } from './solanaWallet'
 import {
@@ -41,16 +41,16 @@ const migrations: MigrationManifest = {
 
     switch (network) {
       case NetworkType.DEVNET:
-        rpcAddress = SolanaNetworks.DEV
+        rpcAddress = EclipseNetworks.DEV
         break
       case NetworkType.TESTNET:
-        rpcAddress = SolanaNetworks.TEST
+        rpcAddress = EclipseNetworks.TEST
         break
       case NetworkType.LOCALNET:
-        rpcAddress = SolanaNetworks.LOCAL
+        rpcAddress = EclipseNetworks.LOCAL
         break
       case NetworkType.MAINNET:
-        rpcAddress = SolanaNetworks.MAIN
+        rpcAddress = EclipseNetworks.MAIN
         break
     }
 

@@ -7,7 +7,7 @@ import { Typography } from '@material-ui/core'
 import { colors } from '@static/theme'
 import SelectNetworkButton from './SelectNetworkButton'
 import ChangeWalletButton from './ChangeWalletButton'
-import { NetworkType, SolanaNetworks } from '@consts/static'
+import { NetworkType, EclipseNetworks } from '@consts/static'
 import SelectRPCButton from './SelectRPCButton'
 
 const loremIpsum =
@@ -48,8 +48,8 @@ storiesOf('buttons/newHeaderButton', module)
       <SelectNetworkButton
         name={NetworkType.DEVNET}
         networks={[
-          { networkType: NetworkType.DEVNET, rpc: SolanaNetworks.DEV },
-          { networkType: NetworkType.MAINNET, rpc: SolanaNetworks.MAIN }
+          { networkType: NetworkType.DEVNET, rpc: EclipseNetworks.DEV },
+          { networkType: NetworkType.MAINNET, rpc: EclipseNetworks.MAIN }
         ]}
         onSelect={(networkType, rpc) => action('chosen: ' + networkType + ' ' + rpc)()}
       />
@@ -58,22 +58,22 @@ storiesOf('buttons/newHeaderButton', module)
   .add('selectRPC', () => (
     <div style={{ backgroundColor: colors.black.header, padding: '100px' }}>
       <SelectRPCButton
-        rpc={SolanaNetworks.MAIN}
+        rpc={EclipseNetworks.MAIN}
         networks={[
           {
             networkType: NetworkType.MAINNET,
-            rpc: SolanaNetworks.MAIN,
+            rpc: EclipseNetworks.MAIN,
             rpcName: 'Nightly'
           },
-          { networkType: NetworkType.MAINNET, rpc: SolanaNetworks.MAIN, rpcName: 'Solana' },
+          { networkType: NetworkType.MAINNET, rpc: EclipseNetworks.MAIN, rpcName: 'Solana' },
           {
             networkType: NetworkType.MAINNET,
-            rpc: SolanaNetworks.MAIN,
+            rpc: EclipseNetworks.MAIN,
             rpcName: 'Serum'
           },
           {
             networkType: NetworkType.MAINNET,
-            rpc: SolanaNetworks.MAIN,
+            rpc: EclipseNetworks.MAIN,
             rpcName: 'GenesysGo'
           }
         ]}

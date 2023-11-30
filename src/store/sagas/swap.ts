@@ -150,7 +150,7 @@ export function* handleSwapWithETH(): Generator {
 
       return yield put(
         snackbarsActions.add({
-          message: 'SOL wrapping failed. Please try again.',
+          message: 'ETH wrapping failed. Please try again.',
           variant: 'error',
           persist: false,
           txid: initialTxid
@@ -173,7 +173,7 @@ export function* handleSwapWithETH(): Generator {
       return yield put(
         snackbarsActions.add({
           message:
-            'Tokens swapping failed. Please unwrap wrapped SOL in your wallet and try again.',
+            'Tokens swapping failed. Please unwrap wrapped ETH in your wallet and try again.',
           variant: 'error',
           persist: false,
           txid: swapTxid
@@ -228,7 +228,7 @@ export function* handleSwapWithETH(): Generator {
     yield put(
       snackbarsActions.add({
         message:
-          'Failed to send. Please unwrap wrapped SOL in your wallet if you have any and try again.',
+          'Failed to send. Please unwrap wrapped ETH in your wallet if you have any and try again.',
         variant: 'error',
         persist: false
       })

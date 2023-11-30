@@ -49,7 +49,7 @@ export const WETH_DEV: Token = {
   coingeckoId: 'ethereum'
 }
 
-enum SolanaNetworks {
+enum EclipseNetworks {
   TEST = 'https://staging-rpc.dev.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
   MAIN = 'https://staging-rpc.dev.eclipsenetwork.xyz',
   DEV = 'https://staging-rpc.dev.eclipsenetwork.xyz',
@@ -201,4 +201,4 @@ export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
   primaryIndex: index
 }))
 
-export { SolanaNetworks, DEFAULT_PUBLICKEY, MAX_U64, NetworkType }
+export { EclipseNetworks, DEFAULT_PUBLICKEY, MAX_U64, NetworkType }

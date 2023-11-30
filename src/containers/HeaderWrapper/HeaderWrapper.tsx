@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react'
 import Header from '@components/Header/Header'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
-import { NetworkType, SolanaNetworks } from '@consts/static'
+import { NetworkType, EclipseNetworks } from '@consts/static'
 import { actions as walletActions, Status } from '@reducers/solanaWallet'
 import { address, status } from '@selectors/solanaWallet'
 import { actions } from '@reducers/solanaConnection'
@@ -41,7 +41,7 @@ export const HeaderWrapper: React.FC = () => {
   const defaultMainnetRPC = useMemo(() => {
     const lastRPC = localStorage.getItem('INVARIANT_MAINNET_RPC')
 
-    return lastRPC === null ? SolanaNetworks.MAIN : lastRPC
+    return lastRPC === null ? EclipseNetworks.MAIN : lastRPC
   }, [])
 
   return (
