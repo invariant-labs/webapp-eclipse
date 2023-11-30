@@ -666,7 +666,7 @@ export interface PoolSnapshot {
 
 export const getNetworkStats = async (name: string): Promise<Record<string, PoolSnapshot[]>> => {
   const { data } = await axios.get<Record<string, PoolSnapshot[]>>(
-    `https://stats.invariant.app/full/${name}`
+    `https://stats.invariant.app/full/eclipse-${name}`
   )
 
   return data
@@ -1041,7 +1041,7 @@ export const getTicksList = async (
 export const getPoolsAPY = async (name: string): Promise<Record<string, number>> => {
   try {
     const { data } = await axios.get<Record<string, number>>(
-      `https://stats.invariant.app/pool_apy/${name}`
+      `https://stats.invariant.app/pool_apy/eclipse-${name}`
     )
 
     return data
@@ -1062,7 +1062,7 @@ export const getIncentivesRewardData = async (
 ): Promise<Record<string, IncentiveRewardData>> => {
   try {
     const { data } = await axios.get<Record<string, IncentiveRewardData>>(
-      `https://stats.invariant.app/incentive_rewards/${name}`
+      `https://stats.invariant.app/incentive_rewards/eclipse-${name}`
     )
 
     return data
@@ -1074,7 +1074,7 @@ export const getIncentivesRewardData = async (
 export const getPoolsVolumeRanges = async (name: string): Promise<Record<string, Range[]>> => {
   try {
     const { data } = await axios.get<Record<string, Range[]>>(
-      `https://stats.invariant.app/pool_volume_range/${name}`
+      `https://stats.invariant.app/pool_volume_range/eclipse-${name}`
     )
 
     return data

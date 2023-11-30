@@ -16,7 +16,7 @@ import { SinglePositionPage } from './SinglePositionPage/SinglePositionPage'
 // import SingleFarmPage from './SingleFarmPage/SingleFarmPage'
 import Footer from '@components/Footer/Footer'
 import FarmsPage from './FarmsPage/FarmsPage'
-// import StatsPage from './StatsPage/StatsPage'
+import StatsPage from './StatsPage/StatsPage'
 // import BondsPage from './BondsPage/BondsPage'
 
 export const PagesRouter: React.FC = () => {
@@ -49,7 +49,7 @@ export const PagesRouter: React.FC = () => {
             path={'/farm/:id'}
             render={({ match }) => <SingleFarmPage id={match.params.id} />}
           /> */}
-          {/* <Route path={'/stats'} component={StatsPage} /> */}
+          <Route path={'/stats'} component={StatsPage} />
           {/* <Route path={'/bonds'} component={BondsPage} /> */}
           <Route
             path={'/position/:id'}
