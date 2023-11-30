@@ -23,7 +23,7 @@ export interface Token {
 export const PRICE_DECIMAL = 24
 export const USDC_DEV: Token = {
   symbol: 'USDC',
-  address: new PublicKey('G6p4KcFS3SNToF3iPNAtpuN3V1d4GYQWj4XUWhBMT4xh'),
+  address: new PublicKey('5W3bmyYDww6p5XRZnCR6m2c75st6XyCxW1TgGS3wTq7S'),
   decimals: 9,
   name: 'USD Coin',
   logoURI:
@@ -32,7 +32,7 @@ export const USDC_DEV: Token = {
 }
 export const BTC_DEV: Token = {
   symbol: 'BTC',
-  address: new PublicKey('8yKX1JD2gXgu3SXvZ7RxeYwD32RGwUHcJKvVDskrHLoG'),
+  address: new PublicKey('3JXmQAzBPU66dkVQufSE1ChBMRAdCHp6T7ZMBKAwhmWw'),
   decimals: 9,
   name: 'Bitcoin',
   logoURI:
