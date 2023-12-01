@@ -65,7 +65,7 @@ export const SelectNetwork: React.FC<ISelectNetworkModal> = ({
               <DotIcon className={classes.dotIcon} />
             </Grid>
           ))}
-          <a href='https://invariant.app'>
+          <a href='https://invariant.app' style={{ textDecoration: 'none' }}>
             <Grid className={classes.listItem} item key='networks-solana'>
               <img className={classes.icon} src={icons.MainnetIcon} />
               <Typography className={classes.name}>Solana</Typography>
