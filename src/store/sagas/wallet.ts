@@ -113,23 +113,7 @@ export function* handleAirdrop(): Generator {
   const connection = yield* call(getConnection)
   const networkType = yield* select(network)
   const wallet = yield* call(getWallet)
-  let balance = yield* call([connection, connection.getBalance], wallet.publicKey)
-  if (balance < 0.05 * 1e9) {
-    yield* call([connection, connection.requestAirdrop], wallet.publicKey, 0.1 * 1e9)
-    balance = yield* call([connection, connection.getBalance], wallet.publicKey)
-    yield* call(sleep, 2000)
-    let retries = 30
-    for (;;) {
-      // eslint-disable-next-line eqeqeq
-      if (0.05 * 1e9 < (yield* call([connection, connection.getBalance], wallet.publicKey))) {
-        break
-      }
-      yield* call(sleep, 2000)
-      if (--retries <= 0) {
-        break
-      }
-    }
-  }
+  yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
 
   yield* call(getCollateralTokenAirdrop, airdropTokens[networkType], airdropQuantities[networkType])
   yield put(

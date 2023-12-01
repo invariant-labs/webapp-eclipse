@@ -65,6 +65,12 @@ export const SelectNetwork: React.FC<ISelectNetworkModal> = ({
               <DotIcon className={classes.dotIcon} />
             </Grid>
           ))}
+          <a href='https://invariant.app'>
+            <Grid className={classes.listItem} item key='networks-solana'>
+              <img className={classes.icon} src={icons.MainnetIcon} />
+              <Typography className={classes.name}>Solana</Typography>
+            </Grid>
+          </a>
         </Grid>
       </Grid>
     </Popover>
