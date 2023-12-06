@@ -22,7 +22,7 @@ export function* initConnection(): Generator {
     // yield* call(init)
     yield* put(
       snackbarsActions.add({
-        message: 'Solana network connected.',
+        message: 'Eclipse network connected.',
         variant: 'success',
         persist: false
       })
@@ -36,7 +36,7 @@ export function* initConnection(): Generator {
     yield* put(actions.setStatus(Status.Error))
     yield put(
       snackbarsActions.add({
-        message: 'Failed to connect to Solana network',
+        message: 'Failed to connect to Eclipse network',
         variant: 'error',
         persist: false
       })
