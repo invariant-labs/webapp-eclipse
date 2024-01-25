@@ -33,10 +33,23 @@ import { network } from '@selectors/solanaConnection'
 import { canCreateNewPool, canCreateNewPosition, status, swapTokens } from '@selectors/solanaWallet'
 import { getCurrentSolanaConnection } from '@web3/connection'
 import { openWalletSelectorModal } from '@web3/selector'
+import { History } from 'history'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
-export const NewPositionWrapper = () => {
+export interface IProps {
+  initialTokenFrom: string
+  initialTokenTo: string
+  initialFee: string
+  history: History<unknown>
+}
+
+export const NewPositionWrapper: React.FC<IProps> = ({
+  initialTokenFrom,
+  initialTokenTo,
+  initialFee,
+  history
+}) => {
   const dispatch = useDispatch()
 
   const connection = getCurrentSolanaConnection()
@@ -373,6 +386,10 @@ export const NewPositionWrapper = () => {
 
   return (
     <NewPosition
+      initialTokenFrom={initialTokenFrom}
+      initialTokenTo={initialTokenTo}
+      initialFee={initialFee}
+      history={history}
       copyPoolAddressHandler={copyPoolAddressHandler}
       poolAddress={poolIndex !== null ? allPools[poolIndex].address.toString() : ''}
       tokens={tokens}
