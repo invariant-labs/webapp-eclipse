@@ -84,7 +84,6 @@ const useStyles = makeStyles((theme: Theme) => ({
       filter: 'brightness(1.5)'
     }
   },
-
   HiddenTransactionButton: {
     background: 'none !important',
     border: 'none',

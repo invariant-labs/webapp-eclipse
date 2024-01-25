@@ -1,4 +1,3 @@
-import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
@@ -7,7 +6,6 @@ import { printBN } from '@consts/utils'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Button, Grid, Hidden, Typography } from '@material-ui/core'
-import { Color } from '@material-ui/lab/Alert/Alert'
 import { PlotTickData } from '@reducers/positions'
 import { PublicKey } from '@solana/web3.js'
 import backIcon from '@static/svg/back-arrow.svg'
@@ -15,6 +13,9 @@ import React, { useState } from 'react'
 import { Link, useHistory } from 'react-router-dom'
 import { ILiquidityToken } from './SinglePositionInfo/consts'
 import useStyles from './style'
+
+import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
+import { Color } from '@material-ui/lab'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -102,6 +103,7 @@ const PositionDetails: React.FC<IProps> = ({
           userHasStakes={userHasStakes}
         />
       </Grid>
+
       <Grid
         container
         item

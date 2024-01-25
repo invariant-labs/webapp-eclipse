@@ -18,7 +18,7 @@ import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { MAX_TICK } from '@invariant-labs/sdk-eclipse/src'
 import { Button, Grid, Typography } from '@material-ui/core'
-import { Color } from '@material-ui/lab/Alert/Alert'
+import { Color } from '@material-ui/lab'
 import { BN } from '@project-serum/anchor'
 import { PlotTickData } from '@reducers/positions'
 import { SwapToken } from '@selectors/solanaWallet'
@@ -357,6 +357,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               copyPoolAddressHandler={copyPoolAddressHandler}
             />
           ) : null}
+
           <ConcentrationTypeSwitch
             onSwitch={val => {
               setIsConcentrated(val)
