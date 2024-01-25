@@ -1,38 +1,42 @@
-import { Button, Grid, Typography } from '@material-ui/core'
-import React, { useEffect, useState } from 'react'
-import DepositSelector from './DepositSelector/DepositSelector'
-import RangeSelector from './RangeSelector/RangeSelector'
-import { BN } from '@project-serum/anchor'
-import { SwapToken } from '@selectors/solanaWallet'
+import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import Slippage from '@components/Modals/Slippage/Slippage'
+import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
+import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import { BestTier } from '@consts/static'
+import { blurContent, unblurContent } from '@consts/uiUtils'
 import {
-  calcPrice,
   CoingeckoPriceData,
-  determinePositionTokenBlock,
   PositionTokenBlock,
+  calcPrice,
+  determinePositionTokenBlock,
   printBN,
   printBNtoBN,
   trimLeadingZeros
 } from '@consts/utils'
-import { PublicKey } from '@solana/web3.js'
-import { PlotTickData } from '@reducers/positions'
-import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
-import { Link } from 'react-router-dom'
-import settingIcon from '@static/svg/settings.svg'
-import backIcon from '@static/svg/back-arrow.svg'
-import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { MIN_TICK } from '@invariant-labs/sdk-eclipse'
-import { MAX_TICK } from '@invariant-labs/sdk-eclipse/src'
-import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import PoolInit from './PoolInit/PoolInit'
-import { BestTier } from '@consts/static'
-import { blurContent, unblurContent } from '@consts/uiUtils'
-import Slippage from '@components/Modals/Slippage/Slippage'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
-import useStyles from './style'
+import { MAX_TICK } from '@invariant-labs/sdk-eclipse/src'
+import { Button, Grid, Typography } from '@material-ui/core'
+import { Color } from '@material-ui/lab/Alert/Alert'
+import { BN } from '@project-serum/anchor'
+import { PlotTickData } from '@reducers/positions'
+import { SwapToken } from '@selectors/solanaWallet'
+import { PublicKey } from '@solana/web3.js'
+import backIcon from '@static/svg/back-arrow.svg'
+import settingIcon from '@static/svg/settings.svg'
+import React, { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import ConcentrationTypeSwitch from './ConcentrationTypeSwitch/ConcentrationTypeSwitch'
+import DepositSelector from './DepositSelector/DepositSelector'
+import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
+import PoolInit from './PoolInit/PoolInit'
+import RangeSelector from './RangeSelector/RangeSelector'
+import useStyles from './style'
 
 export interface INewPosition {
+  poolAddress: string
+  copyPoolAddressHandler: (message: string, variant: Color) => void
   tokens: SwapToken[]
   data: PlotTickData[]
   midPrice: TickPlotPositionData
@@ -98,6 +102,8 @@ export interface INewPosition {
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
+  poolAddress,
+  copyPoolAddressHandler,
   tokens,
   data,
   midPrice,
@@ -317,6 +323,13 @@ export const NewPosition: React.FC<INewPosition> = ({
       <Grid container justifyContent='space-between'>
         <Typography className={classes.title}>Add new liquidity position</Typography>
         <Grid container item alignItems='center' className={classes.options}>
+          {poolIndex !== null ? (
+            <MarketIdLabel
+              displayLength={9}
+              marketId={poolAddress}
+              copyPoolAddressHandler={copyPoolAddressHandler}
+            />
+          ) : null}
           <ConcentrationTypeSwitch
             onSwitch={val => {
               setIsConcentrated(val)
