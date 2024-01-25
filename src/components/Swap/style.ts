@@ -66,6 +66,15 @@ const useStyles = makeStyles((theme: Theme) => ({
       color: colors.white.main
     }
   },
+  refreshIcon: {
+    width: 26,
+    height: 21,
+    cursor: 'pointer',
+    transition: 'filter 100ms',
+    '&:hover': {
+      filter: 'brightness(1.5)'
+    }
+  },
   settingsIcon: {
     width: 20,
     height: 20,
@@ -94,6 +103,20 @@ const useStyles = makeStyles((theme: Theme) => ({
     color: colors.invariant.lightHover
   },
 
+  swapControls: {
+    display: 'flex',
+    gap: 8
+  },
+
+  refreshIconBtn: {
+    padding: 0,
+    margin: 0,
+    minWidth: 'auto',
+    background: 'none',
+    '& :hover': {
+      background: 'none'
+    }
+  },
   settingsIconBtn: {
     padding: 0,
     margin: 0,
