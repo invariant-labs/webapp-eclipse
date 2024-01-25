@@ -2,6 +2,10 @@ import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import { addressToTicker, parseFeeToPathFee } from '@consts/uiUtils'
+import { printBN } from '@consts/utils'
+import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Button, Grid, Hidden, Typography } from '@material-ui/core'
 import { Color } from '@material-ui/lab/Alert/Alert'
 import { PlotTickData } from '@reducers/positions'
@@ -13,6 +17,8 @@ import { ILiquidityToken } from './SinglePositionInfo/consts'
 import useStyles from './style'
 
 interface IProps {
+  tokenXAddress: PublicKey
+  tokenYAddress: PublicKey
   poolAddress: PublicKey
   copyPoolAddressHandler: (message: string, variant: Color) => void
   detailsData: PlotTickData[]
@@ -26,7 +32,7 @@ interface IProps {
   closePosition: (claimFarmRewards?: boolean) => void
   ticksLoading: boolean
   tickSpacing: number
-  fee: number
+  fee: Decimal
   min: number
   max: number
   initialIsDiscreteValue: boolean
@@ -42,6 +48,8 @@ interface IProps {
 }
 
 const PositionDetails: React.FC<IProps> = ({
+  tokenXAddress,
+  tokenYAddress,
   poolAddress,
   copyPoolAddressHandler,
   detailsData,
@@ -83,7 +91,7 @@ const PositionDetails: React.FC<IProps> = ({
         </Link>
 
         <SinglePositionInfo
-          fee={fee}
+          fee={+printBN(fee.v, DECIMAL - 2)}
           onClickClaimFee={onClickClaimFee}
           closePosition={closePosition}
           tokenX={tokenX}
@@ -115,7 +123,11 @@ const PositionDetails: React.FC<IProps> = ({
               className={classes.button}
               variant='contained'
               onClick={() => {
-                history.push('/newPosition')
+                const parsedFee = parseFeeToPathFee(fee.v)
+                const address1 = addressToTicker(tokenXAddress.toString())
+                const address2 = addressToTicker(tokenYAddress.toString())
+
+                history.push(`/newPosition/${address1}/${address2}/${parsedFee}`)
               }}>
               <span className={classes.buttonText}>+ Add Liquidity</span>
             </Button>

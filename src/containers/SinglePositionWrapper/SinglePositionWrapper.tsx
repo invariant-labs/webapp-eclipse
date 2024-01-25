@@ -9,7 +9,7 @@ import {
 } from '@consts/utils'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { MAX_TICK, getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
-import { DECIMAL, calculateClaimAmount } from '@invariant-labs/sdk-eclipse/src/utils'
+import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/src/utils'
 import { Grid, Typography } from '@material-ui/core'
 import { Color } from '@material-ui/lab/Alert/Alert'
 import { actions } from '@reducers/positions'
@@ -347,6 +347,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   return !isLoadingList && position ? (
     <PositionDetails
+      tokenXAddress={position.tokenX.assetAddress}
+      tokenYAddress={position.tokenY.assetAddress}
       poolAddress={position.poolData.address}
       copyPoolAddressHandler={copyPoolAddressHandler}
       detailsData={data}
@@ -394,7 +396,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             ? undefined
             : tokenYPriceData.price * +printBN(position.tokenY.balance, position.tokenY.decimals)
       }}
-      fee={+printBN(position.poolData.fee.v, DECIMAL - 2)}
+      fee={position.poolData.fee}
       min={min}
       max={max}
       initialIsDiscreteValue={initialIsDiscreteValue}
