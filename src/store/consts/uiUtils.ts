@@ -1,4 +1,16 @@
+import { BN } from '@project-serum/anchor'
+
 export const toBlur = 'global-blur'
+
+export const addressTickerMap: { [key: string]: string } = {
+  WETH: 'So11111111111111111111111111111111111111112',
+  BTC: '3JXmQAzBPU66dkVQufSE1ChBMRAdCHp6T7ZMBKAwhmWw',
+  USDC: '5W3bmyYDww6p5XRZnCR6m2c75st6XyCxW1TgGS3wTq7S'
+}
+
+export const reversedAddressTickerMap = Object.fromEntries(
+  Object.entries(addressTickerMap).map(([key, value]) => [value, key])
+)
 
 // could use rewriting to backdrop-filter when browser support is better
 export const blurContent = () => {
@@ -22,3 +34,20 @@ export const importantStyles = (styleObject: { [key: string]: string | number })
     }),
     styleObject
   )
+
+export const parseFeeToPathFee = (fee: BN): string => {
+  const parsedFee = (fee / Math.pow(10, 8)).toString().padStart(3, '0')
+  return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
+}
+
+export const parsePathFeeToFeeString = (pathFee: string): string => {
+  return (+pathFee.replace('_', '') * Math.pow(10, 8)).toString()
+}
+
+export const tickerToAddress = (ticker: string): string => {
+  return addressTickerMap[ticker] || ticker
+}
+
+export const addressToTicker = (address: string): string => {
+  return reversedAddressTickerMap[address] || address
+}
