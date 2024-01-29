@@ -1,14 +1,14 @@
 import ChangeWalletButton from '@components/HeaderButton/ChangeWalletButton'
+import FaucetButton from '@components/HeaderButton/FaucetButton'
 import SelectNetworkButton from '@components/HeaderButton/SelectNetworkButton'
 import SelectRPCButton from '@components/HeaderButton/SelectRPCButton'
-import useButtonStyles from '@components/HeaderButton/style'
 import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
 import SelectMainnetRPC from '@components/Modals/SelectMainnetRPC/SelectMainnetRPC'
 import { ISelectNetwork } from '@components/Modals/SelectNetwork/SelectNetwork'
 import NavbarButton from '@components/Navbar/Button'
 import { EclipseNetworks, NetworkType } from '@consts/static'
 import { blurContent, unblurContent } from '@consts/uiUtils'
-import { Button, CardMedia, Grid, Hidden, IconButton, useMediaQuery } from '@material-ui/core'
+import { CardMedia, Grid, Hidden, IconButton, useMediaQuery } from '@material-ui/core'
 import DotIcon from '@material-ui/icons/FiberManualRecordRounded'
 import { PublicKey } from '@solana/web3.js'
 import icons from '@static/icons'
@@ -44,7 +44,7 @@ export const Header: React.FC<IHeader> = ({
   onDisconnectWallet
 }) => {
   const classes = useStyles()
-  const buttonClasses = useButtonStyles()
+  // const buttonClasses = useButtonStyles()
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
 
@@ -111,13 +111,7 @@ export const Header: React.FC<IHeader> = ({
           wrap='nowrap'>
           <Hidden xsDown>
             {typeOfNetwork === NetworkType.DEVNET || typeOfNetwork === NetworkType.TESTNET ? (
-              <Button
-                className={buttonClasses.headerButton}
-                variant='contained'
-                classes={{ label: buttonClasses.label }}
-                onClick={onFaucet}>
-                Faucet
-              </Button>
+              <FaucetButton />
             ) : null}
           </Hidden>
           <Hidden xsDown>
