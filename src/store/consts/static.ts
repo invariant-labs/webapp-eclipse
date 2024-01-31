@@ -1,6 +1,6 @@
-import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { BN } from '@project-serum/anchor'
+import { PublicKey } from '@solana/web3.js'
 
 declare global {
   interface Window {
@@ -157,32 +157,21 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 }
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
-  Devnet: [
-    USDC_DEV.address,
-    BTC_DEV.address,
-    WETH_DEV.address
-  ],
-  Mainnet: [
-  ],
+  Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
+  Mainnet: [],
   Testnet: [],
   Localnet: []
 }
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
-  Devnet: [
-    USDC_DEV.address,
-    BTC_DEV.address
-  ],
+  Devnet: [USDC_DEV.address, BTC_DEV.address],
   Mainnet: [],
   Testnet: [],
   Localnet: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
-  Devnet: [
-    100 * 10 ** USDC_DEV.decimals,
-    0.0025 * 10 ** BTC_DEV.decimals
-  ],
+  Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
   Mainnet: [],
   Testnet: [],
   Localnet: []
@@ -201,4 +190,6 @@ export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
   primaryIndex: index
 }))
 
-export { EclipseNetworks, DEFAULT_PUBLICKEY, MAX_U64, NetworkType }
+export { DEFAULT_PUBLICKEY, EclipseNetworks, MAX_U64, NetworkType }
+
+export const POSITIONS_PER_PAGE = 5
