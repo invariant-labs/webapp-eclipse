@@ -1,4 +1,5 @@
 import { PositionsList } from '@components/PositionsList/PositionsList'
+import { POSITIONS_PER_PAGE } from '@consts/static'
 import { calcYPerXPrice, printBN } from '@consts/utils'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
@@ -12,7 +13,7 @@ import {
 } from '@selectors/positions'
 import { status } from '@selectors/solanaWallet'
 import { openWalletSelectorModal } from '@web3/selector'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router-dom'
 
@@ -33,6 +34,16 @@ export const WrappedPositionsList: React.FC = () => {
   const setLastPage = (page: number) => {
     dispatch(actions.setLastPage(page))
   }
+
+  useEffect(() => {
+    if (list.length === 0) {
+      setLastPage(1)
+    }
+
+    if (lastPage > Math.ceil(list.length / POSITIONS_PER_PAGE)) {
+      setLastPage(lastPage - 1)
+    }
+  }, [list])
 
   return (
     <PositionsList
@@ -123,7 +134,7 @@ export const WrappedPositionsList: React.FC = () => {
         })}
       loading={isLoading}
       showNoConnected={walletStatus !== Status.Initialized}
-      itemsPerPage={5}
+      itemsPerPage={POSITIONS_PER_PAGE}
       noConnectedBlockerProps={{
         onConnect: openWalletSelectorModal,
         descCustomText: 'You have no positions.'
