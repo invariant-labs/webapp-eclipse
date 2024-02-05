@@ -51,3 +51,7 @@ export const tickerToAddress = (ticker: string): string => {
 export const addressToTicker = (address: string): string => {
   return reversedAddressTickerMap[address] || address
 }
+
+export const randomNumberFromRange = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
