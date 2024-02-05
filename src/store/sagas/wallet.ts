@@ -15,6 +15,8 @@ import { getSolanaWallet, disconnectWallet } from '@web3/wallet'
 import {
   Account,
   PublicKey,
+  sendAndConfirmRawTransaction,
+  Signer,
   SystemProgram,
   Transaction,
   TransactionInstruction
@@ -116,16 +118,17 @@ export function* handleAirdrop(): Generator {
 
   if (networkType === NetworkType.TESTNET) {
     // transfer sol
-    yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
-
+    // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
+    yield* call(transferAirdropSOL)
     yield* call(
       getCollateralTokenAirdrop,
       airdropTokens[networkType],
       airdropQuantities[networkType]
     )
+    
     yield put(
       snackbarsActions.add({
-        message: 'You will soon receive airdrop',
+        message: 'You will soon receive airdrop of tokens',
         variant: 'success',
         persist: false
       })
@@ -162,6 +165,48 @@ export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator 
   }
   if (acc.length !== 0) {
     yield* call(createMultipleAccounts, acc)
+  }
+}
+
+export function* transferAirdropSOL(): Generator {
+  const wallet = yield* call(getWallet)
+
+  const tx = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: airdropAdmin.publicKey,
+      toPubkey: wallet.publicKey,
+      lamports: 3000000
+    })
+  )
+  const connection = yield* call(getConnection)
+  const blockhash = yield* call([connection, connection.getRecentBlockhash])
+  tx.feePayer = airdropAdmin.publicKey
+  tx.recentBlockhash = blockhash.blockhash
+  tx.setSigners(airdropAdmin.publicKey)
+  tx.partialSign(airdropAdmin as Signer)
+
+  const txid = yield* call(sendAndConfirmRawTransaction, connection, tx.serialize(), {
+    skipPreflight: false
+  })
+
+  if (!txid.length) {
+    yield put(
+      snackbarsActions.add({
+        message: 'Failed to airdrop testnet ETH. Please try again.',
+        variant: 'error',
+        persist: false,
+        txid
+      })
+    )
+  } else {
+    yield put(
+      snackbarsActions.add({
+        message: 'Testnet ETH airdrop successfully.',
+        variant: 'success',
+        persist: false,
+        txid
+      })
+    )
   }
 }
 
