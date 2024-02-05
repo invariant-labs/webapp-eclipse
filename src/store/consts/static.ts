@@ -214,7 +214,7 @@ export const airdropTokens: Record<NetworkType, PublicKey[]> = {
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
   Mainnet: [],
-  Testnet: [],
+  Testnet: [10 * 10 ** USDC_DEV.decimals, 0.00025 * 10 ** BTC_DEV.decimals],
   Localnet: []
 }
 

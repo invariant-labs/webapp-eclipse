@@ -22,6 +22,7 @@ import {
 import { actions } from '@reducers/stats'
 import loader from '@static/gif/loader.gif'
 import useStyles from './styles'
+import EmptyPlaceholder from '@components/EmptyPlaceholder/EmptyPlaceholder'
 // import { farms } from '@selectors/farms'
 // import { actions as farmsActions } from '@reducers/farms'
 
@@ -86,7 +87,10 @@ export const WrappedStats: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
-      {isLoadingStats ? (
+      <Grid container direction='column' alignItems='center'>
+        <EmptyPlaceholder desc={'We have not started collecting statistics yet'} />
+      </Grid>
+      {/* {isLoadingStats ? (
         <img src={loader} className={classes.loading} />
       ) : (
         <>
@@ -156,7 +160,7 @@ export const WrappedStats: React.FC = () => {
             }))}
           />
         </>
-      )}
+      )} */}
     </Grid>
   )
 }
