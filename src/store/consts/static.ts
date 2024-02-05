@@ -50,7 +50,7 @@ export const WETH_DEV: Token = {
 }
 
 enum EclipseNetworks {
-  TEST = 'https://staging-rpc.dev.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
+  TEST = 'https://testnet.dev2.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
   MAIN = 'https://staging-rpc.dev.eclipsenetwork.xyz',
   DEV = 'https://staging-rpc.dev.eclipsenetwork.xyz',
   LOCAL = 'http://127.0.0.1:8899'
