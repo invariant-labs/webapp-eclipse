@@ -15,6 +15,8 @@ import { getSolanaWallet, disconnectWallet } from '@web3/wallet'
 import {
   Account,
   PublicKey,
+  sendAndConfirmRawTransaction,
+  Signer,
   SystemProgram,
   Transaction,
   TransactionInstruction
@@ -26,7 +28,7 @@ import { BN } from '@project-serum/anchor'
 import { WalletAdapter } from '@web3/adapters/types'
 import { getTokenDetails } from './token'
 import { accounts, status } from '@selectors/solanaWallet'
-import { airdropQuantities, airdropTokens, Token as StoreToken } from '@consts/static'
+import { airdropQuantities, airdropTokens, NetworkType, Token as StoreToken } from '@consts/static'
 import airdropAdmin from '@consts/airdropAdmin'
 import { network } from '@selectors/solanaConnection'
 import { tokens } from '@selectors/pools'
@@ -113,16 +115,40 @@ export function* handleAirdrop(): Generator {
   const connection = yield* call(getConnection)
   const networkType = yield* select(network)
   const wallet = yield* call(getWallet)
-  yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
 
-  yield* call(getCollateralTokenAirdrop, airdropTokens[networkType], airdropQuantities[networkType])
-  yield put(
-    snackbarsActions.add({
-      message: 'You will soon receive airdrop',
-      variant: 'success',
-      persist: false
-    })
-  )
+  if (networkType === NetworkType.TESTNET) {
+    // transfer sol
+    // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
+    yield* call(transferAirdropSOL)
+    yield* call(
+      getCollateralTokenAirdrop,
+      airdropTokens[networkType],
+      airdropQuantities[networkType]
+    )
+    
+    yield put(
+      snackbarsActions.add({
+        message: 'You will soon receive airdrop of tokens',
+        variant: 'success',
+        persist: false
+      })
+    )
+  } else {
+    yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
+
+    yield* call(
+      getCollateralTokenAirdrop,
+      airdropTokens[networkType],
+      airdropQuantities[networkType]
+    )
+    yield put(
+      snackbarsActions.add({
+        message: 'You will soon receive airdrop',
+        variant: 'success',
+        persist: false
+      })
+    )
+  }
 }
 
 export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator {
@@ -139,6 +165,48 @@ export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator 
   }
   if (acc.length !== 0) {
     yield* call(createMultipleAccounts, acc)
+  }
+}
+
+export function* transferAirdropSOL(): Generator {
+  const wallet = yield* call(getWallet)
+
+  const tx = new Transaction().add(
+    SystemProgram.transfer({
+      fromPubkey: airdropAdmin.publicKey,
+      toPubkey: wallet.publicKey,
+      lamports: 3000000
+    })
+  )
+  const connection = yield* call(getConnection)
+  const blockhash = yield* call([connection, connection.getRecentBlockhash])
+  tx.feePayer = airdropAdmin.publicKey
+  tx.recentBlockhash = blockhash.blockhash
+  tx.setSigners(airdropAdmin.publicKey)
+  tx.partialSign(airdropAdmin as Signer)
+
+  const txid = yield* call(sendAndConfirmRawTransaction, connection, tx.serialize(), {
+    skipPreflight: false
+  })
+
+  if (!txid.length) {
+    yield put(
+      snackbarsActions.add({
+        message: 'Failed to airdrop testnet ETH. Please try again.',
+        variant: 'error',
+        persist: false,
+        txid
+      })
+    )
+  } else {
+    yield put(
+      snackbarsActions.add({
+        message: 'Testnet ETH airdrop successfully.',
+        variant: 'success',
+        persist: false,
+        txid
+      })
+    )
   }
 }
 

@@ -59,13 +59,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const allPools = useSelector(poolsArraySortedByFees)
   const poolsVolumeRanges = useSelector(volumeRanges)
 
-  const canUserCreateNewPool = useSelector(canCreateNewPool)
-  const canUserCreateNewPosition = useSelector(canCreateNewPosition)
-
   const { success, inProgress } = useSelector(initPosition)
   const { data: ticksData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
   const currentNetwork = useSelector(network)
+
+  const canUserCreateNewPool = useSelector(canCreateNewPool(currentNetwork))
+  const canUserCreateNewPosition = useSelector(canCreateNewPosition(currentNetwork))
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
 

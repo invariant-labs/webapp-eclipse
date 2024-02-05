@@ -12,12 +12,15 @@ import { PlotTickData, PositionWithAddress } from '@reducers/positions'
 import { Token as SPLToken, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
   BTC_DEV,
+  BTC_TEST,
   MAX_U64,
   NetworkType,
   PRICE_DECIMAL,
   Token,
   USDC_DEV,
-  WETH_DEV
+  USDC_TEST,
+  WETH_DEV,
+  WETH_TEST
 } from './static'
 import mainnetList from './tokenLists/mainnet.json'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
@@ -391,6 +394,12 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [USDC_DEV.address.toString()]: USDC_DEV,
         [BTC_DEV.address.toString()]: BTC_DEV,
         [WETH_DEV.address.toString()]: WETH_DEV
+      }
+    case NetworkType.TESTNET:
+      return {
+        [USDC_TEST.address.toString()]: USDC_TEST,
+        [BTC_TEST.address.toString()]: BTC_TEST,
+        [WETH_TEST.address.toString()]: WETH_TEST
       }
     default:
       return {}

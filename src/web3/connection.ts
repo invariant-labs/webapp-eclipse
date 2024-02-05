@@ -23,8 +23,8 @@ const networkTypetoProgramNetwork = (type: NetworkType): Network => {
       return Network.DEV
     case NetworkType.LOCALNET:
       return Network.LOCAL
-    // case EclipseNetworks.TEST:
-    //   return StakerNetwork.TEST
+    case NetworkType.TESTNET:
+      return Network.TEST
     case NetworkType.MAINNET:
       return Network.MAIN
     default:

@@ -355,6 +355,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     if (poolSigners.length) {
       signedTx.partialSign(...poolSigners)
     }
+
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
