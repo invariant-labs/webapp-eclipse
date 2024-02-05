@@ -27,7 +27,7 @@ export interface IHeader {
   landing: string
   typeOfNetwork: NetworkType
   rpc: string
-  onFaucet?: () => void
+  onFaucet: () => void
   onDisconnectWallet: () => void
   defaultMainnetRPC: string
 }
@@ -111,7 +111,7 @@ export const Header: React.FC<IHeader> = ({
           wrap='nowrap'>
           <Hidden xsDown>
             {typeOfNetwork === NetworkType.DEVNET || typeOfNetwork === NetworkType.TESTNET ? (
-              <FaucetButton />
+              <FaucetButton onFaucet={onFaucet} />
             ) : null}
           </Hidden>
           <Hidden xsDown>

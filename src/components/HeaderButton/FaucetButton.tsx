@@ -6,10 +6,11 @@ import React from 'react'
 import useStyles from './style'
 
 export interface IProps {
+  onFaucet: () => void
   disabled?: boolean
 }
 
-export const FaucetButton: React.FC<IProps> = ({ disabled = false }) => {
+export const FaucetButton: React.FC<IProps> = ({ onFaucet, disabled = false }) => {
   const classes = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openFaucet, setOpenFaucet] = React.useState<boolean>(false)
@@ -36,7 +37,7 @@ export const FaucetButton: React.FC<IProps> = ({ disabled = false }) => {
         onClick={handleClick}>
         Faucet
       </Button>
-      <Faucet open={openFaucet} anchorEl={anchorEl} handleClose={handleClose} />
+      <Faucet open={openFaucet} onFaucet={onFaucet} anchorEl={anchorEl} handleClose={handleClose} />
     </>
   )
 }

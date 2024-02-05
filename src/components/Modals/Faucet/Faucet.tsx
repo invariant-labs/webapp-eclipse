@@ -1,19 +1,20 @@
 import { Canvas } from '@components/Canvas/Canvas'
 import { randomNumberFromRange } from '@consts/uiUtils'
 import { Button, Grid, Input, Popover, Typography } from '@material-ui/core'
-import { actions as walletActions } from '@reducers/solanaWallet'
 import refreshIcon from '@static/svg/refresh.svg'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import useStyles from './styles'
+import { actions as snackbarsActions } from '@reducers/snackbars'
 
 export interface IProps {
   open: boolean
   anchorEl: HTMLButtonElement | null
   handleClose: () => void
+  onFaucet: () => void
 }
 
-export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose }) => {
+export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet }) => {
   const classes = useStyles()
   const dispatch = useDispatch()
 
@@ -34,6 +35,22 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose }) => {
   const numbers = useMemo(() => {
     return [numberOne, numberTwo]
   }, [numberOne, numberTwo])
+
+  const handleCaptcha = () => {
+    if (numberOne + numberTwo === Number(answer)) {
+      onFaucet()
+      generateCaptcha()
+      handleClose()
+    } else {
+      dispatch(
+        snackbarsActions.add({
+          message: 'Captcha failed. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+  }
 
   return (
     <Popover
@@ -81,13 +98,7 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose }) => {
           />
           <Button
             className={classes.add}
-            onClick={() => {
-              if (numberOne + numberTwo === Number(answer)) {
-                dispatch(walletActions.airdrop())
-              } else {
-                generateCaptcha()
-              }
-            }}
+            onClick={handleCaptcha}
             disableRipple
             disabled={answer === ''}>
             Get
