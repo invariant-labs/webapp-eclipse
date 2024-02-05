@@ -7,6 +7,8 @@ import { snackbars } from '@selectors/snackbars'
 import { network } from '@selectors/solanaConnection'
 import useStyles from './style'
 import { getExplorer } from '@consts/utils'
+import { Network } from '@invariant-labs/sdk-eclipse'
+import { NetworkType } from '@consts/static'
 
 let displayed: string[] = []
 
@@ -41,10 +43,12 @@ const Notifier = () => {
               <button
                 className={classes.button}
                 onClick={() => {
+                  const sufix =
+                    currentNetwork === NetworkType.DEVNET ? '?cluster=devnet' : '?cluster=testnet'
                   if (txid !== undefined && !isAccount) {
-                    window.open(getExplorer(currentNetwork) + 'tx/' + txid)
+                    window.open(getExplorer(currentNetwork) + 'tx/' + txid + sufix)
                   } else if (isAccount) {
-                    window.open(getExplorer(currentNetwork) + 'address/' + txid)
+                    window.open(getExplorer(currentNetwork) + 'address/' + txid + sufix)
                   }
                 }}>
                 <span>Details</span>
