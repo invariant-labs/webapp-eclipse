@@ -33,7 +33,6 @@ export const FaucetButton: React.FC<IProps> = ({ onFaucet, disabled = false }) =
         variant='contained'
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
-        endIcon={<KeyboardArrowDownIcon id='downIcon' />}
         onClick={handleClick}>
         Faucet
       </Button>
