@@ -134,6 +134,7 @@ export const Header: React.FC<IHeader> = ({
               //   rpcName:
               //     mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
               // },
+              { networkType: NetworkType.TESTNET, rpc: EclipseNetworks.TEST },
               { networkType: NetworkType.DEVNET, rpc: EclipseNetworks.DEV }
             ]}
             onSelect={onNetworkSelect}

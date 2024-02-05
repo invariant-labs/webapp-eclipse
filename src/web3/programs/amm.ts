@@ -15,6 +15,7 @@ export const getMarketProgram = async (
   if (_market) {
     return _market
   }
+
   const net = networkTypetoProgramNetwork(networkType)
 
   _market = await Market.build(
@@ -30,6 +31,7 @@ export const getMarketProgramSync = (networkType: NetworkType, rpcAddress: strin
   if (_market) {
     return _market
   }
+
   const net = networkTypetoProgramNetwork(networkType)
 
   Market.build(

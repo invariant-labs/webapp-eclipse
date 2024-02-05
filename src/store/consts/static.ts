@@ -49,6 +49,36 @@ export const WETH_DEV: Token = {
   coingeckoId: 'ethereum'
 }
 
+export const USDC_TEST: Token = {
+  symbol: 'USDC',
+  address: new PublicKey('5yQMGqpB1Q1J3b8UNStkVks9nFKao1axKYsgZYeMv1ei'),
+  decimals: 9,
+  name: 'USD Coin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+
+export const BTC_TEST: Token = {
+  symbol: 'BTC',
+  address: new PublicKey('97hEP4PZ2P1pQ77yCvc9NxARHttVuTVhdKmvGG1aRNGG'),
+  decimals: 9,
+  name: 'Bitcoin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
+  coingeckoId: 'bitcoin'
+}
+
+export const WETH_TEST: Token = {
+  symbol: 'WETH',
+  address: new PublicKey('So11111111111111111111111111111111111111112'),
+  decimals: 9,
+  name: 'Wrapped Ethereum',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+  coingeckoId: 'ethereum'
+}
+
 enum EclipseNetworks {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
   MAIN = 'https://staging-rpc.dev.eclipsenetwork.xyz',
@@ -69,7 +99,7 @@ const MAX_U64 = new BN('18446744073709551615')
 export const tokens: Record<NetworkType, Token[]> = {
   Devnet: [USDC_DEV, BTC_DEV],
   Mainnet: [],
-  Testnet: [],
+  Testnet: [USDC_TEST, BTC_TEST],
   Localnet: []
 }
 
@@ -151,7 +181,18 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
       bestTierIndex: 2
     }
   ],
-  Testnet: [],
+  Testnet: [
+    {
+      tokenX: USDC_TEST.address,
+      tokenY: WETH_TEST.address,
+      bestTierIndex: 2
+    },
+    {
+      tokenX: USDC_TEST.address,
+      tokenY: BTC_TEST.address,
+      bestTierIndex: 2
+    }
+  ],
   Mainnet: mainnetBestTiersCreator(),
   Localnet: []
 }
@@ -159,14 +200,14 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [],
-  Testnet: [],
+  Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Localnet: []
 }
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
   Mainnet: [],
-  Testnet: [],
+  Testnet: [USDC_TEST.address, BTC_TEST.address],
   Localnet: []
 }
 
@@ -182,8 +223,10 @@ export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(9200961)
 
 export const WETH_POSITION_INIT_LAMPORTS = new BN(6164600)
+export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(61646)
 
 export const WETH_POOL_INIT_LAMPORTS = new BN(106000961)
+export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1060009)
 
 export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
   tier,
