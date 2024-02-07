@@ -1,3 +1,4 @@
+import EmptyPlaceholder from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import PositionDetails from '@components/PositionDetails/PositionDetails'
 import {
   CoingeckoPriceData,
@@ -10,7 +11,7 @@ import {
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { MAX_TICK, getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/src/utils'
-import { Grid, Typography } from '@material-ui/core'
+import { Grid } from '@material-ui/core'
 import { Color } from '@material-ui/lab/Alert/Alert'
 import { actions } from '@reducers/positions'
 import { actions as snackbarsActions } from '@reducers/snackbars'
@@ -347,6 +348,12 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     )
   }
 
+  useEffect(() => {
+    if (!position) {
+      history.push('/pool')
+    }
+  }, [position])
+
   return !isLoadingList && position ? (
     <PositionDetails
       tokenXAddress={position.tokenX.assetAddress}
@@ -421,8 +428,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       <img src={loader} className={classes.loading} />
     </Grid>
   ) : !position ? (
-    <Typography className={classes.placeholderText}>
-      Position does not exist in your list.
-    </Typography>
+    <Grid container justifyContent='center'>
+      <EmptyPlaceholder desc='Position does not exist in your list!' />
+    </Grid>
   ) : null
 }
