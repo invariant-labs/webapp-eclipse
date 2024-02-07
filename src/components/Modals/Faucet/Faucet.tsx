@@ -23,8 +23,10 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
   const [answer, setAnswer] = useState('')
 
   useEffect(() => {
-    generateCaptcha()
-  }, [])
+    if (open) {
+      generateCaptcha()
+    }
+  }, [open])
 
   const generateCaptcha = () => {
     setNumberOne(randomNumberFromRange(1, 99))
@@ -39,7 +41,6 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
   const handleCaptcha = () => {
     if (numberOne + numberTwo === Number(answer)) {
       onFaucet()
-      generateCaptcha()
       handleClose()
     } else {
       dispatch(
@@ -50,6 +51,7 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
         })
       )
     }
+    generateCaptcha()
   }
 
   return (
