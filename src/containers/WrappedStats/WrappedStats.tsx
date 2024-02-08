@@ -23,6 +23,8 @@ import { actions } from '@reducers/stats'
 import loader from '@static/gif/loader.gif'
 import useStyles from './styles'
 import EmptyPlaceholder from '@components/EmptyPlaceholder/EmptyPlaceholder'
+import { network } from '@selectors/solanaConnection'
+import { NetworkType } from '@consts/static'
 // import { farms } from '@selectors/farms'
 // import { actions as farmsActions } from '@reducers/farms'
 
@@ -39,6 +41,7 @@ export const WrappedStats: React.FC = () => {
   const volumePlotData = useSelector(volumePlot)
   const liquidityPlotData = useSelector(liquidityPlot)
   const isLoadingStats = useSelector(isLoading)
+  const currentNetwork = useSelector(network)
   // const allFarms = useSelector(farms)
 
   // useEffect(() => {
@@ -87,10 +90,11 @@ export const WrappedStats: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
-      <Grid container direction='column' alignItems='center'>
-        <EmptyPlaceholder desc={'We have not started collecting statistics yet'} />
-      </Grid>
-      {/* {isLoadingStats ? (
+      {currentNetwork === NetworkType.TESTNET ? (
+        <Grid container direction='column' alignItems='center'>
+          <EmptyPlaceholder desc={'We have not started collecting statistics yet'} />
+        </Grid>
+      ) : isLoadingStats ? (
         <img src={loader} className={classes.loading} />
       ) : (
         <>
@@ -160,7 +164,7 @@ export const WrappedStats: React.FC = () => {
             }))}
           />
         </>
-      )} */}
+      )}
     </Grid>
   )
 }
