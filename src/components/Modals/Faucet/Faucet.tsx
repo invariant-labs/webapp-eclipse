@@ -39,7 +39,9 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
   }, [numberOne, numberTwo])
 
   const handleCaptcha = () => {
-    if (numberOne + numberTwo === Number(answer)) {
+    const trimmedAnswer = answer.replace(/\s/g, '');
+    
+    if (numberOne + numberTwo === Number(answer) || trimmedAnswer === (numberOne.toString() + numberTwo.toString())) {
       onFaucet()
       handleClose()
     } else {
@@ -75,7 +77,7 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
           direction='row'
           justifyContent='space-between'
           wrap='nowrap'>
-          <Typography className={classes.title}>Add two numbers on screen</Typography>
+          <Typography className={classes.title}>Please input the result of adding these two values:</Typography>
           <Button onClick={generateCaptcha} className={classes.refreshIconBtn}>
             <img src={refreshIcon} className={classes.refreshIcon} />
           </Button>
