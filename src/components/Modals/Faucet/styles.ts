@@ -11,7 +11,7 @@ const useStyles = makeStyles(() => ({
   },
   title: {
     ...typography.body1,
-    margin: 10
+    padding: '0 10px'
   },
   name: {
     textTransform: 'capitalize',
@@ -23,7 +23,6 @@ const useStyles = makeStyles(() => ({
     boxShadow: 'none'
   },
   lowerRow: {
-    height: 30,
     marginBlock: 10
   },
   input: {
