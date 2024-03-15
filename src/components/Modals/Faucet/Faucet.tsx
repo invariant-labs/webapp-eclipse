@@ -41,10 +41,10 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
   const handleCaptcha = () => {
     const trimmedAnswer = answer.replace(/\s/g, '')
 
-    if (
-      numberOne + numberTwo === Number(answer) ||
-      trimmedAnswer === numberOne.toString() + numberTwo.toString()
-    ) {
+    const sumMatchesAnswer = numberOne + numberTwo === Number(answer)
+    const concatenatedMatchesAnswer = trimmedAnswer === numberOne.toString() + numberTwo.toString()
+
+    if (sumMatchesAnswer || concatenatedMatchesAnswer) {
       onFaucet()
       handleClose()
     } else {
