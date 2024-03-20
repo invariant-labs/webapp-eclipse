@@ -96,6 +96,10 @@ export const WrappedStats: React.FC = () => {
         </Grid>
       ) : isLoadingStats ? (
         <img src={loader} className={classes.loading} />
+      ) : liquidityPlotData.length === 0 ? (
+        <Grid container direction='column' alignItems='center'>
+          <EmptyPlaceholder desc={'We have not started collecting statistics yet'} />
+        </Grid>
       ) : (
         <>
           <Typography className={classes.subheader}>Overview</Typography>
