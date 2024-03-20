@@ -23,7 +23,7 @@ export interface Token {
 export const PRICE_DECIMAL = 24
 export const USDC_DEV: Token = {
   symbol: 'USDC',
-  address: new PublicKey('5W3bmyYDww6p5XRZnCR6m2c75st6XyCxW1TgGS3wTq7S'),
+  address: new PublicKey('GEds1ARB3oywy2sSdiNGDyxz9MhpfqPkFYYStdZmHaiN'),
   decimals: 9,
   name: 'USD Coin',
   logoURI:
@@ -32,7 +32,7 @@ export const USDC_DEV: Token = {
 }
 export const BTC_DEV: Token = {
   symbol: 'BTC',
-  address: new PublicKey('3JXmQAzBPU66dkVQufSE1ChBMRAdCHp6T7ZMBKAwhmWw'),
+  address: new PublicKey('CfwLhXJ2r2NmUE1f7oAeySY6eEZ7f5tC8v95nopUs5ez'),
   decimals: 9,
   name: 'Bitcoin',
   logoURI:
@@ -40,10 +40,10 @@ export const BTC_DEV: Token = {
   coingeckoId: 'bitcoin'
 }
 export const WETH_DEV: Token = {
-  symbol: 'WETH',
+  symbol: 'ETH',
   address: new PublicKey('So11111111111111111111111111111111111111112'),
   decimals: 9,
-  name: 'Wrapped Ethereum',
+  name: 'Ethereum',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
   coingeckoId: 'ethereum'
@@ -70,10 +70,10 @@ export const BTC_TEST: Token = {
 }
 
 export const WETH_TEST: Token = {
-  symbol: 'WETH',
+  symbol: 'ETH',
   address: new PublicKey('So11111111111111111111111111111111111111112'),
   decimals: 9,
-  name: 'Wrapped Ethereum',
+  name: 'Ethereum',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
   coingeckoId: 'ethereum'
@@ -81,8 +81,8 @@ export const WETH_TEST: Token = {
 
 enum EclipseNetworks {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
-  MAIN = 'https://staging-rpc.dev.eclipsenetwork.xyz',
-  DEV = 'https://staging-rpc.dev.eclipsenetwork.xyz',
+  MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
+  DEV = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   LOCAL = 'http://127.0.0.1:8899'
 }
 
