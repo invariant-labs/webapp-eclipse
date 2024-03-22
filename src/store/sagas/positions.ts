@@ -113,9 +113,6 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       userTokenY = yield* call(createAccount, data.tokenY)
     }
 
-    let initPositionTx: Transaction
-    let poolSigners: Keypair[] = []
-
     const { transaction, signers } = yield* call(
       [marketProgram, marketProgram.initPoolAndPositionTx],
       {
@@ -135,8 +132,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       }
     )
 
-    initPositionTx = transaction
-    poolSigners = signers
+    const initPositionTx = transaction
+    const poolSigners = signers
 
     const initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
 
