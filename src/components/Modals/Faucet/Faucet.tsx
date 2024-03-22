@@ -42,9 +42,10 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
     const trimmedAnswer = answer.replace(/\s/g, '')
 
     const sumMatchesAnswer = numberOne + numberTwo === Number(answer)
+    const sumMatchesAnswerInverted = numberTwo + numberOne === Number(answer)
     const concatenatedMatchesAnswer = trimmedAnswer === numberOne.toString() + numberTwo.toString()
 
-    if (sumMatchesAnswer || concatenatedMatchesAnswer) {
+    if (sumMatchesAnswer || sumMatchesAnswerInverted || concatenatedMatchesAnswer) {
       onFaucet()
       handleClose()
     } else {
