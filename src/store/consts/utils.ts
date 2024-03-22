@@ -17,6 +17,7 @@ import {
   NetworkType,
   PRICE_DECIMAL,
   Token,
+  tokensPrices,
   USDC_DEV,
   USDC_TEST,
   WETH_DEV,
@@ -723,6 +724,10 @@ export interface CoingeckoPriceData {
   priceChange: number
 }
 
+export interface TokenPriceData {
+  price: number
+}
+
 export const getCoingeckoPricesData = async (
   ids: string[]
 ): Promise<Record<string, CoingeckoPriceData>> => {
@@ -1016,6 +1021,21 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
     divider: 1000000000
   }
 ]
+
+export const getMockedTokenPrice = (symbol: string, network: NetworkType): TokenPriceData => {
+  const sufix = network === NetworkType.DEVNET ? '_DEV' : '_TEST'
+  const prices = tokensPrices[network]
+  switch (symbol) {
+    case 'BTC':
+      return prices[symbol + sufix]
+    case 'ETH':
+      return prices['W' + symbol + sufix]
+    case 'USDC':
+      return prices[symbol + sufix]
+    default:
+      return { price: 0 }
+  }
+}
 
 export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPriceData> => {
   return await axios

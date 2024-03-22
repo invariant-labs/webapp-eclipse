@@ -5,8 +5,8 @@ import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
 import { ALL_FEE_TIERS_DATA, BestTier } from '@consts/static'
 import { addressToTicker, blurContent, parseFeeToPathFee, unblurContent } from '@consts/uiUtils'
 import {
-  CoingeckoPriceData,
   PositionTokenBlock,
+  TokenPriceData,
   calcPrice,
   determinePositionTokenBlock,
   printBN,
@@ -91,8 +91,8 @@ export interface INewPosition {
   onIsConcentratedChange: (val: boolean) => void
   initialHideUnknownTokensValue: boolean
   onHideUnknownTokensChange: (val: boolean) => void
-  tokenAPriceData?: CoingeckoPriceData
-  tokenBPriceData?: CoingeckoPriceData
+  tokenAPriceData?: TokenPriceData
+  tokenBPriceData?: TokenPriceData
   priceALoading?: boolean
   priceBLoading?: boolean
   hasTicksError?: boolean
@@ -497,8 +497,6 @@ export const NewPosition: React.FC<INewPosition> = ({
           commonTokens={commonTokens}
           initialHideUnknownTokensValue={initialHideUnknownTokensValue}
           onHideUnknownTokensChange={onHideUnknownTokensChange}
-          percentageChangeA={tokenAPriceData?.priceChange}
-          percentageChangeB={tokenBPriceData?.priceChange}
           priceA={tokenAPriceData?.price}
           priceB={tokenBPriceData?.price}
           priceALoading={priceALoading}

@@ -3,9 +3,9 @@ import { Swap } from '@components/Swap/Swap'
 import { commonTokensForNetworks } from '@consts/static'
 import {
   addNewTokenToLocalStorage,
-  CoingeckoPriceData,
-  getCoingeckoTokenPrice,
-  getNewTokenOrThrow
+  getMockedTokenPrice,
+  getNewTokenOrThrow,
+  TokenPriceData
 } from '@consts/utils'
 import { actions as poolsActions } from '@reducers/pools'
 import { actions as snackbarsActions } from '@reducers/snackbars'
@@ -128,7 +128,7 @@ export const WrappedSwap = () => {
     localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
   }
 
-  const [tokenFromPriceData, setTokenFromPriceData] = useState<CoingeckoPriceData | undefined>(
+  const [tokenFromPriceData, setTokenFromPriceData] = useState<TokenPriceData | undefined>(
     undefined
   )
   const [priceFromLoading, setPriceFromLoading] = useState(false)
@@ -137,34 +137,29 @@ export const WrappedSwap = () => {
       return
     }
 
-    const id = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
+    const id = tokensDict[tokenFrom.toString()].symbol ?? ''
+
     if (id.length) {
       setPriceFromLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenFromPriceData(data))
-        .catch(() => setTokenFromPriceData(undefined))
-        .finally(() => setPriceFromLoading(false))
+      setTokenFromPriceData(getMockedTokenPrice(id, networkType))
+      setPriceFromLoading(false)
     } else {
       setTokenFromPriceData(undefined)
     }
   }, [tokenFrom])
 
-  const [tokenToPriceData, setTokenToPriceData] = useState<CoingeckoPriceData | undefined>(
-    undefined
-  )
+  const [tokenToPriceData, setTokenToPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceToLoading, setPriceToLoading] = useState(false)
   useEffect(() => {
     if (tokenTo === null) {
       return
     }
 
-    const id = tokensDict[tokenTo.toString()].coingeckoId ?? ''
+    const id = tokensDict[tokenTo.toString()].symbol ?? ''
     if (id.length) {
       setPriceToLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenToPriceData(data))
-        .catch(() => setTokenToPriceData(undefined))
-        .finally(() => setPriceToLoading(false))
+      setTokenToPriceData(getMockedTokenPrice(id, networkType))
+      setPriceToLoading(false)
     } else {
       setTokenToPriceData(undefined)
     }

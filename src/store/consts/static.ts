@@ -1,6 +1,7 @@
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
+import { TokenPriceData } from './utils'
 
 declare global {
   interface Window {
@@ -96,6 +97,12 @@ enum NetworkType {
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
+export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> = {
+  Devnet: { USDC_DEV: { price: 1 }, BTC_DEV: { price: 64572.0 }, WETH_DEV: { price: 3430.21 } },
+  Mainnet: {},
+  Testnet: { USDC_TEST: { price: 1 }, BTC_TEST: { price: 64572.0 }, WETH_TEST: { price: 3430.21 } },
+  Localnet: {}
+}
 export const tokens: Record<NetworkType, Token[]> = {
   Devnet: [USDC_DEV, BTC_DEV],
   Mainnet: [],
