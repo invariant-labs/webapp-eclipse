@@ -345,7 +345,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     const poolSigners: Keypair[] = []
 
-    let combinedTransaction = new Transaction()
+    const combinedTransaction = new Transaction()
 
     combinedTransaction.add(createIx).add(transferIx).add(initIx)
 
