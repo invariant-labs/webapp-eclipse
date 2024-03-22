@@ -37,7 +37,16 @@ import { network, rpcAddress } from '@selectors/solanaConnection'
 // import { getStakerProgram } from '@web3/programs/staker'
 // import { Staker } from '@invariant-labs/staker-sdk'
 
-export function* handleInitPositionWithETH(data: InitPositionData): Generator {
+function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
+  const data = action.payload
+
+  if (
+    (data.tokenX.toString() === WRAPPED_ETH_ADDRESS && data.xAmount === 0) ||
+    (data.tokenY.toString() === WRAPPED_ETH_ADDRESS && data.yAmount === 0)
+  ) {
+    return yield* call(handleInitPosition, action)
+  }
+
   try {
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
@@ -104,44 +113,27 @@ export function* handleInitPositionWithETH(data: InitPositionData): Generator {
       userTokenY = yield* call(createAccount, data.tokenY)
     }
 
-    let initPositionTx: Transaction
-    let poolSigners: Keypair[] = []
-
-    if (data.initPool) {
-      const { transaction, signers } = yield* call(
-        [marketProgram, marketProgram.initPoolAndPositionTx],
-        {
-          pair: new Pair(data.tokenX, data.tokenY, {
-            fee: data.fee,
-            tickSpacing: data.tickSpacing
-          }),
-          userTokenX,
-          userTokenY,
-          lowerTick: data.lowerTick,
-          upperTick: data.upperTick,
-          liquidityDelta: data.liquidityDelta,
-          owner: wallet.publicKey,
-          initTick: data.initTick,
-          slippage: data.slippage,
-          knownPrice: data.knownPrice
-        }
-      )
-
-      initPositionTx = transaction
-      poolSigners = signers
-    } else {
-      initPositionTx = yield* call([marketProgram, marketProgram.initPositionTx], {
-        pair: new Pair(data.tokenX, data.tokenY, { fee: data.fee, tickSpacing: data.tickSpacing }),
+    const { transaction, signers } = yield* call(
+      [marketProgram, marketProgram.initPoolAndPositionTx],
+      {
+        pair: new Pair(data.tokenX, data.tokenY, {
+          fee: data.fee,
+          tickSpacing: data.tickSpacing
+        }),
         userTokenX,
         userTokenY,
         lowerTick: data.lowerTick,
         upperTick: data.upperTick,
         liquidityDelta: data.liquidityDelta,
         owner: wallet.publicKey,
+        initTick: data.initTick,
         slippage: data.slippage,
         knownPrice: data.knownPrice
-      })
-    }
+      }
+    )
+
+    const initPositionTx = transaction
+    const poolSigners = signers
 
     const initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
 
@@ -270,15 +262,175 @@ export function* handleInitPositionWithETH(data: InitPositionData): Generator {
   }
 }
 
+function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Generator {
+  const data = action.payload
+
+  if (
+    (data.tokenX.toString() === WRAPPED_ETH_ADDRESS && data.xAmount === 0) ||
+    (data.tokenY.toString() === WRAPPED_ETH_ADDRESS && data.yAmount === 0)
+  ) {
+    return yield* call(handleInitPosition, action)
+  }
+
+  // To initialize both the pool and position, separate transactions are necessary, as a single transaction does not have enough space to accommodate all instructions for both pool and position creation with ETH.
+  if (data.initPool) {
+    return yield* call(handleInitPositionAndPoolWithETH, action)
+  }
+
+  try {
+    const connection = yield* call(getConnection)
+    const wallet = yield* call(getWallet)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc)
+
+    const tokensAccounts = yield* select(accounts)
+    const allTokens = yield* select(tokens)
+
+    const wrappedEthAccount = Keypair.generate()
+
+    const createIx = SystemProgram.createAccount({
+      fromPubkey: wallet.publicKey,
+      newAccountPubkey: wrappedEthAccount.publicKey,
+      lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
+      space: 165,
+      programId: TOKEN_PROGRAM_ID
+    })
+
+    const transferIx = SystemProgram.transfer({
+      fromPubkey: wallet.publicKey,
+      toPubkey: wrappedEthAccount.publicKey,
+      lamports:
+        allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+          ? data.xAmount
+          : data.yAmount
+    })
+
+    const initIx = Token.createInitAccountInstruction(
+      TOKEN_PROGRAM_ID,
+      NATIVE_MINT,
+      wrappedEthAccount.publicKey,
+      wallet.publicKey
+    )
+
+    const unwrapIx = Token.createCloseAccountInstruction(
+      TOKEN_PROGRAM_ID,
+      wrappedEthAccount.publicKey,
+      wallet.publicKey,
+      wallet.publicKey,
+      []
+    )
+
+    let userTokenX =
+      allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? wrappedEthAccount.publicKey
+        : tokensAccounts[data.tokenX.toString()]
+        ? tokensAccounts[data.tokenX.toString()].address
+        : null
+
+    if (userTokenX === null) {
+      userTokenX = yield* call(createAccount, data.tokenX)
+    }
+
+    let userTokenY =
+      allTokens[data.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? wrappedEthAccount.publicKey
+        : tokensAccounts[data.tokenY.toString()]
+        ? tokensAccounts[data.tokenY.toString()].address
+        : null
+
+    if (userTokenY === null) {
+      userTokenY = yield* call(createAccount, data.tokenY)
+    }
+
+    const poolSigners: Keypair[] = []
+
+    const combinedTransaction = new Transaction()
+
+    combinedTransaction.add(createIx).add(transferIx).add(initIx)
+
+    const initPositionTx = yield* call([marketProgram, marketProgram.initPositionTx], {
+      pair: new Pair(data.tokenX, data.tokenY, { fee: data.fee, tickSpacing: data.tickSpacing }),
+      userTokenX,
+      userTokenY,
+      lowerTick: data.lowerTick,
+      upperTick: data.upperTick,
+      liquidityDelta: data.liquidityDelta,
+      owner: wallet.publicKey,
+      slippage: data.slippage,
+      knownPrice: data.knownPrice
+    })
+
+    combinedTransaction.add(initPositionTx)
+    combinedTransaction.add(unwrapIx)
+
+    const blockhash = yield* call([connection, connection.getRecentBlockhash])
+    combinedTransaction.recentBlockhash = blockhash.blockhash
+    combinedTransaction.feePayer = wallet.publicKey
+
+    const signedTx = yield* call([wallet, wallet.signTransaction], combinedTransaction)
+
+    signedTx.partialSign(wrappedEthAccount)
+
+    if (poolSigners.length) {
+      signedTx.partialSign(...poolSigners)
+    }
+
+    const txId = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
+
+    if (!txId.length) {
+      yield put(actions.setInitPositionSuccess(false))
+
+      return yield put(
+        snackbarsActions.add({
+          message: 'Position adding failed. Please try again.',
+          variant: 'error',
+          persist: false,
+          txid: txId
+        })
+      )
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Position added successfully.',
+          variant: 'success',
+          persist: false,
+          txid: txId
+        })
+      )
+
+      yield put(actions.getPositionsList())
+    }
+
+    yield put(actions.setInitPositionSuccess(true))
+  } catch (error) {
+    console.log(error)
+
+    yield put(actions.setInitPositionSuccess(false))
+
+    yield put(
+      snackbarsActions.add({
+        message: 'Failed to send. Please try again.',
+        variant: 'error',
+        persist: false
+      })
+    )
+  }
+}
+
 export function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   try {
     const allTokens = yield* select(tokens)
 
     if (
-      allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
-      allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      (allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
+        action.payload.xAmount !== 0) ||
+      (allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
+        action.payload.yAmount !== 0)
     ) {
-      return yield* call(handleInitPositionWithETH, action.payload)
+      return yield* call(handleInitPositionWithETH, action)
     }
 
     const connection = yield* call(getConnection)
