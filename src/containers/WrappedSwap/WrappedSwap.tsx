@@ -3,6 +3,7 @@ import { Swap } from '@components/Swap/Swap'
 import { commonTokensForNetworks } from '@consts/static'
 import {
   addNewTokenToLocalStorage,
+  getCoingeckoTokenPrice,
   getMockedTokenPrice,
   getNewTokenOrThrow,
   TokenPriceData
@@ -137,12 +138,19 @@ export const WrappedSwap = () => {
       return
     }
 
-    const id = tokensDict[tokenFrom.toString()].symbol ?? ''
-
+    const id = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
+    console.log(id)
+    console.log(tokensDict[tokenFrom.toString()].symbol)
     if (id.length) {
       setPriceFromLoading(true)
-      setTokenFromPriceData(getMockedTokenPrice(id, networkType))
-      setPriceFromLoading(false)
+      getCoingeckoTokenPrice(id)
+        .then(data => setTokenFromPriceData(data))
+        .catch(() =>
+          setTokenFromPriceData(
+            getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, networkType)
+          )
+        )
+        .finally(() => setPriceFromLoading(false))
     } else {
       setTokenFromPriceData(undefined)
     }
@@ -155,11 +163,17 @@ export const WrappedSwap = () => {
       return
     }
 
-    const id = tokensDict[tokenTo.toString()].symbol ?? ''
+    const id = tokensDict[tokenTo.toString()].coingeckoId ?? ''
     if (id.length) {
       setPriceToLoading(true)
-      setTokenToPriceData(getMockedTokenPrice(id, networkType))
-      setPriceToLoading(false)
+      getCoingeckoTokenPrice(id)
+        .then(data => setTokenToPriceData(data))
+        .catch(() =>
+          setTokenToPriceData(
+            getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, networkType)
+          )
+        )
+        .finally(() => setPriceToLoading(false))
     } else {
       setTokenToPriceData(undefined)
     }
