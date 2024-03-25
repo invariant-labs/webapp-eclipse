@@ -3,12 +3,13 @@ import NewPosition from '@components/NewPosition/NewPosition'
 import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
 import { ALL_FEE_TIERS_DATA, bestTiers, commonTokensForNetworks } from '@consts/static'
 import {
-  CoingeckoPriceData,
+  TokenPriceData,
   addNewTokenToLocalStorage,
   calcPrice,
   calcYPerXPrice,
   createPlaceholderLiquidityPlot,
   getCoingeckoTokenPrice,
+  getMockedTokenPrice,
   getNewTokenOrThrow,
   printBN
 } from '@consts/utils'
@@ -300,7 +301,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
   }
 
-  const [tokenAPriceData, setTokenAPriceData] = useState<CoingeckoPriceData | undefined>(undefined)
+  const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceALoading, setPriceALoading] = useState(false)
   useEffect(() => {
     if (tokenAIndex === null) {
@@ -312,14 +313,16 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       setPriceALoading(true)
       getCoingeckoTokenPrice(id)
         .then(data => setTokenAPriceData(data))
-        .catch(() => setTokenAPriceData(undefined))
+        .catch(() =>
+          setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
+        )
         .finally(() => setPriceALoading(false))
     } else {
       setTokenAPriceData(undefined)
     }
   }, [tokenAIndex])
 
-  const [tokenBPriceData, setTokenBPriceData] = useState<CoingeckoPriceData | undefined>(undefined)
+  const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceBLoading, setPriceBLoading] = useState(false)
   useEffect(() => {
     if (tokenBIndex === null) {
@@ -331,7 +334,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       setPriceBLoading(true)
       getCoingeckoTokenPrice(id)
         .then(data => setTokenBPriceData(data))
-        .catch(() => setTokenBPriceData(undefined))
+        .catch(() =>
+          setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
+        )
         .finally(() => setPriceBLoading(false))
     } else {
       setTokenBPriceData(undefined)

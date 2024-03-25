@@ -1,11 +1,12 @@
 import EmptyPlaceholder from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import PositionDetails from '@components/PositionDetails/PositionDetails'
 import {
-  CoingeckoPriceData,
+  TokenPriceData,
   calcPrice,
   calcYPerXPrice,
   createPlaceholderLiquidityPlot,
   getCoingeckoTokenPrice,
+  getMockedTokenPrice,
   printBN
 } from '@consts/utils'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
@@ -30,6 +31,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useHistory } from 'react-router'
 import useStyles from './style'
+import { network } from '@selectors/solanaConnection'
 // import { hasFarms, hasUserStakes, stakesForPosition } from '@selectors/farms'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { Status } from '@reducers/solanaWallet'
@@ -46,6 +48,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const dispatch = useDispatch()
 
+  const currentNetwork = useSelector(network)
   const position = useSelector(singlePositionData(id))
   const isLoadingList = useSelector(isLoadingPositionsList)
   const { data: ticksData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
@@ -269,8 +272,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     localStorage.setItem('IS_PLOT_DISCRETE', val ? 'true' : 'false')
   }
 
-  const [tokenXPriceData, setTokenXPriceData] = useState<CoingeckoPriceData | undefined>(undefined)
-  const [tokenYPriceData, setTokenYPriceData] = useState<CoingeckoPriceData | undefined>(undefined)
+  const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
+  const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
 
   const currentVolumeRange = useMemo(() => {
     if (!position?.poolData.address) {
@@ -323,7 +326,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     if (xId.length) {
       getCoingeckoTokenPrice(xId)
         .then(data => setTokenXPriceData(data))
-        .catch(() => setTokenXPriceData(undefined))
+        .catch(() =>
+          setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork))
+        )
     } else {
       setTokenXPriceData(undefined)
     }
@@ -332,7 +337,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     if (yId.length) {
       getCoingeckoTokenPrice(yId)
         .then(data => setTokenYPriceData(data))
-        .catch(() => setTokenYPriceData(undefined))
+        .catch(() =>
+          setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork))
+        )
     } else {
       setTokenYPriceData(undefined)
     }

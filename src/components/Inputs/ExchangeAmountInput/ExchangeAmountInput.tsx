@@ -54,7 +54,6 @@ export const AmountInput: React.FC<IProps> = ({
   limit,
   initialHideUnknownTokensValue,
   onHideUnknownTokensChange,
-  percentageChange = 0,
   tokenPrice,
   priceLoading = false
 }) => {
@@ -218,14 +217,6 @@ export const AmountInput: React.FC<IProps> = ({
               <img src={loadingAnimation} className={classes.loading} />
             ) : tokenPrice ? (
               <>
-                <Typography
-                  className={classNames(
-                    classes.percentage,
-                    percentageChange > 0 ? classes.percentagePositive : classes.percentageNegative
-                  )}>
-                  {percentageChange > 0 ? '+' : ''}
-                  {percentageChange.toFixed(2)}%
-                </Typography>
                 <Typography className={classes.caption2}>
                   ~${formatNumbers(usdThresholds)(usdBalance.toString()) + showPrefix(usdBalance)}
                 </Typography>
