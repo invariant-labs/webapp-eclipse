@@ -1,11 +1,11 @@
 import { Canvas } from '@components/Canvas/Canvas'
 import { randomNumberFromRange } from '@consts/uiUtils'
 import { Button, Grid, Input, Popover, Typography } from '@material-ui/core'
+import { actions as snackbarsActions } from '@reducers/snackbars'
 import refreshIcon from '@static/svg/refresh.svg'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import useStyles from './styles'
-import { actions as snackbarsActions } from '@reducers/snackbars'
 
 export interface IProps {
   open: boolean
@@ -39,13 +39,11 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
   }, [numberOne, numberTwo])
 
   const handleCaptcha = () => {
-    const trimmedAnswer = answer.replace(/\s/g, '')
-
     const sumMatchesAnswer = numberOne + numberTwo === Number(answer)
-    const sumMatchesAnswerInverted = numberTwo + numberOne === Number(answer)
-    const concatenatedMatchesAnswer = trimmedAnswer === numberOne.toString() + numberTwo.toString()
+    const concatMatchesAnswer = numberOne.toString() + numberTwo.toString() === answer
+    const reversedConcactMatchesAnswer = numberTwo.toString() + numberOne.toString() === answer
 
-    if (sumMatchesAnswer || sumMatchesAnswerInverted || concatenatedMatchesAnswer) {
+    if (sumMatchesAnswer || concatMatchesAnswer || reversedConcactMatchesAnswer) {
       onFaucet()
       handleClose()
     } else {
