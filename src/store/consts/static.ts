@@ -72,7 +72,7 @@ export const BTC_TEST: Token = {
 
 export const WETH_TEST: Token = {
   symbol: 'ETH',
-  address: new PublicKey('2npED2DvE1pndJUUYUrUJcfNWaqQiCkdixStaYB5ZuKo'),
+  address: new PublicKey('F1UrAegXK6EWMh1Qprmj5ACKLCKjRkYnAWVeUr6dpAf7'),
   decimals: 9,
   name: 'Ether (Portal)',
   logoURI:
@@ -214,14 +214,18 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
   Mainnet: [],
-  Testnet: [USDC_TEST.address, BTC_TEST.address],
+  Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Localnet: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
   Mainnet: [],
-  Testnet: [10 * 10 ** USDC_DEV.decimals, 0.00025 * 10 ** BTC_DEV.decimals],
+  Testnet: [
+    10 * 10 ** USDC_TEST.decimals,
+    0.00025 * 10 ** BTC_TEST.decimals,
+    0.003 * 10 ** WETH_TEST.decimals
+  ],
   Localnet: []
 }
 
