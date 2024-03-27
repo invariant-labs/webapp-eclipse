@@ -72,11 +72,11 @@ export const BTC_TEST: Token = {
 
 export const WETH_TEST: Token = {
   symbol: 'ETH',
-  address: new PublicKey('So11111111111111111111111111111111111111112'),
+  address: new PublicKey('2npED2DvE1pndJUUYUrUJcfNWaqQiCkdixStaYB5ZuKo'),
   decimals: 9,
-  name: 'Ethereum',
+  name: 'Ether (Portal)',
   logoURI:
-    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+    'https://raw.githubusercontent.com/wormhole-foundation/wormhole-token-list/main/assets/ETH_wh.png',
   coingeckoId: 'ethereum'
 }
 
