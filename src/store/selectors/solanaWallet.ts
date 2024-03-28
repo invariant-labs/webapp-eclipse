@@ -7,11 +7,9 @@ import { tokens } from './pools'
 import {
   WRAPPED_ETH_ADDRESS,
   WETH_POOL_INIT_LAMPORTS,
-  WETH_POSITION_INIT_LAMPORTS,
   NetworkType,
   WETH_POOL_INIT_LAMPORTS_TEST
 } from '@consts/static'
-import { Network } from '@invariant-labs/sdk-eclipse'
 
 const store = (s: AnyProps) => s[solanaWalletSliceName] as ISolanaWallet
 

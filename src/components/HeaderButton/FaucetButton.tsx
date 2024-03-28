@@ -1,7 +1,6 @@
 import Faucet from '@components/Modals/Faucet/Faucet'
 import { blurContent, unblurContent } from '@consts/uiUtils'
 import { Button } from '@material-ui/core'
-import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import React from 'react'
 import useStyles from './style'
 

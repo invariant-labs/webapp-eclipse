@@ -7,7 +7,6 @@ import { snackbars } from '@selectors/snackbars'
 import { network } from '@selectors/solanaConnection'
 import useStyles from './style'
 import { getExplorer } from '@consts/utils'
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { NetworkType } from '@consts/static'
 
 let displayed: string[] = []

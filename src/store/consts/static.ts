@@ -2,6 +2,7 @@ import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { TokenPriceData } from './utils'
+import { ISnackbar } from '@reducers/snackbars'
 
 declare global {
   interface Window {
@@ -247,3 +248,9 @@ export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
 export { DEFAULT_PUBLICKEY, EclipseNetworks, MAX_U64, NetworkType }
 
 export const POSITIONS_PER_PAGE = 5
+
+export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
+  message: 'Signing transactions',
+  variant: 'pending',
+  persist: true
+}
