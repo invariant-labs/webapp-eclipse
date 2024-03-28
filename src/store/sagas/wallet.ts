@@ -33,6 +33,8 @@ import airdropAdmin from '@consts/airdropAdmin'
 import { network } from '@selectors/solanaConnection'
 import { tokens } from '@selectors/pools'
 import { actions as poolsActions } from '@reducers/pools'
+import { createLoaderKey } from '@consts/utils'
+import { closeSnackbar } from 'notistack'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { actions as bondsActions } from '@reducers/bonds'
 
@@ -112,6 +114,16 @@ export function* handleAirdrop(): Generator {
     return
   }
 
+  const loaderKey = createLoaderKey()
+  yield put(
+    snackbarsActions.add({
+      message: 'Airdrop in progress',
+      variant: 'pending',
+      persist: true,
+      key: loaderKey
+    })
+  )
+
   const connection = yield* call(getConnection)
   const networkType = yield* select(network)
   const wallet = yield* call(getWallet)
@@ -125,7 +137,7 @@ export function* handleAirdrop(): Generator {
       airdropTokens[networkType],
       airdropQuantities[networkType]
     )
-    
+
     yield put(
       snackbarsActions.add({
         message: 'You will soon receive airdrop of tokens',
@@ -149,6 +161,9 @@ export function* handleAirdrop(): Generator {
       })
     )
   }
+
+  closeSnackbar(loaderKey)
+  yield put(snackbarsActions.remove(loaderKey))
 }
 
 export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator {

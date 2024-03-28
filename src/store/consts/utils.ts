@@ -1119,3 +1119,5 @@ export const getExplorer = (networkType: NetworkType) => {
       return 'https://explorer.dev.eclipsenetwork.xyz/'
   }
 }
+
+export const createLoaderKey = () => (new Date().getMilliseconds() + Math.random()).toString()
