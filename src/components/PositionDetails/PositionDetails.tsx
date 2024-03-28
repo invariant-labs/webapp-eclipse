@@ -2,7 +2,7 @@ import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/S
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
 import { addressToTicker, parseFeeToPathFee } from '@consts/uiUtils'
-import { printBN } from '@consts/utils'
+import { TokenPriceData, printBN } from '@consts/utils'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Button, Grid, Hidden, Typography } from '@material-ui/core'
@@ -29,6 +29,8 @@ interface IProps {
   currentPrice: number
   tokenX: ILiquidityToken
   tokenY: ILiquidityToken
+  tokenXPriceData?: TokenPriceData
+  tokenYPriceData?: TokenPriceData
   onClickClaimFee: () => void
   closePosition: (claimFarmRewards?: boolean) => void
   ticksLoading: boolean
@@ -60,6 +62,8 @@ const PositionDetails: React.FC<IProps> = ({
   currentPrice,
   tokenY,
   tokenX,
+  tokenXPriceData,
+  tokenYPriceData,
   onClickClaimFee,
   closePosition,
   ticksLoading,
@@ -97,6 +101,8 @@ const PositionDetails: React.FC<IProps> = ({
           closePosition={closePosition}
           tokenX={tokenX}
           tokenY={tokenY}
+          tokenXPriceData={tokenXPriceData}
+          tokenYPriceData={tokenYPriceData}
           xToY={xToY}
           swapHandler={() => setXToY(!xToY)}
           showFeesLoader={showFeesLoader}
