@@ -5,7 +5,7 @@ import { blurContent, unblurContent } from '@consts/uiUtils'
 import { ISelectNetwork } from '@components/Modals/SelectNetwork/SelectNetwork'
 import KeyboardArrowDownIcon from '@material-ui/icons/KeyboardArrowDown'
 import { NetworkType } from '@consts/static'
-import SelectMainnetRPC from '@components/Modals/SelectMainnetRPC/SelectMainnetRPC'
+import SelectDevnetRPC from '@components/Modals/SelectDevnetRPC/SelectDevnetRPC'
 
 export interface IProps {
   rpc: string
@@ -45,7 +45,7 @@ export const SelectRPCButton: React.FC<IProps> = ({
         onClick={handleClick}>
         RPC
       </Button>
-      <SelectMainnetRPC
+      <SelectDevnetRPC
         networks={networks}
         open={openMainnetRpcs}
         anchorEl={anchorEl}

@@ -7,7 +7,7 @@ import classNames from 'classnames'
 import useStyles from './styles'
 import { ISelectNetwork } from '../SelectNetwork/SelectNetwork'
 
-export interface ISelectMainnetRpc {
+export interface ISelectDevnetRpc {
   networks: ISelectNetwork[]
   open: boolean
   anchorEl: HTMLButtonElement | null
@@ -15,7 +15,7 @@ export interface ISelectMainnetRpc {
   handleClose: () => void
   activeRPC: string
 }
-export const SelectMainnetRPC: React.FC<ISelectMainnetRpc> = ({
+export const SelectDevnetRPC: React.FC<ISelectDevnetRpc> = ({
   networks,
   anchorEl,
   open,
@@ -50,7 +50,7 @@ export const SelectMainnetRPC: React.FC<ISelectMainnetRpc> = ({
         horizontal: 'center'
       }}>
       <Grid className={classes.root}>
-        <Typography className={classes.title}>Select mainnet RPC to use</Typography>
+        <Typography className={classes.title}>Select devnet RPC to use</Typography>
         <Grid className={classes.list} container alignContent='space-around' direction='column'>
           {networks.map(({ networkType, rpc, rpcName }) => (
             <Grid
@@ -91,7 +91,7 @@ export const SelectMainnetRPC: React.FC<ISelectMainnetRpc> = ({
           <Button
             className={classes.add}
             onClick={() => {
-              onSelect(NetworkType.MAINNET, address, 'Custom')
+              onSelect(NetworkType.DEVNET, address, 'Custom')
               handleClose()
             }}
             disableRipple
@@ -103,4 +103,4 @@ export const SelectMainnetRPC: React.FC<ISelectMainnetRpc> = ({
     </Popover>
   )
 }
-export default SelectMainnetRPC
+export default SelectDevnetRPC
