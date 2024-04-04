@@ -11,8 +11,30 @@ const useStyles = makeStyles((theme: Theme) => ({
     ...typography.body1,
     lineHeight: '22px',
     height: 40,
+
+    '&:not(:last-child)': {
+      marginRight: 12
+    },
+
+    '&:hover': {
+      background: colors.blue.deep
+    },
+    '&:active': {
+      '& #downIcon': {
+        transform: 'rotateX(180deg)'
+      }
+    }
+  },
+  headerButtonFaucet: {
+    background: colors.invariant.light,
+    color: colors.white.main,
+    paddingInline: 12,
+    borderRadius: 10,
+    textTransform: 'none',
+    ...typography.body1,
+    lineHeight: '22px',
+    height: 40,
     width: 130,
-    minWidth: 94,
 
     '&:not(:last-child)': {
       marginRight: 12

@@ -3,7 +3,7 @@ import FaucetButton from '@components/HeaderButton/FaucetButton'
 import SelectNetworkButton from '@components/HeaderButton/SelectNetworkButton'
 import SelectRPCButton from '@components/HeaderButton/SelectRPCButton'
 import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
-import SelectMainnetRPC from '@components/Modals/SelectMainnetRPC/SelectMainnetRPC'
+import SelectDevnetRPC from '@components/Modals/SelectDevnetRPC/SelectDevnetRPC'
 import { ISelectNetwork } from '@components/Modals/SelectNetwork/SelectNetwork'
 import NavbarButton from '@components/Navbar/Button'
 import { EclipseNetworks, NetworkType } from '@consts/static'
@@ -58,7 +58,7 @@ export const Header: React.FC<IHeader> = ({
   const [activePath, setActive] = React.useState(landing)
 
   const [routesModalOpen, setRoutesModalOpen] = React.useState(false)
-  const [mainnetRpcsOpen, setMainnetRpcsOpen] = React.useState(false)
+  const [devnetRpcsOpen, setDevnetRpcsOpen] = React.useState(false)
   const [routesModalAnchor, setRoutesModalAnchor] = React.useState<HTMLButtonElement | null>(null)
 
   React.useEffect(() => {
@@ -66,7 +66,18 @@ export const Header: React.FC<IHeader> = ({
     setActive(landing)
   }, [landing])
 
-  const mainnetRPCs: ISelectNetwork[] = []
+  const devnetRPCs: ISelectNetwork[] = [
+    {
+      networkType: NetworkType.DEVNET,
+      rpc: EclipseNetworks.DEV,
+      rpcName: 'Eclipse'
+    },
+    {
+      networkType: NetworkType.DEVNET,
+      rpc: EclipseNetworks.DEV_EU,
+      rpcName: 'Eclipse EU'
+    }
+  ]
 
   return (
     <Grid container>
@@ -115,8 +126,8 @@ export const Header: React.FC<IHeader> = ({
             ) : null}
           </Hidden>
           <Hidden xsDown>
-            {typeOfNetwork === NetworkType.MAINNET ? (
-              <SelectRPCButton rpc={rpc} networks={mainnetRPCs} onSelect={onNetworkSelect} />
+            {typeOfNetwork === NetworkType.DEVNET ? (
+              <SelectRPCButton rpc={rpc} networks={devnetRPCs} onSelect={onNetworkSelect} />
             ) : null}
           </Hidden>
           <SelectNetworkButton
@@ -129,7 +140,7 @@ export const Header: React.FC<IHeader> = ({
               //     mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
               // },
               { networkType: NetworkType.TESTNET, rpc: EclipseNetworks.TEST },
-              { networkType: NetworkType.DEVNET, rpc: EclipseNetworks.DEV }
+              { networkType: NetworkType.DEVNET, rpc: EclipseNetworks.DEV_EU }
             ]}
             onSelect={onNetworkSelect}
           />
@@ -188,19 +199,19 @@ export const Header: React.FC<IHeader> = ({
               typeOfNetwork === NetworkType.MAINNET && isXsDown
                 ? () => {
                     setRoutesModalOpen(false)
-                    setMainnetRpcsOpen(true)
+                    setDevnetRpcsOpen(true)
                   }
                 : undefined
             }
           />
           {typeOfNetwork === NetworkType.MAINNET ? (
-            <SelectMainnetRPC
-              networks={mainnetRPCs}
-              open={mainnetRpcsOpen}
+            <SelectDevnetRPC
+              networks={devnetRPCs}
+              open={devnetRpcsOpen}
               anchorEl={routesModalAnchor}
               onSelect={onNetworkSelect}
               handleClose={() => {
-                setMainnetRpcsOpen(false)
+                setDevnetRpcsOpen(false)
                 unblurContent()
               }}
               activeRPC={rpc}

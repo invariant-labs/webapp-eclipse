@@ -28,7 +28,7 @@ export const FaucetButton: React.FC<IProps> = ({ onFaucet, disabled = false }) =
   return (
     <>
       <Button
-        className={classes.headerButton}
+        className={classes.headerButtonFaucet}
         variant='contained'
         classes={{ disabled: classes.disabled }}
         disabled={disabled}

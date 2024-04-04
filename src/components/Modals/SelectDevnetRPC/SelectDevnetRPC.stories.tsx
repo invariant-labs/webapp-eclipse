@@ -1,7 +1,7 @@
 import React from 'react'
 import { storiesOf } from '@storybook/react'
 import { action } from '@storybook/addon-actions'
-import SelectMainnetRPC from './SelectMainnetRPC'
+import SelectMainnetRPC from './SelectDevnetRPC'
 import { NetworkType, EclipseNetworks } from '@consts/static'
 import { ISelectNetwork } from '../SelectNetwork/SelectNetwork'
 

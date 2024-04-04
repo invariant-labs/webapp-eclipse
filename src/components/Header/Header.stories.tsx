@@ -72,6 +72,7 @@ storiesOf('ui/newHeader', module)
             typeOfNetwork={NetworkType.DEVNET}
             rpc={EclipseNetworks.DEV}
             defaultMainnetRPC={EclipseNetworks.MAIN}
+            onFaucet={() => {}}
           />
         </div>
       </div>
