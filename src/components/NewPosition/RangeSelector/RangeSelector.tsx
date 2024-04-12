@@ -14,7 +14,11 @@ import { MIN_TICK } from '@invariant-labs/sdk-eclipse'
 import { MAX_TICK } from '@invariant-labs/sdk-eclipse/src'
 import PlotTypeSwitch from '@components/PlotTypeSwitch/PlotTypeSwitch'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
-import { getConcentrationArray, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  getConcentrationArray,
+  getMaxTick,
+  getMinTick
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import loader from '@static/gif/loader.gif'
 import useStyles from './style'
 import activeLiquidity from '@static/svg/activeLiquidity.svg'
@@ -343,7 +347,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
               tooltip: classes.liquidityTooltip
             }}>
             <Typography className={classes.activeLiquidity}>
-              Active liquidity <div className={classes.activeLiquidityIcon}>i</div>
+              Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
             </Typography>
           </Tooltip>
           <Typography className={classes.currentPrice}>Current price</Typography>

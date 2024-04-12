@@ -84,6 +84,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [poolIndex])
 
   useEffect(() => {
+    let timeoutId1: number
+    let timeoutId2: number
+
     if (!inProgress && progress === 'progress') {
       setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
 
@@ -99,13 +102,18 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         )
       }
 
-      setTimeout(() => {
+      timeoutId1 = setTimeout(() => {
         setProgress(success ? 'success' : 'failed')
       }, 1500)
 
-      setTimeout(() => {
+      timeoutId2 = setTimeout(() => {
         setProgress('none')
       }, 3000)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
 

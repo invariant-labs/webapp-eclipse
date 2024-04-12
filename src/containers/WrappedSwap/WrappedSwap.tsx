@@ -46,18 +46,26 @@ export const WrappedSwap = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
   const [tokenTo, setTokenTo] = useState<PublicKey | null>(null)
-
   useEffect(() => {
+    let timeoutId1: number
+    let timeoutId2: number
+
     if (!inProgress && progress === 'progress') {
       setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
 
-      setTimeout(() => {
+      timeoutId1 = setTimeout(() => {
         setProgress(success ? 'success' : 'failed')
       }, 1500)
 
-      setTimeout(() => {
+      timeoutId2 = setTimeout(() => {
         setProgress('none')
       }, 3000)
+    }
+
+    // Cleanup function
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
 
@@ -139,8 +147,6 @@ export const WrappedSwap = () => {
     }
 
     const id = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
-    console.log(id)
-    console.log(tokensDict[tokenFrom.toString()].symbol)
     if (id.length) {
       setPriceFromLoading(true)
       getCoingeckoTokenPrice(id)

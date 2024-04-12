@@ -278,9 +278,9 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
       <svg x={(midPrice.x - plotMin) * unitLen - 20} y={0} width={40} height={innerHeight}>
         <defs>
           <linearGradient id='currentGradient'>
-            <stop offset='0%' stop-color='black' stop-opacity='0' />
-            <stop offset='50%' stop-color='black' stop-opacity='0.25' />
-            <stop offset='100%' stop-color='black' stop-opacity='0' />
+            <stop offset='0%' stopColor='black' stopOpacity='0' />
+            <stop offset='50%' stopColor='black' stopOpacity='0.25' />
+            <stop offset='100%' stopColor='black' stopOpacity='0' />
           </linearGradient>
         </defs>
         <rect x={0} y={0} width={40} height={innerHeight} fill='url(#currentGradient)' />
@@ -346,8 +346,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         <text
           x='50%'
           y='50%'
-          dominant-baseline='middle'
-          text-anchor='middle'
+          dominantBaseline='middle'
+          textAnchor='middle'
           className={classes.loadingText}>
           Loading liquidity data...
         </text>
@@ -430,7 +430,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         data={[
           {
             id: 'less than range',
-            data: currentLessThanRange
+            data: currentLessThanRange.length ? currentLessThanRange : [{ x: plotMin, y: 0 }]
           },
           {
             id: 'range',
@@ -438,7 +438,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           },
           {
             id: 'greater than range',
-            data: currentGreaterThanRange
+            data: currentGreaterThanRange.length ? currentGreaterThanRange : [{ x: plotMax, y: 0 }]
           }
         ]}
         curve={isDiscrete ? (isXtoY ? 'stepAfter' : 'stepBefore') : 'basis'}

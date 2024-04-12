@@ -151,7 +151,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
               tooltip: classes.liquidityTooltip
             }}>
             <Typography className={classes.activeLiquidity}>
-              Active liquidity <div className={classes.activeLiquidityIcon}>i</div>
+              Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
             </Typography>
           </Tooltip>
           <Typography className={classes.currentPrice}>Current price</Typography>
