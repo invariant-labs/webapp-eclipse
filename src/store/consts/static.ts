@@ -53,7 +53,7 @@ export const WETH_DEV: Token = {
 
 export const USDC_TEST: Token = {
   symbol: 'USDC',
-  address: new PublicKey('5yQMGqpB1Q1J3b8UNStkVks9nFKao1axKYsgZYeMv1ei'),
+  address: new PublicKey('5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx'),
   decimals: 9,
   name: 'USD Coin',
   logoURI:
@@ -63,7 +63,7 @@ export const USDC_TEST: Token = {
 
 export const BTC_TEST: Token = {
   symbol: 'BTC',
-  address: new PublicKey('97hEP4PZ2P1pQ77yCvc9NxARHttVuTVhdKmvGG1aRNGG'),
+  address: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo'),
   decimals: 9,
   name: 'Bitcoin',
   logoURI:
@@ -73,11 +73,10 @@ export const BTC_TEST: Token = {
 
 export const WETH_TEST: Token = {
   symbol: 'ETH',
-  address: new PublicKey('F1UrAegXK6EWMh1Qprmj5ACKLCKjRkYnAWVeUr6dpAf7'),
+  address: new PublicKey('So11111111111111111111111111111111111111112'),
   decimals: 9,
-  name: 'Ether (Portal)',
-  logoURI:
-    'https://raw.githubusercontent.com/wormhole-foundation/wormhole-token-list/main/assets/ETH_wh.png',
+  name: 'Ether',
+  logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
   coingeckoId: 'ethereum'
 }
 
@@ -216,7 +215,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
   Mainnet: [],
-  Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
+  Testnet: [USDC_TEST.address, BTC_TEST.address],
   Localnet: []
 }
 
@@ -225,8 +224,7 @@ export const airdropQuantities: Record<NetworkType, number[]> = {
   Mainnet: [],
   Testnet: [
     10 * 10 ** USDC_TEST.decimals,
-    0.00025 * 10 ** BTC_TEST.decimals,
-    0.003 * 10 ** WETH_TEST.decimals
+    0.00025 * 10 ** BTC_TEST.decimals
   ],
   Localnet: []
 }
