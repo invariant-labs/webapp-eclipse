@@ -19,9 +19,9 @@ export interface ISolanaConnectionStore {
 export const defaultState: ISolanaConnectionStore = {
   status: Status.Uninitialized,
   message: '',
-  network: NetworkType.DEVNET,
+  network: NetworkType.TESTNET,
   slot: 0,
-  rpcAddress: EclipseNetworks.DEV
+  rpcAddress: EclipseNetworks.TEST
 }
 export const solanaConnectionSliceName = 'solanaConnection'
 const solanaConnectionSlice = createSlice({
