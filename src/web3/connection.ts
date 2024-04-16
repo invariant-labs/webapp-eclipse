@@ -68,7 +68,7 @@ const getCurrentSolanaConnection = (): Connection | null => {
 
 export {
   getSolanaConnection,
-  EclipseNetworks as EclipseNetworks,
+  EclipseNetworks,
   getCurrentSolanaConnection,
   // networkTypetoStakerNetwork,
   networkTypetoProgramNetwork
