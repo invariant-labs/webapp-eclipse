@@ -99,9 +99,28 @@ export const PoolInit: React.FC<IPoolInit> = ({
     changeRangeHandler(leftRange, rightRange)
   }, [midPrice])
 
+  const validateMidPriceInput = (midPriceInput: string) => {
+    const minTick = getMinTick(tickSpacing)
+    const maxTick = getMaxTick(tickSpacing)
+
+    const minPrice = isXtoY
+      ? calcPrice(minTick, isXtoY, xDecimal, yDecimal)
+      : calcPrice(maxTick, isXtoY, xDecimal, yDecimal)
+    const maxPrice = isXtoY
+      ? calcPrice(maxTick, isXtoY, xDecimal, yDecimal)
+      : calcPrice(minTick, isXtoY, xDecimal, yDecimal)
+
+    const numericMidPriceInput = parseFloat(midPriceInput)
+    const validatedMidPrice = Math.min(Math.max(numericMidPriceInput, minPrice), maxPrice)
+
+    return toMaxNumericPlaces(validatedMidPrice, 5)
+  }
+
   useEffect(() => {
     if (currentPairReversed !== null) {
-      setMidPriceInput((1 / +midPriceInput).toString())
+      const validatedMidPrice = validateMidPriceInput((1 / +midPriceInput).toString())
+
+      setMidPriceInput(validatedMidPrice)
       changeRangeHandler(rightRange, leftRange)
     }
   }, [currentPairReversed])
@@ -132,6 +151,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
           decimal={isXtoY ? xDecimal : yDecimal}
           className={classes.midPrice}
           placeholder='0.0'
+          onBlur={e => {
+            setMidPriceInput(validateMidPriceInput(e.target.value))
+          }}
         />
 
         <Grid
