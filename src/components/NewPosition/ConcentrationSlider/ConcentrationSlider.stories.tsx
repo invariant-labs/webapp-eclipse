@@ -19,6 +19,7 @@ storiesOf('position/concentrationSlider', module).add('default', () => {
           console.log(val)
         }}
         valueIndex={3}
+        minimumSliderIndex={10}
       />
     </div>
   )

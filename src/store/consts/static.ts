@@ -76,7 +76,8 @@ export const WETH_TEST: Token = {
   address: new PublicKey('So11111111111111111111111111111111111111112'),
   decimals: 9,
   name: 'Ether',
-  logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
   coingeckoId: 'ethereum'
 }
 
@@ -222,10 +223,7 @@ export const airdropTokens: Record<NetworkType, PublicKey[]> = {
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
   Mainnet: [],
-  Testnet: [
-    10 * 10 ** USDC_TEST.decimals,
-    0.00025 * 10 ** BTC_TEST.decimals
-  ],
+  Testnet: [10 * 10 ** USDC_TEST.decimals, 0.00025 * 10 ** BTC_TEST.decimals],
   Localnet: []
 }
 
@@ -253,3 +251,5 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
   variant: 'pending',
   persist: true
 }
+
+export type PositionOpeningMethod = 'range' | 'concentration'
