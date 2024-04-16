@@ -14,6 +14,7 @@ import {
   BTC_DEV,
   BTC_TEST,
   MAX_U64,
+  MOON_TEST,
   NetworkType,
   PRICE_DECIMAL,
   Token,
@@ -400,7 +401,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       return {
         [USDC_TEST.address.toString()]: USDC_TEST,
         [BTC_TEST.address.toString()]: BTC_TEST,
-        [WETH_TEST.address.toString()]: WETH_TEST
+        [WETH_TEST.address.toString()]: WETH_TEST,
+        [MOON_TEST.address.toString()]: MOON_TEST
       }
     default:
       return {}

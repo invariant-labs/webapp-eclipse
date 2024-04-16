@@ -76,8 +76,18 @@ export const WETH_TEST: Token = {
   address: new PublicKey('So11111111111111111111111111111111111111112'),
   decimals: 9,
   name: 'Ether',
-  logoURI: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
   coingeckoId: 'ethereum'
+}
+
+export const MOON_TEST: Token = {
+  symbol: 'MOON',
+  address: new PublicKey('JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S'),
+  decimals: 5,
+  name: 'Moon Inu',
+  logoURI: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
+  coingeckoId: ''
 }
 
 enum EclipseNetworks {
@@ -101,7 +111,12 @@ const MAX_U64 = new BN('18446744073709551615')
 export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> = {
   Devnet: { USDC_DEV: { price: 1 }, BTC_DEV: { price: 64572.0 }, WETH_DEV: { price: 3430.21 } },
   Mainnet: {},
-  Testnet: { USDC_TEST: { price: 1 }, BTC_TEST: { price: 64572.0 }, WETH_TEST: { price: 3430.21 } },
+  Testnet: {
+    USDC_TEST: { price: 1 },
+    BTC_TEST: { price: 64572.0 },
+    WETH_TEST: { price: 3430.21 },
+    MOON_TEST: { price: 0.00000005735 }
+  },
   Localnet: {}
 }
 export const tokens: Record<NetworkType, Token[]> = {
@@ -222,10 +237,7 @@ export const airdropTokens: Record<NetworkType, PublicKey[]> = {
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
   Mainnet: [],
-  Testnet: [
-    10 * 10 ** USDC_TEST.decimals,
-    0.00025 * 10 ** BTC_TEST.decimals
-  ],
+  Testnet: [10 * 10 ** USDC_TEST.decimals, 0.00025 * 10 ** BTC_TEST.decimals],
   Localnet: []
 }
 
