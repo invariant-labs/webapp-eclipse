@@ -13,6 +13,7 @@ import { Token as SPLToken, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
   BTC_DEV,
   BTC_TEST,
+  EBGR_TEST,
   MAX_U64,
   MOON_TEST,
   NetworkType,
@@ -402,7 +403,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [USDC_TEST.address.toString()]: USDC_TEST,
         [BTC_TEST.address.toString()]: BTC_TEST,
         [WETH_TEST.address.toString()]: WETH_TEST,
-        [MOON_TEST.address.toString()]: MOON_TEST
+        [MOON_TEST.address.toString()]: MOON_TEST,
+        [EBGR_TEST.address.toString()]: EBGR_TEST
       }
     default:
       return {}

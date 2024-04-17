@@ -5,7 +5,8 @@ export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
   WETH: 'So11111111111111111111111111111111111111112',
   BTC: '3JXmQAzBPU66dkVQufSE1ChBMRAdCHp6T7ZMBKAwhmWw',
-  USDC: '5W3bmyYDww6p5XRZnCR6m2c75st6XyCxW1TgGS3wTq7S'
+  USDC: '5W3bmyYDww6p5XRZnCR6m2c75st6XyCxW1TgGS3wTq7S',
+  EBGR: 'EBGR158Z3d2x6Gy5YaoTimLHfEFGyQxxDXL4hYCfU3Xe'
 }
 
 export const reversedAddressTickerMap = Object.fromEntries(
