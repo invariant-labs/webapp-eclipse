@@ -19,7 +19,6 @@ import {
   printBN
 } from '@consts/utils'
 import { Pair, calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
-import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/src/math'
 import { feeToTickSpacing, getMaxTick } from '@invariant-labs/sdk-eclipse/src/utils'
