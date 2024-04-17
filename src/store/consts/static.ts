@@ -81,6 +81,15 @@ export const WETH_TEST: Token = {
   coingeckoId: 'ethereum'
 }
 
+export const MOON_TEST: Token = {
+  symbol: 'MOON',
+  address: new PublicKey('JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S'),
+  decimals: 5,
+  name: 'Moon Inu',
+  logoURI: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
+  coingeckoId: ''
+}
+
 enum EclipseNetworks {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
   MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
@@ -102,7 +111,12 @@ const MAX_U64 = new BN('18446744073709551615')
 export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> = {
   Devnet: { USDC_DEV: { price: 1 }, BTC_DEV: { price: 64572.0 }, WETH_DEV: { price: 3430.21 } },
   Mainnet: {},
-  Testnet: { USDC_TEST: { price: 1 }, BTC_TEST: { price: 64572.0 }, WETH_TEST: { price: 3430.21 } },
+  Testnet: {
+    USDC_TEST: { price: 1 },
+    BTC_TEST: { price: 64572.0 },
+    WETH_TEST: { price: 3430.21 },
+    MOON_TEST: { price: 0.00000005735 }
+  },
   Localnet: {}
 }
 export const tokens: Record<NetworkType, Token[]> = {
@@ -251,5 +265,9 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
   variant: 'pending',
   persist: true
 }
+
+export const ADDRESSES_TO_REVERS_TOKEN_PAIRS: string[] = [
+  'So11111111111111111111111111111111111111112'
+] // ETH
 
 export type PositionOpeningMethod = 'range' | 'concentration'
