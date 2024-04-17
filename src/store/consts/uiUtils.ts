@@ -1,4 +1,5 @@
 import { BN } from '@project-serum/anchor'
+import { ADDRESSES_TO_REVERS_TOKEN_PAIRS } from './static'
 
 export const toBlur = 'global-blur'
 
@@ -6,7 +7,9 @@ export const addressTickerMap: { [key: string]: string } = {
   WETH: 'So11111111111111111111111111111111111111112',
   BTC: '3JXmQAzBPU66dkVQufSE1ChBMRAdCHp6T7ZMBKAwhmWw',
   USDC: '5W3bmyYDww6p5XRZnCR6m2c75st6XyCxW1TgGS3wTq7S',
-  EBGR: 'EBGR158Z3d2x6Gy5YaoTimLHfEFGyQxxDXL4hYCfU3Xe'
+  EBGR: 'EBGR158Z3d2x6Gy5YaoTimLHfEFGyQxxDXL4hYCfU3Xe',
+  ETH: 'So11111111111111111111111111111111111111112',
+  MOON: 'JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S'
 }
 
 export const reversedAddressTickerMap = Object.fromEntries(
@@ -55,4 +58,15 @@ export const addressToTicker = (address: string): string => {
 
 export const randomNumberFromRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
+export const initialXtoY = (tokenXAddress?: string, tokenYAddress?: string) => {
+  if (!tokenXAddress || !tokenYAddress) {
+    return true
+  }
+
+  const isTokeXStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenXAddress)
+  const isTokenYStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenYAddress)
+
+  return isTokeXStablecoin === isTokenYStablecoin || (!isTokeXStablecoin && !isTokenYStablecoin)
 }
