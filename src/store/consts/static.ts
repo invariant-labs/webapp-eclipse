@@ -265,3 +265,7 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
   variant: 'pending',
   persist: true
 }
+
+export const ADDRESSES_TO_REVERS_TOKEN_PAIRS: string[] = [
+  'So11111111111111111111111111111111111111112'
+] // ETH

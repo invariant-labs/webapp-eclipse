@@ -1,7 +1,7 @@
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import { addressToTicker, parseFeeToPathFee } from '@consts/uiUtils'
+import { addressToTicker, initialXtoY, parseFeeToPathFee } from '@consts/uiUtils'
 import { TokenPriceData, printBN } from '@consts/utils'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -83,7 +83,9 @@ const PositionDetails: React.FC<IProps> = ({
 
   const history = useHistory()
 
-  const [xToY, setXToY] = useState<boolean>(true)
+  const [xToY, setXToY] = useState<boolean>(
+    initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
+  )
 
   return (
     <Grid container className={classes.wrapperContainer} wrap='nowrap'>
