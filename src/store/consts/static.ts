@@ -92,7 +92,7 @@ export const MOON_TEST: Token = {
 
 export const EBGR_TEST: Token = {
   symbol: 'EBGR',
-  address: new PublicKey('EBGR158Z3d2x6Gy5YaoTimLHfEFGyQxxDXL4hYCfU3Xe'),
+  address: new PublicKey('EBGR1Nb8k3ihiwFuRvXXuxotSKbX7FQWwuzfJEVE9wx9'),
   decimals: 9,
   name: 'eBeggars',
   logoURI:
