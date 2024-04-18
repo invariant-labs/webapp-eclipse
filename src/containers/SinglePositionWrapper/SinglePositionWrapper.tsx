@@ -29,13 +29,14 @@ import {
 import loader from '@static/gif/loader.gif'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useHistory } from 'react-router'
+import { Redirect, useHistory } from 'react-router'
 import useStyles from './style'
 import { network } from '@selectors/solanaConnection'
+import { status } from '@selectors/solanaWallet'
+import { Status } from '@reducers/solanaWallet'
 // import { hasFarms, hasUserStakes, stakesForPosition } from '@selectors/farms'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { Status } from '@reducers/solanaWallet'
-// import { status } from '@selectors/solanaWallet'
 
 export interface IProps {
   id: string
@@ -61,12 +62,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   // const hasAnyTokens = useSelector(hasTokens)
   // const hasAnyFarms = useSelector(hasFarms)
   // const hasAnyStakes = useSelector(hasUserStakes)
-  // const walletStatus = useSelector(status)
+  const walletStatus = useSelector(status)
   // const positionStakes = useSelector(stakesForPosition(position?.address))
 
   const [waitingForTicksData, setWaitingForTicksData] = useState<boolean | null>(null)
 
   const [showFeesLoader, setShowFeesLoader] = useState(true)
+
+  const [isFinishedDelayRender, setIsFinishedDelayRender] = useState(false)
 
   useEffect(() => {
     if (position?.id && waitingForTicksData === null) {
@@ -356,89 +359,119 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }
 
   useEffect(() => {
-    if (!position) {
-      history.push('/pool')
-    }
-  }, [position])
+    const timer = setTimeout(() => {
+      setIsFinishedDelayRender(true)
+    }, 1000)
 
-  return !isLoadingList && position ? (
-    <PositionDetails
-      tokenXAddress={position.tokenX.assetAddress}
-      tokenYAddress={position.tokenY.assetAddress}
-      poolAddress={position.poolData.address}
-      copyPoolAddressHandler={copyPoolAddressHandler}
-      detailsData={data}
-      midPrice={midPrice}
-      leftRange={leftRange}
-      rightRange={rightRange}
-      currentPrice={current}
-      onClickClaimFee={() => {
-        dispatch(actions.claimFee(position.positionIndex))
-      }}
-      closePosition={claimFarmRewards => {
-        dispatch(
-          actions.closePosition({
-            positionIndex: position.positionIndex,
-            onSuccess: () => {
-              history.push('/pool')
-            },
-            claimFarmRewards
-          })
-        )
-      }}
-      ticksLoading={ticksLoading}
-      tickSpacing={position?.poolData.tickSpacing ?? 1}
-      tokenX={{
-        name: position.tokenX.symbol,
-        icon: position.tokenX.logoURI,
-        decimal: position.tokenX.decimals,
-        balance: +printBN(position.tokenX.balance, position.tokenX.decimals),
-        liqValue: tokenXLiquidity,
-        claimValue: tokenXClaim,
-        usdValue:
-          typeof tokenXPriceData?.price === 'undefined'
-            ? undefined
-            : tokenXPriceData.price * +printBN(position.tokenX.balance, position.tokenX.decimals)
-      }}
-      tokenXPriceData={tokenXPriceData}
-      tokenY={{
-        name: position.tokenY.symbol,
-        icon: position.tokenY.logoURI,
-        decimal: position.tokenY.decimals,
-        balance: +printBN(position.tokenY.balance, position.tokenY.decimals),
-        liqValue: tokenYLiquidity,
-        claimValue: tokenYClaim,
-        usdValue:
-          typeof tokenYPriceData?.price === 'undefined'
-            ? undefined
-            : tokenYPriceData.price * +printBN(position.tokenY.balance, position.tokenY.decimals)
-      }}
-      tokenYPriceData={tokenYPriceData}
-      fee={position.poolData.fee}
-      min={min}
-      max={max}
-      initialIsDiscreteValue={initialIsDiscreteValue}
-      onDiscreteChange={setIsDiscreteValue}
-      showFeesLoader={showFeesLoader}
-      hasTicksError={hasTicksError}
-      reloadHandler={() => {
-        dispatch(
-          actions.getCurrentPlotTicks({
-            poolIndex: position.poolData.poolIndex,
-            isXtoY: true
-          })
-        )
-      }}
-      plotVolumeRange={currentVolumeRange}
-      // userHasStakes={!!positionStakes.length}
-    />
-  ) : isLoadingList ? (
-    <Grid container>
-      <img src={loader} className={classes.loading} />
-    </Grid>
-  ) : !position ? (
-    <Grid container justifyContent='center'>
+    return () => {
+      clearTimeout(timer)
+    }
+  }, [walletStatus])
+
+  useEffect(() => {
+    if (isFinishedDelayRender) {
+      setIsFinishedDelayRender(false)
+    }
+  }, [walletStatus])
+
+  if (position) {
+    return (
+      <PositionDetails
+        tokenXAddress={position.tokenX.assetAddress}
+        tokenYAddress={position.tokenY.assetAddress}
+        poolAddress={position.poolData.address}
+        copyPoolAddressHandler={copyPoolAddressHandler}
+        detailsData={data}
+        midPrice={midPrice}
+        leftRange={leftRange}
+        rightRange={rightRange}
+        currentPrice={current}
+        onClickClaimFee={() => {
+          dispatch(actions.claimFee(position.positionIndex))
+        }}
+        closePosition={claimFarmRewards => {
+          dispatch(
+            actions.closePosition({
+              positionIndex: position.positionIndex,
+              onSuccess: () => {
+                history.push('/pool')
+              },
+              claimFarmRewards
+            })
+          )
+        }}
+        ticksLoading={ticksLoading}
+        tickSpacing={position?.poolData.tickSpacing ?? 1}
+        tokenX={{
+          name: position.tokenX.symbol,
+          icon: position.tokenX.logoURI,
+          decimal: position.tokenX.decimals,
+          balance: +printBN(position.tokenX.balance, position.tokenX.decimals),
+          liqValue: tokenXLiquidity,
+          claimValue: tokenXClaim,
+          usdValue:
+            typeof tokenXPriceData?.price === 'undefined'
+              ? undefined
+              : tokenXPriceData.price * +printBN(position.tokenX.balance, position.tokenX.decimals)
+        }}
+        tokenXPriceData={tokenXPriceData}
+        tokenY={{
+          name: position.tokenY.symbol,
+          icon: position.tokenY.logoURI,
+          decimal: position.tokenY.decimals,
+          balance: +printBN(position.tokenY.balance, position.tokenY.decimals),
+          liqValue: tokenYLiquidity,
+          claimValue: tokenYClaim,
+          usdValue:
+            typeof tokenYPriceData?.price === 'undefined'
+              ? undefined
+              : tokenYPriceData.price * +printBN(position.tokenY.balance, position.tokenY.decimals)
+        }}
+        tokenYPriceData={tokenYPriceData}
+        fee={position.poolData.fee}
+        min={min}
+        max={max}
+        initialIsDiscreteValue={initialIsDiscreteValue}
+        onDiscreteChange={setIsDiscreteValue}
+        showFeesLoader={showFeesLoader}
+        hasTicksError={hasTicksError}
+        reloadHandler={() => {
+          dispatch(
+            actions.getCurrentPlotTicks({
+              poolIndex: position.poolData.poolIndex,
+              isXtoY: true
+            })
+          )
+        }}
+        plotVolumeRange={currentVolumeRange}
+        // userHasStakes={!!positionStakes.length}
+      />
+    )
+  }
+  if (
+    (isLoadingList && walletStatus === Status.Initialized) ||
+    (!position && walletStatus === Status.Uninitialized && !isFinishedDelayRender)
+  ) {
+    return (
+      <Grid
+        container
+        justifyContent='center'
+        alignItems='center'
+        className={classes.fullHeightContainer}>
+        <img src={loader} className={classes.loading} />
+      </Grid>
+    )
+  }
+  if (!position && walletStatus === Status.Initialized && isFinishedDelayRender) {
+    return <Redirect to='/pool' />
+  }
+  return (
+    <Grid
+      container
+      justifyContent='center'
+      alignItems='center'
+      className={classes.fullHeightContainer}>
       <EmptyPlaceholder desc='Position does not exist in your list!' />
     </Grid>
-  ) : null
+  )
 }
