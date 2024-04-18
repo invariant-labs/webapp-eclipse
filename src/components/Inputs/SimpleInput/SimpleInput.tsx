@@ -11,6 +11,7 @@ interface IProps {
   decimal: number
   placeholder?: string
   style?: CSSProperties
+  onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>
 }
 
 export const AmountInput: React.FC<IProps> = ({
@@ -20,7 +21,8 @@ export const AmountInput: React.FC<IProps> = ({
   className,
   decimal,
   placeholder,
-  style
+  style,
+  onBlur
 }) => {
   const classes = useStyles()
 
@@ -75,6 +77,7 @@ export const AmountInput: React.FC<IProps> = ({
       disableUnderline={true}
       placeholder={placeholder}
       onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
+      onBlur={onBlur}
     />
   )
 }
