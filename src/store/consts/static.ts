@@ -269,3 +269,5 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
 export const ADDRESSES_TO_REVERS_TOKEN_PAIRS: string[] = [
   'So11111111111111111111111111111111111111112'
 ] // ETH
+
+export type PositionOpeningMethod = 'range' | 'concentration'
