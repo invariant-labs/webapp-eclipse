@@ -100,6 +100,16 @@ export const EBGR_TEST: Token = {
   coingeckoId: ''
 }
 
+export const ECEGG_TEST: Token = {
+  symbol: 'ECEGG',
+  address: new PublicKey('ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'),
+  decimals: 9,
+  name: 'Eclipse Egg',
+  logoURI:
+    'https://orange-raw-gibbon-956.mypinata.cloud/ipfs/QmNx9coi2RwBcAmBxkVC45qtjh6zqZeWCzWgxfg8JMsH7R',
+  coingeckoId: ''
+}
+
 enum EclipseNetworks {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
   MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
@@ -126,7 +136,8 @@ export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> =
     BTC_TEST: { price: 64572.0 },
     WETH_TEST: { price: 3430.21 },
     MOON_TEST: { price: 0.00000005735 },
-    EBGR_TEST: { price: 0.0000011 }
+    EBGR_TEST: { price: 0.0000011 },
+    ECEGG_TEST: { price: 0.000001 }
   },
   Localnet: {}
 }
