@@ -48,6 +48,12 @@ export interface UpdateTickmap {
   bitmap: number[]
 }
 
+export interface FetchTicksAndTickMaps {
+  tokenFrom: PublicKey
+  tokenTo: PublicKey
+  allPools: PoolWithAddress[]
+}
+
 export const defaultState: IPoolsStore = {
   tokens: {},
   pools: {},
@@ -155,6 +161,16 @@ const poolsSlice = createSlice({
     },
     updateTickmap(state, action: PayloadAction<UpdateTickmap>) {
       state.tickMaps[action.payload.address].bitmap = action.payload.bitmap
+    },
+    getTicksAndTickMaps(_state, _action: PayloadAction<FetchTicksAndTickMaps>) {
+      return _state
+    },
+    addTicksToArray(state, action: PayloadAction<UpdateTick>) {
+      const { index, tickStructure } = action.payload
+      if (!state.poolTicks[index]) {
+        state.poolTicks[index] = []
+      }
+      state.poolTicks[index] = [...state.poolTicks[index], ...tickStructure]
     }
   }
 })
