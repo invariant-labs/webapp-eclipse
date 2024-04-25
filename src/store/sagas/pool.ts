@@ -117,7 +117,7 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
       )
 
       if (ticks.length > 300) {
-        yield* put(actions.setTicks({ index: pool.tickmap.toString(), tickStructure: [] }))
+        yield* put(actions.setTicks({ index: pool.address.toString(), tickStructure: [] }))
         for (let i = 0; i < ticks.length; i += 100) {
           yield* call(sleep, 100)
           const chunk = ticks.slice(i, i + 100)
@@ -126,7 +126,7 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
           )
         }
       } else {
-        yield* put(actions.setTicks({ index: pool.tickmap.toString(), tickStructure: ticks }))
+        yield* put(actions.setTicks({ index: pool.address.toString(), tickStructure: ticks }))
       }
     }
   } catch (error) {
