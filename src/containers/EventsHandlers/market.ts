@@ -218,6 +218,7 @@ const MarketEvents = () => {
 
   useEffect(() => {
     if (tokenFrom && tokenTo) {
+      dispatch(actions.getNearestTicksForPair({ tokenFrom, tokenTo, allPools }))
       dispatch(actions.getTicksAndTickMaps({ tokenFrom, tokenTo, allPools }))
     }
   }, [tokenFrom, tokenTo])

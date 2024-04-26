@@ -101,16 +101,25 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
 
     const pools = findPairs(tokenFrom, tokenTo, allPools)
 
-    for (const pool of pools) {
-      const tickMaps = yield* call(
-        [marketProgram, marketProgram.getTickmap],
-        new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
+    const allTickMaps = yield* all([
+      ...pools.map(pool =>
+        call(
+          [marketProgram, marketProgram.getTickmap],
+          new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
+        )
       )
+    ])
 
+    for (let i = 0; i < pools.length; i++) {
       yield* put(
-        actions.setTickMaps({ index: pool.tickmap.toString(), tickMapStructure: tickMaps })
+        actions.setTickMaps({
+          index: pools[i].tickmap.toString(),
+          tickMapStructure: allTickMaps[i]
+        })
       )
+    }
 
+    for (const pool of pools) {
       const ticks = yield* call(
         [marketProgram, marketProgram.getAllTicks],
         new Pair(tokenFrom, tokenTo, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
@@ -134,6 +143,48 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
   }
 }
 
+export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTickMaps>) {
+  const { tokenFrom, tokenTo, allPools } = action.payload
+  enum IsXtoY {
+    Up = 'up',
+    Down = 'down'
+  }
+
+  try {
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc)
+
+    const pools = findPairs(tokenFrom, tokenTo, allPools)
+
+    const results = yield* all([
+      ...pools.map(pool => {
+        const isXtoY = tokenFrom.equals(pool.tokenX)
+        return call(
+          [marketProgram, marketProgram.getClosestTicks],
+          new Pair(tokenFrom, tokenTo, { fee: pool.fee.v, tickSpacing: pool.tickSpacing }),
+          300,
+          undefined,
+          isXtoY ? IsXtoY.Down : IsXtoY.Up
+        )
+      })
+    ])
+
+    if (results.length > 0) {
+      for (let i = 0; i < pools.length; i++) {
+        yield* put(
+          actions.setNearestTicksForPair({
+            index: pools[i].address.toString(),
+            tickStructure: results[i]
+          })
+        )
+      }
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export function* getPoolsDataForListHandler(): Generator {
   yield* takeEvery(actions.getPoolsDataForList, fetchPoolsDataForList)
 }
@@ -150,13 +201,18 @@ export function* getTicksAndTickMapsHandler(): Generator {
   yield* takeEvery(actions.getTicksAndTickMaps, fetchTicksAndTickMaps)
 }
 
+export function* getNearestTicksForPairHandler(): Generator {
+  yield* takeEvery(actions.getNearestTicksForPair, fetchNearestTicksForPair)
+}
+
 export function* poolsSaga(): Generator {
   yield all(
     [
       getPoolDataHandler,
       getAllPoolsForPairDataHandler,
       getPoolsDataForListHandler,
-      getTicksAndTickMapsHandler
+      getTicksAndTickMapsHandler,
+      getNearestTicksForPairHandler
     ].map(spawn)
   )
 }

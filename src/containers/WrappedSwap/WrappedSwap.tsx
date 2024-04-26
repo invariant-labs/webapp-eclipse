@@ -15,8 +15,8 @@ import { actions } from '@reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
   poolsArraySortedByFees,
-  poolTicks,
-  tickMaps
+  tickMaps,
+  nearestPoolTicksForPair
 } from '@selectors/pools'
 import { network } from '@selectors/solanaConnection'
 import { status, swapTokens, swapTokensDict, balanceLoading } from '@selectors/solanaWallet'
@@ -35,7 +35,7 @@ export const WrappedSwap = () => {
   const walletStatus = useSelector(status)
   const swap = useSelector(swapPool)
   const tickmap = useSelector(tickMaps)
-  const poolTicksArray = useSelector(poolTicks)
+  const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
   const allPools = useSelector(poolsArraySortedByFees)
   const tokensList = useSelector(swapTokens)
   const tokensDict = useSelector(swapTokensDict)
@@ -301,7 +301,7 @@ export const WrappedSwap = () => {
       pools={allPools}
       swapData={swap}
       progress={progress}
-      poolTicks={poolTicksArray}
+      poolTicks={poolTicksForSimulation}
       isWaitingForNewPool={isFetchingNewPool}
       tickmap={tickmap}
       initialTokenFromIndex={initialTokenFromIndex === -1 ? null : initialTokenFromIndex}
