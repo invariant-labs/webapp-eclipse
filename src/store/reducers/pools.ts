@@ -16,6 +16,7 @@ export interface IPoolsStore {
   tokens: Record<string, Token>
   pools: { [key in string]: PoolWithAddress }
   poolTicks: { [key in string]: Tick[] }
+  nearestPoolTicksForPair: { [key in string]: Tick[] }
   isLoadingLatestPoolsForTransaction: boolean
   tickMaps: { [key in string]: Tickmap }
   volumeRanges: Record<string, Range[]>
@@ -48,10 +49,17 @@ export interface UpdateTickmap {
   bitmap: number[]
 }
 
+export interface FetchTicksAndTickMaps {
+  tokenFrom: PublicKey
+  tokenTo: PublicKey
+  allPools: PoolWithAddress[]
+}
+
 export const defaultState: IPoolsStore = {
   tokens: {},
   pools: {},
   poolTicks: {},
+  nearestPoolTicksForPair: {},
   isLoadingLatestPoolsForTransaction: false,
   tickMaps: {},
   volumeRanges: {}
@@ -155,7 +163,22 @@ const poolsSlice = createSlice({
     },
     updateTickmap(state, action: PayloadAction<UpdateTickmap>) {
       state.tickMaps[action.payload.address].bitmap = action.payload.bitmap
-    }
+    },
+    getTicksAndTickMaps(_state, _action: PayloadAction<FetchTicksAndTickMaps>) {
+      return _state
+    },
+    addTicksToArray(state, action: PayloadAction<UpdateTick>) {
+      const { index, tickStructure } = action.payload
+      if (!state.poolTicks[index]) {
+        state.poolTicks[index] = []
+      }
+      state.poolTicks[index] = [...state.poolTicks[index], ...tickStructure]
+    },
+    setNearestTicksForPair(state, action: PayloadAction<UpdateTick>) {
+      state.nearestPoolTicksForPair[action.payload.index] = action.payload.tickStructure
+      return state
+    },
+    getNearestTicksForPair(_state, _action: PayloadAction<FetchTicksAndTickMaps>) {}
   }
 })
 

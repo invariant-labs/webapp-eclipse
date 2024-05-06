@@ -5,12 +5,7 @@ import { Status } from '@reducers/solanaConnection'
 import { actions } from '@reducers/pools'
 import { getMarketProgramSync } from '@web3/programs/amm'
 import { poolsArraySortedByFees, poolTicks, tickMaps } from '@selectors/pools'
-import {
-  getNetworkTokensList,
-  findPairs,
-  getFullNewTokensData,
-  getPoolsVolumeRanges
-} from '@consts/utils'
+import { getNetworkTokensList, getFullNewTokensData, getPoolsVolumeRanges } from '@consts/utils'
 import { swap } from '@selectors/swap'
 import { findTickmapChanges, Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
@@ -223,27 +218,8 @@ const MarketEvents = () => {
 
   useEffect(() => {
     if (tokenFrom && tokenTo) {
-      const pools = findPairs(tokenFrom, tokenTo, allPools)
-      for (const pool of pools) {
-        marketProgram
-          .getTickmap(
-            new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
-          )
-          .then(res => {
-            dispatch(actions.setTickMaps({ index: pool.tickmap.toString(), tickMapStructure: res }))
-          })
-          .catch(err => {
-            console.log(err)
-          })
-        marketProgram
-          .getAllTicks(
-            new Pair(tokenFrom, tokenTo, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
-          )
-          .then(res => {
-            dispatch(actions.setTicks({ index: pool.address.toString(), tickStructure: res }))
-          })
-          .catch(err => console.log(err))
-      }
+      dispatch(actions.getNearestTicksForPair({ tokenFrom, tokenTo, allPools }))
+      dispatch(actions.getTicksAndTickMaps({ tokenFrom, tokenTo, allPools }))
     }
   }, [tokenFrom, tokenTo])
 

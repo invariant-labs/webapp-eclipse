@@ -566,8 +566,14 @@ export const handleSimulate = async (
     isXtoY = fromToken.equals(pool.tokenX)
 
     const ticks: Map<number, Tick> = new Map<number, Tick>()
-    for (const tick of poolTicks[pool.address.toString()]) {
-      ticks.set(tick.index, tick)
+    const poolTicksForAddress = poolTicks[pool.address.toString()]
+    if (Array.isArray(poolTicksForAddress)) {
+      for (const tick of poolTicksForAddress) {
+        ticks.set(tick.index, tick)
+      }
+    } else {
+      errorMessage.push(`Ticks not available for pool ${pool.address.toString()}`)
+      continue // Move to the next pool
     }
 
     try {
