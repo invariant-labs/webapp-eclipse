@@ -101,23 +101,7 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
 
     const pools = findPairs(tokenFrom, tokenTo, allPools)
 
-    const allTickMaps = yield* all([
-      ...pools.map(pool =>
-        call(
-          [marketProgram, marketProgram.getTickmap],
-          new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
-        )
-      )
-    ])
-
-    for (let i = 0; i < pools.length; i++) {
-      yield* put(
-        actions.setTickMaps({
-          index: pools[i].tickmap.toString(),
-          tickMapStructure: allTickMaps[i]
-        })
-      )
-    }
+    yield* call(fetchTickMaps, pools)
 
     for (const pool of pools) {
       const ticks = yield* call(
@@ -143,6 +127,30 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
   }
 }
 
+function* fetchTickMaps(pools: PoolWithAddress[]) {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const marketProgram = yield* call(getMarketProgram, networkType, rpc)
+
+  const allTickMaps = yield* all([
+    ...pools.map(pool =>
+      call(
+        [marketProgram, marketProgram.getTickmap],
+        new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
+      )
+    )
+  ])
+
+  for (let i = 0; i < pools.length; i++) {
+    yield* put(
+      actions.setTickMaps({
+        index: pools[i].tickmap.toString(),
+        tickMapStructure: allTickMaps[i]
+      })
+    )
+  }
+}
+
 export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTickMaps>) {
   const { tokenFrom, tokenTo, allPools } = action.payload
   enum IsXtoY {
@@ -157,13 +165,15 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
 
     const pools = findPairs(tokenFrom, tokenTo, allPools)
 
+    yield* call(fetchTickMaps, pools)
+
     const results = yield* all([
       ...pools.map(pool => {
         const isXtoY = tokenFrom.equals(pool.tokenX)
         return call(
           [marketProgram, marketProgram.getClosestTicks],
           new Pair(tokenFrom, tokenTo, { fee: pool.fee.v, tickSpacing: pool.tickSpacing }),
-          300,
+          21,
           undefined,
           isXtoY ? IsXtoY.Down : IsXtoY.Up
         )
