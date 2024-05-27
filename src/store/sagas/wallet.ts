@@ -200,7 +200,7 @@ export function* transferAirdropSOL(): Generator {
     SystemProgram.transfer({
       fromPubkey: airdropAdmin.publicKey,
       toPubkey: wallet.publicKey,
-      lamports: 30000
+      lamports: 6000
     })
   )
   const connection = yield* call(getConnection)
