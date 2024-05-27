@@ -156,7 +156,7 @@ export function* handleAirdrop(): Generator {
       })
     )
   } else {
-    yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
+    yield* call([connection, connection.requestAirdrop], wallet.publicKey, 2 * 1e8)
 
     yield* call(
       getCollateralTokenAirdrop,
@@ -200,7 +200,7 @@ export function* transferAirdropSOL(): Generator {
     SystemProgram.transfer({
       fromPubkey: airdropAdmin.publicKey,
       toPubkey: wallet.publicKey,
-      lamports: 30000
+      lamports: 6000
     })
   )
   const connection = yield* call(getConnection)
