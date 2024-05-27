@@ -156,7 +156,7 @@ export function* handleAirdrop(): Generator {
       })
     )
   } else {
-    yield* call([connection, connection.requestAirdrop], wallet.publicKey, 2 * 1e8)
+    yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
 
     yield* call(
       getCollateralTokenAirdrop,
