@@ -1,17 +1,26 @@
 import {
-  call,
-  takeLeading,
-  SagaGenerator,
-  put,
-  spawn,
   all,
+  call,
+  put,
+  SagaGenerator,
   select,
-  takeLatest
+  spawn,
+  takeLatest,
+  takeLeading
 } from 'typed-redux-saga'
 
+import airdropAdmin from '@consts/airdropAdmin'
+import { airdropQuantities, airdropTokens, NetworkType, Token as StoreToken } from '@consts/static'
+import { createLoaderKey } from '@consts/utils'
+import { BN } from '@project-serum/anchor'
+import { actions as poolsActions } from '@reducers/pools'
+import { actions as positionsActions } from '@reducers/positions'
+import { actions as snackbarsActions } from '@reducers/snackbars'
 import { actions, ITokenAccount, Status } from '@reducers/solanaWallet'
-import { getConnection } from './connection'
-import { getSolanaWallet, disconnectWallet } from '@web3/wallet'
+import { tokens } from '@selectors/pools'
+import { network } from '@selectors/solanaConnection'
+import { accounts, status } from '@selectors/solanaWallet'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
   Account,
   PublicKey,
@@ -21,20 +30,11 @@ import {
   Transaction,
   TransactionInstruction
 } from '@solana/web3.js'
-import { Token, ASSOCIATED_TOKEN_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { actions as snackbarsActions } from '@reducers/snackbars'
-import { actions as positionsActions } from '@reducers/positions'
-import { BN } from '@project-serum/anchor'
 import { WalletAdapter } from '@web3/adapters/types'
-import { getTokenDetails } from './token'
-import { accounts, status } from '@selectors/solanaWallet'
-import { airdropQuantities, airdropTokens, NetworkType, Token as StoreToken } from '@consts/static'
-import airdropAdmin from '@consts/airdropAdmin'
-import { network } from '@selectors/solanaConnection'
-import { tokens } from '@selectors/pools'
-import { actions as poolsActions } from '@reducers/pools'
-import { createLoaderKey } from '@consts/utils'
+import { disconnectWallet, getSolanaWallet } from '@web3/wallet'
 import { closeSnackbar } from 'notistack'
+import { getConnection } from './connection'
+import { getTokenDetails } from './token'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { actions as bondsActions } from '@reducers/bonds'
 
@@ -200,7 +200,7 @@ export function* transferAirdropSOL(): Generator {
     SystemProgram.transfer({
       fromPubkey: airdropAdmin.publicKey,
       toPubkey: wallet.publicKey,
-      lamports: 6000
+      lamports: 50000
     })
   )
   const connection = yield* call(getConnection)
