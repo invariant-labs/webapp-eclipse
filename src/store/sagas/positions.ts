@@ -126,27 +126,25 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       userTokenY = yield* call(createAccount, data.tokenY)
     }
 
-    const { transaction, signers } = yield* call(
-      [marketProgram, marketProgram.initPoolAndPositionTx],
-      {
-        pair: new Pair(data.tokenX, data.tokenY, {
-          fee: data.fee,
-          tickSpacing: data.tickSpacing
-        }),
-        userTokenX,
-        userTokenY,
-        lowerTick: data.lowerTick,
-        upperTick: data.upperTick,
-        liquidityDelta: data.liquidityDelta,
-        owner: wallet.publicKey,
-        initTick: data.initTick,
-        slippage: data.slippage,
-        knownPrice: data.knownPrice
-      }
-    )
+    const txs = yield* call([marketProgram, marketProgram.initPoolAndPositionTx], {
+      pair: new Pair(data.tokenX, data.tokenY, {
+        fee: data.fee,
+        tickSpacing: data.tickSpacing
+      }),
+      userTokenX,
+      userTokenY,
+      lowerTick: data.lowerTick,
+      upperTick: data.upperTick,
+      liquidityDelta: data.liquidityDelta,
+      owner: wallet.publicKey,
+      initTick: data.initTick,
+      slippage: data.slippage,
+      knownPrice: data.knownPrice
+    })
 
-    const initPositionTx = transaction
-    const poolSigners = signers
+    const initPositionTx = txs.initPositionTx
+    const initPoolTx = txs.initPoolTx
+    const poolSigners = txs.initPoolSigners
 
     const initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
 
@@ -158,6 +156,10 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     initPositionTx.recentBlockhash = initPositionBlockhash.blockhash
     initPositionTx.feePayer = wallet.publicKey
 
+    const initPoolBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    initPoolTx.recentBlockhash = initPoolBlockhash.blockhash
+    initPoolTx.feePayer = wallet.publicKey
+
     const unwrapTx = new Transaction().add(unwrapIx)
     const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
     unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
@@ -165,9 +167,9 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const [initialSignedTx, initPositionSignedTx, unwrapSignedTx] = yield* call(
+    const [initialSignedTx, initPositionSignedTx, unwrapSignedTx, initPoolSignedTx] = yield* call(
       [wallet, wallet.signAllTransactions],
-      [initialTx, initPositionTx, unwrapTx]
+      [initialTx, initPositionTx, unwrapTx, initPoolTx]
     )
 
     closeSnackbar(loaderSigningTx)
@@ -176,7 +178,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     initialSignedTx.partialSign(wrappedEthAccount)
 
     if (poolSigners.length) {
-      initPositionSignedTx.partialSign(...poolSigners)
+      initPoolSignedTx.partialSign(...poolSigners)
     }
 
     const initialTxid = yield* call(
@@ -200,6 +202,10 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
         })
       )
     }
+
+    yield* call(sendAndConfirmRawTransaction, connection, initPoolSignedTx.serialize(), {
+      skipPreflight: false
+    })
 
     const initPositionTxid = yield* call(
       sendAndConfirmRawTransaction,
@@ -526,33 +532,28 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     }
 
     let tx: Transaction
+    let initPoolTx: Transaction | null = null
     let poolSigners: Keypair[] = []
 
     if (action.payload.initPool) {
-      console.log(userTokenX.toString())
-      console.log(userTokenY.toString())
-      console.log(action.payload)
-      const { transaction, signers } = yield* call(
-        [marketProgram, marketProgram.initPoolAndPositionTx],
-        {
-          pair: new Pair(action.payload.tokenX, action.payload.tokenY, {
-            fee: action.payload.fee,
-            tickSpacing: action.payload.tickSpacing
-          }),
-          userTokenX,
-          userTokenY,
-          lowerTick: action.payload.lowerTick,
-          upperTick: action.payload.upperTick,
-          liquidityDelta: action.payload.liquidityDelta,
-          owner: wallet.publicKey,
-          initTick: action.payload.initTick,
-          slippage: action.payload.slippage,
-          knownPrice: action.payload.knownPrice
-        }
-      )
-
-      tx = transaction
-      poolSigners = signers
+      const txs = yield* call([marketProgram, marketProgram.initPoolAndPositionTx], {
+        pair: new Pair(action.payload.tokenX, action.payload.tokenY, {
+          fee: action.payload.fee,
+          tickSpacing: action.payload.tickSpacing
+        }),
+        userTokenX,
+        userTokenY,
+        lowerTick: action.payload.lowerTick,
+        upperTick: action.payload.upperTick,
+        liquidityDelta: action.payload.liquidityDelta,
+        owner: wallet.publicKey,
+        initTick: action.payload.initTick,
+        slippage: action.payload.slippage,
+        knownPrice: action.payload.knownPrice
+      })
+      tx = txs.initPositionTx
+      initPoolTx = txs.initPoolTx
+      poolSigners = txs.initPoolSigners
     } else {
       tx = yield* call([marketProgram, marketProgram.initPositionTx], {
         pair: new Pair(action.payload.tokenX, action.payload.tokenY, {
@@ -574,6 +575,20 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     tx.recentBlockhash = blockhash.blockhash
     tx.feePayer = wallet.publicKey
 
+    if (initPoolTx) {
+      initPoolTx.recentBlockhash = blockhash.blockhash
+      initPoolTx.feePayer = wallet.publicKey
+      yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+      const signedTx = yield* call([wallet, wallet.signTransaction], initPoolTx)
+      closeSnackbar(loaderSigningTx)
+      yield put(snackbarsActions.remove(loaderSigningTx))
+      signedTx.partialSign(...poolSigners)
+      yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+        skipPreflight: false
+      })
+      // yield put(actions.setInitPositionSuccess(!!txid.length))
+    }
+
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     const signedTx = yield* call([wallet, wallet.signTransaction], tx)
@@ -581,15 +596,15 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    if (poolSigners.length) {
-      signedTx.partialSign(...poolSigners)
-    }
+    // if (poolSigners.length) {
+    //   signedTx.partialSign(...poolSigners)
+    // }
 
-    console.log('Sending transaction')
+    // console.log('Sending transaction')
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
-    console.log(txid)
+    // console.log(txid)
 
     yield put(actions.setInitPositionSuccess(!!txid.length))
 
