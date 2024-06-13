@@ -878,7 +878,6 @@ export const getFullNewTokensData = async (
     const token = new SPLToken(connection, address, programId, new Keypair())
     return await token.getMintInfo()
   })
-  // .map(async token => await (await token).getMintInfo())
 
   const tokens: Record<string, Token> = {}
 

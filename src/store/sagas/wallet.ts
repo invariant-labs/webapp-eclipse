@@ -20,12 +20,7 @@ import { actions, ITokenAccount, Status } from '@reducers/solanaWallet'
 import { tokens } from '@selectors/pools'
 import { network } from '@selectors/solanaConnection'
 import { accounts, status } from '@selectors/solanaWallet'
-import {
-  // AccountInfo,
-  ASSOCIATED_TOKEN_PROGRAM_ID,
-  Token,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
   Account,
   ParsedAccountData,
@@ -85,20 +80,6 @@ export function* fetchTokensAccounts(): Generator {
   const connection = yield* call(getConnection)
   const wallet = yield* call(getWallet)
 
-  // const tokenAccounts = await connection.getTokenAccountsByOwner(wallet.publicKey, {
-  //   programId: TOKEN_PROGRAM_ID
-  // })
-  // const token2022Accounts = await connection.getTokenAccountsByOwner(wallet.publicKey, {
-  //   programId: TOKEN_2022_PROGRAM_ID
-  // })
-  // const accountsWithProgramId = [...tokenAccounts.value, ...token2022Accounts.value].map(
-  //   ({ account, pubkey }) => ({
-  //     account,
-  //     pubkey,
-  //     programId: account.data.program === 'spl-token' ? TOKEN_PROGRAM_ID : TOKEN_2022_PROGRAM_ID
-  //   })
-  // )
-
   const splTokensAccounts: RpcResponseAndContext<TokenAccountInfo[]> = yield* call(
     [connection, connection.getParsedTokenAccountsByOwner],
     wallet.publicKey,
@@ -106,8 +87,6 @@ export function* fetchTokensAccounts(): Generator {
       programId: TOKEN_PROGRAM_ID
     }
   )
-
-  console.log(splTokensAccounts)
 
   const token2022TokensAccounts: RpcResponseAndContext<TokenAccountInfo[]> = yield* call(
     [connection, connection.getParsedTokenAccountsByOwner],
@@ -117,23 +96,11 @@ export function* fetchTokensAccounts(): Generator {
     }
   )
 
-  console.log(token2022TokensAccounts)
-
-  // Merge the values from both responses
   const mergedAccounts: TokenAccountInfo[] = [
     ...splTokensAccounts.value,
     ...token2022TokensAccounts.value
   ]
 
-  console.log(mergedAccounts)
-  const tokensAccounts = yield* call(
-    [connection, connection.getParsedTokenAccountsByOwner],
-    wallet.publicKey,
-    {
-      programId: TOKEN_PROGRAM_ID
-    }
-  )
-  console.log(tokensAccounts)
   const allTokens = yield* select(tokens)
   const newAccounts: ITokenAccount[] = []
   const unknownTokens: Record<string, StoreToken> = {}
@@ -199,7 +166,6 @@ export function* handleAirdrop(): Generator {
   if (networkType === NetworkType.TESTNET) {
     // transfer sol
     // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
-    console.log(wallet.publicKey.toString())
     yield* call(transferAirdropSOL)
     yield* call(
       getCollateralTokenAirdrop,
@@ -215,7 +181,6 @@ export function* handleAirdrop(): Generator {
       })
     )
   } else {
-    console.log(wallet.publicKey.toString())
     yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
 
     yield* call(
@@ -255,7 +220,6 @@ export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator 
 
 export function* transferAirdropSOL(): Generator {
   const wallet = yield* call(getWallet)
-  console.log(wallet.publicKey.toString())
   const tx = new Transaction().add(
     SystemProgram.transfer({
       fromPubkey: airdropAdmin.publicKey,

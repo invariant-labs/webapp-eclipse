@@ -94,7 +94,7 @@ export const S22_TEST: Token = {
   symbol: 'S22',
   address: new PublicKey('Bo6ufYtZ7rRtVX2VryazbYjZSgHExfpXST9Xo3Vd3CyA'),
   decimals: 9,
-  name: 'Token 2022 Test',
+  name: 'S22',
   logoURI:
     'https://orange-raw-gibbon-956.mypinata.cloud/ipfs/Qmb1yojLQjv5dNjQ3TrAjKvf42XxQJqpLm2nRyzeuz9iGV',
   coingeckoId: ''
