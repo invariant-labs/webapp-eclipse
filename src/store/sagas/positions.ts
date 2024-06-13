@@ -529,6 +529,9 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     let poolSigners: Keypair[] = []
 
     if (action.payload.initPool) {
+      console.log(userTokenX.toString())
+      console.log(userTokenY.toString())
+      console.log(action.payload)
       const { transaction, signers } = yield* call(
         [marketProgram, marketProgram.initPoolAndPositionTx],
         {
@@ -582,9 +585,11 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
       signedTx.partialSign(...poolSigners)
     }
 
+    console.log('Sending transaction')
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
+    console.log(txid)
 
     yield put(actions.setInitPositionSuccess(!!txid.length))
 

@@ -1,4 +1,10 @@
-import { calculatePriceSqrt, MAX_TICK, MIN_TICK, Pair } from '@invariant-labs/sdk-eclipse'
+import {
+  calculatePriceSqrt,
+  getTokenProgramAddress,
+  MAX_TICK,
+  MIN_TICK,
+  Pair
+} from '@invariant-labs/sdk-eclipse'
 import { Decimal, PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
   calculateTickDelta,
@@ -9,7 +15,7 @@ import {
 } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@project-serum/anchor'
 import { PlotTickData, PositionWithAddress } from '@reducers/positions'
-import { Token as SPLToken, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { Token as SPLToken } from '@solana/spl-token'
 import {
   BTC_DEV,
   BTC_TEST,
@@ -19,6 +25,7 @@ import {
   MOON_TEST,
   NetworkType,
   PRICE_DECIMAL,
+  S22_TEST,
   Token,
   tokensPrices,
   USDC_DEV,
@@ -405,6 +412,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [BTC_TEST.address.toString()]: BTC_TEST,
         [WETH_TEST.address.toString()]: WETH_TEST,
         [MOON_TEST.address.toString()]: MOON_TEST,
+        [S22_TEST.address.toString()]: S22_TEST,
         [EBGR_TEST.address.toString()]: EBGR_TEST,
         [ECEGG_TEST.address.toString()]: ECEGG_TEST
       }
@@ -854,13 +862,23 @@ export const generateUnknownTokenDataObject = (address: PublicKey, decimals: num
   isUnknown: true
 })
 
+export const getTokenProgramId = async (
+  connection: Connection,
+  address: PublicKey
+): Promise<PublicKey> => {
+  return await getTokenProgramAddress(connection, address)
+}
+
 export const getFullNewTokensData = async (
   addresses: PublicKey[],
   connection: Connection
 ): Promise<Record<string, Token>> => {
-  const promises = addresses
-    .map(address => new SPLToken(connection, address, TOKEN_PROGRAM_ID, new Keypair()))
-    .map(async token => await token.getMintInfo())
+  const promises = addresses.map(async address => {
+    const programId = await getTokenProgramId(connection, address)
+    const token = new SPLToken(connection, address, programId, new Keypair())
+    return await token.getMintInfo()
+  })
+  // .map(async token => await (await token).getMintInfo())
 
   const tokens: Record<string, Token> = {}
 
@@ -891,7 +909,8 @@ export const getNewTokenOrThrow = async (
   connection: Connection
 ): Promise<Record<string, Token>> => {
   const key = new PublicKey(address)
-  const token = new SPLToken(connection, key, TOKEN_PROGRAM_ID, new Keypair())
+  const programId = await getTokenProgramId(connection, new PublicKey(address))
+  const token = new SPLToken(connection, key, programId, new Keypair())
 
   const info = await token.getMintInfo()
 

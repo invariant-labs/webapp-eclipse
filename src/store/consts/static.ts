@@ -90,6 +90,16 @@ export const MOON_TEST: Token = {
   coingeckoId: ''
 }
 
+export const S22_TEST: Token = {
+  symbol: 'S22',
+  address: new PublicKey('Bo6ufYtZ7rRtVX2VryazbYjZSgHExfpXST9Xo3Vd3CyA'),
+  decimals: 9,
+  name: 'Token 2022 Test',
+  logoURI:
+    'https://orange-raw-gibbon-956.mypinata.cloud/ipfs/Qmb1yojLQjv5dNjQ3TrAjKvf42XxQJqpLm2nRyzeuz9iGV',
+  coingeckoId: ''
+}
+
 export const EBGR_TEST: Token = {
   symbol: 'EBGR',
   address: new PublicKey('EBGR1Nb8k3ihiwFuRvXXuxotSKbX7FQWwuzfJEVE9wx9'),
@@ -136,6 +146,7 @@ export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> =
     BTC_TEST: { price: 64572.0 },
     WETH_TEST: { price: 3430.21 },
     MOON_TEST: { price: 0.00000005735 },
+    S22_TEST: { price: 0.01 },
     EBGR_TEST: { price: 0.0000011 },
     ECEGG_TEST: { price: 0.000001 }
   },

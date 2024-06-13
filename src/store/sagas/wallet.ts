@@ -11,7 +11,7 @@ import {
 
 import airdropAdmin from '@consts/airdropAdmin'
 import { airdropQuantities, airdropTokens, NetworkType, Token as StoreToken } from '@consts/static'
-import { createLoaderKey } from '@consts/utils'
+import { createLoaderKey, getTokenProgramId } from '@consts/utils'
 import { BN } from '@project-serum/anchor'
 import { actions as poolsActions } from '@reducers/pools'
 import { actions as positionsActions } from '@reducers/positions'
@@ -20,14 +20,22 @@ import { actions, ITokenAccount, Status } from '@reducers/solanaWallet'
 import { tokens } from '@selectors/pools'
 import { network } from '@selectors/solanaConnection'
 import { accounts, status } from '@selectors/solanaWallet'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import {
+  // AccountInfo,
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  Token,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
 import {
   Account,
+  ParsedAccountData,
   PublicKey,
+  RpcResponseAndContext,
   sendAndConfirmRawTransaction,
   Signer,
   SystemProgram,
   Transaction,
+  AccountInfo,
   TransactionInstruction
 } from '@solana/web3.js'
 import { WalletAdapter } from '@web3/adapters/types'
@@ -35,6 +43,7 @@ import { disconnectWallet, getSolanaWallet } from '@web3/wallet'
 import { closeSnackbar } from 'notistack'
 import { getConnection } from './connection'
 import { getTokenDetails } from './token'
+import { TOKEN_2022_PROGRAM_ID } from '@invariant-labs/sdk-eclipse'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { actions as bondsActions } from '@reducers/bonds'
 
@@ -67,9 +76,56 @@ interface IparsedTokenInfo {
     uiAmount: number
   }
 }
+interface TokenAccountInfo {
+  pubkey: PublicKey
+  account: AccountInfo<ParsedAccountData>
+}
+
 export function* fetchTokensAccounts(): Generator {
   const connection = yield* call(getConnection)
   const wallet = yield* call(getWallet)
+
+  // const tokenAccounts = await connection.getTokenAccountsByOwner(wallet.publicKey, {
+  //   programId: TOKEN_PROGRAM_ID
+  // })
+  // const token2022Accounts = await connection.getTokenAccountsByOwner(wallet.publicKey, {
+  //   programId: TOKEN_2022_PROGRAM_ID
+  // })
+  // const accountsWithProgramId = [...tokenAccounts.value, ...token2022Accounts.value].map(
+  //   ({ account, pubkey }) => ({
+  //     account,
+  //     pubkey,
+  //     programId: account.data.program === 'spl-token' ? TOKEN_PROGRAM_ID : TOKEN_2022_PROGRAM_ID
+  //   })
+  // )
+
+  const splTokensAccounts: RpcResponseAndContext<TokenAccountInfo[]> = yield* call(
+    [connection, connection.getParsedTokenAccountsByOwner],
+    wallet.publicKey,
+    {
+      programId: TOKEN_PROGRAM_ID
+    }
+  )
+
+  console.log(splTokensAccounts)
+
+  const token2022TokensAccounts: RpcResponseAndContext<TokenAccountInfo[]> = yield* call(
+    [connection, connection.getParsedTokenAccountsByOwner],
+    wallet.publicKey,
+    {
+      programId: TOKEN_2022_PROGRAM_ID
+    }
+  )
+
+  console.log(token2022TokensAccounts)
+
+  // Merge the values from both responses
+  const mergedAccounts: TokenAccountInfo[] = [
+    ...splTokensAccounts.value,
+    ...token2022TokensAccounts.value
+  ]
+
+  console.log(mergedAccounts)
   const tokensAccounts = yield* call(
     [connection, connection.getParsedTokenAccountsByOwner],
     wallet.publicKey,
@@ -77,10 +133,11 @@ export function* fetchTokensAccounts(): Generator {
       programId: TOKEN_PROGRAM_ID
     }
   )
+  console.log(tokensAccounts)
   const allTokens = yield* select(tokens)
   const newAccounts: ITokenAccount[] = []
   const unknownTokens: Record<string, StoreToken> = {}
-  for (const account of tokensAccounts.value) {
+  for (const account of mergedAccounts) {
     const info: IparsedTokenInfo = account.account.data.parsed.info
     newAccounts.push({
       programId: new PublicKey(info.mint),
@@ -107,7 +164,8 @@ export function* fetchTokensAccounts(): Generator {
 
 export function* getToken(tokenAddress: PublicKey): SagaGenerator<Token> {
   const connection = yield* call(getConnection)
-  const token = new Token(connection, tokenAddress, TOKEN_PROGRAM_ID, new Account())
+  const programId = yield* call(getTokenProgramId, connection, new PublicKey(tokenAddress))
+  const token = new Token(connection, tokenAddress, programId, new Account())
   return token
 }
 
@@ -141,6 +199,7 @@ export function* handleAirdrop(): Generator {
   if (networkType === NetworkType.TESTNET) {
     // transfer sol
     // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
+    console.log(wallet.publicKey.toString())
     yield* call(transferAirdropSOL)
     yield* call(
       getCollateralTokenAirdrop,
@@ -156,6 +215,7 @@ export function* handleAirdrop(): Generator {
       })
     )
   } else {
+    console.log(wallet.publicKey.toString())
     yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
 
     yield* call(
@@ -195,7 +255,7 @@ export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator 
 
 export function* transferAirdropSOL(): Generator {
   const wallet = yield* call(getWallet)
-
+  console.log(wallet.publicKey.toString())
   const tx = new Transaction().add(
     SystemProgram.transfer({
       fromPubkey: airdropAdmin.publicKey,
@@ -284,16 +344,18 @@ export function* signAndSend(wallet: WalletAdapter, tx: Transaction): SagaGenera
 
 export function* createAccount(tokenAddress: PublicKey): SagaGenerator<PublicKey> {
   const wallet = yield* call(getWallet)
+  const connection = yield* call(getConnection)
+  const programId = yield* call(getTokenProgramId, connection, new PublicKey(tokenAddress))
   const associatedAccount = yield* call(
     Token.getAssociatedTokenAddress,
     ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
+    programId,
     tokenAddress,
     wallet.publicKey
   )
   const ix = Token.createAssociatedTokenAccountInstruction(
     ASSOCIATED_TOKEN_PROGRAM_ID,
-    TOKEN_PROGRAM_ID,
+    programId,
     tokenAddress,
     associatedAccount,
     wallet.publicKey,
@@ -330,21 +392,23 @@ export function* createAccount(tokenAddress: PublicKey): SagaGenerator<PublicKey
 
 export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerator<PublicKey[]> {
   const wallet = yield* call(getWallet)
+  const connection = yield* call(getConnection)
   const ixs: TransactionInstruction[] = []
   const associatedAccs: PublicKey[] = []
 
   for (const address of tokenAddress) {
+    const programId = yield* call(getTokenProgramId, connection, address)
     const associatedAccount = yield* call(
       Token.getAssociatedTokenAddress,
       ASSOCIATED_TOKEN_PROGRAM_ID,
-      TOKEN_PROGRAM_ID,
+      programId,
       address,
       wallet.publicKey
     )
     associatedAccs.push(associatedAccount)
     const ix = Token.createAssociatedTokenAccountInstruction(
       ASSOCIATED_TOKEN_PROGRAM_ID,
-      TOKEN_PROGRAM_ID,
+      programId,
       address,
       associatedAccount,
       wallet.publicKey,
