@@ -4,6 +4,7 @@ import { getConnection } from './connection'
 import { Account, PublicKey } from '@solana/web3.js'
 import { MintInfo, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { getWallet } from './wallet'
+import { getTokenProgramId } from '@consts/utils'
 
 export function* createToken(
   decimals: number,
@@ -26,7 +27,8 @@ export function* createToken(
 }
 export function* getTokenDetails(address: string): SagaGenerator<MintInfo> {
   const connection = yield* call(getConnection)
-  const token = new Token(connection, new PublicKey(address), TOKEN_PROGRAM_ID, new Account())
+  const programId = yield* call(getTokenProgramId, connection, new PublicKey(address))
+  const token = new Token(connection, new PublicKey(address), programId, new Account())
   const info = yield* call([token, token.getMintInfo])
   return info
 }
@@ -34,7 +36,8 @@ export function* getTokenDetails(address: string): SagaGenerator<MintInfo> {
 export function* mintToken(tokenAddress: string, recipient: string, amount: number): Generator {
   yield* call(getWallet)
   const connection = yield* call(getConnection)
-  const token = new Token(connection, new PublicKey(tokenAddress), TOKEN_PROGRAM_ID, new Account())
+  const programId = yield* call(getTokenProgramId, connection, new PublicKey(tokenAddress))
+  const token = new Token(connection, new PublicKey(tokenAddress), programId, new Account())
   // This should return txid in future
   yield* call([token, token.mintTo], new PublicKey(recipient), new Account(), [], amount)
 }
