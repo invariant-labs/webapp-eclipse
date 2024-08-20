@@ -1099,6 +1099,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
         tickSpacing: positionForIndex.tickSpacing
       }),
       owner: wallet.publicKey,
+      payer: wallet.publicKey,
       index: data.positionIndex,
       userTokenX,
       userTokenY
@@ -1250,6 +1251,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
         tickSpacing: positionForIndex.tickSpacing
       }),
       owner: wallet.publicKey,
+      payer: wallet.publicKey,
       index: action.payload.positionIndex,
       userTokenX,
       userTokenY
