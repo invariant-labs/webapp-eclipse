@@ -36,7 +36,6 @@ import {
   WETH_DEV,
   WETH_TEST
 } from './static'
-import mainnetList from './tokenLists/mainnet.json'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
 import { PoolWithAddress } from '@reducers/pools'
 import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
