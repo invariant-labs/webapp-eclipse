@@ -133,12 +133,10 @@ export const Header: React.FC<IHeader> = ({
           <SelectNetworkButton
             name={typeOfNetwork}
             networks={[
-              // {
-              //   networkType: NetworkType.MAINNET,
-              //   rpc: defaultMainnetRPC,
-              //   rpcName:
-              //     mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
-              // },
+              {
+                networkType: NetworkType.MAINNET,
+                rpc: EclipseNetworks.MAIN
+              },
               { networkType: NetworkType.TESTNET, rpc: EclipseNetworks.TEST },
               { networkType: NetworkType.DEVNET, rpc: EclipseNetworks.DEV_EU }
             ]}

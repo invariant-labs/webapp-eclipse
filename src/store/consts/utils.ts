@@ -19,15 +19,20 @@ import { Token as SPLToken } from '@solana/spl-token'
 import {
   BTC_DEV,
   BTC_TEST,
+  ETH_MAIN,
   MAX_U64,
   MOON_TEST,
   NetworkType,
   PRICE_DECIMAL,
   S22_TEST,
+  SOL_MAIN,
   Token,
   tokensPrices,
   USDC_DEV,
+  USDC_MAIN,
   USDC_TEST,
+  USDT_MAIN,
+  WBTC_MAIN,
   WETH_DEV,
   WETH_TEST
 } from './static'
@@ -390,14 +395,21 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
   const obj: Record<string, Token> = {}
   switch (networkType) {
     case NetworkType.MAINNET:
-      ;(mainnetList as any[]).forEach(token => {
-        obj[token.address] = {
-          ...token,
-          address: new PublicKey(token.address),
-          coingeckoId: token?.extensions?.coingeckoId
-        }
-      })
-      return obj
+      // ;(mainnetList as any[]).forEach(token => {
+      //   obj[token.address] = {
+      //     ...token,
+      //     address: new PublicKey(token.address),
+      //     coingeckoId: token?.extensions?.coingeckoId
+      //   }
+      // })
+      // return obj
+      return {
+        [USDC_MAIN.address.toString()]: USDC_MAIN,
+        [USDT_MAIN.address.toString()]: USDT_MAIN,
+        [SOL_MAIN.address.toString()]: SOL_MAIN,
+        [ETH_MAIN.address.toString()]: ETH_MAIN,
+        [WBTC_MAIN.address.toString()]: WBTC_MAIN
+      }
     case NetworkType.DEVNET:
       return {
         [USDC_DEV.address.toString()]: USDC_DEV,
