@@ -8,6 +8,7 @@ import { address, status } from '@selectors/solanaWallet'
 import { actions } from '@reducers/solanaConnection'
 import { network, rpcAddress } from '@selectors/solanaConnection'
 import { nightlyConnectAdapter, openWalletSelectorModal } from '@web3/selector'
+import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -45,30 +46,33 @@ export const HeaderWrapper: React.FC = () => {
   }, [])
 
   return (
-    <Header
-      address={walletAddress}
-      onNetworkSelect={(network, rpcAddress, rpcName) => {
-        if (network !== currentNetwork || rpcAddress !== currentRpc) {
-          if (network === NetworkType.MAINNET) {
-            localStorage.setItem('INVARIANT_MAINNET_RPC', rpcAddress)
-          }
+    <>
+      <ThankYouModal />
+      <Header
+        address={walletAddress}
+        onNetworkSelect={(network, rpcAddress, rpcName) => {
+          if (network !== currentNetwork || rpcAddress !== currentRpc) {
+            if (network === NetworkType.MAINNET) {
+              localStorage.setItem('INVARIANT_MAINNET_RPC', rpcAddress)
+            }
 
-          dispatch(actions.setNetwork({ network, rpcAddress, rpcName }))
-        }
-      }}
-      onConnectWallet={openWalletSelectorModal}
-      landing={location.pathname.substr(1)}
-      walletConnected={walletStatus === Status.Initialized}
-      onFaucet={() => {
-        dispatch(walletActions.airdrop())
-      }}
-      onDisconnectWallet={() => {
-        dispatch(walletActions.disconnect())
-      }}
-      typeOfNetwork={currentNetwork}
-      rpc={currentRpc}
-      defaultMainnetRPC={defaultMainnetRPC}
-    />
+            dispatch(actions.setNetwork({ network, rpcAddress, rpcName }))
+          }
+        }}
+        onConnectWallet={openWalletSelectorModal}
+        landing={location.pathname.substr(1)}
+        walletConnected={walletStatus === Status.Initialized}
+        onFaucet={() => {
+          dispatch(walletActions.airdrop())
+        }}
+        onDisconnectWallet={() => {
+          dispatch(walletActions.disconnect())
+        }}
+        typeOfNetwork={currentNetwork}
+        rpc={currentRpc}
+        defaultMainnetRPC={defaultMainnetRPC}
+      />
+    </>
   )
 }
 

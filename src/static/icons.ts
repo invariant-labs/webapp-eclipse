@@ -30,6 +30,8 @@ import inactiveIcon from './svg/inactive.svg'
 import allIcon from './svg/all.svg'
 import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
+import circleDiscord from './svg/circle-discord.svg'
+import circleTelegram from './svg/circle-telegram.svg'
 
 const icons: { [key: string]: string } = {
   USDT: USDIcon,
@@ -64,7 +66,9 @@ const icons: { [key: string]: string } = {
   inactiveIcon: inactiveIcon,
   allIcon: allIcon,
   closeSmallIcon: closeSmallIcon,
-  docsIcon
+  docsIcon,
+  circleDiscord,
+  circleTelegram
 }
 
 export default icons
