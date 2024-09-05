@@ -32,6 +32,7 @@ import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
 import circleDiscord from './svg/circle-discord.svg'
 import circleTelegram from './svg/circle-telegram.svg'
+import eclipse from './svg/eclipse.svg'
 
 const icons: { [key: string]: string } = {
   USDT: USDIcon,
@@ -68,7 +69,8 @@ const icons: { [key: string]: string } = {
   closeSmallIcon: closeSmallIcon,
   docsIcon,
   circleDiscord,
-  circleTelegram
+  circleTelegram,
+  eclipse
 }
 
 export default icons

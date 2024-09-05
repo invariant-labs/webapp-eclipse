@@ -149,6 +149,8 @@ export function* handleAirdrop(): Generator {
     return
   }
 
+  yield* put(actions.showThankYouModal(true))
+
   const loaderKey = createLoaderKey()
   yield put(
     snackbarsActions.add({

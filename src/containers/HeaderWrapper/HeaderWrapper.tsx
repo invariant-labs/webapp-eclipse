@@ -4,7 +4,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation } from 'react-router-dom'
 import { NetworkType, EclipseNetworks } from '@consts/static'
 import { actions as walletActions, Status } from '@reducers/solanaWallet'
-import { address, status } from '@selectors/solanaWallet'
+import { address, status, thankYouModalShown } from '@selectors/solanaWallet'
 import { actions } from '@reducers/solanaConnection'
 import { network, rpcAddress } from '@selectors/solanaConnection'
 import { nightlyConnectAdapter, openWalletSelectorModal } from '@web3/selector'
@@ -45,9 +45,15 @@ export const HeaderWrapper: React.FC = () => {
     return lastRPC === null ? EclipseNetworks.MAIN : lastRPC
   }, [])
 
+  const isThankYouModalShown = useSelector(thankYouModalShown)
+
+  const hideThankYouModal = () => {
+    dispatch(walletActions.showThankYouModal(false))
+  }
+
   return (
     <>
-      <ThankYouModal />
+      {isThankYouModalShown && <ThankYouModal hideModal={hideThankYouModal} />}
       <Header
         address={walletAddress}
         onNetworkSelect={(network, rpcAddress, rpcName) => {

@@ -36,6 +36,7 @@ export interface ISolanaWallet {
   balance: BN
   accounts: { [key in string]: ITokenAccount }
   balanceLoading: boolean
+  thankYouModalShown: boolean
 }
 
 export const defaultState: ISolanaWallet = {
@@ -43,7 +44,8 @@ export const defaultState: ISolanaWallet = {
   address: DEFAULT_PUBLICKEY,
   balance: new BN(0),
   accounts: {},
-  balanceLoading: false
+  balanceLoading: false,
+  thankYouModalShown: false
 }
 
 export const solanaWalletSliceName = 'solanaWallet'
@@ -94,7 +96,11 @@ const solanaWalletSlice = createSlice({
     rescanTokens() {},
     airdrop() {},
     connect() {},
-    disconnect() {}
+    disconnect() {},
+    showThankYouModal(state, action: PayloadAction<boolean>) {
+      state.thankYouModalShown = action.payload
+      return state
+    }
   }
 })
 interface IsetTokenBalance {

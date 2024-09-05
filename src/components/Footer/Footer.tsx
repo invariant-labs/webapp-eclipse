@@ -69,7 +69,7 @@ export const Footer = () => {
           title='Twitter'
           placement='top'
           TransitionComponent={FooterTransition}>
-          <a href={social.twitter} className={classes.footerLink} target='_blank'>
+          <a href={social.x} className={classes.footerLink} target='_blank'>
             <img className={classes.icon} src={icons.TwitterIcon} alt={'twitter icon'} />
           </a>
         </Tooltip>

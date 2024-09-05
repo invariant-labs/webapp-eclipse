@@ -13,14 +13,9 @@ const useStyles = makeStyles(() => ({
     opacity: 0.7
   },
   container: {
-    width: 480,
-    padding: 32,
+    width: 544,
     borderRadius: 24,
     background: colors.invariant.component,
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    gap: 32,
     position: 'absolute',
     top: '50%',
     left: '50%',
@@ -75,6 +70,24 @@ const useStyles = makeStyles(() => ({
       textDecoration: 'underline',
       color: colors.white.main
     }
+  },
+  eclipseIcon: {
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    zIndex: -1,
+    opacity: 0.1
+  },
+  gradient: {
+    borderRadius: 24,
+    padding: 32,
+    background:
+      'radial-gradient(circle at top, rgba(239, 132, 245, 0.25), rgba(239, 132, 245, 0)), radial-gradient(circle at bottom, rgba(46, 224, 154, 0.25), rgba(46, 224, 154, 0))',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    gap: 32
   }
 }))
 
