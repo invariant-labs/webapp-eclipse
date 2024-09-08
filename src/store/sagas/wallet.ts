@@ -25,7 +25,6 @@ import {
   Account,
   ParsedAccountData,
   PublicKey,
-  RpcResponseAndContext,
   sendAndConfirmRawTransaction,
   Signer,
   SystemProgram,
@@ -80,21 +79,22 @@ export function* fetchTokensAccounts(): Generator {
   const connection = yield* call(getConnection)
   const wallet = yield* call(getWallet)
 
-  const splTokensAccounts: RpcResponseAndContext<TokenAccountInfo[]> = yield* call(
-    [connection, connection.getParsedTokenAccountsByOwner],
-    wallet.publicKey,
-    {
-      programId: TOKEN_PROGRAM_ID
-    }
-  )
-
-  const token2022TokensAccounts: RpcResponseAndContext<TokenAccountInfo[]> = yield* call(
-    [connection, connection.getParsedTokenAccountsByOwner],
-    wallet.publicKey,
-    {
-      programId: TOKEN_2022_PROGRAM_ID
-    }
-  )
+  const { splTokensAccounts, token2022TokensAccounts } = yield* all({
+    splTokensAccounts: call(
+      [connection, connection.getParsedTokenAccountsByOwner],
+      wallet.publicKey,
+      {
+        programId: TOKEN_PROGRAM_ID
+      }
+    ),
+    token2022TokensAccounts: call(
+      [connection, connection.getParsedTokenAccountsByOwner],
+      wallet.publicKey,
+      {
+        programId: TOKEN_2022_PROGRAM_ID
+      }
+    )
+  })
 
   const mergedAccounts: TokenAccountInfo[] = [
     ...splTokensAccounts.value,
