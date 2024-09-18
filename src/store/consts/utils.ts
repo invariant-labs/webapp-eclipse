@@ -19,6 +19,7 @@ import { Token as SPLToken } from '@solana/spl-token'
 import {
   BTC_DEV,
   BTC_TEST,
+  FullSnap,
   MAX_U64,
   MOON_TEST,
   NetworkType,
@@ -1147,3 +1148,11 @@ export const getExplorer = (networkType: NetworkType) => {
 }
 
 export const createLoaderKey = () => (new Date().getMilliseconds() + Math.random()).toString()
+
+export const getFullSnap = async (name: string): Promise<FullSnap> => {
+  const { data } = await axios.get<FullSnap>(
+    `https://stats.invariant.app/svm/full_snap/eclipse-${name}`
+  )
+
+  return data
+}
