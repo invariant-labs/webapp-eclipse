@@ -23,6 +23,48 @@ export interface Token {
   isUnknown?: boolean
 }
 export const PRICE_DECIMAL = 24
+
+export const USDC_MAIN: Token = {
+  symbol: 'USDC',
+  address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+  decimals: 6,
+  name: 'USDC',
+  logoURI: 'https://coin-images.coingecko.com/coins/images/6319/large/usdc.png?1696506694',
+  coingeckoId: ''
+}
+export const USDT_MAIN: Token = {
+  symbol: 'USDT',
+  address: new PublicKey('Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'),
+  decimals: 6,
+  name: 'Tether',
+  logoURI: 'https://coin-images.coingecko.com/coins/images/325/large/Tether.png?1696501661',
+  coingeckoId: ''
+}
+export const SOL_MAIN: Token = {
+  symbol: 'SOL',
+  address: new PublicKey('So11111111111111111111111111111111111111112'),
+  decimals: 9,
+  name: 'Wrapped Solana',
+  logoURI: 'https://coin-images.coingecko.com/coins/images/21629/large/solana.jpg?1696520989',
+  coingeckoId: ''
+}
+export const ETH_MAIN: Token = {
+  symbol: 'ETH',
+  address: new PublicKey('7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'),
+  decimals: 8,
+  name: 'Ethereum (Wormhole)',
+  logoURI: 'https://coin-images.coingecko.com/coins/images/22990/large/ETH_wh_small.png?1696522286',
+  coingeckoId: ''
+}
+export const WBTC_MAIN: Token = {
+  symbol: 'WBTC',
+  address: new PublicKey('3NZ9JMVBmGAqocybic2c7LQCJScmgsAZ6vQqTDzcqmJh'),
+  decimals: 8,
+  name: 'Wrapped BTC (Wormhole)',
+  logoURI:
+    'https://coin-images.coingecko.com/coins/images/23004/large/WBTC_wh_small.png?1696522299',
+  coingeckoId: ''
+}
 export const USDC_DEV: Token = {
   symbol: 'USDC',
   address: new PublicKey('GEds1ARB3oywy2sSdiNGDyxz9MhpfqPkFYYStdZmHaiN'),
@@ -100,8 +142,8 @@ export const S22_TEST: Token = {
 }
 
 enum EclipseNetworks {
-  TEST = 'https://testnet.dev2.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
-  MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
+  MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
+  TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
   DEV_EU = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   LOCAL = 'http://127.0.0.1:8899'
@@ -131,7 +173,7 @@ export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> =
 }
 export const tokens: Record<NetworkType, Token[]> = {
   Devnet: [USDC_DEV, BTC_DEV],
-  Mainnet: [],
+  Mainnet: [USDC_MAIN, USDT_MAIN, SOL_MAIN, ETH_MAIN, WBTC_MAIN],
   Testnet: [USDC_TEST, BTC_TEST],
   Localnet: []
 }
@@ -232,7 +274,13 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
-  Mainnet: [],
+  Mainnet: [
+    USDC_MAIN.address,
+    USDT_MAIN.address,
+    SOL_MAIN.address,
+    ETH_MAIN.address,
+    WBTC_MAIN.address
+  ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Localnet: []
 }
