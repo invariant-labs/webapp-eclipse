@@ -281,3 +281,59 @@ export const ADDRESSES_TO_REVERS_TOKEN_PAIRS: string[] = [
 ] // ETH
 
 export type PositionOpeningMethod = 'range' | 'concentration'
+
+export interface SnapshotValueData {
+  tokenBNFromBeginning: string
+  usdValue24: number
+}
+
+export interface PoolSnapshot {
+  timestamp: number
+  volumeX: SnapshotValueData
+  volumeY: SnapshotValueData
+  liquidityX: SnapshotValueData
+  liquidityY: SnapshotValueData
+  feeX: SnapshotValueData
+  feeY: SnapshotValueData
+}
+
+export interface FullSnap {
+  volume24: {
+    value: number
+    change: number
+  }
+  tvl24: {
+    value: number
+    change: number
+  }
+  fees24: {
+    value: number
+    change: number
+  }
+  tokensData: TokenStatsDataWithString[]
+  poolsData: PoolStatsDataWithString[]
+  volumePlot: TimeData[]
+  liquidityPlot: TimeData[]
+}
+
+export interface TokenStatsDataWithString {
+  address: string
+  price: number
+  volume24: number
+  tvl: number
+}
+
+export interface TimeData {
+  timestamp: number
+  value: number
+}
+
+export interface PoolStatsDataWithString {
+  poolAddress: string
+  tokenX: string
+  tokenY: string
+  fee: number
+  volume24: number
+  tvl: number
+  apy: number
+}

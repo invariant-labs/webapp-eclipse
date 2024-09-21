@@ -23,8 +23,8 @@ import { actions } from '@reducers/stats'
 import loader from '@static/gif/loader.gif'
 import useStyles from './styles'
 import EmptyPlaceholder from '@components/EmptyPlaceholder/EmptyPlaceholder'
-import { network } from '@selectors/solanaConnection'
-import { NetworkType } from '@consts/static'
+// import { network } from '@selectors/solanaConnection'
+// import { NetworkType } from '@consts/static'
 // import { farms } from '@selectors/farms'
 // import { actions as farmsActions } from '@reducers/farms'
 
@@ -41,7 +41,7 @@ export const WrappedStats: React.FC = () => {
   const volumePlotData = useSelector(volumePlot)
   const liquidityPlotData = useSelector(liquidityPlot)
   const isLoadingStats = useSelector(isLoading)
-  const currentNetwork = useSelector(network)
+  // const currentNetwork = useSelector(network)
   // const allFarms = useSelector(farms)
 
   // useEffect(() => {
@@ -90,11 +90,7 @@ export const WrappedStats: React.FC = () => {
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
-      {currentNetwork === NetworkType.TESTNET ? (
-        <Grid container direction='column' alignItems='center'>
-          <EmptyPlaceholder desc={'We have not started collecting statistics yet'} />
-        </Grid>
-      ) : isLoadingStats ? (
+      {isLoadingStats ? (
         <img src={loader} className={classes.loading} />
       ) : liquidityPlotData.length === 0 ? (
         <Grid container direction='column' alignItems='center'>
@@ -106,13 +102,13 @@ export const WrappedStats: React.FC = () => {
           <Grid container className={classes.plotsRow} wrap='nowrap'>
             <Volume
               volume={volume24h.value}
-              percentVolume={volume24h.change}
+              percentVolume={volume24h.change ?? 0}
               data={volumePlotData}
               className={classes.plot}
             />
             <Liquidity
               liquidityVolume={tvl24h.value}
-              liquidityPercent={tvl24h.change}
+              liquidityPercent={tvl24h.change ?? 0}
               data={liquidityPlotData}
               className={classes.plot}
             />
@@ -120,22 +116,22 @@ export const WrappedStats: React.FC = () => {
           <Grid className={classes.row}>
             <VolumeBar
               volume={volume24h.value}
-              percentVolume={volume24h.change}
+              percentVolume={volume24h.change ?? 0}
               tvlVolume={tvl24h.value}
-              percentTvl={tvl24h.change}
+              percentTvl={tvl24h.change ?? 0}
               feesVolume={fees24h.value}
-              percentFees={fees24h.change}
+              percentFees={fees24h.change ?? 0}
             />
           </Grid>
           <Typography className={classes.subheader}>Top tokens</Typography>
           <Grid container className={classes.row}>
             <TokensList
               data={tokensList.map(tokenData => ({
-                icon: tokenData.tokenDetails.logoURI,
-                name: tokenData.tokenDetails.name,
-                symbol: tokenData.tokenDetails.symbol,
+                icon: tokenData.tokenDetails?.logoURI,
+                name: tokenData.tokenDetails?.name,
+                symbol: tokenData.tokenDetails?.symbol,
                 price: tokenData.price,
-                priceChange: tokenData.priceChange,
+                // priceChange: tokenData.priceChange,
                 volume: tokenData.volume24,
                 TVL: tokenData.tvl
               }))}
@@ -144,10 +140,10 @@ export const WrappedStats: React.FC = () => {
           <Typography className={classes.subheader}>Top pools</Typography>
           <PoolList
             data={poolsList.map(poolData => ({
-              symbolFrom: poolData.tokenXDetails.symbol,
-              symbolTo: poolData.tokenYDetails.symbol,
-              iconFrom: poolData.tokenXDetails.logoURI,
-              iconTo: poolData.tokenYDetails.logoURI,
+              symbolFrom: poolData.tokenXDetails?.symbol,
+              symbolTo: poolData.tokenYDetails?.symbol,
+              iconFrom: poolData.tokenXDetails?.logoURI,
+              iconTo: poolData.tokenYDetails?.logoURI,
               volume: poolData.volume24,
               TVL: poolData.tvl,
               fee: poolData.fee,
