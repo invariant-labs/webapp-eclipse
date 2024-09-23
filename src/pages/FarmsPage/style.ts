@@ -3,11 +3,13 @@ import { makeStyles, Theme } from '@material-ui/core/styles'
 const useStyles = makeStyles((theme: Theme) => ({
   container: {
     display: 'flex',
-    justifyContent: 'center',
-    backgroundColor: 'transparent',
-    marginTop: 45,
-    paddingInline: 94,
     minHeight: '70vh',
+    marginTop: 97,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    paddingInline: 94,
+    maxWidth: '100%',
 
     [theme.breakpoints.down('md')]: {
       paddingInline: 80

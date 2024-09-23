@@ -6,7 +6,7 @@ import useStyles from './style'
 const FarmsPage: React.FC = () => {
   const classes = useStyles()
   return (
-    <Grid container className={classes.container}>
+    <Grid className={classes.container}>
       <FarmsWrapper />
     </Grid>
   )
