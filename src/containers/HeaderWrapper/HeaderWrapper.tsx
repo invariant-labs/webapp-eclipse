@@ -19,6 +19,12 @@ export const HeaderWrapper: React.FC = () => {
   const location = useLocation()
 
   useEffect(() => {
+    if (currentNetwork === NetworkType.DEVNET) {
+      dispatch(
+        actions.setNetwork({ network: NetworkType.TESTNET, rpcAddress: EclipseNetworks.TEST })
+      )
+    }
+
     nightlyConnectAdapter.addListener('connect', () => {
       dispatch(walletActions.connect())
     })
