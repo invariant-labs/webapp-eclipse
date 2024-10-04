@@ -1,17 +1,20 @@
-const fs = require('fs')
-const axios = require('axios')
+import fs from 'fs'
 
 const run = async () => {
-  const tokensObject = await (await axios.default.get('https://token.jup.ag/all')).data
-  fs.writeFileSync(
-    './src/store/consts/tokenLists/mainnet.json',
-    JSON.stringify(
-      Object.values(tokensObject).sort((a, b) =>
-        a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase())
-      )
-    )
-  )
+  // const tokensObject = (await axios.get('https://api.psplist.xyz/tokens')).data
 
+  const tokensList = {}
+  // tokensObject.forEach(({ symbol, contractAddress, decimals, name }) => {
+  //   tokensList[contractAddress] = {
+  //     symbol,
+  //     address: contractAddress,
+  //     decimals,
+  //     name,
+  //     logoURI: `https://api.psplist.xyz/tokens/${contractAddress}/logo`
+  //   }
+  // })
+
+  fs.writeFileSync('./src/store/consts/tokenLists/mainnet.json', JSON.stringify(tokensList))
   console.log('Tokens list updated!')
 }
 

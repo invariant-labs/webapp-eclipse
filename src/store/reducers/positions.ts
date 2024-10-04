@@ -1,8 +1,9 @@
 import { InitPosition, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { BN } from '@project-serum/anchor'
-import { PayloadType } from '@reducers/types'
+
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
+import { PayloadType } from './types'
 
 export interface PositionWithAddress extends Position {
   address: PublicKey

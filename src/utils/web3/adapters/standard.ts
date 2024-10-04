@@ -1,7 +1,7 @@
 import { Transaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
-import { DEFAULT_PUBLICKEY } from '@consts/static'
-import { nightlyConnectAdapter } from '@web3/selector'
+import { nightlyConnectAdapter } from '../selector'
+import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 
 export class StandardAdapter implements WalletAdapter {
   constructor() {

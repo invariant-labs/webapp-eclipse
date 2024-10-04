@@ -1,8 +1,6 @@
 import { BN } from '@project-serum/anchor'
-import { ADDRESSES_TO_REVERS_TOKEN_PAIRS } from './static'
-
+import { ADDRESSES_TO_REVERS_TOKEN_PAIRS } from '@store/consts/static'
 export const toBlur = 'global-blur'
-
 export const addressTickerMap: { [key: string]: string } = {
   WETH: 'So11111111111111111111111111111111111111112',
   BTC: '3JXmQAzBPU66dkVQufSE1ChBMRAdCHp6T7ZMBKAwhmWw',

@@ -1,8 +1,8 @@
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { TokenPriceData } from './utils'
-import { ISnackbar } from '@reducers/snackbars'
+import { ISnackbar } from '@store/reducers/snackbars'
+import { TokenPriceData } from '@utils/utils'
 
 declare global {
   interface Window {
@@ -99,7 +99,7 @@ export const S22_TEST: Token = {
   coingeckoId: ''
 }
 
-enum EclipseNetworks {
+export enum EclipseNetworks {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
   MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
@@ -107,7 +107,7 @@ enum EclipseNetworks {
   LOCAL = 'http://127.0.0.1:8899'
 }
 
-enum NetworkType {
+export enum NetworkType {
   DEVNET = 'Devnet',
   TESTNET = 'Testnet',
   LOCALNET = 'Localnet',
@@ -266,7 +266,7 @@ export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
   primaryIndex: index
 }))
 
-export { DEFAULT_PUBLICKEY, EclipseNetworks, MAX_U64, NetworkType }
+export { DEFAULT_PUBLICKEY, MAX_U64 }
 
 export const POSITIONS_PER_PAGE = 5
 
