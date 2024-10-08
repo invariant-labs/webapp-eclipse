@@ -17,7 +17,7 @@ export const ImagePicker: React.FC<{ control: any }> = ({ control }) => {
       name='image'
       control={control}
       defaultValue=''
-      render={({ onChange, value }: any) => (
+      render={({ field: { onChange, value } }) => (
         <div className={classes.root}>
           <div className={classes.imageContainer}>
             {defaultImages.map((image, index) => (
