@@ -50,9 +50,9 @@ const ControlledTextInput: React.FC<ControlledTextInputProps> = ({
     control={control}
     rules={rules}
     defaultValue=''
-    render={({ onChange, value, name: fieldName }: any) => (
+    render={({ field: { onChange, value } }) => (
       <TextInput
-        label={fieldName}
+        label={name}
         value={value}
         handleChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         error={!!errors[name]}
@@ -74,9 +74,9 @@ const ControlledNumericInput: React.FC<ControlledNumericInputProps> = ({
     control={control}
     defaultValue=''
     rules={{ required: `${name.charAt(0).toUpperCase() + name.slice(1)} is required` }}
-    render={({ onChange, value, name: fieldName }: any) => (
+    render={({ field: { onChange, value } }) => (
       <NumericInput
-        label={fieldName}
+        label={name}
         value={value}
         onChange={onChange}
         error={!!errors[name]}

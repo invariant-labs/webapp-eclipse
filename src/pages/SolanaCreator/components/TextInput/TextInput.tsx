@@ -25,9 +25,14 @@ export const TextInput: React.FC<ITextInput> = ({
   errorMessage = ''
 }) => {
   const classes = useStyles()
+  const capitalizedLabel =
+    typeof label === 'string' && label.length > 0
+      ? label.charAt(0).toUpperCase() + label.slice(1)
+      : ''
+
   return (
     <div className={classes.inputWrapper}>
-      <h1 className={classes.headerTitle}>{label.charAt(0).toUpperCase() + label.slice(1)}</h1>
+      <h1 className={classes.headerTitle}>{capitalizedLabel}</h1>
       <Input
         placeholder={label}
         className={`${classes.input} ${error ? classes.inputError : ''}`}

@@ -27,6 +27,10 @@ export const NumericInput: React.FC<INumericInput> = ({
   const classes = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
   const [inputValue, setInputValue] = useState(value)
+  const capitalizedLabel =
+    typeof label === 'string' && label.length > 0
+      ? label.charAt(0).toUpperCase() + label.slice(1)
+      : ''
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
     const regex = /^\d*\.?\d*$/
@@ -70,7 +74,7 @@ export const NumericInput: React.FC<INumericInput> = ({
 
   return (
     <div className={classes.inputWrapper}>
-      <h1 className={classes.headerTitle}>{label.charAt(0).toUpperCase() + label.slice(1)}</h1>
+      <h1 className={classes.headerTitle}>{capitalizedLabel}</h1>
       <Input
         inputRef={inputRef}
         type='text'
