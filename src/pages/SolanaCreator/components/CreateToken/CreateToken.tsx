@@ -1,6 +1,6 @@
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
-import { Button, debounce } from '@material-ui/core'
+import { Button } from '@material-ui/core'
 import useStyles from './styles'
 import { TextInput } from '../TextInput/TextInput'
 import { NumericInput } from '../NumericInput/NumericInput'
@@ -93,74 +93,93 @@ export const CreateToken: React.FC = () => {
     control,
     handleSubmit,
     setError,
-    formState: { errors },
+    formState: { errors, isSubmitted },
     watch,
-    clearErrors
-  } = useForm<FormData>()
+    clearErrors,
+    trigger
+  } = useForm<FormData>({
+    mode: 'onChange',
+    reValidateMode: 'onChange'
+  })
 
   const supply = watch('supply')
   const decimals = watch('decimals')
 
-  const MAX_VALUE = BigInt(2) ** BigInt(64) - BigInt(1)
+  const MAX_VALUE = useMemo(() => BigInt(2) ** BigInt(64) - BigInt(1), [])
 
-  const validateSupplyAndDecimals = (supply: string, decimals: string): string | null => {
-    if (!supply || !decimals) return null
+  const validateSupplyAndDecimals = useCallback(
+    (supply: string, decimals: string): string | null => {
+      if (!supply || !decimals) return null
 
-    const supplyValue = BigInt(supply)
-    const decimalsValue = parseInt(decimals, 10)
+      const supplyValue = BigInt(supply)
+      const decimalsValue = parseInt(decimals, 10)
 
-    if (decimalsValue > 20) {
-      return 'Decimals cannot exceed 20'
-    }
+      if (decimalsValue > 20) {
+        return 'Decimals cannot exceed 20'
+      }
 
-    if (supplyValue === 0n || decimalsValue === 0) {
+      if (supplyValue === 0n || decimalsValue === 0) {
+        return null
+      }
+
+      const totalDigits = supply.length + decimalsValue
+      if (totalDigits > 20) {
+        return '(Supply * 10^decimal) must be less than or equal to (2^64) - 1'
+      }
+
+      if (totalDigits === 20) {
+        const result = supplyValue * BigInt(10) ** BigInt(decimalsValue)
+        return result <= MAX_VALUE
+          ? null
+          : '(Supply * 10^decimal) must be less than or equal to (2^64) - 1'
+      }
+
       return null
-    }
-
-    const totalDigits = supply.length + decimalsValue
-    if (totalDigits > 20) {
-      return 'Supply * 10^decimal must be less than or equal to (2^64) - 1'
-    }
-
-    if (totalDigits === 20) {
-      const result = supplyValue * BigInt(10) ** BigInt(decimalsValue)
-      return result <= MAX_VALUE
-        ? null
-        : 'Supply * 10^decimal must be less than or equal to (2^64) - 1'
-    }
-
-    return null
-  }
+    },
+    [MAX_VALUE]
+  )
 
   const debouncedValidation = useCallback(
-    debounce((supply: string, decimals: string) => {
-      const validationResult = validateSupplyAndDecimals(supply, decimals)
-      if (validationResult) {
-        setError('supply', { type: 'manual', message: validationResult })
-        setError('decimals', { type: 'manual', message: validationResult })
-      } else {
-        clearErrors(['supply', 'decimals'])
-      }
-    }, 300),
-    [setError, clearErrors]
+    (supply: string, decimals: string) => {
+      const timeoutId = setTimeout(() => {
+        if (isSubmitted) {
+          const validationResult = validateSupplyAndDecimals(supply, decimals)
+          if (validationResult) {
+            setError('supply', { type: 'manual', message: validationResult })
+            setError('decimals', { type: 'manual', message: validationResult })
+          } else {
+            clearErrors(['supply', 'decimals'])
+          }
+          void trigger(['supply', 'decimals'])
+        }
+      }, 300)
+
+      return () => clearTimeout(timeoutId)
+    },
+    [setError, clearErrors, validateSupplyAndDecimals, trigger, isSubmitted]
   )
 
   useEffect(() => {
-    debouncedValidation(supply, decimals)
-    return () => {
-      debouncedValidation.clear()
-    }
+    const cleanup = debouncedValidation(supply, decimals)
+    return cleanup
   }, [supply, decimals, debouncedValidation])
 
-  const onSubmit = (data: FormData) => {
-    const validationResult = validateSupplyAndDecimals(data.supply, data.decimals)
-    if (validationResult) {
-      setError('supply', { type: 'manual', message: validationResult })
-      setError('decimals', { type: 'manual', message: validationResult })
-      return
-    }
-    console.log(data)
-  }
+  const onSubmit = useCallback(
+    (data: FormData) => {
+      const validationResult = validateSupplyAndDecimals(data.supply, data.decimals)
+      if (validationResult) {
+        setError('supply', { type: 'manual', message: validationResult })
+        setError('decimals', { type: 'manual', message: validationResult })
+        return
+      }
+      try {
+        console.log(data)
+      } catch (error) {
+        console.error('Error submitting form:', error)
+      }
+    },
+    [validateSupplyAndDecimals, setError]
+  )
 
   return (
     <div className={classes.pageWrapper}>
