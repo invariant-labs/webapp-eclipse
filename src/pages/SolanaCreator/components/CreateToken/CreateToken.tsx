@@ -33,6 +33,8 @@ interface ControlledNumericInputProps {
   name: keyof FormData
   label: string
   control: any
+  rules?: object
+
   errors: any
   decimalsLimit: number
 }
@@ -63,9 +65,11 @@ const ControlledTextInput: React.FC<ControlledTextInputProps> = ({
     )}
   />
 )
+
 const ControlledNumericInput: React.FC<ControlledNumericInputProps> = ({
   name,
   control,
+  rules,
   errors,
   decimalsLimit
 }) => (
@@ -73,7 +77,7 @@ const ControlledNumericInput: React.FC<ControlledNumericInputProps> = ({
     name={name}
     control={control}
     defaultValue=''
-    rules={{ required: `${name.charAt(0).toUpperCase() + name.slice(1)} is required` }}
+    rules={{ required: `${name.charAt(0).toUpperCase() + name.slice(1)} is required`, ...rules }}
     render={({ field: { onChange, value } }) => (
       <NumericInput
         label={name}
@@ -114,11 +118,11 @@ export const CreateToken: React.FC = () => {
       const supplyValue = BigInt(supply)
       const decimalsValue = parseInt(decimals, 10)
 
-      if (decimalsValue > 20) {
-        return 'Decimals cannot exceed 20'
+      if (decimalsValue < 5 || decimalsValue > 9) {
+        return 'Decimals must be between 5 and 9'
       }
 
-      if (supplyValue === 0n || decimalsValue === 0) {
+      if (supplyValue === 0n) {
         return null
       }
 
@@ -144,19 +148,26 @@ export const CreateToken: React.FC = () => {
       const timeoutId = setTimeout(() => {
         if (isSubmitted) {
           const validationResult = validateSupplyAndDecimals(supply, decimals)
+          console.log('validationResult', validationResult)
+
           if (validationResult) {
+            console.log('Setting error for supply and decimals')
             setError('supply', { type: 'manual', message: validationResult })
             setError('decimals', { type: 'manual', message: validationResult })
           } else {
+            console.log('Clearing errors for supply and decimals')
             clearErrors(['supply', 'decimals'])
           }
+
           void trigger(['supply', 'decimals'])
         }
+
+        console.log('Current errors:', errors)
       }, 300)
 
       return () => clearTimeout(timeoutId)
     },
-    [setError, clearErrors, validateSupplyAndDecimals, trigger, isSubmitted]
+    [setError, clearErrors, validateSupplyAndDecimals, trigger, isSubmitted, errors]
   )
 
   useEffect(() => {
@@ -164,12 +175,29 @@ export const CreateToken: React.FC = () => {
     return cleanup
   }, [supply, decimals, debouncedValidation])
 
+  type SocialPlatform = 'twitter' | 'telegram' | 'discord'
+
+  const validateSocialLink = (value: string, platform: SocialPlatform): true | string => {
+    if (!value) return true
+    const patterns: Record<SocialPlatform, RegExp> = {
+      twitter: /^https?:\/\/(www\.)?twitter\.com\/.+/i,
+      telegram: /^https?:\/\/(t\.me|telegram\.me)\/.+/i,
+      discord: /^https?:\/\/(www\.)?discord\.gg\/.+/i
+    }
+    return patterns[platform].test(value) || `Invalid ${platform} link`
+  }
+  const validateDecimals = useCallback((value: string): string | undefined => {
+    const decimalValue = parseInt(value, 10)
+    if (isNaN(decimalValue) || decimalValue < 5 || decimalValue > 9) {
+      return 'Decimals must be between 5 and 9'
+    }
+    return undefined
+  }, [])
   const onSubmit = useCallback(
     (data: FormData) => {
       const validationResult = validateSupplyAndDecimals(data.supply, data.decimals)
       if (validationResult) {
         setError('supply', { type: 'manual', message: validationResult })
-        setError('decimals', { type: 'manual', message: validationResult })
         return
       }
       try {
@@ -195,14 +223,20 @@ export const CreateToken: React.FC = () => {
                     label='Name'
                     control={control}
                     errors={errors}
-                    rules={{ required: 'Name is required' }}
+                    rules={{
+                      required: 'Name is required',
+                      maxLength: { value: 30, message: 'Name must be 30 characters or less' }
+                    }}
                   />
                   <ControlledTextInput
                     name='symbol'
                     label='Ticker/Symbol'
                     control={control}
                     errors={errors}
-                    rules={{ required: 'Symbol is required' }}
+                    rules={{
+                      required: 'Symbol is required',
+                      maxLength: { value: 8, message: 'Symbol must be 8 characters or less' }
+                    }}
                   />
                   <div className={classes.row}>
                     <ControlledNumericInput
@@ -210,7 +244,10 @@ export const CreateToken: React.FC = () => {
                       label='Decimals'
                       control={control}
                       errors={errors}
-                      decimalsLimit={3}
+                      decimalsLimit={0}
+                      rules={{
+                        validate: validateDecimals
+                      }}
                     />
                     <ControlledNumericInput
                       name='supply'
@@ -218,6 +255,11 @@ export const CreateToken: React.FC = () => {
                       control={control}
                       errors={errors}
                       decimalsLimit={0}
+                      rules={{
+                        required: 'Supply is required',
+                        validate: (value: string) =>
+                          validateSupplyAndDecimals(value, watch('decimals'))
+                      }}
                     />
                   </div>
                   <Button className={classes.button} variant='contained' type='submit'>
@@ -235,6 +277,12 @@ export const CreateToken: React.FC = () => {
                     control={control}
                     multiline
                     minRows={3}
+                    rules={{
+                      maxLength: {
+                        value: 500,
+                        message: 'Description must be 500 characters or less'
+                      }
+                    }}
                   />
                   <ControlledTextInput
                     name='website'
@@ -247,18 +295,21 @@ export const CreateToken: React.FC = () => {
                     name='twitter'
                     label='X (formerly Twitter)'
                     control={control}
+                    rules={{ validate: (value: string) => validateSocialLink(value, 'twitter') }}
                   />
                   <ControlledTextInput
                     name='telegram'
                     label='Telegram'
                     control={control}
                     errors={errors}
+                    rules={{ validate: (value: string) => validateSocialLink(value, 'telegram') }}
                   />
                   <ControlledTextInput
                     name='discord'
                     label='Discord'
                     control={control}
                     errors={errors}
+                    rules={{ validate: (value: string) => validateSocialLink(value, 'discord') }}
                   />
                 </div>
               </div>
