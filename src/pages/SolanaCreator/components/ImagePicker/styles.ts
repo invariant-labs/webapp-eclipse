@@ -46,7 +46,7 @@ const useStyles = makeStyles(theme => ({
     justifyContent: 'center',
     cursor: 'pointer',
     '&:hover': {
-      backgroundColor: colors.invariant.light
+      backgroundColor: colors.invariant.lightGrey
     }
   },
   hiddenInput: {
