@@ -1,9 +1,9 @@
-import { PoolWithAddress } from '@reducers/pools'
 import { createSelector } from 'reselect'
 import { IPositionsStore, positionsSliceName, PositionWithAddress } from '../reducers/positions'
 import { AnyProps, keySelectors } from './helpers'
 import { poolsArraySortedByFees } from './pools'
 import { SwapToken, swapTokensDict } from './solanaWallet'
+import { PoolWithAddress } from '@store/reducers/pools'
 
 const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore
 

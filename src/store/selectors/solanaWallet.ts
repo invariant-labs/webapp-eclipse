@@ -1,15 +1,16 @@
 import { BN } from '@project-serum/anchor'
 import { createSelector } from '@reduxjs/toolkit'
-import { ISolanaWallet, solanaWalletSliceName, ITokenAccount } from '@reducers/solanaWallet'
+
 import { keySelectors, AnyProps } from './helpers'
 import { PublicKey } from '@solana/web3.js'
 import { tokens } from './pools'
+import { ISolanaWallet, ITokenAccount, solanaWalletSliceName } from '@store/reducers/solanaWallet'
 import {
-  WRAPPED_ETH_ADDRESS,
-  WETH_POOL_INIT_LAMPORTS,
   NetworkType,
-  WETH_POOL_INIT_LAMPORTS_TEST
-} from '@consts/static'
+  WETH_POOL_INIT_LAMPORTS,
+  WETH_POOL_INIT_LAMPORTS_TEST,
+  WRAPPED_ETH_ADDRESS
+} from '@store/consts/static'
 
 const store = (s: AnyProps) => s[solanaWalletSliceName] as ISolanaWallet
 

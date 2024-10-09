@@ -14,8 +14,20 @@ import {
   SimulationStatus
 } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@project-serum/anchor'
-import { PlotTickData, PositionWithAddress } from '@reducers/positions'
+
 import { Token as SPLToken } from '@solana/spl-token'
+
+import mainnetList from '@store/consts/tokenLists/mainnet.json'
+import { Connection, Keypair, PublicKey } from '@solana/web3.js'
+
+import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
+import axios, { AxiosResponse } from 'axios'
+import { getMaxTick, getMinTick, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
+// import { Staker } from '@invariant-labs/staker-sdk'
+// import { ExtendedStake } from '@reducers/farms'
+// import { Stake } from '@invariant-labs/staker-sdk/lib/staker'
+
+import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
   BTC_DEV,
   BTC_TEST,
@@ -31,17 +43,9 @@ import {
   USDC_TEST,
   WETH_DEV,
   WETH_TEST
-} from './static'
-import mainnetList from './tokenLists/mainnet.json'
-import { Connection, Keypair, PublicKey } from '@solana/web3.js'
-import { PoolWithAddress } from '@reducers/pools'
-import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
-import axios, { AxiosResponse } from 'axios'
-import { getMaxTick, getMinTick, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
-// import { Staker } from '@invariant-labs/staker-sdk'
-// import { ExtendedStake } from '@reducers/farms'
-// import { Stake } from '@invariant-labs/staker-sdk/lib/staker'
-import bs58 from 'bs58'
+} from '@store/consts/static'
+import { PoolWithAddress } from '@store/reducers/pools'
+import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes'
 // import { calculateSellPrice } from '@invariant-labs/bonds-sdk/lib/math'
 // import { BondSaleStruct } from '@invariant-labs/bonds-sdk/lib/sale'
 
@@ -1066,9 +1070,9 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
 
 export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPriceData> => {
   return await axios
-    .get<CoingeckoApiPriceData[]>(
-      `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}`
-    )
+    .get<
+      CoingeckoApiPriceData[]
+    >(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}`)
     .then(res => {
       return {
         price: res.data[0].current_price ?? 0,

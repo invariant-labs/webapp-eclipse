@@ -1,8 +1,9 @@
 import { getMarketAddress, Market } from '@invariant-labs/sdk-eclipse'
-import { getSolanaConnection, networkTypetoProgramNetwork } from '@web3/connection'
-import { getSolanaWallet } from '@web3/wallet'
 import { PublicKey } from '@solana/web3.js'
-import { NetworkType } from '@consts/static'
+import { NetworkType } from '@store/consts/static'
+import { getSolanaConnection, networkTypetoProgramNetwork } from '../connection'
+import { getSolanaWallet } from '../wallet'
+
 let _market: Market
 export const getCurrentMarketProgram = (): Market => {
   return _market

@@ -1,39 +1,33 @@
 import { call, put, takeEvery, take, select, all, spawn, takeLatest } from 'typed-redux-saga'
-import { actions as snackbarsActions } from '@reducers/snackbars'
-import { actions as poolsActions, ListPoolsResponse, ListType } from '@reducers/pools'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { actions as poolsActions, ListPoolsResponse, ListType } from '@store/reducers/pools'
 import { createAccount, getWallet, sleep } from './wallet'
-import { getMarketProgram } from '@web3/programs/amm'
 import { getConnection } from './connection'
 import {
   actions,
   ClosePositionData,
   GetCurrentTicksData,
   InitPositionData
-} from '@reducers/positions'
+} from '@store/reducers/positions'
 import { PayloadAction } from '@reduxjs/toolkit'
-import { poolsArraySortedByFees, tokens } from '@selectors/pools'
+import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { Pair } from '@invariant-labs/sdk-eclipse'
+import { accounts } from '@store/selectors/solanaWallet'
+import { Transaction, sendAndConfirmRawTransaction, Keypair, SystemProgram } from '@solana/web3.js'
+import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { SIGNING_SNACKBAR_CONFIG, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
+import { positionsWithPoolsData, singlePositionData } from '@store/selectors/positions'
+import { GuardPredicate } from '@redux-saga/types'
+import { network, rpcAddress } from '@store/selectors/solanaConnection'
+import { closeSnackbar } from 'notistack'
+import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createLiquidityPlot,
   createLoaderKey,
   createPlaceholderLiquidityPlot,
   getPositionsAddressesFromRange
-} from '@consts/utils'
-import { accounts } from '@selectors/solanaWallet'
-import {
-  Transaction,
-  sendAndConfirmRawTransaction,
-  Keypair,
-  SystemProgram
-  // PublicKey
-} from '@solana/web3.js'
-import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { SIGNING_SNACKBAR_CONFIG, WRAPPED_ETH_ADDRESS } from '@consts/static'
-import { positionsWithPoolsData, singlePositionData } from '@selectors/positions'
-import { GuardPredicate } from '@redux-saga/types'
+} from '@utils/utils'
 // import { createClaimAllPositionRewardsTx } from './farms'
-import { network, rpcAddress } from '@selectors/solanaConnection'
-import { closeSnackbar } from 'notistack'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { stakesForPosition } from '@selectors/farms'
 // import { getStakerProgram } from '@web3/programs/staker'
@@ -108,8 +102,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[data.tokenX.toString()]
-        ? tokensAccounts[data.tokenX.toString()].address
-        : null
+          ? tokensAccounts[data.tokenX.toString()].address
+          : null
 
     if (userTokenX === null) {
       userTokenX = yield* call(createAccount, data.tokenX)
@@ -119,8 +113,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       allTokens[data.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[data.tokenY.toString()]
-        ? tokensAccounts[data.tokenY.toString()].address
-        : null
+          ? tokensAccounts[data.tokenY.toString()].address
+          : null
 
     if (userTokenY === null) {
       userTokenY = yield* call(createAccount, data.tokenY)
@@ -370,8 +364,8 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
       allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[data.tokenX.toString()]
-        ? tokensAccounts[data.tokenX.toString()].address
-        : null
+          ? tokensAccounts[data.tokenX.toString()].address
+          : null
 
     if (userTokenX === null) {
       userTokenX = yield* call(createAccount, data.tokenX)
@@ -381,8 +375,8 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
       allTokens[data.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[data.tokenY.toString()]
-        ? tokensAccounts[data.tokenY.toString()].address
-        : null
+          ? tokensAccounts[data.tokenY.toString()].address
+          : null
 
     if (userTokenY === null) {
       userTokenY = yield* call(createAccount, data.tokenY)
@@ -803,8 +797,8 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
       allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[positionForIndex.tokenX.toString()]
-        ? tokensAccounts[positionForIndex.tokenX.toString()].address
-        : null
+          ? tokensAccounts[positionForIndex.tokenX.toString()].address
+          : null
 
     if (userTokenX === null) {
       userTokenX = yield* call(createAccount, positionForIndex.tokenX)
@@ -814,8 +808,8 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
       allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[positionForIndex.tokenY.toString()]
-        ? tokensAccounts[positionForIndex.tokenY.toString()].address
-        : null
+          ? tokensAccounts[positionForIndex.tokenY.toString()].address
+          : null
 
     if (userTokenY === null) {
       userTokenY = yield* call(createAccount, positionForIndex.tokenY)
@@ -1067,8 +1061,8 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
       allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[positionForIndex.tokenX.toString()]
-        ? tokensAccounts[positionForIndex.tokenX.toString()].address
-        : null
+          ? tokensAccounts[positionForIndex.tokenX.toString()].address
+          : null
 
     if (userTokenX === null) {
       userTokenX = yield* call(createAccount, positionForIndex.tokenX)
@@ -1078,8 +1072,8 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
       allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[positionForIndex.tokenY.toString()]
-        ? tokensAccounts[positionForIndex.tokenY.toString()].address
-        : null
+          ? tokensAccounts[positionForIndex.tokenY.toString()].address
+          : null
 
     if (userTokenY === null) {
       userTokenY = yield* call(createAccount, positionForIndex.tokenY)

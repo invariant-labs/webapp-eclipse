@@ -1,6 +1,6 @@
-import { NetworkType, EclipseNetworks } from '@consts/static'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from './types'
+import { EclipseNetworks, NetworkType } from '@store/consts/static'
 
 export enum Status {
   Uninitialized = 'uninitialized',

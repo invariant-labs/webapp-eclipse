@@ -1,22 +1,22 @@
 import { call, put, all, spawn, takeEvery, takeLatest, select } from 'typed-redux-saga'
-import { getMarketProgram } from '@web3/programs/amm'
 import { Pair } from '@invariant-labs/sdk-eclipse'
+import { PayloadAction } from '@reduxjs/toolkit'
+import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
+import { PublicKey } from '@solana/web3.js'
+import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { getConnection } from './connection'
+import { sleep } from './wallet'
+import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   actions,
   FetchTicksAndTickMaps,
   ListPoolsRequest,
   PairTokens,
   PoolWithAddress
-} from '@reducers/pools'
-import { PayloadAction } from '@reduxjs/toolkit'
-import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
-import { PublicKey } from '@solana/web3.js'
-import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { findPairs, getFullNewTokensData, getPools, getPoolsFromAdresses } from '@consts/utils'
-import { tokens } from '@selectors/pools'
-import { getConnection } from './connection'
-import { network, rpcAddress } from '@selectors/solanaConnection'
-import { sleep } from './wallet'
+} from '@store/reducers/pools'
+import { tokens } from '@store/selectors/pools'
+import { network, rpcAddress } from '@store/selectors/solanaConnection'
+import { findPairs, getFullNewTokensData, getPools, getPoolsFromAdresses } from '@utils/utils'
 
 export interface iTick {
   index: Tick[]

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from './types'
 import { SnackbarVariant } from '@components/Snackbar/Snackbar'
-import { createLoaderKey } from '@consts/utils'
+import { createLoaderKey } from '@utils/utils'
 
 export interface ISnackbar {
   message: string

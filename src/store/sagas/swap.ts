@@ -1,19 +1,19 @@
 import { call, put, select, takeEvery } from 'typed-redux-saga'
-import { actions as snackbarsActions } from '@reducers/snackbars'
-import { actions as swapActions } from '@reducers/swap'
-import { swap } from '@selectors/swap'
-import { poolsArraySortedByFees, tokens } from '@selectors/pools'
-import { accounts } from '@selectors/solanaWallet'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { actions as swapActions } from '@store/reducers/swap'
+import { swap } from '@store/selectors/swap'
+import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
+import { accounts } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
-import { getMarketProgram } from '@web3/programs/amm'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getConnection } from './connection'
 import { Keypair, sendAndConfirmRawTransaction, SystemProgram, Transaction } from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { SIGNING_SNACKBAR_CONFIG, WRAPPED_ETH_ADDRESS } from '@consts/static'
-import { network, rpcAddress } from '@selectors/solanaConnection'
-import { createLoaderKey } from '@consts/utils'
+import { SIGNING_SNACKBAR_CONFIG, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
+import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { closeSnackbar } from 'notistack'
+import { createLoaderKey } from '@utils/utils'
+import { getMarketProgram } from '@utils/web3/programs/amm'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -106,8 +106,8 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenFrom.toString()]
-        ? tokensAccounts[tokenFrom.toString()].address
-        : null
+          ? tokensAccounts[tokenFrom.toString()].address
+          : null
     if (fromAddress === null) {
       fromAddress = yield* call(createAccount, tokenFrom)
     }
@@ -115,8 +115,8 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenTo.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenTo.toString()]
-        ? tokensAccounts[tokenTo.toString()].address
-        : null
+          ? tokensAccounts[tokenTo.toString()].address
+          : null
     if (toAddress === null) {
       toAddress = yield* call(createAccount, tokenTo)
     }

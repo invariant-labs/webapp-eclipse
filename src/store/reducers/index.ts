@@ -1,7 +1,6 @@
 import { combineReducers } from 'redux'
 import storage from 'redux-persist/lib/storage'
 import { persistReducer, createTransform, createMigrate, MigrationManifest } from 'redux-persist'
-import { NetworkType, EclipseNetworks } from '@consts/static'
 import { reducer as snackbarsReducer, snackbarsSliceName } from './snackbars'
 import { reducer as solanaWalletReducer, solanaWalletSliceName } from './solanaWallet'
 import {
@@ -13,6 +12,7 @@ import { poolsSliceName, reducer as poolsReducer } from './pools'
 import { swapSliceName, reducer as swapReducer } from './swap'
 import { positionsSliceName, reducer as positionsReducer } from './positions'
 import { statsSliceName, reducer as statsReducer } from './stats'
+import { EclipseNetworks, NetworkType } from '@store/consts/static'
 // import { farmsSliceName, reducer as farmsReducer } from './farms'
 // import { bondsSliceName, reducer as bondsReducer } from './bonds'
 
@@ -30,7 +30,7 @@ const transformNetwork = createTransform(
 )
 
 const migrations: MigrationManifest = {
-  // @ts-expect-error
+  // @ts-expect-error: Migration function may have undefined state
   1: (state: ISolanaConnectionStore) => {
     const network =
       typeof state?.network !== 'undefined' && Object.values(NetworkType).includes(state.network)

@@ -1,11 +1,10 @@
 import { all, call, put, SagaGenerator, select, takeLeading, spawn, delay } from 'typed-redux-saga'
-
-import { actions, Status, PayloadTypes } from '@reducers/solanaConnection'
-import { getSolanaConnection } from '@web3/connection'
-import { actions as snackbarsActions } from '@reducers/snackbars'
-import { rpcAddress } from '@selectors/solanaConnection'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Connection } from '@solana/web3.js'
 import { PayloadAction } from '@reduxjs/toolkit'
+import { rpcAddress } from '@store/selectors/solanaConnection'
+import { getSolanaConnection } from '@utils/web3/connection'
+import { actions, PayloadTypes, Status } from '@store/reducers/solanaConnection'
 
 export function* getConnection(): SagaGenerator<Connection> {
   const rpc = yield* select(rpcAddress)
