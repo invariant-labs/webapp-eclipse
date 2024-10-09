@@ -38,7 +38,7 @@ const useStyles = makeStyles(theme => ({
     flexDirection: 'column',
     gap: '10px'
   },
-  collumnInput: {
+  columnInput: {
     display: 'flex',
     flexDirection: 'column',
     gap: '10px',
@@ -78,6 +78,10 @@ const useStyles = makeStyles(theme => ({
     '&:hover': {
       background: 'linear-gradient(180deg, #EF84F5 0%, #9C3EBD 100%)',
       boxShadow: '0px 0px 16px rgba(239, 132, 245, 0.35)'
+    },
+    '&:disabled': {
+      background: colors.invariant.light,
+      color: colors.invariant.componentBcg
     }
   },
   headerTitle: {
