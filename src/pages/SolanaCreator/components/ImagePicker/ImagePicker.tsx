@@ -2,15 +2,19 @@ import Logo1 from '@static/svg/SolanaCreator/Logo.svg'
 import Logo2 from '@static/svg/SolanaCreator/Logo2.svg'
 import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
-import useStyle from './styles'
 import { Controller } from 'react-hook-form'
 import { ChangeEvent } from 'react'
-import { Button } from '@material-ui/core'
+import { Box, Button, IconButton } from '@material-ui/core'
 import { CloudUpload as UploadIcon } from '@material-ui/icons'
-const defaultImages: string[] = [Logo1, Logo2, Cat1, Cat2]
+import useStyles from './styles'
 
-export const ImagePicker: React.FC<{ control: any }> = ({ control }) => {
-  const classes = useStyle()
+interface ImagePickerProps {
+  control: any
+}
+
+const defaultImages: string[] = [Logo1, Logo2, Cat1, Cat2]
+export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
+  const classes = useStyles()
 
   return (
     <Controller
@@ -18,8 +22,8 @@ export const ImagePicker: React.FC<{ control: any }> = ({ control }) => {
       control={control}
       defaultValue=''
       render={({ field: { onChange, value } }) => (
-        <div className={classes.root}>
-          <div className={classes.imageContainer}>
+        <Box className={classes.root}>
+          <Box className={classes.imageContainer}>
             {defaultImages.map((image, index) => (
               <Button
                 key={index}
@@ -33,7 +37,10 @@ export const ImagePicker: React.FC<{ control: any }> = ({ control }) => {
                 <img src={value} alt='Uploaded' className={classes.uploadedImage} />
               </Button>
             )}
-            <label htmlFor='contained-button-file' className={classes.uploadButton}>
+            <IconButton
+              component='label'
+              className={classes.uploadButton}
+              aria-label='upload image'>
               <input
                 accept='image/*'
                 className={classes.hiddenInput}
@@ -53,9 +60,9 @@ export const ImagePicker: React.FC<{ control: any }> = ({ control }) => {
                 }}
               />
               <UploadIcon className={classes.uploadIcon} />
-            </label>
-          </div>
-        </div>
+            </IconButton>
+          </Box>
+        </Box>
       )}
     />
   )

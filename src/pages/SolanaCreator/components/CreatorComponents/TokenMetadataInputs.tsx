@@ -1,5 +1,6 @@
 import React from 'react'
 import { UseFormReturn } from 'react-hook-form'
+import { Box } from '@material-ui/core'
 import { ControlledTextInput } from './ControlledInputs'
 import { ImagePicker } from '../ImagePicker/ImagePicker'
 import { FormData, validateSocialLink } from '../../utils/solanaCreatorUtils'
@@ -17,8 +18,8 @@ export const TokenMetadataInputs: React.FC<TokenMetadataInputsProps> = ({ formMe
   } = formMethods
 
   return (
-    <div className={classes.container}>
-      <div className={classes.column}>
+    <Box className={classes.container}>
+      <Box className={classes.column}>
         <ImagePicker control={control} />
         <ControlledTextInput
           name='description'
@@ -56,7 +57,7 @@ export const TokenMetadataInputs: React.FC<TokenMetadataInputsProps> = ({ formMe
           errors={errors}
           rules={{ validate: (value: string) => validateSocialLink(value, 'discord') }}
         />
-      </div>
-    </div>
+      </Box>
+    </Box>
   )
 }

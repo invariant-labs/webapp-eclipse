@@ -1,4 +1,4 @@
-import { Input } from '@material-ui/core'
+import { Box, Input, Typography } from '@material-ui/core'
 import useStyles from './styles'
 import React, { useRef, useState } from 'react'
 
@@ -73,8 +73,10 @@ export const NumericInput: React.FC<INumericInput> = ({
   }
 
   return (
-    <div className={classes.inputWrapper}>
-      <h1 className={classes.headerTitle}>{capitalizedLabel}</h1>
+    <Box className={classes.inputWrapper}>
+      <Typography component={'h1'} className={classes.headerTitle}>
+        {capitalizedLabel}
+      </Typography>
       <Input
         inputRef={inputRef}
         type='text'
@@ -86,6 +88,6 @@ export const NumericInput: React.FC<INumericInput> = ({
         error={error}
       />
       {error && errorMessage && <p className={classes.errorMessage}>{errorMessage}</p>}
-    </div>
+    </Box>
   )
 }
