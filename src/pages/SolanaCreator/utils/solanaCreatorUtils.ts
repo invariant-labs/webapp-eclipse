@@ -86,7 +86,7 @@ const errorMessages: Record<string, ErrorMessage> = {
     fullErrorMessage: 'This field is required'
   },
   decimals: {
-    shortErrorMessage: '', // This will be dynamically set
+    shortErrorMessage: '',
     fullErrorMessage: 'Invalid value'
   },
   supply: {
@@ -118,7 +118,6 @@ const getErrorMessages = (error: any): ErrorMessage => {
     }
   }
 
-  // Default case if no specific error is matched
   return {
     shortErrorMessage: error.message || 'An error occurred',
     fullErrorMessage: error.message || 'An unexpected error occurred'
