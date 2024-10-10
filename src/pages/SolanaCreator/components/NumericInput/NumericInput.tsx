@@ -77,7 +77,7 @@ export const NumericInput: React.FC<INumericInput> = ({
 
   return (
     <Box className={classes.inputWrapper}>
-      <Box className={classes.inputContainer}>
+      <Box className={`${classes.inputContainer} ${error ? 'error' : ''}`}>
         <Typography variant='h6' className={classes.headerTitle}>
           {capitalizedLabel}
           {error && fullErrorMessage && (
@@ -92,7 +92,7 @@ export const NumericInput: React.FC<INumericInput> = ({
           inputRef={inputRef}
           type='text'
           placeholder={label}
-          className={`${classes.input} ${error ? classes.inputError : ''}`}
+          className={`${classes.input} ${error ? classes.inputError : ''}  ${error ? 'error' : ''}`}
           disableUnderline={true}
           value={inputValue}
           onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
@@ -101,7 +101,9 @@ export const NumericInput: React.FC<INumericInput> = ({
       </Box>
       {error && (
         <Box className={classes.errorMessageContainer}>
-          <Typography className={classes.errorMessage}>{errorMessage}</Typography>
+          <Typography className={`${classes.errorMessage} ${error ? 'visible' : ''}`}>
+            {errorMessage}
+          </Typography>
         </Box>
       )}
     </Box>
