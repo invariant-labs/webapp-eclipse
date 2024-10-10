@@ -17,6 +17,7 @@ import { SwapPage } from './SwapPage/SwapPage'
 import Footer from '@components/Footer/Footer'
 import FarmsPage from './FarmsPage/FarmsPage'
 import StatsPage from './StatsPage/StatsPage'
+import SolanaCreator from './SolanaCreator/SolanaCreator'
 // import BondsPage from './BondsPage/BondsPage'
 
 export const PagesRouter: React.FC = () => {
@@ -72,6 +73,8 @@ export const PagesRouter: React.FC = () => {
           />
           <Route path={'/pool'} component={ListPage} />
           <Route path={'/farms'} component={FarmsPage} />
+          <Route path={'/token'} component={SolanaCreator} />
+
           {/* <Route
             path={'/farm/:id'}
             render={({ match }) => <SingleFarmPage id={match.params.id} />}
