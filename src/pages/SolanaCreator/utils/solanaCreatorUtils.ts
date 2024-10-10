@@ -100,8 +100,6 @@ const getErrorMessages = (error: any): ErrorMessage => {
     return { shortErrorMessage: '', fullErrorMessage: '' }
   }
 
-  console.log('error', error)
-
   if (error.type === 'required') {
     return errorMessages.required
   }
