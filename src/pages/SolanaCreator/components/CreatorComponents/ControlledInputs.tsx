@@ -2,7 +2,7 @@ import React from 'react'
 import { Controller } from 'react-hook-form'
 import { TextInput } from '../TextInput/TextInput'
 import { NumericInput } from '../NumericInput/NumericInput'
-import { FormData } from '../../utils/solanaCreatorUtils'
+import getErrorMessages, { FormData } from '../../utils/solanaCreatorUtils'
 
 interface ControlledInputProps {
   name: keyof FormData
@@ -48,29 +48,34 @@ export const ControlledTextInput: React.FC<ControlledTextInputProps> = ({
     )}
   />
 )
-
 export const ControlledNumericInput: React.FC<ControlledNumericInputProps> = ({
   name,
   label,
   control,
-  rules,
   errors,
+  rules,
   decimalsLimit
-}) => (
-  <Controller
-    name={name}
-    control={control}
-    defaultValue=''
-    rules={{ required: `${label} is required`, ...rules }}
-    render={({ field: { onChange, value } }) => (
-      <NumericInput
-        label={label}
-        value={value}
-        onChange={onChange}
-        error={!!errors[name]}
-        errorMessage={errors[name]?.message || ''}
-        decimalsLimit={decimalsLimit}
-      />
-    )}
-  />
-)
+}) => {
+  const error = errors[name]
+
+  const { shortErrorMessage, fullErrorMessage } = getErrorMessages(error)
+
+  return (
+    <Controller
+      name={name}
+      control={control}
+      rules={rules}
+      render={({ field: { onChange, value } }) => (
+        <NumericInput
+          label={label}
+          value={value}
+          onChange={onChange}
+          error={!!error}
+          errorMessage={shortErrorMessage}
+          fullErrorMessage={fullErrorMessage}
+          decimalsLimit={decimalsLimit}
+        />
+      )}
+    />
+  )
+}

@@ -4,7 +4,7 @@ import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
 import { Controller } from 'react-hook-form'
 import { ChangeEvent } from 'react'
-import { Box, Button, IconButton } from '@material-ui/core'
+import { Box, Button } from '@material-ui/core'
 import { CloudUpload as UploadIcon } from '@material-ui/icons'
 import useStyles from './styles'
 
@@ -37,10 +37,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
                 <img src={value} alt='Uploaded' className={classes.uploadedImage} />
               </Button>
             )}
-            <IconButton
-              component='label'
-              className={classes.uploadButton}
-              aria-label='upload image'>
+            <Button component='label' className={classes.imageButton} aria-label='upload image'>
               <input
                 accept='image/*'
                 className={classes.hiddenInput}
@@ -60,7 +57,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
                 }}
               />
               <UploadIcon className={classes.uploadIcon} />
-            </IconButton>
+            </Button>
           </Box>
         </Box>
       )}

@@ -1,7 +1,22 @@
-import { makeStyles } from '@material-ui/core'
+import { makeStyles, Theme } from '@material-ui/core'
 import { colors, typography } from '@static/theme'
-
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles((theme: Theme) => ({
+  inputWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    minHeight: '90px'
+  },
+  inputContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    flex: 1
+  },
+  headerTitle: {
+    ...typography.heading4,
+    color: colors.invariant.text,
+    marginBottom: theme.spacing(1.2)
+  },
   input: {
     padding: '11px 12px',
     width: '100%',
@@ -29,26 +44,21 @@ const useStyles = makeStyles(() => ({
       border: `1px solid ${colors.red.main}`
     }
   },
-  headerTitle: {
-    fontFamily: 'Mukta',
-    fontStyle: 'normal',
-    fontWeight: 700,
-    fontSize: '20px',
-    lineHeight: '24px',
-    display: 'flex',
-    alignItems: 'center',
-    letterSpacing: '-0.03em',
-    color: colors.invariant.text
+  infoIcon: {
+    color: colors.red.main,
+    fontSize: '18px'
   },
-  inputWrapper: {
+  errorMessageContainer: {
+    minHeight: '40px', // Increased to accommodate multi-line error messages
     display: 'flex',
-    flexDirection: 'column',
-    width: '100%'
+    maxWidth: '90%',
+    alignItems: 'flex-start',
+    marginTop: '4px'
   },
   errorMessage: {
     color: colors.red.main,
     fontSize: '14px',
-    marginTop: '4px'
+    lineHeight: '1.2'
   }
 }))
 

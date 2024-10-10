@@ -11,12 +11,12 @@ export interface FormData {
   image: string
 }
 
-type SocialPlatform = 'twitter' | 'telegram' | 'discord'
+type SocialPlatform = 'x' | 'telegram' | 'discord'
 
 export const validateSocialLink = (value: string, platform: SocialPlatform): true | string => {
   if (!value) return true
   const patterns: Record<SocialPlatform, RegExp> = {
-    twitter: /^https?:\/\/(www\.)?twitter\.com\/.+/i,
+    x: /^https?:\/\/(www\.)?(twitter\.com|x\.com)\/.+/i,
     telegram: /^https?:\/\/(t\.me|telegram\.me)\/.+/i,
     discord: /^https?:\/\/(www\.)?discord\.gg\/.+/i
   }
@@ -25,15 +25,20 @@ export const validateSocialLink = (value: string, platform: SocialPlatform): tru
 
 const MAX_VALUE = BigInt(2) ** BigInt(64) - BigInt(1)
 
-export const validateSupplyAndDecimals = (supply: string, decimals: string): string | null => {
+export const validateDecimals = (decimals: string): string | null => {
+  if (!decimals) return null
+  const decimalsValue = parseInt(decimals, 10)
+  if (isNaN(decimalsValue) || decimalsValue < 5 || decimalsValue > 9) {
+    return 'Decimals must be between 5 and 9'
+  }
+  return null
+}
+
+export const validateSupply = (supply: string, decimals: string): string | null => {
   if (!supply || !decimals) return null
 
   const supplyValue = BigInt(supply)
   const decimalsValue = parseInt(decimals, 10)
-
-  if (decimalsValue < 5 || decimalsValue > 9) {
-    return 'Decimals must be between 5 and 9'
-  }
 
   if (supplyValue === 0n) {
     return null
@@ -41,14 +46,12 @@ export const validateSupplyAndDecimals = (supply: string, decimals: string): str
 
   const totalDigits = supply.length + decimalsValue
   if (totalDigits > 20) {
-    return '(Supply * 10^decimal) must be less than or equal to (2^64) - 1'
+    return 'Supply exceeds maximum limit'
   }
 
   if (totalDigits === 20) {
     const result = supplyValue * BigInt(10) ** BigInt(decimalsValue)
-    return result <= MAX_VALUE
-      ? null
-      : '(Supply * 10^decimal) must be less than or equal to (2^64) - 1'
+    return result <= MAX_VALUE ? null : 'Supply exceeds maximum limit'
   }
 
   return null
@@ -56,8 +59,70 @@ export const validateSupplyAndDecimals = (supply: string, decimals: string): str
 
 export const onSubmit = (data: FormData) => {
   try {
+    const decimalsError = validateDecimals(data.decimals)
+    if (decimalsError) {
+      throw new Error(decimalsError)
+    }
+
+    const supplyError = validateSupply(data.supply, data.decimals)
+    if (supplyError) {
+      throw new Error(supplyError)
+    }
+
     console.log(data)
   } catch (error) {
     console.error('Error submitting form:', error)
   }
 }
+
+interface ErrorMessage {
+  shortErrorMessage: string
+  fullErrorMessage: string
+}
+
+const errorMessages: Record<string, ErrorMessage> = {
+  required: {
+    shortErrorMessage: 'This field is required',
+    fullErrorMessage: 'This field is required'
+  },
+  decimals: {
+    shortErrorMessage: '', // This will be dynamically set
+    fullErrorMessage: 'Invalid value'
+  },
+  supply: {
+    shortErrorMessage: 'Supply exceeds limit',
+    fullErrorMessage: '(Supply * 10^decimal) must be less than or equal to (2^64) - 1'
+  }
+}
+
+const getErrorMessages = (error: any): ErrorMessage => {
+  if (!error) {
+    return { shortErrorMessage: '', fullErrorMessage: '' }
+  }
+
+  console.log('error', error)
+
+  if (error.type === 'required') {
+    return errorMessages.required
+  }
+
+  if (error.type === 'validate') {
+    switch (error.ref.name) {
+      case 'decimals':
+        return {
+          ...errorMessages.decimals,
+          shortErrorMessage: error.message as string
+        }
+      case 'supply':
+        return errorMessages.supply
+    }
+  }
+
+  // Default case if no specific error is matched
+  return {
+    shortErrorMessage: error.message || 'An error occurred',
+    fullErrorMessage: error.message || 'An unexpected error occurred'
+  }
+}
+
+export default getErrorMessages

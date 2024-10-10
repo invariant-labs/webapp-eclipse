@@ -1,5 +1,6 @@
-import { makeStyles } from '@material-ui/core'
+import { lighten, makeStyles } from '@material-ui/core'
 import { colors } from '@static/theme'
+
 const useStyles = makeStyles(theme => ({
   root: {
     display: 'flex',
@@ -12,7 +13,10 @@ const useStyles = makeStyles(theme => ({
   },
   uploadedImage: {
     borderRadius: 8,
-    maxWidth: '100px'
+    maxWidth: '100px',
+    width: '70%',
+    height: '70%',
+    objectFit: 'cover'
   },
   imageContainer: {
     display: 'flex',
@@ -27,7 +31,13 @@ const useStyles = makeStyles(theme => ({
     backgroundColor: colors.invariant.newDark,
     padding: 0,
     overflow: 'hidden',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     '&.selected': {
+      backgroundColor: colors.invariant.light
+    },
+    '&:hover': {
       backgroundColor: colors.invariant.light
     },
     '& img': {
@@ -36,25 +46,13 @@ const useStyles = makeStyles(theme => ({
       objectFit: 'cover'
     }
   },
-  uploadButton: {
-    width: 100,
-    height: 100,
-    borderRadius: 16,
-    backgroundColor: colors.invariant.newDark,
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
-    cursor: 'pointer',
-    '&:hover': {
-      backgroundColor: colors.invariant.lightGrey
-    }
-  },
   hiddenInput: {
     display: 'none'
   },
   uploadIcon: {
-    fontSize: 20,
-    color: colors.invariant.light
+    fontSize: 40,
+    color: lighten(colors.invariant.light, 0.5)
   }
 }))
+
 export default useStyles

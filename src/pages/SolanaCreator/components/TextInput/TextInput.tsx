@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input } from '@material-ui/core'
+import { Input, Typography } from '@material-ui/core'
 import useStyles from './styles'
 
 interface ITextInput {
@@ -44,7 +44,7 @@ export const TextInput: React.FC<ITextInput> = ({
         onChange={handleChange}
         error={error}
       />
-      {error && errorMessage && <p className={classes.errorMessage}>{errorMessage}</p>}
+      <Typography className={classes.errorMessage}>{errorMessage}</Typography>
     </div>
   )
 }

@@ -42,12 +42,15 @@ const useStyles = makeStyles(() => ({
   },
   inputWrapper: {
     display: 'flex',
-    flexDirection: 'column'
+    flexDirection: 'column',
+    width: '100%',
+    minHeight: '90px'
   },
   errorMessage: {
     color: colors.red.main,
     fontSize: '14px',
-    marginTop: '4px'
+    marginTop: '4px',
+    minHeight: '20px'
   }
 }))
 

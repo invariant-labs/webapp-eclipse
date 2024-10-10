@@ -1,6 +1,7 @@
-import { Box, Input, Typography } from '@material-ui/core'
+import { Box, IconButton, Input, Tooltip, Typography } from '@material-ui/core'
 import useStyles from './styles'
 import React, { useRef, useState } from 'react'
+import InfoIcon from '@material-ui/icons/Info'
 
 interface INumericInput {
   label: string
@@ -9,6 +10,7 @@ interface INumericInput {
   decimalsLimit?: number
   error?: boolean
   errorMessage?: string
+  fullErrorMessage?: string
 }
 
 const getScaleFromString = (value: string): number => {
@@ -22,7 +24,8 @@ export const NumericInput: React.FC<INumericInput> = ({
   onChange,
   decimalsLimit = 2,
   error = false,
-  errorMessage = ''
+  errorMessage = '',
+  fullErrorMessage = ''
 }) => {
   const classes = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -74,20 +77,33 @@ export const NumericInput: React.FC<INumericInput> = ({
 
   return (
     <Box className={classes.inputWrapper}>
-      <Typography component={'h1'} className={classes.headerTitle}>
-        {capitalizedLabel}
-      </Typography>
-      <Input
-        inputRef={inputRef}
-        type='text'
-        placeholder={label}
-        className={`${classes.input} ${error ? classes.inputError : ''}`}
-        disableUnderline={true}
-        value={inputValue}
-        onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
-        error={error}
-      />
-      {error && errorMessage && <p className={classes.errorMessage}>{errorMessage}</p>}
+      <Box className={classes.inputContainer}>
+        <Typography variant='h6' className={classes.headerTitle}>
+          {capitalizedLabel}
+          {error && fullErrorMessage && (
+            <Tooltip title={fullErrorMessage} arrow>
+              <IconButton size='small'>
+                <InfoIcon className={classes.infoIcon} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Typography>
+        <Input
+          inputRef={inputRef}
+          type='text'
+          placeholder={label}
+          className={`${classes.input} ${error ? classes.inputError : ''}`}
+          disableUnderline={true}
+          value={inputValue}
+          onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
+          error={error}
+        />
+      </Box>
+      {error && (
+        <Box className={classes.errorMessageContainer}>
+          <Typography className={classes.errorMessage}>{errorMessage}</Typography>
+        </Box>
+      )}
     </Box>
   )
 }

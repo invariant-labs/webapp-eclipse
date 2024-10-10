@@ -57,13 +57,21 @@ const useStyles = makeStyles(theme => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    alignItems: 'flex-start',
     padding: '24px',
     gap: '24px',
-    // width: '100%'
     height: 'fit-content',
     background: colors.invariant.component,
     borderRadius: '24px'
+  },
+  inputsWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: '16px'
+  },
+  inputContainer: {
+    height: '110px',
+    display: 'flex',
+    flexDirection: 'column'
   },
   button: {
     color: colors.invariant.dark,
