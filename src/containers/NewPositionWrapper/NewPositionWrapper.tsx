@@ -318,8 +318,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     if (poolIndex !== null && allPools[poolIndex]) {
       setMidPrice({
         index: allPools[poolIndex].currentTickIndex,
-        x: calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal),
-        sqrtPrice: allPools[poolIndex].sqrtPrice
+        x: calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice.v, isXtoY, xDecimal, yDecimal),
+        sqrtPrice: allPools[poolIndex].sqrtPrice.v
       })
     }
   }, [poolIndex, isXtoY, xDecimal, yDecimal, allPools])
