@@ -5,19 +5,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    minHeight: '90px'
+    minHeight: '110px'
   },
   inputContainer: {
     height: '70px',
     display: 'flex',
     flexDirection: 'column',
-    position: 'relative',
-    overflow: 'hidden',
-    transition: 'height 0.3s ease-in-out',
-
-    '&.error': {
-      height: '90px'
-    }
+    width: '100%'
   },
   headerTitle: {
     ...typography.heading4,
@@ -37,17 +31,15 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 16,
     backgroundColor: colors.invariant.newDark,
     color: colors.invariant.lightGrey,
+    border: '1px solid transparent',
+
     borderRadius: 8,
     cursor: 'pointer',
-    transition: 'transform 0.3s ease-in-out',
     '&::placeholder': {
       color: colors.invariant.textGrey
     },
     '&:focus': {
       color: colors.white.main
-    },
-    '&.error': {
-      transform: 'translateY(-3px)'
     }
   },
 
@@ -62,23 +54,16 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: '18px'
   },
   errorMessageContainer: {
-    minHeight: '40px',
+    minHeight: '20px',
     display: 'flex',
-    maxWidth: '90%',
+    width: '100%',
     alignItems: 'flex-start'
   },
   errorMessage: {
     color: colors.invariant.Error,
     fontSize: 12,
     marginTop: 4,
-
-    transform: 'translateY(100%)',
-    transition: 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out',
-
-    '&.visible': {
-      opacity: 1,
-      transform: 'translateY(0)'
-    }
+    width: '100%'
   }
 }))
 

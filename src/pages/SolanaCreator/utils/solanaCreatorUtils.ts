@@ -86,8 +86,8 @@ const errorMessages: Record<string, ErrorMessage> = {
     fullErrorMessage: 'This field is required'
   },
   decimals: {
-    shortErrorMessage: '',
-    fullErrorMessage: 'Invalid value'
+    shortErrorMessage: 'Invalid decimals',
+    fullErrorMessage: 'Decimals must be between 5 and 9'
   },
   supply: {
     shortErrorMessage: 'Supply exceeds limit',
@@ -108,8 +108,8 @@ const getErrorMessages = (error: any): ErrorMessage => {
     switch (error.ref.name) {
       case 'decimals':
         return {
-          ...errorMessages.decimals,
-          shortErrorMessage: error.message as string
+          shortErrorMessage: 'Decimals must be between 5 and 9',
+          fullErrorMessage: error.message || errorMessages.decimals.fullErrorMessage
         }
       case 'supply':
         return errorMessages.supply
