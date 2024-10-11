@@ -27,8 +27,10 @@ lint:
     - prettier@3.3.3
     - svgo@3.3.2
     - trufflehog@3.82.2
-    - yamllint@1.35.1
   disabled:
+    - trunk-announce
+    - trunk-check-pre-push
+    - trunk-fmt-pre-commit
     - 'node_modules/**/*'
     - 'src/components/**/*.stories.tsx'
     - 'src/pages/SolanaCreator/**/*'
