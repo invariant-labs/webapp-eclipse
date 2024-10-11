@@ -475,7 +475,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           hasError={hasTicksError}
           reloadHandler={reloadHandler}
         />
-        <FormControlLabel
+        {/* <FormControlLabel
           control={
             <Checkbox
               checked={onlyUserPositions}
@@ -488,7 +488,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           }
           label='Show only your positions'
           classes={{ label: classes.checkboxLabel }}
-        />
+        /> */}
       </Grid>
       <Grid container className={classes.innerWrapper}>
         <Typography className={classes.subheader}>Set price range</Typography>

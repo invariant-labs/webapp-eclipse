@@ -530,7 +530,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             ) : null}
             <Grid className={classes.optionsWrapper}>
               <Hidden mdDown>
-                {tokenAIndex !== null && tokenBIndex !== null && (
+                {tokenAIndex !== null && tokenBIndex !== null && poolIndex !== null && (
                   <ConcentrationTypeSwitch
                     onSwitch={val => {
                       if (val) {
@@ -792,7 +792,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             midPriceIndex={midPrice.index}
             onChangeMidPrice={onChangeMidPrice}
             currentPairReversed={currentPairReversed}
-            positionOpeningMethod={positionOpeningMethod}
+            positionOpeningMethod={'range'}
             concentrationArray={concentrationArray}
             concentrationIndex={concentrationIndex}
             setConcentrationIndex={setConcentrationIndex}

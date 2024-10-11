@@ -22,6 +22,7 @@ import {
   tickerToAddress,
   parsePathFeeToFeeString
 } from '@utils/utils'
+import { set } from 'remeda'
 
 export interface InputState {
   value: string
@@ -114,16 +115,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   walletStatus,
   onConnectWallet,
   onDisconnectWallet,
-  ethBalanceWithoutFee,
-  tokenAIndex,
-  tokenBIndex,
-  setTokenAIndex,
-  setTokenBIndex
+  ethBalanceWithoutFee
 }) => {
   const { classes } = useStyles()
 
-  // const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
-  // const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
+  const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
+  const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
+
   const [tokenAPrice, setTokenAPrice] = useState<number | undefined>(undefined)
   const [tokenBPrice, setTokenBPrice] = useState<number | undefined>(undefined)
 
@@ -179,7 +177,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         feeTierIndexFromPath = index
       }
     })
-
+    setTokenAIndex(tokenAIndexFromPath)
+    setTokenBIndex(tokenBIndexFromPath)
     setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath)
 
     setIsLoaded(true)
@@ -247,34 +246,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     feeTierIndex,
     minimumSliderIndex
   ])
-
-  const [wasRunTokenA, setWasRunTokenA] = useState(false)
-  const [wasRunTokenB, setWasRunTokenB] = useState(false)
-
-  useEffect(() => {
-    const tokenFromAddress = tickerToAddress(network, initialTokenFrom)
-    const tokenToAddress = tickerToAddress(network, initialTokenTo)
-
-    if (!tokenFromAddress || !tokenToAddress) {
-      return
-    }
-
-    if (!wasRunTokenA) {
-      const tokenFromIndex = Object.values(tokens).findIndex(
-        token => token.assetAddress.toString() === tokenFromAddress
-      )
-      setTokenAIndex(tokenFromIndex)
-      setWasRunTokenA(true)
-    }
-
-    if (!wasRunTokenB) {
-      const tokenToIndex = Object.values(tokens).findIndex(
-        token => token.assetAddress.toString() === tokenToAddress
-      )
-      setTokenAIndex(tokenToIndex)
-      setWasRunTokenB(true)
-    }
-  }, [wasRunTokenA, wasRunTokenB, tokens])
 
   useEffect(() => {
     if (tokenAIndex !== null) {

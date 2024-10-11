@@ -28,12 +28,10 @@ import {
   isLoadingLatestPoolsForTransaction,
   isLoadingTicksAndTickMaps,
   isLoadingTokens,
-  isLoadingTokensError,
   poolsArraySortedByFees
 } from '@store/selectors/pools'
 import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
 import {
-  address,
   balanceLoading,
   status,
   balance,
@@ -287,32 +285,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       }
     }
   }, [isWaitingForNewPool])
-
-  // useEffect(() => {
-  //   if (
-  //     poolIndex !== null &&
-  //     !isWaitingForNewPool &&
-  //     tokenAIndex !== null &&
-  //     tokenBIndex !== null
-  //   ) {
-  //     const isCurrentTokenX = isXtoY
-  //       ? allPools[poolIndex].tokenX === tokens[tokenAIndex].assetAddress
-  //       : allPools[poolIndex].tokenX === tokens[tokenBIndex].assetAddress
-
-  //     const isCurrentTokenY = isXtoY
-  //       ? allPools[poolIndex].tokenY === tokens[tokenBIndex].assetAddress
-  //       : allPools[poolIndex].tokenY === tokens[tokenAIndex].assetAddress
-
-  //     if (isCurrentTokenX && isCurrentTokenY) {
-  //       dispatch(
-  //         actions.getCurrentPlotTicks({
-  //           poolIndex: poolIndex,
-  //           isXtoY: allPools[poolIndex].tokenX.equals(tokens[tokenAIndex].assetAddress)
-  //         })
-  //       )
-  //     }
-  //   }
-  // }, [isWaitingForNewPool, tokenAIndex, tokenBIndex, poolIndex, allPools])
 
   useEffect(() => {
     if (poolIndex !== null && allPools[poolIndex]) {
@@ -658,7 +630,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             )
           }
         }
-
+        
         setTokenAIndex(tokenA)
         setTokenBIndex(tokenB)
         setFeeIndex(feeTierIndex)
