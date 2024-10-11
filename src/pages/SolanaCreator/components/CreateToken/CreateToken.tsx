@@ -54,7 +54,7 @@ export const CreateToken: React.FC = () => {
           <form onSubmit={formMethods.handleSubmit(onSubmit)}>
             <Box className={classes.row}>
               <TokenInfoInputs formMethods={formMethods} />
-              <TokenMetadataInputs formMethods={formMethods} />
+              {/*<TokenMetadataInputs formMethods={formMethods} /> */}
             </Box>
           </form>
         </Box>
