@@ -1,6 +1,5 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
-
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_NEW_POSITION_SLIPPAGE,
@@ -30,9 +29,7 @@ import {
   isLoadingTicksAndTickMaps,
   isLoadingTokens,
   isLoadingTokensError,
-  pools,
-  poolsArraySortedByFees,
-  volumeRanges
+  poolsArraySortedByFees
 } from '@store/selectors/pools'
 import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
 import {
@@ -50,13 +47,12 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
-import { DECIMAL, feeToTickSpacing, getMaxTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { InitMidPrice, TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
-import { set } from 'remeda'
 
 export interface IProps {
   initialTokenFrom: string
@@ -141,30 +137,38 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const tokenFromIndex = tokens.findIndex(
       token => token.assetAddress.toString() === tokenFromAddress
     )
-
+    console.log('tokenFromAddress', tokenFromAddress)
+    console.log('TOKENS INDEX', tokens)
     const tokenToIndex = tokens.findIndex(token => token.assetAddress.toString() === tokenToAddress)
-
+    console.log('tokenToAddress', tokenToAddress)
+    console.log('tokenToIndex', tokenToIndex)
     if (
       tokenFromAddress !== null &&
-      tokenToIndex !== -1 &&
-      (tokenToAddress === null || tokenFromIndex === -1)
+      tokenFromIndex !== -1 &&
+      (tokenToAddress === null || tokenToIndex === -1)
     ) {
       navigate(`/newPosition/${initialTokenFrom}/${initialFee}`)
 
       setTokenAIndex(tokenFromIndex)
+      setTokenBIndex(null)
     } else if (
       tokenFromAddress !== null &&
-      tokenToIndex !== -1 &&
+      tokenFromIndex !== -1 &&
       tokenToAddress !== null &&
-      tokenFromIndex !== -1
+      tokenToIndex !== -1
     ) {
       navigate(`/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}`)
 
       setTokenAIndex(tokenFromIndex)
       setTokenBIndex(tokenToIndex)
+    } else {
+      navigate(`/newPosition/${initialFee}`)
+
+      setTokenAIndex(null)
+      setTokenBIndex(null)
     }
     // }
-  }, [initialTokenTo, initialTokenFrom, tokens])
+  }, [tokens])
 
   useEffect(() => {
     isMountedRef.current = true
@@ -300,31 +304,31 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [isWaitingForNewPool])
 
-  useEffect(() => {
-    if (
-      poolIndex !== null &&
-      !isWaitingForNewPool &&
-      tokenAIndex !== null &&
-      tokenBIndex !== null
-    ) {
-      const isCurrentTokenX = isXtoY
-        ? allPools[poolIndex].tokenX === tokens[tokenAIndex].assetAddress
-        : allPools[poolIndex].tokenX === tokens[tokenBIndex].assetAddress
+  // useEffect(() => {
+  //   if (
+  //     poolIndex !== null &&
+  //     !isWaitingForNewPool &&
+  //     tokenAIndex !== null &&
+  //     tokenBIndex !== null
+  //   ) {
+  //     const isCurrentTokenX = isXtoY
+  //       ? allPools[poolIndex].tokenX === tokens[tokenAIndex].assetAddress
+  //       : allPools[poolIndex].tokenX === tokens[tokenBIndex].assetAddress
 
-      const isCurrentTokenY = isXtoY
-        ? allPools[poolIndex].tokenY === tokens[tokenBIndex].assetAddress
-        : allPools[poolIndex].tokenY === tokens[tokenAIndex].assetAddress
+  //     const isCurrentTokenY = isXtoY
+  //       ? allPools[poolIndex].tokenY === tokens[tokenBIndex].assetAddress
+  //       : allPools[poolIndex].tokenY === tokens[tokenAIndex].assetAddress
 
-      if (isCurrentTokenX && isCurrentTokenY) {
-        dispatch(
-          actions.getCurrentPlotTicks({
-            poolIndex: poolIndex,
-            isXtoY: allPools[poolIndex].tokenX.equals(tokens[tokenAIndex].assetAddress)
-          })
-        )
-      }
-    }
-  }, [isWaitingForNewPool, tokenAIndex, tokenBIndex, poolIndex, allPools])
+  //     if (isCurrentTokenX && isCurrentTokenY) {
+  //       dispatch(
+  //         actions.getCurrentPlotTicks({
+  //           poolIndex: poolIndex,
+  //           isXtoY: allPools[poolIndex].tokenX.equals(tokens[tokenAIndex].assetAddress)
+  //         })
+  //       )
+  //     }
+  //   }
+  // }, [isWaitingForNewPool, tokenAIndex, tokenBIndex, poolIndex, allPools])
 
   useEffect(() => {
     if (poolIndex !== null && allPools[poolIndex]) {
@@ -461,7 +465,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceALoading, setPriceALoading] = useState(false)
   useEffect(() => {
-    if (tokenAIndex === null) {
+    console.log('tokenAIndex ----------', tokenAIndex)
+    if (tokenAIndex === null || (tokenAIndex !== null && !tokens[tokenAIndex])) {
       return
     }
 
@@ -477,12 +482,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     } else {
       setTokenAPriceData(undefined)
     }
-  }, [tokenAIndex])
+  }, [tokenAIndex, tokens])
 
   const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceBLoading, setPriceBLoading] = useState(false)
   useEffect(() => {
-    if (tokenBIndex === null) {
+    if (tokenBIndex === null || (tokenBIndex !== null && !tokens[tokenBIndex])) {
       return
     }
 
@@ -498,7 +503,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     } else {
       setTokenBPriceData(undefined)
     }
-  }, [tokenBIndex])
+  }, [tokenBIndex, tokens])
 
   const initialSlippage =
     localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? DEFAULT_NEW_POSITION_SLIPPAGE

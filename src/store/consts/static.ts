@@ -309,11 +309,11 @@ const mainnetList = {}
 export const getAddressTickerMap = (network: NetworkType): { [k: string]: string } => {
   if (network !== NetworkType.Mainnet) {
     return {
-      WETH: 'So11111111111111111111111111111111111111112',
-      BTC: '3JXmQAzBPU66dkVQufSE1ChBMRAdCHp6T7ZMBKAwhmWw',
-      USDC: '5W3bmyYDww6p5XRZnCR6m2c75st6XyCxW1TgGS3wTq7S',
+      WETH: WETH_ADDRESS[network].toString(),
+      BTC: BTC_ADDRESS[network].toString(),
+      USDC: USDC_ADDRESS[network].toString(),
       EBGR: 'EBGR1Nb8k3ihiwFuRvXXuxotSKbX7FQWwuzfJEVE9wx9',
-      ETH: 'So11111111111111111111111111111111111111112',
+      ETH: WETH_ADDRESS[network].toString(),
       MOON: 'JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S',
       ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
     }
@@ -331,6 +331,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
 }
 
 export const getReversedAddressTickerMap = (network: NetworkType) => {
+  console.log('')
   return Object.fromEntries(
     Object.entries(getAddressTickerMap(network)).map(([key, value]) => [value, key])
   )

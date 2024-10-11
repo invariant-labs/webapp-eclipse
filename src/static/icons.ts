@@ -33,6 +33,7 @@ import varaLogo from './svg/VaraLogo.svg'
 import warningIcon from './svg/Warning.svg'
 import circleDiscord from './svg/circle-discord.svg'
 import circleTelegram from './svg/circle-telegram.svg'
+import eclipse from './svg/eclipse.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -69,7 +70,8 @@ const icons: { [key: string]: string } = {
   Vara: varaLogo,
   warningIcon,
   circleDiscord,
-  circleTelegram
+  circleTelegram,
+  eclipse
 }
 
 export default icons

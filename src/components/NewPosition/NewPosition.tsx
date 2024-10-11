@@ -441,7 +441,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const updatePath = (index1: number | null, index2: number | null, fee: number) => {
     const parsedFee = parseFeeToPathFee(ALL_FEE_TIERS_DATA[fee].tier.fee)
-
+    console.log('token1', index1)
+    console.log('token2', index2)
     if (index1 != null && index2 != null) {
       const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
       const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())

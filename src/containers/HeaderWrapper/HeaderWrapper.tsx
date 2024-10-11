@@ -103,7 +103,7 @@ export const HeaderWrapper: React.FC = () => {
             useCurrentRpc={useCurrentRpc}
           />
         )}
-      {/* {isThankYouModalShown && <ThankYouModal hideModal={hideThankYouModal} />} */}
+      {isThankYouModalShown && <ThankYouModal hideModal={hideThankYouModal} />}
       <Header
         address={walletAddress}
         onNetworkSelect={(network, rpcAddress) => {

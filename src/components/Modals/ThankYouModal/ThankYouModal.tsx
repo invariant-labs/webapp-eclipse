@@ -16,7 +16,7 @@ export const ThankYouModal: React.FC<Props> = ({ hideModal }) => {
         <Box className={classes.gradient}>
           <img className={classes.eclipseIcon} src={icons.eclipse} alt='Eclipse icon' />
 
-          <Box display='flex' flexDirection='column' alignItems='center' sx={{ gap: 16 }}>
+          <Box display='flex' flexDirection='column' alignItems='center' sx={{ gap: 2 }}>
             <Typography className={classes.title}>Thank you</Typography>
             <Typography className={classes.lowerTitle}>
               for using Invariant Faucet on Eclipse!
@@ -27,10 +27,10 @@ export const ThankYouModal: React.FC<Props> = ({ hideModal }) => {
             To stay updated, follow us on our social media.
           </Typography>
 
-          <Box display='flex' flexDirection='column' alignItems='center' sx={{ gap: 16 }}>
+          <Box display='flex' flexDirection='column' alignItems='center' sx={{ gap: 2 }}>
             <Typography className={classes.lowerTitle}>Join us here!</Typography>
 
-            <Box display='flex' sx={{ gap: 24 }}>
+            <Box display='flex' sx={{ gap: 3 }}>
               <a href={social.discord} target='_blank'>
                 <img src={icons.circleDiscord} alt='Discord in circle icon' />
               </a>

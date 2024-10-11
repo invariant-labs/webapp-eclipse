@@ -64,7 +64,7 @@ export const defaultState: IPoolsStore = {
   nearestPoolTicksForPair: {},
   isLoadingLatestPoolsForTransaction: false,
   isLoadingTicksAndTickMaps: false,
-  isLoadingTokens: true, // set to true
+  isLoadingTokens: false, // set to true
   isLoadingTokensError: false,
   tickMaps: {},
   volumeRanges: {}
@@ -100,6 +100,7 @@ const poolsSlice = createSlice({
         ...state.tokens,
         ...action.payload
       }
+      state.isLoadingTokens = false
       return state
     },
     setVolumeRanges(state, action: PayloadAction<Record<string, Range[]>>) {
