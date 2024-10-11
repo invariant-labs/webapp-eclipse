@@ -98,14 +98,14 @@ export const printBN = (amount: BN, decimals: number): string => {
     )
   }
 }
-// Bad solution but i hate regex
-export const trimZeros = (amount: string) => {
-  try {
-    return parseFloat(amount).toString()
-  } catch (error) {
-    return amount
-  }
+
+export const trimZeros = (numStr: string): string => {
+  return numStr
+    .replace(/(\.\d*?)0+$/, '$1')
+    .replace(/^0+(\d)|(\d)0+$/gm, '$1$2')
+    .replace(/\.$/, '')
 }
+
 export const convertBalanceToBN = (amount: string, decimals: number): BN => {
   const balanceString = amount.split('.')
   if (balanceString.length !== 2) {
@@ -302,17 +302,12 @@ export const calculateTickFromBalance = (
 
   const basePrice = Math.max(
     price,
-    Number(calcPriceByTickIndex(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal))
+    calcPriceByTickIndex(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal)
   )
-  const primaryUnitsPrice = getPrimaryUnitsPrice(
-    basePrice,
-    isXtoY,
-    Number(xDecimal),
-    Number(yDecimal)
-  )
+  const primaryUnitsPrice = getPrimaryUnitsPrice(basePrice, isXtoY, xDecimal, yDecimal)
   const tick = Math.round(logBase(primaryUnitsPrice, 1.0001))
 
-  return Math.max(Math.min(tick, Number(getMaxTick(spacing))), Number(getMinTick(spacing)))
+  return Math.max(Math.min(tick, getMaxTick(spacing)), getMinTick(spacing))
 }
 
 export const validConcentrationMidPriceTick = (
@@ -1301,10 +1296,6 @@ export const stringToFixed = (string: string, numbersAfterDot: number): string =
 
 export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
   try {
-    if (!isValidPublicKey(ticker)) {
-      return null
-    }
-
     return getAddressTickerMap(network)[ticker].toString()
   } catch (error) {
     return ticker

@@ -13,6 +13,7 @@ import {
 } from '@store/consts/static'
 import {
   addressToTicker,
+  calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   calculateConcentrationRange,
   convertBalanceToBN,
@@ -58,8 +59,8 @@ export interface INewPosition {
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   tokens: SwapToken[]
   data: PlotTickData[]
-  midPrice: TickPlotPositionData
-  setMidPrice: (mid: TickPlotPositionData) => void
+  midPrice: InitMidPrice
+  setMidPrice: (mid: InitMidPrice) => void
   addLiquidityHandler: (
     leftTickIndex: number,
     rightTickIndex: number,
@@ -106,10 +107,6 @@ export interface INewPosition {
   priceBLoading?: boolean
   hasTicksError?: boolean
   reloadHandler: () => void
-  plotVolumeRange?: {
-    min: number
-    max: number
-  }
   currentFeeIndex: number
   onSlippageChange: (slippage: string) => void
   initialSlippage: string
@@ -240,7 +237,7 @@ export const NewPosition: React.FC<INewPosition> = ({
       .map((_e, index) => ({ x: index, y: index, index })),
     midPrice: {
       x: 50,
-      index: 50
+      index: 0
     },
     tokenASymbol: 'ABC',
     tokenBSymbol: 'XYZ'
@@ -335,8 +332,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const onChangeMidPrice = (tickIndex: number, sqrtPrice: BN) => {
     setMidPrice({
       index: tickIndex,
-      x: calcPriceByTickIndex(tickIndex, isXtoY, xDecimal, yDecimal)
-      // sqrtPrice: sqrtPrice
+      x: calcPriceBySqrtPrice(sqrtPrice, isXtoY, xDecimal, yDecimal),
+      sqrtPrice: sqrtPrice
     })
 
     if (tokenAIndex !== null && (isXtoY ? rightRange > tickIndex : rightRange < tickIndex)) {
@@ -357,8 +354,8 @@ export const NewPosition: React.FC<INewPosition> = ({
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
         convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-        Number(leftRange),
-        Number(rightRange),
+        leftRange,
+        rightRange,
         false
       )
 
@@ -471,7 +468,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     }, 1000)
 
     return () => clearTimeout(timeout)
-  }, [refresherTime])
+  }, [refresherTime, poolIndex])
 
   const [lastPoolIndex, setLastPoolIndex] = useState<number | null>(poolIndex)
 
@@ -591,7 +588,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             onChangePositionTokens(index1, index2, fee)
 
             if (!isLoadingTokens) {
-              updatePath(index1, index1, fee)
+              updatePath(index1, index2, fee)
             }
           }}
           onAddLiquidity={() => {

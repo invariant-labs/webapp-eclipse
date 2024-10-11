@@ -306,12 +306,16 @@ export const defaultPrefixConfig: PrefixConfig = {
 }
 const mainnetList = {}
 
-export const getAddressTickerMap = (network: NetworkType): { [k: string]: PublicKey } => {
+export const getAddressTickerMap = (network: NetworkType): { [k: string]: string } => {
   if (network !== NetworkType.Mainnet) {
     return {
-      BTC: BTC_ADDRESS[network],
-      WETH: WETH_ADDRESS[network],
-      USDC: USDC_ADDRESS[network]
+      WETH: 'So11111111111111111111111111111111111111112',
+      BTC: '3JXmQAzBPU66dkVQufSE1ChBMRAdCHp6T7ZMBKAwhmWw',
+      USDC: '5W3bmyYDww6p5XRZnCR6m2c75st6XyCxW1TgGS3wTq7S',
+      EBGR: 'EBGR1Nb8k3ihiwFuRvXXuxotSKbX7FQWwuzfJEVE9wx9',
+      ETH: 'So11111111111111111111111111111111111111112',
+      MOON: 'JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S',
+      ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
     }
   } else {
     const parsedMainnetList = mainnetList as unknown as Record<string, Token>
@@ -322,7 +326,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: Public
       result[token.symbol] = token.address
     })
 
-    return result
+    return {}
   }
 }
 

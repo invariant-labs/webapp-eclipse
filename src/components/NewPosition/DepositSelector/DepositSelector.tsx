@@ -134,44 +134,48 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [isLoaded, setIsLoaded] = useState<boolean>(false)
 
   useEffect(() => {
-    if (!isLoaded || Object.keys(tokens).length !== 0 || ALL_FEE_TIERS_DATA.length !== 0) {
-      const tokenFromAddress = tickerToAddress(network, initialTokenFrom)
-      const tokenToAddress = tickerToAddress(network, initialTokenTo)
-      let tokenAIndexFromPath = null
-      let tokenBIndexFromPath = null
-      if (!tokenFromAddress || !tokenToAddress) {
-        return
-      }
-
-      tokens.forEach((token, index) => {
-        if (token.assetAddress.toString() === tokenFromAddress) {
-          tokenAIndexFromPath = index
-        }
-
-        if (token.assetAddress.toString() === tokenToAddress) {
-          tokenBIndexFromPath = index
-        }
-      })
-
-      let feeTierIndexFromPath = 0
-
-      const parsedFee = parsePathFeeToFeeString(initialFee)
-
-      ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
-        if (feeTierData.tier.fee.toString() === parsedFee) {
-          feeTierIndexFromPath = index
-        }
-      })
-
-      setTokenAIndex(tokenAIndexFromPath)
-      setTokenBIndex(tokenBIndexFromPath)
-      setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath)
-
-      setIsLoaded(true)
-    } else {
-      setIsLoaded(false)
+    if (isLoaded || tokens.length === 0 || ALL_FEE_TIERS_DATA.length === 0) {
+      return
     }
-  }, [Object.keys(tokens).length])
+    let feeTierIndexFromPath = 0
+    let tokenAIndexFromPath = null
+    let tokenBIndexFromPath = null
+    const tokenFromAddress = tickerToAddress(network, initialTokenFrom)
+    const tokenToAddress = tickerToAddress(network, initialTokenTo)
+
+    const tokenFromIndex = tokens.findIndex(
+      token => token.assetAddress.toString() === tokenFromAddress
+    )
+
+    const tokenToIndex = tokens.findIndex(token => token.assetAddress.toString() === tokenToAddress)
+
+    if (
+      tokenFromAddress !== null &&
+      tokenFromIndex !== -1 &&
+      (tokenToAddress === null || tokenToIndex === -1)
+    ) {
+      tokenAIndexFromPath = tokenFromIndex
+    } else if (
+      tokenFromAddress !== null &&
+      tokenToIndex !== -1 &&
+      tokenToAddress !== null &&
+      tokenFromIndex !== -1
+    ) {
+      tokenAIndexFromPath = tokenFromIndex
+      tokenBIndexFromPath = tokenToIndex
+    }
+    const parsedFee = parsePathFeeToFeeString(initialFee)
+
+    ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
+      if (feeTierData.tier.fee.toString() === parsedFee) {
+        feeTierIndexFromPath = index
+      }
+    })
+
+    setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath)
+
+    setIsLoaded(true)
+  }, [tokens, initialTokenFrom, initialTokenTo, initialFee])
 
   const getButtonMessage = useCallback(() => {
     if (tokenAIndex === null || tokenBIndex === null) {

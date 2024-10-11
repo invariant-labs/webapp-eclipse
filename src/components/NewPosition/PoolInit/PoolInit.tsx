@@ -90,8 +90,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
       yDecimal
     )
 
-    const parsedTickSpacing = Number(tickSpacing)
-    const tickDelta = calculateTickDelta(parsedTickSpacing, 2, 2)
+    const tickDelta = calculateTickDelta(tickSpacing, 2, 2)
 
     const minTickLimit = minTick + (2 + tickDelta) * tickSpacing
     const maxTickLimit = maxTick - (2 + tickDelta) * tickSpacing
@@ -126,6 +125,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
       xDecimal,
       yDecimal
     )
+
+    console.log('+midPriceInput', +midPriceInput)
+    console.log('midPriceInConcentrationMode', midPriceInConcentrationMode)
 
     const priceTickIndex = calculateTickFromBalance(
       positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
@@ -286,7 +288,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
         <Grid className={classes.infoWrapper}>
           <Typography className={classes.info}>
             This pool does not exist yet. To create it, select the fee tier, initial price, and
-            enter the amount of tokens. The estimated cost of creating a pool is 0.1 ETH.
+            enter the amount of tokens. The estimated cost of creating a pool is 0.003 AZERO.
           </Typography>
         </Grid>
 
