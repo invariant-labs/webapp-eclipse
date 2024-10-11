@@ -1,51 +1,61 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
-import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
-import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import { ALL_FEE_TIERS_DATA, BestTier, PositionOpeningMethod } from '@consts/static'
-import { addressToTicker, blurContent, parseFeeToPathFee, unblurContent } from '@consts/uiUtils'
-import {
-  PositionTokenBlock,
-  TokenPriceData,
-  calcPrice,
-  calculateConcentrationRange,
-  determinePositionTokenBlock,
-  printBN,
-  printBNtoBN,
-  trimLeadingZeros
-} from '@consts/utils'
-import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
-import {
-  fromFee,
-  getMaxTick,
-  getMinTick,
-  getConcentrationArray
-} from '@invariant-labs/sdk-eclipse/lib/utils'
-import { Button, Grid, Typography } from '@material-ui/core'
-import { Color } from '@material-ui/lab'
-import { BN } from '@project-serum/anchor'
-import { PlotTickData } from '@reducers/positions'
-import { SwapToken } from '@selectors/solanaWallet'
-import { PublicKey } from '@solana/web3.js'
+import Refresher from '@components/Refresher/Refresher'
+
+import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
-import { History } from 'history'
+import {
+  ALL_FEE_TIERS_DATA,
+  NetworkType,
+  PositionTokenBlock,
+  REFRESHER_INTERVAL
+} from '@store/consts/static'
+import {
+  addressToTicker,
+  calcPriceByTickIndex,
+  calculateConcentrationRange,
+  convertBalanceToBN,
+  determinePositionTokenBlock,
+  parseFeeToPathFee,
+  printBN,
+  trimLeadingZeros,
+  validConcentrationMidPriceTick
+} from '@utils/utils'
+import { PlotTickData } from '@store/reducers/positions'
+
+import { blurContent, unblurContent } from '@utils/uiUtils'
+import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useState } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import ConcentrationTypeSwitch from './ConcentrationTypeSwitch/ConcentrationTypeSwitch'
 import DepositSelector from './DepositSelector/DepositSelector'
 import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
+import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { Status } from '@store/reducers/solanaWallet'
+import { SwapToken } from '@store/selectors/solanaWallet'
+import { InitMidPrice, TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import { PublicKey } from '@solana/web3.js'
+import { BN } from '@project-serum/anchor'
+import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  fromFee,
+  getConcentrationArray,
+  getMaxTick,
+  getMinTick
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 
 export interface INewPosition {
   initialTokenFrom: string
   initialTokenTo: string
   initialFee: string
-  history: History<unknown>
   poolAddress: string
-  copyPoolAddressHandler: (message: string, variant: Color) => void
+  copyPoolAddressHandler: (message: string, variant: VariantType) => void
   tokens: SwapToken[]
   data: PlotTickData[]
   midPrice: TickPlotPositionData
@@ -73,8 +83,7 @@ export interface INewPosition {
     feeValue: number
   }>
   ticksLoading: boolean
-  showNoConnected?: boolean
-  noConnectedBlockerProps: INoConnected
+  loadingTicksAndTickMaps: boolean
   progress: ProgressState
   isXtoY: boolean
   xDecimal: number
@@ -84,11 +93,7 @@ export interface INewPosition {
   poolIndex: number | null
   currentPairReversed: boolean | null
   bestTiers: BestTier[]
-  initialIsDiscreteValue: boolean
-  onDiscreteChange: (val: boolean) => void
   currentPriceSqrt: BN
-  canCreateNewPool: boolean
-  canCreateNewPosition: boolean
   handleAddToken: (address: string) => void
   commonTokens: PublicKey[]
   initialOpeningPositionMethod: PositionOpeningMethod
@@ -108,13 +113,26 @@ export interface INewPosition {
   currentFeeIndex: number
   onSlippageChange: (slippage: string) => void
   initialSlippage: string
+  onRefresh: () => void
+  isBalanceLoading: boolean
+  shouldNotUpdatePriceRange: boolean
+  unblockUpdatePriceRange: () => void
+  isGetLiquidityError: boolean
+  onlyUserPositions: boolean
+  setOnlyUserPositions: (val: boolean) => void
+  network: NetworkType
+  isLoadingTokens: boolean
+  ethBalance: BN
+  walletStatus: Status
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+  ethBalanceWithoutFee: BN
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
   initialTokenFrom,
   initialTokenTo,
   initialFee,
-  history,
   poolAddress,
   copyPoolAddressHandler,
   tokens,
@@ -122,14 +140,12 @@ export const NewPosition: React.FC<INewPosition> = ({
   midPrice,
   setMidPrice,
   addLiquidityHandler,
+  progress = 'progress',
   onChangePositionTokens,
   isCurrentPoolExisting,
   calcAmount,
   feeTiers,
   ticksLoading,
-  showNoConnected,
-  noConnectedBlockerProps,
-  progress,
   isXtoY,
   xDecimal,
   yDecimal,
@@ -138,11 +154,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   poolIndex,
   currentPairReversed,
   bestTiers,
-  initialIsDiscreteValue,
-  onDiscreteChange,
-  currentPriceSqrt,
-  canCreateNewPool,
-  canCreateNewPosition,
   handleAddToken,
   commonTokens,
   initialOpeningPositionMethod,
@@ -155,12 +166,27 @@ export const NewPosition: React.FC<INewPosition> = ({
   priceBLoading,
   hasTicksError,
   reloadHandler,
-  plotVolumeRange,
   currentFeeIndex,
   onSlippageChange,
-  initialSlippage
+  initialSlippage,
+  currentPriceSqrt,
+  onRefresh,
+  isBalanceLoading,
+  shouldNotUpdatePriceRange,
+  unblockUpdatePriceRange,
+  isGetLiquidityError,
+  onlyUserPositions,
+  setOnlyUserPositions,
+  network,
+  isLoadingTokens,
+  ethBalance,
+  walletStatus,
+  onConnectWallet,
+  onDisconnectWallet,
+  ethBalanceWithoutFee
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
+  const navigate = useNavigate()
 
   const [positionOpeningMethod, setPositionOpeningMethod] = useState<PositionOpeningMethod>(
     initialOpeningPositionMethod
@@ -182,11 +208,15 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [concentrationIndex, setConcentrationIndex] = useState(0)
 
   const [minimumSliderIndex, setMinimumSliderIndex] = useState<number>(0)
+  const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
 
-  const concentrationArray = useMemo(
-    () => getConcentrationArray(tickSpacing, 2, midPrice.index).sort((a, b) => a - b),
-    [tickSpacing]
-  )
+  const [shouldReversePlot, setShouldReversePlot] = useState(false)
+
+  const concentrationArray = useMemo(() => {
+    const validatedMidPrice = validConcentrationMidPriceTick(midPrice.index, isXtoY, tickSpacing)
+
+    return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
+  }, [tickSpacing, midPrice.index])
 
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
@@ -258,9 +288,11 @@ export const NewPosition: React.FC<INewPosition> = ({
       leftRange = left
       rightRange = right
     }
+    leftRange = left
+    rightRange = right
 
-    setLeftRange(leftRange)
-    setRightRange(rightRange)
+    setLeftRange(left)
+    setRightRange(right)
 
     if (
       tokenAIndex !== null &&
@@ -268,7 +300,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     ) {
       const deposit = tokenADeposit
       const amount = getOtherTokenAmount(
-        printBNtoBN(deposit, tokens[tokenAIndex].decimals),
+        convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
         leftRange,
         rightRange,
         true
@@ -277,7 +309,6 @@ export const NewPosition: React.FC<INewPosition> = ({
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
         setTokenBDeposit(amount)
-
         return
       }
     }
@@ -288,7 +319,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     ) {
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
-        printBNtoBN(deposit, tokens[tokenBIndex].decimals),
+        convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
         leftRange,
         rightRange,
         false
@@ -301,35 +332,33 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }
 
-  const onChangeMidPrice = (mid: number) => {
+  const onChangeMidPrice = (tickIndex: number, sqrtPrice: BN) => {
     setMidPrice({
-      index: mid,
-      x: calcPrice(mid, isXtoY, xDecimal, yDecimal)
+      index: tickIndex,
+      x: calcPriceByTickIndex(tickIndex, isXtoY, xDecimal, yDecimal)
+      // sqrtPrice: sqrtPrice
     })
 
-    if (tokenAIndex !== null && (isXtoY ? rightRange > mid : rightRange < mid)) {
+    if (tokenAIndex !== null && (isXtoY ? rightRange > tickIndex : rightRange < tickIndex)) {
       const deposit = tokenADeposit
       const amount = getOtherTokenAmount(
-        printBNtoBN(deposit, tokens[tokenAIndex].decimals),
+        convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
         leftRange,
         rightRange,
         true
       )
-
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
         setTokenBDeposit(amount)
-
         return
       }
     }
-
-    if (tokenBIndex !== null && (isXtoY ? leftRange < mid : leftRange > mid)) {
+    if (tokenBIndex !== null && (isXtoY ? leftRange < tickIndex : leftRange > tickIndex)) {
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
-        printBNtoBN(deposit, tokens[tokenBIndex].decimals),
-        leftRange,
-        rightRange,
+        convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+        Number(leftRange),
+        Number(rightRange),
         false
       )
 
@@ -339,6 +368,7 @@ export const NewPosition: React.FC<INewPosition> = ({
       }
     }
   }
+
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
@@ -388,7 +418,13 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (!ticksLoading && positionOpeningMethod === 'range') {
       onChangeRange(leftRange, rightRange)
     }
-  }, [midPrice.index])
+  }, [midPrice.index, leftRange, rightRange])
+
+  useEffect(() => {
+    if (positionOpeningMethod === 'range') {
+      onChangeRange(leftRange, rightRange)
+    }
+  }, [currentPriceSqrt])
 
   const handleClickSettings = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -407,64 +443,129 @@ export const NewPosition: React.FC<INewPosition> = ({
   }
 
   const updatePath = (index1: number | null, index2: number | null, fee: number) => {
-    const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
+    const parsedFee = parseFeeToPathFee(ALL_FEE_TIERS_DATA[fee].tier.fee)
 
     if (index1 != null && index2 != null) {
-      const address1 = addressToTicker(tokens[index1].assetAddress.toString())
-      const address2 = addressToTicker(tokens[index2].assetAddress.toString())
-      history.replace(`/newPosition/${address1}/${address2}/${parsedFee}`)
+      const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
+      const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())
+      navigate(`/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}`, { replace: true })
     } else if (index1 != null) {
-      const address = addressToTicker(tokens[index1].assetAddress.toString())
-      history.replace(`/newPosition/${address}/${parsedFee}`)
+      const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
+      navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
     } else if (index2 != null) {
-      const address = addressToTicker(tokens[index2].assetAddress.toString())
-      history.replace(`/newPosition/${address}/${parsedFee}`)
+      const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
+      navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
     } else if (fee != null) {
-      history.replace(`/newPosition/${parsedFee}`)
+      navigate(`/newPosition/${parsedFee}`, { replace: true })
     }
   }
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (refresherTime > 0 && isCurrentPoolExisting) {
+        setRefresherTime(refresherTime - 1)
+      } else if (isCurrentPoolExisting) {
+        onRefresh()
+        setRefresherTime(REFRESHER_INTERVAL)
+      }
+    }, 1000)
+
+    return () => clearTimeout(timeout)
+  }, [refresherTime])
+
+  const [lastPoolIndex, setLastPoolIndex] = useState<number | null>(poolIndex)
+
+  useEffect(() => {
+    if (poolIndex != lastPoolIndex) {
+      setLastPoolIndex(lastPoolIndex)
+      setRefresherTime(REFRESHER_INTERVAL)
+    }
+  }, [poolIndex])
+
+  const blockedToken = useMemo(
+    () =>
+      positionOpeningMethod === 'range'
+        ? determinePositionTokenBlock(
+            currentPriceSqrt,
+            Math.min(leftRange, rightRange),
+            Math.max(leftRange, rightRange),
+            isXtoY
+          )
+        : false,
+    [leftRange, rightRange, currentPriceSqrt]
+  )
+
   return (
     <Grid container className={classes.wrapper} direction='column'>
-      <Link to='/pool' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
+      <Link to='/liquidity' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
         <Grid className={classes.back} container item alignItems='center'>
-          <img className={classes.backIcon} src={backIcon} />
-          <Typography className={classes.backText}>Back to Liquidity Positions List</Typography>
+          <img className={classes.backIcon} src={backIcon} alt='back' />
+          <Typography className={classes.backText}>Positions</Typography>
         </Grid>
       </Link>
 
-      <Grid container justifyContent='space-between'>
-        <Typography className={classes.title}>Add new liquidity position</Typography>
-        <Grid container item alignItems='center' className={classes.options}>
-          {poolIndex !== null ? (
-            <MarketIdLabel
-              displayLength={9}
-              marketId={poolAddress}
-              copyPoolAddressHandler={copyPoolAddressHandler}
-            />
-          ) : null}
-
-          <ConcentrationTypeSwitch
-            onSwitch={val => {
-              if (val) {
-                setPositionOpeningMethod('concentration')
-                onPositionOpeningMethodChange('concentration')
-              } else {
-                setPositionOpeningMethod('range')
-                onPositionOpeningMethodChange('range')
-              }
-            }}
-            initialValue={initialOpeningPositionMethod === 'concentration' ? 0 : 1}
-            className={classes.switch}
-            style={{
-              opacity: poolIndex !== null ? 1 : 0
-            }}
-            disabled={poolIndex === null}
-          />
-          <Button onClick={handleClickSettings} className={classes.settingsIconBtn} disableRipple>
-            <img src={settingIcon} className={classes.settingsIcon} />
-          </Button>
-        </Grid>
+      <Grid
+        container
+        justifyContent='space-between'
+        alignItems='center'
+        className={classes.headerContainer}>
+        <Box className={classes.titleContainer}>
+          <Typography className={classes.title}>Add new position</Typography>
+          {poolIndex !== null && tokenAIndex !== tokenBIndex && (
+            <TooltipHover text='Refresh'>
+              <Box>
+                <Refresher
+                  currentIndex={refresherTime}
+                  maxIndex={REFRESHER_INTERVAL}
+                  onClick={() => {
+                    onRefresh()
+                    setRefresherTime(REFRESHER_INTERVAL)
+                  }}
+                />
+              </Box>
+            </TooltipHover>
+          )}
+        </Box>
+        {tokenAIndex !== null && tokenBIndex !== null && (
+          <Grid container item alignItems='center' className={classes.options}>
+            {poolIndex !== null ? (
+              <MarketIdLabel
+                displayLength={4}
+                marketId={poolAddress}
+                copyPoolAddressHandler={copyPoolAddressHandler}
+              />
+            ) : null}
+            <Grid className={classes.optionsWrapper}>
+              <Hidden mdDown>
+                {tokenAIndex !== null && tokenBIndex !== null && (
+                  <ConcentrationTypeSwitch
+                    onSwitch={val => {
+                      if (val) {
+                        setPositionOpeningMethod('concentration')
+                        onPositionOpeningMethodChange('concentration')
+                      } else {
+                        setPositionOpeningMethod('range')
+                        onPositionOpeningMethodChange('range')
+                      }
+                    }}
+                    className={classes.switch}
+                    currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
+                  />
+                )}
+              </Hidden>
+              {poolIndex !== null && (
+                <TooltipHover text='Settings'>
+                  <Button
+                    onClick={handleClickSettings}
+                    className={classes.settingsIconBtn}
+                    disableRipple>
+                    <img src={settingIcon} className={classes.settingsIcon} alt='settings' />
+                  </Button>
+                </TooltipHover>
+              )}
+            </Grid>
+          </Grid>
+        )}
       </Grid>
 
       <Slippage
@@ -472,14 +573,12 @@ export const NewPosition: React.FC<INewPosition> = ({
         setSlippage={setSlippage}
         handleClose={handleCloseSettings}
         anchorEl={anchorEl}
-        defaultSlippage={'1'}
         initialSlippage={initialSlippage}
         infoText='Slippage tolerance is a pricing difference between the price at the confirmation time and the actual price of the transaction users are willing to accept when initializing position.'
-        headerText='Position Transaction Settings'
+        headerText='Position Settings'
       />
 
       <Grid container className={classes.row} alignItems='stretch'>
-        {showNoConnected && <NoConnected {...noConnectedBlockerProps} />}
         <DepositSelector
           initialTokenFrom={initialTokenFrom}
           initialTokenTo={initialTokenTo}
@@ -491,33 +590,45 @@ export const NewPosition: React.FC<INewPosition> = ({
             setTokenBIndex(index2)
             onChangePositionTokens(index1, index2, fee)
 
-            updatePath(index1, index2, fee)
+            if (!isLoadingTokens) {
+              updatePath(index1, index1, fee)
+            }
           }}
           onAddLiquidity={() => {
             if (tokenAIndex !== null && tokenBIndex !== null) {
+              const tokenADecimals = tokens[tokenAIndex].decimals
+              const tokenBDecimals = tokens[tokenBIndex].decimals
+
               addLiquidityHandler(
                 leftRange,
                 rightRange,
                 isXtoY
-                  ? +tokenADeposit * 10 ** tokens[tokenAIndex].decimals
-                  : +tokenBDeposit * 10 ** tokens[tokenBIndex].decimals,
+                  ? convertBalanceToBN(tokenADeposit, tokenADecimals)
+                  : convertBalanceToBN(tokenBDeposit, tokenBDecimals),
                 isXtoY
-                  ? +tokenBDeposit * 10 ** tokens[tokenBIndex].decimals
-                  : +tokenADeposit * 10 ** tokens[tokenAIndex].decimals,
+                  ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
+                  : convertBalanceToBN(tokenADeposit, tokenADecimals),
                 { v: fromFee(new BN(Number(+slippTolerance * 1000))) }
               )
             }
           }}
           tokenAInputState={{
-            value: tokenADeposit,
+            value:
+              tokenAIndex !== null &&
+              tokenBIndex !== null &&
+              !isWaitingForNewPool &&
+              blockedToken === PositionTokenBlock.A
+                ? '0'
+                : tokenADeposit,
             setValue: value => {
               if (tokenAIndex === null) {
                 return
               }
+
               setTokenADeposit(value)
               setTokenBDeposit(
                 getOtherTokenAmount(
-                  printBNtoBN(value, tokens[tokenAIndex].decimals),
+                  convertBalanceToBN(value, tokens[tokenAIndex].decimals),
                   leftRange,
                   rightRange,
                   true
@@ -528,17 +639,19 @@ export const NewPosition: React.FC<INewPosition> = ({
               tokenAIndex !== null &&
               tokenBIndex !== null &&
               !isWaitingForNewPool &&
-              determinePositionTokenBlock(
-                currentPriceSqrt,
-                Math.min(leftRange, rightRange),
-                Math.max(leftRange, rightRange),
-                isXtoY
-              ) === PositionTokenBlock.A,
+              blockedToken === PositionTokenBlock.A,
+
             blockerInfo: 'Range only for single-asset deposit.',
             decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
           }}
           tokenBInputState={{
-            value: tokenBDeposit,
+            value:
+              tokenAIndex !== null &&
+              tokenBIndex !== null &&
+              !isWaitingForNewPool &&
+              blockedToken === PositionTokenBlock.B
+                ? '0'
+                : tokenBDeposit,
             setValue: value => {
               if (tokenBIndex === null) {
                 return
@@ -546,7 +659,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               setTokenBDeposit(value)
               setTokenADeposit(
                 getOtherTokenAmount(
-                  printBNtoBN(value, tokens[tokenBIndex].decimals),
+                  convertBalanceToBN(value, tokens[tokenBIndex].decimals),
                   leftRange,
                   rightRange,
                   false
@@ -557,12 +670,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               tokenAIndex !== null &&
               tokenBIndex !== null &&
               !isWaitingForNewPool &&
-              determinePositionTokenBlock(
-                currentPriceSqrt,
-                Math.min(leftRange, rightRange),
-                Math.max(leftRange, rightRange),
-                isXtoY
-              ) === PositionTokenBlock.B,
+              blockedToken === PositionTokenBlock.B,
             blockerInfo: 'Range only for single-asset deposit.',
             decimalsLimit: tokenBIndex !== null ? tokens[tokenBIndex].decimals : 0
           }}
@@ -572,18 +680,18 @@ export const NewPosition: React.FC<INewPosition> = ({
             if (tokenAIndex === null || tokenBIndex === null) {
               return
             }
-
+            setShouldReversePlot(true)
             const pom = tokenAIndex
             setTokenAIndex(tokenBIndex)
             setTokenBIndex(pom)
             onChangePositionTokens(tokenBIndex, tokenAIndex, currentFeeIndex)
 
-            updatePath(tokenBIndex, tokenAIndex, currentFeeIndex)
+            if (!isLoadingTokens) {
+              updatePath(tokenBIndex, tokenAIndex, currentFeeIndex)
+            }
           }}
           poolIndex={poolIndex}
           bestTierIndex={bestTierIndex}
-          canCreateNewPool={canCreateNewPool}
-          canCreateNewPosition={canCreateNewPosition}
           handleAddToken={handleAddToken}
           commonTokens={commonTokens}
           initialHideUnknownTokensValue={initialHideUnknownTokensValue}
@@ -597,8 +705,35 @@ export const NewPosition: React.FC<INewPosition> = ({
           concentrationIndex={concentrationIndex}
           minimumSliderIndex={minimumSliderIndex}
           positionOpeningMethod={positionOpeningMethod}
+          isBalanceLoading={isBalanceLoading}
+          isGetLiquidityError={isGetLiquidityError}
+          ticksLoading={ticksLoading}
+          network={network}
+          ethBalance={ethBalance}
+          walletStatus={walletStatus}
+          onConnectWallet={onConnectWallet}
+          onDisconnectWallet={onDisconnectWallet}
+          ethBalanceWithoutFee={ethBalanceWithoutFee}
         />
-
+        <Hidden mdUp>
+          <Grid container justifyContent='end' mb={2}>
+            {poolIndex !== null && (
+              <ConcentrationTypeSwitch
+                onSwitch={val => {
+                  if (val) {
+                    setPositionOpeningMethod('concentration')
+                    onPositionOpeningMethodChange('concentration')
+                  } else {
+                    setPositionOpeningMethod('range')
+                    onPositionOpeningMethodChange('range')
+                  }
+                }}
+                className={classes.switch}
+                currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
+              />
+            )}
+          </Grid>
+        </Hidden>
         {isCurrentPoolExisting ||
         tokenAIndex === null ||
         tokenBIndex === null ||
@@ -633,17 +768,20 @@ export const NewPosition: React.FC<INewPosition> = ({
             xDecimal={xDecimal}
             yDecimal={yDecimal}
             currentPairReversed={currentPairReversed}
-            initialIsDiscreteValue={initialIsDiscreteValue}
-            onDiscreteChange={onDiscreteChange}
             positionOpeningMethod={positionOpeningMethod}
             hasTicksError={hasTicksError}
             reloadHandler={reloadHandler}
-            volumeRange={plotVolumeRange}
             concentrationArray={concentrationArray}
             setConcentrationIndex={setConcentrationIndex}
             concentrationIndex={concentrationIndex}
             minimumSliderIndex={minimumSliderIndex}
             getTicksInsideRange={getTicksInsideRange}
+            shouldReversePlot={shouldReversePlot}
+            setShouldReversePlot={setShouldReversePlot}
+            shouldNotUpdatePriceRange={shouldNotUpdatePriceRange}
+            unblockUpdatePriceRange={unblockUpdatePriceRange}
+            onlyUserPositions={onlyUserPositions}
+            setOnlyUserPositions={setOnlyUserPositions}
           />
         ) : (
           <PoolInit
@@ -654,9 +792,14 @@ export const NewPosition: React.FC<INewPosition> = ({
             yDecimal={yDecimal}
             tokenASymbol={tokenAIndex !== null ? tokens[tokenAIndex].symbol : 'ABC'}
             tokenBSymbol={tokenBIndex !== null ? tokens[tokenBIndex].symbol : 'XYZ'}
-            midPrice={midPrice.index}
+            midPriceIndex={midPrice.index}
             onChangeMidPrice={onChangeMidPrice}
             currentPairReversed={currentPairReversed}
+            positionOpeningMethod={positionOpeningMethod}
+            concentrationArray={concentrationArray}
+            concentrationIndex={concentrationIndex}
+            setConcentrationIndex={setConcentrationIndex}
+            minimumSliderIndex={minimumSliderIndex}
           />
         )}
       </Grid>

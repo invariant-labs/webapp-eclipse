@@ -16,7 +16,7 @@ import {
 } from '@store/reducers/pools'
 import { tokens } from '@store/selectors/pools'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
-import { findPairs, getFullNewTokensData, getPools, getPoolsFromAdresses } from '@utils/utils'
+import { findPairs, getFullNewTokensData, getPools, getPoolsFromAddresses } from '@utils/utils'
 
 export interface iTick {
   index: Tick[]
@@ -47,13 +47,21 @@ export function* fetchPoolData(action: PayloadAction<Pair>) {
 }
 
 export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
-  const networkType = yield* select(network)
-  const rpc = yield* select(rpcAddress)
-  const marketProgram = yield* call(getMarketProgram, networkType, rpc)
-  const pairs = FEE_TIERS.map(fee => new Pair(action.payload.first, action.payload.second, fee))
-  const pools: PoolWithAddress[] = yield call(getPools, pairs, marketProgram)
+  try {
+    const networkType = yield* select(network)
+    console.log('networkType', networkType)
+    const rpc = yield* select(rpcAddress)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc)
+    console.log('tokens1:', action.payload.first)
+    console.log('tokens2:', action.payload.second)
+    const pairs = FEE_TIERS.map(fee => new Pair(action.payload.first, action.payload.second, fee))
 
-  yield* put(actions.addPools(pools))
+    const pools: PoolWithAddress[] = yield call(getPools, pairs, marketProgram)
+
+    yield* put(actions.addPools(pools))
+  } catch (error) {
+    console.log(error)
+  }
 }
 
 export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) {
@@ -61,8 +69,9 @@ export function* fetchPoolsDataForList(action: PayloadAction<ListPoolsRequest>) 
   const networkType = yield* select(network)
   const rpc = yield* select(rpcAddress)
   const marketProgram = yield* call(getMarketProgram, networkType, rpc)
+
   const newPools: PoolWithAddress[] = yield* call(
-    getPoolsFromAdresses,
+    getPoolsFromAddresses,
     action.payload.addresses.map(addr => new PublicKey(addr)),
     marketProgram
   )

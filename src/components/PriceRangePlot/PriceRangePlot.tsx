@@ -1,19 +1,21 @@
-import React, { useCallback, useMemo, useRef } from 'react'
-import { Layer, ResponsiveLine } from '@nivo/line'
-// @ts-expect-error
+import { Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import { linearGradientDef } from '@nivo/core'
-import { colors, theme } from '@static/theme'
-import { Button, Grid, Typography, useMediaQuery } from '@material-ui/core'
-import classNames from 'classnames'
+import { Layer, ResponsiveLine } from '@nivo/line'
+import loader from '@static/gif/loader.gif'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
+import { colors, theme } from '@static/theme'
+import { formatNumber, nearestTickIndex } from '@utils/utils'
+import { PlotTickData } from '@store/reducers/positions'
+import classNames from 'classnames'
+import React, { useCallback, useMemo, useRef } from 'react'
 import Brush from './Brush/Brush'
-import { nearestTickIndex } from '@consts/utils'
-import { PlotTickData } from '@reducers/positions'
-import loader from '@static/gif/loader.gif'
 import useStyles from './style'
+import { BN } from '@project-serum/anchor'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
+
+export type InitMidPrice = TickPlotPositionData & { sqrtPrice: BN }
 
 export interface IPriceRangePlot {
   data: PlotTickData[]
@@ -33,14 +35,9 @@ export interface IPriceRangePlot {
   xDecimal: number
   yDecimal: number
   tickSpacing: number
-  isDiscrete?: boolean
   coverOnLoading?: boolean
   hasError?: boolean
   reloadHandler: () => void
-  volumeRange?: {
-    min: number
-    max: number
-  }
 }
 
 export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
@@ -61,13 +58,11 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   xDecimal,
   yDecimal,
   tickSpacing,
-  isDiscrete = false,
   coverOnLoading = false,
   hasError = false,
-  reloadHandler,
-  volumeRange
+  reloadHandler
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
 
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -294,40 +289,6 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     )
   }
 
-  const volumeRangeLayer: Layer = ({ innerWidth, innerHeight }) => {
-    if (typeof volumeRange === 'undefined') {
-      return null
-    }
-
-    const unitLen = innerWidth / (plotMax - plotMin)
-    return (
-      <>
-        {volumeRange.min >= plotMin ? (
-          <line
-            x1={(volumeRange.min - plotMin) * unitLen}
-            x2={(volumeRange.min - plotMin) * unitLen}
-            y1={0}
-            strokeWidth={1}
-            y2={innerHeight}
-            stroke={colors.invariant.text}
-            strokeDasharray='16 4'
-          />
-        ) : null}
-        {volumeRange.max <= plotMax ? (
-          <line
-            x1={(volumeRange.max - plotMin) * unitLen}
-            x2={(volumeRange.max - plotMin) * unitLen}
-            y1={0}
-            strokeWidth={1}
-            y2={innerHeight}
-            stroke={colors.invariant.text}
-            strokeDasharray='16 4'
-          />
-        ) : null}
-      </>
-    )
-  }
-
   const bottomLineLayer: Layer = ({ innerWidth, innerHeight }) => {
     const bottomLine = innerHeight
     return <rect x={0} y={bottomLine} width={innerWidth} height={1} fill={colors.invariant.light} />
@@ -398,15 +359,17 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     disabled
   )
 
+  const isNoPositions = data.every(tick => !(tick.y > 0))
+
   return (
     <Grid
       container
       className={classNames(classes.container, className)}
       style={style}
-      innerRef={containerRef}>
+      ref={containerRef}>
       {loading && coverOnLoading ? (
         <Grid container className={classes.cover}>
-          <img src={loader} className={classes.loader} />
+          <img src={loader} className={classes.loader} alt='Loader' />
         </Grid>
       ) : null}
       {!loading && hasError ? (
@@ -425,13 +388,31 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         className={classNames(classes.zoomButtonsWrapper, 'zoomBtns')}
         justifyContent='space-between'>
         <Button className={classes.zoomButton} onClick={zoomPlus} disableRipple>
-          <img src={ZoomInIcon} className={classes.zoomIcon} />
+          <img src={ZoomInIcon} className={classes.zoomIcon} alt='Zoom in' />
         </Button>
         <Button className={classes.zoomButton} onClick={zoomMinus} disableRipple>
-          <img src={ZoomOutIcon} className={classes.zoomIcon} />
+          <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
         </Button>
       </Grid>
       <ResponsiveLine
+        sliceTooltip={() => <></>}
+        tooltip={() => <></>}
+        useMesh={false}
+        enableCrosshair={false}
+        enablePointLabel={false}
+        debugSlices={false}
+        enableSlices={false}
+        debugMesh={false}
+        areaBaselineValue={0}
+        pointBorderWidth={0}
+        areaBlendMode='normal'
+        crosshairType='x'
+        pointLabel=''
+        pointBorderColor=''
+        pointColor=''
+        lineWidth={2}
+        pointSize={2}
+        areaOpacity={0.2}
         data={[
           {
             id: 'less than range',
@@ -446,7 +427,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
             data: currentGreaterThanRange.length ? currentGreaterThanRange : [{ x: plotMax, y: 0 }]
           }
         ]}
-        curve={isDiscrete ? (isXtoY ? 'stepAfter' : 'stepBefore') : 'basis'}
+        curve={isXtoY ? 'stepAfter' : 'stepBefore'}
         margin={{ top: isSmDown ? 55 : 25, bottom: 15 }}
         colors={[colors.invariant.pink, colors.invariant.green, colors.invariant.pink]}
         axisTop={null}
@@ -456,7 +437,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           tickSize: 0,
           tickPadding: 0,
           tickRotation: 0,
-          tickValues: 5
+          tickValues: 5,
+          format: value => formatNumber(value.toString())
         }}
         xScale={{
           type: 'linear',
@@ -466,7 +448,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         yScale={{
           type: 'linear',
           min: 0,
-          max: maxVal
+          max: isNoPositions ? 1 : maxVal
         }}
         enableGridX={false}
         enableGridY={false}
@@ -484,7 +466,6 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           'lines',
           lazyLoadingLayer,
           currentLayer,
-          volumeRangeLayer,
           brushLayer,
           'axes',
           'legends'

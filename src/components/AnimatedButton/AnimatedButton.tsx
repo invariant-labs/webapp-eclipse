@@ -1,9 +1,9 @@
-import React from 'react'
-import { Button } from '@material-ui/core'
-import successGif from '@static/gif/successAnimation.gif'
+import { Button } from '@mui/material'
 import errorGif from '@static/gif/errorAnimation.gif'
 import loadingAnimation from '@static/gif/loading.gif'
+import successGif from '@static/gif/successAnimation.gif'
 import classNames from 'classnames'
+import React from 'react'
 import useStyles from './style'
 
 export type ProgressState =
@@ -29,7 +29,7 @@ const AnimatedButton: React.FC<Props> = ({
   onClick,
   className
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
 
   const getMessage = () => {
     if (progress === 'none') {
@@ -45,10 +45,10 @@ const AnimatedButton: React.FC<Props> = ({
     }
 
     if (progress === 'success') {
-      return <img className={classes.gifContent} src={successGif} />
+      return <img className={classes.gifContent} src={successGif} alt='success' />
     }
 
-    return <img className={classes.gifContent} src={errorGif} />
+    return <img className={classes.gifContent} src={errorGif} alt='error' />
   }
 
   const getClasses = () => {
@@ -84,7 +84,10 @@ const AnimatedButton: React.FC<Props> = ({
       progress === 'approvedWithSuccess' ||
       progress === 'approvedWithFail' ||
       content === 'Loading' ? (
-        <img src={loadingAnimation} style={{ height: '100%', width: 25, zIndex: 10 }}></img>
+        <img
+          src={loadingAnimation}
+          style={{ height: 25, width: 25, zIndex: 10 }}
+          alt='loading'></img>
       ) : (
         getMessage()
       )}

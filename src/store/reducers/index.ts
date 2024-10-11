@@ -12,7 +12,8 @@ import { poolsSliceName, reducer as poolsReducer } from './pools'
 import { swapSliceName, reducer as swapReducer } from './swap'
 import { positionsSliceName, reducer as positionsReducer } from './positions'
 import { statsSliceName, reducer as statsReducer } from './stats'
-import { EclipseNetworks, NetworkType } from '@store/consts/static'
+import { NetworkType } from '@store/consts/static'
+import { RPC } from '@utils/web3/connection'
 // import { farmsSliceName, reducer as farmsReducer } from './farms'
 // import { bondsSliceName, reducer as bondsReducer } from './bonds'
 
@@ -22,7 +23,7 @@ const transformNetwork = createTransform(
   },
   (outboundState, key) => {
     if (key === 'network' && !Object.values(NetworkType).includes(outboundState)) {
-      return NetworkType.MAINNET
+      return NetworkType.Mainnet
     }
 
     return outboundState
@@ -35,22 +36,22 @@ const migrations: MigrationManifest = {
     const network =
       typeof state?.network !== 'undefined' && Object.values(NetworkType).includes(state.network)
         ? state.network
-        : NetworkType.MAINNET
+        : NetworkType.Mainnet
 
     let rpcAddress
 
     switch (network) {
-      case NetworkType.DEVNET:
-        rpcAddress = EclipseNetworks.DEV
+      case NetworkType.Devnet:
+        rpcAddress = RPC.DEV
         break
-      case NetworkType.TESTNET:
-        rpcAddress = EclipseNetworks.TEST
+      case NetworkType.Testnet:
+        rpcAddress = RPC.TEST
         break
-      case NetworkType.LOCALNET:
-        rpcAddress = EclipseNetworks.LOCAL
+      case NetworkType.Local:
+        rpcAddress = RPC.LOCAL
         break
-      case NetworkType.MAINNET:
-        rpcAddress = EclipseNetworks.MAIN
+      case NetworkType.Mainnet:
+        rpcAddress = RPC.MAIN
         break
     }
 

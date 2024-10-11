@@ -16,7 +16,11 @@ import { accounts } from '@store/selectors/solanaWallet'
 import { Transaction, sendAndConfirmRawTransaction, Keypair, SystemProgram } from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { SIGNING_SNACKBAR_CONFIG, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
-import { positionsWithPoolsData, singlePositionData } from '@store/selectors/positions'
+import {
+  positionsList,
+  positionsWithPoolsData,
+  singlePositionData
+} from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { closeSnackbar } from 'notistack'
@@ -25,6 +29,7 @@ import {
   createLiquidityPlot,
   createLoaderKey,
   createPlaceholderLiquidityPlot,
+  getLiquidityTicksByPositionsList,
   getPositionsAddressesFromRange
 } from '@utils/utils'
 // import { createClaimAllPositionRewardsTx } from './farms'
@@ -647,7 +652,7 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
   const allPools = yield* select(poolsArraySortedByFees)
   const allTokens = yield* select(tokens)
 
-  const poolIndex = action.payload.poolIndex
+  const { poolIndex, isXtoY, fetchTicksAndTickmap } = action.payload
 
   const xDecimal = allTokens[allPools[poolIndex].tokenX.toString()].decimals
   const yDecimal = allTokens[allPools[poolIndex].tokenY.toString()].decimals
@@ -665,6 +670,15 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
       })
     )
 
+    const { list } = yield* select(positionsList)
+    const userTicks = getLiquidityTicksByPositionsList(
+      allPools[poolIndex],
+      list,
+      isXtoY,
+      xDecimal,
+      yDecimal
+    )
+
     const ticksData = createLiquidityPlot(
       rawTicks,
       allPools[poolIndex],
@@ -673,7 +687,7 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
       yDecimal
     )
 
-    yield put(actions.setPlotTicks(ticksData))
+    yield put(actions.setPlotTicks({ allPlotTicks: ticksData, userPlotTicks: userTicks }))
   } catch (error) {
     console.log(error)
     const data = createPlaceholderLiquidityPlot(
@@ -693,16 +707,16 @@ export function* handleGetPositionsList() {
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc)
     const wallet = yield* call(getWallet)
-
+    console.log('wallet.publicKey', wallet.publicKey)
     const { head } = yield* call([marketProgram, marketProgram.getPositionList], wallet.publicKey)
-
+    console.log(head)
     const list = yield* call(
       [marketProgram, marketProgram.getPositionsFromRange],
       wallet.publicKey,
       0,
       head - 1
     )
-
+    console.log('list', list)
     const addresses = yield* call(
       getPositionsAddressesFromRange,
       marketProgram,
@@ -710,7 +724,7 @@ export function* handleGetPositionsList() {
       0,
       head - 1
     )
-
+    console.log('addresses', addresses)
     const positions = list.map((position, index) => ({
       ...position,
       address: addresses[index]

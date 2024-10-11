@@ -7,14 +7,21 @@ import { PoolWithAddress } from '@store/reducers/pools'
 
 const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore
 
-export const { lastPage, positionsList, plotTicks, currentPositionRangeTicks, initPosition } =
-  keySelectors(store, [
-    'lastPage',
-    'positionsList',
-    'plotTicks',
-    'currentPositionRangeTicks',
-    'initPosition'
-  ])
+export const {
+  lastPage,
+  positionsList,
+  plotTicks,
+  currentPositionTicks,
+  initPosition,
+  shouldNotUpdateRange
+} = keySelectors(store, [
+  'lastPage',
+  'positionsList',
+  'plotTicks',
+  'currentPositionTicks',
+  'initPosition',
+  'shouldNotUpdateRange'
+])
 
 export const lastPageSelector = createSelector(lastPage, s => s)
 
@@ -63,8 +70,9 @@ export const singlePositionData = (id: string) =>
 export const positionsSelectors = {
   positionsList,
   plotTicks,
-  currentPositionRangeTicks,
-  initPosition
+  currentPositionTicks,
+  initPosition,
+  shouldNotUpdateRange
 }
 
 export default positionsSelectors

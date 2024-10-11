@@ -1,14 +1,14 @@
 import { Provider } from 'react-redux'
 import { store } from './store'
 import { RouterProvider } from 'react-router-dom'
+import { router } from '@pages/RouterPages'
+import SnackbarProvider from '@components/Snackbar'
 import { theme } from '@static/theme'
 import { ThemeProvider } from '@mui/material/styles'
-import { filterConsoleMessages, messagesToHide } from './hideErrors'
-import { SnackbarProvider } from 'notistack'
 import Notifier from '@containers/Notifier/Notifier'
-import { router } from '@pages/RouterPages'
+// import { filterConsoleMessages, messagesToHide } from './hideErrors'
 
-filterConsoleMessages(messagesToHide)
+// filterConsoleMessages(messagesToHide)
 
 function App() {
   return (

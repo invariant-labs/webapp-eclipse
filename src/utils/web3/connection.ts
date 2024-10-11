@@ -1,6 +1,6 @@
 import { Connection } from '@solana/web3.js'
 import { Network } from '@invariant-labs/sdk-eclipse'
-import { NetworkType, EclipseNetworks } from '@store/consts/static'
+import { NetworkType, RPC } from '@store/consts/static'
 // import { Network as StakerNetwork } from '@invariant-labs/staker-sdk'
 // import { Network as BondsNetwork } from '@invariant-labs/bonds-sdk'
 
@@ -19,13 +19,13 @@ const getSolanaConnection = (url: string): Connection => {
 
 const networkTypetoProgramNetwork = (type: NetworkType): Network => {
   switch (type) {
-    case NetworkType.DEVNET:
+    case NetworkType.Devnet:
       return Network.DEV
-    case NetworkType.LOCALNET:
+    case NetworkType.Local:
       return Network.LOCAL
-    case NetworkType.TESTNET:
+    case NetworkType.Testnet:
       return Network.TEST
-    case NetworkType.MAINNET:
+    case NetworkType.Mainnet:
       return Network.MAIN
     default:
       return Network.DEV
@@ -68,7 +68,7 @@ const getCurrentSolanaConnection = (): Connection | null => {
 
 export {
   getSolanaConnection,
-  EclipseNetworks,
+  RPC,
   getCurrentSolanaConnection,
   // networkTypetoStakerNetwork,
   networkTypetoProgramNetwork

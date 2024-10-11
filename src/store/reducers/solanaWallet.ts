@@ -1,8 +1,9 @@
 import { BN } from '@project-serum/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
-import { PayloadType } from './types'
+import { PayloadType } from '@store/consts/types'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+
 export enum Status {
   Uninitialized = 'uninitialized',
   Init = 'init',
@@ -100,7 +101,8 @@ const solanaWalletSlice = createSlice({
     rescanTokens() {},
     airdrop() {},
     connect() {},
-    disconnect() {}
+    disconnect() {},
+    reconnect() {}
   }
 })
 interface IsetTokenBalance {

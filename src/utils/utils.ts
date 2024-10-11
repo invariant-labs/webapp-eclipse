@@ -20,24 +20,32 @@ import { Token as SPLToken } from '@solana/spl-token'
 import mainnetList from '@store/consts/tokenLists/mainnet.json'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
 
-import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  Market,
+  Tickmap,
+  TICK_CROSSES_PER_IX,
+  Position
+} from '@invariant-labs/sdk-eclipse/lib/market'
 import axios, { AxiosResponse } from 'axios'
-import { getMaxTick, getMinTick, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
 // import { Staker } from '@invariant-labs/staker-sdk'
 // import { ExtendedStake } from '@reducers/farms'
 // import { Stake } from '@invariant-labs/staker-sdk/lib/staker'
 
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
+  ADDRESSES_TO_REVERS_TOKEN_PAIRS,
   BTC_DEV,
   BTC_TEST,
-  FullSnap,
+  FormatConfig,
+  getAddressTickerMap,
+  getReversedAddressTickerMap,
   MAX_U64,
   MOON_TEST,
   NetworkType,
   PRICE_DECIMAL,
   S22_TEST,
-  Token,
+  subNumbers,
   tokensPrices,
   USDC_DEV,
   USDC_TEST,
@@ -46,6 +54,20 @@ import {
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes'
+import {
+  CoingeckoApiPriceData,
+  CoingeckoPriceData,
+  FormatNumberThreshold,
+  FullSnap,
+  IncentiveRewardData,
+  PoolSnapshot,
+  PrefixConfig,
+  Token,
+  TokenPriceData
+} from '@store/consts/types'
+import { getX, getXfromLiquidity, getY, sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
+import { PositionWithPoolData } from '@store/selectors/positions'
+
 // import { calculateSellPrice } from '@invariant-labs/bonds-sdk/lib/math'
 // import { BondSaleStruct } from '@invariant-labs/bonds-sdk/lib/sale'
 
@@ -84,12 +106,11 @@ export const trimZeros = (amount: string) => {
     return amount
   }
 }
-export const printBNtoBN = (amount: string, decimals: number): BN => {
+export const convertBalanceToBN = (amount: string, decimals: number): BN => {
   const balanceString = amount.split('.')
   if (balanceString.length !== 2) {
     return new BN(balanceString[0] + '0'.repeat(decimals))
   }
-  // console.log(balanceString[1].length)
   if (balanceString[1].length <= decimals) {
     return new BN(
       balanceString[0] + balanceString[1] + '0'.repeat(decimals - balanceString[1].length)
@@ -135,12 +156,6 @@ export const removeTickerPrefix = (ticker: string, prefix: string[] = ['x', '$']
   return ticker
 }
 
-export interface PrefixConfig {
-  B?: number
-  M?: number
-  K?: number
-}
-
 const defaultPrefixConfig: PrefixConfig = {
   B: 1000000000,
   M: 1000000,
@@ -163,12 +178,6 @@ export const showPrefix = (nr: number, config: PrefixConfig = defaultPrefixConfi
   }
 
   return ''
-}
-
-export interface FormatNumberThreshold {
-  value: number
-  decimals: number
-  divider?: number
 }
 
 export const defaultThresholds: FormatNumberThreshold[] = [
@@ -215,6 +224,128 @@ export const formatNumbers =
     return num < 0 && threshold ? '-' + formatted : formatted
   }
 
+export const calculateSqrtPriceFromBalance = (
+  price: number,
+  spacing: number,
+  isXtoY: boolean,
+  xDecimal: number,
+  yDecimal: number
+) => {
+  const minTick = getMinTick(spacing)
+  const maxTick = getMaxTick(spacing)
+
+  const basePrice = Math.min(
+    Math.max(
+      price,
+      Number(calcPriceByTickIndex(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal))
+    ),
+    Number(calcPriceByTickIndex(isXtoY ? maxTick : minTick, isXtoY, xDecimal, yDecimal))
+  )
+
+  const primaryUnitsPrice = getPrimaryUnitsPrice(
+    basePrice,
+    isXtoY,
+    Number(xDecimal),
+    Number(yDecimal)
+  )
+
+  const parsedPrimaryUnits =
+    primaryUnitsPrice > 1 && Number.isInteger(primaryUnitsPrice)
+      ? primaryUnitsPrice.toString()
+      : primaryUnitsPrice.toFixed(24)
+
+  const priceBN = convertBalanceToBN(parsedPrimaryUnits, PRICE_SCALE)
+  const sqrtPrice = sqrt(priceBN)
+
+  const minSqrtPrice = calculatePriceSqrt(minTick).v
+  const maxSqrtPrice = calculatePriceSqrt(maxTick).v
+
+  let validatedSqrtPrice = sqrtPrice
+
+  if (sqrtPrice.lt(minSqrtPrice)) {
+    validatedSqrtPrice = minSqrtPrice
+  } else if (sqrtPrice.gt(maxSqrtPrice)) {
+    validatedSqrtPrice = maxSqrtPrice
+  }
+
+  return validatedSqrtPrice
+}
+
+export const findClosestIndexByValue = (arr: number[], value: number): number => {
+  const high = arr.length - 1
+
+  if (value < arr[0]) {
+    return 0
+  }
+
+  if (value > arr[high]) {
+    return high
+  }
+
+  for (let i = arr.length - 1; i >= 0; i--) {
+    if (Number(arr[i].toFixed(0)) <= Number(value.toFixed(0))) {
+      return i
+    }
+  }
+  return high
+}
+
+export const calculateTickFromBalance = (
+  price: number,
+  spacing: number,
+  isXtoY: boolean,
+  xDecimal: number,
+  yDecimal: number
+) => {
+  const minTick = getMinTick(spacing)
+  const maxTick = getMaxTick(spacing)
+
+  const basePrice = Math.max(
+    price,
+    Number(calcPriceByTickIndex(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal))
+  )
+  const primaryUnitsPrice = getPrimaryUnitsPrice(
+    basePrice,
+    isXtoY,
+    Number(xDecimal),
+    Number(yDecimal)
+  )
+  const tick = Math.round(logBase(primaryUnitsPrice, 1.0001))
+
+  return Math.max(Math.min(tick, Number(getMaxTick(spacing))), Number(getMinTick(spacing)))
+}
+
+export const validConcentrationMidPriceTick = (
+  midPriceTick: number,
+  isXtoY: boolean,
+  tickSpacing: number
+) => {
+  const minTick = getMinTick(tickSpacing)
+  const maxTick = getMaxTick(tickSpacing)
+
+  const parsedTickSpacing = Number(tickSpacing)
+  const tickDelta = calculateTickDelta(parsedTickSpacing, 2, 2)
+
+  const minTickLimit = minTick + (2 + tickDelta) * tickSpacing
+  const maxTickLimit = maxTick - (2 + tickDelta) * tickSpacing
+
+  if (isXtoY) {
+    if (midPriceTick < minTickLimit) {
+      return minTickLimit
+    } else if (midPriceTick > maxTickLimit) {
+      return maxTickLimit
+    }
+  } else {
+    if (midPriceTick > maxTickLimit) {
+      return maxTickLimit
+    } else if (midPriceTick < minTickLimit) {
+      return minTickLimit
+    }
+  }
+
+  return midPriceTick
+}
+
 export const nearestPriceIndex = (price: number, data: Array<{ x: number; y: number }>) => {
   let nearest = 0
 
@@ -239,11 +370,34 @@ export const getScaleFromString = (value: string): number => {
 
 export const logBase = (x: number, b: number): number => Math.log(x) / Math.log(b)
 
-export const calcYPerXPrice = (sqrtPrice: BN, xDecimal: number, yDecimal: number): number => {
+export const calcYPerXPriceBySqrtPrice = (
+  sqrtPrice: BN,
+  xDecimal: number,
+  yDecimal: number
+): number => {
   const sqrt = +printBN(sqrtPrice, PRICE_DECIMAL)
   const proportion = sqrt * sqrt
 
   return proportion / 10 ** (yDecimal - xDecimal)
+}
+
+export const calcPriceBySqrtPrice = (
+  sqrtPrice: BN,
+  isXtoY: boolean,
+  xDecimal: number,
+  yDecimal: number
+): number => {
+  const price = calcYPerXPriceBySqrtPrice(sqrtPrice, xDecimal, yDecimal) ** (isXtoY ? 1 : -1)
+
+  return price
+}
+
+export const calcYPerXPriceByTickIndex = (
+  tickIndex: number,
+  xDecimal: number,
+  yDecimal: number
+): number => {
+  return calcYPerXPriceBySqrtPrice(calculatePriceSqrt(tickIndex), xDecimal, yDecimal)
 }
 
 export const spacingMultiplicityLte = (arg: number, spacing: number): number => {
@@ -291,7 +445,7 @@ export const createLiquidityPlot = (
   const max = getMaxTick(pool.tickSpacing)
 
   if (!ticks.length || ticks[0].index > min) {
-    const minPrice = calcPrice(min, isXtoY, tokenXDecimal, tokenYDecimal)
+    const minPrice = calcPriceByTickIndex(min, isXtoY, tokenXDecimal, tokenYDecimal)
 
     ticksData.push({
       x: minPrice,
@@ -302,14 +456,24 @@ export const createLiquidityPlot = (
 
   ticks.forEach((tick, i) => {
     if (i === 0 && tick.index - pool.tickSpacing > min) {
-      const price = calcPrice(tick.index - pool.tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
+      const price = calcPriceByTickIndex(
+        tick.index - pool.tickSpacing,
+        isXtoY,
+        tokenXDecimal,
+        tokenYDecimal
+      )
       ticksData.push({
         x: price,
         y: 0,
         index: tick.index - pool.tickSpacing
       })
     } else if (i > 0 && tick.index - pool.tickSpacing > ticks[i - 1].index) {
-      const price = calcPrice(tick.index - pool.tickSpacing, isXtoY, tokenXDecimal, tokenYDecimal)
+      const price = calcPriceByTickIndex(
+        tick.index - pool.tickSpacing,
+        isXtoY,
+        tokenXDecimal,
+        tokenYDecimal
+      )
       ticksData.push({
         x: price,
         y: +printBN(ticks[i - 1].liqudity, DECIMAL),
@@ -317,7 +481,7 @@ export const createLiquidityPlot = (
       })
     }
 
-    const price = calcPrice(tick.index, isXtoY, tokenXDecimal, tokenYDecimal)
+    const price = calcPriceByTickIndex(tick.index, isXtoY, tokenXDecimal, tokenYDecimal)
     ticksData.push({
       x: price,
       y: +printBN(ticks[i].liqudity, DECIMAL),
@@ -326,7 +490,7 @@ export const createLiquidityPlot = (
   })
 
   if (!ticks.length) {
-    const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal)
+    const maxPrice = calcPriceByTickIndex(max, isXtoY, tokenXDecimal, tokenYDecimal)
 
     ticksData.push({
       x: maxPrice,
@@ -335,7 +499,7 @@ export const createLiquidityPlot = (
     })
   } else if (ticks[ticks.length - 1].index < max) {
     if (max - ticks[ticks.length - 1].index > pool.tickSpacing) {
-      const price = calcPrice(
+      const price = calcPriceByTickIndex(
         ticks[ticks.length - 1].index + pool.tickSpacing,
         isXtoY,
         tokenXDecimal,
@@ -348,7 +512,7 @@ export const createLiquidityPlot = (
       })
     }
 
-    const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal)
+    const maxPrice = calcPriceByTickIndex(max, isXtoY, tokenXDecimal, tokenYDecimal)
 
     ticksData.push({
       x: maxPrice,
@@ -358,6 +522,226 @@ export const createLiquidityPlot = (
   }
 
   return isXtoY ? ticksData : ticksData.reverse()
+}
+export const parseLiquidityOnUserTicks = (
+  ticks: { index: number; liquidityChange: Decimal; sign: boolean }[]
+) => {
+  let currentLiquidity = new BN(0)
+
+  return ticks.map(tick => {
+    currentLiquidity = currentLiquidity.add(tick.liquidityChange.v.muln(tick.sign ? 1 : -1))
+    return {
+      liquidity: currentLiquidity,
+      index: tick.index
+    }
+  })
+}
+
+export const getLiquidityTicksByPositionsList = (
+  pool: PoolWithAddress,
+  positions: PositionWithAddress[],
+  isXtoY: boolean,
+  tokenXDecimal: number,
+  tokenYDecimal: number
+): PlotTickData[] => {
+  const minTick = getMinTick(pool.tickSpacing)
+  const maxTick = getMaxTick(pool.tickSpacing)
+
+  const userTickIndexes: { index: number; liquidity: Decimal }[] = []
+
+  positions.forEach(position => {
+    if (position.pool.equals(pool.address)) {
+      const lowerTickIndex = position.lowerTickIndex
+      const upperTickIndex = position.upperTickIndex
+      userTickIndexes.push({ index: lowerTickIndex, liquidity: position.liquidity })
+      userTickIndexes.push({ index: upperTickIndex, liquidity: position.liquidity })
+    }
+  })
+
+  const newTicks: { index: number; liquidityChange: Decimal; sign: boolean }[] = []
+
+  userTickIndexes.forEach(userTick => {
+    const [liquidityChange, sign] = userTick.liquidity.v.gt(new BN(0))
+      ? [userTick.liquidity, true]
+      : [{ v: userTick.liquidity.v.neg() }, false]
+
+    if (!liquidityChange.v.eq(new BN(0))) {
+      newTicks.push({ index: userTick.index, liquidityChange, sign })
+    }
+  })
+  const parsedTicks = parseLiquidityOnUserTicks(newTicks)
+  console.log('parsedTicks', parsedTicks)
+
+  const ticksData: PlotTickData[] = []
+
+  parsedTicks.forEach((tick, i) => {
+    if (i === 0 && tick.index - pool.tickSpacing > minTick) {
+      const price = calcPriceByTickIndex(
+        tick.index - pool.tickSpacing,
+        isXtoY,
+        tokenXDecimal,
+        tokenYDecimal
+      )
+      ticksData.push({
+        x: price,
+        y: 0,
+        index: tick.index - pool.tickSpacing
+      })
+    } else if (i > 0 && tick.index - pool.tickSpacing > parsedTicks[i - 1].index) {
+      const price = calcPriceByTickIndex(
+        tick.index - pool.tickSpacing,
+        isXtoY,
+        tokenXDecimal,
+        tokenYDecimal
+      )
+      console.log('y1:', parsedTicks[i - 1].liquidity)
+      ticksData.push({
+        x: price,
+        y: +printBN(parsedTicks[i - 1].liquidity, DECIMAL),
+        index: tick.index - pool.tickSpacing
+      })
+    }
+
+    const price = calcPriceByTickIndex(tick.index, isXtoY, tokenXDecimal, tokenYDecimal)
+    console.log('y2:', userTickIndexes[i].liquidity)
+    ticksData.push({
+      x: price,
+      y: +printBN(parsedTicks[i].liquidity, DECIMAL),
+      index: tick.index
+    })
+  })
+
+  const sortedTicks = ticksData.sort((a, b) => a.index - b.index)
+
+  if (sortedTicks.length !== 0 && sortedTicks[0].index > minTick) {
+    const minPrice = calcPriceByTickIndex(minTick, isXtoY, tokenXDecimal, tokenYDecimal)
+
+    sortedTicks.unshift({
+      x: minPrice,
+      y: 0,
+      index: minTick
+    })
+  }
+  if (sortedTicks.length !== 0 && sortedTicks[sortedTicks.length - 1].index < maxTick) {
+    const maxPrice = calcPriceByTickIndex(maxTick, isXtoY, tokenXDecimal, tokenYDecimal)
+
+    sortedTicks.push({
+      x: maxPrice,
+      y: 0,
+      index: maxTick
+    })
+  }
+  console.log('sortedTicks', sortedTicks)
+  return sortedTicks
+}
+
+export const numberToString = (number: number | bigint | string): string => {
+  return String(number).includes('e-')
+    ? Number(number).toFixed(parseInt(String(number).split('e-')[1]))
+    : String(number)
+}
+
+export const containsOnlyZeroes = (string: string): boolean => {
+  return /^(?!.*[1-9]).*$/.test(string)
+}
+
+export const printSubNumber = (amount: number): string => {
+  return Array.from(String(amount))
+    .map(char => subNumbers[+char])
+    .join('')
+}
+
+export const formatNumber = (
+  number: number | bigint | string,
+  noDecimals?: boolean,
+  decimalsAfterDot: number = 3
+): string => {
+  const numberAsNumber = Number(number)
+  const isNegative = numberAsNumber < 0
+  const absNumberAsNumber = Math.abs(numberAsNumber)
+
+  if (absNumberAsNumber.toString().includes('e')) {
+    const exponential = absNumberAsNumber.toExponential(decimalsAfterDot)
+    return isNegative ? `-${exponential}` : exponential
+  }
+
+  const absNumberAsString = numberToString(absNumberAsNumber)
+
+  if (containsOnlyZeroes(absNumberAsString)) {
+    return '0'
+  }
+
+  const [beforeDot, afterDot] = absNumberAsString.split('.')
+
+  let formattedNumber
+
+  if (Math.abs(numberAsNumber) >= FormatConfig.B) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.BDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.BDecimals) + (noDecimals ? '' : formattedDecimals) + 'B'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.M) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.MDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.MDecimals) + (noDecimals ? '' : formattedDecimals) + 'M'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.K) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.KDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.KDecimals) + (noDecimals ? '' : formattedDecimals) + 'K'
+  } else if (afterDot && countLeadingZeros(afterDot) <= decimalsAfterDot) {
+    const roundedNumber = numberAsNumber
+      .toFixed(countLeadingZeros(afterDot) + decimalsAfterDot + 1)
+      .slice(0, -1)
+    formattedNumber = trimZeros(roundedNumber)
+  } else {
+    const leadingZeros = afterDot ? countLeadingZeros(afterDot) : 0
+
+    const parsedAfterDot =
+      String(parseInt(afterDot)).length > decimalsAfterDot
+        ? String(parseInt(afterDot)).slice(0, decimalsAfterDot)
+        : afterDot
+    formattedNumber = trimZeros(
+      beforeDot +
+        '.' +
+        (parsedAfterDot
+          ? leadingZeros > decimalsAfterDot
+            ? '0' + printSubNumber(leadingZeros) + parseInt(parsedAfterDot)
+            : parsedAfterDot
+          : '')
+    )
+  }
+
+  return isNegative ? '-' + formattedNumber : formattedNumber
+}
+
+export const formatBalance = (number: number | bigint | string): string => {
+  const numberAsString = numberToString(number)
+
+  const [beforeDot, afterDot] = numberAsString.split('.')
+
+  return beforeDot.replace(/\B(?=(\d{3})+(?!\d))/g, ',') + (afterDot ? '.' + afterDot : '')
+}
+
+export const countLeadingZeros = (str: string): number => {
+  return (str.match(/^0+/) || [''])[0].length
 }
 
 export const createPlaceholderLiquidityPlot = (
@@ -372,7 +756,7 @@ export const createPlaceholderLiquidityPlot = (
   const min = getMinTick(tickSpacing)
   const max = getMaxTick(tickSpacing)
 
-  const minPrice = calcPrice(min, isXtoY, tokenXDecimal, tokenYDecimal)
+  const minPrice = calcPriceByTickIndex(min, isXtoY, tokenXDecimal, tokenYDecimal)
 
   ticksData.push({
     x: minPrice,
@@ -380,7 +764,7 @@ export const createPlaceholderLiquidityPlot = (
     index: min
   })
 
-  const maxPrice = calcPrice(max, isXtoY, tokenXDecimal, tokenYDecimal)
+  const maxPrice = calcPriceByTickIndex(max, isXtoY, tokenXDecimal, tokenYDecimal)
 
   ticksData.push({
     x: maxPrice,
@@ -394,7 +778,7 @@ export const createPlaceholderLiquidityPlot = (
 export const getNetworkTokensList = (networkType: NetworkType): Record<string, Token> => {
   const obj: Record<string, Token> = {}
   switch (networkType) {
-    case NetworkType.MAINNET:
+    case NetworkType.Mainnet:
       ;(mainnetList as any[]).forEach(token => {
         obj[token.address] = {
           ...token,
@@ -403,13 +787,13 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         }
       })
       return obj
-    case NetworkType.DEVNET:
+    case NetworkType.Devnet:
       return {
         [USDC_DEV.address.toString()]: USDC_DEV,
         [BTC_DEV.address.toString()]: BTC_DEV,
         [WETH_DEV.address.toString()]: WETH_DEV
       }
-    case NetworkType.TESTNET:
+    case NetworkType.Testnet:
       return {
         [USDC_TEST.address.toString()]: USDC_TEST,
         [BTC_TEST.address.toString()]: BTC_TEST,
@@ -449,7 +833,10 @@ export const nearestTickIndex = (
   xDecimal: number,
   yDecimal: number
 ) => {
-  const base = Math.max(price, calcPrice(isXtoY ? MIN_TICK : MAX_TICK, isXtoY, xDecimal, yDecimal))
+  const base = Math.max(
+    price,
+    calcPriceByTickIndex(isXtoY ? MIN_TICK : MAX_TICK, isXtoY, xDecimal, yDecimal)
+  )
   const primaryUnitsPrice = getPrimaryUnitsPrice(base, isXtoY, xDecimal, yDecimal)
   const log = Math.round(logBase(primaryUnitsPrice, 1.0001))
   return nearestSpacingMultiplicity(log, spacing)
@@ -471,8 +858,13 @@ export const calcTicksAmountInRange = (
   return Math.ceil(Math.abs(maxIndex - minIndex) / tickSpacing)
 }
 
-export const calcPrice = (index: number, isXtoY: boolean, xDecimal: number, yDecimal: number) => {
-  const price = calcYPerXPrice(calculatePriceSqrt(index).v, xDecimal, yDecimal)
+export const calcPriceByTickIndex = (
+  index: number,
+  isXtoY: boolean,
+  xDecimal: number,
+  yDecimal: number
+) => {
+  const price = calcYPerXPriceBySqrtPrice(calculatePriceSqrt(index).v, xDecimal, yDecimal)
 
   return isXtoY ? price : price !== 0 ? 1 / price : Number.MAX_SAFE_INTEGER
 }
@@ -512,7 +904,7 @@ export const calcCurrentPriceOfPool = (
 
   const knownPrice: BN = new BN(sqrtPricePow * 10 ** decimalDiff)
 
-  return printBNtoBN(knownPrice.toString(), 0)
+  return convertBalanceToBN(knownPrice.toString(), 0)
 }
 
 export const handleSimulate = async (
@@ -680,21 +1072,6 @@ export const toMaxNumericPlaces = (num: number, places: number): string => {
   return num.toFixed(places + Math.abs(log) - 1)
 }
 
-export interface SnapshotValueData {
-  tokenBNFromBeginning: string
-  usdValue24: number
-}
-
-export interface PoolSnapshot {
-  timestamp: number
-  volumeX: SnapshotValueData
-  volumeY: SnapshotValueData
-  liquidityX: SnapshotValueData
-  liquidityY: SnapshotValueData
-  feeX: SnapshotValueData
-  feeY: SnapshotValueData
-}
-
 export const getNetworkStats = async (name: string): Promise<Record<string, PoolSnapshot[]>> => {
   const { data } = await axios.get<Record<string, PoolSnapshot[]>>(
     `https://stats.invariant.app/full/eclipse-${name}`
@@ -703,50 +1080,47 @@ export const getNetworkStats = async (name: string): Promise<Record<string, Pool
   return data
 }
 
-export const getPoolsFromAdresses = async (
+export const getPoolsFromAddresses = async (
   addresses: PublicKey[],
   marketProgram: Market
 ): Promise<PoolWithAddress[]> => {
-  const pools = (await marketProgram.program.account.pool.fetchMultiple(
-    addresses
-  )) as Array<PoolStructure | null>
+  try {
+    console.log('addresses', addresses)
+    console.log('marketProgram', marketProgram)
+    const pools = (await marketProgram.program.account.pool.fetchMultiple(
+      addresses
+    )) as Array<PoolStructure | null>
 
-  return pools
-    .map((pool, index) =>
-      pool !== null
-        ? {
-            ...pool,
-            address: addresses[index]
-          }
-        : null
-    )
-    .filter(pool => pool !== null) as PoolWithAddress[]
+    return pools
+      .map((pool, index) =>
+        pool !== null
+          ? {
+              ...pool,
+              address: addresses[index]
+            }
+          : null
+      )
+      .filter(pool => pool !== null) as PoolWithAddress[]
+  } catch (error) {
+    console.log(error)
+    return []
+  }
 }
 
 export const getPools = async (
   pairs: Pair[],
   marketProgram: Market
 ): Promise<PoolWithAddress[]> => {
-  const addresses: PublicKey[] = await Promise.all(
-    pairs.map(async pair => await pair.getAddress(marketProgram.program.programId))
-  )
+  try {
+    const addresses: PublicKey[] = await Promise.all(
+      pairs.map(async pair => await pair.getAddress(marketProgram.program.programId))
+    )
 
-  return await getPoolsFromAdresses(addresses, marketProgram)
-}
-
-export interface CoingeckoApiPriceData {
-  id: string
-  current_price: number
-  price_change_percentage_24h: number
-}
-
-export interface CoingeckoPriceData {
-  price: number
-  priceChange: number
-}
-
-export interface TokenPriceData {
-  price: number
+    return await getPoolsFromAddresses(addresses, marketProgram)
+  } catch (error) {
+    console.log(error)
+    return []
+  }
 }
 
 export const getCoingeckoPricesData = async (
@@ -921,6 +1295,50 @@ export const getNewTokenOrThrow = async (
   }
 }
 
+export const stringToFixed = (string: string, numbersAfterDot: number): string => {
+  return string.includes('.') ? string.slice(0, string.indexOf('.') + 1 + numbersAfterDot) : string
+}
+
+export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
+  try {
+    if (!isValidPublicKey(ticker)) {
+      return null
+    }
+
+    return getAddressTickerMap(network)[ticker].toString()
+  } catch (error) {
+    return ticker
+  }
+}
+
+export const addressToTicker = (network: NetworkType, address: string): string => {
+  return getReversedAddressTickerMap(network)[address] || address
+}
+
+export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: string | null) => {
+  if (!tokenXAddress || !tokenYAddress) {
+    return true
+  }
+
+  const isTokeXStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenXAddress)
+  const isTokenYStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenYAddress)
+
+  return isTokeXStablecoin === isTokenYStablecoin || (!isTokeXStablecoin && !isTokenYStablecoin)
+}
+
+export const parseFeeToPathFee = (fee: BN): string => {
+  const parsedFee = (fee / Math.pow(10, 8)).toString().padStart(3, '0')
+  return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
+}
+
+export const parsePathFeeToFeeString = (pathFee: string): string => {
+  return (+pathFee.replace('_', '') * Math.pow(10, 8)).toString()
+}
+
+export const randomNumberFromRange = (min: number, max: number) => {
+  return Math.floor(Math.random() * (max - min + 1) + min)
+}
+
 // TODO: commented until eclipse staker sdk will be available
 // export const getUserStakesForFarm = async (
 //   stakerProgram: Staker,
@@ -1054,7 +1472,7 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
 ]
 
 export const getMockedTokenPrice = (symbol: string, network: NetworkType): TokenPriceData => {
-  const sufix = network === NetworkType.DEVNET ? '_DEV' : '_TEST'
+  const sufix = network === NetworkType.Devnet ? '_DEV' : '_TEST'
   const prices = tokensPrices[network]
   switch (symbol) {
     case 'BTC':
@@ -1110,13 +1528,6 @@ export const getPoolsAPY = async (name: string): Promise<Record<string, number>>
   }
 }
 
-export interface IncentiveRewardData {
-  apy: number
-  apySingleTick: number
-  total: number
-  token: string
-}
-
 export const getIncentivesRewardData = async (
   name: string
 ): Promise<Record<string, IncentiveRewardData>> => {
@@ -1145,7 +1556,7 @@ export const getPoolsVolumeRanges = async (name: string): Promise<Record<string,
 
 export const getExplorer = (networkType: NetworkType) => {
   switch (networkType) {
-    case NetworkType.DEVNET:
+    case NetworkType.Devnet:
     default:
       return 'https://explorer.dev.eclipsenetwork.xyz/'
   }
@@ -1159,4 +1570,15 @@ export const getFullSnap = async (name: string): Promise<FullSnap> => {
   )
 
   return data
+}
+export const isValidPublicKey = (keyString?: string | null) => {
+  try {
+    if (!keyString) {
+      return false
+    }
+    new PublicKey(keyString)
+    return true
+  } catch (error) {
+    return false
+  }
 }

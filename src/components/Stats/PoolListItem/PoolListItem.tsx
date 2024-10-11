@@ -1,23 +1,16 @@
 import React from 'react'
-import { Grid, Typography, Box, useMediaQuery } from '@material-ui/core'
 import { theme } from '@static/theme'
-import { formatNumbers, showPrefix } from '@consts/utils'
-import ArrowDropDownIcon from '@material-ui/icons/ArrowDropDown'
-import ArrowDropUpIcon from '@material-ui/icons/ArrowDropUp'
-import useStyle from './style'
-
-export enum SortType {
-  NAME_ASC,
-  NAME_DESC,
-  FEE_ASC,
-  FEE_DESC,
-  VOLUME_ASC,
-  VOLUME_DESC,
-  TVL_ASC,
-  TVL_DESC
-  // APY_ASC,
-  // APY_DESC
-}
+import { useStyles } from './style'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
+import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
+import { useNavigate } from 'react-router-dom'
+import icons from '@static/icons'
+import { NetworkType, SortTypePoolList } from '@store/consts/static'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { parseFeeToPathFee } from '@utils/utils'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { addressToTicker, formatNumber } from '@utils/utils'
 
 interface IProps {
   TVL?: number
@@ -29,9 +22,12 @@ interface IProps {
   iconFrom?: string
   iconTo?: string
   tokenIndex?: number
-  sortType?: SortType
-  onSort?: (type: SortType) => void
+  sortType?: SortTypePoolList
+  onSort?: (type: SortTypePoolList) => void
   hideBottomLine?: boolean
+  addressFrom?: string
+  addressTo?: string
+  network?: NetworkType
   apy?: number
   apyData?: {
     fees: number
@@ -52,31 +48,46 @@ const PoolListItem: React.FC<IProps> = ({
   tokenIndex,
   sortType,
   onSort,
-  hideBottomLine = false
-  // apy = 0,
-  // apyData = {
-  //   fees: 0,
-  //   accumulatedFarmsAvg: 0,
-  //   accumulatedFarmsSingleTick: 0
-  // }
+  hideBottomLine = false,
+  addressFrom,
+  addressTo,
+  network,
+  apy = 0,
+  apyData = {
+    fees: 0,
+    accumulatedFarmsAvg: 0,
+    accumulatedFarmsSingleTick: 0
+  }
 }) => {
-  const classes = useStyle()
+  const { classes } = useStyles()
 
-  const isXs = useMediaQuery(theme.breakpoints.down('xs'))
+  const navigate = useNavigate()
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
+  const handleOpenPosition = () => {
+    navigate(
+      `/newPosition/${addressToTicker(network ?? NetworkType.Testnet, addressFrom ?? '')}/${addressToTicker(network ?? NetworkType.Testnet, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`
+    )
+  }
+
+  const handleOpenSwap = () => {
+    navigate(
+      `/exchange/${addressToTicker(network ?? NetworkType.Testnet, addressFrom ?? '')}/${addressToTicker(network ?? NetworkType.Testnet, addressTo ?? '')}`
+    )
+  }
   return (
-    <Grid>
+    <Grid maxWidth='100%'>
       {displayType === 'token' ? (
         <Grid
           container
           classes={{ container: classes.container }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
-          {!isXs ? <Typography>{tokenIndex}</Typography> : null}
+          {!isSm ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
-            {!isXs && (
+            {!isSm && (
               <Box className={classes.iconsWrapper}>
-                <img src={iconFrom} />
-                <img src={iconTo} />
+                <img src={iconFrom} alt='Token from' />
+                <img src={iconTo} alt='Token to' />
               </Box>
             )}
             <Grid className={classes.symbolsContainer}>
@@ -85,10 +96,12 @@ const PoolListItem: React.FC<IProps> = ({
               </Typography>
             </Grid>
           </Grid>
-          {/* {!isXs ? (
+          {/* {!isSm ? (
             <Typography>
               {`${apy > 1000 ? '>1000' : apy.toFixed(2)}%`}
               <Tooltip
+                enterTouchDelay={0}
+                leaveTouchDelay={Number.MAX_SAFE_INTEGER}
                 title={
                   <>
                     <Typography className={classes.liquidityTitle}>Pool APY</Typography>
@@ -124,12 +137,26 @@ const PoolListItem: React.FC<IProps> = ({
             </Typography>
           ) : null} */}
           <Typography>{fee}%</Typography>
-          <Typography>{`$${formatNumbers()(volume.toString())}${showPrefix(volume)}`}</Typography>
-          <Typography>{`$${formatNumbers()(TVL.toString())}${showPrefix(TVL)}`}</Typography>
+          <Typography>{`$${formatNumber(volume)}`}</Typography>
+          <Typography>{`$${formatNumber(TVL)}`}</Typography>
+          {!isSm && (
+            <Box className={classes.action}>
+              <TooltipHover text='Exchange'>
+                <button className={classes.actionButton} onClick={handleOpenSwap}>
+                  <img width={32} height={32} src={icons.horizontalSwapIcon} alt={'Exchange'} />
+                </button>
+              </TooltipHover>
+              <TooltipHover text='Add position'>
+                <button className={classes.actionButton} onClick={handleOpenPosition}>
+                  <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
+                </button>
+              </TooltipHover>
+            </Box>
+          )}
         </Grid>
       ) : (
         <Grid container classes={{ container: classes.container, root: classes.header }}>
-          {!isXs && (
+          {!isSm && (
             <Typography style={{ lineHeight: '11px' }}>
               N<sup>o</sup>
             </Typography>
@@ -137,16 +164,16 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              if (sortType === SortType.NAME_ASC) {
-                onSort?.(SortType.NAME_DESC)
+              if (sortType === SortTypePoolList.NAME_ASC) {
+                onSort?.(SortTypePoolList.NAME_DESC)
               } else {
-                onSort?.(SortType.NAME_ASC)
+                onSort?.(SortTypePoolList.NAME_ASC)
               }
             }}>
             Name
-            {sortType === SortType.NAME_ASC ? (
+            {sortType === SortTypePoolList.NAME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortType.NAME_DESC ? (
+            ) : sortType === SortTypePoolList.NAME_DESC ? (
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
@@ -171,51 +198,52 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              if (sortType === SortType.FEE_ASC) {
-                onSort?.(SortType.FEE_DESC)
+              if (sortType === SortTypePoolList.FEE_ASC) {
+                onSort?.(SortTypePoolList.FEE_DESC)
               } else {
-                onSort?.(SortType.FEE_ASC)
+                onSort?.(SortTypePoolList.FEE_ASC)
               }
             }}>
             Fee
-            {sortType === SortType.FEE_ASC ? (
+            {sortType === SortTypePoolList.FEE_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortType.FEE_DESC ? (
+            ) : sortType === SortTypePoolList.FEE_DESC ? (
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              if (sortType === SortType.VOLUME_DESC) {
-                onSort?.(SortType.VOLUME_ASC)
+              if (sortType === SortTypePoolList.VOLUME_DESC) {
+                onSort?.(SortTypePoolList.VOLUME_ASC)
               } else {
-                onSort?.(SortType.VOLUME_DESC)
+                onSort?.(SortTypePoolList.VOLUME_DESC)
               }
             }}>
             Volume 24H
-            {sortType === SortType.VOLUME_ASC ? (
+            {sortType === SortTypePoolList.VOLUME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortType.VOLUME_DESC ? (
+            ) : sortType === SortTypePoolList.VOLUME_DESC ? (
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
-              if (sortType === SortType.TVL_DESC) {
-                onSort?.(SortType.TVL_ASC)
+              if (sortType === SortTypePoolList.TVL_DESC) {
+                onSort?.(SortTypePoolList.TVL_ASC)
               } else {
-                onSort?.(SortType.TVL_DESC)
+                onSort?.(SortTypePoolList.TVL_DESC)
               }
             }}>
             TVL
-            {sortType === SortType.TVL_ASC ? (
+            {sortType === SortTypePoolList.TVL_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
-            ) : sortType === SortType.TVL_DESC ? (
+            ) : sortType === SortTypePoolList.TVL_DESC ? (
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
+          {!isSm && <Typography align='right'>Action</Typography>}
         </Grid>
       )}
     </Grid>

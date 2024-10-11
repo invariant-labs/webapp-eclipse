@@ -3,10 +3,9 @@ import { PoolStructure, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
-import { PayloadType } from './types'
 import * as R from 'remeda'
 import { Range } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { Token } from '@store/consts/static'
+import { PayloadType, Token } from '@store/consts/types'
 
 export interface PoolWithAddress extends PoolStructure {
   address: PublicKey

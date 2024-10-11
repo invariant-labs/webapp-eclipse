@@ -1,8 +1,10 @@
 import React, { useMemo, useEffect } from 'react'
-import { Grid } from '@material-ui/core'
-import useStyle from './style'
+import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
+import { useStyles } from './style'
+import { Grid } from '@mui/material'
+import { NetworkType, SortTypePoolList } from '@store/consts/static'
+
 import { PaginationList } from '@components/Pagination/Pagination'
-import PoolListItem, { SortType } from '@components/Stats/PoolListItem/PoolListItem'
 
 interface PoolListInterface {
   data: Array<{
@@ -20,39 +22,40 @@ interface PoolListInterface {
       accumulatedFarmsSingleTick: number
     }
   }>
+  network: NetworkType
 }
 
-const PoolList: React.FC<PoolListInterface> = ({ data }) => {
-  const classes = useStyle()
+const PoolList: React.FC<PoolListInterface> = ({ data, network }) => {
+  const { classes } = useStyles()
   const [page, setPage] = React.useState(1)
-  const [sortType, setSortType] = React.useState(SortType.VOLUME_DESC)
+  const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
 
   const sortedData = useMemo(() => {
     switch (sortType) {
-      case SortType.NAME_ASC:
+      case SortTypePoolList.NAME_ASC:
         return data.sort((a, b) =>
           `${a.symbolFrom}/${a.symbolTo}`.localeCompare(`${b.symbolFrom}/${b.symbolTo}`)
         )
-      case SortType.NAME_DESC:
+      case SortTypePoolList.NAME_DESC:
         return data.sort((a, b) =>
           `${b.symbolFrom}/${b.symbolTo}`.localeCompare(`${a.symbolFrom}/${a.symbolTo}`)
         )
-      case SortType.FEE_ASC:
+      case SortTypePoolList.FEE_ASC:
         return data.sort((a, b) => a.fee - b.fee)
-      case SortType.FEE_DESC:
+      case SortTypePoolList.FEE_DESC:
         return data.sort((a, b) => b.fee - a.fee)
-      case SortType.VOLUME_ASC:
+      case SortTypePoolList.VOLUME_ASC:
         return data.sort((a, b) => (a.volume === b.volume ? a.TVL - b.TVL : a.volume - b.volume))
-      case SortType.VOLUME_DESC:
+      case SortTypePoolList.VOLUME_DESC:
         return data.sort((a, b) => (a.volume === b.volume ? b.TVL - a.TVL : b.volume - a.volume))
-      case SortType.TVL_ASC:
+      case SortTypePoolList.TVL_ASC:
         return data.sort((a, b) => (a.TVL === b.TVL ? a.volume - b.volume : a.TVL - b.TVL))
-      case SortType.TVL_DESC:
+      case SortTypePoolList.TVL_DESC:
         return data.sort((a, b) => (a.TVL === b.TVL ? b.volume - a.volume : b.TVL - a.TVL))
-      case SortType.APY_ASC:
-        return data.sort((a, b) => a.apy - b.apy)
-      case SortType.APY_DESC:
-        return data.sort((a, b) => b.apy - a.apy)
+      // case SortType.APY_ASC:
+      //   return data.sort((a, b) => a.apy - b.apy)
+      // case SortType.APY_DESC:
+      //   return data.sort((a, b) => b.apy - a.apy)
     }
   }, [data, sortType])
 
@@ -89,6 +92,10 @@ const PoolList: React.FC<PoolListInterface> = ({ data }) => {
           apy={element.apy}
           hideBottomLine={pages === 1 && index + 1 === data.length}
           apyData={element.apyData}
+          key={index}
+          // addressFrom={element.addressFrom}
+          // addressTo={element.addressTo}
+          network={network}
         />
       ))}
       {pages > 1 ? (

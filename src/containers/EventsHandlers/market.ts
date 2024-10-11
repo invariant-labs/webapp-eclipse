@@ -1,15 +1,17 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
-import { network, rpcAddress, status } from '@selectors/solanaConnection'
-import { Status } from '@reducers/solanaConnection'
-import { actions } from '@reducers/pools'
-import { getMarketProgramSync } from '@web3/programs/amm'
-import { poolsArraySortedByFees, poolTicks, tickMaps } from '@selectors/pools'
-import { getNetworkTokensList, getFullNewTokensData, getPoolsVolumeRanges } from '@consts/utils'
-import { swap } from '@selectors/swap'
+import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
+import { Status } from '@store/reducers/solanaConnection'
+import { actions } from '@store/reducers/pools'
+
+import { poolsArraySortedByFees, poolTicks, tickMaps } from '@store/selectors/pools'
+
+import { swap } from '@store/selectors/swap'
 import { findTickmapChanges, Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
-import { getCurrentSolanaConnection } from '@web3/connection'
+import { getMarketProgramSync } from '@utils/web3/programs/amm'
+import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { getFullNewTokensData, getNetworkTokensList, getPoolsVolumeRanges } from '@utils/utils'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()

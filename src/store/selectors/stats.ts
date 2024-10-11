@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import { IStatsStore, PoolStatsData, statsSliceName, TokenStatsData } from '../reducers/stats'
 import { keySelectors, AnyProps } from './helpers'
 import { tokens } from './pools'
-import { Token } from '@store/consts/static'
+import { Token } from '@store/consts/types'
 
 const store = (s: AnyProps) => s[statsSliceName] as IStatsStore
 

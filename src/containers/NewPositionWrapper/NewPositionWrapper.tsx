@@ -1,77 +1,98 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
-import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+
 import {
   ALL_FEE_TIERS_DATA,
-  PositionOpeningMethod,
+  DEFAULT_NEW_POSITION_SLIPPAGE,
   bestTiers,
   commonTokensForNetworks
-} from '@consts/static'
+} from '@store/consts/static'
+import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
 import {
-  TokenPriceData,
   addNewTokenToLocalStorage,
-  calcPrice,
-  calcYPerXPrice,
+  calcPriceByTickIndex,
+  calcYPerXPriceBySqrtPrice,
   createPlaceholderLiquidityPlot,
   getCoingeckoTokenPrice,
   getMockedTokenPrice,
   getNewTokenOrThrow,
-  printBN
-} from '@consts/utils'
-import { Pair, calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
-import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/src/math'
-import { feeToTickSpacing, getMaxTick } from '@invariant-labs/sdk-eclipse/src/utils'
-import { Color } from '@material-ui/lab'
+  printBN,
+  tickerToAddress
+} from '@utils/utils'
 import { BN } from '@project-serum/anchor'
-import { actions as poolsActions } from '@reducers/pools'
-import { actions } from '@reducers/positions'
-import { actions as snackbarsActions } from '@reducers/snackbars'
-import { Status } from '@reducers/solanaWallet'
+import { actions as poolsActions } from '@store/reducers/pools'
+import { actions, actions as positionsActions } from '@store/reducers/positions'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { network } from '@store/selectors/solanaConnection'
 import {
   isLoadingLatestPoolsForTransaction,
+  pools,
   poolsArraySortedByFees,
   volumeRanges
-} from '@selectors/pools'
-import { initPosition, plotTicks } from '@selectors/positions'
-import { network } from '@selectors/solanaConnection'
-import { canCreateNewPool, canCreateNewPosition, status, swapTokens } from '@selectors/solanaWallet'
-import { PublicKey } from '@solana/web3.js'
-import { getCurrentSolanaConnection } from '@web3/connection'
-import { openWalletSelectorModal } from '@web3/selector'
-import { History } from 'history'
+} from '@store/selectors/pools'
+import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
+import {
+  address,
+  balanceLoading,
+  status,
+  balance,
+  poolTokens,
+  minPoolEthBalance
+} from '@store/selectors/solanaWallet'
+import { openWalletSelectorModal } from '@utils/web3/selector'
+import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { PublicKey } from '@solana/web3.js'
+import { DECIMAL, feeToTickSpacing, getMaxTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import { Pair } from '@invariant-labs/sdk-eclipse'
+import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
+import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 
 export interface IProps {
   initialTokenFrom: string
   initialTokenTo: string
   initialFee: string
-  history: History<unknown>
 }
 
 export const NewPositionWrapper: React.FC<IProps> = ({
   initialTokenFrom,
   initialTokenTo,
-  initialFee,
-  history
+  initialFee
 }) => {
   const dispatch = useDispatch()
 
   const connection = getCurrentSolanaConnection()
 
-  const tokens = useSelector(swapTokens)
+  const ethBalance = useSelector(balance)
+  const ethBalanceWithoutFee = useSelector(minPoolEthBalance)
+  const tokens = useSelector(poolTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
   const poolsVolumeRanges = useSelector(volumeRanges)
+  const poolsData = useSelector(pools)
+
+  const isBalanceLoading = useSelector(balanceLoading)
+  const shouldNotUpdatePriceRange = useSelector(shouldNotUpdateRange)
 
   const { success, inProgress } = useSelector(initPosition)
-  const { data: ticksData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
+
+  const [onlyUserPositions, setOnlyUserPositions] = useState(false)
+
+  const {
+    allData,
+    userData,
+    loading: ticksLoading,
+    hasError: hasTicksError
+  } = useSelector(plotTicks)
+  const ticksData = onlyUserPositions ? userData : allData
+
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
   const currentNetwork = useSelector(network)
-
-  const canUserCreateNewPool = useSelector(canCreateNewPool(currentNetwork))
-  const canUserCreateNewPosition = useSelector(canCreateNewPosition(currentNetwork))
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
 
@@ -82,7 +103,75 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const [currentPairReversed, setCurrentPairReversed] = useState<boolean | null>(null)
 
+  const [initialLoader, setInitialLoader] = useState(true)
+
+  const [isGetLiquidityError, setIsGetLiquidityError] = useState(false)
+
   const isMountedRef = useRef(false)
+  const navigate = useNavigate()
+  // const isCurrentlyLoadingTokens = useSelector(isLoadingTokens)
+  // const isCurrentlyLoadingTokensError = useSelector(isLoadingTokensError)
+
+  useEffect(() => {
+    const tokensToFetch = []
+
+    const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
+    const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
+    if (!tokenFromAddress || !tokenToAddress) {
+      return
+    }
+    tokens.findIndex(key => key.assetAddress.toString() === tokenFromAddress) !== -1
+
+    if (
+      initialTokenFrom &&
+      tokens.findIndex(key => key.assetAddress.toString() === tokenFromAddress) !== -1
+    ) {
+      tokensToFetch.push(tickerToAddress(currentNetwork, initialTokenFrom))
+    }
+
+    if (
+      initialTokenTo &&
+      tokens.findIndex(key => key.assetAddress.toString() === tokenToAddress) !== -1
+    ) {
+      tokensToFetch.push(tickerToAddress(currentNetwork, initialTokenTo))
+    }
+
+    // if (tokensToFetch.length) {
+    //   dispatch(poolsActions.getTokens(tokensToFetch))
+    // } else {
+    //   dispatch(poolsActions.addTokens({}))
+    // }
+  }, [])
+
+  useEffect(() => {
+    // if (isCurrentlyLoadingTokensError) {
+    const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
+    const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
+    if (!tokenFromAddress || !tokenToAddress) {
+      return
+    }
+
+    if (tokenFromAddress && !tokenToAddress) {
+      navigate(`/newPosition/${initialTokenFrom}/${initialFee}`)
+      const tokenFromIndex = Object.values(tokens).findIndex(
+        token => token.assetAddress.toString() === tokenFromAddress
+      )
+      setTokenAIndex(tokenFromIndex)
+    } else if (tokenFromAddress && tokenToAddress) {
+      const tokenFromIndex = Object.values(tokens).findIndex(
+        token => token.assetAddress.toString() === tokenFromAddress
+      )
+      const tokenToIndex = Object.values(tokens).findIndex(
+        token => token.assetAddress.toString() === tokenToAddress
+      )
+      setTokenAIndex(tokenFromIndex)
+      setTokenBIndex(tokenToIndex)
+
+      navigate(`/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}`)
+    }
+
+    // }
+  }, [initialTokenTo, initialTokenFrom])
 
   useEffect(() => {
     isMountedRef.current = true
@@ -98,8 +187,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [poolIndex])
 
   useEffect(() => {
-    let timeoutId1: number
-    let timeoutId2: number
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
 
     if (!inProgress && progress === 'progress') {
       setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
@@ -118,11 +207,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
       timeoutId1 = setTimeout(() => {
         setProgress(success ? 'success' : 'failed')
-      }, 1500)
+      }, 500)
 
       timeoutId2 = setTimeout(() => {
         setProgress('none')
-      }, 3000)
+        dispatch(actions.setInitPositionSuccess(false))
+      }, 1800)
     }
 
     return () => {
@@ -163,6 +253,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [feeIndex, setFeeIndex] = useState(0)
 
   const fee = useMemo(() => ALL_FEE_TIERS_DATA[feeIndex].tier.fee, [feeIndex])
+
   const tickSpacing = useMemo(
     () =>
       ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing ??
@@ -173,6 +264,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [midPrice, setMidPrice] = useState<TickPlotPositionData>({
     index: 0,
     x: 1
+    // sqrtPrice: BN(0)
   })
 
   const isWaitingForNewPool = useMemo(() => {
@@ -184,7 +276,18 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [isFetchingNewPool, poolIndex])
 
   useEffect(() => {
-    if (!isWaitingForNewPool && tokenAIndex !== null && tokenBIndex !== null) {
+    if (initialLoader && !isWaitingForNewPool) {
+      setInitialLoader(false)
+    }
+  }, [isWaitingForNewPool])
+
+  useEffect(() => {
+    if (
+      !isWaitingForNewPool &&
+      tokenAIndex !== null &&
+      tokenBIndex !== null &&
+      tokenAIndex !== tokenBIndex
+    ) {
       const index = allPools.findIndex(
         pool =>
           pool.fee.v.eq(fee) &&
@@ -205,20 +308,25 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       }
     }
   }, [isWaitingForNewPool])
+
   useEffect(() => {
     if (poolIndex !== null) {
       setMidPrice({
         index: allPools[poolIndex].currentTickIndex,
-        x: calcYPerXPrice(allPools[poolIndex].sqrtPrice.v, xDecimal, yDecimal) ** (isXtoY ? 1 : -1)
+        x:
+          calcYPerXPriceBySqrtPrice(allPools[poolIndex].sqrtPrice.v, xDecimal, yDecimal) **
+          (isXtoY ? 1 : -1)
+        // sqrtPrice: allPools[poolIndex].sqrtPrice
       })
     }
-  }, [poolIndex, isXtoY, xDecimal, yDecimal, allPools])
+  }, [poolIndex, isXtoY, xDecimal, yDecimal, poolsData])
 
   useEffect(() => {
     if (poolIndex === null) {
       setMidPrice({
         index: 0,
-        x: calcPrice(0, isXtoY, xDecimal, yDecimal)
+        x: calcPriceByTickIndex(0, isXtoY, xDecimal, yDecimal)
+        // sqrtPrice: BN(0)
       })
     }
   }, [poolIndex, isXtoY, xDecimal, yDecimal])
@@ -252,14 +360,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [progress])
 
-  const initialIsDiscreteValue = localStorage.getItem('IS_PLOT_DISCRETE')
-    ? localStorage.getItem('IS_PLOT_DISCRETE') === 'true'
-    : true
-
-  const setIsDiscreteValue = (val: boolean) => {
-    localStorage.setItem('IS_PLOT_DISCRETE', val ? 'true' : 'false')
-  }
-
   const addTokenHandler = (address: string) => {
     if (
       connection !== null &&
@@ -271,7 +371,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           addNewTokenToLocalStorage(address, currentNetwork)
           dispatch(
             snackbarsActions.add({
-              message: 'Token added to your list',
+              message: 'Token added.',
               variant: 'success',
               persist: false
             })
@@ -280,7 +380,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         .catch(() => {
           dispatch(
             snackbarsActions.add({
-              message: 'Token adding failed, check if address is valid and try again',
+              message: 'Token add failed.',
               variant: 'error',
               persist: false
             })
@@ -289,7 +389,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     } else {
       dispatch(
         snackbarsActions.add({
-          message: 'Token already exists on your list',
+          message: 'Token already in list.',
           variant: 'info',
           persist: false
         })
@@ -297,7 +397,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }
 
-  const copyPoolAddressHandler = (message: string, variant: Color) => {
+  const copyPoolAddressHandler = (message: string, variant: VariantType) => {
     dispatch(
       snackbarsActions.add({
         message,
@@ -383,7 +483,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       .map(range => (range.tickUpper === null ? undefined : range.tickUpper))
       .filter(tick => typeof tick !== 'undefined') as number[]
 
-    const lowerPrice = calcPrice(
+    const lowerPrice = calcPriceByTickIndex(
       !lowerTicks.length || !upperTicks.length
         ? allPools[poolIndex].currentTickIndex
         : Math.min(...lowerTicks),
@@ -392,7 +492,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       yDecimal
     )
 
-    const upperPrice = calcPrice(
+    const upperPrice = calcPriceByTickIndex(
       !lowerTicks.length || !upperTicks.length
         ? Math.min(
             allPools[poolIndex].currentTickIndex + allPools[poolIndex].tickSpacing,
@@ -410,7 +510,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [poolsVolumeRanges, poolIndex, isXtoY, xDecimal, yDecimal])
 
-  const initialSlippage = localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? '1'
+  const initialSlippage =
+    localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? DEFAULT_NEW_POSITION_SLIPPAGE
 
   const onSlippageChange = (slippage: string) => {
     localStorage.setItem('INVARIANT_NEW_POSITION_SLIPPAGE', slippage)
@@ -468,12 +569,44 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     return new BN(0)
   }
 
+  const unblockUpdatePriceRange = () => {
+    dispatch(positionsActions.setShouldNotUpdateRange(false))
+  }
+
+  const onRefresh = () => {
+    if (!success) {
+      dispatch(positionsActions.setShouldNotUpdateRange(true))
+    }
+
+    if (tokenAIndex !== null && tokenBIndex !== null) {
+      dispatch(walletActions.getBalance())
+
+      dispatch(
+        poolsActions.getPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee
+          })
+        )
+      )
+
+      if (poolIndex !== null) {
+        dispatch(
+          actions.getCurrentPlotTicks({
+            poolIndex,
+            isXtoY: allPools[poolIndex].tokenX.equals(
+              tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress
+            )
+          })
+        )
+      }
+    }
+  }
+
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
       initialTokenTo={initialTokenTo}
       initialFee={initialFee}
-      history={history}
       copyPoolAddressHandler={copyPoolAddressHandler}
       poolAddress={poolIndex !== null ? allPools[poolIndex].address.toString() : ''}
       tokens={tokens}
@@ -558,21 +691,23 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         if (tokenAIndex === null || tokenBIndex === null) {
           return
         }
-
+        if (poolIndex !== null) {
+          dispatch(positionsActions.setShouldNotUpdateRange(true))
+        }
         if (progress === 'none') {
           setProgress('progress')
         }
 
-        const lowerTick = Math.min(leftTickIndex, rightTickIndex)
-        const upperTick = Math.max(leftTickIndex, rightTickIndex)
+        const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
+        const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
 
         dispatch(
-          actions.initPosition({
+          positionsActions.initPosition({
             tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
             tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
             fee,
-            lowerTick,
-            upperTick,
+            lowerTick: lowerTickIndex,
+            upperTick: upperTickIndex,
             liquidityDelta: liquidityRef.current,
             initPool: poolIndex === null,
             initTick: poolIndex === null ? midPrice.index : undefined,
@@ -588,29 +723,40 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         )
       }}
       isCurrentPoolExisting={poolIndex !== null}
+      onRefresh={onRefresh}
+      isBalanceLoading={isBalanceLoading}
+      shouldNotUpdatePriceRange={shouldNotUpdatePriceRange}
+      unblockUpdatePriceRange={unblockUpdatePriceRange}
+      isGetLiquidityError={isGetLiquidityError}
+      onlyUserPositions={onlyUserPositions}
+      setOnlyUserPositions={setOnlyUserPositions}
+      network={currentNetwork}
+      // isLoadingTokens={isCurrentlyLoadingTokens}
+      ethBalance={ethBalance}
+      walletStatus={walletStatus}
+      onConnectWallet={async () => {
+        await openWalletSelectorModal()
+        dispatch(walletActions.connect())
+      }}
+      onDisconnectWallet={() => {
+        dispatch(walletActions.disconnect())
+      }}
       calcAmount={calcAmount}
       ticksLoading={ticksLoading}
-      showNoConnected={walletStatus !== Status.Initialized}
-      noConnectedBlockerProps={{
-        onConnect: openWalletSelectorModal,
-        descCustomText: 'Cannot add any liquidity.'
-      }}
+      loadingTicksAndTickMaps={true} //todo
+      isLoadingTokens={false} //todo
       progress={progress}
       isXtoY={isXtoY}
       tickSpacing={tickSpacing}
       xDecimal={xDecimal}
       yDecimal={yDecimal}
-      isWaitingForNewPool={isWaitingForNewPool}
+      isWaitingForNewPool={isWaitingForNewPool || initialLoader}
       poolIndex={poolIndex}
       currentPairReversed={currentPairReversed}
       bestTiers={bestTiers[currentNetwork]}
-      initialIsDiscreteValue={initialIsDiscreteValue}
-      onDiscreteChange={setIsDiscreteValue}
       currentPriceSqrt={
         poolIndex !== null ? allPools[poolIndex].sqrtPrice.v : calculatePriceSqrt(midPrice.index).v
       }
-      canCreateNewPool={canUserCreateNewPool}
-      canCreateNewPosition={canUserCreateNewPosition}
       handleAddToken={addTokenHandler}
       commonTokens={commonTokensForNetworks[currentNetwork]}
       initialOpeningPositionMethod={initialIsConcentrationOpening ? 'concentration' : 'range'}
@@ -638,6 +784,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       currentFeeIndex={feeIndex}
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
+      ethBalanceWithoutFee={ethBalanceWithoutFee}
     />
   )
 }

@@ -7,7 +7,18 @@ import inject from '@rollup/plugin-inject'
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), topLevelAwait(), wasm(), compression()],
+  plugins: [
+    react(),
+    topLevelAwait(),
+    wasm(),
+    compression(),
+    inject({
+      assert: ['assert', 'default']
+    })
+  ],
+  define: {
+    'process.env.NODE_DEBUG': 'false'
+  },
   resolve: {
     alias: {
       '@components': '/src/components',

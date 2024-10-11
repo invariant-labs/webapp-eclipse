@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@material-ui/core'
+import { Box, Button, Typography } from '@mui/material'
 import useStyles from './style'
 import icons from '@static/icons'
 import { social } from '@static/links'
@@ -8,15 +8,14 @@ interface Props {
 }
 
 export const ThankYouModal: React.FC<Props> = ({ hideModal }) => {
-  const classes = useStyles()
-
+  const { classes } = useStyles()
   return (
     <>
       <Box className={classes.background}></Box>
       <Box className={classes.container}>
         <Box className={classes.gradient}>
           <img className={classes.eclipseIcon} src={icons.eclipse} alt='Eclipse icon' />
-          {/* @ts-expect-error */}
+
           <Box display='flex' flexDirection='column' alignItems='center' sx={{ gap: 16 }}>
             <Typography className={classes.title}>Thank you</Typography>
             <Typography className={classes.lowerTitle}>
@@ -27,10 +26,10 @@ export const ThankYouModal: React.FC<Props> = ({ hideModal }) => {
             We are building much more on Eclipse right now! 👀 <br />
             To stay updated, follow us on our social media.
           </Typography>
-          {/* @ts-expect-error */}
+
           <Box display='flex' flexDirection='column' alignItems='center' sx={{ gap: 16 }}>
             <Typography className={classes.lowerTitle}>Join us here!</Typography>
-            {/* @ts-expect-error */}
+
             <Box display='flex' sx={{ gap: 24 }}>
               <a href={social.discord} target='_blank'>
                 <img src={icons.circleDiscord} alt='Discord in circle icon' />

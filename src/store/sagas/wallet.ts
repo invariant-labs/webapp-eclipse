@@ -8,12 +8,8 @@ import {
   takeLatest,
   takeLeading
 } from 'typed-redux-saga'
-import {
-  airdropQuantities,
-  airdropTokens,
-  NetworkType,
-  Token as StoreToken
-} from '@store/consts/static'
+import { airdropQuantities, airdropTokens, NetworkType } from '@store/consts/static'
+import { Token as StoreToken } from '@store/consts/types'
 import { BN } from '@project-serum/anchor'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as positionsActions } from '@store/reducers/positions'
@@ -42,6 +38,7 @@ import { disconnectWallet, getSolanaWallet } from '@utils/web3/wallet'
 import { WalletAdapter } from '@utils/web3/adapters/types'
 import airdropAdmin from '@store/consts/airdropAdmin'
 import { createLoaderKey, getTokenProgramId } from '@utils/utils'
+import { openWalletSelectorModal } from '@utils/web3/selector'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { actions as bondsActions } from '@reducers/bonds'
 
@@ -169,7 +166,7 @@ export function* handleAirdrop(): Generator {
   const networkType = yield* select(network)
   const wallet = yield* call(getWallet)
 
-  if (networkType === NetworkType.TESTNET) {
+  if (networkType === NetworkType.Testnet) {
     // transfer sol
     // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
     yield* call(transferAirdropSOL)
@@ -489,6 +486,12 @@ export function* handleDisconnect(): Generator {
   }
 }
 
+export function* handleReconnect(): Generator {
+  yield* call(handleDisconnect)
+  yield* call(openWalletSelectorModal)
+  yield* call(handleConnect, { type: actions.connect.type, payload: false })
+}
+
 export function* connectHandler(): Generator {
   yield takeLatest(actions.connect, handleConnect)
 }
@@ -509,8 +512,19 @@ export function* handleBalanceSaga(): Generator {
   yield takeLeading(actions.getBalance, handleBalance)
 }
 
+export function* reconnectHandler(): Generator {
+  yield takeLatest(actions.reconnect, handleReconnect)
+}
+
 export function* walletSaga(): Generator {
   yield all(
-    [initSaga, airdropSaga, connectHandler, disconnectHandler, handleBalanceSaga].map(spawn)
+    [
+      initSaga,
+      airdropSaga,
+      connectHandler,
+      disconnectHandler,
+      handleBalanceSaga,
+      reconnectHandler
+    ].map(spawn)
   )
 }

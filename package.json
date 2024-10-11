@@ -18,7 +18,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@invariant-labs/sdk-eclipse": "^0.0.18",
+    "@invariant-labs/sdk-eclipse": "^0.0.19",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@nightlylabs/wallet-selector-solana": "^0.3.1",
@@ -31,7 +31,9 @@
     "@solana/spl-token-registry": "^0.2.55",
     "@solana/web3.js": "1.87.6",
     "@storybook/addon-actions": "^8.1.10",
+    "assert": "^2.1.0",
     "axios": "^1.6.8",
+    "buffer": "^6.0.3",
     "classnames": "^2.5.1",
     "notistack": "^3.0.1",
     "rc-scrollbars": "^1.1.6",

@@ -1,24 +1,27 @@
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
-import {
-  ALL_FEE_TIERS_DATA,
-  PositionOpeningMethod,
-  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
-  WETH_POOL_INIT_LAMPORTS,
-  WRAPPED_ETH_ADDRESS
-} from '@consts/static'
-import { parsePathFeeToFeeString, tickerToAddress } from '@consts/uiUtils'
-import { getScaleFromString, printBN, printBNtoBN } from '@consts/utils'
-import { Grid, Typography } from '@material-ui/core'
-import { BN } from '@project-serum/anchor'
-import { SwapToken } from '@selectors/solanaWallet'
-import { PublicKey } from '@solana/web3.js'
+import { Grid, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
+import { ALL_FEE_TIERS_DATA, NetworkType } from '@store/consts/static'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import FeeSwitch from '../FeeSwitch/FeeSwitch'
-import useStyles from './style'
+import { useStyles } from './style'
+import { PositionOpeningMethod } from '@store/consts/types'
+import { SwapToken } from '@store/selectors/solanaWallet'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
+import { PublicKey } from '@solana/web3.js'
+import { BN } from '@project-serum/anchor'
+import { Status } from '@store/reducers/solanaWallet'
+import {
+  convertBalanceToBN,
+  getScaleFromString,
+  printBN,
+  tickerToAddress,
+  parsePathFeeToFeeString
+} from '@utils/utils'
 
 export interface InputState {
   value: string
@@ -44,15 +47,11 @@ export interface IDepositSelector {
   feeTiers: number[]
   className?: string
   progress: ProgressState
-  percentageChangeA?: number
   priceA?: number
-  percentageChangeB?: number
   priceB?: number
   onReverseTokens: () => void
   poolIndex: number | null
   bestTierIndex?: number
-  canCreateNewPool: boolean
-  canCreateNewPosition: boolean
   handleAddToken: (address: string) => void
   commonTokens: PublicKey[]
   initialHideUnknownTokensValue: boolean
@@ -64,6 +63,15 @@ export interface IDepositSelector {
   concentrationIndex: number
   minimumSliderIndex: number
   positionOpeningMethod: PositionOpeningMethod
+  isBalanceLoading: boolean
+  isGetLiquidityError: boolean
+  ticksLoading: boolean
+  network: NetworkType
+  ethBalance: BN
+  walletStatus: Status
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
+  ethBalanceWithoutFee: BN
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -83,8 +91,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onReverseTokens,
   poolIndex,
   bestTierIndex,
-  canCreateNewPool,
-  canCreateNewPosition,
   handleAddToken,
   commonTokens,
   initialHideUnknownTokensValue,
@@ -95,48 +101,77 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   concentrationArray,
   concentrationIndex,
   minimumSliderIndex,
-  positionOpeningMethod
+  positionOpeningMethod,
+  isBalanceLoading,
+  isGetLiquidityError,
+  ticksLoading,
+  network,
+  ethBalance,
+  walletStatus,
+  onConnectWallet,
+  onDisconnectWallet,
+  ethBalanceWithoutFee
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
+  const [tokenAPrice, setTokenAPrice] = useState<number | undefined>(undefined)
+  const [tokenBPrice, setTokenBPrice] = useState<number | undefined>(undefined)
+
+  useEffect(() => {
+    if (!tokenAPrice) {
+      setTokenAPrice(priceA)
+    }
+
+    if (!tokenBPrice) {
+      setTokenBPrice(priceB)
+    }
+  }, [priceALoading, priceBLoading, priceA, priceB])
+
+  const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(initialHideUnknownTokensValue)
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false)
 
   useEffect(() => {
-    if (isLoaded || tokens.length === 0 || ALL_FEE_TIERS_DATA.length === 0) {
-      return
+    if (!isLoaded || Object.keys(tokens).length !== 0 || ALL_FEE_TIERS_DATA.length !== 0) {
+      const tokenFromAddress = tickerToAddress(network, initialTokenFrom)
+      const tokenToAddress = tickerToAddress(network, initialTokenTo)
+      let tokenAIndexFromPath = null
+      let tokenBIndexFromPath = null
+      if (!tokenFromAddress || !tokenToAddress) {
+        return
+      }
+
+      tokens.forEach((token, index) => {
+        if (token.assetAddress.toString() === tokenFromAddress) {
+          tokenAIndexFromPath = index
+        }
+
+        if (token.assetAddress.toString() === tokenToAddress) {
+          tokenBIndexFromPath = index
+        }
+      })
+
+      let feeTierIndexFromPath = 0
+
+      const parsedFee = parsePathFeeToFeeString(initialFee)
+
+      ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
+        if (feeTierData.tier.fee.toString() === parsedFee) {
+          feeTierIndexFromPath = index
+        }
+      })
+
+      setTokenAIndex(tokenAIndexFromPath)
+      setTokenBIndex(tokenBIndexFromPath)
+      setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath)
+
+      setIsLoaded(true)
+    } else {
+      setIsLoaded(false)
     }
-
-    let tokenAIndexFromPath = null
-    let tokenBIndexFromPath = null
-    let feeTierIndexFromPath = 0
-
-    tokens.forEach((token, index) => {
-      if (token.assetAddress.toString() === tickerToAddress(initialTokenFrom)) {
-        tokenAIndexFromPath = index
-      }
-
-      if (token.assetAddress.toString() === tickerToAddress(initialTokenTo)) {
-        tokenBIndexFromPath = index
-      }
-    })
-
-    const parsedFee = parsePathFeeToFeeString(initialFee)
-
-    ALL_FEE_TIERS_DATA.forEach((feeTierData, index) => {
-      if (feeTierData.tier.fee.toString() === parsedFee) {
-        feeTierIndexFromPath = index
-      }
-    })
-
-    setTokenAIndex(tokenAIndexFromPath)
-    setTokenBIndex(tokenBIndexFromPath)
-    setPositionTokens(tokenAIndexFromPath, tokenBIndexFromPath, feeTierIndexFromPath)
-
-    setIsLoaded(true)
-  }, [tokens])
+  }, [Object.keys(tokens).length])
 
   const getButtonMessage = useCallback(() => {
     if (tokenAIndex === null || tokenBIndex === null) {
@@ -153,52 +188,81 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         : 'Set higher fee tier'
     }
 
-    if (
-      (poolIndex === null && !canCreateNewPool) ||
-      (poolIndex !== null && !canCreateNewPosition)
-    ) {
-      return 'Insufficient ETH'
+    if (isGetLiquidityError) {
+      return 'Provide a smaller amount'
     }
 
     if (
       !tokenAInputState.blocked &&
-      printBNtoBN(tokenAInputState.value, tokens[tokenAIndex].decimals).gt(
+      convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).gt(
         tokens[tokenAIndex].balance
       )
     ) {
-      return "You don't have enough token A"
+      return `Not enough ${tokens[tokenAIndex].symbol}`
     }
 
     if (
       !tokenBInputState.blocked &&
-      printBNtoBN(tokenBInputState.value, tokens[tokenBIndex].decimals).gt(
+      convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals).gt(
         tokens[tokenBIndex].balance
       )
     ) {
-      return "You don't have enough token B"
+      return `Not enough ${tokens[tokenBIndex].symbol}`
+    }
+
+    if (ethBalance.lt(ethBalanceWithoutFee)) {
+      return `Insufficient ETH`
     }
 
     if (
-      !tokenAInputState.blocked &&
-      +tokenAInputState.value === 0 &&
-      !tokenBInputState.blocked &&
-      +tokenBInputState.value === 0
+      (!tokenAInputState.blocked && +tokenAInputState.value === 0) ||
+      (!tokenBInputState.blocked && +tokenBInputState.value === 0)
     ) {
-      return 'Liquidity must be greater than 0'
+      return !tokenAInputState.blocked && !tokenBInputState.blocked
+        ? 'Enter token amounts'
+        : 'Enter token amount'
     }
 
-    return 'Add Liquidity'
+    return 'Add Position'
   }, [
     tokenAIndex,
     tokenBIndex,
-    tokenAInputState.value,
-    tokenBInputState.value,
+    tokenAInputState,
+    tokenBInputState,
     tokens,
     positionOpeningMethod,
     concentrationIndex,
     feeTierIndex,
     minimumSliderIndex
   ])
+
+  const [wasRunTokenA, setWasRunTokenA] = useState(false)
+  const [wasRunTokenB, setWasRunTokenB] = useState(false)
+
+  useEffect(() => {
+    const tokenFromAddress = tickerToAddress(network, initialTokenFrom)
+    const tokenToAddress = tickerToAddress(network, initialTokenTo)
+
+    if (!tokenFromAddress || !tokenToAddress) {
+      return
+    }
+
+    if (!wasRunTokenA) {
+      const tokenFromIndex = Object.values(tokens).findIndex(
+        token => token.assetAddress.toString() === tokenFromAddress
+      )
+      setTokenAIndex(tokenFromIndex)
+      setWasRunTokenA(true)
+    }
+
+    if (!wasRunTokenB) {
+      const tokenToIndex = Object.values(tokens).findIndex(
+        token => token.assetAddress.toString() === tokenToAddress
+      )
+      setTokenAIndex(tokenToIndex)
+      setWasRunTokenB(true)
+    }
+  }, [wasRunTokenA, wasRunTokenB, tokens])
 
   useEffect(() => {
     if (tokenAIndex !== null) {
@@ -238,26 +302,40 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               sliceName
               commonTokens={commonTokens}
               initialHideUnknownTokensValue={initialHideUnknownTokensValue}
-              onHideUnknownTokensChange={onHideUnknownTokensChange}
+              onHideUnknownTokensChange={e => {
+                onHideUnknownTokensChange(e)
+                setHideUnknownTokens(e)
+              }}
+              hiddenUnknownTokens={hideUnknownTokens}
+              network={network}
             />
           </Grid>
 
-          <img
-            className={classes.arrows}
-            src={SwapList}
-            alt='Arrow'
-            onClick={() => {
-              if (!tokenBInputState.blocked) {
-                tokenAInputState.setValue(tokenBInputState.value)
-              } else {
-                tokenBInputState.setValue(tokenAInputState.value)
-              }
-              const pom = tokenAIndex
-              setTokenAIndex(tokenBIndex)
-              setTokenBIndex(pom)
-              onReverseTokens()
-            }}
-          />
+          <TooltipHover text='Reverse tokens'>
+            <img
+              className={classes.arrows}
+              src={SwapList}
+              alt='Arrow'
+              onClick={() => {
+                if (ticksLoading) {
+                  return
+                }
+
+                if (!tokenBInputState.blocked) {
+                  tokenAInputState.setValue(tokenBInputState.value)
+                } else {
+                  tokenBInputState.setValue(tokenAInputState.value)
+                }
+                const pom = tokenAIndex
+                setTokenAIndex(tokenBIndex)
+                setTokenBIndex(pom)
+                const pricePom = tokenAPrice
+                setTokenAPrice(tokenBPrice)
+                setTokenBPrice(pricePom)
+                onReverseTokens()
+              }}
+            />
+          </TooltipHover>
 
           <Grid className={classes.selectWrapper}>
             <Select
@@ -273,7 +351,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               sliceName
               commonTokens={commonTokens}
               initialHideUnknownTokensValue={initialHideUnknownTokensValue}
-              onHideUnknownTokensChange={onHideUnknownTokensChange}
+              onHideUnknownTokensChange={e => {
+                onHideUnknownTokensChange(e)
+                setHideUnknownTokens(e)
+              }}
+              hiddenUnknownTokens={hideUnknownTokens}
+              network={network}
             />
           </Grid>
         </Grid>
@@ -292,7 +375,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
       <Grid container className={classes.sectionWrapper}>
         <DepositAmountInput
-          tokenPrice={priceA}
+          tokenPrice={tokenAPrice}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
           placeholder='0.0'
@@ -301,31 +384,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               return
             }
 
-            if (tokens[tokenAIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-              if (tokenBIndex !== null && poolIndex === null) {
-                tokenAInputState.setValue(
-                  printBN(
-                    tokens[tokenAIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
-                      ? tokens[tokenAIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
-                      : new BN(0),
-                    tokens[tokenAIndex].decimals
-                  )
-                )
-
-                return
-              }
-
-              tokenAInputState.setValue(
-                printBN(
-                  tokens[tokenAIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                    ? tokens[tokenAIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                    : new BN(0),
-                  tokens[tokenAIndex].decimals
-                )
-              )
-
-              return
-            }
             tokenAInputState.setValue(
               printBN(tokens[tokenAIndex].balance, tokens[tokenAIndex].decimals)
             )
@@ -349,10 +407,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           }}
           {...tokenAInputState}
           priceLoading={priceALoading}
+          isBalanceLoading={isBalanceLoading}
+          walletUninitialized={walletStatus !== Status.Initialized}
         />
 
         <DepositAmountInput
-          tokenPrice={priceB}
+          tokenPrice={tokenBPrice}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
           placeholder='0.0'
@@ -361,31 +421,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               return
             }
 
-            if (tokens[tokenBIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-              if (tokenAIndex !== null && poolIndex === null) {
-                tokenBInputState.setValue(
-                  printBN(
-                    tokens[tokenBIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
-                      ? tokens[tokenBIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
-                      : new BN(0),
-                    tokens[tokenBIndex].decimals
-                  )
-                )
-
-                return
-              }
-
-              tokenBInputState.setValue(
-                printBN(
-                  tokens[tokenBIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                    ? tokens[tokenBIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                    : new BN(0),
-                  tokens[tokenBIndex].decimals
-                )
-              )
-
-              return
-            }
             tokenBInputState.setValue(
               printBN(tokens[tokenBIndex].balance, tokens[tokenBIndex].decimals)
             )
@@ -406,23 +441,55 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           }}
           {...tokenBInputState}
           priceLoading={priceBLoading}
+          isBalanceLoading={isBalanceLoading}
+          walletUninitialized={walletStatus !== Status.Initialized}
         />
       </Grid>
-
-      <AnimatedButton
-        className={classNames(
-          classes.addButton,
-          progress === 'none' ? classes.hoverButton : undefined
-        )}
-        onClick={() => {
-          if (progress === 'none') {
-            onAddLiquidity()
-          }
-        }}
-        disabled={getButtonMessage() !== 'Add Liquidity'}
-        content={getButtonMessage()}
-        progress={progress}
-      />
+      {walletStatus !== Status.Initialized ? (
+        <ChangeWalletButton
+          name='Connect wallet'
+          onConnect={onConnectWallet}
+          connected={false}
+          onDisconnect={onDisconnectWallet}
+          className={classes.connectWalletButton}
+        />
+      ) : getButtonMessage() === 'Insufficient ETH' ? (
+        <TooltipHover
+          text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+          top={-10}>
+          <div>
+            <AnimatedButton
+              className={classNames(
+                classes.addButton,
+                progress === 'none' ? classes.hoverButton : undefined
+              )}
+              onClick={() => {
+                if (progress === 'none') {
+                  onAddLiquidity()
+                }
+              }}
+              disabled={getButtonMessage() !== 'Add Position'}
+              content={getButtonMessage()}
+              progress={progress}
+            />
+          </div>
+        </TooltipHover>
+      ) : (
+        <AnimatedButton
+          className={classNames(
+            classes.addButton,
+            progress === 'none' ? classes.hoverButton : undefined
+          )}
+          onClick={() => {
+            if (progress === 'none') {
+              onAddLiquidity()
+            }
+          }}
+          disabled={getButtonMessage() !== 'Add Position'}
+          content={getButtonMessage()}
+          progress={progress}
+        />
+      )}
     </Grid>
   )
 }

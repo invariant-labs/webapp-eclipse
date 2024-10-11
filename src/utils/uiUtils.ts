@@ -1,5 +1,15 @@
+import { Network } from '@invariant-labs/sdk-eclipse'
 import { BN } from '@project-serum/anchor'
-import { ADDRESSES_TO_REVERS_TOKEN_PAIRS } from '@store/consts/static'
+import { PublicKey } from '@solana/web3.js'
+import {
+  ADDRESSES_TO_REVERS_TOKEN_PAIRS,
+  BTC_TEST,
+  getAddressTickerMap,
+  getReversedAddressTickerMap,
+  USDC_TEST,
+  WETH_TEST
+} from '@store/consts/static'
+import { Token } from '@store/consts/types'
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
   WETH: 'So11111111111111111111111111111111111111112',
@@ -38,34 +48,3 @@ export const importantStyles = (styleObject: { [key: string]: string | number })
     styleObject
   )
 
-export const parseFeeToPathFee = (fee: BN): string => {
-  const parsedFee = (fee / Math.pow(10, 8)).toString().padStart(3, '0')
-  return parsedFee.slice(0, parsedFee.length - 2) + '_' + parsedFee.slice(parsedFee.length - 2)
-}
-
-export const parsePathFeeToFeeString = (pathFee: string): string => {
-  return (+pathFee.replace('_', '') * Math.pow(10, 8)).toString()
-}
-
-export const tickerToAddress = (ticker: string): string => {
-  return addressTickerMap[ticker] || ticker
-}
-
-export const addressToTicker = (address: string): string => {
-  return reversedAddressTickerMap[address] || address
-}
-
-export const randomNumberFromRange = (min: number, max: number) => {
-  return Math.floor(Math.random() * (max - min + 1) + min)
-}
-
-export const initialXtoY = (tokenXAddress?: string, tokenYAddress?: string) => {
-  if (!tokenXAddress || !tokenYAddress) {
-    return true
-  }
-
-  const isTokeXStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenXAddress)
-  const isTokenYStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenYAddress)
-
-  return isTokeXStablecoin === isTokenYStablecoin || (!isTokeXStablecoin && !isTokenYStablecoin)
-}

@@ -1,33 +1,46 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
-import { commonTokensForNetworks } from '@consts/static'
-import {
-  addNewTokenToLocalStorage,
-  getCoingeckoTokenPrice,
-  getMockedTokenPrice,
-  getNewTokenOrThrow,
-  TokenPriceData
-} from '@consts/utils'
-import { actions as poolsActions } from '@reducers/pools'
-import { actions as snackbarsActions } from '@reducers/snackbars'
-import { actions as walletActions } from '@reducers/solanaWallet'
-import { actions } from '@reducers/swap'
+import { commonTokensForNetworks, DEFAULT_SWAP_SLIPPAGE } from '@store/consts/static'
+import { actions as poolsActions } from '@store/reducers/pools'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions } from '@store/reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
   poolsArraySortedByFees,
   tickMaps,
   nearestPoolTicksForPair
-} from '@selectors/pools'
-import { network } from '@selectors/solanaConnection'
-import { status, swapTokens, swapTokensDict, balanceLoading } from '@selectors/solanaWallet'
-import { swap as swapPool } from '@selectors/swap'
+} from '@store/selectors/pools'
+import { network } from '@store/selectors/solanaConnection'
+import {
+  status,
+  swapTokens,
+  swapTokensDict,
+  balanceLoading,
+  balance
+} from '@store/selectors/solanaWallet'
+import { swap as swapPool } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
-import { getCurrentSolanaConnection } from '@web3/connection'
-import { openWalletSelectorModal } from '@web3/selector'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
+import {
+  addNewTokenToLocalStorage,
+  getCoingeckoTokenPrice,
+  getMockedTokenPrice,
+  getNewTokenOrThrow,
+  tickerToAddress
+} from '@utils/utils'
+import { TokenPriceData } from '@store/consts/types'
+import { openWalletSelectorModal } from '@utils/web3/selector'
+import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { VariantType } from 'notistack'
 
-export const WrappedSwap = () => {
+type Props = {
+  initialTokenFrom: string
+  initialTokenTo: string
+}
+
+export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const dispatch = useDispatch()
 
   const connection = getCurrentSolanaConnection()
@@ -43,27 +56,27 @@ export const WrappedSwap = () => {
   const { success, inProgress } = useSelector(swapPool)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
   const networkType = useSelector(network)
-
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
   const [tokenTo, setTokenTo] = useState<PublicKey | null>(null)
+  const ethBalance = useSelector(balance)
+
   useEffect(() => {
-    let timeoutId1: number
-    let timeoutId2: number
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
 
     if (!inProgress && progress === 'progress') {
       setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
 
       timeoutId1 = setTimeout(() => {
         setProgress(success ? 'success' : 'failed')
-      }, 1500)
+      }, 1000)
 
       timeoutId2 = setTimeout(() => {
         setProgress('none')
       }, 3000)
     }
 
-    // Cleanup function
     return () => {
       clearTimeout(timeoutId1)
       clearTimeout(timeoutId2)
@@ -80,17 +93,29 @@ export const WrappedSwap = () => {
       )
     }
   }, [isFetchingNewPool])
-  const lastTokenFrom = localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
-  const lastTokenTo = localStorage.getItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`)
+
+  const lastTokenFrom =
+    tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
+      ? tickerToAddress(networkType, initialTokenFrom)
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
+
+  const lastTokenTo =
+    tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
+      ? tickerToAddress(networkType, initialTokenTo)
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`)
 
   const initialTokenFromIndex =
     lastTokenFrom === null
       ? null
-      : tokensList.findIndex(token => token.assetAddress.equals(new PublicKey(lastTokenFrom)))
+      : Object.values(tokensList).findIndex(token =>
+          token.assetAddress.equals(new PublicKey(lastTokenFrom))
+        )
   const initialTokenToIndex =
     lastTokenTo === null
       ? null
-      : tokensList.findIndex(token => token.assetAddress.equals(new PublicKey(lastTokenTo)))
+      : Object.values(tokensList).findIndex(token =>
+          token.assetAddress.equals(new PublicKey(lastTokenTo))
+        )
 
   const addTokenHandler = (address: string) => {
     if (
@@ -104,7 +129,7 @@ export const WrappedSwap = () => {
           addNewTokenToLocalStorage(address, networkType)
           dispatch(
             snackbarsActions.add({
-              message: 'Token added to your list',
+              message: 'Token added.',
               variant: 'success',
               persist: false
             })
@@ -113,7 +138,7 @@ export const WrappedSwap = () => {
         .catch(() => {
           dispatch(
             snackbarsActions.add({
-              message: 'Token adding failed, check if address is valid and try again',
+              message: 'Token add failed.',
               variant: 'error',
               persist: false
             })
@@ -122,7 +147,7 @@ export const WrappedSwap = () => {
     } else {
       dispatch(
         snackbarsActions.add({
-          message: 'Token already exists on your list',
+          message: 'Token already in list.',
           variant: 'info',
           persist: false
         })
@@ -141,7 +166,9 @@ export const WrappedSwap = () => {
   const [tokenFromPriceData, setTokenFromPriceData] = useState<TokenPriceData | undefined>(
     undefined
   )
+
   const [priceFromLoading, setPriceFromLoading] = useState(false)
+
   useEffect(() => {
     if (tokenFrom === null) {
       return
@@ -166,6 +193,7 @@ export const WrappedSwap = () => {
 
   const [tokenToPriceData, setTokenToPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceToLoading, setPriceToLoading] = useState(false)
+
   useEffect(() => {
     if (tokenTo === null) {
       return
@@ -187,7 +215,7 @@ export const WrappedSwap = () => {
     }
   }, [tokenTo])
 
-  const initialSlippage = localStorage.getItem('INVARIANT_SWAP_SLIPPAGE') ?? '1'
+  const initialSlippage = localStorage.getItem('INVARIANT_SWAP_SLIPPAGE') ?? DEFAULT_SWAP_SLIPPAGE
 
   const onSlippageChange = (slippage: string) => {
     localStorage.setItem('INVARIANT_SWAP_SLIPPAGE', slippage)
@@ -242,6 +270,16 @@ export const WrappedSwap = () => {
     } else {
       setTokenFromPriceData(undefined)
     }
+  }
+
+  const copyTokenAddressHandler = (message: string, variant: VariantType) => {
+    dispatch(
+      snackbarsActions.add({
+        message,
+        variant,
+        persist: false
+      })
+    )
   }
 
   return (
@@ -317,6 +355,9 @@ export const WrappedSwap = () => {
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
       isBalanceLoading={isBalanceLoading}
+      copyTokenAddressHandler={copyTokenAddressHandler}
+      ethBalance={ethBalance}
+      network={networkType}
     />
   )
 }
