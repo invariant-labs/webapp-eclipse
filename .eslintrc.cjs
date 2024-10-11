@@ -7,7 +7,12 @@ module.exports = {
     'plugin:react-hooks/recommended',
     'plugin:storybook/recommended'
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  ignorePatterns: [
+    'dist',
+    '.eslintrc.cjs',
+    'node_modules',
+    'node_modules/@invariant-labs/sdk-eclipse/**'
+  ],
   parserOptions: {
     project: './tsconfig.json'
   },
