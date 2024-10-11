@@ -27,6 +27,7 @@ export const TokenMetadataInputs: React.FC<TokenMetadataInputsProps> = ({ formMe
           errors={errors}
           control={control}
           multiline
+          maxRows={3}
           minRows={3}
           rules={{
             maxLength: {

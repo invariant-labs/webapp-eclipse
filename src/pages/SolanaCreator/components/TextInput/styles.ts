@@ -38,18 +38,23 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     alignItems: 'center',
     letterSpacing: '-0.03em',
-    color: colors.invariant.text
+    color: colors.invariant.text,
+    marginBottom: '8px'
   },
   inputWrapper: {
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    minHeight: '150px'
+    minHeight: '160px'
+  },
+  inputContainer: {
+    height: '80px',
+    overflowY: 'auto'
   },
   errorMessage: {
     color: colors.red.main,
     fontSize: '14px',
-    marginTop: '4px',
+    lineHeight: '20px',
     minHeight: '20px'
   }
 }))

@@ -15,6 +15,7 @@ interface ControlledInputProps {
 interface ControlledTextInputProps extends ControlledInputProps {
   multiline?: boolean
   minRows?: number
+  maxRows?: number
 }
 
 interface ControlledNumericInputProps extends ControlledInputProps {
@@ -44,6 +45,7 @@ export const ControlledTextInput: React.FC<ControlledTextInputProps> = ({
         errorMessage={errors[name]?.message || ''}
         multiline={multiline}
         minRows={minRows}
+        maxRows={minRows}
       />
     )}
   />
