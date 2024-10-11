@@ -35,4 +35,3 @@ export const importantStyles = (styleObject: { [key: string]: string | number })
     }),
     styleObject
   )
-

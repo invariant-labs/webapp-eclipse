@@ -25,17 +25,15 @@ const SolanaWalletEvents = () => {
     const connectEvents = () => {
       connection.onAccountChange(new PublicKey(publicKey), (accountInfo: AccountInfo<Buffer>) => {
         dispatch(actions.setBalance(new BN(accountInfo.lamports)))
-
       })
     }
     connectEvents()
   }, [dispatch, publicKey, networkStatus])
 
-
   const tokensAccounts = useSelector(accounts)
   const walletStat = useSelector(walletStatus)
   const [initializedAccount, setInitializedAccount] = useState<Set<string>>(new Set())
-  
+
   React.useEffect(() => {
     const connection = getCurrentSolanaConnection()
     if (!connection || walletStat !== Status.Initialized || networkStatus !== Status.Initialized) {

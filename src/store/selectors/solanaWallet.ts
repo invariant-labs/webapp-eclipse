@@ -72,7 +72,7 @@ export const swapTokens = createSelector(
           ? ethBalance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
             ? ethBalance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
             : new BN(0)
-          : allAccounts[token.address.toString()]?.balance ?? new BN(0)
+          : (allAccounts[token.address.toString()]?.balance ?? new BN(0))
     }))
   }
 )
@@ -102,7 +102,7 @@ export const poolTokens = createSelector(accounts, tokens, (allAccounts, tokens)
     balance:
       token.address.toString() === WRAPPED_ETH_ADDRESS
         ? minPoolEthBalance
-        : allAccounts[token.address.toString()]?.balance ?? new BN(0)
+        : (allAccounts[token.address.toString()]?.balance ?? new BN(0))
   }))
 })
 
@@ -120,7 +120,7 @@ export const swapTokensDict = createSelector(
         balance:
           val.address.toString() === WRAPPED_ETH_ADDRESS
             ? ethBalance
-            : allAccounts[val.address.toString()]?.balance ?? new BN(0)
+            : (allAccounts[val.address.toString()]?.balance ?? new BN(0))
       }
     })
 
