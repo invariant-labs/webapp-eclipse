@@ -31,7 +31,14 @@
     "noImplicitAny": false
   },
   "include": ["src"],
-  "exclude": ["node_modules", "src/pages/SolanaCreator", "**/*.stories.ts", "**/*.stories.tsx"],
+  "exclude": [
+    "node_modules/**/*",
+    "src/pages/SolanaCreator",
+    "**/*.stories.ts",
+    "**/*.stories.tsx",
+    "src/components/FarmsList/**/*",
+    "src/components/Modals/SelectModals/SortFarmsModal/**/*"
+  ],
   "references": [
     {
       "path": "./tsconfig.node.json"
