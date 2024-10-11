@@ -2,7 +2,7 @@ import React from 'react'
 import { useForm } from 'react-hook-form'
 import { Box, Typography } from '@material-ui/core'
 import useStyles from './styles'
-//import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
+// import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
 import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils'
 import { TokenInfoInputs } from '../CreatorComponents/TokenInfoInputs'
 
