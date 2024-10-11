@@ -73,7 +73,6 @@ export const PagesRouter: React.FC = () => {
           />
           <Route path={'/pool'} component={ListPage} />
           <Route path={'/farms'} component={FarmsPage} />
-          <Route path={'/token'} component={SolanaCreator} />
 
           {/* <Route
             path={'/farm/:id'}
