@@ -5,7 +5,6 @@ import { getSolanaWallet } from './wallet'
 import { WebUploader } from '@irys/web-upload'
 import { WebSolana } from '@irys/web-upload-solana'
 import { Keypair, SystemProgram, Transaction } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
 import { createInitializeInstruction, pack, TokenMetadata } from '@solana/spl-token-metadata'
 import {
   createAssociatedTokenAccountInstruction,
