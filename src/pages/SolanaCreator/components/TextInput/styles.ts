@@ -44,7 +44,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    minHeight: '90px'
+    minHeight: '150px'
   },
   errorMessage: {
     color: colors.red.main,
