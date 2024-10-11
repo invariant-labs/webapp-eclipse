@@ -99,11 +99,9 @@ export const NumericInput: React.FC<INumericInput> = ({
           error={error}
         />
       </Box>
-      {error && (
-        <Box className={classes.errorMessageContainer}>
-          <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
-        </Box>
-      )}
+      <Box className={classes.errorMessageContainer}>
+        <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
+      </Box>
     </Box>
   )
 }

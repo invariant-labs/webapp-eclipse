@@ -12,6 +12,7 @@ const useStyles = makeStyles(() => ({
     fontFamily: 'Mukta',
     outlineStyle: 'none',
     fontSize: 16,
+    border: '1px solid transparent',
     backgroundColor: colors.invariant.newDark,
     color: colors.invariant.lightGrey,
     borderRadius: 8,
@@ -45,7 +46,7 @@ const useStyles = makeStyles(() => ({
     display: 'flex',
     flexDirection: 'column',
     width: '100%',
-    minHeight: '160px'
+    minHeight: 'fit-content'
   },
   inputContainer: {
     height: '80px',
