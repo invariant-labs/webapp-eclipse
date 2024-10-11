@@ -29,6 +29,8 @@ lint:
     - trufflehog@3.82.2
     - yamllint@1.35.1
   disabled:
-    - 'node_modules/**'
+    - 'node_modules/**/*'
     - 'src/components/**/*.stories.tsx'
     - 'src/pages/SolanaCreator/**/*'
+    - 'src/components/FarmsList/**/*'
+    - 'src/components/Modals/SelectModals/SortFarmsModal/**/*'

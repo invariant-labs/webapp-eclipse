@@ -143,8 +143,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return
     }
     let feeTierIndexFromPath = 0
-    let tokenAIndexFromPath = null
-    let tokenBIndexFromPath = null
+    let tokenAIndexFromPath: null | number = null
+    let tokenBIndexFromPath: null | number = null
     const tokenFromAddress = tickerToAddress(network, initialTokenFrom)
     const tokenToAddress = tickerToAddress(network, initialTokenTo)
 
