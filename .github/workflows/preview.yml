@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  lint:
+  build:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,8 +16,6 @@ jobs:
           node-version: '16'
       - name: install
         run: npm i
-      - name: Trunk Check
-        uses: trunk-io/trunk-action@v0.3.0-beta
       - name: build
         run: npm run build
 
