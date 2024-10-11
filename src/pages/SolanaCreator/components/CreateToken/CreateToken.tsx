@@ -3,6 +3,9 @@ import { useForm } from 'react-hook-form'
 import useStyles from './styles'
 import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils'
 import { TokenInfoInputs } from '../CreatorComponents/TokenInfoInputs'
+import { createToken } from '@web3/createToken'
+import { useSelector } from 'react-redux'
+import { network } from '@selectors/solanaConnection'
 import { Box, Typography } from '@mui/material'
 
 interface FormData {
@@ -20,12 +23,25 @@ interface FormData {
 
 export const CreateToken: React.FC = () => {
   const { classes } = useStyles()
+  const currentNetwork = useSelector(network)
 
   const formMethods = useForm<FormData>({
     mode: 'onChange',
-    reValidateMode: 'onChange'
+    reValidateMode: 'onChange',
+    defaultValues: {
+      name: '',
+      symbol: '',
+      decimals: '',
+      supply: '',
+      description: '',
+      website: '',
+      twitter: '',
+      telegram: '',
+      discord: '',
+      image: ''
+    }
   })
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     try {
       const decimalsError = validateDecimals(data.decimals)
       if (decimalsError) {
@@ -37,7 +53,9 @@ export const CreateToken: React.FC = () => {
         throw new Error(supplyError)
       }
 
-      console.log(data)
+      const hasCreated = await createToken(data, currentNetwork)
+      // TODO: add snackbar
+      console.log('has created', hasCreated)
     } catch (error) {
       console.error('Error submitting form:', error)
     }
