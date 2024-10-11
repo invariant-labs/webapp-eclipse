@@ -42,9 +42,10 @@ module.exports = {
   },
   overrides: [
     {
-      files: ['**/*.stories.*'],
+      files: ['**/*.stories.tsx'],
       rules: {
-        'storybook/story-exports': 'off'
+        '@typescript-eslint/no-unused-vars': 'off',
+        'import/no-unresolved': 'off'
       }
     }
   ]

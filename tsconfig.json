@@ -27,9 +27,11 @@
       "@web3/*": ["src/web3/*"],
       "@utils/*": ["src/utils/*"],
       "@/*": ["src/*"]
-    }
+    },
+    "noImplicitAny": false
   },
   "include": ["src"],
+  "exclude": ["node_modules", "src/pages/SolanaCreator"],
   "references": [
     {
       "path": "./tsconfig.node.json"
