@@ -3,9 +3,7 @@ import searchIcon from '@static/svg/lupa.svg'
 import { theme } from '@static/theme'
 import React, { forwardRef, useEffect, useMemo, useRef, useState } from 'react'
 import { FixedSizeList as List } from 'react-window'
-import CustomScrollbar from '../CustomScrollbar'
 import useStyles from '../style'
-
 import AddTokenModal from '@components/Modals/AddTokenModal/AddTokenModal'
 import {
   Box,
@@ -25,6 +23,7 @@ import icons from '@static/icons'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
+import CustomScrollbar from './CustomScrollbar'
 
 export interface ISelectTokenModal {
   tokens: SwapToken[]

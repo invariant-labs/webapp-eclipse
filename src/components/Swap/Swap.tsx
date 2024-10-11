@@ -650,6 +650,7 @@ export const Swap: React.FC<ISwap> = ({
                 (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
             }
             hiddenUnknownTokens={hideUnknownTokens}
+            network={network}
           />
         </Box>
         <Box className={classes.tokenComponentTextContainer}>
@@ -732,6 +733,7 @@ export const Swap: React.FC<ISwap> = ({
                 (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
             }
             hiddenUnknownTokens={hideUnknownTokens}
+            network={network}
           />
         </Box>
         <Box className={classes.transactionDetails}>

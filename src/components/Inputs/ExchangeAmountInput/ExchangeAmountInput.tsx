@@ -8,6 +8,7 @@ import classNames from 'classnames'
 import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import { PublicKey } from '@solana/web3.js'
+import { NetworkType } from '@store/consts/static'
 
 interface IProps {
   setValue: (value: string) => void
@@ -36,6 +37,7 @@ interface IProps {
   showMaxButton: boolean
   showBlur: boolean
   hiddenUnknownTokens: boolean
+  network: NetworkType
 }
 
 export const AmountInput: React.FC<IProps> = ({
@@ -63,7 +65,8 @@ export const AmountInput: React.FC<IProps> = ({
   isBalanceLoading,
   showMaxButton = true,
   showBlur,
-  hiddenUnknownTokens
+  hiddenUnknownTokens,
+  network
 }) => {
   const hideBalance = balance === '- -' || !balance || hideBalances
   const { classes } = useStyles()
@@ -125,6 +128,7 @@ export const AmountInput: React.FC<IProps> = ({
           initialHideUnknownTokensValue={initialHideUnknownTokensValue}
           onHideUnknownTokensChange={onHideUnknownTokensChange}
           hiddenUnknownTokens={hiddenUnknownTokens}
+          network={network}
         />
         {showBlur ? (
           <div className={classes.blur}></div>
