@@ -3,7 +3,7 @@ import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
 import useStyles from '../CreateToken/styles'
-import { Button } from '@material-ui/core'
+import { Box, Button } from '@material-ui/core'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
@@ -19,8 +19,8 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
   } = formMethods
 
   return (
-    <div className={classes.container}>
-      <div className={classes.inputsWrapper}>
+    <Box className={classes.container}>
+      <Box className={classes.inputsWrapper}>
         <ControlledTextInput
           name='name'
           label='Name'
@@ -41,8 +41,8 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
             maxLength: { value: 8, message: 'Symbol must be 8 characters or less' }
           }}
         />
-        <div className={classes.row}>
-          <div className={classes.inputContainer}>
+        <Box className={classes.row}>
+          <Box className={classes.inputContainer}>
             <ControlledNumericInput
               name='decimals'
               label='Decimals'
@@ -59,8 +59,8 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
                 }
               }}
             />
-          </div>
-          <div className={classes.inputContainer}>
+          </Box>
+          <Box className={classes.inputContainer}>
             <ControlledNumericInput
               name='supply'
               label='Supply'
@@ -72,12 +72,12 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
                 validate: (value: string) => validateSupply(value, watch('decimals'))
               }}
             />
-          </div>
-        </div>
-      </div>
+          </Box>
+        </Box>
+      </Box>
       <Button className={classes.button} variant='contained' type='submit' disabled={!isValid}>
         <span className={classes.buttonText}>Create Token</span>
       </Button>
-    </div>
+    </Box>
   )
 }

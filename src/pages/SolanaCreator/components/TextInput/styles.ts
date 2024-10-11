@@ -22,6 +22,22 @@ const useStyles = makeStyles(() => ({
     },
     '&:focus': {
       color: colors.white.main
+    },
+    '& textarea': {
+      overflow: 'auto !important',
+      '&::-webkit-scrollbar': {
+        width: '8px'
+      },
+      '&::-webkit-scrollbar-track': {
+        background: colors.invariant.newDark
+      },
+      '&::-webkit-scrollbar-thumb': {
+        backgroundColor: colors.invariant.lightGrey,
+        borderRadius: '4px',
+        '&:hover': {
+          backgroundColor: colors.invariant.textGrey
+        }
+      }
     }
   },
   inputError: {

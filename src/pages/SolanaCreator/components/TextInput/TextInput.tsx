@@ -1,5 +1,5 @@
 import React from 'react'
-import { Input, Typography } from '@material-ui/core'
+import { Box, Input, Typography } from '@material-ui/core'
 import useStyles from './styles'
 
 interface ITextInput {
@@ -31,7 +31,7 @@ export const TextInput: React.FC<ITextInput> = ({
       : ''
 
   return (
-    <div className={classes.inputWrapper}>
+    <Box className={classes.inputWrapper}>
       <h1 className={classes.headerTitle}>{capitalizedLabel}</h1>
       <Input
         placeholder={label}
@@ -45,6 +45,6 @@ export const TextInput: React.FC<ITextInput> = ({
         error={error}
       />
       <Typography className={classes.errorMessage}>{errorMessage}</Typography>
-    </div>
+    </Box>
   )
 }
