@@ -12,8 +12,7 @@ import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
   REFRESHER_INTERVAL,
-  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
-  WRAPPED_ETH_ADDRESS
+  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -21,7 +20,6 @@ import {
   findPairs,
   handleSimulate,
   printBN,
-  stringToFixed,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
@@ -29,17 +27,16 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
-import { Simulate } from '@store/reducers/swap'
+import React, { useEffect, useRef, useState } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
-import { SimulateResult, SwapError, TokenPriceData } from '@store/consts/types'
+import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { DECIMAL, fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Decimal, Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'

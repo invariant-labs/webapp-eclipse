@@ -6,10 +6,8 @@ import classNames from 'classnames'
 import { useMemo, useState } from 'react'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
-import { PublicKey } from '@solana/web3.js'
 
 export interface IPositionItem {
   tokenXName: string

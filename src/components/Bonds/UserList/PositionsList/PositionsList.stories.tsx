@@ -38,3 +38,4 @@
 //       })
 //     return <PositionsList data={data} />
 //   })
+export default {}

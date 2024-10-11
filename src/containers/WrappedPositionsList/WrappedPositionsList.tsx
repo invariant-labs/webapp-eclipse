@@ -160,9 +160,7 @@ export const WrappedPositionsList: React.FC = () => {
       showNoConnected={walletStatus !== Status.Initialized}
       itemsPerPage={POSITIONS_PER_PAGE}
       noConnectedBlockerProps={{
-        onConnect: async () => {
-          openWalletSelectorModal
-        },
+        onConnect: openWalletSelectorModal,
         title: 'Start exploring liquidity pools right now!',
         descCustomText: 'Or, connect your wallet to see existing positions, and create a new one!'
       }}

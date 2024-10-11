@@ -30,10 +30,6 @@ export interface ISinglePositionPlot {
   xToY: boolean
   hasTicksError?: boolean
   reloadHandler: () => void
-  volumeRange?: {
-    min: number
-    max: number
-  }
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -50,8 +46,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   max,
   xToY,
   hasTicksError,
-  reloadHandler,
-  volumeRange
+  reloadHandler
 }) => {
   const { classes } = useStyles()
 
@@ -205,7 +200,6 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
           coverOnLoading
           hasError={hasTicksError}
           reloadHandler={reloadHandler}
-          // volumeRange={volumeRange}
         />
       </Grid>
       <Grid className={classes.minMaxInfo}>

@@ -31,7 +31,7 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
           {desc?.length && <Typography className={classes.desc}>{desc}</Typography>}
           {withButton && (
             <Button className={classes.button} onClick={onAction} variant='contained'>
-              {!!buttonName ? buttonName : 'Add a position'}
+              {buttonName ? buttonName : 'Add a position'}
             </Button>
           )}
         </Grid>

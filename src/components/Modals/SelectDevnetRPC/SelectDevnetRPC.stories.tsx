@@ -34,3 +34,4 @@
 //     activeRPC={EclipseNetworks.MAIN}
 //   />
 // ))
+export default {}

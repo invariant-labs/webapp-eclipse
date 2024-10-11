@@ -44,10 +44,6 @@ interface IProps {
   showFeesLoader?: boolean
   hasTicksError?: boolean
   reloadHandler: () => void
-  plotVolumeRange?: {
-    min: number
-    max: number
-  }
   userHasStakes?: boolean
   onRefresh: () => void
   isBalanceLoading: boolean
@@ -78,7 +74,6 @@ const PositionDetails: React.FC<IProps> = ({
   showFeesLoader = false,
   hasTicksError,
   reloadHandler,
-  plotVolumeRange,
   userHasStakes = false,
   onRefresh,
   isBalanceLoading,
@@ -87,7 +82,7 @@ const PositionDetails: React.FC<IProps> = ({
   const { classes } = useStyles()
 
   const navigate = useNavigate()
-  console.log('detailsData', detailsData)
+
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
@@ -235,14 +230,6 @@ const PositionDetails: React.FC<IProps> = ({
             xToY={xToY}
             hasTicksError={hasTicksError}
             reloadHandler={reloadHandler}
-            volumeRange={
-              xToY
-                ? plotVolumeRange
-                : {
-                    min: 1 / (plotVolumeRange?.max ?? 1),
-                    max: 1 / (plotVolumeRange?.min ?? 1)
-                  }
-            }
           />
         </Grid>
       </Grid>

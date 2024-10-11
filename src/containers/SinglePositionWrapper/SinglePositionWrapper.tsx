@@ -6,7 +6,6 @@ import {
   calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   calcYPerXPriceBySqrtPrice,
-  calcYPerXPriceByTickIndex,
   createPlaceholderLiquidityPlot,
   getCoingeckoTokenPrice,
   getMockedTokenPrice,
@@ -17,7 +16,7 @@ import { actions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
-import { poolsArraySortedByFees, tickMaps, volumeRanges } from '@store/selectors/pools'
+import { poolsArraySortedByFees } from '@store/selectors/pools'
 import {
   currentPositionTicks,
   isLoadingPositionsList,
@@ -33,9 +32,8 @@ import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import { NoConnected } from '@components/NoConnected/NoConnected'
 import { openWalletSelectorModal } from '@utils/web3/selector'
-import { PublicKey } from '@solana/web3.js'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
-import { calculatePriceSqrt, MAX_TICK } from '@invariant-labs/sdk-eclipse/src'
+import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 export interface IProps {
@@ -56,13 +54,12 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     loading: ticksLoading,
     hasError: hasTicksError
   } = useSelector(plotTicks)
-  const allTickMaps = useSelector(tickMaps)
+
   const {
     lowerTick,
     upperTick,
     loading: currentPositionTicksLoading
   } = useSelector(currentPositionTicks)
-  const poolsVolumeRanges = useSelector(volumeRanges)
 
   const walletStatus = useSelector(status)
   const isBalanceLoading = useSelector(balanceLoading)
@@ -269,50 +266,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
 
-  const currentVolumeRange = useMemo(() => {
-    if (!position?.poolData.address) {
-      return undefined
-    }
-
-    const poolAddress = position.poolData.address.toString()
-
-    if (!poolsVolumeRanges[poolAddress]) {
-      return undefined
-    }
-
-    const lowerTicks: number[] = poolsVolumeRanges[poolAddress]
-      .map(range => (range.tickLower === null ? undefined : range.tickLower))
-      .filter(tick => typeof tick !== 'undefined') as number[]
-    const upperTicks: number[] = poolsVolumeRanges[poolAddress]
-      .map(range => (range.tickUpper === null ? undefined : range.tickUpper))
-      .filter(tick => typeof tick !== 'undefined') as number[]
-
-    const lowerPrice = calcPriceByTickIndex(
-      !lowerTicks.length || !upperTicks.length
-        ? position.poolData.currentTickIndex
-        : Math.min(...lowerTicks),
-      true,
-      position.tokenX.decimals,
-      position.tokenY.decimals
-    )
-    const minTick = getMinTick(position.poolData.tickSpacing)
-    const maxTick = getMaxTick(position.poolData.tickSpacing)
-
-    const upperPrice = calcPriceByTickIndex(
-      !lowerTicks.length || !upperTicks.length
-        ? Math.min(position.poolData.currentTickIndex + position.poolData.tickSpacing, maxTick)
-        : Math.max(...upperTicks),
-      true,
-      position.tokenX.decimals,
-      position.tokenY.decimals
-    )
-
-    return {
-      min: Math.min(lowerPrice, upperPrice),
-      max: Math.max(lowerPrice, upperPrice)
-    }
-  }, [poolsVolumeRanges, position])
-
   useEffect(() => {
     if (!position) {
       return
@@ -384,7 +337,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   // }, [poolsArray])
 
   const onRefresh = () => {
-    console.log('position?.positionIndex', position?.positionIndex)
     if (position?.positionIndex === undefined) {
       return
     }
@@ -472,7 +424,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             })
           )
         }}
-        plotVolumeRange={currentVolumeRange}
         onRefresh={onRefresh}
         isBalanceLoading={isBalanceLoading}
         network={currentNetwork}

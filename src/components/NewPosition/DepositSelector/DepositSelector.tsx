@@ -72,6 +72,10 @@ export interface IDepositSelector {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   ethBalanceWithoutFee: BN
+  tokenAIndex: number | null
+  tokenBIndex: number | null
+  setTokenAIndex: (index: number | null) => void
+  setTokenBIndex: (index: number | null) => void
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -110,12 +114,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   walletStatus,
   onConnectWallet,
   onDisconnectWallet,
-  ethBalanceWithoutFee
+  ethBalanceWithoutFee,
+  tokenAIndex,
+  tokenBIndex,
+  setTokenAIndex,
+  setTokenBIndex
 }) => {
   const { classes } = useStyles()
 
-  const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
-  const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
+  // const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
+  // const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
   const [tokenAPrice, setTokenAPrice] = useState<number | undefined>(undefined)
   const [tokenBPrice, setTokenBPrice] = useState<number | undefined>(undefined)
 

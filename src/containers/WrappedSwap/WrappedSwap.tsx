@@ -124,7 +124,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     ) {
       getNewTokenOrThrow(address, connection)
         .then(data => {
-          console.log(data)
           dispatch(poolsActions.addTokens(data))
           addNewTokenToLocalStorage(address, networkType)
           dispatch(

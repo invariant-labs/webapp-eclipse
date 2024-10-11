@@ -652,7 +652,7 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
   const allPools = yield* select(poolsArraySortedByFees)
   const allTokens = yield* select(tokens)
 
-  const { poolIndex, isXtoY, fetchTicksAndTickmap } = action.payload
+  const { poolIndex, isXtoY } = action.payload
 
   const xDecimal = allTokens[allPools[poolIndex].tokenX.toString()].decimals
   const yDecimal = allTokens[allPools[poolIndex].tokenY.toString()].decimals
@@ -707,16 +707,16 @@ export function* handleGetPositionsList() {
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc)
     const wallet = yield* call(getWallet)
-    console.log('wallet.publicKey', wallet.publicKey)
+
     const { head } = yield* call([marketProgram, marketProgram.getPositionList], wallet.publicKey)
-    console.log(head)
+
     const list = yield* call(
       [marketProgram, marketProgram.getPositionsFromRange],
       wallet.publicKey,
       0,
       head - 1
     )
-    console.log('list', list)
+
     const addresses = yield* call(
       getPositionsAddressesFromRange,
       marketProgram,
@@ -724,7 +724,7 @@ export function* handleGetPositionsList() {
       0,
       head - 1
     )
-    console.log('addresses', addresses)
+
     const positions = list.map((position, index) => ({
       ...position,
       address: addresses[index]

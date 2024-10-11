@@ -1,15 +1,3 @@
-import { Network } from '@invariant-labs/sdk-eclipse'
-import { BN } from '@project-serum/anchor'
-import { PublicKey } from '@solana/web3.js'
-import {
-  ADDRESSES_TO_REVERS_TOKEN_PAIRS,
-  BTC_TEST,
-  getAddressTickerMap,
-  getReversedAddressTickerMap,
-  USDC_TEST,
-  WETH_TEST
-} from '@store/consts/static'
-import { Token } from '@store/consts/types'
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
   WETH: 'So11111111111111111111111111111111111111112',

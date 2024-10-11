@@ -6,7 +6,6 @@ import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './styles'
 import { NetworkType, RECOMMENDED_RPC_ADDRESS } from '@store/consts/static'
 import icons from '@static/icons'
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { RpcStatus } from '@store/reducers/solanaConnection'
 
 export interface ISelectMainnetRPC {

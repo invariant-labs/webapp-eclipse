@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { MemoryRouter } from 'react-router-dom'
 import SinglePositionInfo from './SinglePositionInfo'
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { NetworkType } from '@store/consts/static'
 
 const meta = {

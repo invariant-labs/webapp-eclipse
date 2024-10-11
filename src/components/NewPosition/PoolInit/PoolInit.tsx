@@ -126,9 +126,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
       yDecimal
     )
 
-    console.log('+midPriceInput', +midPriceInput)
-    console.log('midPriceInConcentrationMode', midPriceInConcentrationMode)
-
     const priceTickIndex = calculateTickFromBalance(
       positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
       tickSpacing,
@@ -136,7 +133,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
       xDecimal,
       yDecimal
     )
-    console.log('midPriceInput', midPriceInput)
+
     onChangeMidPrice(priceTickIndex, sqrtPrice)
   }, [midPriceInput])
 

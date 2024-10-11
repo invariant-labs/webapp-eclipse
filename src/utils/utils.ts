@@ -14,24 +14,12 @@ import {
   SimulationStatus
 } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@project-serum/anchor'
-
 import { Token as SPLToken } from '@solana/spl-token'
-
 import mainnetList from '@store/consts/tokenLists/mainnet.json'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
-
-import {
-  Market,
-  Tickmap,
-  TICK_CROSSES_PER_IX,
-  Position
-} from '@invariant-labs/sdk-eclipse/lib/market'
+import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios, { AxiosResponse } from 'axios'
 import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
-// import { Staker } from '@invariant-labs/staker-sdk'
-// import { ExtendedStake } from '@reducers/farms'
-// import { Stake } from '@invariant-labs/staker-sdk/lib/staker'
-
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERS_TOKEN_PAIRS,
@@ -65,11 +53,7 @@ import {
   Token,
   TokenPriceData
 } from '@store/consts/types'
-import { getX, getXfromLiquidity, getY, sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
-import { PositionWithPoolData } from '@store/selectors/positions'
-
-// import { calculateSellPrice } from '@invariant-labs/bonds-sdk/lib/math'
-// import { BondSaleStruct } from '@invariant-labs/bonds-sdk/lib/sale'
+import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 
 export const transformBN = (amount: BN): string => {
   // eslint-disable-next-line new-cap
@@ -565,7 +549,6 @@ export const getLiquidityTicksByPositionsList = (
     }
   })
   const parsedTicks = parseLiquidityOnUserTicks(newTicks)
-  console.log('parsedTicks', parsedTicks)
 
   const ticksData: PlotTickData[] = []
 
@@ -589,7 +572,7 @@ export const getLiquidityTicksByPositionsList = (
         tokenXDecimal,
         tokenYDecimal
       )
-      console.log('y1:', parsedTicks[i - 1].liquidity)
+
       ticksData.push({
         x: price,
         y: +printBN(parsedTicks[i - 1].liquidity, DECIMAL),
@@ -598,7 +581,7 @@ export const getLiquidityTicksByPositionsList = (
     }
 
     const price = calcPriceByTickIndex(tick.index, isXtoY, tokenXDecimal, tokenYDecimal)
-    console.log('y2:', userTickIndexes[i].liquidity)
+
     ticksData.push({
       x: price,
       y: +printBN(parsedTicks[i].liquidity, DECIMAL),
@@ -626,7 +609,7 @@ export const getLiquidityTicksByPositionsList = (
       index: maxTick
     })
   }
-  console.log('sortedTicks', sortedTicks)
+
   return sortedTicks
 }
 
@@ -1080,8 +1063,6 @@ export const getPoolsFromAddresses = async (
   marketProgram: Market
 ): Promise<PoolWithAddress[]> => {
   try {
-    console.log('addresses', addresses)
-    console.log('marketProgram', marketProgram)
     const pools = (await marketProgram.program.account.pool.fetchMultiple(
       addresses
     )) as Array<PoolStructure | null>

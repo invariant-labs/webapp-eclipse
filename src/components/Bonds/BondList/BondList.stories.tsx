@@ -38,3 +38,4 @@
 //       })
 //     return <BondList data={data} />
 //   })
+export default {}

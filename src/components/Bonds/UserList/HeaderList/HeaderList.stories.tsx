@@ -5,3 +5,4 @@
 // storiesOf('bonds/HeaderList', module).add('HeaderList', () => {
 //   return <HeaderList />
 // })
+export default {}

@@ -14,3 +14,4 @@
 //     </div>
 //   )
 // })
+export default {}

@@ -1,7 +1,6 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@components/Refresher/Refresher'
-
 import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
@@ -14,7 +13,6 @@ import {
 import {
   addressToTicker,
   calcPriceBySqrtPrice,
-  calcPriceByTickIndex,
   calculateConcentrationRange,
   convertBalanceToBN,
   determinePositionTokenBlock,
@@ -24,7 +22,6 @@ import {
   validConcentrationMidPriceTick
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -36,11 +33,10 @@ import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
 import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
-
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { InitMidPrice, TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@project-serum/anchor'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
@@ -441,8 +437,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const updatePath = (index1: number | null, index2: number | null, fee: number) => {
     const parsedFee = parseFeeToPathFee(ALL_FEE_TIERS_DATA[fee].tier.fee)
-    console.log('token1', index1)
-    console.log('token2', index2)
+
     if (index1 != null && index2 != null) {
       const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
       const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())
@@ -578,6 +573,10 @@ export const NewPosition: React.FC<INewPosition> = ({
 
       <Grid container className={classes.row} alignItems='stretch'>
         <DepositSelector
+          tokenAIndex={tokenAIndex}
+          tokenBIndex={tokenBIndex}
+          setTokenAIndex={setTokenAIndex}
+          setTokenBIndex={setTokenBIndex}
           initialTokenFrom={initialTokenFrom}
           initialTokenTo={initialTokenTo}
           initialFee={initialFee}

@@ -94,3 +94,4 @@
 //       />
 //     </div>
 //   ))
+export default {}

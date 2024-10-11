@@ -67,7 +67,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 }) => {
   const dispatch = useDispatch()
   const connection = getCurrentSolanaConnection()
-  const walletAddress = useSelector(address)
   const ethBalance = useSelector(balance)
   const ethBalanceWithoutFee = useSelector(minPoolEthBalance)
   const tokens = useSelector(poolTokens)
@@ -108,7 +107,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isMountedRef = useRef(false)
   const navigate = useNavigate()
   const isCurrentlyLoadingTokens = useSelector(isLoadingTokens)
-  const isCurrentlyLoadingTokensError = useSelector(isLoadingTokensError)
 
   // useEffect(() => {
   //   const tokensToFetch = []
@@ -129,28 +127,21 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   // }, [])
 
   useEffect(() => {
-    // if (isCurrentlyLoadingTokensError) {
-
     const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
     const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
 
     const tokenFromIndex = tokens.findIndex(
       token => token.assetAddress.toString() === tokenFromAddress
     )
-    console.log('tokenFromAddress', tokenFromAddress)
-    console.log('TOKENS INDEX', tokens)
+
     const tokenToIndex = tokens.findIndex(token => token.assetAddress.toString() === tokenToAddress)
-    console.log('tokenToAddress', tokenToAddress)
-    console.log('tokenToIndex', tokenToIndex)
+
     if (
       tokenFromAddress !== null &&
       tokenFromIndex !== -1 &&
       (tokenToAddress === null || tokenToIndex === -1)
     ) {
       navigate(`/newPosition/${initialTokenFrom}/${initialFee}`)
-
-      setTokenAIndex(tokenFromIndex)
-      setTokenBIndex(null)
     } else if (
       tokenFromAddress !== null &&
       tokenFromIndex !== -1 &&
@@ -158,16 +149,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       tokenToIndex !== -1
     ) {
       navigate(`/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}`)
-
-      setTokenAIndex(tokenFromIndex)
-      setTokenBIndex(tokenToIndex)
     } else {
       navigate(`/newPosition/${initialFee}`)
-
-      setTokenAIndex(null)
-      setTokenBIndex(null)
     }
-    // }
   }, [tokens])
 
   useEffect(() => {
@@ -465,7 +449,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceALoading, setPriceALoading] = useState(false)
   useEffect(() => {
-    console.log('tokenAIndex ----------', tokenAIndex)
     if (tokenAIndex === null || (tokenAIndex !== null && !tokens[tokenAIndex])) {
       return
     }

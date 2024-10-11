@@ -5,3 +5,4 @@
 // storiesOf('bonds/BondHeader', module).add('BondHeader', () => {
 //   return <IBondHeader />
 // })
+export default {}
