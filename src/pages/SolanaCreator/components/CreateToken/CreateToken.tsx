@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { Box, Typography } from '@material-ui/core'
 import useStyles from './styles'
 import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
-import { onSubmit } from '../../utils/solanaCreatorUtils'
+import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils'
 import { TokenInfoInputs } from '../CreatorComponents/TokenInfoInputs'
 
 interface FormData {
@@ -26,6 +26,23 @@ export const CreateToken: React.FC = () => {
     mode: 'onChange',
     reValidateMode: 'onChange'
   })
+  const onSubmit = (data: FormData) => {
+    try {
+      const decimalsError = validateDecimals(data.decimals)
+      if (decimalsError) {
+        throw new Error(decimalsError)
+      }
+
+      const supplyError = validateSupply(data.supply, data.decimals)
+      if (supplyError) {
+        throw new Error(supplyError)
+      }
+
+      console.log(data)
+    } catch (error) {
+      console.error('Error submitting form:', error)
+    }
+  }
 
   return (
     <Box className={classes.pageWrapper}>

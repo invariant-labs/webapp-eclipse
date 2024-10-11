@@ -57,24 +57,6 @@ export const validateSupply = (supply: string, decimals: string): string | null 
   return null
 }
 
-export const onSubmit = (data: FormData) => {
-  try {
-    const decimalsError = validateDecimals(data.decimals)
-    if (decimalsError) {
-      throw new Error(decimalsError)
-    }
-
-    const supplyError = validateSupply(data.supply, data.decimals)
-    if (supplyError) {
-      throw new Error(supplyError)
-    }
-
-    console.log(data)
-  } catch (error) {
-    console.error('Error submitting form:', error)
-  }
-}
-
 interface ErrorMessage {
   shortErrorMessage: string
   fullErrorMessage: string
