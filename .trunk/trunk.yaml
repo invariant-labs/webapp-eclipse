@@ -36,3 +36,5 @@ lint:
     - 'src/pages/SolanaCreator/**/*'
     - 'src/components/FarmsList/**/*'
     - 'src/components/Modals/SelectModals/SortFarmsModal/**/*'
+  ignore:
+    - node_modules
