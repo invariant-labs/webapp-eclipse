@@ -425,7 +425,6 @@ export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerato
 export function* init(): Generator {
   yield* put(actions.setStatus(Status.Init))
   const wallet = yield* call(getWallet)
-  // const balance = yield* call(getBalance, wallet.publicKey)
   yield* put(actions.setAddress(wallet.publicKey))
   yield* put(actions.setIsBalanceLoading(true))
   const balance = yield* call(getBalance, wallet.publicKey)
@@ -435,7 +434,6 @@ export function* init(): Generator {
   yield* put(actions.setIsBalanceLoading(false))
 }
 
-// eslint-disable-next-line @typescript-eslint/promise-function-async
 export const sleep = (ms: number) => {
   return new Promise(resolve => setTimeout(resolve, ms))
 }

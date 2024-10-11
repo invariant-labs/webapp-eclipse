@@ -37,6 +37,15 @@ module.exports = {
         varsIgnorePattern: '^_',
         argsIgnorePattern: '^_'
       }
-    ]
-  }
+    ],
+    'no-extra-semi': 'off'
+  },
+  overrides: [
+    {
+      files: ['**/*.stories.*'],
+      rules: {
+        'storybook/story-exports': 'off'
+      }
+    }
+  ]
 }

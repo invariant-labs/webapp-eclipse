@@ -9,7 +9,6 @@ import { Status } from '@store/reducers/solanaWallet'
 import {
   isLoadingPositionsList,
   lastPageSelector,
-  positionsList,
   positionsWithPoolsData
 } from '@store/selectors/positions'
 import { address, status } from '@store/selectors/solanaWallet'
@@ -17,7 +16,7 @@ import { address, status } from '@store/selectors/solanaWallet'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { calcPriceBySqrtPrice, calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
+import {  calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { IPositionItem } from '@components/PositionsList/PositionItem/PositionItem'
 
@@ -55,7 +54,7 @@ export const WrappedPositionsList: React.FC = () => {
   }
 
   const data: IPositionItem[] = list
-    .map((position, index) => {
+    .map(position => {
       const lowerPrice = calcYPerXPriceBySqrtPrice(
         calculatePriceSqrt(position.lowerTickIndex).v,
         position.tokenX.decimals,

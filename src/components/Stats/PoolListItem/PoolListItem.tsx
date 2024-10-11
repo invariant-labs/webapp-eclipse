@@ -51,13 +51,13 @@ const PoolListItem: React.FC<IProps> = ({
   hideBottomLine = false,
   addressFrom,
   addressTo,
-  network,
-  apy = 0,
-  apyData = {
-    fees: 0,
-    accumulatedFarmsAvg: 0,
-    accumulatedFarmsSingleTick: 0
-  }
+  network
+  // apy = 0,
+  // apyData = {
+  //   fees: 0,
+  //   accumulatedFarmsAvg: 0,
+  //   accumulatedFarmsSingleTick: 0
+  // }
 }) => {
   const { classes } = useStyles()
 

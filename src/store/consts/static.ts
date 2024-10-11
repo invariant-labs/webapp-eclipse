@@ -117,7 +117,7 @@ export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
-  DEV_EU = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
+  DEV_EU = RPC.MAIN,
   LOCAL = 'http://127.0.0.1:8899'
 }
 

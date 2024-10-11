@@ -100,7 +100,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const [initialLoader, setInitialLoader] = useState(true)
 
-  const [isGetLiquidityError, setIsGetLiquidityError] = useState(false)
+  // const [isGetLiquidityError, setIsGetLiquidityError] = useState(false)
 
   const isMountedRef = useRef(false)
   const navigate = useNavigate()
@@ -630,7 +630,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             )
           }
         }
-        
+
         setTokenAIndex(tokenA)
         setTokenBIndex(tokenB)
         setFeeIndex(feeTierIndex)
@@ -678,7 +678,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isBalanceLoading={isBalanceLoading}
       shouldNotUpdatePriceRange={shouldNotUpdatePriceRange}
       unblockUpdatePriceRange={unblockUpdatePriceRange}
-      isGetLiquidityError={isGetLiquidityError}
+      isGetLiquidityError={false}
       onlyUserPositions={onlyUserPositions}
       setOnlyUserPositions={setOnlyUserPositions}
       network={currentNetwork}

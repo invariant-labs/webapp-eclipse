@@ -130,7 +130,6 @@ export const Swap: React.FC<ISwap> = ({
   onSlippageChange,
   initialSlippage,
   isBalanceLoading,
-  swapData,
   copyTokenAddressHandler,
   network,
   ethBalance

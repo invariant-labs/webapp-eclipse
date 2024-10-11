@@ -16,7 +16,6 @@ import { actions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
-import { poolsArraySortedByFees } from '@store/selectors/pools'
 import {
   currentPositionTicks,
   isLoadingPositionsList,
@@ -34,7 +33,7 @@ import { NoConnected } from '@components/NoConnected/NoConnected'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
-import { calculateClaimAmount, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 export interface IProps {
   id: string
@@ -63,7 +62,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const walletStatus = useSelector(status)
   const isBalanceLoading = useSelector(balanceLoading)
-  const poolsArray = useSelector(poolsArraySortedByFees)
 
   const [waitingForTicksData, setWaitingForTicksData] = useState<boolean | null>(null)
 

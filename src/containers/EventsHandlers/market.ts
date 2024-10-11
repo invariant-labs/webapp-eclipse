@@ -11,7 +11,7 @@ import { findTickmapChanges, Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
-import { getFullNewTokensData, getNetworkTokensList, getPoolsVolumeRanges } from '@utils/utils'
+import { getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -90,7 +90,6 @@ const MarketEvents = () => {
 
     const connectEvents = () => {
       allPools.forEach(pool => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         marketProgram.onPoolChange(pool.tokenX, pool.tokenY, { fee: pool.fee.v }, poolStructure => {
           dispatch(
             actions.updatePool({
@@ -146,7 +145,7 @@ const MarketEvents = () => {
         })
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
     connectEvents()
   }, [networkStatus, marketProgram, Object.values(poolTicksArray).length])
 
@@ -214,7 +213,7 @@ const MarketEvents = () => {
         })
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
     connectEvents()
   }, [networkStatus, marketProgram, Object.values(tickmaps).length])
 

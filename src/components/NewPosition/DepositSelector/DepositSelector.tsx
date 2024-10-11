@@ -22,7 +22,6 @@ import {
   tickerToAddress,
   parsePathFeeToFeeString
 } from '@utils/utils'
-import { set } from 'remeda'
 
 export interface InputState {
   value: string

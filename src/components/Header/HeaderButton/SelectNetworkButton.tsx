@@ -5,7 +5,6 @@ import { Button } from '@mui/material'
 import SelectNetwork from '@components/Modals/SelectNetwork/SelectNetwork'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { ISelectNetwork } from '@store/consts/types'
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { NetworkType } from '@store/consts/static'
 
 export interface IProps {

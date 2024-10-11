@@ -1,7 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import { BN } from '@project-serum/anchor'
-import { Button, Checkbox, FormControlLabel, Grid, Tooltip, Typography } from '@mui/material'
+import { Button,  Grid, Tooltip, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import activeLiquidity from '@static/svg/activeLiquidity.svg'
 import {
@@ -85,8 +84,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   setShouldReversePlot,
   shouldNotUpdatePriceRange,
   unblockUpdatePriceRange,
-  onlyUserPositions,
-  setOnlyUserPositions
+  // onlyUserPositions,
+  // setOnlyUserPositions
 }) => {
   const { classes } = useStyles()
 
