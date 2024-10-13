@@ -1,24 +1,25 @@
 import { DEFAULT_PUBLICKEY, NetworkType } from '@consts/static'
 import { FormData } from '../pages/SolanaCreator/utils/solanaCreatorUtils'
-import { getCurrentSolanaConnection } from './connection'
+import { getCurrentSolanaConnection, getHeliusConnection } from './connection'
 import { getSolanaWallet } from './wallet'
-import { WebUploader } from '@irys/web-upload'
-import { WebSolana } from '@irys/web-upload-solana'
-import { Keypair, SystemProgram, Transaction } from '@solana/web3.js'
-import { createInitializeInstruction, pack, TokenMetadata } from '@solana/spl-token-metadata'
 import {
-  createAssociatedTokenAccountInstruction,
-  createInitializeMetadataPointerInstruction,
-  createInitializeMintInstruction,
-  createMintToInstruction,
-  ExtensionType,
-  getAssociatedTokenAddress,
-  getMintLen,
-  LENGTH_SIZE,
-  TOKEN_2022_PROGRAM_ID,
-  TYPE_SIZE
-} from '@solana/spl-token'
-import BaseWebIrys from '@irys/web-upload/dist/types/base'
+  Connection,
+  Keypair,
+  PublicKey,
+  sendAndConfirmTransaction,
+  SystemProgram,
+  Transaction
+} from '@solana/web3.js'
+// import BaseWebIrys from '@irys/web-upload/dist/types/base'
+// import { WebSolana } from '@irys/web-upload-solana'
+// import { WebUploader } from '@irys/web-upload'
+// import {
+//   createCreateMetadataAccountV3Instruction,
+//   PROGRAM_ID
+// } from '@metaplex-foundation/mpl-token-metadata'
+
+import * as spl18 from '@solana/spl-token'
+import { TOKEN_2022_PROGRAM_ID } from '@invariant-labs/sdk-eclipse'
 
 export const stringToFile = (dataUrl: string) => {
   const base64Data = dataUrl.split(',')[1]
@@ -34,17 +35,16 @@ export const stringToFile = (dataUrl: string) => {
 
 export const createToken = async (data: FormData, network: NetworkType) => {
   const wallet = getSolanaWallet()
-  const connection = getCurrentSolanaConnection()
-
+  const connection = getHeliusConnection(network)
   if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) return false
 
-  let irysUploader: BaseWebIrys
+  // let irysUploader: BaseWebIrys
 
-  if ((network = NetworkType.MAINNET)) {
-    irysUploader = await WebUploader(WebSolana).withProvider(wallet)
-  } else {
-    irysUploader = await WebUploader(WebSolana).withProvider(wallet).devnet()
-  }
+  // if ((network = NetworkType.MAINNET)) {
+  //   irysUploader = await WebUploader(WebSolana).withProvider(wallet)
+  // } else {
+  //   irysUploader = await WebUploader(WebSolana).withProvider(wallet).devnet()
+  // }
 
   const {
     name,
@@ -58,134 +58,136 @@ export const createToken = async (data: FormData, network: NetworkType) => {
     discord,
     image
   } = data
-
+  console.log(connection.rpcEndpoint)
   const mintKeypair = Keypair.generate()
   const mintAuthority = wallet.publicKey
   const updateAuthority = wallet.publicKey
   const mint = mintKeypair.publicKey
   const decimals = Number(decimalsAsString)
-  const supply = BigInt(Number(supplyAsString) * Math.pow(10, decimals))
+  const supply = Number(supplyAsString) * Math.pow(10, decimals)
+  // let imageUri: string = ''
 
-  let imageUri: string = ''
+  // if (image.length > 0) {
+  //   const fileToUpload = stringToFile(image)
+  //   const imageTags = [{ name: 'Content-Type', value: fileToUpload.type }]
+  //   try {
+  //     const receipt = await irysUploader.uploadFile(fileToUpload, {
+  //       tags: imageTags
+  //     })
+  //     imageUri = `https://gateway.irys.xyz/${receipt.id}`
+  //   } catch (e) {
+  //     console.log('Error when uploading image', e)
+  //     return false
+  //   }
+  // }
 
-  if (image.length > 0) {
-    const fileToUpload = stringToFile(image)
-    const imageTags = [{ name: 'Content-Type', value: fileToUpload.type }]
-    try {
-      const receipt = await irysUploader.uploadFile(fileToUpload, {
-        tags: imageTags
-      })
-      imageUri = `https://gateway.irys.xyz/${receipt.id}`
-    } catch (e) {
-      console.log('Error when uploading image', e)
-      return false
-    }
-  }
+  // const links: [string, string][] = [
+  //   ['website', website],
+  //   ['twitter', twitter],
+  //   ['telegram', telegram],
+  //   ['discord', discord]
+  // ].filter(item => item[1].length > 0) as [string, string][]
 
-  const links: [string, string][] = [
-    ['website', website],
-    ['twitter', twitter],
-    ['telegram', telegram],
-    ['discord', discord]
-  ].filter(item => item[1].length > 0) as [string, string][]
+  // const metaDataToUpload = {
+  //   updateAuthority: updateAuthority.toString(),
+  //   mint: mint.toString(),
+  //   name: name,
+  //   symbol: symbol,
+  //   image: imageUri,
+  //   description: description,
+  //   links
+  // }
 
-  const metaDataToUpload = {
-    updateAuthority: updateAuthority.toString(),
-    mint: mint.toString(),
-    name: name,
-    symbol: symbol,
-    image: imageUri,
-    description: description,
-    links
-  }
+  // let metaDataUri: string
 
-  let metaDataUri: string
+  // const metaDataTags = [{ name: 'Content-Type', value: 'application/json' }]
+  // try {
+  //   const receipt = await irysUploader.upload(JSON.stringify(metaDataToUpload), {
+  //     tags: metaDataTags
+  //   })
+  //   metaDataUri = `https://gateway.irys.xyz/${receipt.id}`
+  // } catch (e) {
+  //   console.log('Error when uploading metadata', e)
+  //   return false
+  // }
 
-  const metaDataTags = [{ name: 'Content-Type', value: 'application/json' }]
-  try {
-    const receipt = await irysUploader.upload(JSON.stringify(metaDataToUpload), {
-      tags: metaDataTags
-    })
-    metaDataUri = `https://gateway.irys.xyz/${receipt.id}`
-  } catch (e) {
-    console.log('Error when uploading metadata', e)
-    return false
-  }
+  // const createMetadataInstruction = createCreateMetadataAccountV3Instruction(
+  //   {
+  //     metadata: PublicKey.findProgramAddressSync(
+  //       [Buffer.from('metadata'), PROGRAM_ID.toBuffer(), mintKeypair.publicKey.toBuffer()],
+  //       PROGRAM_ID
+  //     )[0],
+  //     mint: mintKeypair.publicKey,
+  //     mintAuthority,
+  //     payer: wallet.publicKey,
+  //     updateAuthority
+  //   },
+  //   {
+  //     createMetadataAccountArgsV3: {
+  //       data: {
+  //         name: name,
+  //         symbol: symbol,
+  //         uri: '',
+  //         creators: null,
+  //         sellerFeeBasisPoints: 0,
+  //         uses: null,
+  //         collection: null
+  //       },
+  //       isMutable: false,
+  //       collectionDetails: null
+  //     }
+  //   }
+  // )
 
-  const metaData: TokenMetadata = {
-    updateAuthority: updateAuthority,
-    mint: mint,
-    name: metaDataToUpload.name,
-    symbol: metaDataToUpload.symbol,
-    uri: metaDataUri,
-    additionalMetadata: [...links]
-  }
-
-  const metadataExtension = TYPE_SIZE + LENGTH_SIZE
-  const metadataLen = pack(metaData).length
-  const mintLen = getMintLen([ExtensionType.MetadataPointer])
-
-  const lamports = await connection.getMinimumBalanceForRentExemption(
-    mintLen + metadataExtension + metadataLen
-  )
+  const lamports = await spl18.Token.getMinBalanceRentForExemptMint(connection)
 
   const createAccountInstruction = SystemProgram.createAccount({
     fromPubkey: wallet.publicKey,
     newAccountPubkey: mint,
-    space: mintLen,
+    space: spl18.MintLayout.span,
     lamports,
     programId: TOKEN_2022_PROGRAM_ID
   })
 
-  const initializeMetadataPointerInstruction = createInitializeMetadataPointerInstruction(
-    mint,
-    updateAuthority,
-    mint,
-    TOKEN_2022_PROGRAM_ID
-  )
-
-  const initializeMintInstruction = createInitializeMintInstruction(
+  const initializeMintInstruction = spl18.Token.createInitMintInstruction(
+    TOKEN_2022_PROGRAM_ID,
     mint,
     decimals,
     mintAuthority,
-    null,
-    TOKEN_2022_PROGRAM_ID
+    null
   )
 
-  const initializeMetadataInstruction = createInitializeInstruction({
-    programId: TOKEN_2022_PROGRAM_ID,
-    metadata: mint,
-    updateAuthority: updateAuthority,
-    mint: mint,
-    mintAuthority: mintAuthority,
-    name: metaData.name,
-    symbol: metaData.symbol,
-    uri: metaData.uri
-  })
-
-  const tokenATA = await getAssociatedTokenAddress(mintKeypair.publicKey, wallet.publicKey)
-
-  const associatedTokenAccountInstruction = createAssociatedTokenAccountInstruction(
-    wallet.publicKey,
-    tokenATA,
-    wallet.publicKey,
-    mintKeypair.publicKey
+  const tokenATA = await spl18.Token.getAssociatedTokenAddress(
+    spl18.ASSOCIATED_TOKEN_PROGRAM_ID,
+    TOKEN_2022_PROGRAM_ID,
+    mintKeypair.publicKey,
+    wallet.publicKey
   )
 
-  const mintToInstruction = createMintToInstruction(
+  const associatedTokenAccountInstruction = spl18.Token.createAssociatedTokenAccountInstruction(
+    spl18.ASSOCIATED_TOKEN_PROGRAM_ID,
+    TOKEN_2022_PROGRAM_ID,
     mintKeypair.publicKey,
     tokenATA,
     wallet.publicKey,
+    wallet.publicKey
+  )
+
+  const mintToInstruction = spl18.Token.createMintToInstruction(
+    TOKEN_2022_PROGRAM_ID,
+    mintKeypair.publicKey,
+    tokenATA,
+    wallet.publicKey,
+    [],
     supply
   )
 
   const transaction = new Transaction().add(
     createAccountInstruction,
-    initializeMetadataPointerInstruction,
     initializeMintInstruction,
-    initializeMetadataInstruction,
     associatedTokenAccountInstruction,
     mintToInstruction
+    //createMetadataInstruction
   )
 
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash()
