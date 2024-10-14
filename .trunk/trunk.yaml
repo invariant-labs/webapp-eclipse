@@ -33,7 +33,6 @@ lint:
     - trunk-fmt-pre-commit
     - 'node_modules/**/*'
     - 'src/components/**/*.stories.tsx'
-    - 'src/pages/SolanaCreator/**/*'
     - 'src/components/FarmsList/**/*'
     - 'src/components/Modals/SelectModals/SortFarmsModal/**/*'
   ignore:
