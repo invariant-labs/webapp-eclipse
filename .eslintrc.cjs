@@ -43,7 +43,8 @@ module.exports = {
         argsIgnorePattern: '^_'
       }
     ],
-    'no-extra-semi': 'off'
+    'no-extra-semi': 'off',
+    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
   },
   overrides: [
     {
