@@ -7,8 +7,9 @@ import getErrorMessages, { FormData } from '../../utils/solanaCreatorUtils'
 interface ControlledInputProps {
   name: keyof FormData
   label: string
+  placeholder?: string
   control: any
-  rules?: object
+  rules?: any
   errors: any
 }
 
@@ -29,6 +30,7 @@ export const ControlledTextInput: React.FC<ControlledTextInputProps> = ({
   rules,
   errors,
   multiline,
+  placeholder,
   minRows
 }) => (
   <Controller
@@ -38,8 +40,10 @@ export const ControlledTextInput: React.FC<ControlledTextInputProps> = ({
     defaultValue=''
     render={({ field: { onChange, value } }) => (
       <TextInput
+        placeholder={placeholder ?? label}
         label={label}
         value={value}
+        required={rules?.required ? rules.required : false}
         handleChange={(e: React.ChangeEvent<HTMLInputElement>) => onChange(e.target.value)}
         error={!!errors[name]}
         errorMessage={errors[name]?.message || ''}
@@ -56,7 +60,8 @@ export const ControlledNumericInput: React.FC<ControlledNumericInputProps> = ({
   control,
   errors,
   rules,
-  decimalsLimit
+  decimalsLimit,
+  placeholder
 }) => {
   const error = errors[name]
 
@@ -69,9 +74,11 @@ export const ControlledNumericInput: React.FC<ControlledNumericInputProps> = ({
       rules={rules}
       render={({ field: { onChange, value } }) => (
         <NumericInput
+          placeholder={placeholder}
           label={label}
           value={value}
           onChange={onChange}
+          required={rules?.required ? rules.required : false}
           error={!!error}
           errorMessage={shortErrorMessage}
           fullErrorMessage={fullErrorMessage}

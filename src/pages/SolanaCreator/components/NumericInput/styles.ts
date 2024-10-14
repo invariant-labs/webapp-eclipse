@@ -42,7 +42,28 @@ const useStyles = makeStyles((theme: Theme) => ({
       color: colors.white.main
     }
   },
-
+  labelContainer: {
+    position: 'relative',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  requiredDot: {
+    position: 'absolute',
+    top: 15,
+    right: -5,
+    display: 'inline-block',
+    width: '10px',
+    height: '10px',
+    borderRadius: '50%',
+    backgroundColor: 'red',
+    boxShadow: '0 0 0 rgba(255, 0, 0, 0.4)',
+    animation: '$glowing 2s infinite'
+  },
+  '@keyframes glowing': {
+    '0%': { boxShadow: '0 0 0 0 rgba(255, 0, 0, 0.4)' },
+    '70%': { boxShadow: '0 0 0 10px rgba(255, 0, 0, 0)' },
+    '100%': { boxShadow: '0 0 0 0 rgba(255, 0, 0, 0)' }
+  },
   inputError: {
     border: `1px solid ${colors.red.main}`,
     '&:focus': {

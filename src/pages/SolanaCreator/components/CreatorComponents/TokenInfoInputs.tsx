@@ -24,6 +24,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
         <ControlledTextInput
           name='name'
           label='Name'
+          placeholder='Put the name of your token here'
           control={control}
           errors={errors}
           rules={{
@@ -33,7 +34,8 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
         />
         <ControlledTextInput
           name='symbol'
-          label='Ticker/Symbol'
+          label='Symbol'
+          placeholder='Put the symbol of your token here'
           control={control}
           errors={errors}
           rules={{
@@ -46,6 +48,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
             <ControlledNumericInput
               name='decimals'
               label='Decimals'
+              placeholder='Decimals between 5 and 9'
               control={control}
               errors={errors}
               decimalsLimit={0}
@@ -64,6 +67,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
             <ControlledNumericInput
               name='supply'
               label='Supply'
+              placeholder='Supply of your token'
               control={control}
               errors={errors}
               decimalsLimit={0}

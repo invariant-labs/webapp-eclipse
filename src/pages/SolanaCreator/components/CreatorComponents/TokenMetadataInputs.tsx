@@ -24,6 +24,7 @@ export const TokenMetadataInputs: React.FC<TokenMetadataInputsProps> = ({ formMe
         <ControlledTextInput
           name='description'
           label='Description'
+          placeholder='Tell us something about your token...'
           errors={errors}
           control={control}
           multiline

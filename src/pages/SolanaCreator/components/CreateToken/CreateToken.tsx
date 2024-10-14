@@ -5,6 +5,7 @@ import useStyles from './styles'
 // import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
 import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils'
 import { TokenInfoInputs } from '../CreatorComponents/TokenInfoInputs'
+import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
 
 interface FormData {
   name: string
@@ -54,6 +55,7 @@ export const CreateToken: React.FC = () => {
           <form onSubmit={formMethods.handleSubmit(onSubmit)}>
             <Box className={classes.row}>
               <TokenInfoInputs formMethods={formMethods} />
+              <TokenMetadataInputs formMethods={formMethods} />
             </Box>
           </form>
         </Box>

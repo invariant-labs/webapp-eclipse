@@ -21,8 +21,10 @@ const useStyles = makeStyles(theme => ({
   imageContainer: {
     display: 'flex',
     flexWrap: 'wrap',
+    justifyContent: 'space-between',
     gap: theme.spacing(1),
-    width: '100%'
+    width: '100%',
+    marginBottom: theme.spacing(1)
   },
   imageButton: {
     width: 100,
@@ -50,8 +52,16 @@ const useStyles = makeStyles(theme => ({
     display: 'none'
   },
   uploadIcon: {
-    fontSize: 40,
+    fontSize: 30,
     color: lighten(colors.invariant.light, 0.5)
+  },
+  uploadButton: {
+    width: '100%',
+    backgroundColor: colors.invariant.newDark,
+    color: colors.invariant.light,
+    '&:hover': {
+      backgroundColor: lighten(colors.invariant.newDark, 0.1)
+    }
   }
 }))
 
