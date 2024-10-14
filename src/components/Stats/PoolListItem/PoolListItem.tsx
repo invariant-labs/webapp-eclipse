@@ -10,7 +10,7 @@ import { NetworkType, SortTypePoolList } from '@store/consts/static'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { parseFeeToPathFee } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { addressToTicker, formatNumber } from '@utils/utils'
+import { formatNumber } from '@utils/utils'
 
 interface IProps {
   TVL?: number
@@ -48,10 +48,10 @@ const PoolListItem: React.FC<IProps> = ({
   tokenIndex,
   sortType,
   onSort,
-  hideBottomLine = false,
-  addressFrom,
-  addressTo,
-  network
+  hideBottomLine = false
+  // addressFrom,
+  // addressTo,
+  // network
   // apy = 0,
   // apyData = {
   //   fees: 0,
@@ -66,15 +66,14 @@ const PoolListItem: React.FC<IProps> = ({
 
   const handleOpenPosition = () => {
     navigate(
-      `/newPosition/${addressToTicker(network ?? NetworkType.Testnet, addressFrom ?? '')}/${addressToTicker(network ?? NetworkType.Testnet, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`
+      `/newPosition/${symbolFrom ?? ''}/${symbolTo ?? ''}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`
     )
   }
 
   const handleOpenSwap = () => {
-    navigate(
-      `/exchange/${addressToTicker(network ?? NetworkType.Testnet, addressFrom ?? '')}/${addressToTicker(network ?? NetworkType.Testnet, addressTo ?? '')}`
-    )
+    navigate(`/exchange/${symbolFrom ?? ''}/${symbolTo ?? ''}`)
   }
+
   return (
     <Grid maxWidth='100%'>
       {displayType === 'token' ? (
