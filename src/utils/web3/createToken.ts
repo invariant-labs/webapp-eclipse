@@ -10,9 +10,9 @@ import {
   SystemProgram,
   Transaction
 } from '@solana/web3.js'
-// import BaseWebIrys from '@irys/web-upload/dist/types/base'
-// import { WebSolana } from '@irys/web-upload-solana'
-// import { WebUploader } from '@irys/web-upload'
+import BaseWebIrys from '@irys/web-upload/dist/types/base'
+import { WebSolana } from '@irys/web-upload-solana'
+import { WebUploader } from '@irys/web-upload'
 // import {
 //   createCreateMetadataAccountV3Instruction,
 //   PROGRAM_ID
@@ -38,13 +38,13 @@ export const createToken = async (data: FormData, network: NetworkType) => {
   const connection = getHeliusConnection(network)
   if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) return false
 
-  // let irysUploader: BaseWebIrys
+  let irysUploader: BaseWebIrys
 
-  // if ((network = NetworkType.MAINNET)) {
-  //   irysUploader = await WebUploader(WebSolana).withProvider(wallet)
-  // } else {
-  //   irysUploader = await WebUploader(WebSolana).withProvider(wallet).devnet()
-  // }
+  if ((network = NetworkType.MAINNET)) {
+    irysUploader = await WebUploader(WebSolana).withProvider(wallet)
+  } else {
+    irysUploader = await WebUploader(WebSolana).withProvider(wallet).devnet()
+  }
 
   const {
     name,
