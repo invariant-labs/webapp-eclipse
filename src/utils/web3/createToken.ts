@@ -24,7 +24,7 @@ async function getFileFromInput(inputString: string) {
   const blob = await response.blob()
 
   const fileName = inputString.split('/').pop()
-  const file = new File([blob], fileName!, { type: blob.type })
+  const file = new File([blob], fileName ? fileName : 'logo', { type: blob.type })
 
   return file
 }
@@ -32,7 +32,7 @@ async function getFileFromInput(inputString: string) {
 export const stringToFile = (dataUrl: string) => {
   const base64Data = dataUrl.split(',')[1]
   const typeArr = dataUrl.split(',')[0].match(/:(.*?);/)
-  const fileType = (typeArr && typeArr[1]) || 'image/png'
+  const fileType = typeArr && typeArr[1] ? typeArr[1] : 'image/png'
   const fileName = `logo.${fileType.split('/')[1]}`
   const byteString = atob(base64Data)
   const byteArray = Uint8Array.from(Array.from(byteString, char => char.charCodeAt(0)))
@@ -47,7 +47,7 @@ export const createToken = async (data: FormData, network: NetworkType) => {
   const connection = getHeliusConnection(network)
   if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) return false
 
-  let irysUploader = await WebUploader(WebSolana)
+  const irysUploader = await WebUploader(WebSolana)
     .withProvider(wallet)
     .withRpc(connection.rpcEndpoint)
     .devnet()
@@ -88,12 +88,12 @@ export const createToken = async (data: FormData, network: NetworkType) => {
     }
   }
 
-  const links: [string, string][] = [
+  const links: Array<[string, string]> = [
     ['website', website],
     ['twitter', twitter],
     ['telegram', telegram],
     ['discord', discord]
-  ].filter(item => item[1].length > 0) as [string, string][]
+  ].filter(item => item[1].length > 0) as Array<[string, string]>
 
   const metaDataToUpload = {
     updateAuthority: updateAuthority.toString(),

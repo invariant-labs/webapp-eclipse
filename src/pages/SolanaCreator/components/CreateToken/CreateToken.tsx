@@ -56,7 +56,7 @@ export const CreateToken: React.FC = () => {
 
       const hasCreated = await createToken(data, currentNetwork)
       // TODO: add snackbar
-      //console.log('has created', hasCreated)
+      console.log('has created', hasCreated)
     } catch (error) {
       console.error('Error submitting form:', error)
     }
