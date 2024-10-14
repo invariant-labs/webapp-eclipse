@@ -1203,7 +1203,7 @@ export const determinePositionTokenBlock = (
 export const generateUnknownTokenDataObject = (address: PublicKey, decimals: number): Token => ({
   address,
   decimals,
-  symbol: `${address.toString().slice(0, 4)}...${address.toString().slice(-4)}`,
+  symbol: `${address.toString().slice(0, 2)}...${address.toString().slice(-4)}`,
   name: address.toString(),
   logoURI: '/unknownToken.svg',
   isUnknown: true

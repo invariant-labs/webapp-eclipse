@@ -34,6 +34,7 @@ import warningIcon from './svg/Warning.svg'
 import circleDiscord from './svg/circle-discord.svg'
 import circleTelegram from './svg/circle-telegram.svg'
 import eclipse from './svg/eclipse.svg'
+import alephiumLogo from './svg/alephiumLogo.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -68,6 +69,7 @@ const icons: { [key: string]: string } = {
   Eclipse: eclipseLogo,
   Solana: solanaLogo,
   Vara: varaLogo,
+  Alephium: alephiumLogo,
   warningIcon,
   circleDiscord,
   circleTelegram,
