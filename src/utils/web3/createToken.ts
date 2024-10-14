@@ -24,7 +24,7 @@ async function getFileFromInput(inputString: string) {
   const blob = await response.blob()
 
   const fileName = inputString.split('/').pop()
-  const file = new File([blob], fileName ? fileName : 'logo', { type: blob.type })
+  const file = new File([blob], fileName || 'logo', { type: blob.type })
 
   return file
 }
@@ -32,7 +32,7 @@ async function getFileFromInput(inputString: string) {
 export const stringToFile = (dataUrl: string) => {
   const base64Data = dataUrl.split(',')[1]
   const typeArr = dataUrl.split(',')[0].match(/:(.*?);/)
-  const fileType = typeArr && typeArr[1] ? typeArr[1] : 'image/png'
+  const fileType = typeArr?.[1] ?? 'image/png'
   const fileName = `logo.${fileType.split('/')[1]}`
   const byteString = atob(base64Data)
   const byteArray = Uint8Array.from(Array.from(byteString, char => char.charCodeAt(0)))
