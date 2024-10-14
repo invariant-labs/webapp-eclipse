@@ -33,7 +33,6 @@
   "include": ["src"],
   "exclude": [
     "node_modules/**/*",
-    "src/pages/SolanaCreator",
     "**/*.stories.ts",
     "**/*.stories.tsx",
     "src/components/FarmsList/**/*",

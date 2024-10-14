@@ -1,8 +1,7 @@
-import { Box, IconButton, Input, Tooltip, Typography } from '@material-ui/core'
+import { Box, IconButton, Input, Tooltip, Typography } from '@mui/material'
 import useStyles from './styles'
 import React, { useRef, useState } from 'react'
-import InfoIcon from '@material-ui/icons/Info'
-
+import InfoIcon from '@mui/icons-material/Info'
 interface INumericInput {
   label: string
   value: string
@@ -27,7 +26,7 @@ export const NumericInput: React.FC<INumericInput> = ({
   errorMessage = '',
   fullErrorMessage = ''
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
   const [inputValue, setInputValue] = useState(value)
   const capitalizedLabel =
