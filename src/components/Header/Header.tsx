@@ -1,7 +1,7 @@
 import SelectTestnetRPC from '@components/Modals/SelectTestnetRPC/SelectTestnetRPC'
 import NavbarButton from '@components/Navbar/NavbarButton'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
-import { Box, Button, CardMedia, Grid, IconButton, useMediaQuery } from '@mui/material'
+import { Box, CardMedia, Grid, IconButton, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
 import Hamburger from '@static/svg/Hamburger.svg'
 import { theme } from '@static/theme'
@@ -14,16 +14,14 @@ import SelectNetworkButton from './HeaderButton/SelectNetworkButton'
 import SelectRPCButton from './HeaderButton/SelectRPCButton'
 import useButtonStyles from './HeaderButton/style'
 import useStyles from './style'
-
 import SelectChainButton from './HeaderButton/SelectChainButton'
-
 import SelectChain from '@components/Modals/SelectChain/SelectChain'
 import SelectMainnetRPC from '@components/Modals/SelectMainnetRPC/SelectMainnetRPC'
-
 import { ISelectChain, ISelectNetwork } from '@store/consts/types'
 import { RpcStatus } from '@store/reducers/solanaConnection'
 import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
 import { PublicKey } from '@solana/web3.js'
+import FaucetButton from './HeaderButton/FaucetButton'
 
 export interface IHeader {
   address: PublicKey
@@ -33,7 +31,7 @@ export interface IHeader {
   landing: string
   typeOfNetwork: NetworkType
   rpc: string
-  onFaucet?: () => void
+  onFaucet: () => void
   onDisconnectWallet: () => void
   defaultTestnetRPC: string
   onCopyAddress: () => void
@@ -195,13 +193,7 @@ export const Header: React.FC<IHeader> = ({
           <Grid container className={classes.leftButtons}>
             {typeOfNetwork === NetworkType.Testnet ? (
               <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                <Button
-                  className={buttonStyles.classes.headerButton}
-                  variant='contained'
-                  sx={{ '& .MuiButton-label': buttonStyles.classes.label }}
-                  onClick={onFaucet}>
-                  Faucet
-                </Button>
+                <FaucetButton onFaucet={onFaucet}>Faucet</FaucetButton>
               </Box>
             ) : null}
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
