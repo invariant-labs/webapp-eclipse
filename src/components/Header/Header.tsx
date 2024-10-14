@@ -63,7 +63,6 @@ export const Header: React.FC<IHeader> = ({
   rpcStatus
 }) => {
   const { classes } = useStyles()
-  const buttonStyles = useButtonStyles()
   const navigate = useNavigate()
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
