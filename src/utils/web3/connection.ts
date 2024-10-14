@@ -21,8 +21,7 @@ const getHeliusConnection = (type: NetworkType): Connection => {
   switch (type) {
     default:
       return new Connection(
-        'https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c',
-        'recent'
+        'https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c'
       )
   }
 }

@@ -6,6 +6,7 @@ import { TokenInfoInputs } from '../CreatorComponents/TokenInfoInputs'
 import { createToken } from '@web3/createToken'
 import { useSelector } from 'react-redux'
 import { network } from '@selectors/solanaConnection'
+import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
 import { Box, Typography } from '@mui/material'
 
 interface FormData {
@@ -55,7 +56,7 @@ export const CreateToken: React.FC = () => {
 
       const hasCreated = await createToken(data, currentNetwork)
       // TODO: add snackbar
-      console.log('has created', hasCreated)
+      //console.log('has created', hasCreated)
     } catch (error) {
       console.error('Error submitting form:', error)
     }
@@ -71,6 +72,7 @@ export const CreateToken: React.FC = () => {
           <form onSubmit={formMethods.handleSubmit(onSubmit)}>
             <Box className={classes.row}>
               <TokenInfoInputs formMethods={formMethods} />
+              <TokenMetadataInputs formMethods={formMethods} />
             </Box>
           </form>
         </Box>
