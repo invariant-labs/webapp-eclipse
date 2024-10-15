@@ -1,18 +1,30 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import SelectTestnetRPC from './SelectTestnetRPC'
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { RpcStatus } from '@store/reducers/solanaConnection'
+import { NetworkType } from '@store/consts/static'
+import { Provider } from 'react-redux'
+import { store } from '@store/index'
+import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
-  title: 'Modals/SelectRPC',
+  title: 'Modals/SelectTestnetRPC',
   component: SelectTestnetRPC,
+  decorators: [
+    Story => (
+      <Provider store={store}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </Provider>
+    )
+  ],
   args: {
     activeRPC: 'https://testnet-mock.com',
     anchorEl: null,
     handleClose: () => {},
     networks: [
       {
-        networkType: Network.TEST,
+        networkType: NetworkType.Testnet,
         rpc: 'https://testnet-mock.com',
         rpcName: 'Testnet'
       }
@@ -26,4 +38,4 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Primary: Story = {}
+export const TestnetPrimary: Story = {}

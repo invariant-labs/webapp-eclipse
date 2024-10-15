@@ -1,8 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import SelectMainnetRPC from './SelectMainnetRPC'
-
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { RpcStatus } from '@store/reducers/solanaConnection'
+import { NetworkType } from '@store/consts/static'
 
 const meta = {
   title: 'Modals/SelectRPC',
@@ -13,7 +12,7 @@ const meta = {
     handleClose: () => {},
     networks: [
       {
-        networkType: Network.MAIN,
+        networkType: NetworkType.Mainnet,
         rpc: 'https://mainnet-mock.com',
         rpcName: 'Mainnet'
       }

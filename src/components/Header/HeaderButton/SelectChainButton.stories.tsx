@@ -14,8 +14,8 @@ type Story = StoryObj<typeof meta>
 export const Primary: Story = {
   args: {
     activeChain: {
-      name: Chain.AlephZero,
-      address: 'https://azero.invariant.app/swap'
+      name: Chain.Eclipse,
+      address: 'https://eclipse.invariant.app/swap'
     },
     chains: [
       { name: Chain.AlephZero, address: 'https://azero.invariant.app/swap' },

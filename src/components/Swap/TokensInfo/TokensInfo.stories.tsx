@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import TokensInfo from './TokensInfo'
 import { fn } from '@storybook/test'
-import { BTC_TEST, USDC_TEST } from '@store/consts/static'
+import { BTC_TEST, NetworkType, USDC_TEST } from '@store/consts/static'
 import { Provider } from 'react-redux'
 import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
@@ -47,7 +47,8 @@ export const Primary: Story = {
       isUnknown: false
     },
     tokenFromPrice: 53433 as any,
-    tokenToPrice: 3243 as any
+    tokenToPrice: 3243 as any,
+    network: NetworkType.Testnet
   },
   render: args => {
     return <TokensInfo {...args} />

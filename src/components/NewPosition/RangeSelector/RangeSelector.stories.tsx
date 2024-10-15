@@ -31,11 +31,11 @@ const PrimaryComponent: React.FC<typeof Primary.args> = args => {
       {...args}
       concentrationIndex={concentrationIndex}
       setConcentrationIndex={setConcentrationIndex}
-      tickSpacing={1 as any}
-      xDecimal={9 as any}
-      yDecimal={12 as any}
-      midPrice={{ x: 1, index: 1 as any }}
-      data={[{ x: 0, y: 0, index: 0 as any }]}
+      tickSpacing={1}
+      xDecimal={9}
+      yDecimal={12}
+      midPrice={{ x: 1, index: 1 }}
+      data={[{ x: 0, y: 0, index: 0 }]}
     />
   )
 }
@@ -44,23 +44,22 @@ export const Primary: Story = {
   args: {
     currentPairReversed: false,
     isXtoY: true,
-    midPrice: { x: 1, index: 1 as any },
+    midPrice: { x: 1, index: 1 },
     concentrationArray: [0.1, 0.2, 0.3, 0.4, 0.5],
     concentrationIndex: 2,
-    data: [{ x: 0, y: 0, index: 0 as any }],
-    getTicksInsideRange: () => ({ leftInRange: 0n as any, rightInRange: 100n as any }),
+    data: [{ x: 0, y: 0, index: 0 }],
+    getTicksInsideRange: () => ({ leftInRange: 0, rightInRange: 100 }),
     minimumSliderIndex: 0,
     onChangeRange: fn(),
     poolIndex: 0,
     reloadHandler: fn(),
     setConcentrationIndex: fn(),
     ticksLoading: false,
-    tickSpacing: 1 as any,
+    tickSpacing: 1,
     tokenASymbol: 'SOL',
     tokenBSymbol: 'ETH',
-    xDecimal: 9 as any,
-    yDecimal: 12 as any,
-    poolKey: '',
+    xDecimal: 9,
+    yDecimal: 12,
     setShouldReversePlot: fn(),
     shouldReversePlot: false,
     shouldNotUpdatePriceRange: false,

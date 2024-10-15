@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import SelectTokenModal from './SelectTokenModal'
 import { fn } from '@storybook/test'
+import { NetworkType } from '@store/consts/static'
 
 const tokens: any = {
   So11111111111111111111111111111111111111112: {
@@ -51,6 +52,7 @@ export const Primary: Story = {
     initialHideUnknownTokensValue: false,
     onHideUnknownTokensChange: fn(),
     tokens: tokens,
-    hiddenUnknownTokens: false
+    hiddenUnknownTokens: false,
+    network: NetworkType.Testnet
   }
 }
