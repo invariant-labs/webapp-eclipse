@@ -67,8 +67,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     inputsWrapper: {
       display: 'flex',
-      flexDirection: 'column',
-      gap: '16px'
+      flexDirection: 'column'
     },
     inputContainer: {
       height: '110px',
