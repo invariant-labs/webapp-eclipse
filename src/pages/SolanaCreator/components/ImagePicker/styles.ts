@@ -28,7 +28,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
     marginBottom: theme.spacing(1)
   },
   placeholderIcon: {
-    fontSize: 48
+    fontSize: 48,
+    color: colors.invariant.lightGrey
   },
   imageButton: {
     width: 100,

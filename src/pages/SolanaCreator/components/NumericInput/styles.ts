@@ -1,8 +1,7 @@
-import { Theme } from '@mui/material/styles'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles()((theme: Theme) => ({
+const useStyles = makeStyles()(() => ({
   input: {
     ...typography.body2,
     width: '100%',
