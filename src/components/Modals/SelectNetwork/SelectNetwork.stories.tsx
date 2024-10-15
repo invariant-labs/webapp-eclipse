@@ -1,22 +1,32 @@
-import React from 'react'
-import { storiesOf } from '@storybook/react'
-import { action } from '@storybook/addon-actions'
-import SelectNetwork, { ISelectNetwork } from './SelectNetwork'
-import { NetworkType, EclipseNetworks } from '@consts/static'
+import type { Meta, StoryObj } from '@storybook/react'
+import SelectNetwork from './SelectNetwork'
+import { Network } from '@invariant-labs/sdk-eclipse'
 
-const networks: ISelectNetwork[] = [
-  { networkType: NetworkType.MAINNET, rpc: EclipseNetworks.MAIN },
-  { networkType: NetworkType.DEVNET, rpc: EclipseNetworks.DEV },
-  { networkType: NetworkType.TESTNET, rpc: EclipseNetworks.TEST }
-]
+const meta = {
+  title: 'Modals/SelectNetwork',
+  component: SelectNetwork,
+  args: {
+    activeNetwork: Network.TEST,
+    anchorEl: null,
+    handleClose: () => {},
+    networks: [
+      {
+        networkType: Network.TEST,
+        rpc: 'https://testnet-mock.com',
+        rpcName: 'Testnet'
+      },
+      {
+        networkType: Network.MAIN,
+        rpc: 'https://mock.com',
+        rpcName: 'Mainnet'
+      }
+    ],
+    onSelect: () => {},
+    open: true
+  }
+} satisfies Meta<typeof SelectNetwork>
 
-storiesOf('modals/newSelectNetwork', module).add('default', () => (
-  <SelectNetwork
-    networks={networks}
-    open={true}
-    handleClose={() => {}}
-    onSelect={(networkType, rpc) => action('chosen: ' + networkType + ' ' + rpc)()}
-    anchorEl={null}
-    activeNetwork={NetworkType.TESTNET}
-  />
-))
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Primary: Story = {}

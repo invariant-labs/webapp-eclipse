@@ -1,11 +1,11 @@
 import { Canvas } from '@components/Canvas/Canvas'
-import { randomNumberFromRange } from '@consts/uiUtils'
-import { Button, Grid, Input, Popover, Typography } from '@material-ui/core'
-import { actions as snackbarsActions } from '@reducers/snackbars'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import refreshIcon from '@static/svg/refresh.svg'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import useStyles from './styles'
+import { randomNumberFromRange } from '@utils/utils'
+import { Button, Grid, Input, Popover, Typography } from '@mui/material'
 
 export interface IProps {
   open: boolean
@@ -15,7 +15,7 @@ export interface IProps {
 }
 
 export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
   const dispatch = useDispatch()
 
   const [numberOne, setNumberOne] = useState(0)

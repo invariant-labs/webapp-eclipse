@@ -1,6 +1,6 @@
 import React from 'react'
-import { Box, Input, Typography } from '@material-ui/core'
 import useStyles from './styles'
+import { Box, Input, Typography } from '@mui/material'
 
 interface ITextInput {
   label: string
@@ -28,7 +28,7 @@ export const TextInput: React.FC<ITextInput> = ({
   placeholder,
   required = false
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
   const capitalizedLabel =
     typeof label === 'string' && label.length > 0
       ? label.charAt(0).toUpperCase() + label.slice(1)

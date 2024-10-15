@@ -3,14 +3,15 @@ import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
 import useStyles from '../CreateToken/styles'
-import { Box, Button } from '@material-ui/core'
+import { Box, Button } from '@mui/material'
+
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
 }
 
 export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods }) => {
-  const classes = useStyles()
+  const {classes} = useStyles()
   const {
     control,
     watch,

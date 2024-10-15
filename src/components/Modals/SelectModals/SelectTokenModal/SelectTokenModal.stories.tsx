@@ -1,61 +1,56 @@
-import React from 'react'
-import { storiesOf } from '@storybook/react'
-import { withKnobs } from '@storybook/addon-knobs'
-import SelectTokenModal from '@components/Modals/SelectModals/SelectTokenModal/SelectTokenModal'
-import { action } from '@storybook/addon-actions'
-import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
-import { SwapToken } from '@components/Swap/Swap'
+import type { Meta, StoryObj } from '@storybook/react'
+import SelectTokenModal from './SelectTokenModal'
+import { fn } from '@storybook/test'
 
-const tokens: SwapToken[] = [
-  {
-    balance: new BN(100).mul(new BN(34786)),
+const tokens: any = {
+  So11111111111111111111111111111111111111112: {
+    balance: 111,
     decimals: 6,
     symbol: 'SOL',
-    assetAddress: new PublicKey('So11111111111111111111111111111111111111112'),
+    assetAddress: 'So11111111111111111111111111111111111111112',
     name: 'Wrapped Solana',
     logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
-    address: new PublicKey('So11111111111111111111111111111111111111112')
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'
   },
-  {
-    balance: new BN(100).mul(new BN(126)),
+  '9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E': {
+    balance: 1000,
     decimals: 6,
     symbol: 'BTC',
-    assetAddress: new PublicKey('9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E'),
+    assetAddress: '9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E',
     name: 'BTC',
     logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-    address: new PublicKey('So11111111111111111111111111111111111111112')
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png'
   },
-  {
-    balance: new BN(10).mul(new BN(5342)),
+  EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: {
+    balance: 222,
     decimals: 6,
     symbol: 'USDC',
-    assetAddress: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+    assetAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     name: 'USD coin',
     logoURI:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-    address: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png'
   }
-]
+}
 
-storiesOf('newModals/selectToken', module)
-  .addDecorator(withKnobs)
-  .add('default', () => (
-    <SelectTokenModal
-      tokens={tokens}
-      commonTokens={[
-        new PublicKey('So11111111111111111111111111111111111111112'),
-        new PublicKey('9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E'),
-        new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
-      ]}
-      open={true}
-      handleClose={() => {}}
-      anchorEl={null}
-      onSelect={index => action(`chosen index: ${index}`)()}
-      handleAddToken={() => {}}
-      initialHideUnknownTokensValue={false}
-      onHideUnknownTokensChange={() => {}}
-    />
-  ))
+const meta = {
+  title: 'Modals/SelectTokenModal',
+  component: SelectTokenModal
+} satisfies Meta<typeof SelectTokenModal>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Primary: Story = {
+  args: {
+    anchorEl: null,
+    handleClose: () => {},
+    onSelect: () => {},
+    open: true,
+    commonTokens: [],
+    handleAddToken: fn(),
+    initialHideUnknownTokensValue: false,
+    onHideUnknownTokensChange: fn(),
+    tokens: tokens,
+    hiddenUnknownTokens: false
+  }
+}

@@ -1,16 +1,16 @@
-import TokenListItem, { SortType } from '../TokenListItem/TokenListItem'
+import TokenListItem from '../TokenListItem/TokenListItem'
 import React, { useEffect, useMemo, useState } from 'react'
-import { PaginationList } from '@components/Pagination/Pagination'
-import { Grid, useMediaQuery } from '@material-ui/core'
 import { theme } from '@static/theme'
 import useStyles from './style'
+import { Grid, useMediaQuery } from '@mui/material'
+import { SortTypeTokenList } from '@store/consts/static'
+import { PaginationList } from '@components/Pagination/Pagination'
 
 export interface ITokensListData {
   icon: string
   name: string
   symbol: string
   price: number
-  // priceChange: number
   volume: number
   TVL: number
 }
@@ -20,41 +20,41 @@ export interface ITokensList {
 }
 
 const TokensList: React.FC<ITokensList> = ({ data }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
   const [page, setPage] = useState(1)
-  const [sortType, setSortType] = React.useState(SortType.VOLUME_DESC)
+  const [sortType, setSortType] = React.useState(SortTypeTokenList.VOLUME_DESC)
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
 
   const sortedData = useMemo(() => {
     switch (sortType) {
-      case SortType.NAME_ASC:
+      case SortTypeTokenList.NAME_ASC:
         return data.sort((a, b) =>
           isXsDown
             ? a.symbol.localeCompare(b.symbol)
             : `${a.name} (${a.symbol})`.localeCompare(`${b.name} (${b.symbol})`)
         )
-      case SortType.NAME_DESC:
+      case SortTypeTokenList.NAME_DESC:
         return data.sort((a, b) =>
           isXsDown
             ? b.symbol.localeCompare(a.symbol)
             : `${b.name} (${b.symbol})`.localeCompare(`${a.name} (${a.symbol})`)
         )
-      case SortType.PRICE_ASC:
+      case SortTypeTokenList.PRICE_ASC:
         return data.sort((a, b) => a.price - b.price)
-      case SortType.PRICE_DESC:
+      case SortTypeTokenList.PRICE_DESC:
         return data.sort((a, b) => b.price - a.price)
-      // case SortType.CHANGE_ASC:
+      // case SortTypeTokenList.CHANGE_ASC:
       //   return data.sort((a, b) => a.priceChange - b.priceChange)
-      // case SortType.CHANGE_DESC:
+      // case SortTypeTokenList.CHANGE_DESC:
       //   return data.sort((a, b) => b.priceChange - a.priceChange)
-      case SortType.VOLUME_ASC:
+      case SortTypeTokenList.VOLUME_ASC:
         return data.sort((a, b) => (a.volume === b.volume ? a.TVL - b.TVL : a.volume - b.volume))
-      case SortType.VOLUME_DESC:
+      case SortTypeTokenList.VOLUME_DESC:
         return data.sort((a, b) => (a.volume === b.volume ? b.TVL - a.TVL : b.volume - a.volume))
-      case SortType.TVL_ASC:
+      case SortTypeTokenList.TVL_ASC:
         return data.sort((a, b) => (a.TVL === b.TVL ? a.volume - b.volume : a.TVL - b.TVL))
-      case SortType.TVL_DESC:
+      case SortTypeTokenList.TVL_DESC:
         return data.sort((a, b) => (a.TVL === b.TVL ? b.volume - a.volume : b.TVL - a.TVL))
     }
   }, [data, sortType, isXsDown])

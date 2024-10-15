@@ -1,10 +1,9 @@
 import { call, SagaGenerator } from 'typed-redux-saga'
-
 import { getConnection } from './connection'
 import { Account, PublicKey } from '@solana/web3.js'
 import { MintInfo, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { getWallet } from './wallet'
-import { getTokenProgramId } from '@consts/utils'
+import { getTokenProgramId } from '@utils/utils'
 
 export function* createToken(
   decimals: number,

@@ -1,8 +1,9 @@
-import { DEFAULT_PUBLICKEY } from '@consts/static'
 import { BN } from '@project-serum/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
-import { PayloadType } from './types'
+import { PayloadType } from '@store/consts/types'
+import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+
 export enum Status {
   Uninitialized = 'uninitialized',
   Init = 'init',
@@ -74,7 +75,7 @@ const solanaWalletSlice = createSlice({
     getBalance(state) {
       return state
     },
-    setIsBalanceLoading(state, action: PayloadAction<Boolean>) {
+    setIsBalanceLoading(state, action: PayloadAction<boolean>) {
       action.payload ? (state.balanceLoading = true) : (state.balanceLoading = false)
       return state
     },
@@ -92,15 +93,16 @@ const solanaWalletSlice = createSlice({
       state.accounts[action.payload.programId].balance = action.payload.balance
       return state
     },
+    showThankYouModal(state, action: PayloadAction<boolean>) {
+      state.thankYouModalShown = action.payload
+      return state
+    },
     // Triggers rescan for tokens that we control
     rescanTokens() {},
     airdrop() {},
     connect() {},
     disconnect() {},
-    showThankYouModal(state, action: PayloadAction<boolean>) {
-      state.thankYouModalShown = action.payload
-      return state
-    }
+    reconnect() {}
   }
 })
 interface IsetTokenBalance {

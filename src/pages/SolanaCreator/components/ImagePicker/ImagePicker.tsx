@@ -1,13 +1,13 @@
 import React, { ChangeEvent, useState } from 'react'
 import { Controller } from 'react-hook-form'
-import { Box, Button } from '@material-ui/core'
-import { CloudUpload as UploadIcon, Image as ImageIcon } from '@material-ui/icons'
+import { CloudUpload as UploadIcon, Image as ImageIcon } from '@mui/icons-material'
 import useStyles from './styles'
 
 import Logo1 from '@static/svg/SolanaCreator/Logo.svg'
 import Logo2 from '@static/svg/SolanaCreator/Logo2.svg'
 import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
+import { Box, Button } from '@mui/material'
 
 interface ImagePickerProps {
   control: any
@@ -16,7 +16,7 @@ interface ImagePickerProps {
 const defaultImages: string[] = [Logo1, Logo2, Cat1, Cat2]
 
 export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
   const [customImage, setCustomImage] = useState<string | null>(null)
 
   const handleImageUpload = (

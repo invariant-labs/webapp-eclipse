@@ -1,7 +1,8 @@
-import { lighten, makeStyles } from '@material-ui/core'
+import { lighten, Theme } from '@mui/material'
 import { colors } from '@static/theme'
+import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'flex',
     flexDirection: 'column',
@@ -42,13 +43,40 @@ const useStyles = makeStyles(theme => ({
     '&.selected': {
       backgroundColor: colors.invariant.light
     },
-    '&:hover': {
-      backgroundColor: colors.invariant.light
-    },
-    '& img': {
+    uploadedImage: {
+      borderRadius: 8,
+      maxWidth: '100px',
       width: '70%',
       height: '70%',
       objectFit: 'cover'
+    },
+    imageContainer: {
+      display: 'flex',
+      flexWrap: 'wrap',
+      gap: theme.spacing(1),
+      width: '100%'
+    },
+    imageButton: {
+      width: 100,
+      height: 100,
+      borderRadius: 16,
+      backgroundColor: colors.invariant.newDark,
+      padding: 0,
+      overflow: 'hidden',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      '&.selected': {
+        backgroundColor: colors.invariant.light
+      },
+      '&:hover': {
+        backgroundColor: colors.invariant.light
+      },
+      '& img': {
+        width: '70%',
+        height: '70%',
+        objectFit: 'cover'
+      }
     }
   },
   hiddenInput: {

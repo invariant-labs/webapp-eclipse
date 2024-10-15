@@ -1,19 +1,34 @@
-import React from 'react'
-import { storiesOf } from '@storybook/react'
-import { action } from '@storybook/addon-actions'
-import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
-import { MemoryRouter } from 'react-router'
+import type { Meta, StoryObj } from '@storybook/react'
+import Routes from './RoutesModal'
+import { MemoryRouter } from 'react-router-dom'
+import { fn } from '@storybook/test'
+const meta = {
+  title: 'Modals/Routes',
+  component: Routes,
+  args: {
+    anchorEl: null
+  },
+  decorators: [
+    Story => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    )
+  ]
+} satisfies Meta<typeof Routes>
 
-const routes = ['swap', 'pool', 'IDO', 'farms', 'swap']
+export default meta
+type Story = StoryObj<typeof meta>
 
-storiesOf('modals/routesModal', module)
-  .addDecorator(story => <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>)
-  .add('default', () => (
-    <RoutesModal
-      routes={routes}
-      open={true}
-      anchorEl={null}
-      handleClose={() => {}}
-      onSelect={(selected: string) => action('chosen: ' + selected)()}
-    />
-  ))
+export const Primary: Story = {
+  args: {
+    anchorEl: null,
+    handleClose: fn(),
+    open: true,
+    onSelect: fn(),
+    routes: ['exchange', 'liquidity', 'statistics'],
+    current: 'exchange',
+    onRPC: fn(),
+    onFaucet: fn()
+  }
+}

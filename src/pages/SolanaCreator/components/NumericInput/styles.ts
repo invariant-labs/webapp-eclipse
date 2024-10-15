@@ -1,46 +1,54 @@
-import { makeStyles, Theme } from '@material-ui/core'
+import { Theme } from '@mui/material/styles'
 import { colors, typography } from '@static/theme'
-const useStyles = makeStyles((theme: Theme) => ({
-  inputWrapper: {
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%',
-    minHeight: '110px'
-  },
-  inputContainer: {
-    height: '70px',
-    display: 'flex',
-    flexDirection: 'column',
-    width: '100%'
-  },
-  headerTitle: {
-    ...typography.heading4,
-    color: colors.invariant.text,
-    marginBottom: theme.spacing(1.5)
-  },
+import { makeStyles } from 'tss-react/mui'
+
+const useStyles = makeStyles()((theme: Theme) => ({
   input: {
-    padding: '11px 12px',
-    width: '100%',
-    minHeight: '32px',
-    boxSizing: 'border-box',
     ...typography.body2,
-    outline: 'none',
-    marginRight: -8,
+    width: '100%',
+    padding: '11px 12px',
+    boxSizing: 'border-box',
     fontFamily: 'Mukta',
-    outlineStyle: 'none',
     fontSize: 16,
+    outline: 'none',
+    border: '1px solid transparent',
     backgroundColor: colors.invariant.newDark,
     color: colors.invariant.lightGrey,
-    border: '1px solid transparent',
-
     borderRadius: 8,
     cursor: 'pointer',
+    transition: 'color 0.3s ease, border-color 0.3s ease',
+
     '&::placeholder': {
       color: colors.invariant.textGrey
     },
     '&:focus': {
+      color: colors.white.main,
+      borderColor: colors.invariant.lightGrey
+    }
+  },
+  inputWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    minHeight: '110px',
+    '&:focus': {
       color: colors.white.main
     }
+  },
+  headerTitle: {
+    fontFamily: 'Mukta',
+    fontWeight: 700,
+    fontSize: '20px',
+    lineHeight: '24px',
+    letterSpacing: '-0.03em',
+    color: colors.invariant.text,
+    marginBottom: '8px',
+    display: 'flex',
+    alignItems: 'center'
+  },
+  inputContainer: {
+    height: '80px',
+    overflowY: 'auto'
   },
   labelContainer: {
     position: 'relative',
