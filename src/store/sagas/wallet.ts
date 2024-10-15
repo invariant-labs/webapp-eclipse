@@ -1,6 +1,7 @@
 import {
   all,
   call,
+  delay,
   put,
   SagaGenerator,
   select,
@@ -486,8 +487,8 @@ export function* handleDisconnect(): Generator {
 
 export function* handleReconnect(): Generator {
   yield* call(handleDisconnect)
+  yield* delay(100)
   yield* call(openWalletSelectorModal)
-  yield* call(handleConnect, { type: actions.connect.type, payload: false })
 }
 
 export function* connectHandler(): Generator {

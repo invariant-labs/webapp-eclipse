@@ -58,7 +58,6 @@ export const Header: React.FC<IHeader> = ({
   activeChain,
   onChainSelect,
   network,
-  defaultDevnetRPC,
   rpcStatus
 }) => {
   const { classes } = useStyles()
