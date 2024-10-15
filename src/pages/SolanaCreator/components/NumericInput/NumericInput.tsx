@@ -81,7 +81,7 @@ export const NumericInput: React.FC<INumericInput> = ({
   return (
     <>
       <Box className={classes.inputWrapper}>
-        <Box className={`${classes.inputContainer}`}>
+        <Box>
           <div className={classes.labelContainer}>
             <Typography className={classes.headerTitle}>
               {capitalizedLabel}{' '}
