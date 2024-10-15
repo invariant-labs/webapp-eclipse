@@ -66,13 +66,13 @@ const useStyles = makeStyles((theme: Theme) => ({
     '100%': { boxShadow: '0 0 0 0 rgba(255, 0, 0, 0)' }
   },
   inputError: {
-    border: `1px solid ${colors.red.main}`,
+    border: `1px solid ${colors.invariant.Error}`,
     '&:focus': {
-      border: `1px solid ${colors.red.main}`
+      border: `1px solid ${colors.invariant.Error}`
     }
   },
   infoIcon: {
-    color: colors.red.main,
+    color: colors.invariant.Error,
     fontSize: '18px'
   },
   errorMessageContainer: {
@@ -86,6 +86,9 @@ const useStyles = makeStyles((theme: Theme) => ({
     fontSize: 12,
     marginTop: 4,
     width: '100%'
+  },
+  errorIndicator: {
+    color: colors.invariant.Error
   }
 }))
 

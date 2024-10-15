@@ -37,8 +37,10 @@ export const TextInput: React.FC<ITextInput> = ({
   return (
     <Box className={classes.inputWrapper}>
       <div className={classes.labelContainer}>
-        <h1 className={classes.headerTitle}>{capitalizedLabel}</h1>
-        {!error && required && <span className={classes.requiredDot} />}
+        <h1 className={classes.headerTitle}>
+          {capitalizedLabel}{' '}
+          {required ? <span className={classes.errorIndicator}>&nbsp;*</span> : null}
+        </h1>
       </div>
       <Input
         placeholder={placeholder ?? label}

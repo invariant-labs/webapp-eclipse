@@ -83,17 +83,9 @@ export const NumericInput: React.FC<INumericInput> = ({
     <Box className={classes.inputWrapper}>
       <Box className={`${classes.inputContainer}`}>
         <div className={classes.labelContainer}>
-          <Typography className={classes.headerTitle}>{capitalizedLabel}</Typography>
-          <Typography variant='h6'>
-            {error && fullErrorMessage && (
-              <Tooltip title={fullErrorMessage} arrow>
-                <IconButton size='small'>
-                  <InfoIcon className={classes.infoIcon} />
-                </IconButton>
-              </Tooltip>
-            )}
+          <Typography className={classes.headerTitle}>
+            {capitalizedLabel} {required ? <span className={classes.errorIndicator}>*</span> : null}
           </Typography>
-          {!error && required && <span className={classes.requiredDot} />}
         </div>
         <Input
           inputRef={inputRef}
@@ -108,6 +100,13 @@ export const NumericInput: React.FC<INumericInput> = ({
       </Box>
       <Box className={classes.errorMessageContainer}>
         <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
+        {error && fullErrorMessage && (
+          <Tooltip title={fullErrorMessage} arrow>
+            <IconButton size='small'>
+              <InfoIcon className={classes.infoIcon} />
+            </IconButton>
+          </Tooltip>
+        )}
       </Box>
     </Box>
   )

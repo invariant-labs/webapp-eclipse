@@ -62,9 +62,9 @@ const useStyles = makeStyles(() => ({
     '100%': { boxShadow: '0 0 0 0 rgba(255, 0, 0, 0)' }
   },
   inputError: {
-    border: `1px solid ${colors.red.main}`,
+    border: `1px solid ${colors.invariant.Error}`,
     '&:focus': {
-      border: `1px solid ${colors.red.main}`
+      border: `1px solid ${colors.invariant.Error}`
     }
   },
   headerTitle: {
@@ -90,10 +90,13 @@ const useStyles = makeStyles(() => ({
     overflowY: 'auto'
   },
   errorMessage: {
-    color: colors.red.main,
+    color: colors.invariant.Error,
     fontSize: '14px',
     lineHeight: '20px',
     minHeight: '20px'
+  },
+  errorIndicator: {
+    color: colors.invariant.Error
   }
 }))
 
