@@ -26,6 +26,9 @@ const useStyles = makeStyles(theme => ({
     width: '100%',
     marginBottom: theme.spacing(1)
   },
+  placeholderIcon: {
+    fontSize: 48
+  },
   imageButton: {
     width: 100,
     height: 100,

@@ -19,6 +19,24 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
   const classes = useStyles()
   const [customImage, setCustomImage] = useState<string | null>(null)
 
+  const handleImageUpload = (
+    e: ChangeEvent<HTMLInputElement>,
+    onChange: (value: string) => void
+  ) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = (e: ProgressEvent<FileReader>) => {
+        if (e.target?.result) {
+          const newCustomImage = e.target.result as string
+          setCustomImage(newCustomImage)
+          onChange(newCustomImage)
+        }
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
   return (
     <Controller
       name='image'
@@ -36,12 +54,21 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
               </Button>
             ))}
             <Button
+              component={customImage ? 'button' : 'label'}
               className={`${classes.imageButton} ${value === customImage ? 'selected' : ''}`}
               onClick={() => customImage && onChange(customImage)}>
               {customImage ? (
                 <img src={customImage} alt='Custom' className={classes.uploadedImage} />
               ) : (
                 <ImageIcon className={classes.placeholderIcon} />
+              )}
+              {!customImage && (
+                <input
+                  accept='image/*'
+                  className={classes.hiddenInput}
+                  type='file'
+                  onChange={e => handleImageUpload(e, onChange)}
+                />
               )}
             </Button>
           </Box>
@@ -52,20 +79,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
               className={classes.hiddenInput}
               id='contained-button-file-full-width'
               type='file'
-              onChange={(e: ChangeEvent<HTMLInputElement>) => {
-                const file = e.target.files?.[0]
-                if (file) {
-                  const reader = new FileReader()
-                  reader.onload = (e: ProgressEvent<FileReader>) => {
-                    if (e.target?.result) {
-                      const newCustomImage = e.target.result as string
-                      setCustomImage(newCustomImage)
-                      onChange(newCustomImage)
-                    }
-                  }
-                  reader.readAsDataURL(file)
-                }
-              }}
+              onChange={e => handleImageUpload(e, onChange)}
             />
           </Button>
         </Box>
