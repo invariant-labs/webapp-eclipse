@@ -38,7 +38,7 @@ export const TextInput: React.FC<ITextInput> = ({
     <Box className={classes.inputWrapper}>
       <div className={classes.labelContainer}>
         <h1 className={classes.headerTitle}>{capitalizedLabel}</h1>
-        {required && <span className={classes.requiredDot} />}
+        {!error && required && <span className={classes.requiredDot} />}
       </div>
       <Input
         placeholder={placeholder ?? label}

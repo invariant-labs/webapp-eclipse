@@ -46,7 +46,7 @@ const useStyles = makeStyles((theme: Theme) => ({
     position: 'relative',
     display: 'flex',
     alignItems: 'baseline',
-    marginBottom: theme.spacing(0.5)
+    marginBottom: theme.spacing(1)
   },
   requiredDot: {
     position: 'absolute',
