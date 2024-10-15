@@ -3,8 +3,8 @@ import { Controller } from 'react-hook-form'
 import { CloudUpload as UploadIcon, Image as ImageIcon } from '@mui/icons-material'
 import useStyles from './styles'
 
-import Logo1 from '@static/svg/SolanaCreator/Logo.svg'
-import Logo2 from '@static/svg/SolanaCreator/Logo2.svg'
+import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
+import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
 import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
 import { Box, Button, Typography } from '@mui/material'
@@ -13,7 +13,7 @@ interface ImagePickerProps {
   control: any
 }
 
-const defaultImages: string[] = [Logo1, Logo2, Cat1, Cat2]
+const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
 const MAX_FILE_SIZE = 800 * 1024
 
 export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
