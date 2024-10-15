@@ -83,7 +83,8 @@ export const NumericInput: React.FC<INumericInput> = ({
       <Box className={`${classes.inputContainer}`}>
         <div className={classes.labelContainer}>
           <Typography className={classes.headerTitle}>
-            {capitalizedLabel} {required ? <span className={classes.errorIndicator}>*</span> : null}
+            {capitalizedLabel}{' '}
+            {required ? <span className={classes.errorIndicator}>&nbsp;*</span> : null}
           </Typography>
         </div>
         <Input
