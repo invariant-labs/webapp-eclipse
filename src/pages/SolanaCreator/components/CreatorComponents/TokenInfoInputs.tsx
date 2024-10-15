@@ -3,22 +3,26 @@ import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
 import useStyles from '../CreateToken/styles'
-import { Box, Button } from '@mui/material'
-
+import { Box, Button, Typography } from '@mui/material'
+import InfoIcon from '@mui/icons-material/Info'
+import { useSelector } from 'react-redux'
+import { status } from '@store/selectors/solanaWallet'
+import { Status } from '@store/reducers/solanaWallet'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
 }
 
 export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods }) => {
-  const {classes} = useStyles()
+  const { classes } = useStyles()
   const {
     control,
     watch,
 
     formState: { errors, isValid }
   } = formMethods
-
+  const walletStatus = useSelector(status)
+  const BUTTON_TEXT = walletStatus === Status.Initialized ? 'Create token' : 'Connect wallet'
   return (
     <Box className={classes.container}>
       <Box className={classes.inputsWrapper}>
@@ -80,8 +84,12 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
           </Box>
         </Box>
       </Box>
+      <Box className={classes.tokenCost}>
+        <InfoIcon />
+        <Typography>Token cost: 0.1 SOL</Typography>
+      </Box>
       <Button className={classes.button} variant='contained' type='submit' disabled={!isValid}>
-        <span className={classes.buttonText}>Create Token</span>
+        <span className={classes.buttonText}>{BUTTON_TEXT}</span>
       </Button>
     </Box>
   )

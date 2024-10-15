@@ -65,6 +65,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: colors.invariant.component,
       borderRadius: '24px'
     },
+
+    tokenCost: {
+      display: 'flex',
+      alignItems: 'center',
+      color: colors.invariant.text,
+      gap: '10px'
+    },
     inputsWrapper: {
       display: 'flex',
       flexDirection: 'column'
