@@ -54,7 +54,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
               </Button>
             ))}
             <Button
-              component={customImage ? 'button' : 'label'}
+              component='label'
               className={`${classes.imageButton} ${value === customImage ? 'selected' : ''}`}
               onClick={() => customImage && onChange(customImage)}>
               {customImage ? (
@@ -62,14 +62,12 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
               ) : (
                 <ImageIcon className={classes.placeholderIcon} />
               )}
-              {!customImage && (
-                <input
-                  accept='image/*'
-                  className={classes.hiddenInput}
-                  type='file'
-                  onChange={e => handleImageUpload(e, onChange)}
-                />
-              )}
+              <input
+                accept='image/*'
+                className={classes.hiddenInput}
+                type='file'
+                onChange={e => handleImageUpload(e, onChange)}
+              />
             </Button>
           </Box>
           <Button component='label' className={classes.uploadButton} disableRipple>
