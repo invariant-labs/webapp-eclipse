@@ -1,17 +1,17 @@
 import React from 'react'
 import { UseFormReturn } from 'react-hook-form'
-import { Box } from '@material-ui/core'
 import { ControlledTextInput } from './ControlledInputs'
 import { ImagePicker } from '../ImagePicker/ImagePicker'
 import { FormData, validateSocialLink } from '../../utils/solanaCreatorUtils'
 import useStyles from '../CreateToken/styles'
+import { Box } from '@mui/material'
 
 interface TokenMetadataInputsProps {
   formMethods: UseFormReturn<FormData>
 }
 
 export const TokenMetadataInputs: React.FC<TokenMetadataInputsProps> = ({ formMethods }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
   const {
     control,
     formState: { errors }

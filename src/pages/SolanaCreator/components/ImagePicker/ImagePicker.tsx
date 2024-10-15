@@ -4,9 +4,9 @@ import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
 import { Controller } from 'react-hook-form'
 import { ChangeEvent } from 'react'
-import { Box, Button } from '@material-ui/core'
-import { CloudUpload as UploadIcon } from '@material-ui/icons'
+import UploadIcon from '@mui/icons-material/CloudUpload'
 import useStyles from './styles'
+import { Box, Button } from '@mui/material'
 
 interface ImagePickerProps {
   control: any
@@ -14,7 +14,7 @@ interface ImagePickerProps {
 
 const defaultImages: string[] = [Logo1, Logo2, Cat1, Cat2]
 export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
 
   return (
     <Controller

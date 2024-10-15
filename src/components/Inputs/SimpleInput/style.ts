@@ -1,7 +1,7 @@
 import { colors, typography } from '@static/theme'
-import { makeStyles } from '@material-ui/core/styles'
+import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles(() => ({
+export const useStyles = makeStyles()(() => ({
   amountInput: {
     background: colors.invariant.dark,
     color: colors.white.main,

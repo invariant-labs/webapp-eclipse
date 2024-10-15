@@ -1,8 +1,8 @@
 import { InitPosition, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { BN } from '@project-serum/anchor'
-import { PayloadType } from '@reducers/types'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
+import { PayloadType } from '@store/consts/types'
 
 export interface PositionWithAddress extends Position {
   address: PublicKey
@@ -19,7 +19,8 @@ export interface PlotTickData {
 }
 
 export interface PlotTicks {
-  data: PlotTickData[]
+  allData: PlotTickData[]
+  userData: PlotTickData[]
   loading: boolean
   hasError?: boolean
 }
@@ -29,7 +30,7 @@ export interface InitPositionStore {
   success: boolean
 }
 
-export interface CurrentPositionRangeTicksStore {
+export interface CurrentPositionTicksStore {
   lowerTick?: Tick
   upperTick?: Tick
   loading: boolean
@@ -38,8 +39,9 @@ export interface IPositionsStore {
   lastPage: number
   plotTicks: PlotTicks
   positionsList: PositionsListStore
-  currentPositionRangeTicks: CurrentPositionRangeTicksStore
+  currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
+  shouldNotUpdateRange: boolean
 }
 
 export interface InitPositionData
@@ -57,7 +59,9 @@ export interface InitPositionData
 export interface GetCurrentTicksData {
   poolIndex: number
   isXtoY: boolean
+  fetchTicksAndTickmap?: boolean
   disableLoading?: boolean
+  onlyUserPositionsEnabled?: boolean
 }
 
 export interface ClosePositionData {
@@ -74,14 +78,15 @@ export interface SetPositionData {
 export const defaultState: IPositionsStore = {
   lastPage: 1,
   plotTicks: {
-    data: [],
+    allData: [],
+    userData: [],
     loading: false
   },
   positionsList: {
     list: [],
     loading: true
   },
-  currentPositionRangeTicks: {
+  currentPositionTicks: {
     lowerTick: undefined,
     upperTick: undefined,
     loading: false
@@ -89,7 +94,8 @@ export const defaultState: IPositionsStore = {
   initPosition: {
     inProgress: false,
     success: false
-  }
+  },
+  shouldNotUpdateRange: false
 }
 
 export const positionsSliceName = 'positions'
@@ -110,14 +116,19 @@ const positionsSlice = createSlice({
       state.initPosition.success = action.payload
       return state
     },
-    setPlotTicks(state, action: PayloadAction<PlotTickData[]>) {
-      state.plotTicks.data = action.payload
+    setPlotTicks(
+      state,
+      action: PayloadAction<{ allPlotTicks: PlotTickData[]; userPlotTicks: PlotTickData[] }>
+    ) {
+      state.plotTicks.allData = action.payload.allPlotTicks
+      state.plotTicks.userData = action.payload.userPlotTicks
       state.plotTicks.loading = false
       state.plotTicks.hasError = false
       return state
     },
     setErrorPlotTicks(state, action: PayloadAction<PlotTickData[]>) {
-      state.plotTicks.data = action.payload
+      state.plotTicks.allData = action.payload
+      state.plotTicks.userData = action.payload
       state.plotTicks.loading = false
       state.plotTicks.hasError = true
       return state
@@ -146,14 +157,14 @@ const positionsSlice = createSlice({
       return state
     },
     getCurrentPositionRangeTicks(state, _action: PayloadAction<string>) {
-      state.currentPositionRangeTicks.loading = true
+      state.currentPositionTicks.loading = true
       return state
     },
     setCurrentPositionRangeTicks(
       state,
       action: PayloadAction<{ lowerTick?: Tick; upperTick?: Tick }>
     ) {
-      state.currentPositionRangeTicks = {
+      state.currentPositionTicks = {
         ...action.payload,
         loading: false
       }
@@ -167,6 +178,10 @@ const positionsSlice = createSlice({
     },
     resetState(state) {
       state = defaultState
+      return state
+    },
+    setShouldNotUpdateRange(state, action: PayloadAction<boolean>) {
+      state.shouldNotUpdateRange = action.payload
       return state
     }
   }

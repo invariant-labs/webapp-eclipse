@@ -1,7 +1,8 @@
-import { makeStyles } from '@material-ui/core'
+import { Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
+import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles(theme => ({
+export const useStyles = makeStyles()((theme: Theme) => ({
   container: {
     display: 'grid',
     gridTemplateColumns: '5% 35% 20% 20% 20%',
@@ -11,14 +12,10 @@ export const useStyles = makeStyles(theme => ({
     whiteSpace: 'nowrap',
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '5% 35% 15% 17.5% 16.5% 15%',
+      gridTemplateColumns: '30% 22.5% 32.5% 15%',
       '& p': {
-        ...typography.caption2
+        ...typography.caption1
       }
-    },
-
-    [theme.breakpoints.down('xs')]: {
-      gridTemplateColumns: '15% 25% 35% 25%'
     }
   },
 

@@ -1,11 +1,21 @@
-import { all, call, put, SagaGenerator, select, takeLeading, spawn, delay } from 'typed-redux-saga'
-
-import { actions, Status, PayloadTypes } from '@reducers/solanaConnection'
-import { getSolanaConnection } from '@web3/connection'
-import { actions as snackbarsActions } from '@reducers/snackbars'
-import { rpcAddress } from '@selectors/solanaConnection'
+import { all, call, put, SagaGenerator, select, takeLeading, spawn } from 'typed-redux-saga'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Connection } from '@solana/web3.js'
 import { PayloadAction } from '@reduxjs/toolkit'
+import { rpcAddress, rpcStatus } from '@store/selectors/solanaConnection'
+import { getSolanaConnection } from '@utils/web3/connection'
+import { actions, RpcStatus, Status } from '@store/reducers/solanaConnection'
+import { NetworkType } from '@store/consts/static'
+
+export function* handleRpcError(_action: PayloadAction): Generator {
+  const currentRpcStatus = yield* select(rpcStatus)
+
+  if (currentRpcStatus === RpcStatus.Uninitialized) {
+    yield* put(actions.setRpcStatus(RpcStatus.Error))
+  } else if (currentRpcStatus === RpcStatus.Ignored) {
+    yield* put(actions.setRpcStatus(RpcStatus.IgnoredWithError))
+  }
+}
 
 export function* getConnection(): SagaGenerator<Connection> {
   const rpc = yield* select(rpcAddress)
@@ -16,10 +26,7 @@ export function* getConnection(): SagaGenerator<Connection> {
 export function* initConnection(): Generator {
   try {
     yield* call(getConnection)
-    // TODO: pull state here
 
-    // yield* call(pullUserAccountData)
-    // yield* call(init)
     yield* put(
       snackbarsActions.add({
         message: 'Eclipse network connected.',
@@ -28,9 +35,6 @@ export function* initConnection(): Generator {
       })
     )
     yield* put(actions.setStatus(Status.Initialized))
-    // yield* call(depositCollateral, new BN(4 * 1e8))
-    // yield* call(mintUsd, new BN(8 * 1e7))
-    // yield* call(handleAirdrop)
   } catch (error) {
     console.log(error)
     yield* put(actions.setStatus(Status.Error))
@@ -44,18 +48,19 @@ export function* initConnection(): Generator {
   }
 }
 
-export function* handleNetworkChange(action: PayloadAction<PayloadTypes['setNetwork']>): Generator {
-  yield* delay(1000)
-  window.location.reload()
+export function* handleNetworkChange(action: PayloadAction<NetworkType>): Generator {
+  // yield* delay(1000)
+  // window.location.reload()
   yield* put(
     snackbarsActions.add({
-      message: `You are on network ${action.payload.network}${
-        action.payload?.rpcName ? ' (' + action.payload.rpcName + ')' : ''
-      }.`,
+      message: `You are on network ${action.payload}`,
       variant: 'info',
       persist: false
     })
   )
+
+  localStorage.setItem('INVARIANT_NETWORK_ECLIPSE', action.payload)
+  window.location.reload()
 }
 
 export function* updateSlot(): Generator {
@@ -74,6 +79,11 @@ export function* networkChangeSaga(): Generator {
 export function* initConnectionSaga(): Generator {
   yield takeLeading(actions.initSolanaConnection, initConnection)
 }
+
+export function* handleRpcErrorSaga(): Generator {
+  yield takeLeading(actions.handleRpcError, handleRpcError)
+}
+
 export function* connectionSaga(): Generator {
-  yield* all([networkChangeSaga, initConnectionSaga, updateSlotSaga].map(spawn))
+  yield* all([networkChangeSaga, initConnectionSaga, updateSlotSaga, handleRpcError].map(spawn))
 }

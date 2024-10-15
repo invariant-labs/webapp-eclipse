@@ -1,12 +1,11 @@
-import { Token } from '@consts/static'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
-import { PayloadType } from './types'
 import * as R from 'remeda'
 import { Range } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { PayloadType, Token } from '@store/consts/types'
 
 export interface PoolWithAddress extends PoolStructure {
   address: PublicKey
@@ -18,6 +17,9 @@ export interface IPoolsStore {
   poolTicks: { [key in string]: Tick[] }
   nearestPoolTicksForPair: { [key in string]: Tick[] }
   isLoadingLatestPoolsForTransaction: boolean
+  isLoadingTicksAndTickMaps: boolean
+  isLoadingTokens: boolean
+  isLoadingTokensError: boolean
   tickMaps: { [key in string]: Tickmap }
   volumeRanges: Record<string, Range[]>
 }
@@ -61,6 +63,9 @@ export const defaultState: IPoolsStore = {
   poolTicks: {},
   nearestPoolTicksForPair: {},
   isLoadingLatestPoolsForTransaction: false,
+  isLoadingTicksAndTickMaps: false,
+  isLoadingTokens: false, // set to true
+  isLoadingTokensError: false,
   tickMaps: {},
   volumeRanges: {}
 }
@@ -95,6 +100,7 @@ const poolsSlice = createSlice({
         ...state.tokens,
         ...action.payload
       }
+      state.isLoadingTokens = false
       return state
     },
     setVolumeRanges(state, action: PayloadAction<Record<string, Range[]>>) {

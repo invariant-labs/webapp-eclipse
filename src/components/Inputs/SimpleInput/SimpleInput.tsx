@@ -1,7 +1,7 @@
-import { Input } from '@material-ui/core'
 import React, { CSSProperties, useRef } from 'react'
 import classNames from 'classnames'
 import useStyles from './style'
+import { Input } from '@mui/material'
 
 interface IProps {
   setValue: (value: string) => void
@@ -14,7 +14,7 @@ interface IProps {
   onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>
 }
 
-export const AmountInput: React.FC<IProps> = ({
+export const SimpleInput: React.FC<IProps> = ({
   value,
   setValue,
   error,
@@ -24,7 +24,7 @@ export const AmountInput: React.FC<IProps> = ({
   style,
   onBlur
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -37,9 +37,9 @@ export const AmountInput: React.FC<IProps> = ({
       const caretPosition = e.target.selectionStart
 
       let parsed = e.target.value
-      const zerosRegex = /^0+\d+\.?\d*$/
+      const zerosRegex = /^0+\d*\.?\d*$/
       if (zerosRegex.test(parsed)) {
-        parsed = parsed.replace(/^0+/, '')
+        parsed = parsed.replace(/^0+(?!$)/, '')
       }
 
       const dotRegex = /^\.\d*$/
@@ -59,12 +59,11 @@ export const AmountInput: React.FC<IProps> = ({
         }, 0)
       }
     } else if (!onlyNumbersRegex.test(e.target.value)) {
-      setValue('')
+      return
     } else if (!regex.test(e.target.value)) {
       setValue(e.target.value.slice(0, e.target.value.length - 1))
     }
   }
-
   return (
     <Input
       inputRef={inputRef}
@@ -72,13 +71,15 @@ export const AmountInput: React.FC<IProps> = ({
       className={classNames(classes.amountInput, className)}
       classes={{ input: classes.input }}
       style={style}
-      type={'text'}
       value={value}
       disableUnderline={true}
       placeholder={placeholder}
       onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
       onBlur={onBlur}
+      inputProps={{
+        inputMode: 'decimal'
+      }}
     />
   )
 }
-export default AmountInput
+export default SimpleInput

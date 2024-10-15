@@ -1,10 +1,9 @@
 import React from 'react'
 import { useForm } from 'react-hook-form'
-import { Box, Typography } from '@material-ui/core'
 import useStyles from './styles'
-// import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
 import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils'
 import { TokenInfoInputs } from '../CreatorComponents/TokenInfoInputs'
+import { Box, Typography } from '@mui/material'
 
 interface FormData {
   name: string
@@ -20,7 +19,7 @@ interface FormData {
 }
 
 export const CreateToken: React.FC = () => {
-  const classes = useStyles()
+  const { classes } = useStyles()
 
   const formMethods = useForm<FormData>({
     mode: 'onChange',

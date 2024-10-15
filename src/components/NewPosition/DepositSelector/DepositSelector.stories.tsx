@@ -1,78 +1,126 @@
-import React from 'react'
-import { storiesOf } from '@storybook/react'
-import DepositSelector from './DepositSelector'
-import { SwapToken } from '@selectors/solanaWallet'
-import { BN } from '@project-serum/anchor'
-import { PublicKey } from '@solana/web3.js'
-import { useState } from '@storybook/addons'
+import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import { useState } from 'react'
+import DepositSelector, { IDepositSelector } from './DepositSelector'
+import { SwapToken } from '@store/selectors/wallet'
+import { Provider } from 'react-redux'
+import { store } from '@store/index'
+import { MemoryRouter } from 'react-router-dom'
+import { Network } from '@invariant-labs/a0-sdk'
+import { Status } from '@store/reducers/wallet'
 
-const tokens: SwapToken[] = [
-  {
-    balance: new BN(100).mul(new BN(34786)),
-    decimals: 6,
+const tokens: Record<string, SwapToken> = {
+  So11111111111111111111111111111111111111112: {
+    balance: 111 as any,
+    decimals: 6 as any,
     symbol: 'SOL',
-    assetAddress: new PublicKey('So11111111111111111111111111111111111111112'),
+    assetAddress: 'So11111111111111111111111111111111111111112',
     name: 'Wrapped Solana',
     logoURI:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png'
   },
-  {
-    balance: new BN(100).mul(new BN(126)),
-    decimals: 6,
+  '9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E': {
+    balance: 1000 as any,
+    decimals: 6 as any,
     symbol: 'BTC',
-    assetAddress: new PublicKey('9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E'),
+    assetAddress: '9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E',
     name: 'BTC',
     logoURI:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png'
   },
-  {
-    balance: new BN(10).mul(new BN(5342)),
-    decimals: 6,
+  EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v: {
+    balance: 222 as any,
+    decimals: 6 as any,
     symbol: 'USDC',
-    assetAddress: new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'),
+    assetAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v',
     name: 'USD coin',
     logoURI:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png'
   }
-]
+}
 
-storiesOf('position/depositSelector', module).add('deposit', () => {
+const meta = {
+  title: 'Components/DepositSelector',
+  component: DepositSelector,
+  decorators: [
+    Story => (
+      <Provider store={store}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </Provider>
+    )
+  ]
+} satisfies Meta<typeof DepositSelector>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+const PrimaryComponent: React.FC<IDepositSelector> = args => {
   const [feeTierIndex, setFeeTierIndex] = useState<number>(0)
+
   return (
     <DepositSelector
-      tokens={tokens}
+      {...args}
       setPositionTokens={(_a, _b, fee) => {
         setFeeTierIndex(fee)
       }}
-      onAddLiquidity={() => {}}
-      tokenAInputState={{
-        value: '0.000001',
-        setValue: () => {},
-        blocked: false,
-        decimalsLimit: 6
-      }}
-      tokenBInputState={{
-        value: '',
-        setValue: () => {},
-        blocked: true,
-        blockerInfo: 'Select a token.',
-        decimalsLimit: 8
-      }}
-      feeTiers={[0.02, 0.04, 0.1, 0.3, 1]}
-      progress='none'
-      onReverseTokens={() => {}}
-      poolIndex={0}
-      canCreateNewPool
-      canCreateNewPosition
-      handleAddToken={() => {}}
-      commonTokens={[
-        new PublicKey('So11111111111111111111111111111111111111112'),
-        new PublicKey('9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E'),
-        new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
-      ]}
-      initialHideUnknownTokensValue={false}
-      onHideUnknownTokensChange={() => {}}
       feeTierIndex={feeTierIndex}
+      poolIndex={0}
     />
   )
-})
+}
+
+export const Primary: Story = {
+  args: {
+    commonTokens: [
+      'So11111111111111111111111111111111111111112',
+      '9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E',
+      'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+    ],
+    concentrationArray: Array.from({ length: 141 }, (_, i) => i + 2),
+    concentrationIndex: 0,
+    feeTiers: [0.02, 0.04, 0.1, 0.3, 1, 2, 5],
+    handleAddToken: fn(),
+    initialFee: '0.02',
+    initialHideUnknownTokensValue: false,
+    initialTokenFrom: 'USDC',
+    initialTokenTo: 'BTC',
+    minimumSliderIndex: 0,
+    onAddLiquidity: fn(),
+    onHideUnknownTokensChange: fn(),
+    onReverseTokens: fn(),
+    poolIndex: 0,
+    positionOpeningMethod: 'range',
+    progress: 'success',
+    setPositionTokens: fn(),
+    tokens: tokens,
+    feeTierIndex: 0,
+    tokenAInputState: {
+      value: '1234',
+      setValue: fn(),
+      blocked: false,
+      blockerInfo: '',
+      decimalsLimit: 12
+    },
+    tokenBInputState: {
+      value: '11',
+      setValue: fn(),
+      blocked: false,
+      blockerInfo: '',
+      decimalsLimit: 12
+    },
+    bestTierIndex: 2,
+    priceA: 1111,
+    priceB: 2222,
+    isBalanceLoading: false,
+    isGetLiquidityError: false,
+    ticksLoading: false,
+    network: Network.Testnet,
+    azeroBalance: 20000000000000 as any,
+    walletStatus: Status.Initialized,
+    onConnectWallet: () => {},
+    onDisconnectWallet: () => {}
+  },
+  render: args => <PrimaryComponent {...args} />
+}

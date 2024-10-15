@@ -1,15 +1,17 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
-import { network, rpcAddress, status } from '@selectors/solanaConnection'
-import { Status } from '@reducers/solanaConnection'
-import { actions } from '@reducers/pools'
-import { getMarketProgramSync } from '@web3/programs/amm'
-import { poolsArraySortedByFees, poolTicks, tickMaps } from '@selectors/pools'
-import { getNetworkTokensList, getFullNewTokensData, getPoolsVolumeRanges } from '@consts/utils'
-import { swap } from '@selectors/swap'
+import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
+import { Status } from '@store/reducers/solanaConnection'
+import { actions } from '@store/reducers/pools'
+
+import { poolsArraySortedByFees, poolTicks, tickMaps } from '@store/selectors/pools'
+
+import { swap } from '@store/selectors/swap'
 import { findTickmapChanges, Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
-import { getCurrentSolanaConnection } from '@web3/connection'
+import { getMarketProgramSync } from '@utils/web3/programs/amm'
+import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -69,13 +71,13 @@ const MarketEvents = () => {
         .finally(() => {
           dispatch(actions.addTokens(tokens))
         })
-      getPoolsVolumeRanges(networkType.toLowerCase())
-        .then(ranges => {
-          dispatch(actions.setVolumeRanges(ranges))
-        })
-        .catch(error => {
-          console.log(error)
-        })
+      // getPoolsVolumeRanges(networkType.toLowerCase())
+      //   .then(ranges => {
+      //     dispatch(actions.setVolumeRanges(ranges))
+      //   })
+      //   .catch(error => {
+      //     console.log(error)
+      //   })
     }
 
     connectEvents()
@@ -88,7 +90,6 @@ const MarketEvents = () => {
 
     const connectEvents = () => {
       allPools.forEach(pool => {
-        // eslint-disable-next-line @typescript-eslint/no-floating-promises
         marketProgram.onPoolChange(pool.tokenX, pool.tokenY, { fee: pool.fee.v }, poolStructure => {
           dispatch(
             actions.updatePool({
@@ -144,7 +145,7 @@ const MarketEvents = () => {
         })
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
     connectEvents()
   }, [networkStatus, marketProgram, Object.values(poolTicksArray).length])
 
@@ -212,7 +213,7 @@ const MarketEvents = () => {
         })
       }
     }
-    // eslint-disable-next-line @typescript-eslint/no-floating-promises
+
     connectEvents()
   }, [networkStatus, marketProgram, Object.values(tickmaps).length])
 

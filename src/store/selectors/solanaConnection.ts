@@ -1,15 +1,16 @@
-import { ISolanaConnectionStore, solanaConnectionSliceName } from '@reducers/solanaConnection'
+import { ISolanaConnectionStore, solanaConnectionSliceName } from '@store/reducers/solanaConnection'
 import { keySelectors, AnyProps } from './helpers'
 
 const store = (s: AnyProps) => s[solanaConnectionSliceName] as ISolanaConnectionStore
 
-export const { network, status, slot, rpcAddress } = keySelectors(store, [
+export const { network, status, slot, rpcAddress, rpcStatus } = keySelectors(store, [
   'network',
   'status',
   'slot',
-  'rpcAddress'
+  'rpcAddress',
+  'rpcStatus'
 ])
 
-export const solanaConnectionSelectors = { network, status, slot, rpcAddress }
+export const solanaConnectionSelectors = { network, status, slot, rpcAddress, rpcStatus }
 
 export default solanaConnectionSelectors
