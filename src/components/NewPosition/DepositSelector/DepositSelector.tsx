@@ -435,6 +435,21 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               return
             }
 
+            if (tokens[tokenBIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
+              if (tokenBIndex !== null && poolIndex === null) {
+                tokenAInputState.setValue(
+                  printBN(
+                    tokens[tokenBIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
+                      ? tokens[tokenBIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
+                      : new BN(0),
+                    tokens[tokenBIndex].decimals
+                  )
+                )
+
+                return
+              }
+            }
+
             tokenBInputState.setValue(
               printBN(tokens[tokenBIndex].balance, tokens[tokenBIndex].decimals)
             )
