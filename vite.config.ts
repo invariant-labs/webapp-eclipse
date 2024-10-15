@@ -60,5 +60,10 @@ export default defineConfig({
       plugins: [inject({ Buffer: ['buffer', 'Buffer'] })]
     },
     target: 'es2020'
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      target: 'es2020'
+    }
   }
 })
