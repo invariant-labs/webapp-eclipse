@@ -73,7 +73,8 @@ const useStyles = makeStyles()(() => ({
     color: colors.invariant.Error,
     fontSize: '14px',
     lineHeight: '20px',
-    minHeight: '20px'
+    minHeight: '20px',
+    marginTop: 4
   },
   labelContainer: {
     position: 'relative',

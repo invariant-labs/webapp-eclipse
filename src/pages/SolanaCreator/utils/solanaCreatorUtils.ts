@@ -90,7 +90,7 @@ const getErrorMessages = (error: any): ErrorMessage => {
     switch (error.ref.name) {
       case 'decimals':
         return {
-          shortErrorMessage: 'Decimals must be between 5 and 9',
+          shortErrorMessage: 'Invalid range for decimals (5-9)',
           fullErrorMessage: error.message || errorMessages.decimals.fullErrorMessage
         }
       case 'supply':

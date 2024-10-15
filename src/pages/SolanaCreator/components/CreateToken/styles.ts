@@ -116,8 +116,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       paddingTop: '24px',
       width: '100%',
       [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
-        width: '70%'
+        flexDirection: 'row'
       }
     }
   }

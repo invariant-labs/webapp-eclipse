@@ -65,11 +65,12 @@ export const Header: React.FC<IHeader> = ({
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
 
-  const routes = ['swap', 'pool', 'stats', 'farms', 'token']
+  const routes = ['exchange', 'liquidity', 'statistics', 'token']
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^newPosition\/*/, /^position\/*/],
-    exchange: [/^exchange\/*/]
+    exchange: [/^exchange\/*/],
+    token: [/^token\/*/]
   }
 
   const [activePath, setActive] = useState('exchange')

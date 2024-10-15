@@ -24,6 +24,9 @@ const useStyles = makeStyles()((theme: Theme) => ({
     '&:focus': {
       color: colors.white.main,
       borderColor: colors.invariant.lightGrey
+    },
+    '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+      display: 'none'
     }
   },
   inputWrapper: {
@@ -47,14 +50,14 @@ const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center'
   },
   inputContainer: {
-    height: '80px',
-    overflowY: 'auto'
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column'
   },
   labelContainer: {
     position: 'relative',
     display: 'flex',
-    alignItems: 'baseline',
-    marginBottom: theme.spacing(1)
+    alignItems: 'baseline'
   },
   requiredDot: {
     position: 'absolute',
@@ -87,11 +90,12 @@ const useStyles = makeStyles()((theme: Theme) => ({
     minHeight: '20px',
     display: 'flex',
     width: '100%',
-    alignItems: 'flex-start'
+    alignItems: 'flex-start',
+    marginTop: '54px'
   },
   errorMessage: {
     color: colors.invariant.Error,
-    fontSize: 12,
+    fontSize: 13,
     marginTop: 4,
     width: '100%'
   },

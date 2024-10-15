@@ -79,35 +79,37 @@ export const NumericInput: React.FC<INumericInput> = ({
   }
 
   return (
-    <Box className={classes.inputWrapper}>
-      <Box className={`${classes.inputContainer}`}>
-        <div className={classes.labelContainer}>
-          <Typography className={classes.headerTitle}>
-            {capitalizedLabel}{' '}
-            {required ? <span className={classes.errorIndicator}>&nbsp;*</span> : null}
-          </Typography>
-        </div>
-        <Input
-          inputRef={inputRef}
-          type='text'
-          placeholder={placeholder ?? label}
-          className={`${classes.input} ${error ? classes.inputError : ''}`}
-          disableUnderline={true}
-          value={inputValue}
-          onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
-          error={error}
-        />
+    <>
+      <Box className={classes.inputWrapper}>
+        <Box className={`${classes.inputContainer}`}>
+          <div className={classes.labelContainer}>
+            <Typography className={classes.headerTitle}>
+              {capitalizedLabel}{' '}
+              {required ? <span className={classes.errorIndicator}>&nbsp;*</span> : null}
+            </Typography>
+          </div>
+          <Input
+            inputRef={inputRef}
+            type='text'
+            placeholder={placeholder ?? label}
+            className={`${classes.input} ${error ? classes.inputError : ''}`}
+            disableUnderline={true}
+            value={inputValue}
+            onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
+            error={error}
+          />
+        </Box>
+        <Box className={classes.errorMessageContainer}>
+          <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
+          {error && fullErrorMessage && (
+            <Tooltip title={fullErrorMessage} arrow>
+              <IconButton size='small'>
+                <InfoIcon className={classes.infoIcon} />
+              </IconButton>
+            </Tooltip>
+          )}
+        </Box>
       </Box>
-      <Box className={classes.errorMessageContainer}>
-        <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
-        {error && fullErrorMessage && (
-          <Tooltip title={fullErrorMessage} arrow>
-            <IconButton size='small'>
-              <InfoIcon className={classes.infoIcon} />
-            </IconButton>
-          </Tooltip>
-        )}
-      </Box>
-    </Box>
+    </>
   )
 }
