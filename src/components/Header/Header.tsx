@@ -38,7 +38,7 @@ export interface IHeader {
   activeChain: ISelectChain
   onChainSelect: (chain: ISelectChain) => void
   network: NetworkType
-  defaultMainnetRPC: string
+  defaultDevnetRPC: string
   rpcStatus: RpcStatus
 }
 
@@ -58,7 +58,7 @@ export const Header: React.FC<IHeader> = ({
   activeChain,
   onChainSelect,
   network,
-  defaultMainnetRPC,
+  defaultDevnetRPC,
   rpcStatus
 }) => {
   const { classes } = useStyles()
@@ -88,7 +88,7 @@ export const Header: React.FC<IHeader> = ({
     {
       networkType: NetworkType.Testnet,
       rpc: RPC.TEST,
-      rpcName: 'Aleph Zero Testnet'
+      rpcName: 'Eclipse Testnet'
     }
   ]
 
@@ -96,7 +96,7 @@ export const Header: React.FC<IHeader> = ({
     {
       networkType: NetworkType.Mainnet,
       rpc: RPC.MAIN,
-      rpcName: 'Aleph Zero Mainnet'
+      rpcName: 'Eclipse Mainnet'
     }
   ]
 
@@ -104,7 +104,7 @@ export const Header: React.FC<IHeader> = ({
     {
       networkType: NetworkType.Devnet,
       rpc: RPC.DEV,
-      rpcName: 'Eclipse'
+      rpcName: 'Eclipse '
     },
     {
       networkType: NetworkType.Devnet,
@@ -218,13 +218,13 @@ export const Header: React.FC<IHeader> = ({
                   rpc: defaultTestnetRPC,
                   rpcName:
                     testnetRPCs.find(data => data.rpc === defaultTestnetRPC)?.rpcName ?? 'Custom'
-                },
-                {
-                  networkType: NetworkType.Mainnet,
-                  rpc: defaultMainnetRPC,
-                  rpcName:
-                    mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
                 }
+                // {
+                //   networkType: NetworkType.Devnet,
+                //   rpc: defaultDevnetRPC,
+                //   rpcName:
+                //     mainnetRPCs.find(data => data.rpc === defaultDevnetRPC)?.rpcName ?? 'Custom'
+                // }
               ]}
               onSelect={onNetworkSelect}
             />

@@ -64,14 +64,14 @@ export const HeaderWrapper: React.FC = () => {
     return lastRPC === null ? RPC.TEST : lastRPC
   }, [])
 
-  const defaultMainnetRPC = useMemo(() => {
-    const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`)
+  const defaultDevnetRPC = useMemo(() => {
+    const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`)
 
     if (lastRPC === null) {
-      localStorage.setItem(`INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`, RPC.MAIN)
+      localStorage.setItem(`INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`, RPC.DEV_EU)
     }
 
-    return lastRPC === null ? RPC.MAIN : lastRPC
+    return lastRPC === null ? RPC.DEV_EU : lastRPC
   }, [])
 
   const activeChain = CHAINS.find(chain => chain.name === Chain.Eclipse) ?? CHAINS[0]
@@ -157,7 +157,7 @@ export const HeaderWrapper: React.FC = () => {
           }
         }}
         network={currentNetwork}
-        defaultMainnetRPC={defaultMainnetRPC}
+        defaultDevnetRPC={defaultDevnetRPC}
         rpcStatus={currentRpcStatus}
       />
     </>
