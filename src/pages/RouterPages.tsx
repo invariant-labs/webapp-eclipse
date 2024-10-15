@@ -5,6 +5,7 @@ import RootPage from './RootPage'
 import SinglePositionPage from '@pages/SinglePositionPage/SinglePositionPage'
 import StatsPage from '@pages/StatsPage/StatsPage'
 import SwapPage from '@pages/SwapPage/SwapPage'
+import SolanaCreator from '@pages/SolanaCreator/SolanaCreator'
 
 export const router = createBrowserRouter(
   createRoutesFromElements(
@@ -12,6 +13,7 @@ export const router = createBrowserRouter(
       <Route path='/exchange/:item1?/:item2?' element={<SwapPage />} />
       <Route path='/liquidity' element={<ListPage />} />
       <Route path='/statistics' element={<StatsPage />} />
+      <Route path='/token' element={<SolanaCreator />} />
       <Route path='/newPosition/:item1?/:item2?/:item3?' element={<NewPositionPage />} />
       <Route path='/position/:id' element={<SinglePositionPage />} />
       {/* <Route path='/token' element={<SolanaCreator />} /> */}

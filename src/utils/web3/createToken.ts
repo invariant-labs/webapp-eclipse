@@ -1,6 +1,6 @@
-import { DEFAULT_PUBLICKEY, NetworkType } from '@consts/static'
-import { FormData } from '../pages/SolanaCreator/utils/solanaCreatorUtils'
-import { getHeliusConnection } from './connection'
+import { DEFAULT_PUBLICKEY, NetworkType } from '../../store/consts/static'
+import { FormData } from '../../pages/SolanaCreator/utils/solanaCreatorUtils'
+import { getCurrentSolanaConnection } from './connection'
 import { getSolanaWallet } from './wallet'
 import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
 import { WebSolana } from '@irys/web-upload-solana'
@@ -44,13 +44,13 @@ export const stringToFile = (dataUrl: string) => {
 export const createToken = async (data: FormData, network: NetworkType) => {
   const wallet = getSolanaWallet()
 
-  const connection = getHeliusConnection(network)
+  const connection = getCurrentSolanaConnection()
   if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) return false
-
-  const irysUploader = await WebUploader(WebSolana)
-    .withProvider(wallet)
-    .withRpc(connection.rpcEndpoint)
-    .devnet()
+  if (!connection) return
+  const irysUploader =
+    network === NetworkType.Mainnet
+      ? await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint)
+      : await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint).devnet()
 
   const {
     name,
@@ -208,6 +208,8 @@ export const createToken = async (data: FormData, network: NetworkType) => {
 
   const signedTx = await wallet.signTransaction(transaction)
 
+  const sim = await connection.simulateTransaction(signedTx)
+  console.log(sim)
   const signatureTx = await connection.sendRawTransaction(signedTx.serialize())
   console.log(signatureTx)
   const confirmedTx = await connection.confirmTransaction({

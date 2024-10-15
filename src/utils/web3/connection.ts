@@ -17,15 +17,6 @@ const getSolanaConnection = (url: string): Connection => {
   return _connection
 }
 
-const getHeliusConnection = (type: NetworkType): Connection => {
-  switch (type) {
-    default:
-      return new Connection(
-        'https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c'
-      )
-  }
-}
-
 const networkTypetoProgramNetwork = (type: NetworkType): Network => {
   switch (type) {
     case NetworkType.Devnet:
@@ -76,7 +67,6 @@ const getCurrentSolanaConnection = (): Connection | null => {
 }
 
 export {
-  getHeliusConnection,
   getSolanaConnection,
   RPC,
   getCurrentSolanaConnection,
