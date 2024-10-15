@@ -28,7 +28,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
       <Box className={classes.inputsWrapper}>
         <ControlledTextInput
           name='name'
-          label='Name'
+          label='Name (Max 30)'
           placeholder='Put the name of your token here'
           control={control}
           errors={errors}
@@ -39,7 +39,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
         />
         <ControlledTextInput
           name='symbol'
-          label='Symbol'
+          label='Symbol (Max 8)'
           placeholder='Put the symbol of your token here'
           control={control}
           errors={errors}

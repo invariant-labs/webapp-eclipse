@@ -44,8 +44,10 @@ const useStyles = makeStyles()(() => ({
   },
   inputError: {
     borderColor: colors.invariant.Error,
+    color: colors.invariant.Error,
     '&:focus': {
-      borderColor: colors.invariant.Error
+      borderColor: colors.invariant.Error,
+      color: colors.invariant.Error
     }
   },
   headerTitle: {
@@ -80,23 +82,13 @@ const useStyles = makeStyles()(() => ({
     position: 'relative',
     display: 'inline-block'
   },
-  requiredDot: {
-    position: 'absolute',
-    top: '35px',
-    right: -5,
-    width: '10px',
-    height: '10px',
-    borderRadius: '50%',
-    backgroundColor: colors.invariant.Error,
-    animation: '$glowing 2s infinite'
-  },
   '@keyframes glowing': {
     '0%': { boxShadow: `0 0 0 0 ${colors.invariant.Error}40` },
     '70%': { boxShadow: `0 0 0 10px ${colors.invariant.Error}00` },
     '100%': { boxShadow: `0 0 0 0 ${colors.invariant.Error}00` }
   },
   errorIndicator: {
-    color: colors.invariant.Error
+    color: '#2EE09A'
   }
 }))
 

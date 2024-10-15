@@ -69,9 +69,11 @@ const useStyles = makeStyles()(() => ({
     '100%': { boxShadow: '0 0 0 0 rgba(255, 0, 0, 0)' }
   },
   inputError: {
-    border: `1px solid ${colors.invariant.Error}`,
+    borderColor: colors.invariant.Error,
+    color: colors.invariant.Error,
     '&:focus': {
-      border: `1px solid ${colors.invariant.Error}`
+      borderColor: colors.invariant.Error,
+      color: colors.invariant.Error
     }
   },
   infoIcon: {
@@ -92,7 +94,7 @@ const useStyles = makeStyles()(() => ({
     width: '100%'
   },
   errorIndicator: {
-    color: colors.invariant.Error
+    color: '#2EE09A'
   }
 }))
 
