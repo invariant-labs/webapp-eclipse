@@ -31,8 +31,6 @@ const useStyles = makeStyles()(() => ({
   inputWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    width: '100%',
-    minHeight: '110px',
     '&:focus': {
       color: colors.white.main
     }
@@ -47,11 +45,6 @@ const useStyles = makeStyles()(() => ({
     marginBottom: '8px',
     display: 'flex',
     alignItems: 'center'
-  },
-  inputContainer: {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column'
   },
   labelContainer: {
     position: 'relative',
