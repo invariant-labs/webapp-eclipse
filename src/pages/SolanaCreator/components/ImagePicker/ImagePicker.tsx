@@ -7,17 +7,19 @@ import Logo1 from '@static/svg/SolanaCreator/Logo.svg'
 import Logo2 from '@static/svg/SolanaCreator/Logo2.svg'
 import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
-import { Box, Button } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 
 interface ImagePickerProps {
   control: any
 }
 
 const defaultImages: string[] = [Logo1, Logo2, Cat1, Cat2]
+const MAX_FILE_SIZE = 800 * 1024
 
 export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
   const { classes } = useStyles()
   const [customImage, setCustomImage] = useState<string | null>(null)
+  const [error, setError] = useState<string | null>(null)
 
   const handleImageUpload = (
     e: ChangeEvent<HTMLInputElement>,
@@ -25,12 +27,19 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
   ) => {
     const file = e.target.files?.[0]
     if (file) {
+      if (file.size > MAX_FILE_SIZE) {
+        console.log('File size exceeds 1KB limit')
+        setError('File size exceeds 800KB limit')
+        return
+      }
+
       const reader = new FileReader()
       reader.onload = (e: ProgressEvent<FileReader>) => {
         if (e.target?.result) {
           const newCustomImage = e.target.result as string
           setCustomImage(newCustomImage)
           onChange(newCustomImage)
+          setError(null)
         }
       }
       reader.readAsDataURL(file)
@@ -62,12 +71,14 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
               ) : (
                 <ImageIcon className={classes.placeholderIcon} />
               )}
-              <input
-                accept='image/*'
-                className={classes.hiddenInput}
-                type='file'
-                onChange={e => handleImageUpload(e, onChange)}
-              />
+              {customImage ? null : (
+                <input
+                  accept='image/*'
+                  className={classes.hiddenInput}
+                  type='file'
+                  onChange={e => handleImageUpload(e, onChange)}
+                />
+              )}
             </Button>
           </Box>
           <Button component='label' className={classes.uploadButton} disableRipple>
@@ -80,6 +91,11 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
               onChange={e => handleImageUpload(e, onChange)}
             />
           </Button>
+          {error && (
+            <Typography color='error' className={classes.errorMessage}>
+              {error}
+            </Typography>
+          )}
         </Box>
       )}
     />

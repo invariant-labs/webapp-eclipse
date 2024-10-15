@@ -100,7 +100,6 @@ export const NumericInput: React.FC<INumericInput> = ({
           />
         </Box>
         <Box className={classes.errorMessageContainer}>
-          <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
           {error && fullErrorMessage && (
             <Tooltip title={fullErrorMessage} arrow>
               <IconButton size='small'>
@@ -108,6 +107,7 @@ export const NumericInput: React.FC<INumericInput> = ({
               </IconButton>
             </Tooltip>
           )}
+          <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
         </Box>
       </Box>
     </>

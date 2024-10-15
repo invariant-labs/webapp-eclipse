@@ -12,6 +12,12 @@ const useStyles = makeStyles()((theme: Theme) => ({
       alignItems: 'flex-start'
     }
   },
+  errorMessage: {
+    color: colors.invariant.Error,
+    fontSize: 13,
+    marginTop: 4,
+    width: '100%'
+  },
   uploadedImage: {
     borderRadius: 8,
     maxWidth: '100px',
