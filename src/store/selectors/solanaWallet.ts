@@ -5,10 +5,8 @@ import { PublicKey } from '@solana/web3.js'
 import { tokens } from './pools'
 import { ISolanaWallet, ITokenAccount, solanaWalletSliceName } from '@store/reducers/solanaWallet'
 import {
-  NetworkType,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
-  WETH_POOL_INIT_LAMPORTS,
-  WETH_POOL_INIT_LAMPORTS_TEST,
+  WETH_POSITION_INIT_LAMPORTS,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 
@@ -72,39 +70,28 @@ export const swapTokens = createSelector(
           ? ethBalance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
             ? ethBalance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
             : new BN(0)
-          : (allAccounts[token.address.toString()]?.balance ?? new BN(0))
+          : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
   }
 )
-export const minPoolEthBalance = (network: NetworkType) =>
-  createSelector(balance, ethBalance => {
-    switch (network) {
-      case NetworkType.Devnet:
-        return ethBalance.gt(WETH_POOL_INIT_LAMPORTS)
-          ? ethBalance.sub(WETH_POOL_INIT_LAMPORTS)
-          : new BN(0)
-      case NetworkType.Testnet:
-        return ethBalance.gt(WETH_POOL_INIT_LAMPORTS_TEST)
-          ? ethBalance.sub(WETH_POOL_INIT_LAMPORTS_TEST)
-          : new BN(0)
-      case NetworkType.Mainnet:
-      default:
-        return ethBalance.gt(WETH_POOL_INIT_LAMPORTS)
-          ? ethBalance.sub(WETH_POOL_INIT_LAMPORTS)
-          : new BN(0)
-    }
-  })
 
-export const poolTokens = createSelector(accounts, tokens, (allAccounts, tokens) => {
-  return Object.values(tokens).map(token => ({
-    ...token,
-    assetAddress: token.address,
-    balance:
-      token.address.toString() === WRAPPED_ETH_ADDRESS
-        ? minPoolEthBalance
-        : (allAccounts[token.address.toString()]?.balance ?? new BN(0))
-  }))
-})
+export const poolTokens = createSelector(
+  accounts,
+  tokens,
+  balance,
+  (allAccounts, tokens, ethBalance) => {
+    return Object.values(tokens).map(token => ({
+      ...token,
+      assetAddress: token.address,
+      balance:
+        token.address.toString() === WRAPPED_ETH_ADDRESS
+          ? ethBalance.gt(WETH_POSITION_INIT_LAMPORTS)
+            ? ethBalance.sub(WETH_POSITION_INIT_LAMPORTS)
+            : new BN(0)
+          : allAccounts[token.address.toString()]?.balance ?? new BN(0)
+    }))
+  }
+)
 
 export const swapTokensDict = createSelector(
   accounts,
@@ -120,7 +107,7 @@ export const swapTokensDict = createSelector(
         balance:
           val.address.toString() === WRAPPED_ETH_ADDRESS
             ? ethBalance
-            : (allAccounts[val.address.toString()]?.balance ?? new BN(0))
+            : allAccounts[val.address.toString()]?.balance ?? new BN(0)
       }
     })
 

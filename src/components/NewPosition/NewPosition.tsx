@@ -119,7 +119,6 @@ export interface INewPosition {
   walletStatus: Status
   onConnectWallet: () => void
   onDisconnectWallet: () => void
-  ethBalanceWithoutFee: BN
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -175,8 +174,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   ethBalance,
   walletStatus,
   onConnectWallet,
-  onDisconnectWallet,
-  ethBalanceWithoutFee
+  onDisconnectWallet
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -707,7 +705,6 @@ export const NewPosition: React.FC<INewPosition> = ({
           walletStatus={walletStatus}
           onConnectWallet={onConnectWallet}
           onDisconnectWallet={onDisconnectWallet}
-          ethBalanceWithoutFee={ethBalanceWithoutFee}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

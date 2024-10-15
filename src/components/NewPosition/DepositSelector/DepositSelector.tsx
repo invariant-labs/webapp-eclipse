@@ -3,7 +3,12 @@ import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmo
 import Select from '@components/Inputs/Select/Select'
 import { Grid, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
-import { ALL_FEE_TIERS_DATA, NetworkType } from '@store/consts/static'
+import {
+  ALL_FEE_TIERS_DATA,
+  NetworkType,
+  WETH_POOL_INIT_LAMPORTS,
+  WRAPPED_ETH_ADDRESS
+} from '@store/consts/static'
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useState } from 'react'
 import FeeSwitch from '../FeeSwitch/FeeSwitch'
@@ -71,7 +76,6 @@ export interface IDepositSelector {
   walletStatus: Status
   onConnectWallet: () => void
   onDisconnectWallet: () => void
-  ethBalanceWithoutFee: BN
   tokenAIndex: number | null
   tokenBIndex: number | null
   setTokenAIndex: (index: number | null) => void
@@ -110,11 +114,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   isGetLiquidityError,
   ticksLoading,
   network,
-  ethBalance,
   walletStatus,
   onConnectWallet,
-  onDisconnectWallet,
-  ethBalanceWithoutFee
+  onDisconnectWallet
 }) => {
   const { classes } = useStyles()
 
@@ -137,7 +139,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(initialHideUnknownTokensValue)
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false)
-
+  console.log('tokenAInputState.value', tokenAInputState.value)
+  console.log(
+    'tokenAInputState.price',
+    tokenAIndex &&
+      convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).toString()
+  )
   useEffect(() => {
     if (isLoaded || tokens.length === 0 || ALL_FEE_TIERS_DATA.length === 0) {
       return
@@ -220,7 +227,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return `Not enough ${tokens[tokenBIndex].symbol}`
     }
 
-    if (ethBalance.lt(ethBalanceWithoutFee)) {
+    const tokenABalance = convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals)
+    const tokenBBalance = convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals)
+
+    if (
+      (poolIndex === null &&
+        tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_POOL_INIT_LAMPORTS))) ||
+      (poolIndex === null &&
+        tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_POOL_INIT_LAMPORTS)))
+    ) {
       return `Insufficient ETH`
     }
 
@@ -364,6 +381,21 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           onMaxClick={() => {
             if (tokenAIndex === null) {
               return
+            }
+
+            if (tokens[tokenAIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
+              if (tokenBIndex !== null && poolIndex === null) {
+                tokenAInputState.setValue(
+                  printBN(
+                    tokens[tokenAIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
+                      ? tokens[tokenAIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
+                      : new BN(0),
+                    tokens[tokenAIndex].decimals
+                  )
+                )
+
+                return
+              }
             }
 
             tokenAInputState.setValue(

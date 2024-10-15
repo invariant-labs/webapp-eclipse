@@ -31,13 +31,7 @@ import {
   poolsArraySortedByFees
 } from '@store/selectors/pools'
 import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
-import {
-  balanceLoading,
-  status,
-  balance,
-  poolTokens,
-  minPoolEthBalance
-} from '@store/selectors/solanaWallet'
+import { balanceLoading, status, balance, poolTokens } from '@store/selectors/solanaWallet'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -66,7 +60,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const dispatch = useDispatch()
   const connection = getCurrentSolanaConnection()
   const ethBalance = useSelector(balance)
-  const ethBalanceWithoutFee = useSelector(minPoolEthBalance)
   const tokens = useSelector(poolTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
@@ -699,7 +692,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       currentFeeIndex={feeIndex}
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
-      ethBalanceWithoutFee={ethBalanceWithoutFee}
     />
   )
 }
