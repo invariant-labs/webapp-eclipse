@@ -45,7 +45,8 @@ const useStyles = makeStyles((theme: Theme) => ({
   labelContainer: {
     position: 'relative',
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'baseline',
+    marginBottom: theme.spacing(0.5)
   },
   requiredDot: {
     position: 'absolute',

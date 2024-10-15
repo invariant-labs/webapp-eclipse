@@ -84,17 +84,17 @@ export const NumericInput: React.FC<INumericInput> = ({
       <Box className={`${classes.inputContainer}`}>
         <div className={classes.labelContainer}>
           <Typography className={classes.headerTitle}>{capitalizedLabel}</Typography>
-          {required && <span className={classes.requiredDot} />}
+          <Typography variant='h6'>
+            {error && fullErrorMessage && (
+              <Tooltip title={fullErrorMessage} arrow>
+                <IconButton size='small'>
+                  <InfoIcon className={classes.infoIcon} />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Typography>
+          {!error && required && <span className={classes.requiredDot} />}
         </div>
-        <Typography variant='h6'>
-          {error && fullErrorMessage && (
-            <Tooltip title={fullErrorMessage} arrow>
-              <IconButton size='small'>
-                <InfoIcon className={classes.infoIcon} />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Typography>
         <Input
           inputRef={inputRef}
           type='text'
