@@ -3,6 +3,7 @@ import { useForm } from 'react-hook-form'
 import useStyles from './styles'
 import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils'
 import { TokenInfoInputs } from '../CreatorComponents/TokenInfoInputs'
+import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
 import { Box, Typography } from '@mui/material'
 
 interface FormData {
@@ -53,6 +54,7 @@ export const CreateToken: React.FC = () => {
           <form onSubmit={formMethods.handleSubmit(onSubmit)}>
             <Box className={classes.row}>
               <TokenInfoInputs formMethods={formMethods} />
+              <TokenMetadataInputs formMethods={formMethods} />
             </Box>
           </form>
         </Box>

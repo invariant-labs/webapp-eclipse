@@ -65,10 +65,16 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: colors.invariant.component,
       borderRadius: '24px'
     },
+
+    tokenCost: {
+      display: 'flex',
+      alignItems: 'center',
+      color: colors.invariant.text,
+      gap: '10px'
+    },
     inputsWrapper: {
       display: 'flex',
-      flexDirection: 'column',
-      gap: '16px'
+      flexDirection: 'column'
     },
     inputContainer: {
       height: '110px',
@@ -116,8 +122,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       paddingTop: '24px',
       width: '100%',
       [theme.breakpoints.up('md')]: {
-        flexDirection: 'row',
-        width: '70%'
+        flexDirection: 'row'
       }
     }
   }

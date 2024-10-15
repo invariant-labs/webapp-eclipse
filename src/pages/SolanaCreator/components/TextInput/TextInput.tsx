@@ -12,6 +12,8 @@ interface ITextInput {
   maxRows?: number
   error?: boolean
   errorMessage?: string
+  placeholder?: string
+  required?: boolean
 }
 
 export const TextInput: React.FC<ITextInput> = ({
@@ -22,7 +24,9 @@ export const TextInput: React.FC<ITextInput> = ({
   value,
   handleChange,
   error = false,
-  errorMessage = ''
+  errorMessage = '',
+  placeholder,
+  required = false
 }) => {
   const { classes } = useStyles()
   const capitalizedLabel =
@@ -32,9 +36,14 @@ export const TextInput: React.FC<ITextInput> = ({
 
   return (
     <Box className={classes.inputWrapper}>
-      <h1 className={classes.headerTitle}>{capitalizedLabel}</h1>
+      <div className={classes.labelContainer}>
+        <h1 className={classes.headerTitle}>
+          {capitalizedLabel}{' '}
+          {required ? <span className={classes.errorIndicator}>&nbsp;*</span> : null}
+        </h1>
+      </div>
       <Input
-        placeholder={label}
+        placeholder={placeholder ?? label}
         className={`${classes.input} ${error ? classes.inputError : ''}`}
         disableUnderline={true}
         multiline={multiline}
@@ -43,6 +52,7 @@ export const TextInput: React.FC<ITextInput> = ({
         value={value}
         onChange={handleChange}
         error={error}
+        required={required}
       />
       <Typography className={classes.errorMessage}>{errorMessage}</Typography>
     </Box>

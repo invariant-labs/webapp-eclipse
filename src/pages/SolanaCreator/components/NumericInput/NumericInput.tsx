@@ -7,9 +7,11 @@ interface INumericInput {
   value: string
   onChange: (value: string) => void
   decimalsLimit?: number
+  placeholder?: string
   error?: boolean
   errorMessage?: string
   fullErrorMessage?: string
+  required?: boolean
 }
 
 const getScaleFromString = (value: string): number => {
@@ -24,7 +26,9 @@ export const NumericInput: React.FC<INumericInput> = ({
   decimalsLimit = 2,
   error = false,
   errorMessage = '',
-  fullErrorMessage = ''
+  fullErrorMessage = '',
+  placeholder,
+  required
 }) => {
   const { classes } = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -75,10 +79,27 @@ export const NumericInput: React.FC<INumericInput> = ({
   }
 
   return (
-    <Box className={classes.inputWrapper}>
-      <Box className={`${classes.inputContainer}`}>
-        <Typography variant='h6' className={classes.headerTitle}>
-          {capitalizedLabel}
+    <>
+      <Box className={classes.inputWrapper}>
+        <Box>
+          <div className={classes.labelContainer}>
+            <Typography className={classes.headerTitle}>
+              {capitalizedLabel}{' '}
+              {required ? <span className={classes.errorIndicator}>&nbsp;*</span> : null}
+            </Typography>
+          </div>
+          <Input
+            inputRef={inputRef}
+            type='text'
+            placeholder={placeholder ?? label}
+            className={`${classes.input} ${error ? classes.inputError : ''}`}
+            disableUnderline={true}
+            value={inputValue}
+            onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
+            error={error}
+          />
+        </Box>
+        <Box className={classes.errorMessageContainer}>
           {error && fullErrorMessage && (
             <Tooltip title={fullErrorMessage} arrow>
               <IconButton size='small'>
@@ -86,21 +107,9 @@ export const NumericInput: React.FC<INumericInput> = ({
               </IconButton>
             </Tooltip>
           )}
-        </Typography>
-        <Input
-          inputRef={inputRef}
-          type='text'
-          placeholder={label}
-          className={`${classes.input} ${error ? classes.inputError : ''}`}
-          disableUnderline={true}
-          value={inputValue}
-          onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
-          error={error}
-        />
+          <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
+        </Box>
       </Box>
-      <Box className={classes.errorMessageContainer}>
-        <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>
-      </Box>
-    </Box>
+    </>
   )
 }
