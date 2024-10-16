@@ -1,13 +1,12 @@
-import React, { useState } from 'react'
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import AnimatedNumber from './AnimatedNumber'
 import { formatNumber } from '@utils/utils'
-import { Button, TextField } from '@mui/material' // Using MUI for Button and TextField
+import { Button, TextField } from '@mui/material'
 import { Provider } from 'react-redux'
 import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
 
-// Define the meta object for Storybook
 const meta = {
   title: 'Common/AnimatedNumber',
   component: AnimatedNumber,

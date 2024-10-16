@@ -3,7 +3,6 @@ import { MemoryRouter } from 'react-router-dom'
 import PoolList from './PoolList'
 import { store } from '@store/index'
 import { Provider } from 'react-redux'
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { NetworkType } from '@store/consts/static'
 
 const meta = {
