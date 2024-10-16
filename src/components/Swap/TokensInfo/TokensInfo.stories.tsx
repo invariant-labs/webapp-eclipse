@@ -27,7 +27,7 @@ export const Primary: Story = {
   args: {
     copyTokenAddressHandler: fn(),
     tokenFrom: {
-      balance: 234234000343400000n as any,
+      balance: 234234000343400000,
       symbol: BTC_TEST.symbol,
       assetAddress: BTC_TEST.address,
       name: BTC_TEST.name,
@@ -37,7 +37,7 @@ export const Primary: Story = {
       isUnknown: false
     },
     tokenTo: {
-      balance: 23435345450000400n as any,
+      balance: 23435345450000400,
       symbol: USDC_TEST.symbol,
       assetAddress: USDC_TEST.address,
       name: USDC_TEST.name,
@@ -46,8 +46,8 @@ export const Primary: Story = {
       decimals: USDC_TEST.decimals,
       isUnknown: false
     },
-    tokenFromPrice: 53433 as any,
-    tokenToPrice: 3243 as any,
+    tokenFromPrice: 53433,
+    tokenToPrice: 3243,
     network: NetworkType.Testnet
   },
   render: args => {

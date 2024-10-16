@@ -119,7 +119,7 @@ export const Primary: Story = {
     handleRefresh: () => {},
     initialPage: 1,
     setLastPage: () => {},
-    length: 0 as any,
+    length: 0,
     noInitialPositions: false
   }
 }

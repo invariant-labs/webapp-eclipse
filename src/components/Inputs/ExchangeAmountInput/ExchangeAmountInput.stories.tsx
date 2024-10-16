@@ -85,19 +85,12 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    value: '0', // Default value for the input
+    value: '0',
     setValue: fn()
   },
   render: args => {
-    const [value, setValue] = useState('0') // Manage state for value
-    return (
-      <ExchangeAmountInput
-        {...args}
-        setValue={setValue}
-        value={value}
-        tokens={tokens} // Example tokens; replace with real token data if needed
-      />
-    )
+    const [value, setValue] = useState('0')
+    return <ExchangeAmountInput {...args} setValue={setValue} value={value} tokens={tokens} />
   }
 }
 
@@ -105,10 +98,10 @@ export const WithError: Story = {
   args: {
     value: '0',
     setValue: fn(),
-    error: 'Invalid amount' // Example error message
+    error: 'Invalid amount'
   },
   render: args => {
-    const [value, setValue] = useState('0') // Manage state for value
+    const [value, setValue] = useState('0')
     return <ExchangeAmountInput {...args} setValue={setValue} value={value} />
   }
 }

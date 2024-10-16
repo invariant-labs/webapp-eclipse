@@ -23,7 +23,6 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-
 const tokens: SwapToken[] = [
   {
     balance: new BN(100).mul(new BN(34786)),
@@ -59,12 +58,12 @@ export const Primary: Story = {
     currentPairReversed: false,
     isXtoY: true,
     addLiquidityHandler: fn(),
-    midPrice: { x: 1234, index: 23 } as any,
+    midPrice: { x: 1234, index: 23, sqrtPrice: new BN(1111111111123) },
     bestTiers: [],
     commonTokens: [],
     copyPoolAddressHandler: fn(),
     currentFeeIndex: 0,
-    currentPriceSqrt: 123 as any,
+    currentPriceSqrt: 123,
     data: [],
     feeTiers: [
       { feeValue: 0.1 },
@@ -91,10 +90,10 @@ export const Primary: Story = {
     reloadHandler: fn(),
     setMidPrice: fn(),
     ticksLoading: false,
-    tickSpacing: 1 as any,
+    tickSpacing: 1,
     tokens: tokens,
-    xDecimal: 9 as any,
-    yDecimal: 12 as any,
+    xDecimal: 9,
+    yDecimal: 12,
     hasTicksError: false,
     calcAmount: fn(),
     loadingTicksAndTickMaps: false,
