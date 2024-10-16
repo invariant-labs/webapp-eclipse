@@ -3,9 +3,9 @@ import { BrowserRouter } from 'react-router-dom'
 import { PositionsList } from './PositionsList'
 import { NetworkType } from '@store/consts/static'
 import { IPositionItem } from './PositionItem/PositionItem'
-import { PublicKey } from '@solana/web3.js'
+
 const meta = {
-  title: 'PositionsList',
+  title: 'Components/PositionsList',
   component: PositionsList,
   decorators: [
     Story => (

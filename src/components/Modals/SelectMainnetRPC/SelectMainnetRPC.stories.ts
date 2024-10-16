@@ -4,7 +4,7 @@ import { RpcStatus } from '@store/reducers/solanaConnection'
 import { NetworkType } from '@store/consts/static'
 
 const meta = {
-  title: 'Modals/SelectRPC',
+  title: 'Modals/SelectMainnetRPC',
   component: SelectMainnetRPC,
   args: {
     activeRPC: 'https://mainnet-mock.com',

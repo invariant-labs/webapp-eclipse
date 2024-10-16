@@ -48,7 +48,9 @@ const meta = {
     Story => (
       <Provider store={store}>
         <MemoryRouter>
-          <Story />
+          <div style={{ width: '500px' }}>
+            <Story />
+          </div>
         </MemoryRouter>
       </Provider>
     )
@@ -94,7 +96,7 @@ export const Primary: Story = {
     onReverseTokens: fn(),
     poolIndex: 0,
     positionOpeningMethod: 'range',
-    progress: 'success',
+    progress: 'none',
     setPositionTokens: fn(),
     tokens: tokens,
     feeTierIndex: 0,

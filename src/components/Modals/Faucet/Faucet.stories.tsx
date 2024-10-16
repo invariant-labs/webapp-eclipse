@@ -1,13 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react'
-import FaucetButton from './FaucetButton'
+import Faucet from './Faucet'
 import { fn } from '@storybook/test'
-import { store } from '@store/index'
 import { Provider } from 'react-redux'
+import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
-  title: 'Buttons/FaucetButton',
-  component: FaucetButton,
+  title: 'Modals/Faucet',
+  component: Faucet,
   decorators: [
     Story => (
       <Provider store={store}>
@@ -16,15 +16,16 @@ const meta = {
         </MemoryRouter>
       </Provider>
     )
-  ]
-} satisfies Meta<typeof FaucetButton>
+  ],
+  args: {
+    open: true,
+    onFaucet: () => {}
+  }
+} satisfies Meta<typeof Faucet>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
-  args: {
-    onFaucet: fn(),
-    children: 'Faucet'
-  }
+  args: { anchorEl: null, open: true, handleClose: fn() }
 }

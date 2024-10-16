@@ -30,7 +30,7 @@
 //   )
 
 //   const isAddressValid = () => {
-//     const urlRegex = /^https?:\/\/[^.]+\.[^.]+/
+//   const urlRegex = /^(https?:\/\/|wss?:\/\/)[\w.-]+\.[a-zA-Z]{2,}(:\d+)?(\/.*)?$/;
 
 //     return urlRegex.test(address)
 //   }

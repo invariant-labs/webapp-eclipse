@@ -16,7 +16,12 @@ const meta = {
         rpcName: 'Testnet'
       },
       {
-        networkType: NetworkType.Testnet,
+        networkType: NetworkType.Devnet,
+        rpc: 'https://mock.com',
+        rpcName: 'Devnet'
+      },
+      {
+        networkType: NetworkType.Mainnet,
         rpc: 'https://mock.com',
         rpcName: 'Mainnet'
       }

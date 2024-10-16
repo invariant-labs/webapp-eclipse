@@ -1,13 +1,13 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import FaucetButton from './FaucetButton'
-import { fn } from '@storybook/test'
 import { store } from '@store/index'
+import { RpcErrorModal } from './RpcErrorModal'
+import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
-  title: 'Buttons/FaucetButton',
-  component: FaucetButton,
+  title: 'Modals/RpcErrorModal',
+  component: RpcErrorModal,
   decorators: [
     Story => (
       <Provider store={store}>
@@ -17,14 +17,15 @@ const meta = {
       </Provider>
     )
   ]
-} satisfies Meta<typeof FaucetButton>
+} satisfies Meta<typeof RpcErrorModal>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    onFaucet: fn(),
-    children: 'Faucet'
+    rpcAddress: 'https://rpc-mainnet.maticvigil.com/',
+    useCurrentRpc: fn(),
+    useDefaultRpc: fn()
   }
 }

@@ -25,18 +25,6 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const data = [
-  {
-    x: calcPriceByTickIndex(MIN_TICK, true, 6, 6),
-    y: 10,
-    index: MIN_TICK
-  },
-  {
-    x: calcPriceByTickIndex(MAX_TICK, true, 6, 6),
-    y: 10,
-    index: MAX_TICK
-  }
-]
 
 const tokens: SwapToken[] = [
   {

@@ -13,7 +13,9 @@ const meta = {
     Story => (
       <Provider store={store}>
         <MemoryRouter>
-          <Story />
+          <div style={{ width: '500px' }}>
+            <Story />
+          </div>
         </MemoryRouter>
       </Provider>
     )
