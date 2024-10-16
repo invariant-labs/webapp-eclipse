@@ -20,6 +20,9 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@invariant-labs/sdk-eclipse": "^0.0.20",
+    "@irys/web-upload": "^0.0.13",
+    "@irys/web-upload-solana": "^0.1.6",
+    "@metaplex-foundation/mpl-token-metadata": "^2.13.0",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@nightlylabs/wallet-selector-solana": "^0.3.1",
@@ -85,6 +88,7 @@
     "typescript-eslint": "^7.7.0",
     "vite": "^5.2.0",
     "vite-plugin-compression2": "^1.1.1",
+    "vite-plugin-node-polyfills": "^0.22.0",
     "vite-plugin-wasm": "^3.3.0",
     "vitest": "^1.5.0"
   },
