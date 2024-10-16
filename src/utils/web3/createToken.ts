@@ -208,8 +208,6 @@ export const createToken = async (data: FormData, network: NetworkType) => {
 
   const signedTx = await wallet.signTransaction(transaction)
 
-  const sim = await connection.simulateTransaction(signedTx)
-  console.log(sim)
   const signatureTx = await connection.sendRawTransaction(signedTx.serialize())
   console.log(signatureTx)
   const confirmedTx = await connection.confirmTransaction({
