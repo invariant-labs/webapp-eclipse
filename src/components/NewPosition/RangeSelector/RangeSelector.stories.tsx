@@ -1,96 +1,72 @@
-import React from 'react'
-import { storiesOf } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react'
+import { fn } from '@storybook/test'
+import { useState } from 'react'
 import RangeSelector from './RangeSelector'
-import { action } from '@storybook/addon-actions'
-import { calcPrice } from '@consts/utils'
-import { MAX_TICK, MIN_TICK } from '@invariant-labs/sdk-eclipse'
+import { Provider } from 'react-redux'
+import { store } from '@store/index'
+import { MemoryRouter } from 'react-router-dom'
 
-const data = [
-  {
-    x: calcPrice(MIN_TICK, true, 6, 6),
-    y: 10,
-    index: MIN_TICK
+const meta = {
+  title: 'Components/RangeSelector',
+  component: RangeSelector,
+  decorators: [
+    Story => (
+      <Provider store={store}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </Provider>
+    )
+  ]
+} satisfies Meta<typeof RangeSelector>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+const PrimaryComponent: React.FC<typeof Primary.args> = args => {
+  const [concentrationIndex, setConcentrationIndex] = useState<number>(2)
+
+  return (
+    <RangeSelector
+      {...args}
+      concentrationIndex={concentrationIndex}
+      setConcentrationIndex={setConcentrationIndex}
+      tickSpacing={1 as any}
+      xDecimal={9 as any}
+      yDecimal={12 as any}
+      midPrice={{ x: 1, index: 1 as any }}
+      data={[{ x: 0, y: 0, index: 0 as any }]}
+    />
+  )
+}
+
+export const Primary: Story = {
+  args: {
+    currentPairReversed: false,
+    isXtoY: true,
+    midPrice: { x: 1, index: 1 as any },
+    concentrationArray: [0.1, 0.2, 0.3, 0.4, 0.5],
+    concentrationIndex: 2,
+    data: [{ x: 0, y: 0, index: 0 as any }],
+    getTicksInsideRange: () => ({ leftInRange: 0n as any, rightInRange: 100n as any }),
+    minimumSliderIndex: 0,
+    onChangeRange: fn(),
+    poolIndex: 0,
+    reloadHandler: fn(),
+    setConcentrationIndex: fn(),
+    ticksLoading: false,
+    tickSpacing: 1 as any,
+    tokenASymbol: 'SOL',
+    tokenBSymbol: 'ETH',
+    xDecimal: 9 as any,
+    yDecimal: 12 as any,
+    poolKey: '',
+    setShouldReversePlot: fn(),
+    shouldReversePlot: false,
+    shouldNotUpdatePriceRange: false,
+    unblockUpdatePriceRange: fn(),
+    onlyUserPositions: false,
+    setOnlyUserPositions: fn()
   },
-  {
-    x: calcPrice(MAX_TICK, true, 6, 6),
-    y: 10,
-    index: MAX_TICK
-  }
-]
-
-storiesOf('position/rangeSelector', module)
-  .add('setter', () => (
-    <RangeSelector
-      data={data}
-      midPrice={{
-        x: calcPrice(140, true, 6, 6),
-        index: 140
-      }}
-      tokenASymbol='BAT'
-      tokenBSymbol='ETH'
-      onChangeRange={(left, right) => {
-        action(`range indexes: ${left} - ${right}`)()
-      }}
-      ticksLoading={false}
-      xDecimal={6}
-      yDecimal={6}
-      tickSpacing={1}
-      isXtoY={true}
-      currentPairReversed={null}
-      initialIsDiscreteValue={false}
-      onDiscreteChange={() => {}}
-      poolIndex={null}
-      reloadHandler={() => {}}
-    />
-  ))
-  .add('blocked', () => (
-    <RangeSelector
-      data={data}
-      midPrice={{
-        x: calcPrice(140, true, 6, 6),
-        index: 140
-      }}
-      tokenASymbol='BAT'
-      tokenBSymbol='ETH'
-      onChangeRange={(left, right) => {
-        action(`range indexes: ${left} - ${right}`)()
-      }}
-      blocked
-      blockerInfo='Select tokens to set price range.'
-      ticksLoading={false}
-      xDecimal={6}
-      yDecimal={6}
-      tickSpacing={4}
-      isXtoY={true}
-      currentPairReversed={null}
-      initialIsDiscreteValue={false}
-      onDiscreteChange={() => {}}
-      poolIndex={null}
-      reloadHandler={() => {}}
-    />
-  ))
-  .add('concentrated', () => (
-    <RangeSelector
-      data={data}
-      midPrice={{
-        x: calcPrice(140, true, 6, 6),
-        index: 140
-      }}
-      tokenASymbol='BAT'
-      tokenBSymbol='ETH'
-      onChangeRange={(left, right) => {
-        action(`range indexes: ${left} - ${right}`)()
-      }}
-      ticksLoading={false}
-      xDecimal={6}
-      yDecimal={6}
-      tickSpacing={1}
-      isXtoY={true}
-      currentPairReversed={null}
-      initialIsDiscreteValue={false}
-      onDiscreteChange={() => {}}
-      isConcentrated
-      poolIndex={null}
-      reloadHandler={() => {}}
-    />
-  ))
+  render: args => <PrimaryComponent {...args} />
+}

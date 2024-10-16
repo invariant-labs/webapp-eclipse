@@ -1,27 +1,28 @@
-import { makeStyles } from '@material-ui/core'
 import { colors, typography } from '@static/theme'
+import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles()(() => ({
   input: {
-    padding: '11px 12px',
-    width: '100%',
-    boxSizing: 'border-box',
     ...typography.body2,
-    outline: 'none',
-    marginRight: -8,
+    width: '100%',
+    padding: '11px 12px',
+    boxSizing: 'border-box',
     fontFamily: 'Mukta',
-    outlineStyle: 'none',
     fontSize: 16,
+    outline: 'none',
     border: '1px solid transparent',
     backgroundColor: colors.invariant.newDark,
     color: colors.invariant.lightGrey,
     borderRadius: 8,
     cursor: 'pointer',
+    transition: 'color 0.3s ease, border-color 0.3s ease',
+
     '&::placeholder': {
       color: colors.invariant.textGrey
     },
     '&:focus': {
-      color: colors.white.main
+      color: colors.white.main,
+      borderColor: colors.invariant.lightGrey
     },
     '& textarea': {
       overflow: 'auto !important',
@@ -34,6 +35,7 @@ const useStyles = makeStyles(() => ({
       '&::-webkit-scrollbar-thumb': {
         backgroundColor: colors.invariant.lightGrey,
         borderRadius: '4px',
+        transition: 'background-color 0.3s ease',
         '&:hover': {
           backgroundColor: colors.invariant.textGrey
         }
@@ -41,22 +43,23 @@ const useStyles = makeStyles(() => ({
     }
   },
   inputError: {
-    border: `1px solid ${colors.red.main}`,
+    borderColor: colors.invariant.Error,
+    color: colors.invariant.Error,
     '&:focus': {
-      border: `1px solid ${colors.red.main}`
+      borderColor: colors.invariant.Error,
+      color: colors.invariant.Error
     }
   },
   headerTitle: {
     fontFamily: 'Mukta',
-    fontStyle: 'normal',
     fontWeight: 700,
     fontSize: '20px',
     lineHeight: '24px',
-    display: 'flex',
-    alignItems: 'center',
     letterSpacing: '-0.03em',
     color: colors.invariant.text,
-    marginBottom: '8px'
+    marginBottom: '8px',
+    display: 'flex',
+    alignItems: 'center'
   },
   inputWrapper: {
     display: 'flex',
@@ -69,10 +72,23 @@ const useStyles = makeStyles(() => ({
     overflowY: 'auto'
   },
   errorMessage: {
-    color: colors.red.main,
+    color: colors.invariant.Error,
     fontSize: '14px',
     lineHeight: '20px',
-    minHeight: '20px'
+    minHeight: '20px',
+    marginTop: 4
+  },
+  labelContainer: {
+    position: 'relative',
+    display: 'inline-block'
+  },
+  '@keyframes glowing': {
+    '0%': { boxShadow: `0 0 0 0 ${colors.invariant.Error}40` },
+    '70%': { boxShadow: `0 0 0 10px ${colors.invariant.Error}00` },
+    '100%': { boxShadow: `0 0 0 0 ${colors.invariant.Error}00` }
+  },
+  errorIndicator: {
+    color: '#2EE09A'
   }
 }))
 

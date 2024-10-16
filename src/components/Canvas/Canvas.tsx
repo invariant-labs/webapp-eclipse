@@ -1,4 +1,4 @@
-import { randomNumberFromRange } from '@consts/uiUtils'
+import { randomNumberFromRange } from '@utils/utils'
 import React, { useEffect, useRef } from 'react'
 
 export interface IProps {

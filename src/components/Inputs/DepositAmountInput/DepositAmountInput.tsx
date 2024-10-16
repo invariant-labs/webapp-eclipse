@@ -1,7 +1,7 @@
-import { formatNumbers, FormatNumberThreshold, getScaleFromString, showPrefix } from '@consts/utils'
-import { Button, Grid, Input, Tooltip, Typography } from '@material-ui/core'
-import React, { useRef, CSSProperties } from 'react'
+import { Button, Grid, Input, Tooltip, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
+import { formatNumber, getScaleFromString } from '@utils/utils'
+import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 
 interface IProps {
@@ -16,10 +16,13 @@ interface IProps {
   blockerInfo?: string
   decimalsLimit: number
   onBlur?: () => void
+  percentageChange?: number
   tokenPrice?: number
   balanceValue?: string
   disabled?: boolean
   priceLoading?: boolean
+  isBalanceLoading: boolean
+  walletUninitialized: boolean
 }
 
 export const DepositAmountInput: React.FC<IProps> = ({
@@ -37,71 +40,13 @@ export const DepositAmountInput: React.FC<IProps> = ({
   tokenPrice,
   balanceValue,
   disabled = false,
-  priceLoading = false
+  priceLoading = false,
+  isBalanceLoading,
+  walletUninitialized
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles({ isSelected: !!currency && !walletUninitialized })
 
   const inputRef = useRef<HTMLInputElement>(null)
-
-  const thresholds: FormatNumberThreshold[] = [
-    {
-      value: 10,
-      decimals: decimalsLimit
-    },
-    {
-      value: 100,
-      decimals: 4
-    },
-    {
-      value: 1000,
-      decimals: 2
-    },
-    {
-      value: 10000,
-      decimals: 1
-    },
-    {
-      value: 1000000,
-      decimals: 2,
-      divider: 1000
-    },
-    {
-      value: 1000000000,
-      decimals: 2,
-      divider: 1000000
-    },
-    {
-      value: Infinity,
-      decimals: 2,
-      divider: 1000000000
-    }
-  ]
-
-  const usdThresholds: FormatNumberThreshold[] = [
-    {
-      value: 1000,
-      decimals: 2
-    },
-    {
-      value: 10000,
-      decimals: 1
-    },
-    {
-      value: 1000000,
-      decimals: 2,
-      divider: 1000
-    },
-    {
-      value: 1000000000,
-      decimals: 2,
-      divider: 1000000
-    },
-    {
-      value: Infinity,
-      decimals: 2,
-      divider: 1000000000
-    }
-  ]
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
     const regex = /^\d*\.?\d*$/
@@ -162,26 +107,29 @@ export const DepositAmountInput: React.FC<IProps> = ({
             wrap='nowrap'>
             {currency !== null ? (
               <>
-                <img alt='' src={currencyIconSrc} className={classes.currencyIcon} />
+                <img alt='currency icon' src={currencyIconSrc} className={classes.currencyIcon} />
                 <Typography className={classes.currencySymbol}>{currency}</Typography>
               </>
             ) : (
-              <Typography className={classes.noCurrencyText}>Select</Typography>
+              <Typography className={classes.noCurrencyText}>-</Typography>
             )}
           </Grid>
           <Input
             className={classes.input}
             classes={{ input: classes.innerInput }}
             inputRef={inputRef}
-            type={'text'}
             value={value}
             disableUnderline={true}
             placeholder={placeholder}
             onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
             onBlur={onBlur}
             disabled={disabled}
+            inputProps={{
+              inputMode: 'decimal'
+            }}
           />
         </Grid>
+
         <Grid
           container
           justifyContent='space-between'
@@ -193,44 +141,48 @@ export const DepositAmountInput: React.FC<IProps> = ({
             container
             alignItems='center'
             wrap='nowrap'
-            onClick={onMaxClick}>
-            {
-              <>
-                <Typography className={classes.caption2}>
-                  Balance:{' '}
-                  {currency
-                    ? `${
-                        balanceValue
-                          ? formatNumbers(thresholds)(balanceValue) +
-                            showPrefix(Number(balanceValue))
-                          : '0'
-                      } ${currency}`
-                    : '- -'}
-                </Typography>
-                <Button
-                  className={
-                    currency
-                      ? classes.maxButton
-                      : `${classes.maxButton} ${classes.maxButtonNotActive}`
-                  }
-                  onClick={onMaxClick}>
-                  Max
-                </Button>
-              </>
-            }
+            onClick={walletUninitialized ? () => {} : onMaxClick}>
+            <Typography className={classes.caption2}>
+              Balance:{' '}
+              {walletUninitialized ? (
+                <>-</>
+              ) : isBalanceLoading ? (
+                <img src={loadingAnimation} className={classes.loadingBalance} alt='loading' />
+              ) : (
+                <>{formatNumber(balanceValue || 0)}</>
+              )}{' '}
+              {currency}
+            </Typography>
+            <Button
+              className={
+                currency && !walletUninitialized
+                  ? classes.maxButton
+                  : `${classes.maxButton} ${classes.maxButtonNotActive}`
+              }>
+              Max
+            </Button>
           </Grid>
           <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
-            {currency ? (
+            {currency && !walletUninitialized ? (
               priceLoading ? (
-                <img src={loadingAnimation} className={classes.loading} />
+                <img src={loadingAnimation} className={classes.loading} alt='loading' />
               ) : tokenPrice ? (
-                <>
-                  <Typography className={classes.caption2}>
-                    ~${formatNumbers(usdThresholds)(usdBalance.toString()) + showPrefix(usdBalance)}
+                <Tooltip
+                  enterTouchDelay={0}
+                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+                  title='Estimated USD Value of the Selected Tokens in Your Wallet'
+                  placement='bottom'
+                  classes={{
+                    tooltip: classes.tooltip
+                  }}>
+                  <Typography className={classes.estimatedBalance}>
+                    ~${formatNumber(usdBalance.toFixed(2))}
                   </Typography>
-                </>
+                </Tooltip>
               ) : (
                 <Tooltip
+                  enterTouchDelay={0}
+                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
                   title='Cannot fetch price of token'
                   placement='bottom'
                   classes={{

@@ -1,6 +1,6 @@
-import { NetworkType, EclipseNetworks } from '@consts/static'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
-import { PayloadType } from './types'
+import { PayloadType } from '@store/consts/types'
+import { NetworkType, RPC } from '@store/consts/static'
 
 export enum Status {
   Uninitialized = 'uninitialized',
@@ -8,20 +8,39 @@ export enum Status {
   Error = 'error',
   Initialized = 'initalized'
 }
+
+export enum RpcStatus {
+  Uninitialized,
+  Error,
+  Ignored,
+  IgnoredWithError
+}
+
+const RPC_STATUS =
+  localStorage.getItem('IS_RPC_WARNING_IGNORED') === 'true'
+    ? RpcStatus.Ignored
+    : RpcStatus.Uninitialized
+
 export interface ISolanaConnectionStore {
   status: Status
   message: string
   network: NetworkType
   slot: number
   rpcAddress: string
+  rpcStatus: RpcStatus
 }
+
+const network =
+  NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
+  NetworkType.Testnet
 
 export const defaultState: ISolanaConnectionStore = {
   status: Status.Uninitialized,
   message: '',
-  network: NetworkType.TESTNET,
+  network: network,
   slot: 0,
-  rpcAddress: EclipseNetworks.TEST
+  rpcAddress: localStorage.getItem(`INVARIANT_NETWORK_ECLIPSE${network}`) ?? RPC.TEST,
+  rpcStatus: RPC_STATUS
 }
 export const solanaConnectionSliceName = 'solanaConnection'
 const solanaConnectionSlice = createSlice({
@@ -40,16 +59,8 @@ const solanaConnectionSlice = createSlice({
       state.message = action.payload
       return state
     },
-    setNetwork(
-      state,
-      action: PayloadAction<{
-        network: NetworkType
-        rpcAddress: string
-        rpcName?: string
-      }>
-    ) {
-      state.network = action.payload.network
-      state.rpcAddress = action.payload.rpcAddress
+    setNetwork(state, action: PayloadAction<NetworkType>) {
+      state.network = action.payload
       return state
     },
     updateSlot(state) {
@@ -57,6 +68,17 @@ const solanaConnectionSlice = createSlice({
     },
     setSlot(state, action: PayloadAction<number>) {
       state.slot = action.payload
+      return state
+    },
+    setRPCAddress(state, action: PayloadAction<string>) {
+      state.rpcAddress = action.payload
+      return state
+    },
+    setRpcStatus(state, action: PayloadAction<RpcStatus>) {
+      state.rpcStatus = action.payload
+      return state
+    },
+    handleRpcError(state, _action: PayloadAction) {
       return state
     }
   }

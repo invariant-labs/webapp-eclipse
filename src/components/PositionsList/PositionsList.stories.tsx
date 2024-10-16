@@ -1,105 +1,119 @@
-import React from 'react'
-import { storiesOf } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react'
+import { BrowserRouter } from 'react-router-dom'
 import { PositionsList } from './PositionsList'
-import { Grid } from '@material-ui/core'
-import { MemoryRouter } from 'react-router-dom'
+import { Network } from '@invariant-labs/a0-sdk'
+
+const meta = {
+  title: 'PositionsList',
+  component: PositionsList,
+  decorators: [
+    Story => (
+      <BrowserRouter>
+        <Story />
+      </BrowserRouter>
+    )
+  ]
+} satisfies Meta<typeof PositionsList>
+
+export default meta
+type Story = StoryObj<typeof meta>
 
 const data = [
   {
     tokenXName: 'BTC',
-    tokenYName: 'SNY',
-    tokenXIcon:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-    tokenYIcon:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    tokenYName: 'AZERO',
+    tokenXIcon: '',
+    tokenYIcon: '',
     min: 2149.6,
     max: 149.6,
     fee: 0.05,
+    valueX: 10000.45,
+    valueY: 2137.4,
+    id: 1,
+    address: '0x123132423423',
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
-    valueX: 10000.45,
-    valueY: 21370.4,
-    id: '1'
+    currentPrice: 1000,
+    network: Network.Testnet,
+    isFullRange: false
   },
   {
     tokenXName: 'BTC',
-    tokenYName: 'SNY',
-    tokenXIcon:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-    tokenYIcon:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    tokenYName: 'AZERO',
+    tokenXIcon: '',
+    tokenYIcon: '',
     min: 2149.6,
     max: 149.6,
     fee: 0.05,
+    valueX: 10000.45,
+    valueY: 2137.4,
+    id: 2,
+    address: '0x123132423423',
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
-    valueX: 10000.45,
-    valueY: 21370.4,
-    id: '2'
+    currentPrice: 1000,
+    network: Network.Testnet,
+    isFullRange: false
   },
   {
     tokenXName: 'BTC',
-    tokenYName: 'SNY',
-    tokenXIcon:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-    tokenYIcon:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    tokenYName: 'AZERO',
+    tokenXIcon: '',
+    tokenYIcon: '',
     min: 2149.6,
     max: 149.6,
     fee: 0.05,
+    valueX: 10000.45,
+    valueY: 2137.4,
+    id: 3,
+    address: '0x123132423423',
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
-    valueX: 10000.45,
-    valueY: 21370.4,
-    id: '3'
+    currentPrice: 1000,
+    network: Network.Testnet,
+    isFullRange: false
   },
   {
     tokenXName: 'BTC',
-    tokenYName: 'SNY',
-    tokenXIcon:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-    tokenYIcon:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    tokenYName: 'AZERO',
+    tokenXIcon: '',
+    tokenYIcon: '',
     min: 2149.6,
     max: 149.6,
     fee: 0.05,
+    valueX: 10000.45,
+    valueY: 2137.4,
+    id: 4,
+    address: '0x123132423423',
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
-    valueX: 10000.45,
-    valueY: 21370.4,
-    id: '4'
+    currentPrice: 1000,
+    network: Network.Testnet,
+    isFullRange: false
   }
 ]
 
-storiesOf('positionsList/list', module)
-  .addDecorator(story => <MemoryRouter initialEntries={['/']}>{story()}</MemoryRouter>)
-  .add('default', () => {
-    const handleClick = () => {
-      console.log('actionButton add Position')
-    }
-    return (
-      <Grid
-        style={{
-          backgroundColor: '#1C1B1E',
-          justifyContent: 'center',
-          alignItems: 'center',
-          display: 'flex',
-          flexDirection: 'column',
-          paddingInline: 20
-        }}>
-        <PositionsList
-          data={data}
-          onAddPositionClick={handleClick}
-          itemsPerPage={5}
-          noConnectedBlockerProps={{
-            onConnect: () => {}
-          }}
-          searchValue={''}
-          searchSetValue={() => {}}
-          handleRefresh={() => {}}
-          initialPage={1}
-          setLastPage={() => {}}
-        />
-      </Grid>
-    )
-  })
+const handleClick = () => {
+  console.log('actionButton add Position')
+}
+
+export const Primary: Story = {
+  args: {
+    data,
+    onAddPositionClick: handleClick,
+    itemsPerPage: 5,
+    noConnectedBlockerProps: {
+      onConnect: () => {}
+    },
+    searchValue: '',
+    searchSetValue: () => {},
+    handleRefresh: () => {},
+    initialPage: 1,
+    setLastPage: () => {},
+    pageChanged: () => {},
+    length: 0 as any,
+    loadedPages: {},
+    getRemainingPositions: () => {},
+    noInitialPositions: false
+  }
+}

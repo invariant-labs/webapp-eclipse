@@ -1,15 +1,12 @@
 import React from 'react'
-import { Typography, Popover, Grid } from '@material-ui/core'
-import { NetworkType } from '@consts/static'
 import icons from '@static/icons'
-import DotIcon from '@material-ui/icons/FiberManualRecordRounded'
 import classNames from 'classnames'
 import useStyles from './style'
-export interface ISelectNetwork {
-  networkType: NetworkType
-  rpc: string
-  rpcName?: string
-}
+import { ISelectNetwork } from '@store/consts/types'
+import { Grid, Popover, Typography } from '@mui/material'
+import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
+import { NetworkType } from '@store/consts/static'
+
 export interface ISelectNetworkModal {
   networks: ISelectNetwork[]
   open: boolean
@@ -26,7 +23,7 @@ export const SelectNetwork: React.FC<ISelectNetworkModal> = ({
   handleClose,
   activeNetwork
 }) => {
-  const classes = useStyles()
+  const { classes } = useStyles()
   return (
     <Popover
       open={open}
@@ -60,17 +57,10 @@ export const SelectNetwork: React.FC<ISelectNetworkModal> = ({
                 src={icons[`${networkType}Icon`]}
                 alt={`${networkType} icon`}
               />
-
               <Typography className={classes.name}>{networkType}</Typography>
               <DotIcon className={classes.dotIcon} />
             </Grid>
           ))}
-          <a href='https://invariant.app' style={{ textDecoration: 'none' }}>
-            <Grid className={classes.listItem} item key='networks-solana'>
-              <img className={classes.icon} src={icons.MainnetIcon} />
-              <Typography className={classes.name}>Solana</Typography>
-            </Grid>
-          </a>
         </Grid>
       </Grid>
     </Popover>

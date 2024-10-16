@@ -1,16 +1,18 @@
-import React from 'react'
-import { storiesOf } from '@storybook/react'
+import type { Meta, StoryObj } from '@storybook/react'
 import ConcentrationTypeSwitch from './ConcentrationTypeSwitch'
+import { fn } from '@storybook/test'
 
-storiesOf('position/concentrationTypeSwitch', module).add('default', () => {
-  return (
-    <div
-      style={{
-        backgroundColor: '#202946',
-        padding: 20,
-        width: 200
-      }}>
-      <ConcentrationTypeSwitch onSwitch={() => {}} initialValue={0} />
-    </div>
-  )
-})
+const meta = {
+  title: 'Components/ConcentrationTypeSwitch',
+  component: ConcentrationTypeSwitch
+} satisfies Meta<typeof ConcentrationTypeSwitch>
+
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Primary: Story = {
+  args: {
+    currentValue: 0,
+    onSwitch: fn()
+  }
+}

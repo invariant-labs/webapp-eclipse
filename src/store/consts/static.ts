@@ -1,27 +1,41 @@
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { TokenPriceData } from './utils'
-import { ISnackbar } from '@reducers/snackbars'
+import { ISnackbar } from '@store/reducers/snackbars'
+import { BestTier, Chain, PrefixConfig, Token, TokenPriceData } from './types'
 
-declare global {
-  interface Window {
-    solana: any
-  }
+export enum NetworkType {
+  Local = 'Local',
+  Testnet = 'Testnet',
+  Devnet = 'Devnet',
+  Mainnet = 'Mainnet'
+}
+const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
-  interface ImportMeta {
-    globEager: (x: string) => { [propertyName: string]: { default: string } }
-  }
+export const WETH_ADDRESS = {
+  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Testnet]: new PublicKey('So11111111111111111111111111111111111111112'),
+  [NetworkType.Devnet]: new PublicKey('So11111111111111111111111111111111111111112'),
+  [NetworkType.Local]: emptyPublicKey
 }
-export interface Token {
-  symbol: string
-  address: PublicKey
-  decimals: number
-  name: string
-  logoURI: string
-  coingeckoId?: string
-  isUnknown?: boolean
+
+export const BTC_ADDRESS = {
+  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Testnet]: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo'),
+  [NetworkType.Devnet]: new PublicKey('CfwLhXJ2r2NmUE1f7oAeySY6eEZ7f5tC8v95nopUs5ez'),
+  [NetworkType.Local]: emptyPublicKey
 }
+
+export const USDC_ADDRESS = {
+  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Testnet]: new PublicKey('5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx'),
+  [NetworkType.Devnet]: new PublicKey('GEds1ARB3oywy2sSdiNGDyxz9MhpfqPkFYYStdZmHaiN'),
+  [NetworkType.Local]: emptyPublicKey
+}
+export const USDT_MAINNET_ADDRESS = '5Et3dDcXUiThrBCot7g65k3oDSicGy4qC82cq9f911izKNtE'
+
+export const REFRESHER_INTERVAL = 120
+
 export const PRICE_DECIMAL = 24
 export const USDC_DEV: Token = {
   symbol: 'USDC',
@@ -99,19 +113,12 @@ export const S22_TEST: Token = {
   coingeckoId: ''
 }
 
-enum EclipseNetworks {
-  TEST = 'https://testnet.dev2.eclipsenetwork.xyz', // TODO: TEST and MAIN temporarily set to the same endpoint as DEV; they are unvailable to change to on frontend anyways
+export enum RPC {
+  TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
-  DEV_EU = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
+  DEV_EU = RPC.MAIN,
   LOCAL = 'http://127.0.0.1:8899'
-}
-
-enum NetworkType {
-  DEVNET = 'Devnet',
-  TESTNET = 'Testnet',
-  LOCALNET = 'Localnet',
-  MAINNET = 'Mainnet'
 }
 
 const DEFAULT_PUBLICKEY = new PublicKey(0)
@@ -127,19 +134,13 @@ export const tokensPrices: Record<NetworkType, Record<string, TokenPriceData>> =
     MOON_TEST: { price: 0.00000005735 },
     S22_TEST: { price: 0.01 }
   },
-  Localnet: {}
+  Local: {}
 }
 export const tokens: Record<NetworkType, Token[]> = {
   Devnet: [USDC_DEV, BTC_DEV],
   Mainnet: [],
   Testnet: [USDC_TEST, BTC_TEST],
-  Localnet: []
-}
-
-export interface BestTier {
-  tokenX: PublicKey
-  tokenY: PublicKey
-  bestTierIndex: number
+  Local: []
 }
 
 const mainnetBestTiersCreator = () => {
@@ -202,7 +203,7 @@ const mainnetBestTiersCreator = () => {
 }
 
 export const bestTiers: Record<NetworkType, BestTier[]> = {
-  Devnet: [
+  [NetworkType.Devnet]: [
     {
       tokenX: USDC_DEV.address,
       tokenY: WETH_DEV.address,
@@ -214,7 +215,7 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
       bestTierIndex: 2
     }
   ],
-  Testnet: [
+  [NetworkType.Testnet]: [
     {
       tokenX: USDC_TEST.address,
       tokenY: WETH_TEST.address,
@@ -226,39 +227,39 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
       bestTierIndex: 2
     }
   ],
-  Mainnet: mainnetBestTiersCreator(),
-  Localnet: []
+  [NetworkType.Mainnet]: mainnetBestTiersCreator(),
+  [NetworkType.Local]: []
 }
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
-  Localnet: []
+  Local: []
 }
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
   Mainnet: [],
   Testnet: [USDC_TEST.address, BTC_TEST.address],
-  Localnet: []
+  Local: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
   Mainnet: [],
   Testnet: [2 * 10 ** USDC_TEST.decimals, 0.00005 * 10 ** BTC_TEST.decimals],
-  Localnet: []
+  Local: []
 }
 
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
 
-export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(9200961)
+export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(50000)
 
-export const WETH_POSITION_INIT_LAMPORTS = new BN(6164600)
+export const WETH_POSITION_INIT_LAMPORTS = new BN(100000)
 export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(61646)
 
-export const WETH_POOL_INIT_LAMPORTS = new BN(106000961)
+export const WETH_POOL_INIT_LAMPORTS = new BN(9900000)
 export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1060009)
 
 export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
@@ -266,7 +267,7 @@ export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
   primaryIndex: index
 }))
 
-export { DEFAULT_PUBLICKEY, EclipseNetworks, MAX_U64, NetworkType }
+export { DEFAULT_PUBLICKEY, MAX_U64 }
 
 export const POSITIONS_PER_PAGE = 5
 
@@ -280,60 +281,106 @@ export const ADDRESSES_TO_REVERS_TOKEN_PAIRS: string[] = [
   'So11111111111111111111111111111111111111112'
 ] // ETH
 
-export type PositionOpeningMethod = 'range' | 'concentration'
-
-export interface SnapshotValueData {
-  tokenBNFromBeginning: string
-  usdValue24: number
+export const FormatConfig = {
+  B: 1000000000,
+  M: 1000000,
+  K: 1000,
+  BDecimals: 9,
+  MDecimals: 6,
+  KDecimals: 3,
+  DecimalsAfterDot: 2
 }
 
-export interface PoolSnapshot {
-  timestamp: number
-  volumeX: SnapshotValueData
-  volumeY: SnapshotValueData
-  liquidityX: SnapshotValueData
-  liquidityY: SnapshotValueData
-  feeX: SnapshotValueData
-  feeY: SnapshotValueData
+export enum PositionTokenBlock {
+  None,
+  A,
+  B
 }
 
-export interface FullSnap {
-  volume24: {
-    value: number
-    change: number
+export const subNumbers = ['₀', '₁', '₂', '₃', '₄', '₅', '₆', '₇', '₈', '₉']
+
+export const defaultPrefixConfig: PrefixConfig = {
+  B: 1000000000,
+  M: 1000000,
+  K: 10000
+}
+const mainnetList = {}
+
+export const getAddressTickerMap = (network: NetworkType): { [k: string]: string } => {
+  if (network !== NetworkType.Mainnet) {
+    return {
+      WETH: WETH_ADDRESS[network].toString(),
+      BTC: BTC_ADDRESS[network].toString(),
+      USDC: USDC_ADDRESS[network].toString(),
+      EBGR: 'EBGR1Nb8k3ihiwFuRvXXuxotSKbX7FQWwuzfJEVE9wx9',
+      ETH: WETH_ADDRESS[network].toString(),
+      MOON: 'JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S',
+      ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
+    }
+  } else {
+    const parsedMainnetList = mainnetList as unknown as Record<string, Token>
+    const result: { [k: string]: PublicKey } = {}
+
+    Object.keys(parsedMainnetList).forEach((key: string) => {
+      const token = parsedMainnetList[key]
+      result[token.symbol] = token.address
+    })
+
+    return {}
   }
-  tvl24: {
-    value: number
-    change: number
-  }
-  fees24: {
-    value: number
-    change: number
-  }
-  tokensData: TokenStatsDataWithString[]
-  poolsData: PoolStatsDataWithString[]
-  volumePlot: TimeData[]
-  liquidityPlot: TimeData[]
 }
 
-export interface TokenStatsDataWithString {
-  address: string
-  price: number
-  volume24: number
-  tvl: number
+export const getReversedAddressTickerMap = (network: NetworkType) => {
+  console.log('')
+  return Object.fromEntries(
+    Object.entries(getAddressTickerMap(network)).map(([key, value]) => [value, key])
+  )
 }
 
-export interface TimeData {
-  timestamp: number
-  value: number
+export const MINIMAL_POOL_INIT_PRICE = 0.00000001
+
+export const DEFAULT_SWAP_SLIPPAGE = '0.50'
+export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
+
+export const CHAINS = [
+  { name: Chain.Solana, address: 'https://invariant.app/swap' },
+  { name: Chain.AlephZero, address: 'https://azero.invariant.app/exchange' },
+  { name: Chain.Eclipse, address: 'https://eclipse.invariant.app/exchange' },
+  { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
+  { name: Chain.Alephium, address: 'https://alph.invariant.app/exchange' }
+]
+
+export const enum SortTypePoolList {
+  NAME_ASC,
+  NAME_DESC,
+  FEE_ASC,
+  FEE_DESC,
+  VOLUME_ASC,
+  VOLUME_DESC,
+  TVL_ASC,
+  TVL_DESC
+  // APY_ASC,
+  // APY_DESC
 }
 
-export interface PoolStatsDataWithString {
-  poolAddress: string
-  tokenX: string
-  tokenY: string
-  fee: number
-  volume24: number
-  tvl: number
-  apy: number
+export const enum SortTypeTokenList {
+  NAME_ASC,
+  NAME_DESC,
+  PRICE_ASC,
+  PRICE_DESC,
+  // CHANGE_ASC,
+  // CHANGE_DESC,
+  VOLUME_ASC,
+  VOLUME_DESC,
+  TVL_ASC,
+  TVL_DESC
 }
+
+export const RECOMMENDED_RPC_ADDRESS = {
+  [NetworkType.Testnet]: RPC.TEST,
+  [NetworkType.Mainnet]: RPC.MAIN,
+  [NetworkType.Devnet]: RPC.DEV_EU,
+  [NetworkType.Local]: ''
+}
+
+export const DEFAULT_TOKEN_DECIMAL = 6
