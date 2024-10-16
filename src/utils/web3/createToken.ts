@@ -46,7 +46,7 @@ export const createToken = async (data: FormData, network: NetworkType) => {
 
   const connection = getCurrentSolanaConnection()
   if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) return false
-  if (!connection) return
+
   const irysUploader =
     network === NetworkType.Mainnet
       ? await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint)
