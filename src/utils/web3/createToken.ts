@@ -10,23 +10,24 @@ import {
   PROGRAM_ID
 } from '@metaplex-foundation/mpl-token-metadata'
 import * as spl18 from '@solana/spl-token'
+import { defaultImages } from '@pages/SolanaCreator/components/ImagePicker/ImagePicker'
 
 async function getFileFromInput(inputString: string) {
-  function isBase64(str: string) {
-    return str.startsWith('data:image/')
+  function isStaticFile(str: string) {
+    return defaultImages.includes(str)
   }
 
-  if (isBase64(inputString)) {
-    return stringToFile(inputString)
+  if (isStaticFile(inputString)) {
+    const response = await fetch(inputString)
+    const blob = await response.blob()
+
+    const fileName = inputString.split('/').pop()
+    const file = new File([blob], fileName || 'logo', { type: blob.type })
+
+    return file
   }
 
-  const response = await fetch(inputString)
-  const blob = await response.blob()
-
-  const fileName = inputString.split('/').pop()
-  const file = new File([blob], fileName || 'logo', { type: blob.type })
-
-  return file
+  return stringToFile(inputString)
 }
 
 export const stringToFile = (dataUrl: string) => {
