@@ -13,7 +13,7 @@ interface ImagePickerProps {
   control: any
 }
 
-const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
+export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
 const MAX_FILE_SIZE = 800 * 1024
 
 export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
