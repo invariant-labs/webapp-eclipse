@@ -1,16 +1,16 @@
-import { DEFAULT_PUBLICKEY, NetworkType } from '../../store/consts/static'
-import { FormData } from '../../pages/SolanaCreator/utils/solanaCreatorUtils'
-import { getCurrentSolanaConnection } from './connection'
-import { getSolanaWallet } from './wallet'
-import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
-import { WebSolana } from '@irys/web-upload-solana'
 import { WebUploader } from '@irys/web-upload'
+import { WebSolana } from '@irys/web-upload-solana'
 import {
   createCreateMetadataAccountV3Instruction,
   PROGRAM_ID
 } from '@metaplex-foundation/mpl-token-metadata'
-import * as spl18 from '@solana/spl-token'
 import { defaultImages } from '@pages/SolanaCreator/components/ImagePicker/ImagePicker'
+import * as spl18 from '@solana/spl-token'
+import { Keypair, PublicKey, SystemProgram, Transaction } from '@solana/web3.js'
+import { FormData } from '../../pages/SolanaCreator/utils/solanaCreatorUtils'
+import { DEFAULT_PUBLICKEY, NetworkType } from '../../store/consts/static'
+import { getCurrentSolanaConnection } from './connection'
+import { getSolanaWallet } from './wallet'
 
 async function getFileFromInput(inputString: string) {
   function isStaticFile(str: string) {
@@ -50,8 +50,13 @@ export const createToken = async (data: FormData, network: NetworkType) => {
 
   const irysUploader =
     network === NetworkType.Mainnet
-      ? await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint)
-      : await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint).devnet()
+      ? await WebUploader(WebSolana)
+          .withProvider(wallet)
+          .withRpc('https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c')
+      : await WebUploader(WebSolana)
+          .withProvider(wallet)
+          .withRpc('https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c')
+          .devnet()
 
   const {
     name,
