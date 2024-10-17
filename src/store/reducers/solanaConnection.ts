@@ -39,7 +39,7 @@ export const defaultState: ISolanaConnectionStore = {
   message: '',
   network: network,
   slot: 0,
-  rpcAddress: localStorage.getItem(`INVARIANT_NETWORK_ECLIPSE${network}`) ?? RPC.TEST,
+  rpcAddress: localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RPC.TEST,
   rpcStatus: RPC_STATUS
 }
 export const solanaConnectionSliceName = 'solanaConnection'

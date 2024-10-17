@@ -77,6 +77,11 @@ const statsSlice = createSlice({
       state.isLoading = true
 
       return state
+    },
+    setLoadingStats(state, action: PayloadAction<boolean>) {
+      state.isLoading = action.payload
+
+      return state
     }
   }
 })

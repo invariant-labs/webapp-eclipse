@@ -48,6 +48,7 @@ export const Primary: Story = {
     onChainSelect: fn(),
     network: NetworkType.Testnet,
     defaultDevnetRPC: RPC.DEV_EU,
-    rpcStatus: RpcStatus.Uninitialized
+    rpcStatus: RpcStatus.Uninitialized,
+    defaultMainnetRPC: RPC.MAIN
   }
 }
