@@ -139,12 +139,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(initialHideUnknownTokensValue)
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false)
-  console.log('tokenAInputState.value', tokenAInputState.value)
-  console.log(
-    'tokenAInputState.price',
-    tokenAIndex &&
-      convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).toString()
-  )
+
   useEffect(() => {
     if (isLoaded || tokens.length === 0 || ALL_FEE_TIERS_DATA.length === 0) {
       return
