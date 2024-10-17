@@ -100,6 +100,25 @@ const useStyles = makeStyles()((theme: Theme) => {
         color: colors.invariant.componentBcg
       }
     },
+    connectWalletButton: {
+      color: colors.invariant.dark,
+      ...typography.body1,
+      textTransform: 'none',
+      borderRadius: 14,
+      height: 48,
+      minWidth: 130,
+      paddingInline: 0,
+      background:
+        'linear-gradient(180deg, rgba(239, 132, 245, 0.8) 0%, rgba(156, 62, 189, 0.8) 100%)',
+      '&:hover': {
+        background: 'linear-gradient(180deg, #EF84F5 0%, #9C3EBD 100%)',
+        boxShadow: '0px 0px 16px rgba(239, 132, 245, 0.35)'
+      },
+      '&:disabled': {
+        background: colors.invariant.light,
+        color: colors.invariant.componentBcg
+      }
+    },
     headerTitle: {
       fontFamily: 'Mukta',
       fontStyle: 'normal',

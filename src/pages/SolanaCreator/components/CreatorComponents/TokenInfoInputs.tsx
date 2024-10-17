@@ -5,15 +5,14 @@ import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
 import useStyles from '../CreateToken/styles'
 import { Box, Button, Typography } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
-import { useSelector } from 'react-redux'
-import { status } from '@store/selectors/solanaWallet'
-import { Status } from '@store/reducers/solanaWallet'
+import { openWalletSelectorModal } from '@utils/web3/selector'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
+  buttonText: string
 }
 
-export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods }) => {
+export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods, buttonText }) => {
   const { classes } = useStyles()
   const {
     control,
@@ -21,8 +20,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
 
     formState: { errors, isValid }
   } = formMethods
-  const walletStatus = useSelector(status)
-  const BUTTON_TEXT = walletStatus === Status.Initialized ? 'Create token' : 'Connect wallet'
+  const isSubmitButton = buttonText === 'Create token'
   return (
     <Box className={classes.container}>
       <Box className={classes.inputsWrapper}>
@@ -88,9 +86,19 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
         <InfoIcon />
         <Typography>Token cost: 0.1 SOL</Typography>
       </Box>
-      <Button className={classes.button} variant='contained' type='submit' disabled={!isValid}>
-        <span className={classes.buttonText}>{BUTTON_TEXT}</span>
-      </Button>
+      {isSubmitButton ? (
+        <Button className={classes.button} variant='contained' type='submit' disabled={!isValid}>
+          <span className={classes.buttonText}>{buttonText}</span>
+        </Button>
+      ) : (
+        <Button
+          className={classes.connectWalletButton}
+          variant='contained'
+          type='button'
+          onClick={openWalletSelectorModal}>
+          <span className={classes.buttonText}>{buttonText}</span>
+        </Button>
+      )}
     </Box>
   )
 }

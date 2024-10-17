@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import useStyles from './styles'
 import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils'
@@ -8,6 +8,8 @@ import { Box, Typography } from '@mui/material'
 import { createToken } from '@utils/web3/createToken'
 import { useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
+import { status } from '@store/selectors/solanaWallet'
+import { Status } from '@store/reducers/solanaWallet'
 
 interface FormData {
   name: string
@@ -25,6 +27,10 @@ interface FormData {
 export const CreateToken: React.FC = () => {
   const { classes } = useStyles()
   const currentNetwork = useSelector(network)
+
+  const walletStatus = useSelector(status)
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+  const buttonText = isConnected ? 'Create token' : 'Connect wallet'
 
   const formMethods = useForm<FormData>({
     mode: 'onChange',
@@ -70,7 +76,7 @@ export const CreateToken: React.FC = () => {
           </Typography>
           <form onSubmit={formMethods.handleSubmit(onSubmit)}>
             <Box className={classes.row}>
-              <TokenInfoInputs formMethods={formMethods} />
+              <TokenInfoInputs formMethods={formMethods} buttonText={buttonText} />
               <TokenMetadataInputs formMethods={formMethods} />
             </Box>
           </form>
