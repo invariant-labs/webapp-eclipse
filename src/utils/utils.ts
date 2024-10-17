@@ -763,6 +763,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       // })
       // return obj
       return {
+        [WETH_TEST.address.toString()]: WETH_TEST,
         [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN
       }
     case NetworkType.Devnet:
