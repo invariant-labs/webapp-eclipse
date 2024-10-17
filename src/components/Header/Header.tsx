@@ -216,16 +216,16 @@ export const Header: React.FC<IHeader> = ({
               name={typeOfNetwork}
               networks={[
                 {
-                  networkType: NetworkType.Testnet,
-                  rpc: defaultTestnetRPC,
-                  rpcName:
-                    testnetRPCs.find(data => data.rpc === defaultTestnetRPC)?.rpcName ?? 'Custom'
-                },
-                {
                   networkType: NetworkType.Mainnet,
                   rpc: defaultMainnetRPC,
                   rpcName:
                     mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
+                },
+                {
+                  networkType: NetworkType.Testnet,
+                  rpc: defaultTestnetRPC,
+                  rpcName:
+                    testnetRPCs.find(data => data.rpc === defaultTestnetRPC)?.rpcName ?? 'Custom'
                 }
                 // {
                 //   networkType: NetworkType.Devnet,
