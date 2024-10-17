@@ -754,14 +754,19 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
   const obj: Record<string, Token> = {}
   switch (networkType) {
     case NetworkType.Mainnet:
-      ;(mainnetList as any[]).forEach(token => {
-        obj[token.address] = {
-          ...token,
-          address: new PublicKey(token.address),
-          coingeckoId: token?.extensions?.coingeckoId
-        }
-      })
-      return obj
+      // ;(mainnetList as any[]).forEach(token => {
+      //   obj[token.address] = {
+      //     ...token,
+      //     address: new PublicKey(token.address),
+      //     coingeckoId: token?.extensions?.coingeckoId
+      //   }
+      // })
+      // return obj
+      return {
+        [USDC_TEST.address.toString()]: USDC_TEST,
+        [BTC_TEST.address.toString()]: BTC_TEST,
+        [WETH_TEST.address.toString()]: WETH_TEST
+      }
     case NetworkType.Devnet:
       return {
         [USDC_DEV.address.toString()]: USDC_DEV,

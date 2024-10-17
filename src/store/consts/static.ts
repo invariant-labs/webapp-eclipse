@@ -3,6 +3,7 @@ import { BN } from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
 import { BestTier, Chain, PrefixConfig, Token, TokenPriceData } from './types'
+import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 
 export enum NetworkType {
   Local = 'Local',
@@ -13,26 +14,25 @@ export enum NetworkType {
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
 export const WETH_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey(MAINNET_TOKENS.ETH),
   [NetworkType.Testnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Devnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Local]: emptyPublicKey
 }
 
 export const BTC_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey(MAINNET_TOKENS.BTC),
   [NetworkType.Testnet]: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo'),
   [NetworkType.Devnet]: new PublicKey('CfwLhXJ2r2NmUE1f7oAeySY6eEZ7f5tC8v95nopUs5ez'),
   [NetworkType.Local]: emptyPublicKey
 }
 
 export const USDC_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey(MAINNET_TOKENS.USDC),
   [NetworkType.Testnet]: new PublicKey('5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx'),
   [NetworkType.Devnet]: new PublicKey('GEds1ARB3oywy2sSdiNGDyxz9MhpfqPkFYYStdZmHaiN'),
   [NetworkType.Local]: emptyPublicKey
 }
-export const USDT_MAINNET_ADDRESS = '5Et3dDcXUiThrBCot7g65k3oDSicGy4qC82cq9f911izKNtE'
 
 export const REFRESHER_INTERVAL = 120
 
@@ -113,11 +113,39 @@ export const S22_TEST: Token = {
   coingeckoId: ''
 }
 
+export const USDC_MAIN: Token = {
+  symbol: 'USDC',
+  address: USDC_ADDRESS[NetworkType.Mainnet],
+  decimals: 9,
+  name: 'USD Coin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+export const BTC_MAIN: Token = {
+  symbol: 'BTC',
+  address: BTC_ADDRESS[NetworkType.Mainnet],
+  decimals: 9,
+  name: 'Bitcoin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
+  coingeckoId: 'bitcoin'
+}
+export const WETH_MAIN: Token = {
+  symbol: 'ETH',
+  address: WETH_ADDRESS[NetworkType.Mainnet],
+  decimals: 9,
+  name: 'Ethereum',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+  coingeckoId: 'ethereum'
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
-  MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
+  MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
-  DEV_EU = RPC.MAIN,
+  DEV_EU = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   LOCAL = 'http://127.0.0.1:8899'
 }
 
@@ -233,7 +261,7 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
-  Mainnet: [],
+  Mainnet: [USDC_MAIN.address, BTC_MAIN.address, WETH_MAIN.address],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
 }
@@ -318,15 +346,23 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
     }
   } else {
-    const parsedMainnetList = mainnetList as unknown as Record<string, Token>
-    const result: { [k: string]: PublicKey } = {}
+    // const parsedMainnetList = mainnetList as unknown as Record<string, Token>
+    // const result: { [k: string]: PublicKey } = {}
 
-    Object.keys(parsedMainnetList).forEach((key: string) => {
-      const token = parsedMainnetList[key]
-      result[token.symbol] = token.address
-    })
+    // Object.keys(parsedMainnetList).forEach((key: string) => {
+    //   const token = parsedMainnetList[key]
+    //   result[token.symbol] = token.address
+    // })
 
-    return {}
+    return {
+      WETH: WETH_ADDRESS[network].toString(),
+      BTC: BTC_ADDRESS[network].toString(),
+      USDC: USDC_ADDRESS[network].toString(),
+      EBGR: 'EBGR1Nb8k3ihiwFuRvXXuxotSKbX7FQWwuzfJEVE9wx9',
+      ETH: WETH_ADDRESS[network].toString(),
+      MOON: 'JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S',
+      ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
+    }
   }
 }
 

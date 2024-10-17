@@ -39,6 +39,7 @@ export interface IHeader {
   onChainSelect: (chain: ISelectChain) => void
   network: NetworkType
   defaultDevnetRPC: string
+  defaultMainnetRPC: string
   rpcStatus: RpcStatus
 }
 
@@ -58,7 +59,8 @@ export const Header: React.FC<IHeader> = ({
   activeChain,
   onChainSelect,
   network,
-  rpcStatus
+  rpcStatus,
+  defaultMainnetRPC
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -76,7 +78,7 @@ export const Header: React.FC<IHeader> = ({
   const [activePath, setActive] = useState('exchange')
 
   const [routesModalOpen, setRoutesModalOpen] = useState(false)
-  const [testnetRpcsOpen, setTestnetRpcsOpen] = useState(false)
+  const [RpcsModalOpen, setRpcsModalOpen] = useState(false)
   const [chainSelectOpen, setChainSelectOpen] = useState(false)
   const [routesModalAnchor, setRoutesModalAnchor] = useState<HTMLButtonElement | null>(null)
 
@@ -218,6 +220,12 @@ export const Header: React.FC<IHeader> = ({
                   rpc: defaultTestnetRPC,
                   rpcName:
                     testnetRPCs.find(data => data.rpc === defaultTestnetRPC)?.rpcName ?? 'Custom'
+                },
+                {
+                  networkType: NetworkType.Mainnet,
+                  rpc: defaultMainnetRPC,
+                  rpcName:
+                    mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
                 }
                 // {
                 //   networkType: NetworkType.Devnet,
@@ -281,7 +289,7 @@ export const Header: React.FC<IHeader> = ({
               isMdDown
                 ? () => {
                     setRoutesModalOpen(false)
-                    setTestnetRpcsOpen(true)
+                    setRpcsModalOpen(true)
                   }
                 : undefined
             }
@@ -297,11 +305,11 @@ export const Header: React.FC<IHeader> = ({
           {typeOfNetwork === NetworkType.Testnet ? (
             <SelectTestnetRPC
               networks={testnetRPCs}
-              open={testnetRpcsOpen}
+              open={RpcsModalOpen}
               anchorEl={routesModalAnchor}
               onSelect={onNetworkSelect}
               handleClose={() => {
-                setTestnetRpcsOpen(false)
+                setRpcsModalOpen(false)
                 unblurContent()
               }}
               activeRPC={rpc}
@@ -310,11 +318,11 @@ export const Header: React.FC<IHeader> = ({
           ) : (
             <SelectMainnetRPC
               networks={mainnetRPCs}
-              open={testnetRpcsOpen}
+              open={RpcsModalOpen}
               anchorEl={routesModalAnchor}
               onSelect={onNetworkSelect}
               handleClose={() => {
-                setTestnetRpcsOpen(false)
+                setRpcsModalOpen(false)
                 unblurContent()
               }}
               activeRPC={rpc}
