@@ -1,10 +1,12 @@
+import { useState } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
-import Routes from './RoutesModal'
+import RoutesModal from './RoutesModal'
 import { MemoryRouter } from 'react-router-dom'
 import { fn } from '@storybook/test'
+
 const meta = {
   title: 'Modals/Routes',
-  component: Routes,
+  component: RoutesModal,
   args: {
     anchorEl: null
   },
@@ -15,20 +17,37 @@ const meta = {
       </MemoryRouter>
     )
   ]
-} satisfies Meta<typeof Routes>
+} satisfies Meta<typeof RoutesModal>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
+  render: args => {
+    const [currentRoute, setCurrentRoute] = useState(args.current)
+
+    const handleSelectRoute = (selected: string) => {
+      setCurrentRoute(selected)
+      args.onSelect(selected)
+    }
+
+    return <RoutesModal {...args} current={currentRoute} onSelect={handleSelectRoute} />
+  },
   args: {
-    anchorEl: null,
+    onSelect: fn(),
     handleClose: fn(),
     open: true,
-    onSelect: fn(),
-    routes: ['exchange', 'liquidity', 'statistics'],
-    current: 'exchange',
-    onRPC: fn(),
-    onFaucet: fn()
+    routes: ['exchange', 'liquidity', 'statistics']
   }
+}
+
+Primary.args = {
+  anchorEl: null,
+  handleClose: fn(),
+  open: true,
+  onSelect: fn(),
+  routes: ['exchange', 'liquidity', 'statistics'],
+  current: 'exchange',
+  onRPC: fn(),
+  onFaucet: fn()
 }

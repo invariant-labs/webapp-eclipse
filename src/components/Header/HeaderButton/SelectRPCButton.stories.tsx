@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import SelectRPCButton from './SelectRPCButton'
-import { RPC } from '@store/consts/static'
+import { NetworkType, RPC } from '@store/consts/static'
 import { action } from '@storybook/addon-actions'
-import { Network } from '@invariant-labs/sdk-eclipse'
+
 import { RpcStatus } from '@store/reducers/solanaConnection'
 
 const meta = {
@@ -18,13 +18,13 @@ export const Primary: Story = {
     rpc: RPC.TEST,
     networks: [
       {
-        networkType: Network.TEST,
+        networkType: NetworkType.Testnet,
         rpc: RPC.TEST,
         rpcName: 'Testnet'
       }
     ],
     onSelect: (networkType, rpc) => action('chosen: ' + networkType + ' ' + rpc)(),
-    network: Network.TEST,
+    network: NetworkType.Testnet,
     rpcStatus: RpcStatus.Uninitialized
   }
 }

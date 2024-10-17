@@ -22,13 +22,13 @@ type Story = StoryObj<typeof meta>
 export const Primary: Story = {
   args: {
     closePosition: fn(),
-    fee: 1 as any,
+    fee: 1,
     onClickClaimFee: fn(),
     swapHandler: fn(),
     tokenX: {
       name: 'BTC',
       icon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-      decimal: 9 as any,
+      decimal: 9,
       liqValue: 10000.23532,
       claimValue: 21.37,
       balance: 9.11
@@ -36,7 +36,7 @@ export const Primary: Story = {
     tokenY: {
       name: 'ETH',
       icon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-      decimal: 12 as any,
+      decimal: 12,
       liqValue: 10000.23532,
       claimValue: 21.37,
       balance: 9.11

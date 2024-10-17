@@ -33,8 +33,6 @@
   "include": ["src"],
   "exclude": [
     "node_modules/**/*",
-    "**/*.stories.ts",
-    "**/*.stories.tsx",
     "src/components/FarmsList/**/*",
     "src/components/Modals/SelectModals/SortFarmsModal/**/*"
   ],

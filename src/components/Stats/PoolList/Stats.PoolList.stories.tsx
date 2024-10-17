@@ -3,7 +3,7 @@ import { MemoryRouter } from 'react-router-dom'
 import PoolList from './PoolList'
 import { store } from '@store/index'
 import { Provider } from 'react-redux'
-import { Network } from '@invariant-labs/sdk-eclipse'
+import { NetworkType } from '@store/consts/static'
 
 const meta = {
   title: 'Stats/PoolList',
@@ -85,6 +85,6 @@ const poolsList = Array(40)
 export const Primary: Story = {
   args: {
     data: poolsList,
-    network: Network.LOCAL
+    network: NetworkType.Local
   }
 }

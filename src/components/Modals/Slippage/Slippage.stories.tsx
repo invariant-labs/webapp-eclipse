@@ -1,10 +1,22 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import Slippage from './Slippage'
 import { fn } from '@storybook/test'
+import { Provider } from 'react-redux'
+import { store } from '@store/index'
+import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
   title: 'Modals/Slippage',
   component: Slippage,
+  decorators: [
+    Story => (
+      <Provider store={store}>
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      </Provider>
+    )
+  ],
   args: {
     open: true
   }

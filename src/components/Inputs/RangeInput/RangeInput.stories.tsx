@@ -24,6 +24,7 @@ const RangeInputWrapper: React.FC<IRangeInput> = args => {
       }}>
       <RangeInput
         {...args}
+        style={{ flex: '1 1 0%', gap: 12, width: '300px', margin: 'auto' }}
         currentValue={val}
         decreaseValue={() => {
           setVal((+val - 0.01).toFixed(2).toString())
@@ -37,7 +38,6 @@ const RangeInputWrapper: React.FC<IRangeInput> = args => {
         onBlur={() => {
           setVal((+val).toFixed(2).toString())
         }}
-        style={{ width: 200, maxHeight: 300, margin: 'auto' }}
       />
     </div>
   )
