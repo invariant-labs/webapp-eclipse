@@ -332,7 +332,7 @@ export const defaultPrefixConfig: PrefixConfig = {
   M: 1000000,
   K: 10000
 }
-const mainnetList = {}
+// const mainnetList = {}
 
 export const getAddressTickerMap = (network: NetworkType): { [k: string]: string } => {
   if (network !== NetworkType.Mainnet) {
