@@ -28,6 +28,7 @@ import {
   getAddressTickerMap,
   getReversedAddressTickerMap,
   MAX_U64,
+  MOCKED_TOKEN_MAIN,
   MOON_TEST,
   NetworkType,
   PRICE_DECIMAL,
@@ -762,9 +763,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       // })
       // return obj
       return {
-        [USDC_TEST.address.toString()]: USDC_TEST,
-        [BTC_TEST.address.toString()]: BTC_TEST,
-        [WETH_TEST.address.toString()]: WETH_TEST
+        [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN
       }
     case NetworkType.Devnet:
       return {
