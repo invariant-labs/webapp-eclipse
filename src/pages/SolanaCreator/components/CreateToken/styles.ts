@@ -49,11 +49,10 @@ const useStyles = makeStyles()((theme: Theme) => {
 
     row: {
       display: 'flex',
-      flexDirection: 'column',
       justifyContent: 'center',
-      gap: '10px',
-      [theme.breakpoints.up('sm')]: {
-        flexDirection: 'row'
+      flexDirection: 'row',
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column'
       }
     },
     container: {
@@ -63,7 +62,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: '24px',
       height: 'fit-content',
       background: colors.invariant.component,
-      borderRadius: '24px'
+      borderRadius: '24px',
+      flex: '1 1 0',
+      [theme.breakpoints.down('md')]: {
+        flex: 'auto'
+      }
     },
 
     tokenCost: {
@@ -82,11 +85,25 @@ const useStyles = makeStyles()((theme: Theme) => {
       flexDirection: 'column'
     },
     button: {
+      height: 48,
+      width: '100%'
+    },
+    buttonActive: {
+      transition: 'filter 0.3s linear',
+      background: `${colors.invariant.greenLinearGradient} !important`,
+      filter: 'brightness(0.8)',
+      '&:hover': {
+        filter: 'brightness(1.15)',
+        boxShadow:
+          '0px 3px 1px -2px rgba(43, 193, 144, 0.2),0px 1px 2px 0px rgba(45, 168, 128, 0.14),0px 0px 5px 7px rgba(59, 183, 142, 0.12)'
+      }
+    },
+    connectWalletButton: {
       color: colors.invariant.dark,
       ...typography.body1,
       textTransform: 'none',
       borderRadius: 14,
-      height: 40,
+      height: 48,
       minWidth: 130,
       paddingInline: 0,
       background:
