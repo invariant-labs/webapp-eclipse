@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
@@ -6,13 +6,27 @@ import useStyles from '../CreateToken/styles'
 import { Box, Button, Typography } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
 import { openWalletSelectorModal } from '@utils/web3/selector'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import { BN } from '@project-serum/anchor'
+import { WETH_CREATE_TOKEN_LAMPORTS } from '@store/consts/static'
+import classNames from 'classnames'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
   buttonText: string
+  success: boolean
+  inProgress: boolean
+  ethBalance: BN
 }
 
-export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods, buttonText }) => {
+export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
+  formMethods,
+  buttonText,
+  success,
+  inProgress,
+  ethBalance
+}) => {
   const { classes } = useStyles()
   const {
     control,
@@ -21,6 +35,34 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods, b
     formState: { errors, isValid }
   } = formMethods
   const isSubmitButton = buttonText === 'Create token'
+  const [progress, setProgress] = useState<ProgressState>('none')
+
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 1000)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+      }, 3000)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
+
+  const createAvailable = useMemo(() => {
+    return ethBalance.lt(WETH_CREATE_TOKEN_LAMPORTS)
+  }, [ethBalance])
+
   return (
     <Box className={classes.container}>
       <Box className={classes.inputsWrapper}>
@@ -86,10 +128,42 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods, b
         <InfoIcon />
         <Typography>Token cost: 0.1 SOL</Typography>
       </Box>
+
+      {/* // <Button className={classes.button} variant='contained' type='submit' disabled={!isValid}>
+        //   <span className={classes.buttonText}>{buttonText}</span>
+        // </Button> */}
+
       {isSubmitButton ? (
-        <Button className={classes.button} variant='contained' type='submit' disabled={!isValid}>
-          <span className={classes.buttonText}>{buttonText}</span>
-        </Button>
+        createAvailable ? (
+          <TooltipHover
+            text='More SOL is required to cover the transaction fee. Obtain more SOL to complete this transaction.'
+            top={-45}>
+            <div>
+              <AnimatedButton
+                type='submit'
+                content={'Insufficient SOL'}
+                className={classes.button}
+                onClick={() => {}}
+                disabled={createAvailable}
+                progress={progress}
+              />
+            </div>
+          </TooltipHover>
+        ) : (
+          <AnimatedButton
+            type='submit'
+            content={buttonText}
+            disabled={!isValid}
+            className={classNames(
+              classes.button,
+              isValid && progress === 'none' ? classes.buttonActive : null
+            )}
+            onClick={() => {
+              setProgress('progress')
+            }}
+            progress={progress}
+          />
+        )
       ) : (
         <Button
           className={classes.connectWalletButton}

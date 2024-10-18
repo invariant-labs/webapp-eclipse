@@ -5,11 +5,12 @@ import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils
 import { TokenInfoInputs } from '../CreatorComponents/TokenInfoInputs'
 import { TokenMetadataInputs } from '../CreatorComponents/TokenMetadataInputs'
 import { Box, Typography } from '@mui/material'
-import { createToken } from '@utils/web3/createToken'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
-import { status } from '@store/selectors/solanaWallet'
+import { balance, status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
+import { actions } from '@store/reducers/creator'
+import { creatorState } from '@store/selectors/creator'
 
 interface FormData {
   name: string
@@ -27,8 +28,12 @@ interface FormData {
 export const CreateToken: React.FC = () => {
   const { classes } = useStyles()
   const currentNetwork = useSelector(network)
-
   const walletStatus = useSelector(status)
+  const ethBalance = useSelector(balance)
+  const { success, inProgress } = useSelector(creatorState)
+
+  const dispatch = useDispatch()
+
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const buttonText = isConnected ? 'Create token' : 'Connect wallet'
 
@@ -48,7 +53,7 @@ export const CreateToken: React.FC = () => {
       image: ''
     }
   })
-  const onSubmit = async (data: FormData) => {
+  const onSubmit = (data: FormData) => {
     try {
       const decimalsError = validateDecimals(data.decimals)
       if (decimalsError) {
@@ -60,8 +65,7 @@ export const CreateToken: React.FC = () => {
         throw new Error(supplyError)
       }
 
-      const hasCreated = await createToken(data, currentNetwork)
-      console.log('has created', hasCreated)
+      dispatch(actions.createToken({ data, network: currentNetwork }))
     } catch (error) {
       console.error('Error submitting form:', error)
     }
@@ -76,7 +80,13 @@ export const CreateToken: React.FC = () => {
           </Typography>
           <form onSubmit={formMethods.handleSubmit(onSubmit)}>
             <Box className={classes.row} gap='20px'>
-              <TokenInfoInputs formMethods={formMethods} buttonText={buttonText} />
+              <TokenInfoInputs
+                formMethods={formMethods}
+                buttonText={buttonText}
+                success={success}
+                inProgress={inProgress}
+                ethBalance={ethBalance}
+              />
               <TokenMetadataInputs formMethods={formMethods} />
             </Box>
           </form>

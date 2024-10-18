@@ -85,22 +85,17 @@ const useStyles = makeStyles()((theme: Theme) => {
       flexDirection: 'column'
     },
     button: {
-      color: colors.invariant.dark,
-      ...typography.body1,
-      textTransform: 'none',
-      borderRadius: 14,
       height: 48,
-      minWidth: 130,
-      paddingInline: 0,
-      background:
-        'linear-gradient(180deg, rgba(239, 132, 245, 0.8) 0%, rgba(156, 62, 189, 0.8) 100%)',
+      width: '100%'
+    },
+    buttonActive: {
+      transition: 'filter 0.3s linear',
+      background: `${colors.invariant.greenLinearGradient} !important`,
+      filter: 'brightness(0.8)',
       '&:hover': {
-        background: 'linear-gradient(180deg, #EF84F5 0%, #9C3EBD 100%)',
-        boxShadow: '0px 0px 16px rgba(239, 132, 245, 0.35)'
-      },
-      '&:disabled': {
-        background: colors.invariant.light,
-        color: colors.invariant.componentBcg
+        filter: 'brightness(1.15)',
+        boxShadow:
+          '0px 3px 1px -2px rgba(43, 193, 144, 0.2),0px 1px 2px 0px rgba(45, 168, 128, 0.14),0px 0px 5px 7px rgba(59, 183, 142, 0.12)'
       }
     },
     connectWalletButton: {
