@@ -4,7 +4,9 @@ import { keySelectors, AnyProps } from './helpers'
 import { PublicKey } from '@solana/web3.js'
 import { tokens } from './pools'
 import { ISolanaWallet, ITokenAccount, solanaWalletSliceName } from '@store/reducers/solanaWallet'
+import { ISolanaConnectionStore, solanaConnectionSliceName } from '@store/reducers/solanaConnection'
 import {
+  NetworkType,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
   WETH_POSITION_INIT_LAMPORTS,
   WRAPPED_ETH_ADDRESS
@@ -21,6 +23,10 @@ export const { address, balance, accounts, status, balanceLoading, thankYouModal
     'balanceLoading',
     'thankYouModalShown'
   ])
+
+const connectionStore = (s: AnyProps) => s[solanaConnectionSliceName] as ISolanaConnectionStore
+
+export const { network } = keySelectors(connectionStore, ['network'])
 
 export const tokenBalance = (tokenAddress: PublicKey) =>
   createSelector(accounts, tokensAccounts => {
@@ -61,15 +67,21 @@ export const swapTokens = createSelector(
   accounts,
   tokens,
   balance,
-  (allAccounts, tokens, ethBalance) => {
+  network,
+  (allAccounts, tokens, ethBalance, networkType) => {
+    const ethEstimatedBalance =
+      networkType === NetworkType.Mainnet
+        ? ethBalance
+        : ethBalance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+          ? ethBalance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+          : new BN(0)
+
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
-          ? ethBalance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-            ? ethBalance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-            : new BN(0)
+          ? ethEstimatedBalance
           : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
   }
@@ -79,15 +91,21 @@ export const poolTokens = createSelector(
   accounts,
   tokens,
   balance,
-  (allAccounts, tokens, ethBalance) => {
+  network,
+  (allAccounts, tokens, ethBalance, networkType) => {
+    const ethEstimatedBalance =
+      networkType === NetworkType.Mainnet
+        ? ethBalance
+        : ethBalance.gt(WETH_POSITION_INIT_LAMPORTS)
+          ? ethBalance.sub(WETH_POSITION_INIT_LAMPORTS)
+          : new BN(0)
+
     return Object.values(tokens).map(token => ({
       ...token,
       assetAddress: token.address,
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
-          ? ethBalance.gt(WETH_POSITION_INIT_LAMPORTS)
-            ? ethBalance.sub(WETH_POSITION_INIT_LAMPORTS)
-            : new BN(0)
+          ? ethEstimatedBalance
           : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
   }

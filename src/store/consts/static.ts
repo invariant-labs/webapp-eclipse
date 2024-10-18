@@ -3,6 +3,8 @@ import { BN } from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
 import { BestTier, Chain, PrefixConfig, Token, TokenPriceData } from './types'
+import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
+import icons from '@static/icons'
 
 export enum NetworkType {
   Local = 'Local',
@@ -13,26 +15,25 @@ export enum NetworkType {
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
 export const WETH_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Testnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Devnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Local]: emptyPublicKey
 }
 
 export const BTC_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey(MAINNET_TOKENS.BTC),
   [NetworkType.Testnet]: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo'),
   [NetworkType.Devnet]: new PublicKey('CfwLhXJ2r2NmUE1f7oAeySY6eEZ7f5tC8v95nopUs5ez'),
   [NetworkType.Local]: emptyPublicKey
 }
 
 export const USDC_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey(MAINNET_TOKENS.USDC),
   [NetworkType.Testnet]: new PublicKey('5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx'),
   [NetworkType.Devnet]: new PublicKey('GEds1ARB3oywy2sSdiNGDyxz9MhpfqPkFYYStdZmHaiN'),
   [NetworkType.Local]: emptyPublicKey
 }
-export const USDT_MAINNET_ADDRESS = '5Et3dDcXUiThrBCot7g65k3oDSicGy4qC82cq9f911izKNtE'
 
 export const REFRESHER_INTERVAL = 120
 
@@ -113,11 +114,30 @@ export const S22_TEST: Token = {
   coingeckoId: ''
 }
 
+export const MOCKED_TOKEN_MAIN: Token = {
+  symbol: 'MT',
+  address: new PublicKey('82kkga2kBcQNyV4VKJhGvE7Z58fFavVyuh5NapMVo7Qs'),
+  decimals: 9,
+  name: 'Mocked Token',
+  logoURI: icons.unknownToken,
+  coingeckoId: ''
+}
+
+export const WETH_MAIN: Token = {
+  symbol: 'ETH',
+  address: WETH_ADDRESS[NetworkType.Mainnet],
+  decimals: 9,
+  name: 'Ethereum',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+  coingeckoId: 'ethereum'
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
-  MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
+  MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
-  DEV_EU = RPC.MAIN,
+  DEV_EU = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   LOCAL = 'http://127.0.0.1:8899'
 }
 
@@ -233,26 +253,28 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
-  Mainnet: [],
+  Mainnet: [MOCKED_TOKEN_MAIN.address, WETH_MAIN.address],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
 }
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
-  Mainnet: [],
+  Mainnet: [MOCKED_TOKEN_MAIN.address],
   Testnet: [USDC_TEST.address, BTC_TEST.address],
   Local: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
-  Mainnet: [],
+  Mainnet: [1000 * 10 ** MOCKED_TOKEN_MAIN.decimals],
   Testnet: [2 * 10 ** USDC_TEST.decimals, 0.00005 * 10 ** BTC_TEST.decimals],
   Local: []
 }
 
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
+
+export const WETH_MIN_TRANSACTION_FEE_MAIN = new BN(1)
 
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(50000)
 
@@ -304,7 +326,7 @@ export const defaultPrefixConfig: PrefixConfig = {
   M: 1000000,
   K: 10000
 }
-const mainnetList = {}
+// const mainnetList = {}
 
 export const getAddressTickerMap = (network: NetworkType): { [k: string]: string } => {
   if (network !== NetworkType.Mainnet) {
@@ -318,15 +340,18 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
     }
   } else {
-    const parsedMainnetList = mainnetList as unknown as Record<string, Token>
-    const result: { [k: string]: PublicKey } = {}
+    // const parsedMainnetList = mainnetList as unknown as Record<string, Token>
+    // const result: { [k: string]: PublicKey } = {}
 
-    Object.keys(parsedMainnetList).forEach((key: string) => {
-      const token = parsedMainnetList[key]
-      result[token.symbol] = token.address
-    })
+    // Object.keys(parsedMainnetList).forEach((key: string) => {
+    //   const token = parsedMainnetList[key]
+    //   result[token.symbol] = token.address
+    // })
 
-    return {}
+    return {
+      MT: MOCKED_TOKEN_MAIN.address.toString(),
+      ETH: WETH_ADDRESS[network].toString()
+    }
   }
 }
 

@@ -10,14 +10,14 @@ export const getCurrentMarketProgram = (): Market => {
 }
 
 export const getMarketProgram = async (
-  networkType: NetworkType,
+  network: NetworkType,
   rpcAddress: string
 ): Promise<Market> => {
   if (_market) {
     return _market
   }
 
-  const net = networkTypetoProgramNetwork(networkType)
+  const net = networkTypetoProgramNetwork(network)
 
   _market = await Market.build(
     net,
