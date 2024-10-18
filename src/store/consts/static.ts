@@ -267,7 +267,7 @@ export const airdropTokens: Record<NetworkType, PublicKey[]> = {
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
-  Mainnet: [1 * 0.0001 ** MOCKED_TOKEN_MAIN.decimals],
+  Mainnet: [1000 * 10 ** MOCKED_TOKEN_MAIN.decimals],
   Testnet: [2 * 10 ** USDC_TEST.decimals, 0.00005 * 10 ** BTC_TEST.decimals],
   Local: []
 }
