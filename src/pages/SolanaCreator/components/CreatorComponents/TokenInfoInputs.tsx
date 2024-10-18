@@ -46,7 +46,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods, b
             maxLength: { value: 8, message: 'Symbol must be 8 characters or less' }
           }}
         />
-        <Box className={classes.row}>
+        <Box className={classes.row} gap='10px'>
           <Box className={classes.inputContainer}>
             <ControlledNumericInput
               name='decimals'

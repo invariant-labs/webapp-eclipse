@@ -49,11 +49,10 @@ const useStyles = makeStyles()((theme: Theme) => {
 
     row: {
       display: 'flex',
-      flexDirection: 'column',
       justifyContent: 'center',
-      gap: '10px',
-      [theme.breakpoints.up('sm')]: {
-        flexDirection: 'row'
+      flexDirection: 'row',
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column'
       }
     },
     container: {
@@ -63,7 +62,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: '24px',
       height: 'fit-content',
       background: colors.invariant.component,
-      borderRadius: '24px'
+      borderRadius: '24px',
+      flex: '1 1 0',
+      [theme.breakpoints.down('md')]: {
+        flex: 'auto'
+      }
     },
 
     tokenCost: {
@@ -86,7 +89,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       ...typography.body1,
       textTransform: 'none',
       borderRadius: 14,
-      height: 40,
+      height: 48,
       minWidth: 130,
       paddingInline: 0,
       background:
