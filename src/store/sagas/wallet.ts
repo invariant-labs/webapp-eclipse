@@ -202,7 +202,6 @@ export function* handleAirdrop(): Generator {
         )
         return
       }
-      yield* put(actions.showThankYouModal(true))
       yield put(
         snackbarsActions.add({
           message: 'Airdrop in progress',
@@ -225,6 +224,7 @@ export function* handleAirdrop(): Generator {
           persist: false
         })
       )
+      yield* put(actions.showThankYouModal(true))
     } else {
       yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
 
