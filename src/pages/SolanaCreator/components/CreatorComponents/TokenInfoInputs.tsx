@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
@@ -9,7 +9,6 @@ import { openWalletSelectorModal } from '@utils/web3/selector'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { BN } from '@project-serum/anchor'
-import { WETH_CREATE_TOKEN_LAMPORTS } from '@store/consts/static'
 import classNames from 'classnames'
 
 interface TokenInfoInputsProps {
@@ -24,8 +23,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
   formMethods,
   buttonText,
   success,
-  inProgress,
-  ethBalance
+  inProgress
 }) => {
   const { classes } = useStyles()
   const {
