@@ -22,7 +22,6 @@ import { createLoaderKey } from '@utils/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { closeSnackbar } from 'notistack'
 import { getSolanaConnection } from '@utils/web3/connection'
-import { BN } from '@project-serum/anchor'
 
 export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
   const { data, network } = action.payload
