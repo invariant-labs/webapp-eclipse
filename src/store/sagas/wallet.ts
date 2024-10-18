@@ -13,7 +13,7 @@ import {
   airdropQuantities,
   airdropTokens,
   NetworkType,
-  WETH_MIN_TRANSACTION_FEE_MAIN
+  WETH_MIN_TRANSACTION_FEE_MAIN,
 } from '@store/consts/static'
 import { Token as StoreToken } from '@store/consts/types'
 import { BN } from '@project-serum/anchor'
@@ -43,7 +43,7 @@ import { TOKEN_2022_PROGRAM_ID } from '@invariant-labs/sdk-eclipse'
 import { disconnectWallet, getSolanaWallet } from '@utils/web3/wallet'
 import { WalletAdapter } from '@utils/web3/adapters/types'
 import airdropAdmin from '@store/consts/airdropAdmin'
-import { createLoaderKey, getTokenProgramId, printBN } from '@utils/utils'
+import { createLoaderKey, getTokenProgramId } from '@utils/utils'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { actions as bondsActions } from '@reducers/bonds'
@@ -192,16 +192,16 @@ export function* handleAirdrop(): Generator {
         })
       )
     } else if (networkType === NetworkType.Mainnet) {
-      // if (ethBalance.lt(WETH_MIN_TRANSACTION_FEE_MAIN)) {
-      //   yield put(
-      //     snackbarsActions.add({
-      //       message: 'Do not have enough ETH to get faucet',
-      //       variant: 'error',
-      //       persist: false
-      //     })
-      //   )
-      //   return
-      // }
+      if (ethBalance.lt(WETH_MIN_TRANSACTION_FEE_MAIN)) {
+        yield put(
+          snackbarsActions.add({
+            message: 'Do not have enough ETH to get faucet',
+            variant: 'error',
+            persist: false
+          })
+        )
+        return
+      }
       yield* put(actions.showThankYouModal(true))
       yield put(
         snackbarsActions.add({
