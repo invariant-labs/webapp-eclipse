@@ -129,10 +129,6 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
         <Typography>Token cost: 0.1 SOL</Typography>
       </Box>
 
-      {/* // <Button className={classes.button} variant='contained' type='submit' disabled={!isValid}>
-        //   <span className={classes.buttonText}>{buttonText}</span>
-        // </Button> */}
-
       {isSubmitButton ? (
         createAvailable ? (
           <TooltipHover
