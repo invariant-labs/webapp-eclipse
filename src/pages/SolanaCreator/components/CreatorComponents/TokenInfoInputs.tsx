@@ -59,9 +59,10 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
     }
   }, [success, inProgress])
 
-  const createAvailable = useMemo(() => {
-    return ethBalance.lt(WETH_CREATE_TOKEN_LAMPORTS)
-  }, [ethBalance])
+  // const createAvailable = useMemo(() => {
+  //   return ethBalance.lt(WETH_CREATE_TOKEN_LAMPORTS)
+  // }, [ethBalance])
+  const createAvailable = false
 
   return (
     <Box className={classes.container}>

@@ -2,7 +2,6 @@ import { PayloadAction } from '@reduxjs/toolkit'
 import { actions, CreateTokenPayload } from '@store/reducers/creator'
 import { all, call, put, spawn, takeLatest } from 'typed-redux-saga'
 import { getWallet } from './wallet'
-import { getConnection } from './connection'
 import { DEFAULT_PUBLICKEY, NetworkType, SIGNING_SNACKBAR_CONFIG } from '@store/consts/static'
 import { WebUploader } from '@irys/web-upload'
 import { WebSolana } from '@irys/web-upload-solana'
@@ -22,6 +21,8 @@ import * as spl18 from '@solana/spl-token'
 import { createLoaderKey } from '@utils/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { closeSnackbar } from 'notistack'
+import { getSolanaConnection } from '@utils/web3/connection'
+import { BN } from '@project-serum/anchor'
 
 export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
   const { data, network } = action.payload
@@ -43,7 +44,9 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
   const loaderSigningTx = createLoaderKey()
   try {
     const wallet = yield* call(getWallet)
-    const connection = yield* call(getConnection)
+    const connection = getSolanaConnection(
+      'https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c'
+    )
 
     if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) {
       yield put(
@@ -65,13 +68,8 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
     )
     const irysUploader = yield* call(async () => {
       return network === NetworkType.Mainnet
-        ? await WebUploader(WebSolana)
-            .withProvider(wallet)
-            .withRpc('https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c')
-        : await WebUploader(WebSolana)
-            .withProvider(wallet)
-            .withRpc('https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c')
-            .devnet()
+        ? await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint)
+        : await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint).devnet()
     })
 
     const mintKeypair = Keypair.generate()
@@ -180,7 +178,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       tokenATA,
       wallet.publicKey,
       [],
-      supply
+      BigInt(supply) as any
     )
 
     const createMetadataAccountInstruction = createCreateMetadataAccountV3Instruction(
