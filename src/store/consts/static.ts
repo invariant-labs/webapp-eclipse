@@ -260,19 +260,21 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
-  Mainnet: [],
+  Mainnet: [MOCKED_TOKEN_MAIN.address],
   Testnet: [USDC_TEST.address, BTC_TEST.address],
   Local: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
-  Mainnet: [],
+  Mainnet: [1 * 0.0001 ** MOCKED_TOKEN_MAIN.decimals],
   Testnet: [2 * 10 ** USDC_TEST.decimals, 0.00005 * 10 ** BTC_TEST.decimals],
   Local: []
 }
 
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
+
+export const WETH_MIN_TRANSACTION_FEE_MAIN = new BN(1)
 
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(50000)
 
