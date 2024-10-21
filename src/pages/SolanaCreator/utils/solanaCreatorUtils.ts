@@ -35,14 +35,15 @@ export const validateDecimals = (decimals: string): string | null => {
 }
 
 export const validateSupply = (supply: string, decimals: string): string | null => {
-  if (!supply || !decimals) return null
-
   const supplyValue = BigInt(supply)
-  const decimalsValue = parseInt(decimals, 10)
 
   if (supplyValue === 0n) {
-    return null
+    return 'Supply must be greater than 0'
   }
+
+  if (!supply || !decimals) return null
+
+  const decimalsValue = parseInt(decimals, 10)
 
   const totalDigits = supply.length + decimalsValue
   if (totalDigits > 20) {
@@ -73,7 +74,7 @@ const errorMessages: Record<string, ErrorMessage> = {
   },
   supply: {
     shortErrorMessage: 'Supply exceeds limit',
-    fullErrorMessage: '(Supply * 10^decimal) must be less than or equal to (2^64) - 1'
+    fullErrorMessage: '(Supply * 10^decimal) must be less than (2^64) and greater than 0'
   }
 }
 
@@ -94,7 +95,10 @@ const getErrorMessages = (error: any): ErrorMessage => {
           fullErrorMessage: error.message || errorMessages.decimals.fullErrorMessage
         }
       case 'supply':
-        return errorMessages.supply
+        return {
+          shortErrorMessage: error.message || 'Supply exceeds limit',
+          fullErrorMessage: errorMessages.supply.fullErrorMessage
+        }
     }
   }
 

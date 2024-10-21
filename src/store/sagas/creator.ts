@@ -253,6 +253,18 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
     if (confirmedTx.value.err === null) {
       console.log('Token has been created')
       yield* put(actions.setCreateSuccess(true))
+
+      yield put(
+        snackbarsActions.add({
+          message: 'Token created successfully.',
+          variant: 'success',
+          persist: false,
+          link: {
+            label: 'Details',
+            href: `https://solscan.io/tx/${signatureTx}?cluster=custom&customUrl=https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c`
+          }
+        })
+      )
       return
     }
     console.log('Failed to create a Token', false)
