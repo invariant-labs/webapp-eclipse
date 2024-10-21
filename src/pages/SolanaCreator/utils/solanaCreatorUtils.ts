@@ -11,14 +11,20 @@ export interface FormData {
   image: string
 }
 
-type SocialPlatform = 'x' | 'telegram' | 'discord'
+type SocialPlatform = 'x' | 'telegram' | 'discord' | 'website'
 
 export const validateSocialLink = (value: string, platform: SocialPlatform): true | string => {
   if (!value) return true
   const patterns: Record<SocialPlatform, RegExp> = {
+    website:
+      /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i,
     x: /^https?:\/\/(www\.)?(twitter\.com|x\.com)\/.+/i,
     telegram: /^https?:\/\/(t\.me|telegram\.me)\/.+/i,
     discord: /^https?:\/\/(www\.)?discord\.gg\/.+/i
+  }
+
+  if (value.length > 200) {
+    return 'Link exceeds maximum length'
   }
   return patterns[platform].test(value) || `Invalid ${platform} link`
 }
