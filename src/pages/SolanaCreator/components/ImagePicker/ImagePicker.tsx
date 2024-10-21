@@ -14,7 +14,7 @@ interface ImagePickerProps {
 }
 
 export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
-const MAX_FILE_SIZE = 800 * 1024
+const MAX_FILE_SIZE = 100 * 1024
 
 export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
   const { classes } = useStyles()
@@ -28,8 +28,8 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
     const file = e.target.files?.[0]
     if (file) {
       if (file.size > MAX_FILE_SIZE) {
-        console.log('File size exceeds 1KB limit')
-        setError('File size exceeds 800KB limit')
+        console.log('File size exceeds 100KB limit')
+        setError('File size exceeds 100KB limit')
         return
       }
 
