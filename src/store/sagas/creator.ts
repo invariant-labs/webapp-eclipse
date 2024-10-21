@@ -96,12 +96,20 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       }
     }
 
-    const links: Array<[string, string]> = [
+    const links: { [key: string]: string } = [
       ['website', website],
       ['twitter', twitter],
       ['telegram', telegram],
       ['discord', discord]
-    ].filter(item => item[1].length > 0) as Array<[string, string]>
+    ].reduce(
+      (acc, [key, value]) => {
+        if (value.length > 0) {
+          acc[key] = value
+        }
+        return acc
+      },
+      {} as { [key: string]: string }
+    )
 
     const metaDataToUpload = {
       updateAuthority: updateAuthority.toString(),
@@ -110,7 +118,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       symbol: symbol,
       image: imageUri,
       description: description,
-      links
+      ...links
     }
 
     let metaDataUri: string
