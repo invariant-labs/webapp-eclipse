@@ -269,7 +269,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
           persist: false,
           link: {
             label: 'Details',
-            href: `https://solscan.io/tx/${signatureTx}?cluster=custom&customUrl=https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c`
+            href: `https://solscan.io/tx/${signatureTx}?cluster=custom&customUrl=https://rpc-devnet.hellomoon.io/81316f2a-7eb6-48f2-9398-d8bf82ae063e`
           }
         })
       )
