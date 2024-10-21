@@ -44,7 +44,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
   try {
     const wallet = yield* call(getWallet)
     const connection = getSolanaConnection(
-      'https://devnet.helius-rpc.com/?api-key=ef843b40-9876-4a02-a181-a1e6d3e61b4c'
+      'https://rpc-devnet.hellomoon.io/81316f2a-7eb6-48f2-9398-d8bf82ae063e'
     )
 
     if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) {
