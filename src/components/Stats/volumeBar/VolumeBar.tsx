@@ -6,12 +6,12 @@ import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumber } from '@utils/utils'
 
 interface Iprops {
-  percentVolume: number
-  volume: number
-  tvlVolume: number
-  percentTvl: number
-  feesVolume: number
-  percentFees: number
+  percentVolume: number | null
+  volume: number | null
+  tvlVolume: number | null
+  percentTvl: number | null
+  feesVolume: number | null
+  percentFees: number | null
 }
 
 const VolumeBar: React.FC<Iprops> = ({
@@ -23,6 +23,13 @@ const VolumeBar: React.FC<Iprops> = ({
   percentFees
 }) => {
   const { classes } = useStyles()
+
+  percentVolume = percentVolume ?? 0
+  volume = volume ?? 0
+  tvlVolume = tvlVolume ?? 0
+  percentTvl = percentTvl ?? 0
+  feesVolume = feesVolume ?? 0
+  percentFees = percentFees ?? 0
 
   const isXDown = useMediaQuery(theme.breakpoints.down('xs'))
 
