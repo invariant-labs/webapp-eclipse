@@ -1,13 +1,14 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
-import Select from './Select'
-import { SwapToken } from '@store/selectors/solanaWallet'
-import { BN } from '@project-serum/anchor'
-import { PublicKey } from '@solana/web3.js'
-import { NetworkType } from '@store/consts/static'
+import ExchangeAmountInput from './ExchangeAmountInput'
+import { useState } from 'react'
 import { Provider } from 'react-redux'
 import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
+import { SwapToken } from '@store/selectors/solanaWallet'
+import { PublicKey } from '@solana/web3.js'
+import { NetworkType } from '@store/consts/static'
+import { BN } from '@project-serum/anchor'
 
 const tokens: SwapToken[] = [
   {
@@ -40,8 +41,8 @@ const tokens: SwapToken[] = [
 ]
 
 const meta = {
-  title: 'Inputs/Select',
-  component: Select,
+  title: 'Inputs/ExchangeAmountInput',
+  component: ExchangeAmountInput,
   decorators: [
     Story => (
       <Provider store={store}>
@@ -51,28 +52,56 @@ const meta = {
       </Provider>
     )
   ],
-  args: {}
-} satisfies Meta<typeof Select>
+  args: {
+    error: null,
+    className: '',
+    decimal: 2,
+    placeholder: '0.0',
+    onMaxClick: fn(),
+    current: null,
+    tokens: tokens,
+    onSelect: fn(),
+    disabled: false,
+    balance: '1000',
+    hideBalances: false,
+    handleAddToken: fn(),
+    commonTokens: [],
+    limit: undefined,
+    initialHideUnknownTokensValue: false,
+    onHideUnknownTokensChange: fn(),
+    tokenPrice: 100,
+    priceLoading: false,
+    isBalanceLoading: false,
+    showMaxButton: true,
+    showBlur: false,
+    hiddenUnknownTokens: false,
+    network: NetworkType.Testnet,
+    percentageChange: 0
+  }
+} satisfies Meta<typeof ExchangeAmountInput>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    name: 'Select token',
-    current: null,
-    onSelect: fn(),
-    commonTokens: [
-      new PublicKey('So11111111111111111111111111111111111111112'),
-      new PublicKey('9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E'),
-      new PublicKey('EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v')
-    ],
-    handleAddToken: fn(),
-    initialHideUnknownTokensValue: false,
-    tokens: tokens,
-    onHideUnknownTokensChange: fn(),
-    centered: false,
-    hiddenUnknownTokens: false,
-    network: NetworkType.Testnet
+    value: '0',
+    setValue: fn()
+  },
+  render: args => {
+    const [value, setValue] = useState('0')
+    return <ExchangeAmountInput {...args} setValue={setValue} value={value} tokens={tokens} />
+  }
+}
+
+export const WithError: Story = {
+  args: {
+    value: '0',
+    setValue: fn(),
+    error: 'Invalid amount'
+  },
+  render: args => {
+    const [value, setValue] = useState('0')
+    return <ExchangeAmountInput {...args} setValue={setValue} value={value} />
   }
 }

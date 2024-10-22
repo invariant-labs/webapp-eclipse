@@ -13,7 +13,9 @@ const meta = {
     Story => (
       <Provider store={store}>
         <MemoryRouter>
-          <Story />
+          <div style={{ width: '500px' }}>
+            <Story />
+          </div>
         </MemoryRouter>
       </Provider>
     )
@@ -24,16 +26,25 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 const PrimaryComponent: React.FC<typeof Primary.args> = args => {
-  const [midPrice, setMidPrice] = useState<bigint>(0n)
+  const [midPrice, setMidPrice] = useState(0)
 
   return (
     <PoolInit
       {...args}
+      concentrationArray={[0.1, 0.2, 0.3, 0.4, 0.5]}
+      concentrationIndex={2}
+      minimumSliderIndex={0}
+      setConcentrationIndex={fn()}
+      xDecimal={6}
+      yDecimal={6}
+      tickSpacing={1}
+      isXtoY={true}
       midPriceIndex={midPrice}
       onChangeMidPrice={setMidPrice}
-      tickSpacing={1n}
-      xDecimal={9n}
-      yDecimal={12n}
+      currentPairReversed={null}
+      onChangeRange={fn()}
+      tokenASymbol='BTC'
+      tokenBSymbol='ETH'
     />
   )
 }
@@ -42,14 +53,14 @@ export const Primary: Story = {
   args: {
     currentPairReversed: false,
     isXtoY: true,
-    midPriceIndex: 0 as any,
+    midPriceIndex: 0,
     onChangeMidPrice: fn(),
     onChangeRange: fn(),
-    tickSpacing: 1 as any,
+    tickSpacing: 1,
     tokenASymbol: 'BTC',
     tokenBSymbol: 'ETH',
-    xDecimal: 9 as any,
-    yDecimal: 12 as any,
+    xDecimal: 9,
+    yDecimal: 12,
     concentrationArray: [0.1, 0.2, 0.3, 0.4, 0.5],
     concentrationIndex: 2,
     minimumSliderIndex: 0,

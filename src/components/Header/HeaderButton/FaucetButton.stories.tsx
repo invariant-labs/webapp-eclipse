@@ -1,14 +1,13 @@
-import { MemoryRouter } from 'react-router-dom'
-import { OutlinedButton } from './OutlinedButton'
-
 import type { Meta, StoryObj } from '@storybook/react'
+import FaucetButton from './FaucetButton'
 import { fn } from '@storybook/test'
-import { Provider } from 'react-redux'
 import { store } from '@store/index'
+import { Provider } from 'react-redux'
+import { MemoryRouter } from 'react-router-dom'
 
 const meta = {
-  title: 'Buttons/OutlinedButton',
-  component: OutlinedButton,
+  title: 'Buttons/FaucetButton',
+  component: FaucetButton,
   decorators: [
     Story => (
       <Provider store={store}>
@@ -18,15 +17,14 @@ const meta = {
       </Provider>
     )
   ]
-} satisfies Meta<typeof OutlinedButton>
+} satisfies Meta<typeof FaucetButton>
 
 export default meta
 type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    name: 'Connect button',
-    onClick: fn(),
-    disabled: false
+    onFaucet: fn(),
+    children: 'Faucet'
   }
 }

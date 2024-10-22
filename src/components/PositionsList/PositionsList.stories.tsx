@@ -1,10 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react'
 import { BrowserRouter } from 'react-router-dom'
 import { PositionsList } from './PositionsList'
-import { Network } from '@invariant-labs/a0-sdk'
+import { NetworkType } from '@store/consts/static'
+import { IPositionItem } from './PositionItem/PositionItem'
 
 const meta = {
-  title: 'PositionsList',
+  title: 'Components/PositionsList',
   component: PositionsList,
   decorators: [
     Story => (
@@ -18,78 +19,86 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-const data = [
+const data: IPositionItem[] = [
   {
+    address: 'So11111111111111111111111111111111111111112',
+    currentPrice: 123.234,
+    isFullRange: false,
+    network: NetworkType.Testnet,
     tokenXName: 'BTC',
-    tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenYName: 'SNY',
+    tokenXIcon:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    tokenYIcon:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     min: 2149.6,
     max: 149.6,
     fee: 0.05,
-    valueX: 10000.45,
-    valueY: 2137.4,
-    id: 1,
-    address: '0x123132423423',
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
-    currentPrice: 1000,
-    network: Network.Testnet,
-    isFullRange: false
+    valueX: 10000.45,
+    valueY: 21370.4,
+    id: '1'
   },
   {
+    address: 'So11111111111111111111111111111111111111112',
+    currentPrice: 123.234,
+    isFullRange: false,
+    network: NetworkType.Testnet,
     tokenXName: 'BTC',
-    tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenYName: 'SNY',
+    tokenXIcon:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    tokenYIcon:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     min: 2149.6,
     max: 149.6,
     fee: 0.05,
-    valueX: 10000.45,
-    valueY: 2137.4,
-    id: 2,
-    address: '0x123132423423',
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
-    currentPrice: 1000,
-    network: Network.Testnet,
-    isFullRange: false
+    valueX: 10000.45,
+    valueY: 21370.4,
+    id: '2'
   },
   {
+    address: 'So11111111111111111111111111111111111111112',
+    currentPrice: 123.234,
+    isFullRange: false,
+    network: NetworkType.Testnet,
     tokenXName: 'BTC',
-    tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenYName: 'SNY',
+    tokenXIcon:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    tokenYIcon:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     min: 2149.6,
     max: 149.6,
     fee: 0.05,
-    valueX: 10000.45,
-    valueY: 2137.4,
-    id: 3,
-    address: '0x123132423423',
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
-    currentPrice: 1000,
-    network: Network.Testnet,
-    isFullRange: false
+    valueX: 10000.45,
+    valueY: 21370.4,
+    id: '3'
   },
   {
+    address: 'So11111111111111111111111111111111111111112',
+    currentPrice: 123.234,
+    isFullRange: false,
+    network: NetworkType.Testnet,
     tokenXName: 'BTC',
-    tokenYName: 'AZERO',
-    tokenXIcon: '',
-    tokenYIcon: '',
+    tokenYName: 'SNY',
+    tokenXIcon:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+    tokenYIcon:
+      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     min: 2149.6,
     max: 149.6,
     fee: 0.05,
-    valueX: 10000.45,
-    valueY: 2137.4,
-    id: 4,
-    address: '0x123132423423',
     tokenXLiq: 5000,
     tokenYLiq: 300.2,
-    currentPrice: 1000,
-    network: Network.Testnet,
-    isFullRange: false
+    valueX: 10000.45,
+    valueY: 21370.4,
+    id: '4'
   }
 ]
 
@@ -110,10 +119,7 @@ export const Primary: Story = {
     handleRefresh: () => {},
     initialPage: 1,
     setLastPage: () => {},
-    pageChanged: () => {},
-    length: 0 as any,
-    loadedPages: {},
-    getRemainingPositions: () => {},
+    length: 0,
     noInitialPositions: false
   }
 }

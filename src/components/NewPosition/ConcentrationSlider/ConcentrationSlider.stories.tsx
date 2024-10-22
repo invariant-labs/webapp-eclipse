@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react'
-
 import ConcentrationSlider from './ConcentrationSlider'
 import { fn } from '@storybook/test'
 

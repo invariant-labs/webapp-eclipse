@@ -339,3 +339,4 @@
 // }
 
 // export default BuyBondModal
+export default {}

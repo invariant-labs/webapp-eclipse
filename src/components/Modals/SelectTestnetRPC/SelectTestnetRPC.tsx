@@ -37,8 +37,7 @@ export const SelectTestnetRPC: React.FC<ISelectTestnetRPC> = ({
   const inputRef = useRef<HTMLInputElement>(null)
 
   const isAddressValid = () => {
-    const urlRegex = /^wss?:\/\/[^.]+\.[^.]+/
-
+    const urlRegex = /^(https?:\/\/|wss?:\/\/)[\w.-]+\.[a-zA-Z]{2,}(:\d+)?(\/.*)?$/
     return urlRegex.test(address)
   }
 
