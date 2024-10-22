@@ -162,6 +162,15 @@ export const WETH_MAIN: Token = {
   coingeckoId: 'ethereum'
 }
 
+export const LAIKA_MAIN: Token = {
+  symbol: 'LAIKA',
+  address: new PublicKey('LaihKXA47apnS599tyEyasY2REfEzBNe4heunANhsMx'),
+  decimals: 5,
+  name: 'Laika',
+  logoURI: 'https://pbs.twimg.com/profile_images/1828487610039443460/tdyEkg74_400x400.jpg',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -289,7 +298,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     WETH_MAIN.address,
     USDC_MAIN.address,
     SOL_MAIN.address,
-    DOGWIFHAT_MAIN.address
+    DOGWIFHAT_MAIN.address,
+    LAIKA_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -390,7 +400,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ETH: WETH_ADDRESS[network].toString(),
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
-      WIF: DOGWIFHAT_MAIN.address.toString()
+      WIF: DOGWIFHAT_MAIN.address.toString(),
+      LAIKA: LAIKA_MAIN.address.toString()
     }
   }
 }
