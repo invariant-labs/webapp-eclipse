@@ -4,12 +4,12 @@ import { PayloadType } from '@store/consts/types'
 
 export interface TimeData {
   timestamp: number
-  value: number
+  value: number | null
 }
 
 export interface Value24H {
   value: number
-  change: number
+  change: number | null
 }
 
 export interface TokenStatsData {
