@@ -6,6 +6,7 @@ import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
+  WETH_MIN_TRANSACTION_FEE_MAIN,
   WETH_POOL_INIT_LAMPORTS,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
@@ -116,7 +117,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   network,
   walletStatus,
   onConnectWallet,
-  onDisconnectWallet
+  onDisconnectWallet,
+  ethBalance
 }) => {
   const { classes } = useStyles()
 
@@ -226,12 +228,14 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     const tokenBBalance = convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals)
 
     if (
-      (poolIndex === null &&
-        tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
-        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_POOL_INIT_LAMPORTS))) ||
-      (poolIndex === null &&
-        tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
-        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_POOL_INIT_LAMPORTS)))
+      network === NetworkType.Testnet
+        ? (poolIndex === null &&
+            tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+            tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_POOL_INIT_LAMPORTS))) ||
+          (poolIndex === null &&
+            tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+            tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_POOL_INIT_LAMPORTS)))
+        : ethBalance.lt(WETH_MIN_TRANSACTION_FEE_MAIN)
     ) {
       return `Insufficient ETH`
     }
