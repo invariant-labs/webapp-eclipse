@@ -115,12 +115,41 @@ export const S22_TEST: Token = {
 }
 
 export const MOCKED_TOKEN_MAIN: Token = {
-  symbol: 'MT',
+  symbol: 'MCT',
   address: new PublicKey('82kkga2kBcQNyV4VKJhGvE7Z58fFavVyuh5NapMVo7Qs'),
   decimals: 9,
   name: 'Mocked Token',
-  logoURI: icons.unknownToken,
+  logoURI: icons.dog1,
   coingeckoId: ''
+}
+
+export const USDC_MAIN: Token = {
+  symbol: 'USDC',
+  address: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+  decimals: 6,
+  name: 'USD Coin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+
+export const SOL_MAIN: Token = {
+  symbol: 'SOL',
+  address: new PublicKey('BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL'),
+  decimals: 9,
+  name: 'Solana',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+  coingeckoId: 'solana'
+}
+
+export const DOGWIFHAT_MAIN: Token = {
+  symbol: 'WIF',
+  address: new PublicKey('841P4tebEgNux2jaWSjCoi9LhrVr9eHGjLc758Va3RPH'),
+  decimals: 6,
+  name: 'DOGWIFHAT',
+  logoURI: 'https://assets.coingecko.com/coins/images/33566/standard/dogwifhat.jpg?1702499428',
+  coingeckoId: 'dogwifhat'
 }
 
 export const WETH_MAIN: Token = {
@@ -255,7 +284,13 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
-  Mainnet: [MOCKED_TOKEN_MAIN.address, WETH_MAIN.address],
+  Mainnet: [
+    MOCKED_TOKEN_MAIN.address,
+    WETH_MAIN.address,
+    USDC_MAIN.address,
+    SOL_MAIN.address,
+    DOGWIFHAT_MAIN.address
+  ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
 }
@@ -351,8 +386,11 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
     // })
 
     return {
-      MT: MOCKED_TOKEN_MAIN.address.toString(),
-      ETH: WETH_ADDRESS[network].toString()
+      MCT: MOCKED_TOKEN_MAIN.address.toString(),
+      ETH: WETH_ADDRESS[network].toString(),
+      USDC: USDC_MAIN.address.toString(),
+      SOL: SOL_MAIN.address.toString(),
+      WIF: DOGWIFHAT_MAIN.address.toString()
     }
   }
 }

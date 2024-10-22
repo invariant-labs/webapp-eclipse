@@ -24,6 +24,7 @@ import {
   ADDRESSES_TO_REVERS_TOKEN_PAIRS,
   BTC_DEV,
   BTC_TEST,
+  DOGWIFHAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
   getReversedAddressTickerMap,
@@ -33,9 +34,11 @@ import {
   NetworkType,
   PRICE_DECIMAL,
   S22_TEST,
+  SOL_MAIN,
   subNumbers,
   tokensPrices,
   USDC_DEV,
+  USDC_MAIN,
   USDC_TEST,
   WETH_DEV,
   WETH_TEST
@@ -764,7 +767,10 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       // return obj
       return {
         [WETH_TEST.address.toString()]: WETH_TEST,
-        [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN
+        [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
+        [USDC_MAIN.address.toString()]: USDC_MAIN,
+        [SOL_MAIN.address.toString()]: SOL_MAIN,
+        [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN
       }
     case NetworkType.Devnet:
       return {

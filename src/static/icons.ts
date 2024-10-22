@@ -35,6 +35,10 @@ import circleDiscord from './svg/circle-discord.svg'
 import circleTelegram from './svg/circle-telegram.svg'
 import eclipse from './svg/eclipse.svg'
 import alephiumLogo from './svg/alephiumLogo.svg'
+import cat1 from './svg/SolanaCreator/Cat1.svg'
+import cat2 from './svg/SolanaCreator/Cat2.svg'
+import dog1 from './svg/SolanaCreator/Dog1.svg'
+import dog2 from './svg/SolanaCreator/Dog2.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -73,7 +77,11 @@ const icons: { [key: string]: string } = {
   warningIcon,
   circleDiscord,
   circleTelegram,
-  eclipse
+  eclipse,
+  cat1,
+  cat2,
+  dog1,
+  dog2
 }
 
 export default icons
