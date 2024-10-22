@@ -74,6 +74,16 @@ export const HeaderWrapper: React.FC = () => {
     return lastRPC === null ? RPC.DEV_EU : lastRPC
   }, [])
 
+  const defaultMainnetRPC = useMemo(() => {
+    const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`)
+
+    if (lastRPC === null) {
+      localStorage.setItem(`INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`, RPC.MAIN)
+    }
+
+    return lastRPC === null ? RPC.MAIN : lastRPC
+  }, [])
+
   const activeChain = CHAINS.find(chain => chain.name === Chain.Eclipse) ?? CHAINS[0]
 
   const currentRpcStatus = useSelector(rpcStatus)
@@ -159,6 +169,7 @@ export const HeaderWrapper: React.FC = () => {
         network={currentNetwork}
         defaultDevnetRPC={defaultDevnetRPC}
         rpcStatus={currentRpcStatus}
+        defaultMainnetRPC={defaultMainnetRPC}
       />
     </>
   )

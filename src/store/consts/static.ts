@@ -3,6 +3,8 @@ import { BN } from '@project-serum/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
 import { BestTier, Chain, PrefixConfig, Token, TokenPriceData } from './types'
+import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
+import icons from '@static/icons'
 
 export enum NetworkType {
   Local = 'Local',
@@ -13,26 +15,25 @@ export enum NetworkType {
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
 export const WETH_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Testnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Devnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Local]: emptyPublicKey
 }
 
 export const BTC_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey(MAINNET_TOKENS.BTC),
   [NetworkType.Testnet]: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo'),
   [NetworkType.Devnet]: new PublicKey('CfwLhXJ2r2NmUE1f7oAeySY6eEZ7f5tC8v95nopUs5ez'),
   [NetworkType.Local]: emptyPublicKey
 }
 
 export const USDC_ADDRESS = {
-  [NetworkType.Mainnet]: emptyPublicKey,
+  [NetworkType.Mainnet]: new PublicKey(MAINNET_TOKENS.USDC),
   [NetworkType.Testnet]: new PublicKey('5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx'),
   [NetworkType.Devnet]: new PublicKey('GEds1ARB3oywy2sSdiNGDyxz9MhpfqPkFYYStdZmHaiN'),
   [NetworkType.Local]: emptyPublicKey
 }
-export const USDT_MAINNET_ADDRESS = '5Et3dDcXUiThrBCot7g65k3oDSicGy4qC82cq9f911izKNtE'
 
 export const REFRESHER_INTERVAL = 120
 
@@ -113,11 +114,79 @@ export const S22_TEST: Token = {
   coingeckoId: ''
 }
 
+export const MOCKED_TOKEN_MAIN: Token = {
+  symbol: 'MCT',
+  address: new PublicKey('82kkga2kBcQNyV4VKJhGvE7Z58fFavVyuh5NapMVo7Qs'),
+  decimals: 9,
+  name: 'Mocked Token',
+  logoURI: icons.dog1,
+  coingeckoId: ''
+}
+
+export const USDC_MAIN: Token = {
+  symbol: 'USDC',
+  address: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+  decimals: 6,
+  name: 'USD Coin (Hyperlane)',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+
+export const SOL_MAIN: Token = {
+  symbol: 'SOL',
+  address: new PublicKey('BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL'),
+  decimals: 9,
+  name: 'Solana (Hyperlane)',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
+  coingeckoId: 'solana'
+}
+
+export const DOGWIFHAT_MAIN: Token = {
+  symbol: 'WIF',
+  address: new PublicKey('841P4tebEgNux2jaWSjCoi9LhrVr9eHGjLc758Va3RPH'),
+  decimals: 6,
+  name: 'DOGWIFHAT (Hyperlane)',
+  logoURI: 'https://assets.coingecko.com/coins/images/33566/standard/dogwifhat.jpg?1702499428',
+  coingeckoId: 'dogwifhat'
+}
+
+export const WETH_MAIN: Token = {
+  symbol: 'ETH',
+  address: WETH_ADDRESS[NetworkType.Mainnet],
+  decimals: 9,
+  name: 'Ethereum',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+  coingeckoId: 'ethereum'
+}
+
+export const LAIKA_MAIN: Token = {
+  symbol: 'LAIKA',
+  address: new PublicKey('LaihKXA47apnS599tyEyasY2REfEzBNe4heunANhsMx'),
+  decimals: 5,
+  name: 'Laika',
+  logoURI: 'https://pbs.twimg.com/profile_images/1828487610039443460/tdyEkg74_400x400.jpg',
+  coingeckoId: ''
+}
+
+export const MOON_MAIN: Token = {
+  symbol: 'MOON',
+  address: new PublicKey('HgD4Dc6qYCj3UanMDiuC4qANheeTsAvk6DY91B3F8gnL'),
+  decimals: 5,
+  name: 'MoonCoin',
+  logoURI: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
-  MAIN = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
+  MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
+  MAIN_HELIUS = 'https://eclipse.helius-rpc.com',
+  MAIN_LGNS = 'https://eclipse.lgns.net',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
-  DEV_EU = RPC.MAIN,
+  DEV_EU = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
   LOCAL = 'http://127.0.0.1:8899'
 }
 
@@ -233,33 +302,43 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
-  Mainnet: [],
+  Mainnet: [
+    MOCKED_TOKEN_MAIN.address,
+    WETH_MAIN.address,
+    USDC_MAIN.address,
+    SOL_MAIN.address,
+    DOGWIFHAT_MAIN.address,
+    LAIKA_MAIN.address,
+    MOON_MAIN.address
+  ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
 }
 
 export const airdropTokens: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address],
-  Mainnet: [],
+  Mainnet: [MOCKED_TOKEN_MAIN.address],
   Testnet: [USDC_TEST.address, BTC_TEST.address],
   Local: []
 }
 
 export const airdropQuantities: Record<NetworkType, number[]> = {
   Devnet: [100 * 10 ** USDC_DEV.decimals, 0.0025 * 10 ** BTC_DEV.decimals],
-  Mainnet: [],
+  Mainnet: [1000 * 10 ** MOCKED_TOKEN_MAIN.decimals],
   Testnet: [2 * 10 ** USDC_TEST.decimals, 0.00005 * 10 ** BTC_TEST.decimals],
   Local: []
 }
 
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
 
-export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(50000)
+export const WETH_MIN_TRANSACTION_FEE_MAIN = new BN(150000)
 
-export const WETH_POSITION_INIT_LAMPORTS = new BN(100000)
+export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(800000)
+
+export const WETH_POSITION_INIT_LAMPORTS = new BN(700000)
 export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(61646)
 
-export const WETH_POOL_INIT_LAMPORTS = new BN(9900000)
+export const WETH_POOL_INIT_LAMPORTS = new BN(1750000)
 export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1060009)
 
 export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
@@ -304,7 +383,7 @@ export const defaultPrefixConfig: PrefixConfig = {
   M: 1000000,
   K: 10000
 }
-const mainnetList = {}
+// const mainnetList = {}
 
 export const getAddressTickerMap = (network: NetworkType): { [k: string]: string } => {
   if (network !== NetworkType.Mainnet) {
@@ -318,15 +397,23 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
     }
   } else {
-    const parsedMainnetList = mainnetList as unknown as Record<string, Token>
-    const result: { [k: string]: PublicKey } = {}
+    // const parsedMainnetList = mainnetList as unknown as Record<string, Token>
+    // const result: { [k: string]: PublicKey } = {}
 
-    Object.keys(parsedMainnetList).forEach((key: string) => {
-      const token = parsedMainnetList[key]
-      result[token.symbol] = token.address
-    })
+    // Object.keys(parsedMainnetList).forEach((key: string) => {
+    //   const token = parsedMainnetList[key]
+    //   result[token.symbol] = token.address
+    // })
 
-    return {}
+    return {
+      MCT: MOCKED_TOKEN_MAIN.address.toString(),
+      ETH: WETH_ADDRESS[network].toString(),
+      USDC: USDC_MAIN.address.toString(),
+      SOL: SOL_MAIN.address.toString(),
+      WIF: DOGWIFHAT_MAIN.address.toString(),
+      LAIKA: LAIKA_MAIN.address.toString(),
+      MOON: MOON_MAIN.address.toString()
+    }
   }
 }
 

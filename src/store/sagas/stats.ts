@@ -46,6 +46,7 @@ export function* getStats(): Generator {
     const newTokens = yield* call(getFullNewTokensData, [...unknownTokens], connection)
     yield* put(poolsActions.addTokens(newTokens))
   } catch (error) {
+    yield* put(actions.setLoadingStats(false))
     console.log(error)
   }
 }
