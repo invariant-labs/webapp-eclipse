@@ -21,7 +21,7 @@ import * as spl18 from '@solana/spl-token'
 import { createLoaderKey } from '@utils/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { closeSnackbar } from 'notistack'
-import { getSolanaConnection } from '@utils/web3/connection'
+import { getCurrentSolanaConnection } from '@utils/web3/connection'
 
 export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
   const { data, network } = action.payload
@@ -43,9 +43,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
   const loaderSigningTx = createLoaderKey()
   try {
     const wallet = yield* call(getWallet)
-    const connection = getSolanaConnection(
-      'https://rpc-devnet.hellomoon.io/81316f2a-7eb6-48f2-9398-d8bf82ae063e'
-    )
+    const connection = getCurrentSolanaConnection()
 
     if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) {
       yield put(
@@ -267,10 +265,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
           message: 'Token created successfully.',
           variant: 'success',
           persist: false,
-          link: {
-            label: 'Details',
-            href: `https://solscan.io/tx/${signatureTx}?cluster=custom&customUrl=https://rpc-devnet.hellomoon.io/81316f2a-7eb6-48f2-9398-d8bf82ae063e`
-          }
+          txid: signatureTx
         })
       )
       return

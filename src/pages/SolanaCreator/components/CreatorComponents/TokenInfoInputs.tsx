@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
@@ -10,6 +10,7 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { BN } from '@project-serum/anchor'
 import classNames from 'classnames'
+import { WETH_CREATE_TOKEN_LAMPORTS } from '@store/consts/static'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
@@ -23,7 +24,8 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
   formMethods,
   buttonText,
   success,
-  inProgress
+  inProgress,
+  ethBalance
 }) => {
   const { classes } = useStyles()
   const {
@@ -57,10 +59,9 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
     }
   }, [success, inProgress])
 
-  // const createAvailable = useMemo(() => {
-  //   return ethBalance.lt(WETH_CREATE_TOKEN_LAMPORTS)
-  // }, [ethBalance])
-  const createAvailable = false
+  const createAvailable = useMemo(() => {
+    return ethBalance.gt(WETH_CREATE_TOKEN_LAMPORTS)
+  }, [ethBalance])
 
   return (
     <Box className={classes.container}>
@@ -125,21 +126,21 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
       </Box>
       <Box className={classes.tokenCost}>
         <InfoIcon />
-        <Typography>Token cost: 0.1 SOL</Typography>
+        <Typography>Token cost: ~0.01 ETH</Typography>
       </Box>
 
       {isSubmitButton ? (
-        createAvailable ? (
+        !createAvailable ? (
           <TooltipHover
-            text='More SOL is required to cover the transaction fee. Obtain more SOL to complete this transaction.'
+            text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
             top={-45}>
             <div>
               <AnimatedButton
                 type='submit'
-                content={'Insufficient SOL'}
+                content={'Insufficient ETH'}
                 className={classes.button}
                 onClick={() => {}}
-                disabled={createAvailable}
+                disabled={!createAvailable}
                 progress={progress}
               />
             </div>
