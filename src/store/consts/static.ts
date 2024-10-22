@@ -331,14 +331,14 @@ export const airdropQuantities: Record<NetworkType, number[]> = {
 
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
 
-export const WETH_MIN_TRANSACTION_FEE_MAIN = new BN(1)
+export const WETH_MIN_TRANSACTION_FEE_MAIN = new BN(150000)
 
-export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(50000)
+export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(800000)
 
-export const WETH_POSITION_INIT_LAMPORTS = new BN(100000)
+export const WETH_POSITION_INIT_LAMPORTS = new BN(700000)
 export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(61646)
 
-export const WETH_POOL_INIT_LAMPORTS = new BN(9900000)
+export const WETH_POOL_INIT_LAMPORTS = new BN(1750000)
 export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1060009)
 
 export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
