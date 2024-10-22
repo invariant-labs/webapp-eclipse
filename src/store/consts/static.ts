@@ -167,7 +167,8 @@ export const LAIKA_MAIN: Token = {
   address: new PublicKey('LaihKXA47apnS599tyEyasY2REfEzBNe4heunANhsMx'),
   decimals: 5,
   name: 'Laika',
-  logoURI: 'https://pbs.twimg.com/profile_images/1828487610039443460/tdyEkg74_400x400.jpg',
+  logoURI:
+    'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f736864772d64726976652e67656e65737973676f2e6e65742f387035714352796b774e767a463433484d6b31356243664c3678413934474b65365a526570696e6d576a44692f6c61696b612e706e67',
   coingeckoId: ''
 }
 
