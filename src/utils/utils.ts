@@ -31,6 +31,7 @@ import {
   LAIKA_MAIN,
   MAX_U64,
   MOCKED_TOKEN_MAIN,
+  MOON_MAIN,
   MOON_TEST,
   NetworkType,
   PRICE_DECIMAL,
@@ -772,7 +773,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [USDC_MAIN.address.toString()]: USDC_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
-        [LAIKA_MAIN.address.toString()]: LAIKA_MAIN
+        [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
+        [MOON_MAIN.address.toString()]: MOON_MAIN
       }
     case NetworkType.Devnet:
       return {
