@@ -15,7 +15,6 @@ import {
 } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@project-serum/anchor'
 import { Token as SPLToken } from '@solana/spl-token'
-import mainnetList from '@store/consts/tokenLists/mainnet.json'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
 import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios, { AxiosResponse } from 'axios'
@@ -25,17 +24,22 @@ import {
   ADDRESSES_TO_REVERS_TOKEN_PAIRS,
   BTC_DEV,
   BTC_TEST,
+  DOGWIFHAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
   getReversedAddressTickerMap,
+  LAIKA_MAIN,
   MAX_U64,
+  MOCKED_TOKEN_MAIN,
   MOON_TEST,
   NetworkType,
   PRICE_DECIMAL,
   S22_TEST,
+  SOL_MAIN,
   subNumbers,
   tokensPrices,
   USDC_DEV,
+  USDC_MAIN,
   USDC_TEST,
   WETH_DEV,
   WETH_TEST
@@ -751,17 +755,25 @@ export const createPlaceholderLiquidityPlot = (
 }
 
 export const getNetworkTokensList = (networkType: NetworkType): Record<string, Token> => {
-  const obj: Record<string, Token> = {}
+  // const obj: Record<string, Token> = {}
   switch (networkType) {
     case NetworkType.Mainnet:
-      ;(mainnetList as any[]).forEach(token => {
-        obj[token.address] = {
-          ...token,
-          address: new PublicKey(token.address),
-          coingeckoId: token?.extensions?.coingeckoId
-        }
-      })
-      return obj
+      // ;(mainnetList as any[]).forEach(token => {
+      //   obj[token.address] = {
+      //     ...token,
+      //     address: new PublicKey(token.address),
+      //     coingeckoId: token?.extensions?.coingeckoId
+      //   }
+      // })
+      // return obj
+      return {
+        [WETH_TEST.address.toString()]: WETH_TEST,
+        [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
+        [USDC_MAIN.address.toString()]: USDC_MAIN,
+        [SOL_MAIN.address.toString()]: SOL_MAIN,
+        [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
+        [LAIKA_MAIN.address.toString()]: LAIKA_MAIN
+      }
     case NetworkType.Devnet:
       return {
         [USDC_DEV.address.toString()]: USDC_DEV,

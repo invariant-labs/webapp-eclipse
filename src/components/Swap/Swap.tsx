@@ -12,7 +12,8 @@ import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
   REFRESHER_INTERVAL,
-  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT
+  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
+  WETH_MIN_TRANSACTION_FEE_MAIN
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -446,7 +447,13 @@ export const Swap: React.FC<ISwap> = ({
       return 'Insufficient balance'
     }
 
-    if (ethBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)) {
+    if (
+      ethBalance.lt(
+        network === NetworkType.Testnet
+          ? WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT
+          : WETH_MIN_TRANSACTION_FEE_MAIN
+      )
+    ) {
       return `Insufficient Wrapped ETH`
     }
 
