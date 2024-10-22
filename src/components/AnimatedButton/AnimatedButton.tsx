@@ -1,4 +1,4 @@
-import { Button } from '@mui/material'
+import { Button, SxProps, Theme } from '@mui/material'
 import errorGif from '@static/gif/errorAnimation.gif'
 import loadingAnimation from '@static/gif/loading.gif'
 import successGif from '@static/gif/successAnimation.gif'
@@ -20,6 +20,7 @@ interface Props {
   progress: ProgressState
   onClick: () => void
   className?: string
+  sx?: SxProps<Theme>
 }
 
 const AnimatedButton: React.FC<Props> = ({
@@ -27,7 +28,8 @@ const AnimatedButton: React.FC<Props> = ({
   disabled = false,
   progress,
   onClick,
-  className
+  className,
+  sx
 }) => {
   const { classes } = useStyles()
 
@@ -78,7 +80,9 @@ const AnimatedButton: React.FC<Props> = ({
           : undefined,
         className
       )}
-      onClick={onClick}>
+      onClick={onClick}
+      sx={sx}
+      >
       <div className={getClasses()}></div>
       {progress === 'progress' ||
       progress === 'approvedWithSuccess' ||
@@ -91,6 +95,7 @@ const AnimatedButton: React.FC<Props> = ({
       ) : (
         getMessage()
       )}
+
     </Button>
   )
 }

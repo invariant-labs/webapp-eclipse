@@ -2,12 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import Header from './Header'
 import { MemoryRouter } from 'react-router-dom'
-
 import { Provider } from 'react-redux'
 import { store } from '@store/index'
 import { RpcStatus } from '@store/reducers/solanaConnection'
-import { Network } from '@invariant-labs/sdk-eclipse'
 import { Chain } from '@store/consts/types'
+import { PublicKey } from '@solana/web3.js'
+import { NetworkType, RPC } from '@store/consts/static'
 
 const meta = {
   title: 'Layout/Header',
@@ -29,14 +29,14 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    address: '0x1234567890123456789012345678901234567890',
-    defaultTestnetRPC: 'https://rpc.testnet.moonbeam.network',
-    landing: '',
+    address: new PublicKey(42),
+    defaultTestnetRPC: RPC.TEST,
+    landing: 'exchange',
     onConnectWallet: fn(),
     onDisconnectWallet: fn(),
     onNetworkSelect: fn(),
-    rpc: 'https://rpc.testnet.moonbeam.network',
-    typeOfNetwork: Network.TEST,
+    rpc: RPC.TEST,
+    typeOfNetwork: NetworkType.Testnet,
     walletConnected: true,
     onFaucet: fn(),
     onCopyAddress: fn(),
@@ -46,8 +46,8 @@ export const Primary: Story = {
       address: 'https://exlipse.invariant.app'
     },
     onChainSelect: fn(),
-    network: Network.TEST,
-    defaultMainnetRPC: 'https://rpc.moonbeam.network',
+    network: NetworkType.Testnet,
+    defaultDevnetRPC: RPC.DEV_EU,
     rpcStatus: RpcStatus.Uninitialized
   }
 }
