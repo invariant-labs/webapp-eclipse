@@ -22,6 +22,7 @@
     "@invariant-labs/sdk-eclipse": "^0.0.20",
     "@irys/web-upload": "^0.0.13",
     "@irys/web-upload-solana": "^0.1.6",
+    "@metaplex-foundation/js": "^0.20.1",
     "@metaplex-foundation/mpl-token-metadata": "^2.13.0",
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",

@@ -38,7 +38,7 @@ import { TOKEN_2022_PROGRAM_ID } from '@invariant-labs/sdk-eclipse'
 import { disconnectWallet, getSolanaWallet } from '@utils/web3/wallet'
 import { WalletAdapter } from '@utils/web3/adapters/types'
 import airdropAdmin from '@store/consts/airdropAdmin'
-import { createLoaderKey, getTokenProgramId } from '@utils/utils'
+import { createLoaderKey, getTokenMetadata, getTokenProgramId } from '@utils/utils'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { actions as bondsActions } from '@reducers/bonds'
@@ -116,14 +116,12 @@ export function* fetchTokensAccounts(): Generator {
     })
 
     if (!allTokens[info.mint]) {
-      unknownTokens[info.mint] = {
-        name: info.mint,
-        symbol: `${info.mint.slice(0, 4)}...${info.mint.slice(-4)}`,
-        decimals: info.tokenAmount.decimals,
-        address: new PublicKey(info.mint),
-        logoURI: '/unknownToken.svg',
-        isUnknown: true
-      }
+      unknownTokens[info.mint] = yield* call(
+        getTokenMetadata,
+        connection,
+        info.mint,
+        info.tokenAmount.decimals
+      )
     }
   }
 
