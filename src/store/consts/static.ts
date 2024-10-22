@@ -127,7 +127,7 @@ export const USDC_MAIN: Token = {
   symbol: 'USDC',
   address: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
   decimals: 6,
-  name: 'USD Coin',
+  name: 'USD Coin (Hyperlane)',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
   coingeckoId: 'usd-coin'
@@ -137,7 +137,7 @@ export const SOL_MAIN: Token = {
   symbol: 'SOL',
   address: new PublicKey('BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL'),
   decimals: 9,
-  name: 'Solana',
+  name: 'Solana (Hyperlane)',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/So11111111111111111111111111111111111111112/logo.png',
   coingeckoId: 'solana'
@@ -147,7 +147,7 @@ export const DOGWIFHAT_MAIN: Token = {
   symbol: 'WIF',
   address: new PublicKey('841P4tebEgNux2jaWSjCoi9LhrVr9eHGjLc758Va3RPH'),
   decimals: 6,
-  name: 'DOGWIFHAT',
+  name: 'DOGWIFHAT (Hyperlane)',
   logoURI: 'https://assets.coingecko.com/coins/images/33566/standard/dogwifhat.jpg?1702499428',
   coingeckoId: 'dogwifhat'
 }
@@ -168,6 +168,15 @@ export const LAIKA_MAIN: Token = {
   decimals: 5,
   name: 'Laika',
   logoURI: 'https://pbs.twimg.com/profile_images/1828487610039443460/tdyEkg74_400x400.jpg',
+  coingeckoId: ''
+}
+
+export const MOON_MAIN: Token = {
+  symbol: 'MOON',
+  address: new PublicKey('HgD4Dc6qYCj3UanMDiuC4qANheeTsAvk6DY91B3F8gnL'),
+  decimals: 5,
+  name: 'MoonCoin',
+  logoURI: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
   coingeckoId: ''
 }
 
@@ -299,7 +308,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDC_MAIN.address,
     SOL_MAIN.address,
     DOGWIFHAT_MAIN.address,
-    LAIKA_MAIN.address
+    LAIKA_MAIN.address,
+    MOON_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -401,7 +411,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
-      LAIKA: LAIKA_MAIN.address.toString()
+      LAIKA: LAIKA_MAIN.address.toString(),
+      MOON: MOON_MAIN.address.toString()
     }
   }
 }
