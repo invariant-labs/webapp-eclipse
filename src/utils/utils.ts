@@ -28,6 +28,7 @@ import {
   FormatConfig,
   getAddressTickerMap,
   getReversedAddressTickerMap,
+  GSVM_MAIN,
   LAIKA_MAIN,
   MAX_U64,
   MOCKED_TOKEN_MAIN,
@@ -774,7 +775,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [SOL_MAIN.address.toString()]: SOL_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
-        [MOON_MAIN.address.toString()]: MOON_MAIN
+        [MOON_MAIN.address.toString()]: MOON_MAIN,
+        [GSVM_MAIN.address.toString()]: GSVM_MAIN
       }
     case NetworkType.Devnet:
       return {
