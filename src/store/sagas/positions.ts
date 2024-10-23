@@ -1,7 +1,7 @@
 import { call, put, takeEvery, take, select, all, spawn, takeLatest } from 'typed-redux-saga'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as poolsActions, ListPoolsResponse, ListType } from '@store/reducers/pools'
-import { createAccount, getWallet, init, sleep } from './wallet'
+import { createAccount, getWallet, sleep } from './wallet'
 import { getConnection } from './connection'
 import {
   actions,
