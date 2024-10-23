@@ -575,7 +575,7 @@ export const Swap: React.FC<ISwap> = ({
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
-          You have wrapped ETH.{' '}
+          You have wrapped ETH. {' '}
           <u className={classes.unwrapNowButton} onClick={unwrapWETH}>
             Unwrap now.
           </u>
