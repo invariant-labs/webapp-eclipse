@@ -207,6 +207,25 @@ export const ECAT_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const TURBO_MAIN: Token = {
+  symbol: 'Turbo',
+  address: new PublicKey('trbts2EsWyMdnCjsHUFBKLtgudmBD7Rfbz8zCg1s4EK'),
+  decimals: 9,
+  name: 'Eclip Turbo',
+  logoURI:
+    'https://bafybeibup6ghtrj5re3ba243bxtb6yafihgwnj3z2whte577svbvejhjjm.ipfs.w3s.link/Turbo.png',
+  coingeckoId: ''
+}
+
+export const MOO_MAIN: Token = {
+  symbol: 'MOO',
+  address: new PublicKey('8nF4QmTxsFh5L7bBw9qfdfW67CEAdLWuK9EQjsTgk8d'),
+  decimals: 9,
+  name: 'cow',
+  logoURI: 'https://uploader.irys.xyz/CfU2Zsy5i2wKwoq788W4ZJGfjmeU6QGhNugz4gVM4RJA',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -336,10 +355,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     SOL_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    MOON_MAIN.address,
-    GSVM_MAIN.address,
-    DARKMOON_MAIN.address,
-    ECAT_MAIN.address
+    MOON_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
