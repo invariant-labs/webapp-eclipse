@@ -185,7 +185,16 @@ export const GSVM_MAIN: Token = {
   address: new PublicKey('137EXM1L3m8hDeq29ducnGhYCwEDCAnxcJ7kqD4TcFFC'),
   decimals: 9,
   name: 'GSVM',
-  logoURI: 'https://ice.frostsky.com/2024/10/22/b074ce77cf228fd23a716c1724b6b9d3.jpeg',
+  logoURI: 'https://i.mij.rip/2024/10/24/988580889ba810e7d4986fe5b1718c69.jpeg',
+  coingeckoId: ''
+}
+
+export const DARKMOON_MAIN: Token = {
+  symbol: 'DARKMOON',
+  address: new PublicKey('F2kbmDAWrcNms6bf98kxkNaKb3chGXea6Dbz8aepQy58'),
+  decimals: 6,
+  name: 'Dark Moon',
+  logoURI: 'https://i.imgur.com/pJ3u7kS.jpeg',
   coingeckoId: ''
 }
 
@@ -319,7 +328,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
     MOON_MAIN.address,
-    GSVM_MAIN.address
+    GSVM_MAIN.address,
+    DARKMOON_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -430,7 +440,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
-      GSVM: GSVM_MAIN.address.toString()
+      GSVM: GSVM_MAIN.address.toString(),
+      DARKMOON_MAIN: DARKMOON_MAIN.address.toString()
     }
   }
 }

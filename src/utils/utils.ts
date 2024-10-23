@@ -24,6 +24,7 @@ import {
   ADDRESSES_TO_REVERS_TOKEN_PAIRS,
   BTC_DEV,
   BTC_TEST,
+  DARKMOON_MAIN,
   DOGWIFHAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
@@ -776,7 +777,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,
-        [GSVM_MAIN.address.toString()]: GSVM_MAIN
+        [GSVM_MAIN.address.toString()]: GSVM_MAIN,
+        [DARKMOON_MAIN.address.toString()]: DARKMOON_MAIN
       }
     case NetworkType.Devnet:
       return {
