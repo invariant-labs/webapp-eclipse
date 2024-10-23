@@ -268,7 +268,8 @@ export function* handleSwapWithETH(): Generator {
     yield put(
       snackbarsActions.add({
         message:
-          'Failed to send. Please unwrap wrapped ETH in your wallet if you have any and try again.',
+          // 'Failed to send. Please unwrap wrapped ETH in your wallet if you have any and try again.',
+          'Failed to send. Please try again.',
         variant: 'error',
         persist: false
       })
