@@ -32,14 +32,14 @@ export interface ISolanaConnectionStore {
 
 const network =
   NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
-  NetworkType.Testnet
+  NetworkType.Mainnet
 
 export const defaultState: ISolanaConnectionStore = {
   status: Status.Uninitialized,
   message: '',
   network: network,
   slot: 0,
-  rpcAddress: localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RPC.TEST,
+  rpcAddress: localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RPC.MAIN,
   rpcStatus: RPC_STATUS
 }
 export const solanaConnectionSliceName = 'solanaConnection'
