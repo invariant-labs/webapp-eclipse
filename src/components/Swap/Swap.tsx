@@ -577,7 +577,7 @@ export const Swap: React.FC<ISwap> = ({
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}
           <u className={classes.unwrapNowButton} onClick={unwrapWETH}>
-            Unwrap now
+            Unwrap now.
           </u>
         </Box>
       )}
