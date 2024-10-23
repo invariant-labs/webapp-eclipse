@@ -13,7 +13,8 @@ import {
   airdropQuantities,
   airdropTokens,
   NetworkType,
-  WETH_MIN_FAUCET_FEE_MAIN
+  WETH_MIN_FAUCET_FEE_MAIN,
+  WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import { Token as StoreToken } from '@store/consts/types'
 import { BN } from '@project-serum/anchor'
@@ -545,6 +546,86 @@ export function* handleReconnect(): Generator {
   yield* call(openWalletSelectorModal)
 }
 
+export function* handleUnwrapWETH(): Generator {
+  const wallet = yield* call(getWallet)
+  const connection = yield* call(getConnection)
+  const allAccounts = yield* select(accounts)
+
+  const loaderUnwrapWETH = createLoaderKey()
+
+  let wrappedEthAccountPublicKey: PublicKey | null = null
+  Object.entries(allAccounts).map(([address, token]) => {
+    if (address === WRAPPED_ETH_ADDRESS) {
+      wrappedEthAccountPublicKey = token.address
+    }
+  })
+
+  if (!wrappedEthAccountPublicKey) {
+    return
+  }
+
+  try {
+    yield put(
+      snackbarsActions.add({
+        message: 'Unwraping Wrapped ETH...',
+        variant: 'pending',
+        persist: true,
+        key: loaderUnwrapWETH
+      })
+    )
+
+    const unwrapIx = Token.createCloseAccountInstruction(
+      TOKEN_PROGRAM_ID,
+      wrappedEthAccountPublicKey,
+      wallet.publicKey,
+      wallet.publicKey,
+      []
+    )
+
+    const unwrapTx = new Transaction().add(unwrapIx)
+
+    const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
+    unwrapTx.feePayer = wallet.publicKey
+
+    const unwrapSignedTx = yield* call([wallet, wallet.signTransaction], unwrapTx)
+
+    const unwrapTxid = yield* call(
+      sendAndConfirmRawTransaction,
+      connection,
+      unwrapSignedTx.serialize(),
+      {
+        skipPreflight: false
+      }
+    )
+
+    if (!unwrapTxid.length) {
+      yield put(
+        snackbarsActions.add({
+          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
+          variant: 'warning',
+          persist: false,
+          txid: unwrapTxid
+        })
+      )
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'ETH unwrapped successfully.',
+          variant: 'success',
+          persist: false,
+          txid: unwrapTxid
+        })
+      )
+    }
+  } catch (e) {
+    console.log(e)
+  }
+
+  closeSnackbar(loaderUnwrapWETH)
+  yield put(snackbarsActions.remove(loaderUnwrapWETH))
+}
+
 export function* connectHandler(): Generator {
   yield takeLatest(actions.connect, handleConnect)
 }
@@ -569,6 +650,10 @@ export function* reconnectHandler(): Generator {
   yield takeLatest(actions.reconnect, handleReconnect)
 }
 
+export function* unwrapWETHHandler(): Generator {
+  yield takeLeading(actions.unwrapWETH, handleUnwrapWETH)
+}
+
 export function* walletSaga(): Generator {
   yield all(
     [
@@ -577,7 +662,8 @@ export function* walletSaga(): Generator {
       connectHandler,
       disconnectHandler,
       handleBalanceSaga,
-      reconnectHandler
+      reconnectHandler,
+      unwrapWETHHandler
     ].map(spawn)
   )
 }

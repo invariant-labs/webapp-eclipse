@@ -103,6 +103,8 @@ export interface ISwap {
   copyTokenAddressHandler: (message: string, variant: VariantType) => void
   network: NetworkType
   ethBalance: BN
+  unwrapWETH: () => void
+  wrappedETHAccountExist: boolean
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -134,7 +136,9 @@ export const Swap: React.FC<ISwap> = ({
   isBalanceLoading,
   copyTokenAddressHandler,
   network,
-  ethBalance
+  ethBalance,
+  unwrapWETH,
+  wrappedETHAccountExist
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -569,6 +573,14 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
+      {wrappedETHAccountExist && (
+        <Box className={classes.unwrapContainer}>
+          You have wrapped ETH.{' '}
+          <u className={classes.unwrapNowButton} onClick={unwrapWETH}>
+            Unwrap now
+          </u>
+        </Box>
+      )}
       <Grid container className={classes.header}>
         <Typography component='h1'>Exchange tokens</Typography>
         <Box className={classes.swapControls}>
