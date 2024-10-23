@@ -342,7 +342,20 @@ export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(61646)
 export const WETH_POOL_INIT_LAMPORTS = new BN(9900000)
 export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1060009)
 
-export const WETH_CREATE_TOKEN_LAMPORTS = new BN(10054877)
+export const TESTNET_WETH_CREATE_TOKEN_LAMPORTS = new BN(1100000)
+export const MAINNET_WETH_CREATE_TOKEN_LAMPORTS = new BN(200000)
+
+export const getCreateTokenLamports = (network: NetworkType): BN => {
+  console.log(network)
+  switch (network) {
+    case NetworkType.Testnet:
+      return TESTNET_WETH_CREATE_TOKEN_LAMPORTS
+    case NetworkType.Mainnet:
+      return MAINNET_WETH_CREATE_TOKEN_LAMPORTS
+    default:
+      throw new Error('Invalid network')
+  }
+}
 
 export const ALL_FEE_TIERS_DATA = FEE_TIERS.map((tier, index) => ({
   tier,
