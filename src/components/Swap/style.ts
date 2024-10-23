@@ -333,6 +333,17 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.caption1,
     color: colors.invariant.lightGrey,
     marginBottom: 8
+  },
+  unwrapContainer: {
+    background: colors.invariant.component,
+    color: colors.white.main,
+    borderRadius: 8,
+    padding: 4,
+    paddingInline: 12,
+    marginBottom: 16
+  },
+  unwrapNowButton: {
+    cursor: 'pointer'
   }
 }))
 
