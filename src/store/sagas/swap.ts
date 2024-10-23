@@ -15,6 +15,8 @@ import { closeSnackbar } from 'notistack'
 import { createLoaderKey } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 
+const MAX_CROSSES_IN_SINGLE_TX = 12
+
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
@@ -137,7 +139,7 @@ export function* handleSwapWithETH(): Generator {
         byAmountIn: byAmountIn,
         owner: wallet.publicKey
       },
-      2
+      MAX_CROSSES_IN_SINGLE_TX
     )
 
     initialTx.add(swapIx)
