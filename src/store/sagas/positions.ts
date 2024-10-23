@@ -125,6 +125,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       userTokenY = yield* call(createAccount, data.tokenY)
     }
 
+    const combinedTransaction = new Transaction()
+
     const { initPoolTx, initPoolSigners, initPositionTx } = yield* call(
       [marketProgram, marketProgram.initPoolAndPositionTx],
       {
@@ -144,62 +146,66 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       }
     )
 
-    const initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
+    combinedTransaction.add(createIx).add(transferIx).add(initIx).add(initPositionTx).add(unwrapIx)
 
-    const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    initialTx.recentBlockhash = initialBlockhash.blockhash
-    initialTx.feePayer = wallet.publicKey
-
-    const initPositionBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    initPositionTx.recentBlockhash = initPositionBlockhash.blockhash
-    initPositionTx.feePayer = wallet.publicKey
+    // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    // initialTx.recentBlockhash = initialBlockhash.blockhash
+    // initialTx.feePayer = wallet.publicKey
 
     const initPoolBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    console.log(initPoolBlockhash)
     initPoolTx.recentBlockhash = initPoolBlockhash.blockhash
     initPoolTx.feePayer = wallet.publicKey
 
-    const unwrapTx = new Transaction().add(unwrapIx)
-    const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
-    unwrapTx.feePayer = wallet.publicKey
+    const initPositionBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    console.log(initPositionBlockhash)
+    combinedTransaction.recentBlockhash = initPositionBlockhash.blockhash
+    combinedTransaction.feePayer = wallet.publicKey
+
+    // const unwrapTx = new Transaction().add(unwrapIx)
+    // const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    // unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
+    // unwrapTx.feePayer = wallet.publicKey
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const [initialSignedTx, initPositionSignedTx, unwrapSignedTx, initPoolSignedTx] = yield* call(
+    const [signedCombinedTransactionTx, initPoolSignedTx] = yield* call(
       [wallet, wallet.signAllTransactions],
-      [initialTx, initPositionTx, unwrapTx, initPoolTx]
+      // [initialTx, initPositionTx, unwrapTx, initPoolTx]
+      [combinedTransaction, initPoolTx]
     )
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    initialSignedTx.partialSign(wrappedEthAccount)
+    // initialSignedTx.partialSign(wrappedEthAccount)
+    signedCombinedTransactionTx.partialSign(wrappedEthAccount)
 
     if (initPoolSigners.length) {
       initPoolSignedTx.partialSign(...initPoolSigners)
     }
 
-    const initialTxid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      initialSignedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    // const initialTxid = yield* call(
+    //   sendAndConfirmRawTransaction,
+    //   connection,
+    //   initialSignedTx.serialize(),
+    //   {
+    //     skipPreflight: false
+    //   }
+    // )
 
-    if (!initialTxid.length) {
-      yield put(actions.setInitPositionSuccess(false))
+    // if (!initialTxid.length) {
+    //   yield put(actions.setInitPositionSuccess(false))
 
-      return yield put(
-        snackbarsActions.add({
-          message: 'ETH wrapping failed. Please try again.',
-          variant: 'error',
-          persist: false,
-          txid: initialTxid
-        })
-      )
-    }
+    //   return yield put(
+    //     snackbarsActions.add({
+    //       message: 'ETH wrapping failed. Please try again.',
+    //       variant: 'error',
+    //       persist: false,
+    //       txid: initialTxid
+    //     })
+    //   )
+    // }
 
     yield* call(sendAndConfirmRawTransaction, connection, initPoolSignedTx.serialize(), {
       skipPreflight: false
@@ -208,7 +214,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     const initPositionTxid = yield* call(
       sendAndConfirmRawTransaction,
       connection,
-      initPositionSignedTx.serialize(),
+      signedCombinedTransactionTx.serialize(),
       {
         skipPreflight: false
       }
@@ -223,7 +229,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       return yield put(
         snackbarsActions.add({
           message:
-            'Position adding failed. Please unwrap wrapped ETH in your wallet and try again.',
+            // 'Position adding failed. Please unwrap wrapped ETH in your wallet and try again.',
+            'Position adding failed. Please try again.',
           variant: 'error',
           persist: false,
           txid: initPositionTxid
@@ -242,36 +249,36 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       yield put(actions.getPositionsList())
     }
 
-    const unwrapTxid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      unwrapSignedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    // const unwrapTxid = yield* call(
+    //   sendAndConfirmRawTransaction,
+    //   connection,
+    //   unwrapSignedTx.serialize(),
+    //   {
+    //     skipPreflight: false
+    //   }
+    // )
 
     yield put(actions.setInitPositionSuccess(true))
 
-    if (!unwrapTxid.length) {
-      yield put(
-        snackbarsActions.add({
-          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
-          variant: 'warning',
-          persist: false,
-          txid: unwrapTxid
-        })
-      )
-    } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'ETH unwrapped successfully.',
-          variant: 'success',
-          persist: false,
-          txid: unwrapTxid
-        })
-      )
-    }
+    // if (!unwrapTxid.length) {
+    //   yield put(
+    //     snackbarsActions.add({
+    //       message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
+    //       variant: 'warning',
+    //       persist: false,
+    //       txid: unwrapTxid
+    //     })
+    //   )
+    // } else {
+    //   yield put(
+    //     snackbarsActions.add({
+    //       message: 'ETH unwrapped successfully.',
+    //       variant: 'success',
+    //       persist: false,
+    //       txid: unwrapTxid
+    //     })
+    //   )
+    // }
 
     closeSnackbar(loaderCreatePool)
     yield put(snackbarsActions.remove(loaderCreatePool))
