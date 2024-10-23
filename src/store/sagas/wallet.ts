@@ -9,7 +9,12 @@ import {
   takeLatest,
   takeLeading
 } from 'typed-redux-saga'
-import { airdropQuantities, airdropTokens, NetworkType } from '@store/consts/static'
+import {
+  airdropQuantities,
+  airdropTokens,
+  NetworkType,
+  WETH_MIN_FAUCET_FEE_MAIN
+} from '@store/consts/static'
 import { Token as StoreToken } from '@store/consts/types'
 import { BN } from '@project-serum/anchor'
 import { actions as poolsActions } from '@store/reducers/pools'
@@ -18,7 +23,7 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions, ITokenAccount, Status } from '@store/reducers/solanaWallet'
 import { tokens } from '@store/selectors/pools'
 import { network } from '@store/selectors/solanaConnection'
-import { accounts, status } from '@store/selectors/solanaWallet'
+import { accounts, balance, status } from '@store/selectors/solanaWallet'
 import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
   Account,
@@ -151,58 +156,107 @@ export function* handleAirdrop(): Generator {
     return
   }
 
-  yield* put(actions.showThankYouModal(true))
-
   const loaderKey = createLoaderKey()
-  yield put(
-    snackbarsActions.add({
-      message: 'Airdrop in progress',
-      variant: 'pending',
-      persist: true,
-      key: loaderKey
-    })
-  )
 
   const connection = yield* call(getConnection)
   const networkType = yield* select(network)
   const wallet = yield* call(getWallet)
+  const ethBalance = yield* select(balance)
 
-  if (networkType === NetworkType.Testnet) {
-    // transfer sol
-    // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
-    yield* call(transferAirdropSOL)
-    yield* call(
-      getCollateralTokenAirdrop,
-      airdropTokens[networkType],
-      airdropQuantities[networkType]
-    )
+  try {
+    if (networkType === NetworkType.Testnet) {
+      yield* put(actions.showThankYouModal(true))
+      yield put(
+        snackbarsActions.add({
+          message: 'Airdrop in progress',
+          variant: 'pending',
+          persist: true,
+          key: loaderKey
+        })
+      )
+
+      // transfer sol
+      // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
+      // yield* call(transferAirdropSOL)
+      yield* call(
+        getCollateralTokenAirdrop,
+        airdropTokens[networkType],
+        airdropQuantities[networkType]
+      )
+
+      yield put(
+        snackbarsActions.add({
+          message: 'You will soon receive airdrop of tokens',
+          variant: 'success',
+          persist: false
+        })
+      )
+    } else if (networkType === NetworkType.Mainnet) {
+      if (ethBalance.lt(WETH_MIN_FAUCET_FEE_MAIN)) {
+        yield put(
+          snackbarsActions.add({
+            message: 'Do not have enough ETH to get faucet',
+            variant: 'error',
+            persist: false
+          })
+        )
+        return
+      }
+      yield put(
+        snackbarsActions.add({
+          message: 'Airdrop in progress',
+          variant: 'pending',
+          persist: true,
+          key: loaderKey
+        })
+      )
+
+      yield* call(
+        getCollateralTokenAirdrop,
+        airdropTokens[networkType],
+        airdropQuantities[networkType]
+      )
+
+      yield put(
+        snackbarsActions.add({
+          message: 'You will soon receive airdrop of tokens',
+          variant: 'success',
+          persist: false
+        })
+      )
+      yield* put(actions.showThankYouModal(true))
+    } else {
+      yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
+
+      yield* call(
+        getCollateralTokenAirdrop,
+        airdropTokens[networkType],
+        airdropQuantities[networkType]
+      )
+      yield put(
+        snackbarsActions.add({
+          message: 'You will soon receive airdrop',
+          variant: 'success',
+          persist: false
+        })
+      )
+    }
+
+    closeSnackbar(loaderKey)
+    yield put(snackbarsActions.remove(loaderKey))
+  } catch (error) {
+    console.log(error)
+    closeSnackbar(loaderKey)
+    yield put(snackbarsActions.remove(loaderKey))
 
     yield put(
       snackbarsActions.add({
-        message: 'You will soon receive airdrop of tokens',
-        variant: 'success',
-        persist: false
-      })
-    )
-  } else {
-    yield* call([connection, connection.requestAirdrop], wallet.publicKey, 1 * 1e9)
-
-    yield* call(
-      getCollateralTokenAirdrop,
-      airdropTokens[networkType],
-      airdropQuantities[networkType]
-    )
-    yield put(
-      snackbarsActions.add({
-        message: 'You will soon receive airdrop',
-        variant: 'success',
+        message: 'Failed to get a faucet',
+        variant: 'error',
         persist: false
       })
     )
   }
-
-  closeSnackbar(loaderKey)
-  yield put(snackbarsActions.remove(loaderKey))
 }
 
 export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator {

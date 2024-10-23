@@ -170,25 +170,6 @@ export interface PoolSnapshot {
   feeY: SnapshotValueData
 }
 
-export interface FullSnap {
-  volume24: {
-    value: number
-    change: number
-  }
-  tvl24: {
-    value: number
-    change: number
-  }
-  fees24: {
-    value: number
-    change: number
-  }
-  tokensData: TokenStatsDataWithString[]
-  poolsData: PoolStatsDataWithString[]
-  volumePlot: TimeData[]
-  liquidityPlot: TimeData[]
-}
-
 export interface TokenStatsDataWithString {
   address: string
   price: number
@@ -229,15 +210,15 @@ export interface PoolSnapshot {
 export interface FullSnap {
   volume24: {
     value: number
-    change: number
+    change: number | null
   }
   tvl24: {
     value: number
-    change: number
+    change: number | null
   }
   fees24: {
     value: number
-    change: number
+    change: number | null
   }
   tokensData: TokenStatsDataWithString[]
   poolsData: PoolStatsDataWithString[]

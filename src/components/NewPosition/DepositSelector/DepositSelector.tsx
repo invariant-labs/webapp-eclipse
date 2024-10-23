@@ -6,11 +6,14 @@ import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
-  WETH_POOL_INIT_LAMPORTS,
+  WETH_POOL_INIT_LAMPORTS_MAIN,
+  WETH_POOL_INIT_LAMPORTS_TEST,
+  WETH_POSITION_INIT_LAMPORTS_MAIN,
+  WETH_POSITION_INIT_LAMPORTS_TEST,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import FeeSwitch from '../FeeSwitch/FeeSwitch'
 import { useStyles } from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
@@ -116,7 +119,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   network,
   walletStatus,
   onConnectWallet,
-  onDisconnectWallet
+  onDisconnectWallet,
+  ethBalance
 }) => {
   const { classes } = useStyles()
 
@@ -125,6 +129,14 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const [tokenAPrice, setTokenAPrice] = useState<number | undefined>(undefined)
   const [tokenBPrice, setTokenBPrice] = useState<number | undefined>(undefined)
+
+  const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
+    if (network === NetworkType.Testnet) {
+      return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_TEST : WETH_POSITION_INIT_LAMPORTS_TEST
+    } else {
+      return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_MAIN : WETH_POSITION_INIT_LAMPORTS_MAIN
+    }
+  }, [network])
 
   useEffect(() => {
     if (!tokenAPrice) {
@@ -139,12 +151,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(initialHideUnknownTokensValue)
 
   const [isLoaded, setIsLoaded] = useState<boolean>(false)
-  console.log('tokenAInputState.value', tokenAInputState.value)
-  console.log(
-    'tokenAInputState.price',
-    tokenAIndex &&
-      convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).toString()
-  )
+
   useEffect(() => {
     if (isLoaded || tokens.length === 0 || ALL_FEE_TIERS_DATA.length === 0) {
       return
@@ -231,12 +238,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     const tokenBBalance = convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals)
 
     if (
-      (poolIndex === null &&
-        tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
-        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_POOL_INIT_LAMPORTS))) ||
-      (poolIndex === null &&
-        tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
-        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_POOL_INIT_LAMPORTS)))
+      (tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_MIN_FEE_LAMPORTS))) ||
+      (tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
+        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_MIN_FEE_LAMPORTS))) ||
+      ethBalance.lt(WETH_MIN_FEE_LAMPORTS)
     ) {
       return `Insufficient ETH`
     }
@@ -384,18 +390,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             }
 
             if (tokens[tokenAIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-              if (tokenBIndex !== null && poolIndex === null) {
-                tokenAInputState.setValue(
-                  printBN(
-                    tokens[tokenAIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
-                      ? tokens[tokenAIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
-                      : new BN(0),
-                    tokens[tokenAIndex].decimals
-                  )
+              tokenAInputState.setValue(
+                printBN(
+                  tokens[tokenAIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
+                    ? tokens[tokenAIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+                    : new BN(0),
+                  tokens[tokenAIndex].decimals
                 )
+              )
 
-                return
-              }
+              return
             }
 
             tokenAInputState.setValue(
@@ -436,18 +440,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             }
 
             if (tokens[tokenBIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-              if (tokenBIndex !== null && poolIndex === null) {
-                tokenAInputState.setValue(
-                  printBN(
-                    tokens[tokenBIndex].balance.gt(WETH_POOL_INIT_LAMPORTS)
-                      ? tokens[tokenBIndex].balance.sub(WETH_POOL_INIT_LAMPORTS)
-                      : new BN(0),
-                    tokens[tokenBIndex].decimals
-                  )
+              tokenBInputState.setValue(
+                printBN(
+                  tokens[tokenBIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
+                    ? tokens[tokenBIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+                    : new BN(0),
+                  tokens[tokenBIndex].decimals
                 )
+              )
 
-                return
-              }
+              return
             }
 
             tokenBInputState.setValue(

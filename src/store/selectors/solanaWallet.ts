@@ -4,11 +4,7 @@ import { keySelectors, AnyProps } from './helpers'
 import { PublicKey } from '@solana/web3.js'
 import { tokens } from './pools'
 import { ISolanaWallet, ITokenAccount, solanaWalletSliceName } from '@store/reducers/solanaWallet'
-import {
-  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
-  WETH_POSITION_INIT_LAMPORTS,
-  WRAPPED_ETH_ADDRESS
-} from '@store/consts/static'
+import { WRAPPED_ETH_ADDRESS } from '@store/consts/static'
 
 const store = (s: AnyProps) => s[solanaWalletSliceName] as ISolanaWallet
 
@@ -67,9 +63,7 @@ export const swapTokens = createSelector(
       assetAddress: token.address,
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
-          ? ethBalance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-            ? ethBalance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-            : new BN(0)
+          ? ethBalance
           : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
   }
@@ -85,9 +79,7 @@ export const poolTokens = createSelector(
       assetAddress: token.address,
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
-          ? ethBalance.gt(WETH_POSITION_INIT_LAMPORTS)
-            ? ethBalance.sub(WETH_POSITION_INIT_LAMPORTS)
-            : new BN(0)
+          ? ethBalance
           : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
   }

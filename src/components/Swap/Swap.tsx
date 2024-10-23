@@ -12,7 +12,9 @@ import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
   REFRESHER_INTERVAL,
-  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT
+  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
+  WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
+  WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -27,7 +29,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
@@ -175,6 +177,14 @@ export const Swap: React.FC<ISwap> = ({
     priceImpact: new BN(0),
     error: []
   })
+
+  const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
+    if (network === NetworkType.Testnet) {
+      return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
+    } else {
+      return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN
+    }
+  }, [network])
 
   const timeoutRef = useRef<number>(0)
 
@@ -446,7 +456,15 @@ export const Swap: React.FC<ISwap> = ({
       return 'Insufficient balance'
     }
 
-    if (ethBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)) {
+    if (
+      tokens[tokenFromIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS
+        ? ethBalance.lt(
+            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals).add(
+              WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT
+            )
+          )
+        : ethBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+    ) {
       return `Insufficient Wrapped ETH`
     }
 
@@ -621,6 +639,21 @@ export const Swap: React.FC<ISwap> = ({
             onMaxClick={() => {
               if (tokenFromIndex !== null) {
                 setInputRef(inputTarget.FROM)
+
+                if (
+                  tokens[tokenFromIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))
+                ) {
+                  setAmountFrom(
+                    printBN(
+                      tokens[tokenFromIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                        ? tokens[tokenFromIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                        : new BN(0),
+                      tokens[tokenFromIndex].decimals
+                    )
+                  )
+
+                  return
+                }
 
                 setAmountFrom(
                   printBN(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
