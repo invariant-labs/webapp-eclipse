@@ -180,6 +180,15 @@ export const MOON_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const GSVM_MAIN: Token = {
+  symbol: 'GSVM',
+  address: new PublicKey('137EXM1L3m8hDeq29ducnGhYCwEDCAnxcJ7kqD4TcFFC'),
+  decimals: 9,
+  name: 'GSVM',
+  logoURI: 'https://ice.frostsky.com/2024/10/22/b074ce77cf228fd23a716c1724b6b9d3.jpeg',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -309,7 +318,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     SOL_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    MOON_MAIN.address
+    MOON_MAIN.address,
+    GSVM_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -332,10 +342,10 @@ export const airdropQuantities: Record<NetworkType, number[]> = {
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
 
 // export const WETH_MIN_FAUCET_FEE_MAIN = new BN(10000)
-export const WETH_MIN_FAUCET_FEE_MAIN = new BN(150000)
+export const WETH_MIN_FAUCET_FEE_MAIN = new BN(25000)
 
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST = new BN(50000)
-export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN = new BN(800000)
+export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN = new BN(25000)
 
 // export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(150000)
 export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(700000)
@@ -419,7 +429,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       SOL: SOL_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
-      MOON: MOON_MAIN.address.toString()
+      MOON: MOON_MAIN.address.toString(),
+      GSVM: GSVM_MAIN.address.toString()
     }
   }
 }
