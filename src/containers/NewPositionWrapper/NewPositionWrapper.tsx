@@ -612,8 +612,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
         const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
         const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
-        console.log(Math.floor(xAmount))
-        console.log(Math.floor(yAmount))
+
         dispatch(
           positionsActions.initPosition({
             tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
