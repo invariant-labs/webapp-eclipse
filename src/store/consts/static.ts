@@ -198,6 +198,15 @@ export const DARKMOON_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const ECAT_MAIN: Token = {
+  symbol: 'ECAT',
+  address: new PublicKey('9iswScagJJkKAAsRtp7pJB62f3idZRxHr1Sr9hACThFh'),
+  decimals: 9,
+  name: 'EclipseCat',
+  logoURI: 'https://i.mij.rip/2024/10/24/b2e9d0150c4fe30d8a22f6d711ae3c44.jpeg',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -329,7 +338,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     LAIKA_MAIN.address,
     MOON_MAIN.address,
     GSVM_MAIN.address,
-    DARKMOON_MAIN.address
+    DARKMOON_MAIN.address,
+    ECAT_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -441,7 +451,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       LAIKA: LAIKA_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
-      DARKMOON_MAIN: DARKMOON_MAIN.address.toString()
+      DARKMOON_MAIN: DARKMOON_MAIN.address.toString(),
+      ECAT_MAIN: ECAT_MAIN.address.toString()
     }
   }
 }
