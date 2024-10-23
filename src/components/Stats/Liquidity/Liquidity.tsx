@@ -9,8 +9,8 @@ import { Grid, Typography } from '@mui/material'
 import { formatNumber } from '@utils/utils'
 
 interface LiquidityInterface {
-  liquidityPercent: number
-  liquidityVolume: number
+  liquidityPercent: number | null
+  liquidityVolume: number | null
   data: TimeData[]
   className?: string
 }
@@ -22,6 +22,9 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   className
 }) => {
   const { classes } = useStyles()
+
+  liquidityPercent = liquidityPercent ?? 0
+  liquidityVolume = liquidityVolume ?? 0
 
   const isLower = liquidityPercent < 0
 

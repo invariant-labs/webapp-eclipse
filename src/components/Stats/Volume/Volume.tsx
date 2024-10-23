@@ -10,14 +10,17 @@ import { Box } from '@mui/system'
 import { formatNumber } from '@utils/utils'
 
 interface StatsInterface {
-  percentVolume: number
-  volume: number
+  percentVolume: number | null
+  volume: number | null
   data: TimeData[]
   className?: string
 }
 
 const Volume: React.FC<StatsInterface> = ({ percentVolume, volume, data, className }) => {
   const { classes } = useStyles()
+
+  percentVolume = percentVolume ?? 0
+  volume = volume ?? 0
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
 

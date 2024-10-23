@@ -13,7 +13,7 @@ import {
   airdropQuantities,
   airdropTokens,
   NetworkType,
-  WETH_MIN_TRANSACTION_FEE_MAIN,
+  WETH_MIN_FAUCET_FEE_MAIN
 } from '@store/consts/static'
 import { Token as StoreToken } from '@store/consts/types'
 import { BN } from '@project-serum/anchor'
@@ -192,7 +192,7 @@ export function* handleAirdrop(): Generator {
         })
       )
     } else if (networkType === NetworkType.Mainnet) {
-      if (ethBalance.lt(WETH_MIN_TRANSACTION_FEE_MAIN)) {
+      if (ethBalance.lt(WETH_MIN_FAUCET_FEE_MAIN)) {
         yield put(
           snackbarsActions.add({
             message: 'Do not have enough ETH to get faucet',
