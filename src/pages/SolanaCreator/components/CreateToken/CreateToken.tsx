@@ -86,6 +86,7 @@ export const CreateToken: React.FC = () => {
                 success={success}
                 inProgress={inProgress}
                 ethBalance={ethBalance}
+                currentNetwork={currentNetwork}
               />
               <TokenMetadataInputs formMethods={formMethods} />
             </Box>

@@ -10,7 +10,8 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { BN } from '@project-serum/anchor'
 import classNames from 'classnames'
-import { WETH_CREATE_TOKEN_LAMPORTS } from '@store/consts/static'
+import { getCreateTokenLamports, NetworkType } from '@store/consts/static'
+import { printBN, trimZeros } from '@utils/utils'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
@@ -18,6 +19,7 @@ interface TokenInfoInputsProps {
   success: boolean
   inProgress: boolean
   ethBalance: BN
+  currentNetwork: NetworkType
 }
 
 export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
@@ -25,7 +27,8 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
   buttonText,
   success,
   inProgress,
-  ethBalance
+  ethBalance,
+  currentNetwork
 }) => {
   const { classes } = useStyles()
   const {
@@ -60,7 +63,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
   }, [success, inProgress])
 
   const createAvailable = useMemo(() => {
-    return ethBalance.gt(WETH_CREATE_TOKEN_LAMPORTS)
+    return ethBalance.gt(getCreateTokenLamports(currentNetwork))
   }, [ethBalance])
 
   return (
@@ -126,7 +129,9 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
       </Box>
       <Box className={classes.tokenCost}>
         <InfoIcon />
-        <Typography>Token cost: ~0.01 ETH</Typography>
+        <Typography>
+          Token cost: ~{trimZeros(printBN(getCreateTokenLamports(currentNetwork), 9))} ETH
+        </Typography>
       </Box>
 
       {isSubmitButton ? (
