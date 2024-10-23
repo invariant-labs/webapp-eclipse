@@ -101,7 +101,9 @@ export const Primary: Story = {
     ethBalance: 2000000000,
     poolTicks: {},
     priceFromLoading: false,
-    priceToLoading: false
+    priceToLoading: false,
+    unwrapWETH: fn(),
+    wrappedETHAccountExist: true
   },
   render: args => {
     return <Swap {...args} />

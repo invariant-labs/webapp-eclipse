@@ -1,6 +1,10 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { Swap } from '@components/Swap/Swap'
-import { commonTokensForNetworks, DEFAULT_SWAP_SLIPPAGE } from '@store/consts/static'
+import {
+  commonTokensForNetworks,
+  DEFAULT_SWAP_SLIPPAGE,
+  WRAPPED_ETH_ADDRESS
+} from '@store/consts/static'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
@@ -17,11 +21,12 @@ import {
   swapTokens,
   swapTokensDict,
   balanceLoading,
-  balance
+  balance,
+  accounts
 } from '@store/selectors/solanaWallet'
 import { swap as swapPool } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   addNewTokenToLocalStorage,
@@ -281,6 +286,24 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     )
   }
 
+  const allAccounts = useSelector(accounts)
+
+  const wrappedETHAccountExist = useMemo(() => {
+    let wrappedETHAccountExist = false
+
+    Object.entries(allAccounts).map(([address]) => {
+      if (address === WRAPPED_ETH_ADDRESS) {
+        wrappedETHAccountExist = true
+      }
+    })
+
+    return wrappedETHAccountExist
+  }, [allAccounts])
+
+  const unwrapWETH = () => {
+    dispatch(walletActions.unwrapWETH())
+  }
+
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
@@ -357,6 +380,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       copyTokenAddressHandler={copyTokenAddressHandler}
       ethBalance={ethBalance}
       network={networkType}
+      unwrapWETH={unwrapWETH}
+      wrappedETHAccountExist={wrappedETHAccountExist}
     />
   )
 }
