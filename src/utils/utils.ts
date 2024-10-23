@@ -26,6 +26,7 @@ import {
   BTC_TEST,
   DARKMOON_MAIN,
   DOGWIFHAT_MAIN,
+  ECAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
   getReversedAddressTickerMap,
@@ -778,7 +779,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,
         [GSVM_MAIN.address.toString()]: GSVM_MAIN,
-        [DARKMOON_MAIN.address.toString()]: DARKMOON_MAIN
+        [DARKMOON_MAIN.address.toString()]: DARKMOON_MAIN,
+        [ECAT_MAIN.address.toString()]: ECAT_MAIN
       }
     case NetworkType.Devnet:
       return {
