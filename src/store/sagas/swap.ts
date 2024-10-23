@@ -90,9 +90,9 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? new Transaction().add(createIx).add(transferIx).add(initIx)
         : new Transaction().add(createIx).add(initIx)
-    const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    initialTx.recentBlockhash = initialBlockhash.blockhash
-    initialTx.feePayer = wallet.publicKey
+    // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    // initialTx.recentBlockhash = initialBlockhash.blockhash
+    // initialTx.feePayer = wallet.publicKey
 
     const unwrapIx = Token.createCloseAccountInstruction(
       TOKEN_PROGRAM_ID,
@@ -106,8 +106,8 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenFrom.toString()]
-          ? tokensAccounts[tokenFrom.toString()].address
-          : null
+        ? tokensAccounts[tokenFrom.toString()].address
+        : null
     if (fromAddress === null) {
       fromAddress = yield* call(createAccount, tokenFrom)
     }
@@ -115,40 +115,50 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenTo.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenTo.toString()]
-          ? tokensAccounts[tokenTo.toString()].address
-          : null
+        ? tokensAccounts[tokenTo.toString()].address
+        : null
     if (toAddress === null) {
       toAddress = yield* call(createAccount, tokenTo)
     }
-    const swapTx = yield* call([marketProgram, marketProgram.swapTransaction], {
-      pair: new Pair(tokenFrom, tokenTo, {
-        fee: allPools[poolIndex].fee.v,
-        tickSpacing: allPools[poolIndex].tickSpacing
-      }),
-      xToY: isXtoY,
-      amount: byAmountIn ? amountIn : amountOut,
-      estimatedPriceAfterSwap,
-      slippage: slippage,
-      accountX: isXtoY ? fromAddress : toAddress,
-      accountY: isXtoY ? toAddress : fromAddress,
-      byAmountIn: byAmountIn,
-      owner: wallet.publicKey
-    })
-    const swapBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    swapTx.recentBlockhash = swapBlockhash.blockhash
-    swapTx.feePayer = wallet.publicKey
 
-    const unwrapTx = new Transaction().add(unwrapIx)
-    const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
-    unwrapTx.feePayer = wallet.publicKey
+    const swapIx = yield* call(
+      [marketProgram, marketProgram.swapInstruction],
+      {
+        pair: new Pair(tokenFrom, tokenTo, {
+          fee: allPools[poolIndex].fee.v,
+          tickSpacing: allPools[poolIndex].tickSpacing
+        }),
+        xToY: isXtoY,
+        amount: byAmountIn ? amountIn : amountOut,
+        estimatedPriceAfterSwap,
+        slippage: slippage,
+        accountX: isXtoY ? fromAddress : toAddress,
+        accountY: isXtoY ? toAddress : fromAddress,
+        byAmountIn: byAmountIn,
+        owner: wallet.publicKey
+      },
+      2
+    )
+
+    initialTx.add(swapIx)
+    initialTx.add(unwrapIx)
+
+    // const swapBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    // swapTx.recentBlockhash = swapBlockhash.blockhash
+    // swapTx.feePayer = wallet.publicKey
+
+    // const unwrapTx = new Transaction().add(unwrapIx)
+    // const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    // unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
+    // unwrapTx.feePayer = wallet.publicKey
+
+    const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    initialTx.recentBlockhash = initialBlockhash.blockhash
+    initialTx.feePayer = wallet.publicKey
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const [initialSignedTx, swapSignedTx, unwrapSignedTx] = yield* call(
-      [wallet, wallet.signAllTransactions],
-      [initialTx, swapTx, unwrapTx]
-    )
+    const initialSignedTx = yield* call([wallet, wallet.signTransaction], initialTx)
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
@@ -180,68 +190,68 @@ export function* handleSwapWithETH(): Generator {
       )
     }
 
-    const swapTxid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      swapSignedTx.serialize(),
-      {
-        skipPreflight: false
-      }
+    // const swapTxid = yield* call(
+    //   sendAndConfirmRawTransaction,
+    //   connection,
+    //   swapSignedTx.serialize(),
+    //   {
+    //     skipPreflight: false
+    //   }
+    // )
+
+    // if (!swapTxid.length) {
+    //   yield put(swapActions.setSwapSuccess(false))
+
+    //   return yield put(
+    //     snackbarsActions.add({
+    //       message:
+    //         'Tokens swapping failed. Please unwrap wrapped ETH in your wallet and try again.',
+    //       variant: 'error',
+    //       persist: false,
+    //       txid: swapTxid
+    //     })
+    //   )
+    // } else {
+    yield put(
+      snackbarsActions.add({
+        message: 'Tokens swapped successfully.',
+        variant: 'success',
+        persist: false,
+        txid: initialTxid
+      })
     )
+    // }
 
-    if (!swapTxid.length) {
-      yield put(swapActions.setSwapSuccess(false))
-
-      return yield put(
-        snackbarsActions.add({
-          message:
-            'Tokens swapping failed. Please unwrap wrapped ETH in your wallet and try again.',
-          variant: 'error',
-          persist: false,
-          txid: swapTxid
-        })
-      )
-    } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapped successfully.',
-          variant: 'success',
-          persist: false,
-          txid: swapTxid
-        })
-      )
-    }
-
-    const unwrapTxid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      unwrapSignedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    // const unwrapTxid = yield* call(
+    //   sendAndConfirmRawTransaction,
+    //   connection,
+    //   unwrapSignedTx.serialize(),
+    //   {
+    //     skipPreflight: false
+    //   }
+    // )
 
     yield put(swapActions.setSwapSuccess(true))
 
-    if (!unwrapTxid.length) {
-      yield put(
-        snackbarsActions.add({
-          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
-          variant: 'warning',
-          persist: false,
-          txid: unwrapTxid
-        })
-      )
-    } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'ETH unwrapped successfully.',
-          variant: 'success',
-          persist: false,
-          txid: unwrapTxid
-        })
-      )
-    }
+    // if (!unwrapTxid.length) {
+    //   yield put(
+    //     snackbarsActions.add({
+    //       message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
+    //       variant: 'warning',
+    //       persist: false,
+    //       txid: unwrapTxid
+    //     })
+    //   )
+    // } else {
+    //   yield put(
+    //     snackbarsActions.add({
+    //       message: 'ETH unwrapped successfully.',
+    //       variant: 'success',
+    //       persist: false,
+    //       txid: unwrapTxid
+    //     })
+    //   )
+    // }
 
     closeSnackbar(loaderSwappingTokens)
     yield put(snackbarsActions.remove(loaderSwappingTokens))
@@ -258,7 +268,8 @@ export function* handleSwapWithETH(): Generator {
     yield put(
       snackbarsActions.add({
         message:
-          'Failed to send. Please unwrap wrapped ETH in your wallet if you have any and try again.',
+          // 'Failed to send. Please unwrap wrapped ETH in your wallet if you have any and try again.',
+          'Failed to send. Please try again.',
         variant: 'error',
         persist: false
       })
