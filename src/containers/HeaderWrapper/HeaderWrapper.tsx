@@ -96,6 +96,7 @@ export const HeaderWrapper: React.FC = () => {
     dispatch(actions.setRPCAddress(RECOMMENDED_RPC_ADDRESS[currentNetwork]))
     dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))
     localStorage.setItem('IS_RPC_WARNING_IGNORED', 'false')
+    window.location.reload()
   }
 
   const useCurrentRpc = () => {
@@ -122,6 +123,7 @@ export const HeaderWrapper: React.FC = () => {
             dispatch(actions.setRPCAddress(rpcAddress))
             dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))
             localStorage.setItem('IS_RPC_WARNING_IGNORED', 'false')
+            window.location.reload()
           }
 
           if (network !== currentNetwork) {
