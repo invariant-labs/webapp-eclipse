@@ -1,19 +1,35 @@
-import React from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
 import useStyles from '../CreateToken/styles'
 import { Box, Button, Typography } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
-import { useSelector } from 'react-redux'
-import { status } from '@store/selectors/solanaWallet'
-import { Status } from '@store/reducers/solanaWallet'
+import { openWalletSelectorModal } from '@utils/web3/selector'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import { BN } from '@project-serum/anchor'
+import classNames from 'classnames'
+import { getCreateTokenLamports, NetworkType } from '@store/consts/static'
+import { printBN, trimZeros } from '@utils/utils'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
+  buttonText: string
+  success: boolean
+  inProgress: boolean
+  ethBalance: BN
+  currentNetwork: NetworkType
 }
 
-export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods }) => {
+export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
+  formMethods,
+  buttonText,
+  success,
+  inProgress,
+  ethBalance,
+  currentNetwork
+}) => {
   const { classes } = useStyles()
   const {
     control,
@@ -21,8 +37,35 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
 
     formState: { errors, isValid }
   } = formMethods
-  const walletStatus = useSelector(status)
-  const BUTTON_TEXT = walletStatus === Status.Initialized ? 'Create token' : 'Connect wallet'
+  const isSubmitButton = buttonText === 'Create token'
+  const [progress, setProgress] = useState<ProgressState>('none')
+
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 1000)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+      }, 3000)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
+
+  const createAvailable = useMemo(() => {
+    return ethBalance.gt(getCreateTokenLamports(currentNetwork))
+  }, [ethBalance])
+
   return (
     <Box className={classes.container}>
       <Box className={classes.inputsWrapper}>
@@ -48,7 +91,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
             maxLength: { value: 8, message: 'Symbol must be 8 characters or less' }
           }}
         />
-        <Box className={classes.row}>
+        <Box className={classes.row} gap='10px'>
           <Box className={classes.inputContainer}>
             <ControlledNumericInput
               name='decimals'
@@ -86,11 +129,51 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({ formMethods })
       </Box>
       <Box className={classes.tokenCost}>
         <InfoIcon />
-        <Typography>Token cost: 0.1 SOL</Typography>
+        <Typography>
+          Token cost: ~{trimZeros(printBN(getCreateTokenLamports(currentNetwork), 9))} ETH
+        </Typography>
       </Box>
-      <Button className={classes.button} variant='contained' type='submit' disabled={!isValid}>
-        <span className={classes.buttonText}>{BUTTON_TEXT}</span>
-      </Button>
+
+      {isSubmitButton ? (
+        !createAvailable ? (
+          <TooltipHover
+            text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+            top={-45}>
+            <div>
+              <AnimatedButton
+                type='submit'
+                content={'Insufficient ETH'}
+                className={classes.button}
+                onClick={() => {}}
+                disabled={!createAvailable}
+                progress={progress}
+              />
+            </div>
+          </TooltipHover>
+        ) : (
+          <AnimatedButton
+            type='submit'
+            content={buttonText}
+            disabled={!isValid}
+            className={classNames(
+              classes.button,
+              isValid && progress === 'none' ? classes.buttonActive : null
+            )}
+            onClick={() => {
+              setProgress('progress')
+            }}
+            progress={progress}
+          />
+        )
+      ) : (
+        <Button
+          className={classes.connectWalletButton}
+          variant='contained'
+          type='button'
+          onClick={openWalletSelectorModal}>
+          <span className={classes.buttonText}>{buttonText}</span>
+        </Button>
+      )}
     </Box>
   )
 }

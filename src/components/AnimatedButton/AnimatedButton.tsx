@@ -21,6 +21,7 @@ interface Props {
   onClick: () => void
   className?: string
   sx?: SxProps<Theme>
+  type?: 'button' | 'submit' | 'reset'
 }
 
 const AnimatedButton: React.FC<Props> = ({
@@ -29,7 +30,8 @@ const AnimatedButton: React.FC<Props> = ({
   progress,
   onClick,
   className,
-  sx
+  sx,
+  type = 'button'
 }) => {
   const { classes } = useStyles()
 
@@ -82,7 +84,7 @@ const AnimatedButton: React.FC<Props> = ({
       )}
       onClick={onClick}
       sx={sx}
-      >
+      type={type}>
       <div className={getClasses()}></div>
       {progress === 'progress' ||
       progress === 'approvedWithSuccess' ||
@@ -95,7 +97,6 @@ const AnimatedButton: React.FC<Props> = ({
       ) : (
         getMessage()
       )}
-
     </Button>
   )
 }
