@@ -1550,7 +1550,7 @@ export const getExplorer = (networkType: NetworkType) => {
   switch (networkType) {
     case NetworkType.Devnet:
     default:
-      return 'https://explorer.dev.eclipsenetwork.xyz/'
+      return 'https://explorer.eclipse.xyz/'
   }
 }
 
