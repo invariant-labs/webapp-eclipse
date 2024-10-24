@@ -420,6 +420,29 @@ export const Swap: React.FC<ISwap> = ({
     return simulateResult.error.some(err => err === error)
   }
 
+  const isEveryPoolEmpty = useMemo(() => {
+    if (tokenFromIndex !== null && tokenToIndex !== null) {
+      const pairs = findPairs(
+        tokens[tokenFromIndex].assetAddress,
+        tokens[tokenToIndex].assetAddress,
+        pools
+      )
+
+      let poolEmptyCount = 0
+      for (const pair of pairs) {
+        if (
+          poolTicks[pair.address.toString()] === undefined ||
+          (poolTicks[pair.address.toString()] && !poolTicks[pair.address.toString()].length)
+        ) {
+          poolEmptyCount++
+        }
+      }
+      return poolEmptyCount === pairs.length
+    }
+
+    return true
+  }, [tokenFromIndex, tokenToIndex, poolTicks])
+
   // const isInsufficientLiquidityError = useMemo(
   //   () =>
   //     simulateResult.poolKey === null &&
@@ -495,8 +518,12 @@ export const Swap: React.FC<ISwap> = ({
       return 'Not enough liquidity'
     }
 
-    if (amountTo === '') {
-      return `Swap simulation error`
+    if (!isEveryPoolEmpty && amountTo === '') {
+      return 'Amount out is zero'
+    }
+
+    if (isEveryPoolEmpty && amountTo === '') {
+      return 'Swap simulation error'
     }
 
     return 'Exchange'
