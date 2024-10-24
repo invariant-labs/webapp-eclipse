@@ -6,11 +6,22 @@ import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { accounts } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
 import { Pair } from '@invariant-labs/sdk-eclipse'
-import { getConnection } from './connection'
-import { Keypair, sendAndConfirmRawTransaction, SystemProgram, Transaction } from '@solana/web3.js'
+import { getConnection, handleRpcError } from './connection'
+import {
+  Keypair,
+  sendAndConfirmRawTransaction,
+  SystemProgram,
+  Transaction,
+  TransactionExpiredTimeoutError
+} from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { SIGNING_SNACKBAR_CONFIG, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
+import {
+  SIGNING_SNACKBAR_CONFIG,
+  TIMEOUT_ERROR_MESSAGE,
+  WRAPPED_ETH_ADDRESS
+} from '@store/consts/static'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
+import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
 import { createLoaderKey } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
@@ -108,8 +119,8 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenFrom.toString()]
-        ? tokensAccounts[tokenFrom.toString()].address
-        : null
+          ? tokensAccounts[tokenFrom.toString()].address
+          : null
     if (fromAddress === null) {
       fromAddress = yield* call(createAccount, tokenFrom)
     }
@@ -117,8 +128,8 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenTo.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenTo.toString()]
-        ? tokensAccounts[tokenTo.toString()].address
-        : null
+          ? tokensAccounts[tokenTo.toString()].address
+          : null
     if (toAddress === null) {
       toAddress = yield* call(createAccount, tokenTo)
     }
@@ -267,15 +278,28 @@ export function* handleSwapWithETH(): Generator {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message:
-          // 'Failed to send. Please unwrap wrapped ETH in your wallet if you have any and try again.',
-          'Failed to send. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message:
+            'Failed to send. Please unwrap wrapped SOL in your wallet if you have any and try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -406,13 +430,27 @@ export function* handleSwap(): Generator {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to send. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 

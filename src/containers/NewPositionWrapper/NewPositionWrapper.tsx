@@ -12,7 +12,7 @@ import {
   calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   createPlaceholderLiquidityPlot,
-  getCoingeckoTokenPrice,
+  getCoinGeckoTokenPrice,
   getMockedTokenPrice,
   getNewTokenOrThrow,
   printBN,
@@ -21,9 +21,10 @@ import {
 import { BN } from '@project-serum/anchor'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions, actions as positionsActions } from '@store/reducers/positions'
+import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
-import { network } from '@store/selectors/solanaConnection'
+import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
   isLoadingLatestPoolsForTransaction,
   isLoadingTicksAndTickMaps,
@@ -85,6 +86,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isMountedRef = useRef(false)
   const navigate = useNavigate()
   const isCurrentlyLoadingTokens = useSelector(isLoadingTokens)
+  const isTimeoutError = useSelector(timeoutError)
+
   useEffect(() => {
     const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
     const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
@@ -388,8 +391,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const id = tokens[tokenAIndex].coingeckoId ?? ''
     if (id.length) {
       setPriceALoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenAPriceData(data))
+      getCoinGeckoTokenPrice(id)
+        .then(data => setTokenAPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
         )
@@ -409,8 +412,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const id = tokens[tokenBIndex].coingeckoId ?? ''
     if (id.length) {
       setPriceBLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenBPriceData(data))
+      getCoinGeckoTokenPrice(id)
+        .then(data => setTokenBPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
         )
@@ -512,6 +515,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       }
     }
   }
+
+  useEffect(() => {
+    if (isTimeoutError) {
+      void onRefresh()
+      dispatch(connectionActions.setTimeoutError(false))
+    }
+  }, [isTimeoutError])
 
   return (
     <NewPosition

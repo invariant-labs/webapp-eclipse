@@ -7,15 +7,15 @@ import {
   calcPriceByTickIndex,
   calcYPerXPriceBySqrtPrice,
   createPlaceholderLiquidityPlot,
-  getCoingeckoTokenPrice,
+  getCoinGeckoTokenPrice,
   getMockedTokenPrice,
   printBN
 } from '@utils/utils'
-
+import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { network } from '@store/selectors/solanaConnection'
+import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
   currentPositionTicks,
   isLoadingPositionsList,
@@ -62,6 +62,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const walletStatus = useSelector(status)
   const isBalanceLoading = useSelector(balanceLoading)
+
+  const isTimeoutError = useSelector(timeoutError)
 
   const [waitingForTicksData, setWaitingForTicksData] = useState<boolean | null>(null)
 
@@ -271,8 +273,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
     const xId = position.tokenX.coingeckoId ?? ''
     if (xId.length) {
-      getCoingeckoTokenPrice(xId)
-        .then(data => setTokenXPriceData(data))
+      getCoinGeckoTokenPrice(xId)
+        .then(data => setTokenXPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork))
         )
@@ -282,8 +284,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
     const yId = position.tokenY.coingeckoId ?? ''
     if (yId.length) {
-      getCoingeckoTokenPrice(yId)
-        .then(data => setTokenYPriceData(data))
+      getCoinGeckoTokenPrice(yId)
+        .then(data => setTokenYPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork))
         )
@@ -353,6 +355,13 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       dispatch(walletActions.getBalance())
     }
   }
+
+  useEffect(() => {
+    if (isTimeoutError) {
+      onRefresh()
+      dispatch(connectionActions.setTimeoutError(false))
+    }
+  }, [isTimeoutError])
 
   if (position) {
     return (

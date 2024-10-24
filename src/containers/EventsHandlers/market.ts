@@ -1,7 +1,7 @@
 import { useDispatch, useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
 import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
-import { Status } from '@store/reducers/solanaConnection'
+import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/pools'
 
 import { poolsArraySortedByFees, poolTicks, tickMaps } from '@store/selectors/pools'
@@ -216,6 +216,14 @@ const MarketEvents = () => {
 
     connectEvents()
   }, [networkStatus, marketProgram, Object.values(tickmaps).length])
+
+  useEffect(() => {
+    window.addEventListener('unhandledrejection', e => {
+      dispatch(solanaConnectionActions.handleRpcError(e))
+    })
+
+    return () => {}
+  }, [])
 
   useEffect(() => {
     if (tokenFrom && tokenTo) {
