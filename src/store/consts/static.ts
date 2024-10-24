@@ -355,7 +355,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     SOL_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    MOON_MAIN.address
+    MOON_MAIN.address,
+    TURBO_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -527,3 +528,5 @@ export const RECOMMENDED_RPC_ADDRESS = {
 }
 
 export const DEFAULT_TOKEN_DECIMAL = 6
+
+export const TIMEOUT_ERROR_MESSAGE = 'Transaction timed out. Check the details to see if it passed.'

@@ -42,6 +42,7 @@ import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Decimal, Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { on } from 'process'
 
 export interface Pools {
   tokenX: PublicKey
@@ -105,6 +106,8 @@ export interface ISwap {
   ethBalance: BN
   unwrapWETH: () => void
   wrappedETHAccountExist: boolean
+  isTimeoutError: boolean
+  deleteTimeoutError: () => void
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -138,7 +141,9 @@ export const Swap: React.FC<ISwap> = ({
   network,
   ethBalance,
   unwrapWETH,
-  wrappedETHAccountExist
+  wrappedETHAccountExist,
+  isTimeoutError,
+  deleteTimeoutError
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -193,6 +198,13 @@ export const Swap: React.FC<ISwap> = ({
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isTimeoutError) {
+      onRefresh(tokenFromIndex, tokenToIndex)
+      deleteTimeoutError()
+    }
+  }, [isTimeoutError])
 
   useEffect(() => {
     navigate(
@@ -575,7 +587,7 @@ export const Swap: React.FC<ISwap> = ({
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
-          You have wrapped ETH. {' '}
+          You have wrapped ETH.{' '}
           <u className={classes.unwrapNowButton} onClick={unwrapWETH}>
             Unwrap now.
           </u>

@@ -28,6 +28,7 @@ export interface ISolanaConnectionStore {
   slot: number
   rpcAddress: string
   rpcStatus: RpcStatus
+  timeoutError: boolean
 }
 
 const network =
@@ -40,7 +41,8 @@ export const defaultState: ISolanaConnectionStore = {
   network: network,
   slot: 0,
   rpcAddress: localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RPC.MAIN,
-  rpcStatus: RPC_STATUS
+  rpcStatus: RPC_STATUS,
+  timeoutError: false
 }
 export const solanaConnectionSliceName = 'solanaConnection'
 const solanaConnectionSlice = createSlice({
@@ -79,6 +81,10 @@ const solanaConnectionSlice = createSlice({
       return state
     },
     handleRpcError(state, _action: PayloadAction) {
+      return state
+    },
+    setTimeoutError(state, action: PayloadAction<boolean>) {
+      state.timeoutError = action.payload
       return state
     }
   }
