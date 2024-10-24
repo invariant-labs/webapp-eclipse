@@ -38,7 +38,7 @@ import {
   TransactionInstruction
 } from '@solana/web3.js'
 import { closeSnackbar } from 'notistack'
-import { getConnection } from './connection'
+import { getConnection, handleRpcError } from './connection'
 import { getTokenDetails } from './token'
 import { TOKEN_2022_PROGRAM_ID } from '@invariant-labs/sdk-eclipse'
 import { disconnectWallet, getSolanaWallet } from '@utils/web3/wallet'
@@ -133,7 +133,7 @@ export function* fetchTokensAccounts(): Generator {
     }
   }
 
-  yield* put(actions.addTokenAccounts(newAccounts))
+  yield* put(actions.setTokenAccounts(newAccounts))
   yield* put(poolsActions.addTokens(unknownTokens))
 }
 
@@ -508,18 +508,22 @@ export function* sendSol(amount: BN, recipient: PublicKey): SagaGenerator<string
 }
 
 export function* handleConnect(): Generator {
-  const walletStatus = yield* select(status)
-  if (walletStatus === Status.Initialized) {
-    yield* put(
-      snackbarsActions.add({
-        message: 'Wallet already connected.',
-        variant: 'info',
-        persist: false
-      })
-    )
-    return
+  try {
+    const walletStatus = yield* select(status)
+    if (walletStatus === Status.Initialized) {
+      yield* put(
+        snackbarsActions.add({
+          message: 'Wallet already connected.',
+          variant: 'info',
+          persist: false
+        })
+      )
+      return
+    }
+    yield* call(init)
+  } catch (error) {
+    yield* call(handleRpcError, (error as Error).message)
   }
-  yield* call(init)
 }
 
 export function* handleDisconnect(): Generator {
@@ -537,6 +541,8 @@ export function* handleDisconnect(): Generator {
     // yield* put(bondsActions.setUserVested({}))
   } catch (error) {
     console.log(error)
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -553,14 +559,17 @@ export function* handleUnwrapWETH(): Generator {
 
   const loaderUnwrapWETH = createLoaderKey()
 
-  let wrappedEthAccountPublicKey: PublicKey | null = null
+  const wrappedEthAccountPublicKeys: PublicKey[] = []
   Object.entries(allAccounts).map(([address, token]) => {
-    if (address === WRAPPED_ETH_ADDRESS) {
-      wrappedEthAccountPublicKey = token.address
+    if (
+      address === WRAPPED_ETH_ADDRESS &&
+      token.balance.gt(new BN(0) && wrappedEthAccountPublicKeys.length < 10)
+    ) {
+      wrappedEthAccountPublicKeys.push(token.address)
     }
   })
 
-  if (!wrappedEthAccountPublicKey) {
+  if (!wrappedEthAccountPublicKeys) {
     return
   }
 
@@ -574,15 +583,19 @@ export function* handleUnwrapWETH(): Generator {
       })
     )
 
-    const unwrapIx = Token.createCloseAccountInstruction(
-      TOKEN_PROGRAM_ID,
-      wrappedEthAccountPublicKey,
-      wallet.publicKey,
-      wallet.publicKey,
-      []
-    )
+    const unwrapTx = new Transaction()
 
-    const unwrapTx = new Transaction().add(unwrapIx)
+    wrappedEthAccountPublicKeys.forEach(wrappedEthAccountPublicKey => {
+      const unwrapIx = Token.createCloseAccountInstruction(
+        TOKEN_PROGRAM_ID,
+        wrappedEthAccountPublicKey,
+        wallet.publicKey,
+        wallet.publicKey,
+        []
+      )
+
+      unwrapTx.add(unwrapIx)
+    })
 
     const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
     unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
@@ -618,8 +631,12 @@ export function* handleUnwrapWETH(): Generator {
         })
       )
     }
+
+    yield* put(actions.getBalance())
   } catch (e) {
     console.log(e)
+
+    yield* call(handleRpcError, (e as Error).message)
   }
 
   closeSnackbar(loaderUnwrapWETH)

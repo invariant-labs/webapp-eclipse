@@ -6,7 +6,7 @@ import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { accounts } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
 import { Pair } from '@invariant-labs/sdk-eclipse'
-import { getConnection } from './connection'
+import { getConnection, handleRpcError } from './connection'
 import { Keypair, sendAndConfirmRawTransaction, SystemProgram, Transaction } from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { SIGNING_SNACKBAR_CONFIG, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
@@ -108,8 +108,8 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenFrom.toString()]
-        ? tokensAccounts[tokenFrom.toString()].address
-        : null
+          ? tokensAccounts[tokenFrom.toString()].address
+          : null
     if (fromAddress === null) {
       fromAddress = yield* call(createAccount, tokenFrom)
     }
@@ -117,8 +117,8 @@ export function* handleSwapWithETH(): Generator {
       allTokens[tokenTo.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
         : tokensAccounts[tokenTo.toString()]
-        ? tokensAccounts[tokenTo.toString()].address
-        : null
+          ? tokensAccounts[tokenTo.toString()].address
+          : null
     if (toAddress === null) {
       toAddress = yield* call(createAccount, tokenTo)
     }
@@ -276,6 +276,8 @@ export function* handleSwapWithETH(): Generator {
         persist: false
       })
     )
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -413,6 +415,8 @@ export function* handleSwap(): Generator {
         persist: false
       })
     )
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 

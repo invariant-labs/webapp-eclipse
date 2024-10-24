@@ -30,7 +30,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   addNewTokenToLocalStorage,
-  getCoingeckoTokenPrice,
+  getCoinGeckoTokenPrice,
   getMockedTokenPrice,
   getNewTokenOrThrow,
   tickerToAddress
@@ -39,6 +39,7 @@ import { TokenPriceData } from '@store/consts/types'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
+import { BN } from '@project-serum/anchor'
 
 type Props = {
   initialTokenFrom: string
@@ -182,8 +183,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (id.length) {
       setPriceFromLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenFromPriceData(data))
+      getCoinGeckoTokenPrice(id)
+        .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
             getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, networkType)
@@ -206,8 +207,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     const id = tokensDict[tokenTo.toString()].coingeckoId ?? ''
     if (id.length) {
       setPriceToLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenToPriceData(data))
+      getCoinGeckoTokenPrice(id)
+        .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
             getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, networkType)
@@ -247,8 +248,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (idTo.length) {
       setPriceToLoading(true)
-      getCoingeckoTokenPrice(idTo)
-        .then(data => setTokenToPriceData(data))
+      getCoinGeckoTokenPrice(idTo)
+        .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
             getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, networkType)
@@ -263,8 +264,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (idFrom.length) {
       setPriceFromLoading(true)
-      getCoingeckoTokenPrice(idFrom)
-        .then(data => setTokenFromPriceData(data))
+      getCoinGeckoTokenPrice(idFrom)
+        .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
             getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, networkType)
@@ -291,8 +292,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const wrappedETHAccountExist = useMemo(() => {
     let wrappedETHAccountExist = false
 
-    Object.entries(allAccounts).map(([address]) => {
-      if (address === WRAPPED_ETH_ADDRESS) {
+    Object.entries(allAccounts).map(([address, token]) => {
+      if (address === WRAPPED_ETH_ADDRESS && token.balance.gt(new BN(0))) {
         wrappedETHAccountExist = true
       }
     })

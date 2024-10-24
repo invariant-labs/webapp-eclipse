@@ -3,7 +3,8 @@ import {
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
-  Pair
+  Pair,
+  sleep
 } from '@invariant-labs/sdk-eclipse'
 import { Decimal, PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
@@ -24,8 +25,11 @@ import {
   ADDRESSES_TO_REVERS_TOKEN_PAIRS,
   BTC_DEV,
   BTC_TEST,
+  COINGECKO_QUERY_COOLDOWN,
   DARKMOON_MAIN,
+  DEFAULT_TOKENS,
   DOGWIFHAT_MAIN,
+  EBULL_MAIN,
   ECAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
@@ -53,6 +57,7 @@ import {
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes'
 import {
+  CoinGeckoAPIData,
   CoingeckoApiPriceData,
   CoingeckoPriceData,
   FormatNumberThreshold,
@@ -784,7 +789,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [DARKMOON_MAIN.address.toString()]: DARKMOON_MAIN,
         [ECAT_MAIN.address.toString()]: ECAT_MAIN,
         [TURBO_MAIN.address.toString()]: TURBO_MAIN,
-        [MOO_MAIN.address.toString()]: MOO_MAIN
+        [MOO_MAIN.address.toString()]: MOO_MAIN,
+        [EBULL_MAIN.address.toString()]: EBULL_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -1478,17 +1484,41 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
   }
 }
 
-export const getCoingeckoTokenPrice = async (id: string): Promise<CoingeckoPriceData> => {
-  return await axios
-    .get<
-      CoingeckoApiPriceData[]
-    >(`https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${id}`)
-    .then(res => {
-      return {
-        price: res.data[0].current_price ?? 0,
-        priceChange: res.data[0].price_change_percentage_24h ?? 0
-      }
-    })
+let isCoinGeckoQueryRunning = false
+
+export const getCoinGeckoTokenPrice = async (id: string): Promise<number | undefined> => {
+  while (isCoinGeckoQueryRunning) {
+    await sleep(100)
+  }
+  isCoinGeckoQueryRunning = true
+
+  const cachedLastQueryTimestamp = localStorage.getItem('COINGECKO_LAST_QUERY_TIMESTAMP')
+  let lastQueryTimestamp = 0
+  if (cachedLastQueryTimestamp) {
+    lastQueryTimestamp = Number(cachedLastQueryTimestamp)
+  }
+
+  const cachedPriceData = localStorage.getItem('COINGECKO_PRICE_DATA')
+  let priceData: CoinGeckoAPIData = []
+  if (cachedPriceData && Number(lastQueryTimestamp) + COINGECKO_QUERY_COOLDOWN > Date.now()) {
+    priceData = JSON.parse(cachedPriceData)
+  } else {
+    try {
+      const { data } = await axios.get<CoinGeckoAPIData>(
+        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${DEFAULT_TOKENS}`
+      )
+      priceData = data
+      localStorage.setItem('COINGECKO_PRICE_DATA', JSON.stringify(priceData))
+      localStorage.setItem('COINGECKO_LAST_QUERY_TIMESTAMP', String(Date.now()))
+    } catch (e) {
+      localStorage.removeItem('COINGECKO_LAST_QUERY_TIMESTAMP')
+      localStorage.removeItem('COINGECKO_PRICE_DATA')
+      console.log(e)
+    }
+  }
+
+  isCoinGeckoQueryRunning = false
+  return priceData.find(entry => entry.id === id)?.current_price
 }
 
 export const getTicksList = async (
