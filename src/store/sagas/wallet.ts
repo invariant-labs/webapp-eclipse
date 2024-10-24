@@ -559,14 +559,17 @@ export function* handleUnwrapWETH(): Generator {
 
   const loaderUnwrapWETH = createLoaderKey()
 
-  let wrappedEthAccountPublicKey: PublicKey | null = null
+  const wrappedEthAccountPublicKeys: PublicKey[] = []
   Object.entries(allAccounts).map(([address, token]) => {
-    if (address === WRAPPED_ETH_ADDRESS) {
-      wrappedEthAccountPublicKey = token.address
+    if (
+      address === WRAPPED_ETH_ADDRESS &&
+      token.balance.gt(new BN(0) && wrappedEthAccountPublicKeys.length < 10)
+    ) {
+      wrappedEthAccountPublicKeys.push(token.address)
     }
   })
 
-  if (!wrappedEthAccountPublicKey) {
+  if (!wrappedEthAccountPublicKeys) {
     return
   }
 
@@ -580,15 +583,19 @@ export function* handleUnwrapWETH(): Generator {
       })
     )
 
-    const unwrapIx = Token.createCloseAccountInstruction(
-      TOKEN_PROGRAM_ID,
-      wrappedEthAccountPublicKey,
-      wallet.publicKey,
-      wallet.publicKey,
-      []
-    )
+    const unwrapTx = new Transaction()
 
-    const unwrapTx = new Transaction().add(unwrapIx)
+    wrappedEthAccountPublicKeys.forEach(wrappedEthAccountPublicKey => {
+      const unwrapIx = Token.createCloseAccountInstruction(
+        TOKEN_PROGRAM_ID,
+        wrappedEthAccountPublicKey,
+        wallet.publicKey,
+        wallet.publicKey,
+        []
+      )
+
+      unwrapTx.add(unwrapIx)
+    })
 
     const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
     unwrapTx.recentBlockhash = unwrapBlockhash.blockhash

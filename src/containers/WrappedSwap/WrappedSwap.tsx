@@ -39,6 +39,7 @@ import { TokenPriceData } from '@store/consts/types'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
+import { BN } from '@project-serum/anchor'
 
 type Props = {
   initialTokenFrom: string
@@ -291,8 +292,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const wrappedETHAccountExist = useMemo(() => {
     let wrappedETHAccountExist = false
 
-    Object.entries(allAccounts).map(([address]) => {
-      if (address === WRAPPED_ETH_ADDRESS) {
+    Object.entries(allAccounts).map(([address, token]) => {
+      if (address === WRAPPED_ETH_ADDRESS && token.balance.gt(new BN(0))) {
         wrappedETHAccountExist = true
       }
     })
