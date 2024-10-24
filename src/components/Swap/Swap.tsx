@@ -42,7 +42,6 @@ import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Decimal, Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
-import { on } from 'process'
 
 export interface Pools {
   tokenX: PublicKey
