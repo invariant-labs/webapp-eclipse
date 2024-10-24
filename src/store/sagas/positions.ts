@@ -13,9 +13,19 @@ import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { accounts } from '@store/selectors/solanaWallet'
-import { Transaction, sendAndConfirmRawTransaction, Keypair, SystemProgram } from '@solana/web3.js'
+import {
+  Transaction,
+  sendAndConfirmRawTransaction,
+  Keypair,
+  SystemProgram,
+  TransactionExpiredTimeoutError
+} from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import { SIGNING_SNACKBAR_CONFIG, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
+import {
+  SIGNING_SNACKBAR_CONFIG,
+  TIMEOUT_ERROR_MESSAGE,
+  WRAPPED_ETH_ADDRESS
+} from '@store/consts/static'
 import {
   positionsList,
   positionsWithPoolsData,
@@ -32,6 +42,7 @@ import {
   getLiquidityTicksByPositionsList,
   getPositionsAddressesFromRange
 } from '@utils/utils'
+import { actions as connectionActions } from '@store/reducers/solanaConnection'
 // import { createClaimAllPositionRewardsTx } from './farms'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { stakesForPosition } from '@selectors/farms'
@@ -292,13 +303,26 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to send. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message:
+            'Failed to send. Please unwrap wrapped SOL in your wallet if you have any and try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
 
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -479,13 +503,26 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to send. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message:
+            'Failed to send. Please unwrap wrapped SOL in your wallet if you have any and try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
 
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -649,13 +686,25 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to send. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
 
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -908,13 +957,25 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to claim fee. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
 
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -1029,13 +1090,25 @@ export function* handleClaimFee(action: PayloadAction<number>) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to claim fee. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
 
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -1197,13 +1270,25 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to close position. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
 
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -1348,13 +1433,25 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    yield put(
-      snackbarsActions.add({
-        message: 'Failed to close position. Please try again.',
-        variant: 'error',
-        persist: false
-      })
-    )
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
 
     yield* call(handleRpcError, (error as Error).message)
   }

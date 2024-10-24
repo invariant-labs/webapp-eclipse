@@ -8,6 +8,7 @@ import {
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
@@ -15,7 +16,7 @@ import {
   tickMaps,
   nearestPoolTicksForPair
 } from '@store/selectors/pools'
-import { network } from '@store/selectors/solanaConnection'
+import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
   status,
   swapTokens,
@@ -66,6 +67,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
   const [tokenTo, setTokenTo] = useState<PublicKey | null>(null)
   const ethBalance = useSelector(balance)
+  const isTimeoutError = useSelector(timeoutError)
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -383,6 +385,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       network={networkType}
       unwrapWETH={unwrapWETH}
       wrappedETHAccountExist={wrappedETHAccountExist}
+      isTimeoutError={isTimeoutError}
+      deleteTimeoutError={() => {
+        dispatch(connectionActions.setTimeoutError(false))
+      }}
     />
   )
 }

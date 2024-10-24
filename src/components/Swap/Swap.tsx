@@ -105,6 +105,8 @@ export interface ISwap {
   ethBalance: BN
   unwrapWETH: () => void
   wrappedETHAccountExist: boolean
+  isTimeoutError: boolean
+  deleteTimeoutError: () => void
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -138,7 +140,9 @@ export const Swap: React.FC<ISwap> = ({
   network,
   ethBalance,
   unwrapWETH,
-  wrappedETHAccountExist
+  wrappedETHAccountExist,
+  isTimeoutError,
+  deleteTimeoutError
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -193,6 +197,13 @@ export const Swap: React.FC<ISwap> = ({
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isTimeoutError) {
+      onRefresh(tokenFromIndex, tokenToIndex)
+      deleteTimeoutError()
+    }
+  }, [isTimeoutError])
 
   useEffect(() => {
     navigate(

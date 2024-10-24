@@ -11,11 +11,11 @@ import {
   getMockedTokenPrice,
   printBN
 } from '@utils/utils'
-
+import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { network } from '@store/selectors/solanaConnection'
+import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
   currentPositionTicks,
   isLoadingPositionsList,
@@ -62,6 +62,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const walletStatus = useSelector(status)
   const isBalanceLoading = useSelector(balanceLoading)
+
+  const isTimeoutError = useSelector(timeoutError)
 
   const [waitingForTicksData, setWaitingForTicksData] = useState<boolean | null>(null)
 
@@ -353,6 +355,13 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       dispatch(walletActions.getBalance())
     }
   }
+
+  useEffect(() => {
+    if (isTimeoutError) {
+      onRefresh()
+      dispatch(connectionActions.setTimeoutError(false))
+    }
+  }, [isTimeoutError])
 
   if (position) {
     return (
