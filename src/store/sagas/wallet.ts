@@ -133,7 +133,7 @@ export function* fetchTokensAccounts(): Generator {
     }
   }
 
-  yield* put(actions.addTokenAccounts(newAccounts))
+  yield* put(actions.setTokenAccounts(newAccounts))
   yield* put(poolsActions.addTokens(unknownTokens))
 }
 
@@ -631,6 +631,8 @@ export function* handleUnwrapWETH(): Generator {
         })
       )
     }
+
+    yield* put(actions.getBalance())
   } catch (e) {
     console.log(e)
 
