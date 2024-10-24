@@ -97,13 +97,13 @@ export const Header: React.FC<IHeader> = ({
   const mainnetRPCs: ISelectNetwork[] = [
     {
       networkType: NetworkType.Mainnet,
-      rpc: RPC.MAIN,
-      rpcName: 'Eclipse Mainnet'
+      rpc: RPC.MAIN_HELIUS,
+      rpcName: 'Helius'
     },
     {
       networkType: NetworkType.Mainnet,
-      rpc: RPC.MAIN_HELIUS,
-      rpcName: 'Helius'
+      rpc: RPC.MAIN,
+      rpcName: 'Eclipse Mainnet'
     },
     {
       networkType: NetworkType.Mainnet,

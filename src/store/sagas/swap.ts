@@ -6,7 +6,7 @@ import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { accounts } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
 import { Pair } from '@invariant-labs/sdk-eclipse'
-import { getConnection } from './connection'
+import { getConnection, handleRpcError } from './connection'
 import {
   Keypair,
   sendAndConfirmRawTransaction,
@@ -298,6 +298,8 @@ export function* handleSwapWithETH(): Generator {
         })
       )
     }
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -447,6 +449,8 @@ export function* handleSwap(): Generator {
         })
       )
     }
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
