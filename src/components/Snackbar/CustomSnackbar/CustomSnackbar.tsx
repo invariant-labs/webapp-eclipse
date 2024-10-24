@@ -77,7 +77,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
               <StyledDetails
                 onClick={() => {
                   window.open(
-                    `https://explorer.dev.eclipsenetwork.xyz/tx/${txid.toString()}${networkUrl}`,
+                    `https://explorer.eclipse.xyz/tx/${txid.toString()}${networkUrl}`,
                     '_blank'
                   )
                 }}>
