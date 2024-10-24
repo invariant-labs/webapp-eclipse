@@ -536,3 +536,7 @@ export const RECOMMENDED_RPC_ADDRESS = {
 }
 
 export const DEFAULT_TOKEN_DECIMAL = 6
+
+export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
+
+export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifhat']

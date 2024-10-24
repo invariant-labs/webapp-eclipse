@@ -30,7 +30,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   addNewTokenToLocalStorage,
-  getCoingeckoTokenPrice,
+  getCoinGeckoTokenPrice,
   getMockedTokenPrice,
   getNewTokenOrThrow,
   tickerToAddress
@@ -182,8 +182,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (id.length) {
       setPriceFromLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenFromPriceData(data))
+      getCoinGeckoTokenPrice(id)
+        .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
             getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, networkType)
@@ -206,8 +206,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     const id = tokensDict[tokenTo.toString()].coingeckoId ?? ''
     if (id.length) {
       setPriceToLoading(true)
-      getCoingeckoTokenPrice(id)
-        .then(data => setTokenToPriceData(data))
+      getCoinGeckoTokenPrice(id)
+        .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
             getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, networkType)
@@ -247,8 +247,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (idTo.length) {
       setPriceToLoading(true)
-      getCoingeckoTokenPrice(idTo)
-        .then(data => setTokenToPriceData(data))
+      getCoinGeckoTokenPrice(idTo)
+        .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
             getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, networkType)
@@ -263,8 +263,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (idFrom.length) {
       setPriceFromLoading(true)
-      getCoingeckoTokenPrice(idFrom)
-        .then(data => setTokenFromPriceData(data))
+      getCoinGeckoTokenPrice(idFrom)
+        .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
             getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, networkType)
