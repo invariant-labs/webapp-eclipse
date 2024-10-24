@@ -181,6 +181,52 @@ export const MOON_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const GSVM_MAIN: Token = {
+  symbol: 'GSVM',
+  address: new PublicKey('137EXM1L3m8hDeq29ducnGhYCwEDCAnxcJ7kqD4TcFFC'),
+  decimals: 9,
+  name: 'GSVM',
+  logoURI: 'https://i.mij.rip/2024/10/24/988580889ba810e7d4986fe5b1718c69.jpeg',
+  coingeckoId: ''
+}
+
+export const DARKMOON_MAIN: Token = {
+  symbol: 'DARKMOON',
+  address: new PublicKey('F2kbmDAWrcNms6bf98kxkNaKb3chGXea6Dbz8aepQy58'),
+  decimals: 6,
+  name: 'Dark Moon',
+  logoURI: 'https://i.imgur.com/pJ3u7kS.jpeg',
+  coingeckoId: ''
+}
+
+export const ECAT_MAIN: Token = {
+  symbol: 'ECAT',
+  address: new PublicKey('9iswScagJJkKAAsRtp7pJB62f3idZRxHr1Sr9hACThFh'),
+  decimals: 9,
+  name: 'EclipseCat',
+  logoURI: 'https://i.mij.rip/2024/10/24/b2e9d0150c4fe30d8a22f6d711ae3c44.jpeg',
+  coingeckoId: ''
+}
+
+export const TURBO_MAIN: Token = {
+  symbol: 'Turbo',
+  address: new PublicKey('trbts2EsWyMdnCjsHUFBKLtgudmBD7Rfbz8zCg1s4EK'),
+  decimals: 9,
+  name: 'Eclip Turbo',
+  logoURI:
+    'https://bafybeibup6ghtrj5re3ba243bxtb6yafihgwnj3z2whte577svbvejhjjm.ipfs.w3s.link/Turbo.png',
+  coingeckoId: ''
+}
+
+export const MOO_MAIN: Token = {
+  symbol: 'MOO',
+  address: new PublicKey('8nF4QmTxsFh5L7bBw9qfdfW67CEAdLWuK9EQjsTgk8d'),
+  decimals: 9,
+  name: 'cow',
+  logoURI: 'https://uploader.irys.xyz/CfU2Zsy5i2wKwoq788W4ZJGfjmeU6QGhNugz4gVM4RJA',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -332,15 +378,22 @@ export const airdropQuantities: Record<NetworkType, number[]> = {
 
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
 
-export const WETH_MIN_TRANSACTION_FEE_MAIN = new BN(1)
+// export const WETH_MIN_FAUCET_FEE_MAIN = new BN(10000)
+export const WETH_MIN_FAUCET_FEE_MAIN = new BN(25000)
 
-export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = new BN(50000)
+export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST = new BN(50000)
+export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN = new BN(25000)
 
-export const WETH_POSITION_INIT_LAMPORTS = new BN(100000)
-export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(61646)
+// export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(150000)
+export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(700000)
+export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(700000)
 
-export const WETH_POOL_INIT_LAMPORTS = new BN(9900000)
-export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1060009)
+// export const WETH_POOL_INIT_LAMPORTS_MAIN = new BN(1000000)
+export const WETH_POOL_INIT_LAMPORTS_MAIN = new BN(1750000)
+export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
+
+export const WETH_CREATE_TOKEN_LAMPORTS_MAIN = new BN(2000000)
+export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
 export const TESTNET_WETH_CREATE_TOKEN_LAMPORTS = new BN(1100000)
 export const MAINNET_WETH_CREATE_TOKEN_LAMPORTS = new BN(200000)
@@ -427,7 +480,10 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       SOL: SOL_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
-      MOON: MOON_MAIN.address.toString()
+      MOON: MOON_MAIN.address.toString(),
+      GSVM: GSVM_MAIN.address.toString(),
+      DARKMOON_MAIN: DARKMOON_MAIN.address.toString(),
+      ECAT_MAIN: ECAT_MAIN.address.toString()
     }
   }
 }
