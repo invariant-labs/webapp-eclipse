@@ -529,4 +529,5 @@ export const RECOMMENDED_RPC_ADDRESS = {
 
 export const DEFAULT_TOKEN_DECIMAL = 6
 
-export const TIMEOUT_ERROR_MESSAGE = 'Transaction timed out. Check the details to see if it passed.'
+export const TIMEOUT_ERROR_MESSAGE =
+  'Transaction has timed out. Check the details to confirm success.'
