@@ -105,6 +105,8 @@ export interface ISwap {
   ethBalance: BN
   unwrapWETH: () => void
   wrappedETHAccountExist: boolean
+  isTimeoutError: boolean
+  deleteTimeoutError: () => void
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -138,7 +140,9 @@ export const Swap: React.FC<ISwap> = ({
   network,
   ethBalance,
   unwrapWETH,
-  wrappedETHAccountExist
+  wrappedETHAccountExist,
+  isTimeoutError,
+  deleteTimeoutError
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -193,6 +197,13 @@ export const Swap: React.FC<ISwap> = ({
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (isTimeoutError) {
+      onRefresh(tokenFromIndex, tokenToIndex)
+      deleteTimeoutError()
+    }
+  }, [isTimeoutError])
 
   useEffect(() => {
     navigate(
@@ -484,6 +495,10 @@ export const Swap: React.FC<ISwap> = ({
       return 'Not enough liquidity'
     }
 
+    if (amountTo === '') {
+      return `Swap simulation error`
+    }
+
     return 'Exchange'
   }
   const hasShowRateMessage = () => {
@@ -575,7 +590,7 @@ export const Swap: React.FC<ISwap> = ({
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
-          You have wrapped ETH. {' '}
+          You have wrapped ETH.{' '}
           <u className={classes.unwrapNowButton} onClick={unwrapWETH}>
             Unwrap now.
           </u>

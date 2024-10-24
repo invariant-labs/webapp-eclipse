@@ -2,7 +2,7 @@ import { actions } from '@store/reducers/stats'
 import { call, put, select, takeEvery } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
-import { getConnection } from './connection'
+import { getConnection, handleRpcError } from './connection'
 import { tokens } from '@store/selectors/pools'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { getFullNewTokensData, getFullSnap } from '@utils/utils'
@@ -48,6 +48,8 @@ export function* getStats(): Generator {
   } catch (error) {
     yield* put(actions.setLoadingStats(false))
     console.log(error)
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 

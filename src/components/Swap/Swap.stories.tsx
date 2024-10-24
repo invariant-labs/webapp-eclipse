@@ -103,7 +103,9 @@ export const Primary: Story = {
     priceFromLoading: false,
     priceToLoading: false,
     unwrapWETH: fn(),
-    wrappedETHAccountExist: true
+    wrappedETHAccountExist: true,
+    deleteTimeoutError: fn(),
+    isTimeoutError: false
   },
   render: args => {
     return <Swap {...args} />

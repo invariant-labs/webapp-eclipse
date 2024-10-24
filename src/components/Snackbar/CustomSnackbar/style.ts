@@ -74,6 +74,7 @@ export const StyledContainer = styled('div')({
 export const StyledTitle = styled(Typography)({
   wordWrap: 'break-word',
   marginLeft: 8,
+  width: `calc(100% - 8px)`,
   color: colors.invariant.text,
   ...typography.body2
 })

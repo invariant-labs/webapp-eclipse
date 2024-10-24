@@ -226,6 +226,15 @@ export const MOO_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const EBULL_MAIN: Token = {
+  symbol: 'EBull',
+  address: new PublicKey('2vvZp5DXtfpm8MV4KLRKqwdqnKfsKZt4pmk31JHnMw3J'),
+  decimals: 9,
+  name: 'EclipseIsGood',
+  logoURI: 'https://wmimg.com/i/1303/2024/10/6719b01383638.jpeg',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -355,7 +364,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     SOL_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    MOON_MAIN.address
+    MOON_MAIN.address,
+    TURBO_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -521,9 +531,16 @@ export const enum SortTypeTokenList {
 
 export const RECOMMENDED_RPC_ADDRESS = {
   [NetworkType.Testnet]: RPC.TEST,
-  [NetworkType.Mainnet]: RPC.MAIN,
+  [NetworkType.Mainnet]: RPC.MAIN_HELIUS,
   [NetworkType.Devnet]: RPC.DEV_EU,
   [NetworkType.Local]: ''
 }
 
 export const DEFAULT_TOKEN_DECIMAL = 6
+
+export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
+
+export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifhat']
+
+export const TIMEOUT_ERROR_MESSAGE =
+  'Transaction has timed out. Check the details to confirm success.'
