@@ -279,11 +279,10 @@ export function* handleSwapWithETH(): Generator {
     yield put(snackbarsActions.remove(loaderSigningTx))
 
     if (error instanceof TransactionExpiredTimeoutError) {
-      console.log('error.signature', error.signature)
       yield put(
         snackbarsActions.add({
           message: TIMEOUT_ERROR_MESSAGE,
-          variant: 'error',
+          variant: 'info',
           persist: true,
           txid: error.signature
         })
@@ -433,7 +432,7 @@ export function* handleSwap(): Generator {
       yield put(
         snackbarsActions.add({
           message: TIMEOUT_ERROR_MESSAGE,
-          variant: 'error',
+          variant: 'info',
           persist: true,
           txid: error.signature
         })
