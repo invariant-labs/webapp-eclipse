@@ -11,14 +11,20 @@ export interface FormData {
   image: string
 }
 
-type SocialPlatform = 'x' | 'telegram' | 'discord'
+type SocialPlatform = 'x' | 'telegram' | 'discord' | 'website'
 
 export const validateSocialLink = (value: string, platform: SocialPlatform): true | string => {
   if (!value) return true
   const patterns: Record<SocialPlatform, RegExp> = {
+    website:
+      /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i,
     x: /^https?:\/\/(www\.)?(twitter\.com|x\.com)\/.+/i,
     telegram: /^https?:\/\/(t\.me|telegram\.me)\/.+/i,
     discord: /^https?:\/\/(www\.)?discord\.gg\/.+/i
+  }
+
+  if (value.length > 200) {
+    return 'Link exceeds maximum length'
   }
   return patterns[platform].test(value) || `Invalid ${platform} link`
 }
@@ -35,14 +41,15 @@ export const validateDecimals = (decimals: string): string | null => {
 }
 
 export const validateSupply = (supply: string, decimals: string): string | null => {
-  if (!supply || !decimals) return null
-
   const supplyValue = BigInt(supply)
-  const decimalsValue = parseInt(decimals, 10)
 
   if (supplyValue === 0n) {
-    return null
+    return 'Supply must be greater than 0'
   }
+
+  if (!supply || !decimals) return null
+
+  const decimalsValue = parseInt(decimals, 10)
 
   const totalDigits = supply.length + decimalsValue
   if (totalDigits > 20) {
@@ -73,7 +80,7 @@ const errorMessages: Record<string, ErrorMessage> = {
   },
   supply: {
     shortErrorMessage: 'Supply exceeds limit',
-    fullErrorMessage: '(Supply * 10^decimal) must be less than or equal to (2^64) - 1'
+    fullErrorMessage: '(Supply * 10^decimal) must be less than (2^64) and greater than 0'
   }
 }
 
@@ -94,7 +101,10 @@ const getErrorMessages = (error: any): ErrorMessage => {
           fullErrorMessage: error.message || errorMessages.decimals.fullErrorMessage
         }
       case 'supply':
-        return errorMessages.supply
+        return {
+          shortErrorMessage: error.message || 'Supply exceeds limit',
+          fullErrorMessage: errorMessages.supply.fullErrorMessage
+        }
     }
   }
 

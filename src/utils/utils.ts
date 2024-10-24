@@ -69,6 +69,7 @@ import {
   TokenPriceData
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
+import { Metaplex } from '@metaplex-foundation/js'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1259,9 +1260,10 @@ export const getFullNewTokensData = async (
   const tokens: Record<string, Token> = {}
 
   await Promise.allSettled(promises).then(results =>
-    results.forEach((result, index) => {
-      tokens[addresses[index].toString()] = generateUnknownTokenDataObject(
-        addresses[index],
+    results.forEach(async (result, index) => {
+      tokens[addresses[index].toString()] = await getTokenMetadata(
+        connection,
+        addresses[index].toString(),
         result.status === 'fulfilled' ? result.value.decimals : 6
       )
     })
@@ -1280,6 +1282,42 @@ export const addNewTokenToLocalStorage = (address: string, network: NetworkType)
   localStorage.setItem(`CUSTOM_TOKENS_${network}`, JSON.stringify([...new Set(currentList)]))
 }
 
+export async function getTokenMetadata(
+  connection: Connection,
+  address: string,
+  decimals: number
+): Promise<Token> {
+  const mintAddress = new PublicKey(address)
+
+  try {
+    const metaplex = new Metaplex(connection)
+
+    const nft = await metaplex.nfts().findByMint({ mintAddress })
+
+    const irisTokenData = await axios.get<any>(nft.uri).then(res => res.data)
+
+    return {
+      address: mintAddress,
+      decimals,
+      symbol:
+        nft?.symbol || irisTokenData?.symbol || `${address.slice(0, 2)}...${address.slice(-4)}`,
+      name: nft?.name || irisTokenData?.name || address,
+      logoURI: nft?.json?.image || irisTokenData?.image || '/unknownToken.svg',
+      isUnknown: true
+    }
+  } catch (error) {
+    console.log('error', error)
+    return {
+      address: mintAddress,
+      decimals,
+      symbol: `${address.slice(0, 2)}...${address.slice(-4)}`,
+      name: address,
+      logoURI: '/unknownToken.svg',
+      isUnknown: true
+    }
+  }
+}
+
 export const getNewTokenOrThrow = async (
   address: string,
   connection: Connection
@@ -1292,8 +1330,10 @@ export const getNewTokenOrThrow = async (
 
   console.log(info)
 
+  const tokenData = await getTokenMetadata(connection, address, info.decimals)
+
   return {
-    [address.toString()]: generateUnknownTokenDataObject(key, info.decimals)
+    [address.toString()]: tokenData
   }
 }
 

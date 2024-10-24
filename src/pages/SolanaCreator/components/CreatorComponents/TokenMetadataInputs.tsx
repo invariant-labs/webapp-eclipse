@@ -37,7 +37,13 @@ export const TokenMetadataInputs: React.FC<TokenMetadataInputsProps> = ({ formMe
             }
           }}
         />
-        <ControlledTextInput name='website' label='Website' control={control} errors={errors} />
+        <ControlledTextInput
+          name='website'
+          label='Website'
+          control={control}
+          errors={errors}
+          rules={{ validate: (value: string) => validateSocialLink(value, 'website') }}
+        />
         <ControlledTextInput
           errors={errors}
           name='twitter'

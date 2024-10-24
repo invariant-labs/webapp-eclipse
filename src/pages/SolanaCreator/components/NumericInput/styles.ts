@@ -14,7 +14,6 @@ const useStyles = makeStyles()(() => ({
     backgroundColor: colors.invariant.newDark,
     color: colors.invariant.lightGrey,
     borderRadius: 8,
-    cursor: 'pointer',
     transition: 'color 0.3s ease, border-color 0.3s ease',
 
     '&::placeholder': {
