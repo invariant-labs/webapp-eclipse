@@ -87,7 +87,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
     }
   }
 
-  const usdBalance = tokenPrice && balanceValue ? tokenPrice * +balanceValue : 0
+  const usdBalance = tokenPrice && value ? tokenPrice * +value : 0
 
   return (
     <Grid container className={classes.wrapper} style={style}>

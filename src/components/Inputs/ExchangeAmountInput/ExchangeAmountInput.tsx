@@ -204,7 +204,7 @@ export const AmountInput: React.FC<IProps> = ({
                     tooltip: classes.tooltip
                   }}>
                   <Typography className={classes.caption2}>
-                    ~${formatNumber((+(usdBalance ?? 0)).toFixed(2))}
+                    ~${formatNumber(usdBalance.toFixed(2))}
                   </Typography>
                 </Tooltip>
               ) : (
