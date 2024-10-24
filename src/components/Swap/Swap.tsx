@@ -484,6 +484,10 @@ export const Swap: React.FC<ISwap> = ({
       return 'Not enough liquidity'
     }
 
+    if (amountTo === '') {
+      return `Swap simulation error`
+    }
+
     return 'Exchange'
   }
   const hasShowRateMessage = () => {
