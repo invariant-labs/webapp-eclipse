@@ -226,6 +226,15 @@ export const MOO_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const EBULL_MAIN: Token = {
+  symbol: 'EBull',
+  address: new PublicKey('2vvZp5DXtfpm8MV4KLRKqwdqnKfsKZt4pmk31JHnMw3J'),
+  decimals: 9,
+  name: 'EclipseIsGood',
+  logoURI: 'https://wmimg.com/i/1303/2024/10/6719b01383638.jpeg',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',

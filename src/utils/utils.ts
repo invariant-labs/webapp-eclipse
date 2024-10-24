@@ -26,6 +26,7 @@ import {
   BTC_TEST,
   DARKMOON_MAIN,
   DOGWIFHAT_MAIN,
+  EBULL_MAIN,
   ECAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
@@ -784,7 +785,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [DARKMOON_MAIN.address.toString()]: DARKMOON_MAIN,
         [ECAT_MAIN.address.toString()]: ECAT_MAIN,
         [TURBO_MAIN.address.toString()]: TURBO_MAIN,
-        [MOO_MAIN.address.toString()]: MOO_MAIN
+        [MOO_MAIN.address.toString()]: MOO_MAIN,
+        [EBULL_MAIN.address.toString()]: EBULL_MAIN
       }
     case NetworkType.Devnet:
       return {
