@@ -4,7 +4,7 @@ import { PayloadAction } from '@reduxjs/toolkit'
 import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import { PublicKey } from '@solana/web3.js'
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { getConnection } from './connection'
+import { getConnection, handleRpcError } from './connection'
 import { sleep } from './wallet'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
@@ -43,6 +43,8 @@ export function* fetchPoolData(action: PayloadAction<Pair>) {
     )
   } catch (error) {
     yield* put(actions.addPools([]))
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -60,6 +62,8 @@ export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
     yield* put(actions.addPools(pools))
   } catch (error) {
     console.log(error)
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -148,6 +152,8 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
     }
   } catch (error) {
     console.log(error)
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -190,6 +196,8 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
     }
   } catch (error) {
     console.log(error)
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 

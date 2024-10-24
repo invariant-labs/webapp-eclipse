@@ -2,19 +2,32 @@ import { all, call, put, SagaGenerator, select, takeLeading, spawn } from 'typed
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Connection } from '@solana/web3.js'
 import { PayloadAction } from '@reduxjs/toolkit'
-import { rpcAddress, rpcStatus } from '@store/selectors/solanaConnection'
+import { network, rpcAddress, rpcStatus } from '@store/selectors/solanaConnection'
 import { getSolanaConnection } from '@utils/web3/connection'
 import { actions, RpcStatus, Status } from '@store/reducers/solanaConnection'
-import { NetworkType } from '@store/consts/static'
+import { NetworkType, RECOMMENDED_RPC_ADDRESS } from '@store/consts/static'
 
-export function* handleRpcError(_action: PayloadAction): Generator {
+export function* handleRpcError(error: string): Generator {
+  const currentRpc = yield* select(rpcAddress)
   const currentRpcStatus = yield* select(rpcStatus)
+  const networkType = yield* select(network)
 
-  if (currentRpcStatus === RpcStatus.Uninitialized) {
-    yield* put(actions.setRpcStatus(RpcStatus.Error))
-  } else if (currentRpcStatus === RpcStatus.Ignored) {
-    yield* put(actions.setRpcStatus(RpcStatus.IgnoredWithError))
+  console.log(error)
+
+  if (
+    currentRpc !== RECOMMENDED_RPC_ADDRESS[networkType] &&
+    (error.includes('Failed to fetch') || error.includes('400') || error.includes('403'))
+  ) {
+    if (currentRpcStatus === RpcStatus.Uninitialized) {
+      yield* put(actions.setRpcStatus(RpcStatus.Error))
+    } else if (currentRpcStatus === RpcStatus.Ignored) {
+      yield* put(actions.setRpcStatus(RpcStatus.IgnoredWithError))
+    }
   }
+}
+
+export function* handleRpcErrorHandler(action: PayloadAction<PromiseRejectionEvent>): Generator {
+  yield* call(handleRpcError, action.payload.reason.message)
 }
 
 export function* getConnection(): SagaGenerator<Connection> {
@@ -45,6 +58,8 @@ export function* initConnection(): Generator {
         persist: false
       })
     )
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -81,9 +96,8 @@ export function* initConnectionSaga(): Generator {
 }
 
 export function* handleRpcErrorSaga(): Generator {
-  yield takeLeading(actions.handleRpcError, handleRpcError)
+  yield takeLeading(actions.handleRpcError, handleRpcErrorHandler)
 }
-
 export function* connectionSaga(): Generator {
-  yield* all([networkChangeSaga, initConnectionSaga, updateSlotSaga, handleRpcError].map(spawn))
+  yield* all([networkChangeSaga, initConnectionSaga, updateSlotSaga, handleRpcErrorSaga].map(spawn))
 }

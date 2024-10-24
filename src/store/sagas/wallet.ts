@@ -38,7 +38,7 @@ import {
   TransactionInstruction
 } from '@solana/web3.js'
 import { closeSnackbar } from 'notistack'
-import { getConnection } from './connection'
+import { getConnection, handleRpcError } from './connection'
 import { getTokenDetails } from './token'
 import { TOKEN_2022_PROGRAM_ID } from '@invariant-labs/sdk-eclipse'
 import { disconnectWallet, getSolanaWallet } from '@utils/web3/wallet'
@@ -508,18 +508,22 @@ export function* sendSol(amount: BN, recipient: PublicKey): SagaGenerator<string
 }
 
 export function* handleConnect(): Generator {
-  const walletStatus = yield* select(status)
-  if (walletStatus === Status.Initialized) {
-    yield* put(
-      snackbarsActions.add({
-        message: 'Wallet already connected.',
-        variant: 'info',
-        persist: false
-      })
-    )
-    return
+  try {
+    const walletStatus = yield* select(status)
+    if (walletStatus === Status.Initialized) {
+      yield* put(
+        snackbarsActions.add({
+          message: 'Wallet already connected.',
+          variant: 'info',
+          persist: false
+        })
+      )
+      return
+    }
+    yield* call(init)
+  } catch (error) {
+    yield* call(handleRpcError, (error as Error).message)
   }
-  yield* call(init)
 }
 
 export function* handleDisconnect(): Generator {
@@ -537,6 +541,8 @@ export function* handleDisconnect(): Generator {
     // yield* put(bondsActions.setUserVested({}))
   } catch (error) {
     console.log(error)
+
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -620,6 +626,8 @@ export function* handleUnwrapWETH(): Generator {
     }
   } catch (e) {
     console.log(e)
+
+    yield* call(handleRpcError, (e as Error).message)
   }
 
   closeSnackbar(loaderUnwrapWETH)
