@@ -26,7 +26,7 @@ import { closeSnackbar } from 'notistack'
 import { createLoaderKey } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 
-const MAX_CROSSES_IN_SINGLE_TX = 12
+const MAX_CROSSES_IN_SINGLE_TX = 11
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -291,8 +291,7 @@ export function* handleSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message:
-            'Failed to send. Please unwrap wrapped SOL in your wallet if you have any and try again.',
+          message: 'Failed to send. Please try again.',
           variant: 'error',
           persist: false
         })

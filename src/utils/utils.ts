@@ -28,9 +28,11 @@ import {
   COINGECKO_QUERY_COOLDOWN,
   DARKMOON_MAIN,
   DEFAULT_TOKENS,
+  DOGO_MAIN,
   DOGWIFHAT_MAIN,
   EBULL_MAIN,
   ECAT_MAIN,
+  EGOAT_MAIN,
   FormatConfig,
   getAddressTickerMap,
   getReversedAddressTickerMap,
@@ -791,7 +793,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [ECAT_MAIN.address.toString()]: ECAT_MAIN,
         [TURBO_MAIN.address.toString()]: TURBO_MAIN,
         [MOO_MAIN.address.toString()]: MOO_MAIN,
-        [EBULL_MAIN.address.toString()]: EBULL_MAIN
+        [EBULL_MAIN.address.toString()]: EBULL_MAIN,
+        [EGOAT_MAIN.address.toString()]: EGOAT_MAIN,
+        [DOGO_MAIN.address.toString()]: DOGO_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -1613,14 +1617,6 @@ export const getPoolsVolumeRanges = async (name: string): Promise<Record<string,
     return data
   } catch (_err) {
     return {}
-  }
-}
-
-export const getExplorer = (networkType: NetworkType) => {
-  switch (networkType) {
-    case NetworkType.Devnet:
-    default:
-      return 'https://explorer.eclipse.xyz/'
   }
 }
 
