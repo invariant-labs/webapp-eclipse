@@ -1576,14 +1576,6 @@ export const getPoolsVolumeRanges = async (name: string): Promise<Record<string,
   }
 }
 
-export const getExplorer = (networkType: NetworkType) => {
-  switch (networkType) {
-    case NetworkType.Devnet:
-    default:
-      return 'https://explorer.eclipse.xyz/'
-  }
-}
-
 export const createLoaderKey = () => (new Date().getMilliseconds() + Math.random()).toString()
 
 export const getFullSnap = async (name: string): Promise<FullSnap> => {
