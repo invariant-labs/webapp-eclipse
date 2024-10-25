@@ -127,9 +127,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
 
-  const [tokenAPrice, setTokenAPrice] = useState<number | undefined>(undefined)
-  const [tokenBPrice, setTokenBPrice] = useState<number | undefined>(undefined)
-
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_TEST : WETH_POSITION_INIT_LAMPORTS_TEST
@@ -137,16 +134,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_MAIN : WETH_POSITION_INIT_LAMPORTS_MAIN
     }
   }, [network])
-
-  useEffect(() => {
-    if (!tokenAPrice) {
-      setTokenAPrice(priceA)
-    }
-
-    if (!tokenBPrice) {
-      setTokenBPrice(priceB)
-    }
-  }, [priceALoading, priceBLoading, priceA, priceB])
 
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(initialHideUnknownTokensValue)
 
@@ -334,9 +321,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 const pom = tokenAIndex
                 setTokenAIndex(tokenBIndex)
                 setTokenBIndex(pom)
-                const pricePom = tokenAPrice
-                setTokenAPrice(tokenBPrice)
-                setTokenBPrice(pricePom)
                 onReverseTokens()
               }}
             />
@@ -380,7 +364,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
       <Grid container className={classes.sectionWrapper}>
         <DepositAmountInput
-          tokenPrice={tokenAPrice}
+          tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
           placeholder='0.0'
@@ -430,7 +414,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         />
 
         <DepositAmountInput
-          tokenPrice={tokenBPrice}
+          tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
           placeholder='0.0'

@@ -382,6 +382,27 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '&:hover': {
       filter: 'brightness(2)'
     }
+  },
+  noData: {
+    color: colors.invariant.warning,
+    ...typography.caption2,
+    cursor: 'default',
+    display: 'flex',
+    flexDirection: 'row'
+  },
+  noDataIcon: {
+    marginRight: 5,
+    height: 9.5,
+    width: 9.5,
+    border: '1px solid #EFD063',
+    color: colors.invariant.warning,
+    borderRadius: '50%',
+    fontSize: 8,
+    lineHeight: '10px',
+    fontWeight: 400,
+    textAlign: 'center',
+    alignSelf: 'center',
+    cursor: 'default'
   }
 }))
 
