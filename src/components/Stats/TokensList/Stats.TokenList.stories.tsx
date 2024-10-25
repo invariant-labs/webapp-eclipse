@@ -101,7 +101,8 @@ export const Primary: Story = {
       price: tokenData.price,
       priceChange: tokenData.priceChange,
       volume: tokenData.volume24,
-      TVL: tokenData.tvl
+      TVL: tokenData.tvl,
+      isUnknown: true
     }))
   }
 }

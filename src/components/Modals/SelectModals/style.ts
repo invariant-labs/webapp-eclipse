@@ -215,6 +215,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
 
+    imageContainer: {
+      minWidth: 30,
+      maxWidth: 30,
+      height: 30,
+      marginRight: 16,
+      position: 'relative'
+    },
     tokenIcon: {
       minWidth: 30,
       maxWidth: 30,
@@ -222,6 +229,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       marginRight: 16,
       borderRadius: '50%',
       boxShadow: '0px 0px 10px rgba(216, 255, 181, 0.5)'
+    },
+    warningIcon: {
+      position: 'absolute',
+      width: 12,
+      height: 12,
+      bottom: -6,
+      right: -6
     },
     tokenBalance: {
       ...typography.body2,

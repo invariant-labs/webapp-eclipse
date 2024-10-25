@@ -35,7 +35,8 @@ const meta = {
     style: {},
     disabled: false,
     isBalanceLoading: false,
-    walletUninitialized: true
+    walletUninitialized: true,
+    currencyIsUnknown: true
   }
 } satisfies Meta<typeof DepositAmountInput>
 
