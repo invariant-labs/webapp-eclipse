@@ -236,6 +236,15 @@ export const EBULL_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const PUNKSTAR_MAIN: Token = {
+  symbol: 'PUNKSTAR',
+  address: new PublicKey('5HMGZW3oGvHRYcqJ817iXvMv1iXruTYF9nyt9iWfg8Lr'),
+  decimals: 5,
+  name: 'Cryptopunkstar',
+  logoURI: 'https://gateway.irys.xyz/57e1EaYNzg86AoGJ59j5cycKH6H3i9V1Db1sJNcAXZhb',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -359,14 +368,14 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [
-    MOCKED_TOKEN_MAIN.address,
     WETH_MAIN.address,
     USDC_MAIN.address,
     SOL_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    MOON_MAIN.address,
-    TURBO_MAIN.address
+    TURBO_MAIN.address,
+    GSVM_MAIN.address,
+    MOO_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
