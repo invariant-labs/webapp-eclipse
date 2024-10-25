@@ -316,8 +316,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     } else {
       yield put(
         snackbarsActions.add({
-          message:
-            'Failed to send. Please unwrap wrapped ETH in your wallet if you have any and try again.',
+          message: 'Failed to send. Please try again.',
           variant: 'error',
           persist: false
         })
@@ -516,8 +515,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message:
-            'Failed to send. Please unwrap wrapped ETH in your wallet if you have any and try again.',
+          message: 'Failed to send. Please try again.',
           variant: 'error',
           persist: false
         })
