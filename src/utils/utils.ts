@@ -45,6 +45,7 @@ import {
   MOON_TEST,
   NetworkType,
   PRICE_DECIMAL,
+  PUNKSTAR_MAIN,
   S22_TEST,
   SOL_MAIN,
   subNumbers,
@@ -795,7 +796,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [MOO_MAIN.address.toString()]: MOO_MAIN,
         [EBULL_MAIN.address.toString()]: EBULL_MAIN,
         [EGOAT_MAIN.address.toString()]: EGOAT_MAIN,
-        [DOGO_MAIN.address.toString()]: DOGO_MAIN
+        [DOGO_MAIN.address.toString()]: DOGO_MAIN,
+        [PUNKSTAR_MAIN.address.toString()]: PUNKSTAR_MAIN
       }
     case NetworkType.Devnet:
       return {
