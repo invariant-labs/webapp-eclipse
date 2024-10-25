@@ -41,6 +41,7 @@ export const defaultState: ISolanaConnectionStore = {
   network: network,
   slot: 0,
   rpcAddress: localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RECOMMENDED_RPC_ADDRESS[network],
+  rpcStatus: RPC_STATUS,
   timeoutError: false
 }
 export const solanaConnectionSliceName = 'solanaConnection'
