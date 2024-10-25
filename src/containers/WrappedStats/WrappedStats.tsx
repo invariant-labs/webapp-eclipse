@@ -21,6 +21,8 @@ import Liquidity from '@components/Stats/Liquidity/Liquidity'
 import VolumeBar from '@components/Stats/volumeBar/VolumeBar'
 import TokensList from '@components/Stats/TokensList/TokensList'
 import PoolList from '@components/Stats/PoolList/PoolList'
+import icons from '@static/icons'
+import { shortenAddress } from '@utils/uiUtils'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -40,6 +42,8 @@ export const WrappedStats: React.FC = () => {
   useEffect(() => {
     dispatch(actions.getCurrentStats())
   }, [])
+
+  console.log(poolsList)
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -80,9 +84,9 @@ export const WrappedStats: React.FC = () => {
           <Grid container className={classes.row}>
             <TokensList
               data={tokensList.map(tokenData => ({
-                icon: tokenData.tokenDetails?.logoURI,
-                name: tokenData.tokenDetails?.name,
-                symbol: tokenData.tokenDetails?.symbol,
+                icon: tokenData.tokenDetails?.logoURI ?? icons.unknownToken,
+                name: tokenData.tokenDetails?.name ?? tokenData.address.toString(),
+                symbol: tokenData.tokenDetails?.symbol ?? tokenData.address.toString(),
                 price: tokenData.price,
                 // priceChange: tokenData.priceChange,
                 volume: tokenData.volume24,
@@ -93,10 +97,12 @@ export const WrappedStats: React.FC = () => {
           <Typography className={classes.subheader}>Top pools</Typography>
           <PoolList
             data={poolsList.map(poolData => ({
-              symbolFrom: poolData.tokenXDetails?.symbol,
-              symbolTo: poolData.tokenYDetails?.symbol,
-              iconFrom: poolData.tokenXDetails?.logoURI,
-              iconTo: poolData.tokenYDetails?.logoURI,
+              symbolFrom:
+                poolData.tokenXDetails?.symbol ?? shortenAddress(poolData.tokenX.toString()),
+              symbolTo:
+                poolData.tokenYDetails?.symbol ?? shortenAddress(poolData.tokenY.toString()),
+              iconFrom: poolData.tokenXDetails?.logoURI ?? icons.unknownToken,
+              iconTo: poolData.tokenYDetails?.logoURI ?? icons.unknownToken,
               volume: poolData.volume24,
               TVL: poolData.tvl,
               fee: poolData.fee,
