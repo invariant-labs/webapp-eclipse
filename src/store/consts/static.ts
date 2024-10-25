@@ -245,6 +245,24 @@ export enum RPC {
   LOCAL = 'http://127.0.0.1:8899'
 }
 
+export const EGOAT_MAIN: Token = {
+  symbol: 'EGoat',
+  address: new PublicKey('Hxazh1rGXPj2LHgvZBm5Us4rJbB4JZYgdBL6ymYfdt1v'),
+  decimals: 8,
+  name: 'Eclipse Goat',
+  logoURI: 'https://ice.frostsky.com/2024/10/25/07f27173568f10a102f09ee700046aa4.jpeg',
+  coingeckoId: ''
+}
+
+export const DOGO_MAIN: Token = {
+  symbol: 'DOGO',
+  address: new PublicKey('3imBwxNwVbPnz6yr87HjvdxjNvyCx7cqiuaDyahSB897'),
+  decimals: 9,
+  name: 'Dogo',
+  logoURI: 'https://gateway.irys.xyz/DD7oq5BBPmULMBPsSwyAUTbExKMHuisKtv4HpyUgRU2k',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
