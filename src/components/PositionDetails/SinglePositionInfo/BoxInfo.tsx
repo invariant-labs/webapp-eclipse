@@ -137,7 +137,20 @@ export const BoxInfo: React.FC<{
                     {showPrefix(tokenA.value * tokenA.price)}
                   </Typography>
                 </Tooltip>
-              ) : null}
+              ) : (
+                <Tooltip
+                  enterTouchDelay={0}
+                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+                  title='Cannot fetch price of token'
+                  placement='bottom'
+                  classes={{
+                    tooltip: classes.tooltip
+                  }}>
+                  <Typography className={classes.noData}>
+                    <span className={classes.noDataIcon}>?</span>No data
+                  </Typography>
+                </Tooltip>
+              )}
             </Grid>
           ) : null}
         </Grid>

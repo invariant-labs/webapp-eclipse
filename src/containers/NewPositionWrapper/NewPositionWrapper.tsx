@@ -420,8 +420,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [tokenBIndex, tokens])
 
-  console.log(tokenAPriceData, tokenBPriceData)
-
   const initialSlippage =
     localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? DEFAULT_NEW_POSITION_SLIPPAGE
 
