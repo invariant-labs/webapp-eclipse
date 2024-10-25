@@ -291,8 +291,7 @@ export function* handleSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message:
-            'Failed to send. Please unwrap wrapped SOL in your wallet if you have any and try again.',
+          message: 'Failed to send. Please try again.',
           variant: 'error',
           persist: false
         })
