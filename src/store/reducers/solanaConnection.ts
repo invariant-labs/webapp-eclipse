@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '@store/consts/types'
-import { NetworkType, RPC } from '@store/consts/static'
+import { NetworkType, RECOMMENDED_RPC_ADDRESS, RPC } from '@store/consts/static'
 
 export enum Status {
   Uninitialized = 'uninitialized',
@@ -40,7 +40,8 @@ export const defaultState: ISolanaConnectionStore = {
   message: '',
   network: network,
   slot: 0,
-  rpcAddress: localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RPC.MAIN,
+  rpcAddress:
+    localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RECOMMENDED_RPC_ADDRESS[network],
   rpcStatus: RPC_STATUS,
   timeoutError: false
 }

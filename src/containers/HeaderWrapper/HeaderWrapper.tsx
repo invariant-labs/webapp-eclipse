@@ -58,7 +58,10 @@ export const HeaderWrapper: React.FC = () => {
     const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`)
 
     if (lastRPC === null) {
-      localStorage.setItem(`INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`, RPC.TEST)
+      localStorage.setItem(
+        `INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`,
+        RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet]
+      )
     }
 
     return lastRPC === null ? RPC.TEST : lastRPC
@@ -68,7 +71,10 @@ export const HeaderWrapper: React.FC = () => {
     const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`)
 
     if (lastRPC === null) {
-      localStorage.setItem(`INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`, RPC.DEV_EU)
+      localStorage.setItem(
+        `INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`,
+        RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet]
+      )
     }
 
     return lastRPC === null ? RPC.DEV_EU : lastRPC
@@ -78,7 +84,10 @@ export const HeaderWrapper: React.FC = () => {
     const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`)
 
     if (lastRPC === null) {
-      localStorage.setItem(`INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`, RPC.MAIN)
+      localStorage.setItem(
+        `INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`,
+        RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet]
+      )
     }
 
     return lastRPC === null ? RPC.MAIN : lastRPC
