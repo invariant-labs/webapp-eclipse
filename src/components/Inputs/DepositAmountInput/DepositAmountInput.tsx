@@ -87,7 +87,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
     }
   }
 
-  const usdBalance = tokenPrice && balanceValue ? tokenPrice * +balanceValue : 0
+  const usdBalance = tokenPrice && value ? tokenPrice * +value : 0
 
   return (
     <Grid container className={classes.wrapper} style={style}>
@@ -163,14 +163,14 @@ export const DepositAmountInput: React.FC<IProps> = ({
             </Button>
           </Grid>
           <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
-            {currency && !walletUninitialized ? (
+            {currency ? (
               priceLoading ? (
                 <img src={loadingAnimation} className={classes.loading} alt='loading' />
               ) : tokenPrice ? (
                 <Tooltip
                   enterTouchDelay={0}
                   leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-                  title='Estimated USD Value of the Selected Tokens in Your Wallet'
+                  title='Estimated USD Value of the Entered Tokens'
                   placement='bottom'
                   classes={{
                     tooltip: classes.tooltip
