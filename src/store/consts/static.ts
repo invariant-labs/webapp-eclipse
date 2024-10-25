@@ -358,14 +358,14 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [
-    MOCKED_TOKEN_MAIN.address,
     WETH_MAIN.address,
     USDC_MAIN.address,
     SOL_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    MOON_MAIN.address,
-    TURBO_MAIN.address
+    TURBO_MAIN.address,
+    GSVM_MAIN.address,
+    MOON_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
