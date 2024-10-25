@@ -511,7 +511,7 @@ export const Swap: React.FC<ISwap> = ({
         isError('Amount out is zero')) &&
       !simulateResult.error.length
     ) {
-      return 'Insufficient volume'
+      return 'Insufficient amount'
     }
 
     if (isError('Too large amount')) {
@@ -522,8 +522,8 @@ export const Swap: React.FC<ISwap> = ({
       return 'Amount out is zero'
     }
 
-    if (isEveryPoolEmpty && amountTo === '') {
-      return 'Swap simulation error'
+    if (isEveryPoolEmpty) {
+      return 'RPC error'
     }
 
     return 'Exchange'
