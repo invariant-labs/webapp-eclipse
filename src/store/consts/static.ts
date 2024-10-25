@@ -236,6 +236,24 @@ export const EBULL_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const EGOAT_MAIN: Token = {
+  symbol: 'EGoat',
+  address: new PublicKey('Hxazh1rGXPj2LHgvZBm5Us4rJbB4JZYgdBL6ymYfdt1v'),
+  decimals: 8,
+  name: 'Eclipse Goat',
+  logoURI: 'https://ice.frostsky.com/2024/10/25/07f27173568f10a102f09ee700046aa4.jpeg',
+  coingeckoId: ''
+}
+
+export const DOGO_MAIN: Token = {
+  symbol: 'DOGO',
+  address: new PublicKey('3imBwxNwVbPnz6yr87HjvdxjNvyCx7cqiuaDyahSB897'),
+  decimals: 9,
+  name: 'Dogo',
+  logoURI: 'https://gateway.irys.xyz/DD7oq5BBPmULMBPsSwyAUTbExKMHuisKtv4HpyUgRU2k',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -359,14 +377,14 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [
-    MOCKED_TOKEN_MAIN.address,
     WETH_MAIN.address,
     USDC_MAIN.address,
     SOL_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    MOON_MAIN.address,
-    TURBO_MAIN.address
+    GSVM_MAIN.address,
+    TURBO_MAIN.address,
+    EBULL_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
