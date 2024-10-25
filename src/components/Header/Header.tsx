@@ -103,7 +103,7 @@ export const Header: React.FC<IHeader> = ({
     {
       networkType: NetworkType.Mainnet,
       rpc: RPC.MAIN,
-      rpcName: 'Eclipse Mainnet'
+      rpcName: 'Eclipse'
     },
     {
       networkType: NetworkType.Mainnet,
