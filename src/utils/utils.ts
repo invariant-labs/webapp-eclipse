@@ -1642,3 +1642,20 @@ export const isValidPublicKey = (keyString?: string | null) => {
     return false
   }
 }
+
+export const trimDecimalZeros = (numStr: string): string => {
+  if (/^[0.]+$/.test(numStr)) {
+    return '0'
+  }
+
+  const withoutTrailingDot = numStr.replace(/\.$/, '')
+
+  if (!withoutTrailingDot.includes('.')) {
+    return withoutTrailingDot
+  }
+
+  const [integerPart, decimalPart] = withoutTrailingDot.split('.')
+
+  const trimmedDecimal = decimalPart.replace(/0+$/, '')
+  return trimmedDecimal ? `${integerPart}.${trimmedDecimal}` : integerPart
+}

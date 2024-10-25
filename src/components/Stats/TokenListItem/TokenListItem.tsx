@@ -3,9 +3,10 @@ import { colors, theme } from '@static/theme'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useStyles } from './style'
-import { Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumber } from '@utils/utils'
 import { SortTypeTokenList } from '@store/consts/static'
+import icons from '@static/icons'
 
 interface IProps {
   displayType: string
@@ -20,6 +21,7 @@ interface IProps {
   sortType?: SortTypeTokenList
   onSort?: (type: SortTypeTokenList) => void
   hideBottomLine?: boolean
+  isUnknown?: boolean
 }
 
 const TokenListItem: React.FC<IProps> = ({
@@ -34,7 +36,8 @@ const TokenListItem: React.FC<IProps> = ({
   TVL = 0,
   sortType,
   onSort,
-  hideBottomLine = false
+  hideBottomLine = false,
+  isUnknown
 }) => {
   const { classes } = useStyles()
   // const isNegative = priceChange < 0
@@ -51,7 +54,12 @@ const TokenListItem: React.FC<IProps> = ({
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!hideName && !isSm && <Typography component='p'>{itemNumber}</Typography>}
           <Grid className={classes.tokenName}>
-            {!isSm && <img src={icon} alt='Token icon'></img>}
+            {!isSm && (
+              <Box className={classes.imageContainer}>
+                <img className={classes.tokenIcon} src={icon} alt='Token icon'></img>
+                {isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
+              </Box>
+            )}
             <Typography>
               {hideName ? symbol : name}
               {!hideName && <span className={classes.tokenSymbol}>{` (${symbol})`}</span>}
