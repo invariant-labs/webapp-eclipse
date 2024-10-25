@@ -772,20 +772,15 @@ export function* handleGetPositionsList() {
 
     const { head } = yield* call([marketProgram, marketProgram.getPositionList], wallet.publicKey)
 
-    const list = yield* call(
-      [marketProgram, marketProgram.getPositionsFromRange],
-      wallet.publicKey,
-      0,
-      head - 1
-    )
-
-    const addresses = yield* call(
-      getPositionsAddressesFromRange,
-      marketProgram,
-      wallet.publicKey,
-      0,
-      head - 1
-    )
+    const { list, addresses } = yield* all({
+      list: call(
+        [marketProgram, marketProgram.getPositionsFromRange],
+        wallet.publicKey,
+        0,
+        head - 1
+      ),
+      addresses: call(getPositionsAddressesFromRange, marketProgram, wallet.publicKey, 0, head - 1)
+    })
 
     const positions = list.map((position, index) => ({
       ...position,
@@ -1462,6 +1457,8 @@ export function* handleGetSinglePosition(action: PayloadAction<number>) {
     const marketProgram = yield* call(getMarketProgram, networkType, rpc)
     const wallet = yield* call(getWallet)
 
+    yield put(actions.getCurrentPositionRangeTicks(action.payload.toString()))
+
     const position = yield* call(
       [marketProgram, marketProgram.getPosition],
       wallet.publicKey,
@@ -1474,8 +1471,6 @@ export function* handleGetSinglePosition(action: PayloadAction<number>) {
         position
       })
     )
-
-    yield put(actions.getCurrentPositionRangeTicks(position.id.toString()))
   } catch (error) {
     console.log(error)
 
@@ -1500,17 +1495,10 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
       tickSpacing: positionData.poolData.tickSpacing
     })
 
-    const lowerTick = yield* call(
-      [marketProgram, marketProgram.getTick],
-      pair,
-      positionData.lowerTickIndex
-    )
-
-    const upperTick = yield* call(
-      [marketProgram, marketProgram.getTick],
-      pair,
-      positionData.upperTickIndex
-    )
+    const { lowerTick, upperTick } = yield* all({
+      lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
+      upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
+    })
 
     yield put(
       actions.setCurrentPositionRangeTicks({
