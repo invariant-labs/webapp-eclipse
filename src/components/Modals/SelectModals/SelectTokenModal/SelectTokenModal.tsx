@@ -300,12 +300,17 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = ({
                       setValue('')
                       handleClose()
                     }}>
-                    <img
-                      className={classes.tokenIcon}
-                      src={token.logoURI}
-                      loading='lazy'
-                      alt={token.name + 'logo'}
-                    />
+                    <Box className={classes.imageContainer}>
+                      <img
+                        className={classes.tokenIcon}
+                        src={token.logoURI}
+                        loading='lazy'
+                        alt={token.name + 'logo'}
+                      />
+                      {token.isUnknown && (
+                        <img className={classes.warningIcon} src={icons.warningIcon} />
+                      )}
+                    </Box>
                     <Grid container className={classes.tokenContainer}>
                       <Grid
                         container
