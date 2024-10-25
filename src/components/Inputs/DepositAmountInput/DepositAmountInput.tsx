@@ -1,13 +1,15 @@
-import { Button, Grid, Input, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Grid, Input, Tooltip, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumber, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
+import icons from '@static/icons'
 
 interface IProps {
   setValue: (value: string) => void
   currency: string | null
   currencyIconSrc?: string
+  currencyIsUnknown: boolean
   value?: string
   placeholder?: string
   onMaxClick: () => void
@@ -28,6 +30,7 @@ interface IProps {
 export const DepositAmountInput: React.FC<IProps> = ({
   currency,
   currencyIconSrc,
+  currencyIsUnknown,
   value,
   setValue,
   placeholder,
@@ -107,7 +110,12 @@ export const DepositAmountInput: React.FC<IProps> = ({
             wrap='nowrap'>
             {currency !== null ? (
               <>
-                <img alt='currency icon' src={currencyIconSrc} className={classes.currencyIcon} />
+                <Box className={classes.imageContainer}>
+                  <img alt='currency icon' src={currencyIconSrc} className={classes.currencyIcon} />
+                  {currencyIsUnknown && (
+                    <img className={classes.warningIcon} src={icons.warningIcon} />
+                  )}
+                </Box>
                 <Typography className={classes.currencySymbol}>{currency}</Typography>
               </>
             ) : (

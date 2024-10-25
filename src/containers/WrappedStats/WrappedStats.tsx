@@ -88,7 +88,8 @@ export const WrappedStats: React.FC = () => {
                 price: tokenData.price,
                 // priceChange: tokenData.priceChange,
                 volume: tokenData.volume24,
-                TVL: tokenData.tvl
+                TVL: tokenData.tvl,
+                isUnknown: tokenData.tokenDetails?.isUnknown ?? false
               }))}
             />
           </Grid>
@@ -111,7 +112,7 @@ export const WrappedStats: React.FC = () => {
                 fees: poolData.apy,
                 accumulatedFarmsSingleTick: 0,
                 accumulatedFarmsAvg: 0
-              }
+              },
               // apy:
               //   poolData.apy + (accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0),
               // apyData: {
@@ -120,6 +121,8 @@ export const WrappedStats: React.FC = () => {
               //     accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0,
               //   accumulatedFarmsAvg: accumulatedAverageAPY?.[poolData.poolAddress.toString()] ?? 0
               // }
+              isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
+              isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false
             }))}
             network={currentNetwork}
           />

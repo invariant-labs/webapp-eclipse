@@ -13,6 +13,7 @@ export interface ITokensListData {
   price: number
   volume: number
   TVL: number
+  isUnknown: boolean
 }
 
 export interface ITokensList {
@@ -99,6 +100,7 @@ const TokensList: React.FC<ITokensList> = ({ data }) => {
             volume={token.volume}
             TVL={token.TVL}
             hideBottomLine={pages === 1 && index + 1 === data.length}
+            isUnknown={token.isUnknown}
           />
         )
       })}

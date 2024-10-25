@@ -95,11 +95,26 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
     color: colors.invariant.Error,
     backgroundColor: `${colors.invariant.Error}40`
   },
-  currencyIcon: {
+  imageContainer: {
     width: 20,
     height: 20,
     marginRight: 8,
+    position: 'relative',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  currencyIcon: {
+    width: 20,
+    height: 20,
     borderRadius: '100%'
+  },
+  warningIcon: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    bottom: -6,
+    right: -6
   },
   currencySymbol: {
     ...typography.body3,
