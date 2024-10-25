@@ -163,7 +163,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
             </Button>
           </Grid>
           <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
-            {currency && !walletUninitialized ? (
+            {currency ? (
               priceLoading ? (
                 <img src={loadingAnimation} className={classes.loading} alt='loading' />
               ) : tokenPrice ? (
