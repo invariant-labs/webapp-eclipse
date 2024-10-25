@@ -523,7 +523,7 @@ export const Swap: React.FC<ISwap> = ({
     }
 
     if (isEveryPoolEmpty) {
-      return 'RPC error'
+      return 'RPC connection error'
     }
 
     return 'Exchange'
