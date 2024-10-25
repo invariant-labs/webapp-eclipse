@@ -43,8 +43,6 @@ export const WrappedStats: React.FC = () => {
     dispatch(actions.getCurrentStats())
   }, [])
 
-  console.log(poolsList)
-
   return (
     <Grid container className={classes.wrapper} direction='column'>
       {isLoadingStats ? (
