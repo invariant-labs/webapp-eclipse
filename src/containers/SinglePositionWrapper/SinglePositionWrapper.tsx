@@ -71,6 +71,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const [isFinishedDelayRender, setIsFinishedDelayRender] = useState(false)
 
+  const [isClosingPosition, setIsClosingPosition] = useState(false)
   // const poolKey = position?.poolKey ? poolKeyToString(position?.poolKey) : ''
 
   useEffect(() => {
@@ -358,10 +359,22 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   useEffect(() => {
     if (isTimeoutError) {
-      onRefresh()
-      dispatch(connectionActions.setTimeoutError(false))
+      dispatch(actions.getPositionsList())
     }
   }, [isTimeoutError])
+
+  useEffect(() => {
+    if (!isLoadingList && isTimeoutError) {
+      if (position?.positionIndex === undefined && isClosingPosition) {
+        setIsClosingPosition(false)
+        dispatch(connectionActions.setTimeoutError(false))
+        navigate('/liquidity')
+      } else {
+        dispatch(connectionActions.setTimeoutError(false))
+        onRefresh()
+      }
+    }
+  }, [isLoadingList])
 
   if (position) {
     return (
@@ -380,6 +393,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           dispatch(actions.claimFee(position.positionIndex))
         }}
         closePosition={claimFarmRewards => {
+          setIsClosingPosition(true)
           dispatch(
             actions.closePosition({
               positionIndex: position.positionIndex,
