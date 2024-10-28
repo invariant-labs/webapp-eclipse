@@ -28,7 +28,8 @@ import {
   getScaleFromString,
   printBN,
   tickerToAddress,
-  parsePathFeeToFeeString
+  parsePathFeeToFeeString,
+  trimDecimalZeros
 } from '@utils/utils'
 
 export interface InputState {
@@ -367,6 +368,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
+          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenAIndex === null) {
@@ -375,11 +377,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
             if (tokens[tokenAIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
               tokenAInputState.setValue(
-                printBN(
-                  tokens[tokenAIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
-                    ? tokens[tokenAIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
-                    : new BN(0),
-                  tokens[tokenAIndex].decimals
+                trimDecimalZeros(
+                  printBN(
+                    tokens[tokenAIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
+                      ? tokens[tokenAIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+                      : new BN(0),
+                    tokens[tokenAIndex].decimals
+                  )
                 )
               )
 
@@ -406,6 +410,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             ) {
               tokenAInputState.setValue('0.0')
             }
+
+            tokenAInputState.setValue(trimDecimalZeros(tokenAInputState.value))
           }}
           {...tokenAInputState}
           priceLoading={priceALoading}
@@ -417,6 +423,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
+          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenBIndex === null) {
@@ -425,11 +432,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
             if (tokens[tokenBIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
               tokenBInputState.setValue(
-                printBN(
-                  tokens[tokenBIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
-                    ? tokens[tokenBIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
-                    : new BN(0),
-                  tokens[tokenBIndex].decimals
+                trimDecimalZeros(
+                  printBN(
+                    tokens[tokenBIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
+                      ? tokens[tokenBIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+                      : new BN(0),
+                    tokens[tokenBIndex].decimals
+                  )
                 )
               )
 
@@ -453,6 +462,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             ) {
               tokenBInputState.setValue('0.0')
             }
+
+            tokenBInputState.setValue(trimDecimalZeros(tokenBInputState.value))
           }}
           {...tokenBInputState}
           priceLoading={priceBLoading}

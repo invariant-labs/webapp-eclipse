@@ -214,7 +214,7 @@ export const TURBO_MAIN: Token = {
   decimals: 9,
   name: 'Eclip Turbo',
   logoURI:
-    'https://bafybeibup6ghtrj5re3ba243bxtb6yafihgwnj3z2whte577svbvejhjjm.ipfs.w3s.link/Turbo.png',
+    'https://bafybeicnocffdewuiq5d2kxi3pyn7yq3lkbiypcqgdhzpszh64agdwgju4.ipfs.w3s.link/Turbo%20logo.png',
   coingeckoId: ''
 }
 
@@ -393,7 +393,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     LAIKA_MAIN.address,
     TURBO_MAIN.address,
     GSVM_MAIN.address,
-    MOO_MAIN.address
+    EGOAT_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []

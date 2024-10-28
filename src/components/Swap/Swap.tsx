@@ -22,6 +22,7 @@ import {
   findPairs,
   handleSimulate,
   printBN,
+  trimDecimalZeros,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
@@ -698,11 +699,13 @@ export const Swap: React.FC<ISwap> = ({
                   tokens[tokenFromIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))
                 ) {
                   setAmountFrom(
-                    printBN(
-                      tokens[tokenFromIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                        ? tokens[tokenFromIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                        : new BN(0),
-                      tokens[tokenFromIndex].decimals
+                    trimDecimalZeros(
+                      printBN(
+                        tokens[tokenFromIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                          ? tokens[tokenFromIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
+                          : new BN(0),
+                        tokens[tokenFromIndex].decimals
+                      )
                     )
                   )
 
@@ -740,6 +743,7 @@ export const Swap: React.FC<ISwap> = ({
             network={network}
           />
         </Box>
+
         <Box className={classes.tokenComponentTextContainer}>
           <Box
             className={classes.swapArrowBox}
@@ -822,6 +826,24 @@ export const Swap: React.FC<ISwap> = ({
             hiddenUnknownTokens={hideUnknownTokens}
             network={network}
           />
+        </Box>
+        <Box className={classes.unknownWarningContainer}>
+          {tokens[tokenFromIndex ?? '']?.isUnknown && (
+            <TooltipHover
+              text={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+              <Box className={classes.unknownWarning}>
+                {tokens[tokenFromIndex ?? ''].symbol} is not verified
+              </Box>
+            </TooltipHover>
+          )}
+          {tokens[tokenToIndex ?? '']?.isUnknown && (
+            <TooltipHover
+              text={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+              <Box className={classes.unknownWarning}>
+                {tokens[tokenToIndex ?? ''].symbol} is not verified
+              </Box>
+            </TooltipHover>
+          )}
         </Box>
         <Box className={classes.transactionDetails}>
           <Box className={classes.transactionDetailsInner}>

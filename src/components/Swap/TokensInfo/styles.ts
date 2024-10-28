@@ -32,13 +32,26 @@ export const useStyles = makeStyles<{ isToken: boolean }>()((_theme, { isToken }
     flex: 1,
     width: '100%'
   },
-
+  imageContainer: {
+    minWidth: 30,
+    maxWidth: 30,
+    height: 30,
+    marginRight: 8,
+    position: 'relative'
+  },
   tokenIcon: {
     minWidth: 30,
     maxWidth: 30,
     height: 30,
     marginRight: 8,
     borderRadius: '50%'
+  },
+  warningIcon: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    bottom: -6,
+    right: -6
   },
   tokenName: {
     color: colors.white.main,
