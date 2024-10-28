@@ -81,7 +81,12 @@ const PoolList: React.FC<PoolListInterface> = ({ data, network }) => {
 
   return (
     <Grid container direction='column' classes={{ root: classes.container }}>
-      <PoolListItem displayType='header' onSort={setSortType} sortType={sortType} />
+      <PoolListItem
+        displayType='header'
+        onSort={setSortType}
+        sortType={sortType}
+        network={network}
+      />
       {paginator(page).map((element, index) => (
         <PoolListItem
           displayType='token'

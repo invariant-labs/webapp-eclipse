@@ -105,7 +105,8 @@ export const Primary: Story = {
     unwrapWETH: fn(),
     wrappedETHAccountExist: true,
     deleteTimeoutError: fn(),
-    isTimeoutError: false
+    isTimeoutError: false,
+    canNavigate: true
   },
   render: args => {
     return <Swap {...args} />

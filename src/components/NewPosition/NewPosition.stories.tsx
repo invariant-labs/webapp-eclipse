@@ -110,7 +110,8 @@ export const Primary: Story = {
     walletStatus: Status.Initialized,
     onConnectWallet: () => {},
     onDisconnectWallet: () => {},
-    poolAddress: ''
+    poolAddress: '',
+    canNavigate: true
   },
   render: () => {
     return (
@@ -171,6 +172,7 @@ export const Primary: Story = {
         onConnectWallet={() => {}}
         onDisconnectWallet={() => {}}
         poolAddress=''
+        canNavigate={true}
       />
     )
   }
