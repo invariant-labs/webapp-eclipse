@@ -23,6 +23,7 @@ import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERS_TOKEN_PAIRS,
+  AI16Z_MAIN,
   BTC_DEV,
   BTC_TEST,
   COINGECKO_QUERY_COOLDOWN,
@@ -54,6 +55,7 @@ import {
   USDC_DEV,
   USDC_MAIN,
   USDC_TEST,
+  VLR_MAIN,
   WETH_DEV,
   WETH_TEST
 } from '@store/consts/static'
@@ -797,7 +799,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [EBULL_MAIN.address.toString()]: EBULL_MAIN,
         [EGOAT_MAIN.address.toString()]: EGOAT_MAIN,
         [DOGO_MAIN.address.toString()]: DOGO_MAIN,
-        [PUNKSTAR_MAIN.address.toString()]: PUNKSTAR_MAIN
+        [PUNKSTAR_MAIN.address.toString()]: PUNKSTAR_MAIN,
+        [AI16Z_MAIN.address.toString()]: AI16Z_MAIN,
+        [VLR_MAIN.address.toString()]: VLR_MAIN
       }
     case NetworkType.Devnet:
       return {

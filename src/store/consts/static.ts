@@ -223,7 +223,7 @@ export const MOO_MAIN: Token = {
   address: new PublicKey('8nF4QmTxsFh5L7bBw9qfdfW67CEAdLWuK9EQjsTgk8d'),
   decimals: 9,
   name: 'cow',
-  logoURI: 'https://uploader.irys.xyz/CfU2Zsy5i2wKwoq788W4ZJGfjmeU6QGhNugz4gVM4RJA',
+  logoURI: 'https://i.imgur.com/DoS5Dyn.png',
   coingeckoId: ''
 }
 
@@ -242,6 +242,24 @@ export const PUNKSTAR_MAIN: Token = {
   decimals: 5,
   name: 'Cryptopunkstar',
   logoURI: 'https://gateway.irys.xyz/57e1EaYNzg86AoGJ59j5cycKH6H3i9V1Db1sJNcAXZhb',
+  coingeckoId: ''
+}
+
+export const AI16Z_MAIN: Token = {
+  symbol: 'ai16z',
+  address: new PublicKey('DZLJXHaNeCgjzhS6m2qLwRzAF8HFeyc6zTBU1AmuG79S'),
+  decimals: 9,
+  name: 'ai16z',
+  logoURI: 'https://gateway.irys.xyz/98qj6Hqi6VnYnVzop9RtAGmSe2TDXApdRMtYC4kkuG76',
+  coingeckoId: ''
+}
+
+export const VLR_MAIN: Token = {
+  symbol: 'vlr',
+  address: new PublicKey('89jLd8KJrW653MX7VGQKZKZjkqUNKh3ZZ7L6oN6xGtsK'),
+  decimals: 9,
+  name: 'valery',
+  logoURI: 'https://i.imgur.com/BSV6JOp.png',
   coingeckoId: ''
 }
 
