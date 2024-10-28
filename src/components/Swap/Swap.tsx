@@ -108,6 +108,7 @@ export interface ISwap {
   wrappedETHAccountExist: boolean
   isTimeoutError: boolean
   deleteTimeoutError: () => void
+  canNavigate: boolean
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -143,7 +144,8 @@ export const Swap: React.FC<ISwap> = ({
   unwrapWETH,
   wrappedETHAccountExist,
   isTimeoutError,
-  deleteTimeoutError
+  deleteTimeoutError,
+  canNavigate
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -207,30 +209,22 @@ export const Swap: React.FC<ISwap> = ({
   }, [isTimeoutError])
 
   useEffect(() => {
-    navigate(
-      `/exchange/${tokenFromIndex !== null ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString()) : '-'}/${tokenToIndex !== null ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString()) : '-'}`,
-      {
-        replace: true
-      }
-    )
-  }, [tokenFromIndex, tokenToIndex])
+    if (canNavigate) {
+      navigate(
+        `/exchange/${tokenFromIndex !== null ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString()) : '-'}/${tokenToIndex !== null ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString()) : '-'}`,
+        {
+          replace: true
+        }
+      )
+    }
+  }, [tokenFromIndex, tokenToIndex, isBalanceLoading])
 
   useEffect(() => {
-    if (!!tokens.length && tokenFromIndex === null && tokenToIndex === null) {
-      const firstCommonIndex = commonTokens.length
-        ? tokens.findIndex(token => token.assetAddress.equals(commonTokens[0]))
-        : -1
-
-      setTokenFromIndex(
-        initialTokenFromIndex !== null
-          ? initialTokenFromIndex
-          : firstCommonIndex !== -1
-            ? firstCommonIndex
-            : 0
-      )
+    if (!!tokens.length && tokenFromIndex === null && tokenToIndex === null && canNavigate) {
+      setTokenFromIndex(initialTokenFromIndex)
       setTokenToIndex(initialTokenToIndex)
     }
-  }, [tokens.length])
+  }, [tokens.length, canNavigate])
 
   // useEffect(() => {
   //   if (Object.keys(tokens).length && tokenFrom === null && tokenTo === null) {

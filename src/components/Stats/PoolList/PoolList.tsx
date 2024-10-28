@@ -15,6 +15,8 @@ interface PoolListInterface {
     volume: number
     TVL: number
     fee: number
+    addressFrom: string
+    addressTo: string
     apy: number
     apyData: {
       fees: number
@@ -95,8 +97,8 @@ const PoolList: React.FC<PoolListInterface> = ({ data, network }) => {
           hideBottomLine={pages === 1 && index + 1 === data.length}
           apyData={element.apyData}
           key={index}
-          // addressFrom={element.addressFrom}
-          // addressTo={element.addressTo}
+          addressFrom={element.addressFrom}
+          addressTo={element.addressTo}
           network={network}
           isUnknownFrom={element.isUnknownFrom}
           isUnknownTo={element.isUnknownTo}

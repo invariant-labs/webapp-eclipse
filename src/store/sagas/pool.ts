@@ -201,6 +201,24 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
   }
 }
 
+export function* handleGetPathTokens(action: PayloadAction<string[]>) {
+  const tokens = action.payload
+
+  const connection = yield* getConnection()
+
+  try {
+    const tokensData = yield* call(
+      getFullNewTokensData,
+      tokens.map(token => new PublicKey(token)),
+      connection
+    )
+
+    yield* put(actions.addPathTokens(tokensData))
+  } catch (e) {
+    yield* put(actions.setTokensError(true))
+  }
+}
+
 export function* getPoolsDataForListHandler(): Generator {
   yield* takeEvery(actions.getPoolsDataForList, fetchPoolsDataForList)
 }
@@ -221,6 +239,10 @@ export function* getNearestTicksForPairHandler(): Generator {
   yield* takeEvery(actions.getNearestTicksForPair, fetchNearestTicksForPair)
 }
 
+export function* getPathTokensHandler(): Generator {
+  yield* takeLatest(actions.getPathTokens, handleGetPathTokens)
+}
+
 export function* poolsSaga(): Generator {
   yield all(
     [
@@ -228,7 +250,8 @@ export function* poolsSaga(): Generator {
       getAllPoolsForPairDataHandler,
       getPoolsDataForListHandler,
       getTicksAndTickMapsHandler,
-      getNearestTicksForPairHandler
+      getNearestTicksForPairHandler,
+      getPathTokensHandler
     ].map(spawn)
   )
 }

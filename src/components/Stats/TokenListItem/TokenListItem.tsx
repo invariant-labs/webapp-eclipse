@@ -7,6 +7,7 @@ import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumber } from '@utils/utils'
 import { SortTypeTokenList } from '@store/consts/static'
 import icons from '@static/icons'
+import { shortenAddress } from '@utils/uiUtils'
 
 interface IProps {
   displayType: string
@@ -61,8 +62,10 @@ const TokenListItem: React.FC<IProps> = ({
               </Box>
             )}
             <Typography>
-              {hideName ? symbol : name}
-              {!hideName && <span className={classes.tokenSymbol}>{` (${symbol})`}</span>}
+              {hideName ? shortenAddress(symbol) : name}
+              {!hideName && (
+                <span className={classes.tokenSymbol}>{` (${shortenAddress(symbol)})`}</span>
+              )}
             </Typography>
           </Grid>
           <Typography>{`~$${formatNumber(price)}`}</Typography>

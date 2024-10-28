@@ -3,6 +3,7 @@ import { Swap } from '@components/Swap/Swap'
 import {
   commonTokensForNetworks,
   DEFAULT_SWAP_SLIPPAGE,
+  WETH_MAIN,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import { actions as poolsActions } from '@store/reducers/pools'
@@ -14,7 +15,8 @@ import {
   isLoadingLatestPoolsForTransaction,
   poolsArraySortedByFees,
   tickMaps,
-  nearestPoolTicksForPair
+  nearestPoolTicksForPair,
+  isLoadingPathTokens
 } from '@store/selectors/pools'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
@@ -41,6 +43,7 @@ import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@project-serum/anchor'
+import { useLocation } from 'react-router-dom'
 
 type Props = {
   initialTokenFrom: string
@@ -68,6 +71,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const [tokenTo, setTokenTo] = useState<PublicKey | null>(null)
   const ethBalance = useSelector(balance)
   const isTimeoutError = useSelector(timeoutError)
+  const isPathTokensLoading = useSelector(isLoadingPathTokens)
+  const { state } = useLocation()
+  const [block, setBlock] = useState(state?.referer === 'stats')
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -105,7 +111,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
       ? tickerToAddress(networkType, initialTokenFrom)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`)
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
     tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
@@ -124,6 +131,25 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       : Object.values(tokensList).findIndex(token =>
           token.assetAddress.equals(new PublicKey(lastTokenTo))
         )
+
+  useEffect(() => {
+    const tokens: string[] = []
+
+    if (initialTokenFromIndex === -1 && lastTokenFrom && !tokensDict[lastTokenFrom]) {
+      tokens.push(lastTokenFrom)
+    }
+
+    if (initialTokenToIndex === -1 && lastTokenTo && !tokensDict[lastTokenTo]) {
+      tokens.push(lastTokenTo)
+    }
+
+    if (tokens.length) {
+      dispatch(poolsActions.getPathTokens(tokens))
+      setBlock(false)
+    }
+  }, [tokensList])
+
+  const canNavigate = connection !== null && !isPathTokensLoading && !block
 
   const addTokenHandler = (address: string) => {
     if (
@@ -181,7 +207,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    const id = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
+    const id = tokensDict[tokenFrom.toString()]?.coingeckoId ?? ''
 
     if (id.length) {
       setPriceFromLoading(true)
@@ -206,7 +232,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    const id = tokensDict[tokenTo.toString()].coingeckoId ?? ''
+    const id = tokensDict[tokenTo.toString()]?.coingeckoId ?? ''
     if (id.length) {
       setPriceToLoading(true)
       getCoinGeckoTokenPrice(id)
@@ -389,6 +415,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       deleteTimeoutError={() => {
         dispatch(connectionActions.setTimeoutError(false))
       }}
+      canNavigate={canNavigate}
     />
   )
 }

@@ -11,6 +11,7 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { parseFeeToPathFee } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumber } from '@utils/utils'
+import { shortenAddress } from '@utils/uiUtils'
 
 interface IProps {
   TVL?: number
@@ -51,8 +52,8 @@ const PoolListItem: React.FC<IProps> = ({
   sortType,
   onSort,
   hideBottomLine = false,
-  // addressFrom,
-  // addressTo,
+  addressFrom,
+  addressTo,
   // network
   // apy = 0,
   // apyData = {
@@ -70,12 +71,12 @@ const PoolListItem: React.FC<IProps> = ({
 
   const handleOpenPosition = () => {
     navigate(
-      `/newPosition/${symbolFrom ?? ''}/${symbolTo ?? ''}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`
+      `/newPosition/${addressFrom ?? ''}/${addressTo ?? ''}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`
     )
   }
 
   const handleOpenSwap = () => {
-    navigate(`/exchange/${symbolFrom ?? ''}/${symbolTo ?? ''}`)
+    navigate(`/exchange/${addressFrom ?? ''}/${addressTo ?? ''}`, { state: { referer: 'stats' } })
   }
 
   return (
@@ -101,7 +102,7 @@ const PoolListItem: React.FC<IProps> = ({
             )}
             <Grid className={classes.symbolsContainer}>
               <Typography>
-                {symbolFrom}/{symbolTo}
+                {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
               </Typography>
             </Grid>
           </Grid>

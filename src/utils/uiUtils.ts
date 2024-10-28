@@ -37,4 +37,4 @@ export const importantStyles = (styleObject: { [key: string]: string | number })
   )
 
 export const shortenAddress = (address: string, chars = 4) =>
-  `${address.slice(0, chars)}...${address.slice(-chars)}`
+  address.length > 8 ? `${address.slice(0, chars)}...${address.slice(-chars)}` : address
