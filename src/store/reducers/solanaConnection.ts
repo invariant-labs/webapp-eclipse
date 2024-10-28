@@ -40,7 +40,8 @@ export const defaultState: ISolanaConnectionStore = {
   message: '',
   network: network,
   slot: 0,
-  rpcAddress: localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RECOMMENDED_RPC_ADDRESS[network],
+  rpcAddress:
+    localStorage.getItem(`INVARIANT_RPC_Eclipse_${network}`) ?? RECOMMENDED_RPC_ADDRESS[network],
   rpcStatus: RPC_STATUS,
   timeoutError: false
 }

@@ -113,14 +113,24 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
 
     const pools = findPairs(tokenFrom, tokenTo, allPools)
 
-    const allTickMaps = yield* all([
-      ...pools.map(pool =>
-        call(
-          [marketProgram, marketProgram.getTickmap],
-          new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
+    const { allTickMaps, allTicks } = yield* all({
+      allTickMaps: all([
+        ...pools.map(pool =>
+          call(
+            [marketProgram, marketProgram.getTickmap],
+            new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
+          )
         )
-      )
-    ])
+      ]),
+      allTicks: all([
+        ...pools.map(pool =>
+          call(
+            [marketProgram, marketProgram.getAllTicks],
+            new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
+          )
+        )
+      ])
+    })
 
     for (let i = 0; i < pools.length; i++) {
       yield* put(
@@ -131,11 +141,13 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
       )
     }
 
+    const allTicksDict: Record<string, Tick[]> = {}
+    for (let i = 0; i < pools.length; i++) {
+      allTicksDict[pools[i].address.toString()] = allTicks[i]
+    }
+
     for (const pool of pools) {
-      const ticks = yield* call(
-        [marketProgram, marketProgram.getAllTicks],
-        new Pair(tokenFrom, tokenTo, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
-      )
+      const ticks = allTicksDict[pool.address.toString()]
 
       if (ticks.length > 300) {
         yield* put(actions.setTicks({ index: pool.address.toString(), tickStructure: [] }))
