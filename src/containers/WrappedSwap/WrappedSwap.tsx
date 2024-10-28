@@ -145,8 +145,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (tokens.length) {
       dispatch(poolsActions.getPathTokens(tokens))
-      setBlock(false)
     }
+
+    setBlock(false)
   }, [tokensList])
 
   const canNavigate = connection !== null && !isPathTokensLoading && !block

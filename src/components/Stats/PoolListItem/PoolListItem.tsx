@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType, SortTypePoolList } from '@store/consts/static'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { parseFeeToPathFee } from '@utils/utils'
+import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumber } from '@utils/utils'
 import { shortenAddress } from '@utils/uiUtils'
@@ -28,7 +28,7 @@ interface IProps {
   hideBottomLine?: boolean
   addressFrom?: string
   addressTo?: string
-  network?: NetworkType
+  network: NetworkType
   apy?: number
   apyData?: {
     fees: number
@@ -54,7 +54,7 @@ const PoolListItem: React.FC<IProps> = ({
   hideBottomLine = false,
   addressFrom,
   addressTo,
-  // network
+  network,
   // apy = 0,
   // apyData = {
   //   fees: 0,
@@ -71,12 +71,16 @@ const PoolListItem: React.FC<IProps> = ({
 
   const handleOpenPosition = () => {
     navigate(
-      `/newPosition/${addressFrom ?? ''}/${addressTo ?? ''}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`
+      `/newPosition/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      { state: { referer: 'stats' } }
     )
   }
 
   const handleOpenSwap = () => {
-    navigate(`/exchange/${addressFrom ?? ''}/${addressTo ?? ''}`, { state: { referer: 'stats' } })
+    navigate(
+      `/exchange/${addressToTicker(network, addressFrom ?? '')}/$${addressToTicker(network, addressTo ?? '')}`,
+      { state: { referer: 'stats' } }
+    )
   }
 
   return (

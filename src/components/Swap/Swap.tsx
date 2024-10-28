@@ -217,7 +217,7 @@ export const Swap: React.FC<ISwap> = ({
         }
       )
     }
-  }, [tokenFromIndex, tokenToIndex, isBalanceLoading])
+  }, [tokenFromIndex, tokenToIndex])
 
   useEffect(() => {
     if (!!tokens.length && tokenFromIndex === null && tokenToIndex === null && canNavigate) {
