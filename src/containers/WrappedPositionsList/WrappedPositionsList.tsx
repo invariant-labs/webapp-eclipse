@@ -16,7 +16,7 @@ import { address, status } from '@store/selectors/solanaWallet'
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import {  calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
+import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { IPositionItem } from '@components/PositionsList/PositionItem/PositionItem'
 
@@ -175,7 +175,7 @@ export const WrappedPositionsList: React.FC = () => {
       //     )
       //   }
       // }}
-      length={length}
+      length={list.length}
       // loadedPages={loadedPages}
       // getRemainingPositions={() => {
       //   dispatch(actions.getRemainingPositions({ setLoaded: true }))
