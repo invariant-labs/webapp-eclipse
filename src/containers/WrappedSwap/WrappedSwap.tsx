@@ -122,15 +122,23 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const initialTokenFromIndex =
     lastTokenFrom === null
       ? null
-      : Object.values(tokensList).findIndex(token =>
-          token.assetAddress.equals(new PublicKey(lastTokenFrom))
-        )
+      : Object.values(tokensList).findIndex(token => {
+          try {
+            return token.assetAddress.equals(new PublicKey(lastTokenFrom))
+          } catch (e) {
+            return false
+          }
+        })
   const initialTokenToIndex =
     lastTokenTo === null
       ? null
-      : Object.values(tokensList).findIndex(token =>
-          token.assetAddress.equals(new PublicKey(lastTokenTo))
-        )
+      : Object.values(tokensList).findIndex(token => {
+          try {
+            return token.assetAddress.equals(new PublicKey(lastTokenTo))
+          } catch (e) {
+            return false
+          }
+        })
 
   useEffect(() => {
     const tokens: string[] = []

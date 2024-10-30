@@ -78,7 +78,7 @@ const PoolListItem: React.FC<IProps> = ({
 
   const handleOpenSwap = () => {
     navigate(
-      `/exchange/${addressToTicker(network, addressFrom ?? '')}/$${addressToTicker(network, addressTo ?? '')}`,
+      `/exchange/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}`,
       { state: { referer: 'stats' } }
     )
   }
