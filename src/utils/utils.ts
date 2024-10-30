@@ -1439,12 +1439,10 @@ export const getPositionsAddressesFromRange = async (
   lowerIndex: number,
   upperIndex: number
 ) => {
-  const promises: Array<
-    Promise<{
-      positionAddress: PublicKey
-      positionBump: number
-    }>
-  > = []
+  const promises: Array<{
+    positionAddress: PublicKey
+    positionBump: number
+  }> = []
 
   for (let i = lowerIndex; i <= upperIndex; i++) {
     promises.push(marketProgram.getPositionAddress(owner, i))
