@@ -263,6 +263,25 @@ export const VLR_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const TIA_MAIN: Token = {
+  symbol: 'TIA',
+  address: new PublicKey('9RryNMhAVJpAwAGjCAMKbbTFwgjapqPkzpGMfTQhEjf8'),
+  decimals: 6,
+  name: 'Celestia',
+  logoURI:
+    'https://github.com/cosmos/chain-registry/blob/master/celestia/images/celestia.png?raw=true',
+  coingeckoId: ''
+}
+
+export const STTIA_MAIN: Token = {
+  symbol: 'stTIA',
+  address: new PublicKey('V5m1Cc9VK61mKL8xVYrjR7bjD2BC5VpADLa6ws3G8KM'),
+  decimals: 6,
+  name: 'Stride Staked TIA',
+  logoURI: 'https://github.com/cosmos/chain-registry/blob/master/stride/images/sttia.png?raw=true',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
