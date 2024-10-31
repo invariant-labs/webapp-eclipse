@@ -149,7 +149,7 @@ export const DOGWIFHAT_MAIN: Token = {
   decimals: 6,
   name: 'DOGWIFHAT (Hyperlane)',
   logoURI: 'https://assets.coingecko.com/coins/images/33566/standard/dogwifhat.jpg?1702499428',
-  coingeckoId: 'dogwifhat'
+  coingeckoId: 'dogwifcoin'
 }
 
 export const WETH_MAIN: Token = {
@@ -619,7 +619,7 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
 
-export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifhat']
+export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifcoin']
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
