@@ -1,5 +1,9 @@
 name: deploy master
 
+permissions:
+  contents: write
+  deployments: write
+
 on:
   push:
     branches: [master]
