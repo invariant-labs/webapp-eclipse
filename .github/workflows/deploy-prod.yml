@@ -1,7 +1,7 @@
 name: deploy master
 
 permissions:
-  pull-requests: read
+  pull-requests: write
   statuses: write
 
 on:
