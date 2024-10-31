@@ -149,7 +149,7 @@ export const DOGWIFHAT_MAIN: Token = {
   decimals: 6,
   name: 'DOGWIFHAT (Hyperlane)',
   logoURI: 'https://assets.coingecko.com/coins/images/33566/standard/dogwifhat.jpg?1702499428',
-  coingeckoId: 'dogwifcoin'
+  coingeckoId: 'dogwifhat'
 }
 
 export const WETH_MAIN: Token = {
@@ -260,6 +260,25 @@ export const VLR_MAIN: Token = {
   decimals: 9,
   name: 'valery',
   logoURI: 'https://i.imgur.com/BSV6JOp.png',
+  coingeckoId: ''
+}
+
+export const TIA_MAIN: Token = {
+  symbol: 'TIA',
+  address: new PublicKey('9RryNMhAVJpAwAGjCAMKbbTFwgjapqPkzpGMfTQhEjf8'),
+  decimals: 6,
+  name: 'Celestia',
+  logoURI:
+    'https://github.com/cosmos/chain-registry/blob/master/celestia/images/celestia.png?raw=true',
+  coingeckoId: ''
+}
+
+export const STTIA_MAIN: Token = {
+  symbol: 'stTIA',
+  address: new PublicKey('V5m1Cc9VK61mKL8xVYrjR7bjD2BC5VpADLa6ws3G8KM'),
+  decimals: 6,
+  name: 'Stride Staked TIA',
+  logoURI: 'https://github.com/cosmos/chain-registry/blob/master/stride/images/sttia.png?raw=true',
   coingeckoId: ''
 }
 
@@ -600,7 +619,7 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
 
-export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifcoin']
+export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifhat']
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
