@@ -410,8 +410,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
     TURBO_MAIN.address,
-    GSVM_MAIN.address,
-    EGOAT_MAIN.address
+    TIA_MAIN.address,
+    STTIA_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
