@@ -27,6 +27,7 @@ import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
   isLoadingLatestPoolsForTransaction,
+  isLoadingPathTokens,
   isLoadingTicksAndTickMaps,
   isLoadingTokens,
   poolsArraySortedByFees
@@ -37,7 +38,7 @@ import { openWalletSelectorModal } from '@utils/web3/selector'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -87,32 +88,87 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const navigate = useNavigate()
   const isCurrentlyLoadingTokens = useSelector(isLoadingTokens)
   const isTimeoutError = useSelector(timeoutError)
+  const isPathTokensLoading = useSelector(isLoadingPathTokens)
+  const { state } = useLocation()
+  const [block, setBlock] = useState(state?.referer === 'stats')
 
   useEffect(() => {
-    const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
-    const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
-
-    const tokenFromIndex = tokens.findIndex(
-      token => token.assetAddress.toString() === tokenFromAddress
-    )
-
-    const tokenToIndex = tokens.findIndex(token => token.assetAddress.toString() === tokenToAddress)
+    const pathTokens: string[] = []
 
     if (
-      tokenFromAddress !== null &&
-      tokenFromIndex !== -1 &&
-      (tokenToAddress === null || tokenToIndex === -1)
+      initialTokenFrom !== '' &&
+      tokens.findIndex(
+        token =>
+          token.address.toString() === (tickerToAddress(currentNetwork, initialTokenFrom) ?? '')
+      ) === -1
     ) {
-      navigate(`/newPosition/${initialTokenFrom}/${initialFee}`)
-    } else if (
-      tokenFromAddress !== null &&
-      tokenFromIndex !== -1 &&
-      tokenToAddress !== null &&
-      tokenToIndex !== -1
+      pathTokens.push(initialTokenFrom)
+    }
+
+    if (
+      initialTokenTo !== '' &&
+      tokens.findIndex(
+        token =>
+          token.address.toString() === (tickerToAddress(currentNetwork, initialTokenTo) ?? '')
+      ) === -1
     ) {
-      navigate(`/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}`)
-    } else {
-      navigate(`/newPosition/${initialFee}`)
+      pathTokens.push(initialTokenTo)
+    }
+
+    if (pathTokens.length) {
+      dispatch(poolsActions.getPathTokens(pathTokens))
+    }
+
+    setBlock(false)
+  }, [tokens])
+
+  const canNavigate = connection !== null && !isPathTokensLoading && !block
+
+  console.log(!block, !isPathTokensLoading)
+
+  useEffect(() => {
+    if (canNavigate) {
+      const tokenAIndex = tokens.findIndex(token => token.address.toString() === initialTokenFrom)
+      if (tokenAIndex !== -1) {
+        setTokenAIndex(tokenAIndex)
+      }
+
+      const tokenBIndex = tokens.findIndex(token => token.address.toString() === initialTokenTo)
+      if (tokenBIndex !== -1) {
+        setTokenBIndex(tokenBIndex)
+      }
+    }
+  }, [canNavigate])
+
+  useEffect(() => {
+    if (canNavigate) {
+      const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
+      const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
+
+      const tokenFromIndex = tokens.findIndex(
+        token => token.assetAddress.toString() === tokenFromAddress
+      )
+
+      const tokenToIndex = tokens.findIndex(
+        token => token.assetAddress.toString() === tokenToAddress
+      )
+
+      if (
+        tokenFromAddress !== null &&
+        tokenFromIndex !== -1 &&
+        (tokenToAddress === null || tokenToIndex === -1)
+      ) {
+        navigate(`/newPosition/${initialTokenFrom}/${initialFee}`)
+      } else if (
+        tokenFromAddress !== null &&
+        tokenFromIndex !== -1 &&
+        tokenToAddress !== null &&
+        tokenToIndex !== -1
+      ) {
+        navigate(`/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}`)
+      } else {
+        navigate(`/newPosition/${initialFee}`)
+      }
     }
   }, [tokens])
 
@@ -702,6 +758,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       currentFeeIndex={feeIndex}
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
+      canNavigate={canNavigate}
     />
   )
 }

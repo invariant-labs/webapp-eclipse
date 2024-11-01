@@ -22,7 +22,6 @@ import VolumeBar from '@components/Stats/volumeBar/VolumeBar'
 import TokensList from '@components/Stats/TokensList/TokensList'
 import PoolList from '@components/Stats/PoolList/PoolList'
 import icons from '@static/icons'
-import { shortenAddress } from '@utils/uiUtils'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -96,17 +95,15 @@ export const WrappedStats: React.FC = () => {
           <Typography className={classes.subheader}>Top pools</Typography>
           <PoolList
             data={poolsList.map(poolData => ({
-              symbolFrom:
-                poolData.tokenXDetails?.symbol ?? shortenAddress(poolData.tokenX.toString()),
-              symbolTo:
-                poolData.tokenYDetails?.symbol ?? shortenAddress(poolData.tokenY.toString()),
+              symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
+              symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
               iconFrom: poolData.tokenXDetails?.logoURI ?? icons.unknownToken,
               iconTo: poolData.tokenYDetails?.logoURI ?? icons.unknownToken,
               volume: poolData.volume24,
               TVL: poolData.tvl,
               fee: poolData.fee,
-              // addressFrom: poolData.tokenX,
-              // addressTo: poolData.tokenY
+              addressFrom: poolData.tokenX.toString(),
+              addressTo: poolData.tokenY.toString(),
               apy: poolData.apy,
               apyData: {
                 fees: poolData.apy,

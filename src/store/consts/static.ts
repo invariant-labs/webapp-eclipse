@@ -548,16 +548,22 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
     // })
 
     return {
-      MCT: MOCKED_TOKEN_MAIN.address.toString(),
       ETH: WETH_ADDRESS[network].toString(),
+      MCT: MOCKED_TOKEN_MAIN.address.toString(),
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
-      DARKMOON_MAIN: DARKMOON_MAIN.address.toString(),
-      ECAT_MAIN: ECAT_MAIN.address.toString()
+      DARKMOON: DARKMOON_MAIN.address.toString(),
+      ECAT: ECAT_MAIN.address.toString(),
+      Turbo: TURBO_MAIN.address.toString(),
+      MOO: MOO_MAIN.address.toString(),
+      EBull: EBULL_MAIN.address.toString(),
+      EGoat: EGOAT_MAIN.address.toString(),
+      DOGO: DOGO_MAIN.address.toString(),
+      PUNKSTAR: PUNKSTAR_MAIN.address.toString()
     }
   }
 }

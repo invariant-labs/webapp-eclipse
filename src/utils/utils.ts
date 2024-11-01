@@ -1273,15 +1273,15 @@ export const getFullNewTokensData = async (
 
   const tokens: Record<string, Token> = {}
 
-  await Promise.allSettled(promises).then(results =>
-    results.forEach(async (result, index) => {
-      tokens[addresses[index].toString()] = await getTokenMetadata(
-        connection,
-        addresses[index].toString(),
-        result.status === 'fulfilled' ? result.value.decimals : 6
-      )
-    })
-  )
+  const results = await Promise.allSettled(promises)
+
+  for (const [index, result] of results.entries()) {
+    tokens[addresses[index].toString()] = await getTokenMetadata(
+      connection,
+      addresses[index].toString(),
+      result.status === 'fulfilled' ? result.value.decimals : 6
+    )
+  }
 
   return tokens
 }
