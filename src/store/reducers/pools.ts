@@ -6,6 +6,8 @@ import { PublicKey } from '@solana/web3.js'
 import * as R from 'remeda'
 import { Range } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PayloadType, Token } from '@store/consts/types'
+import { getNetworkTokensList } from '@utils/utils'
+import { NetworkType } from '@store/consts/static'
 
 export interface PoolWithAddress extends PoolStructure {
   address: PublicKey
@@ -19,6 +21,7 @@ export interface IPoolsStore {
   isLoadingLatestPoolsForTransaction: boolean
   isLoadingTicksAndTickMaps: boolean
   isLoadingTokens: boolean
+  isLoadingPathTokens: boolean
   isLoadingTokensError: boolean
   tickMaps: { [key in string]: Tickmap }
   volumeRanges: Record<string, Range[]>
@@ -57,14 +60,19 @@ export interface FetchTicksAndTickMaps {
   allPools: PoolWithAddress[]
 }
 
+const network =
+  NetworkType[localStorage.getItem('INVARIANT_NETWORK_ECLIPSE') as keyof typeof NetworkType] ??
+  NetworkType.Mainnet
+
 export const defaultState: IPoolsStore = {
-  tokens: {},
+  tokens: { ...getNetworkTokensList(network) },
   pools: {},
   poolTicks: {},
   nearestPoolTicksForPair: {},
   isLoadingLatestPoolsForTransaction: false,
   isLoadingTicksAndTickMaps: false,
-  isLoadingTokens: false, // set to true
+  isLoadingTokens: false,
+  isLoadingPathTokens: false,
   isLoadingTokensError: false,
   tickMaps: {},
   volumeRanges: {}
@@ -101,6 +109,15 @@ const poolsSlice = createSlice({
         ...action.payload
       }
       state.isLoadingTokens = false
+      return state
+    },
+    addPathTokens(state, action: PayloadAction<Record<string, Token>>) {
+      for (const token in action.payload) {
+        if (!state.tokens[token]) {
+          state.tokens[token] = action.payload[token]
+        }
+      }
+      state.isLoadingPathTokens = false
       return state
     },
     setVolumeRanges(state, action: PayloadAction<Record<string, Range[]>>) {
@@ -184,7 +201,19 @@ const poolsSlice = createSlice({
       state.nearestPoolTicksForPair[action.payload.index] = action.payload.tickStructure
       return state
     },
-    getNearestTicksForPair(_state, _action: PayloadAction<FetchTicksAndTickMaps>) {}
+    getNearestTicksForPair(_state, _action: PayloadAction<FetchTicksAndTickMaps>) {},
+    getTokens(state, _action: PayloadAction<string[]>) {
+      state.isLoadingTokens = true
+      return state
+    },
+    getPathTokens(state, _action: PayloadAction<string[]>) {
+      state.isLoadingPathTokens = true
+      return state
+    },
+    setTokensError(state, action: PayloadAction<boolean>) {
+      state.isLoadingTokensError = action.payload
+      return state
+    }
   }
 })
 

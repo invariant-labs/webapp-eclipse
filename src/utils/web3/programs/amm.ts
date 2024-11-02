@@ -35,18 +35,12 @@ export const getMarketProgramSync = (networkType: NetworkType, rpcAddress: strin
 
   const net = networkTypetoProgramNetwork(networkType)
 
-  Market.build(
+  const market = Market.build(
     net,
     getSolanaWallet(),
     getSolanaConnection(rpcAddress),
     new PublicKey(getMarketAddress(net))
   )
-    .then(market => {
-      _market = market
-    })
-    .catch(err => {
-      console.log(err)
-    })
 
-  return _market
+  return market
 }

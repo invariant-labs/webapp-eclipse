@@ -119,6 +119,7 @@ export interface INewPosition {
   walletStatus: Status
   onConnectWallet: () => void
   onDisconnectWallet: () => void
+  canNavigate: boolean
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -174,7 +175,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   ethBalance,
   walletStatus,
   onConnectWallet,
-  onDisconnectWallet
+  onDisconnectWallet,
+  canNavigate
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -431,20 +433,21 @@ export const NewPosition: React.FC<INewPosition> = ({
   }
 
   const updatePath = (index1: number | null, index2: number | null, fee: number) => {
-    const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
-
-    if (index1 != null && index2 != null) {
-      const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
-      const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-      navigate(`/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}`, { replace: true })
-    } else if (index1 != null) {
-      const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
-      navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
-    } else if (index2 != null) {
-      const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-      navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
-    } else if (fee != null) {
-      navigate(`/newPosition/${parsedFee}`, { replace: true })
+    if (canNavigate) {
+      const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
+      if (index1 != null && index2 != null) {
+        const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
+        const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())
+        navigate(`/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}`, { replace: true })
+      } else if (index1 != null) {
+        const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
+        navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
+      } else if (index2 != null) {
+        const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
+        navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
+      } else if (fee != null) {
+        navigate(`/newPosition/${parsedFee}`, { replace: true })
+      }
     }
   }
 
@@ -703,6 +706,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           walletStatus={walletStatus}
           onConnectWallet={onConnectWallet}
           onDisconnectWallet={onDisconnectWallet}
+          canNavigate={canNavigate}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

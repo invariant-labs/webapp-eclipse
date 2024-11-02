@@ -149,7 +149,7 @@ export const DOGWIFHAT_MAIN: Token = {
   decimals: 6,
   name: 'DOGWIFHAT (Hyperlane)',
   logoURI: 'https://assets.coingecko.com/coins/images/33566/standard/dogwifhat.jpg?1702499428',
-  coingeckoId: 'dogwifhat'
+  coingeckoId: 'dogwifcoin'
 }
 
 export const WETH_MAIN: Token = {
@@ -260,6 +260,25 @@ export const VLR_MAIN: Token = {
   decimals: 9,
   name: 'valery',
   logoURI: 'https://i.imgur.com/BSV6JOp.png',
+  coingeckoId: ''
+}
+
+export const TIA_MAIN: Token = {
+  symbol: 'TIA',
+  address: new PublicKey('9RryNMhAVJpAwAGjCAMKbbTFwgjapqPkzpGMfTQhEjf8'),
+  decimals: 6,
+  name: 'Celestia',
+  logoURI:
+    'https://github.com/cosmos/chain-registry/blob/master/celestia/images/celestia.png?raw=true',
+  coingeckoId: ''
+}
+
+export const STTIA_MAIN: Token = {
+  symbol: 'stTIA',
+  address: new PublicKey('V5m1Cc9VK61mKL8xVYrjR7bjD2BC5VpADLa6ws3G8KM'),
+  decimals: 6,
+  name: 'Stride Staked TIA',
+  logoURI: 'https://github.com/cosmos/chain-registry/blob/master/stride/images/sttia.png?raw=true',
   coingeckoId: ''
 }
 
@@ -410,8 +429,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
     TURBO_MAIN.address,
-    GSVM_MAIN.address,
-    EGOAT_MAIN.address
+    TIA_MAIN.address,
+    STTIA_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -529,16 +548,22 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
     // })
 
     return {
-      MCT: MOCKED_TOKEN_MAIN.address.toString(),
       ETH: WETH_ADDRESS[network].toString(),
+      MCT: MOCKED_TOKEN_MAIN.address.toString(),
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
-      DARKMOON_MAIN: DARKMOON_MAIN.address.toString(),
-      ECAT_MAIN: ECAT_MAIN.address.toString()
+      DARKMOON: DARKMOON_MAIN.address.toString(),
+      ECAT: ECAT_MAIN.address.toString(),
+      Turbo: TURBO_MAIN.address.toString(),
+      MOO: MOO_MAIN.address.toString(),
+      EBull: EBULL_MAIN.address.toString(),
+      EGoat: EGOAT_MAIN.address.toString(),
+      DOGO: DOGO_MAIN.address.toString(),
+      PUNKSTAR: PUNKSTAR_MAIN.address.toString()
     }
   }
 }
@@ -600,7 +625,7 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
 
-export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifhat']
+export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifcoin']
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
