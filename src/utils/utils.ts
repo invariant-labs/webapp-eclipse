@@ -24,6 +24,7 @@ import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERS_TOKEN_PAIRS,
   AI16Z_MAIN,
+  BRICK_MAIN,
   BTC_DEV,
   BTC_TEST,
   COINGECKO_QUERY_COOLDOWN,
@@ -45,6 +46,7 @@ import {
   MOON_MAIN,
   MOON_TEST,
   NetworkType,
+  PANTY_MAIN,
   PRICE_DECIMAL,
   PUNKSTAR_MAIN,
   STTIA_MAIN,
@@ -805,7 +807,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [AI16Z_MAIN.address.toString()]: AI16Z_MAIN,
         [VLR_MAIN.address.toString()]: VLR_MAIN,
         [TIA_MAIN.address.toString()]: TIA_MAIN,
-        [STTIA_MAIN.address.toString()]: STTIA_MAIN
+        [STTIA_MAIN.address.toString()]: STTIA_MAIN,
+        [BRICK_MAIN.address.toString()]: BRICK_MAIN,
+        [PANTY_MAIN.address.toString()]: PANTY_MAIN
       }
     case NetworkType.Devnet:
       return {
