@@ -84,6 +84,7 @@ export interface IDepositSelector {
   tokenBIndex: number | null
   setTokenAIndex: (index: number | null) => void
   setTokenBIndex: (index: number | null) => void
+  canNavigate: boolean
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -121,7 +122,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   walletStatus,
   onConnectWallet,
   onDisconnectWallet,
-  ethBalance
+  ethBalance,
+  canNavigate
 }) => {
   const { classes } = useStyles()
 
@@ -184,6 +186,29 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
     setIsLoaded(true)
   }, [tokens, initialTokenFrom, initialTokenTo, initialFee])
+
+  const [wasRunTokenA, setWasRunTokenA] = useState(false)
+  const [wasRunTokenB, setWasRunTokenB] = useState(false)
+
+  useEffect(() => {
+    if (canNavigate) {
+      const tokenAIndex = tokens.findIndex(
+        token => token.assetAddress.toString() === tickerToAddress(network, initialTokenFrom)
+      )
+      if (!wasRunTokenA && tokenAIndex !== -1) {
+        setTokenAIndex(tokenAIndex)
+        setWasRunTokenA(true)
+      }
+
+      const tokenBIndex = tokens.findIndex(
+        token => token.assetAddress.toString() === tickerToAddress(network, initialTokenTo)
+      )
+      if (!wasRunTokenB && tokenBIndex !== -1) {
+        setTokenBIndex(tokenBIndex)
+        setWasRunTokenB(true)
+      }
+    }
+  }, [wasRunTokenA, wasRunTokenB, canNavigate, tokens.length])
 
   const getButtonMessage = useCallback(() => {
     if (tokenAIndex === null || tokenBIndex === null) {

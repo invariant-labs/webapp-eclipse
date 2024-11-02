@@ -47,9 +47,11 @@ import {
   NetworkType,
   PRICE_DECIMAL,
   PUNKSTAR_MAIN,
+  STTIA_MAIN,
   S22_TEST,
   SOL_MAIN,
   subNumbers,
+  TIA_MAIN,
   tokensPrices,
   TURBO_MAIN,
   USDC_DEV,
@@ -801,7 +803,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [DOGO_MAIN.address.toString()]: DOGO_MAIN,
         [PUNKSTAR_MAIN.address.toString()]: PUNKSTAR_MAIN,
         [AI16Z_MAIN.address.toString()]: AI16Z_MAIN,
-        [VLR_MAIN.address.toString()]: VLR_MAIN
+        [VLR_MAIN.address.toString()]: VLR_MAIN,
+        [TIA_MAIN.address.toString()]: TIA_MAIN,
+        [STTIA_MAIN.address.toString()]: STTIA_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -1269,15 +1273,15 @@ export const getFullNewTokensData = async (
 
   const tokens: Record<string, Token> = {}
 
-  await Promise.allSettled(promises).then(results =>
-    results.forEach(async (result, index) => {
-      tokens[addresses[index].toString()] = await getTokenMetadata(
-        connection,
-        addresses[index].toString(),
-        result.status === 'fulfilled' ? result.value.decimals : 6
-      )
-    })
-  )
+  const results = await Promise.allSettled(promises)
+
+  for (const [index, result] of results.entries()) {
+    tokens[addresses[index].toString()] = await getTokenMetadata(
+      connection,
+      addresses[index].toString(),
+      result.status === 'fulfilled' ? result.value.decimals : 6
+    )
+  }
 
   return tokens
 }
@@ -1439,12 +1443,10 @@ export const getPositionsAddressesFromRange = async (
   lowerIndex: number,
   upperIndex: number
 ) => {
-  const promises: Array<
-    Promise<{
-      positionAddress: PublicKey
-      positionBump: number
-    }>
-  > = []
+  const promises: Array<{
+    positionAddress: PublicKey
+    positionBump: number
+  }> = []
 
   for (let i = lowerIndex; i <= upperIndex; i++) {
     promises.push(marketProgram.getPositionAddress(owner, i))
@@ -1655,11 +1657,14 @@ export const trimDecimalZeros = (numStr: string): string => {
   const withoutTrailingDot = numStr.replace(/\.$/, '')
 
   if (!withoutTrailingDot.includes('.')) {
-    return withoutTrailingDot
+    return withoutTrailingDot.replace(/^0+/, '') || '0'
   }
 
   const [integerPart, decimalPart] = withoutTrailingDot.split('.')
 
   const trimmedDecimal = decimalPart.replace(/0+$/, '')
-  return trimmedDecimal ? `${integerPart}.${trimmedDecimal}` : integerPart
+
+  const trimmedInteger = integerPart.replace(/^0+/, '')
+
+  return trimmedDecimal ? `${trimmedInteger || '0'}.${trimmedDecimal}` : trimmedInteger || '0'
 }

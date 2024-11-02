@@ -128,7 +128,8 @@ export const Primary: Story = {
     setTokenAIndex: fn(),
     setTokenBIndex: fn(),
     tokenAIndex: 0,
-    tokenBIndex: 1
+    tokenBIndex: 1,
+    canNavigate: true
   },
   render: args => <PrimaryComponent {...args} />
 }
