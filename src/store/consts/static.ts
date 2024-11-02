@@ -282,6 +282,25 @@ export const STTIA_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const PANTY_MAIN: Token = {
+  symbol: 'PANTY',
+  address: new PublicKey('FZLbeANPzvtKPX7cZyRJ53Ce1wihgr57h5r348NziSRD'),
+  decimals: 9,
+  name: 'Panty Pussycat',
+  logoURI: 'https://uploader.irys.xyz/5kfRvn9JjexfBihhNwsnAfxGdJeppvNf89156vkaCkPF',
+  coingeckoId: ''
+}
+
+export const BRICK_MAIN: Token = {
+  symbol: 'Brick',
+  address: new PublicKey('3Q5RQRTKCH4RWGFVFht1RtM1fx3SSxNGAk1sTuVank6w'),
+  decimals: 9,
+  name: 'Brick',
+  logoURI:
+    'https://beige-random-platypus-427.mypinata.cloud/ipfs/QmQqSjag5q4nQTDcAnqkGrxp5Y2DzBqWB4L6FMM38cszbm',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
