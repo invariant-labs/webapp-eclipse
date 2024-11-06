@@ -39,7 +39,7 @@ import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { DECIMAL, fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Decimal, Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
@@ -822,6 +822,11 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Box>
         <Box className={classes.unknownWarningContainer}>
+          {+printBN(simulateResult.priceImpact, DECIMAL - 2) > 25 && (
+            <TooltipHover text='Your trade size might be too large'>
+              <Box className={classes.unknownWarning}>Price impact is more than 25%</Box>
+            </TooltipHover>
+          )}
           {tokens[tokenFromIndex ?? '']?.isUnknown && (
             <TooltipHover
               text={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
