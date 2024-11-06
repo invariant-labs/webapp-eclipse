@@ -32,6 +32,7 @@ import {
   DEFAULT_TOKENS,
   DOGO_MAIN,
   DOGWIFHAT_MAIN,
+  DOGW_MAIN,
   EBULL_MAIN,
   ECAT_MAIN,
   EGOAT_MAIN,
@@ -47,12 +48,14 @@ import {
   MOON_TEST,
   NetworkType,
   PANTY_MAIN,
+  PODAVINI_MAIN,
   PRICE_DECIMAL,
   PUNKSTAR_MAIN,
   STTIA_MAIN,
   S22_TEST,
   SOL_MAIN,
   subNumbers,
+  TETH_MAIN,
   TIA_MAIN,
   tokensPrices,
   TURBO_MAIN,
@@ -809,7 +812,10 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [TIA_MAIN.address.toString()]: TIA_MAIN,
         [STTIA_MAIN.address.toString()]: STTIA_MAIN,
         [BRICK_MAIN.address.toString()]: BRICK_MAIN,
-        [PANTY_MAIN.address.toString()]: PANTY_MAIN
+        [PANTY_MAIN.address.toString()]: PANTY_MAIN,
+        [PODAVINI_MAIN.address.toString()]: PODAVINI_MAIN,
+        [DOGW_MAIN.address.toString()]: DOGW_MAIN,
+        [TETH_MAIN.address.toString()]: TETH_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -1453,7 +1459,7 @@ export const getPositionsAddressesFromRange = async (
   }> = []
 
   for (let i = lowerIndex; i <= upperIndex; i++) {
-    promises.push(marketProgram.getPositionAddress(owner, i))
+    promises.push(await marketProgram.getPositionAddress(owner, i))
   }
 
   return await Promise.all(promises).then(data =>
