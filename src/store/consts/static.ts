@@ -301,6 +301,35 @@ export const PANTY_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const PODAVINI_MAIN: Token = {
+  symbol: 'PODAVINI',
+  address: new PublicKey('Aj6HETPRCwjLJBBpfSEnRy8jCp1ZipEs7FTMKi745tsJ'),
+  decimals: 9,
+  name: 'PODAVINI',
+  logoURI: 'https://uploader.irys.xyz/GH55FteKNSLkBPcQ1UtZS4RXUKS4waYeG2XvHaPzrqiR',
+  coingeckoId: ''
+}
+
+export const DOGW_MAIN: Token = {
+  symbol: 'dogw',
+  address: new PublicKey('Ev6go111sv39uMrAQeWsatFWgSYdfENuQGtBmr5QRwbJ'),
+  decimals: 9,
+  name: 'dog wif meat',
+  logoURI:
+    'https://lime-peculiar-eel-621.mypinata.cloud/ipfs/QmVYxFNgSnVFXrbaxTh7Pz6iQ9AJU8e7BLBMcyWiE476mU',
+  coingeckoId: ''
+}
+
+export const TETH_MAIN: Token = {
+  symbol: 'tETH',
+  address: new PublicKey('GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn'),
+  decimals: 9,
+  name: 'Turbo ETH',
+  logoURI:
+    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/06833c4417faafd198ef8cf904612c721e5d96db/deployments/warp_routes/tETH/logo.svg',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
