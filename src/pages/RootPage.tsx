@@ -18,7 +18,6 @@ const blockedCountries = [
   'CF',
   'CD',
   'KP',
-  'UA',
   'CU',
   'IR',
   'LY',
