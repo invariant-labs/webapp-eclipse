@@ -16,6 +16,7 @@ import {
 } from '@solana/web3.js'
 import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
+  MAX_CROSSES_IN_SINGLE_TX,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   WRAPPED_ETH_ADDRESS
@@ -25,8 +26,6 @@ import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
 import { createLoaderKey } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
-
-const MAX_CROSSES_IN_SINGLE_TX = 11
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
