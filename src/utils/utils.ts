@@ -17,7 +17,12 @@ import {
 import { BN } from '@project-serum/anchor'
 import { Token as SPLToken } from '@solana/spl-token'
 import { Connection, Keypair, PublicKey } from '@solana/web3.js'
-import { Market, Tickmap, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  Market,
+  Tickmap,
+  TICK_CROSSES_PER_IX,
+  TICK_VIRTUAL_CROSSES_PER_IX
+} from '@invariant-labs/sdk-eclipse/lib/market'
 import axios, { AxiosResponse } from 'axios'
 import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
@@ -64,7 +69,9 @@ import {
   USDC_TEST,
   VLR_MAIN,
   WETH_DEV,
-  WETH_TEST
+  WETH_TEST,
+  WRAPPED_ETH_ADDRESS,
+  MAX_CROSSES_IN_SINGLE_TX
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes'
@@ -1006,6 +1013,11 @@ export const handleSimulate = async (
       errorMessage.push(`Ticks not available for pool ${pool.address.toString()}`)
       continue // Move to the next pool
     }
+    const maxCrosses =
+      pool.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
+      pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+        ? MAX_CROSSES_IN_SINGLE_TX
+        : TICK_CROSSES_PER_IX
 
     try {
       const swapSimulateResult = simulateSwap({
@@ -1015,7 +1027,9 @@ export const handleSimulate = async (
         slippage: slippage,
         pool: pool,
         ticks: ticks,
-        tickmap: tickmaps[pool.tickmap.toString()]
+        tickmap: tickmaps[pool.tickmap.toString()],
+        maxCrosses,
+        maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX
       })
       if (swapSimulateResult.amountPerTick.length > TICK_CROSSES_PER_IX) {
         errorMessage.push('Too large amount')
