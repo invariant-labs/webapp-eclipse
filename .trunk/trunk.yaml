@@ -35,5 +35,3 @@ lint:
     - 'src/components/**/*.stories.tsx'
     - 'src/components/FarmsList/**/*'
     - 'src/components/Modals/SelectModals/SortFarmsModal/**/*'
-  ignore:
-    - node_modules

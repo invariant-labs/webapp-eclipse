@@ -124,8 +124,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const canNavigate = connection !== null && !isPathTokensLoading && !block
 
-  console.log(!block, !isPathTokensLoading)
-
   useEffect(() => {
     if (canNavigate) {
       const tokenAIndex = tokens.findIndex(token => token.address.toString() === initialTokenFrom)
@@ -304,7 +302,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         )
       }
     }
-  }, [isWaitingForNewPool])
+  }, [isWaitingForNewPool, allPools])
 
   useEffect(() => {
     if (poolIndex !== null) {
