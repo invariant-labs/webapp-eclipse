@@ -2,7 +2,6 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { useState } from 'react'
 import DepositSelector, { IDepositSelector } from './DepositSelector'
-
 import { Provider } from 'react-redux'
 import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
@@ -129,7 +128,8 @@ export const Primary: Story = {
     setTokenBIndex: fn(),
     tokenAIndex: 0,
     tokenBIndex: 1,
-    canNavigate: true
+    canNavigate: true,
+    isCurrentPoolExisting: true
   },
   render: args => <PrimaryComponent {...args} />
 }
