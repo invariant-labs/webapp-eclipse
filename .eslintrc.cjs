@@ -23,7 +23,7 @@ module.exports = {
     indent: 'off',
     '@typescript-eslint/indent': 'off',
     'multiline-ternary': 'off',
-    'no-unused-vars': 'off',
+    'no-empty': 'off',
     '@typescript-eslint/no-unused-vars': 'off',
     '@typescript-eslint/explicit-function-return-type': 'off',
     '@typescript-eslint/prefer-reduce-type-parameter': 'off',
@@ -43,15 +43,16 @@ module.exports = {
         argsIgnorePattern: '^_'
       }
     ],
-    'no-extra-semi': 'off',
-    '@typescript-eslint/no-unused-vars': ['error', { argsIgnorePattern: '^_' }]
+    'no-extra-semi': 'off'
   },
   overrides: [
     {
       files: ['**/*.stories.tsx'],
       rules: {
         '@typescript-eslint/no-unused-vars': 'off',
-        'import/no-unresolved': 'off'
+        'import/no-unresolved': 'off',
+        'react-hooks/rules-of-hooks': 'off',
+        'storybook/story-exports': 'off'
       }
     }
   ]

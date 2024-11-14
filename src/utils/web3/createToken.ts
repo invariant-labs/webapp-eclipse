@@ -1,4 +1,4 @@
-import { defaultImages } from '@pages/SolanaCreator/components/ImagePicker/ImagePicker'
+import { defaultImages } from '@store/consts/static'
 
 export async function getFileFromInput(inputString: string) {
   function isStaticFile(str: string) {

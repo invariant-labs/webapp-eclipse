@@ -5,6 +5,10 @@ import { ISnackbar } from '@store/reducers/snackbars'
 import { BestTier, Chain, PrefixConfig, Token, TokenPriceData } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
+import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
+import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
+import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
+import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
 
 export enum NetworkType {
   Local = 'Local',
@@ -679,3 +683,5 @@ export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
 
 export const MAX_CROSSES_IN_SINGLE_TX = 11
+
+export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]

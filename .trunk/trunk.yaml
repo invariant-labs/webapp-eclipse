@@ -25,13 +25,13 @@ lint:
     - osv-scanner@1.8.5
     - oxipng@9.1.2
     - prettier@3.3.3
-    - svgo@3.3.2
     - trufflehog@3.82.2
   disabled:
-    - trunk-announce
-    - trunk-check-pre-push
-    - trunk-fmt-pre-commit
     - 'node_modules/**/*'
-    - 'src/components/**/*.stories.tsx'
-    - 'src/components/FarmsList/**/*'
-    - 'src/components/Modals/SelectModals/SortFarmsModal/**/*'
+actions:
+  disabled:
+    - trunk-announce
+    - trunk-fmt-pre-commit
+  enabled:
+    - trunk-upgrade-available
+    - trunk-check-pre-push
