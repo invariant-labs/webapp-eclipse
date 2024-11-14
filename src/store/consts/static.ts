@@ -677,3 +677,5 @@ export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifcoin']
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
+
+export const MAX_CROSSES_IN_SINGLE_TX = 11;
