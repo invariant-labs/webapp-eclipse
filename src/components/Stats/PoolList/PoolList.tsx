@@ -7,7 +7,7 @@ import { NetworkType, SortTypePoolList } from '@store/consts/static'
 import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 
-interface PoolListInterface {
+export interface PoolListInterface {
   data: Array<{
     symbolFrom: string
     symbolTo: string
