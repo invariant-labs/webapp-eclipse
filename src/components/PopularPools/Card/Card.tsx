@@ -6,7 +6,7 @@ import { colors } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
 import icons from '@static/icons'
-import SwapList from '@static/svg/swap-list.svg'
+import RevertIcon from '@static/svg/revert.svg'
 import { shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import backIcon from '@static/svg/back-arrow-2.svg'
@@ -95,7 +95,7 @@ const Card: React.FC<ICard> = ({
                   />
                   {isUnknownFrom && <img className={classes.warningIcon} src={icons.warningIcon} />}
                 </Box>
-                <img className={classes.swapIcon} src={SwapList} alt='Token from' />
+                <img className={classes.swapIcon} src={RevertIcon} alt='Token from' />
                 <Box className={classes.iconContainer}>
                   <img
                     className={classes.tokenIcon}

@@ -22,7 +22,7 @@ export const useStyles = makeStyles()(() => ({
     height: 36,
     marginBottom: '16px'
   },
-  swapIcon: { minWidth: 36, maxWidth: 36, height: 36, color: 'white' },
+  swapIcon: { height: 15, margin: '10.5px 6px' },
   iconContainer: {
     minWidth: 36,
     maxWidth: 36,
