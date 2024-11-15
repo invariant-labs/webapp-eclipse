@@ -3,13 +3,15 @@ import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import Card from './Card/Card'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
+import { NetworkType } from '@store/consts/static'
 
 export interface IPopularPools {
   pools: PopularPoolData[]
   isLoading: boolean
+  network: NetworkType
 }
 
-const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading }) => {
+const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network }) => {
   const { classes } = useStyles()
 
   return (
@@ -38,6 +40,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading }) => {
             isUnknownFrom={pool.isUnknownFrom}
             isUnknownTo={pool.isUnknownTo}
             isLoading={isLoading}
+            network={network}
           />
         ))}
       </GradientBorder>

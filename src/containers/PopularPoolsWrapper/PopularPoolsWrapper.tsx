@@ -7,6 +7,7 @@ import { actions } from '@store/reducers/stats'
 import { Grid } from '@mui/material'
 import useStyles from './style'
 import loader from '@static/gif/loader.gif'
+import { network } from '@store/selectors/solanaConnection'
 
 export interface PopularPoolData {
   symbolFrom: string
@@ -31,11 +32,11 @@ export interface PopularPoolData {
 export const PopularPoolsWrapper: React.FC = () => {
   const dispatch = useDispatch()
 
+  const currentNetwork = useSelector(network)
+
   const isLoadingStats = useSelector(isLoading)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
 
-  const { classes } = useStyles()
-  console.log('poolsList', poolsList)
   const data: PopularPoolData[] = []
   for (let i = 0; i < 4; i++) {
     if (!poolsList[i]) {
@@ -68,7 +69,7 @@ export const PopularPoolsWrapper: React.FC = () => {
 
   return (
     <Grid container>
-      <PopularPools pools={data} isLoading={isLoadingStats} />
+      <PopularPools pools={data} isLoading={isLoadingStats} network={currentNetwork} />
     </Grid>
   )
 }

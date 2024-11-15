@@ -1,7 +1,8 @@
+import { Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(() => ({
+export const useStyles = makeStyles()((theme: Theme) => ({
   title: {
     color: colors.invariant.text,
     ...typography.heading4,
@@ -11,9 +12,9 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'space-between',
-    flexWrap: 'wrap',
     gap: 20,
     padding: '24px',
-    backgroundColor: colors.invariant.transparentBcg
+    backgroundColor: colors.invariant.transparentBcg,
+    flexWrap: 'nowrap'
   }
 }))
