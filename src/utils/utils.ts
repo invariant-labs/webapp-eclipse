@@ -728,15 +728,15 @@ export const formatNumber = (
       String(parseInt(afterDot)).length > decimalsAfterDot
         ? String(parseInt(afterDot)).slice(0, decimalsAfterDot)
         : afterDot
-    formattedNumber = trimZeros(
+
+    formattedNumber =
       beforeDot +
-        '.' +
-        (parsedAfterDot
-          ? leadingZeros > decimalsAfterDot
-            ? '0' + printSubNumber(leadingZeros) + parseInt(parsedAfterDot)
-            : parsedAfterDot
-          : '')
-    )
+      '.' +
+      (parsedAfterDot
+        ? leadingZeros > decimalsAfterDot
+          ? '0' + printSubNumber(leadingZeros) + parseInt(parsedAfterDot)
+          : parsedAfterDot
+        : '')
   }
 
   return isNegative ? '-' + formattedNumber : formattedNumber
@@ -1375,10 +1375,21 @@ export const getNewTokenOrThrow = async (
   }
 }
 
-export const stringToFixed = (string: string, numbersAfterDot: number): string => {
-  return string.includes('.') ? string.slice(0, string.indexOf('.') + 1 + numbersAfterDot) : string
-}
+export const stringToFixed = (
+  string: string,
+  numbersAfterDot: number,
+  trimZeros?: boolean
+): string => {
+  const toFixedString = string.includes('.')
+    ? string.slice(0, string.indexOf('.') + 1 + numbersAfterDot)
+    : string
 
+  if (trimZeros) {
+    return trimDecimalZeros(toFixedString)
+  } else {
+    return toFixedString
+  }
+}
 export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
   try {
     return getAddressTickerMap(network)[ticker].toString()

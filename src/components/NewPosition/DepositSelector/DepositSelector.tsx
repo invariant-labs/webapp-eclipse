@@ -85,6 +85,7 @@ export interface IDepositSelector {
   setTokenAIndex: (index: number | null) => void
   setTokenBIndex: (index: number | null) => void
   canNavigate: boolean
+  isCurrentPoolExisting: boolean
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -123,7 +124,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onConnectWallet,
   onDisconnectWallet,
   ethBalance,
-  canNavigate
+  canNavigate,
+  isCurrentPoolExisting
 }) => {
   const { classes } = useStyles()
 
@@ -136,7 +138,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     } else {
       return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_MAIN : WETH_POSITION_INIT_LAMPORTS_MAIN
     }
-  }, [network])
+  }, [network, isCurrentPoolExisting])
 
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(initialHideUnknownTokensValue)
 
@@ -393,7 +395,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
+          currencyIsUnknown={
+            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
+          }
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenAIndex === null) {
@@ -448,7 +452,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
+          currencyIsUnknown={
+            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
+          }
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenBIndex === null) {
