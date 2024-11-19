@@ -685,3 +685,22 @@ export const TIMEOUT_ERROR_MESSAGE =
 export const MAX_CROSSES_IN_SINGLE_TX = 11
 
 export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
+
+export const popularPools: { tokenX: string; tokenY: string }[] = [
+  {
+    tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+    tokenY: 'So11111111111111111111111111111111111111112'
+  },
+  {
+    tokenX: 'LaihKXA47apnS599tyEyasY2REfEzBNe4heunANhsMx',
+    tokenY: 'So11111111111111111111111111111111111111112'
+  },
+  {
+    tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+    tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL'
+  },
+  {
+    tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+    tokenY: 'LaihKXA47apnS599tyEyasY2REfEzBNe4heunANhsMx'
+  }
+]

@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import PopularPools from '@components/PopularPools/PopularPools'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
@@ -6,60 +6,73 @@ import icons from '@static/icons'
 import { actions } from '@store/reducers/stats'
 import { Grid } from '@mui/material'
 import { network } from '@store/selectors/solanaConnection'
+import { popularPools } from '@store/consts/static'
 
 export interface PopularPoolData {
-  symbolFrom: string
-  symbolTo: string
-  iconFrom: string
-  iconTo: string
-  volume: number
-  TVL: number
-  fee: number
+  symbolFrom?: string
+  symbolTo?: string
+  iconFrom?: string
+  iconTo?: string
+  volume?: number
+  TVL?: number
+  fee?: number
   addressFrom: string
   addressTo: string
-  apy: number
-  apyData: {
+  apy?: number
+  apyData?: {
     fees: number
     accumulatedFarmsAvg: number
     accumulatedFarmsSingleTick: number
   }
-  isUnknownFrom: boolean
-  isUnknownTo: boolean
+  isUnknownFrom?: boolean
+  isUnknownTo?: boolean
 }
 
 export const PopularPoolsWrapper: React.FC = () => {
   const dispatch = useDispatch()
 
   const currentNetwork = useSelector(network)
-
   const isLoadingStats = useSelector(isLoading)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
 
-  const data: PopularPoolData[] = []
-  for (let i = 0; i < 4; i++) {
-    if (!poolsList[i]) {
-      break
-    }
-    data.push({
-      symbolFrom: poolsList[i]?.tokenXDetails?.symbol ?? poolsList[i].tokenX.toString(),
-      symbolTo: poolsList[i]?.tokenYDetails?.symbol ?? poolsList[i].tokenY.toString(),
-      iconFrom: poolsList[i]?.tokenXDetails?.logoURI ?? icons.unknownToken,
-      iconTo: poolsList[i]?.tokenYDetails?.logoURI ?? icons.unknownToken,
-      volume: poolsList[i].volume24,
-      TVL: poolsList[i].tvl,
-      fee: poolsList[i].fee,
-      addressFrom: poolsList[i].tokenX.toString(),
-      addressTo: poolsList[i].tokenY.toString(),
-      apy: poolsList[i].apy,
-      apyData: {
-        fees: poolsList[i].apy,
-        accumulatedFarmsSingleTick: 0,
-        accumulatedFarmsAvg: 0
-      },
-      isUnknownFrom: poolsList[i].tokenXDetails?.isUnknown ?? false,
-      isUnknownTo: poolsList[i].tokenYDetails?.isUnknown ?? false
+  const list: PopularPoolData[] = useMemo(() => {
+    const data: PopularPoolData[] = []
+    popularPools.map(pool => {
+      const poolData = poolsList.find(
+        item =>
+          (item.tokenX.toString() === pool.tokenX && item.tokenY.toString() === pool.tokenY) ||
+          (item.tokenX.toString() === pool.tokenY && item.tokenY.toString() === pool.tokenX)
+      )
+      if (poolData) {
+        data.push({
+          symbolFrom: poolData?.tokenXDetails?.symbol ?? pool.tokenX,
+          symbolTo: poolData?.tokenYDetails?.symbol ?? pool.tokenY,
+          iconFrom: poolData?.tokenXDetails?.logoURI ?? icons.unknownToken,
+          iconTo: poolData?.tokenYDetails?.logoURI ?? icons.unknownToken,
+          volume: poolData.volume24,
+          TVL: poolData.tvl,
+          fee: poolData.fee,
+          addressFrom: poolData.tokenX.toString(),
+          addressTo: poolData.tokenY.toString(),
+          apy: poolData.apy,
+          apyData: {
+            fees: poolData.apy,
+            accumulatedFarmsSingleTick: 0,
+            accumulatedFarmsAvg: 0
+          },
+          isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
+          isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false
+        })
+      } else {
+        data.push({
+          addressFrom: pool.tokenX,
+          addressTo: pool.tokenY
+        })
+      }
     })
-  }
+
+    return data
+  }, [poolsList])
 
   useEffect(() => {
     dispatch(actions.getCurrentStats())
@@ -67,7 +80,7 @@ export const PopularPoolsWrapper: React.FC = () => {
 
   return (
     <Grid container>
-      <PopularPools pools={data} isLoading={isLoadingStats} network={currentNetwork} />
+      <PopularPools pools={list} isLoading={isLoadingStats} network={currentNetwork} />
     </Grid>
   )
 }

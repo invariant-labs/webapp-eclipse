@@ -40,6 +40,7 @@ const Card: React.FC<ICard> = ({
   const navigate = useNavigate()
 
   const handleOpenPosition = () => {
+    if (fee === undefined) return
     navigate(
       `/newPosition/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
       { state: { referer: 'liquidity' } }
@@ -115,8 +116,10 @@ const Card: React.FC<ICard> = ({
               <Grid container gap='8px'>
                 {/* <StatsLabel title='APY' value={apy.toString()} /> */}
                 <StatsLabel title='Fee' value={fee + '%'} />
-                <StatsLabel title='TVL' value={`$${formatNumber(TVL)}`} />
-                <StatsLabel title='Volume' value={`$${formatNumber(volume)}`} />
+                {TVL !== undefined && <StatsLabel title='TVL' value={`$${formatNumber(TVL)}`} />}
+                {volume !== undefined && (
+                  <StatsLabel title='Volume' value={`$${formatNumber(volume)}`} />
+                )}
               </Grid>
               <Grid container justifyContent='space-between' alignItems='center' mt='auto'>
                 <Grid

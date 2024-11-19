@@ -18,7 +18,7 @@ export interface IPopularPools {
 
 const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network }) => {
   const { classes } = useStyles()
-  console.log(theme.breakpoints.down('md'))
+
   const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
   const isSmDown = useMediaQuery('@media (max-width:700px)')
