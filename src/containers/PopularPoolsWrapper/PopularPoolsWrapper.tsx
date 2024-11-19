@@ -5,8 +5,6 @@ import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import icons from '@static/icons'
 import { actions } from '@store/reducers/stats'
 import { Grid } from '@mui/material'
-import useStyles from './style'
-import loader from '@static/gif/loader.gif'
 import { network } from '@store/selectors/solanaConnection'
 
 export interface PopularPoolData {

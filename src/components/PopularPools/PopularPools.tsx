@@ -1,9 +1,14 @@
-import { Grid, Typography } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import Card from './Card/Card'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
 import { NetworkType } from '@store/consts/static'
+import Slider from 'react-slick'
+import 'slick-carousel/slick/slick.css'
+import 'slick-carousel/slick/slick-theme.css'
+import { theme } from '@static/theme'
+import { useMemo } from 'react'
 
 export interface IPopularPools {
   pools: PopularPoolData[]
@@ -13,6 +18,17 @@ export interface IPopularPools {
 
 const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network }) => {
   const { classes } = useStyles()
+  console.log(theme.breakpoints.down('md'))
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
+  const isSmDown = useMediaQuery('@media (max-width:700px)')
+
+  const slidesNumber = useMemo(() => {
+    if (isSmDown) return 1
+    if (isMdDown) return 2
+    if (isLgDown) return 3
+    return 4
+  }, [isMdDown, isLgDown, isSmDown])
 
   return (
     <Grid container mb={5}>
@@ -24,25 +40,39 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network }) =>
         borderRadius={34}
         borderWidth={1}
         innerClassName={classes.cardsContainer}>
-        {pools.map(pool => (
-          <Card
-            addressFrom={pool.addressFrom}
-            addressTo={pool.addressTo}
-            iconFrom={pool.iconFrom}
-            iconTo={pool.iconTo}
-            volume={pool.volume}
-            TVL={pool.TVL}
-            fee={pool.fee}
-            symbolFrom={pool.symbolFrom}
-            symbolTo={pool.symbolTo}
-            apy={pool.apy}
-            apyData={pool.apyData}
-            isUnknownFrom={pool.isUnknownFrom}
-            isUnknownTo={pool.isUnknownTo}
-            isLoading={isLoading}
-            network={network}
-          />
-        ))}
+        <Slider
+          dots={isLgDown}
+          draggable={isLgDown}
+          touchMove={isLgDown}
+          infinite={false}
+          speed={500}
+          slidesToShow={slidesNumber}
+          slidesToScroll={1}
+          arrows={false}
+          className={classes.slider}
+          dotsClass={`slick-dots ${classes.dots}`}
+          appendDots={dots => <ul>{dots}</ul>}
+          rows={1}>
+          {pools.map(pool => (
+            <Card
+              addressFrom={pool.addressFrom}
+              addressTo={pool.addressTo}
+              iconFrom={pool.iconFrom}
+              iconTo={pool.iconTo}
+              volume={pool.volume}
+              TVL={pool.TVL}
+              fee={pool.fee}
+              symbolFrom={pool.symbolFrom}
+              symbolTo={pool.symbolTo}
+              apy={pool.apy}
+              apyData={pool.apyData}
+              isUnknownFrom={pool.isUnknownFrom}
+              isUnknownTo={pool.isUnknownTo}
+              isLoading={isLoading}
+              network={network}
+            />
+          ))}
+        </Slider>
       </GradientBorder>
     </Grid>
   )

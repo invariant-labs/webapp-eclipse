@@ -5,7 +5,9 @@ export const useStyles = makeStyles()(() => ({
   root: { width: '220px' },
   container: {
     position: 'relative',
-    height: 300 //325 with 4 stats labels
+    height: 300, //325 with 4 stats labels
+    borderRadius: '24px',
+    overflow: 'hidden'
   },
   backgroundImage: {
     position: 'absolute',

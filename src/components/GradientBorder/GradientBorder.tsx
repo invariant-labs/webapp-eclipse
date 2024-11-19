@@ -29,11 +29,11 @@ const GradientBorder: React.FC<IGradientBorder> = ({
     borderRadius
   })
 
-  const Content = ({ hidden }: { hidden?: boolean }) => {
+  const Content = ({ hidden, hideBackground }: { hidden?: boolean; hideBackground?: boolean }) => {
     return (
       <Grid
         container
-        className={(classes.innerContainer, innerClassName)}
+        className={(classes.innerContainer, hideBackground && classes.noBackground, innerClassName)}
         visibility={hidden ? 'hidden' : 'visible'}>
         {children}
       </Grid>
@@ -41,17 +41,22 @@ const GradientBorder: React.FC<IGradientBorder> = ({
   }
   return (
     <Grid container className={classes.rootContainer}>
-      <Grid container className={classes.positionAbsolute}>
-        <Grid
-          container
-          className={classNames(classes.gradientContainer, classes.gradient)}
-          overflow='hidden'>
-          <Content hidden />
+      <Grid overflow='hidden'>
+        <Grid container className={classes.positionAbsolute}>
+          <Grid
+            container
+            className={classNames(classes.gradientContainer, classes.gradient)}
+            overflow='hidden'>
+            {/* <Content hidden /> */}
+          </Grid>
         </Grid>
       </Grid>
       <Grid container>
-        <Grid container className={classes.gradientContainer} zIndex={1} overflow='hidden'>
-          <Content />
+        <Grid
+          container
+          className={classNames(classes.gradientContainer, classes.noBackground)}
+          zIndex={1}>
+          <Content hideBackground />
         </Grid>
       </Grid>
     </Grid>

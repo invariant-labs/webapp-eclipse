@@ -40,9 +40,13 @@ export const useStyles = makeStyles<{
   positionAbsolute: {
     position: 'absolute',
     width: '100%',
-    height: '100%'
+    height: '100%',
+    backgroundColor: colors.invariant.transparentBcg,
+    overflow: 'hidden',
+    borderRadius: `calc((${borderWidth}px / 2) + ${borderRadius}px)`
   },
   innerContainer: {
     borderRadius: borderRadius ?? 10
-  }
+  },
+  noBackground: {}
 }))
