@@ -621,7 +621,6 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
 }
 
 export const getReversedAddressTickerMap = (network: NetworkType) => {
-  console.log('')
   return Object.fromEntries(
     Object.entries(getAddressTickerMap(network)).map(([key, value]) => [value, key])
   )
@@ -686,21 +685,25 @@ export const MAX_CROSSES_IN_SINGLE_TX = 11
 
 export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
 
-export const popularPools: { tokenX: string; tokenY: string }[] = [
+export const popularPools: { tokenX: string; tokenY: string; fee: string }[] = [
   {
     tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-    tokenY: 'So11111111111111111111111111111111111111112'
+    tokenY: 'So11111111111111111111111111111111111111112',
+    fee: '0.01'
   },
   {
-    tokenX: 'LaihKXA47apnS599tyEyasY2REfEzBNe4heunANhsMx',
-    tokenY: 'So11111111111111111111111111111111111111112'
+    tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
+    tokenY: 'So11111111111111111111111111111111111111112',
+    fee: '0.01'
   },
   {
-    tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-    tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL'
+    tokenX: 'So11111111111111111111111111111111111111112',
+    tokenY: 'trbts2EsWyMdnCjsHUFBKLtgudmBD7Rfbz8zCg1s4EK',
+    fee: '0.3'
   },
   {
-    tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-    tokenY: 'LaihKXA47apnS599tyEyasY2REfEzBNe4heunANhsMx'
+    tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+    tokenY: 'So11111111111111111111111111111111111111112',
+    fee: '0.3'
   }
 ]

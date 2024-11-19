@@ -40,8 +40,9 @@ export const PopularPoolsWrapper: React.FC = () => {
     popularPools.map(pool => {
       const poolData = poolsList.find(
         item =>
-          (item.tokenX.toString() === pool.tokenX && item.tokenY.toString() === pool.tokenY) ||
-          (item.tokenX.toString() === pool.tokenY && item.tokenY.toString() === pool.tokenX)
+          ((item.tokenX.toString() === pool.tokenX && item.tokenY.toString() === pool.tokenY) ||
+            (item.tokenX.toString() === pool.tokenY && item.tokenY.toString() === pool.tokenX)) &&
+          item.fee.toString() === pool.fee
       )
       if (poolData) {
         data.push({
