@@ -90,14 +90,19 @@ const MarketEvents = () => {
 
     const connectEvents = () => {
       allPools.forEach(pool => {
-        marketProgram.onPoolChange(pool.tokenX, pool.tokenY, { fee: pool.fee.v }, poolStructure => {
-          dispatch(
-            actions.updatePool({
-              address: pool.address,
-              poolStructure
-            })
-          )
-        })
+        marketProgram.onPoolChange(
+          pool.tokenX,
+          pool.tokenY,
+          { fee: pool.fee.v, tickSpacing: pool.tickSpacing },
+          poolStructure => {
+            dispatch(
+              actions.updatePool({
+                address: pool.address,
+                poolStructure
+              })
+            )
+          }
+        )
       })
     }
 

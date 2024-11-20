@@ -1,7 +1,7 @@
 import { call, SagaGenerator } from 'typed-redux-saga'
 import { getConnection } from './connection'
-import { Account, PublicKey } from '@solana/web3.js'
-import { MintInfo, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { Keypair, PublicKey } from '@solana/web3.js'
+import { createMint, getMint, Mint, mintTo, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import { getWallet } from './wallet'
 import { getTokenProgramId } from '@utils/utils'
 
@@ -12,31 +12,45 @@ export function* createToken(
 ): SagaGenerator<string> {
   const wallet = yield* call(getWallet)
   const connection = yield* call(getConnection)
+  const keypair = Keypair.generate();
 
   const token = yield* call(
-    [Token, Token.createMint],
+    createMint,
     connection,
-    new Account(),
+    keypair,
     mintAuthority ? new PublicKey(mintAuthority) : wallet.publicKey,
     freezeAuthority ? new PublicKey(freezeAuthority) : null,
     decimals,
+    undefined,
+    undefined,
     TOKEN_PROGRAM_ID
   )
-  return token.publicKey.toString()
+  return token.toString()
 }
-export function* getTokenDetails(address: string): SagaGenerator<MintInfo> {
+export function* getTokenDetails(address: string): SagaGenerator<Mint> {
   const connection = yield* call(getConnection)
   const programId = yield* call(getTokenProgramId, connection, new PublicKey(address))
-  const token = new Token(connection, new PublicKey(address), programId, new Account())
-  const info = yield* call([token, token.getMintInfo])
-  return info
+  const mint = yield* call(getMint, connection, new PublicKey(address), undefined, programId)
+  return mint
 }
 
 export function* mintToken(tokenAddress: string, recipient: string, amount: number): Generator {
   yield* call(getWallet)
   const connection = yield* call(getConnection)
+  const keypair = Keypair.generate()
   const programId = yield* call(getTokenProgramId, connection, new PublicKey(tokenAddress))
-  const token = new Token(connection, new PublicKey(tokenAddress), programId, new Account())
+
   // This should return txid in future
-  yield* call([token, token.mintTo], new PublicKey(recipient), new Account(), [], amount)
+  yield* call(
+    mintTo,
+    connection,
+    keypair,
+    new PublicKey(tokenAddress),
+    new PublicKey(recipient),
+    keypair,
+    amount,
+    [],
+    undefined,
+    programId
+  )
 }

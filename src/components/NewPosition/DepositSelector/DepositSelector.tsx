@@ -21,7 +21,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { Status } from '@store/reducers/solanaWallet'
 import {
   convertBalanceToBN,

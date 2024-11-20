@@ -14,9 +14,9 @@ import {
   simulateSwap,
   SimulationStatus
 } from '@invariant-labs/sdk-eclipse/src/utils'
-import { BN } from '@project-serum/anchor'
-import { Token as SPLToken } from '@solana/spl-token'
-import { Connection, Keypair, PublicKey } from '@solana/web3.js'
+import { BN } from '@coral-xyz/anchor'
+import { getMint } from '@solana/spl-token'
+import { Connection, PublicKey } from '@solana/web3.js'
 import {
   Market,
   Tickmap,
@@ -74,7 +74,7 @@ import {
   MAX_CROSSES_IN_SINGLE_TX
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
-import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes'
+import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
 import {
   CoinGeckoAPIData,
   CoingeckoApiPriceData,
@@ -1291,14 +1291,19 @@ export const getFullNewTokensData = async (
 ): Promise<Record<string, Token>> => {
   const promises = addresses.map(async address => {
     const programId = await getTokenProgramId(connection, address)
-    const token = new SPLToken(connection, address, programId, new Keypair())
-    return await token.getMintInfo()
+    return getMint(
+      connection,
+      address,
+      undefined,
+      programId
+    )
   })
 
   const tokens: Record<string, Token> = {}
 
   const results = await Promise.allSettled(promises)
 
+  console.log("addr 2", results)
   for (const [index, result] of results.entries()) {
     tokens[addresses[index].toString()] = await getTokenMetadata(
       connection,
@@ -1325,6 +1330,8 @@ export async function getTokenMetadata(
   address: string,
   decimals: number
 ): Promise<Token> {
+  console.log("addr inner", address)
+
   const mintAddress = new PublicKey(address)
 
   try {
@@ -1361,13 +1368,18 @@ export const getNewTokenOrThrow = async (
   connection: Connection
 ): Promise<Record<string, Token>> => {
   const key = new PublicKey(address)
-  const programId = await getTokenProgramId(connection, new PublicKey(address))
-  const token = new SPLToken(connection, key, programId, new Keypair())
+  const programId = await getTokenProgramId(connection, key)
 
-  const info = await token.getMintInfo()
+  const info = await getMint(
+    connection,
+    key,
+    undefined,
+    programId
+  )
 
   console.log(info)
-
+  
+  console.log("addr", address)
   const tokenData = await getTokenMetadata(connection, address, info.decimals)
 
   return {

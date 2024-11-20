@@ -17,7 +17,7 @@ import {
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import { Token as StoreToken } from '@store/consts/types'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as positionsActions } from '@store/reducers/positions'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
@@ -25,9 +25,8 @@ import { actions, ITokenAccount, Status } from '@store/reducers/solanaWallet'
 import { tokens } from '@store/selectors/pools'
 import { network } from '@store/selectors/solanaConnection'
 import { accounts, balance, status } from '@store/selectors/solanaWallet'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createCloseAccountInstruction, createMintToInstruction, getAssociatedTokenAddress, getMint, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
-  Account,
   ParsedAccountData,
   PublicKey,
   sendAndConfirmRawTransaction,
@@ -40,7 +39,7 @@ import {
 import { closeSnackbar } from 'notistack'
 import { getConnection, handleRpcError } from './connection'
 import { getTokenDetails } from './token'
-import { TOKEN_2022_PROGRAM_ID } from '@invariant-labs/sdk-eclipse'
+import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
 import { disconnectWallet, getSolanaWallet } from '@utils/web3/wallet'
 import { WalletAdapter } from '@utils/web3/adapters/types'
 import airdropAdmin from '@store/consts/airdropAdmin'
@@ -114,6 +113,7 @@ export function* fetchTokensAccounts(): Generator {
   const unknownTokens: Record<string, StoreToken> = {}
   for (const account of mergedAccounts) {
     const info: IparsedTokenInfo = account.account.data.parsed.info
+    console.log(info)
     newAccounts.push({
       programId: new PublicKey(info.mint),
       balance: new BN(info.tokenAmount.amount),
@@ -122,6 +122,7 @@ export function* fetchTokensAccounts(): Generator {
     })
 
     if (!allTokens[info.mint]) {
+      console.log("fetching", info);
       unknownTokens[info.mint] = yield* call(
         getTokenMetadata,
         connection,
@@ -135,12 +136,13 @@ export function* fetchTokensAccounts(): Generator {
   yield* put(poolsActions.addTokens(unknownTokens))
 }
 
-export function* getToken(tokenAddress: PublicKey): SagaGenerator<Token> {
-  const connection = yield* call(getConnection)
-  const programId = yield* call(getTokenProgramId, connection, new PublicKey(tokenAddress))
-  const token = new Token(connection, tokenAddress, programId, new Account())
-  return token
-}
+// export function* getToken(tokenAddress: PublicKey): SagaGenerator<Mint> {
+//   const connection = yield* call(getConnection)
+//   const programId = yield* call(getTokenProgramId, connection, new PublicKey(tokenAddress))
+
+//   const token = yield* call(getTokenMetadata, connection, tokenAddress, undefined, programId)
+//   return token
+// }
 
 export function* handleAirdrop(): Generator {
   const walletStatus = yield* select(status)
@@ -262,12 +264,11 @@ export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator 
   const tokensAccounts = yield* select(accounts)
   const acc: PublicKey[] = []
   for (const collateral of collateralsAddresses) {
-    const collateralTokenProgram = yield* call(getToken, collateral)
     const accountAddress = tokensAccounts[collateral.toString()]
       ? tokensAccounts[collateral.toString()].address
       : null
     if (accountAddress == null) {
-      acc.push(collateralTokenProgram.publicKey)
+      acc.push(new PublicKey(collateralsAddresses))
     }
   }
   if (acc.length !== 0) {
@@ -285,7 +286,7 @@ export function* transferAirdropSOL(): Generator {
     })
   )
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getRecentBlockhash])
+  const blockhash = yield* call([connection, connection.getLatestBlockhash])
   tx.feePayer = airdropAdmin.publicKey
   tx.recentBlockhash = blockhash.blockhash
   tx.setSigners(airdropAdmin.publicKey)
@@ -326,23 +327,25 @@ export function* getCollateralTokenAirdrop(
   const tokensAccounts = yield* select(accounts)
   for (const [index, collateral] of collateralsAddresses.entries()) {
     instructions.push(
-      Token.createMintToInstruction(
-        TOKEN_PROGRAM_ID,
+      createMintToInstruction(
         collateral,
         tokensAccounts[collateral.toString()].address,
         airdropAdmin.publicKey,
+        collateralsQuantities[index],
         [],
-        collateralsQuantities[index]
+        TOKEN_PROGRAM_ID,
       )
     )
   }
   const tx = instructions.reduce((tx, ix) => tx.add(ix), new Transaction())
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getRecentBlockhash])
+  const blockhash = yield* call([connection, connection.getLatestBlockhash])
   tx.feePayer = wallet.publicKey
   tx.recentBlockhash = blockhash.blockhash
-  const signedTx = yield* call([wallet, wallet.signTransaction], tx)
-  signedTx.partialSign(airdropAdmin)
+  tx.partialSign(airdropAdmin)
+
+  const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+
   yield* call([connection, connection.sendRawTransaction], signedTx.serialize(), {
     skipPreflight: true
   })
@@ -355,10 +358,10 @@ export function* getCollateralTokenAirdrop(
 
 export function* signAndSend(wallet: WalletAdapter, tx: Transaction): SagaGenerator<string> {
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getRecentBlockhash])
+  const blockhash = yield* call([connection, connection.getLatestBlockhash])
   tx.feePayer = wallet.publicKey
   tx.recentBlockhash = blockhash.blockhash
-  const signedTx = yield* call([wallet, wallet.signTransaction], tx)
+  const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
   const signature = yield* call([connection, connection.sendRawTransaction], signedTx.serialize())
   return signature
 }
@@ -368,19 +371,20 @@ export function* createAccount(tokenAddress: PublicKey): SagaGenerator<PublicKey
   const connection = yield* call(getConnection)
   const programId = yield* call(getTokenProgramId, connection, new PublicKey(tokenAddress))
   const associatedAccount = yield* call(
-    Token.getAssociatedTokenAddress,
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-    programId,
+    getAssociatedTokenAddress,
     tokenAddress,
-    wallet.publicKey
+    wallet.publicKey,
+    false,
+    programId,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
   )
-  const ix = Token.createAssociatedTokenAccountInstruction(
-    ASSOCIATED_TOKEN_PROGRAM_ID,
-    programId,
-    tokenAddress,
+  const ix = createAssociatedTokenAccountInstruction(
+    wallet.publicKey,
     associatedAccount,
     wallet.publicKey,
-    wallet.publicKey
+    tokenAddress,
+    programId,
+    ASSOCIATED_TOKEN_PROGRAM_ID,
   )
   yield* call(signAndSend, wallet, new Transaction().add(ix))
   const token = yield* call(getTokenDetails, tokenAddress.toString())
@@ -417,23 +421,25 @@ export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerato
   const ixs: TransactionInstruction[] = []
   const associatedAccs: PublicKey[] = []
 
+  
   for (const address of tokenAddress) {
     const programId = yield* call(getTokenProgramId, connection, address)
     const associatedAccount = yield* call(
-      Token.getAssociatedTokenAddress,
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      programId,
+      getAssociatedTokenAddress,
       address,
-      wallet.publicKey
+      wallet.publicKey,
+      false,
+      programId,
+      ASSOCIATED_TOKEN_PROGRAM_ID,
     )
     associatedAccs.push(associatedAccount)
-    const ix = Token.createAssociatedTokenAccountInstruction(
-      ASSOCIATED_TOKEN_PROGRAM_ID,
-      programId,
-      address,
+    const ix = createAssociatedTokenAccountInstruction(
       associatedAccount,
       wallet.publicKey,
-      wallet.publicKey
+      wallet.publicKey,
+      address,
+      programId,
+      ASSOCIATED_TOKEN_PROGRAM_ID,
     )
     ixs.push(ix)
   }
@@ -578,22 +584,22 @@ export function* handleUnwrapWETH(): Generator {
     const unwrapTx = new Transaction()
 
     wrappedEthAccountPublicKeys.forEach(wrappedEthAccountPublicKey => {
-      const unwrapIx = Token.createCloseAccountInstruction(
-        TOKEN_PROGRAM_ID,
+      const unwrapIx = createCloseAccountInstruction(
         wrappedEthAccountPublicKey,
         wallet.publicKey,
         wallet.publicKey,
-        []
+        [],
+        TOKEN_PROGRAM_ID,
       )
 
       unwrapTx.add(unwrapIx)
     })
 
-    const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    const unwrapBlockhash = yield* call([connection, connection.getLatestBlockhash])
     unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
     unwrapTx.feePayer = wallet.publicKey
 
-    const unwrapSignedTx = yield* call([wallet, wallet.signTransaction], unwrapTx)
+    const unwrapSignedTx = (yield* call([wallet, wallet.signTransaction], unwrapTx)) as Transaction
 
     const unwrapTxid = yield* call(
       sendAndConfirmRawTransaction,
@@ -601,7 +607,7 @@ export function* handleUnwrapWETH(): Generator {
       unwrapSignedTx.serialize(),
       {
         skipPreflight: false
-      }
+      },
     )
 
     if (!unwrapTxid.length) {
