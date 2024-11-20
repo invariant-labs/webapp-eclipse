@@ -12,7 +12,7 @@ export function* createToken(
 ): SagaGenerator<string> {
   const wallet = yield* call(getWallet)
   const connection = yield* call(getConnection)
-  const keypair = Keypair.generate();
+  const keypair = Keypair.generate()
 
   const token = yield* call(
     createMint,

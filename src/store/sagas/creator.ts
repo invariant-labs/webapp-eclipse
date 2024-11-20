@@ -157,7 +157,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       decimals,
       mintAuthority,
       null,
-      spl18.TOKEN_PROGRAM_ID,
+      spl18.TOKEN_PROGRAM_ID
     )
 
     const tokenATA = yield* call(
@@ -166,7 +166,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       wallet.publicKey,
       undefined,
       spl18.TOKEN_PROGRAM_ID,
-      spl18.ASSOCIATED_TOKEN_PROGRAM_ID,
+      spl18.ASSOCIATED_TOKEN_PROGRAM_ID
     )
 
     const associatedTokenAccountInstruction = spl18.createAssociatedTokenAccountInstruction(
@@ -175,7 +175,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       wallet.publicKey,
       mintKeypair.publicKey,
       spl18.TOKEN_PROGRAM_ID,
-      spl18.ASSOCIATED_TOKEN_PROGRAM_ID,
+      spl18.ASSOCIATED_TOKEN_PROGRAM_ID
     )
 
     const mintToInstruction = spl18.createMintToInstruction(
@@ -184,7 +184,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       wallet.publicKey,
       BigInt(supply),
       [],
-      spl18.TOKEN_PROGRAM_ID,
+      spl18.TOKEN_PROGRAM_ID
     )
 
     const createMetadataAccountInstruction = createCreateMetadataAccountV3Instruction(

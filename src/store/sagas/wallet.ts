@@ -25,7 +25,15 @@ import { actions, ITokenAccount, Status } from '@store/reducers/solanaWallet'
 import { tokens } from '@store/selectors/pools'
 import { network } from '@store/selectors/solanaConnection'
 import { accounts, balance, status } from '@store/selectors/solanaWallet'
-import { ASSOCIATED_TOKEN_PROGRAM_ID, createAssociatedTokenAccountInstruction, createCloseAccountInstruction, createMintToInstruction, getAssociatedTokenAddress, getMint, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import {
+  ASSOCIATED_TOKEN_PROGRAM_ID,
+  createAssociatedTokenAccountInstruction,
+  createCloseAccountInstruction,
+  createMintToInstruction,
+  getAssociatedTokenAddress,
+  getMint,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
 import {
   ParsedAccountData,
   PublicKey,
@@ -122,7 +130,7 @@ export function* fetchTokensAccounts(): Generator {
     })
 
     if (!allTokens[info.mint]) {
-      console.log("fetching", info);
+      console.log('fetching', info)
       unknownTokens[info.mint] = yield* call(
         getTokenMetadata,
         connection,
@@ -333,7 +341,7 @@ export function* getCollateralTokenAirdrop(
         airdropAdmin.publicKey,
         collateralsQuantities[index],
         [],
-        TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID
       )
     )
   }
@@ -376,7 +384,7 @@ export function* createAccount(tokenAddress: PublicKey): SagaGenerator<PublicKey
     wallet.publicKey,
     false,
     programId,
-    ASSOCIATED_TOKEN_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID
   )
   const ix = createAssociatedTokenAccountInstruction(
     wallet.publicKey,
@@ -384,7 +392,7 @@ export function* createAccount(tokenAddress: PublicKey): SagaGenerator<PublicKey
     wallet.publicKey,
     tokenAddress,
     programId,
-    ASSOCIATED_TOKEN_PROGRAM_ID,
+    ASSOCIATED_TOKEN_PROGRAM_ID
   )
   yield* call(signAndSend, wallet, new Transaction().add(ix))
   const token = yield* call(getTokenDetails, tokenAddress.toString())
@@ -421,7 +429,6 @@ export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerato
   const ixs: TransactionInstruction[] = []
   const associatedAccs: PublicKey[] = []
 
-  
   for (const address of tokenAddress) {
     const programId = yield* call(getTokenProgramId, connection, address)
     const associatedAccount = yield* call(
@@ -430,7 +437,7 @@ export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerato
       wallet.publicKey,
       false,
       programId,
-      ASSOCIATED_TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID
     )
     associatedAccs.push(associatedAccount)
     const ix = createAssociatedTokenAccountInstruction(
@@ -439,7 +446,7 @@ export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerato
       wallet.publicKey,
       address,
       programId,
-      ASSOCIATED_TOKEN_PROGRAM_ID,
+      ASSOCIATED_TOKEN_PROGRAM_ID
     )
     ixs.push(ix)
   }
@@ -589,7 +596,7 @@ export function* handleUnwrapWETH(): Generator {
         wallet.publicKey,
         wallet.publicKey,
         [],
-        TOKEN_PROGRAM_ID,
+        TOKEN_PROGRAM_ID
       )
 
       unwrapTx.add(unwrapIx)
@@ -607,7 +614,7 @@ export function* handleUnwrapWETH(): Generator {
       unwrapSignedTx.serialize(),
       {
         skipPreflight: false
-      },
+      }
     )
 
     if (!unwrapTxid.length) {

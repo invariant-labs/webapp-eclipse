@@ -47,10 +47,6 @@ export default defineConfig({
     },
     
   },
-  esbuild: {
-    minifyIdentifiers: false,
-    keepNames: true,
-  },
   optimizeDeps: {
     esbuildOptions: {
       target: 'es2020'

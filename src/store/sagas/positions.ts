@@ -452,7 +452,10 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const signedTx = (yield* call([wallet, wallet.signTransaction], combinedTransaction)) as Transaction
+    const signedTx = (yield* call(
+      [wallet, wallet.signTransaction],
+      combinedTransaction
+    )) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
@@ -462,14 +465,9 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
       signedTx.partialSign(...poolSigners)
     }
 
-    const txId = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      signedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    const txId = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
 
     if (!txId.length) {
       yield put(actions.setInitPositionSuccess(false))
@@ -654,14 +652,9 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      signedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
 
     yield put(actions.setInitPositionSuccess(!!txid.length))
 
@@ -928,14 +921,9 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
     yield put(snackbarsActions.remove(loaderSigningTx))
     ;(signedTx as Transaction).partialSign(wrappedEthAccount)
 
-    const txid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      signedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
 
     if (!txid.length) {
       yield put(
@@ -1066,14 +1054,9 @@ export function* handleClaimFee(action: PayloadAction<number>) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      signedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
 
     if (!txid.length) {
       yield put(
@@ -1245,14 +1228,9 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     yield put(snackbarsActions.remove(loaderSigningTx))
     ;(signedTx as Transaction).partialSign(wrappedEthAccount)
 
-    const txid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      signedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
 
     yield* call(sleep, 3000)
 
@@ -1413,14 +1391,9 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      signedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
 
     yield* call(sleep, 3000)
 

@@ -14,7 +14,13 @@ import {
   Transaction,
   TransactionExpiredTimeoutError
 } from '@solana/web3.js'
-import { createCloseAccountInstruction, createInitializeAccountInstruction, getMinimumBalanceForRentExemptAccount, NATIVE_MINT, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import {
+  createCloseAccountInstruction,
+  createInitializeAccountInstruction,
+  getMinimumBalanceForRentExemptAccount,
+  NATIVE_MINT,
+  TOKEN_PROGRAM_ID
+} from '@solana/spl-token'
 import {
   MAX_CROSSES_IN_SINGLE_TX,
   SIGNING_SNACKBAR_CONFIG,
@@ -95,7 +101,7 @@ export function* handleSwapWithETH(): Generator {
       wrappedEthAccount.publicKey,
       NATIVE_MINT,
       wallet.publicKey,
-      TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID
     )
 
     const initialTx =
@@ -111,7 +117,7 @@ export function* handleSwapWithETH(): Generator {
       wallet.publicKey,
       wallet.publicKey,
       [],
-      TOKEN_PROGRAM_ID,
+      TOKEN_PROGRAM_ID
     )
 
     let fromAddress =
@@ -170,7 +176,10 @@ export function* handleSwapWithETH(): Generator {
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const initialSignedTx = (yield* call([wallet, wallet.signTransaction], initialTx)) as Transaction
+    const initialSignedTx = (yield* call(
+      [wallet, wallet.signTransaction],
+      initialTx
+    )) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))

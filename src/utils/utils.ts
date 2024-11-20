@@ -1291,19 +1291,14 @@ export const getFullNewTokensData = async (
 ): Promise<Record<string, Token>> => {
   const promises = addresses.map(async address => {
     const programId = await getTokenProgramId(connection, address)
-    return getMint(
-      connection,
-      address,
-      undefined,
-      programId
-    )
+    return getMint(connection, address, undefined, programId)
   })
 
   const tokens: Record<string, Token> = {}
 
   const results = await Promise.allSettled(promises)
 
-  console.log("addr 2", results)
+  console.log('addr 2', results)
   for (const [index, result] of results.entries()) {
     tokens[addresses[index].toString()] = await getTokenMetadata(
       connection,
@@ -1330,7 +1325,7 @@ export async function getTokenMetadata(
   address: string,
   decimals: number
 ): Promise<Token> {
-  console.log("addr inner", address)
+  console.log('addr inner', address)
 
   const mintAddress = new PublicKey(address)
 
@@ -1370,16 +1365,11 @@ export const getNewTokenOrThrow = async (
   const key = new PublicKey(address)
   const programId = await getTokenProgramId(connection, key)
 
-  const info = await getMint(
-    connection,
-    key,
-    undefined,
-    programId
-  )
+  const info = await getMint(connection, key, undefined, programId)
 
   console.log(info)
-  
-  console.log("addr", address)
+
+  console.log('addr', address)
   const tokenData = await getTokenMetadata(connection, address, info.decimals)
 
   return {

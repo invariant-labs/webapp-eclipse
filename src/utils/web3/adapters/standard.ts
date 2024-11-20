@@ -12,7 +12,9 @@ export class StandardAdapter implements WalletAdapter {
     return nightlyConnectAdapter.connected
   }
 
-  async signAllTransactions<T extends Transaction | VersionedTransaction> (transactions: T[]): Promise<T[]> {
+  async signAllTransactions<T extends Transaction | VersionedTransaction>(
+    transactions: T[]
+  ): Promise<T[]> {
     return await nightlyConnectAdapter.signAllTransactions(transactions)
   }
 
@@ -20,7 +22,7 @@ export class StandardAdapter implements WalletAdapter {
     return nightlyConnectAdapter.publicKey ?? DEFAULT_PUBLICKEY
   }
 
-  async signTransaction<T extends Transaction | VersionedTransaction> (transaction: T): Promise<T> {
+  async signTransaction<T extends Transaction | VersionedTransaction>(transaction: T): Promise<T> {
     return await nightlyConnectAdapter.signTransaction(transaction)
   }
 
