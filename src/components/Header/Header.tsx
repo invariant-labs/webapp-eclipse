@@ -201,10 +201,11 @@ export const Header: React.FC<IHeader> = ({
 
         <Grid container item className={classes.buttons} wrap='nowrap'>
           <Grid container className={classes.leftButtons}>
-            {/* {typeOfNetwork === NetworkType.Testnet ? ( */}
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-              <FaucetButton onFaucet={onFaucet}>Faucet</FaucetButton>
-            </Box>
+            {typeOfNetwork === NetworkType.Testnet && (
+              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+                <FaucetButton onFaucet={onFaucet}>Faucet</FaucetButton>
+              </Box>
+            )}
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>
               <SelectRPCButton
                 rpc={rpc}
@@ -293,7 +294,7 @@ export const Header: React.FC<IHeader> = ({
               setRoutesModalOpen(false)
               unblurContent()
             }}
-            onFaucet={isMdDown ? onFaucet : undefined}
+            onFaucet={isMdDown && typeOfNetwork === NetworkType.Testnet ? onFaucet : undefined}
             onRPC={
               isMdDown
                 ? () => {
