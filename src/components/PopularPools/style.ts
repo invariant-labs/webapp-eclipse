@@ -26,7 +26,7 @@ export const useStyles = makeStyles()(() => ({
   },
   dots: {
     position: 'absolute',
-    bottom: -58,
+    bottom: -54,
     overflow: 'visible',
     zIndex: 10,
 

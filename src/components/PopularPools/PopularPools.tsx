@@ -31,7 +31,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network }) =>
   }, [isMdDown, isLgDown, isSmDown])
 
   return (
-    <Grid container mb={5}>
+    <Grid container mb={6}>
       <Typography className={classes.title} mb={3}>
         Popular pools
       </Typography>
