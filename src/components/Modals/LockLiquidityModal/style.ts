@@ -188,7 +188,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       flexDirection: 'column',
       gap: 12,
-      flex: 1
+      flex: 1,
+      [theme.breakpoints.down('sm')]: {
+        gap: 8
+      }
     },
     icons: {
       display: 'flex',
@@ -214,7 +217,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       flexDirection: 'row',
       gap: 12,
-      width: '100%'
+      width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column',
+        gap: 8
+      }
     },
     pairFee: {
       flex: '0 1 auto',
@@ -227,10 +234,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       color: colors.invariant.black,
       ...typography.body1,
       padding: '0 8px',
-      textAlign: 'center'
+      textAlign: 'center',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
+      }
     },
     pairRange: {
-      flex: '1 1 0',
+      flex: '1 1 auto',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -238,10 +248,14 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: colors.invariant.light,
       height: 36,
       padding: '0 8px',
-      textAlign: 'center'
+      textAlign: 'center',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        flex: '0 1 auto'
+      }
     },
     pairValue: {
-      flex: '1 1 0',
+      flex: '1 1 auto',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'space-between',
@@ -249,7 +263,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: colors.invariant.light,
       height: 36,
       padding: '0 8px',
-      textAlign: 'center'
+      textAlign: 'center',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%',
+        flex: '0 1 auto'
+      }
     },
     normalText: {
       color: colors.invariant.textGrey,
