@@ -154,6 +154,13 @@ const useStyles = makeStyles()((theme: Theme) => {
         padding: 2,
         marginRight: 2,
         marginLeft: 2
+      },
+      '&:hover': {
+        cursor: 'pointer',
+        filter: 'brightness(2)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
       }
     },
     name: {
@@ -183,6 +190,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       paddingTop: 8,
       paddingBottom: 8,
       flex: '0 0 auto'
+    },
+    tooltip: {
+      color: colors.invariant.textGrey,
+      ...typography.caption4,
+      lineHeight: '24px',
+      background: colors.black.full,
+      borderRadius: 12
     },
     pairDetails: {
       display: 'flex',

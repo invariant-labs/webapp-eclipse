@@ -108,6 +108,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
         fee={`${fee.toString()}% fee`}
         minMax={`${formatNumber(min)}-${formatNumber(max)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
+        isActive={isActive}
+        swapHandler={swapHandler}
       />
       <Grid className={classes.header}>
         <Grid className={classes.iconsGrid}>

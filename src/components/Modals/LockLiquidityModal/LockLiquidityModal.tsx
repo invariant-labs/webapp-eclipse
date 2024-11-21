@@ -1,21 +1,12 @@
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import useStyles from './style'
-import { Button, Grid, Popover, Typography } from '@mui/material'
+import { Button, Grid, Popover, Tooltip, Typography } from '@mui/material'
 import warningExclamationMarkCircle from '@static/svg/warningExclamationMarkCircle.svg'
 import icons from '@static/icons'
 import { formatNumber } from '@utils/utils'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 
-export const LockLiquidityModal = ({
-  open,
-  xToY,
-  tokenX,
-  tokenY,
-  onClose,
-  onLock,
-  fee,
-  minMax,
-  value
-}: {
+export interface ILockLiquidityModal {
   open: boolean
   xToY: boolean
   tokenX: ILiquidityToken
@@ -25,13 +16,29 @@ export const LockLiquidityModal = ({
   fee: string
   minMax: string
   value: string
-}) => {
+  isActive: boolean
+  swapHandler: () => void
+}
+export const LockLiquidityModal = ({
+  open,
+  xToY,
+  tokenX,
+  tokenY,
+  onClose,
+  onLock,
+  fee,
+  minMax,
+  value,
+  isActive,
+  swapHandler
+}: ILockLiquidityModal) => {
   const { classes } = useStyles()
 
   return (
     <Popover
       classes={{ paper: classes.paper }}
       open={open}
+      onClose={onClose}
       className={classes.popover}
       anchorReference='none'
       anchorOrigin={{
@@ -65,8 +72,15 @@ export const LockLiquidityModal = ({
                   className={classes.icon}
                   src={xToY ? tokenX.icon : tokenY.icon}
                   alt={xToY ? tokenX.name : tokenY.name}
-                />
-                <img className={classes.arrowIcon} src={icons.swapListIcon} alt='to' />
+                />{' '}
+                <TooltipHover text='Reverse tokens'>
+                  <img
+                    className={classes.arrowIcon}
+                    src={icons.swapListIcon}
+                    alt='to'
+                    onClick={swapHandler}
+                  />
+                </TooltipHover>
                 <img
                   className={classes.icon}
                   src={xToY ? tokenY.icon : tokenX.icon}
@@ -80,7 +94,26 @@ export const LockLiquidityModal = ({
             <Grid item className={classes.pairDetails}>
               <Grid item container className={classes.pairValues}>
                 <Grid item className={classes.pairFee}>
-                  {fee}
+                  <Tooltip
+                    title={
+                      isActive ? (
+                        <>
+                          The position is <b>active</b> and currently <b>earning a fee</b> as long
+                          as the current price is <b>within</b> the position's price range.
+                        </>
+                      ) : (
+                        <>
+                          The position is <b>inactive</b> and <b>not earning a fee</b> as long as
+                          the current price is <b>outside</b> the position's price range.
+                        </>
+                      )
+                    }
+                    placement='top'
+                    classes={{
+                      tooltip: classes.tooltip
+                    }}>
+                    <Typography>{fee}</Typography>
+                  </Tooltip>
                 </Grid>
                 <Grid item className={classes.pairRange}>
                   <Typography className={classes.normalText}>
