@@ -7,7 +7,7 @@ import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { NetworkType } from '@store/consts/static'
 import { Status } from '@store/reducers/solanaWallet'
 

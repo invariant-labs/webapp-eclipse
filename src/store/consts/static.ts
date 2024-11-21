@@ -1,5 +1,5 @@
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
 import { BestTier, Chain, PrefixConfig, Token, TokenPriceData } from './types'

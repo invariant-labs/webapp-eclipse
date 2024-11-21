@@ -8,7 +8,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { NetworkType } from '@store/consts/static'
 import { DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk-eclipse/lib/market'
 import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { SwapToken } from '@store/selectors/solanaWallet'
 

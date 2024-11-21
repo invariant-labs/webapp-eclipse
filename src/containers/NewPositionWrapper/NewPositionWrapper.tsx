@@ -18,7 +18,7 @@ import {
   printBN,
   tickerToAddress
 } from '@utils/utils'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions, actions as positionsActions } from '@store/reducers/positions'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
@@ -346,7 +346,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       dispatch(
         poolsActions.getPoolData(
           new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-            fee
+            fee,
+            tickSpacing
           })
         )
       )

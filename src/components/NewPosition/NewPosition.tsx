@@ -38,7 +38,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
   fromFee,

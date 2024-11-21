@@ -42,7 +42,7 @@ import { TokenPriceData } from '@store/consts/types'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
 
 type Props = {
