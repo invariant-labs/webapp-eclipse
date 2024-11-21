@@ -87,8 +87,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   feeText: {
     paddingInline: 6,
-    minWidth: 66,
-
+    textAlign: 'center',
     [theme.breakpoints.down('md')]: {
       minWidth: 84,
       marginLeft: 16
@@ -270,7 +269,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     transition: '300ms',
     paddingInline: 0,
     borderRadius: 12,
-    textWrap: 'nowrap',
     ...typography.body1,
 
     '&:hover': {
@@ -283,7 +281,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     [theme.breakpoints.down('sm')]: {
-      width: '50%',
+      width: '33%',
       ...typography.caption1,
       height: 40
     }
@@ -309,7 +307,28 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       }
     },
     [theme.breakpoints.down('sm')]: {
-      width: '50%',
+      width: '33%',
+      ...typography.caption1
+    }
+  },
+  lockButton: {
+    color: colors.invariant.black,
+    background: colors.invariant.pinkLinearGradientOpacity,
+    borderRadius: 12,
+    height: 36,
+    padding: 0,
+    minWidth: 36,
+    '&:hover': {
+      background: colors.invariant.pinkLinearGradient,
+      boxShadow: `0 0 16px ${colors.invariant.pink}`,
+      '@media (hover: none)': {
+        background: colors.invariant.pinkLinearGradientOpacity,
+        boxShadow: 'none'
+      }
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '33%',
+      height: 40,
       ...typography.caption1
     }
   },

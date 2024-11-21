@@ -21,6 +21,9 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
+    min: 1,
+    max: 1,
+    currentPrice: 1,
     closePosition: fn(),
     fee: 1,
     onClickClaimFee: fn(),

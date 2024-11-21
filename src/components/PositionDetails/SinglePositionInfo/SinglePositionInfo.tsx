@@ -2,17 +2,18 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { BoxInfo } from './BoxInfo'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { useNavigate } from 'react-router-dom'
 import { TokenPriceData } from '@store/consts/types'
-
+import lockIcon from '@static/svg/lock.svg'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import icons from '@static/icons'
-import { addressToTicker } from '@utils/utils'
+import { addressToTicker, formatNumber } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
+import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 
 interface IProp {
   fee: number
@@ -29,6 +30,9 @@ interface IProp {
   isBalanceLoading: boolean
   isActive: boolean
   network: NetworkType
+  min: number
+  max: number
+  currentPrice: number
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -45,12 +49,35 @@ const SinglePositionInfo: React.FC<IProp> = ({
   userHasStakes = false,
   isBalanceLoading,
   isActive,
-  network
+  network,
+  min,
+  max,
+  currentPrice
 }) => {
   const navigate = useNavigate()
 
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
   const { classes } = useStyles()
+
+  const onLockPosirionModalClose = () => {
+    setIsLockPositionModalOpen(false)
+    unblurContent()
+  }
+
+  const { value, tokenXLabel, tokenYLabel } = useMemo<{
+    value: string
+    tokenXLabel: string
+    tokenYLabel: string
+  }>(() => {
+    const valueX = tokenX.liqValue + tokenY.liqValue / currentPrice
+    const valueY = tokenY.liqValue + tokenX.liqValue * currentPrice
+    return {
+      value: `${formatNumber(xToY ? valueX : valueY)} ${xToY ? tokenX.name : tokenY.name}`,
+      tokenXLabel: xToY ? tokenX.name : tokenY.name,
+      tokenYLabel: xToY ? tokenY.name : tokenX.name
+    }
+  }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
   return (
     <Grid className={classes.root}>
@@ -70,6 +97,17 @@ const SinglePositionInfo: React.FC<IProp> = ({
           setIsModalOpen(false)
           unblurContent()
         }}
+      />
+      <LockLiquidityModal
+        open={isLockPositionModalOpen}
+        onClose={onLockPosirionModalClose}
+        xToY={xToY}
+        tokenX={tokenX}
+        tokenY={tokenY}
+        onLock={() => {}}
+        fee={`${fee.toString()}% fee`}
+        minMax={`${formatNumber(min)}-${formatNumber(max)} ${tokenYLabel} per ${tokenXLabel}`}
+        value={value}
       />
       <Grid className={classes.header}>
         <Grid className={classes.iconsGrid}>
@@ -177,6 +215,15 @@ const SinglePositionInfo: React.FC<IProp> = ({
               Close position
             </Button>
           </TooltipHover>
+          <Button
+            className={classes.lockButton}
+            variant='contained'
+            onClick={() => {
+              setIsLockPositionModalOpen(true)
+              blurContent()
+            }}>
+            <img src={lockIcon} alt='Lock' />
+          </Button>
           <Hidden smUp>
             <Button
               className={classes.button}

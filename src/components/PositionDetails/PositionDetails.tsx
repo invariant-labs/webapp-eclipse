@@ -149,6 +149,9 @@ const PositionDetails: React.FC<IProps> = ({
           isBalanceLoading={isBalanceLoading}
           isActive={isActive}
           network={network}
+          min={xToY ? min : 1 / max}
+          max={xToY ? max : 1 / min}
+          currentPrice={currentPrice}
         />
       </Grid>
 
