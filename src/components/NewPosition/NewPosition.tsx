@@ -46,6 +46,7 @@ import {
   getMaxTick,
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
+import icons from '@static/icons'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -363,13 +364,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -484,6 +485,19 @@ export const NewPosition: React.FC<INewPosition> = ({
     [leftRange, rightRange, currentPriceSqrt]
   )
 
+  const networkUrl = useMemo(() => {
+    switch (network) {
+      case NetworkType.Mainnet:
+        return ''
+      case NetworkType.Testnet:
+        return '?cluster=testnet'
+      case NetworkType.Devnet:
+        return '?cluster=devnet'
+      default:
+        return '?cluster=testnet'
+    }
+  }, [network])
+
   return (
     <Grid container className={classes.wrapper} direction='column'>
       <Link to='/liquidity' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
@@ -524,6 +538,22 @@ export const NewPosition: React.FC<INewPosition> = ({
                 copyPoolAddressHandler={copyPoolAddressHandler}
               />
             ) : null}
+            {poolAddress && (
+              <TooltipHover text='Open pool in explorer'>
+                <Grid width={'12px'} height={'24px'}>
+                  <a
+                    href={`https://solscan.io/account/${poolAddress}${networkUrl}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    onClick={event => {
+                      event.stopPropagation()
+                    }}
+                    className={classes.link}>
+                    <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
+                  </a>
+                </Grid>
+              </TooltipHover>
+            )}
             <Grid className={classes.optionsWrapper}>
               <Hidden mdDown>
                 {tokenAIndex !== null && tokenBIndex !== null && poolIndex !== null && (

@@ -39,7 +39,6 @@ import {
   tickerToAddress
 } from '@utils/utils'
 import { TokenPriceData } from '@store/consts/types'
-import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
@@ -390,7 +389,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
           )
         }
       }}
-      onConnectWallet={openWalletSelectorModal}
+      onConnectWallet={() => {
+        dispatch(walletActions.connect(false))
+      }}
       onDisconnectWallet={() => {
         dispatch(walletActions.disconnect())
       }}

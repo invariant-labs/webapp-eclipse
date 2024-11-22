@@ -35,6 +35,12 @@ import circleDiscord from './svg/circle-discord.svg'
 import circleTelegram from './svg/circle-telegram.svg'
 import eclipse from './svg/eclipse.svg'
 import alephiumLogo from './svg/alephiumLogo.svg'
+import phantomWalletIcon from './svg/phantom.svg'
+import solflareWalletIcon from './svg/solflare.svg'
+import backpackWalletIcon from './svg/backpack.svg'
+import nightlyConnect from './svg/nightlyGlyph.svg'
+import empty from './svg/empty-icon.svg'
+import newTabBtn from './svg/newTabBtn.svg'
 import cat1 from './svg/SolanaCreator/Cat1.svg'
 import cat2 from './svg/SolanaCreator/Cat2.svg'
 import dog1 from './svg/SolanaCreator/Dog1.svg'
@@ -74,6 +80,10 @@ const icons: { [key: string]: string } = {
   Solana: solanaLogo,
   Vara: varaLogo,
   Alephium: alephiumLogo,
+  PhantomWallet: phantomWalletIcon,
+  SolflareWallet: solflareWalletIcon,
+  BackpackWallet: backpackWalletIcon,
+  NightlyConnect: nightlyConnect,
   warningIcon,
   circleDiscord,
   circleTelegram,
@@ -81,7 +91,9 @@ const icons: { [key: string]: string } = {
   cat1,
   cat2,
   dog1,
-  dog2
+  dog2,
+  emptyIcon: empty,
+  newTabBtn
 }
 
 export default icons

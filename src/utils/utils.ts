@@ -116,12 +116,14 @@ export const printBN = (amount: BN, decimals: number): string => {
 }
 
 export const trimZeros = (numStr: string): string => {
+  if (!numStr) {
+    return ''
+  }
   return numStr
     .replace(/(\.\d*?)0+$/, '$1')
     .replace(/^0+(\d)|(\d)0+$/gm, '$1$2')
     .replace(/\.$/, '')
 }
-
 export const convertBalanceToBN = (amount: string, decimals: number): BN => {
   const balanceString = amount.split('.')
   if (balanceString.length !== 2) {
@@ -646,9 +648,25 @@ export const getLiquidityTicksByPositionsList = (
 }
 
 export const numberToString = (number: number | bigint | string): string => {
-  return String(number).includes('e-')
-    ? Number(number).toFixed(parseInt(String(number).split('e-')[1]))
-    : String(number)
+  if (typeof number === 'bigint') {
+    return number.toString()
+  }
+
+  const numStr = String(number)
+
+  if (numStr.includes('e')) {
+    const [base, exp] = numStr.split('e')
+    const exponent = parseInt(exp, 10)
+
+    if (exponent < 0) {
+      const decimalPlaces = Math.abs(exponent) + base.replace('.', '').length - 1
+      return Number(number).toFixed(decimalPlaces)
+    }
+
+    return Number(number).toString()
+  }
+
+  return numStr
 }
 
 export const containsOnlyZeroes = (string: string): boolean => {
@@ -669,11 +687,6 @@ export const formatNumber = (
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)
-
-  if (absNumberAsNumber.toString().includes('e')) {
-    const exponential = absNumberAsNumber.toExponential(decimalsAfterDot)
-    return isNegative ? `-${exponential}` : exponential
-  }
 
   const absNumberAsString = numberToString(absNumberAsNumber)
 
@@ -720,6 +733,7 @@ export const formatNumber = (
     const roundedNumber = numberAsNumber
       .toFixed(countLeadingZeros(afterDot) + decimalsAfterDot + 1)
       .slice(0, -1)
+
     formattedNumber = trimZeros(roundedNumber)
   } else {
     const leadingZeros = afterDot ? countLeadingZeros(afterDot) : 0
@@ -734,8 +748,8 @@ export const formatNumber = (
       '.' +
       (parsedAfterDot
         ? leadingZeros > decimalsAfterDot
-          ? '0' + printSubNumber(leadingZeros) + parseInt(parsedAfterDot)
-          : parsedAfterDot
+          ? '0' + printSubNumber(leadingZeros) + trimZeros(parsedAfterDot)
+          : trimZeros(parsedAfterDot)
         : '')
   }
 
@@ -1298,7 +1312,6 @@ export const getFullNewTokensData = async (
 
   const results = await Promise.allSettled(promises)
 
-  console.log('addr 2', results)
   for (const [index, result] of results.entries()) {
     tokens[addresses[index].toString()] = await getTokenMetadata(
       connection,
@@ -1325,8 +1338,6 @@ export async function getTokenMetadata(
   address: string,
   decimals: number
 ): Promise<Token> {
-  console.log('addr inner', address)
-
   const mintAddress = new PublicKey(address)
 
   try {
@@ -1346,7 +1357,6 @@ export async function getTokenMetadata(
       isUnknown: true
     }
   } catch (error) {
-    console.log('error', error)
     return {
       address: mintAddress,
       decimals,
@@ -1392,6 +1402,7 @@ export const stringToFixed = (
     return toFixedString
   }
 }
+
 export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
   try {
     return getAddressTickerMap(network)[ticker].toString()
