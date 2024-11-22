@@ -247,3 +247,9 @@ export interface PoolStatsDataWithString {
   tvl: number
   apy: number
 }
+
+export enum WalletType {
+  NIGHTLY = 'NIGHTLY',
+  BACKPACK = 'BACKPACK',
+  SALMON = 'SALMON'
+}

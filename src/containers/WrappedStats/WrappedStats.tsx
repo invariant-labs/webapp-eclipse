@@ -24,6 +24,8 @@ import PoolList from '@components/Stats/PoolList/PoolList'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import SearchIcon from '@static/svg/lupaDark.svg'
+import { actions as snackbarActions } from '@store/reducers/snackbars'
+import { VariantType } from 'notistack'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -46,6 +48,10 @@ export const WrappedStats: React.FC = () => {
   const deferredSearchTokensValue = useDeferredValue(searchTokensValue)
   const deferredSearchPoolsValue = useDeferredValue(searchPoolsValue)
 
+  useEffect(() => {
+    dispatch(actions.getCurrentStats())
+  }, [])
+
   const filteredTokenList = useMemo(() => {
     return tokensList.filter(
       tokenData =>
@@ -65,17 +71,28 @@ export const WrappedStats: React.FC = () => {
       const symbolTo = poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString()
 
       const poolName = shortenAddress(symbolFrom ?? '') + '/' + shortenAddress(symbolTo ?? '')
+      const reversedPoolName =
+        shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
 
       return (
         poolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.fee.toString().concat('%').includes(deferredSearchPoolsValue.toLowerCase())
+        poolData.fee.toString().concat('%').includes(deferredSearchPoolsValue.toLowerCase()) ||
+        reversedPoolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
+        poolData.tokenX.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
+        poolData.tokenY.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase())
       )
     })
   }, [poolsList, deferredSearchPoolsValue])
 
-  useEffect(() => {
-    dispatch(actions.getCurrentStats())
-  }, [])
+  const copyAddressHandler = (message: string, variant: VariantType) => {
+    dispatch(
+      snackbarActions.add({
+        message,
+        variant,
+        persist: false
+      })
+    )
+  }
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -144,8 +161,11 @@ export const WrappedStats: React.FC = () => {
                 // priceChange: tokenData.priceChange,
                 volume: tokenData.volume24,
                 TVL: tokenData.tvl,
+                address: tokenData.address.toString(),
                 isUnknown: tokenData.tokenDetails?.isUnknown ?? false
               }))}
+              network={currentNetwork}
+              copyAddressHandler={copyAddressHandler}
             />
           </Grid>
           <Grid
@@ -196,9 +216,11 @@ export const WrappedStats: React.FC = () => {
               //   accumulatedFarmsAvg: accumulatedAverageAPY?.[poolData.poolAddress.toString()] ?? 0
               // }
               isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
-              isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false
+              isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
+              poolAddress: poolData.poolAddress.toString()
             }))}
             network={currentNetwork}
+            copyAddressHandler={copyAddressHandler}
           />
         </>
       )}

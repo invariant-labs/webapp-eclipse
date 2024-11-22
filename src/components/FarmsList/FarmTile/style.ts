@@ -225,3 +225,5 @@
 // }))
 
 // export default useStyles
+
+export default {}

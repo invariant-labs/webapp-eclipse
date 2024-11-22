@@ -134,9 +134,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
-      return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_TEST : WETH_POSITION_INIT_LAMPORTS_TEST
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
     } else {
-      return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_MAIN : WETH_POSITION_INIT_LAMPORTS_MAIN
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_MAIN : WETH_POOL_INIT_LAMPORTS_MAIN
     }
   }, [network, isCurrentPoolExisting])
 

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -12,7 +12,8 @@ import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumber } from '@utils/utils'
 import { shortenAddress } from '@utils/uiUtils'
-
+import { VariantType } from 'notistack'
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 interface IProps {
   TVL?: number
   volume?: number
@@ -37,6 +38,8 @@ interface IProps {
   }
   isUnknownFrom?: boolean
   isUnknownTo?: boolean
+  poolAddress?: string
+  copyAddressHandler?: (message: string, variant: VariantType) => void
 }
 
 const PoolListItem: React.FC<IProps> = ({
@@ -62,12 +65,15 @@ const PoolListItem: React.FC<IProps> = ({
   //   accumulatedFarmsSingleTick: 0
   // }
   isUnknownFrom,
-  isUnknownTo
+  isUnknownTo,
+  poolAddress,
+  copyAddressHandler
 }) => {
   const { classes } = useStyles()
 
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleOpenPosition = () => {
     navigate(
@@ -83,6 +89,33 @@ const PoolListItem: React.FC<IProps> = ({
     )
   }
 
+  const networkUrl = useMemo(() => {
+    switch (network) {
+      case NetworkType.Mainnet:
+        return ''
+      case NetworkType.Testnet:
+        return '?cluster=testnet'
+      case NetworkType.Devnet:
+        return '?cluster=devnet'
+      default:
+        return ''
+    }
+  }, [network])
+
+  const copyToClipboard = () => {
+    if (!poolAddress || !copyAddressHandler) {
+      return
+    }
+    navigator.clipboard
+      .writeText(poolAddress)
+      .then(() => {
+        copyAddressHandler('Market ID copied to Clipboard', 'success')
+      })
+      .catch(() => {
+        copyAddressHandler('Failed to copy Market ID to Clipboard', 'error')
+      })
+  }
+
   return (
     <Grid maxWidth='100%'>
       {displayType === 'token' ? (
@@ -90,7 +123,7 @@ const PoolListItem: React.FC<IProps> = ({
           container
           classes={{ container: classes.container }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
-          {!isSm ? <Typography>{tokenIndex}</Typography> : null}
+          {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
             {!isSm && (
               <Box className={classes.iconsWrapper}>
@@ -122,46 +155,52 @@ const PoolListItem: React.FC<IProps> = ({
               <Typography>
                 {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
               </Typography>
+              <TooltipHover text='Copy pool address'>
+                <FileCopyOutlinedIcon
+                  onClick={copyToClipboard}
+                  classes={{ root: classes.clipboardIcon }}
+                />
+              </TooltipHover>
             </Grid>
           </Grid>
           {/* {!isSm ? (
             <Typography>
-              {`${apy > 1000 ? '>1000' : apy.toFixed(2)}%`}
-              <Tooltip
-                enterTouchDelay={0}
-                leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-                title={
-                  <>
-                    <Typography className={classes.liquidityTitle}>Pool APY</Typography>
-                    <Typography className={classes.liquidityDesc}>
-                      Pool fees: {`${apyData.fees > 1000 ? '>1000' : apyData.fees.toFixed(2)}%`}
-                      {apyData.accumulatedFarmsAvg > 0 ? (
-                        <>
-                          <br />+ All farms rewards with single tick position:{' '}
-                          {`${
-                            apyData.accumulatedFarmsSingleTick > 1000
-                              ? '>1000'
-                              : apyData.accumulatedFarmsSingleTick.toFixed(2)
-                          }%`}
-                          <br />
-                          (All farms rewards with average position:{' '}
-                          {`${
-                            apyData.accumulatedFarmsAvg > 1000
-                              ? '>1000'
-                              : apyData.accumulatedFarmsAvg.toFixed(2)
-                          }%`}
-                          )
-                        </>
-                      ) : null}
-                    </Typography>
-                  </>
-                }
-                placement='bottom'
-                classes={{
-                  tooltip: classes.liquidityTooltip
-                }}>
-                <span className={classes.activeLiquidityIcon}>i</span>
-              </Tooltip>
+              {`${apy > 1000 ? '>1000%' : apy === 0 ? '-' : apy.toFixed(2) + '%'}`}
+              {apy !== 0 && (
+                <Tooltip
+                  title={
+                    <>
+                      <Typography className={classes.liquidityTitle}>Pool APY</Typography>
+                      <Typography className={classes.liquidityDesc}>
+                        Pool fees: {`${apyData.fees > 1000 ? '>1000' : apyData.fees.toFixed(2)}%`}
+                        {apyData.accumulatedFarmsAvg > 0 ? (
+                          <>
+                            <br />+ All farms rewards with single tick position:{' '}
+                            {`${
+                              apyData.accumulatedFarmsSingleTick > 1000
+                                ? '>1000'
+                                : apyData.accumulatedFarmsSingleTick.toFixed(2)
+                            }%`}
+                            <br />
+                            (All farms rewards with average position:{' '}
+                            {`${
+                              apyData.accumulatedFarmsAvg > 1000
+                                ? '>1000'
+                                : apyData.accumulatedFarmsAvg.toFixed(2)
+                            }%`}
+                            )
+                          </>
+                        ) : null}
+                      </Typography>
+                    </>
+                  }
+                  placement='bottom'
+                  classes={{
+                    tooltip: classes.liquidityTooltip
+                  }}>
+                  <span className={classes.activeLiquidityIcon}>i</span>
+                </Tooltip>
+              )}
             </Typography>
           ) : null} */}
           <Typography>{fee}%</Typography>
@@ -179,12 +218,25 @@ const PoolListItem: React.FC<IProps> = ({
                   <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
                 </button>
               </TooltipHover>
+              <TooltipHover text='Open in explorer'>
+                <button
+                  className={classes.actionButton}
+                  onClick={() =>
+                    window.open(
+                      `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
+                      '_blank',
+                      'noopener,noreferrer'
+                    )
+                  }>
+                  <img width={32} height={32} src={icons.newTabBtn} alt={'Exchange'} />
+                </button>
+              </TooltipHover>
             </Box>
           )}
         </Grid>
       ) : (
         <Grid container classes={{ container: classes.container, root: classes.header }}>
-          {!isSm && (
+          {!isMd && (
             <Typography style={{ lineHeight: '11px' }}>
               N<sup>o</sup>
             </Typography>
@@ -205,20 +257,20 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-          {/* {!isXs ? (
+          {/* {!isSm ? (
             <Typography
               style={{ cursor: 'pointer' }}
               onClick={() => {
-                if (sortType === SortType.APY_DESC) {
-                  onSort?.(SortType.APY_ASC)
+                if (sortType === SortTypePoolList.APY_DESC) {
+                  onSort?.(SortTypePoolList.APY_ASC)
                 } else {
-                  onSort?.(SortType.APY_DESC)
+                  onSort?.(SortTypePoolList.APY_DESC)
                 }
               }}>
-              APY
-              {sortType === SortType.APY_ASC ? (
+              7-days APY
+              {sortType === SortTypePoolList.APY_ASC ? (
                 <ArrowDropUpIcon className={classes.icon} />
-              ) : sortType === SortType.APY_DESC ? (
+              ) : sortType === SortTypePoolList.APY_DESC ? (
                 <ArrowDropDownIcon className={classes.icon} />
               ) : null}
             </Typography>

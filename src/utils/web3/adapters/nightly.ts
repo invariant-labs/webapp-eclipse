@@ -1,9 +1,9 @@
-import { Transaction, VersionedTransaction } from '@solana/web3.js'
+import { Transaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
 import { nightlyConnectAdapter } from '../selector'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 
-export class StandardAdapter implements WalletAdapter {
+export class NightlyWalletAdapter implements WalletAdapter {
   constructor() {
     this.connect = this.connect.bind(this)
   }
@@ -12,9 +12,7 @@ export class StandardAdapter implements WalletAdapter {
     return nightlyConnectAdapter.connected
   }
 
-  async signAllTransactions<T extends Transaction | VersionedTransaction>(
-    transactions: T[]
-  ): Promise<T[]> {
+  async signAllTransactions(transactions: Transaction[]): Promise<Transaction[]> {
     return await nightlyConnectAdapter.signAllTransactions(transactions)
   }
 
@@ -22,12 +20,8 @@ export class StandardAdapter implements WalletAdapter {
     return nightlyConnectAdapter.publicKey ?? DEFAULT_PUBLICKEY
   }
 
-  async signTransaction<T extends Transaction | VersionedTransaction>(transaction: T): Promise<T> {
+  async signTransaction(transaction: Transaction) {
     return await nightlyConnectAdapter.signTransaction(transaction)
-  }
-
-  async signMessage(message: Uint8Array) {
-    return await nightlyConnectAdapter.signMessage(message)
   }
 
   connect = async () => {

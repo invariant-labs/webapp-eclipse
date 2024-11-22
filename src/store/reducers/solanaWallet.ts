@@ -107,7 +107,9 @@ const solanaWalletSlice = createSlice({
     // Triggers rescan for tokens that we control
     rescanTokens() {},
     airdrop() {},
-    connect() {},
+    connect(state, _action: PayloadAction<boolean>) {
+      return state
+    },
     disconnect() {},
     reconnect() {},
     unwrapWETH() {}

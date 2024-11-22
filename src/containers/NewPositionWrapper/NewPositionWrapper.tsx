@@ -34,7 +34,6 @@ import {
 } from '@store/selectors/pools'
 import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
 import { balanceLoading, status, balance, poolTokens } from '@store/selectors/solanaWallet'
-import { openWalletSelectorModal } from '@utils/web3/selector'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -710,7 +709,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isLoadingTokens={isCurrentlyLoadingTokens}
       ethBalance={ethBalance}
       walletStatus={walletStatus}
-      onConnectWallet={openWalletSelectorModal}
+      onConnectWallet={() => {
+        dispatch(walletActions.connect(false))
+      }}
       onDisconnectWallet={() => {
         dispatch(walletActions.disconnect())
       }}
