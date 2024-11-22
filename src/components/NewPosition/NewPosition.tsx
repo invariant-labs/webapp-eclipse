@@ -364,13 +364,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -542,7 +542,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               <TooltipHover text='Open pool in explorer'>
                 <Grid width={'12px'} height={'24px'}>
                   <a
-                    href={`https://solscan.io/account/${poolAddress}${networkUrl}`}
+                    href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
                     target='_blank'
                     rel='noopener noreferrer'
                     onClick={event => {

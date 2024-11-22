@@ -133,7 +133,7 @@ const TokenListItem: React.FC<IProps> = ({
                   className={classes.actionButton}
                   onClick={() =>
                     window.open(
-                      `https://solscan.io/token/${address}${networkUrl}`,
+                      `https://eclipsescan.xyz/token/${address}${networkUrl}`,
                       '_blank',
                       'noopener,noreferrer'
                     )

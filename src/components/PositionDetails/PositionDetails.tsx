@@ -139,7 +139,7 @@ const PositionDetails: React.FC<IProps> = ({
                 <TooltipHover text='Open pool in explorer'>
                   <Grid height={'24px'} mr={'12px'}>
                     <a
-                      href={`https://solscan.io/account/${poolAddress.toString()}${networkUrl}`}
+                      href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
                       target='_blank'
                       rel='noopener noreferrer'
                       onClick={event => {
@@ -240,7 +240,7 @@ const PositionDetails: React.FC<IProps> = ({
                   <TooltipHover text='Open pool in explorer'>
                     <Grid mr={'12px'}>
                       <a
-                        href={`https://solscan.io/account/${poolAddress.toString()}${networkUrl}`}
+                        href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
                         target='_blank'
                         rel='noopener noreferrer'
                         onClick={event => {

@@ -223,7 +223,7 @@ const PoolListItem: React.FC<IProps> = ({
                   className={classes.actionButton}
                   onClick={() =>
                     window.open(
-                      `https://solscan.io/account/${poolAddress}${networkUrl}`,
+                      `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
                       '_blank',
                       'noopener,noreferrer'
                     )
