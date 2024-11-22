@@ -2,13 +2,12 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { useState } from 'react'
 import DepositSelector, { IDepositSelector } from './DepositSelector'
-
 import { Provider } from 'react-redux'
 import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { NetworkType } from '@store/consts/static'
 import { Status } from '@store/reducers/solanaWallet'
 
@@ -129,7 +128,8 @@ export const Primary: Story = {
     setTokenBIndex: fn(),
     tokenAIndex: 0,
     tokenBIndex: 1,
-    canNavigate: true
+    canNavigate: true,
+    isCurrentPoolExisting: true
   },
   render: args => <PrimaryComponent {...args} />
 }

@@ -142,7 +142,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       PROGRAM_ID
     )[0]
 
-    const lamports = yield* call(spl18.Token.getMinBalanceRentForExemptMint, connection)
+    const lamports = yield* call(spl18.getMinimumBalanceForRentExemptAccount, connection)
 
     const createAccountInstruction = SystemProgram.createAccount({
       fromPubkey: wallet.publicKey,
@@ -152,38 +152,39 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       programId: spl18.TOKEN_PROGRAM_ID
     })
 
-    const initializeMintInstruction = spl18.Token.createInitMintInstruction(
-      spl18.TOKEN_PROGRAM_ID,
+    const initializeMintInstruction = spl18.createInitializeMintInstruction(
       mint,
       decimals,
       mintAuthority,
-      null
+      null,
+      spl18.TOKEN_PROGRAM_ID
     )
 
     const tokenATA = yield* call(
-      spl18.Token.getAssociatedTokenAddress,
-      spl18.ASSOCIATED_TOKEN_PROGRAM_ID,
-      spl18.TOKEN_PROGRAM_ID,
+      spl18.getAssociatedTokenAddress,
       mintKeypair.publicKey,
-      wallet.publicKey
+      wallet.publicKey,
+      undefined,
+      spl18.TOKEN_PROGRAM_ID,
+      spl18.ASSOCIATED_TOKEN_PROGRAM_ID
     )
 
-    const associatedTokenAccountInstruction = spl18.Token.createAssociatedTokenAccountInstruction(
-      spl18.ASSOCIATED_TOKEN_PROGRAM_ID,
+    const associatedTokenAccountInstruction = spl18.createAssociatedTokenAccountInstruction(
+      wallet.publicKey,
+      tokenATA,
+      wallet.publicKey,
+      mintKeypair.publicKey,
       spl18.TOKEN_PROGRAM_ID,
+      spl18.ASSOCIATED_TOKEN_PROGRAM_ID
+    )
+
+    const mintToInstruction = spl18.createMintToInstruction(
       mintKeypair.publicKey,
       tokenATA,
       wallet.publicKey,
-      wallet.publicKey
-    )
-
-    const mintToInstruction = spl18.Token.createMintToInstruction(
-      spl18.TOKEN_PROGRAM_ID,
-      mintKeypair.publicKey,
-      tokenATA,
-      wallet.publicKey,
+      BigInt(supply),
       [],
-      BigInt(supply) as any
+      spl18.TOKEN_PROGRAM_ID
     )
 
     const createMetadataAccountInstruction = createCreateMetadataAccountV3Instruction(
@@ -231,7 +232,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
 
     transaction.partialSign(mintKeypair)
 
-    const signedTx = yield* call([wallet, wallet.signTransaction], transaction)
+    const signedTx = (yield* call([wallet, wallet.signTransaction], transaction)) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))

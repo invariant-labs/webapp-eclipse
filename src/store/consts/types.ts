@@ -1,5 +1,5 @@
 import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from './static'
 
@@ -246,4 +246,10 @@ export interface PoolStatsDataWithString {
   volume24: number
   tvl: number
   apy: number
+}
+
+export enum WalletType {
+  NIGHTLY = 'NIGHTLY',
+  BACKPACK = 'BACKPACK',
+  SALMON = 'SALMON'
 }

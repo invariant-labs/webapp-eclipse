@@ -3,7 +3,7 @@ export {}
 // import { NetworkType } from '@consts/static'
 // import { Bonds } from '@invariant-labs/bonds-sdk'
 // import { getSolanaConnection, networkTypetoBondsNetwork } from '@web3/connection'
-// import { getSolanaWallet } from '@web3/wallet'
+// import { getWallet } from '@web3/wallet'
 
 // let _bonds: Bonds
 // export const getCurrentBondsProgram = (): Bonds => {
@@ -19,7 +19,7 @@ export {}
 //   }
 //   const net = networkTypetoBondsNetwork(networkType)
 
-//   _bonds = await Bonds.build(net, getSolanaWallet(), getSolanaConnection(rpcAddress))
+//   _bonds = await Bonds.build(net, getWallet(), getSolanaConnection(rpcAddress))
 //   return _bonds
 // }
 
@@ -29,7 +29,7 @@ export {}
 //   }
 //   const net = networkTypetoBondsNetwork(networkType)
 
-//   Bonds.build(net, getSolanaWallet(), getSolanaConnection(rpcAddress))
+//   Bonds.build(net, getWallet(), getSolanaConnection(rpcAddress))
 //     .then(market => {
 //       _bonds = market
 //     })

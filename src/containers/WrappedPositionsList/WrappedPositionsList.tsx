@@ -1,6 +1,5 @@
 import { PositionsList } from '@components/PositionsList/PositionsList'
 import { NetworkType, POSITIONS_PER_PAGE } from '@store/consts/static'
-
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { DECIMAL, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -12,7 +11,6 @@ import {
   positionsWithPoolsData
 } from '@store/selectors/positions'
 import { address, status } from '@store/selectors/solanaWallet'
-
 import React, { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
