@@ -10,7 +10,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       [theme.breakpoints.down(671)]: {
         display: 'flex',
         marginLeft: 'auto',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        marginTop: 'auto'
       }
     },
     backgroundContainer: {
@@ -136,10 +137,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     icon: {
       width: 40,
-      borderRadius: '100%',
-      [theme.breakpoints.down('sm')]: {
-        width: 22
-      }
+      borderRadius: '100%'
     },
     arrowIcon: {
       width: 32,
@@ -148,13 +146,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       height: 32,
       borderRadius: '100%',
       padding: 4,
-      [theme.breakpoints.down('sm')]: {
-        width: 15,
-        height: 15,
-        padding: 2,
-        marginRight: 2,
-        marginLeft: 2
-      },
       '&:hover': {
         cursor: 'pointer',
         filter: 'brightness(2)',
@@ -181,7 +172,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      gap: 12
+      gap: 12,
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column'
+      }
     },
     pairDisplay: {
       display: 'flex',
@@ -204,7 +198,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 12,
       flex: 1,
       [theme.breakpoints.down('sm')]: {
-        gap: 8
+        gap: 8,
+        width: '100%'
       }
     },
     icons: {

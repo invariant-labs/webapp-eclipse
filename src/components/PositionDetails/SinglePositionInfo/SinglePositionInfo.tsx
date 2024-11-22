@@ -217,15 +217,17 @@ const SinglePositionInfo: React.FC<IProp> = ({
               Close position
             </Button>
           </TooltipHover>
-          <Button
-            className={classes.lockButton}
-            variant='contained'
-            onClick={() => {
-              setIsLockPositionModalOpen(true)
-              blurContent()
-            }}>
-            <img src={lockIcon} alt='Lock' />
-          </Button>
+          <TooltipHover text={'Lock liquidity'}>
+            <Button
+              className={classes.lockButton}
+              variant='contained'
+              onClick={() => {
+                setIsLockPositionModalOpen(true)
+                blurContent()
+              }}>
+              <img src={lockIcon} alt='Lock' />
+            </Button>
+          </TooltipHover>
           <Hidden smUp>
             <Button
               className={classes.button}
