@@ -3,7 +3,7 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@components/Refresher/Refresher'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import refreshIcon from '@static/svg/refresh.svg'
 import settingIcon from '@static/svg/settings.svg'
@@ -224,20 +224,7 @@ export const Swap: React.FC<ISwap> = ({
       setTokenFromIndex(initialTokenFromIndex)
       setTokenToIndex(initialTokenToIndex)
     }
-  }, [tokens.length, canNavigate])
-
-  // useEffect(() => {
-  //   if (Object.keys(tokens).length && tokenFrom === null && tokenTo === null) {
-  //     const firstCommonToken = commonTokens[0] || null
-
-  //     setTokenFrom(initialTokenFrom !== null ? initialTokenFrom : firstCommonToken)
-  //     setTokenTo(initialTokenTo)
-  //   }
-  // }, [Object.keys(tokens).length])
-
-  // useEffect(() => {
-  //   onSetPair(tokenFrom, tokenTo)
-  // }, [tokenFrom, tokenTo])
+  }, [tokens.length, canNavigate, initialTokenFromIndex, initialTokenToIndex])
 
   useEffect(() => {
     onSetPair(
@@ -670,7 +657,7 @@ export const Swap: React.FC<ISwap> = ({
           <ExchangeAmountInput
             value={amountFrom}
             balance={
-              tokenFromIndex !== null
+              tokenFromIndex !== null && !!tokens[tokenFromIndex]
                 ? printBN(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
                 : '- -'
             }

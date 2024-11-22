@@ -4,14 +4,16 @@ import { actions, RpcStatus } from '@store/reducers/solanaConnection'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, rpcAddress, rpcStatus } from '@store/selectors/solanaConnection'
 import { address, status, thankYouModalShown } from '@store/selectors/solanaWallet'
-import { nightlyConnectAdapter, openWalletSelectorModal } from '@utils/web3/selector'
+import { nightlyConnectAdapter } from '@utils/web3/selector'
 import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { Chain } from '@store/consts/types'
+import { Chain, WalletType } from '@store/consts/types'
 import { RpcErrorModal } from '@components/RpcErrorModal/RpcErrorModal'
 import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
+import { changeToNightlyAdapter, connectStaticWallet, getEclipseWallet } from '@utils/web3/wallet'
+import { sleep } from '@invariant-labs/sdk-eclipse'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -29,29 +31,48 @@ export const HeaderWrapper: React.FC = () => {
   }
 
   useEffect(() => {
-    if (currentNetwork === NetworkType.Devnet) {
-      dispatch(actions.setNetwork(NetworkType.Testnet))
-      dispatch(actions.setRPCAddress(RPC.TEST))
+    const reconnectStaticWallet = async (wallet: WalletType) => {
+      await connectStaticWallet(wallet)
+      dispatch(walletActions.connect(true))
     }
 
-    nightlyConnectAdapter.addListener('connect', () => {
-      dispatch(walletActions.connect())
-    })
+    const eagerConnectToNightly = async () => {
+      try {
+        changeToNightlyAdapter()
+        const nightlyAdapter = getEclipseWallet()
 
-    if (nightlyConnectAdapter.connected) {
-      dispatch(walletActions.connect())
-    }
-
-    nightlyConnectAdapter.canEagerConnect().then(
-      async canEagerConnect => {
-        if (canEagerConnect) {
-          await nightlyConnectAdapter.connect()
+        await nightlyAdapter.connect()
+        await sleep(500)
+        if (!nightlyAdapter.connected) {
+          await nightlyAdapter.connect()
+          await sleep(500)
         }
-      },
-      error => {
-        console.log(error)
+        dispatch(walletActions.connect(true))
+      } catch (error) {
+        console.error('Error during Nightly eager connection:', error)
       }
-    )
+    }
+
+    ;(async () => {
+      if (currentNetwork === NetworkType.Devnet) {
+        dispatch(actions.setNetwork(NetworkType.Testnet))
+        dispatch(actions.setRPCAddress(RPC.TEST))
+      }
+
+      const walletType = localStorage.getItem('WALLET_TYPE') as WalletType | null
+
+      if (walletType === WalletType.NIGHTLY) {
+        const canEagerConnect = await nightlyConnectAdapter.canEagerConnect().catch(error => {
+          console.error('Error checking eager connect:', error)
+          return false
+        })
+        if (canEagerConnect) {
+          await eagerConnectToNightly()
+        }
+      } else if (walletType) {
+        await reconnectStaticWallet(walletType)
+      }
+    })()
   }, [])
 
   const defaultTestnetRPC = useMemo(() => {
@@ -60,7 +81,7 @@ export const HeaderWrapper: React.FC = () => {
     if (lastRPC === null) {
       localStorage.setItem(
         `INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`,
-        RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet]
+        RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet]
       )
     }
 
@@ -147,7 +168,9 @@ export const HeaderWrapper: React.FC = () => {
             dispatch(actions.setNetwork(network))
           }
         }}
-        onConnectWallet={openWalletSelectorModal}
+        onConnectWallet={() => {
+          dispatch(walletActions.connect(false))
+        }}
         landing={location.pathname.substring(1)}
         walletConnected={walletStatus === Status.Initialized}
         onDisconnectWallet={() => {
@@ -167,9 +190,6 @@ export const HeaderWrapper: React.FC = () => {
               persist: false
             })
           )
-        }}
-        onChangeWallet={() => {
-          dispatch(walletActions.reconnect())
         }}
         activeChain={activeChain}
         onChainSelect={chain => {

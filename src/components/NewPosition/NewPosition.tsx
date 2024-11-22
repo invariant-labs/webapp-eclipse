@@ -38,7 +38,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
   fromFee,
@@ -46,6 +46,7 @@ import {
   getMaxTick,
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
+import icons from '@static/icons'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -484,6 +485,19 @@ export const NewPosition: React.FC<INewPosition> = ({
     [leftRange, rightRange, currentPriceSqrt]
   )
 
+  const networkUrl = useMemo(() => {
+    switch (network) {
+      case NetworkType.Mainnet:
+        return ''
+      case NetworkType.Testnet:
+        return '?cluster=testnet'
+      case NetworkType.Devnet:
+        return '?cluster=devnet'
+      default:
+        return '?cluster=testnet'
+    }
+  }, [network])
+
   return (
     <Grid container className={classes.wrapper} direction='column'>
       <Link to='/liquidity' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
@@ -524,6 +538,22 @@ export const NewPosition: React.FC<INewPosition> = ({
                 copyPoolAddressHandler={copyPoolAddressHandler}
               />
             ) : null}
+            {poolAddress && (
+              <TooltipHover text='Open pool in explorer'>
+                <Grid width={'12px'} height={'24px'}>
+                  <a
+                    href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    onClick={event => {
+                      event.stopPropagation()
+                    }}
+                    className={classes.link}>
+                    <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
+                  </a>
+                </Grid>
+              </TooltipHover>
+            )}
             <Grid className={classes.optionsWrapper}>
               <Hidden mdDown>
                 {tokenAIndex !== null && tokenBIndex !== null && poolIndex !== null && (
@@ -707,6 +737,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           onConnectWallet={onConnectWallet}
           onDisconnectWallet={onDisconnectWallet}
           canNavigate={canNavigate}
+          isCurrentPoolExisting={isCurrentPoolExisting}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

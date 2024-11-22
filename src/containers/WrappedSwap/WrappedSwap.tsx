@@ -39,10 +39,9 @@ import {
   tickerToAddress
 } from '@utils/utils'
 import { TokenPriceData } from '@store/consts/types'
-import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
 
 type Props = {
@@ -111,8 +110,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
       ? tickerToAddress(networkType, initialTokenFrom)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString()
+      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString())
 
   const lastTokenTo =
     tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
@@ -390,7 +389,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
           )
         }
       }}
-      onConnectWallet={openWalletSelectorModal}
+      onConnectWallet={() => {
+        dispatch(walletActions.connect(false))
+      }}
       onDisconnectWallet={() => {
         dispatch(walletActions.disconnect())
       }}

@@ -1,4 +1,4 @@
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { createSelector } from '@reduxjs/toolkit'
 import { keySelectors, AnyProps } from './helpers'
 import { PublicKey } from '@solana/web3.js'
@@ -64,7 +64,7 @@ export const swapTokens = createSelector(
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
           ? ethBalance
-          : allAccounts[token.address.toString()]?.balance ?? new BN(0)
+          : (allAccounts[token.address.toString()]?.balance ?? new BN(0))
     }))
   }
 )
@@ -80,7 +80,7 @@ export const poolTokens = createSelector(
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
           ? ethBalance
-          : allAccounts[token.address.toString()]?.balance ?? new BN(0)
+          : (allAccounts[token.address.toString()]?.balance ?? new BN(0))
     }))
   }
 )
@@ -99,7 +99,7 @@ export const swapTokensDict = createSelector(
         balance:
           val.address.toString() === WRAPPED_ETH_ADDRESS
             ? ethBalance
-            : allAccounts[val.address.toString()]?.balance ?? new BN(0)
+            : (allAccounts[val.address.toString()]?.balance ?? new BN(0))
       }
     })
 
