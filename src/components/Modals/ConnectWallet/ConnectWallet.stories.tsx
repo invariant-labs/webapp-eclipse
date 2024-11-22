@@ -21,7 +21,6 @@ export const Primary: Story = {
     open: true,
     anchorEl: null,
     handleClose: fn(),
-    callDisconect: fn(),
-    isChangeWallet: false
+    callDisconect: fn()
   }
 }
