@@ -32,6 +32,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'flex-start',
       gap: 32
     },
+    lockWarningText: { textWrap: 'wrap', ...typography.body2 },
+    lockExplanation: {
+      minHeight: 160,
+      color: '#A9B6BF',
+      ...typography.body2,
+      textWrap: 'wrap'
+    },
     lockPositionHeader: {
       width: '100%',
       display: 'flex',
@@ -41,16 +48,12 @@ const useStyles = makeStyles()((theme: Theme) => {
       '& h1': {
         ...typography.heading2,
         flex: 1,
-        textAlign: 'center'
+        textAlign: 'center',
+        [theme.breakpoints.down('sm')]: {
+          marginTop: 30
+        }
       }
     },
-    lockExplanation: {
-      minHeight: 160,
-      color: '#A9B6BF',
-      ...typography.body2,
-      textWrap: 'wrap'
-    },
-    lockWarningText: { textWrap: 'wrap', ...typography.body2 },
     lockPositionClose: {
       position: 'absolute',
       right: 0,
