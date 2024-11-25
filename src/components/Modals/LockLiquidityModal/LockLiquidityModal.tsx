@@ -5,6 +5,9 @@ import warningExclamationMarkCircle from '@static/svg/warningExclamationMarkCirc
 import icons from '@static/icons'
 import { formatNumber } from '@utils/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import classNames from 'classnames'
+import { useEffect, useState } from 'react'
 
 export interface ILockLiquidityModal {
   open: boolean
@@ -18,6 +21,8 @@ export interface ILockLiquidityModal {
   value: string
   isActive: boolean
   swapHandler: () => void
+  success: boolean
+  inProgress: boolean
 }
 export const LockLiquidityModal = ({
   open,
@@ -30,9 +35,34 @@ export const LockLiquidityModal = ({
   minMax,
   value,
   isActive,
-  swapHandler
+  swapHandler,
+  success,
+  inProgress
 }: ILockLiquidityModal) => {
   const { classes } = useStyles()
+  const [progress, setProgress] = useState<ProgressState>('none')
+
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 1000)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+      }, 3000)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
 
   return (
     <Popover
@@ -139,9 +169,18 @@ export const LockLiquidityModal = ({
               Lorem ipsum... This action is irrevirsible! Do you want to proceed? Lorem ipsum...
             </Typography>
           </Grid>
-          <Button className={classes.lockButton} variant='contained' onClick={onLock}>
-            <span className={classes.buttonText}>Lock Position!</span>
-          </Button>
+          <AnimatedButton
+            content={'Lock Position!'}
+            className={classNames(
+              classes.lockButton,
+              progress === 'none' ? classes.buttonText : null
+            )}
+            onClick={() => {
+              onLock()
+              setProgress('progress')
+            }}
+            progress={progress}
+          />
         </Grid>
       </Grid>
     </Popover>

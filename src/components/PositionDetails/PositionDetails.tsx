@@ -8,7 +8,7 @@ import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
@@ -36,6 +36,7 @@ interface IProps {
   tokenXPriceData?: TokenPriceData
   tokenYPriceData?: TokenPriceData
   onClickClaimFee: () => void
+  lockPosition: () => void
   closePosition: (claimFarmRewards?: boolean) => void
   ticksLoading: boolean
   tickSpacing: number
@@ -65,6 +66,7 @@ const PositionDetails: React.FC<IProps> = ({
   tokenX,
   tokenXPriceData,
   tokenYPriceData,
+  lockPosition,
   onClickClaimFee,
   closePosition,
   ticksLoading,
@@ -184,6 +186,7 @@ const PositionDetails: React.FC<IProps> = ({
           min={xToY ? min : 1 / max}
           max={xToY ? max : 1 / min}
           currentPrice={currentPrice}
+          lockPosition={lockPosition}
         />
       </Grid>
 

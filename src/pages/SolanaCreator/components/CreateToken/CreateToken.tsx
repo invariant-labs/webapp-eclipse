@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import useStyles from './styles'
 import { validateDecimals, validateSupply } from '../../utils/solanaCreatorUtils'

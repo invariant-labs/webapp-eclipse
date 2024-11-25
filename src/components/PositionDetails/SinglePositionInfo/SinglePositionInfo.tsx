@@ -2,7 +2,7 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import { BoxInfo } from './BoxInfo'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
@@ -14,6 +14,8 @@ import icons from '@static/icons'
 import { addressToTicker, formatNumber } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
+import { lockerState } from '@store/selectors/locker'
+import { useSelector } from 'react-redux'
 
 interface IProp {
   fee: number
@@ -25,6 +27,7 @@ interface IProp {
   tokenYPriceData?: TokenPriceData
   xToY: boolean
   swapHandler: () => void
+  lockPosition: () => void
   showFeesLoader?: boolean
   userHasStakes?: boolean
   isBalanceLoading: boolean
@@ -52,10 +55,11 @@ const SinglePositionInfo: React.FC<IProp> = ({
   network,
   min,
   max,
-  currentPrice
+  currentPrice,
+  lockPosition
 }) => {
   const navigate = useNavigate()
-
+  const { success, inProgress } = useSelector(lockerState)
   const [isModalOpen, setIsModalOpen] = useState(false)
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
   const { classes } = useStyles()
@@ -104,12 +108,14 @@ const SinglePositionInfo: React.FC<IProp> = ({
         xToY={xToY}
         tokenX={tokenX}
         tokenY={tokenY}
-        onLock={() => {}}
+        onLock={lockPosition}
         fee={`${fee.toString()}% fee`}
         minMax={`${formatNumber(min)}-${formatNumber(max)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
         isActive={isActive}
         swapHandler={swapHandler}
+        success={success}
+        inProgress={inProgress}
       />
       <Grid className={classes.header}>
         <Grid className={classes.iconsGrid}>
