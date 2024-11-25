@@ -17,6 +17,7 @@ const defaultArgs = {
   ticksLoading: false,
   tickSpacing: new BN(1),
   closePosition: fn(),
+  lockPosition: fn(),
   tokenX: {
     name: 'BTC',
     balance: new BN(10000),

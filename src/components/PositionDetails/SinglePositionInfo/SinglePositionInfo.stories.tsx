@@ -28,6 +28,7 @@ export const Primary: Story = {
     fee: 1,
     onClickClaimFee: fn(),
     swapHandler: fn(),
+    lockPosition: fn(),
     tokenX: {
       name: 'BTC',
       icon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
