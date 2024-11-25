@@ -1,8 +1,8 @@
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
-import { BestTier, Chain, PrefixConfig, Token, TokenPriceData } from './types'
+import { BestTier, Chain, PrefixConfig, Token, TokenPriceData, WalletType } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 
@@ -617,7 +617,6 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
 }
 
 export const getReversedAddressTickerMap = (network: NetworkType) => {
-  console.log('')
   return Object.fromEntries(
     Object.entries(getAddressTickerMap(network)).map(([key, value]) => [value, key])
   )
@@ -679,3 +678,9 @@ export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
 
 export const MAX_CROSSES_IN_SINGLE_TX = 11
+
+export const walletNames = {
+  [WalletType.BACKPACK]: 'Backpack',
+  [WalletType.SALMON]: 'Salmon',
+  [WalletType.NIGHTLY]: 'Wallet Selector'
+}

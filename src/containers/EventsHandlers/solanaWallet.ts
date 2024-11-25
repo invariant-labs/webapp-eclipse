@@ -8,7 +8,7 @@ import { AccountInfo, PublicKey } from '@solana/web3.js'
 
 import { Status } from '@store/reducers/solanaConnection'
 
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { parseTokenAccountData } from '@utils/web3/data'
 

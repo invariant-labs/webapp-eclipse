@@ -21,7 +21,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { Status } from '@store/reducers/solanaWallet'
 import {
   convertBalanceToBN,
@@ -134,9 +134,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
-      return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_TEST : WETH_POSITION_INIT_LAMPORTS_TEST
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
     } else {
-      return poolIndex === null ? WETH_POOL_INIT_LAMPORTS_MAIN : WETH_POSITION_INIT_LAMPORTS_MAIN
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_MAIN : WETH_POOL_INIT_LAMPORTS_MAIN
     }
   }, [network, isCurrentPoolExisting])
 

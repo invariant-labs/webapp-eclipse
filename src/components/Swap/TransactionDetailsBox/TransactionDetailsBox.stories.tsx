@@ -4,7 +4,7 @@ import { Provider } from 'react-redux'
 import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
 import { SnackbarProvider } from 'notistack'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 const meta = {
   title: 'Components/TransactionDetailsBox',

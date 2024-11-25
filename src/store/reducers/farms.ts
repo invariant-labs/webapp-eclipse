@@ -4,7 +4,7 @@
 // import { PublicKey } from '@solana/web3.js'
 // import { PayloadType } from './types'
 // import { IncentiveStructure, Stake } from '@invariant-labs/staker-sdk/lib/staker'
-// import { BN } from '@project-serum/anchor'
+// import { BN } from '@coral-xyz/anchor'
 // import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 
 // export interface CurrentFarmData {

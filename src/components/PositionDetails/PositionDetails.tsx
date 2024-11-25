@@ -8,7 +8,7 @@ import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
@@ -19,6 +19,7 @@ import { printBN } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PublicKey } from '@solana/web3.js'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
+import icons from '@static/icons'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -103,6 +104,19 @@ const PositionDetails: React.FC<IProps> = ({
     return () => clearTimeout(timeout)
   }, [refresherTime])
 
+  const networkUrl = useMemo(() => {
+    switch (network) {
+      case NetworkType.Mainnet:
+        return ''
+      case NetworkType.Testnet:
+        return '?cluster=testnet'
+      case NetworkType.Devnet:
+        return '?cluster=devnet'
+      default:
+        return '?cluster=testnet'
+    }
+  }, [network])
+
   return (
     <Grid container className={classes.wrapperContainer} wrap='nowrap'>
       <Grid className={classes.positionDetails} container item direction='column'>
@@ -117,20 +131,38 @@ const PositionDetails: React.FC<IProps> = ({
             <Hidden mdUp>
               <MarketIdLabel
                 marketId={poolAddress.toString()}
-                displayLength={9}
+                displayLength={5}
                 copyPoolAddressHandler={copyPoolAddressHandler}
-                style={{ paddingRight: 10 }}
+                style={{ paddingRight: 8 }}
               />
-              <TooltipHover text='Refresh'>
-                <Refresher
-                  currentIndex={refresherTime}
-                  maxIndex={REFRESHER_INTERVAL}
-                  onClick={() => {
-                    onRefresh()
-                    setRefresherTime(REFRESHER_INTERVAL)
-                  }}
-                />
-              </TooltipHover>
+              {poolAddress.toString() && (
+                <TooltipHover text='Open pool in explorer'>
+                  <Grid height={'24px'} mr={'12px'}>
+                    <a
+                      href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      onClick={event => {
+                        event.stopPropagation()
+                      }}
+                      className={classes.link}>
+                      <img width={14} height={14} src={icons.newTab} alt={'Token address'} />
+                    </a>
+                  </Grid>
+                </TooltipHover>
+              )}
+              <Grid flex={1} justifyItems={'flex-end'}>
+                <TooltipHover text='Refresh'>
+                  <Refresher
+                    currentIndex={refresherTime}
+                    maxIndex={REFRESHER_INTERVAL}
+                    onClick={() => {
+                      onRefresh()
+                      setRefresherTime(REFRESHER_INTERVAL)
+                    }}
+                  />
+                </TooltipHover>
+              </Grid>
             </Hidden>
           </Grid>
         </Grid>
@@ -199,12 +231,37 @@ const PositionDetails: React.FC<IProps> = ({
                   />
                 </Grid>
               </TooltipHover>
-              <MarketIdLabel
-                marketId={poolAddress.toString()}
-                displayLength={9}
-                copyPoolAddressHandler={copyPoolAddressHandler}
-                style={{ padding: '8px 8px  0 0px' }}
-              />
+              <Grid
+                display={'flex'}
+                style={{ padding: '8px 8px  0 0px', height: '24px', minWidth: '290px' }}>
+                <MarketIdLabel
+                  marketId={poolAddress.toString()}
+                  displayLength={5}
+                  copyPoolAddressHandler={copyPoolAddressHandler}
+                />
+                {poolAddress.toString() && (
+                  <TooltipHover text='Open pool in explorer'>
+                    <Grid mr={'12px'}>
+                      <a
+                        href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        onClick={event => {
+                          event.stopPropagation()
+                        }}
+                        className={classes.link}>
+                        <img
+                          width={14}
+                          height={14}
+                          src={icons.newTab}
+                          alt={'Token address'}
+                          style={{ transform: 'translateY(-2px)' }}
+                        />
+                      </a>
+                    </Grid>
+                  </TooltipHover>
+                )}
+              </Grid>
             </Hidden>
           </Grid>
           <SinglePositionPlot

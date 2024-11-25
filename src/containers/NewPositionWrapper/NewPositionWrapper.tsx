@@ -18,7 +18,7 @@ import {
   printBN,
   tickerToAddress
 } from '@utils/utils'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { actions as poolsActions } from '@store/reducers/pools'
 import { actions, actions as positionsActions } from '@store/reducers/positions'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
@@ -34,7 +34,6 @@ import {
 } from '@store/selectors/pools'
 import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
 import { balanceLoading, status, balance, poolTokens } from '@store/selectors/solanaWallet'
-import { openWalletSelectorModal } from '@utils/web3/selector'
 import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -346,7 +345,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       dispatch(
         poolsActions.getPoolData(
           new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-            fee
+            fee,
+            tickSpacing
           })
         )
       )
@@ -709,7 +709,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isLoadingTokens={isCurrentlyLoadingTokens}
       ethBalance={ethBalance}
       walletStatus={walletStatus}
-      onConnectWallet={openWalletSelectorModal}
+      onConnectWallet={() => {
+        dispatch(walletActions.connect(false))
+      }}
       onDisconnectWallet={() => {
         dispatch(walletActions.disconnect())
       }}

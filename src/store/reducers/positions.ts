@@ -1,5 +1,5 @@
 import { InitPosition, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'

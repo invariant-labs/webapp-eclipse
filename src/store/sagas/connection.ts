@@ -33,6 +33,7 @@ export function* handleRpcErrorHandler(action: PayloadAction<PromiseRejectionEve
 export function* getConnection(): SagaGenerator<Connection> {
   const rpc = yield* select(rpcAddress)
   const connection = yield* call(getSolanaConnection, rpc)
+
   return connection
 }
 
