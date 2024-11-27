@@ -1,4 +1,4 @@
-import React, { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, memo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import EventsHandlers from '@containers/EventsHandlers'
@@ -13,7 +13,7 @@ import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions } from '@store/reducers/positions'
 
-const RootPage: React.FC = React.memo(() => {
+const RootPage: React.FC = memo(() => {
   const dispatch = useDispatch()
   const signerStatus = useSelector(connectionStatus)
   const walletStatus = useSelector(status)

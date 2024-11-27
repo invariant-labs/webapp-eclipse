@@ -30,6 +30,7 @@ export const Primary: Story = {
     tokenYLiq: 300.2,
     currentPrice: 10000,
     network: NetworkType.Testnet,
-    isFullRange: false
+    isFullRange: false,
+    isLocked: false
   }
 }

@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
-    width: 1122,
+    width: 1210,
 
     [theme.breakpoints.down('md')]: {
       width: '100%'
@@ -179,7 +179,61 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   titleMobileContainer: {
     display: 'flex',
     flexDirection: 'row',
-
     alignItems: 'center'
+  },
+  switchPoolsContainer: {
+    position: 'relative',
+    width: 'fit-content',
+    backgroundColor: colors.invariant.component,
+    borderRadius: 10,
+    overflow: 'hidden',
+    display: 'inline-flex',
+    height: 32
+  },
+  switchPoolsMarker: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: '50%',
+    backgroundColor: colors.invariant.light,
+    borderRadius: 10,
+    transition: 'all 0.3s ease',
+    zIndex: 1
+  },
+  switchPoolsButtonsGroup: { position: 'relative', zIndex: 2, display: 'flex' },
+  switchPoolsButton: {
+    ...typography.body2,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'white',
+    flex: 1,
+    textTransform: 'none',
+    border: 'none',
+    borderRadius: 10,
+    zIndex: 2,
+    '&.Mui-selected': {
+      backgroundColor: 'transparent'
+    },
+    '&:hover': {
+      backgroundColor: 'transparent'
+    },
+    '&.Mui-selected:hover': {
+      backgroundColor: 'transparent'
+    },
+    letterSpacing: '-0.03em',
+    paddingTop: 6,
+    paddingBottom: 6,
+    paddingLeft: 12,
+    paddingRight: 12
+  },
+  filtersContainer: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    gap: 12,
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column'
+    }
   }
 }))

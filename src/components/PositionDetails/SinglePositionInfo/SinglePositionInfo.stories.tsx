@@ -49,7 +49,8 @@ export const Primary: Story = {
     showFeesLoader: false,
     isBalanceLoading: false,
     isActive: true,
-    network: NetworkType.Testnet
+    network: NetworkType.Testnet,
+    isLocked: false
   },
   render: args => {
     return (

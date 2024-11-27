@@ -50,6 +50,7 @@ interface IProps {
   onRefresh: () => void
   isBalanceLoading: boolean
   network: NetworkType
+  isLocked: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -80,7 +81,8 @@ const PositionDetails: React.FC<IProps> = ({
   userHasStakes = false,
   onRefresh,
   isBalanceLoading,
-  network
+  network,
+  isLocked
 }) => {
   const { classes } = useStyles()
 
@@ -187,6 +189,7 @@ const PositionDetails: React.FC<IProps> = ({
           max={xToY ? max : 1 / min}
           currentPrice={currentPrice}
           lockPosition={lockPosition}
+          isLocked={isLocked}
         />
       </Grid>
 

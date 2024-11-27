@@ -48,6 +48,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const currentNetwork = useSelector(network)
   const position = useSelector(singlePositionData(id))
+
   const isLoadingList = useSelector(isLoadingPositionsList)
   const {
     allData: ticksData,
@@ -343,7 +344,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return
     }
     setShowFeesLoader(true)
-    dispatch(actions.getSinglePosition(position?.positionIndex))
+    dispatch(
+      actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
+    )
 
     if (position) {
       dispatch(
@@ -391,7 +394,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         currentPrice={current}
         onClickClaimFee={() => {
           setShowFeesLoader(true)
-          dispatch(actions.claimFee(position.positionIndex))
+          dispatch(actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked }))
         }}
         lockPosition={() => {
           dispatch(
@@ -454,6 +457,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         onRefresh={onRefresh}
         isBalanceLoading={isBalanceLoading}
         network={currentNetwork}
+        isLocked={position.isLocked}
       />
     )
   }

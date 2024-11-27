@@ -8,10 +8,11 @@ import { Status } from '@store/reducers/solanaWallet'
 import {
   isLoadingPositionsList,
   lastPageSelector,
+  lockedPositionsWithPoolsData,
   positionsWithPoolsData
 } from '@store/selectors/positions'
 import { address, status } from '@store/selectors/solanaWallet'
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
@@ -21,6 +22,7 @@ import { IPositionItem } from '@components/PositionsList/PositionItem/PositionIt
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
   const list = useSelector(positionsWithPoolsData)
+  const lockedList = useSelector(lockedPositionsWithPoolsData)
   const isLoading = useSelector(isLoadingPositionsList)
   const lastPage = useSelector(lastPageSelector)
   const walletStatus = useSelector(status)
@@ -126,7 +128,8 @@ export const WrappedPositionsList: React.FC = () => {
         tokenXLiq,
         tokenYLiq,
         network: NetworkType.Testnet,
-        isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick
+        isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
+        isLocked: position.isLocked
       }
     })
     .filter(item => {
@@ -136,6 +139,91 @@ export const WrappedPositionsList: React.FC = () => {
       )
     })
 
+  const lockedData: IPositionItem[] = lockedList
+    .map(position => {
+      const lowerPrice = calcYPerXPriceBySqrtPrice(
+        calculatePriceSqrt(position.lowerTickIndex).v,
+        position.tokenX.decimals,
+        position.tokenY.decimals
+      )
+      const upperPrice = calcYPerXPriceBySqrtPrice(
+        calculatePriceSqrt(position.upperTickIndex).v,
+        position.tokenX.decimals,
+        position.tokenY.decimals
+      )
+
+      const minTick = getMinTick(position.poolData.tickSpacing)
+      const maxTick = getMaxTick(position.poolData.tickSpacing)
+
+      const min = Math.min(lowerPrice, upperPrice)
+      const max = Math.max(lowerPrice, upperPrice)
+
+      let tokenXLiq, tokenYLiq
+
+      try {
+        tokenXLiq = +printBN(
+          getX(
+            position.liquidity.v,
+            calculatePriceSqrt(position.upperTickIndex).v,
+            position.poolData.sqrtPrice.v,
+            calculatePriceSqrt(position.lowerTickIndex).v
+          ),
+          position.tokenX.decimals
+        )
+      } catch (error) {
+        tokenXLiq = 0
+      }
+
+      try {
+        tokenYLiq = +printBN(
+          getY(
+            position.liquidity.v,
+            calculatePriceSqrt(position.upperTickIndex).v,
+            position.poolData.sqrtPrice.v,
+            calculatePriceSqrt(position.lowerTickIndex).v
+          ),
+          position.tokenY.decimals
+        )
+      } catch (error) {
+        tokenYLiq = 0
+      }
+
+      const currentPrice = calcYPerXPriceBySqrtPrice(
+        position.poolData.sqrtPrice.v,
+        position.tokenX.decimals,
+        position.tokenY.decimals
+      )
+
+      const valueX = tokenXLiq + tokenYLiq / currentPrice
+      const valueY = tokenYLiq + tokenXLiq * currentPrice
+
+      return {
+        tokenXName: position.tokenX.symbol,
+        tokenYName: position.tokenY.symbol,
+        tokenXIcon: position.tokenX.logoURI,
+        tokenYIcon: position.tokenY.logoURI,
+        fee: +printBN(position.poolData.fee.v, DECIMAL - 2),
+        min,
+        max,
+        valueX,
+        valueY,
+        address: walletAddress.toString(),
+        id: position.id.toString() + '_' + position.pool.toString(),
+        isActive: currentPrice >= min && currentPrice <= max,
+        currentPrice,
+        tokenXLiq,
+        tokenYLiq,
+        network: NetworkType.Testnet,
+        isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
+        isLocked: position.isLocked
+      }
+    })
+    .filter(item => {
+      return (
+        item.tokenXName.toLowerCase().includes(value.toLowerCase()) ||
+        item.tokenYName.toLowerCase().includes(value.toLowerCase())
+      )
+    })
   // useEffect(() => {
   //   if (walletStatus === Status.Initialized && walletAddress && !loadedPages[0] && !length) {
   //     dispatch(actions.getPositionsListPage({ index: 0, refresh: false }))
@@ -153,6 +241,7 @@ export const WrappedPositionsList: React.FC = () => {
         navigate('/newPosition')
       }}
       data={data}
+      lockedData={lockedData}
       loading={isLoading}
       showNoConnected={walletStatus !== Status.Initialized}
       itemsPerPage={POSITIONS_PER_PAGE}
@@ -173,12 +262,13 @@ export const WrappedPositionsList: React.FC = () => {
       //     )
       //   }
       // }}
-      length={list.length}
       // loadedPages={loadedPages}
       // getRemainingPositions={() => {
       //   dispatch(actions.getRemainingPositions({ setLoaded: true }))
       // }}
-      noInitialPositions={list.length === 0}
+      length={list.length}
+      lockedLength={lockedList.length}
+      noInitialPositions={list.length === 0 && lockedList.length === 0}
     />
   )
 }

@@ -1,4 +1,4 @@
-import { Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Button, Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import { theme } from '@static/theme'
 import { formatNumber } from '@utils/utils'
@@ -8,6 +8,7 @@ import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
+import lockIcon from '@static/svg/lock.svg'
 
 export interface IPositionItem {
   tokenXName: string
@@ -27,6 +28,7 @@ export interface IPositionItem {
   currentPrice: number
   network: NetworkType
   isFullRange: boolean
+  isLocked: boolean
 }
 
 export const PositionItem: React.FC<IPositionItem> = ({
@@ -44,7 +46,8 @@ export const PositionItem: React.FC<IPositionItem> = ({
   tokenXLiq,
   tokenYLiq,
   network,
-  isFullRange
+  isFullRange,
+  isLocked
 }) => {
   const { classes } = useStyles()
 
@@ -71,7 +74,9 @@ export const PositionItem: React.FC<IPositionItem> = ({
   }
 
   const { tokenXPercentage, tokenYPercentage } = getPercentageRatio()
-
+  const onDropdownMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+  }
   const feeFragment = useMemo(
     () => (
       <Tooltip
@@ -230,6 +235,24 @@ export const PositionItem: React.FC<IPositionItem> = ({
         </Grid>
 
         <Hidden mdDown>{valueFragment}</Hidden>
+
+        <Grid
+          container
+          item
+          className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
+          justifyContent='center'
+          alignItems='center'
+          wrap='nowrap'>
+          {isLocked ? (
+            <TooltipHover text={'Liquidity locked'}>
+              <img src={lockIcon} alt='Lock' />
+            </TooltipHover>
+          ) : (
+            <Button className={classes.dropdownText} onClick={onDropdownMenuClick}>
+              ...
+            </Button>
+          )}
+        </Grid>
       </Grid>
     </Grid>
   )

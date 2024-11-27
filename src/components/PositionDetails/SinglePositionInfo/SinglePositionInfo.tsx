@@ -2,13 +2,14 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { BoxInfo } from './BoxInfo'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { useNavigate } from 'react-router-dom'
 import { TokenPriceData } from '@store/consts/types'
 import lockIcon from '@static/svg/lock.svg'
+import unlockIcon from '@static/svg/unlock.svg'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import icons from '@static/icons'
 import { addressToTicker, formatNumber } from '@utils/utils'
@@ -36,6 +37,7 @@ interface IProp {
   min: number
   max: number
   currentPrice: number
+  isLocked: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -56,7 +58,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   min,
   max,
   currentPrice,
-  lockPosition
+  lockPosition,
+  isLocked
 }) => {
   const navigate = useNavigate()
   const { success, inProgress } = useSelector(lockerState)
@@ -64,10 +67,16 @@ const SinglePositionInfo: React.FC<IProp> = ({
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
   const { classes } = useStyles()
 
-  const onLockPosirionModalClose = () => {
+  const onLockPositionModalClose = () => {
     setIsLockPositionModalOpen(false)
     unblurContent()
   }
+
+  useEffect(() => {
+    if (success && !inProgress) {
+      onLockPositionModalClose()
+    }
+  }, [success, inProgress])
 
   const { value, tokenXLabel, tokenYLabel } = useMemo<{
     value: string
@@ -104,7 +113,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
       />
       <LockLiquidityModal
         open={isLockPositionModalOpen}
-        onClose={onLockPosirionModalClose}
+        onClose={onLockPositionModalClose}
         xToY={xToY}
         tokenX={tokenX}
         tokenY={tokenY}
@@ -206,11 +215,14 @@ const SinglePositionInfo: React.FC<IProp> = ({
           <TooltipHover
             text={
               tokenX.claimValue > 0 || tokenY.claimValue > 0
-                ? 'Unclaimed fees will be returned when closing the position'
+                ? isLocked
+                  ? 'Closing positions is disabled when position is locked'
+                  : 'Unclaimed fees will be returned when closing the position'
                 : ''
             }>
             <Button
               className={classes.closeButton}
+              disabled={isLocked}
               variant='contained'
               onClick={() => {
                 if (!userHasStakes) {
@@ -223,17 +235,26 @@ const SinglePositionInfo: React.FC<IProp> = ({
               Close position
             </Button>
           </TooltipHover>
-          <TooltipHover text={'Lock liquidity'}>
-            <Button
-              className={classes.lockButton}
-              variant='contained'
-              onClick={() => {
-                setIsLockPositionModalOpen(true)
-                blurContent()
-              }}>
-              <img src={lockIcon} alt='Lock' />
-            </Button>
-          </TooltipHover>
+          {!isLocked ? (
+            <TooltipHover text={'Lock liquidity'}>
+              <Button
+                className={classes.lockButton}
+                disabled={isLocked}
+                variant='contained'
+                onClick={() => {
+                  setIsLockPositionModalOpen(true)
+                  blurContent()
+                }}>
+                <img src={lockIcon} alt='Lock' />
+              </Button>
+            </TooltipHover>
+          ) : (
+            <TooltipHover text={'Unlock liquidity'}>
+              <Button className={classes.unlockButton} variant='contained' onClick={() => {}}>
+                <img src={unlockIcon} alt='Lock' />
+              </Button>
+            </TooltipHover>
+          )}
           <Hidden smUp>
             <Button
               className={classes.button}
