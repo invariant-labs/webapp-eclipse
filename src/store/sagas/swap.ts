@@ -10,17 +10,10 @@ import { getConnection, handleRpcError } from './connection'
 import {
   Keypair,
   sendAndConfirmRawTransaction,
-  SystemProgram,
   Transaction,
-  TransactionExpiredTimeoutError
+  TransactionExpiredTimeoutError,
+  TransactionInstruction
 } from '@solana/web3.js'
-import {
-  createCloseAccountInstruction,
-  createInitializeAccountInstruction,
-  getMinimumBalanceForRentExemptAccount,
-  NATIVE_MINT,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token'
 import {
   MAX_CROSSES_IN_SINGLE_TX,
   SIGNING_SNACKBAR_CONFIG,
@@ -32,6 +25,11 @@ import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
 import { createLoaderKey } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
+import {
+  createNativeAtaInstructions,
+  createNativeAtaWithTransferInstructions
+} from '@invariant-labs/sdk-eclipse/lib/utils'
+import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -80,45 +78,36 @@ export function* handleSwapWithETH(): Generator {
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
+    let initialTx: Transaction
+    let unwrapIx: TransactionInstruction
+    if (allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS) {
+      const {
+        createIx,
+        transferIx,
+        initIx,
+        unwrapIx: unwrap
+      } = createNativeAtaWithTransferInstructions(
+        wrappedEthAccount.publicKey,
+        wallet.publicKey,
+        net,
+        amountIn.toNumber()
+      )
+      unwrapIx = unwrap
+      initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
+    } else {
+      const {
+        createIx,
+        initIx,
+        unwrapIx: unwrap
+      } = createNativeAtaInstructions(wrappedEthAccount.publicKey, wallet.publicKey, net)
+      unwrapIx = unwrap
+      initialTx = new Transaction().add(createIx).add(initIx)
+    }
 
-    const transferIx = SystemProgram.transfer({
-      fromPubkey: wallet.publicKey,
-      toPubkey: wrappedEthAccount.publicKey,
-      lamports:
-        allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-          ? amountIn.toNumber()
-          : 0
-    })
-
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const initialTx =
-      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? new Transaction().add(createIx).add(transferIx).add(initIx)
-        : new Transaction().add(createIx).add(initIx)
     // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
     // initialTx.recentBlockhash = initialBlockhash.blockhash
     // initialTx.feePayer = wallet.publicKey
-
-    const unwrapIx = createCloseAccountInstruction(
-      wrappedEthAccount.publicKey,
-      wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
-    )
 
     let fromAddress =
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
