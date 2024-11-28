@@ -49,7 +49,8 @@ const defaultArgs = {
   network: NetworkType.Testnet,
   tokenXAddress: new PublicKey('32'),
   tokenYAddress: new PublicKey('22'),
-  poolAddress: new PublicKey('32')
+  poolAddress: new PublicKey('32'),
+  isLocked: false
 }
 
 const meta = {

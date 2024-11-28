@@ -1,15 +1,29 @@
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
-import { Button, Grid, InputAdornment, InputBase, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Grid,
+  InputAdornment,
+  InputBase,
+  ToggleButton,
+  ToggleButtonGroup,
+  Typography
+} from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import SearchIcon from '@static/svg/lupaDark.svg'
 import refreshIcon from '@static/svg/refresh.svg'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { IPositionItem, PositionItem } from './PositionItem/PositionItem'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { PaginationList } from '@components/Pagination/Pagination'
+
+export enum LiquidityPools {
+  Standard = 'Standard',
+  Locked = 'Locked'
+}
 
 interface IProps {
   initialPage: number
@@ -25,9 +39,11 @@ interface IProps {
   handleRefresh: () => void
   // pageChanged: (page: number) => void
   length: number
+  lockedLength: number
   // loadedPages: Record<number, boolean>
   // getRemainingPositions: () => void
   noInitialPositions: boolean
+  lockedData: IPositionItem[]
 }
 
 export const PositionsList: React.FC<IProps> = ({
@@ -44,14 +60,31 @@ export const PositionsList: React.FC<IProps> = ({
   handleRefresh,
   // pageChanged,
   length,
+  lockedLength,
   // loadedPages,
   // getRemainingPositions,
-  noInitialPositions
+  noInitialPositions,
+  lockedData
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
   const [defaultPage] = useState(initialPage)
   const [page, setPage] = useState(initialPage)
+  const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
+
+  const currentData = useMemo(() => {
+    if (alignment === LiquidityPools.Standard) {
+      return data
+    }
+    return lockedData
+  }, [alignment, data, lockedData])
+
+  const currentLength = useMemo(() => {
+    if (alignment === LiquidityPools.Standard) {
+      return length
+    }
+    return lockedLength
+  }, [alignment, length, lockedLength])
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     // if (Object.keys(loadedPages).length * POSITIONS_PER_QUERY < Number(length)) {
@@ -66,12 +99,22 @@ export const PositionsList: React.FC<IProps> = ({
     setPage(page)
   }
 
+  const handleSwitchPools = (
+    _: React.MouseEvent<HTMLElement>,
+    newAlignment: LiquidityPools | null
+  ) => {
+    if (newAlignment !== null) {
+      setAlignment(newAlignment)
+      setPage(1)
+    }
+  }
+
   const paginator = (currentPage: number) => {
     const page = currentPage || 1
     const perPage = itemsPerPage || 10
     const offset = (page - 1) * perPage
-    const paginatedItems = data.slice(offset).slice(0, itemsPerPage)
-    const totalPages = Math.ceil(data.length / perPage)
+    const paginatedItems = currentData.slice(offset).slice(0, itemsPerPage)
+    const totalPages = Math.ceil(currentData.length / perPage)
 
     return {
       page: page,
@@ -106,25 +149,53 @@ export const PositionsList: React.FC<IProps> = ({
         alignItems='center'>
         <Grid className={classes.searchRoot}>
           <Grid className={classes.titleBar}>
-            <Typography className={classes.title}>Your Positions</Typography>
+            <Typography className={classes.title}>Your Liquidity Positions</Typography>
             <TooltipHover text='Total number of your positions'>
-              <Typography className={classes.positionsNumber}>{String(length)}</Typography>
+              <Typography className={classes.positionsNumber}>{String(currentLength)}</Typography>
             </TooltipHover>
           </Grid>
           <Grid className={classes.searchWrapper}>
-            <InputBase
-              type={'text'}
-              className={classes.searchBar}
-              placeholder='Search position'
-              endAdornment={
-                <InputAdornment position='end'>
-                  <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
-                </InputAdornment>
-              }
-              onChange={handleChangeInput}
-              value={searchValue}
-              disabled={noInitialPositions}
-            />
+            <Grid className={classes.filtersContainer}>
+              <InputBase
+                type={'text'}
+                className={classes.searchBar}
+                placeholder='Search position'
+                endAdornment={
+                  <InputAdornment position='end'>
+                    <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
+                  </InputAdornment>
+                }
+                onChange={handleChangeInput}
+                value={searchValue}
+                disabled={noInitialPositions}
+              />
+              <Box className={classes.switchPoolsContainer}>
+                <Box
+                  className={classes.switchPoolsMarker}
+                  sx={{
+                    left: alignment === LiquidityPools.Standard ? 0 : '50%'
+                  }}
+                />
+                <ToggleButtonGroup
+                  value={alignment}
+                  exclusive
+                  onChange={handleSwitchPools}
+                  className={classes.switchPoolsButtonsGroup}>
+                  <ToggleButton
+                    value={LiquidityPools.Standard}
+                    disableRipple
+                    className={classes.switchPoolsButton}>
+                    Standard
+                  </ToggleButton>
+                  <ToggleButton
+                    value={LiquidityPools.Locked}
+                    disableRipple
+                    className={classes.switchPoolsButton}>
+                    Locked
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+            </Grid>
             <Grid
               display='flex'
               columnGap={2}
@@ -148,7 +219,7 @@ export const PositionsList: React.FC<IProps> = ({
         </Grid>
       </Grid>
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
-        {data.length > 0 && !loading ? (
+        {currentData.length > 0 && !loading ? (
           paginator(page).data.map((element, index) => (
             <Grid
               onClick={() => {

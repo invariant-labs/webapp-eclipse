@@ -9,6 +9,7 @@ export interface PositionWithAddress extends Position {
 }
 export interface PositionsListStore {
   list: PositionWithAddress[]
+  lockedList: PositionWithAddress[]
   loading: boolean
 }
 
@@ -84,6 +85,7 @@ export const defaultState: IPositionsStore = {
   },
   positionsList: {
     list: [],
+    lockedList: [],
     loading: true
   },
   currentPositionTicks: {
@@ -142,11 +144,15 @@ const positionsSlice = createSlice({
       state.positionsList.loading = false
       return state
     },
+    setLockedPositionsList(state, action: PayloadAction<PositionWithAddress[]>) {
+      state.positionsList.lockedList = action.payload
+      return state
+    },
     getPositionsList(state) {
       state.positionsList.loading = true
       return state
     },
-    getSinglePosition(state, _action: PayloadAction<number>) {
+    getSinglePosition(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
     },
     setSinglePosition(state, action: PayloadAction<SetPositionData>) {
@@ -170,7 +176,7 @@ const positionsSlice = createSlice({
       }
       return state
     },
-    claimFee(state, _action: PayloadAction<number>) {
+    claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
     },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {

@@ -86,14 +86,13 @@ export const LockLiquidityModal = ({
             <Button className={classes.lockPositionClose} onClick={onClose} aria-label='Close' />
           </Grid>
           <Typography className={classes.lockExplanation}>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse euismod, diam a
-            egestas pretium, ex massa blandit libero, ac dignissim magna nulla a nunc. Fusce
-            eleifend leo massa, id consectetur massa lacinia sit amet. Phasellus sit amet facilisis
-            metus. Integer sed tellus vel purus varius vehicula. Donec hendrerit ultricies erat eu
-            vulputate. Donec nisi mauris, ullamcorper ac sollicitudin eget, cursus eu sapien. Ut
-            sollicitudin leo nec suscipit malesuada. Nulla facilisi. Lorem ipsum dolor sit amet,
-            consectetur adipiscing elit. Suspendisse euismod, diam a egestas pretium, ex massa
-            blandit libero, ac dignissim magna nulla a nunc.
+            Liquidity providers can permanently lock their liquidity. Trading fees will still remain
+            claimable after the lock. Lock Liquidity Permanently? Are you sure you want to lock your
+            liquidity permanently? Once locked, you will no longer be able to access or withdraw it.
+            However, trading fees will remain claimable. If you are locking a concentrated position,
+            the price range and fee tier associated with that position will also be locked and
+            cannot be modified afterwards. If you wish to make any changes, be sure to do so before
+            locking!
           </Typography>
           <Grid item container className={classes.pairInfo}>
             <Grid item className={classes.pairDisplay}>
@@ -166,7 +165,8 @@ export const LockLiquidityModal = ({
           <Grid item className={classes.lockWarning}>
             <img src={warningExclamationMarkCircle} alt='' />
             <Typography className={classes.lockWarningText}>
-              Lorem ipsum... This action is irrevirsible! Do you want to proceed? Lorem ipsum...
+              By clicking this button, you confirm that you fully understand and agree that your
+              liquidity will be permanently locked.
             </Typography>
           </Grid>
           <AnimatedButton

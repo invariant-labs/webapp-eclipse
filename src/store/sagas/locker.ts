@@ -9,6 +9,7 @@ import { getMaxLockDuration, ILockPositionIx } from '@invariant-labs/locker-ecli
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { actions as positionsActions } from '@store/reducers/positions'
 import { DEFAULT_PUBLICKEY, SIGNING_SNACKBAR_CONFIG } from '@store/consts/static'
 import { createLoaderKey } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
@@ -88,6 +89,7 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
 
     if (confirmedTx.value.err === null) {
       yield* put(actions.setLockSuccess(true))
+      yield* put(positionsActions.getPositionsList())
       yield put(
         snackbarsActions.add({
           message: 'Position locked successfully.',

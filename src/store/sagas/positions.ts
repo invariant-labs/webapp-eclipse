@@ -33,6 +33,7 @@ import {
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import {
+  lockedPositionsWithPoolsData,
   positionsList,
   positionsWithPoolsData,
   singlePositionData
@@ -40,7 +41,7 @@ import {
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { getMarketProgram } from '@utils/web3/programs/amm'
+import { getLockerProgram, getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createLiquidityPlot,
   createLoaderKey,
@@ -778,6 +779,46 @@ export function* handleGetPositionsList() {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
+
+    const [lockerAuth] = lockerProgram.getAuthorityAddress()
+
+    const { head: lockedHead } = yield* call(
+      [marketProgram, marketProgram.getPositionList],
+      lockerAuth
+    )
+
+    const { completeLockedList, completeLockedAddresses } = yield* all({
+      completeLockedList: call(
+        [marketProgram, marketProgram.getPositionsFromRange],
+        lockerAuth,
+        0,
+        lockedHead - 1
+      ),
+      completeLockedAddresses: call(
+        getPositionsAddressesFromRange,
+        marketProgram,
+        lockerAuth,
+        0,
+        lockedHead - 1
+      )
+    })
+
+    const lockedPositions = completeLockedList.map((position, index) => ({
+      ...position,
+      address: completeLockedAddresses[index]
+    }))
+
+    // TODO: update this later
+    let filteredLockedPositions
+    try {
+      const userLockedList = yield* call([lockerProgram, lockerProgram.getLocks], wallet.publicKey)
+      filteredLockedPositions = lockedPositions.filter(pos =>
+        userLockedList.positions.some(userPos => userPos.positionId.eq(pos.id))
+      )
+    } catch (e) {
+      filteredLockedPositions = []
+    }
 
     const { head } = yield* call([marketProgram, marketProgram.getPositionList], wallet.publicKey)
 
@@ -798,6 +839,12 @@ export function* handleGetPositionsList() {
 
     const pools = new Set(list.map(pos => pos.pool.toString()))
 
+    if (filteredLockedPositions.length > 0) {
+      filteredLockedPositions.forEach(lock => {
+        pools.add(lock.pool.toString())
+      })
+    }
+
     yield* put(
       poolsActions.getPoolsDataForList({
         addresses: Array.from(pools),
@@ -816,15 +863,17 @@ export function* handleGetPositionsList() {
 
     yield* take(pattern)
 
+    yield* put(actions.setLockedPositionsList(filteredLockedPositions))
     yield* put(actions.setPositionsList(positions))
   } catch (error) {
+    yield* put(actions.setLockedPositionsList([]))
     yield* put(actions.setPositionsList([]))
 
     yield* call(handleRpcError, (error as Error).message)
   }
 }
 
-export function* handleClaimFeeWithETH(positionIndex: number) {
+export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isLocked: boolean }) {
   const loaderClaimFee = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
@@ -843,8 +892,10 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
 
-    const allPositionsData = yield* select(positionsWithPoolsData)
+    const data = isLocked ? lockedPositionsWithPoolsData : positionsWithPoolsData
+    const allPositionsData = yield* select(data)
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
 
@@ -873,7 +924,7 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
       TOKEN_PROGRAM_ID
     )
 
-    const positionForIndex = allPositionsData[positionIndex].poolData
+    const positionForIndex = allPositionsData[index].poolData
 
     let userTokenX =
       allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
@@ -897,18 +948,38 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
       userTokenY = yield* call(createAccount, positionForIndex.tokenY)
     }
 
-    const ix = yield* call([marketProgram, marketProgram.claimFeeInstruction], {
-      pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-        fee: positionForIndex.fee.v,
-        tickSpacing: positionForIndex.tickSpacing
-      }),
-      userTokenX,
-      userTokenY,
-      owner: wallet.publicKey,
-      index: positionIndex
-    })
+    const tx = new Transaction().add(createIx).add(initIx)
 
-    const tx = new Transaction().add(createIx).add(initIx).add(ix).add(unwrapIx)
+    if (isLocked) {
+      const ix = yield* call(
+        [lockerProgram, lockerProgram.claimFeeIx],
+        {
+          pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
+            fee: positionForIndex.fee.v,
+            tickSpacing: positionForIndex.tickSpacing
+          }),
+          authorityMarketIndex: index,
+          market: marketProgram,
+          positionId: allPositionsData[index].id,
+          lowerTickIndex: allPositionsData[index].lowerTickIndex,
+          upperTickIndex: allPositionsData[index].upperTickIndex
+        },
+        wallet.publicKey
+      )
+      tx.add(...ix).add(unwrapIx)
+    } else {
+      const ix = yield* call([marketProgram, marketProgram.claimFeeInstruction], {
+        pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
+          fee: positionForIndex.fee.v,
+          tickSpacing: positionForIndex.tickSpacing
+        }),
+        userTokenX,
+        userTokenY,
+        owner: wallet.publicKey,
+        index: index
+      })
+      tx.add(ix).add(unwrapIx)
+    }
 
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
     tx.recentBlockhash = blockhash.blockhash
@@ -946,7 +1017,7 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
       )
     }
 
-    yield put(actions.getSinglePosition(positionIndex))
+    yield put(actions.getSinglePosition({ index, isLocked }))
 
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
@@ -982,14 +1053,15 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
   }
 }
 
-export function* handleClaimFee(action: PayloadAction<number>) {
+export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked: boolean }>) {
   const loaderClaimFee = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
   try {
     const allTokens = yield* select(tokens)
-    const allPositionsData = yield* select(positionsWithPoolsData)
-    const positionForIndex = allPositionsData[action.payload].poolData
+    const data = action.payload.isLocked ? lockedPositionsWithPoolsData : positionsWithPoolsData
+    const allPositionsData = yield* select(data)
+    const positionForIndex = allPositionsData[action.payload.index].poolData
 
     if (
       allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
@@ -1012,6 +1084,7 @@ export function* handleClaimFee(action: PayloadAction<number>) {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
 
     const tokensAccounts = yield* select(accounts)
 
@@ -1031,18 +1104,38 @@ export function* handleClaimFee(action: PayloadAction<number>) {
       userTokenY = yield* call(createAccount, positionForIndex.tokenY)
     }
 
-    const ix = yield* call([marketProgram, marketProgram.claimFeeInstruction], {
-      pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-        fee: positionForIndex.fee.v,
-        tickSpacing: positionForIndex.tickSpacing
-      }),
-      userTokenX,
-      userTokenY,
-      owner: wallet.publicKey,
-      index: action.payload
-    })
+    const tx = new Transaction()
 
-    const tx = new Transaction().add(ix)
+    if (action.payload.isLocked) {
+      const ix = yield* call(
+        [lockerProgram, lockerProgram.claimFeeIx],
+        {
+          pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
+            fee: positionForIndex.fee.v,
+            tickSpacing: positionForIndex.tickSpacing
+          }),
+          authorityMarketIndex: action.payload.index,
+          market: marketProgram,
+          positionId: allPositionsData[action.payload.index].id,
+          lowerTickIndex: allPositionsData[action.payload.index].lowerTickIndex,
+          upperTickIndex: allPositionsData[action.payload.index].upperTickIndex
+        },
+        wallet.publicKey
+      )
+      tx.add(...ix)
+    } else {
+      const ix = yield* call([marketProgram, marketProgram.claimFeeInstruction], {
+        pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
+          fee: positionForIndex.fee.v,
+          tickSpacing: positionForIndex.tickSpacing
+        }),
+        userTokenX,
+        userTokenY,
+        owner: wallet.publicKey,
+        index: action.payload.index
+      })
+      tx.add(ix)
+    }
 
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
     tx.recentBlockhash = blockhash.blockhash
@@ -1457,24 +1550,29 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
   }
 }
 
-export function* handleGetSinglePosition(action: PayloadAction<number>) {
+export function* handleGetSinglePosition(
+  action: PayloadAction<{ index: number; isLocked: boolean }>
+) {
   try {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
 
-    yield put(actions.getCurrentPositionRangeTicks(action.payload.toString()))
+    const [lockerAuth] = lockerProgram.getAuthorityAddress()
+
+    yield put(actions.getCurrentPositionRangeTicks(action.payload.index.toString()))
 
     const position = yield* call(
       [marketProgram, marketProgram.getPosition],
-      wallet.publicKey,
-      action.payload
+      action.payload.isLocked ? lockerAuth : wallet.publicKey,
+      action.payload.index
     )
 
     yield put(
       actions.setSinglePosition({
-        index: action.payload,
+        index: action.payload.index,
         position
       })
     )

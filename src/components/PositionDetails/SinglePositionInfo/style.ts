@@ -119,11 +119,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading3,
     color: colors.invariant.text,
     textWrap: 'nowrap',
+    maxWidth: 120,
     fontSize: 22,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
     [theme.breakpoints.down('sm')]: {
       ...typography.heading4
     }
   },
+
   bottomGrid: {
     background: colors.invariant.component,
     marginTop: 20,
@@ -279,7 +284,20 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         boxShadow: 'none'
       }
     },
-
+    '&:disabled': {
+      background: colors.invariant.light,
+      color: colors.invariant.componentBcg,
+      pointerEvents: 'auto',
+      transition: 'all 0.2s',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed',
+        filter: 'brightness(1.15)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
+      }
+    },
     [theme.breakpoints.down('sm')]: {
       width: '33%',
       ...typography.caption1,
@@ -308,6 +326,27 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
     [theme.breakpoints.down('sm')]: {
       width: '33%',
+      ...typography.caption1
+    }
+  },
+  unlockButton: {
+    color: colors.invariant.black,
+    background: colors.invariant.greenLinearGradientOpacity,
+    borderRadius: 12,
+    height: 36,
+    padding: 0,
+    minWidth: 36,
+    '&:hover': {
+      background: colors.invariant.greenLinearGradient,
+      boxShadow: `0 0 16px ${colors.invariant.greenLinearGradient}`,
+      '@media (hover: none)': {
+        background: colors.invariant.greenLinearGradientOpacity,
+        boxShadow: 'none'
+      }
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '33%',
+      height: 40,
       ...typography.caption1
     }
   },
