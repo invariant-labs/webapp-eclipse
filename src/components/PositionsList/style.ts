@@ -45,9 +45,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     flexWrap: 'wrap',
     rowGap: '8px',
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       flexDirection: 'column-reverse',
-      alignItems: 'flex-start'
+      alignItems: 'flex-end'
     }
   },
   searchBar: {
@@ -60,7 +60,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.lightGrey,
     ...typography.body2,
     [theme.breakpoints.down('sm')]: {
-      width: '100%',
       height: 48
     }
   },
@@ -188,7 +187,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 10,
     overflow: 'hidden',
     display: 'inline-flex',
-    height: 32
+    height: 32,
+    [theme.breakpoints.down('sm')]: {
+      height: 48
+    }
   },
   switchPoolsMarker: {
     position: 'absolute',
@@ -232,8 +234,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'flex-start',
     gap: 12,
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      justifyContent: 'space-between'
     }
   }
 }))

@@ -119,11 +119,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading3,
     color: colors.invariant.text,
     textWrap: 'nowrap',
+    maxWidth: 120,
     fontSize: 22,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
     [theme.breakpoints.down('sm')]: {
       ...typography.heading4
     }
   },
+
   bottomGrid: {
     background: colors.invariant.component,
     marginTop: 20,

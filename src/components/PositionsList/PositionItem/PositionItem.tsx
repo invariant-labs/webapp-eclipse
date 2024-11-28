@@ -9,6 +9,7 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
 import lockIcon from '@static/svg/lock.svg'
+import unlockIcon from '@static/svg/unlock.svg'
 
 export interface IPositionItem {
   tokenXName: string
@@ -234,19 +235,23 @@ export const PositionItem: React.FC<IPositionItem> = ({
 
         <Hidden mdDown>{valueFragment}</Hidden>
 
-        {isLocked && (
-          <Grid
-            container
-            item
-            className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
-            justifyContent='center'
-            alignItems='center'
-            wrap='nowrap'>
+        <Grid
+          container
+          item
+          className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
+          justifyContent='center'
+          alignItems='center'
+          wrap='nowrap'>
+          {isLocked ? (
             <TooltipHover text={'Liquidity locked'}>
               <img src={lockIcon} alt='Lock' />
             </TooltipHover>
-          </Grid>
-        )}
+          ) : (
+            <TooltipHover text={'Liquidity not locked'}>
+              <img src={unlockIcon} alt='Lock' />
+            </TooltipHover>
+          )}
+        </Grid>
       </Grid>
     </Grid>
   )

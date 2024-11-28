@@ -148,7 +148,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
           />
           <Grid className={classes.namesGrid}>
             <Typography className={classes.name}>
-              {xToY ? tokenX.name : tokenY.name} - {xToY ? tokenY.name : tokenX.name}
+              {xToY ? tokenX.name : tokenY.name} - {xToY ? tokenY.name : tokenX.name}{' '}
             </Typography>
           </Grid>
           <Grid className={classes.rangeGrid} sx={{ display: { xs: 'flex', md: 'none' } }}>

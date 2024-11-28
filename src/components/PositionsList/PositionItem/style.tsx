@@ -152,7 +152,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingInline: 10,
     marginRight: 8,
 
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down(1029)]: {
       width: '100%',
       marginRight: 0,
       marginTop: 8
@@ -173,7 +173,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingInline: 12,
     marginRight: 8,
 
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down(1029)]: {
       marginRight: 0
     },
     [theme.breakpoints.down('sm')]: {
@@ -191,7 +191,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       width: '100%'
     },
 
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down(1029)]: {
       flexWrap: 'wrap'
     }
   },
