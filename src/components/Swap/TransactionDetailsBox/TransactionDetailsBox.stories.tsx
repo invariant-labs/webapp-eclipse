@@ -30,7 +30,7 @@ export const Primary: Story = {
     exchangeRate: { val: 123, symbol: 'ABC', decimal: 12 },
     slippage: 0.5,
     priceImpact: new BN(1000000000),
-    fee: { v: new BN(1000000000) },
+    fee: new BN(1000000000),
     open: true,
     isLoadingRate: false
   },
