@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useNavigate } from 'react-router-dom'
@@ -13,7 +13,9 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumber } from '@utils/utils'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
+import lockCircle from '@static/svg/lockCircle.svg'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+
 interface IProps {
   TVL?: number
   volume?: number
@@ -124,6 +126,13 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{ container: classes.container }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
+          {!isMd ? (
+            <Tooltip title='asdasdasdasd' placement='bottom' classes={{ tooltip: classes.tooltip }}>
+              <Box className={classes.lockIconBox}>
+                <img src={lockCircle} alt='Liquidity' />
+              </Box>
+            </Tooltip>
+          ) : null}
           <Grid className={classes.imageContainer}>
             {!isSm && (
               <Box className={classes.iconsWrapper}>
@@ -241,6 +250,7 @@ const PoolListItem: React.FC<IProps> = ({
               N<sup>o</sup>
             </Typography>
           )}
+          {!isMd && <Typography />}
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
