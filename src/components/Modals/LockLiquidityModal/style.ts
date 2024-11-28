@@ -34,7 +34,6 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     lockWarningText: { textWrap: 'wrap', ...typography.body2 },
     lockExplanation: {
-      minHeight: 160,
       color: '#A9B6BF',
       ...typography.body2,
       textWrap: 'wrap'
@@ -92,6 +91,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'flex-start',
       gap: 12,
+      paddingTop: 10,
+      paddingBottom: 10,
       paddingRight: 12,
       paddingLeft: 12,
       ...typography.body2,
