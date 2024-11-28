@@ -1,4 +1,4 @@
-import { Button, Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import { theme } from '@static/theme'
 import { formatNumber } from '@utils/utils'
@@ -74,9 +74,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
   }
 
   const { tokenXPercentage, tokenYPercentage } = getPercentageRatio()
-  const onDropdownMenuClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.stopPropagation()
-  }
+
   const feeFragment = useMemo(
     () => (
       <Tooltip
@@ -236,23 +234,19 @@ export const PositionItem: React.FC<IPositionItem> = ({
 
         <Hidden mdDown>{valueFragment}</Hidden>
 
-        <Grid
-          container
-          item
-          className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
-          justifyContent='center'
-          alignItems='center'
-          wrap='nowrap'>
-          {isLocked ? (
+        {isLocked && (
+          <Grid
+            container
+            item
+            className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
+            justifyContent='center'
+            alignItems='center'
+            wrap='nowrap'>
             <TooltipHover text={'Liquidity locked'}>
               <img src={lockIcon} alt='Lock' />
             </TooltipHover>
-          ) : (
-            <Button className={classes.dropdownText} onClick={onDropdownMenuClick}>
-              ...
-            </Button>
-          )}
-        </Grid>
+          </Grid>
+        )}
       </Grid>
     </Grid>
   )
