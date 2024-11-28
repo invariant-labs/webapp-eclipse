@@ -46,8 +46,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     flexWrap: 'wrap',
     rowGap: '8px',
     [theme.breakpoints.down('md')]: {
-      flexDirection: 'column-reverse',
       alignItems: 'flex-end'
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column-reverse'
     }
   },
   searchBar: {
@@ -233,8 +235,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'flex-start',
+    flexDirection: 'row',
     gap: 12,
     [theme.breakpoints.down('md')]: {
+      flexDirection: 'column-reverse',
+      justifyContent: 'flex-start'
+    },
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'row',
       width: '100%',
       justifyContent: 'space-between'
     }

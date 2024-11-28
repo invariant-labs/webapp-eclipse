@@ -836,7 +836,7 @@ export function* handleGetPositionsList() {
       ...position,
       address: addresses[index]
     }))
-    console.log('Positions:', positions)
+
     const pools = new Set(list.map(pos => pos.pool.toString()))
 
     if (filteredLockedPositions.length > 0) {
