@@ -8,7 +8,7 @@ import { Box, Typography } from '@mui/material'
 import { useDispatch, useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
 import { balance, status } from '@store/selectors/solanaWallet'
-import { Status } from '@store/reducers/solanaWallet'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions } from '@store/reducers/creator'
 import { creatorState } from '@store/selectors/creator'
 
@@ -87,6 +87,7 @@ export const CreateToken: React.FC = () => {
                 inProgress={inProgress}
                 ethBalance={ethBalance}
                 currentNetwork={currentNetwork}
+                onConnectWallet={() => dispatch(walletActions.connect(false))}
               />
               <TokenMetadataInputs formMethods={formMethods} />
             </Box>

@@ -17,16 +17,8 @@ import {
   Transaction,
   sendAndConfirmRawTransaction,
   Keypair,
-  SystemProgram,
   TransactionExpiredTimeoutError
 } from '@solana/web3.js'
-import {
-  createCloseAccountInstruction,
-  createInitializeAccountInstruction,
-  getMinimumBalanceForRentExemptAccount,
-  NATIVE_MINT,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token'
 import {
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
@@ -50,6 +42,11 @@ import {
   getPositionsAddressesFromRange
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
+import {
+  createNativeAtaInstructions,
+  createNativeAtaWithTransferInstructions
+} from '@invariant-labs/sdk-eclipse/lib/utils'
+import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 // import { createClaimAllPositionRewardsTx } from './farms'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { stakesForPosition } from '@selectors/farms'
@@ -88,37 +85,15 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     const allTokens = yield* select(tokens)
 
     const wrappedEthAccount = Keypair.generate()
+    const net = networkTypetoProgramNetwork(networkType)
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
-
-    const transferIx = SystemProgram.transfer({
-      fromPubkey: wallet.publicKey,
-      toPubkey: wrappedEthAccount.publicKey,
-      lamports:
-        allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-          ? data.xAmount
-          : data.yAmount
-    })
-
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const unwrapIx = createCloseAccountInstruction(
+    const { createIx, initIx, transferIx, unwrapIx } = createNativeAtaWithTransferInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
+      net,
+      allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? data.xAmount
+        : data.yAmount
     )
 
     let userTokenX =
@@ -372,36 +347,15 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
 
-    const transferIx = SystemProgram.transfer({
-      fromPubkey: wallet.publicKey,
-      toPubkey: wrappedEthAccount.publicKey,
-      lamports:
-        allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-          ? data.xAmount
-          : data.yAmount
-    })
-
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const unwrapIx = createCloseAccountInstruction(
+    const { createIx, initIx, transferIx, unwrapIx } = createNativeAtaWithTransferInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
+      net,
+      allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? data.xAmount
+        : data.yAmount
     )
 
     let userTokenX =
@@ -901,27 +855,12 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
 
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const unwrapIx = createCloseAccountInstruction(
+    const { createIx, initIx, unwrapIx } = createNativeAtaInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
+      net
     )
 
     const positionForIndex = allPositionsData[index].poolData
@@ -1234,27 +1173,12 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
 
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const unwrapIx = createCloseAccountInstruction(
+    const { createIx, initIx, unwrapIx } = createNativeAtaInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
+      net
     )
 
     const positionForIndex = allPositionsData[data.positionIndex].poolData

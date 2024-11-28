@@ -31,7 +31,6 @@ import { useNavigate } from 'react-router-dom'
 import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import { NoConnected } from '@components/NoConnected/NoConnected'
-import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -480,7 +479,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         justifyContent='center'
         className={classes.fullHeightContainer}>
         <NoConnected
-          onConnect={openWalletSelectorModal}
+          onConnect={() => {
+            dispatch(walletActions.connect(false))
+          }}
           title='Connect a wallet to view your position,'
           descCustomText='or start exploring liquidity pools now!'
         />
