@@ -808,12 +808,17 @@ export function* handleGetPositionsList() {
       ...position,
       address: completeLockedAddresses[index]
     }))
-    // TODO: update this later
-    const userLockedList = yield* call([lockerProgram, lockerProgram.getLocks], wallet.publicKey)
 
-    const filteredLockedPositions = lockedPositions.filter(pos =>
-      userLockedList.positions.some(userPos => userPos.positionId.eq(pos.id))
-    )
+    // TODO: update this later
+    let filteredLockedPositions
+    try {
+      const userLockedList = yield* call([lockerProgram, lockerProgram.getLocks], wallet.publicKey)
+      filteredLockedPositions = lockedPositions.filter(pos =>
+        userLockedList.positions.some(userPos => userPos.positionId.eq(pos.id))
+      )
+    } catch (e) {
+      filteredLockedPositions = []
+    }
 
     const { head } = yield* call([marketProgram, marketProgram.getPositionList], wallet.publicKey)
 
@@ -831,12 +836,14 @@ export function* handleGetPositionsList() {
       ...position,
       address: addresses[index]
     }))
-
+    console.log('Positions:', positions)
     const pools = new Set(list.map(pos => pos.pool.toString()))
 
-    filteredLockedPositions.forEach(lock => {
-      pools.add(lock.pool.toString())
-    })
+    if (filteredLockedPositions.length > 0) {
+      filteredLockedPositions.forEach(lock => {
+        pools.add(lock.pool.toString())
+      })
+    }
 
     yield* put(
       poolsActions.getPoolsDataForList({
