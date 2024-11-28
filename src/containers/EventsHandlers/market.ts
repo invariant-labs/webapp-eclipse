@@ -95,7 +95,7 @@ const MarketEvents = () => {
         marketProgram.onPoolChange(
           pool.tokenX,
           pool.tokenY,
-          { fee: pool.fee.v, tickSpacing: pool.tickSpacing },
+          { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
             dispatch(
               actions.updatePool({
@@ -131,7 +131,7 @@ const MarketEvents = () => {
           poolTicksArray[address].forEach(singleTick => {
             marketProgram.onTickChange(
               new Pair(pool.tokenX, pool.tokenY, {
-                fee: pool.fee.v,
+                fee: pool.fee,
                 tickSpacing: pool.tickSpacing
               }),
               singleTick.index,
@@ -188,7 +188,7 @@ const MarketEvents = () => {
                   // trunk-ignore(eslint/@typescript-eslint/no-floating-promises)
                   marketProgram.onTickChange(
                     new Pair(pool.tokenX, pool.tokenY, {
-                      fee: pool.fee.v,
+                      fee: pool.fee,
                       tickSpacing: pool.tickSpacing
                     }),
                     +index,

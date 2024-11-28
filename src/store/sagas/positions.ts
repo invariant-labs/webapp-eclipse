@@ -689,7 +689,7 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
     const rawTicks = yield* call(
       [marketProgram, marketProgram.getAllTicks],
       new Pair(allPools[poolIndex].tokenX, allPools[poolIndex].tokenY, {
-        fee: allPools[poolIndex].fee.v,
+        fee: allPools[poolIndex].fee,
         tickSpacing: allPools[poolIndex].tickSpacing
       })
     )
@@ -894,7 +894,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
         [lockerProgram, lockerProgram.claimFeeIx],
         {
           pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-            fee: positionForIndex.fee.v,
+            fee: positionForIndex.fee,
             tickSpacing: positionForIndex.tickSpacing
           }),
           authorityMarketIndex: index,
@@ -909,7 +909,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     } else {
       const ix = yield* call([marketProgram, marketProgram.claimFeeInstruction], {
         pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-          fee: positionForIndex.fee.v,
+          fee: positionForIndex.fee,
           tickSpacing: positionForIndex.tickSpacing
         }),
         userTokenX,
@@ -1050,7 +1050,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
         [lockerProgram, lockerProgram.claimFeeIx],
         {
           pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-            fee: positionForIndex.fee.v,
+            fee: positionForIndex.fee,
             tickSpacing: positionForIndex.tickSpacing
           }),
           authorityMarketIndex: action.payload.index,
@@ -1065,7 +1065,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     } else {
       const ix = yield* call([marketProgram, marketProgram.claimFeeInstruction], {
         pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-          fee: positionForIndex.fee.v,
+          fee: positionForIndex.fee,
           tickSpacing: positionForIndex.tickSpacing
         }),
         userTokenX,
@@ -1215,7 +1215,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
 
     const ix = yield* call([marketProgram, marketProgram.removePositionInstruction], {
       pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-        fee: positionForIndex.fee.v,
+        fee: positionForIndex.fee,
         tickSpacing: positionForIndex.tickSpacing
       }),
       owner: wallet.publicKey,
@@ -1379,7 +1379,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
 
     const ix = yield* call([marketProgram, marketProgram.removePositionInstruction], {
       pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-        fee: positionForIndex.fee.v,
+        fee: positionForIndex.fee,
         tickSpacing: positionForIndex.tickSpacing
       }),
       owner: wallet.publicKey,
@@ -1520,7 +1520,7 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
     }
 
     const pair = new Pair(positionData.poolData.tokenX, positionData.poolData.tokenY, {
-      fee: positionData.poolData.fee.v,
+      fee: positionData.poolData.fee,
       tickSpacing: positionData.poolData.tickSpacing
     })
 

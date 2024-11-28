@@ -45,7 +45,6 @@ import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
-import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 
 export interface IProps {
   initialTokenFrom: string
@@ -176,7 +175,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [])
 
-  const liquidityRef = useRef<Decimal>({ v: new BN(0) })
+  const liquidityRef = useRef<BN>(new BN(0))
 
   useEffect(() => {
     setProgress('none')
@@ -284,7 +283,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     ) {
       const index = allPools.findIndex(
         pool =>
-          pool.fee.v.eq(fee) &&
+          pool.fee.eq(fee) &&
           ((pool.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
             pool.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (pool.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
@@ -307,8 +306,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     if (poolIndex !== null) {
       setMidPrice({
         index: allPools[poolIndex].currentTickIndex,
-        x: calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice.v, isXtoY, xDecimal, yDecimal),
-        sqrtPrice: allPools[poolIndex].sqrtPrice.v
+        x: calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal),
+        sqrtPrice: allPools[poolIndex].sqrtPrice
       })
     }
   }, [poolIndex, isXtoY, xDecimal, yDecimal, allPools])
@@ -601,7 +600,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         ) {
           const index = allPools.findIndex(
             pool =>
-              pool.fee.v.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee) &&
+              pool.fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee) &&
               ((pool.tokenX.equals(tokens[tokenA].assetAddress) &&
                 pool.tokenY.equals(tokens[tokenB].assetAddress)) ||
                 (pool.tokenX.equals(tokens[tokenB].assetAddress) &&
@@ -729,8 +728,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       bestTiers={bestTiers[currentNetwork]}
       currentPriceSqrt={
         poolIndex !== null && !!allPools[poolIndex]
-          ? allPools[poolIndex].sqrtPrice.v
-          : calculatePriceSqrt(midPrice.index).v
+          ? allPools[poolIndex].sqrtPrice
+          : calculatePriceSqrt(midPrice.index)
       }
       handleAddToken={addTokenHandler}
       commonTokens={commonTokensForNetworks[currentNetwork]}

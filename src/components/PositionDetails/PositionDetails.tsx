@@ -18,8 +18,8 @@ import { addressToTicker, initialXtoY, parseFeeToPathFee } from '@utils/utils'
 import { printBN } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PublicKey } from '@solana/web3.js'
-import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
+import { BN } from '@coral-xyz/anchor'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -40,7 +40,7 @@ interface IProps {
   closePosition: (claimFarmRewards?: boolean) => void
   ticksLoading: boolean
   tickSpacing: number
-  fee: Decimal
+  fee: BN
   min: number
   max: number
   showFeesLoader?: boolean
@@ -171,7 +171,7 @@ const PositionDetails: React.FC<IProps> = ({
           </Grid>
         </Grid>
         <SinglePositionInfo
-          fee={+printBN(fee.v, DECIMAL - 2)}
+          fee={+printBN(fee, DECIMAL - 2)}
           onClickClaimFee={onClickClaimFee}
           closePosition={closePosition}
           tokenX={tokenX}
@@ -215,7 +215,7 @@ const PositionDetails: React.FC<IProps> = ({
                 className={classes.button}
                 variant='contained'
                 onClick={() => {
-                  const parsedFee = parseFeeToPathFee(fee.v)
+                  const parsedFee = parseFeeToPathFee(fee)
                   const address1 = addressToTicker(network, tokenXAddress.toString())
                   const address2 = addressToTicker(network, tokenYAddress.toString())
 

@@ -39,7 +39,6 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
-import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
   fromFee,
   getConcentrationArray,
@@ -63,7 +62,7 @@ export interface INewPosition {
     rightTickIndex: number,
     xAmount: number,
     yAmount: number,
-    slippage: Decimal
+    slippage: BN
   ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
@@ -631,7 +630,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 isXtoY
                   ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
                   : convertBalanceToBN(tokenADeposit, tokenADecimals),
-                { v: fromFee(new BN(Number(+slippTolerance * 1000))) }
+                fromFee(new BN(Number(+slippTolerance * 1000)))
               )
             }
           }}
