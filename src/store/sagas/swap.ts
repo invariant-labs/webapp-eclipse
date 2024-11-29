@@ -2,7 +2,7 @@ import { call, put, select, takeEvery } from 'typed-redux-saga'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as swapActions } from '@store/reducers/swap'
 import { swap } from '@store/selectors/swap'
-import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
+import { poolsArraySortedByFees, tickMaps, tokens } from '@store/selectors/pools'
 import { accounts } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
@@ -10,17 +10,10 @@ import { getConnection, handleRpcError } from './connection'
 import {
   Keypair,
   sendAndConfirmRawTransaction,
-  SystemProgram,
   Transaction,
-  TransactionExpiredTimeoutError
+  TransactionExpiredTimeoutError,
+  TransactionInstruction
 } from '@solana/web3.js'
-import {
-  createCloseAccountInstruction,
-  createInitializeAccountInstruction,
-  getMinimumBalanceForRentExemptAccount,
-  NATIVE_MINT,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token'
 import {
   MAX_CROSSES_IN_SINGLE_TX,
   SIGNING_SNACKBAR_CONFIG,
@@ -32,12 +25,18 @@ import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
 import { createLoaderKey } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
+import {
+  createNativeAtaInstructions,
+  createNativeAtaWithTransferInstructions
+} from '@invariant-labs/sdk-eclipse/lib/utils'
+import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
   try {
+    const tickmaps = yield* select(tickMaps)
     const allTokens = yield* select(tokens)
     const allPools = yield* select(poolsArraySortedByFees)
     const {
@@ -80,45 +79,36 @@ export function* handleSwapWithETH(): Generator {
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
+    let initialTx: Transaction
+    let unwrapIx: TransactionInstruction
+    if (allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS) {
+      const {
+        createIx,
+        transferIx,
+        initIx,
+        unwrapIx: unwrap
+      } = createNativeAtaWithTransferInstructions(
+        wrappedEthAccount.publicKey,
+        wallet.publicKey,
+        net,
+        amountIn.toNumber()
+      )
+      unwrapIx = unwrap
+      initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
+    } else {
+      const {
+        createIx,
+        initIx,
+        unwrapIx: unwrap
+      } = createNativeAtaInstructions(wrappedEthAccount.publicKey, wallet.publicKey, net)
+      unwrapIx = unwrap
+      initialTx = new Transaction().add(createIx).add(initIx)
+    }
 
-    const transferIx = SystemProgram.transfer({
-      fromPubkey: wallet.publicKey,
-      toPubkey: wrappedEthAccount.publicKey,
-      lamports:
-        allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-          ? amountIn.toNumber()
-          : 0
-    })
-
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const initialTx =
-      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? new Transaction().add(createIx).add(transferIx).add(initIx)
-        : new Transaction().add(createIx).add(initIx)
     // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
     // initialTx.recentBlockhash = initialBlockhash.blockhash
     // initialTx.feePayer = wallet.publicKey
-
-    const unwrapIx = createCloseAccountInstruction(
-      wrappedEthAccount.publicKey,
-      wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
-    )
 
     let fromAddress =
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
@@ -143,7 +133,7 @@ export function* handleSwapWithETH(): Generator {
       [marketProgram, marketProgram.swapInstruction],
       {
         pair: new Pair(tokenFrom, tokenTo, {
-          fee: allPools[poolIndex].fee.v,
+          fee: allPools[poolIndex].fee,
           tickSpacing: allPools[poolIndex].tickSpacing
         }),
         xToY: isXtoY,
@@ -155,7 +145,11 @@ export function* handleSwapWithETH(): Generator {
         byAmountIn: byAmountIn,
         owner: wallet.publicKey
       },
-      MAX_CROSSES_IN_SINGLE_TX
+      {
+        pool: allPools[poolIndex],
+        tickmap: tickmaps[allPools[poolIndex].tickmap.toString()]
+      },
+      { tickCrosses: MAX_CROSSES_IN_SINGLE_TX }
     )
 
     initialTx.add(swapIx)
@@ -313,6 +307,7 @@ export function* handleSwapWithETH(): Generator {
 export function* handleSwap(): Generator {
   const loaderSwappingTokens = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
+  const tickmaps = yield* select(tickMaps)
 
   try {
     const allTokens = yield* select(tokens)
@@ -373,20 +368,30 @@ export function* handleSwap(): Generator {
     if (toAddress === null) {
       toAddress = yield* call(createAccount, tokenTo)
     }
-    const swapTx = yield* call([marketProgram, marketProgram.swapTransaction], {
-      pair: new Pair(tokenFrom, tokenTo, {
-        fee: allPools[poolIndex].fee.v,
-        tickSpacing: allPools[poolIndex].tickSpacing
-      }),
-      xToY: isXtoY,
-      amount: byAmountIn ? amountIn : amountOut,
-      estimatedPriceAfterSwap,
-      slippage: slippage,
-      accountX: isXtoY ? fromAddress : toAddress,
-      accountY: isXtoY ? toAddress : fromAddress,
-      byAmountIn: byAmountIn,
-      owner: wallet.publicKey
-    })
+
+    const swapTx = yield* call(
+      [marketProgram, marketProgram.swapTransaction],
+      {
+        pair: new Pair(tokenFrom, tokenTo, {
+          fee: allPools[poolIndex].fee,
+          tickSpacing: allPools[poolIndex].tickSpacing
+        }),
+        xToY: isXtoY,
+        amount: byAmountIn ? amountIn : amountOut,
+        estimatedPriceAfterSwap,
+        slippage: slippage,
+        accountX: isXtoY ? fromAddress : toAddress,
+        accountY: isXtoY ? toAddress : fromAddress,
+        byAmountIn: byAmountIn,
+        owner: wallet.publicKey
+      },
+      {
+        pool: allPools[poolIndex],
+        tickmap: tickmaps[allPools[poolIndex].tickmap.toString()],
+        tokenXProgram: allTokens[allPools[poolIndex].tokenX.toString()].tokenProgram,
+        tokenYProgram: allTokens[allPools[poolIndex].tokenY.toString()].tokenProgram
+      }
+    )
     const connection = yield* call(getConnection)
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
     swapTx.recentBlockhash = blockhash.blockhash

@@ -30,7 +30,6 @@ import { useNavigate } from 'react-router-dom'
 import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import { NoConnected } from '@components/NoConnected/NoConnected'
-import { openWalletSelectorModal } from '@utils/web3/selector'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -99,7 +98,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return {
         index: position.poolData.currentTickIndex,
         x: calcPriceBySqrtPrice(
-          position.poolData.sqrtPrice.v,
+          position.poolData.sqrtPrice,
           true,
           position.tokenX.decimals,
           position.tokenY.decimals
@@ -155,7 +154,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     () =>
       position
         ? calcYPerXPriceBySqrtPrice(
-            calculatePriceSqrt(position.lowerTickIndex).v,
+            calculatePriceSqrt(position.lowerTickIndex),
             position.tokenX.decimals,
             position.tokenY.decimals
           )
@@ -166,7 +165,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     () =>
       position
         ? calcYPerXPriceBySqrtPrice(
-            calculatePriceSqrt(position.upperTickIndex).v,
+            calculatePriceSqrt(position.upperTickIndex),
             position.tokenX.decimals,
             position.tokenY.decimals
           )
@@ -177,7 +176,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     () =>
       position?.poolData
         ? calcPriceBySqrtPrice(
-            position.poolData.sqrtPrice.v,
+            position.poolData.sqrtPrice,
             true,
             position.tokenX.decimals,
             position.tokenY.decimals
@@ -191,10 +190,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       try {
         return +printBN(
           getX(
-            position.liquidity.v,
-            calculatePriceSqrt(position.upperTickIndex).v,
-            position.poolData.sqrtPrice.v,
-            calculatePriceSqrt(position.lowerTickIndex).v
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
           ),
           position.tokenX.decimals
         )
@@ -211,10 +210,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       try {
         return +printBN(
           getY(
-            position.liquidity.v,
-            calculatePriceSqrt(position.upperTickIndex).v,
-            position.poolData.sqrtPrice.v,
-            calculatePriceSqrt(position.lowerTickIndex).v
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
           ),
           position.tokenY.decimals
         )
@@ -470,7 +469,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         justifyContent='center'
         className={classes.fullHeightContainer}>
         <NoConnected
-          onConnect={openWalletSelectorModal}
+          onConnect={() => {
+            dispatch(walletActions.connect(false))
+          }}
           title='Connect a wallet to view your position,'
           descCustomText='or start exploring liquidity pools now!'
         />

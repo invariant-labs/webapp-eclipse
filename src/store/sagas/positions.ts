@@ -17,22 +17,15 @@ import {
   Transaction,
   sendAndConfirmRawTransaction,
   Keypair,
-  SystemProgram,
   TransactionExpiredTimeoutError
 } from '@solana/web3.js'
-import {
-  createCloseAccountInstruction,
-  createInitializeAccountInstruction,
-  getMinimumBalanceForRentExemptAccount,
-  NATIVE_MINT,
-  TOKEN_PROGRAM_ID
-} from '@solana/spl-token'
 import {
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import {
+  plotTicks,
   positionsList,
   positionsWithPoolsData,
   singlePositionData
@@ -49,6 +42,12 @@ import {
   getPositionsAddressesFromRange
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
+import {
+  createNativeAtaInstructions,
+  createNativeAtaWithTransferInstructions,
+  MIN_BALANCE_FOR_RENT_EXEMPT
+} from '@invariant-labs/sdk-eclipse/lib/utils'
+import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 // import { createClaimAllPositionRewardsTx } from './farms'
 // import { actions as farmsActions } from '@reducers/farms'
 // import { stakesForPosition } from '@selectors/farms'
@@ -87,37 +86,15 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     const allTokens = yield* select(tokens)
 
     const wrappedEthAccount = Keypair.generate()
+    const net = networkTypetoProgramNetwork(networkType)
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
-
-    const transferIx = SystemProgram.transfer({
-      fromPubkey: wallet.publicKey,
-      toPubkey: wrappedEthAccount.publicKey,
-      lamports:
-        allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-          ? data.xAmount
-          : data.yAmount
-    })
-
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const unwrapIx = createCloseAccountInstruction(
+    const { createIx, initIx, transferIx, unwrapIx } = createNativeAtaWithTransferInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
+      net,
+      allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? data.xAmount
+        : data.yAmount
     )
 
     let userTokenX =
@@ -160,6 +137,12 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
         initTick: data.initTick,
         slippage: data.slippage,
         knownPrice: data.knownPrice
+      },
+      undefined,
+      {
+        tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
+        tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
+        minRentExemption: MIN_BALANCE_FOR_RENT_EXEMPT[net]
       }
     )
 
@@ -368,39 +351,26 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
+    const allPools = yield* select(poolsArraySortedByFees)
+    const ticks = yield* select(plotTicks)
+
+    const pair = new Pair(data.tokenX, data.tokenY, {
+      fee: data.fee,
+      tickSpacing: data.tickSpacing
+    })
+    const userPositionList = yield* select(positionsList)
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
 
-    const transferIx = SystemProgram.transfer({
-      fromPubkey: wallet.publicKey,
-      toPubkey: wrappedEthAccount.publicKey,
-      lamports:
-        allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-          ? data.xAmount
-          : data.yAmount
-    })
-
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const unwrapIx = createCloseAccountInstruction(
+    const { createIx, initIx, transferIx, unwrapIx } = createNativeAtaWithTransferInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
+      net,
+      allTokens[data.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? data.xAmount
+        : data.yAmount
     )
 
     let userTokenX =
@@ -431,17 +401,35 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     combinedTransaction.add(createIx).add(transferIx).add(initIx)
 
-    const initPositionTx = yield* call([marketProgram, marketProgram.initPositionTx], {
-      pair: new Pair(data.tokenX, data.tokenY, { fee: data.fee, tickSpacing: data.tickSpacing }),
-      userTokenX,
-      userTokenY,
-      lowerTick: data.lowerTick,
-      upperTick: data.upperTick,
-      liquidityDelta: data.liquidityDelta,
-      owner: wallet.publicKey,
-      slippage: data.slippage,
-      knownPrice: data.knownPrice
-    })
+    const initPositionTx = yield* call(
+      [marketProgram, marketProgram.initPositionTx],
+      {
+        pair,
+        userTokenX,
+        userTokenY,
+        lowerTick: data.lowerTick,
+        upperTick: data.upperTick,
+        liquidityDelta: data.liquidityDelta,
+        owner: wallet.publicKey,
+        slippage: data.slippage,
+        knownPrice: data.knownPrice
+      },
+      {
+        lowerTickExists:
+          !ticks.hasError && !ticks.loading
+            ? ticks.allData.find(t => t.index === data.lowerTick) !== undefined
+            : undefined,
+        upperTickExists:
+          !ticks.hasError && !ticks.loading
+            ? ticks.allData.find(t => t.index === data.upperTick) !== undefined
+            : undefined,
+        pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
+        tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
+        tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
+        minRentExemption: MIN_BALANCE_FOR_RENT_EXEMPT[net],
+        positionsList: !userPositionList.loading ? userPositionList : undefined
+      }
+    )
 
     combinedTransaction.add(initPositionTx)
     combinedTransaction.add(unwrapIx)
@@ -564,6 +552,14 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    const allPools = yield* select(poolsArraySortedByFees)
+    const ticks = yield* select(plotTicks)
+    const pair = new Pair(action.payload.tokenX, action.payload.tokenY, {
+      fee: action.payload.fee,
+      tickSpacing: action.payload.tickSpacing
+    })
+
+    const userPositionList = yield* select(positionsList)
 
     const tokensAccounts = yield* select(accounts)
 
@@ -588,39 +584,69 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     let poolSigners: Keypair[] = []
 
     if (action.payload.initPool) {
-      const txs = yield* call([marketProgram, marketProgram.initPoolAndPositionTx], {
-        pair: new Pair(action.payload.tokenX, action.payload.tokenY, {
-          fee: action.payload.fee,
-          tickSpacing: action.payload.tickSpacing
-        }),
-        userTokenX,
-        userTokenY,
-        lowerTick: action.payload.lowerTick,
-        upperTick: action.payload.upperTick,
-        liquidityDelta: action.payload.liquidityDelta,
-        owner: wallet.publicKey,
-        initTick: action.payload.initTick,
-        slippage: action.payload.slippage,
-        knownPrice: action.payload.knownPrice
-      })
+      const txs = yield* call(
+        [marketProgram, marketProgram.initPoolAndPositionTx],
+        {
+          pair,
+          userTokenX,
+          userTokenY,
+          lowerTick: action.payload.lowerTick,
+          upperTick: action.payload.upperTick,
+          liquidityDelta: action.payload.liquidityDelta,
+          owner: wallet.publicKey,
+          initTick: action.payload.initTick,
+          slippage: action.payload.slippage,
+          knownPrice: action.payload.knownPrice
+        },
+        undefined,
+        {
+          lowerTickExists:
+            !ticks.hasError && !ticks.loading
+              ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+              : undefined,
+          upperTickExists:
+            !ticks.hasError && !ticks.loading
+              ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+              : undefined,
+          pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
+          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
+          minRentExemption: MIN_BALANCE_FOR_RENT_EXEMPT[networkTypetoProgramNetwork(networkType)],
+          positionsList: !userPositionList.loading ? userPositionList : undefined
+        }
+      )
       tx = txs.initPositionTx
       initPoolTx = txs.initPoolTx
       poolSigners = txs.initPoolSigners
     } else {
-      tx = yield* call([marketProgram, marketProgram.initPositionTx], {
-        pair: new Pair(action.payload.tokenX, action.payload.tokenY, {
-          fee: action.payload.fee,
-          tickSpacing: action.payload.tickSpacing
-        }),
-        userTokenX,
-        userTokenY,
-        lowerTick: action.payload.lowerTick,
-        upperTick: action.payload.upperTick,
-        liquidityDelta: action.payload.liquidityDelta,
-        owner: wallet.publicKey,
-        slippage: action.payload.slippage,
-        knownPrice: action.payload.knownPrice
-      })
+      tx = yield* call(
+        [marketProgram, marketProgram.initPositionTx],
+        {
+          pair,
+          userTokenX,
+          userTokenY,
+          lowerTick: action.payload.lowerTick,
+          upperTick: action.payload.upperTick,
+          liquidityDelta: action.payload.liquidityDelta,
+          owner: wallet.publicKey,
+          slippage: action.payload.slippage,
+          knownPrice: action.payload.knownPrice
+        },
+        {
+          lowerTickExists:
+            !ticks.hasError && !ticks.loading
+              ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+              : undefined,
+          upperTickExists:
+            !ticks.hasError && !ticks.loading
+              ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+              : undefined,
+          pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
+          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
+          positionsList: !userPositionList.loading ? userPositionList : undefined
+        }
+      )
     }
 
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
@@ -734,7 +760,7 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
     const rawTicks = yield* call(
       [marketProgram, marketProgram.getAllTicks],
       new Pair(allPools[poolIndex].tokenX, allPools[poolIndex].tokenY, {
-        fee: allPools[poolIndex].fee.v,
+        fee: allPools[poolIndex].fee,
         tickSpacing: allPools[poolIndex].tickSpacing
       })
     )
@@ -779,7 +805,10 @@ export function* handleGetPositionsList() {
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
 
-    const { head } = yield* call([marketProgram, marketProgram.getPositionList], wallet.publicKey)
+    const { head, bump } = yield* call(
+      [marketProgram, marketProgram.getPositionList],
+      wallet.publicKey
+    )
 
     const { list, addresses } = yield* all({
       list: call(
@@ -816,9 +845,9 @@ export function* handleGetPositionsList() {
 
     yield* take(pattern)
 
-    yield* put(actions.setPositionsList(positions))
+    yield* put(actions.setPositionsList([positions, { head, bump }, true]))
   } catch (error) {
-    yield* put(actions.setPositionsList([]))
+    yield* put(actions.setPositionsList([[], { head: 0, bump: 0 }, false]))
 
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -850,63 +879,58 @@ export function* handleClaimFeeWithETH(positionIndex: number) {
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
 
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const unwrapIx = createCloseAccountInstruction(
+    const { createIx, initIx, unwrapIx } = createNativeAtaInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
+      net
     )
 
-    const positionForIndex = allPositionsData[positionIndex].poolData
+    const poolForIndex = allPositionsData[positionIndex].poolData
+    const position = allPositionsData[positionIndex]
 
     let userTokenX =
-      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[poolForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
-        : tokensAccounts[positionForIndex.tokenX.toString()]
-          ? tokensAccounts[positionForIndex.tokenX.toString()].address
+        : tokensAccounts[poolForIndex.tokenX.toString()]
+          ? tokensAccounts[poolForIndex.tokenX.toString()].address
           : null
 
     if (userTokenX === null) {
-      userTokenX = yield* call(createAccount, positionForIndex.tokenX)
+      userTokenX = yield* call(createAccount, poolForIndex.tokenX)
     }
 
     let userTokenY =
-      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[poolForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
-        : tokensAccounts[positionForIndex.tokenY.toString()]
-          ? tokensAccounts[positionForIndex.tokenY.toString()].address
+        : tokensAccounts[poolForIndex.tokenY.toString()]
+          ? tokensAccounts[poolForIndex.tokenY.toString()].address
           : null
 
     if (userTokenY === null) {
-      userTokenY = yield* call(createAccount, positionForIndex.tokenY)
+      userTokenY = yield* call(createAccount, poolForIndex.tokenY)
     }
 
-    const ix = yield* call([marketProgram, marketProgram.claimFeeInstruction], {
-      pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-        fee: positionForIndex.fee.v,
-        tickSpacing: positionForIndex.tickSpacing
-      }),
-      userTokenX,
-      userTokenY,
-      owner: wallet.publicKey,
-      index: positionIndex
-    })
+    const ix = yield* call(
+      [marketProgram, marketProgram.claimFeeInstruction],
+      {
+        pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
+          fee: poolForIndex.fee,
+          tickSpacing: poolForIndex.tickSpacing
+        }),
+        userTokenX,
+        userTokenY,
+        owner: wallet.publicKey,
+        index: positionIndex
+      },
+      {
+        position: position,
+        pool: poolForIndex,
+        tokenXProgram: allTokens[poolForIndex.tokenX.toString()].tokenProgram,
+        tokenYProgram: allTokens[poolForIndex.tokenY.toString()].tokenProgram
+      }
+    )
 
     const tx = new Transaction().add(createIx).add(initIx).add(ix).add(unwrapIx)
 
@@ -989,11 +1013,12 @@ export function* handleClaimFee(action: PayloadAction<number>) {
   try {
     const allTokens = yield* select(tokens)
     const allPositionsData = yield* select(positionsWithPoolsData)
-    const positionForIndex = allPositionsData[action.payload].poolData
+    const position = allPositionsData[action.payload]
+    const poolForIndex = position.poolData
 
     if (
-      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
-      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[poolForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
+      allTokens[poolForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
       return yield* call(handleClaimFeeWithETH, action.payload)
     }
@@ -1015,32 +1040,41 @@ export function* handleClaimFee(action: PayloadAction<number>) {
 
     const tokensAccounts = yield* select(accounts)
 
-    let userTokenX = tokensAccounts[positionForIndex.tokenX.toString()]
-      ? tokensAccounts[positionForIndex.tokenX.toString()].address
+    let userTokenX = tokensAccounts[poolForIndex.tokenX.toString()]
+      ? tokensAccounts[poolForIndex.tokenX.toString()].address
       : null
 
     if (userTokenX === null) {
-      userTokenX = yield* call(createAccount, positionForIndex.tokenX)
+      userTokenX = yield* call(createAccount, poolForIndex.tokenX)
     }
 
-    let userTokenY = tokensAccounts[positionForIndex.tokenY.toString()]
-      ? tokensAccounts[positionForIndex.tokenY.toString()].address
+    let userTokenY = tokensAccounts[poolForIndex.tokenY.toString()]
+      ? tokensAccounts[poolForIndex.tokenY.toString()].address
       : null
 
     if (userTokenY === null) {
-      userTokenY = yield* call(createAccount, positionForIndex.tokenY)
+      userTokenY = yield* call(createAccount, poolForIndex.tokenY)
     }
 
-    const ix = yield* call([marketProgram, marketProgram.claimFeeInstruction], {
-      pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-        fee: positionForIndex.fee.v,
-        tickSpacing: positionForIndex.tickSpacing
-      }),
-      userTokenX,
-      userTokenY,
-      owner: wallet.publicKey,
-      index: action.payload
-    })
+    const ix = yield* call(
+      [marketProgram, marketProgram.claimFeeInstruction],
+      {
+        pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
+          fee: poolForIndex.fee,
+          tickSpacing: poolForIndex.tickSpacing
+        }),
+        userTokenX,
+        userTokenY,
+        owner: wallet.publicKey,
+        index: action.payload
+      },
+      {
+        position: position,
+        pool: poolForIndex,
+        tokenXProgram: allTokens[poolForIndex.tokenX.toString()].tokenProgram,
+        tokenYProgram: allTokens[poolForIndex.tokenY.toString()].tokenProgram
+      }
+    )
 
     const tx = new Transaction().add(ix)
 
@@ -1138,54 +1172,40 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     const allPositionsData = yield* select(positionsWithPoolsData)
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
+    const userPositionList = yield* select(positionsList)
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(getMinimumBalanceForRentExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
 
-    const initIx = createInitializeAccountInstruction(
-      wrappedEthAccount.publicKey,
-      NATIVE_MINT,
-      wallet.publicKey,
-      TOKEN_PROGRAM_ID
-    )
-
-    const unwrapIx = createCloseAccountInstruction(
+    const { createIx, initIx, unwrapIx } = createNativeAtaInstructions(
       wrappedEthAccount.publicKey,
       wallet.publicKey,
-      wallet.publicKey,
-      [],
-      TOKEN_PROGRAM_ID
+      net
     )
-
-    const positionForIndex = allPositionsData[data.positionIndex].poolData
+    const position = allPositionsData[data.positionIndex]
+    const poolForIndex = position.poolData
 
     let userTokenX =
-      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[poolForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
-        : tokensAccounts[positionForIndex.tokenX.toString()]
-          ? tokensAccounts[positionForIndex.tokenX.toString()].address
+        : tokensAccounts[poolForIndex.tokenX.toString()]
+          ? tokensAccounts[poolForIndex.tokenX.toString()].address
           : null
 
     if (userTokenX === null) {
-      userTokenX = yield* call(createAccount, positionForIndex.tokenX)
+      userTokenX = yield* call(createAccount, poolForIndex.tokenX)
     }
 
     let userTokenY =
-      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[poolForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
         ? wrappedEthAccount.publicKey
-        : tokensAccounts[positionForIndex.tokenY.toString()]
-          ? tokensAccounts[positionForIndex.tokenY.toString()].address
+        : tokensAccounts[poolForIndex.tokenY.toString()]
+          ? tokensAccounts[poolForIndex.tokenY.toString()].address
           : null
 
     if (userTokenY === null) {
-      userTokenY = yield* call(createAccount, positionForIndex.tokenY)
+      userTokenY = yield* call(createAccount, poolForIndex.tokenY)
     }
 
     // const positionStakes = yield* select(
@@ -1196,16 +1216,26 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     //   yield* call(unsub, stakerProgram, stake.address)
     // }
 
-    const ix = yield* call([marketProgram, marketProgram.removePositionInstruction], {
-      pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-        fee: positionForIndex.fee.v,
-        tickSpacing: positionForIndex.tickSpacing
-      }),
-      owner: wallet.publicKey,
-      index: data.positionIndex,
-      userTokenX,
-      userTokenY
-    })
+    const ix = yield* call(
+      [marketProgram, marketProgram.removePositionInstruction],
+      {
+        pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
+          fee: poolForIndex.fee,
+          tickSpacing: poolForIndex.tickSpacing
+        }),
+        owner: wallet.publicKey,
+        index: data.positionIndex,
+        userTokenX,
+        userTokenY
+      },
+      {
+        position: position,
+        pool: poolForIndex,
+        tokenXProgram: allTokens[poolForIndex.tokenX.toString()].tokenProgram,
+        tokenYProgram: allTokens[poolForIndex.tokenY.toString()].tokenProgram,
+        positionList: !userPositionList.loading ? userPositionList : undefined
+      }
+    )
 
     // let tx: Transaction
 
@@ -1309,11 +1339,12 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
   try {
     const allTokens = yield* select(tokens)
     const allPositionsData = yield* select(positionsWithPoolsData)
-    const positionForIndex = allPositionsData[action.payload.positionIndex].poolData
+    const poolForIndex = allPositionsData[action.payload.positionIndex].poolData
+    const position = allPositionsData[action.payload.positionIndex]
 
     if (
-      allTokens[positionForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
-      allTokens[positionForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+      allTokens[poolForIndex.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
+      allTokens[poolForIndex.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
       return yield* call(handleClosePositionWithETH, action.payload)
     }
@@ -1335,20 +1366,20 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
 
     const tokensAccounts = yield* select(accounts)
 
-    let userTokenX = tokensAccounts[positionForIndex.tokenX.toString()]
-      ? tokensAccounts[positionForIndex.tokenX.toString()].address
+    let userTokenX = tokensAccounts[poolForIndex.tokenX.toString()]
+      ? tokensAccounts[poolForIndex.tokenX.toString()].address
       : null
 
     if (userTokenX === null) {
-      userTokenX = yield* call(createAccount, positionForIndex.tokenX)
+      userTokenX = yield* call(createAccount, poolForIndex.tokenX)
     }
 
-    let userTokenY = tokensAccounts[positionForIndex.tokenY.toString()]
-      ? tokensAccounts[positionForIndex.tokenY.toString()].address
+    let userTokenY = tokensAccounts[poolForIndex.tokenY.toString()]
+      ? tokensAccounts[poolForIndex.tokenY.toString()].address
       : null
 
     if (userTokenY === null) {
-      userTokenY = yield* call(createAccount, positionForIndex.tokenY)
+      userTokenY = yield* call(createAccount, poolForIndex.tokenY)
     }
 
     // const positionStakes = yield* select(
@@ -1360,16 +1391,25 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     //   yield* call(unsub, stakerProgram, stake.address)
     // }
 
-    const ix = yield* call([marketProgram, marketProgram.removePositionInstruction], {
-      pair: new Pair(positionForIndex.tokenX, positionForIndex.tokenY, {
-        fee: positionForIndex.fee.v,
-        tickSpacing: positionForIndex.tickSpacing
-      }),
-      owner: wallet.publicKey,
-      index: action.payload.positionIndex,
-      userTokenX,
-      userTokenY
-    })
+    const ix = yield* call(
+      [marketProgram, marketProgram.removePositionInstruction],
+      {
+        pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
+          fee: poolForIndex.fee,
+          tickSpacing: poolForIndex.tickSpacing
+        }),
+        owner: wallet.publicKey,
+        index: action.payload.positionIndex,
+        userTokenX,
+        userTokenY
+      },
+      {
+        position,
+        pool: poolForIndex,
+        tokenXProgram: allTokens[poolForIndex.tokenX.toString()].tokenProgram,
+        tokenYProgram: allTokens[poolForIndex.tokenY.toString()].tokenProgram
+      }
+    )
 
     // let tx: Transaction
 
@@ -1498,7 +1538,7 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
     }
 
     const pair = new Pair(positionData.poolData.tokenX, positionData.poolData.tokenY, {
-      fee: positionData.poolData.fee.v,
+      fee: positionData.poolData.fee,
       tickSpacing: positionData.poolData.tickSpacing
     })
 

@@ -84,8 +84,8 @@ export const Primary: Story = {
     pools: [],
     progress: 'none',
     swapData: {
-      slippage: { v: fromFee(new BN(1000)) },
-      estimatedPriceAfterSwap: { v: new BN(0) },
+      slippage: fromFee(new BN(1000)),
+      estimatedPriceAfterSwap: new BN(0),
       poolIndex: 0,
       tokenFrom: DEFAULT_PUBLIC_KEY,
       tokenTo: DEFAULT_PUBLIC_KEY,

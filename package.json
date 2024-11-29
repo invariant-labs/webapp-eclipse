@@ -17,9 +17,10 @@
     "update-mainnet-list": "node ./src/fetchMainnetList.js"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.29.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@invariant-labs/sdk-eclipse": "^0.0.38",
+    "@invariant-labs/sdk-eclipse": "0.0.47.2",
     "@irys/web-upload": "^0.0.14",
     "@irys/web-upload-solana": "^0.1.7",
     "@metaplex-foundation/js": "^0.20.1",
@@ -29,7 +30,6 @@
     "@nightlylabs/wallet-selector-solana": "^0.3.1",
     "@nivo/bar": "^0.87.0",
     "@nivo/line": "^0.86.0",
-    "@coral-xyz/anchor": "^0.29.0",
     "@project-serum/sol-wallet-adapter": "^0.2.5",
     "@reduxjs/toolkit": "^2.2.3",
     "@solana/spl-token": "^0.4.9",
