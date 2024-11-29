@@ -135,7 +135,8 @@ export function* fetchTokensAccounts(): Generator {
         getTokenMetadata,
         connection,
         info.mint,
-        info.tokenAmount.decimals
+        info.tokenAmount.decimals,
+        new PublicKey(info.owner)
       )
     }
   }
@@ -574,7 +575,7 @@ export function* handleDisconnect(): Generator {
   try {
     yield* call(disconnectWallet)
     yield* put(actions.resetState())
-    yield* put(positionsActions.setPositionsList([]))
+    yield* put(positionsActions.setPositionsList([[], { head: 0, bump: 0 }, false]))
     // yield* put(farmsActions.setUserStakes({}))
     yield* put(
       positionsActions.setCurrentPositionRangeTicks({

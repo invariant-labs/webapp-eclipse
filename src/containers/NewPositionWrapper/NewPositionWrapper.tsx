@@ -693,7 +693,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             knownPrice:
               poolIndex === null
                 ? calculatePriceSqrt(midPrice.index)
-                : allPools[poolIndex].sqrtPrice
+                : allPools[poolIndex].sqrtPrice,
+            poolIndex
           })
         )
       }}

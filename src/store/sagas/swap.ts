@@ -387,7 +387,9 @@ export function* handleSwap(): Generator {
       },
       {
         pool: allPools[poolIndex],
-        tickmap: tickmaps[allPools[poolIndex].tickmap.toString()]
+        tickmap: tickmaps[allPools[poolIndex].tickmap.toString()],
+        tokenXProgram: allTokens[allPools[poolIndex].tokenX.toString()].tokenProgram,
+        tokenYProgram: allTokens[allPools[poolIndex].tokenY.toString()].tokenProgram
       }
     )
     const connection = yield* call(getConnection)
