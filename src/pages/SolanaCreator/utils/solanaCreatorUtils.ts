@@ -1,3 +1,7 @@
+import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
+import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
+import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
+import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
 export interface FormData {
   name: string
   symbol: string
@@ -116,3 +120,5 @@ const getErrorMessages = (error: any): ErrorMessage => {
 }
 
 export default getErrorMessages
+
+export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]

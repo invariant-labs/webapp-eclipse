@@ -68,7 +68,6 @@ export function* getBalance(pubKey: PublicKey): SagaGenerator<BN> {
 
 export function* handleBalance(): Generator {
   const wallet = yield* call(getWallet)
-  console.log('wallet', wallet)
   yield* put(actions.setAddress(wallet.publicKey))
   yield* put(actions.setIsBalanceLoading(true))
   const balance = yield* call(getBalance, wallet.publicKey)

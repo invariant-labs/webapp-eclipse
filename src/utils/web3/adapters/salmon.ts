@@ -11,6 +11,8 @@ interface SalmonProvider {
   autoApprove?: boolean
   signTransaction: (transaction: Transaction) => Promise<Transaction>
   signAllTransactions: (transactions: Transaction[]) => Promise<Transaction[]>
+  signMessage: (message: Uint8Array) => Promise<any>
+  sendMessage: (message: Uint8Array) => Promise<Uint8Array>
   connect: () => Promise<void>
   disconnect: () => Promise<void>
   on: (event: SalmonEvent, handler: (args: any) => void) => void
@@ -51,6 +53,27 @@ export class SalmonWalletAdapter implements WalletAdapter {
     }
 
     return await this._salmonProvider.signTransaction(transaction)
+  }
+
+  async sendMessage(message: Uint8Array) {
+    if (!this._salmonProvider) {
+      throw new Error('Salmon Wallet not connected' + message)
+    }
+    return await this._salmonProvider.sendMessage(message)
+  }
+
+  async signMessage(message: Uint8Array) {
+    if (!this._salmonProvider) {
+      throw new Error('Salmon Wallet not connected')
+    }
+
+    if (!(message instanceof Uint8Array)) {
+      throw new TypeError('Expected message to be a Uint8Array')
+    }
+
+    const signedMessage = await this._salmonProvider.signMessage(message)
+
+    return new Uint8Array(signedMessage.signature as ArrayBuffer)
   }
 
   connect = async () => {

@@ -2,9 +2,9 @@ import { PayloadAction } from '@reduxjs/toolkit'
 import { actions, CreateTokenPayload } from '@store/reducers/creator'
 import { all, call, put, spawn, takeLatest } from 'typed-redux-saga'
 import { getWallet } from './wallet'
-import { DEFAULT_PUBLICKEY, NetworkType, SIGNING_SNACKBAR_CONFIG } from '@store/consts/static'
+import { DEFAULT_PUBLICKEY, SIGNING_SNACKBAR_CONFIG } from '@store/consts/static'
 import { WebUploader } from '@irys/web-upload'
-import { WebSolana } from '@irys/web-upload-solana'
+import WebSolana from '@irys/web-upload-solana'
 import {
   Keypair,
   PublicKey,
@@ -24,7 +24,7 @@ import { closeSnackbar } from 'notistack'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 
 export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
-  const { data, network } = action.payload
+  const { data } = action.payload
 
   const {
     name,
@@ -63,11 +63,10 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
         key: loaderCreateToken
       })
     )
-    const irysUploader = yield* call(async () => {
-      return network === NetworkType.Mainnet
-        ? await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint)
-        : await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint).devnet()
-    })
+
+    const irysUploader = yield* call(
+      async () => await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint)
+    )
 
     const mintKeypair = Keypair.generate()
     const mintAuthority = wallet.publicKey
@@ -186,7 +185,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
       [],
       spl18.TOKEN_PROGRAM_ID
     )
-
+    console.log('keypair', mintKeypair.publicKey)
     const createMetadataAccountInstruction = createCreateMetadataAccountV3Instruction(
       {
         metadata: metadataPDA,
@@ -232,7 +231,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
 
     transaction.partialSign(mintKeypair)
 
-    const signedTx = (yield* call([wallet, wallet.signTransaction], transaction)) as Transaction
+    const signedTx = yield* call([wallet, wallet.signTransaction], transaction)
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
