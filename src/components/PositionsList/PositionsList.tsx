@@ -219,7 +219,7 @@ export const PositionsList: React.FC<IProps> = ({
         </Grid>
       </Grid>
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
-        {currentData.length > 0 && !loading ? (
+        {currentData.length > 0 && !loading && !showNoConnected ? (
           paginator(page).data.map((element, index) => (
             <Grid
               onClick={() => {

@@ -21,14 +21,11 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    min: 1,
-    max: 1,
-    currentPrice: 1,
     closePosition: fn(),
     fee: 1,
     onClickClaimFee: fn(),
     swapHandler: fn(),
-    lockPosition: fn(),
+    onModalOpen: fn(),
     tokenX: {
       name: 'BTC',
       icon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',

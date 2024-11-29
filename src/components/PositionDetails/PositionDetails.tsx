@@ -14,12 +14,18 @@ import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
 import { TokenPriceData } from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { addressToTicker, initialXtoY, parseFeeToPathFee } from '@utils/utils'
+import { addressToTicker, formatNumber, initialXtoY, parseFeeToPathFee } from '@utils/utils'
 import { printBN } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PublicKey } from '@solana/web3.js'
 import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
+import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
+import { blurContent, unblurContent } from '@utils/uiUtils'
+import { lockerState } from '@store/selectors/locker'
+import { useSelector } from 'react-redux'
+import lockIcon from '@static/svg/lock.svg'
+import unlockIcon from '@static/svg/unlock.svg'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -91,6 +97,11 @@ const PositionDetails: React.FC<IProps> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
+
+  const { success, inProgress } = useSelector(lockerState)
+
+  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
+
   const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
 
   const isActive = midPrice.x >= min && midPrice.x <= max
@@ -121,8 +132,48 @@ const PositionDetails: React.FC<IProps> = ({
     }
   }, [network])
 
+  const onLockPositionModalClose = () => {
+    setIsLockPositionModalOpen(false)
+    unblurContent()
+  }
+
+  useEffect(() => {
+    if (success && !inProgress) {
+      onLockPositionModalClose()
+    }
+  }, [success, inProgress])
+
+  const { value, tokenXLabel, tokenYLabel } = useMemo<{
+    value: string
+    tokenXLabel: string
+    tokenYLabel: string
+  }>(() => {
+    const valueX = tokenX.liqValue + tokenY.liqValue / currentPrice
+    const valueY = tokenY.liqValue + tokenX.liqValue * currentPrice
+    return {
+      value: `${formatNumber(xToY ? valueX : valueY)} ${xToY ? tokenX.name : tokenY.name}`,
+      tokenXLabel: xToY ? tokenX.name : tokenY.name,
+      tokenYLabel: xToY ? tokenY.name : tokenX.name
+    }
+  }, [min, max, currentPrice, tokenX, tokenY, xToY])
+
   return (
     <Grid container className={classes.wrapperContainer} wrap='nowrap'>
+      <LockLiquidityModal
+        open={isLockPositionModalOpen}
+        onClose={onLockPositionModalClose}
+        xToY={xToY}
+        tokenX={tokenX}
+        tokenY={tokenY}
+        onLock={lockPosition}
+        fee={`${+printBN(fee.v, DECIMAL - 2).toString()}% fee`}
+        minMax={`${formatNumber(min)}-${formatNumber(max)} ${tokenYLabel} per ${tokenXLabel}`}
+        value={value}
+        isActive={isActive}
+        swapHandler={() => setXToY(!xToY)}
+        success={success}
+        inProgress={inProgress}
+      />
       <Grid className={classes.positionDetails} container item direction='column'>
         <Grid className={classes.backContainer} container>
           <Link to='/liquidity' style={{ textDecoration: 'none' }}>
@@ -185,14 +236,13 @@ const PositionDetails: React.FC<IProps> = ({
           isBalanceLoading={isBalanceLoading}
           isActive={isActive}
           network={network}
-          min={xToY ? min : 1 / max}
-          max={xToY ? max : 1 / min}
-          currentPrice={currentPrice}
-          lockPosition={lockPosition}
           isLocked={isLocked}
+          onModalOpen={() => {
+            setIsLockPositionModalOpen(true)
+            blurContent()
+          }}
         />
       </Grid>
-
       <Grid
         container
         item
@@ -209,7 +259,30 @@ const PositionDetails: React.FC<IProps> = ({
             flexDirection='row-reverse'
             className={classes.rightHeaderWrapper}
             mt='22px'
+            gap='8px'
             wrap='nowrap'>
+            <Hidden mdDown>
+              {!isLocked ? (
+                <TooltipHover text={'Lock liquidity'}>
+                  <Button
+                    className={classes.lockButton}
+                    disabled={isLocked}
+                    variant='contained'
+                    onClick={() => {
+                      setIsLockPositionModalOpen(true)
+                      blurContent()
+                    }}>
+                    <img src={lockIcon} alt='Lock' />
+                  </Button>
+                </TooltipHover>
+              ) : (
+                <TooltipHover text={'Unlock liquidity'}>
+                  <Button className={classes.unlockButton} variant='contained' onClick={() => {}}>
+                    <img src={unlockIcon} alt='Lock' />
+                  </Button>
+                </TooltipHover>
+              )}
+            </Hidden>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <Button
                 className={classes.button}
@@ -226,7 +299,7 @@ const PositionDetails: React.FC<IProps> = ({
             </Box>
             <Hidden mdDown>
               <TooltipHover text='Refresh'>
-                <Grid mr={2} ml='auto' display='flex' justifyContent='center'>
+                <Grid display='flex' justifyContent='center'>
                   <Refresher
                     currentIndex={refresherTime}
                     maxIndex={REFRESHER_INTERVAL}
@@ -239,7 +312,12 @@ const PositionDetails: React.FC<IProps> = ({
               </TooltipHover>
               <Grid
                 display={'flex'}
-                style={{ padding: '8px 8px  0 0px', height: '24px', minWidth: '290px' }}>
+                style={{
+                  padding: '8px 8px  0 0px',
+                  height: '24px',
+                  minWidth: '200px',
+                  marginRight: 'auto'
+                }}>
                 <MarketIdLabel
                   marketId={poolAddress.toString()}
                   displayLength={5}
@@ -247,7 +325,7 @@ const PositionDetails: React.FC<IProps> = ({
                 />
                 {poolAddress.toString() && (
                   <TooltipHover text='Open pool in explorer'>
-                    <Grid mr={'12px'}>
+                    <Grid>
                       <a
                         href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
                         target='_blank'

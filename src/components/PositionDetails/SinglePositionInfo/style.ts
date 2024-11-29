@@ -71,27 +71,21 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     columnGap: 10,
     flexBasis: '41%',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     flexGrow: 0.6,
     [theme.breakpoints.down('md')]: {
-      justifyContent: 'flex-end',
       flexBasis: 'auto',
       flexGrow: 'auto'
     },
 
     [theme.breakpoints.down('sm')]: {
-      justifyContent: 'space-between',
-      flexBasis: 'auto',
       marginTop: 16
     }
   },
   feeText: {
     paddingInline: 6,
     textAlign: 'center',
-    [theme.breakpoints.down('md')]: {
-      minWidth: 84,
-      marginLeft: 16
-    },
+    minWidth: 66,
     [theme.breakpoints.down('md')]: {
       minWidth: 84,
       marginInline: 12
@@ -119,11 +113,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading3,
     color: colors.invariant.text,
     textWrap: 'nowrap',
-    maxWidth: 120,
     fontSize: 22,
     overflow: 'hidden',
     whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
     [theme.breakpoints.down('sm')]: {
       ...typography.heading4
     }

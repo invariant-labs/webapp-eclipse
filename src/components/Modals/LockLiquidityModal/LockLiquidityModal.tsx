@@ -82,17 +82,25 @@ export const LockLiquidityModal = ({
       <Grid container className={classes.backgroundContainer}>
         <Grid container className={classes.container}>
           <Grid item className={classes.lockPositionHeader}>
-            <Typography component='h1'>Locking your position</Typography>
+            <Typography component='h1'>Lock Position</Typography>
             <Button className={classes.lockPositionClose} onClick={onClose} aria-label='Close' />
           </Grid>
           <Typography className={classes.lockExplanation}>
-            Liquidity providers can permanently lock their liquidity. Trading fees will still remain
-            claimable after the lock. Lock Liquidity Permanently? Are you sure you want to lock your
-            liquidity permanently? Once locked, you will no longer be able to access or withdraw it.
-            However, trading fees will remain claimable. If you are locking a concentrated position,
-            the price range and fee tier associated with that position will also be locked and
-            cannot be modified afterwards. If you wish to make any changes, be sure to do so before
-            locking!
+            <Typography className={classes.lockParagraph}>
+              <b>Are you sure you want to lock your liquidity permanently?</b> Once locked, you will
+              no longer be able to withdraw tokens from this position. Locking liquidity is often
+              used for specific purposes, such as protecting against rug pulls.
+            </Typography>
+            <Typography className={classes.lockParagraph}>
+              Before locking, double-check the parameters of your position (e.g., price range and
+              fee tier). These settings cannot be changed once the position is locked. If you need
+              to adjust the parameters, you can close and reopen the position with the correct
+              settings before locking.
+            </Typography>
+            <Typography className={classes.lockParagraph}>
+              The Invariant locker allows the wallet that locks the position to claim any fees
+              accumulated from swaps
+            </Typography>
           </Typography>
           <Grid item container className={classes.pairInfo}>
             <Grid item className={classes.pairDisplay}>
@@ -165,12 +173,12 @@ export const LockLiquidityModal = ({
           <Grid item className={classes.lockWarning}>
             <img src={warningExclamationMarkCircle} alt='' />
             <Typography className={classes.lockWarningText}>
-              By clicking this button, you confirm that you fully understand and agree that your
-              liquidity will be permanently locked.
+              Once locked, the position cannot be closed, and the tokens cannot be withdrawn. Please
+              ensure you fully understand the consequences before proceeding.
             </Typography>
           </Grid>
           <AnimatedButton
-            content={'Lock Position!'}
+            content={'Lock Position'}
             className={classNames(
               classes.lockButton,
               progress === 'none' ? classes.buttonText : null
