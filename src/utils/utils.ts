@@ -1157,6 +1157,7 @@ export const getPoolsFromAddresses = async (
 
     return pools
       .filter(pool => pool !== null)
+      .filter(pool => pool.fee)
       .map((pool, index) => {
         return {
           ...parsePool(pool),

@@ -141,12 +141,12 @@ export const WrappedPositionsList: React.FC = () => {
   const lockedData: IPositionItem[] = lockedList
     .map(position => {
       const lowerPrice = calcYPerXPriceBySqrtPrice(
-        calculatePriceSqrt(position.lowerTickIndex).v,
+        calculatePriceSqrt(position.lowerTickIndex),
         position.tokenX.decimals,
         position.tokenY.decimals
       )
       const upperPrice = calcYPerXPriceBySqrtPrice(
-        calculatePriceSqrt(position.upperTickIndex).v,
+        calculatePriceSqrt(position.upperTickIndex),
         position.tokenX.decimals,
         position.tokenY.decimals
       )
@@ -162,10 +162,10 @@ export const WrappedPositionsList: React.FC = () => {
       try {
         tokenXLiq = +printBN(
           getX(
-            position.liquidity.v,
-            calculatePriceSqrt(position.upperTickIndex).v,
-            position.poolData.sqrtPrice.v,
-            calculatePriceSqrt(position.lowerTickIndex).v
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
           ),
           position.tokenX.decimals
         )
@@ -176,10 +176,10 @@ export const WrappedPositionsList: React.FC = () => {
       try {
         tokenYLiq = +printBN(
           getY(
-            position.liquidity.v,
-            calculatePriceSqrt(position.upperTickIndex).v,
-            position.poolData.sqrtPrice.v,
-            calculatePriceSqrt(position.lowerTickIndex).v
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
           ),
           position.tokenY.decimals
         )
@@ -188,7 +188,7 @@ export const WrappedPositionsList: React.FC = () => {
       }
 
       const currentPrice = calcYPerXPriceBySqrtPrice(
-        position.poolData.sqrtPrice.v,
+        position.poolData.sqrtPrice,
         position.tokenX.decimals,
         position.tokenY.decimals
       )
@@ -201,7 +201,7 @@ export const WrappedPositionsList: React.FC = () => {
         tokenYName: position.tokenY.symbol,
         tokenXIcon: position.tokenX.logoURI,
         tokenYIcon: position.tokenY.logoURI,
-        fee: +printBN(position.poolData.fee.v, DECIMAL - 2),
+        fee: +printBN(position.poolData.fee, DECIMAL - 2),
         min,
         max,
         valueX,
