@@ -276,8 +276,12 @@ const PositionDetails: React.FC<IProps> = ({
                   </Button>
                 </TooltipHover>
               ) : (
-                <TooltipHover text={'Unlock liquidity'}>
-                  <Button className={classes.unlockButton} variant='contained' onClick={() => {}}>
+                <TooltipHover text={'Unlocking liquidity is forbidden'}>
+                  <Button
+                    disabled
+                    className={classes.unlockButton}
+                    variant='contained'
+                    onClick={() => {}}>
                     <img src={unlockIcon} alt='Lock' />
                   </Button>
                 </TooltipHover>

@@ -164,11 +164,11 @@ const SinglePositionInfo: React.FC<IProp> = ({
           </Grid>
           <TooltipHover
             text={
-              tokenX.claimValue > 0 || tokenY.claimValue > 0
-                ? isLocked
-                  ? 'Closing positions is disabled when position is locked'
-                  : 'Unclaimed fees will be returned when closing the position'
-                : ''
+              isLocked
+                ? 'Closing positions is disabled when position is locked'
+                : tokenX.claimValue > 0 || tokenY.claimValue > 0
+                  ? 'Unclaimed fees will be returned when closing the position'
+                  : ''
             }>
             <Button
               className={classes.closeButton}
@@ -197,8 +197,12 @@ const SinglePositionInfo: React.FC<IProp> = ({
                 </Button>
               </TooltipHover>
             ) : (
-              <TooltipHover text={'Unlock liquidity'}>
-                <Button className={classes.unlockButton} variant='contained' onClick={() => {}}>
+              <TooltipHover text={'Unlocking liquidity is forbidden'}>
+                <Button
+                  disabled
+                  className={classes.unlockButton}
+                  variant='contained'
+                  onClick={() => {}}>
                   <img src={unlockIcon} alt='Lock' />
                 </Button>
               </TooltipHover>
