@@ -18,8 +18,8 @@ import { addressToTicker, formatNumber, initialXtoY, parseFeeToPathFee } from '@
 import { printBN } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PublicKey } from '@solana/web3.js'
-import { Decimal } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
+import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { lockerState } from '@store/selectors/locker'
@@ -46,7 +46,7 @@ interface IProps {
   closePosition: (claimFarmRewards?: boolean) => void
   ticksLoading: boolean
   tickSpacing: number
-  fee: Decimal
+  fee: BN
   min: number
   max: number
   showFeesLoader?: boolean
@@ -166,7 +166,7 @@ const PositionDetails: React.FC<IProps> = ({
         tokenX={tokenX}
         tokenY={tokenY}
         onLock={lockPosition}
-        fee={`${+printBN(fee.v, DECIMAL - 2).toString()}% fee`}
+        fee={`${+printBN(fee, DECIMAL - 2).toString()}% fee`}
         minMax={`${formatNumber(min)}-${formatNumber(max)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
         isActive={isActive}
@@ -222,7 +222,7 @@ const PositionDetails: React.FC<IProps> = ({
           </Grid>
         </Grid>
         <SinglePositionInfo
-          fee={+printBN(fee.v, DECIMAL - 2)}
+          fee={+printBN(fee, DECIMAL - 2)}
           onClickClaimFee={onClickClaimFee}
           closePosition={closePosition}
           tokenX={tokenX}
@@ -288,7 +288,7 @@ const PositionDetails: React.FC<IProps> = ({
                 className={classes.button}
                 variant='contained'
                 onClick={() => {
-                  const parsedFee = parseFeeToPathFee(fee.v)
+                  const parsedFee = parseFeeToPathFee(fee)
                   const address1 = addressToTicker(network, tokenXAddress.toString())
                   const address2 = addressToTicker(network, tokenYAddress.toString())
 

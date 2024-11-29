@@ -1,4 +1,4 @@
-import { Decimal, DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk-eclipse/lib/market'
+import { DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk-eclipse/lib/market'
 import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
@@ -6,8 +6,8 @@ import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
 export interface Swap {
-  slippage: Decimal
-  estimatedPriceAfterSwap: Decimal
+  slippage: BN
+  estimatedPriceAfterSwap: BN
   poolIndex: number
   tokenFrom: PublicKey
   tokenTo: PublicKey
@@ -35,8 +35,8 @@ export interface ISwapStore {
 
 export const defaultState: ISwapStore = {
   swap: {
-    slippage: { v: fromFee(new BN(1000)) },
-    estimatedPriceAfterSwap: { v: new BN(0) },
+    slippage: fromFee(new BN(1000)),
+    estimatedPriceAfterSwap: new BN(0),
     poolIndex: 0,
     tokenFrom: DEFAULT_PUBLIC_KEY,
     tokenTo: DEFAULT_PUBLIC_KEY,
