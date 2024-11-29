@@ -737,10 +737,13 @@ export function* handleGetPositionsList() {
 
     const [lockerAuth] = lockerProgram.getUserLocksAddress(wallet.publicKey)
 
-    const { head: lockedHead } = yield* call(
-      [marketProgram, marketProgram.getPositionList],
-      lockerAuth
-    )
+    let lockedHead
+    try {
+      const { head } = yield* call([marketProgram, marketProgram.getPositionList], lockerAuth)
+      lockedHead = head
+    } catch (e) {
+      lockedHead = 0
+    }
 
     const { lockedList, lockedAddresses } = yield* all({
       lockedList: call(
