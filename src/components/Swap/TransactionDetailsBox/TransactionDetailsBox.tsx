@@ -8,7 +8,7 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 interface IProps {
   open: boolean
-  fee: { v: BN }
+  fee: BN
   exchangeRate: { val: number; symbol: string; decimal: number }
   slippage: number
   priceImpact: BN
@@ -25,7 +25,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
 }) => {
   const { classes } = useStyles({ open })
 
-  const feePercent = Number(printBN(fee.v, DECIMAL - 2))
+  const feePercent = Number(printBN(fee, DECIMAL - 2))
   const impact = +printBN(priceImpact, DECIMAL - 2)
 
   return (

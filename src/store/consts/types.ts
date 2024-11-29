@@ -31,6 +31,7 @@ export enum SwapError {
 }
 
 export interface Token {
+  tokenProgram?: PublicKey
   symbol: string
   address: PublicKey
   decimals: number
