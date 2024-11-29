@@ -373,8 +373,8 @@ export function* handleSwap(): Generator {
       [marketProgram, marketProgram.swapTransaction],
       {
         pair: new Pair(tokenFrom, tokenTo, {
-          fee: swapPool.fee,
-          tickSpacing: swapPool.tickSpacing
+          fee: allPools[poolIndex].fee,
+          tickSpacing: allPools[poolIndex].tickSpacing
         }),
         xToY: isXtoY,
         amount: byAmountIn ? amountIn : amountOut,
@@ -386,10 +386,10 @@ export function* handleSwap(): Generator {
         owner: wallet.publicKey
       },
       {
-        pool: swapPool,
-        tickmap: tickmaps[swapPool.tickmap.toString()],
-        tokenXProgram: allTokens[swapPool.tokenX.toString()].tokenProgram,
-        tokenYProgram: allTokens[swapPool.tokenY.toString()].tokenProgram
+        pool: allPools[poolIndex],
+        tickmap: tickmaps[allPools[poolIndex].tickmap.toString()],
+        tokenXProgram: allTokens[allPools[poolIndex].tokenX.toString()].tokenProgram,
+        tokenYProgram: allTokens[allPools[poolIndex].tokenY.toString()].tokenProgram
       }
     )
     const connection = yield* call(getConnection)
