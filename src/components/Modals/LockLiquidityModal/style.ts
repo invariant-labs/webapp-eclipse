@@ -38,6 +38,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       ...typography.body2,
       textWrap: 'wrap'
     },
+    lockParagraph: {
+      marginBottom: 16,
+      ...typography.body2
+    },
     lockPositionHeader: {
       width: '100%',
       display: 'flex',
