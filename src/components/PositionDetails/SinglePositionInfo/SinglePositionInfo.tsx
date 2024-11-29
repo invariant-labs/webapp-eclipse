@@ -2,7 +2,7 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import { useEffect, useMemo, useState } from 'react'
+import { useState } from 'react'
 import { BoxInfo } from './BoxInfo'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
@@ -12,11 +12,8 @@ import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import icons from '@static/icons'
-import { addressToTicker, formatNumber } from '@utils/utils'
+import { addressToTicker } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
-import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
-import { lockerState } from '@store/selectors/locker'
-import { useSelector } from 'react-redux'
 
 interface IProp {
   fee: number
@@ -28,16 +25,13 @@ interface IProp {
   tokenYPriceData?: TokenPriceData
   xToY: boolean
   swapHandler: () => void
-  lockPosition: () => void
   showFeesLoader?: boolean
   userHasStakes?: boolean
   isBalanceLoading: boolean
   isActive: boolean
   network: NetworkType
-  min: number
-  max: number
-  currentPrice: number
   isLocked: boolean
+  onModalOpen: () => void
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -55,42 +49,12 @@ const SinglePositionInfo: React.FC<IProp> = ({
   isBalanceLoading,
   isActive,
   network,
-  min,
-  max,
-  currentPrice,
-  lockPosition,
+  onModalOpen,
   isLocked
 }) => {
   const navigate = useNavigate()
-  const { success, inProgress } = useSelector(lockerState)
   const [isModalOpen, setIsModalOpen] = useState(false)
-  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
   const { classes } = useStyles()
-
-  const onLockPositionModalClose = () => {
-    setIsLockPositionModalOpen(false)
-    unblurContent()
-  }
-
-  useEffect(() => {
-    if (success && !inProgress) {
-      onLockPositionModalClose()
-    }
-  }, [success, inProgress])
-
-  const { value, tokenXLabel, tokenYLabel } = useMemo<{
-    value: string
-    tokenXLabel: string
-    tokenYLabel: string
-  }>(() => {
-    const valueX = tokenX.liqValue + tokenY.liqValue / currentPrice
-    const valueY = tokenY.liqValue + tokenX.liqValue * currentPrice
-    return {
-      value: `${formatNumber(xToY ? valueX : valueY)} ${xToY ? tokenX.name : tokenY.name}`,
-      tokenXLabel: xToY ? tokenX.name : tokenY.name,
-      tokenYLabel: xToY ? tokenY.name : tokenX.name
-    }
-  }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
   return (
     <Grid className={classes.root}>
@@ -111,21 +75,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
           unblurContent()
         }}
       />
-      <LockLiquidityModal
-        open={isLockPositionModalOpen}
-        onClose={onLockPositionModalClose}
-        xToY={xToY}
-        tokenX={tokenX}
-        tokenY={tokenY}
-        onLock={lockPosition}
-        fee={`${fee.toString()}% fee`}
-        minMax={`${formatNumber(min)}-${formatNumber(max)} ${tokenYLabel} per ${tokenXLabel}`}
-        value={value}
-        isActive={isActive}
-        swapHandler={swapHandler}
-        success={success}
-        inProgress={inProgress}
-      />
+
       <Grid className={classes.header}>
         <Grid className={classes.iconsGrid}>
           <img
@@ -235,26 +185,25 @@ const SinglePositionInfo: React.FC<IProp> = ({
               Close position
             </Button>
           </TooltipHover>
-          {!isLocked ? (
-            <TooltipHover text={'Lock liquidity'}>
-              <Button
-                className={classes.lockButton}
-                disabled={isLocked}
-                variant='contained'
-                onClick={() => {
-                  setIsLockPositionModalOpen(true)
-                  blurContent()
-                }}>
-                <img src={lockIcon} alt='Lock' />
-              </Button>
-            </TooltipHover>
-          ) : (
-            <TooltipHover text={'Unlock liquidity'}>
-              <Button className={classes.unlockButton} variant='contained' onClick={() => {}}>
-                <img src={unlockIcon} alt='Lock' />
-              </Button>
-            </TooltipHover>
-          )}
+          <Hidden mdUp>
+            {!isLocked ? (
+              <TooltipHover text={'Lock liquidity'}>
+                <Button
+                  className={classes.lockButton}
+                  disabled={isLocked}
+                  variant='contained'
+                  onClick={onModalOpen}>
+                  <img src={lockIcon} alt='Lock' />
+                </Button>
+              </TooltipHover>
+            ) : (
+              <TooltipHover text={'Unlock liquidity'}>
+                <Button className={classes.unlockButton} variant='contained' onClick={() => {}}>
+                  <img src={unlockIcon} alt='Lock' />
+                </Button>
+              </TooltipHover>
+            )}
+          </Hidden>
           <Hidden smUp>
             <Button
               className={classes.button}

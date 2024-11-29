@@ -116,5 +116,29 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         filter: 'none'
       }
     }
+  },
+  unlockButton: {
+    color: colors.invariant.black,
+    background: colors.invariant.greenLinearGradientOpacity,
+    borderRadius: 12,
+    height: 40,
+    padding: 0,
+    minWidth: 40,
+    '&:hover': {
+      background: colors.invariant.greenLinearGradient,
+      boxShadow: `0 0 16px ${colors.invariant.greenLinearGradient}`
+    }
+  },
+  lockButton: {
+    color: colors.invariant.black,
+    background: colors.invariant.pinkLinearGradientOpacity,
+    borderRadius: 12,
+    height: 40,
+    padding: 0,
+    minWidth: 40,
+    '&:hover': {
+      background: colors.invariant.pinkLinearGradient,
+      boxShadow: `0 0 16px ${colors.invariant.pink}`
+    }
   }
 }))

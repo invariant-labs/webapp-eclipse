@@ -103,6 +103,7 @@ const PoolList: React.FC<PoolListInterface> = ({ data, network, copyAddressHandl
               iconTo={element.iconTo}
               volume={element.volume}
               TVL={element.TVL}
+              isLocked={Math.random() > 0.5}
               fee={element.fee}
               apy={element.apy}
               hideBottomLine={pages === 1 && index + 1 === data.length}

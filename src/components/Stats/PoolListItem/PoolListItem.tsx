@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -14,6 +14,7 @@ import { formatNumber } from '@utils/utils'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 interface IProps {
   TVL?: number
   volume?: number
@@ -38,6 +39,7 @@ interface IProps {
   }
   isUnknownFrom?: boolean
   isUnknownTo?: boolean
+  isLocked?: boolean
   poolAddress?: string
   copyAddressHandler?: (message: string, variant: VariantType) => void
 }
@@ -66,6 +68,7 @@ const PoolListItem: React.FC<IProps> = ({
   // }
   isUnknownFrom,
   isUnknownTo,
+  isLocked,
   poolAddress,
   copyAddressHandler
 }) => {
@@ -74,7 +77,8 @@ const PoolListItem: React.FC<IProps> = ({
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
+  const lockIconRef = useRef<HTMLImageElement | null>(null)
+  const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
   const handleOpenPosition = () => {
     navigate(
       `/newPosition/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
@@ -127,6 +131,29 @@ const PoolListItem: React.FC<IProps> = ({
           <Grid className={classes.imageContainer}>
             {!isSm && (
               <Box className={classes.iconsWrapper}>
+                {isLocked && (
+                  <Box className={classes.iconContainer}>
+                    <img
+                      className={classes.tokenIcon}
+                      onClick={() => {
+                        setLockPopoverOpen(true)
+                      }}
+                      ref={lockIconRef}
+                      src={icons.lockIcon}
+                      alt='LockIcon'
+                    />
+                    <LockStatsPopover
+                      anchorEl={lockIconRef.current}
+                      open={isLockPopoverOpen}
+                      onClose={() => {
+                        setLockPopoverOpen(false)
+                      }}
+                    />
+                    {isUnknownFrom && (
+                      <img className={classes.warningIcon} src={icons.warningIcon} />
+                    )}
+                  </Box>
+                )}
                 <Box className={classes.iconContainer}>
                   <img
                     className={classes.tokenIcon}
