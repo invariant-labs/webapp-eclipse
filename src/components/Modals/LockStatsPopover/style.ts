@@ -5,20 +5,15 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()((theme: Theme) => {
   return {
     popover: {
-      marginTop: 'max(calc(50vh - 350px), 0px)',
-      marginLeft: 'calc(50vw - 751px)',
-      borderRadius: '20px !important',
       [theme.breakpoints.down('sm')]: {
-        display: 'flex',
-        marginLeft: 'auto',
-        justifyContent: 'center'
+        width: '100%',
+        padding: '16px'
       }
     },
     chart: {
       height: '100px',
       width: '160px'
     },
-
     backgroundContainer: {
       background: colors.invariant.component,
       width: 652,

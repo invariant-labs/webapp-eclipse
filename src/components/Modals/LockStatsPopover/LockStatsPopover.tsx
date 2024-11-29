@@ -30,8 +30,10 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
     <Popover
       open={open}
       anchorEl={anchorEl}
-      classes={{ paper: classes.paper }}
-      className={classes.popover}
+      classes={{
+        paper: classes.paper,
+        root: classes.popover
+      }}
       onClose={onClose}
       anchorOrigin={{
         vertical: 'bottom',
@@ -40,7 +42,8 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
       transformOrigin={{
         vertical: 'top',
         horizontal: 'center'
-      }}>
+      }}
+      marginThreshold={16}>
       <div className={classes.backgroundContainer}>
         <div className={classes.statsContainer} style={{ gap: '16px' }}>
           <div style={{ display: 'flex', width: '48%', gap: '16px' }}>
@@ -73,7 +76,6 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                 colors={[colors.invariant.pink, colors.invariant.green]}
                 slotProps={{
                   legend: { hidden: true },
-
                   pieArc: {
                     fill: 'currentColor'
                   }
@@ -87,15 +89,14 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
               className={classes.description}
               style={{
                 flex: 1,
-                display: 'flex',
-                alignItems: 'center'
+                display: 'flex'
               }}>
               Lorem ipsum dolor init, Lorem ipsum dolor init, Lorem ipsum dolor init, Lorem ipsum
-              dolor init. Lorem ipsum dolor init.
+              dolor init. Lorem ipsum dolor init. Lorem ipsum dolor init, Lorem ipsum dolor init,
+              Lorem ipsum dolor init, Lorem ipsum dolor init.
             </Typography>
           </div>
 
-          {/* Separator */}
           <Box
             sx={{
               width: '2px',
@@ -104,7 +105,6 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
             }}
           />
 
-          {/* Right section */}
           <div
             style={{
               display: 'flex',
@@ -114,7 +114,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
             }}>
             <Typography
               className={classes.chartTitle}
-              style={{ textAlign: 'center', width: 'fit-content' }}>
+              style={{ textAlign: 'center', width: 'fit-content', alignSelf: 'center' }}>
               Progress
             </Typography>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
