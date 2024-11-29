@@ -225,6 +225,19 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '&.Mui-selected:hover': {
       backgroundColor: 'transparent'
     },
+    '&:disabled': {
+      color: colors.invariant.componentBcg,
+      pointerEvents: 'auto',
+      transition: 'all 0.2s',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed',
+        filter: 'brightness(1.15)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
+      }
+    },
     letterSpacing: '-0.03em',
     paddingTop: 6,
     paddingBottom: 6,
