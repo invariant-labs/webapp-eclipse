@@ -100,7 +100,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return {
         index: position.poolData.currentTickIndex,
         x: calcPriceBySqrtPrice(
-          position.poolData.sqrtPrice.v,
+          position.poolData.sqrtPrice,
           true,
           position.tokenX.decimals,
           position.tokenY.decimals
@@ -156,7 +156,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     () =>
       position
         ? calcYPerXPriceBySqrtPrice(
-            calculatePriceSqrt(position.lowerTickIndex).v,
+            calculatePriceSqrt(position.lowerTickIndex),
             position.tokenX.decimals,
             position.tokenY.decimals
           )
@@ -167,7 +167,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     () =>
       position
         ? calcYPerXPriceBySqrtPrice(
-            calculatePriceSqrt(position.upperTickIndex).v,
+            calculatePriceSqrt(position.upperTickIndex),
             position.tokenX.decimals,
             position.tokenY.decimals
           )
@@ -178,7 +178,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     () =>
       position?.poolData
         ? calcPriceBySqrtPrice(
-            position.poolData.sqrtPrice.v,
+            position.poolData.sqrtPrice,
             true,
             position.tokenX.decimals,
             position.tokenY.decimals
@@ -192,10 +192,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       try {
         return +printBN(
           getX(
-            position.liquidity.v,
-            calculatePriceSqrt(position.upperTickIndex).v,
-            position.poolData.sqrtPrice.v,
-            calculatePriceSqrt(position.lowerTickIndex).v
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
           ),
           position.tokenX.decimals
         )
@@ -212,10 +212,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       try {
         return +printBN(
           getY(
-            position.liquidity.v,
-            calculatePriceSqrt(position.upperTickIndex).v,
-            position.poolData.sqrtPrice.v,
-            calculatePriceSqrt(position.lowerTickIndex).v
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
           ),
           position.tokenY.decimals
         )

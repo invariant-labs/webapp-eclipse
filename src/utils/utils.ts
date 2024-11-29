@@ -6,7 +6,7 @@ import {
   Pair,
   sleep
 } from '@invariant-labs/sdk-eclipse'
-import { Decimal, PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
+import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
   calculateTickDelta,
   DECIMAL,
@@ -21,7 +21,11 @@ import {
   Market,
   Tickmap,
   TICK_CROSSES_PER_IX,
-  TICK_VIRTUAL_CROSSES_PER_IX
+  TICK_VIRTUAL_CROSSES_PER_IX,
+  parsePool,
+  RawPoolStructure,
+  parsePosition,
+  parseTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios, { AxiosResponse } from 'axios'
 import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -275,8 +279,8 @@ export const calculateSqrtPriceFromBalance = (
   const priceBN = convertBalanceToBN(parsedPrimaryUnits, PRICE_SCALE)
   const sqrtPrice = sqrt(priceBN)
 
-  const minSqrtPrice = calculatePriceSqrt(minTick).v
-  const maxSqrtPrice = calculatePriceSqrt(maxTick).v
+  const minSqrtPrice = calculatePriceSqrt(minTick)
+  const maxSqrtPrice = calculatePriceSqrt(maxTick)
 
   let validatedSqrtPrice = sqrtPrice
 
@@ -537,12 +541,12 @@ export const createLiquidityPlot = (
   return isXtoY ? ticksData : ticksData.reverse()
 }
 export const parseLiquidityOnUserTicks = (
-  ticks: { index: number; liquidityChange: Decimal; sign: boolean }[]
+  ticks: { index: number; liquidityChange: BN; sign: boolean }[]
 ) => {
   let currentLiquidity = new BN(0)
 
   return ticks.map(tick => {
-    currentLiquidity = currentLiquidity.add(tick.liquidityChange.v.muln(tick.sign ? 1 : -1))
+    currentLiquidity = currentLiquidity.add(tick.liquidityChange.muln(tick.sign ? 1 : -1))
     return {
       liquidity: currentLiquidity,
       index: tick.index
@@ -560,7 +564,7 @@ export const getLiquidityTicksByPositionsList = (
   const minTick = getMinTick(pool.tickSpacing)
   const maxTick = getMaxTick(pool.tickSpacing)
 
-  const userTickIndexes: { index: number; liquidity: Decimal }[] = []
+  const userTickIndexes: { index: number; liquidity: BN }[] = []
 
   positions.forEach(position => {
     if (position.pool.equals(pool.address)) {
@@ -571,14 +575,14 @@ export const getLiquidityTicksByPositionsList = (
     }
   })
 
-  const newTicks: { index: number; liquidityChange: Decimal; sign: boolean }[] = []
+  const newTicks: { index: number; liquidityChange: BN; sign: boolean }[] = []
 
   userTickIndexes.forEach(userTick => {
-    const [liquidityChange, sign] = userTick.liquidity.v.gt(new BN(0))
+    const [liquidityChange, sign] = userTick.liquidity.gt(new BN(0))
       ? [userTick.liquidity, true]
-      : [{ v: userTick.liquidity.v.neg() }, false]
+      : [userTick.liquidity.neg(), false]
 
-    if (!liquidityChange.v.eq(new BN(0))) {
+    if (!liquidityChange.eq(new BN(0))) {
       newTicks.push({ index: userTick.index, liquidityChange, sign })
     }
   })
@@ -919,7 +923,7 @@ export const calcPriceByTickIndex = (
   xDecimal: number,
   yDecimal: number
 ) => {
-  const price = calcYPerXPriceBySqrtPrice(calculatePriceSqrt(index).v, xDecimal, yDecimal)
+  const price = calcYPerXPriceBySqrtPrice(calculatePriceSqrt(index), xDecimal, yDecimal)
 
   return isXtoY ? price : price !== 0 ? 1 / price : Number.MAX_SAFE_INTEGER
 }
@@ -955,7 +959,7 @@ export const calcCurrentPriceOfPool = (
 ) => {
   const decimalDiff = PRICE_DECIMAL + (xDecimal - yDecimal)
   const sqrtPricePow: number =
-    +printBN(pool.sqrtPrice.v, PRICE_DECIMAL) * +printBN(pool.sqrtPrice.v, PRICE_DECIMAL)
+    +printBN(pool.sqrtPrice, PRICE_DECIMAL) * +printBN(pool.sqrtPrice, PRICE_DECIMAL)
 
   const knownPrice: BN = new BN(sqrtPricePow * 10 ** decimalDiff)
 
@@ -966,7 +970,7 @@ export const handleSimulate = async (
   pools: PoolWithAddress[],
   poolTicks: { [key in string]: Tick[] },
   tickmaps: { [key in string]: Tickmap },
-  slippage: Decimal,
+  slippage: BN,
   fromToken: PublicKey,
   toToken: PublicKey,
   amount: BN,
@@ -1149,18 +1153,17 @@ export const getPoolsFromAddresses = async (
   try {
     const pools = (await marketProgram.program.account.pool.fetchMultiple(
       addresses
-    )) as Array<PoolStructure | null>
+    )) as Array<RawPoolStructure | null>
 
     return pools
-      .map((pool, index) =>
-        pool !== null
-          ? {
-              ...pool,
-              address: addresses[index]
-            }
-          : null
-      )
-      .filter(pool => pool !== null) as PoolWithAddress[]
+      .filter(pool => pool !== null)
+      .filter(pool => pool.fee)
+      .map((pool, index) => {
+        return {
+          ...parsePool(pool),
+          address: addresses[index]
+        }
+      }) as PoolWithAddress[]
   } catch (error) {
     console.log(error)
     return []
@@ -1276,11 +1279,11 @@ export const determinePositionTokenBlock = (
   const lowerPrice = calculatePriceSqrt(lowerTick)
   const upperPrice = calculatePriceSqrt(upperTick)
 
-  if (lowerPrice.v.gte(currentSqrtPrice)) {
+  if (lowerPrice.gte(currentSqrtPrice)) {
     return isXtoY ? PositionTokenBlock.B : PositionTokenBlock.A
   }
 
-  if (upperPrice.v.lte(currentSqrtPrice)) {
+  if (upperPrice.lte(currentSqrtPrice)) {
     return isXtoY ? PositionTokenBlock.A : PositionTokenBlock.B
   }
 
@@ -1484,7 +1487,7 @@ export const getPositionsForPool = async (marketProgram: Market, pool: PublicKey
       }
     ])
   ).map(({ account, publicKey }) => ({
-    ...account,
+    ...parsePosition(account),
     address: publicKey
   })) as PositionWithAddress[]
 }
@@ -1639,7 +1642,7 @@ export const getTicksList = async (
 
   const ticks = await marketProgram.program.account.tick.fetchMultiple(ticksAddresses)
 
-  return ticks.map(tick => (tick === null ? null : (tick as Tick)))
+  return ticks.map(tick => (tick === null ? null : parseTick(tick)))
 }
 
 export const getPoolsAPY = async (name: string): Promise<Record<string, number>> => {
