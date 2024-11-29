@@ -5,6 +5,7 @@ import { ISnackbar } from '@store/reducers/snackbars'
 import { BestTier, Chain, PrefixConfig, Token, TokenPriceData, WalletType } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
+import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 export enum NetworkType {
   Local = 'Local',
@@ -39,6 +40,7 @@ export const REFRESHER_INTERVAL = 120
 
 export const PRICE_DECIMAL = 24
 export const USDC_DEV: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'USDC',
   address: new PublicKey('GEds1ARB3oywy2sSdiNGDyxz9MhpfqPkFYYStdZmHaiN'),
   decimals: 9,
@@ -48,6 +50,7 @@ export const USDC_DEV: Token = {
   coingeckoId: 'usd-coin'
 }
 export const BTC_DEV: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'BTC',
   address: new PublicKey('CfwLhXJ2r2NmUE1f7oAeySY6eEZ7f5tC8v95nopUs5ez'),
   decimals: 9,
@@ -57,6 +60,7 @@ export const BTC_DEV: Token = {
   coingeckoId: 'bitcoin'
 }
 export const WETH_DEV: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'ETH',
   address: new PublicKey('So11111111111111111111111111111111111111112'),
   decimals: 9,
@@ -67,6 +71,7 @@ export const WETH_DEV: Token = {
 }
 
 export const USDC_TEST: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'USDC',
   address: new PublicKey('5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx'),
   decimals: 9,
@@ -77,6 +82,7 @@ export const USDC_TEST: Token = {
 }
 
 export const BTC_TEST: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'BTC',
   address: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo'),
   decimals: 9,
@@ -87,6 +93,7 @@ export const BTC_TEST: Token = {
 }
 
 export const WETH_TEST: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'ETH',
   address: new PublicKey('So11111111111111111111111111111111111111112'),
   decimals: 9,
@@ -97,6 +104,7 @@ export const WETH_TEST: Token = {
 }
 
 export const MOON_TEST: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'MOON',
   address: new PublicKey('JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S'),
   decimals: 5,
@@ -106,6 +114,7 @@ export const MOON_TEST: Token = {
 }
 
 export const S22_TEST: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'S22',
   address: new PublicKey('Bo6ufYtZ7rRtVX2VryazbYjZSgHExfpXST9Xo3Vd3CyA'),
   decimals: 9,
@@ -115,6 +124,7 @@ export const S22_TEST: Token = {
 }
 
 export const MOCKED_TOKEN_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'MCT',
   address: new PublicKey('82kkga2kBcQNyV4VKJhGvE7Z58fFavVyuh5NapMVo7Qs'),
   decimals: 9,
@@ -124,6 +134,7 @@ export const MOCKED_TOKEN_MAIN: Token = {
 }
 
 export const USDC_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'USDC',
   address: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
   decimals: 6,
@@ -134,6 +145,7 @@ export const USDC_MAIN: Token = {
 }
 
 export const SOL_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'SOL',
   address: new PublicKey('BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL'),
   decimals: 9,
@@ -144,6 +156,7 @@ export const SOL_MAIN: Token = {
 }
 
 export const DOGWIFHAT_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'WIF',
   address: new PublicKey('841P4tebEgNux2jaWSjCoi9LhrVr9eHGjLc758Va3RPH'),
   decimals: 6,
@@ -153,6 +166,7 @@ export const DOGWIFHAT_MAIN: Token = {
 }
 
 export const WETH_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'ETH',
   address: WETH_ADDRESS[NetworkType.Mainnet],
   decimals: 9,
@@ -163,6 +177,7 @@ export const WETH_MAIN: Token = {
 }
 
 export const LAIKA_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'LAIKA',
   address: new PublicKey('LaihKXA47apnS599tyEyasY2REfEzBNe4heunANhsMx'),
   decimals: 5,
@@ -173,6 +188,7 @@ export const LAIKA_MAIN: Token = {
 }
 
 export const MOON_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'MOON',
   address: new PublicKey('HgD4Dc6qYCj3UanMDiuC4qANheeTsAvk6DY91B3F8gnL'),
   decimals: 5,
@@ -182,6 +198,7 @@ export const MOON_MAIN: Token = {
 }
 
 export const GSVM_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'GSVM',
   address: new PublicKey('137EXM1L3m8hDeq29ducnGhYCwEDCAnxcJ7kqD4TcFFC'),
   decimals: 9,
@@ -191,6 +208,7 @@ export const GSVM_MAIN: Token = {
 }
 
 export const DARKMOON_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'DARKMOON',
   address: new PublicKey('F2kbmDAWrcNms6bf98kxkNaKb3chGXea6Dbz8aepQy58'),
   decimals: 6,
@@ -200,6 +218,7 @@ export const DARKMOON_MAIN: Token = {
 }
 
 export const ECAT_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'ECAT',
   address: new PublicKey('9iswScagJJkKAAsRtp7pJB62f3idZRxHr1Sr9hACThFh'),
   decimals: 9,
@@ -209,6 +228,7 @@ export const ECAT_MAIN: Token = {
 }
 
 export const TURBO_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'Turbo',
   address: new PublicKey('trbts2EsWyMdnCjsHUFBKLtgudmBD7Rfbz8zCg1s4EK'),
   decimals: 9,
@@ -219,6 +239,7 @@ export const TURBO_MAIN: Token = {
 }
 
 export const MOO_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'MOO',
   address: new PublicKey('8nF4QmTxsFh5L7bBw9qfdfW67CEAdLWuK9EQjsTgk8d'),
   decimals: 9,
@@ -228,6 +249,7 @@ export const MOO_MAIN: Token = {
 }
 
 export const EBULL_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'EBull',
   address: new PublicKey('2vvZp5DXtfpm8MV4KLRKqwdqnKfsKZt4pmk31JHnMw3J'),
   decimals: 9,
@@ -237,6 +259,7 @@ export const EBULL_MAIN: Token = {
 }
 
 export const PUNKSTAR_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'PUNKSTAR',
   address: new PublicKey('5HMGZW3oGvHRYcqJ817iXvMv1iXruTYF9nyt9iWfg8Lr'),
   decimals: 5,
@@ -246,6 +269,7 @@ export const PUNKSTAR_MAIN: Token = {
 }
 
 export const AI16Z_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'ai16z',
   address: new PublicKey('DZLJXHaNeCgjzhS6m2qLwRzAF8HFeyc6zTBU1AmuG79S'),
   decimals: 9,
@@ -255,6 +279,7 @@ export const AI16Z_MAIN: Token = {
 }
 
 export const VLR_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'vlr',
   address: new PublicKey('89jLd8KJrW653MX7VGQKZKZjkqUNKh3ZZ7L6oN6xGtsK'),
   decimals: 9,
@@ -264,6 +289,7 @@ export const VLR_MAIN: Token = {
 }
 
 export const TIA_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'TIA',
   address: new PublicKey('9RryNMhAVJpAwAGjCAMKbbTFwgjapqPkzpGMfTQhEjf8'),
   decimals: 6,
@@ -274,6 +300,7 @@ export const TIA_MAIN: Token = {
 }
 
 export const STTIA_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'stTIA',
   address: new PublicKey('V5m1Cc9VK61mKL8xVYrjR7bjD2BC5VpADLa6ws3G8KM'),
   decimals: 6,
@@ -283,6 +310,7 @@ export const STTIA_MAIN: Token = {
 }
 
 export const BRICK_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'Brick',
   address: new PublicKey('3Q5RQRTKCH4RWGFVFht1RtM1fx3SSxNGAk1sTuVank6w'),
   decimals: 9,
@@ -293,6 +321,7 @@ export const BRICK_MAIN: Token = {
 }
 
 export const PANTY_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'PANTY',
   address: new PublicKey('FZLbeANPzvtKPX7cZyRJ53Ce1wihgr57h5r348NziSRD'),
   decimals: 9,
@@ -302,6 +331,7 @@ export const PANTY_MAIN: Token = {
 }
 
 export const PODAVINI_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'PODAVINI',
   address: new PublicKey('Aj6HETPRCwjLJBBpfSEnRy8jCp1ZipEs7FTMKi745tsJ'),
   decimals: 9,
@@ -311,6 +341,7 @@ export const PODAVINI_MAIN: Token = {
 }
 
 export const DOGW_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'dogw',
   address: new PublicKey('Ev6go111sv39uMrAQeWsatFWgSYdfENuQGtBmr5QRwbJ'),
   decimals: 9,
@@ -321,6 +352,7 @@ export const DOGW_MAIN: Token = {
 }
 
 export const TETH_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tETH',
   address: new PublicKey('GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn'),
   decimals: 9,
@@ -341,6 +373,7 @@ export enum RPC {
 }
 
 export const EGOAT_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'EGoat',
   address: new PublicKey('Hxazh1rGXPj2LHgvZBm5Us4rJbB4JZYgdBL6ymYfdt1v'),
   decimals: 8,
@@ -350,6 +383,7 @@ export const EGOAT_MAIN: Token = {
 }
 
 export const DOGO_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'DOGO',
   address: new PublicKey('3imBwxNwVbPnz6yr87HjvdxjNvyCx7cqiuaDyahSB897'),
   decimals: 9,

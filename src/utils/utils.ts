@@ -15,7 +15,7 @@ import {
   SimulationStatus
 } from '@invariant-labs/sdk-eclipse/src/utils'
 import { BN } from '@coral-xyz/anchor'
-import { getMint } from '@solana/spl-token'
+import { getMint, Mint } from '@solana/spl-token'
 import { Connection, PublicKey } from '@solana/web3.js'
 import {
   Market,
@@ -1289,7 +1289,12 @@ export const determinePositionTokenBlock = (
   return PositionTokenBlock.None
 }
 
-export const generateUnknownTokenDataObject = (address: PublicKey, decimals: number): Token => ({
+export const generateUnknownTokenDataObject = (
+  address: PublicKey,
+  decimals: number,
+  tokenProgram?: PublicKey
+): Token => ({
+  tokenProgram,
   address,
   decimals,
   symbol: `${address.toString().slice(0, 2)}...${address.toString().slice(-4)}`,
@@ -1309,9 +1314,12 @@ export const getFullNewTokensData = async (
   addresses: PublicKey[],
   connection: Connection
 ): Promise<Record<string, Token>> => {
-  const promises = addresses.map(async address => {
+  const promises: Promise<[PublicKey, Mint]>[] = addresses.map(async address => {
     const programId = await getTokenProgramId(connection, address)
-    return getMint(connection, address, undefined, programId)
+    return [programId, await getMint(connection, address, undefined, programId)] as [
+      PublicKey,
+      Mint
+    ]
   })
 
   const tokens: Record<string, Token> = {}
@@ -1319,10 +1327,14 @@ export const getFullNewTokensData = async (
   const results = await Promise.allSettled(promises)
 
   for (const [index, result] of results.entries()) {
+    const [programId, decimals] =
+      result.status === 'fulfilled' ? [result.value[0], result.value[1].decimals] : [undefined, 6]
+
     tokens[addresses[index].toString()] = await getTokenMetadata(
       connection,
       addresses[index].toString(),
-      result.status === 'fulfilled' ? result.value.decimals : 6
+      decimals,
+      programId
     )
   }
 
@@ -1342,7 +1354,8 @@ export const addNewTokenToLocalStorage = (address: string, network: NetworkType)
 export async function getTokenMetadata(
   connection: Connection,
   address: string,
-  decimals: number
+  decimals: number,
+  tokenProgram?: PublicKey
 ): Promise<Token> {
   const mintAddress = new PublicKey(address)
 
@@ -1354,6 +1367,7 @@ export async function getTokenMetadata(
     const irisTokenData = await axios.get<any>(nft.uri).then(res => res.data)
 
     return {
+      tokenProgram,
       address: mintAddress,
       decimals,
       symbol:
@@ -1364,6 +1378,7 @@ export async function getTokenMetadata(
     }
   } catch (error) {
     return {
+      tokenProgram,
       address: mintAddress,
       decimals,
       symbol: `${address.slice(0, 2)}...${address.slice(-4)}`,
@@ -1385,8 +1400,7 @@ export const getNewTokenOrThrow = async (
 
   console.log(info)
 
-  console.log('addr', address)
-  const tokenData = await getTokenMetadata(connection, address, info.decimals)
+  const tokenData = await getTokenMetadata(connection, address, info.decimals, programId)
 
   return {
     [address.toString()]: tokenData
