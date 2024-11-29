@@ -235,23 +235,25 @@ export const PositionItem: React.FC<IPositionItem> = ({
 
         <Hidden mdDown>{valueFragment}</Hidden>
 
-        <Grid
-          container
-          item
-          className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
-          justifyContent='center'
-          alignItems='center'
-          wrap='nowrap'>
-          {isLocked ? (
-            <TooltipHover text={'Liquidity locked'}>
-              <img src={lockIcon} alt='Lock' />
-            </TooltipHover>
-          ) : (
-            <TooltipHover text={'Liquidity not locked'}>
-              <img src={unlockIcon} alt='Lock' />
-            </TooltipHover>
-          )}
-        </Grid>
+        {isLocked && (
+          <Grid
+            container
+            item
+            className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
+            justifyContent='center'
+            alignItems='center'
+            wrap='nowrap'>
+            {isLocked ? (
+              <TooltipHover text={'Liquidity locked'}>
+                <img src={lockIcon} alt='Lock' />
+              </TooltipHover>
+            ) : (
+              <TooltipHover text={'Liquidity not locked'}>
+                <img src={unlockIcon} alt='Lock' />
+              </TooltipHover>
+            )}
+          </Grid>
+        )}
       </Grid>
     </Grid>
   )
