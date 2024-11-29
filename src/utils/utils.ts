@@ -392,7 +392,6 @@ export const calcYPerXPriceBySqrtPrice = (
   xDecimal: number,
   yDecimal: number
 ): number => {
-  console.log('Passing sqrtPrice', sqrtPrice)
   const sqrt = +printBN(sqrtPrice, PRICE_DECIMAL)
   const proportion = sqrt * sqrt
 

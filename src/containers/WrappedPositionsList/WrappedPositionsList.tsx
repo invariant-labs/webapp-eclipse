@@ -140,7 +140,6 @@ export const WrappedPositionsList: React.FC = () => {
 
   const lockedData: IPositionItem[] = lockedList
     .map(position => {
-      console.log('Position', position)
       const lowerPrice = calcYPerXPriceBySqrtPrice(
         calculatePriceSqrt(position.lowerTickIndex),
         position.tokenX.decimals,
