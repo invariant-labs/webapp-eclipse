@@ -14,9 +14,9 @@ import {
   simulateSwap,
   SimulationStatus
 } from '@invariant-labs/sdk-eclipse/src/utils'
-import { BN } from '@project-serum/anchor'
-import { Token as SPLToken } from '@solana/spl-token'
-import { Connection, Keypair, PublicKey } from '@solana/web3.js'
+import { BN } from '@coral-xyz/anchor'
+import { getMint } from '@solana/spl-token'
+import { Connection, PublicKey } from '@solana/web3.js'
 import {
   Market,
   Tickmap,
@@ -74,7 +74,7 @@ import {
   MAX_CROSSES_IN_SINGLE_TX
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
-import { bs58 } from '@project-serum/anchor/dist/cjs/utils/bytes'
+import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
 import {
   CoinGeckoAPIData,
   CoingeckoApiPriceData,
@@ -116,12 +116,14 @@ export const printBN = (amount: BN, decimals: number): string => {
 }
 
 export const trimZeros = (numStr: string): string => {
+  if (!numStr) {
+    return ''
+  }
   return numStr
     .replace(/(\.\d*?)0+$/, '$1')
     .replace(/^0+(\d)|(\d)0+$/gm, '$1$2')
     .replace(/\.$/, '')
 }
-
 export const convertBalanceToBN = (amount: string, decimals: number): BN => {
   const balanceString = amount.split('.')
   if (balanceString.length !== 2) {
@@ -646,9 +648,25 @@ export const getLiquidityTicksByPositionsList = (
 }
 
 export const numberToString = (number: number | bigint | string): string => {
-  return String(number).includes('e-')
-    ? Number(number).toFixed(parseInt(String(number).split('e-')[1]))
-    : String(number)
+  if (typeof number === 'bigint') {
+    return number.toString()
+  }
+
+  const numStr = String(number)
+
+  if (numStr.includes('e')) {
+    const [base, exp] = numStr.split('e')
+    const exponent = parseInt(exp, 10)
+
+    if (exponent < 0) {
+      const decimalPlaces = Math.abs(exponent) + base.replace('.', '').length - 1
+      return Number(number).toFixed(decimalPlaces)
+    }
+
+    return Number(number).toString()
+  }
+
+  return numStr
 }
 
 export const containsOnlyZeroes = (string: string): boolean => {
@@ -669,11 +687,6 @@ export const formatNumber = (
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)
-
-  if (absNumberAsNumber.toString().includes('e')) {
-    const exponential = absNumberAsNumber.toExponential(decimalsAfterDot)
-    return isNegative ? `-${exponential}` : exponential
-  }
 
   const absNumberAsString = numberToString(absNumberAsNumber)
 
@@ -720,6 +733,7 @@ export const formatNumber = (
     const roundedNumber = numberAsNumber
       .toFixed(countLeadingZeros(afterDot) + decimalsAfterDot + 1)
       .slice(0, -1)
+
     formattedNumber = trimZeros(roundedNumber)
   } else {
     const leadingZeros = afterDot ? countLeadingZeros(afterDot) : 0
@@ -729,14 +743,18 @@ export const formatNumber = (
         ? String(parseInt(afterDot)).slice(0, decimalsAfterDot)
         : afterDot
 
-    formattedNumber =
-      beforeDot +
-      '.' +
-      (parsedAfterDot
-        ? leadingZeros > decimalsAfterDot
-          ? '0' + printSubNumber(leadingZeros) + parseInt(parsedAfterDot)
-          : parsedAfterDot
-        : '')
+    if (parsedAfterDot) {
+      formattedNumber =
+        beforeDot +
+        '.' +
+        (parsedAfterDot
+          ? leadingZeros > decimalsAfterDot
+            ? '0' + printSubNumber(leadingZeros) + trimZeros(parsedAfterDot)
+            : trimZeros(parsedAfterDot)
+          : '')
+    } else {
+      formattedNumber = beforeDot
+    }
   }
 
   return isNegative ? '-' + formattedNumber : formattedNumber
@@ -1291,8 +1309,7 @@ export const getFullNewTokensData = async (
 ): Promise<Record<string, Token>> => {
   const promises = addresses.map(async address => {
     const programId = await getTokenProgramId(connection, address)
-    const token = new SPLToken(connection, address, programId, new Keypair())
-    return await token.getMintInfo()
+    return getMint(connection, address, undefined, programId)
   })
 
   const tokens: Record<string, Token> = {}
@@ -1344,7 +1361,6 @@ export async function getTokenMetadata(
       isUnknown: true
     }
   } catch (error) {
-    console.log('error', error)
     return {
       address: mintAddress,
       decimals,
@@ -1361,13 +1377,13 @@ export const getNewTokenOrThrow = async (
   connection: Connection
 ): Promise<Record<string, Token>> => {
   const key = new PublicKey(address)
-  const programId = await getTokenProgramId(connection, new PublicKey(address))
-  const token = new SPLToken(connection, key, programId, new Keypair())
+  const programId = await getTokenProgramId(connection, key)
 
-  const info = await token.getMintInfo()
+  const info = await getMint(connection, key, undefined, programId)
 
   console.log(info)
 
+  console.log('addr', address)
   const tokenData = await getTokenMetadata(connection, address, info.decimals)
 
   return {
@@ -1390,6 +1406,7 @@ export const stringToFixed = (
     return toFixedString
   }
 }
+
 export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
   try {
     return getAddressTickerMap(network)[ticker].toString()

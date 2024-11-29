@@ -1,4 +1,4 @@
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
@@ -107,7 +107,9 @@ const solanaWalletSlice = createSlice({
     // Triggers rescan for tokens that we control
     rescanTokens() {},
     airdrop() {},
-    connect() {},
+    connect(state, _action: PayloadAction<boolean>) {
+      return state
+    },
     disconnect() {},
     reconnect() {},
     unwrapWETH() {}

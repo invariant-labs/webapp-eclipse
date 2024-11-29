@@ -3,7 +3,7 @@ import { configureStore, isPlain } from '@reduxjs/toolkit'
 import combinedReducers from './reducers'
 import rootSaga from './sagas'
 import { PublicKey } from '@solana/web3.js'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 const isLocalhost = window.location.hostname === 'localhost'
 

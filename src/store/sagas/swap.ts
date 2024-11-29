@@ -5,16 +5,15 @@ import { swap } from '@store/selectors/swap'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { accounts } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
-import { Pair } from '@invariant-labs/sdk-eclipse'
+import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { getConnection, handleRpcError } from './connection'
 import {
   Keypair,
   sendAndConfirmRawTransaction,
-  SystemProgram,
   Transaction,
-  TransactionExpiredTimeoutError
+  TransactionExpiredTimeoutError,
+  TransactionInstruction
 } from '@solana/web3.js'
-import { NATIVE_MINT, Token, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 import {
   MAX_CROSSES_IN_SINGLE_TX,
   SIGNING_SNACKBAR_CONFIG,
@@ -26,6 +25,11 @@ import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
 import { createLoaderKey } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
+import {
+  createNativeAtaInstructions,
+  createNativeAtaWithTransferInstructions
+} from '@invariant-labs/sdk-eclipse/lib/utils'
+import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -50,7 +54,7 @@ export function* handleSwapWithETH(): Generator {
     const connection = yield* call(getConnection)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
-    const marketProgram = yield* call(getMarketProgram, networkType, rpc)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const swapPool = allPools.find(
       pool =>
         (tokenFrom.equals(pool.tokenX) && tokenTo.equals(pool.tokenY)) ||
@@ -74,45 +78,36 @@ export function* handleSwapWithETH(): Generator {
 
     const wrappedEthAccount = Keypair.generate()
 
-    const createIx = SystemProgram.createAccount({
-      fromPubkey: wallet.publicKey,
-      newAccountPubkey: wrappedEthAccount.publicKey,
-      lamports: yield* call(Token.getMinBalanceRentForExemptAccount, connection),
-      space: 165,
-      programId: TOKEN_PROGRAM_ID
-    })
+    const net = networkTypetoProgramNetwork(networkType)
+    let initialTx: Transaction
+    let unwrapIx: TransactionInstruction
+    if (allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS) {
+      const {
+        createIx,
+        transferIx,
+        initIx,
+        unwrapIx: unwrap
+      } = createNativeAtaWithTransferInstructions(
+        wrappedEthAccount.publicKey,
+        wallet.publicKey,
+        net,
+        amountIn.toNumber()
+      )
+      unwrapIx = unwrap
+      initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
+    } else {
+      const {
+        createIx,
+        initIx,
+        unwrapIx: unwrap
+      } = createNativeAtaInstructions(wrappedEthAccount.publicKey, wallet.publicKey, net)
+      unwrapIx = unwrap
+      initialTx = new Transaction().add(createIx).add(initIx)
+    }
 
-    const transferIx = SystemProgram.transfer({
-      fromPubkey: wallet.publicKey,
-      toPubkey: wrappedEthAccount.publicKey,
-      lamports:
-        allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-          ? amountIn.toNumber()
-          : 0
-    })
-
-    const initIx = Token.createInitAccountInstruction(
-      TOKEN_PROGRAM_ID,
-      NATIVE_MINT,
-      wrappedEthAccount.publicKey,
-      wallet.publicKey
-    )
-
-    const initialTx =
-      allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
-        ? new Transaction().add(createIx).add(transferIx).add(initIx)
-        : new Transaction().add(createIx).add(initIx)
     // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
     // initialTx.recentBlockhash = initialBlockhash.blockhash
     // initialTx.feePayer = wallet.publicKey
-
-    const unwrapIx = Token.createCloseAccountInstruction(
-      TOKEN_PROGRAM_ID,
-      wrappedEthAccount.publicKey,
-      wallet.publicKey,
-      wallet.publicKey,
-      []
-    )
 
     let fromAddress =
       allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS
@@ -164,13 +159,16 @@ export function* handleSwapWithETH(): Generator {
     // unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
     // unwrapTx.feePayer = wallet.publicKey
 
-    const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
+    const initialBlockhash = yield* call([connection, connection.getLatestBlockhash])
     initialTx.recentBlockhash = initialBlockhash.blockhash
     initialTx.feePayer = wallet.publicKey
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const initialSignedTx = yield* call([wallet, wallet.signTransaction], initialTx)
+    const initialSignedTx = (yield* call(
+      [wallet, wallet.signTransaction],
+      initialTx
+    )) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
@@ -330,7 +328,7 @@ export function* handleSwap(): Generator {
     const tokensAccounts = yield* select(accounts)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
-    const marketProgram = yield* call(getMarketProgram, networkType, rpc)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const swapPool = allPools.find(
       pool =>
         (tokenFrom.equals(pool.tokenX) && tokenTo.equals(pool.tokenY)) ||
@@ -379,13 +377,13 @@ export function* handleSwap(): Generator {
       owner: wallet.publicKey
     })
     const connection = yield* call(getConnection)
-    const blockhash = yield* call([connection, connection.getRecentBlockhash])
+    const blockhash = yield* call([connection, connection.getLatestBlockhash])
     swapTx.recentBlockhash = blockhash.blockhash
     swapTx.feePayer = wallet.publicKey
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const signedTx = yield* call([wallet, wallet.signTransaction], swapTx)
+    const signedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))

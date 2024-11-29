@@ -11,7 +11,7 @@ import classNames from 'classnames'
 import React, { useCallback, useMemo, useRef } from 'react'
 import Brush from './Brush/Brush'
 import useStyles from './style'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 

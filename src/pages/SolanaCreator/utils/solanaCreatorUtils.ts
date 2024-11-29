@@ -17,7 +17,7 @@ export const validateSocialLink = (value: string, platform: SocialPlatform): tru
   if (!value) return true
   const patterns: Record<SocialPlatform, RegExp> = {
     website:
-      // eslint-disable-next-line no-useless-escape
+      /* trunk-ignore(eslint/no-useless-escape) */
       /^(http:\/\/www\.|https:\/\/www\.|http:\/\/|https:\/\/)?[a-z0-9]+([\-\.]{1}[a-z0-9]+)*\.[a-z]{2,5}(:[0-9]{1,5})?(\/.*)?$/i,
     x: /^https?:\/\/(www\.)?(twitter\.com|x\.com)\/.+/i,
     telegram: /^https?:\/\/(t\.me|telegram\.me)\/.+/i,

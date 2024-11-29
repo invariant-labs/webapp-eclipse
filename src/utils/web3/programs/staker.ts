@@ -3,7 +3,7 @@ export {}
 // import { NetworkType } from '@consts/static'
 // import { Staker } from '@invariant-labs/staker-sdk'
 // import { getSolanaConnection, networkTypetoStakerNetwork } from '@web3/connection'
-// import { getSolanaWallet } from '@web3/wallet'
+// import { getWallet } from '@web3/wallet'
 
 // let _staker: Staker
 // export const getCurrentStakerProgram = (): Staker => {
@@ -19,7 +19,7 @@ export {}
 //   }
 //   const net = networkTypetoStakerNetwork(networkType)
 
-//   _staker = await Staker.build(net, getSolanaWallet(), getSolanaConnection(rpcAddress))
+//   _staker = await Staker.build(net, getWallet(), getSolanaConnection(rpcAddress))
 //   return _staker
 // }
 
@@ -29,7 +29,7 @@ export {}
 //   }
 //   const net = networkTypetoStakerNetwork(networkType)
 
-//   Staker.build(net, getSolanaWallet(), getSolanaConnection(rpcAddress))
+//   Staker.build(net, getWallet(), getSolanaConnection(rpcAddress))
 //     .then(staker => {
 //       _staker = staker
 //     })

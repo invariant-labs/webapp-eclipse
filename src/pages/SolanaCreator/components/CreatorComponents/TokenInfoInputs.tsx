@@ -3,15 +3,15 @@ import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
 import useStyles from '../CreateToken/styles'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
-import { openWalletSelectorModal } from '@utils/web3/selector'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import classNames from 'classnames'
 import { getCreateTokenLamports, NetworkType } from '@store/consts/static'
 import { printBN, trimZeros } from '@utils/utils'
+import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
@@ -20,6 +20,7 @@ interface TokenInfoInputsProps {
   inProgress: boolean
   ethBalance: BN
   currentNetwork: NetworkType
+  onConnectWallet: () => void
 }
 
 export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
@@ -28,7 +29,8 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
   success,
   inProgress,
   ethBalance,
-  currentNetwork
+  currentNetwork,
+  onConnectWallet
 }) => {
   const { classes } = useStyles()
   const {
@@ -166,13 +168,20 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
           />
         )
       ) : (
-        <Button
+        // <Button
+        //   className={classes.connectWalletButton}
+        //   variant='contained'
+        //   type='button'
+        //   onClick={openWalletSelectorModal}>
+        //   <span className={classes.buttonText}>{buttonText}</span>
+        // </Button>
+        <ChangeWalletButton
+          name='Connect wallet'
+          onConnect={onConnectWallet}
+          connected={false}
+          onDisconnect={() => {}}
           className={classes.connectWalletButton}
-          variant='contained'
-          type='button'
-          onClick={openWalletSelectorModal}>
-          <span className={classes.buttonText}>{buttonText}</span>
-        </Button>
+        />
       )}
     </Box>
   )

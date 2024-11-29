@@ -3,7 +3,7 @@ import { Grid, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumber, printBN } from '@utils/utils'
 import { useStyles } from './styles'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 interface IProps {

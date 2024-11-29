@@ -6,7 +6,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { SnackbarProvider } from 'notistack'
 import { fn } from '@storybook/test'
 import { NetworkType } from '@store/consts/static'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 
 const meta = {

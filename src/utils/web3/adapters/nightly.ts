@@ -3,7 +3,7 @@ import { WalletAdapter } from './types'
 import { nightlyConnectAdapter } from '../selector'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 
-export class StandardAdapter implements WalletAdapter {
+export class NightlyWalletAdapter implements WalletAdapter {
   constructor() {
     this.connect = this.connect.bind(this)
   }
@@ -22,10 +22,6 @@ export class StandardAdapter implements WalletAdapter {
 
   async signTransaction(transaction: Transaction) {
     return await nightlyConnectAdapter.signTransaction(transaction)
-  }
-
-  async signMessage(message: Uint8Array) {
-    return await nightlyConnectAdapter.signMessage(message)
   }
 
   connect = async () => {

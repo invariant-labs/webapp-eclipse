@@ -19,7 +19,7 @@ import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import { MINIMAL_POOL_INIT_PRICE } from '@store/consts/static'
 import AnimatedNumber from '@components/AnimatedNumber/AnimatedNumber'
 import { calculateTickDelta, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { BN } from '@project-serum/anchor'
+import { BN } from '@coral-xyz/anchor'
 
 export interface IPoolInit {
   tokenASymbol: string

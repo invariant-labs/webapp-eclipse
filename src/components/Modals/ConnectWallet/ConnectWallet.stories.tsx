@@ -17,5 +17,10 @@ export default meta
 type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
-  args: { open: true, anchorEl: null, handleClose: fn(), callDisconect: fn() }
+  args: {
+    open: true,
+    anchorEl: null,
+    handleClose: fn(),
+    callDisconect: fn()
+  }
 }
