@@ -2,6 +2,7 @@ import useStyles from './style'
 import { Popover, Typography, LinearProgress, Box } from '@mui/material'
 import { PieChart } from '@mui/x-charts'
 import { colors } from '@static/theme'
+import { useState, useEffect } from 'react'
 
 export interface ILockStatsPopover {
   open: boolean
@@ -11,6 +12,20 @@ export interface ILockStatsPopover {
 
 export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover) => {
   const { classes } = useStyles()
+  const [animationTriggered, setAnimationTriggered] = useState(false)
+
+  useEffect(() => {
+    if (open) {
+      const ANIM_TIME = 100
+      setAnimationTriggered(false)
+
+      const timer = setTimeout(() => {
+        setAnimationTriggered(true)
+      }, ANIM_TIME)
+
+      return () => clearTimeout(timer)
+    }
+  }, [open])
 
   if (!anchorEl) return null
 
@@ -21,7 +36,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
     borderRadius: 4,
     backgroundColor: colors.invariant.light,
     '.MuiLinearProgress-bar': {
-      transition: 'transform .4s linear',
+      transition: 'transform 1s cubic-bezier(0.4, 0, 0.2, 1)',
       borderRadius: 4
     }
   }
@@ -135,7 +150,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                   }}>
                   <LinearProgress
                     variant='determinate'
-                    value={75}
+                    value={animationTriggered ? 75 : 0}
                     sx={{
                       ...progressStyles,
                       width: '100%',
@@ -150,9 +165,10 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                       position: 'absolute',
                       top: 0,
                       left: 0,
-                      width: '75%',
+                      width: animationTriggered ? '75%' : '0%',
                       height: '3px',
                       borderRadius: 4,
+                      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
                       boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
                     }}
                   />
@@ -173,7 +189,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                   }}>
                   <LinearProgress
                     variant='determinate'
-                    value={45}
+                    value={animationTriggered ? 45 : 0}
                     sx={{
                       ...progressStyles,
                       width: '100%',
@@ -188,9 +204,10 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                       position: 'absolute',
                       top: 0,
                       left: 0,
-                      width: '45%',
+                      width: animationTriggered ? '45%' : '0%',
                       height: '3px',
                       borderRadius: 4,
+                      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
                       boxShadow: `0 0 6px 1px ${colors.invariant.green}`
                     }}
                   />
