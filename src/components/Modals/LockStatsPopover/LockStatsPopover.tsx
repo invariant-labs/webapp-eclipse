@@ -39,6 +39,12 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
         vertical: 'bottom',
         horizontal: 'center'
       }}
+      disableRestoreFocus
+      slotProps={{
+        paper: {
+          onMouseLeave: onClose
+        }
+      }}
       transformOrigin={{
         vertical: 'top',
         horizontal: 'center'

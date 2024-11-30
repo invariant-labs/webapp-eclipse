@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -15,6 +15,8 @@ import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
+import classNames from 'classnames'
+
 interface IProps {
   TVL?: number
   volume?: number
@@ -60,12 +62,6 @@ const PoolListItem: React.FC<IProps> = ({
   addressFrom,
   addressTo,
   network,
-  // apy = 0,
-  // apyData = {
-  //   fees: 0,
-  //   accumulatedFarmsAvg: 0,
-  //   accumulatedFarmsSingleTick: 0
-  // }
   isUnknownFrom,
   isUnknownTo,
   isLocked,
@@ -73,12 +69,14 @@ const PoolListItem: React.FC<IProps> = ({
   copyAddressHandler
 }) => {
   const { classes } = useStyles()
-
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const lockIconRef = useRef<HTMLImageElement | null>(null)
+  const containerRef = useRef(null)
+
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
+
   const handleOpenPosition = () => {
     navigate(
       `/newPosition/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
@@ -120,6 +118,31 @@ const PoolListItem: React.FC<IProps> = ({
       })
   }
 
+  useEffect(() => {
+    const handleGlobalMouseMove = e => {
+      if (!isLockPopoverOpen) return
+
+      const container = containerRef.current
+      const popoverElement = document.querySelector('.MuiPopover-root')
+
+      const isOverIcon = container?.contains(e.target)
+      const isOverPopover = popoverElement?.contains(e.target)
+
+      if (!isOverIcon || !isOverPopover) {
+        setLockPopoverOpen(false)
+      }
+    }
+
+    document.addEventListener('mousemove', handleGlobalMouseMove)
+
+    return () => {
+      document.removeEventListener('mousemove', handleGlobalMouseMove)
+    }
+  }, [isLockPopoverOpen])
+
+  const handleMouseEnter = () => {
+    setLockPopoverOpen(true)
+  }
   return (
     <Grid maxWidth='100%'>
       {displayType === 'token' ? (
@@ -128,32 +151,33 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{ container: classes.container }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
+          {!isMd ? (
+            <Box
+              className={classes.iconContainer}
+              ref={containerRef}
+              onMouseEnter={handleMouseEnter}>
+              {isLocked && (
+                <>
+                  <img
+                    className={classes.tokenIcon}
+                    ref={lockIconRef}
+                    src={icons.lockIcon}
+                    alt='LockIcon'
+                  />
+                  <LockStatsPopover
+                    anchorEl={lockIconRef.current}
+                    open={isLockPopoverOpen}
+                    onClose={() => {
+                      setLockPopoverOpen(false)
+                    }}
+                  />
+                </>
+              )}
+            </Box>
+          ) : null}
           <Grid className={classes.imageContainer}>
             {!isSm && (
               <Box className={classes.iconsWrapper}>
-                {isLocked && (
-                  <Box className={classes.iconContainer}>
-                    <img
-                      className={classes.tokenIcon}
-                      onClick={() => {
-                        setLockPopoverOpen(true)
-                      }}
-                      ref={lockIconRef}
-                      src={icons.lockIcon}
-                      alt='LockIcon'
-                    />
-                    <LockStatsPopover
-                      anchorEl={lockIconRef.current}
-                      open={isLockPopoverOpen}
-                      onClose={() => {
-                        setLockPopoverOpen(false)
-                      }}
-                    />
-                    {isUnknownFrom && (
-                      <img className={classes.warningIcon} src={icons.warningIcon} />
-                    )}
-                  </Box>
-                )}
                 <Box className={classes.iconContainer}>
                   <img
                     className={classes.tokenIcon}
@@ -190,46 +214,7 @@ const PoolListItem: React.FC<IProps> = ({
               </TooltipHover>
             </Grid>
           </Grid>
-          {/* {!isSm ? (
-            <Typography>
-              {`${apy > 1000 ? '>1000%' : apy === 0 ? '-' : apy.toFixed(2) + '%'}`}
-              {apy !== 0 && (
-                <Tooltip
-                  title={
-                    <>
-                      <Typography className={classes.liquidityTitle}>Pool APY</Typography>
-                      <Typography className={classes.liquidityDesc}>
-                        Pool fees: {`${apyData.fees > 1000 ? '>1000' : apyData.fees.toFixed(2)}%`}
-                        {apyData.accumulatedFarmsAvg > 0 ? (
-                          <>
-                            <br />+ All farms rewards with single tick position:{' '}
-                            {`${
-                              apyData.accumulatedFarmsSingleTick > 1000
-                                ? '>1000'
-                                : apyData.accumulatedFarmsSingleTick.toFixed(2)
-                            }%`}
-                            <br />
-                            (All farms rewards with average position:{' '}
-                            {`${
-                              apyData.accumulatedFarmsAvg > 1000
-                                ? '>1000'
-                                : apyData.accumulatedFarmsAvg.toFixed(2)
-                            }%`}
-                            )
-                          </>
-                        ) : null}
-                      </Typography>
-                    </>
-                  }
-                  placement='bottom'
-                  classes={{
-                    tooltip: classes.liquidityTooltip
-                  }}>
-                  <span className={classes.activeLiquidityIcon}>i</span>
-                </Tooltip>
-              )}
-            </Typography>
-          ) : null} */}
+
           <Typography>{fee}%</Typography>
           <Typography>{`$${formatNumber(volume)}`}</Typography>
           <Typography>{`$${formatNumber(TVL)}`}</Typography>
@@ -268,6 +253,8 @@ const PoolListItem: React.FC<IProps> = ({
               N<sup>o</sup>
             </Typography>
           )}
+          {!isMd && <Typography></Typography>}
+
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -284,24 +271,6 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-          {/* {!isSm ? (
-            <Typography
-              style={{ cursor: 'pointer' }}
-              onClick={() => {
-                if (sortType === SortTypePoolList.APY_DESC) {
-                  onSort?.(SortTypePoolList.APY_ASC)
-                } else {
-                  onSort?.(SortTypePoolList.APY_DESC)
-                }
-              }}>
-              7-days APY
-              {sortType === SortTypePoolList.APY_ASC ? (
-                <ArrowDropUpIcon className={classes.icon} />
-              ) : sortType === SortTypePoolList.APY_DESC ? (
-                <ArrowDropDownIcon className={classes.icon} />
-              ) : null}
-            </Typography>
-          ) : null} */}
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -318,6 +287,7 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
+
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
