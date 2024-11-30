@@ -40,6 +40,11 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
       borderRadius: 4
     }
   }
+  const pieChartData = [
+    { id: 0, value: 554, label: 'USDT', color: colors.invariant.pink },
+    { id: 1, value: 85, label: 'ETH', color: colors.invariant.green }
+  ]
+  const total = pieChartData.reduce((sum, item) => sum + item.value, 0)
 
   return (
     <Popover
@@ -99,8 +104,11 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                     endAngle: 270,
                     cx: 143,
                     cy: 50,
-                    arcLabel: item => `${item.label}`,
-                    arcLabelRadius: 60
+                    arcLabel: item => {
+                      const percentage = ((item.value / total) * 100).toFixed(1)
+                      return `${item.label} (${percentage}%)`
+                    },
+                    arcLabelRadius: 80
                   }
                 ]}
                 colors={[colors.invariant.pink, colors.invariant.green]}
