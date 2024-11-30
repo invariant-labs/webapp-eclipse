@@ -60,7 +60,16 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                 gap: '8px'
               }}>
               <Typography className={classes.chartTitle} style={{ textAlign: 'center' }}>
-                Lock ratio 
+                Lock ratio
+              </Typography>
+
+              <Typography
+                className={classes.description}
+                style={{
+                  flex: 1,
+                  display: 'flex'
+                }}>
+                Contribution to the total locked amount between the tokens.
               </Typography>
               <PieChart
                 series={[
@@ -73,7 +82,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                     paddingAngle: 2,
                     startAngle: -90,
                     endAngle: 270,
-                    cx: 65,
+                    cx: 143,
                     cy: 50,
                     arcLabel: item => `${item.label}`,
                     arcLabelRadius: 40
@@ -86,19 +95,10 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                     fill: 'currentColor'
                   }
                 }}
-                width={130}
+                width={285}
                 height={100}
               />
             </div>
-
-            <Typography
-              className={classes.description}
-              style={{
-                flex: 1,
-                display: 'flex'
-              }}>
-              Contribution to the total locked amount between the tokens.
-            </Typography>
           </div>
 
           <Box
@@ -198,7 +198,9 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
               </div>
             </div>
             <Typography className={classes.description}>
-              Shares locked tokens contribute to the total volume available in the protocol. The higher the ratio is the more tokens are guaranteed to stay in the protocol ensuring no price manipulation by liquidity removal.
+              Shares locked tokens contribute to the total volume available in the protocol. The
+              higher the ratio is the more tokens are guaranteed to stay in the protocol ensuring no
+              price manipulation by liquidity removal.
             </Typography>
           </div>
         </div>

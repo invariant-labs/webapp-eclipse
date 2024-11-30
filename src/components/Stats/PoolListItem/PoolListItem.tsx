@@ -15,7 +15,6 @@ import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
-import classNames from 'classnames'
 
 interface IProps {
   TVL?: number
@@ -117,16 +116,15 @@ const PoolListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy Market ID to Clipboard', 'error')
       })
   }
-
   useEffect(() => {
-    const handleGlobalMouseMove = e => {
+    const handleGlobalMouseMove = (e: MouseEvent) => {
       if (!isLockPopoverOpen) return
 
-      const container = containerRef.current
+      const container = containerRef.current as HTMLElement | null
       const popoverElement = document.querySelector('.MuiPopover-root')
 
-      const isOverIcon = container?.contains(e.target)
-      const isOverPopover = popoverElement?.contains(e.target)
+      const isOverIcon = container?.contains(e.target as Node)
+      const isOverPopover = popoverElement?.contains(e.target as Node)
 
       if (!isOverIcon || !isOverPopover) {
         setLockPopoverOpen(false)
