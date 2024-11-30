@@ -60,7 +60,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                 gap: '8px'
               }}>
               <Typography className={classes.chartTitle} style={{ textAlign: 'center' }}>
-                Lock stats
+                Lock ratio 
               </Typography>
               <PieChart
                 series={[
@@ -97,9 +97,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                 flex: 1,
                 display: 'flex'
               }}>
-              Lorem ipsum dolor init, Lorem ipsum dolor init, Lorem ipsum dolor init, Lorem ipsum
-              dolor init. Lorem ipsum dolor init. Lorem ipsum dolor init, Lorem ipsum dolor init,
-              Lorem ipsum dolor init, Lorem ipsum dolor init.
+              Contribution to the total locked amount between the tokens.
             </Typography>
           </div>
 
@@ -121,7 +119,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
             <Typography
               className={classes.chartTitle}
               style={{ textAlign: 'center', width: 'fit-content', alignSelf: 'center' }}>
-              Progress
+              Guaranteed Liquidity Share
             </Typography>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -200,7 +198,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
               </div>
             </div>
             <Typography className={classes.description}>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+              Shares locked tokens contribute to the total volume available in the protocol. The higher the ratio is the more tokens are guaranteed to stay in the protocol ensuring no price manipulation by liquidity removal.
             </Typography>
           </div>
         </div>

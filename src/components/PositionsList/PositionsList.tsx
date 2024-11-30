@@ -188,6 +188,7 @@ export const PositionsList: React.FC<IProps> = ({
                     Standard
                   </ToggleButton>
                   <ToggleButton
+                    disabled={lockedData.length === 0}
                     value={LiquidityPools.Locked}
                     disableRipple
                     className={classes.switchPoolsButton}>
