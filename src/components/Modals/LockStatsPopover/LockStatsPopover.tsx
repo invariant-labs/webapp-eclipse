@@ -100,7 +100,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                     cx: 143,
                     cy: 50,
                     arcLabel: item => `${item.label}`,
-                    arcLabelRadius: 40
+                    arcLabelRadius: 60
                   }
                 ]}
                 colors={[colors.invariant.pink, colors.invariant.green]}
