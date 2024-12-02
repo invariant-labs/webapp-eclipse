@@ -28,6 +28,8 @@ export interface PoolStatsData {
   volume24: number
   tvl: number
   apy: number
+  lockedX: number
+  lockedY: number
 }
 
 export interface IStatsStore {

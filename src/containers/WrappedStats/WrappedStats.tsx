@@ -202,6 +202,8 @@ export const WrappedStats: React.FC = () => {
               addressFrom: poolData.tokenX.toString(),
               addressTo: poolData.tokenY.toString(),
               apy: poolData.apy,
+              lockedX: poolData.lockedX,
+              lockedY: poolData.lockedY,
               apyData: {
                 fees: poolData.apy,
                 accumulatedFarmsSingleTick: 0,

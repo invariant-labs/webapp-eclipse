@@ -33,6 +33,8 @@ interface IProps {
   addressTo?: string
   network: NetworkType
   apy?: number
+  lockedX?: number
+  lockedY?: number
   apyData?: {
     fees: number
     accumulatedFarmsAvg: number
@@ -49,6 +51,8 @@ const PoolListItem: React.FC<IProps> = ({
   fee = 0,
   volume = 0,
   TVL = 0,
+  lockedX = 0,
+  lockedY = 0,
   displayType,
   symbolFrom,
   symbolTo,
@@ -165,6 +169,11 @@ const PoolListItem: React.FC<IProps> = ({
                   <LockStatsPopover
                     anchorEl={lockIconRef.current}
                     open={isLockPopoverOpen}
+                    lockedX={lockedX}
+                    lockedY={lockedY}
+                    symbolX={shortenAddress(symbolFrom ?? '')}
+                    symbolY={shortenAddress(symbolTo ?? '')}
+                    tvl={TVL}
                     onClose={() => {
                       setLockPopoverOpen(false)
                     }}

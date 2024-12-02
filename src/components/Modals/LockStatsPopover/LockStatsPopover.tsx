@@ -6,11 +6,24 @@ import { useState, useEffect } from 'react'
 
 export interface ILockStatsPopover {
   open: boolean
+  lockedX: number
+  lockedY: number
+  tvl: number
+  symbolX: string
+  symbolY: string
   anchorEl: HTMLElement | null
   onClose: () => void
 }
 
-export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover) => {
+export const LockStatsPopover = ({
+  open,
+  onClose,
+  anchorEl,
+  lockedX,
+  lockedY,
+  symbolX,
+  symbolY
+}: ILockStatsPopover) => {
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
 
@@ -40,11 +53,6 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
       borderRadius: 4
     }
   }
-  const pieChartData = [
-    { id: 0, value: 554, label: 'USDT', color: colors.invariant.pink },
-    { id: 1, value: 85, label: 'ETH', color: colors.invariant.green }
-  ]
-  const total = pieChartData.reduce((sum, item) => sum + item.value, 0)
 
   return (
     <Popover
@@ -95,17 +103,17 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                 series={[
                   {
                     data: [
-                      { id: 0, value: 554, label: 'USDT', color: colors.invariant.pink },
-                      { id: 1, value: 85, label: 'ETH', color: colors.invariant.green }
+                      { id: 0, value: lockedX, label: symbolX, color: colors.invariant.pink },
+                      { id: 1, value: lockedY, label: symbolY, color: colors.invariant.green }
                     ],
                     outerRadius: 40,
                     paddingAngle: 2,
                     startAngle: -90,
                     endAngle: 270,
                     cx: 143,
-                    cy: 50,
+                    cy: 75,
                     arcLabel: item => {
-                      const percentage = ((item.value / total) * 100).toFixed(1)
+                      const percentage = ((item.value / (lockedX + lockedY)) * 100).toFixed(1)
                       return `${item.label} (${percentage}%)`
                     },
                     arcLabelRadius: 80
@@ -118,8 +126,8 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
                     fill: 'currentColor'
                   }
                 }}
-                width={285}
-                height={100}
+                width={225}
+                height={150}
               />
             </div>
           </div>
