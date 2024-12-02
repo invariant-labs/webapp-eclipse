@@ -517,15 +517,12 @@ export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
 export const WETH_CREATE_TOKEN_LAMPORTS_MAIN = new BN(2000000)
 export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
-export const TESTNET_WETH_CREATE_TOKEN_LAMPORTS = new BN(1100000)
-export const MAINNET_WETH_CREATE_TOKEN_LAMPORTS = new BN(200000)
-
 export const getCreateTokenLamports = (network: NetworkType): BN => {
   switch (network) {
     case NetworkType.Testnet:
-      return TESTNET_WETH_CREATE_TOKEN_LAMPORTS
+      return WETH_CREATE_TOKEN_LAMPORTS_TEST
     case NetworkType.Mainnet:
-      return MAINNET_WETH_CREATE_TOKEN_LAMPORTS
+      return WETH_CREATE_TOKEN_LAMPORTS_MAIN
     default:
       throw new Error('Invalid network')
   }
