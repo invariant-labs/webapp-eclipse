@@ -71,7 +71,7 @@ const PoolListItem: React.FC<IProps> = ({
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const lockIconRef = useRef<HTMLImageElement>(null)
+  const lockIconRef = useRef<HTMLButtonElement>(null)
 
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
 
@@ -131,31 +131,7 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{ container: classes.container }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
-          {!isMd ? (
-            <Box
-              className={classes.iconContainer}
-              onPointerEnter={handlePointerEnter}
-              onPointerLeave={handlePointerLeave}>
-              {isLocked && (
-                <>
-                  <img
-                    className={classes.tokenIcon}
-                    ref={lockIconRef}
-                    src={icons.lockIcon}
-                    onPointerLeave={handlePointerLeave}
-                    alt='LockIcon'
-                  />
-                  <LockStatsPopover
-                    anchorEl={lockIconRef.current}
-                    open={isLockPopoverOpen}
-                    onClose={() => {
-                      setLockPopoverOpen(false)
-                    }}
-                  />
-                </>
-              )}
-            </Box>
-          ) : null}
+
           <Grid className={classes.imageContainer}>
             {!isSm && (
               <Box className={classes.iconsWrapper}>
@@ -201,6 +177,25 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography>{`$${formatNumber(TVL)}`}</Typography>
           {!isSm && (
             <Box className={classes.action}>
+              {isLocked && (
+                <>
+                  <button
+                    className={classes.actionButton}
+                    ref={lockIconRef}
+                    onPointerLeave={handlePointerLeave}
+                    onPointerEnter={handlePointerEnter}>
+                    <img width={32} height={32} src={icons.lockIcon} alt={'Lock info'} />
+                  </button>
+                  <LockStatsPopover
+                    anchorEl={lockIconRef.current}
+                    open={isLockPopoverOpen}
+                    onClose={() => {
+                      setLockPopoverOpen(false)
+                    }}
+                  />
+                </>
+              )}
+
               <TooltipHover text='Exchange'>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
                   <img width={32} height={32} src={icons.horizontalSwapIcon} alt={'Exchange'} />
