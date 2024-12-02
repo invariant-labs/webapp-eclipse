@@ -123,15 +123,13 @@ export const LockStatsPopover = ({
                     data: [
                       {
                         id: 0,
-                        value: lockedX,
-                        percentage: percentages.xLocked,
+                        value: +percentages.xLocked,
                         label: symbolX,
                         color: colors.invariant.pink
                       },
                       {
                         id: 1,
-                        value: lockedY,
-                        percentage: percentages.yLocked,
+                        value: +percentages.yLocked,
                         label: symbolY,
                         color: colors.invariant.green
                       }
@@ -143,7 +141,7 @@ export const LockStatsPopover = ({
                     cx: 143,
                     cy: 75,
                     arcLabel: item => {
-                      return `${item.label} (${item.percentage}%)`
+                      return `${item.label} (${item.value}%)`
                     },
                     arcLabelRadius: 80
                   }
