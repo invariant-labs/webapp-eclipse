@@ -2,18 +2,13 @@ import React, { ChangeEvent, useState } from 'react'
 import { Controller } from 'react-hook-form'
 import { CloudUpload as UploadIcon, Image as ImageIcon } from '@mui/icons-material'
 import useStyles from './styles'
-
-import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
-import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
-import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
-import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
 import { Box, Button, Typography } from '@mui/material'
+import { defaultImages } from '@pages/SolanaCreator/utils/solanaCreatorUtils'
 
 interface ImagePickerProps {
   control: any
 }
 
-export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
 const MAX_FILE_SIZE = 100 * 1024
 
 export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
