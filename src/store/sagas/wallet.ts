@@ -184,8 +184,8 @@ export function* handleAirdrop(): Generator {
       )
 
       // transfer sol
-      yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
-      yield* call(transferAirdropSOL)
+      // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
+      // yield* call(transferAirdropSOL)
       yield* call(
         getCollateralTokenAirdrop,
         airdropTokens[networkType],
