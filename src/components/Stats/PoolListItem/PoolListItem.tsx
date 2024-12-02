@@ -35,6 +35,8 @@ interface IProps {
   apy?: number
   lockedX?: number
   lockedY?: number
+  liquidityX?: number
+  liquidityY?: number
   apyData?: {
     fees: number
     accumulatedFarmsAvg: number
@@ -53,6 +55,8 @@ const PoolListItem: React.FC<IProps> = ({
   TVL = 0,
   lockedX = 0,
   lockedY = 0,
+  liquidityX = 0,
+  liquidityY = 0,
   displayType,
   symbolFrom,
   symbolTo,
@@ -173,7 +177,8 @@ const PoolListItem: React.FC<IProps> = ({
                     lockedY={lockedY}
                     symbolX={shortenAddress(symbolFrom ?? '')}
                     symbolY={shortenAddress(symbolTo ?? '')}
-                    tvl={TVL}
+                    liquidityX={liquidityX}
+                    liquidityY={liquidityY}
                     onClose={() => {
                       setLockPopoverOpen(false)
                     }}

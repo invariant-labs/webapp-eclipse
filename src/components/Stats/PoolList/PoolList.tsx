@@ -19,6 +19,8 @@ interface PoolListInterface {
     fee: number
     lockedX: number
     lockedY: number
+    liquidityX: number
+    liquidityY: number
     addressFrom: string
     addressTo: string
     apy: number
@@ -107,6 +109,8 @@ const PoolList: React.FC<PoolListInterface> = ({ data, network, copyAddressHandl
               TVL={element.TVL}
               lockedX={element.lockedX}
               lockedY={element.lockedY}
+              liquidityX={element.liquidityX}
+              liquidityY={element.liquidityY}
               isLocked={element.lockedX > 0 || element.lockedY > 0}
               fee={element.fee}
               apy={element.apy}
