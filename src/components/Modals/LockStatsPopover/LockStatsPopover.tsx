@@ -15,7 +15,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
   const [animationTriggered, setAnimationTriggered] = useState(false)
 
   useEffect(() => {
-    if (open) {
+    if (open && !animationTriggered) {
       const ANIM_TIME = 500
       setAnimationTriggered(false)
 
