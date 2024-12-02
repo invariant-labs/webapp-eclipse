@@ -16,7 +16,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
 
   useEffect(() => {
     if (open) {
-      const ANIM_TIME = 100
+      const ANIM_TIME = 500
       setAnimationTriggered(false)
 
       const timer = setTimeout(() => {
@@ -31,7 +31,7 @@ export const LockStatsPopover = ({ open, onClose, anchorEl }: ILockStatsPopover)
 
   const progressStyles = {
     height: 3,
-    width: '50%',
+    width: '0%',
     marginLeft: '10px',
     borderRadius: 4,
     backgroundColor: colors.invariant.light,

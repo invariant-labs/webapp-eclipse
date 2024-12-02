@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -71,8 +71,7 @@ const PoolListItem: React.FC<IProps> = ({
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const lockIconRef = useRef<HTMLImageElement | null>(null)
-  const containerRef = useRef(null)
+  const lockIconRef = useRef<HTMLImageElement>(null)
 
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
 
@@ -116,31 +115,14 @@ const PoolListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy Market ID to Clipboard', 'error')
       })
   }
-  useEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (!isLockPopoverOpen) return
-
-      const container = containerRef.current as HTMLElement | null
-      const popoverElement = document.querySelector('.MuiPopover-root')
-
-      const isOverIcon = container?.contains(e.target as Node)
-      const isOverPopover = popoverElement?.contains(e.target as Node)
-
-      if (!isOverIcon || !isOverPopover) {
-        setLockPopoverOpen(false)
-      }
-    }
-
-    document.addEventListener('mousemove', handleGlobalMouseMove)
-
-    return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove)
-    }
-  }, [isLockPopoverOpen])
-
-  const handleMouseEnter = () => {
+  const handlePointerEnter = () => {
     setLockPopoverOpen(true)
   }
+
+  const handlePointerLeave = () => {
+    setLockPopoverOpen(false)
+  }
+
   return (
     <Grid maxWidth='100%'>
       {displayType === 'token' ? (
@@ -152,14 +134,15 @@ const PoolListItem: React.FC<IProps> = ({
           {!isMd ? (
             <Box
               className={classes.iconContainer}
-              ref={containerRef}
-              onMouseEnter={handleMouseEnter}>
+              onPointerEnter={handlePointerEnter}
+              onPointerLeave={handlePointerLeave}>
               {isLocked && (
                 <>
                   <img
                     className={classes.tokenIcon}
                     ref={lockIconRef}
                     src={icons.lockIcon}
+                    onPointerLeave={handlePointerLeave}
                     alt='LockIcon'
                   />
                   <LockStatsPopover
