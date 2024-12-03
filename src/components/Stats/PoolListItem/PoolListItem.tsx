@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -79,8 +79,7 @@ const PoolListItem: React.FC<IProps> = ({
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const lockIconRef = useRef<HTMLImageElement | null>(null)
-  const containerRef = useRef(null)
+  const lockIconRef = useRef<HTMLButtonElement>(null)
 
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
 
@@ -124,31 +123,14 @@ const PoolListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy Market ID to Clipboard', 'error')
       })
   }
-  useEffect(() => {
-    const handleGlobalMouseMove = (e: MouseEvent) => {
-      if (!isLockPopoverOpen) return
-
-      const container = containerRef.current as HTMLElement | null
-      const popoverElement = document.querySelector('.MuiPopover-root')
-
-      const isOverIcon = container?.contains(e.target as Node)
-      const isOverPopover = popoverElement?.contains(e.target as Node)
-
-      if (!isOverIcon || !isOverPopover) {
-        setLockPopoverOpen(false)
-      }
-    }
-
-    document.addEventListener('mousemove', handleGlobalMouseMove)
-
-    return () => {
-      document.removeEventListener('mousemove', handleGlobalMouseMove)
-    }
-  }, [isLockPopoverOpen])
-
-  const handleMouseEnter = () => {
+  const handlePointerEnter = () => {
     setLockPopoverOpen(true)
   }
+
+  const handlePointerLeave = () => {
+    setLockPopoverOpen(false)
+  }
+
   return (
     <Grid maxWidth='100%'>
       {displayType === 'token' ? (
@@ -157,36 +139,6 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{ container: classes.container }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
-          {!isMd ? (
-            <Box
-              className={classes.iconContainer}
-              ref={containerRef}
-              onMouseEnter={handleMouseEnter}>
-              {isLocked && (
-                <>
-                  <img
-                    className={classes.tokenIcon}
-                    ref={lockIconRef}
-                    src={icons.lockIcon}
-                    alt='LockIcon'
-                  />
-                  <LockStatsPopover
-                    anchorEl={lockIconRef.current}
-                    open={isLockPopoverOpen}
-                    lockedX={lockedX}
-                    lockedY={lockedY}
-                    symbolX={shortenAddress(symbolFrom ?? '')}
-                    symbolY={shortenAddress(symbolTo ?? '')}
-                    liquidityX={liquidityX}
-                    liquidityY={liquidityY}
-                    onClose={() => {
-                      setLockPopoverOpen(false)
-                    }}
-                  />
-                </>
-              )}
-            </Box>
-          ) : null}
           <Grid className={classes.imageContainer}>
             {!isSm && (
               <Box className={classes.iconsWrapper}>
@@ -232,6 +184,31 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography>{`$${formatNumber(TVL)}`}</Typography>
           {!isSm && (
             <Box className={classes.action}>
+              {isLocked && (
+                <>
+                  <button
+                    className={classes.actionButton}
+                    ref={lockIconRef}
+                    onPointerLeave={handlePointerLeave}
+                    onPointerEnter={handlePointerEnter}>
+                    <img width={32} height={32} src={icons.lockIcon} alt={'Lock info'} />
+                  </button>
+                  <LockStatsPopover
+                    anchorEl={lockIconRef.current}
+                    open={isLockPopoverOpen}
+                    lockedX={lockedX}
+                    lockedY={lockedY}
+                    symbolX={shortenAddress(symbolFrom ?? '')}
+                    symbolY={shortenAddress(symbolTo ?? '')}
+                    liquidityX={liquidityX}
+                    liquidityY={liquidityY}
+                    onClose={() => {
+                      setLockPopoverOpen(false)
+                    }}
+                  />
+                </>
+              )}
+
               <TooltipHover text='Exchange'>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
                   <img width={32} height={32} src={icons.horizontalSwapIcon} alt={'Exchange'} />
@@ -265,7 +242,6 @@ const PoolListItem: React.FC<IProps> = ({
               N<sup>o</sup>
             </Typography>
           )}
-          {!isMd && <Typography></Typography>}
 
           <Typography
             style={{ cursor: 'pointer' }}

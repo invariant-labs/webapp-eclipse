@@ -46,9 +46,8 @@ export const LockStatsPopover = ({
   }, [lockedX, lockedY, liquidityX, liquidityY])
 
   useEffect(() => {
-    if (open) {
-      const ANIM_TIME = 100
-      setAnimationTriggered(false)
+    if (open && !animationTriggered) {
+      const ANIM_TIME = 500
 
       const timer = setTimeout(() => {
         setAnimationTriggered(true)
@@ -62,7 +61,7 @@ export const LockStatsPopover = ({
 
   const progressStyles = {
     height: 3,
-    width: '50%',
+    width: '0%',
     marginLeft: '10px',
     borderRadius: 4,
     backgroundColor: colors.invariant.light,
@@ -98,7 +97,7 @@ export const LockStatsPopover = ({
       marginThreshold={16}>
       <div className={classes.backgroundContainer}>
         <div className={classes.statsContainer} style={{ gap: '16px' }}>
-          <div style={{ display: 'flex', width: '48%', gap: '16px' }}>
+          <div style={{ display: 'flex', width: '38%', gap: '16px' }}>
             <div
               style={{
                 display: 'flex',
@@ -138,7 +137,7 @@ export const LockStatsPopover = ({
                     paddingAngle: 2,
                     startAngle: -90,
                     endAngle: 270,
-                    cx: 143,
+                    cx: 110,
                     cy: 75,
                     arcLabel: item => {
                       return `${item.label} (${item.value}%)`
@@ -153,7 +152,7 @@ export const LockStatsPopover = ({
                     fill: 'currentColor'
                   }
                 }}
-                width={285}
+                width={250}
                 height={150}
               />
             </div>
@@ -172,7 +171,7 @@ export const LockStatsPopover = ({
               display: 'flex',
               flexDirection: 'column',
               gap: '10px',
-              width: '40%'
+              width: '50%'
             }}>
             <Typography
               className={classes.chartTitle}
@@ -193,7 +192,7 @@ export const LockStatsPopover = ({
                 <Box
                   sx={{
                     width: '40%',
-                    ml: '50px',
+                    ml: '60px',
                     position: 'relative'
                   }}>
                   <LinearProgress
@@ -213,7 +212,7 @@ export const LockStatsPopover = ({
                       position: 'absolute',
                       top: 0,
                       left: 0,
-                      width: animationTriggered ? percentages.xStandard : '0%',
+                      width: animationTriggered ? `${percentages.xStandard}%` : '0%',
                       height: '3px',
                       borderRadius: 4,
                       transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -237,7 +236,7 @@ export const LockStatsPopover = ({
                 <Box
                   sx={{
                     width: '40%',
-                    ml: '50px',
+                    ml: '60px',
                     position: 'relative'
                   }}>
                   <LinearProgress
@@ -257,7 +256,7 @@ export const LockStatsPopover = ({
                       position: 'absolute',
                       top: 0,
                       left: 0,
-                      width: animationTriggered ? percentages.yStandard : '0%',
+                      width: animationTriggered ? `${percentages.yStandard}%` : '0%',
                       height: '3px',
                       borderRadius: 4,
                       transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
