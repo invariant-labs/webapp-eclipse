@@ -7,7 +7,8 @@ import {
   actions,
   ClosePositionData,
   GetCurrentTicksData,
-  InitPositionData
+  InitPositionData,
+  PositionWithAddress
 } from '@store/reducers/positions'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
@@ -805,39 +806,7 @@ export function* handleGetPositionsList() {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-
     const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
-
-    const [lockerAuth] = lockerProgram.getUserLocksAddress(wallet.publicKey)
-
-    let lockedHead
-    try {
-      const { head } = yield* call([marketProgram, marketProgram.getPositionList], lockerAuth)
-      lockedHead = head
-    } catch (e) {
-      lockedHead = 0
-    }
-
-    const { lockedList, lockedAddresses } = yield* all({
-      lockedList: call(
-        [marketProgram, marketProgram.getPositionsFromRange],
-        lockerAuth,
-        0,
-        lockedHead - 1
-      ),
-      lockedAddresses: call(
-        getPositionsAddressesFromRange,
-        marketProgram,
-        lockerAuth,
-        0,
-        lockedHead - 1
-      )
-    })
-
-    const lockedPositions = lockedList.map((position, index) => ({
-      ...position,
-      address: lockedAddresses[index]
-    }))
 
     const { head, bump } = yield* call(
       [marketProgram, marketProgram.getPositionList],
@@ -859,13 +828,44 @@ export function* handleGetPositionsList() {
       address: addresses[index]
     }))
 
+    const [lockerAuth] = lockerProgram.getUserLocksAddress(wallet.publicKey)
+
+    let lockedPositions: PositionWithAddress[]
+    try {
+      const { head: lockedHead } = yield* call(
+        [marketProgram, marketProgram.getPositionList],
+        lockerAuth
+      )
+
+      const { lockedList, lockedAddresses } = yield* all({
+        lockedList: call(
+          [marketProgram, marketProgram.getPositionsFromRange],
+          lockerAuth,
+          0,
+          lockedHead - 1
+        ),
+        lockedAddresses: call(
+          getPositionsAddressesFromRange,
+          marketProgram,
+          lockerAuth,
+          0,
+          lockedHead - 1
+        )
+      })
+
+      lockedPositions = lockedList.map((position, index) => ({
+        ...position,
+        address: lockedAddresses[index]
+      }))
+    } catch (e) {
+      lockedPositions = []
+    }
+
     const pools = new Set(list.map(pos => pos.pool.toString()))
 
-    if (lockedPositions.length > 0) {
-      lockedPositions.forEach(lock => {
-        pools.add(lock.pool.toString())
-      })
-    }
+    lockedPositions.forEach(lock => {
+      pools.add(lock.pool.toString())
+    })
 
     yield* put(
       poolsActions.getPoolsDataForList({

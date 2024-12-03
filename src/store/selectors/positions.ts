@@ -88,11 +88,12 @@ export const singlePositionData = (id: string) =>
   createSelector(
     positionsWithPoolsData,
     lockedPositionsWithPoolsData,
-    (positions, lockedPositions) =>
-      positions.find(position => id === position.id.toString() + '_' + position.pool.toString()) ??
-      lockedPositions.find(
+    (positions, lockedPositions) => {
+      const finalData = [...positions, ...lockedPositions]
+      return finalData.find(
         position => id === position.id.toString() + '_' + position.pool.toString()
       )
+    }
   )
 
 export const positionsSelectors = {

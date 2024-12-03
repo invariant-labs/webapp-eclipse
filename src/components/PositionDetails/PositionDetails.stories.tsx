@@ -7,6 +7,8 @@ import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 
 const defaultArgs = {
+  success: false,
+  inProgress: false,
   currentPrice: new BN(10000),
   leftRange: { index: new BN(2), x: new BN(23) },
   rightRange: { index: new BN(2), x: new BN(45354) },

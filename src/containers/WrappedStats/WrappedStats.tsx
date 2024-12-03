@@ -73,7 +73,6 @@ export const WrappedStats: React.FC = () => {
       const poolName = shortenAddress(symbolFrom ?? '') + '/' + shortenAddress(symbolTo ?? '')
       const reversedPoolName =
         shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
-      console.log(poolData)
       return (
         poolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
         poolData.fee.toString().concat('%').includes(deferredSearchPoolsValue.toLowerCase()) ||

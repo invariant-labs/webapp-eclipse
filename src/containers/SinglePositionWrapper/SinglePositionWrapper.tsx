@@ -34,6 +34,7 @@ import { NoConnected } from '@components/NoConnected/NoConnected'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { lockerState } from '@store/selectors/locker'
 
 export interface IProps {
   id: string
@@ -47,6 +48,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const currentNetwork = useSelector(network)
   const position = useSelector(singlePositionData(id))
+  const { success, inProgress } = useSelector(lockerState)
 
   const isLoadingList = useSelector(isLoadingPositionsList)
   const {
@@ -457,6 +459,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         isBalanceLoading={isBalanceLoading}
         network={currentNetwork}
         isLocked={position.isLocked}
+        success={success}
+        inProgress={inProgress}
       />
     )
   }

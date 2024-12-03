@@ -22,8 +22,6 @@ import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import { lockerState } from '@store/selectors/locker'
-import { useSelector } from 'react-redux'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 
@@ -57,6 +55,8 @@ interface IProps {
   isBalanceLoading: boolean
   network: NetworkType
   isLocked: boolean
+  success: boolean
+  inProgress: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -88,7 +88,9 @@ const PositionDetails: React.FC<IProps> = ({
   onRefresh,
   isBalanceLoading,
   network,
-  isLocked
+  isLocked,
+  success,
+  inProgress
 }) => {
   const { classes } = useStyles()
 
@@ -97,8 +99,6 @@ const PositionDetails: React.FC<IProps> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
-
-  const { success, inProgress } = useSelector(lockerState)
 
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
