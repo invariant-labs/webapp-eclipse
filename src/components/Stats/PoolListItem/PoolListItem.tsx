@@ -33,6 +33,10 @@ interface IProps {
   addressTo?: string
   network: NetworkType
   apy?: number
+  lockedX?: number
+  lockedY?: number
+  liquidityX?: number
+  liquidityY?: number
   apyData?: {
     fees: number
     accumulatedFarmsAvg: number
@@ -49,6 +53,10 @@ const PoolListItem: React.FC<IProps> = ({
   fee = 0,
   volume = 0,
   TVL = 0,
+  lockedX = 0,
+  lockedY = 0,
+  liquidityX = 0,
+  liquidityY = 0,
   displayType,
   symbolFrom,
   symbolTo,
@@ -131,7 +139,6 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{ container: classes.container }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
-
           <Grid className={classes.imageContainer}>
             {!isSm && (
               <Box className={classes.iconsWrapper}>
@@ -189,6 +196,12 @@ const PoolListItem: React.FC<IProps> = ({
                   <LockStatsPopover
                     anchorEl={lockIconRef.current}
                     open={isLockPopoverOpen}
+                    lockedX={lockedX}
+                    lockedY={lockedY}
+                    symbolX={shortenAddress(symbolFrom ?? '')}
+                    symbolY={shortenAddress(symbolTo ?? '')}
+                    liquidityX={liquidityX}
+                    liquidityY={liquidityY}
                     onClose={() => {
                       setLockPopoverOpen(false)
                     }}
