@@ -24,6 +24,7 @@ export function* getStats(): Generator {
       }))
     }
 
+    // @ts-expect-error FIXME: Interface missmatch.
     yield* put(actions.setCurrentStats(parsedFullSnap))
   } catch (error) {
     yield* put(actions.setLoadingStats(false))

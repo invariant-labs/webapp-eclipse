@@ -7,6 +7,8 @@ import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 
 const defaultArgs = {
+  success: false,
+  inProgress: false,
   currentPrice: new BN(10000),
   leftRange: { index: new BN(2), x: new BN(23) },
   rightRange: { index: new BN(2), x: new BN(45354) },
@@ -17,6 +19,7 @@ const defaultArgs = {
   ticksLoading: false,
   tickSpacing: new BN(1),
   closePosition: fn(),
+  lockPosition: fn(),
   tokenX: {
     name: 'BTC',
     balance: new BN(10000),
@@ -48,7 +51,8 @@ const defaultArgs = {
   network: NetworkType.Testnet,
   tokenXAddress: new PublicKey('32'),
   tokenYAddress: new PublicKey('22'),
-  poolAddress: new PublicKey('32')
+  poolAddress: new PublicKey('32'),
+  isLocked: false
 }
 
 const meta = {

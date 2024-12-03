@@ -2,13 +2,14 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useState } from 'react'
+import { useState } from 'react'
 import { BoxInfo } from './BoxInfo'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { useNavigate } from 'react-router-dom'
 import { TokenPriceData } from '@store/consts/types'
-
+import lockIcon from '@static/svg/lock.svg'
+import unlockIcon from '@static/svg/unlock.svg'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import icons from '@static/icons'
 import { addressToTicker } from '@utils/utils'
@@ -29,6 +30,8 @@ interface IProp {
   isBalanceLoading: boolean
   isActive: boolean
   network: NetworkType
+  isLocked: boolean
+  onModalOpen: () => void
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -45,10 +48,11 @@ const SinglePositionInfo: React.FC<IProp> = ({
   userHasStakes = false,
   isBalanceLoading,
   isActive,
-  network
+  network,
+  onModalOpen,
+  isLocked
 }) => {
   const navigate = useNavigate()
-
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { classes } = useStyles()
 
@@ -71,6 +75,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
           unblurContent()
         }}
       />
+
       <Grid className={classes.header}>
         <Grid className={classes.iconsGrid}>
           <img
@@ -93,7 +98,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
           />
           <Grid className={classes.namesGrid}>
             <Typography className={classes.name}>
-              {xToY ? tokenX.name : tokenY.name} - {xToY ? tokenY.name : tokenX.name}
+              {xToY ? tokenX.name : tokenY.name} - {xToY ? tokenY.name : tokenX.name}{' '}
             </Typography>
           </Grid>
           <Grid className={classes.rangeGrid} sx={{ display: { xs: 'flex', md: 'none' } }}>
@@ -159,12 +164,15 @@ const SinglePositionInfo: React.FC<IProp> = ({
           </Grid>
           <TooltipHover
             text={
-              tokenX.claimValue > 0 || tokenY.claimValue > 0
-                ? 'Unclaimed fees will be returned when closing the position'
-                : ''
+              isLocked
+                ? 'Closing positions is disabled when position is locked'
+                : tokenX.claimValue > 0 || tokenY.claimValue > 0
+                  ? 'Unclaimed fees will be returned when closing the position'
+                  : ''
             }>
             <Button
               className={classes.closeButton}
+              disabled={isLocked}
               variant='contained'
               onClick={() => {
                 if (!userHasStakes) {
@@ -177,6 +185,29 @@ const SinglePositionInfo: React.FC<IProp> = ({
               Close position
             </Button>
           </TooltipHover>
+          <Hidden mdUp>
+            {!isLocked ? (
+              <TooltipHover text={'Lock liquidity'}>
+                <Button
+                  className={classes.lockButton}
+                  disabled={isLocked}
+                  variant='contained'
+                  onClick={onModalOpen}>
+                  <img src={lockIcon} alt='Lock' />
+                </Button>
+              </TooltipHover>
+            ) : (
+              <TooltipHover text={'Unlocking liquidity is forbidden'}>
+                <Button
+                  disabled
+                  className={classes.unlockButton}
+                  variant='contained'
+                  onClick={() => {}}>
+                  <img src={unlockIcon} alt='Lock' />
+                </Button>
+              </TooltipHover>
+            )}
+          </Hidden>
           <Hidden smUp>
             <Button
               className={classes.button}

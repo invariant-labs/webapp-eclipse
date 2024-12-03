@@ -13,6 +13,7 @@ import {
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/positions'
+import { actions as lockerActions } from '@store/reducers/locker'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
@@ -24,7 +25,7 @@ import {
 } from '@store/selectors/positions'
 import { balanceLoading, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import useStyles from './style'
@@ -33,6 +34,7 @@ import { NoConnected } from '@components/NoConnected/NoConnected'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { lockerState } from '@store/selectors/locker'
 
 export interface IProps {
   id: string
@@ -46,6 +48,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const currentNetwork = useSelector(network)
   const position = useSelector(singlePositionData(id))
+  const { success, inProgress } = useSelector(lockerState)
+
   const isLoadingList = useSelector(isLoadingPositionsList)
   const {
     allData: ticksData,
@@ -341,7 +345,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return
     }
     setShowFeesLoader(true)
-    dispatch(actions.getSinglePosition(position?.positionIndex))
+    dispatch(
+      actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
+    )
 
     if (position) {
       dispatch(
@@ -389,7 +395,12 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         currentPrice={current}
         onClickClaimFee={() => {
           setShowFeesLoader(true)
-          dispatch(actions.claimFee(position.positionIndex))
+          dispatch(actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked }))
+        }}
+        lockPosition={() => {
+          dispatch(
+            lockerActions.lockPosition({ index: position.positionIndex, network: currentNetwork })
+          )
         }}
         closePosition={claimFarmRewards => {
           setIsClosingPosition(true)
@@ -447,6 +458,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         onRefresh={onRefresh}
         isBalanceLoading={isBalanceLoading}
         network={currentNetwork}
+        isLocked={position.isLocked}
+        success={success}
+        inProgress={inProgress}
       />
     )
   }

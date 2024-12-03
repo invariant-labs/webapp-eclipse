@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'

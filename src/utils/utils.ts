@@ -1156,7 +1156,7 @@ export const getPoolsFromAddresses = async (
     )) as Array<RawPoolStructure | null>
 
     return pools
-      .filter(pool => pool !== null)
+      .filter(pool => !!pool)
       .map((pool, index) => {
         return {
           ...parsePool(pool),
