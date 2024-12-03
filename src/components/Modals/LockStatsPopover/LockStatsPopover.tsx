@@ -106,7 +106,7 @@ export const LockStatsPopover = ({
                 gap: '8px'
               }}>
               <Typography className={classes.chartTitle} style={{ textAlign: 'center' }}>
-                Lock ratio
+                Lock Liquidity Distribution
               </Typography>
 
               <Typography
@@ -115,7 +115,7 @@ export const LockStatsPopover = ({
                   flex: 1,
                   display: 'flex'
                 }}>
-                Contribution to the total locked amount between the tokens.
+                Percentage breakdown of total locked liquidity between token pair in the pool.
               </Typography>
               <PieChart
                 series={[
@@ -177,7 +177,7 @@ export const LockStatsPopover = ({
             <Typography
               className={classes.chartTitle}
               style={{ textAlign: 'center', width: 'fit-content', alignSelf: 'center' }}>
-              Guaranteed Liquidity Share
+              Standard Positions Share
             </Typography>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -268,9 +268,8 @@ export const LockStatsPopover = ({
               </div>
             </div>
             <Typography className={classes.description}>
-              Shares locked tokens contribute to the total volume available in the protocol. The
-              higher the ratio is the more tokens are guaranteed to stay in the protocol ensuring no
-              price manipulation by liquidity removal.
+              Amount and percentage of tokens secured in standard positions. More locked token value
+              (TVL) provides stronger pool stability and better resistance to price impact.
             </Typography>
           </div>
         </div>
