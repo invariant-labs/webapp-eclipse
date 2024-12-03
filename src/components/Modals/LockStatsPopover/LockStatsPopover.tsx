@@ -33,16 +33,21 @@ export const LockStatsPopover = ({
 
   const percentages = useMemo(() => {
     const totalLocked = lockedX + lockedY
-    const xLocked = ((lockedX / totalLocked) * 100).toFixed(1)
-    const yLocked = ((lockedY / totalLocked) * 100).toFixed(1)
-    const xStandard = (((liquidityX - lockedX) / liquidityX) * 100).toFixed(2)
-    const yStandard = (((liquidityY - lockedY) / liquidityY) * 100).toFixed(2)
-    return {
-      xLocked,
-      yLocked,
-      xStandard,
-      yStandard
+    const values = {
+      xLocked: ((lockedX / totalLocked) * 100).toFixed(1),
+      yLocked: ((lockedY / totalLocked) * 100).toFixed(1),
+      xStandard: '100',
+      yStandard: '100'
     }
+
+    if (liquidityX !== 0) {
+      values.xStandard = (((liquidityX - lockedX) / liquidityX) * 100).toFixed(2)
+    }
+    if (liquidityY !== 0) {
+      values.yStandard = (((liquidityY - lockedY) / liquidityY) * 100).toFixed(2)
+    }
+
+    return values
   }, [lockedX, lockedY, liquidityX, liquidityY])
 
   useEffect(() => {
