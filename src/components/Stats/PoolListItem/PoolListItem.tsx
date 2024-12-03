@@ -242,7 +242,6 @@ const PoolListItem: React.FC<IProps> = ({
               N<sup>o</sup>
             </Typography>
           )}
-          {!isMd && <Typography></Typography>}
 
           <Typography
             style={{ cursor: 'pointer' }}
