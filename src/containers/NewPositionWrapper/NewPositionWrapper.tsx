@@ -300,7 +300,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         )
       }
     }
-  }, [isWaitingForNewPool, allPools])
+  }, [isWaitingForNewPool, allPools.length])
 
   useEffect(() => {
     if (poolIndex !== null) {

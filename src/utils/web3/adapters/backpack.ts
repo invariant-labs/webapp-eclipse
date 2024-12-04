@@ -67,7 +67,7 @@ export class BackpackWalletAdapter implements WalletAdapter {
     }
     let provider: BackpackProvider
     if ((window as any)?.backpack) {
-      provider = (window as any).backpack
+      provider = (window as any).backpack.solana
     } else {
       window.open('https://backpack.app/', '_blank')
       return
