@@ -33,22 +33,35 @@ export const LockStatsPopover = ({
 
   const percentages = useMemo(() => {
     const totalLocked = lockedX + lockedY
+    const totalLiq = liquidityX + liquidityY - totalLocked
+
     const values = {
       xLocked: ((lockedX / totalLocked) * 100).toFixed(1),
       yLocked: ((lockedY / totalLocked) * 100).toFixed(1),
-      xStandard: '100',
-      yStandard: '100'
-    }
-
-    if (liquidityX !== 0) {
-      values.xStandard = (((liquidityX - lockedX) / liquidityX) * 100).toFixed(2)
-    }
-    if (liquidityY !== 0) {
-      values.yStandard = (((liquidityY - lockedY) / liquidityY) * 100).toFixed(2)
+      xStandard: (((liquidityX - lockedX) / totalLiq) * 100).toFixed(2),
+      yStandard: (((liquidityY - lockedY) / totalLiq) * 100).toFixed(2)
     }
 
     return values
   }, [lockedX, lockedY, liquidityX, liquidityY])
+
+  const data = useMemo(() => {
+    const arr = [
+      {
+        id: 0,
+        value: +percentages.xLocked,
+        label: symbolX,
+        color: colors.invariant.pink
+      },
+      {
+        id: 1,
+        value: +percentages.yLocked,
+        label: symbolY,
+        color: colors.invariant.green
+      }
+    ]
+    return arr.sort((a, b) => b.value - a.value)
+  }, [percentages, symbolX, symbolY])
 
   useEffect(() => {
     if (open && !animationTriggered) {
@@ -107,7 +120,8 @@ export const LockStatsPopover = ({
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '8px'
+                alignItems: 'center',
+                gap: '12px'
               }}>
               <Typography className={classes.chartTitle} style={{ textAlign: 'center' }}>
                 Lock Liquidity Distribution
@@ -124,30 +138,16 @@ export const LockStatsPopover = ({
               <PieChart
                 series={[
                   {
-                    data: [
-                      {
-                        id: 0,
-                        value: +percentages.xLocked,
-                        label: symbolX,
-                        color: colors.invariant.pink
-                      },
-                      {
-                        id: 1,
-                        value: +percentages.yLocked,
-                        label: symbolY,
-                        color: colors.invariant.green
-                      }
-                    ],
+                    data: data,
                     outerRadius: 40,
-                    paddingAngle: 2,
-                    startAngle: -90,
-                    endAngle: 270,
-                    cx: 110,
-                    cy: 75,
+                    startAngle: -45,
+                    endAngle: 315,
+                    cx: 122.5,
+                    cy: 77.5,
                     arcLabel: item => {
                       return `${item.label} (${item.value}%)`
                     },
-                    arcLabelRadius: 80
+                    arcLabelRadius: 85
                   }
                 ]}
                 colors={[colors.invariant.pink, colors.invariant.green]}
@@ -157,8 +157,8 @@ export const LockStatsPopover = ({
                     fill: 'currentColor'
                   }
                 }}
-                width={250}
-                height={150}
+                width={255}
+                height={155}
               />
             </div>
           </div>
