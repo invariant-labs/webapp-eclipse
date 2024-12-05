@@ -73,7 +73,6 @@ export const WrappedStats: React.FC = () => {
       const poolName = shortenAddress(symbolFrom ?? '') + '/' + shortenAddress(symbolTo ?? '')
       const reversedPoolName =
         shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
-
       return (
         poolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
         poolData.fee.toString().concat('%').includes(deferredSearchPoolsValue.toLowerCase()) ||
@@ -202,6 +201,10 @@ export const WrappedStats: React.FC = () => {
               addressFrom: poolData.tokenX.toString(),
               addressTo: poolData.tokenY.toString(),
               apy: poolData.apy,
+              lockedX: poolData.lockedX,
+              lockedY: poolData.lockedY,
+              liquidityX: poolData.liquidityX,
+              liquidityY: poolData.liquidityY,
               apyData: {
                 fees: poolData.apy,
                 accumulatedFarmsSingleTick: 0,

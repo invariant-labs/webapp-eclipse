@@ -50,20 +50,50 @@ export const positionsWithPoolsData = createSelector(
         poolIndex: index
       }
     })
-
     return list.map((position, index) => ({
       ...position,
       poolData: poolsByKey[position.pool.toString()],
       tokenX: tokens[poolsByKey[position.pool.toString()].tokenX.toString()],
       tokenY: tokens[poolsByKey[position.pool.toString()].tokenY.toString()],
-      positionIndex: index
+      positionIndex: index,
+      isLocked: false
+    }))
+  }
+)
+
+export const lockedPositionsWithPoolsData = createSelector(
+  poolsArraySortedByFees,
+  positionsList,
+  swapTokensDict,
+  (allPools, { lockedList }, tokens) => {
+    const poolsByKey: Record<string, PoolWithAddressAndIndex> = {}
+    allPools.forEach((pool, index) => {
+      poolsByKey[pool.address.toString()] = {
+        ...pool,
+        poolIndex: index
+      }
+    })
+    return lockedList.map((position, index) => ({
+      ...position,
+      poolData: poolsByKey[position.pool.toString()],
+      tokenX: tokens[poolsByKey[position.pool.toString()].tokenX.toString()],
+      tokenY: tokens[poolsByKey[position.pool.toString()].tokenY.toString()],
+      positionIndex: index,
+      isLocked: true
     }))
   }
 )
 
 export const singlePositionData = (id: string) =>
-  createSelector(positionsWithPoolsData, positions =>
-    positions.find(position => id === position.id.toString() + '_' + position.pool.toString())
+  createSelector(
+    positionsWithPoolsData,
+    lockedPositionsWithPoolsData,
+    (positions, lockedPositions) => {
+      const finalData = [...positions, ...lockedPositions]
+      return finalData.find(
+        position => id === position.id.toString() + '_' + position.pool.toString()
+      )
+    }
   )
 
 export const positionsSelectors = {
