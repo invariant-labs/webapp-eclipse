@@ -32,9 +32,8 @@ export const LockStatsPopover = ({
   const [animationTriggered, setAnimationTriggered] = useState(false)
 
   const percentagesAndValues = useMemo(() => {
-    // MATH ABS ONLY IN CASE OF WRONG VALUES FROM API
-    const totalLocked = Math.abs(lockedX) + Math.abs(lockedY)
-    const totalLiqStandard = Math.abs(liquidityX) + Math.abs(liquidityY) - totalLocked
+    const totalLocked = lockedX + lockedY
+    const totalLiqStandard = liquidityX + liquidityY - totalLocked
 
     const values = {
       xLocked: ((lockedX / totalLocked) * 100).toFixed(1),
