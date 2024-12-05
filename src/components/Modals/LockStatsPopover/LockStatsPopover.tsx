@@ -32,8 +32,8 @@ export const LockStatsPopover = ({
   const [animationTriggered, setAnimationTriggered] = useState(false)
 
   const percentagesAndValues = useMemo(() => {
-    const totalLocked = lockedX + lockedY
-    const totalLiqStandard = liquidityX + liquidityY - totalLocked
+    const totalLocked = Math.abs(lockedX) + Math.abs(lockedY)
+    const totalLiqStandard = Math.abs(liquidityX) + Math.abs(liquidityY) - totalLocked
 
     const values = {
       xLocked: ((lockedX / totalLocked) * 100).toFixed(1),
@@ -44,17 +44,20 @@ export const LockStatsPopover = ({
       yStandardVal: liquidityY - lockedY
     }
     // TODO: WHY LOCKED > TVL (testnet BTC/USDC 1%)???
+    // THOSE ARE ADDITIONAL CHECKS TO NOT SHOW SOME STUPID STUFF
     if (lockedX > liquidityX) {
       values.xStandard = '100.00'
       values.yStandard = '0.00'
       values.xStandardVal = lockedX
       values.yStandardVal = 0
+      return values
     }
     if (lockedY > liquidityY) {
       values.yStandard = '100.00'
       values.xStandard = '0.00'
       values.yStandardVal = lockedY
       values.xStandardVal = 0
+      return values
     }
     return values
   }, [lockedX, lockedY, liquidityX, liquidityY])
