@@ -31,24 +31,53 @@ export const LockStatsPopover = ({
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
 
-  const percentages = useMemo(() => {
+  const percentagesAndValues = useMemo(() => {
     const totalLocked = lockedX + lockedY
+    const totalLiqStandard = liquidityX + liquidityY - totalLocked
+
     const values = {
       xLocked: ((lockedX / totalLocked) * 100).toFixed(1),
       yLocked: ((lockedY / totalLocked) * 100).toFixed(1),
-      xStandard: '100',
-      yStandard: '100'
+      xStandard: (((liquidityX - lockedX) / totalLiqStandard) * 100).toFixed(2),
+      yStandard: (((liquidityY - lockedY) / totalLiqStandard) * 100).toFixed(2),
+      xStandardVal: liquidityX - lockedX,
+      yStandardVal: liquidityY - lockedY
     }
-
-    if (liquidityX !== 0) {
-      values.xStandard = (((liquidityX - lockedX) / liquidityX) * 100).toFixed(2)
+    // ADDITIONAL VALIDATION
+    if (lockedX > liquidityX) {
+      values.xStandard = '100.00'
+      values.yStandard = '0.00'
+      values.xStandardVal = lockedX
+      values.yStandardVal = 0
+      return values
     }
-    if (liquidityY !== 0) {
-      values.yStandard = (((liquidityY - lockedY) / liquidityY) * 100).toFixed(2)
+    if (lockedY > liquidityY) {
+      values.yStandard = '100.00'
+      values.xStandard = '0.00'
+      values.yStandardVal = lockedY
+      values.xStandardVal = 0
+      return values
     }
-
     return values
   }, [lockedX, lockedY, liquidityX, liquidityY])
+
+  const data = useMemo(() => {
+    const arr = [
+      {
+        id: 0,
+        value: +percentagesAndValues.xLocked,
+        label: symbolX,
+        color: colors.invariant.pink
+      },
+      {
+        id: 1,
+        value: +percentagesAndValues.yLocked,
+        label: symbolY,
+        color: colors.invariant.green
+      }
+    ]
+    return arr.sort((a, b) => b.value - a.value)
+  }, [percentagesAndValues, symbolX, symbolY])
 
   useEffect(() => {
     if (open && !animationTriggered) {
@@ -107,7 +136,8 @@ export const LockStatsPopover = ({
               style={{
                 display: 'flex',
                 flexDirection: 'column',
-                gap: '8px'
+                alignItems: 'center',
+                gap: '12px'
               }}>
               <Typography className={classes.chartTitle} style={{ textAlign: 'center' }}>
                 Lock Liquidity Distribution
@@ -124,30 +154,16 @@ export const LockStatsPopover = ({
               <PieChart
                 series={[
                   {
-                    data: [
-                      {
-                        id: 0,
-                        value: +percentages.xLocked,
-                        label: symbolX,
-                        color: colors.invariant.pink
-                      },
-                      {
-                        id: 1,
-                        value: +percentages.yLocked,
-                        label: symbolY,
-                        color: colors.invariant.green
-                      }
-                    ],
+                    data: data,
                     outerRadius: 40,
-                    paddingAngle: 2,
-                    startAngle: -90,
-                    endAngle: 270,
-                    cx: 110,
-                    cy: 75,
+                    startAngle: -45,
+                    endAngle: 315,
+                    cx: 122.5,
+                    cy: 77.5,
                     arcLabel: item => {
                       return `${item.label} (${item.value}%)`
                     },
-                    arcLabelRadius: 80
+                    arcLabelRadius: 85
                   }
                 ]}
                 colors={[colors.invariant.pink, colors.invariant.green]}
@@ -157,8 +173,8 @@ export const LockStatsPopover = ({
                     fill: 'currentColor'
                   }
                 }}
-                width={250}
-                height={150}
+                width={255}
+                height={155}
               />
             </div>
           </div>
@@ -188,10 +204,10 @@ export const LockStatsPopover = ({
                 <Typography style={{ textWrap: 'nowrap', width: '120px' }}>
                   {symbolX}:{' '}
                   <span style={{ color: colors.invariant.pink }}>
-                    ${formatNumber(liquidityX - lockedX)}
+                    ${formatNumber(percentagesAndValues.xStandardVal)}
                   </span>{' '}
                   <span style={{ color: colors.invariant.textGrey }}>
-                    ({percentages.xStandard}%)
+                    ({percentagesAndValues.xStandard}%)
                   </span>
                 </Typography>
                 <Box
@@ -202,7 +218,7 @@ export const LockStatsPopover = ({
                   }}>
                   <LinearProgress
                     variant='determinate'
-                    value={animationTriggered ? +percentages.xStandard : 0}
+                    value={animationTriggered ? +percentagesAndValues.xStandard : 0}
                     sx={{
                       ...progressStyles,
                       width: '100%',
@@ -217,7 +233,7 @@ export const LockStatsPopover = ({
                       position: 'absolute',
                       top: 0,
                       left: 0,
-                      width: animationTriggered ? `${percentages.xStandard}%` : '0%',
+                      width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%',
                       height: '3px',
                       borderRadius: 4,
                       transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
@@ -231,10 +247,10 @@ export const LockStatsPopover = ({
                 <Typography style={{ textWrap: 'nowrap', width: '120px' }}>
                   {symbolY}:{' '}
                   <span style={{ color: colors.invariant.green }}>
-                    ${formatNumber(liquidityY - lockedY)}
+                    ${formatNumber(percentagesAndValues.yStandardVal)}
                   </span>{' '}
                   <span style={{ color: colors.invariant.textGrey }}>
-                    ({percentages.yStandard}%)
+                    ({percentagesAndValues.yStandard}%)
                   </span>
                 </Typography>
 
@@ -246,7 +262,7 @@ export const LockStatsPopover = ({
                   }}>
                   <LinearProgress
                     variant='determinate'
-                    value={animationTriggered ? +percentages.yStandard : 0}
+                    value={animationTriggered ? +percentagesAndValues.yStandard : 0}
                     sx={{
                       ...progressStyles,
                       width: '100%',
@@ -261,7 +277,7 @@ export const LockStatsPopover = ({
                       position: 'absolute',
                       top: 0,
                       left: 0,
-                      width: animationTriggered ? `${percentages.yStandard}%` : '0%',
+                      width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
                       height: '3px',
                       borderRadius: 4,
                       transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
