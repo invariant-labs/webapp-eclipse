@@ -43,8 +43,7 @@ export const LockStatsPopover = ({
       xStandardVal: liquidityX - lockedX,
       yStandardVal: liquidityY - lockedY
     }
-    // TODO: WHY LOCKED > TVL (testnet BTC/USDC 1%)???
-    // THOSE ARE ADDITIONAL CHECKS TO NOT SHOW SOME STUPID STUFF
+    // ADDITIONAL VALIDATION
     if (lockedX > liquidityX) {
       values.xStandard = '100.00'
       values.yStandard = '0.00'
