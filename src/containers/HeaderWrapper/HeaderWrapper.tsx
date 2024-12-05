@@ -75,44 +75,60 @@ export const HeaderWrapper: React.FC = () => {
     })()
   }, [])
 
+  const shouldResetRpc = useMemo(() => {
+    const defaultRpcNumber = localStorage.getItem(`INVARIANT_DEFAULT_RPC_NUMBER`)
+
+    const currentRpcNumber =
+      RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet].slice(-12, -1) +
+      RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet].slice(-15, -5) +
+      RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet].slice(-15, -5)
+
+    if (defaultRpcNumber === null || currentRpcNumber !== defaultRpcNumber) {
+      localStorage.setItem(`INVARIANT_DEFAULT_RPC_NUMBER`, currentRpcNumber)
+      return true
+    } else {
+      return false
+    }
+  }, [])
+
   const defaultTestnetRPC = useMemo(() => {
     const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`)
 
-    if (lastRPC === null) {
+    if (lastRPC === null || shouldResetRpc) {
       localStorage.setItem(
         `INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet]
       )
     }
 
-    return lastRPC === null ? RPC.TEST : lastRPC
-  }, [])
+    return lastRPC === null || shouldResetRpc ? RPC.TEST : lastRPC
+  }, [shouldResetRpc])
 
   const defaultDevnetRPC = useMemo(() => {
     const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`)
 
-    if (lastRPC === null) {
+    if (lastRPC === null || shouldResetRpc) {
       localStorage.setItem(
         `INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet]
       )
     }
 
-    return lastRPC === null ? RPC.DEV_EU : lastRPC
-  }, [])
+    return lastRPC === null || shouldResetRpc ? RPC.DEV_EU : lastRPC
+  }, [shouldResetRpc])
 
   const defaultMainnetRPC = useMemo(() => {
     const lastRPC = localStorage.getItem(`INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`)
 
-    if (lastRPC === null) {
+    if (lastRPC === null || shouldResetRpc) {
       localStorage.setItem(
         `INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet]
       )
     }
 
-    return lastRPC === null ? RPC.MAIN : lastRPC
-  }, [])
+    return lastRPC === null || shouldResetRpc ? RPC.MAIN : lastRPC
+  }, [shouldResetRpc])
 
   const activeChain = CHAINS.find(chain => chain.name === Chain.Eclipse) ?? CHAINS[0]
 

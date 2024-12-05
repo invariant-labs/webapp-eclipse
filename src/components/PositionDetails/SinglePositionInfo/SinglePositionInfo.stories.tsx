@@ -25,6 +25,7 @@ export const Primary: Story = {
     fee: 1,
     onClickClaimFee: fn(),
     swapHandler: fn(),
+    onModalOpen: fn(),
     tokenX: {
       name: 'BTC',
       icon: 'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
@@ -45,7 +46,8 @@ export const Primary: Story = {
     showFeesLoader: false,
     isBalanceLoading: false,
     isActive: true,
-    network: NetworkType.Testnet
+    network: NetworkType.Testnet,
+    isLocked: false
   },
   render: args => {
     return (

@@ -38,7 +38,8 @@ const data: IPositionItem[] = [
     tokenYLiq: 300.2,
     valueX: 10000.45,
     valueY: 21370.4,
-    id: '1'
+    id: '1',
+    isLocked: false
   },
   {
     address: 'So11111111111111111111111111111111111111112',
@@ -58,7 +59,8 @@ const data: IPositionItem[] = [
     tokenYLiq: 300.2,
     valueX: 10000.45,
     valueY: 21370.4,
-    id: '2'
+    id: '2',
+    isLocked: false
   },
   {
     address: 'So11111111111111111111111111111111111111112',
@@ -78,7 +80,8 @@ const data: IPositionItem[] = [
     tokenYLiq: 300.2,
     valueX: 10000.45,
     valueY: 21370.4,
-    id: '3'
+    id: '3',
+    isLocked: false
   },
   {
     address: 'So11111111111111111111111111111111111111112',
@@ -98,7 +101,8 @@ const data: IPositionItem[] = [
     tokenYLiq: 300.2,
     valueX: 10000.45,
     valueY: 21370.4,
-    id: '4'
+    id: '4',
+    isLocked: false
   }
 ]
 
@@ -109,6 +113,7 @@ const handleClick = () => {
 export const Primary: Story = {
   args: {
     data,
+    lockedData: data,
     onAddPositionClick: handleClick,
     itemsPerPage: 5,
     noConnectedBlockerProps: {
@@ -120,6 +125,7 @@ export const Primary: Story = {
     initialPage: 1,
     setLastPage: () => {},
     length: 0,
+    lockedLength: 0,
     noInitialPositions: false
   }
 }

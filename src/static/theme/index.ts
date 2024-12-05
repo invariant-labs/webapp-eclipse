@@ -84,6 +84,8 @@ export const colors = {
     pinkLinearGradient: 'linear-gradient(180deg, #EF84F5 0%, #9C3EBD 100%)',
     pinkLinearGradientOpacity:
       'linear-gradient(180deg, rgba(239, 132, 245, 0.8) 0%, rgba(156, 62, 189, 0.8) 100%)',
+    mixedLinearGradient:
+      'radial-gradient(50.2% 50.2% at 50% 0%, rgba(239, 132, 245, 0.25) 0%, rgba(239, 132, 245, 0) 75%), radial-gradient(49.8% 49.8% at 50% 100%, rgba(46, 224, 154, 0.25) 0%, rgba(46, 224, 154, 0) 75%)',
     yellow: '#EFD063',
     blue: '#43BBFF'
   }

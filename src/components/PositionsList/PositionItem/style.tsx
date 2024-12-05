@@ -8,7 +8,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 24,
     padding: 20,
     flexWrap: 'nowrap',
-
     '&:not(:last-child)': {
       marginBottom: 20
     },
@@ -126,7 +125,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   activeFee: {
-    background: colors.invariant.green
+    background: colors.invariant.greenLinearGradient
   },
   infoCenter: {
     flex: '1 1 0%'
@@ -145,13 +144,38 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       marginTop: 8
     }
   },
+  dropdown: {
+    background: colors.invariant.greenLinearGradient,
+    borderRadius: 11,
+    height: 36,
+    width: 57,
+    paddingInline: 10,
+    marginRight: 8,
+
+    [theme.breakpoints.down(1029)]: {
+      width: '100%',
+      marginRight: 0,
+      marginTop: 8
+    }
+  },
+  dropdownLocked: {
+    background: colors.invariant.lightHover
+  },
+  dropdownText: {
+    color: colors.invariant.black,
+    width: '100%'
+  },
   value: {
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
     width: 160,
     paddingInline: 12,
+    marginRight: 8,
 
+    [theme.breakpoints.down(1029)]: {
+      marginRight: 0
+    },
     [theme.breakpoints.down('sm')]: {
       width: 144,
       paddingInline: 6
@@ -167,7 +191,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       width: '100%'
     },
 
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down(1029)]: {
       flexWrap: 'wrap'
     }
   },

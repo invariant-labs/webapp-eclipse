@@ -8,6 +8,8 @@ import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
+import lockIcon from '@static/svg/lock.svg'
+import unlockIcon from '@static/svg/unlock.svg'
 
 export interface IPositionItem {
   tokenXName: string
@@ -27,6 +29,7 @@ export interface IPositionItem {
   currentPrice: number
   network: NetworkType
   isFullRange: boolean
+  isLocked: boolean
 }
 
 export const PositionItem: React.FC<IPositionItem> = ({
@@ -44,7 +47,8 @@ export const PositionItem: React.FC<IPositionItem> = ({
   tokenXLiq,
   tokenYLiq,
   network,
-  isFullRange
+  isFullRange,
+  isLocked
 }) => {
   const { classes } = useStyles()
 
@@ -230,6 +234,26 @@ export const PositionItem: React.FC<IPositionItem> = ({
         </Grid>
 
         <Hidden mdDown>{valueFragment}</Hidden>
+
+        {isLocked && (
+          <Grid
+            container
+            item
+            className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
+            justifyContent='center'
+            alignItems='center'
+            wrap='nowrap'>
+            {isLocked ? (
+              <TooltipHover text={'Liquidity locked'}>
+                <img src={lockIcon} alt='Lock' />
+              </TooltipHover>
+            ) : (
+              <TooltipHover text={'Liquidity not locked'}>
+                <img src={unlockIcon} alt='Lock' />
+              </TooltipHover>
+            )}
+          </Grid>
+        )}
       </Grid>
     </Grid>
   )

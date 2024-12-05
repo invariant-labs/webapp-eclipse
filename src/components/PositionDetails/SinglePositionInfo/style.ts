@@ -71,28 +71,21 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     columnGap: 10,
     flexBasis: '41%',
-    justifyContent: 'space-between',
+    justifyContent: 'flex-end',
     flexGrow: 0.6,
     [theme.breakpoints.down('md')]: {
-      justifyContent: 'flex-end',
       flexBasis: 'auto',
       flexGrow: 'auto'
     },
 
     [theme.breakpoints.down('sm')]: {
-      justifyContent: 'space-between',
-      flexBasis: 'auto',
       marginTop: 16
     }
   },
   feeText: {
     paddingInline: 6,
+    textAlign: 'center',
     minWidth: 66,
-
-    [theme.breakpoints.down('md')]: {
-      minWidth: 84,
-      marginLeft: 16
-    },
     [theme.breakpoints.down('md')]: {
       minWidth: 84,
       marginInline: 12
@@ -121,10 +114,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.text,
     textWrap: 'nowrap',
     fontSize: 22,
+    overflow: 'hidden',
+    whiteSpace: 'nowrap',
     [theme.breakpoints.down('sm')]: {
       ...typography.heading4
     }
   },
+
   bottomGrid: {
     background: colors.invariant.component,
     marginTop: 20,
@@ -270,7 +266,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     transition: '300ms',
     paddingInline: 0,
     borderRadius: 12,
-    textWrap: 'nowrap',
     ...typography.body1,
 
     '&:hover': {
@@ -281,9 +276,22 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         boxShadow: 'none'
       }
     },
-
+    '&:disabled': {
+      background: colors.invariant.light,
+      color: colors.invariant.componentBcg,
+      pointerEvents: 'auto',
+      transition: 'all 0.2s',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed',
+        filter: 'brightness(1.15)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
+      }
+    },
     [theme.breakpoints.down('sm')]: {
-      width: '50%',
+      width: '33%',
       ...typography.caption1,
       height: 40
     }
@@ -309,7 +317,63 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       }
     },
     [theme.breakpoints.down('sm')]: {
-      width: '50%',
+      width: '33%',
+      ...typography.caption1
+    }
+  },
+  unlockButton: {
+    color: colors.invariant.black,
+    background: colors.invariant.greenLinearGradientOpacity,
+    borderRadius: 12,
+    height: 36,
+    padding: 0,
+    minWidth: 36,
+    '&:hover': {
+      background: colors.invariant.greenLinearGradient,
+      boxShadow: `0 0 16px ${colors.invariant.greenLinearGradient}`,
+      '@media (hover: none)': {
+        background: colors.invariant.greenLinearGradientOpacity,
+        boxShadow: 'none'
+      }
+    },
+    '&:disabled': {
+      background: colors.invariant.light,
+      color: colors.invariant.componentBcg,
+      pointerEvents: 'auto',
+      transition: 'all 0.2s',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed',
+        filter: 'brightness(1.15)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
+      }
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '33%',
+      height: 40,
+      ...typography.caption1
+    }
+  },
+  lockButton: {
+    color: colors.invariant.black,
+    background: colors.invariant.pinkLinearGradientOpacity,
+    borderRadius: 12,
+    height: 36,
+    padding: 0,
+    minWidth: 36,
+    '&:hover': {
+      background: colors.invariant.pinkLinearGradient,
+      boxShadow: `0 0 16px ${colors.invariant.pink}`,
+      '@media (hover: none)': {
+        background: colors.invariant.pinkLinearGradientOpacity,
+        boxShadow: 'none'
+      }
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '33%',
+      height: 40,
       ...typography.caption1
     }
   },
