@@ -12,7 +12,7 @@ export class NightlyWalletAdapter implements WalletAdapter {
     return nightlyConnectAdapter.connected
   }
 
-  async signAllTransactions(transactions: Transaction[]): Promise<Transaction[]> {
+  signAllTransactions = async (transactions: Transaction[]): Promise<Transaction[]> => {
     return await nightlyConnectAdapter.signAllTransactions(transactions)
   }
 
@@ -20,11 +20,11 @@ export class NightlyWalletAdapter implements WalletAdapter {
     return nightlyConnectAdapter.publicKey ?? DEFAULT_PUBLICKEY
   }
 
-  async signTransaction(transaction: Transaction) {
+  signTransaction = async (transaction: Transaction) => {
     return await nightlyConnectAdapter.signTransaction(transaction)
   }
 
-  async signMessage(message: Uint8Array) {
+  signMessage = async (message: Uint8Array) => {
     return await nightlyConnectAdapter.signMessage(message)
   }
 

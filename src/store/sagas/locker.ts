@@ -48,7 +48,7 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
 
     const lockData: ILockPositionIx = {
       lockDuration: getMaxLockDuration(),
-      market: marketProgram,
+      market: marketProgram as any,
       index: index
     }
     const ixs = yield* call([locker, locker.lockPositionIx], lockData, wallet.publicKey)

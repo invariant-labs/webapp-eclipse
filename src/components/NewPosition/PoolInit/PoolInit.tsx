@@ -20,6 +20,7 @@ import { MINIMAL_POOL_INIT_PRICE } from '@store/consts/static'
 import AnimatedNumber from '@components/AnimatedNumber/AnimatedNumber'
 import { calculateTickDelta, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
+import { priceToTickInRange } from '@invariant-labs/sdk-eclipse/src/tick'
 
 export interface IPoolInit {
   tokenASymbol: string
@@ -79,7 +80,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
   )
 
   const validConcentrationMidPrice = (midPrice: string) => {
-    // TODO implement during add concentration mode
     const minTick = getMinTick(tickSpacing)
     const maxTick = getMaxTick(tickSpacing)
 
@@ -127,16 +127,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
       yDecimal
     )
 
-    // const priceTickIndex = calculateTickFromBalance(
-    //   positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
-    //   tickSpacing,
-    //   isXtoY,
-    //   xDecimal,
-    //   yDecimal
-    // )
-    const priceTickIndex = nearestTickIndex(+midPriceInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+    const priceTickIndex = priceToTickInRange(sqrtPrice, minTick, maxTick, tickSpacing)
 
-    // onChangeMidPrice(priceTickIndex, sqrtPrice)
     onChangeMidPrice(priceTickIndex, sqrtPrice)
   }, [midPriceInput])
 
@@ -266,9 +258,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
       Math.min(
         Math.max(
           +midPriceInput,
-          Number(calcPriceByTickIndex(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal))
+          calcPriceByTickIndex(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal)
         ),
-        Number(calcPriceByTickIndex(isXtoY ? maxTick : minTick, isXtoY, xDecimal, yDecimal))
+        calcPriceByTickIndex(isXtoY ? maxTick : minTick, isXtoY, xDecimal, yDecimal)
       ),
     [midPriceInput, isXtoY, xDecimal, yDecimal]
   )
