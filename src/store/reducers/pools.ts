@@ -1,5 +1,5 @@
 import { Pair } from '@invariant-labs/sdk-eclipse'
-import { PoolStructure, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { parsePool, PoolStructure, RawPoolStructure, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
@@ -29,7 +29,7 @@ export interface IPoolsStore {
 
 export interface UpdatePool {
   address: PublicKey
-  poolStructure: PoolStructure
+  poolStructure: RawPoolStructure
 }
 
 export interface updateTickMaps {
@@ -138,7 +138,7 @@ const poolsSlice = createSlice({
     updatePool(state, action: PayloadAction<UpdatePool>) {
       state.pools[action.payload.address.toString()] = {
         address: state.pools[action.payload.address.toString()].address,
-        ...action.payload.poolStructure
+        ...parsePool(action.payload.poolStructure)
       }
       return state
     },

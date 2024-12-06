@@ -2,7 +2,7 @@ import { call, put, select, takeEvery } from 'typed-redux-saga'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as swapActions } from '@store/reducers/swap'
 import { swap } from '@store/selectors/swap'
-import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
+import { poolsArraySortedByFees, tickMaps, tokens } from '@store/selectors/pools'
 import { accounts } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
@@ -36,6 +36,7 @@ export function* handleSwapWithETH(): Generator {
   const loaderSigningTx = createLoaderKey()
 
   try {
+    const tickmaps = yield* select(tickMaps)
     const allTokens = yield* select(tokens)
     const allPools = yield* select(poolsArraySortedByFees)
     const {
@@ -132,7 +133,7 @@ export function* handleSwapWithETH(): Generator {
       [marketProgram, marketProgram.swapInstruction],
       {
         pair: new Pair(tokenFrom, tokenTo, {
-          fee: allPools[poolIndex].fee.v,
+          fee: allPools[poolIndex].fee,
           tickSpacing: allPools[poolIndex].tickSpacing
         }),
         xToY: isXtoY,
@@ -144,7 +145,11 @@ export function* handleSwapWithETH(): Generator {
         byAmountIn: byAmountIn,
         owner: wallet.publicKey
       },
-      MAX_CROSSES_IN_SINGLE_TX
+      {
+        pool: allPools[poolIndex],
+        tickmap: tickmaps[allPools[poolIndex].tickmap.toString()]
+      },
+      { tickCrosses: MAX_CROSSES_IN_SINGLE_TX }
     )
 
     initialTx.add(swapIx)
@@ -302,6 +307,7 @@ export function* handleSwapWithETH(): Generator {
 export function* handleSwap(): Generator {
   const loaderSwappingTokens = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
+  const tickmaps = yield* select(tickMaps)
 
   try {
     const allTokens = yield* select(tokens)
@@ -362,20 +368,30 @@ export function* handleSwap(): Generator {
     if (toAddress === null) {
       toAddress = yield* call(createAccount, tokenTo)
     }
-    const swapTx = yield* call([marketProgram, marketProgram.swapTransaction], {
-      pair: new Pair(tokenFrom, tokenTo, {
-        fee: allPools[poolIndex].fee.v,
-        tickSpacing: allPools[poolIndex].tickSpacing
-      }),
-      xToY: isXtoY,
-      amount: byAmountIn ? amountIn : amountOut,
-      estimatedPriceAfterSwap,
-      slippage: slippage,
-      accountX: isXtoY ? fromAddress : toAddress,
-      accountY: isXtoY ? toAddress : fromAddress,
-      byAmountIn: byAmountIn,
-      owner: wallet.publicKey
-    })
+
+    const swapTx = yield* call(
+      [marketProgram, marketProgram.swapTransaction],
+      {
+        pair: new Pair(tokenFrom, tokenTo, {
+          fee: allPools[poolIndex].fee,
+          tickSpacing: allPools[poolIndex].tickSpacing
+        }),
+        xToY: isXtoY,
+        amount: byAmountIn ? amountIn : amountOut,
+        estimatedPriceAfterSwap,
+        slippage: slippage,
+        accountX: isXtoY ? fromAddress : toAddress,
+        accountY: isXtoY ? toAddress : fromAddress,
+        byAmountIn: byAmountIn,
+        owner: wallet.publicKey
+      },
+      {
+        pool: allPools[poolIndex],
+        tickmap: tickmaps[allPools[poolIndex].tickmap.toString()],
+        tokenXProgram: allTokens[allPools[poolIndex].tokenX.toString()].tokenProgram,
+        tokenYProgram: allTokens[allPools[poolIndex].tokenY.toString()].tokenProgram
+      }
+    )
     const connection = yield* call(getConnection)
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
     swapTx.recentBlockhash = blockhash.blockhash

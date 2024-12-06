@@ -1,4 +1,4 @@
-import { InitPosition, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { InitPosition, Position, PositionList, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
@@ -9,6 +9,10 @@ export interface PositionWithAddress extends Position {
 }
 export interface PositionsListStore {
   list: PositionWithAddress[]
+  lockedList: PositionWithAddress[]
+  head: number
+  bump: number
+  initialized: boolean
   loading: boolean
 }
 
@@ -51,6 +55,7 @@ export interface InitPositionData
   fee: BN
   tickSpacing: number
   initPool?: boolean
+  poolIndex: number | null
   initTick?: number
   xAmount: number
   yAmount: number
@@ -84,6 +89,10 @@ export const defaultState: IPositionsStore = {
   },
   positionsList: {
     list: [],
+    lockedList: [],
+    head: 0,
+    bump: 0,
+    initialized: false,
     loading: true
   },
   currentPositionTicks: {
@@ -137,16 +146,23 @@ const positionsSlice = createSlice({
       state.plotTicks.loading = !action.payload.disableLoading
       return state
     },
-    setPositionsList(state, action: PayloadAction<PositionWithAddress[]>) {
-      state.positionsList.list = action.payload
+    setPositionsList(state, action: PayloadAction<[PositionWithAddress[], PositionList, boolean]>) {
+      state.positionsList.list = action.payload[0]
+      state.positionsList.head = action.payload[1].head
+      state.positionsList.bump = action.payload[1].bump
+      state.positionsList.initialized = action.payload[2]
       state.positionsList.loading = false
+      return state
+    },
+    setLockedPositionsList(state, action: PayloadAction<PositionWithAddress[]>) {
+      state.positionsList.lockedList = action.payload
       return state
     },
     getPositionsList(state) {
       state.positionsList.loading = true
       return state
     },
-    getSinglePosition(state, _action: PayloadAction<number>) {
+    getSinglePosition(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
     },
     setSinglePosition(state, action: PayloadAction<SetPositionData>) {
@@ -170,7 +186,7 @@ const positionsSlice = createSlice({
       }
       return state
     },
-    claimFee(state, _action: PayloadAction<number>) {
+    claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
     },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {

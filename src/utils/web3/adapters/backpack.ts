@@ -7,6 +7,8 @@ interface BackpackProvider {
   isConnected: boolean
   signTransaction: (transaction: Transaction) => Promise<Transaction>
   signAllTransactions: (transactions: Transaction[]) => Promise<Transaction[]>
+  signMessage: (message: Uint8Array) => Promise<any>
+  sendMessage: (message: Uint8Array) => Promise<any>
   connect: () => Promise<void>
   disconnect: () => Promise<void>
 }
@@ -37,13 +39,35 @@ export class BackpackWalletAdapter implements WalletAdapter {
     }
     return await this._backpackProvider.signTransaction(transaction)
   }
+
+  async sendMessage(message: Uint8Array) {
+    if (!this._backpackProvider) {
+      throw new Error('Backpack Wallet not connected' + message)
+    }
+    return await this._backpackProvider.sendMessage(message)
+  }
+
+  async signMessage(message: Uint8Array) {
+    if (!this._backpackProvider) {
+      throw new Error('Backpack Wallet not connected')
+    }
+
+    if (!(message instanceof Uint8Array)) {
+      throw new TypeError('Expected message to be a Uint8Array')
+    }
+
+    const signedMessage = await this._backpackProvider.signMessage(message)
+
+    return new Uint8Array(signedMessage.signature as ArrayBuffer)
+  }
+
   connect = async () => {
     if (this._backpackProvider) {
       return
     }
     let provider: BackpackProvider
     if ((window as any)?.backpack) {
-      provider = (window as any).backpack
+      provider = (window as any).backpack.solana
     } else {
       window.open('https://backpack.app/', '_blank')
       return

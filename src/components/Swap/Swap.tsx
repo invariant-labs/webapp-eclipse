@@ -42,7 +42,7 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { DECIMAL, fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
-import { Decimal, Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 
 export interface Pools {
   tokenX: PublicKey
@@ -73,8 +73,8 @@ export interface ISwap {
   pools: PoolWithAddress[]
   tickmap: { [x: string]: Tickmap }
   onSwap: (
-    slippage: Decimal,
-    knownPrice: Decimal,
+    slippage: BN,
+    knownPrice: BN,
     tokenFrom: PublicKey,
     tokenTo: PublicKey,
     poolIndex: number,
@@ -354,9 +354,7 @@ export const Swap: React.FC<ISwap> = ({
             pools,
             poolTicks,
             tickmap,
-            {
-              v: fromFee(new BN(Number(+slippTolerance * 1000)))
-            },
+            fromFee(new BN(Number(+slippTolerance * 1000))),
             tokens[tokenFromIndex].assetAddress,
             tokens[tokenToIndex].assetAddress,
             convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
@@ -369,9 +367,7 @@ export const Swap: React.FC<ISwap> = ({
             pools,
             poolTicks,
             tickmap,
-            {
-              v: fromFee(new BN(Number(+slippTolerance * 1000)))
-            },
+            fromFee(new BN(Number(+slippTolerance * 1000))),
             tokens[tokenFromIndex].assetAddress,
             tokens[tokenToIndex].assetAddress,
             convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
@@ -895,9 +891,7 @@ export const Swap: React.FC<ISwap> = ({
         </Box>
         <TransactionDetailsBox
           open={getStateMessage() !== 'Loading' ? detailsOpen && canShowDetails : prevOpenState}
-          fee={{
-            v: canShowDetails ? pools[simulateResult.poolIndex].fee.v : new BN(0)
-          }}
+          fee={canShowDetails ? pools[simulateResult.poolIndex].fee : new BN(0)}
           exchangeRate={{
             val: rateReversed ? 1 / swapRate : swapRate,
             symbol: canShowDetails
@@ -946,10 +940,8 @@ export const Swap: React.FC<ISwap> = ({
                   if (tokenFromIndex === null || tokenToIndex === null) return
 
                   onSwap(
-                    { v: fromFee(new BN(Number(+slippTolerance * 1000))) },
-                    {
-                      v: simulateResult.estimatedPriceAfterSwap
-                    },
+                    fromFee(new BN(Number(+slippTolerance * 1000))),
+                    simulateResult.estimatedPriceAfterSwap,
                     tokens[tokenFromIndex].assetAddress,
                     tokens[tokenToIndex].assetAddress,
                     simulateResult.poolIndex,
@@ -977,10 +969,8 @@ export const Swap: React.FC<ISwap> = ({
               if (tokenFromIndex === null || tokenToIndex === null) return
 
               onSwap(
-                { v: fromFee(new BN(Number(+slippTolerance * 1000))) },
-                {
-                  v: simulateResult.estimatedPriceAfterSwap
-                },
+                fromFee(new BN(Number(+slippTolerance * 1000))),
+                simulateResult.estimatedPriceAfterSwap,
                 tokens[tokenFromIndex].assetAddress,
                 tokens[tokenToIndex].assetAddress,
                 simulateResult.poolIndex,

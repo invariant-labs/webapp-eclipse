@@ -68,7 +68,6 @@ export function* getBalance(pubKey: PublicKey): SagaGenerator<BN> {
 
 export function* handleBalance(): Generator {
   const wallet = yield* call(getWallet)
-  console.log('wallet', wallet)
   yield* put(actions.setAddress(wallet.publicKey))
   yield* put(actions.setIsBalanceLoading(true))
   const balance = yield* call(getBalance, wallet.publicKey)
@@ -135,7 +134,8 @@ export function* fetchTokensAccounts(): Generator {
         getTokenMetadata,
         connection,
         info.mint,
-        info.tokenAmount.decimals
+        info.tokenAmount.decimals,
+        new PublicKey(info.owner)
       )
     }
   }
@@ -185,8 +185,8 @@ export function* handleAirdrop(): Generator {
       )
 
       // transfer sol
-      yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
-      yield* call(transferAirdropSOL)
+      // yield* call([connection, connection.requestAirdrop], airdropAdmin.publicKey, 1 * 1e9)
+      // yield* call(transferAirdropSOL)
       yield* call(
         getCollateralTokenAirdrop,
         airdropTokens[networkType],
@@ -574,7 +574,7 @@ export function* handleDisconnect(): Generator {
   try {
     yield* call(disconnectWallet)
     yield* put(actions.resetState())
-    yield* put(positionsActions.setPositionsList([]))
+    yield* put(positionsActions.setPositionsList([[], { head: 0, bump: 0 }, false]))
     // yield* put(farmsActions.setUserStakes({}))
     yield* put(
       positionsActions.setCurrentPositionRangeTicks({

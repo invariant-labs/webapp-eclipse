@@ -122,7 +122,7 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
         ...pools.map(pool =>
           call(
             [marketProgram, marketProgram.getTickmap],
-            new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
+            new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee, tickSpacing: pool.tickSpacing })
           )
         )
       ]),
@@ -130,7 +130,7 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
         ...pools.map(pool =>
           call(
             [marketProgram, marketProgram.getAllTicks],
-            new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee.v, tickSpacing: pool.tickSpacing })
+            new Pair(pool.tokenX, pool.tokenY, { fee: pool.fee, tickSpacing: pool.tickSpacing })
           )
         )
       ])
@@ -193,7 +193,7 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
         const isXtoY = tokenFrom.equals(pool.tokenX)
         return call(
           [marketProgram, marketProgram.getClosestTicks],
-          new Pair(tokenFrom, tokenTo, { fee: pool.fee.v, tickSpacing: pool.tickSpacing }),
+          new Pair(tokenFrom, tokenTo, { fee: pool.fee, tickSpacing: pool.tickSpacing }),
           300,
           undefined,
           isXtoY ? IsXtoY.Down : IsXtoY.Up
