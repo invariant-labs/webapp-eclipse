@@ -79,7 +79,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     marketProgram.setWallet(wallet as IWallet)
-    console.log(marketProgram)
+
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
 
@@ -346,8 +346,12 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    marketProgram.setWallet(wallet as IWallet)
-    console.log(marketProgram)
+    marketProgram.setWallet({
+      signAllTransactions: wallet.signAllTransactions,
+      signTransaction: wallet.signTransaction,
+      publicKey: wallet.publicKey
+    } as IWallet)
+
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
     const allPools = yield* select(poolsArraySortedByFees)
@@ -550,16 +554,13 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
-    console.log('wallet:')
-    console.log(wallet)
-    console.log(wallet.signAllTransactions)
+
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     marketProgram.setWallet({
       signAllTransactions: wallet.signAllTransactions,
       signTransaction: wallet.signTransaction,
       publicKey: wallet.publicKey
     } as IWallet)
-    console.log(marketProgram)
 
     const allPools = yield* select(poolsArraySortedByFees)
     const ticks = yield* select(plotTicks)
@@ -592,38 +593,6 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     let initPoolTx: Transaction | null = null
     let poolSigners: Keypair[] = []
 
-    console.log('action.payload.lowerTick', action.payload.lowerTick)
-    console.log('action.payload.upperTick', action.payload.upperTick)
-    console.log(
-      'allPools[action.payload.poolIndex]',
-      action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined
-    )
-    console.log('tokenX', action.payload.tokenX.toString())
-    console.log('tokenY', action.payload.tokenY.toString())
-    console.log(
-      'tokenXProgramAddress:',
-      allTokens[action.payload.tokenX.toString()].tokenProgram?.toString()
-    )
-    console.log(
-      'tokenYProgramAddress:',
-      allTokens[action.payload.tokenY.toString()].tokenProgram?.toString()
-    )
-    console.log('positionList:', !userPositionList.loading ? userPositionList : undefined)
-
-    console.log(
-      'pair.getAddress(market.program.programId)',
-      pair.getAddress(marketProgram.program.programId).toString()
-    )
-
-    console.log(
-      'market.getTickAddress(pair, lower )',
-      marketProgram.getTickAddress(pair, action.payload.lowerTick).tickAddress.toString()
-    )
-    console.log(
-      'market.getTickAddress(pair, upper_index)',
-      marketProgram.getTickAddress(pair, action.payload.upperTick).tickAddress.toString()
-    )
-
     if (action.payload.initPool) {
       const txs = yield* call(
         [marketProgram, marketProgram.initPoolWithSqrtPriceAndPositionTx],
@@ -635,25 +604,24 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
           upperTick: action.payload.upperTick,
           liquidityDelta: action.payload.liquidityDelta,
           owner: wallet.publicKey,
-          initTick: action.payload.initTick,
           slippage: action.payload.slippage,
-          knownPrice: action.payload.knownPrice
+          knownPrice: action.payload.knownPrice,
+          initSqrtPrice: action.payload.knownPrice
         },
-        undefined
-        // {
-        //   lowerTickExists:
-        //     !ticks.hasError && !ticks.loading
-        //       ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
-        //       : undefined,
-        //   upperTickExists:
-        //     !ticks.hasError && !ticks.loading
-        //       ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
-        //       : undefined,
-        //   tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
-        //   tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
-        //   minRentExemption: MIN_BALANCE_FOR_RENT_EXEMPT[networkTypetoProgramNetwork(networkType)],
-        //   positionsList: !userPositionList.loading ? userPositionList : undefined
-        // }
+        undefined,
+        {
+          lowerTickExists:
+            !ticks.hasError && !ticks.loading
+              ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+              : undefined,
+          upperTickExists:
+            !ticks.hasError && !ticks.loading
+              ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+              : undefined,
+          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
+          positionsList: !userPositionList.loading ? userPositionList : undefined
+        }
       )
       tx = txs.initPositionTx
       initPoolTx = txs.initPoolTx
@@ -694,7 +662,6 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     tx.feePayer = wallet.publicKey
 
     if (initPoolTx) {
-      console.log('initPoolTx', initPoolTx)
       initPoolTx.recentBlockhash = blockhash.blockhash
       initPoolTx.feePayer = wallet.publicKey
       yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
@@ -1001,7 +968,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
         [lockerProgram, lockerProgram.claimFeeIx],
         {
           authorityListIndex: index,
-          market: marketProgram,
+          market: marketProgram as any,
           pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
             fee: poolForIndex.fee,
             tickSpacing: poolForIndex.tickSpacing
@@ -1166,7 +1133,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
         [lockerProgram, lockerProgram.claimFeeIx],
         {
           authorityListIndex: action.payload.index,
-          market: marketProgram,
+          market: marketProgram as any,
           pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
             fee: poolForIndex.fee,
             tickSpacing: poolForIndex.tickSpacing

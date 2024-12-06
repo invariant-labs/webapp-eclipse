@@ -1327,7 +1327,7 @@ export const getFullNewTokensData = async (
 ): Promise<Record<string, Token>> => {
   const promises: Promise<[PublicKey, Mint]>[] = addresses.map(async address => {
     const programId = await getTokenProgramId(connection, address)
-    console.log(address.toString(), '---', programId.toString())
+
     return [programId, await getMint(connection, address, undefined, programId)] as [
       PublicKey,
       Mint
