@@ -10,7 +10,7 @@ export const useStyles = makeStyles()(() => ({
   cardsContainer: {
     display: 'flex',
     flexDirection: 'row',
-    padding: '24px',
+    padding: '24px 0px',
     flexWrap: 'nowrap'
   },
   slider: {
