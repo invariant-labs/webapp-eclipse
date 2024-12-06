@@ -598,6 +598,8 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
       'allPools[action.payload.poolIndex]',
       action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined
     )
+    console.log('tokenX', action.payload.tokenX.toString())
+    console.log('tokenY', action.payload.tokenY.toString())
     console.log(
       'tokenXProgramAddress:',
       allTokens[action.payload.tokenX.toString()].tokenProgram?.toString()
@@ -692,9 +694,9 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     tx.feePayer = wallet.publicKey
 
     if (initPoolTx) {
+      console.log('initPoolTx', initPoolTx)
       initPoolTx.recentBlockhash = blockhash.blockhash
       initPoolTx.feePayer = wallet.publicKey
-      console.log('feePayer', initPoolTx.feePayer)
       yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
       const signedTx = (yield* call([wallet, wallet.signTransaction], initPoolTx)) as Transaction
@@ -702,7 +704,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
       closeSnackbar(loaderSigningTx)
 
       yield put(snackbarsActions.remove(loaderSigningTx))
-      ;(signedTx as Transaction).partialSign(...poolSigners)
+      signedTx.partialSign(...poolSigners)
 
       yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
         skipPreflight: false
@@ -712,7 +714,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
-
+    console.log('signedTx', signedTx)
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
