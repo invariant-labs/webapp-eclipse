@@ -57,7 +57,7 @@ const Item: React.FC<IProps> = ({
             </Typography>
           ) : null}
 
-          <Typography>{abbreviateAddress(username ?? '-', 8)}</Typography>
+          <Typography>{isYou ? 'You' : abbreviateAddress(username ?? '-', 8)}</Typography>
           <Typography>{totalPoints ? totalPoints : '-'}</Typography>
           <Typography>
             {pointsIncome ? (
