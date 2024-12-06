@@ -605,8 +605,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
           liquidityDelta: action.payload.liquidityDelta,
           owner: wallet.publicKey,
           slippage: action.payload.slippage,
-          knownPrice: action.payload.knownPrice,
-          initSqrtPrice: action.payload.knownPrice
+          knownPrice: action.payload.knownPrice
         },
         undefined,
         {
@@ -681,7 +680,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
-    console.log('signedTx', signedTx)
+
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 

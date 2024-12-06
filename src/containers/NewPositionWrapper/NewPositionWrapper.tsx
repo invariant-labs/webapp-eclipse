@@ -676,27 +676,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
         const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
 
-        if (tokenAIndex !== null && tokenBIndex !== null) {
-          console.log(
-            'tick mid price ',
-            calcPriceBySqrtPrice(
-              calculatePriceSqrt(midPrice.index),
-              true,
-              tokens[isXtoY ? tokenAIndex : tokenBIndex].decimals,
-              tokens[isXtoY ? tokenBIndex : tokenAIndex].decimals
-            )
-          )
-          console.log(
-            'sqrt mid price',
-            calcPriceBySqrtPrice(
-              midPrice.sqrtPrice,
-              true,
-              tokens[isXtoY ? tokenAIndex : tokenBIndex].decimals,
-              tokens[isXtoY ? tokenBIndex : tokenAIndex].decimals
-            )
-          )
-        }
-
         dispatch(
           positionsActions.initPosition({
             tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
