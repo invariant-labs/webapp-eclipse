@@ -4,6 +4,7 @@ import {
   MAX_TICK,
   MIN_TICK,
   Pair,
+  PRICE_DENOMINATOR,
   sleep
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
@@ -246,6 +247,16 @@ export const formatNumbers =
     return num < 0 && threshold ? '-' + formatted : formatted
   }
 
+export const sqrtPriceToPrice = (sqrtPrice: BN) => {
+  const price = sqrtPrice.mul(sqrtPrice)
+
+  return price.div(PRICE_DENOMINATOR)
+}
+
+export const priceToSqrtPrice = (price: BN) => {
+  return sqrt(price.mul(PRICE_DENOMINATOR))
+}
+
 export const calculateSqrtPriceFromBalance = (
   price: number,
   spacing: number,
@@ -277,7 +288,7 @@ export const calculateSqrtPriceFromBalance = (
       : primaryUnitsPrice.toFixed(24)
 
   const priceBN = convertBalanceToBN(parsedPrimaryUnits, PRICE_SCALE)
-  const sqrtPrice = sqrt(priceBN)
+  const sqrtPrice = priceToSqrtPrice(priceBN)
 
   const minSqrtPrice = calculatePriceSqrt(minTick)
   const maxSqrtPrice = calculatePriceSqrt(maxTick)

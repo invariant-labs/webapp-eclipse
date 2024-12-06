@@ -50,11 +50,6 @@ import {
   MIN_BALANCE_FOR_RENT_EXEMPT
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-// import { createClaimAllPositionRewardsTx } from './farms'
-// import { actions as farmsActions } from '@reducers/farms'
-// import { stakesForPosition } from '@selectors/farms'
-// import { getStakerProgram } from '@web3/programs/staker'
-// import { Staker } from '@invariant-labs/staker-sdk'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -83,7 +78,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-
+    marketProgram.setWallet(wallet as IWallet)
+    console.log(marketProgram)
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
 
@@ -124,7 +120,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     const combinedTransaction = new Transaction()
 
     const { initPoolTx, initPoolSigners, initPositionTx } = yield* call(
-      [marketProgram, marketProgram.initPoolAndPositionTx],
+      [marketProgram, marketProgram.initPoolWithSqrtPriceAndPositionTx],
       {
         pair: new Pair(data.tokenX, data.tokenY, {
           fee: data.fee,
@@ -350,7 +346,8 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-
+    marketProgram.setWallet(wallet as IWallet)
+    console.log(marketProgram)
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
     const allPools = yield* select(poolsArraySortedByFees)
@@ -553,7 +550,17 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
+    console.log('wallet:')
+    console.log(wallet)
+    console.log(wallet.signAllTransactions)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    marketProgram.setWallet({
+      signAllTransactions: wallet.signAllTransactions,
+      signTransaction: wallet.signTransaction,
+      publicKey: wallet.publicKey
+    } as IWallet)
+    console.log(marketProgram)
+
     const allPools = yield* select(poolsArraySortedByFees)
     const ticks = yield* select(plotTicks)
     const pair = new Pair(action.payload.tokenX, action.payload.tokenY, {
@@ -585,9 +592,39 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     let initPoolTx: Transaction | null = null
     let poolSigners: Keypair[] = []
 
+    console.log('action.payload.lowerTick', action.payload.lowerTick)
+    console.log('action.payload.upperTick', action.payload.upperTick)
+    console.log(
+      'allPools[action.payload.poolIndex]',
+      action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined
+    )
+    console.log(
+      'tokenXProgramAddress:',
+      allTokens[action.payload.tokenX.toString()].tokenProgram?.toString()
+    )
+    console.log(
+      'tokenYProgramAddress:',
+      allTokens[action.payload.tokenY.toString()].tokenProgram?.toString()
+    )
+    console.log('positionList:', !userPositionList.loading ? userPositionList : undefined)
+
+    console.log(
+      'pair.getAddress(market.program.programId)',
+      pair.getAddress(marketProgram.program.programId).toString()
+    )
+
+    console.log(
+      'market.getTickAddress(pair, lower )',
+      marketProgram.getTickAddress(pair, action.payload.lowerTick).tickAddress.toString()
+    )
+    console.log(
+      'market.getTickAddress(pair, upper_index)',
+      marketProgram.getTickAddress(pair, action.payload.upperTick).tickAddress.toString()
+    )
+
     if (action.payload.initPool) {
       const txs = yield* call(
-        [marketProgram, marketProgram.initPoolAndPositionTx],
+        [marketProgram, marketProgram.initPoolWithSqrtPriceAndPositionTx],
         {
           pair,
           userTokenX,
@@ -600,22 +637,21 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
           slippage: action.payload.slippage,
           knownPrice: action.payload.knownPrice
         },
-        undefined,
-        {
-          lowerTickExists:
-            !ticks.hasError && !ticks.loading
-              ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
-              : undefined,
-          upperTickExists:
-            !ticks.hasError && !ticks.loading
-              ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
-              : undefined,
-          pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
-          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
-          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
-          minRentExemption: MIN_BALANCE_FOR_RENT_EXEMPT[networkTypetoProgramNetwork(networkType)],
-          positionsList: !userPositionList.loading ? userPositionList : undefined
-        }
+        undefined
+        // {
+        //   lowerTickExists:
+        //     !ticks.hasError && !ticks.loading
+        //       ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+        //       : undefined,
+        //   upperTickExists:
+        //     !ticks.hasError && !ticks.loading
+        //       ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+        //       : undefined,
+        //   tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+        //   tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
+        //   minRentExemption: MIN_BALANCE_FOR_RENT_EXEMPT[networkTypetoProgramNetwork(networkType)],
+        //   positionsList: !userPositionList.loading ? userPositionList : undefined
+        // }
       )
       tx = txs.initPositionTx
       initPoolTx = txs.initPoolTx
@@ -658,7 +694,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     if (initPoolTx) {
       initPoolTx.recentBlockhash = blockhash.blockhash
       initPoolTx.feePayer = wallet.publicKey
-
+      console.log('feePayer', initPoolTx.feePayer)
       yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
       const signedTx = (yield* call([wallet, wallet.signTransaction], initPoolTx)) as Transaction

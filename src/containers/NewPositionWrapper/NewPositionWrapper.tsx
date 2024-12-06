@@ -303,7 +303,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [isWaitingForNewPool, allPools])
 
   useEffect(() => {
-    if (poolIndex !== null) {
+    if (poolIndex !== null && !!allPools[poolIndex]) {
       setMidPrice({
         index: allPools[poolIndex].currentTickIndex,
         x: calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal),
@@ -500,7 +500,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           amount,
           lowerTick,
           upperTick,
-          poolIndex !== null ? allPools[poolIndex].sqrtPrice : calculatePriceSqrt(midPrice.index),
+          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
           true
         )
         if (isMountedRef.current) {
@@ -512,7 +512,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         amount,
         lowerTick,
         upperTick,
-        poolIndex !== null ? allPools[poolIndex].sqrtPrice : calculatePriceSqrt(midPrice.index),
+        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
         true
       )
       if (isMountedRef.current) {
@@ -524,7 +524,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         amount,
         lowerTick,
         upperTick,
-        poolIndex !== null ? allPools[poolIndex].sqrtPrice : calculatePriceSqrt(midPrice.index),
+        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
         true
       )
       if (isMountedRef.current) {
@@ -676,6 +676,27 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
         const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
 
+        if (tokenAIndex !== null && tokenBIndex !== null) {
+          console.log(
+            'tick mid price ',
+            calcPriceBySqrtPrice(
+              calculatePriceSqrt(midPrice.index),
+              true,
+              tokens[isXtoY ? tokenAIndex : tokenBIndex].decimals,
+              tokens[isXtoY ? tokenBIndex : tokenAIndex].decimals
+            )
+          )
+          console.log(
+            'sqrt mid price',
+            calcPriceBySqrtPrice(
+              midPrice.sqrtPrice,
+              true,
+              tokens[isXtoY ? tokenAIndex : tokenBIndex].decimals,
+              tokens[isXtoY ? tokenBIndex : tokenAIndex].decimals
+            )
+          )
+        }
+
         dispatch(
           positionsActions.initPosition({
             tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
@@ -690,10 +711,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             yAmount: Math.floor(yAmount),
             slippage,
             tickSpacing,
-            knownPrice:
-              poolIndex === null
-                ? calculatePriceSqrt(midPrice.index)
-                : allPools[poolIndex].sqrtPrice,
+            knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
             poolIndex
           })
         )

@@ -79,7 +79,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
   )
 
   const validConcentrationMidPrice = (midPrice: string) => {
-    // TODO implement during add concentration mode
     const minTick = getMinTick(tickSpacing)
     const maxTick = getMaxTick(tickSpacing)
 
@@ -127,16 +126,14 @@ export const PoolInit: React.FC<IPoolInit> = ({
       yDecimal
     )
 
-    // const priceTickIndex = calculateTickFromBalance(
-    //   positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
-    //   tickSpacing,
-    //   isXtoY,
-    //   xDecimal,
-    //   yDecimal
-    // )
-    const priceTickIndex = nearestTickIndex(+midPriceInput, tickSpacing, isXtoY, xDecimal, yDecimal)
+    const priceTickIndex = calculateTickFromBalance(
+      positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
+      tickSpacing,
+      isXtoY,
+      xDecimal,
+      yDecimal
+    )
 
-    // onChangeMidPrice(priceTickIndex, sqrtPrice)
     onChangeMidPrice(priceTickIndex, sqrtPrice)
   }, [midPriceInput])
 
@@ -266,9 +263,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
       Math.min(
         Math.max(
           +midPriceInput,
-          Number(calcPriceByTickIndex(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal))
+          calcPriceByTickIndex(isXtoY ? minTick : maxTick, isXtoY, xDecimal, yDecimal)
         ),
-        Number(calcPriceByTickIndex(isXtoY ? maxTick : minTick, isXtoY, xDecimal, yDecimal))
+        calcPriceByTickIndex(isXtoY ? maxTick : minTick, isXtoY, xDecimal, yDecimal)
       ),
     [midPriceInput, isXtoY, xDecimal, yDecimal]
   )
