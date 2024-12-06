@@ -46,29 +46,5 @@ export const useStyles = makeStyles()(() => ({
       //   ...typography.caption2
       // }
     }
-  },
-
-  symbolsContainer: {
-    display: 'flex',
-    alignItems: 'center',
-    marginLeft: 10,
-    paddingRight: 5,
-
-    '& p': {
-      overflow: 'hidden',
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      display: 'block'
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: 0,
-      justifyContent: 'flex-start'
-    }
-  },
-  icon: {
-    [theme.breakpoints.down('sm')]: {
-      marginLeft: -4
-    }
   }
 }))

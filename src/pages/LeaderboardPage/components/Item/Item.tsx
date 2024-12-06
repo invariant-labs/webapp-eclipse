@@ -8,6 +8,7 @@ interface IProps {
   username?: string
   totalPoints?: number
   tokenIndex?: number
+  isYou?: boolean
   hideBottomLine?: boolean
   pointsIncome?: number
   liquidityPositions?: number
@@ -17,6 +18,7 @@ const Item: React.FC<IProps> = ({
   tokenIndex = 0,
   totalPoints,
   displayType,
+  isYou,
   username,
   pointsIncome,
   liquidityPositions,
@@ -42,7 +44,10 @@ const Item: React.FC<IProps> = ({
         <Grid
           container
           classes={{ container: classes.container }}
-          style={hideBottomLine ? { border: 'none' } : undefined}>
+          style={{
+            border: hideBottomLine ? 'none' : undefined,
+            background: isYou ? colors.invariant.light : 'transparent'
+          }}>
           {!isMd ? (
             <Typography
               style={{
@@ -52,7 +57,7 @@ const Item: React.FC<IProps> = ({
             </Typography>
           ) : null}
 
-          <Typography>{abbreviateAddress(username, 8)}</Typography>
+          <Typography>{abbreviateAddress(username ?? '-', 8)}</Typography>
           <Typography>{totalPoints ? totalPoints : '-'}</Typography>
           <Typography>
             {pointsIncome ? (

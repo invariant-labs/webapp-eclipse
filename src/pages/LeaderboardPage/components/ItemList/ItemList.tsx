@@ -84,6 +84,7 @@ const ItemList = () => {
     <Grid container direction='column' classes={{ root: classes.container }}>
       <>
         <Item displayType='header' />
+        <Item displayType='token' tokenIndex={45} username='0x5754676574553434243432' isYou />
         <Item displayType='token' tokenIndex={1} username='0x4534534534534533534534455' />
         <Item
           displayType='token'
