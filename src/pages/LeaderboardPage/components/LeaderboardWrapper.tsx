@@ -3,8 +3,9 @@ import { Box, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import EclipseLogo from '@static/png/eclipse-big-logo.png'
 import { useState } from 'react'
 import ItemList from './ItemList/ItemList'
+import { Faq } from './Faq/Faq'
 export const LeaderboardWrapper: React.FC = () => {
-  const [alignment, setAlignment] = useState<string>('cos')
+  const [alignment, setAlignment] = useState<string>('leaderboard')
   const [_page, setPage] = useState(1)
 
   const { classes } = useStyles()
@@ -54,7 +55,7 @@ export const LeaderboardWrapper: React.FC = () => {
             <Box
               className={classes.switchPoolsMarker}
               sx={{
-                left: alignment === 'cos1' ? 0 : '50%'
+                left: alignment === 'leaderboard' ? 0 : '50%'
               }}
             />
             <ToggleButtonGroup
@@ -62,16 +63,19 @@ export const LeaderboardWrapper: React.FC = () => {
               exclusive
               onChange={handleSwitchPools}
               className={classes.switchPoolsButtonsGroup}>
-              <ToggleButton value={'cos1'} disableRipple className={classes.switchPoolsButton}>
+              <ToggleButton
+                value={'leaderboard'}
+                disableRipple
+                className={classes.switchPoolsButton}>
                 Leaderboard
               </ToggleButton>
-              <ToggleButton value={'cos2'} disableRipple className={classes.switchPoolsButton}>
+              <ToggleButton value={'faq'} disableRipple className={classes.switchPoolsButton}>
                 FAQ
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
         </Box>
-        <ItemList />
+        {alignment === 'leaderboard' ? <ItemList /> : <Faq />}
       </Box>
     </Box>
   )
