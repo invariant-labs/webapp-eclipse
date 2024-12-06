@@ -8,7 +8,7 @@ import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 
-interface PoolListInterface {
+export interface PoolListInterface {
   data: Array<{
     symbolFrom: string
     symbolTo: string
