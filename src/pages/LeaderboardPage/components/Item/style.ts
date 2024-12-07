@@ -6,7 +6,7 @@ export const useStyles = makeStyles()(() => ({
     color: colors.white.main,
     display: 'grid',
     gridTemplateColumns: '5% 40% 20% 20% 10%',
-    padding: '18px 0',
+    padding: '18px 18px',
     backgroundColor: colors.invariant.component,
     borderBottom: `1px solid ${colors.invariant.light}`,
     whiteSpace: 'nowrap',
@@ -37,6 +37,8 @@ export const useStyles = makeStyles()(() => ({
   },
 
   header: {
+    borderTopLeftRadius: '24px',
+    borderTopRightRadius: '24px',
     '& p': {
       color: colors.invariant.textGrey,
       ...typography.body1,
