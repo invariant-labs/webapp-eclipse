@@ -2,19 +2,9 @@ import React from 'react'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
+import { ListElement } from '../ItemList/ItemList'
 
-interface IProps {
-  displayType: string
-  username?: string
-  totalPoints?: number
-  tokenIndex?: number
-  isYou?: boolean
-  hideBottomLine?: boolean
-  pointsIncome?: number
-  liquidityPositions?: number
-}
-
-const Item: React.FC<IProps> = ({
+const Item: React.FC<ListElement> = ({
   tokenIndex = 0,
   totalPoints,
   displayType,

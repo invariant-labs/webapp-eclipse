@@ -39,6 +39,8 @@ export const useStyles = makeStyles()(() => ({
   header: {
     borderTopLeftRadius: '24px',
     borderTopRightRadius: '24px',
+    background: colors.invariant.component,
+    position: 'relative',
     '& p': {
       color: colors.invariant.textGrey,
       ...typography.body1,

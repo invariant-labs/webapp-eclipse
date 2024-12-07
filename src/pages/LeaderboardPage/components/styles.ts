@@ -43,7 +43,10 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     heroLogo: {
       maxWidth: '1072px',
-      maxHeight: '85px'
+      maxHeight: '85px',
+      [theme.breakpoints.down('md')]: {
+        maxWidth: '500px'
+      }
     },
     column: {
       display: 'flex',
