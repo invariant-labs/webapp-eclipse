@@ -87,30 +87,53 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center'
     },
-
+    counterContainer: {
+      display: 'flex',
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column',
+        justifyContent: 'center',
+        alignItems: 'center',
+        '& > * + *': {
+          marginLeft: '0rem',
+          marginTop: '2rem'
+        }
+      },
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: '56px',
+      [theme.breakpoints.up('md')]: {
+        '& > * + *': {
+          marginLeft: '6rem'
+        }
+      }
+    },
     counterLabel: {
       ...typography.body1,
-      color: colors.invariant.textGrey
+      color: colors.invariant.textGrey,
+      textWrap: 'nowrap'
     },
     counterYourPoints: {
       ...typography.heading1,
       background: colors.invariant.pinkLinearGradient,
       WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent'
+      WebkitTextFillColor: 'transparent',
+      textWrap: 'nowrap'
     },
     counterYourRanking: {
       ...typography.heading1,
 
       background: colors.invariant.greenLinearGradient,
       WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent'
+      WebkitTextFillColor: 'transparent',
+      textWrap: 'nowrap'
     },
     counterYourPointsPerDay: {
       ...typography.heading1,
 
       background: colors.invariant.yellow,
       WebkitBackgroundClip: 'text',
-      WebkitTextFillColor: 'transparent'
+      WebkitTextFillColor: 'transparent',
+      textWrap: 'nowrap'
     },
     switchPoolsContainer: {
       position: 'relative',

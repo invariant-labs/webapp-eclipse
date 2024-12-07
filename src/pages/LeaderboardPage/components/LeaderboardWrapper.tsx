@@ -56,16 +56,7 @@ export const LeaderboardWrapper: React.FC = () => {
         <Box className={classes.column}>
           <img src={EclipseLogo} alt='Eclipse Logo' className={classes.heroLogo} />
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            marginTop: '56px',
-            '& > * + *': {
-              marginLeft: '6rem'
-            }
-          }}>
+        <Box className={classes.counterContainer}>
           <Box className={classes.counterItem}>
             <Typography className={classes.counterYourPoints}>123 123</Typography>
             <Typography className={classes.counterLabel}>Your Points</Typography>
