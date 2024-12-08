@@ -94,11 +94,13 @@ const ItemList: React.FC<ItemListProps> = ({ data }) => {
           </Grid>
         ) : null}
       </Box>
-      <div
-        className={`${classes.waveImage} ${classes.bottomWave}`}
-        style={{ alignItems: 'flex-end' }}>
-        <img src={GreenWaves} alt='Green waves' />
-      </div>
+      {pages > 1 ? (
+        <div
+          className={`${classes.waveImage} ${classes.bottomWave}`}
+          style={{ alignItems: 'flex-end' }}>
+          <img src={GreenWaves} alt='Green waves' />
+        </div>
+      ) : null}
     </div>
   )
 }

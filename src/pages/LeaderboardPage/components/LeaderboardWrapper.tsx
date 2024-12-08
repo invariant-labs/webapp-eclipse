@@ -46,7 +46,7 @@ export const LeaderboardWrapper: React.FC = () => {
       return list
     }
 
-    setData(generateRandomList(10000))
+    setData(generateRandomList(100))
   }, [])
 
   return (
