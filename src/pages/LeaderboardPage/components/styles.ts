@@ -10,7 +10,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
       gap: '24px',
-      width: 'calc(100%-10px)',
+      width: 'calc(100% - 10px)',
       padding: '10px'
     },
     tableContainer: {
@@ -52,7 +52,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         maxWidth: '900px' // Slightly smaller on large screens
       },
       [theme.breakpoints.down('lg')]: {
-        maxWidth: '400px' // Smaller on medium-large screens
+        maxWidth: '700px' // Smaller on medium-large screens
       },
       [theme.breakpoints.down('md')]: {
         maxWidth: '400px' // Smaller on medium screens

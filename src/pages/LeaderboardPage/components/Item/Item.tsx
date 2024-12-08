@@ -3,29 +3,54 @@ import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { ListElement } from '../ItemList/ItemList'
+import { shortenAddress } from '@utils/uiUtils'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+import { useDispatch } from 'react-redux'
+import { actions as snackbarActions } from '@store/reducers/snackbars'
 
 const Item: React.FC<ListElement> = ({
   tokenIndex = 0,
   totalPoints,
   displayType,
   isYou,
-  username,
+  address,
   pointsIncome,
   liquidityPositions,
   hideBottomLine = false
 }) => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const dispatch = useDispatch()
   const getColorByPlace = (index: number) => {
     const places = [colors.invariant.yellow, colors.invariant.green, colors.invariant.pink]
     return index - 1 <= places.length ? places[index - 1] : colors.invariant.text
   }
-  const abbreviateAddress = (addr: string, signs?: number) => {
-    const numberOfSigns = signs ? signs : 4
-    if (addr && addr.length > 8) {
-      return addr.slice(0, numberOfSigns) + '...' + addr.slice(-numberOfSigns)
+
+  const copyToClipboard = () => {
+    if (!address) {
+      return
     }
-    return addr
+    navigator.clipboard
+      .writeText(address)
+      .then(() => {
+        dispatch(
+          snackbarActions.add({
+            message: 'Address copied!',
+            variant: 'success',
+            persist: false
+          })
+        )
+      })
+      .catch(() => {
+        dispatch(
+          snackbarActions.add({
+            message: 'Failed to address copy!',
+            variant: 'success',
+            persist: false
+          })
+        )
+      })
   }
 
   return (
@@ -45,20 +70,26 @@ const Item: React.FC<ListElement> = ({
             {tokenIndex}
           </Typography>
 
-          <Typography>{isYou ? 'You' : abbreviateAddress(username ?? '-', 8)}</Typography>
-          <Typography>{totalPoints ? totalPoints : '-'}</Typography>
+          <Typography>
+            {isYou ? 'You' : shortenAddress(address ?? '-', 7)}
+            <TooltipHover text='Copy address'>
+              <FileCopyOutlinedIcon
+                onClick={copyToClipboard}
+                classes={{ root: classes.clipboardIcon }}
+              />
+            </TooltipHover>
+          </Typography>
+          <Typography>{totalPoints}</Typography>
           {!isMd && (
             <Typography>
-              {pointsIncome ? (
+              {pointsIncome && (
                 <Typography style={{ color: colors.invariant.green, ...typography.heading4 }}>
                   + {pointsIncome}
                 </Typography>
-              ) : (
-                <Typography>-</Typography>
               )}{' '}
             </Typography>
           )}
-          {!isMd && <Typography>{liquidityPositions ? liquidityPositions : '-'}</Typography>}
+          {!isMd && <Typography>{liquidityPositions}</Typography>}
         </Grid>
       ) : (
         <Grid container classes={{ container: classes.container, root: classes.header }}>

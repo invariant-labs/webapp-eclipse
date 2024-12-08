@@ -10,7 +10,7 @@ import { colors } from '@static/theme'
 
 export interface ListElement {
   displayType: string
-  username?: string
+  address?: string
   totalPoints?: number
   tokenIndex?: number
   isYou?: boolean
@@ -60,6 +60,7 @@ const ItemList: React.FC<ItemListProps> = ({ data }) => {
               isYou
               liquidityPositions={343}
               tokenIndex={123}
+              pointsIncome={345}
               totalPoints={3453}
             />
           </Box>
@@ -72,7 +73,7 @@ const ItemList: React.FC<ItemListProps> = ({ data }) => {
                   liquidityPositions={element.liquidityPositions}
                   pointsIncome={element.pointsIncome}
                   totalPoints={element.totalPoints}
-                  username={element.username}
+                  address={element.address}
                 />
               ))
             ) : (

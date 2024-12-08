@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => ({
   container: {
     color: colors.white.main,
     display: 'grid',
-    gridTemplateColumns: '5% 40% 20% 20% 10%',
+    gridTemplateColumns: '10% auto 20% 30% 10%',
     padding: '18px 18px',
     backgroundColor: colors.invariant.component,
     borderBottom: `1px solid ${colors.invariant.light}`,
@@ -35,7 +35,19 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
+  clipboardIcon: {
+    marginLeft: 4,
+    width: 18,
+    cursor: 'pointer',
+    color: colors.invariant.lightHover,
+    '&:hover': {
+      color: colors.invariant.text,
 
+      '@media (hover: none)': {
+        color: colors.invariant.lightHover
+      }
+    }
+  },
   header: {
     borderTopLeftRadius: '24px',
     borderTopRightRadius: '24px',

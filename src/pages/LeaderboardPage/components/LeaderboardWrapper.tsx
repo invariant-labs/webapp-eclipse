@@ -18,7 +18,6 @@ export const LeaderboardWrapper: React.FC = () => {
   }
   useEffect(() => {
     const generateRandomListElement = () => {
-      // Helper function to generate a random hex string of a given length
       const randomHex = (length: number) => {
         const hexChars = '0123456789abcdef'
         let result = ''
@@ -30,7 +29,7 @@ export const LeaderboardWrapper: React.FC = () => {
 
       return {
         displayType: 'default',
-        username: `0x${randomHex(254)}`, // 0x + 254 characters
+        address: `0x${randomHex(254)}`, // 0x + 254 characters
         totalPoints: Math.floor(Math.random() * 10000), // Random points (0 - 9999)
         tokenIndex: Math.floor(Math.random() * 100), // Random token index (0 - 99)
         hideBottomLine: Math.random() < 0.5, // Random true/false
