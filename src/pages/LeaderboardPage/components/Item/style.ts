@@ -23,11 +23,11 @@ export const useStyles = makeStyles()(() => ({
     },
 
     [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: 'auto 15%  17.5%  12.5% 120px'
+      gridTemplateColumns: '15% auto 17.5%'
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '32.5% 17.5% 35% 15% ',
+      gridTemplateColumns: '15% auto 17.5%',
 
       '& p': {
         justifyContent: 'flex-start',

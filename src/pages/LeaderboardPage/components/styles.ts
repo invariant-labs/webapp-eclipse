@@ -10,11 +10,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
       gap: '24px',
-      width: '100%',
+      width: 'calc(100%-10px)',
       padding: '10px'
     },
     tableContainer: {
-      maxWidth: 1072,
+      width: '100%',
       padding: '0 24px',
       borderRadius: '24px',
       backgroundColor: `${colors.invariant.component} !important`
@@ -42,10 +42,26 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     heroLogo: {
-      maxWidth: '1072px',
-      maxHeight: '85px',
+      width: 'auto', // Allow natural width
+      height: 'auto', // Allow natural height
+      maxWidth: '100%', // Ensure logo doesn't overflow container
+      objectFit: 'contain', // Maintain aspect ratio
+
+      // Responsive breakpoints
+      [theme.breakpoints.down('xl')]: {
+        maxWidth: '900px' // Slightly smaller on large screens
+      },
+      [theme.breakpoints.down('lg')]: {
+        maxWidth: '400px' // Smaller on medium-large screens
+      },
       [theme.breakpoints.down('md')]: {
-        maxWidth: '500px'
+        maxWidth: '400px' // Smaller on medium screens
+      },
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: '350px' // Even smaller on small mobile screens
+      },
+      [theme.breakpoints.down('xs')]: {
+        maxWidth: '500px' // Smallest on extra small screens
       }
     },
     column: {

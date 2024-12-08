@@ -38,35 +38,31 @@ const Item: React.FC<ListElement> = ({
             border: hideBottomLine ? 'none' : undefined,
             background: isYou ? colors.invariant.light : 'transparent'
           }}>
-          {!isMd ? (
-            <Typography
-              style={{
-                color: getColorByPlace(tokenIndex)
-              }}>
-              {tokenIndex}
-            </Typography>
-          ) : null}
+          <Typography
+            style={{
+              color: getColorByPlace(tokenIndex)
+            }}>
+            {tokenIndex}
+          </Typography>
 
           <Typography>{isYou ? 'You' : abbreviateAddress(username ?? '-', 8)}</Typography>
           <Typography>{totalPoints ? totalPoints : '-'}</Typography>
-          <Typography>
-            {pointsIncome ? (
-              <Typography style={{ color: colors.invariant.green, ...typography.heading4 }}>
-                + {pointsIncome}
-              </Typography>
-            ) : (
-              <Typography>-</Typography>
-            )}{' '}
-          </Typography>
-          <Typography>{liquidityPositions ? liquidityPositions : '-'}</Typography>
+          {!isMd && (
+            <Typography>
+              {pointsIncome ? (
+                <Typography style={{ color: colors.invariant.green, ...typography.heading4 }}>
+                  + {pointsIncome}
+                </Typography>
+              ) : (
+                <Typography>-</Typography>
+              )}{' '}
+            </Typography>
+          )}
+          {!isMd && <Typography>{liquidityPositions ? liquidityPositions : '-'}</Typography>}
         </Grid>
       ) : (
         <Grid container classes={{ container: classes.container, root: classes.header }}>
-          {!isMd && (
-            <Typography style={{ lineHeight: '11px' }}>
-              N<sup>o</sup>
-            </Typography>
-          )}
+          <Typography style={{ lineHeight: '11px' }}>Rank</Typography>
 
           <Typography
             style={{ cursor: 'pointer' }}
@@ -78,7 +74,7 @@ const Item: React.FC<ListElement> = ({
             //   }
             // }}
           >
-            Username
+            Address
             {/* {sortType === SortTypePoolList.NAME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
             ) : sortType === SortTypePoolList.NAME_DESC ? (
@@ -102,41 +98,44 @@ const Item: React.FC<ListElement> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null} */}
           </Typography>
-
-          <Typography
-            style={{ cursor: 'pointer' }}
-            // onClick={() => {
-            //   if (sortType === SortTypePoolList.VOLUME_DESC) {
-            //     onSort?.(SortTypePoolList.VOLUME_ASC)
-            //   } else {
-            //     onSort?.(SortTypePoolList.VOLUME_DESC)
-            //   }
-            // }}
-          >
-            24H points
-            {/* {sortType === SortTypePoolList.VOLUME_ASC ? (
+          {!isMd && (
+            <Typography
+              style={{ cursor: 'pointer' }}
+              // onClick={() => {
+              //   if (sortType === SortTypePoolList.VOLUME_DESC) {
+              //     onSort?.(SortTypePoolList.VOLUME_ASC)
+              //   } else {
+              //     onSort?.(SortTypePoolList.VOLUME_DESC)
+              //   }
+              // }}
+            >
+              24H points
+              {/* {sortType === SortTypePoolList.VOLUME_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
             ) : sortType === SortTypePoolList.VOLUME_DESC ? (
               <ArrowDropDownIcon className={classes.icon} />
             ) : null} */}
-          </Typography>
-          <Typography
-            style={{ cursor: 'pointer' }}
-            // onClick={() => {
-            //   if (sortType === SortTypePoolList.TVL_DESC) {
-            //     onSort?.(SortTypePoolList.TVL_ASC)
-            //   } else {
-            //     onSort?.(SortTypePoolList.TVL_DESC)
-            //   }
-            // }}
-          >
-            Liquidity positions
-            {/* {sortType === SortTypePoolList.TVL_ASC ? (
+            </Typography>
+          )}
+          {!isMd && (
+            <Typography
+              style={{ cursor: 'pointer' }}
+              // onClick={() => {
+              //   if (sortType === SortTypePoolList.TVL_DESC) {
+              //     onSort?.(SortTypePoolList.TVL_ASC)
+              //   } else {
+              //     onSort?.(SortTypePoolList.TVL_DESC)
+              //   }
+              // }}
+            >
+              Positions
+              {/* {sortType === SortTypePoolList.TVL_ASC ? (
               <ArrowDropUpIcon className={classes.icon} />
             ) : sortType === SortTypePoolList.TVL_DESC ? (
               <ArrowDropDownIcon className={classes.icon} />
             ) : null} */}
-          </Typography>
+            </Typography>
+          )}
         </Grid>
       )}
     </Grid>
