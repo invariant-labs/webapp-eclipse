@@ -1,5 +1,10 @@
 import { Pair } from '@invariant-labs/sdk-eclipse'
-import { parsePool, PoolStructure, RawPoolStructure, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  parsePool,
+  PoolStructure,
+  RawPoolStructure,
+  Tickmap
+} from '@invariant-labs/sdk-eclipse/lib/market'
 import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'

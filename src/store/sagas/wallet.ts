@@ -130,12 +130,14 @@ export function* fetchTokensAccounts(): Generator {
     })
 
     if (!allTokens[info.mint]) {
+      const programId = yield* call(getTokenProgramId, connection, new PublicKey(info.mint))
+
       unknownTokens[info.mint] = yield* call(
         getTokenMetadata,
         connection,
         info.mint,
         info.tokenAmount.decimals,
-        new PublicKey(info.owner)
+        programId
       )
     }
   }

@@ -363,13 +363,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : bestTiers.find(
+      : (bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined
+        )?.bestTierIndex ?? undefined)
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -410,11 +410,12 @@ export const NewPosition: React.FC<INewPosition> = ({
       onChangeRange(leftRange, rightRange)
     }
   }, [midPrice.index, leftRange, rightRange])
-  // useEffect(() => {
-  //   if (positionOpeningMethod === 'range') {
-  //     onChangeRange(leftRange, rightRange)
-  //   }
-  // }, [currentPriceSqrt])
+
+  useEffect(() => {
+    if (positionOpeningMethod === 'range') {
+      onChangeRange(leftRange, rightRange)
+    }
+  }, [currentPriceSqrt])
 
   const handleClickSettings = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -475,12 +476,14 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const blockedToken = useMemo(
     () =>
-      determinePositionTokenBlock(
-        currentPriceSqrt,
-        Math.min(leftRange, rightRange),
-        Math.max(leftRange, rightRange),
-        isXtoY
-      ),
+      positionOpeningMethod === 'range'
+        ? determinePositionTokenBlock(
+            currentPriceSqrt,
+            Math.min(leftRange, rightRange),
+            Math.max(leftRange, rightRange),
+            isXtoY
+          )
+        : false,
     [leftRange, rightRange, currentPriceSqrt]
   )
 
@@ -555,7 +558,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             )}
             <Grid className={classes.optionsWrapper}>
               <Hidden mdDown>
-                {tokenAIndex !== null && tokenBIndex !== null && poolIndex !== null && (
+                {tokenAIndex !== null && tokenBIndex !== null && (
                   <ConcentrationTypeSwitch
                     onSwitch={val => {
                       if (val) {
@@ -740,7 +743,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>
-            {poolIndex !== null && (
+            {tokenAIndex !== null && tokenBIndex !== null && (
               <ConcentrationTypeSwitch
                 onSwitch={val => {
                   if (val) {
@@ -818,7 +821,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             midPriceIndex={midPrice.index}
             onChangeMidPrice={onChangeMidPrice}
             currentPairReversed={currentPairReversed}
-            positionOpeningMethod={'range'}
+            positionOpeningMethod={positionOpeningMethod}
             concentrationArray={concentrationArray}
             concentrationIndex={concentrationIndex}
             setConcentrationIndex={setConcentrationIndex}
