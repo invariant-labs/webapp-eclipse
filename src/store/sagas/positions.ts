@@ -609,14 +609,6 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
         },
         undefined,
         {
-          lowerTickExists:
-            !ticks.hasError && !ticks.loading
-              ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
-              : undefined,
-          upperTickExists:
-            !ticks.hasError && !ticks.loading
-              ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
-              : undefined,
           tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
           tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
           positionsList: !userPositionList.loading ? userPositionList : undefined
