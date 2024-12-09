@@ -221,7 +221,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       gap: '24px',
       paddingTop: '24px',
-      width: '100%'
+      [theme.breakpoints.up('xl')]: {
+        width: '50%'
+      }
     }
   }
 })
