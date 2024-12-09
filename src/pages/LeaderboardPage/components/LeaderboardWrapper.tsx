@@ -1,51 +1,45 @@
-import useStyles from './styles'
+import React, { useState, useEffect } from 'react'
 import { Box, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import useStyles from './styles'
 import EclipseLogo from '@static/png/eclipse-big-logo.png'
-import { useEffect, useState } from 'react'
-import ItemList, { ListElement } from './ItemList/ItemList'
 import { Faq } from './Faq/Faq'
+import { LeaderboardItemProps } from './LeaderboardItem/LeaderboardItem'
+import LeaderboardList from './LeaderboardList/LeaderboardList'
+
+const generateRandomListElement = (): LeaderboardItemProps => {
+  const randomHex = (length: number) => {
+    const hexChars = '0123456789abcdef'
+    return Array.from({ length }, () => hexChars[Math.floor(Math.random() * hexChars.length)]).join(
+      ''
+    )
+  }
+
+  return {
+    displayType: 'item',
+    address: `0x${randomHex(254)}`,
+    totalPoints: Math.floor(Math.random() * 10000),
+    tokenIndex: Math.floor(Math.random() * 100),
+    hideBottomLine: Math.random() < 0.5,
+    pointsIncome: Math.floor(Math.random() * 5000),
+    liquidityPositions: Math.floor(Math.random() * 20)
+  }
+}
+
+const generateRandomList = (count: number): LeaderboardItemProps[] =>
+  Array.from({ length: count }, () => generateRandomListElement())
+
 export const LeaderboardWrapper: React.FC = () => {
   const [alignment, setAlignment] = useState<string>('leaderboard')
-  const [_page, setPage] = useState(1)
-
+  const [data, setData] = useState<LeaderboardItemProps[]>([])
   const { classes } = useStyles()
-  const [data, setData] = useState<ListElement[]>([])
+
   const handleSwitchPools = (_: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
-    if (newAlignment !== null) {
+    if (newAlignment) {
       setAlignment(newAlignment)
-      setPage(1)
     }
   }
+
   useEffect(() => {
-    const generateRandomListElement = () => {
-      const randomHex = (length: number) => {
-        const hexChars = '0123456789abcdef'
-        let result = ''
-        for (let i = 0; i < length; i++) {
-          result += hexChars.charAt(Math.floor(Math.random() * hexChars.length))
-        }
-        return result
-      }
-
-      return {
-        displayType: 'default',
-        address: `0x${randomHex(254)}`, // 0x + 254 characters
-        totalPoints: Math.floor(Math.random() * 10000), // Random points (0 - 9999)
-        tokenIndex: Math.floor(Math.random() * 100), // Random token index (0 - 99)
-        hideBottomLine: Math.random() < 0.5, // Random true/false
-        pointsIncome: Math.floor(Math.random() * 5000), // Random income (0 - 4999)
-        liquidityPositions: Math.floor(Math.random() * 20) // Random positions (0 - 19)
-      }
-    }
-
-    const generateRandomList = (count: number) => {
-      const list: ListElement[] = []
-      for (let i = 0; i < count; i++) {
-        list.push(generateRandomListElement())
-      }
-      return list
-    }
-
     setData(generateRandomList(100))
   }, [])
 
@@ -55,20 +49,28 @@ export const LeaderboardWrapper: React.FC = () => {
         <Box className={classes.column}>
           <img src={EclipseLogo} alt='Eclipse Logo' className={classes.heroLogo} />
         </Box>
+
         <Box className={classes.counterContainer}>
-          <Box className={classes.counterItem}>
-            <Typography className={classes.counterYourPoints}>123 123</Typography>
-            <Typography className={classes.counterLabel}>Your Points</Typography>
-          </Box>
-          <Box className={classes.counterItem}>
-            <Typography className={classes.counterYourRanking}># 12 938</Typography>
-            <Typography className={classes.counterLabel}>Your ranking position</Typography>
-          </Box>
-          <Box className={classes.counterItem}>
-            <Typography className={classes.counterYourPointsPerDay}>123 123</Typography>
-            <Typography className={classes.counterLabel}>Your points per day</Typography>
-          </Box>
+          {[
+            { value: '123 123', label: 'Your Points', styleVariant: classes.counterYourPoints },
+            {
+              value: '# 12 938',
+              label: 'Your ranking position',
+              styleVariant: classes.counterYourRanking
+            },
+            {
+              value: '123 123',
+              label: 'Your points per day',
+              styleVariant: classes.counterYourPointsPerDay
+            }
+          ].map(({ value, label, styleVariant }) => (
+            <Box key={label} className={classes.counterItem}>
+              <Typography className={styleVariant}>{value}</Typography>
+              <Typography className={classes.counterLabel}>{label}</Typography>
+            </Box>
+          ))}
         </Box>
+
         <Box
           sx={{
             display: 'flex',
@@ -100,7 +102,8 @@ export const LeaderboardWrapper: React.FC = () => {
             </ToggleButtonGroup>
           </Box>
         </Box>
-        {alignment === 'leaderboard' ? <ItemList data={data} /> : <Faq />}
+
+        {alignment === 'leaderboard' ? <LeaderboardList data={data} /> : <Faq />}
       </Box>
     </Box>
   )

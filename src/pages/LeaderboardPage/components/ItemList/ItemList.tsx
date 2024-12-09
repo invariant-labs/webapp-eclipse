@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import { useStyles } from './style'
 import { Box, Grid } from '@mui/material'
-import Item from '../Item/Item'
+import Item from '../LeaderboardItem/ItemerboardItem'
 import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
 import { PaginationList } from '@components/Pagination/Pagination'
