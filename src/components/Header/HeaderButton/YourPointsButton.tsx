@@ -1,11 +1,12 @@
 import React from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import { Button } from '@mui/material'
-// import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import { Button, useMediaQuery } from '@mui/material'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { ISelectNetwork } from '@store/consts/types'
 import { NetworkType } from '@store/consts/static'
 import YourPointsModal from '@components/Modals/YourPointsModal/YourPointsModals'
+import { theme } from '@static/theme'
 
 export interface IProps {
   name: NetworkType
@@ -19,6 +20,8 @@ export const YourPointsButton: React.FC<IProps> = ({
   onSelect,
   disabled = false
 }) => {
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
@@ -42,7 +45,7 @@ export const YourPointsButton: React.FC<IProps> = ({
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
         onClick={handleClick}>
-        Points: 455.5K
+        {isSm ? <KeyboardArrowDownIcon id='downIcon' /> : 'Points: 343.3M'}
       </Button>
       <YourPointsModal
         networks={networks}

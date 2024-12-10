@@ -31,7 +31,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     pointsHeaderButton: {
       boxSizing: 'border-box',
-      width: 'fit-content',
+      minWidth: '10px',
       height: '40px',
       background: colors.invariant.newDark,
       boxShadow: '0px 0px 5px 5px #2A365C',
@@ -59,6 +59,9 @@ const useStyles = makeStyles()((theme: Theme) => {
         '@media (hover: none)': {
           background: 'transparent'
         }
+      },
+      [theme.breakpoints.down('md')]: {
+        padding: '10px'
       }
     },
     label: {

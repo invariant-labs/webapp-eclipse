@@ -177,7 +177,12 @@ export const Header: React.FC<IHeader> = ({
           item
           className={classes.routers}
           wrap='nowrap'
-          sx={{ display: { xs: 'none', lg: 'block' } }}>
+          sx={{
+            display: { lg: 'block' },
+            '@media (max-width: 1450px)': {
+              display: 'none'
+            }
+          }}>
           {routes.map(path => (
             <Link key={`path-${path}`} to={`/${path}`} className={classes.link}>
               <NavbarButton
@@ -206,7 +211,13 @@ export const Header: React.FC<IHeader> = ({
                 <FaucetButton onFaucet={onFaucet}>Faucet</FaucetButton>
               </Box>
             )}
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box
+              sx={{
+                display: { md: 'block' },
+                '@media (max-width: 1050px)': {
+                  display: 'none'
+                }
+              }}>
               <SelectRPCButton
                 rpc={rpc}
                 networks={networks}
@@ -215,7 +226,15 @@ export const Header: React.FC<IHeader> = ({
                 rpcStatus={rpcStatus}
               />
             </Box>
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box
+              sx={{
+                display: {
+                  md: 'block',
+                  '@media (max-width: 1050px)': {
+                    display: 'none'
+                  }
+                }
+              }}>
               <SelectChainButton
                 activeChain={activeChain}
                 chains={CHAINS}
