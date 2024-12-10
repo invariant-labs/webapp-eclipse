@@ -1,6 +1,6 @@
 import React from 'react'
-import icons from '@static/icons'
-import classNames from 'classnames'
+// import icons from '@static/icons'
+// import classNames from 'classnames'
 import useStyles from './style'
 import { ISelectNetwork } from '@store/consts/types'
 import { Box, Button, Divider, Grid, Popover, Typography } from '@mui/material'
@@ -16,12 +16,12 @@ export interface ISelectNetworkModal {
   activeNetwork: NetworkType
 }
 export const YourPointsModal: React.FC<ISelectNetworkModal> = ({
-  networks,
+  //   networks,
   anchorEl,
   open,
-  onSelect,
-  handleClose,
-  activeNetwork
+  //   onSelect,
+  handleClose
+  //   activeNetwork
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
