@@ -54,12 +54,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       backgroundClip: 'padding-box, border-box',
 
       color: colors.invariant.text,
-      '&:hover': {
-        background: '#2A365C',
-        '@media (hover: none)': {
-          background: 'transparent'
-        }
-      },
+
       [theme.breakpoints.down('md')]: {
         padding: '10px'
       }

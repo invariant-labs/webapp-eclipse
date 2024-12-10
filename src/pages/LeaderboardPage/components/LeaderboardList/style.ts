@@ -1,3 +1,4 @@
+import { alpha } from '@mui/material'
 import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
@@ -44,5 +45,44 @@ export const useStyles = makeStyles()(() => ({
     position: 'absolute',
     bottom: 0,
     left: 0
+  },
+  loading: {
+    width: 150,
+    height: 150,
+    margin: 'auto',
+    position: 'absolute',
+    zIndex: 3,
+    transform: 'translate(-50%,-50%)',
+    top: '50%',
+    left: '50%'
+  },
+  loadingOverlay: {
+    position: 'relative',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      inset: 0,
+      backgroundColor: alpha(colors.invariant.newDark, 0.7),
+      backdropFilter: 'blur(4px)',
+      zIndex: 1,
+      pointerEvents: 'none'
+    }
+  },
+  loadingContent: {
+    position: 'relative',
+    zIndex: 0,
+    animation: 'pulse 1.5s ease-in-out infinite',
+    opacity: 0.7
+  },
+  '@keyframes pulse': {
+    '0%': {
+      opacity: 0.7
+    },
+    '50%': {
+      opacity: 0.5
+    },
+    '100%': {
+      opacity: 0.7
+    }
   }
 }))
