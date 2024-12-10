@@ -6,6 +6,8 @@ import { ISelectNetwork } from '@store/consts/types'
 import { Box, Button, Divider, Grid, Popover, Typography } from '@mui/material'
 import { NetworkType } from '@store/consts/static'
 import { useNavigate } from 'react-router-dom'
+import { useSelector } from 'react-redux'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 
 export interface ISelectNetworkModal {
   networks: ISelectNetwork[]
@@ -25,6 +27,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
+  const userStats = useSelector(leaderboardSelectors.currentUser)
   return (
     <Popover
       open={open}
@@ -42,9 +45,13 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({
       <Grid className={classes.root}>
         <Box className={classes.counterContainer}>
           {[
-            { value: '123 123', label: 'Your Points', styleVariant: classes.counterYourPoints },
             {
-              value: '# 12 938',
+              value: userStats?.totalPoints ?? 0,
+              label: 'Your Points',
+              styleVariant: classes.counterYourPoints
+            },
+            {
+              value: userStats?.rank ?? 0,
               label: 'Your ranking position',
               styleVariant: classes.counterYourRanking
             }
