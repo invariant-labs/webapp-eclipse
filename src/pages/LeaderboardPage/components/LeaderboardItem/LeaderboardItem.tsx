@@ -8,6 +8,7 @@ import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
+import { PublicKey } from '@solana/web3.js'
 
 interface BaseLeaderboardItemProps {
   displayType: 'item' | 'header'
@@ -19,13 +20,15 @@ interface LeaderboardHeaderProps extends BaseLeaderboardItemProps {
 
 interface LeaderboardItemDetailProps extends BaseLeaderboardItemProps {
   displayType: 'item'
-  tokenIndex?: number
-  totalPoints: number
   isYou?: boolean
-  address?: string
-  pointsIncome?: number
-  liquidityPositions?: number
+
   hideBottomLine?: boolean
+
+  totalPoints?: number
+  positionsAmount?: number
+  last24HoursPoints?: number
+  rank?: number
+  address?: PublicKey
 }
 
 export type LeaderboardItemProps = LeaderboardHeaderProps | LeaderboardItemDetailProps
@@ -62,12 +65,12 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
   }
 
   const {
-    tokenIndex = 0,
+    rank = 0,
     totalPoints,
     isYou = false,
     address = '',
-    pointsIncome = 0,
-    liquidityPositions = 0,
+    last24HoursPoints = 0,
+    positionsAmount = 0,
     hideBottomLine = false
   } = props
 
@@ -79,7 +82,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
     if (!address) return
 
     navigator.clipboard
-      .writeText(address)
+      .writeText(address.toString())
       .then(() => {
         dispatch(
           snackbarActions.add({
@@ -109,10 +112,10 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
           border: hideBottomLine ? 'none' : undefined,
           background: isYou ? colors.invariant.light : 'transparent'
         }}>
-        <Typography style={{ color: getColorByPlace(tokenIndex) }}>{tokenIndex}</Typography>
+        <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
         <Typography>
-          {isYou ? 'You' : shortenAddress(address, 7)}
+          {isYou ? 'You' : shortenAddress(address.toString(), 7)}
           <TooltipHover text='Copy address'>
             <FileCopyOutlinedIcon
               onClick={copyToClipboard}
@@ -123,19 +126,19 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
 
         <Typography>{totalPoints}</Typography>
 
-        {!isMd && pointsIncome > 0 && (
+        {!isMd && last24HoursPoints > 0 && (
           <Typography>
             <Typography
               style={{
                 color: colors.invariant.green,
                 ...typography.heading4
               }}>
-              + {pointsIncome}
+              + {last24HoursPoints}
             </Typography>
           </Typography>
         )}
 
-        {!isMd && <Typography>{liquidityPositions}</Typography>}
+        {!isMd && <Typography>{positionsAmount}</Typography>}
       </Grid>
     </Grid>
   )

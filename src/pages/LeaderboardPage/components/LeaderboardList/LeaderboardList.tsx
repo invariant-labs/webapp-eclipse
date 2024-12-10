@@ -6,17 +6,18 @@ import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
 import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
-import { colors } from '@static/theme'
 import loader from '@static/gif/loader.gif'
+import { Keypair, PublicKey } from '@solana/web3.js'
 
 interface LeaderboardEntry {
-  displayType: 'header' | 'item'
-  address?: string
-  totalPoints?: number
-  tokenIndex?: number
+  // displayType: 'header' | 'item'
   hideBottomLine?: boolean
-  pointsIncome?: number
-  liquidityPositions?: number
+
+  totalPoints?: number
+  positionsAmount?: number
+  last24HoursPoints?: number
+  rank?: number
+  address?: PublicKey
 }
 
 interface LeaderboardListProps {
@@ -29,7 +30,7 @@ const ITEMS_PER_PAGE = 25
 const generateMockData = (): LeaderboardEntry[] => {
   return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
     displayType: 'item',
-    address: '0x' + '0'.repeat(40),
+    address: Keypair.generate().publicKey,
     totalPoints: 10000 - index * 100,
     pointsIncome: 1000 - index * 10,
     liquidityPositions: 100 - index,
@@ -84,7 +85,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
         <MemoizedLeaderboardItem displayType='header' />
         {isLoading && <img src={loader} className={classes.loading} alt='Loading' />}
 
-        <Box
+        {/* <Box
           sx={{
             paddingLeft: '24px',
             paddingRight: '24px',
@@ -98,17 +99,17 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
             pointsIncome={345}
             totalPoints={3453}
           />
-        </Box>
+        </Box> */}
 
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
           {displayData.length > 0 ? (
             paginatedData.map((element, index) => (
               <MemoizedLeaderboardItem
-                key={element.address || index}
+                key={index}
                 displayType='item'
-                tokenIndex={index + 1 + (currentPage - 1) * ITEMS_PER_PAGE}
-                liquidityPositions={element.liquidityPositions}
-                pointsIncome={element.pointsIncome}
+                rank={index + 1 + (currentPage - 1) * ITEMS_PER_PAGE}
+                positionsAmount={element.positionsAmount}
+                last24HoursPoints={element.last24HoursPoints}
                 totalPoints={element.totalPoints ?? 0}
                 address={element.address}
               />

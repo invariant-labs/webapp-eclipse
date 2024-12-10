@@ -3,35 +3,19 @@ import { Box, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import useStyles from './styles'
 import EclipseLogo from '@static/png/eclipse-big-logo.png'
 import { Faq } from './Faq/Faq'
-import { LeaderboardItemProps } from './LeaderboardItem/LeaderboardItem'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
-
-const generateRandomListElement = (): LeaderboardItemProps => {
-  const randomHex = (length: number) => {
-    const hexChars = '0123456789abcdef'
-    return Array.from({ length }, () => hexChars[Math.floor(Math.random() * hexChars.length)]).join(
-      ''
-    )
-  }
-
-  return {
-    displayType: 'item',
-    address: `0x${randomHex(254)}`,
-    totalPoints: Math.floor(Math.random() * 10000),
-    tokenIndex: Math.floor(Math.random() * 100),
-    hideBottomLine: Math.random() < 0.5,
-    pointsIncome: Math.floor(Math.random() * 5000),
-    liquidityPositions: Math.floor(Math.random() * 20)
-  }
-}
-
-const generateRandomList = (count: number): LeaderboardItemProps[] =>
-  Array.from({ length: count }, () => generateRandomListElement())
+import { useDispatch, useSelector } from 'react-redux'
+import { actions } from '@store/reducers/leaderboard'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 
 export const LeaderboardWrapper: React.FC = () => {
   const [alignment, setAlignment] = useState<string>('leaderboard')
-  const [data, setData] = useState<LeaderboardItemProps[]>([])
   const { classes } = useStyles()
+
+  const isLoading = useSelector(leaderboardSelectors.loading)
+  const leaderboard = useSelector(leaderboardSelectors.leaderboard)
+  const userStats = useSelector(leaderboardSelectors.currentUser)
+  const dispatch = useDispatch()
 
   const handleSwitchPools = (_: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
     if (newAlignment) {
@@ -40,8 +24,37 @@ export const LeaderboardWrapper: React.FC = () => {
   }
 
   useEffect(() => {
-    setData(generateRandomList(100))
-  }, [])
+    dispatch(actions.getLeaderboardData())
+  }, [dispatch])
+
+  const counterItems = React.useMemo(
+    () => [
+      {
+        value: userStats?.totalPoints ?? '0',
+        label: 'Your Points',
+        styleVariant: classes.counterYourPoints
+      },
+      {
+        value: `# ${userStats?.rank ?? '0'}`,
+        label: 'Your ranking position',
+        styleVariant: classes.counterYourRanking
+      },
+      {
+        value: userStats?.last24HoursPoints ?? '0',
+        label: 'Your points per day',
+        styleVariant: classes.counterYourPointsPerDay
+      }
+    ],
+    [userStats, classes]
+  )
+
+  const content = React.useMemo(() => {
+    return alignment === 'leaderboard' ? (
+      <LeaderboardList data={leaderboard} isLoading={isLoading} />
+    ) : (
+      <Faq />
+    )
+  }, [alignment, leaderboard, isLoading])
 
   return (
     <Box className={classes.pageWrapper}>
@@ -51,19 +64,7 @@ export const LeaderboardWrapper: React.FC = () => {
         </Box>
 
         <Box className={classes.counterContainer}>
-          {[
-            { value: '123 123', label: 'Your Points', styleVariant: classes.counterYourPoints },
-            {
-              value: '# 12 938',
-              label: 'Your ranking position',
-              styleVariant: classes.counterYourRanking
-            },
-            {
-              value: '123 123',
-              label: 'Your points per day',
-              styleVariant: classes.counterYourPointsPerDay
-            }
-          ].map(({ value, label, styleVariant }) => (
+          {counterItems.map(({ value, label, styleVariant }) => (
             <Box key={label} className={classes.counterItem}>
               <Typography className={styleVariant}>{value}</Typography>
               <Typography className={classes.counterLabel}>{label}</Typography>
@@ -103,7 +104,7 @@ export const LeaderboardWrapper: React.FC = () => {
           </Box>
         </Box>
 
-        {alignment === 'leaderboard' ? <LeaderboardList data={data} /> : <Faq />}
+        {content}
       </Box>
     </Box>
   )
