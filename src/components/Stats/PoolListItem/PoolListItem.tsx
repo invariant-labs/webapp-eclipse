@@ -11,7 +11,7 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumber } from '@utils/utils'
-import { shortenAddress } from '@utils/uiUtils'
+import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
@@ -73,7 +73,8 @@ const PoolListItem: React.FC<IProps> = ({
   isUnknownTo,
   isLocked,
   poolAddress,
-  copyAddressHandler
+  copyAddressHandler,
+  apy = 0
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -131,6 +132,8 @@ const PoolListItem: React.FC<IProps> = ({
     setLockPopoverOpen(false)
   }
 
+  const apr = apyToApr(apy)
+
   return (
     <Grid maxWidth='100%'>
       {displayType === 'token' ? (
@@ -166,19 +169,29 @@ const PoolListItem: React.FC<IProps> = ({
                 </Box>
               </Box>
             )}
-            <Grid className={classes.symbolsContainer}>
-              <Typography>
-                {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
-              </Typography>
-              <TooltipHover text='Copy pool address'>
-                <FileCopyOutlinedIcon
-                  onClick={copyToClipboard}
-                  classes={{ root: classes.clipboardIcon }}
-                />
-              </TooltipHover>
-            </Grid>
+            {(!isMd || isSm) && (
+              <Grid className={classes.symbolsContainer}>
+                <Typography>
+                  {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
+                </Typography>
+                <TooltipHover text='Copy pool address'>
+                  <FileCopyOutlinedIcon
+                    onClick={copyToClipboard}
+                    classes={{ root: classes.clipboardIcon }}
+                  />
+                </TooltipHover>
+              </Grid>
+            )}
           </Grid>
-
+          {!isSm ? (
+            <Typography className={classes.row}>
+              {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
+              <span
+                className={
+                  classes.apy
+                }>{`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}</span>
+            </Typography>
+          ) : null}
           <Typography>{fee}%</Typography>
           <Typography>{`$${formatNumber(volume)}`}</Typography>
           <Typography>{`$${formatNumber(TVL)}`}</Typography>
@@ -259,6 +272,25 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
+          {!isSm ? (
+            <Typography
+              className={classes.row}
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (sortType === SortTypePoolList.APY_DESC) {
+                  onSort?.(SortTypePoolList.APY_ASC)
+                } else {
+                  onSort?.(SortTypePoolList.APY_DESC)
+                }
+              }}>
+              APR <span className={classes.apy}>APY</span>
+              {sortType === SortTypePoolList.APY_ASC ? (
+                <ArrowDropUpIcon className={classes.icon} />
+              ) : sortType === SortTypePoolList.APY_DESC ? (
+                <ArrowDropDownIcon className={classes.icon} />
+              ) : null}
+            </Typography>
+          ) : null}
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
