@@ -7,6 +7,8 @@ import { ISelectNetwork } from '@store/consts/types'
 import { NetworkType } from '@store/consts/static'
 import YourPointsModal from '@components/Modals/YourPointsModal/YourPointsModals'
 import { theme } from '@static/theme'
+import { useSelector } from 'react-redux'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 
 export interface IProps {
   name: NetworkType
@@ -25,7 +27,7 @@ export const YourPointsButton: React.FC<IProps> = ({
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
-
+  const currentUser = useSelector(leaderboardSelectors.currentUser)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
     blurContent()
@@ -45,7 +47,11 @@ export const YourPointsButton: React.FC<IProps> = ({
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
         onClick={handleClick}>
-        {isSm ? <KeyboardArrowDownIcon id='downIcon' /> : 'Points: 343.3M'}
+        {isSm ? (
+          <KeyboardArrowDownIcon id='downIcon' />
+        ) : (
+          `Points: ${currentUser?.totalPoints ?? 0}`
+        )}
       </Button>
       <YourPointsModal
         networks={networks}
