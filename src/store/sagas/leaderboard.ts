@@ -20,7 +20,7 @@ export function* getLeaderboard(): Generator {
     const leaderboardData = yield* call(
       fetchLeaderboardData,
       currentNetwork.toLowerCase(),
-      wallet.publicKey.toString() ?? null
+      wallet?.publicKey?.toString() ?? null
     )
     console.log(leaderboardData)
     const parsedData = {
