@@ -9,7 +9,6 @@ import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
-import icons from '@static/icons'
 import { Link } from 'react-router-dom'
 import { network } from '@store/selectors/solanaConnection'
 
