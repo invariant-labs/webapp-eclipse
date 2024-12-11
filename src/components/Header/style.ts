@@ -136,6 +136,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       [theme.breakpoints.up(1600)]: {
         flex: '1 1 0%'
       }
+    },
+    background: {
+      background: colors.invariant.component
     }
   }
 })
