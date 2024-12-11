@@ -6,7 +6,7 @@ export const useStyles = makeStyles()(() => ({
   container: {
     width: '100%',
     borderRadius: '24px',
-    maxHeight: '1800px',
+    maxHeight: '1850px',
     overflow: 'hidden',
     position: 'relative',
     zIndex: 2,

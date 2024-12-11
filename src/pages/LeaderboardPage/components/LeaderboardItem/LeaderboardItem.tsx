@@ -1,14 +1,17 @@
 import React from 'react'
-import { Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
-
+import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
+import icons from '@static/icons'
+import { Link } from 'react-router-dom'
+import { network } from '@store/selectors/solanaConnection'
 
 interface BaseLeaderboardItemProps {
   displayType: 'item' | 'header'
@@ -59,6 +62,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const dispatch = useDispatch()
+  const currentNetwork = useSelector(network)
 
   if (displayType === 'header') {
     return <LeaderboardHeader />
@@ -116,12 +120,21 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
 
         <Typography>
           {isYou ? 'You' : shortenAddress(address.toString(), 7)}
-          <TooltipHover text='Copy address'>
-            <FileCopyOutlinedIcon
-              onClick={copyToClipboard}
-              classes={{ root: classes.clipboardIcon }}
-            />
-          </TooltipHover>
+          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline' }}>
+            <TooltipHover text='Copy address'>
+              <FileCopyOutlinedIcon
+                onClick={copyToClipboard}
+                classes={{ root: classes.clipboardIcon }}
+              />
+            </TooltipHover>
+            <TooltipHover text='Open in explorer'>
+              <Link
+                to={`https://eclipsescan.xyz/token/${address}?cluster=${currentNetwork.toLocaleLowerCase()}`}
+                target='_blank'>
+                <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+              </Link>
+            </TooltipHover>
+          </Box>
         </Typography>
 
         <Typography>{points}</Typography>

@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => ({
   container: {
     color: colors.white.main,
     display: 'grid',
-    gridTemplateColumns: '10% auto 20% 30% 10%',
+    gridTemplateColumns: '10% auto 20% 10% 10%',
     padding: '18px 18px',
     backgroundColor: colors.invariant.component,
     borderBottom: `1px solid ${colors.invariant.light}`,
@@ -34,6 +34,20 @@ export const useStyles = makeStyles()(() => ({
         ...typography.caption1
       }
     }
+  },
+  iconContainer: {
+    minWidth: 28,
+    maxWidth: 28,
+    height: 28,
+    marginRight: 3,
+    position: 'relative'
+  },
+  tokenIcon: {
+    minWidth: 28,
+    maxWidth: 28,
+    height: 28,
+    marginRight: 3,
+    borderRadius: '50%'
   },
   clipboardIcon: {
     marginLeft: 4,
