@@ -11,6 +11,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       height: 70,
       display: 'flex',
       justifyContent: 'space-between',
+      background: colors.invariant.component,
 
       [theme.breakpoints.down('xl')]: {
         paddingInline: 32
@@ -89,7 +90,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      backgroundColor: colors.invariant.component,
+      backgroundColor: colors.invariant.light,
       borderRadius: 14,
       width: 'auto',
       padding: 4

@@ -15,7 +15,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       height: 32,
       boxShadow: 'none',
       '&:hover': {
-        background: colors.invariant.light,
+        background: colors.blue.deep,
         '@media (hover: none)': {
           background: 'transparent'
         }
