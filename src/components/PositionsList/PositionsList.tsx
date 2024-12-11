@@ -149,7 +149,7 @@ export const PositionsList: React.FC<IProps> = ({
         alignItems='center'>
         <Grid className={classes.searchRoot}>
           <Grid className={classes.titleBar}>
-            <Typography className={classes.title}>Your Liquidity Positions</Typography>
+            <Typography className={classes.title}>Your Positions</Typography>
             <TooltipHover text='Total number of your positions'>
               <Typography className={classes.positionsNumber}>{String(currentLength)}</Typography>
             </TooltipHover>
