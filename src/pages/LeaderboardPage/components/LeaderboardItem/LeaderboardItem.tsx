@@ -24,9 +24,9 @@ interface LeaderboardItemDetailProps extends BaseLeaderboardItemProps {
 
   hideBottomLine?: boolean
 
-  totalPoints?: number
-  positionsAmount?: number
-  last24HoursPoints?: number
+  points?: number
+  positions?: number
+  last24hPoints?: number
   rank?: number
   address?: PublicKey
 }
@@ -66,11 +66,11 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
 
   const {
     rank = 0,
-    totalPoints,
+    points,
     isYou = false,
     address = '',
-    last24HoursPoints = 0,
-    positionsAmount = 0,
+    last24hPoints = 0,
+    positions = 0,
     hideBottomLine = false
   } = props
 
@@ -124,21 +124,21 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
           </TooltipHover>
         </Typography>
 
-        <Typography>{totalPoints}</Typography>
+        <Typography>{points}</Typography>
 
-        {!isMd && last24HoursPoints > 0 && (
+        {!isMd && last24hPoints > 0 && (
           <Typography>
             <Typography
               style={{
                 color: colors.invariant.green,
                 ...typography.heading4
               }}>
-              + {last24HoursPoints}
+              + {last24hPoints}
             </Typography>
           </Typography>
         )}
 
-        {!isMd && <Typography>{positionsAmount}</Typography>}
+        {!isMd && <Typography>{positions}</Typography>}
       </Grid>
     </Grid>
   )

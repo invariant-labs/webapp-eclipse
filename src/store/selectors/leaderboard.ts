@@ -32,15 +32,15 @@ export const top10Users = createSelector(topRankedUsers, (sortedUsers: Leaderboa
 )
 
 export const usersByPoints = createSelector(leaderboard, (leaderboardData: LeaderboardEntry[]) =>
-  [...leaderboardData].sort((a, b) => b.totalPoints - a.totalPoints)
+  [...leaderboardData].sort((a, b) => b.points - a.points)
 )
 
 export const last24HoursTopUsers = createSelector(
   leaderboard,
   (leaderboardData: LeaderboardEntry[]) =>
     [...leaderboardData]
-      .sort((a, b) => b.last24HoursPoints - a.last24HoursPoints)
-      .filter(user => user.last24HoursPoints > 0)
+      .sort((a, b) => b.last24hPoints - a.last24hPoints)
+      .filter(user => user.last24hPoints > 0)
 )
 
 export const getUserByAddress = createSelector(
@@ -64,7 +64,7 @@ export const getTotalUsersCount = createSelector(
 export const getActiveUsersLast24h = createSelector(
   leaderboard,
   (leaderboardData: LeaderboardEntry[]) =>
-    leaderboardData.filter(user => user.last24HoursPoints > 0).length
+    leaderboardData.filter(user => user.last24hPoints > 0).length
 )
 
 export const getUserPosition = createSelector(

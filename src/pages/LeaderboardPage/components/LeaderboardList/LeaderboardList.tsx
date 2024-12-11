@@ -13,9 +13,9 @@ interface LeaderboardEntry {
   // displayType: 'header' | 'item'
   hideBottomLine?: boolean
 
-  totalPoints?: number
-  positionsAmount?: number
-  last24HoursPoints?: number
+  points?: number
+  positions?: number
+  last24hPoints?: number
   rank?: number
   address?: PublicKey
 }
@@ -31,7 +31,7 @@ const generateMockData = (): LeaderboardEntry[] => {
   return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
     displayType: 'item',
     address: Keypair.generate().publicKey,
-    totalPoints: 10000 - index * 100,
+    points: 10000 - index * 100,
     pointsIncome: 1000 - index * 10,
     liquidityPositions: 100 - index,
     tokenIndex: index + 1
@@ -97,7 +97,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
             liquidityPositions={343}
             tokenIndex={123}
             pointsIncome={345}
-            totalPoints={3453}
+            points={3453}
           />
         </Box> */}
 
@@ -108,9 +108,9 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
                 key={index}
                 displayType='item'
                 rank={index + 1 + (currentPage - 1) * ITEMS_PER_PAGE}
-                positionsAmount={element.positionsAmount}
-                last24HoursPoints={element.last24HoursPoints}
-                totalPoints={element.totalPoints ?? 0}
+                positions={element.positions}
+                last24hPoints={element.last24hPoints}
+                points={element.points ?? 0}
                 address={element.address}
               />
             ))

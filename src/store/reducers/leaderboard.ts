@@ -3,9 +3,9 @@ import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
 export interface UserStats {
-  totalPoints: number
-  positionsAmount: number
-  last24HoursPoints: number
+  points: number
+  positions: number
+  last24hPoints: number
   rank: number
   address: PublicKey
 }

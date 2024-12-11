@@ -30,7 +30,7 @@ export const LeaderboardWrapper: React.FC = () => {
   const counterItems = React.useMemo(
     () => [
       {
-        value: userStats?.totalPoints ?? '0',
+        value: userStats?.points ?? '0',
         label: 'Your Points',
         styleVariant: classes.counterYourPoints
       },
@@ -40,7 +40,7 @@ export const LeaderboardWrapper: React.FC = () => {
         styleVariant: classes.counterYourRanking
       },
       {
-        value: userStats?.last24HoursPoints ?? '0',
+        value: userStats?.last24hPoints ?? '0',
         label: 'Your points per day',
         styleVariant: classes.counterYourPointsPerDay
       }

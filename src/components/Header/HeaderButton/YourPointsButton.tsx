@@ -47,11 +47,7 @@ export const YourPointsButton: React.FC<IProps> = ({
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
         onClick={handleClick}>
-        {isSm ? (
-          <KeyboardArrowDownIcon id='downIcon' />
-        ) : (
-          `Points: ${currentUser?.totalPoints ?? 0}`
-        )}
+        {isSm ? <KeyboardArrowDownIcon id='downIcon' /> : `Points: ${currentUser?.points ?? 0}`}
       </Button>
       <YourPointsModal
         networks={networks}

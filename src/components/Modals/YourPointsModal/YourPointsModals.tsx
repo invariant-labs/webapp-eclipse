@@ -46,7 +46,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({
         <Box className={classes.counterContainer}>
           {[
             {
-              value: userStats?.totalPoints ?? 0,
+              value: userStats?.points ?? 0,
               label: 'Your Points',
               styleVariant: classes.counterYourPoints
             },
