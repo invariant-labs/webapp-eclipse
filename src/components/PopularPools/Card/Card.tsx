@@ -23,7 +23,7 @@ const Card: React.FC<ICard> = ({
   addressFrom,
   addressTo,
   TVL,
-  // apy,
+  apy,
   // apyData,
   isLoading,
   isUnknownFrom,
@@ -120,6 +120,7 @@ const Card: React.FC<ICard> = ({
                 {volume !== undefined && (
                   <StatsLabel title='Volume' value={`$${formatNumber(volume)}`} />
                 )}
+                {apy !== undefined && <StatsLabel title='APY' value={`${apy.toFixed(2)}%`} />}
               </Grid>
               <Grid container justifyContent='space-between' alignItems='center' mt='auto'>
                 <Grid
