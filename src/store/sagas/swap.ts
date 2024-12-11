@@ -130,7 +130,7 @@ export function* handleSwapWithETH(): Generator {
     }
 
     const swapIx = yield* call(
-      [marketProgram, marketProgram.swapInstruction],
+      [marketProgram, marketProgram.swapIx],
       {
         pair: new Pair(tokenFrom, tokenTo, {
           fee: allPools[poolIndex].fee,
@@ -370,7 +370,7 @@ export function* handleSwap(): Generator {
     }
 
     const swapTx = yield* call(
-      [marketProgram, marketProgram.swapTransaction],
+      [marketProgram, marketProgram.swapTx],
       {
         pair: new Pair(tokenFrom, tokenTo, {
           fee: allPools[poolIndex].fee,
