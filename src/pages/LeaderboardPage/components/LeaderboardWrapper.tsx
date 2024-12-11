@@ -6,14 +6,14 @@ import { Faq } from './Faq/Faq'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
-import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { leaderboardSelectors, topRankedUsers } from '@store/selectors/leaderboard'
 
 export const LeaderboardWrapper: React.FC = () => {
   const [alignment, setAlignment] = useState<string>('leaderboard')
   const { classes } = useStyles()
 
   const isLoading = useSelector(leaderboardSelectors.loading)
-  const leaderboard = useSelector(leaderboardSelectors.leaderboard)
+  const leaderboard = useSelector(topRankedUsers)
   const userStats = useSelector(leaderboardSelectors.currentUser)
   const dispatch = useDispatch()
 
