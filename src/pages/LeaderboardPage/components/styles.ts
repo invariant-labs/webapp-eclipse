@@ -10,6 +10,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
       gap: '24px',
+
       width: 'calc(100% - 10px)',
       padding: '10px'
     },
@@ -214,13 +215,15 @@ const useStyles = makeStyles()((theme: Theme) => {
       paddingRight: 32
     },
 
-    creatorMainContainer: {
+    leaderBoardWrapper: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       gap: '24px',
       paddingTop: '24px',
+      maxWidth: 1072,
+
       [theme.breakpoints.up('xl')]: {
         width: '50%'
       }

@@ -58,7 +58,7 @@ export const LeaderboardWrapper: React.FC = () => {
 
   return (
     <Box className={classes.pageWrapper}>
-      <Box className={classes.creatorMainContainer}>
+      <Box className={classes.leaderBoardWrapper}>
         <Box className={classes.column}>
           <img src={EclipseLogo} alt='Eclipse Logo' className={classes.heroLogo} />
         </Box>
