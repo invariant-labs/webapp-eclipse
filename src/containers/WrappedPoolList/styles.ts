@@ -66,6 +66,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       flexDirection: 'column',
       alignItems: 'flex-start'
     }
+  },
+  container: {
+    width: '100%'
   }
 }))
 

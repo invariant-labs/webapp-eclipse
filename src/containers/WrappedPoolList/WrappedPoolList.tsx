@@ -49,7 +49,7 @@ export const WrappedPoolList: React.FC = () => {
   }
 
   return (
-    <div>
+    <div className={classes.container}>
       <Grid
         display='flex'
         alignItems='end'
