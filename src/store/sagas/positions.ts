@@ -419,12 +419,16 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
       },
       {
         lowerTickExists:
-          !ticks.hasError && !ticks.loading
-            ? ticks.allData.find(t => t.index === data.lowerTick) !== undefined
+          !ticks.hasError &&
+          !ticks.loading &&
+          ticks.allData.find(t => t.index === data.lowerTick) === undefined
+            ? true
             : undefined,
         upperTickExists:
-          !ticks.hasError && !ticks.loading
-            ? ticks.allData.find(t => t.index === data.upperTick) !== undefined
+          !ticks.hasError &&
+          !ticks.loading &&
+          ticks.allData.find(t => t.index === data.upperTick) !== undefined
+            ? true
             : undefined,
         pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
         tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
@@ -633,12 +637,16 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
         },
         {
           lowerTickExists:
-            !ticks.hasError && !ticks.loading
-              ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+            !ticks.hasError &&
+            !ticks.loading &&
+            ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+              ? true
               : undefined,
           upperTickExists:
-            !ticks.hasError && !ticks.loading
-              ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+            !ticks.hasError &&
+            !ticks.loading &&
+            ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+              ? true
               : undefined,
           pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
           tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
