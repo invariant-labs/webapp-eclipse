@@ -10,7 +10,8 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'center',
       padding: '35px 0',
       position: 'relative',
-      zIndex: 50
+      zIndex: 50,
+      background: colors.invariant.component
     },
     footerItem: {
       margin: '0 10px',
