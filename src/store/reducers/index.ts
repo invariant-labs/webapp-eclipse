@@ -16,6 +16,7 @@ import { NetworkType } from '@store/consts/static'
 import { RPC } from '@utils/web3/connection'
 import { reducer as creatorReducer, creatorSliceName } from './creator'
 import { reducer as lockerReducer, lockerSliceName } from './locker'
+import { reducer as leaderboardReducer, leaderboardSliceName } from './leaderboard'
 // import { farmsSliceName, reducer as farmsReducer } from './farms'
 // import { bondsSliceName, reducer as bondsReducer } from './bonds'
 
@@ -81,6 +82,7 @@ const combinedReducers = combineReducers({
   [swapSliceName]: swapReducer,
   [positionsSliceName]: positionsReducer,
   [statsSliceName]: statsReducer,
+  [leaderboardSliceName]: leaderboardReducer,
   [creatorSliceName]: creatorReducer,
   [lockerSliceName]: lockerReducer
   // [farmsSliceName]: farmsReducer

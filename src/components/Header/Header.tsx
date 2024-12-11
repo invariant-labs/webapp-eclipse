@@ -21,6 +21,7 @@ import { RpcStatus } from '@store/reducers/solanaConnection'
 import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
 import { PublicKey } from '@solana/web3.js'
 import FaucetButton from './HeaderButton/FaucetButton'
+import { YourPointsButton } from './HeaderButton/YourPointsButton'
 
 export interface IHeader {
   address: PublicKey
@@ -65,12 +66,13 @@ export const Header: React.FC<IHeader> = ({
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
 
-  const routes = ['exchange', 'liquidity', 'creator', 'statistics']
+  const routes = ['exchange', 'liquidity', 'creator', 'points', 'statistics']
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^newPosition\/*/, /^position\/*/],
     exchange: [/^exchange\/*/],
-    creator: [/^creator\/*/]
+    creator: [/^creator\/*/],
+    leaderboard: [/^points\/*/]
   }
 
   const [activePath, setActive] = useState('exchange')
@@ -175,7 +177,12 @@ export const Header: React.FC<IHeader> = ({
           item
           className={classes.routers}
           wrap='nowrap'
-          sx={{ display: { xs: 'none', lg: 'block' } }}>
+          sx={{
+            display: { lg: 'block' },
+            '@media (max-width: 1450px)': {
+              display: 'none'
+            }
+          }}>
           {routes.map(path => (
             <Link key={`path-${path}`} to={`/${path}`} className={classes.link}>
               <NavbarButton
@@ -204,7 +211,13 @@ export const Header: React.FC<IHeader> = ({
                 <FaucetButton onFaucet={onFaucet}>Faucet</FaucetButton>
               </Box>
             )}
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box
+              sx={{
+                display: { md: 'block' },
+                '@media (max-width: 1050px)': {
+                  display: 'none'
+                }
+              }}>
               <SelectRPCButton
                 rpc={rpc}
                 networks={networks}
@@ -213,7 +226,15 @@ export const Header: React.FC<IHeader> = ({
                 rpcStatus={rpcStatus}
               />
             </Box>
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box
+              sx={{
+                display: {
+                  md: 'block',
+                  '@media (max-width: 1050px)': {
+                    display: 'none'
+                  }
+                }
+              }}>
               <SelectChainButton
                 activeChain={activeChain}
                 chains={CHAINS}
@@ -221,6 +242,32 @@ export const Header: React.FC<IHeader> = ({
               />
             </Box>
             <SelectNetworkButton
+              name={typeOfNetwork}
+              networks={[
+                {
+                  networkType: NetworkType.Mainnet,
+                  rpc: defaultMainnetRPC,
+                  rpcName:
+                    mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
+                },
+                {
+                  networkType: NetworkType.Testnet,
+                  rpc: defaultTestnetRPC,
+                  rpcName:
+                    testnetRPCs.find(data => data.rpc === defaultTestnetRPC)?.rpcName ?? 'Custom'
+                }
+                // {
+                //   networkType: NetworkType.Devnet,
+                //   rpc: defaultDevnetRPC,
+                //   rpcName:
+                //     mainnetRPCs.find(data => data.rpc === defaultDevnetRPC)?.rpcName ?? 'Custom'
+                // }
+              ]}
+              onSelect={onNetworkSelect}
+            />
+          </Grid>
+          <Grid>
+            <YourPointsButton
               name={typeOfNetwork}
               networks={[
                 {
