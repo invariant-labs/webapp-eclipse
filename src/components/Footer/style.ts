@@ -10,8 +10,7 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'center',
       padding: '35px 0',
       position: 'relative',
-      zIndex: 50,
-      background: colors.invariant.component
+      zIndex: 50
     },
     footerItem: {
       margin: '0 10px',
@@ -45,6 +44,14 @@ const useStyles = makeStyles()(() => {
     icon: {
       height: 40,
       width: 40
+    },
+    footerWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      height: 56,
+      paddingInline: 16,
+      borderRadius: 24,
+      background: colors.invariant.component
     }
   }
 })
