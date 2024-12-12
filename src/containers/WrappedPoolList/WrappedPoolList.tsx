@@ -61,7 +61,7 @@ export const WrappedPoolList: React.FC = () => {
         justifyContent='space-between'
         className={classes.rowContainer}>
         <Typography className={classes.subheader} mb={2}>
-          Top pools
+          All pools
         </Typography>
         <InputBase
           type={'text'}
