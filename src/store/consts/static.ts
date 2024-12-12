@@ -725,9 +725,14 @@ export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
 
 export const popularPools: { tokenX: string; tokenY: string; fee: string }[] = [
   {
+    tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+    tokenY: 'So11111111111111111111111111111111111111112',
+    fee: '0.3'
+  },
+  {
     tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
     tokenY: 'So11111111111111111111111111111111111111112',
-    fee: '0.01'
+    fee: '0.3'
   },
   {
     tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
@@ -735,13 +740,8 @@ export const popularPools: { tokenX: string; tokenY: string; fee: string }[] = [
     fee: '0.01'
   },
   {
-    tokenX: 'So11111111111111111111111111111111111111112',
-    tokenY: 'trbts2EsWyMdnCjsHUFBKLtgudmBD7Rfbz8zCg1s4EK',
-    fee: '0.3'
-  },
-  {
-    tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+    tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
     tokenY: 'So11111111111111111111111111111111111111112',
-    fee: '0.3'
+    fee: '1'
   }
 ]
