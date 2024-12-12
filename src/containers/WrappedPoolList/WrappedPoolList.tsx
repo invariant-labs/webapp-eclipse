@@ -2,7 +2,7 @@ import PoolList from '@components/Stats/PoolList/PoolList'
 import { Grid, InputAdornment, InputBase, Typography } from '@mui/material'
 import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { shortenAddress } from '@utils/uiUtils'
-import { useDeferredValue, useMemo, useState } from 'react'
+import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SearchIcon from '@static/svg/lupaDark.svg'
 import useStyles from './styles'
@@ -10,6 +10,7 @@ import icons from '@static/icons'
 import { VariantType } from 'notistack'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { network } from '@store/selectors/solanaConnection'
+import { actions } from '@store/reducers/stats'
 
 export const WrappedPoolList: React.FC = () => {
   const { classes } = useStyles()
@@ -47,6 +48,10 @@ export const WrappedPoolList: React.FC = () => {
       })
     )
   }
+
+  useEffect(() => {
+    dispatch(actions.getCurrentStats())
+  }, [])
 
   return (
     <div className={classes.container}>
