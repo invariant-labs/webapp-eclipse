@@ -278,7 +278,7 @@ export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator 
       ? tokensAccounts[collateral.toString()].address
       : null
     if (accountAddress == null) {
-      acc.push(new PublicKey(collateralsAddresses))
+      acc.push(collateral)
     }
   }
   if (acc.length !== 0) {
@@ -443,8 +443,8 @@ export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerato
     )
     associatedAccs.push(associatedAccount)
     const ix = createAssociatedTokenAccountInstruction(
-      associatedAccount,
       wallet.publicKey,
+      associatedAccount,
       wallet.publicKey,
       address,
       programId,
