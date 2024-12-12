@@ -21,7 +21,6 @@ import { RpcStatus } from '@store/reducers/solanaConnection'
 import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
 import { PublicKey } from '@solana/web3.js'
 import FaucetButton from './HeaderButton/FaucetButton'
-import { BN } from '@coral-xyz/anchor'
 
 export interface IHeader {
   address: PublicKey
@@ -41,7 +40,6 @@ export interface IHeader {
   defaultDevnetRPC: string
   defaultMainnetRPC: string
   rpcStatus: RpcStatus
-  walletBalance: BN
 }
 
 export const Header: React.FC<IHeader> = ({
@@ -60,8 +58,7 @@ export const Header: React.FC<IHeader> = ({
   onChainSelect,
   network,
   rpcStatus,
-  defaultMainnetRPC,
-  walletBalance
+  defaultMainnetRPC
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -205,9 +202,7 @@ export const Header: React.FC<IHeader> = ({
           <Grid container className={classes.leftButtons}>
             {typeOfNetwork === NetworkType.Testnet && (
               <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                <FaucetButton onFaucet={onFaucet} walletBalance={walletBalance}>
-                  Faucet
-                </FaucetButton>
+                <FaucetButton onFaucet={onFaucet}>Faucet</FaucetButton>
               </Box>
             )}
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>

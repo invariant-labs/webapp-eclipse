@@ -3,7 +3,7 @@ import { RPC, CHAINS, RECOMMENDED_RPC_ADDRESS, NetworkType } from '@store/consts
 import { actions, RpcStatus } from '@store/reducers/solanaConnection'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, rpcAddress, rpcStatus } from '@store/selectors/solanaConnection'
-import { address, balance, status, thankYouModalShown } from '@store/selectors/solanaWallet'
+import { address, status, thankYouModalShown } from '@store/selectors/solanaWallet'
 import { nightlyConnectAdapter } from '@utils/web3/selector'
 import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -21,7 +21,6 @@ export const HeaderWrapper: React.FC = () => {
   const currentNetwork = useSelector(network)
   const currentRpc = useSelector(rpcAddress)
   const isThankYouModalShown = useSelector(thankYouModalShown)
-  const walletBalance = useSelector(balance)
 
   const location = useLocation()
   const walletAddress = useSelector(address)
@@ -218,7 +217,6 @@ export const HeaderWrapper: React.FC = () => {
         defaultDevnetRPC={defaultDevnetRPC}
         rpcStatus={currentRpcStatus}
         defaultMainnetRPC={defaultMainnetRPC}
-        walletBalance={walletBalance}
       />
     </>
   )
