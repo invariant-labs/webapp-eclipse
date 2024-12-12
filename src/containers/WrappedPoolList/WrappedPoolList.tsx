@@ -1,6 +1,5 @@
-import PoolList from '@components/Stats/PoolList/PoolList'
 import { Grid, InputAdornment, InputBase, Typography } from '@mui/material'
-import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { shortenAddress } from '@utils/uiUtils'
 import { useDeferredValue, useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -11,6 +10,7 @@ import { VariantType } from 'notistack'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
+import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 
 export const WrappedPoolList: React.FC = () => {
   const { classes } = useStyles()
@@ -20,6 +20,7 @@ export const WrappedPoolList: React.FC = () => {
   const currentNetwork = useSelector(network)
   const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
   const deferredSearchPoolsValue = useDeferredValue(searchPoolsValue)
+  const isLoadingStats = useSelector(isLoading)
 
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
@@ -37,7 +38,7 @@ export const WrappedPoolList: React.FC = () => {
         poolData.tokenY.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase())
       )
     })
-  }, [poolsList, deferredSearchPoolsValue])
+  }, [isLoadingStats, poolsList, deferredSearchPoolsValue])
 
   const copyAddressHandler = (message: string, variant: VariantType) => {
     dispatch(
@@ -77,7 +78,7 @@ export const WrappedPoolList: React.FC = () => {
           disabled={poolsList.length === 0}
         />
       </Grid>
-      <PoolList
+      <LiquidityPoolList
         data={filteredPoolsList.map(poolData => ({
           symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
           symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
@@ -112,7 +113,7 @@ export const WrappedPoolList: React.FC = () => {
         }))}
         network={currentNetwork}
         copyAddressHandler={copyAddressHandler}
-        isStatsPage={false}
+        isLoading={isLoadingStats}
       />
     </div>
   )
