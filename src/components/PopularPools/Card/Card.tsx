@@ -69,7 +69,7 @@ const Card: React.FC<ICard> = ({
           <GradientBorder
             borderRadius={24}
             borderWidth={2}
-            backgroundColor={colors.invariant.component}
+            backgroundColor={colors.invariant.newDark}
             innerClassName={classes.container}>
             <img
               src={cardBackgroundTop}

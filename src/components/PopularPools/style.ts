@@ -5,13 +5,16 @@ export const useStyles = makeStyles()(() => ({
   title: {
     color: colors.invariant.text,
     ...typography.heading4,
-    fontWeight: 500
+    fontWeight: 700
   },
   cardsContainer: {
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
     padding: '24px 0px',
-    flexWrap: 'nowrap'
+    flexWrap: 'nowrap',
+    borderRadius: 32,
+    background: colors.invariant.component
   },
   slider: {
     minWidth: '100%',

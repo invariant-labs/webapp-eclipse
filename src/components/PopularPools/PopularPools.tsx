@@ -2,7 +2,6 @@ import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import Card from './Card/Card'
-import GradientBorder from '@components/GradientBorder/GradientBorder'
 import { NetworkType } from '@store/consts/static'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
@@ -35,11 +34,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network }) =>
       <Typography className={classes.title} mb={3}>
         Popular pools
       </Typography>
-      <GradientBorder
-        opacity={0.25}
-        borderRadius={34}
-        borderWidth={1}
-        innerClassName={classes.cardsContainer}>
+      <div className={classes.cardsContainer}>
         <Slider
           dots={isLgDown}
           draggable={isLgDown}
@@ -73,7 +68,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network }) =>
             />
           ))}
         </Slider>
-      </GradientBorder>
+      </div>
     </Grid>
   )
 }
