@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    background: 'linear-gradient(90deg, #111931 0%, #010514 100%)',
+    background: 'linear-gradient(90deg, #010514 0%, #111931 100%)',
     justifyContent: 'space-between',
     alignItems: 'center',
     padding: '6px 12px',
