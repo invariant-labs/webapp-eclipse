@@ -143,7 +143,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             sortType={sortType}
             network={network}
           />
-          {data.length > 0 ? (
+          {data.length > 0 || isLoading ? (
             paginator(page).map((element, index) => (
               <PoolListItem
                 displayType='token'
