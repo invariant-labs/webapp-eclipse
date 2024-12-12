@@ -112,6 +112,7 @@ export const WrappedPoolList: React.FC = () => {
         }))}
         network={currentNetwork}
         copyAddressHandler={copyAddressHandler}
+        isStatsPage={false}
       />
     </div>
   )

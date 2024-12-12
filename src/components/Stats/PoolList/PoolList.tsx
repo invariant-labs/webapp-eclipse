@@ -1,12 +1,13 @@
 import React, { useMemo, useEffect } from 'react'
 import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
 import { useStyles } from './style'
-import { Grid } from '@mui/material'
+import { Button, Grid, Typography } from '@mui/material'
 import { NetworkType, SortTypePoolList } from '@store/consts/static'
-
 import { PaginationList } from '@components/Pagination/Pagination'
-import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
+import icons from '@static/icons'
+import { useNavigate } from 'react-router-dom'
+import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 
 export interface PoolListInterface {
   data: Array<{
@@ -35,12 +36,19 @@ export interface PoolListInterface {
   }>
   network: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
+  isStatsPage?: boolean
 }
 
-const PoolList: React.FC<PoolListInterface> = ({ data, network, copyAddressHandler }) => {
+const PoolList: React.FC<PoolListInterface> = ({
+  data,
+  network,
+  copyAddressHandler,
+  isStatsPage = true
+}) => {
   const { classes } = useStyles()
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
+  const navigate = useNavigate()
 
   const sortedData = useMemo(() => {
     switch (sortType) {
@@ -127,7 +135,25 @@ const PoolList: React.FC<PoolListInterface> = ({ data, network, copyAddressHandl
             />
           ))
         ) : (
-          <NotFoundPlaceholder title='No pools found...' />
+          <>
+            {isStatsPage ? (
+              <NotFoundPlaceholder title='No pools found...' />
+            ) : (
+              <Grid className={classes.noPoolFoundContainer}>
+                <img className={classes.img} src={icons.empty} alt='Not connected' />
+                <Typography className={classes.noPoolFoundPlaceholder}>No pool found...</Typography>
+                <Typography className={classes.noPoolFoundPlaceholder}>
+                  Add pool by pressing the button!
+                </Typography>
+                <Button
+                  className={classes.addPoolButton}
+                  onClick={() => navigate('/newPosition')}
+                  variant='contained'>
+                  Add pool
+                </Button>
+              </Grid>
+            )}
+          </>
         )}
         {pages > 1 ? (
           <Grid className={classes.pagination}>
