@@ -8,7 +8,6 @@ import { RpcStatus } from '@store/reducers/solanaConnection'
 import { Chain } from '@store/consts/types'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType, RPC } from '@store/consts/static'
-import { BN } from '@coral-xyz/anchor'
 
 const meta = {
   title: 'Layout/Header',
@@ -49,7 +48,6 @@ export const Primary: Story = {
     network: NetworkType.Testnet,
     defaultDevnetRPC: RPC.DEV_EU,
     rpcStatus: RpcStatus.Uninitialized,
-    defaultMainnetRPC: RPC.MAIN,
-    walletBalance: new BN(0)
+    defaultMainnetRPC: RPC.MAIN
   }
 }
