@@ -61,7 +61,7 @@ const Card: React.FC<ICard> = ({
           variant='rounded'
           animation='wave'
           width={220}
-          height={304} //329 with 4 stats labels
+          height={329}
           style={{ opacity: 0.7, borderRadius: 24 }}
         />
       ) : (
