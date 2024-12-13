@@ -142,7 +142,7 @@ export const Header: React.FC<IHeader> = ({
   }, [network])
 
   return (
-    <Grid container>
+    <Grid container className={classes.background}>
       <Grid container className={classes.root} direction='row' alignItems='center' wrap='nowrap'>
         <Grid
           container
