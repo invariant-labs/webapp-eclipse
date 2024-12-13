@@ -10,6 +10,7 @@ import {
   WETH_MIN_FAUCET_FEE_MAIN,
   WETH_MIN_FAUCET_FEE_TEST
 } from '@store/consts/static'
+import classNames from 'classnames'
 
 export interface IProps {
   onFaucet: () => void
@@ -69,11 +70,9 @@ export const FaucetButton: React.FC<IProps> = ({
       <TooltipHover text={getTooltipText()} top={50}>
         <div>
           <Button
-            className={classes.headerButton}
+            className={classNames(classes.headerButton, { [classes.disabled]: isDisabled })}
             variant='contained'
-            classes={{ disabled: classes.disabled }}
-            disabled={isDisabled}
-            onClick={handleClick}>
+            onClick={isDisabled ? () => {} : handleClick}>
             {children}
           </Button>
         </div>
