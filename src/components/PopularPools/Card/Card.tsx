@@ -61,7 +61,7 @@ const Card: React.FC<ICard> = ({
           variant='rounded'
           animation='wave'
           width={220}
-          height={329}
+          height={344}
           style={{ opacity: 0.7, borderRadius: 24 }}
         />
       ) : (

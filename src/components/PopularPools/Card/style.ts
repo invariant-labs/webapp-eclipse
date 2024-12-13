@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => ({
   root: { width: '226px' },
   container: {
     position: 'relative',
-    height: 325,
+    height: 340,
     borderRadius: '24px',
     overflow: 'hidden'
   },
@@ -51,7 +51,8 @@ export const useStyles = makeStyles()(() => ({
     textOverflow: 'ellipsis',
     display: 'block',
     ...typography.heading4,
-    marginBottom: '24px'
+    marginBottom: '12px',
+    fontSize: 28
   },
   back: {
     width: 'fit-content',
@@ -72,7 +73,8 @@ export const useStyles = makeStyles()(() => ({
   backText: {
     color: colors.invariant.text,
     WebkitPaddingBefore: '2px',
-    ...typography.tiny2
+    ...typography.tiny2,
+    fontSize: 16
   },
   button: {
     color: colors.invariant.black,
@@ -80,11 +82,12 @@ export const useStyles = makeStyles()(() => ({
     textTransform: 'none',
     background: colors.invariant.pinkLinearGradientOpacity,
     borderRadius: 8,
-    height: 27,
+    height: 32,
     width: 105,
     paddingRight: 9,
     paddingLeft: 9,
     letterSpacing: -0.03,
+    fontSize: 16,
 
     '&:hover': {
       background: colors.invariant.pinkLinearGradient,
