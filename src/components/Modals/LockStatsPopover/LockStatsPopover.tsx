@@ -168,10 +168,7 @@ export const LockStatsPopover = ({
                 ]}
                 colors={[colors.invariant.pink, colors.invariant.green]}
                 slotProps={{
-                  legend: { hidden: true },
-                  pieArc: {
-                    fill: 'currentColor'
-                  }
+                  legend: { hidden: true }
                 }}
                 width={255}
                 height={155}
