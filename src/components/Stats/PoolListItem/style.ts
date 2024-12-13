@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => ({
   container: {
     color: colors.white.main,
     display: 'grid',
-    gridTemplateColumns: '5%  auto 15% 15% 12.5% 160px',
+    gridTemplateColumns: '5% auto 15% 12% 15% 12% 160px',
     padding: '18px 0',
     backgroundColor: colors.invariant.component,
     borderBottom: `1px solid ${colors.invariant.light}`,
@@ -23,11 +23,11 @@ export const useStyles = makeStyles()(() => ({
     },
 
     [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: 'auto 15%  17.5%  12.5% 120px'
+      gridTemplateColumns: '16% 20% 16% 20% 16% auto'
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '32.5% 17.5% 35% 15% ',
+      gridTemplateColumns: 'auto 20% 24% 20%',
 
       '& p': {
         justifyContent: 'flex-start',
@@ -177,5 +177,16 @@ export const useStyles = makeStyles()(() => ({
         color: colors.invariant.lightHover
       }
     }
+  },
+  row: {
+    display: 'flex',
+    gap: 4,
+    fontSize: 30,
+    height: 32
+  },
+  apy: {
+    fontSize: 12,
+    alignSelf: 'flex-end',
+    color: colors.invariant.textGrey
   }
 }))
