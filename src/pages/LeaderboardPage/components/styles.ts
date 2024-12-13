@@ -222,31 +222,33 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       gap: '24px',
       paddingTop: '24px',
-      width: '100%',
-      maxWidth: '1072px',
+      // width: '100%',
+      width: '1072px',
 
-      [theme.breakpoints.down('sm')]: {
-        width: '350px',
-        gap: '16px',
-        padding: '16px 12px'
+      [theme.breakpoints.between('lg', 'xl')]: {
+        width: '1072px'
       },
 
-      [theme.breakpoints.down('md')]: {
-        maxWidth: '536px',
+      [theme.breakpoints.between('md', 'lg')]: {
+        width: '800px'
+      },
+
+      [`@media (min-width: 480px) and (max-width: ${theme.breakpoints.values.md}px)`]: {
+        width: '436px',
         gap: '20px',
         padding: '20px 14px'
       },
 
-      [theme.breakpoints.between('md', 'lg')]: {
-        maxWidth: '800px'
+      [`@media (min-width: 395px) and (max-width: 480px)`]: {
+        width: '350px'
       },
 
-      [theme.breakpoints.between('lg', 'xl')]: {
-        maxWidth: '1072px'
+      [`@media (max-width: 394px)`]: {
+        width: '330px'
       },
 
       [theme.breakpoints.up('xl')]: {
-        maxWidth: '1200px'
+        width: '1200px'
       }
     }
   }
