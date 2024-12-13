@@ -119,8 +119,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
 
     const combinedTransaction = new Transaction()
 
-    const { initPoolTx, initPoolSigners, initPositionTx } = yield* call(
-      [marketProgram, marketProgram.initPoolWithSqrtPriceAndPositionTx],
+    const { createPoolTx, createPoolSigners, createPositionTx } = yield* call(
+      [marketProgram, marketProgram.createPoolWithSqrtPriceAndPositionTx],
       {
         pair: new Pair(data.tokenX, data.tokenY, {
           fee: data.fee,
@@ -144,20 +144,20 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       }
     )
 
-    combinedTransaction.add(createIx).add(transferIx).add(initIx).add(initPositionTx).add(unwrapIx)
+    combinedTransaction.add(createIx).add(transferIx).add(initIx).add(createPositionTx).add(unwrapIx)
 
     // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
     // initialTx.recentBlockhash = initialBlockhash.blockhash
     // initialTx.feePayer = wallet.publicKey
 
-    const initPoolBlockhash = yield* call([connection, connection.getLatestBlockhash])
+    const createPoolBlockhash = yield* call([connection, connection.getLatestBlockhash])
 
-    initPoolTx.recentBlockhash = initPoolBlockhash.blockhash
-    initPoolTx.feePayer = wallet.publicKey
+    createPoolTx.recentBlockhash = createPoolBlockhash.blockhash
+    createPoolTx.feePayer = wallet.publicKey
 
-    const initPositionBlockhash = yield* call([connection, connection.getLatestBlockhash])
+    const createPositionBlockhash = yield* call([connection, connection.getLatestBlockhash])
 
-    combinedTransaction.recentBlockhash = initPositionBlockhash.blockhash
+    combinedTransaction.recentBlockhash = createPositionBlockhash.blockhash
     combinedTransaction.feePayer = wallet.publicKey
 
     // const unwrapTx = new Transaction().add(unwrapIx)
@@ -167,10 +167,10 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const [signedCombinedTransactionTx, initPoolSignedTx] = (yield* call(
+    const [signedCombinedTransactionTx, createPoolSignedTx] = (yield* call(
       [wallet, wallet.signAllTransactions],
       // [initialTx, initPositionTx, unwrapTx, initPoolTx]
-      [combinedTransaction, initPoolTx]
+      [combinedTransaction, createPoolTx]
     )) as Transaction[]
 
     closeSnackbar(loaderSigningTx)
@@ -179,8 +179,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     // initialSignedTx.partialSign(wrappedEthAccount)
     ;(signedCombinedTransactionTx as Transaction).partialSign(wrappedEthAccount)
 
-    if (initPoolSigners.length) {
-      ;(initPoolSignedTx as Transaction).partialSign(...initPoolSigners)
+    if (createPoolSigners.length) {
+      ;(createPoolSignedTx as Transaction).partialSign(...createPoolSigners)
     }
 
     // const initialTxid = yield* call(
@@ -205,11 +205,11 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     //   )
     // }
 
-    yield* call(sendAndConfirmRawTransaction, connection, initPoolSignedTx.serialize(), {
+    yield* call(sendAndConfirmRawTransaction, connection, createPoolSignedTx.serialize(), {
       skipPreflight: false
     })
 
-    const initPositionTxid = yield* call(
+    const createPositionTxid = yield* call(
       sendAndConfirmRawTransaction,
       connection,
       signedCombinedTransactionTx.serialize(),
@@ -218,7 +218,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       }
     )
 
-    if (!initPositionTxid.length) {
+    if (!createPositionTxid.length) {
       yield put(actions.setInitPositionSuccess(false))
 
       closeSnackbar(loaderCreatePool)
@@ -231,7 +231,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
             'Position adding failed. Please try again.',
           variant: 'error',
           persist: false,
-          txid: initPositionTxid
+          txid: createPositionTxid
         })
       )
     } else {
@@ -240,7 +240,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
           message: 'Position added successfully.',
           variant: 'success',
           persist: false,
-          txid: initPositionTxid
+          txid: createPositionTxid
         })
       )
 
@@ -405,7 +405,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     combinedTransaction.add(createIx).add(transferIx).add(initIx)
 
     const initPositionTx = yield* call(
-      [marketProgram, marketProgram.initPositionTx],
+      [marketProgram, marketProgram.createPositionTx],
       {
         pair,
         userTokenX,
@@ -419,12 +419,16 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
       },
       {
         lowerTickExists:
-          !ticks.hasError && !ticks.loading
-            ? ticks.allData.find(t => t.index === data.lowerTick) !== undefined
+          !ticks.hasError &&
+          !ticks.loading &&
+          ticks.allData.find(t => t.index === data.lowerTick) === undefined
+            ? true
             : undefined,
         upperTickExists:
-          !ticks.hasError && !ticks.loading
-            ? ticks.allData.find(t => t.index === data.upperTick) !== undefined
+          !ticks.hasError &&
+          !ticks.loading &&
+          ticks.allData.find(t => t.index === data.upperTick) !== undefined
+            ? true
             : undefined,
         pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
         tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
@@ -590,12 +594,12 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     }
 
     let tx: Transaction
-    let initPoolTx: Transaction | null = null
+    let createPoolTx: Transaction | null = null
     let poolSigners: Keypair[] = []
 
     if (action.payload.initPool) {
       const txs = yield* call(
-        [marketProgram, marketProgram.initPoolWithSqrtPriceAndPositionTx],
+        [marketProgram, marketProgram.createPoolWithSqrtPriceAndPositionTx],
         {
           pair,
           userTokenX,
@@ -614,12 +618,12 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
           positionsList: !userPositionList.loading ? userPositionList : undefined
         }
       )
-      tx = txs.initPositionTx
-      initPoolTx = txs.initPoolTx
-      poolSigners = txs.initPoolSigners
+      tx = txs.createPositionTx
+      createPoolTx = txs.createPoolTx
+      poolSigners = txs.createPoolSigners
     } else {
       tx = yield* call(
-        [marketProgram, marketProgram.initPositionTx],
+        [marketProgram, marketProgram.createPositionTx],
         {
           pair,
           userTokenX,
@@ -633,12 +637,16 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
         },
         {
           lowerTickExists:
-            !ticks.hasError && !ticks.loading
-              ? ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+            !ticks.hasError &&
+            !ticks.loading &&
+            ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+              ? true
               : undefined,
           upperTickExists:
-            !ticks.hasError && !ticks.loading
-              ? ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+            !ticks.hasError &&
+            !ticks.loading &&
+            ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+              ? true
               : undefined,
           pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
           tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
@@ -652,12 +660,12 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     tx.recentBlockhash = blockhash.blockhash
     tx.feePayer = wallet.publicKey
 
-    if (initPoolTx) {
-      initPoolTx.recentBlockhash = blockhash.blockhash
-      initPoolTx.feePayer = wallet.publicKey
+    if (createPoolTx) {
+      createPoolTx.recentBlockhash = blockhash.blockhash
+      createPoolTx.feePayer = wallet.publicKey
       yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-      const signedTx = (yield* call([wallet, wallet.signTransaction], initPoolTx)) as Transaction
+      const signedTx = (yield* call([wallet, wallet.signTransaction], createPoolTx)) as Transaction
 
       closeSnackbar(loaderSigningTx)
 
@@ -972,7 +980,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
       tx.add(...ix).add(unwrapIx)
     } else {
       const ix = yield* call(
-        [marketProgram, marketProgram.claimFeeInstruction],
+        [marketProgram, marketProgram.claimFeeIx],
         {
           pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
             fee: poolForIndex.fee,
@@ -1137,7 +1145,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
       tx.add(...ix)
     } else {
       const ix = yield* call(
-        [marketProgram, marketProgram.claimFeeInstruction],
+        [marketProgram, marketProgram.claimFeeIx],
         {
           pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
             fee: poolForIndex.fee,
@@ -1297,7 +1305,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     // }
 
     const ix = yield* call(
-      [marketProgram, marketProgram.removePositionInstruction],
+      [marketProgram, marketProgram.removePositionIx],
       {
         pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
           fee: poolForIndex.fee,
@@ -1472,7 +1480,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     // }
 
     const ix = yield* call(
-      [marketProgram, marketProgram.removePositionInstruction],
+      [marketProgram, marketProgram.removePositionIx],
       {
         pair: new Pair(poolForIndex.tokenX, poolForIndex.tokenY, {
           fee: poolForIndex.fee,

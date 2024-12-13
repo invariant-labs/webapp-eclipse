@@ -3,7 +3,7 @@ import { Controller } from 'react-hook-form'
 import { CloudUpload as UploadIcon, Image as ImageIcon } from '@mui/icons-material'
 import useStyles from './styles'
 import { Box, Button, Typography } from '@mui/material'
-import { defaultImages } from '@pages/SolanaCreator/utils/solanaCreatorUtils'
+import { defaultImages } from '@store/consts/static'
 
 interface ImagePickerProps {
   control: any

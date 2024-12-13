@@ -80,7 +80,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       whiteSpace: 'nowrap'
     },
     disabled: {
-      opacity: 0.5
+      color: `${colors.invariant.textGrey} !important`,
+      cursor: 'not-allowed !important',
+
+      '&:hover': {
+        background: 'transparent',
+        boxShadow: 'none'
+      }
     },
     paper: {
       background: 'transparent',

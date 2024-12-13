@@ -14,6 +14,7 @@ import {
   airdropTokens,
   NetworkType,
   WETH_MIN_FAUCET_FEE_MAIN,
+  WETH_MIN_FAUCET_FEE_TEST,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import { Token as StoreToken } from '@store/consts/types'
@@ -176,6 +177,17 @@ export function* handleAirdrop(): Generator {
 
   try {
     if (networkType === NetworkType.Testnet) {
+      if (ethBalance.lt(WETH_MIN_FAUCET_FEE_TEST)) {
+        yield put(
+          snackbarsActions.add({
+            message: 'Do not have enough ETH to claim faucet',
+            variant: 'error',
+            persist: false
+          })
+        )
+        return
+      }
+
       yield* put(actions.showThankYouModal(true))
       yield put(
         snackbarsActions.add({
@@ -206,7 +218,7 @@ export function* handleAirdrop(): Generator {
       if (ethBalance.lt(WETH_MIN_FAUCET_FEE_MAIN)) {
         yield put(
           snackbarsActions.add({
-            message: 'Do not have enough ETH to get faucet',
+            message: 'Do not have enough ETH to claim faucet',
             variant: 'error',
             persist: false
           })
@@ -278,7 +290,7 @@ export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator 
       ? tokensAccounts[collateral.toString()].address
       : null
     if (accountAddress == null) {
-      acc.push(new PublicKey(collateralsAddresses))
+      acc.push(collateral)
     }
   }
   if (acc.length !== 0) {
@@ -443,8 +455,8 @@ export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerato
     )
     associatedAccs.push(associatedAccount)
     const ix = createAssociatedTokenAccountInstruction(
-      associatedAccount,
       wallet.publicKey,
+      associatedAccount,
       wallet.publicKey,
       address,
       programId,
