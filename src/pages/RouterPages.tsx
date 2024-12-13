@@ -19,7 +19,7 @@ export const router = createBrowserRouter(
       <Route path='/position/:id' element={<SinglePositionPage />} />
       <Route path='/portfolio' element={<PortfolioPage />} />
       <Route path='/creator' element={<SolanaCreator />} />
-      <Route path='/leaderboard' element={<LeaderBoardPage />} />
+      {/* <Route path='/leaderboard' element={<LeaderBoardPage />} /> */}
       <Route path='*' element={<Navigate to='/exchange' replace />} />
     </Route>
   )

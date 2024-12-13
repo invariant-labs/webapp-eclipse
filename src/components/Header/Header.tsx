@@ -65,7 +65,7 @@ export const Header: React.FC<IHeader> = ({
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
 
-  const routes = ['exchange', 'liquidity', 'portfolio', 'creator', 'leaderboard', 'statistics']
+  const routes = ['exchange', 'liquidity', 'portfolio', 'creator' /*'leaderboard'*/, 'statistics']
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^newPosition\/*/, /^position\/*/],
