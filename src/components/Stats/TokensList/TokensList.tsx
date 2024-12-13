@@ -3,10 +3,18 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { theme } from '@static/theme'
 import useStyles from './style'
 import { Grid, useMediaQuery } from '@mui/material'
-import { NetworkType, SortTypeTokenList } from '@store/consts/static'
+import {
+  BTC_TEST,
+  NetworkType,
+  SortTypeTokenList,
+  USDC_TEST,
+  WETH_TEST
+} from '@store/consts/static'
 import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
+import { Keypair } from '@solana/web3.js'
+import classNames from 'classnames'
 
 export interface ITokensListData {
   icon: string
@@ -23,9 +31,27 @@ export interface ITokensList {
   data: ITokensListData[]
   network: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
+  isLoading: boolean
 }
 
-const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler }) => {
+const ITEMS_PER_PAGE = 10
+
+const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
+
+const generateMockData = () => {
+  return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
+    icon: tokens[index % tokens.length].logoURI,
+    name: tokens[index % tokens.length].name,
+    symbol: tokens[index % tokens.length].symbol,
+    price: Math.random() * 100,
+    volume: Math.random() * 10000,
+    TVL: Math.random() * 10000,
+    address: Keypair.generate().publicKey.toString(),
+    isUnknown: false
+  }))
+}
+
+const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler, isLoading }) => {
   const { classes } = useStyles()
   const [page, setPage] = useState(1)
   const [sortType, setSortType] = React.useState(SortTypeTokenList.VOLUME_DESC)
@@ -33,6 +59,10 @@ const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler }
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
 
   const sortedData = useMemo(() => {
+    if (isLoading) {
+      return generateMockData()
+    }
+
     switch (sortType) {
       case SortTypeTokenList.NAME_ASC:
         return data.sort((a, b) =>
@@ -89,10 +119,15 @@ const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler }
   const pages = Math.ceil(data.length / 10)
 
   return (
-    <Grid container direction='column' classes={{ root: classes.container }} wrap='nowrap'>
+    <Grid
+      container
+      direction='column'
+      classes={{ root: classes.container }}
+      wrap='nowrap'
+      className={classNames({ [classes.loadingOverlay]: isLoading })}>
       <>
         <TokenListItem displayType='header' onSort={setSortType} sortType={sortType} />
-        {data.length > 0 ? (
+        {data.length > 0 || isLoading ? (
           paginator(page).data.map((token, index) => {
             return (
               <TokenListItem
