@@ -3,14 +3,29 @@ import React from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Button } from '@mui/material'
+import { BN } from '@coral-xyz/anchor'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import {
+  NetworkType,
+  WETH_MIN_FAUCET_FEE_MAIN,
+  WETH_MIN_FAUCET_FEE_TEST
+} from '@store/consts/static'
 
 export interface IProps {
   onFaucet: () => void
   disabled?: boolean
   children?: React.ReactNode
+  network: NetworkType
+  walletBalance: BN | null
 }
 
-export const FaucetButton: React.FC<IProps> = ({ onFaucet, disabled = false, children }) => {
+export const FaucetButton: React.FC<IProps> = ({
+  onFaucet,
+  disabled = false,
+  children,
+  network,
+  walletBalance
+}) => {
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openFaucet, setOpenFaucet] = React.useState<boolean>(false)
@@ -26,16 +41,28 @@ export const FaucetButton: React.FC<IProps> = ({ onFaucet, disabled = false, chi
     setOpenFaucet(false)
   }
 
+  console.log(walletBalance)
+  const isDisabled =
+    disabled ||
+    (walletBalance !== null &&
+      walletBalance.lte(
+        network === NetworkType.Mainnet ? WETH_MIN_FAUCET_FEE_MAIN : WETH_MIN_FAUCET_FEE_TEST
+      ))
+
   return (
     <>
-      <Button
-        className={classes.headerButton}
-        variant='contained'
-        classes={{ disabled: classes.disabled }}
-        disabled={disabled}
-        onClick={handleClick}>
-        {children}
-      </Button>
+      <TooltipHover text={isDisabled ? "You don't have enought ETH to claim faucet" : ''} top={50}>
+        <div>
+          <Button
+            className={classes.headerButton}
+            variant='contained'
+            classes={{ disabled: classes.disabled }}
+            disabled={isDisabled}
+            onClick={handleClick}>
+            {children}
+          </Button>
+        </div>
+      </TooltipHover>
       <Faucet open={openFaucet} onFaucet={onFaucet} anchorEl={anchorEl} handleClose={handleClose} />
     </>
   )

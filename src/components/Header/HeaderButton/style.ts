@@ -80,7 +80,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       whiteSpace: 'nowrap'
     },
     disabled: {
-      opacity: 0.5
+      color: `${colors.invariant.textGrey} !important`
     },
     paper: {
       background: 'transparent',
