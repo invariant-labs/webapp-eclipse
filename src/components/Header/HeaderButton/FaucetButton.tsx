@@ -41,17 +41,32 @@ export const FaucetButton: React.FC<IProps> = ({
     setOpenFaucet(false)
   }
 
-  console.log(walletBalance)
   const isDisabled =
     disabled ||
-    (walletBalance !== null &&
+    walletBalance === null ||
+    walletBalance.lte(
+      network === NetworkType.Mainnet ? WETH_MIN_FAUCET_FEE_MAIN : WETH_MIN_FAUCET_FEE_TEST
+    )
+
+  const getTooltipText = () => {
+    if (walletBalance === null) {
+      return 'Please connect wallet to claim faucet'
+    }
+    if (
+      walletBalance !== null &&
       walletBalance.lte(
         network === NetworkType.Mainnet ? WETH_MIN_FAUCET_FEE_MAIN : WETH_MIN_FAUCET_FEE_TEST
-      ))
+      )
+    ) {
+      return "You don't have enough ETH to claim faucet"
+    }
+
+    return ''
+  }
 
   return (
     <>
-      <TooltipHover text={isDisabled ? "You don't have enought ETH to claim faucet" : ''} top={50}>
+      <TooltipHover text={getTooltipText()} top={50}>
         <div>
           <Button
             className={classes.headerButton}
