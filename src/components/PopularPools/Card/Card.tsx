@@ -114,7 +114,12 @@ const Card: React.FC<ICard> = ({
                 {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}
               </Typography>
               <Grid container gap='8px'>
-                {apy !== undefined && <StatsLabel title='APY' value={`${apy.toFixed(2)}%`} />}
+                {apy !== undefined && (
+                  <StatsLabel
+                    title='APY'
+                    value={`${apy > 1000 ? '>1000%' : apy === 0 ? '-' : apy.toFixed(2) + '%'}`}
+                  />
+                )}
                 <StatsLabel title='Fee' value={fee + '%'} />
                 {TVL !== undefined && <StatsLabel title='TVL' value={`$${formatNumber(TVL)}`} />}
                 {volume !== undefined && (
