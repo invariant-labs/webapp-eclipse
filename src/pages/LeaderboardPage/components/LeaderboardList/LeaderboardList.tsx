@@ -8,14 +8,15 @@ import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
 import loader from '@static/gif/loader.gif'
 import { Keypair, PublicKey } from '@solana/web3.js'
+import { BN } from '@coral-xyz/anchor'
 
 interface LeaderboardEntry {
   // displayType: 'header' | 'item'
   hideBottomLine?: boolean
 
-  points?: number
+  points?: BN
   positions?: number
-  last24hPoints?: number
+  last24hPoints?: BN
   rank?: number
   address?: PublicKey
 }

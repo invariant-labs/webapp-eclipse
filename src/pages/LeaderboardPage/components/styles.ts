@@ -229,7 +229,31 @@ const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: '24px',
-      maxWidth: 1072,
+      paddingTop: '24px',
+      // width: '100%',
+      width: '1072px',
+
+      [theme.breakpoints.between('lg', 'xl')]: {
+        width: '1072px'
+      },
+
+      [theme.breakpoints.between('md', 'lg')]: {
+        width: '800px'
+      },
+
+      [`@media (min-width: 480px) and (max-width: ${theme.breakpoints.values.md}px)`]: {
+        width: '436px',
+        gap: '20px',
+        padding: '20px 14px'
+      },
+
+      [`@media (min-width: 395px) and (max-width: 480px)`]: {
+        width: '350px'
+      },
+
+      [`@media (max-width: 394px)`]: {
+        width: '330px'
+      },
 
       [theme.breakpoints.up('xl')]: {
         width: '50%'

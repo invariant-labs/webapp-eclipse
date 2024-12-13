@@ -11,6 +11,8 @@ import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
 import { network } from '@store/selectors/solanaConnection'
+import { BN } from '@coral-xyz/anchor'
+import { printBN } from '@utils/utils'
 
 interface BaseLeaderboardItemProps {
   displayType: 'item' | 'header'
@@ -26,9 +28,9 @@ interface LeaderboardItemDetailProps extends BaseLeaderboardItemProps {
 
   hideBottomLine?: boolean
 
-  points?: number
+  points?: string
   positions?: number
-  last24hPoints?: number
+  last24hPoints?: string
   rank?: number
   address?: PublicKey
 }
@@ -76,6 +78,8 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
     positions = 0,
     hideBottomLine = false
   } = props
+
+  console.log(props)
 
   const getColorByPlace = (index: number) => {
     return index - 1 < PLACE_COLORS.length ? PLACE_COLORS[index - 1] : colors.invariant.text
@@ -136,16 +140,16 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
           </Box>
         </Typography>
 
-        <Typography>{points}</Typography>
+        <Typography>{printBN(new BN(points, 'hex'), 6)}</Typography>
 
-        {!isMd && last24hPoints > 0 && (
+        {!isMd && (
           <Typography>
             <Typography
               style={{
                 color: colors.invariant.green,
                 ...typography.heading4
               }}>
-              + {last24hPoints}
+              + {printBN(new BN(last24hPoints, 'hex'), 6)}
             </Typography>
           </Typography>
         )}
