@@ -6,7 +6,7 @@ import icons from '@static/icons'
 import { actions } from '@store/reducers/stats'
 import { Grid } from '@mui/material'
 import { network } from '@store/selectors/solanaConnection'
-import { popularPools } from '@store/consts/static'
+import { getPopularPools } from '@store/consts/static'
 
 export interface PopularPoolData {
   symbolFrom?: string
@@ -37,6 +37,20 @@ export const PopularPoolsWrapper: React.FC = () => {
 
   const list: PopularPoolData[] = useMemo(() => {
     const data: PopularPoolData[] = []
+
+    let popularPools = getPopularPools(currentNetwork)
+    if (popularPools.length === 0) {
+      console.log(2)
+      popularPools = poolsList
+        .sort((a, b) => b.volume24 - a.volume24)
+        .slice(0, 4)
+        .map(pool => ({
+          tokenX: pool.tokenX.toString(),
+          tokenY: pool.tokenY.toString(),
+          fee: pool.fee.toString()
+        }))
+    }
+
     popularPools.map(pool => {
       const poolData = poolsList.find(
         item =>

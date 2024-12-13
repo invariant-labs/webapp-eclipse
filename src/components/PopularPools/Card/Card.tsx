@@ -23,7 +23,7 @@ const Card: React.FC<ICard> = ({
   addressFrom,
   addressTo,
   TVL,
-  // apy,
+  apy,
   // apyData,
   isLoading,
   isUnknownFrom,
@@ -61,7 +61,7 @@ const Card: React.FC<ICard> = ({
           variant='rounded'
           animation='wave'
           width={220}
-          height={304} //329 with 4 stats labels
+          height={344}
           style={{ opacity: 0.7, borderRadius: 24 }}
         />
       ) : (
@@ -69,7 +69,7 @@ const Card: React.FC<ICard> = ({
           <GradientBorder
             borderRadius={24}
             borderWidth={2}
-            backgroundColor={colors.invariant.component}
+            backgroundColor={colors.invariant.newDark}
             innerClassName={classes.container}>
             <img
               src={cardBackgroundTop}
@@ -114,7 +114,12 @@ const Card: React.FC<ICard> = ({
                 {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}
               </Typography>
               <Grid container gap='8px'>
-                {/* <StatsLabel title='APY' value={apy.toString()} /> */}
+                {apy !== undefined && (
+                  <StatsLabel
+                    title='APY'
+                    value={`${apy > 1000 ? '>1000%' : apy === 0 ? '-' : apy.toFixed(2) + '%'}`}
+                  />
+                )}
                 <StatsLabel title='Fee' value={fee + '%'} />
                 {TVL !== undefined && <StatsLabel title='TVL' value={`$${formatNumber(TVL)}`} />}
                 {volume !== undefined && (
