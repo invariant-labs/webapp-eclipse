@@ -1,11 +1,12 @@
+import { BN } from '@coral-xyz/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
 export interface UserStats {
-  points: number
+  points: BN
   positions: number
-  last24hPoints: number
+  last24hPoints: BN
   rank: number
   address: PublicKey
 }

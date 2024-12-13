@@ -222,10 +222,31 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       gap: '24px',
       paddingTop: '24px',
-      maxWidth: 1072,
+      width: '100%',
+      maxWidth: '1072px',
+
+      [theme.breakpoints.down('sm')]: {
+        width: '350px',
+        gap: '16px',
+        padding: '16px 12px'
+      },
+
+      [theme.breakpoints.down('md')]: {
+        maxWidth: '536px',
+        gap: '20px',
+        padding: '20px 14px'
+      },
+
+      [theme.breakpoints.between('md', 'lg')]: {
+        maxWidth: '800px'
+      },
+
+      [theme.breakpoints.between('lg', 'xl')]: {
+        maxWidth: '1072px'
+      },
 
       [theme.breakpoints.up('xl')]: {
-        width: '50%'
+        maxWidth: '1200px'
       }
     }
   }
