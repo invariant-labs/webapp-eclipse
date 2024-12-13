@@ -191,7 +191,8 @@ export const PositionsList: React.FC<IProps> = ({
                     disabled={lockedData.length === 0}
                     value={LiquidityPools.Locked}
                     disableRipple
-                    className={classes.switchPoolsButton}>
+                    className={classes.switchPoolsButton}
+                    classes={{ disabled: classes.disabledSwitchButton }}>
                     Locked
                   </ToggleButton>
                 </ToggleButtonGroup>

@@ -539,7 +539,7 @@ export const airdropQuantities: Record<NetworkType, number[]> = {
 
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
 
-// export const WETH_MIN_FAUCET_FEE_MAIN = new BN(10000)
+export const WETH_MIN_FAUCET_FEE_TEST = new BN(45000)
 export const WETH_MIN_FAUCET_FEE_MAIN = new BN(25000)
 
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST = new BN(50000)
