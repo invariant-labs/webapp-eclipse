@@ -264,7 +264,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
-      gap: 24
+      gap: 24,
+      [theme.breakpoints.down(1020)]: {
+        flexDirection: 'column'
+      }
     },
     topScorersItem: {
       display: 'flex',
