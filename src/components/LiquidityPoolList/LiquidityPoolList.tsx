@@ -114,6 +114,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
       //   return data.sort((a, b) => a.apy - b.apy)
       // case SortType.APY_DESC:
       //   return data.sort((a, b) => b.apy - a.apy)
+      default:
+        return data
     }
   }, [data, sortType])
 
