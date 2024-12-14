@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => ({
   container: {
     color: colors.white.main,
     display: 'grid',
-    gridTemplateColumns: '10% auto 20% 10% 10%',
+    gridTemplateColumns: '10% auto 30% 20% 10%',
     padding: '18px 18px',
     backgroundColor: colors.invariant.component,
     borderBottom: `1px solid ${colors.invariant.light}`,

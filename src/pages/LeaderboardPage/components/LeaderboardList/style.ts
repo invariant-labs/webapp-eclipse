@@ -6,11 +6,11 @@ export const useStyles = makeStyles()(() => ({
   container: {
     width: '100%',
     borderRadius: '24px',
-    maxHeight: '1850px',
+    maxHeight: 'fit-content',
     overflow: 'hidden',
     position: 'relative',
     zIndex: 2,
-    backgroundColor: `${colors.invariant.component} !important`
+    backgroundColor: `${colors.invariant.newDark} !important`
   },
   pagination: {
     padding: '20px 0 10px 0',

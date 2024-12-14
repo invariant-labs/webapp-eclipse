@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { alpha, Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
@@ -37,7 +37,7 @@ interface LeaderboardItemDetailProps extends BaseLeaderboardItemProps {
 
 export type LeaderboardItemProps = LeaderboardHeaderProps | LeaderboardItemDetailProps
 
-const PLACE_COLORS = [colors.invariant.yellow, colors.invariant.green, colors.invariant.pink]
+const PLACE_COLORS = [colors.invariant.yellow, colors.invariant.silver, colors.invariant.bronze]
 
 const LeaderboardHeader: React.FC = () => {
   const { classes } = useStyles()
@@ -117,12 +117,19 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
         classes={{ container: classes.container }}
         style={{
           border: hideBottomLine ? 'none' : undefined,
-          background: isYou ? colors.invariant.light : 'transparent'
+          background: isYou ? alpha(colors.invariant.light, 0.4) : 'transparent',
+          paddingLeft: isYou ? 24 : 0,
+          paddingRight: isYou ? 24 : 0
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
         <Typography>
-          {isYou ? 'You' : shortenAddress(address.toString(), 7)}
+          {shortenAddress(address.toString(), 4)}
+          {isYou ? (
+            <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
+              (You)
+            </Typography>
+          ) : null}
           <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline' }}>
             <TooltipHover text='Copy address'>
               <FileCopyOutlinedIcon

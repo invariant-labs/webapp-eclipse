@@ -9,7 +9,10 @@ import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundP
 import loader from '@static/gif/loader.gif'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
-
+import { useSelector } from 'react-redux'
+import { status } from '@store/selectors/solanaWallet'
+import { Status } from '@store/reducers/solanaWallet'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 interface LeaderboardEntry {
   // displayType: 'header' | 'item'
   hideBottomLine?: boolean
@@ -49,6 +52,9 @@ const MemoizedLeaderboardItem = React.memo(LeaderboardItem)
 const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = false }) => {
   const { classes } = useStyles()
   const [currentPage, setCurrentPage] = React.useState(1)
+  const walletStatus = useSelector(status)
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+  const userStats = useSelector(leaderboardSelectors.currentUser)
 
   const displayData = useMemo(() => {
     return isLoading ? generateMockData() : data
@@ -87,22 +93,18 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
         <MemoizedLeaderboardItem displayType='header' />
         {isLoading && <img src={loader} className={classes.loading} alt='Loading' />}
 
-        {/* <Box
-          sx={{
-            paddingLeft: '24px',
-            paddingRight: '24px',
-            background: colors.invariant.light
-          }}>
+        {isConnected && userStats && (
           <MemoizedLeaderboardItem
+            key={userStats.rank}
             displayType='item'
+            rank={userStats.rank}
             isYou
-            liquidityPositions={343}
-            tokenIndex={123}
-            pointsIncome={345}
-            points={3453}
+            positions={userStats.positions}
+            last24hPoints={userStats.last24hPoints}
+            points={userStats.points ?? 0}
+            address={userStats.address}
           />
-        </Box> */}
-
+        )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
           {displayData.length > 0 ? (
             paginatedData.map((element, index) => (

@@ -236,7 +236,27 @@ export const LeaderboardWrapper: React.FC = () => {
             <Box
               className={classes.switchPoolsMarker}
               sx={{
-                left: alignment === 'leaderboard' ? 0 : '50%'
+                left: {
+                  xs: (() => {
+                    switch (alignment) {
+                      case 'leaderboard':
+                        return 0
+                      case 'faq':
+                        return '50%'
+                      case 'reward':
+                        return '100%'
+                      default:
+                        return 0
+                    }
+                  })(),
+                  md: alignment === 'leaderboard' ? 0 : alignment === 'faq' ? '50%' : '100%',
+                  transform:
+                    alignment === 'leaderboard'
+                      ? 'none'
+                      : alignment === 'faq'
+                        ? 'translateX(-50%)'
+                        : 'translateX(-100%)'
+                }
               }}
             />
             <ToggleButtonGroup
@@ -251,7 +271,10 @@ export const LeaderboardWrapper: React.FC = () => {
                 Leaderboard
               </ToggleButton>
               <ToggleButton value={'faq'} disableRipple className={classes.switchPoolsButton}>
-                FAQ
+                FAQ (questions)
+              </ToggleButton>
+              <ToggleButton value={'rewards'} disableRipple className={classes.switchPoolsButton}>
+                Rewards
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
