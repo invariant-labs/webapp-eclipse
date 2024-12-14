@@ -6,7 +6,7 @@ const useStyles = makeStyles()(() => {
     root: {
       background: colors.invariant.component,
       width: 175,
-      height: 251,
+      height: 'fit-content',
       borderRadius: 20,
       marginTop: 8,
       padding: 8
@@ -15,6 +15,7 @@ const useStyles = makeStyles()(() => {
       borderRadius: 5,
       marginTop: 7
     },
+
     listItem: {
       color: colors.invariant.textGrey,
       background: colors.invariant.component,

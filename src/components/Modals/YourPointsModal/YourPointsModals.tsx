@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 // import icons from '@static/icons'
 // import classNames from 'classnames'
 import useStyles from './style'
@@ -8,6 +8,9 @@ import { NetworkType } from '@store/consts/static'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { status } from '@store/selectors/solanaWallet'
+import { Status } from '@store/reducers/solanaWallet'
+import { colors, typography } from '@static/theme'
 
 export interface ISelectNetworkModal {
   networks: ISelectNetwork[]
@@ -27,6 +30,9 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
+  const walletStatus = useSelector(status)
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
   const userStats = useSelector(leaderboardSelectors.currentUser)
   return (
     <Popover
@@ -44,34 +50,69 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({
       }}>
       <Grid className={classes.root}>
         <Box className={classes.counterContainer}>
-          {[
-            {
-              value: userStats?.points ?? 0,
-              label: 'Your Points',
-              styleVariant: classes.counterYourPoints
-            },
-            {
-              value: userStats?.rank ?? 0,
-              label: 'Your ranking position',
-              styleVariant: classes.counterYourRanking
-            }
-          ].map(({ value, label, styleVariant }) => (
+          {isConnected ? (
             <>
-              <Box key={label} className={classes.counterItem}>
-                <Typography className={styleVariant}>{value}</Typography>
-                <Typography className={classes.counterLabel}>{label}</Typography>
-              </Box>
-              <Divider className={classes.divider} />
+              {[
+                {
+                  value: userStats?.points ?? 0,
+                  label: 'Your Points',
+                  styleVariant: classes.counterYourPoints
+                },
+                {
+                  value: `# ${userStats?.rank ?? 0}`,
+                  label: 'Your Ranking Position',
+                  styleVariant: classes.counterYourRanking
+                }
+              ].map(({ value, label, styleVariant }, index) => (
+                <React.Fragment key={label}>
+                  <Box className={classes.counterItem} style={{ marginTop: '4px' }}>
+                    <Typography className={styleVariant}>{value}</Typography>
+                    <Typography className={classes.counterLabel}>{label}</Typography>
+                  </Box>
+                  {index < 1 && <Divider className={classes.divider} />}{' '}
+                </React.Fragment>
+              ))}
+
+              <Button
+                className={classes.button}
+                style={{ marginTop: '16px' }}
+                onClick={() => {
+                  handleClose()
+                  navigate('/pints')
+                }}>
+                Go to Points Tab
+              </Button>
             </>
-          ))}
-          <Button
-            className={classes.button}
-            onClick={() => {
-              handleClose()
-              navigate('/leaderboard')
-            }}>
-            Go to Leaderboard
-          </Button>
+          ) : (
+            <>
+              <Box className={classes.counterItem}>
+                <Typography style={{ color: colors.invariant.text }}>
+                  Points Program is{' '}
+                  <Typography style={{ color: colors.invariant.pink, textAlign: 'center' }}>
+                    live!
+                  </Typography>
+                </Typography>
+                <Typography
+                  style={{
+                    color: colors.invariant.textGrey,
+                    ...typography.body2,
+                    marginTop: '8px',
+                    textAlign: 'center'
+                  }}>
+                  Visit Points Tab to track your progress.
+                </Typography>
+                <Button
+                  style={{ marginTop: '16px' }}
+                  className={classes.button}
+                  onClick={() => {
+                    handleClose()
+                    navigate('/pints')
+                  }}>
+                  Go to Points Tab
+                </Button>
+              </Box>
+            </>
+          )}
         </Box>
         {/* <Typography className={classes.title}>Select a network</Typography>
         <Grid className={classes.list} container alignContent='space-around' direction='column'>
