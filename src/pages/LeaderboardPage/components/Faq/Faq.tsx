@@ -47,30 +47,29 @@ const faqData = [
   },
   {
     question: `I don't understand how the points distribution works. Could you explain it to me?`,
-    answer: `
-    
+    answer: `    
       Sure! Here is the explanation with a graphic example.
-You create two positions in a <b>USDC/USDT</b> pool with a price of <b>1 USDC per USDT</b>.
-(*Both positions contribute an equal amount of tokens to the pool.)
-<ul>
-<li><b>Position 1</b>: Narrow range (<b>0.9999 - 1.0001</b>).</li>
-<li>Position 2: Wider range (<b>0.9995 - 1.0005</b>).</li>
-</ul>
-When both positions are active:
-<ul>
-<li>Position 1 receives only <b>⅙</b> (1000 points) of the distributed points due to its wider range.</li>
-</ul>
-Position 2 receives <b>⅚</b> (5000 points) of the distributed points due to its narrower range (higher concentration).
-<img src="${FAQ1}" /></br>
+      You create two positions in a <b>USDC/USDT</b> pool with a price of <b>1 USDC per USDT</b>.
+      (*Both positions contribute an equal amount of tokens to the pool.)
+      <ul>
+      <li><b>Position 1</b>: Narrow range (<b>0.9999 - 1.0001</b>).</li>
+      <li>Position 2: Wider range (<b>0.9995 - 1.0005</b>).</li>
+      </ul>
+      When both positions are active:
+      <ul>
+      <li>Position 1 receives only <b>⅙</b> (1000 points) of the distributed points due to its wider range.</li>
+      </ul>
+      Position 2 receives <b>⅚</b> (5000 points) of the distributed points due to its narrower range (higher concentration).
+      <img src="${FAQ1}" /></br>
 
-If the price moves to <b>1.0004</b>:
-<ul>
-<li>
-Position 1 becomes the sole active position and collects all distributed points(6000 points) during this time.
-</li>
-</ul>
-Position 2 is no longer active (falls out of range, not collecting fee and accruing points).
-<img src="${FAQ2}" />
+      If the price moves to <b>1.0004</b>:
+      <ul>
+      <li>
+      Position 1 becomes the sole active position and collects all distributed points(6000 points) during this time.
+      </li>
+      </ul>
+      Position 2 is no longer active (falls out of range, not collecting fee and accruing points).
+      <img src="${FAQ2}" />
     
     `
   },
@@ -89,7 +88,7 @@ Position 2 is no longer active (falls out of range, not collecting fee and accru
   },
   {
     question: `How to contact us?`,
-    answer: `You can contact us via: </br> <ul><li>Discord (<a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A">CLICK!</a>)</li><li>Email (<a href="mailto:contact@invariant.app" style="color: #2EE09A">CLICK!</a>)</li><li>X (<a href="https://x.com/invariant_labs" style="color: #2EE09A">CLICK!</a>)</li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="#" style="color: #2EE09A">here</a></p>`
+    answer: `You can contact us via: </br> <ul><li>Discord (<a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A">CLICK!</a>)</li><li>Email (<a href="mailto:contact@invariant.app" style="color: #2EE09A">CLICK!</a>)</li><li>X (<a href="https://x.com/invariant_labs" style="color: #2EE09A">CLICK!</a>)</li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A">here</a></p>`
   }
 ]
 
