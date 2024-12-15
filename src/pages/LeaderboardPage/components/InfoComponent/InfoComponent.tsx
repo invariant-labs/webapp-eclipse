@@ -1,7 +1,6 @@
 import { Box, Button, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import Jupi from '@static/png/jupi.png'
-import { colors } from '@static/theme'
 import './animation.css'
 import LaunchIcon from '@mui/icons-material/Launch'
 

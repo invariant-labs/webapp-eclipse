@@ -1,10 +1,6 @@
 import React, { useMemo } from 'react'
-// import icons from '@static/icons'
-// import classNames from 'classnames'
 import useStyles from './style'
-import { ISelectNetwork } from '@store/consts/types'
 import { Box, Button, Divider, Grid, Popover, Typography } from '@mui/material'
-import { NetworkType } from '@store/consts/static'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -13,21 +9,11 @@ import { Status } from '@store/reducers/solanaWallet'
 import { colors, typography } from '@static/theme'
 
 export interface ISelectNetworkModal {
-  networks: ISelectNetwork[]
   open: boolean
   anchorEl: HTMLButtonElement | null
-  onSelect: (networkType: NetworkType, rpcAddress: string, rpcName?: string) => void
   handleClose: () => void
-  activeNetwork: NetworkType
 }
-export const YourPointsModal: React.FC<ISelectNetworkModal> = ({
-  //   networks,
-  anchorEl,
-  open,
-  //   onSelect,
-  handleClose
-  //   activeNetwork
-}) => {
+export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open, handleClose }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
   const walletStatus = useSelector(status)
