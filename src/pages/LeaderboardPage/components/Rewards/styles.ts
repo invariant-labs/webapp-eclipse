@@ -58,6 +58,16 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
+  connectWalletButton: {
+    height: '48px !important',
+    borderRadius: '16px',
+    width: '100%',
+    margin: '30px 0',
+
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
+  },
   button: {
     display: 'flex',
     flexDirection: 'row',
