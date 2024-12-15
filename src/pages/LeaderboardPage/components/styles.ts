@@ -170,6 +170,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       height: 32,
       [theme.breakpoints.down('sm')]: {
         height: 48
+      },
+      [theme.breakpoints.down('md')]: {
+        width: '95%'
       }
     },
     switchPoolsMarker: {
