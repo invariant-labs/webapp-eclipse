@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
-    width: 1210,
+    width: 1210, //merge
 
     [theme.breakpoints.down('md')]: {
       width: '100%'
@@ -259,5 +259,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       width: '100%',
       justifyContent: 'space-between'
     }
+  },
+  disabledSwitchButton: {
+    color: `${colors.invariant.textGrey} !important`
   }
 }))

@@ -1,4 +1,4 @@
-import { InitPosition, Position, PositionList, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { CreatePosition, Position, PositionList, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
@@ -49,7 +49,7 @@ export interface IPositionsStore {
 }
 
 export interface InitPositionData
-  extends Omit<InitPosition, 'owner' | 'userTokenX' | 'userTokenY' | 'pair'> {
+  extends Omit<CreatePosition, 'owner' | 'userTokenX' | 'userTokenY' | 'pair'> {
   tokenX: PublicKey
   tokenY: PublicKey
   fee: BN

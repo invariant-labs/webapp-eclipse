@@ -13,7 +13,7 @@ export interface IProps {
   onSelect: (networkType: NetworkType, rpcAddress: string, rpcName?: string) => void
   disabled?: boolean
 }
-export const YourPointsButton: React.FC<IProps> = ({ onSelect, disabled = false }) => {
+export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { classes } = useStyles()

@@ -64,8 +64,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     justifySelf: 'center',
-    // },
-    padding: '13px ',
+    padding: '13px',
     gap: '10px',
     width: 'max-content',
     height: '50px',
@@ -76,8 +75,15 @@ export const useStyles = makeStyles()(() => ({
     ...typography.heading4,
     textTransform: 'none',
     color: colors.invariant.dark,
+    transition: 'all 0.3s ease',
     '&:hover': {
-      background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)'
+      background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
+    },
+    '&:active': {
+      transform: 'translateY(1px)',
+      boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
     }
   },
   pointsValue: {

@@ -89,7 +89,9 @@ export const colors = {
     mixedLinearGradient:
       'radial-gradient(50.2% 50.2% at 50% 0%, rgba(239, 132, 245, 0.25) 0%, rgba(239, 132, 245, 0) 75%), radial-gradient(49.8% 49.8% at 50% 100%, rgba(46, 224, 154, 0.25) 0%, rgba(46, 224, 154, 0) 75%)',
     yellow: '#EFD063',
-    blue: '#43BBFF'
+    blue: '#43BBFF',
+    transparentBcg: 'rgba(1, 5, 20, 0.25)',
+    bodyBackground: '#141b2d'
   }
 }
 

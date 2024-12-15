@@ -41,6 +41,7 @@ export interface IHeader {
   defaultDevnetRPC: string
   defaultMainnetRPC: string
   rpcStatus: RpcStatus
+  walletBalance: BN | null
 }
 
 export const Header: React.FC<IHeader> = ({
@@ -59,7 +60,8 @@ export const Header: React.FC<IHeader> = ({
   onChainSelect,
   network,
   rpcStatus,
-  defaultMainnetRPC
+  defaultMainnetRPC,
+  walletBalance
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -71,6 +73,7 @@ export const Header: React.FC<IHeader> = ({
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^newPosition\/*/, /^position\/*/],
     exchange: [/^exchange\/*/],
+    portfolio: [/^portfolio\/*/],
     creator: [/^creator\/*/],
     leaderboard: [/^points\/*/]
   }
@@ -208,7 +211,9 @@ export const Header: React.FC<IHeader> = ({
           <Grid container className={classes.leftButtons}>
             {typeOfNetwork === NetworkType.Testnet && (
               <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                <FaucetButton onFaucet={onFaucet}>Faucet</FaucetButton>
+                <FaucetButton onFaucet={onFaucet} network={network} walletBalance={walletBalance}>
+                  Faucet
+                </FaucetButton>
               </Box>
             )}
             <Box
