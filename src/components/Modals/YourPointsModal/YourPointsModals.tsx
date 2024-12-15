@@ -88,9 +88,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({
               <Box className={classes.counterItem}>
                 <Typography style={{ color: colors.invariant.text }}>
                   Points Program is{' '}
-                  <Typography style={{ color: colors.invariant.pink, textAlign: 'center' }}>
-                    live!
-                  </Typography>
+                  <span style={{ color: colors.invariant.pink, textAlign: 'center' }}>live!</span>
                 </Typography>
                 <Typography
                   style={{
