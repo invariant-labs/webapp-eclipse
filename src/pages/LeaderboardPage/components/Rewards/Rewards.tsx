@@ -57,7 +57,7 @@ export const Rewards = () => {
                 <Box style={{ width: '250px' }}>
                   <AnimatedButton
                     disabled={true}
-                    progress={progress}
+                    progress={'none'}
                     sx={{ width: '100%', marginTop: '64px' }}
                     content='Claim'
                     onClick={() => {}}
