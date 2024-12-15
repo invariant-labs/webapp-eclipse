@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo } from 'react'
 import { Box, ToggleButton, ToggleButtonGroup, Tooltip, Typography } from '@mui/material'
 import useStyles from './styles'
 import { Faq } from './Faq/Faq'
@@ -17,8 +17,16 @@ import { printBN } from '@utils/utils'
 import { shortenAddress } from '@utils/uiUtils'
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
-export const LeaderboardWrapper: React.FC = () => {
-  const [alignment, setAlignment] = useState<string>('leaderboard')
+
+interface LeaderboardWrapperProps {
+  alignment: string
+  setAlignment: React.Dispatch<React.SetStateAction<string>>
+}
+
+export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
+  alignment,
+  setAlignment
+}) => {
   const { classes } = useStyles()
 
   const isLoading = useSelector(leaderboardSelectors.loading)
@@ -59,11 +67,11 @@ export const LeaderboardWrapper: React.FC = () => {
   }, [dispatch])
 
   const content = React.useMemo(() => {
-    return alignment === 'leaderboard' ? (
-      <LeaderboardList data={leaderboard} isLoading={isLoading} />
-    ) : (
-      <Faq />
-    )
+    if (alignment === 'leaderboard') {
+      return <LeaderboardList data={leaderboard} isLoading={isLoading} />
+    } else if (alignment === 'faq') {
+      return <Faq />
+    }
   }, [alignment, leaderboard, isLoading])
 
   return (

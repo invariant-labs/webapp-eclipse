@@ -48,22 +48,33 @@ const RootPage: React.FC = memo(() => {
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
         <Box
-          style={{
+          sx={{
             background: colors.invariant.pink,
             padding: '10px 8px',
             width: '100%',
+            maxWidth: '100%',
             display: 'flex',
             ...typography.body1,
             justifyContent: 'center',
-            alignItems: 'center'
+            alignItems: 'center',
+            boxSizing: 'border-box',
+            margin: 0
           }}>
-          <img src={icons.airdrop} style={{ marginRight: '6px' }} />
+          <img
+            src={icons.airdrop}
+            style={{
+              marginRight: '6px',
+              height: '24px',
+              width: '24px'
+            }}
+          />
           Check your Rewards status! Check it out{' '}
           <span
             style={{
               color: colors.invariant.text,
               textDecoration: 'underline',
               marginLeft: '6px',
+              cursor: 'pointer',
               ...typography.body1
             }}
             onClick={() => {
