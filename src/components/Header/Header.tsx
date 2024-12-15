@@ -22,6 +22,7 @@ import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
 import { PublicKey } from '@solana/web3.js'
 import FaucetButton from './HeaderButton/FaucetButton'
 import { YourPointsButton } from './HeaderButton/YourPointsButton'
+import { BN } from '@coral-xyz/anchor'
 
 export interface IHeader {
   address: PublicKey
