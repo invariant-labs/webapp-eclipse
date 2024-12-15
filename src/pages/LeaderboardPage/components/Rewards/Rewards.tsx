@@ -57,24 +57,11 @@ export const Rewards = () => {
                 </Typography>
                 <Box style={{ width: '250px' }}>
                   <AnimatedButton
-                    disabled={!currentUser?.points}
+                    disabled={true}
                     progress={progress}
                     sx={{ width: '100%', marginTop: '64px' }}
                     content='Claim'
-                    onClick={() => {
-                      setProgress('progress')
-                      setTimeout(() => {
-                        setTimeout(() => {
-                          setProgress('approvedWithSuccess')
-                          setTimeout(() => {
-                            setProgress('success')
-                            setTimeout(() => {
-                              setProgress('none')
-                            }, 1000)
-                          }, 1000)
-                        }, 3000)
-                      }, 2000)
-                    }}
+                    onClick={() => {}}
                   />
                 </Box>
               </Box>
