@@ -3,14 +3,12 @@ import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Button, useMediaQuery } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
-import { NetworkType } from '@store/consts/static'
 import YourPointsModal from '@components/Modals/YourPointsModal/YourPointsModals'
 import { theme } from '@static/theme'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 
 export interface IProps {
-  onSelect: (networkType: NetworkType, rpcAddress: string, rpcName?: string) => void
   disabled?: boolean
 }
 export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {

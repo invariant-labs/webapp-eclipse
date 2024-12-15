@@ -273,30 +273,7 @@ export const Header: React.FC<IHeader> = ({
             />
           </Grid>
           <Grid>
-            <YourPointsButton
-              name={typeOfNetwork}
-              networks={[
-                {
-                  networkType: NetworkType.Mainnet,
-                  rpc: defaultMainnetRPC,
-                  rpcName:
-                    mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
-                },
-                {
-                  networkType: NetworkType.Testnet,
-                  rpc: defaultTestnetRPC,
-                  rpcName:
-                    testnetRPCs.find(data => data.rpc === defaultTestnetRPC)?.rpcName ?? 'Custom'
-                }
-                // {
-                //   networkType: NetworkType.Devnet,
-                //   rpc: defaultDevnetRPC,
-                //   rpcName:
-                //     mainnetRPCs.find(data => data.rpc === defaultDevnetRPC)?.rpcName ?? 'Custom'
-                // }
-              ]}
-              onSelect={onNetworkSelect}
-            />
+            <YourPointsButton />
           </Grid>
           <ChangeWalletButton
             name={
