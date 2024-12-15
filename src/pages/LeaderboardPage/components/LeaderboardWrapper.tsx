@@ -15,7 +15,8 @@ import infoIcon from '@static/svg/info.svg'
 import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { shortenAddress } from '@utils/uiUtils'
-
+import { status } from '@store/selectors/solanaWallet'
+import { Status } from '@store/reducers/solanaWallet'
 export const LeaderboardWrapper: React.FC = () => {
   const [alignment, setAlignment] = useState<string>('leaderboard')
   const { classes } = useStyles()
@@ -24,6 +25,8 @@ export const LeaderboardWrapper: React.FC = () => {
   const leaderboard = useSelector(topRankedUsers)
   const userStats = useSelector(leaderboardSelectors.currentUser)
   const dispatch = useDispatch()
+  const walletStatus = useSelector(status)
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   const { firstPlace, secondPlace, thirdPlace } = useMemo(() => {
     const firstPlaceItem = leaderboard.find(item => item.rank === 1) || null
@@ -75,7 +78,22 @@ export const LeaderboardWrapper: React.FC = () => {
             width: '100%'
           }}>
           <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
-          <Box className={classes.sectionContent}>
+
+          <Box className={classes.sectionContent} style={{ position: 'relative' }}>
+            {!isConnected ? (
+              <Box
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  position: 'absolute',
+                  transform: 'translate(-50%,-50%)',
+                  top: '50%',
+                  left: '50%',
+                  backdropFilter: 'blur(2px)'
+                }}
+              />
+            ) : null}
+
             <Box
               sx={{
                 width: '235px',
