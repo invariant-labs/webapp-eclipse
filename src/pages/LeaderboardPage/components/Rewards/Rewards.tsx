@@ -5,8 +5,11 @@ import { colors } from '@static/theme'
 import icons from '@static/icons'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import { useState } from 'react'
+import { useSelector } from 'react-redux'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 export const Rewards = () => {
   const { classes } = useStyles()
+  const currentUser = useSelector(leaderboardSelectors.currentUser)
   const [progress, setProgress] = useState<ProgressState>('none')
 
   return (
@@ -41,9 +44,12 @@ export const Rewards = () => {
               flexDirection: 'column',
               alignItems: 'center'
             }}>
-            <Typography className={classes.pointsValue}>123,321,32 points</Typography>
+            <Typography className={classes.pointsValue}>
+              {currentUser?.points ?? 0} points
+            </Typography>
             <Box style={{ width: '250px' }}>
               <AnimatedButton
+                disabled={!currentUser?.points}
                 progress={progress}
                 sx={{ width: '100%', marginTop: '64px' }}
                 content='Claim'
