@@ -13,7 +13,7 @@ export const LeaderBoardPage: React.FC = () => {
 
   useEffect(() => {
     const section = searchParams.get('section')
-    if (section === 'reward') {
+    if (section === 'rewards') {
       setAlignment('rewards')
     }
   }, [searchParams])

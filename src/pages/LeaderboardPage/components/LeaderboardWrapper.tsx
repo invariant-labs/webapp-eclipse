@@ -269,7 +269,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                         return 0
                       case 'faq':
                         return '50%'
-                      case 'reward':
+                      case 'rewards':
                         return '100%'
                       default:
                         return 0
