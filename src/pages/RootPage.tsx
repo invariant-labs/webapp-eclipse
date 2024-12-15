@@ -4,7 +4,7 @@ import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import EventsHandlers from '@containers/EventsHandlers'
 import FooterWrapper from '@containers/FooterWrapper'
 import HeaderWrapper from '@containers/HeaderWrapper/HeaderWrapper'
-import { Grid } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { status as connectionStatus } from '@store/selectors/solanaConnection'
 import { toBlur } from '@utils/uiUtils'
@@ -12,7 +12,8 @@ import useStyles from './style'
 import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions } from '@store/reducers/positions'
-
+import { colors, typography } from '@static/theme'
+import icons from '@static/icons'
 const RootPage: React.FC = memo(() => {
   const dispatch = useDispatch()
   const signerStatus = useSelector(connectionStatus)
@@ -46,6 +47,32 @@ const RootPage: React.FC = memo(() => {
     <>
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
+        <Box
+          style={{
+            background: colors.invariant.pink,
+            padding: '10px 8px',
+            width: '100%',
+            display: 'flex',
+            ...typography.body1,
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+          <img src={icons.airdrop} style={{ marginRight: '6px' }} />
+          Check your Rewards status! Check it out{' '}
+          <span
+            style={{
+              color: colors.invariant.text,
+              textDecoration: 'underline',
+              marginLeft: '6px',
+              ...typography.body1
+            }}
+            onClick={() => {
+              navigate('/points')
+            }}>
+            here!
+          </span>
+        </Box>
+
         <Grid className={classes.root}>
           <HeaderWrapper />
           <Grid className={classes.body}>
