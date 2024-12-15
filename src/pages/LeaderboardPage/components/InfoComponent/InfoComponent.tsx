@@ -3,44 +3,26 @@ import { useStyles } from './styles'
 import Jupi from '@static/png/jupi.png'
 import { colors } from '@static/theme'
 import './animation.css'
+import LaunchIcon from '@mui/icons-material/Launch'
 
 export const InfoComponent = () => {
   const { classes } = useStyles()
   return (
     <Box className={classes.infoContainer}>
-      <Box style={{ width: '50%' }}>
-        <Typography
-          style={{
-            color: colors.invariant.text,
-            fontSize: '50px',
-            fontWeight: '600',
-            lineHeight: '40px',
-            letterSpacing: '-0.03em',
-            maxWidth: '800px'
-          }}>
-          What are Invariant Points?
-        </Typography>
+      <Box style={{ width: 'auto' }}>
+        <Typography className={classes.header}>What are Invariant Points?</Typography>
 
-        <Typography
-          style={{
-            color: colors.invariant.textGrey,
-            fontSize: '24px',
-            fontWeight: '400',
-            lineHeight: '28px',
-            letterSpacing: '-0.03em',
-            marginTop: '32px',
-            maxWidth: '800px'
-          }}>
+        <Typography className={classes.description}>
           Invariant Points are a rewards program designed to incentivize liquidity providers on
           Invariant. Earn points by providing liquidity and participating in community activities.
           Develop your own liquidity provision strategy and climb to the top of the leaderboard.
           Accumulated points can be used for future exclusive benefits.
         </Typography>
         <Button className={classes.button} style={{ marginTop: '32px' }}>
-          Learn More{' '}
+          Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
         </Button>
       </Box>
-      <Box style={{ width: '40%', marginLeft: '56px' }}>
+      <Box style={{ width: 'auto' }}>
         <img
           src={Jupi}
           alt='Astronaut flying in space'

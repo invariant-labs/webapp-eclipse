@@ -257,7 +257,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       },
 
       [theme.breakpoints.up('xl')]: {
-        width: '50%'
+        width: '1120px'
       }
     },
     sectionContent: {
