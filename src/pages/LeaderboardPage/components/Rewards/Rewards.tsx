@@ -65,7 +65,15 @@ export const Rewards = () => {
                 </Box>
               </Box>
             </Box>
-            <Typography className={classes.description} style={{ marginTop: '64px' }}>
+            <Typography
+              className={classes.description}
+              style={{
+                marginTop: '64px',
+                display: 'flex',
+                justifyItems: 'center',
+                alignItems: 'center',
+                flexDirection: 'column'
+              }}>
               If you want to learn more about point system, read about them in our Docs.
               <Button className={classes.button} style={{ marginTop: '32px' }}>
                 Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
