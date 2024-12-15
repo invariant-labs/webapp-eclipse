@@ -297,7 +297,15 @@ export const Header: React.FC<IHeader> = ({
           />
         </Grid>
 
-        <Grid sx={{ display: { xs: 'block', lg: 'none' } }}>
+        <Grid
+          sx={{
+            display: {
+              md: 'block',
+              '@media (min-width: 1450px)': {
+                display: 'none'
+              }
+            }
+          }}>
           <IconButton
             className={classes.menuButton}
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
