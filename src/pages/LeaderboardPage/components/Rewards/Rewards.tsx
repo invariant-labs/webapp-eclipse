@@ -3,8 +3,8 @@ import { useStyles } from './styles'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors } from '@static/theme'
 import icons from '@static/icons'
-import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
-import { useMemo, useState } from 'react'
+import AnimatedButton from '@components/AnimatedButton/AnimatedButton'
+import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { status } from '@store/selectors/solanaWallet'
@@ -15,7 +15,6 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 export const Rewards = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
-  const [progress, setProgress] = useState<ProgressState>('none')
   const walletStatus = useSelector(status)
   const dispatch = useDispatch()
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
