@@ -17,7 +17,7 @@ const faqData = [
   },
   {
     question: 'How are points calculated?',
-    answer: `In short: </br> <ul><li>The larger the position, the more points you earn.</li><li>The narrower the range of the position (higher concentration), the more points you earn.</li><li>The longer the position remains active, the more points you accumulate.</li><li>The wider the position, the more consistent your point earnings become.</li></ul>The exact formula for calculating points is explained in detail in our docs - <a href="https://docs.invariant.app/docs/tutorial/get_started" target="_blank" style="text-decoration-color: #2EE09A"><span style="color: #2EE09A">CLICK HERE!<span></a>`
+    answer: `In short: </br> <ul><li>The larger the position, the more points you earn.</li><li>The narrower the range of the position (higher concentration), the more points you earn.</li><li>The longer the position remains active, the more points you accumulate.</li><li>The wider the position, the more consistent your point earnings become.</li></ul>The exact formula for calculating points is explained in detail in our docs - <a href="https://docs.invariant.app/docs/tutorial/get_started" target="_blank" style="text-decoration-color: #2EE09A"><span style="color: #2EE09A" target="_blank">CLICK HERE!<span></a>`
   },
   {
     question: 'On which blockchain can I earn points?',
@@ -76,7 +76,7 @@ const faqData = [
   {
     question: `I'm new to providing liquidity, how can I learn how to do it correctly?`,
     answer:
-      'No worries, everyone started somewhere. You can start by reading our docs about concentrated liquidity provision <a href="https://docs.invariant.app/docs/tutorial/get_started" style="color: #2EE09A">here</a>.'
+      'No worries, everyone started somewhere. You can start by reading our docs about concentrated liquidity provision <a href="https://docs.invariant.app/docs/tutorial/get_started" style="color: #2EE09A" target="_blank">here.</a>'
   },
   {
     question: `I'm new to CLMM(Concentrated Liquidity Market Maker), but I was previously a provider in the classic AMM model. What to do?`,
@@ -88,7 +88,7 @@ const faqData = [
   },
   {
     question: `How to contact us?`,
-    answer: `You can contact us via: </br> <ul><li>Discord (<a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A">CLICK!</a>)</li><li>Email (<a href="mailto:contact@invariant.app" style="color: #2EE09A">CLICK!</a>)</li><li>X (<a href="https://x.com/invariant_labs" style="color: #2EE09A">CLICK!</a>)</li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A">here.</a></p>`
+    answer: `You can contact us via: </br> <ul><li>Discord (<a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">CLICK!</a>)</li><li>Email (<a href="mailto:contact@invariant.app" style="color: #2EE09A">CLICK!</a>)</li><li>X (<a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">CLICK!</a>)</li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p>`
   }
 ]
 
