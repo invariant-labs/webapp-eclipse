@@ -90,7 +90,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                   className={classes.button}
                   onClick={() => {
                     handleClose()
-                    navigate('/pints')
+                    navigate('/points')
                   }}>
                   Go to Points Tab
                 </Button>
