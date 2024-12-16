@@ -24,6 +24,19 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
     setOpenNetworks(true)
   }
 
+  const formatLargeNumber = (number: number) => {
+    const suffixes = ['', 'K', 'M', 'B', 'T', 'Q']
+
+    if (number < 1000) {
+      return number.toFixed(1)
+    }
+
+    const suffixIndex = Math.floor(Math.log10(number) / 3)
+    const scaledNumber = number / Math.pow(1000, suffixIndex)
+
+    return `${scaledNumber.toFixed(1)}${suffixes[suffixIndex]}`
+  }
+
   const handleClose = () => {
     unblurContent()
     setOpenNetworks(false)
@@ -37,7 +50,11 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
         onClick={handleClick}>
-        {isSm ? <KeyboardArrowDownIcon id='downIcon' /> : `Points: ${currentUser?.points ?? 0}`}
+        {isSm ? (
+          <KeyboardArrowDownIcon id='downIcon' />
+        ) : (
+          `Points: ${formatLargeNumber(currentUser?.points ?? 0)}`
+        )}
       </Button>
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />
     </>

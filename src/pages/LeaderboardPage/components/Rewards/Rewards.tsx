@@ -12,6 +12,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
+import { Link } from 'react-router-dom'
 export const Rewards = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
@@ -86,9 +87,11 @@ export const Rewards = () => {
               flexDirection: 'column'
             }}>
             If you want to learn more about point system, read about them in our Docs.
-            <Button className={classes.button} style={{ marginTop: '32px' }}>
-              Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
-            </Button>
+            <Link to='https://docs.invariant.app/docs/tutorial/get_started' target='_blank'>
+              <Button className={classes.button} style={{ marginTop: '32px' }}>
+                Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+              </Button>
+            </Link>
           </Typography>
         </>
       </Box>
