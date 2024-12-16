@@ -78,7 +78,7 @@ const RootPage: React.FC = memo(() => {
               ...typography.body1
             }}
             onClick={() => {
-              navigate('/points?section=rewards')
+              navigate('/points')
             }}>
             here!
           </span>
