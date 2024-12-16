@@ -9,14 +9,13 @@ import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundP
 import loader from '@static/gif/loader.gif'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { actions } from '@store/reducers/leaderboard'
 interface LeaderboardEntry {
-  // displayType: 'header' | 'item'
   hideBottomLine?: boolean
-
   points?: BN
   positions?: number
   last24hPoints?: BN
@@ -29,10 +28,8 @@ interface LeaderboardListProps {
   isLoading?: boolean
 }
 
-const ITEMS_PER_PAGE = 25
-
-const generateMockData = (): LeaderboardEntry[] => {
-  return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
+const generateMockData = (itemsPerPage: number): LeaderboardEntry[] => {
+  return Array.from({ length: itemsPerPage }, (_, index) => ({
     displayType: 'item',
     address: Keypair.generate().publicKey,
     points: 10000 - index * 100,
@@ -42,42 +39,38 @@ const generateMockData = (): LeaderboardEntry[] => {
   }))
 }
 
-const paginateData = <T,>(data: T[], page: number, itemsPerPage: number): T[] => {
-  const startIndex = (page - 1) * itemsPerPage
-  return data.slice(startIndex, startIndex + itemsPerPage)
-}
-
 const MemoizedLeaderboardItem = React.memo(LeaderboardItem)
 
 const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = false }) => {
   const { classes } = useStyles()
-  const [currentPage, setCurrentPage] = React.useState(1)
   const walletStatus = useSelector(status)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const userStats = useSelector(leaderboardSelectors.currentUser)
 
+  const dispatch = useDispatch()
+  const currentPage = useSelector(leaderboardSelectors.currentPage)
+  const totalItems = useSelector(leaderboardSelectors.totalItems)
+  const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
+
   const displayData = useMemo(() => {
-    return isLoading ? generateMockData() : data
+    return isLoading ? generateMockData(itemsPerPage) : data
   }, [isLoading, data])
 
-  const paginatedData = useMemo(
-    () => paginateData(displayData, currentPage, ITEMS_PER_PAGE),
-    [displayData, currentPage]
+  const totalPages = useMemo(() => Math.ceil(totalItems / itemsPerPage), [displayData])
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      dispatch(actions.getLeaderboardData({ page, itemsPerPage }))
+    },
+    [dispatch, itemsPerPage]
   )
-
-  const totalPages = useMemo(() => Math.ceil(displayData.length / ITEMS_PER_PAGE), [displayData])
-
-  const handlePageChange = useCallback((page: number) => {
-    setCurrentPage(page)
-  }, [])
-
   React.useEffect(() => {
-    setCurrentPage(1)
-  }, [displayData])
+    console.log({ currentPage, totalItems, itemsPerPage, totalPages })
+  }, [])
 
   const renderWaves = (position: 'top' | 'bottom', imageSrc: string) =>
     totalPages > 1 &&
-    paginatedData.length > 20 && (
+    data.length > 20 && (
       <div
         className={`${classes.waveImage} ${classes[`${position}Wave`]}`}
         style={{ alignItems: position === 'top' ? 'flex-start' : 'flex-end' }}>
@@ -107,11 +100,11 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
         )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
           {displayData.length > 0 ? (
-            paginatedData.map((element, index) => (
+            data.map((element, index) => (
               <MemoizedLeaderboardItem
                 key={index}
                 displayType='item'
-                rank={index + 1 + (currentPage - 1) * ITEMS_PER_PAGE}
+                rank={index + 1 + (currentPage - 1) * itemsPerPage}
                 positions={element.positions}
                 last24hPoints={element.last24hPoints}
                 points={element.points ?? 0}
@@ -124,7 +117,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
         </Box>
       </Grid>
 
-      {totalPages > 1 && (
+      {totalPages >= 1 && (
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
           <Grid className={classes.pagination}>
             <PaginationList

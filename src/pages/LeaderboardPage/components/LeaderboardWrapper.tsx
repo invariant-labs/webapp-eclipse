@@ -33,6 +33,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const leaderboard = useSelector(topRankedUsers)
   const userStats = useSelector(leaderboardSelectors.currentUser)
   const dispatch = useDispatch()
+  const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
+  // const currentPage = useSelector(leaderboardSelectors.currentPage)
   const walletStatus = useSelector(status)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
@@ -63,8 +65,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   }
 
   useEffect(() => {
-    dispatch(actions.getLeaderboardData())
-  }, [dispatch])
+    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
+  }, [dispatch, itemsPerPage])
 
   const content = React.useMemo(() => {
     if (alignment === 'leaderboard') {

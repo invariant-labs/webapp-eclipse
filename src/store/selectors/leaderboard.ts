@@ -11,14 +11,21 @@ import { PublicKey } from '@solana/web3.js'
 const store = (s: AnyProps) => s[leaderboardSliceName] as ILeaderboardStore
 
 // Basic selectors
-export const { isLoading, currentUser, leaderboard } = keySelectors(store, [
-  'isLoading',
-  'currentUser',
-  'leaderboard'
-])
+export const { isLoading, currentUser, leaderboard, currentPage, itemsPerPage, totalItems } =
+  keySelectors(store, [
+    'currentPage',
+    'totalItems',
+    'itemsPerPage',
+    'isLoading',
+    'currentUser',
+    'leaderboard'
+  ])
 
 export const leaderboardSelectors = {
   loading: isLoading,
+  currentPage,
+  itemsPerPage,
+  totalItems,
   currentUser,
   leaderboard
 }

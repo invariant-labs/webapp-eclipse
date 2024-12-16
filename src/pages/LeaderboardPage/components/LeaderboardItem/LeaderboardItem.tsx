@@ -79,8 +79,6 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
     hideBottomLine = false
   } = props
 
-  console.log(props)
-
   const getColorByPlace = (index: number) => {
     return index - 1 < PLACE_COLORS.length ? PLACE_COLORS[index - 1] : colors.invariant.text
   }

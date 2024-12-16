@@ -17,12 +17,18 @@ export interface ILeaderboardStore {
   currentUser: UserStats | null
   leaderboard: LeaderboardEntry[]
   isLoading: boolean
+  currentPage: number
+  totalItems: number
+  itemsPerPage: number
 }
 
 export const defaultState: ILeaderboardStore = {
   currentUser: null,
   leaderboard: [],
-  isLoading: false
+  isLoading: false,
+  currentPage: 1,
+  totalItems: 0,
+  itemsPerPage: 25
 }
 
 export const leaderboardSliceName = 'leaderboard'
@@ -36,15 +42,22 @@ const leaderboardSlice = createSlice({
       action: PayloadAction<{
         user: UserStats
         leaderboard: LeaderboardEntry[]
+        totalItems: number
       }>
     ) {
       state.currentUser = action.payload.user
       state.leaderboard = action.payload.leaderboard
+      state.totalItems = action.payload.totalItems
       state.isLoading = false
       return state
     },
-    getLeaderboardData(state) {
+    getLeaderboardData(state, action: PayloadAction<{ page: number; itemsPerPage: number }>) {
       state.isLoading = true
+      state.currentPage = action.payload.page
+      return state
+    },
+    setCurrentPage(state, action: PayloadAction<number>) {
+      state.currentPage = action.payload
       return state
     },
     setLoadingState(state, action: PayloadAction<boolean>) {
