@@ -2,15 +2,18 @@ import { Typography, Box, Button } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import React from 'react'
 import useStyles from './style'
+import { useNavigate } from 'react-router-dom'
 
 interface ITimerProps {
   hours: string
   minutes: string
   seconds: string
+  handleClose: () => void
 }
 
-export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds }) => {
+export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds, handleClose }) => {
   const { classes } = useStyles()
+  const navigate = useNavigate()
 
   return (
     <>

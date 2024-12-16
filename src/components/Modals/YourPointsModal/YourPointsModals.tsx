@@ -117,7 +117,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
           </Box>
         ) : (
           <Box className={classes.counterContainer}>
-            <Timer hours={hours} minutes={minutes} seconds={seconds} />
+            <Timer hours={hours} minutes={minutes} seconds={seconds} handleClose={handleClose} />
           </Box>
         )}
       </Grid>
