@@ -6,7 +6,6 @@ import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
 import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
-import loader from '@static/gif/loader.gif'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import { useDispatch, useSelector } from 'react-redux'
@@ -84,7 +83,6 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
 
       <Grid container direction='column' className={isLoading ? classes.loadingOverlay : ''}>
         <MemoizedLeaderboardItem displayType='header' />
-        {isLoading && <img src={loader} className={classes.loading} alt='Loading' />}
 
         {isConnected && userStats && (
           <MemoizedLeaderboardItem
