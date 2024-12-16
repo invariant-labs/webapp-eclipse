@@ -1,10 +1,10 @@
-import { useEffect, useCallback, memo } from 'react'
+import { useEffect, useCallback, memo, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import EventsHandlers from '@containers/EventsHandlers'
 import FooterWrapper from '@containers/FooterWrapper'
 import HeaderWrapper from '@containers/HeaderWrapper/HeaderWrapper'
-import { Box, Grid } from '@mui/material'
+import { Grid } from '@mui/material'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { status as connectionStatus } from '@store/selectors/solanaConnection'
 import { toBlur } from '@utils/uiUtils'
@@ -12,8 +12,10 @@ import useStyles from './style'
 import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions } from '@store/reducers/positions'
-import { colors, typography } from '@static/theme'
-import icons from '@static/icons'
+import { TimerBanner } from './LeaderboardPage/components/LeaderboardBanner/TimerBanner'
+import { useCountdown } from './LeaderboardPage/components/LeaderboardTimer/useCountdown'
+import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/NormalBanner'
+import { LAUNCH_DATE } from './LeaderboardPage/config'
 const RootPage: React.FC = memo(() => {
   const dispatch = useDispatch()
   const signerStatus = useSelector(connectionStatus)
@@ -42,48 +44,28 @@ const RootPage: React.FC = memo(() => {
       dispatch(actions.getPositionsList())
     }
   }, [signerStatus, walletStatus])
+  const [isExpired, setExpired] = useState(false)
+  const targetDate = useMemo(() => {
+    const date = new Date(LAUNCH_DATE)
+    return date
+  }, [])
+
+  const { hours, minutes, seconds } = useCountdown({
+    targetDate,
+    onExpire: () => {
+      setExpired(true)
+    }
+  })
 
   return (
     <>
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
-        <Box
-          sx={{
-            background: colors.invariant.pink,
-            padding: '10px 20px',
-            width: '100%',
-            maxWidth: '100%',
-            display: 'flex',
-            ...typography.body1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            boxSizing: 'border-box',
-            margin: 0
-          }}>
-          <img
-            src={icons.airdrop}
-            style={{
-              marginRight: '6px',
-              height: '24px',
-              width: '24px'
-            }}
-          />
-          Invariant Points are available now! Check out your progress and rewards
-          <span
-            style={{
-              color: colors.invariant.text,
-              textDecoration: 'underline',
-              marginLeft: '6px',
-              cursor: 'pointer',
-              ...typography.body1
-            }}
-            onClick={() => {
-              navigate('/points')
-            }}>
-            here!
-          </span>
-        </Box>
-
+        {isExpired ? (
+          <NormalBanner />
+        ) : (
+          <TimerBanner seconds={seconds} minutes={minutes} hours={hours} />
+        )}
         <Grid className={classes.root}>
           <HeaderWrapper />
           <Grid className={classes.body}>

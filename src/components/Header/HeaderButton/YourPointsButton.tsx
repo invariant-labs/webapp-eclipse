@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo, useState } from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Button, useMediaQuery } from '@mui/material'
@@ -8,13 +8,15 @@ import { theme } from '@static/theme'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { formatLargeNumber } from '@utils/formatBigNumber'
+import { LAUNCH_DATE } from '@pages/LeaderboardPage/config'
+import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
 
 export interface IProps {
   disabled?: boolean
 }
 export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-
+  const [isExpired, setExpired] = useState(false)
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
@@ -30,6 +32,18 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
     setOpenNetworks(false)
   }
 
+  const targetDate = useMemo(() => {
+    const date = new Date(LAUNCH_DATE)
+    return date
+  }, [])
+
+  useCountdown({
+    targetDate,
+    onExpire: () => {
+      setExpired(true)
+    }
+  })
+
   return (
     <>
       <Button
@@ -38,10 +52,16 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
         onClick={handleClick}>
-        {isSm ? (
-          <KeyboardArrowDownIcon id='downIcon' />
+        {isExpired ? (
+          <>
+            {isSm ? (
+              <KeyboardArrowDownIcon id='downIcon' />
+            ) : (
+              `Points: ${formatLargeNumber(currentUser?.points ?? 0)}`
+            )}
+          </>
         ) : (
-          `Points: ${formatLargeNumber(currentUser?.points ?? 0)}`
+          'Click here!'
         )}
       </Button>
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />

@@ -5,7 +5,7 @@ const useStyles = makeStyles()(() => {
   return {
     root: {
       background: colors.invariant.component,
-      width: 175,
+      width: 227,
       height: 'fit-content',
       borderRadius: 20,
       marginTop: 8,
