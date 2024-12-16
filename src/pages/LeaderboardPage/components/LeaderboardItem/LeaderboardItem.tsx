@@ -13,6 +13,7 @@ import { Link } from 'react-router-dom'
 import { network } from '@store/selectors/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 interface BaseLeaderboardItemProps {
   displayType: 'item' | 'header'
@@ -145,7 +146,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
           </Box>
         </Typography>
 
-        <Typography>{printBN(new BN(points, 'hex'), 6)}</Typography>
+        <Typography>{printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)}</Typography>
 
         {!isMd && (
           <Typography>
@@ -154,7 +155,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
                 color: colors.invariant.green,
                 ...typography.heading4
               }}>
-              + {printBN(new BN(last24hPoints, 'hex'), 6)}
+              + {printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL)}
             </Typography>
           </Typography>
         )}
