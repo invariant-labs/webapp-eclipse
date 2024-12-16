@@ -99,29 +99,6 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
             </>
           )}
         </Box>
-        {/* <Typography className={classes.title}>Select a network</Typography>
-        <Grid className={classes.list} container alignContent='space-around' direction='column'>
-          {networks.map(({ networkType, rpc, rpcName }) => (
-            <Grid
-              className={classNames(
-                classes.listItem,
-                networkType === activeNetwork ? classes.active : null
-              )}
-              item
-              key={`networks-${networkType}`}
-              onClick={() => {
-                onSelect(networkType, rpc, rpcName)
-              }}>
-              <img
-                className={classes.icon}
-                src={icons[`${networkType}Icon`]}
-                alt={`${networkType} icon`}
-              />
-              <Typography className={classes.name}>{networkType}</Typography>
-              <DotIcon className={classes.dotIcon} />
-            </Grid>
-          ))}
-        </Grid> */}
       </Grid>
     </Popover>
   )
