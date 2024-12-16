@@ -88,7 +88,7 @@ const faqData = [
   },
   {
     question: `How to contact us?`,
-    answer: `You can contact us via: </br> <ul><li>Discord (<a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A">CLICK!</a>)</li><li>Email (<a href="mailto:contact@invariant.app" style="color: #2EE09A">CLICK!</a>)</li><li>X (<a href="https://x.com/invariant_labs" style="color: #2EE09A">CLICK!</a>)</li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A">here</a></p>`
+    answer: `You can contact us via: </br> <ul><li>Discord (<a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A">CLICK!</a>)</li><li>Email (<a href="mailto:contact@invariant.app" style="color: #2EE09A">CLICK!</a>)</li><li>X (<a href="https://x.com/invariant_labs" style="color: #2EE09A">CLICK!</a>)</li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A">here.</a></p>`
   }
 ]
 
