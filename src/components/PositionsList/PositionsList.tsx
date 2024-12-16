@@ -149,7 +149,7 @@ export const PositionsList: React.FC<IProps> = ({
         alignItems='center'>
         <Grid className={classes.searchRoot}>
           <Grid className={classes.titleBar}>
-            <Typography className={classes.title}>Your Liquidity Positions</Typography>
+            <Typography className={classes.title}>Your Positions</Typography>
             <TooltipHover text='Total number of your positions'>
               <Typography className={classes.positionsNumber}>{String(currentLength)}</Typography>
             </TooltipHover>
@@ -191,7 +191,8 @@ export const PositionsList: React.FC<IProps> = ({
                     disabled={lockedData.length === 0}
                     value={LiquidityPools.Locked}
                     disableRipple
-                    className={classes.switchPoolsButton}>
+                    className={classes.switchPoolsButton}
+                    classes={{ disabled: classes.disabledSwitchButton }}>
                     Locked
                   </ToggleButton>
                 </ToggleButtonGroup>

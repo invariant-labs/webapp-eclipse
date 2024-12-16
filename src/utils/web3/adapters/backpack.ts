@@ -21,7 +21,7 @@ export class BackpackWalletAdapter implements WalletAdapter {
     return this._backpackProvider?.isConnected || false
   }
 
-  async signAllTransactions(transactions: Transaction[]): Promise<Transaction[]> {
+  signAllTransactions = async (transactions: Transaction[]): Promise<Transaction[]> => {
     if (!this._backpackProvider) {
       return transactions
     }
@@ -33,21 +33,21 @@ export class BackpackWalletAdapter implements WalletAdapter {
       : DEFAULT_PUBLICKEY
   }
 
-  async signTransaction(transaction: Transaction) {
+  signTransaction = async (transaction: Transaction) => {
     if (!this._backpackProvider) {
       return transaction
     }
     return await this._backpackProvider.signTransaction(transaction)
   }
 
-  async sendMessage(message: Uint8Array) {
+  sendMessage = async (message: Uint8Array) => {
     if (!this._backpackProvider) {
       throw new Error('Backpack Wallet not connected' + message)
     }
     return await this._backpackProvider.sendMessage(message)
   }
 
-  async signMessage(message: Uint8Array) {
+  signMessage = async (message: Uint8Array) => {
     if (!this._backpackProvider) {
       throw new Error('Backpack Wallet not connected')
     }
@@ -67,7 +67,7 @@ export class BackpackWalletAdapter implements WalletAdapter {
     }
     let provider: BackpackProvider
     if ((window as any)?.backpack) {
-      provider = (window as any).backpack
+      provider = (window as any).backpack.solana
     } else {
       window.open('https://backpack.app/', '_blank')
       return

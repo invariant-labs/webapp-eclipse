@@ -300,10 +300,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         )
       }
     }
-  }, [isWaitingForNewPool, allPools])
+  }, [isWaitingForNewPool, allPools.length])
 
   useEffect(() => {
-    if (poolIndex !== null) {
+    if (poolIndex !== null && !!allPools[poolIndex]) {
       setMidPrice({
         index: allPools[poolIndex].currentTickIndex,
         x: calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal),
@@ -500,7 +500,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           amount,
           lowerTick,
           upperTick,
-          poolIndex !== null ? allPools[poolIndex].sqrtPrice : calculatePriceSqrt(midPrice.index),
+          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
           true
         )
         if (isMountedRef.current) {
@@ -512,7 +512,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         amount,
         lowerTick,
         upperTick,
-        poolIndex !== null ? allPools[poolIndex].sqrtPrice : calculatePriceSqrt(midPrice.index),
+        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
         true
       )
       if (isMountedRef.current) {
@@ -524,7 +524,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         amount,
         lowerTick,
         upperTick,
-        poolIndex !== null ? allPools[poolIndex].sqrtPrice : calculatePriceSqrt(midPrice.index),
+        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
         true
       )
       if (isMountedRef.current) {
@@ -690,10 +690,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             yAmount: Math.floor(yAmount),
             slippage,
             tickSpacing,
-            knownPrice:
-              poolIndex === null
-                ? calculatePriceSqrt(midPrice.index)
-                : allPools[poolIndex].sqrtPrice,
+            knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
             poolIndex
           })
         )
