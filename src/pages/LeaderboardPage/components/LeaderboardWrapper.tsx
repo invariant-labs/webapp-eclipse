@@ -297,7 +297,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                 Leaderboard
               </ToggleButton>
               <ToggleButton value={'faq'} disableRipple className={classes.switchPoolsButton}>
-                FAQ (questions)
+                FAQ
               </ToggleButton>
               <ToggleButton value={'rewards'} disableRipple className={classes.switchPoolsButton}>
                 Rewards
