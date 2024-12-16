@@ -63,9 +63,6 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
     },
     [dispatch, itemsPerPage]
   )
-  React.useEffect(() => {
-    console.log({ currentPage, totalItems, itemsPerPage, totalPages })
-  }, [])
 
   const renderWaves = (position: 'top' | 'bottom', imageSrc: string) =>
     totalPages > 1 &&

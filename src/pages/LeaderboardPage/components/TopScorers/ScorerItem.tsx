@@ -32,17 +32,17 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({ address, points, cupVar
   }
   return (
     <Box className={classes.topScorersItem}>
-      <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+      <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
         <img src={getIconByCupVariant()} alt={cupVariant} />
       </Box>
       <Box className={classes.topScorersItemBox}>
-        <Box sx={{ display: { sm: 'block', md: 'none' } }}>
+        <Box sx={{ display: { sm: 'block', lg: 'none' } }}>
           <img
             src={getIconByCupVariant()}
             alt={cupVariant}
             style={{
               height: '110px',
-              [theme.breakpoints.down('md')]: {
+              [theme.breakpoints.down('lg')]: {
                 height: '85px'
               }
             }}

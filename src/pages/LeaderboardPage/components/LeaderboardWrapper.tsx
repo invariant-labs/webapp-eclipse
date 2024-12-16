@@ -9,6 +9,7 @@ import { leaderboardSelectors, topRankedUsers } from '@store/selectors/leaderboa
 
 import { YourProgress } from './YourProgress/YourProgress'
 import { TopScorers } from './TopScorers/TopScorers'
+import { Switcher } from './Switcher/Switcher'
 
 interface LeaderboardWrapperProps {
   alignment: string
@@ -27,12 +28,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const dispatch = useDispatch()
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
   const top3Scorers = useSelector(leaderboardSelectors.top3Scorers)
-
-  const handleSwitchPools = (_: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
-    if (newAlignment) {
-      setAlignment(newAlignment)
-    }
-  }
 
   useEffect(() => {
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
@@ -84,7 +79,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
               }
             })()}
           </Typography>
-          <Box className={classes.switchPoolsContainer}>
+          <Switcher alignment={alignment} setAlignment={setAlignment} />
+          {/* <Box className={classes.switchPoolsContainer}>
             <Box
               className={classes.switchPoolsMarker}
               sx={{
@@ -129,7 +125,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                 Rewards
               </ToggleButton>
             </ToggleButtonGroup>
-          </Box>
+          </Box> */}
         </Box>
 
         {content}

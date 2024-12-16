@@ -9,7 +9,7 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       flexDirection: 'row',
       gap: 24,
-      [theme.breakpoints.down('md')]: {
+      [theme.breakpoints.down('lg')]: {
         flexDirection: 'column'
       }
     },
@@ -26,7 +26,6 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      //   flexDirection: 'column',
       gap: 8,
       borderRadius: 12,
       width: 267,
