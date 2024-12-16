@@ -61,7 +61,7 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
             )}
           </>
         ) : (
-          'Click here!'
+          'Click!'
         )}
       </Button>
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />
