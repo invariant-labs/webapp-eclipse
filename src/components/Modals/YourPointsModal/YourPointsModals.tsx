@@ -7,6 +7,7 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
 import { colors, typography } from '@static/theme'
+import { formatLargeNumber } from '@utils/formatBigNumber'
 
 export interface ISelectNetworkModal {
   open: boolean
@@ -40,7 +41,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
             <>
               {[
                 {
-                  value: userStats?.points ?? 0,
+                  value: formatLargeNumber(userStats?.points ?? 0),
                   label: 'Your Points',
                   styleVariant: classes.counterYourPoints
                 },
