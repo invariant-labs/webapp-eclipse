@@ -25,10 +25,8 @@ export const Rewards = () => {
         <Typography className={classes.header}>Rewards</Typography>
         <>
           <Typography className={classes.description}>
-            Invariant Points are a rewards program designed to incentivize liquidity providers on
-            Invariant. Earn points by providing liquidity and participating in community activities.
-            Develop your own liquidity provision strategy and climb to the top of the leaderboard.
-            Accumulated points can be used for future exclusive benefits.
+            Welcome to the Rewards Tab! Here, you’ll be able to claim airdrops for being an early
+            user on Invariant. Your allocation will depend on the number of points you’ve accrued.
           </Typography>
           <Box style={{ marginTop: '64px' }}>
             <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -86,7 +84,7 @@ export const Rewards = () => {
               alignItems: 'center',
               flexDirection: 'column'
             }}>
-            If you want to learn more about point system, read about them in our Docs.
+            If you want to learn more about rewards and points distribution, check out our docs.
             <Link
               to='https://docs.invariant.app/docs/tutorial/get_started'
               target='_blank'

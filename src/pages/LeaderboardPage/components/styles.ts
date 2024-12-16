@@ -188,6 +188,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     switchPoolsButtonsGroup: { position: 'relative', zIndex: 2, display: 'flex' },
     switchPoolsButton: {
       ...typography.body2,
+      fontFamily: 'Arial',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',

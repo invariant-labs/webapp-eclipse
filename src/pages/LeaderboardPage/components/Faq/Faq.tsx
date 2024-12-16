@@ -48,27 +48,27 @@ const faqData = [
   {
     question: `I don't understand how the points distribution works. Could you explain it to me?`,
     answer: `    
-      Sure! Here is the explanation with a graphic example.
+      Sure! Here is the explanation with a graphic example.</br>
       You create two positions in a <b>USDC/USDT</b> pool with a price of <b>1 USDC per USDT</b>.
       (*Both positions contribute an equal amount of tokens to the pool.)
       <ul>
-      <li><b>Position 1</b>: Narrow range (<b>0.9999 - 1.0001</b>).</li>
-      <li>Position 2: Wider range (<b>0.9995 - 1.0005</b>).</li>
+      <li><b>Position 1:</b> Narrow range (<b>0.9999 - 1.0001</b>).</li>
+      <li><b>Position 2:</b> Wider range (<b>0.9995 - 1.0005</b>).</li>
       </ul>
       When both positions are active:
       <ul>
-      <li>Position 1 receives only <b>⅙</b> (1000 points) of the distributed points due to its wider range.</li>
+      <li><b>Position 1</b> receives only <b>⅙</b> (1000 points) of the distributed points due to its wider range.</li>
+      <li><b>Position 2</b> receives <b>⅚</b> (5000 points) of the distributed points due to its narrower range (higher concentration).</li>
       </ul>
-      Position 2 receives <b>⅚</b> (5000 points) of the distributed points due to its narrower range (higher concentration).
       <img src="${FAQ1}" /></br>
 
       If the price moves to <b>1.0004</b>:
       <ul>
       <li>
-      Position 1 becomes the sole active position and collects all distributed points(6000 points) during this time.
+      <b>Position 1</b> becomes the sole active position and collects all distributed points(6000 points) during this time.
       </li>
+      <li><b>Position 2</b> is no longer active (falls out of range, not collecting fee and accruing points).</li>
       </ul>
-      Position 2 is no longer active (falls out of range, not collecting fee and accruing points).
       <img src="${FAQ2}" />
     
     `
@@ -76,7 +76,7 @@ const faqData = [
   {
     question: `I'm new to providing liquidity, how can I learn how to do it correctly?`,
     answer:
-      'No worries, everyone started somewhere. You can start by reading our docs about concentrated liquidity provision here'
+      'No worries, everyone started somewhere. You can start by reading our docs about concentrated liquidity provision <a href="https://docs.invariant.app/docs/tutorial/get_started" style="color: #2EE09A">here</a>.'
   },
   {
     question: `I'm new to CLMM(Concentrated Liquidity Market Maker), but I was previously a provider in the classic AMM model. What to do?`,

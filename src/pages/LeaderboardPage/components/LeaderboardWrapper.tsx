@@ -137,9 +137,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                   }}>
                   <Typography className={classes.headerSmallText}>Total Points</Typography>
                   <Tooltip
-                    title={
-                      'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum'
-                    }
+                    title={'Points refresh every hour.'}
                     placement='bottom'
                     classes={{
                       tooltip: classes.tooltip
@@ -184,7 +182,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                     gap: '8px'
                   }}>
                   <Typography className={classes.headerSmallText}>Global Rank</Typography>
-                  <Tooltip
+                  {/* <Tooltip
                     title={
                       'Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum Lorem ipsum'
                     }
@@ -193,7 +191,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                       tooltip: classes.tooltip
                     }}>
                     <img src={infoIcon} alt='i' width={14} />
-                  </Tooltip>
+                  </Tooltip> */}
                 </Box>
                 <Typography className={classes.headerBigText}>
                   {userStats ? userStats.rank : 0}

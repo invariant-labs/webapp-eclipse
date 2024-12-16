@@ -50,7 +50,7 @@ const RootPage: React.FC = memo(() => {
         <Box
           sx={{
             background: colors.invariant.pink,
-            padding: '10px 8px',
+            padding: '10px 20px',
             width: '100%',
             maxWidth: '100%',
             display: 'flex',
@@ -68,7 +68,7 @@ const RootPage: React.FC = memo(() => {
               width: '24px'
             }}
           />
-          Check your Rewards status! Check it out{' '}
+          Invariant Points are available now! Check out your progress and rewards
           <span
             style={{
               color: colors.invariant.text,
