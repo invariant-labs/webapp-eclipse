@@ -4,6 +4,8 @@ import { fn } from '@storybook/test'
 import { store } from '@store/index'
 import { Provider } from 'react-redux'
 import { MemoryRouter } from 'react-router-dom'
+import { BN } from '@coral-xyz/anchor'
+import { NetworkType } from '@store/consts/static'
 
 const meta = {
   title: 'Buttons/FaucetButton',
@@ -25,6 +27,8 @@ type Story = StoryObj<typeof meta>
 export const Primary: Story = {
   args: {
     onFaucet: fn(),
-    children: 'Faucet'
+    children: 'Faucet',
+    network: NetworkType.Mainnet,
+    walletBalance: new BN(0)
   }
 }

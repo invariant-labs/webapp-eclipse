@@ -21,6 +21,7 @@ import { RpcStatus } from '@store/reducers/solanaConnection'
 import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
 import { PublicKey } from '@solana/web3.js'
 import FaucetButton from './HeaderButton/FaucetButton'
+import { BN } from '@coral-xyz/anchor'
 
 export interface IHeader {
   address: PublicKey
@@ -40,6 +41,7 @@ export interface IHeader {
   defaultDevnetRPC: string
   defaultMainnetRPC: string
   rpcStatus: RpcStatus
+  walletBalance: BN | null
 }
 
 export const Header: React.FC<IHeader> = ({
@@ -58,19 +60,22 @@ export const Header: React.FC<IHeader> = ({
   onChainSelect,
   network,
   rpcStatus,
-  defaultMainnetRPC
+  defaultMainnetRPC,
+  walletBalance
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
 
-  const routes = ['exchange', 'liquidity', 'creator', 'statistics']
+  const routes = ['exchange', 'liquidity', 'portfolio', 'creator' /*'leaderboard'*/, 'statistics']
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
-    liquidity: [/^newPosition\/*/, /^position\/*/],
+    liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
-    creator: [/^creator\/*/]
+    portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
+    creator: [/^creator\/*/],
+    leaderboard: [/^leaderboard\/*/]
   }
 
   const [activePath, setActive] = useState('exchange')
@@ -201,7 +206,9 @@ export const Header: React.FC<IHeader> = ({
           <Grid container className={classes.leftButtons}>
             {typeOfNetwork === NetworkType.Testnet && (
               <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                <FaucetButton onFaucet={onFaucet}>Faucet</FaucetButton>
+                <FaucetButton onFaucet={onFaucet} network={network} walletBalance={walletBalance}>
+                  Faucet
+                </FaucetButton>
               </Box>
             )}
             <Box sx={{ display: { xs: 'none', md: 'block' } }}>

@@ -373,7 +373,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       if (position?.positionIndex === undefined && isClosingPosition) {
         setIsClosingPosition(false)
         dispatch(connectionActions.setTimeoutError(false))
-        navigate('/liquidity')
+        navigate('/portfolio')
       } else {
         dispatch(connectionActions.setTimeoutError(false))
         onRefresh()
@@ -408,7 +408,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             actions.closePosition({
               positionIndex: position.positionIndex,
               onSuccess: () => {
-                navigate('/liquidity')
+                navigate('/portfolio')
               },
               claimFarmRewards
             })
@@ -501,7 +501,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       className={classes.fullHeightContainer}>
       <EmptyPlaceholder
         desc='The position does not exist in your list! '
-        onAction={() => navigate('/liquidity')}
+        onAction={() => navigate('/portfolio')}
         buttonName='Back to positions'
       />
     </Grid>

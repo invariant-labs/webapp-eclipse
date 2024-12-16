@@ -5,6 +5,7 @@ const useStyles = makeStyles()(theme => {
     container: {
       display: 'flex',
       justifyContent: 'center',
+      alignItems: 'flex-start',
       backgroundColor: 'transparent',
       marginTop: 45,
       paddingInline: 94,
@@ -20,6 +21,13 @@ const useStyles = makeStyles()(theme => {
 
       [theme.breakpoints.down('sm')]: {
         paddingInline: 8
+      }
+    },
+    innerContainer: {
+      maxWidth: 1072,
+
+      [theme.breakpoints.down('md')]: {
+        width: '100%'
       }
     }
   }

@@ -98,6 +98,7 @@ export const Primary: Story = {
   args: {
     data: poolsList,
     network: NetworkType.Local,
-    copyAddressHandler: fn()
+    copyAddressHandler: fn(),
+    isLoading: false
   }
 }

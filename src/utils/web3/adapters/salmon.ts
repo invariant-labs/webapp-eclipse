@@ -33,7 +33,7 @@ export class SalmonWalletAdapter implements WalletAdapter {
     return this._salmonProvider?.autoApprove || false
   }
 
-  async signAllTransactions(transactions: Transaction[]): Promise<Transaction[]> {
+  signAllTransactions = async (transactions: Transaction[]): Promise<Transaction[]> => {
     if (!this._salmonProvider) {
       return transactions
     }
@@ -47,7 +47,7 @@ export class SalmonWalletAdapter implements WalletAdapter {
       : DEFAULT_PUBLICKEY
   }
 
-  async signTransaction(transaction: Transaction) {
+  signTransaction = async (transaction: Transaction) => {
     if (!this._salmonProvider) {
       return transaction
     }
@@ -55,14 +55,14 @@ export class SalmonWalletAdapter implements WalletAdapter {
     return await this._salmonProvider.signTransaction(transaction)
   }
 
-  async sendMessage(message: Uint8Array) {
+  sendMessage = async (message: Uint8Array) => {
     if (!this._salmonProvider) {
       throw new Error('Salmon Wallet not connected' + message)
     }
     return await this._salmonProvider.sendMessage(message)
   }
 
-  async signMessage(message: Uint8Array) {
+  signMessage = async (message: Uint8Array) => {
     if (!this._salmonProvider) {
       throw new Error('Salmon Wallet not connected')
     }

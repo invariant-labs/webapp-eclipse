@@ -6,6 +6,10 @@ import { BestTier, Chain, PrefixConfig, Token, TokenPriceData, WalletType } from
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
+import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
+import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
+import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
+import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
 
 export enum NetworkType {
   Local = 'Local',
@@ -59,6 +63,7 @@ export const BTC_DEV: Token = {
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
   coingeckoId: 'bitcoin'
 }
+
 export const WETH_DEV: Token = {
   tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'ETH',
@@ -534,7 +539,7 @@ export const airdropQuantities: Record<NetworkType, number[]> = {
 
 export const WRAPPED_ETH_ADDRESS = 'So11111111111111111111111111111111111111112'
 
-// export const WETH_MIN_FAUCET_FEE_MAIN = new BN(10000)
+export const WETH_MIN_FAUCET_FEE_TEST = new BN(45000)
 export const WETH_MIN_FAUCET_FEE_MAIN = new BN(25000)
 
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST = new BN(50000)
@@ -674,9 +679,9 @@ export const enum SortTypePoolList {
   VOLUME_ASC,
   VOLUME_DESC,
   TVL_ASC,
-  TVL_DESC
-  // APY_ASC,
-  // APY_DESC
+  TVL_DESC,
+  APY_ASC,
+  APY_DESC
 }
 
 export const enum SortTypeTokenList {
@@ -714,4 +719,36 @@ export const walletNames = {
   [WalletType.BACKPACK]: 'Backpack',
   [WalletType.SALMON]: 'Salmon',
   [WalletType.NIGHTLY]: 'Wallet Selector'
+}
+
+export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
+
+export const getPopularPools = (network: NetworkType) => {
+  switch (network) {
+    case NetworkType.Mainnet:
+      return [
+        {
+          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '0.3'
+        },
+        {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '0.3'
+        },
+        {
+          tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '0.01'
+        },
+        {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '1'
+        }
+      ]
+    default:
+      return []
+  }
 }
