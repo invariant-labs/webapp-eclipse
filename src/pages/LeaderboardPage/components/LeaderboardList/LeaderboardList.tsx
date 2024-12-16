@@ -112,7 +112,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
               />
             ))
           ) : (
-            <NotFoundPlaceholder title='Leaderboard empty...' />
+            <NotFoundPlaceholder title='Leaderboard is empty...' />
           )}
         </Box>
       </Grid>
@@ -122,7 +122,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
           <Grid className={classes.pagination}>
             <PaginationList
               pages={totalPages}
-              defaultPage={1}
+              defaultPage={currentPage}
               handleChangePage={handlePageChange}
               variant='center'
             />

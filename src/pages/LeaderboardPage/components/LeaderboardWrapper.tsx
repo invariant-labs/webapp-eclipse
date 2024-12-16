@@ -12,11 +12,11 @@ import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
 import trapezeLeft from '@static/png/trapezeLeft.png'
 import trapezeRight from '@static/png/trapezeRight.png'
 import infoIcon from '@static/svg/info.svg'
-import { BN } from '@coral-xyz/anchor'
-import { printBN } from '@utils/utils'
+import { printBN, trimZeros } from '@utils/utils'
 import { shortenAddress } from '@utils/uiUtils'
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
+import { BN } from '@coral-xyz/anchor'
 
 interface LeaderboardWrapperProps {
   alignment: string
@@ -34,30 +34,10 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const userStats = useSelector(leaderboardSelectors.currentUser)
   const dispatch = useDispatch()
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
-  // const currentPage = useSelector(leaderboardSelectors.currentPage)
+  const [firstPlace, secondPlace, thirdPlace] = useSelector(leaderboardSelectors.top3Scorers)
   const walletStatus = useSelector(status)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
-  const { firstPlace, secondPlace, thirdPlace } = useMemo(() => {
-    const firstPlaceItem = leaderboard.find(item => item.rank === 1) || null
-    const secondPlaceItem = leaderboard.find(item => item.rank === 2) || null
-    const thirdPlaceItem = leaderboard.find(item => item.rank === 3) || null
-
-    return {
-      firstPlace: firstPlaceItem
-        ? { points: new BN(firstPlaceItem.points, 'hex'), addr: firstPlaceItem.address.toString() }
-        : { points: new BN(0), addr: '' },
-      secondPlace: secondPlaceItem
-        ? {
-            points: new BN(secondPlaceItem.points, 'hex'),
-            addr: secondPlaceItem.address.toString()
-          }
-        : { points: new BN(0), addr: '' },
-      thirdPlace: thirdPlaceItem
-        ? { points: new BN(thirdPlaceItem.points, 'hex'), addr: thirdPlaceItem.address.toString() }
-        : { points: new BN(0), addr: '' }
-    }
-  }, [leaderboard])
   const handleSwitchPools = (_: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
     if (newAlignment) {
       setAlignment(newAlignment)
@@ -209,42 +189,46 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             marginTop: '56px',
             width: '100%'
           }}>
-          <Typography className={classes.leaderboardHeaderSectionTitle}>Top Scorers</Typography>
-          <Box className={classes.sectionContent}>
-            <Box className={classes.topScorersItem}>
-              <img src={leaderboardSilver} alt='Silver' />
-              <Box className={classes.topScorersItemBox}>
-                <Typography className={classes.headerBigText}>
-                  {printBN(secondPlace.points, 6)} Points
-                </Typography>
-                <Typography className={classes.headerSmallText}>
-                  {shortenAddress(secondPlace.addr, 4)}
-                </Typography>
+          {firstPlace && secondPlace && thirdPlace && (
+            <>
+              <Typography className={classes.leaderboardHeaderSectionTitle}>Top Scorers</Typography>
+              <Box className={classes.sectionContent}>
+                <Box className={classes.topScorersItem}>
+                  <img src={leaderboardSilver} alt='Silver' />
+                  <Box className={classes.topScorersItemBox}>
+                    <Typography className={classes.headerBigText}>
+                      {trimZeros(printBN(new BN(secondPlace.points, 'hex'), 6))} Points
+                    </Typography>
+                    <Typography className={classes.headerSmallText}>
+                      {shortenAddress(secondPlace.address.toString(), 4)}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box className={classes.topScorersItem}>
+                  <img src={leaderboardGolden} alt='Gold' />
+                  <Box className={classes.topScorersItemBox}>
+                    <Typography className={classes.headerBigText}>
+                      {trimZeros(printBN(new BN(firstPlace.points, 'hex'), 6))} Points
+                    </Typography>
+                    <Typography className={classes.headerSmallText}>
+                      {shortenAddress(firstPlace.address.toString(), 4)}
+                    </Typography>
+                  </Box>
+                </Box>
+                <Box className={classes.topScorersItem}>
+                  <img src={leaderboardBronze} alt='Bronze' />
+                  <Box className={classes.topScorersItemBox}>
+                    <Typography className={classes.headerBigText}>
+                      {trimZeros(printBN(new BN(thirdPlace.points, 'hex'), 6))} Points
+                    </Typography>
+                    <Typography className={classes.headerSmallText}>
+                      {shortenAddress(thirdPlace.address.toString(), 4)}
+                    </Typography>
+                  </Box>
+                </Box>
               </Box>
-            </Box>
-            <Box className={classes.topScorersItem}>
-              <img src={leaderboardGolden} alt='Gold' />
-              <Box className={classes.topScorersItemBox}>
-                <Typography className={classes.headerBigText}>
-                  {printBN(firstPlace.points, 6)} Points
-                </Typography>
-                <Typography className={classes.headerSmallText}>
-                  {shortenAddress(firstPlace.addr, 4)}
-                </Typography>
-              </Box>
-            </Box>
-            <Box className={classes.topScorersItem}>
-              <img src={leaderboardBronze} alt='Bronze' />
-              <Box className={classes.topScorersItemBox}>
-                <Typography className={classes.headerBigText}>
-                  {printBN(thirdPlace.points, 6)} Points
-                </Typography>
-                <Typography className={classes.headerSmallText}>
-                  {shortenAddress(thirdPlace.addr, 4)}
-                </Typography>
-              </Box>
-            </Box>
-          </Box>
+            </>
+          )}
         </Box>
         <Box
           sx={{
@@ -256,7 +240,18 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             width: '100%'
           }}>
           <Typography className={classes.leaderboardHeaderSectionTitle}>
-            Points Leaderboard
+            {(() => {
+              switch (alignment) {
+                case 'leaderboard':
+                  return 'Point Leaderboard'
+                case 'faq':
+                  return 'Frequent questions'
+                case 'rewards':
+                  return 'Rewards'
+                default:
+                  return 0
+              }
+            })()}
           </Typography>
           <Box className={classes.switchPoolsContainer}>
             <Box

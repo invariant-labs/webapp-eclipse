@@ -46,6 +46,10 @@ const faqData = [
     answer: 'ETH/USDC'
   },
   {
+    question: `I had an open position on ETH/USDC before the Invariant Points launch. What should I do?`,
+    answer: 'You should close the position and reopen it so that the points start accumulating.'
+  },
+  {
     question: `I don't understand how the points distribution works. Could you explain it to me?`,
     answer: `    
       Sure! Here is the explanation with a graphic example.</br>

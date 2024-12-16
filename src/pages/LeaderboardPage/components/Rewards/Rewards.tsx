@@ -86,7 +86,7 @@ export const Rewards = () => {
             }}>
             If you want to learn more about rewards and points distribution, check out our docs.
             <Link
-              to='https://docs.invariant.app/docs/tutorial/get_started'
+              to='https://docs.invariant.app/docs/invariant_points/mechanism'
               target='_blank'
               style={{ textDecoration: 'none' }}>
               <Button className={classes.button} style={{ marginTop: '32px' }}>

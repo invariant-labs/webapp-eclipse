@@ -19,7 +19,7 @@ export const InfoComponent = () => {
           Accumulated points can be used for future exclusive benefits.
         </Typography>
         <Link
-          to='https://docs.invariant.app/docs/tutorial/get_started'
+          to='https://docs.invariant.app/docs/invariant_points/overview'
           target='_blank'
           style={{ textDecoration: 'none' }}>
           <Button className={classes.button} style={{ marginTop: '32px' }}>
