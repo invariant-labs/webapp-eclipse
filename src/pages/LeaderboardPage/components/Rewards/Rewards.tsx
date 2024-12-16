@@ -87,7 +87,10 @@ export const Rewards = () => {
               flexDirection: 'column'
             }}>
             If you want to learn more about point system, read about them in our Docs.
-            <Link to='https://docs.invariant.app/docs/tutorial/get_started' target='_blank'>
+            <Link
+              to='https://docs.invariant.app/docs/tutorial/get_started'
+              target='_blank'
+              style={{ textDecoration: 'none' }}>
               <Button className={classes.button} style={{ marginTop: '32px' }}>
                 Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
               </Button>
