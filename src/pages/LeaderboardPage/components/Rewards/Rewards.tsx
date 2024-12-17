@@ -52,7 +52,7 @@ export const Rewards = () => {
                 {currentUser?.points ?? 0} points
               </Typography>
               <Box style={{ width: '250px' }}>
-                <Box sx={{ marginTop: '64px' }}>
+                <Box sx={{ marginTop: '8px' }}>
                   <ChangeWalletButton
                     isDisabled={isConnected}
                     name={!isConnected ? 'Connect Wallet' : 'Claim'}
