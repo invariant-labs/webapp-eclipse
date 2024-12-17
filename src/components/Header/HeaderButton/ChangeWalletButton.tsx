@@ -17,6 +17,7 @@ export interface IProps {
   className?: string
   onCopyAddress?: () => void
   textClassName?: string
+  isDisabled?: boolean
 }
 export const ChangeWalletButton: React.FC<IProps> = ({
   name,
@@ -25,6 +26,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   startIcon,
   hideArrow,
   onDisconnect,
+  isDisabled = false,
   className,
   onCopyAddress = () => {},
   textClassName
@@ -35,6 +37,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   const [isOpenSelectWallet, setIsOpenSelectWallet] = React.useState<boolean>(false)
   const [isChangeWallet, setIsChangeWallet] = React.useState<boolean>(false)
 
+  // if (isDisabled) return
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!connected) {
       setIsOpenSelectWallet(true)
@@ -88,9 +91,11 @@ export const ChangeWalletButton: React.FC<IProps> = ({
         id='connect-wallet-button'
         className={classNames(
           connected ? classes.headerButtonConnected : classes.headerButtonConnect,
+          isDisabled && classes.disabled,
           className
         )}
-        variant='contained'
+        variant={'contained'}
+        disabled={isDisabled}
         classes={{
           disabled: classes.disabled,
           startIcon: classes.startIcon,

@@ -53,17 +53,10 @@ export const Rewards = () => {
                 {currentUser?.points ?? 0} points
               </Typography>
               <Box style={{ width: '250px' }}>
-                {isConnected ? (
-                  <AnimatedButton
-                    disabled={true}
-                    progress={'none'}
-                    sx={{ width: '100%', marginTop: '64px' }}
-                    content='Claim'
-                    onClick={() => {}}
-                  />
-                ) : (
+                <Box sx={{ marginTop: '64px' }}>
                   <ChangeWalletButton
-                    name='Connect wallet'
+                    isDisabled={isConnected}
+                    name={!isConnected ? 'Connect Wallet' : 'Claim'}
                     onConnect={() => {
                       dispatch(walletActions.connect(false))
                     }}
@@ -71,7 +64,7 @@ export const Rewards = () => {
                     onDisconnect={() => {}}
                     className={classes.connectWalletButton}
                   />
-                )}
+                </Box>
               </Box>
             </Box>
           </Box>

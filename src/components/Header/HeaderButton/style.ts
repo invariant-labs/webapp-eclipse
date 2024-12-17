@@ -29,6 +29,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         paddingInline: 6
       }
     },
+
     pointsHeaderButton: {
       boxSizing: 'border-box',
       minWidth: '10px',
@@ -64,6 +65,35 @@ const useStyles = makeStyles()((theme: Theme) => {
     label: {
       WebkitPaddingBefore: '2px'
     },
+    headerButtonConnected: {
+      background: colors.invariant.light,
+      color: colors.white.main,
+      paddingInline: 12,
+      borderRadius: 14,
+      textTransform: 'none',
+      ...typography.body1,
+      height: 40,
+
+      '&:hover': {
+        background: colors.blue.deep,
+        '@media (hover: none)': {
+          background: colors.invariant.light
+        }
+      },
+
+      '&.Mui-disabled': {
+        background: colors.invariant.componentBcg,
+        backgroundImage: 'none !important',
+        opacity: 0.5,
+        pointerEvents: 'auto',
+        color: `${colors.invariant.textGrey} !important`,
+        '&:hover': {
+          background: colors.invariant.componentBcg,
+          boxShadow: 'none',
+          cursor: 'not-allowed'
+        }
+      }
+    },
     headerButtonConnect: {
       background: colors.invariant.pinkLinearGradientOpacity,
       color: colors.invariant.newDark,
@@ -86,21 +116,18 @@ const useStyles = makeStyles()((theme: Theme) => {
           background: colors.invariant.pinkLinearGradientOpacity,
           boxShadow: 'none'
         }
-      }
-    },
-    headerButtonConnected: {
-      background: colors.invariant.light,
-      color: colors.white.main,
-      paddingInline: 12,
-      borderRadius: 14,
-      textTransform: 'none',
-      ...typography.body1,
-      height: 40,
+      },
 
-      '&:hover': {
-        background: colors.blue.deep,
-        '@media (hover: none)': {
-          background: colors.invariant.light
+      '&.Mui-disabled': {
+        background: colors.invariant.componentBcg,
+        backgroundImage: 'none !important',
+        opacity: 0.5,
+        pointerEvents: 'auto',
+        color: `${colors.invariant.textGrey} !important`,
+        '&:hover': {
+          background: colors.invariant.componentBcg,
+          boxShadow: 'none',
+          cursor: 'not-allowed'
         }
       }
     },
