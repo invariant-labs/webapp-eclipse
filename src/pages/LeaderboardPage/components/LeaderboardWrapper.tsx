@@ -80,52 +80,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             })()}
           </Typography>
           <Switcher alignment={alignment} setAlignment={setAlignment} />
-          {/* <Box className={classes.switchPoolsContainer}>
-            <Box
-              className={classes.switchPoolsMarker}
-              sx={{
-                left: {
-                  xs: (() => {
-                    switch (alignment) {
-                      case 'leaderboard':
-                        return 0
-                      case 'faq':
-                        return '50%'
-                      case 'rewards':
-                        return '100%'
-                      default:
-                        return 0
-                    }
-                  })(),
-                  md: alignment === 'leaderboard' ? 0 : alignment === 'faq' ? '50%' : '100%',
-                  transform:
-                    alignment === 'leaderboard'
-                      ? 'none'
-                      : alignment === 'faq'
-                        ? 'translateX(-50%)'
-                        : 'translateX(-100%)'
-                }
-              }}
-            />
-            <ToggleButtonGroup
-              value={alignment}
-              exclusive
-              onChange={handleSwitchPools}
-              className={classes.switchPoolsButtonsGroup}>
-              <ToggleButton
-                value={'leaderboard'}
-                disableRipple
-                className={classes.switchPoolsButton}>
-                Leaderboard
-              </ToggleButton>
-              <ToggleButton value={'faq'} disableRipple className={classes.switchPoolsButton}>
-                FAQ
-              </ToggleButton>
-              <ToggleButton value={'rewards'} disableRipple className={classes.switchPoolsButton}>
-                Rewards
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box> */}
         </Box>
 
         {content}
