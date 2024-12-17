@@ -1,4 +1,4 @@
-import { Theme } from '@mui/material'
+import { alpha, Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
@@ -347,17 +347,19 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   unknownWarningContainer: {
     marginTop: 12,
+    width: '100%',
     display: 'flex',
     gap: 12
   },
   unknownWarning: {
     width: 'fit-content',
-    background: colors.invariant.yellow,
-    color: colors.invariant.black,
+    background: alpha(colors.invariant.Error, 0.25),
+    border: `1px solid ${colors.invariant.Error}`,
+    ...typography.caption2,
+    color: colors.invariant.Error,
     padding: 4,
     paddingInline: 8,
-    borderRadius: 8,
-    fontSize: 12
+    borderRadius: 10
   }
 }))
 
