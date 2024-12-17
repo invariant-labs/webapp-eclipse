@@ -16,7 +16,7 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
   return (
     <Box
       sx={{
-        background: colors.invariant.pink,
+        background: colors.invariant.light,
         padding: '10px 20px',
         width: '100%',
         maxWidth: '100%',
@@ -25,6 +25,7 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
         justifyContent: 'center',
         alignItems: 'center',
         boxSizing: 'border-box',
+        color: colors.invariant.text,
         margin: 0
       }}>
       <img
@@ -44,8 +45,7 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
             background: colors.invariant.green,
             padding: '2px',
             marginRight: '4px',
-
-            borderRadius: '6px'
+            borderRadius: '2px'
           }}>
           {hours}H
         </span>
@@ -58,7 +58,7 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
             padding: '2px',
             marginLeft: '4px',
             marginRight: '4px',
-            borderRadius: '6px'
+            borderRadius: '2px'
           }}>
           {minutes}M
         </span>
@@ -70,16 +70,16 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
             background: colors.invariant.green,
             padding: '2px',
             marginLeft: '4px',
-            borderRadius: '6px'
+            borderRadius: '2px'
           }}>
           {seconds}S
         </span>
       </span>
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-        Check it out here!
+        Check it out
         <span
           style={{
-            color: colors.invariant.text,
+            color: colors.invariant.pink,
             textDecoration: 'underline',
             marginLeft: '6px',
             cursor: 'pointer',

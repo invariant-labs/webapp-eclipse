@@ -8,8 +8,7 @@ const useStyles = makeStyles()(() => {
       width: 227,
       height: 'fit-content',
       borderRadius: 20,
-      marginTop: 8,
-      padding: 8
+      padding: 16
     },
     list: {
       borderRadius: 5,
@@ -61,7 +60,7 @@ const useStyles = makeStyles()(() => {
     paper: {
       background: 'transparent',
       boxShadow: 'none',
-      borderRadius: '24px',
+      borderRadius: '16px',
       border: '2px solid transparent',
       backgroundImage: 'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
       backgroundOrigin: 'border-box',

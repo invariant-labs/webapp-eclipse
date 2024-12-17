@@ -18,8 +18,22 @@ export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds, handleCl
   return (
     <>
       <Typography style={{ color: colors.invariant.text }}>
-        <span style={{ color: colors.invariant.pink, textAlign: 'center' }}>Invariant Points</span>{' '}
-        launches in:
+        <span
+          style={{
+            color: colors.invariant.pink,
+            textAlign: 'center',
+            textShadow: '0px 0px 5px #EF84F5'
+          }}>
+          Invariant Points
+        </span>{' '}
+        <span
+          style={{
+            color: colors.invariant.text,
+            textAlign: 'center',
+            textShadow: '0px 0px 5px #FFFFFF80'
+          }}>
+          launches in:
+        </span>
       </Typography>
 
       <Box
