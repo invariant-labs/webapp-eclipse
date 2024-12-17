@@ -57,16 +57,12 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
   const displayData = useMemo(() => {
     return isLoading ? generateMockData(itemsPerPage) : data
   }, [isLoading, data])
-
   const totalPages = useMemo(() => Math.ceil(totalItems / itemsPerPage), [displayData])
   const lowerBound = useMemo(
     () => (currentPage - 1) * itemsPerPage + 1,
     [currentPage, itemsPerPage]
   )
-  const upperBound = useMemo(
-    () => Math.min(currentPage * (itemsPerPage ?? 25), totalItems),
-    [currentPage, itemsPerPage]
-  )
+  const upperBound = useMemo(() => Math.min(currentPage * itemsPerPage, totalItems), [displayData])
 
   const handlePageChange = useCallback(
     (page: number) => {
