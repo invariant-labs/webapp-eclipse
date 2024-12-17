@@ -1,5 +1,5 @@
-import { Pagination, Typography, useMediaQuery } from '@mui/material'
-import { theme, typography, colors } from '@static/theme'
+import { Pagination, useMediaQuery } from '@mui/material'
+import { theme } from '@static/theme'
 import { useStyles } from './style'
 
 export interface IPaginationList {
