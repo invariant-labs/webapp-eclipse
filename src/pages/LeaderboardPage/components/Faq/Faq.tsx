@@ -56,8 +56,8 @@ const faqData = [
       You create two positions in a <b>USDC/USDT</b> pool with a price of <b>1 USDC per USDT</b>.
       (*Both positions contribute an equal amount of tokens to the pool.)
       <ul>
-      <li><b>Position 1:</b> Narrow range (<b>0.9999 - 1.0001</b>).</li>
-      <li><b>Position 2:</b> Wider range (<b>0.9995 - 1.0005</b>).</li>
+      <li><b>Position 1:</b> Wider range (<b>0.9995 - 1.0005</b>).</li>
+      <li><b>Position 2:</b> Narrow range (<b>0.9999 - 1.0001</b>).</li>
       </ul>
       When both positions are active:
       <ul>
