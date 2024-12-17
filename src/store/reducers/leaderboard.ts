@@ -71,34 +71,6 @@ const leaderboardSlice = createSlice({
       state.isLoading = action.payload
       return state
     }
-    //   updateUserStats(state, action: PayloadAction<UserStats>) {
-    //     state.currentUser = action.payload
-    //     const userIndex = state.leaderboard.findIndex(
-    //       entry => entry.address === action.payload.address
-    //     )
-    //     if (userIndex !== -1) {
-    //       state.leaderboard[userIndex] = action.payload
-
-    //       if (action.payload.rank <= 3) {
-    //         const existingTop3Index = state.top3Scorers.findIndex(
-    //           entry => entry.address === action.payload.address
-    //         )
-
-    //         if (existingTop3Index !== -1) {
-    //           state.top3Scorers[existingTop3Index] = action.payload
-    //         } else {
-    //           state.top3Scorers = [...state.top3Scorers, action.payload]
-    //             .sort((a, b) => a.rank - b.rank)
-    //             .slice(0, 3)
-    //         }
-    //       } else {
-    //         state.top3Scorers = state.top3Scorers.filter(
-    //           entry => entry.address !== action.payload.address
-    //         )
-    //       }
-    //     }
-    //     return state
-    //   }
   }
 })
 

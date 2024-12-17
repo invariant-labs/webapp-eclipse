@@ -1,5 +1,5 @@
-import { Pagination, useMediaQuery } from '@mui/material'
-import { theme } from '@static/theme'
+import { Pagination, Typography, useMediaQuery } from '@mui/material'
+import { theme, typography, colors } from '@static/theme'
 import { useStyles } from './style'
 
 export interface IPaginationList {
@@ -22,7 +22,9 @@ export const PaginationList: React.FC<IPaginationList> = ({
   const matches = useMediaQuery(theme.breakpoints.down('xs'))
 
   return (
-    <div className={classes.root} style={{ justifyContent: position ? 'center' : `${variant}` }}>
+    <div
+      className={classes.root}
+      style={{ justifyContent: position ? 'center' : `${variant}`, alignItems: 'center' }}>
       <Pagination
         count={pages}
         shape='rounded'
