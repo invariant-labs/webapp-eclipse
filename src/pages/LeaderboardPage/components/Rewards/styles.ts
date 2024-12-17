@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   infoContainer: {
     width: '100%',
-    marginTop: '72px',
+    marginTop: '14px',
     minHeight: '445px',
     padding: '25px max(15%, 20px)',
     display: 'flex',
