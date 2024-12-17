@@ -169,6 +169,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
                 position: isMobile ? 'static' : 'absolute',
                 right: 0,
                 top: '55%',
+                pointerEvents: 'none',
                 transform: isMobile ? 'none' : 'translateY(-50%)'
               }}>
               <Typography
