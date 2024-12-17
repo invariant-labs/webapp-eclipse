@@ -89,5 +89,11 @@ export const useStyles = makeStyles()(() => ({
       transform: 'translateY(1px)',
       boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
     }
+  },
+  linkButtonContainer: {
+    [theme.breakpoints.down('md')]: {
+      display: 'flex',
+      justifyContent: 'center'
+    }
   }
 }))
