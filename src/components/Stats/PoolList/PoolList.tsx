@@ -43,7 +43,7 @@ export interface PoolListInterface {
 const ITEMS_PER_PAGE = 10
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
-const fees = [0.01, 0.02, 0.1, 0.3, 1]
+const fees = [0.01, 0.02, 0.1, 0.3, 0.9, 1]
 
 const generateMockData = () => {
   return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
