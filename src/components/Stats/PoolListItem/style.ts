@@ -35,6 +35,9 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
+  containerNoAPY: {
+    gridTemplateColumns: '5% auto 12% 15% 12% 160px'
+  },
   tooltipIcon: {
     '&:hover': {
       cursor: 'pointer'
