@@ -4,6 +4,7 @@ import Jupi from '@static/png/jupi.png'
 import './animation.css'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { Link } from 'react-router-dom'
+import { theme } from '@static/theme'
 
 export const InfoComponent = () => {
   const { classes } = useStyles()
@@ -21,7 +22,13 @@ export const InfoComponent = () => {
         <Link
           to='https://docs.invariant.app/docs/invariant_points/overview'
           target='_blank'
-          style={{ textDecoration: 'none' }}>
+          style={{
+            textDecoration: 'none',
+            [theme.breakpoints.down('md')]: {
+              display: 'flex',
+              justifyContent: 'center'
+            }
+          }}>
           <Button className={classes.button} style={{ marginTop: '32px' }}>
             Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
           </Button>
