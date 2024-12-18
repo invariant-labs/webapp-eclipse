@@ -21,7 +21,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
 
   const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
-  const isSmDown = useMediaQuery('@media (max-width:700px)')
+  const isSmDown = useMediaQuery('@media (max-width: 800px)')
 
   const slidesNumber = useMemo(() => {
     if (isSmDown) return 1
@@ -40,15 +40,16 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
           dots={isLgDown}
           draggable={isLgDown}
           touchMove={isLgDown}
-          infinite={false}
+          infinite={true}
           speed={500}
           slidesToShow={slidesNumber}
           slidesToScroll={1}
-          arrows={false}
+          arrows={true}
           className={classes.slider}
           dotsClass={`slick-dots ${classes.dots}`}
           appendDots={dots => <ul>{dots}</ul>}
-          rows={1}>
+          rows={1}
+          centerMode={true}>
           {pools.map(pool => (
             <Card
               addressFrom={pool.addressFrom}

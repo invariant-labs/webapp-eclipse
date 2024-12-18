@@ -17,14 +17,23 @@ export const useStyles = makeStyles()(() => ({
     background: colors.invariant.component
   },
   slider: {
-    minWidth: '100%',
-    '& .slick-track': {
-      display: 'flex',
-      justifyContent: 'space-between'
-    },
-    '& .slick-slide': {
-      display: 'flex',
-      justifyContent: 'center'
+    // minWidth: '100%',
+    // '& .slick-track': {
+    //   display: 'flex',
+    //   justifyContent: 'space-between'
+    // },
+    // '& .slick-slide': {
+    //   display: 'flex',
+    //   justifyContent: 'center'
+    // },
+    '& .slick-arrow': {
+      '&::before': {
+        background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+        fontSize: 24,
+        '-webkit-background-clip': 'text',
+        color: 'transparent',
+        opacity: 1
+      }
     }
   },
   dots: {
