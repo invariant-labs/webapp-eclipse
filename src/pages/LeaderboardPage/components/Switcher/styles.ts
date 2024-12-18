@@ -55,6 +55,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
     },
     switchPoolsButton: {
       ...typography.body2,
+      fontWeight: '700',
       fontFamily: 'Arial',
       display: 'flex',
       justifyContent: 'center',
