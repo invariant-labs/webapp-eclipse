@@ -10,8 +10,9 @@ import { colors, typography } from '@static/theme'
 import { formatLargeNumber } from '@utils/formatBigNumber'
 import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
 import { Timer } from './Timer'
-import { LAUNCH_DATE } from '@pages/LeaderboardPage/config'
-import { trimZeros } from '@utils/utils'
+import { LAUNCH_DATE, LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { printBN, trimZeros } from '@utils/utils'
+import { BN } from '@coral-xyz/anchor'
 
 export interface ISelectNetworkModal {
   open: boolean
@@ -59,7 +60,12 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
               <>
                 {[
                   {
-                    value: trimZeros(formatLargeNumber(userStats?.points ?? 0)),
+                    value:
+                      trimZeros(
+                        formatLargeNumber(
+                          +printBN(new BN(userStats?.points, 'hex'), LEADERBOARD_DECIMAL)
+                        )
+                      ) ?? 0,
                     label: 'Your Points',
                     styleVariant: classes.counterYourPoints
                   },

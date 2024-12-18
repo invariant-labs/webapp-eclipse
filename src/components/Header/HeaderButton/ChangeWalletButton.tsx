@@ -6,6 +6,9 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import ConnectWallet from '@components/Modals/ConnectWallet/ConnectWallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import SelectWalletModal from '@components/Modals/SelectWalletModal/SelectWalletModal'
+import { useDispatch, useSelector } from 'react-redux'
+import { actions } from '@store/reducers/leaderboard'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 
 export interface IProps {
   name: string
@@ -37,6 +40,9 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   const [isOpenSelectWallet, setIsOpenSelectWallet] = React.useState<boolean>(false)
   const [isChangeWallet, setIsChangeWallet] = React.useState<boolean>(false)
 
+  const dispatch = useDispatch()
+  const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
+
   // if (isDisabled) return
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!connected) {
@@ -55,6 +61,8 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     setIsOpenSelectWallet(false)
     unblurContent()
     setIsChangeWallet(false)
+
+    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
   }
 
   const handleClose = () => {

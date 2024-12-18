@@ -18,7 +18,7 @@ import { ProgressItem } from './ProgressItem'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
-import { printBN } from '@utils/utils'
+import { formatNumberWithCommas, printBN, trimZeros } from '@utils/utils'
 
 interface YourProgressProps {
   userStats: UserStats | null
@@ -52,7 +52,9 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           tooltip='Points refresh every hour.'
           desktopLabelAligment='right'
           label='Total points'
-          value={printBN(new BN(userStats?.points, 'hex') ?? 0, LEADERBOARD_DECIMAL)}
+          value={formatNumberWithCommas(
+            trimZeros(printBN(new BN(userStats?.points, 'hex') ?? 0, LEADERBOARD_DECIMAL))
+          )}
         />
         <ProgressItem
           background={{
