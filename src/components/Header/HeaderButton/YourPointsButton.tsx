@@ -11,6 +11,7 @@ import { formatLargeNumber } from '@utils/formatBigNumber'
 import { LAUNCH_DATE } from '@pages/LeaderboardPage/config'
 import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
 import { trimZeros } from '@utils/utils'
+import icons from '@static/icons'
 
 export interface IProps {
   disabled?: boolean
@@ -62,7 +63,17 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
             )}
           </>
         ) : (
-          'Click!'
+          <>
+            <img
+              src={icons.airdrop}
+              style={{
+                marginRight: '6px',
+                height: '13px',
+                width: '9px'
+              }}
+            />
+            Points
+          </>
         )}
       </Button>
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />

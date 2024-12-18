@@ -31,6 +31,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
 
     pointsHeaderButton: {
+      textTransform: 'none',
       boxSizing: 'border-box',
       minWidth: '10px',
       height: '40px',
