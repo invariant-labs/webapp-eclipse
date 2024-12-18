@@ -35,6 +35,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
   })
   const walletStatus = useSelector(status)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+  const totalItems = useSelector(leaderboardSelectors.totalItems)
 
   const userStats = useSelector(leaderboardSelectors.currentUser)
   return (
@@ -63,7 +64,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                     styleVariant: classes.counterYourPoints
                   },
                   {
-                    value: `# ${userStats?.rank ?? 0}`,
+                    value: `# ${userStats?.rank ?? totalItems + 1}`,
                     label: 'Your Ranking Position',
                     styleVariant: classes.counterYourRanking
                   }
