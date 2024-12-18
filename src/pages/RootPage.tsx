@@ -64,7 +64,7 @@ const RootPage: React.FC = memo(() => {
     setTimeout(() => {
       setShowHeader(false)
       setIsHiding(false)
-    }, 200)
+    }, 300)
   }
 
   return (

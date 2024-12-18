@@ -2,6 +2,7 @@ import { Box } from '@mui/material'
 import icons from '@static/icons'
 import { colors, typography } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
+
 interface INormalBannerProps {
   onClose: () => void
   isHiding: boolean
@@ -9,31 +10,36 @@ interface INormalBannerProps {
 
 export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
   const navigate = useNavigate()
+  const bannerHeight = '44px'
 
   return (
     <Box
       sx={{
         position: 'relative',
         background: colors.invariant.light,
-        padding: '10px 20px',
+        padding: isHiding ? '0px 20px' : '10px 20px',
         width: '100%',
         maxWidth: '100%',
+        height: isHiding ? '0' : bannerHeight,
         display: 'flex',
         ...typography.body1,
         justifyContent: 'center',
         alignItems: 'center',
         boxSizing: 'border-box',
         color: colors.invariant.text,
-        margin: 0,
-        transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
-        transition: 'transform 0.5s ease-in-out'
+        margin: isHiding ? '0' : undefined,
+        overflow: 'hidden',
+        opacity: isHiding ? 0 : 1,
+        transition: 'all 0.3s ease-in-out'
       }}>
       <span
         style={{
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          flexWrap: 'wrap'
+          flexWrap: 'wrap',
+          transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
+          transition: 'transform 0.3s ease-in-out'
         }}>
         <img
           src={icons.airdrop}
