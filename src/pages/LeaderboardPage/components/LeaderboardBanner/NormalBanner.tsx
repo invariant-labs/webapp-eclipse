@@ -4,8 +4,10 @@ import { colors, typography } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 interface INormalBannerProps {
   onClose: () => void
+  isHiding: boolean
 }
-export const NormalBanner = ({ onClose }: INormalBannerProps) => {
+
+export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
   const navigate = useNavigate()
 
   return (
@@ -22,7 +24,9 @@ export const NormalBanner = ({ onClose }: INormalBannerProps) => {
         alignItems: 'center',
         boxSizing: 'border-box',
         color: colors.invariant.text,
-        margin: 0
+        margin: 0,
+        transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
+        transition: 'transform 0.5s ease-in-out'
       }}>
       <span
         style={{

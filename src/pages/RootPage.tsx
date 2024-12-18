@@ -18,6 +18,7 @@ import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/Nor
 import { LAUNCH_DATE } from './LeaderboardPage/config'
 const RootPage: React.FC = memo(() => {
   const [showHeader, setShowHeader] = useState(true)
+  const [isHiding, setIsHiding] = useState(false)
   const dispatch = useDispatch()
   const signerStatus = useSelector(connectionStatus)
   const walletStatus = useSelector(status)
@@ -58,14 +59,22 @@ const RootPage: React.FC = memo(() => {
     }
   })
 
+  const handleBannerClose = () => {
+    setIsHiding(true)
+    setTimeout(() => {
+      setShowHeader(false)
+      setIsHiding(false)
+    }, 200)
+  }
+
   return (
     <>
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
         {showHeader && (
           <>
-            {isExpired ? (
-              <NormalBanner onClose={() => setShowHeader(false)} />
+            {!isExpired ? (
+              <NormalBanner onClose={handleBannerClose} isHiding={isHiding} />
             ) : (
               <TimerBanner seconds={seconds} minutes={minutes} hours={hours} />
             )}
