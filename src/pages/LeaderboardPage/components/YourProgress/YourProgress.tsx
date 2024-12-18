@@ -15,6 +15,7 @@ import trapezeMobileBottom from '@static/png/trapezeMobileBottom.png'
 import { useSelector } from 'react-redux'
 import { BlurOverlay } from './BlurOverlay'
 import { ProgressItem } from './ProgressItem'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
 
 interface YourProgressProps {
   userStats: UserStats | null
@@ -23,6 +24,8 @@ interface YourProgressProps {
 export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
   const { classes } = useStyles()
   const walletStatus = useSelector(status)
+  const totalItems = useSelector(leaderboardSelectors.totalItems)
+
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   return (
@@ -55,7 +58,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           }}
           desktopLabelAligment='left'
           label='Global rank'
-          value={userStats?.rank ?? 0}
+          value={userStats?.rank ?? (isConnected ? totalItems + 1 : 0)}
         />
       </Box>
     </Box>
