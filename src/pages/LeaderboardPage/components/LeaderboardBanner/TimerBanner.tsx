@@ -40,39 +40,48 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
       <span style={{ marginLeft: '6px', marginRight: '6px' }}>
         <span
           style={{
+            display: 'inline-block',
             color: colors.invariant.dark,
             ...typography.body1,
             background: colors.invariant.green,
             padding: '2px',
             marginRight: '4px',
-            borderRadius: '2px'
+            borderRadius: '2px',
+            width: '32px',
+            textAlign: 'center'
           }}>
-          {hours}H
+          {hours} H
         </span>
         :
         <span
           style={{
+            display: 'inline-block',
             color: colors.invariant.dark,
             ...typography.body1,
             background: colors.invariant.green,
             padding: '2px',
             marginLeft: '4px',
             marginRight: '4px',
-            borderRadius: '2px'
+            borderRadius: '2px',
+            width: '36px',
+            textAlign: 'center'
           }}>
-          {minutes}M
+          {minutes} M
         </span>
         :
         <span
           style={{
+            display: 'inline-block',
             color: colors.invariant.dark,
             ...typography.body1,
             background: colors.invariant.green,
             padding: '2px',
             marginLeft: '4px',
-            borderRadius: '2px'
+            borderRadius: '2px',
+            width: '32px',
+            textAlign: 'center'
           }}>
-          {seconds}S
+          {seconds} S
         </span>
       </span>
       <Box sx={{ display: { xs: 'none', md: 'block' } }}>
