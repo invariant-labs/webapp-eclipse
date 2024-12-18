@@ -118,7 +118,7 @@ export const Faq = () => {
               display: 'none'
             },
             '&.Mui-expanded': {
-              margin: 0,
+              margin: '0px !important',
               '&::after': {
                 content: '""',
                 position: 'absolute',
