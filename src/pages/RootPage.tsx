@@ -17,9 +17,8 @@ import { useCountdown } from './LeaderboardPage/components/LeaderboardTimer/useC
 import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/NormalBanner'
 import { LAUNCH_DATE } from './LeaderboardPage/config'
 
-// Constants for localStorage
 const BANNER_STORAGE_KEY = 'invariant-banner-state'
-const BANNER_HIDE_DURATION = 5000 // 24 hours
+const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
   const [showHeader, setShowHeader] = useState(() => {
