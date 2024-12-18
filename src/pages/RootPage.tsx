@@ -73,7 +73,7 @@ const RootPage: React.FC = memo(() => {
       <div id={toBlur}>
         {showHeader && (
           <>
-            {!isExpired ? (
+            {isExpired ? (
               <NormalBanner onClose={handleBannerClose} isHiding={isHiding} />
             ) : (
               <TimerBanner seconds={seconds} minutes={minutes} hours={hours} />
