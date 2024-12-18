@@ -17,6 +17,7 @@ import { useCountdown } from './LeaderboardPage/components/LeaderboardTimer/useC
 import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/NormalBanner'
 import { LAUNCH_DATE } from './LeaderboardPage/config'
 const RootPage: React.FC = memo(() => {
+  const [showHeader, setShowHeader] = useState(true)
   const dispatch = useDispatch()
   const signerStatus = useSelector(connectionStatus)
   const walletStatus = useSelector(status)
@@ -61,10 +62,14 @@ const RootPage: React.FC = memo(() => {
     <>
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
-        {isExpired ? (
-          <NormalBanner />
-        ) : (
-          <TimerBanner seconds={seconds} minutes={minutes} hours={hours} />
+        {showHeader && (
+          <>
+            {!isExpired ? (
+              <NormalBanner onClose={() => setShowHeader(false)} />
+            ) : (
+              <TimerBanner seconds={seconds} minutes={minutes} hours={hours} />
+            )}
+          </>
         )}
         <Grid className={classes.root}>
           <HeaderWrapper />
