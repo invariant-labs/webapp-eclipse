@@ -118,6 +118,7 @@ export const Faq = () => {
               display: 'none'
             },
             '&.Mui-expanded': {
+              margin: 0,
               '&::after': {
                 content: '""',
                 position: 'absolute',
