@@ -26,17 +26,25 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
         alignItems: 'center',
         boxSizing: 'border-box',
         color: colors.invariant.text,
+        flexDirection: { xs: 'column', sm: 'row' },
         margin: 0
       }}>
-      <img
-        src={icons.airdrop}
+      <span
         style={{
-          marginRight: '6px',
-          height: '24px',
-          width: '24px'
-        }}
-      />
-      Invariant Points will start in
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center'
+        }}>
+        <img
+          src={icons.airdrop}
+          style={{
+            marginRight: '6px',
+            height: '24px',
+            width: '24px'
+          }}
+        />
+        Invariant Points will start in
+      </span>
       <span style={{ marginLeft: '6px', marginRight: '6px' }}>
         <span
           style={{
