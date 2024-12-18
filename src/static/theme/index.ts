@@ -77,6 +77,8 @@ export const colors = {
     textGrey: '#A9B6BF',
     lightGrey: '#bac7d1',
     text: '#FFFFFF',
+    silver: '#C6C5C7',
+    bronze: '#C48643',
     Error: '#FB555F',
     greenLinearGradient: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
     greenLinearGradientOpacity:

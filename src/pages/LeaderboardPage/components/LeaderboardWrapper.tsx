@@ -1,106 +1,88 @@
+import React, { useEffect } from 'react'
+import { Box, Typography } from '@mui/material'
 import useStyles from './styles'
-import { Box, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
-import EclipseLogo from '@static/png/eclipse-big-logo.png'
-import { useEffect, useState } from 'react'
-import ItemList, { ListElement } from './ItemList/ItemList'
 import { Faq } from './Faq/Faq'
-export const LeaderboardWrapper: React.FC = () => {
-  const [alignment, setAlignment] = useState<string>('leaderboard')
-  const [_page, setPage] = useState(1)
+import LeaderboardList from './LeaderboardList/LeaderboardList'
+import { useDispatch, useSelector } from 'react-redux'
+import { actions } from '@store/reducers/leaderboard'
+import { leaderboardSelectors, topRankedUsers } from '@store/selectors/leaderboard'
 
+import { YourProgress } from './YourProgress/YourProgress'
+import { TopScorers } from './TopScorers/TopScorers'
+import { Switcher } from './Switcher/Switcher'
+
+interface LeaderboardWrapperProps {
+  alignment: string
+  setAlignment: React.Dispatch<React.SetStateAction<string>>
+}
+
+export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
+  alignment,
+  setAlignment
+}) => {
   const { classes } = useStyles()
-  const [data, setData] = useState<ListElement[]>([])
-  const handleSwitchPools = (_: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
-    if (newAlignment !== null) {
-      setAlignment(newAlignment)
-      setPage(1)
-    }
-  }
+
+  const isLoading = useSelector(leaderboardSelectors.loading)
+  const leaderboard = useSelector(topRankedUsers)
+  const userStats = useSelector(leaderboardSelectors.currentUser)
+  const dispatch = useDispatch()
+  const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
+  const top3Scorers = useSelector(leaderboardSelectors.top3Scorers)
+
   useEffect(() => {
-    const generateRandomListElement = () => {
-      const randomHex = (length: number) => {
-        const hexChars = '0123456789abcdef'
-        let result = ''
-        for (let i = 0; i < length; i++) {
-          result += hexChars.charAt(Math.floor(Math.random() * hexChars.length))
-        }
-        return result
-      }
+    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
+  }, [dispatch, itemsPerPage])
 
-      return {
-        displayType: 'default',
-        address: `0x${randomHex(254)}`, // 0x + 254 characters
-        totalPoints: Math.floor(Math.random() * 10000), // Random points (0 - 9999)
-        tokenIndex: Math.floor(Math.random() * 100), // Random token index (0 - 99)
-        hideBottomLine: Math.random() < 0.5, // Random true/false
-        pointsIncome: Math.floor(Math.random() * 5000), // Random income (0 - 4999)
-        liquidityPositions: Math.floor(Math.random() * 20) // Random positions (0 - 19)
-      }
+  const content = React.useMemo(() => {
+    if (alignment === 'leaderboard') {
+      return <LeaderboardList data={leaderboard} isLoading={isLoading} />
+    } else if (alignment === 'faq') {
+      return <Faq />
     }
-
-    const generateRandomList = (count: number) => {
-      const list: ListElement[] = []
-      for (let i = 0; i < count; i++) {
-        list.push(generateRandomListElement())
-      }
-      return list
-    }
-
-    setData(generateRandomList(100))
-  }, [])
+  }, [alignment, leaderboard, isLoading])
 
   return (
     <Box className={classes.pageWrapper}>
-      <Box className={classes.creatorMainContainer}>
-        <Box className={classes.column}>
-          <img src={EclipseLogo} alt='Eclipse Logo' className={classes.heroLogo} />
-        </Box>
-        <Box className={classes.counterContainer}>
-          <Box className={classes.counterItem}>
-            <Typography className={classes.counterYourPoints}>123 123</Typography>
-            <Typography className={classes.counterLabel}>Your Points</Typography>
-          </Box>
-          <Box className={classes.counterItem}>
-            <Typography className={classes.counterYourRanking}># 12 938</Typography>
-            <Typography className={classes.counterLabel}>Your ranking position</Typography>
-          </Box>
-          <Box className={classes.counterItem}>
-            <Typography className={classes.counterYourPointsPerDay}>123 123</Typography>
-            <Typography className={classes.counterLabel}>Your points per day</Typography>
-          </Box>
+      <Box className={classes.leaderBoardWrapper}>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '24px',
+            marginTop: '56px',
+            width: '100%'
+          }}>
+          <YourProgress userStats={userStats} />
+          <TopScorers top3Scorers={top3Scorers} />
         </Box>
         <Box
           sx={{
             display: 'flex',
-            justifyContent: 'center',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '24px',
             marginTop: '56px',
             width: '100%'
           }}>
-          <Box className={classes.switchPoolsContainer}>
-            <Box
-              className={classes.switchPoolsMarker}
-              sx={{
-                left: alignment === 'leaderboard' ? 0 : '50%'
-              }}
-            />
-            <ToggleButtonGroup
-              value={alignment}
-              exclusive
-              onChange={handleSwitchPools}
-              className={classes.switchPoolsButtonsGroup}>
-              <ToggleButton
-                value={'leaderboard'}
-                disableRipple
-                className={classes.switchPoolsButton}>
-                Leaderboard
-              </ToggleButton>
-              <ToggleButton value={'faq'} disableRipple className={classes.switchPoolsButton}>
-                FAQ
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
+          <Typography className={classes.leaderboardHeaderSectionTitle}>
+            {(() => {
+              switch (alignment) {
+                case 'leaderboard':
+                  return 'Point Leaderboard'
+                case 'faq':
+                  return 'Frequent questions'
+                case 'rewards':
+                  return 'Rewards'
+                default:
+                  return 0
+              }
+            })()}
+          </Typography>
+          <Switcher alignment={alignment} setAlignment={setAlignment} />
         </Box>
-        {alignment === 'leaderboard' ? <ItemList data={data} /> : <Faq />}
+
+        {content}
       </Box>
     </Box>
   )

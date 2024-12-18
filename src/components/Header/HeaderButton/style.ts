@@ -29,8 +29,70 @@ const useStyles = makeStyles()((theme: Theme) => {
         paddingInline: 6
       }
     },
+
+    pointsHeaderButton: {
+      boxSizing: 'border-box',
+      minWidth: '10px',
+      height: '40px',
+      background: colors.invariant.newDark,
+      boxShadow: '0px 0px 5px 5px #2A365C',
+      borderRadius: '14px',
+      fontFamily: 'Mukta',
+      fontWeight: 700,
+      fontSize: '16px',
+      lineHeight: '20px',
+      letterSpacing: '-0.03em',
+      textWrap: 'nowrap',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: '12px',
+      marginRight: '12px',
+      border: '2px solid transparent',
+      backgroundImage: 'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
+      backgroundOrigin: 'border-box',
+      backgroundClip: 'padding-box, border-box',
+
+      color: colors.invariant.text,
+
+      [theme.breakpoints.down('sm')]: {
+        padding: '0px 2px'
+      },
+      [theme.breakpoints.between('sm', 'lg')]: {
+        padding: '0px 20px'
+      }
+    },
     label: {
       WebkitPaddingBefore: '2px'
+    },
+    headerButtonConnected: {
+      background: colors.invariant.light,
+      color: colors.white.main,
+      paddingInline: 12,
+      borderRadius: 14,
+      textTransform: 'none',
+      ...typography.body1,
+      height: 40,
+
+      '&:hover': {
+        background: colors.blue.deep,
+        '@media (hover: none)': {
+          background: colors.invariant.light
+        }
+      },
+
+      '&.Mui-disabled': {
+        background: colors.invariant.componentBcg,
+        backgroundImage: 'none !important',
+        opacity: 0.5,
+        pointerEvents: 'auto',
+        color: `${colors.invariant.textGrey} !important`,
+        '&:hover': {
+          background: colors.invariant.componentBcg,
+          boxShadow: 'none',
+          cursor: 'not-allowed'
+        }
+      }
     },
     headerButtonConnect: {
       background: colors.invariant.pinkLinearGradientOpacity,
@@ -54,21 +116,18 @@ const useStyles = makeStyles()((theme: Theme) => {
           background: colors.invariant.pinkLinearGradientOpacity,
           boxShadow: 'none'
         }
-      }
-    },
-    headerButtonConnected: {
-      background: colors.invariant.light,
-      color: colors.white.main,
-      paddingInline: 12,
-      borderRadius: 14,
-      textTransform: 'none',
-      ...typography.body1,
-      height: 40,
+      },
 
-      '&:hover': {
-        background: colors.blue.deep,
-        '@media (hover: none)': {
-          background: colors.invariant.light
+      '&.Mui-disabled': {
+        background: colors.invariant.componentBcg,
+        backgroundImage: 'none !important',
+        opacity: 0.5,
+        pointerEvents: 'auto',
+        color: `${colors.invariant.textGrey} !important`,
+        '&:hover': {
+          background: colors.invariant.componentBcg,
+          boxShadow: 'none',
+          cursor: 'not-allowed'
         }
       }
     },
