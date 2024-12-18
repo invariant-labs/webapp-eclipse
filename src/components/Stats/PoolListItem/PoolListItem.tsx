@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useMemo } from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -7,14 +7,14 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType, SortTypePoolList } from '@store/consts/static'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+
 import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
-import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumber } from '@utils/utils'
-import { apyToApr, shortenAddress } from '@utils/uiUtils'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
+import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import classNames from 'classnames'
 
 interface IProps {
@@ -34,10 +34,6 @@ interface IProps {
   addressTo?: string
   network: NetworkType
   apy?: number
-  lockedX?: number
-  lockedY?: number
-  liquidityX?: number
-  liquidityY?: number
   apyData?: {
     fees: number
     accumulatedFarmsAvg: number
@@ -45,7 +41,6 @@ interface IProps {
   }
   isUnknownFrom?: boolean
   isUnknownTo?: boolean
-  isLocked?: boolean
   poolAddress?: string
   copyAddressHandler?: (message: string, variant: VariantType) => void
   showAPY: boolean
@@ -55,10 +50,6 @@ const PoolListItem: React.FC<IProps> = ({
   fee = 0,
   volume = 0,
   TVL = 0,
-  lockedX = 0,
-  lockedY = 0,
-  liquidityX = 0,
-  liquidityY = 0,
   displayType,
   symbolFrom,
   symbolTo,
@@ -71,21 +62,18 @@ const PoolListItem: React.FC<IProps> = ({
   addressFrom,
   addressTo,
   network,
+  apy = 0,
   isUnknownFrom,
   isUnknownTo,
-  isLocked,
   poolAddress,
   copyAddressHandler,
-  apy = 0,
   showAPY
 }) => {
   const { classes } = useStyles()
-  const navigate = useNavigate()
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const lockIconRef = useRef<HTMLButtonElement>(null)
 
-  const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
+  const navigate = useNavigate()
+  const isSmd = useMediaQuery('(max-width:780px)')
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleOpenPosition = () => {
     navigate(
@@ -127,13 +115,6 @@ const PoolListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy Market ID to Clipboard', 'error')
       })
   }
-  const handlePointerEnter = () => {
-    setLockPopoverOpen(true)
-  }
-
-  const handlePointerLeave = () => {
-    setLockPopoverOpen(false)
-  }
 
   const apr = apyToApr(apy)
 
@@ -148,47 +129,43 @@ const PoolListItem: React.FC<IProps> = ({
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
-            {!isSm && (
-              <Box className={classes.iconsWrapper}>
-                <Box className={classes.iconContainer}>
-                  <img
-                    className={classes.tokenIcon}
-                    src={iconFrom}
-                    alt='Token from'
-                    onError={e => {
-                      e.currentTarget.src = icons.unknownToken
-                    }}
-                  />
-                  {isUnknownFrom && <img className={classes.warningIcon} src={icons.warningIcon} />}
-                </Box>
-                <Box className={classes.iconContainer}>
-                  <img
-                    className={classes.tokenIcon}
-                    src={iconTo}
-                    alt='Token to'
-                    onError={e => {
-                      e.currentTarget.src = icons.unknownToken
-                    }}
-                  />
-                  {isUnknownTo && <img className={classes.warningIcon} src={icons.warningIcon} />}
-                </Box>
+            <Box className={classes.iconsWrapper}>
+              <Box className={classes.iconContainer}>
+                <img
+                  className={classes.tokenIcon}
+                  src={iconFrom}
+                  alt='Token from'
+                  onError={e => {
+                    e.currentTarget.src = icons.unknownToken
+                  }}
+                />
+                {isUnknownFrom && <img className={classes.warningIcon} src={icons.warningIcon} />}
               </Box>
-            )}
-            {(!isMd || isSm) && (
-              <Grid className={classes.symbolsContainer}>
-                <Typography>
-                  {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
-                </Typography>
-                <TooltipHover text='Copy pool address'>
-                  <FileCopyOutlinedIcon
-                    onClick={copyToClipboard}
-                    classes={{ root: classes.clipboardIcon }}
-                  />
-                </TooltipHover>
-              </Grid>
-            )}
+              <Box className={classes.iconContainer}>
+                <img
+                  className={classes.tokenIcon}
+                  src={iconTo}
+                  alt='Token to'
+                  onError={e => {
+                    e.currentTarget.src = icons.unknownToken
+                  }}
+                />
+                {isUnknownTo && <img className={classes.warningIcon} src={icons.warningIcon} />}
+              </Box>
+            </Box>
+            <Grid className={classes.symbolsContainer}>
+              <Typography>
+                {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
+              </Typography>
+              <TooltipHover text='Copy pool address'>
+                <FileCopyOutlinedIcon
+                  onClick={copyToClipboard}
+                  classes={{ root: classes.clipboardIcon }}
+                />
+              </TooltipHover>
+            </Grid>
           </Grid>
-          {!isSm && showAPY ? (
+          {!isSmd && showAPY ? (
             <Typography className={classes.row}>
               {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
               <span
@@ -200,33 +177,8 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography>{fee}%</Typography>
           <Typography>{`$${formatNumber(volume)}`}</Typography>
           <Typography>{`$${formatNumber(TVL)}`}</Typography>
-          {!isSm && (
+          {!isMd && (
             <Box className={classes.action}>
-              {isLocked && (
-                <>
-                  <button
-                    className={classes.actionButton}
-                    ref={lockIconRef}
-                    onPointerLeave={handlePointerLeave}
-                    onPointerEnter={handlePointerEnter}>
-                    <img width={32} height={32} src={icons.lockIcon} alt={'Lock info'} />
-                  </button>
-                  <LockStatsPopover
-                    anchorEl={lockIconRef.current}
-                    open={isLockPopoverOpen}
-                    lockedX={lockedX}
-                    lockedY={lockedY}
-                    symbolX={shortenAddress(symbolFrom ?? '')}
-                    symbolY={shortenAddress(symbolTo ?? '')}
-                    liquidityX={liquidityX}
-                    liquidityY={liquidityY}
-                    onClose={() => {
-                      setLockPopoverOpen(false)
-                    }}
-                  />
-                </>
-              )}
-
               <TooltipHover text='Exchange'>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
                   <img width={32} height={32} src={icons.horizontalSwapIcon} alt={'Exchange'} />
@@ -242,7 +194,7 @@ const PoolListItem: React.FC<IProps> = ({
                   className={classes.actionButton}
                   onClick={() =>
                     window.open(
-                      `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
+                      `https://solscan.io/account/${poolAddress}${networkUrl}`,
                       '_blank',
                       'noopener,noreferrer'
                     )
@@ -265,7 +217,6 @@ const PoolListItem: React.FC<IProps> = ({
               N<sup>o</sup>
             </Typography>
           )}
-
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -282,7 +233,7 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-          {!isSm && showAPY ? (
+          {!isSmd && showAPY ? (
             <Typography
               className={classes.row}
               style={{ cursor: 'pointer' }}
@@ -317,7 +268,6 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -350,7 +300,7 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-          {!isSm && <Typography align='right'>Action</Typography>}
+          {!isMd && <Typography align='right'>Action</Typography>}
         </Grid>
       )}
     </Grid>

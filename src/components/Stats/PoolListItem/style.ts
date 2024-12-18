@@ -5,12 +5,11 @@ export const useStyles = makeStyles()(() => ({
   container: {
     color: colors.white.main,
     display: 'grid',
-    gridTemplateColumns: '5% auto 15% 12% 15% 12% 160px',
+    gridTemplateColumns: '30px auto 160px 80px 140px 100px 120px',
     padding: '18px 0',
     backgroundColor: colors.invariant.component,
     borderBottom: `1px solid ${colors.invariant.light}`,
     whiteSpace: 'nowrap',
-    maxWidth: '100%',
 
     '& p': {
       ...typography.heading4,
@@ -23,11 +22,15 @@ export const useStyles = makeStyles()(() => ({
     },
 
     [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: '16% 20% 16% 20% 16% auto'
+      gridTemplateColumns: 'auto 140px 100px 80px 120px'
+    },
+
+    '@media (max-width: 780px)': {
+      gridTemplateColumns: 'auto 100px 140px 80px'
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: 'auto 20% 24% 20%',
+      gridTemplateColumns: 'auto 80px 80px 60px',
 
       '& p': {
         justifyContent: 'flex-start',
@@ -35,14 +38,28 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
+
   containerNoAPY: {
-    gridTemplateColumns: '5% auto 12% 15% 12% 160px'
-  },
-  tooltipIcon: {
-    '&:hover': {
-      cursor: 'pointer'
+    gridTemplateColumns: '30px auto 80px 140px 100px 120px',
+
+    [theme.breakpoints.down('md')]: {
+      gridTemplateColumns: 'auto 100px 80px 120px'
+    },
+
+    '@media (max-width: 780px)': {
+      gridTemplateColumns: 'auto 100px 140px 80px'
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: 'auto 80px 80px 60px',
+
+      '& p': {
+        justifyContent: 'flex-start',
+        ...typography.caption1
+      }
     }
   },
+
   imageContainer: {
     display: 'flex',
     alignItems: 'center'
@@ -148,16 +165,16 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   iconContainer: {
-    minWidth: 28,
-    maxWidth: 28,
-    height: 28,
+    minWidth: 24,
+    maxWidth: 24,
+    height: 24,
     marginRight: 3,
     position: 'relative'
   },
   tokenIcon: {
-    minWidth: 28,
-    maxWidth: 28,
-    height: 28,
+    minWidth: 24,
+    maxWidth: 24,
+    height: 24,
     marginRight: 3,
     borderRadius: '50%'
   },
