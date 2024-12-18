@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useRef, useState } from 'react'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -16,6 +16,7 @@ import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import classNames from 'classnames'
+import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 
 interface IProps {
   TVL?: number
@@ -34,6 +35,10 @@ interface IProps {
   addressTo?: string
   network: NetworkType
   apy?: number
+  lockedX?: number
+  lockedY?: number
+  liquidityX?: number
+  liquidityY?: number
   apyData?: {
     fees: number
     accumulatedFarmsAvg: number
@@ -41,6 +46,7 @@ interface IProps {
   }
   isUnknownFrom?: boolean
   isUnknownTo?: boolean
+  isLocked?: boolean
   poolAddress?: string
   copyAddressHandler?: (message: string, variant: VariantType) => void
   showAPY: boolean
@@ -50,6 +56,10 @@ const PoolListItem: React.FC<IProps> = ({
   fee = 0,
   volume = 0,
   TVL = 0,
+  lockedX = 0,
+  lockedY = 0,
+  liquidityX = 0,
+  liquidityY = 0,
   displayType,
   symbolFrom,
   symbolTo,
@@ -65,6 +75,7 @@ const PoolListItem: React.FC<IProps> = ({
   apy = 0,
   isUnknownFrom,
   isUnknownTo,
+  isLocked,
   poolAddress,
   copyAddressHandler,
   showAPY
@@ -74,6 +85,9 @@ const PoolListItem: React.FC<IProps> = ({
   const navigate = useNavigate()
   const isSmd = useMediaQuery('(max-width:780px)')
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const lockIconRef = useRef<HTMLButtonElement>(null)
+
+  const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
 
   const handleOpenPosition = () => {
     navigate(
@@ -114,6 +128,13 @@ const PoolListItem: React.FC<IProps> = ({
       .catch(() => {
         copyAddressHandler('Failed to copy Market ID to Clipboard', 'error')
       })
+  }
+  const handlePointerEnter = () => {
+    setLockPopoverOpen(true)
+  }
+
+  const handlePointerLeave = () => {
+    setLockPopoverOpen(false)
   }
 
   const apr = apyToApr(apy)
@@ -179,6 +200,31 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography>{`$${formatNumber(TVL)}`}</Typography>
           {!isMd && (
             <Box className={classes.action}>
+              {isLocked && (
+                <>
+                  <button
+                    className={classes.actionButton}
+                    ref={lockIconRef}
+                    onPointerLeave={handlePointerLeave}
+                    onPointerEnter={handlePointerEnter}>
+                    <img width={32} height={32} src={icons.lockIcon} alt={'Lock info'} />
+                  </button>
+                  <LockStatsPopover
+                    anchorEl={lockIconRef.current}
+                    open={isLockPopoverOpen}
+                    lockedX={lockedX}
+                    lockedY={lockedY}
+                    symbolX={shortenAddress(symbolFrom ?? '')}
+                    symbolY={shortenAddress(symbolTo ?? '')}
+                    liquidityX={liquidityX}
+                    liquidityY={liquidityY}
+                    onClose={() => {
+                      setLockPopoverOpen(false)
+                    }}
+                  />
+                </>
+              )}
+
               <TooltipHover text='Exchange'>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
                   <img width={32} height={32} src={icons.horizontalSwapIcon} alt={'Exchange'} />
@@ -194,7 +240,7 @@ const PoolListItem: React.FC<IProps> = ({
                   className={classes.actionButton}
                   onClick={() =>
                     window.open(
-                      `https://solscan.io/account/${poolAddress}${networkUrl}`,
+                      `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
                       '_blank',
                       'noopener,noreferrer'
                     )

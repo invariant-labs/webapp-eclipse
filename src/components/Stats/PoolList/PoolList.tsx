@@ -18,10 +18,10 @@ export interface PoolListInterface {
     volume: number
     TVL: number
     fee: number
-    // lockedX: number
-    // lockedY: number
-    // liquidityX: number
-    // liquidityY: number
+    lockedX: number
+    lockedY: number
+    liquidityX: number
+    liquidityY: number
     addressFrom: string
     addressTo: string
     apy: number
@@ -157,11 +157,11 @@ const PoolList: React.FC<PoolListInterface> = ({
               iconTo={element.iconTo}
               volume={element.volume}
               TVL={element.TVL}
-              // lockedX={element.lockedX}
-              // lockedY={element.lockedY}
-              // liquidityX={element.liquidityX}
-              // liquidityY={element.liquidityY}
-              // isLocked={element.lockedX > 0 || element.lockedY > 0}
+              lockedX={element.lockedX}
+              lockedY={element.lockedY}
+              liquidityX={element.liquidityX}
+              liquidityY={element.liquidityY}
+              isLocked={element.lockedX > 0 || element.lockedY > 0}
               fee={element.fee}
               apy={element.apy}
               hideBottomLine={pages === 1 && index + 1 === data.length}
