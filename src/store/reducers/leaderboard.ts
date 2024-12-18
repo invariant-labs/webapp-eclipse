@@ -42,7 +42,7 @@ const leaderboardSlice = createSlice({
     setLeaderboardData(
       state,
       action: PayloadAction<{
-        user: UserStats
+        user: UserStats | null
         leaderboard: LeaderboardEntry[]
         totalItems: number
       }>

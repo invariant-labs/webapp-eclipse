@@ -25,9 +25,9 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const isLoading = useSelector(leaderboardSelectors.loading)
   const leaderboard = useSelector(topRankedUsers)
   const userStats = useSelector(leaderboardSelectors.currentUser)
+  const top3Scorers = useSelector(leaderboardSelectors.top3Scorers)
   const dispatch = useDispatch()
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
-  const top3Scorers = useSelector(leaderboardSelectors.top3Scorers)
 
   useEffect(() => {
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))

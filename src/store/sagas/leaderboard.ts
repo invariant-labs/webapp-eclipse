@@ -1,11 +1,14 @@
 import { call, put, select, takeEvery } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
-import { PublicKey } from '@solana/web3.js'
 import { handleRpcError } from './connection'
-import { actions } from '@store/reducers/leaderboard'
+import { actions, UserStats } from '@store/reducers/leaderboard'
 import { getWallet } from './wallet'
 import { PayloadAction } from '@reduxjs/toolkit'
-
+interface IResponse {
+  user: UserStats | null
+  leaderboard: UserStats[]
+  totalItems: number
+}
 async function fetchLeaderboardData(
   network: string,
   userWallet?: string,
@@ -19,7 +22,7 @@ async function fetchLeaderboardData(
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }
-  return response.json()
+  return response.json() as Promise<IResponse>
 }
 export function* getLeaderboard(
   action: PayloadAction<{ page: number; itemsPerPage: number }>
@@ -41,9 +44,10 @@ export function* getLeaderboard(
       user: leaderboardData.user
         ? {
             ...leaderboardData.user,
-            address: new PublicKey(leaderboardData.user.address)
+            address: leaderboardData.user.address
           }
         : null,
+
       leaderboard: leaderboardData.leaderboard.map((entry: any) => ({
         ...entry,
         address: entry.address

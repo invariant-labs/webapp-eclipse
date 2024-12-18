@@ -15,6 +15,10 @@ import trapezeMobileBottom from '@static/png/trapezeMobileBottom.png'
 import { useSelector } from 'react-redux'
 import { BlurOverlay } from './BlurOverlay'
 import { ProgressItem } from './ProgressItem'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { BN } from '@coral-xyz/anchor'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { formatNumberWithCommas, printBN, trimZeros } from '@utils/utils'
 
 interface YourProgressProps {
   userStats: UserStats | null
@@ -23,6 +27,8 @@ interface YourProgressProps {
 export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
   const { classes } = useStyles()
   const walletStatus = useSelector(status)
+  const totalItems = useSelector(leaderboardSelectors.totalItems)
+
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   return (
@@ -46,7 +52,9 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           tooltip='Points refresh every hour.'
           desktopLabelAligment='right'
           label='Total points'
-          value={userStats?.points ?? 0}
+          value={formatNumberWithCommas(
+            trimZeros(printBN(new BN(userStats?.points, 'hex') ?? 0, LEADERBOARD_DECIMAL))
+          )}
         />
         <ProgressItem
           background={{
@@ -55,7 +63,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           }}
           desktopLabelAligment='left'
           label='Global rank'
-          value={userStats?.rank ?? 0}
+          value={userStats?.rank ?? (isConnected ? totalItems + 1 : 0)}
         />
       </Box>
     </Box>
