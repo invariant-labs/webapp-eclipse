@@ -1,4 +1,4 @@
-import { useEffect, useCallback, memo, useMemo, useState } from 'react'
+import { useEffect, useCallback, memo, useMemo, useState, useLayoutEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import EventsHandlers from '@containers/EventsHandlers'
@@ -92,7 +92,7 @@ const RootPage: React.FC = memo(() => {
     }, 400)
   }
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     const checkBannerState = () => {
       const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
       if (storedData) {
@@ -113,10 +113,6 @@ const RootPage: React.FC = memo(() => {
     }
 
     checkBannerState()
-
-    const interval = setInterval(checkBannerState, 60000)
-
-    return () => clearInterval(interval)
   }, [])
 
   return (

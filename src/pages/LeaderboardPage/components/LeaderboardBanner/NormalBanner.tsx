@@ -17,10 +17,10 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
       sx={{
         position: 'relative',
         background: colors.invariant.light,
-        padding: isHiding ? '0px 20px' : '10px 20px',
+        padding: isHiding ? '0px 0px' : '10px 20px',
         width: '100%',
         maxWidth: '100%',
-        height: isHiding ? '0' : bannerHeight,
+        height: isHiding ? '0px' : bannerHeight,
         display: 'flex',
         ...typography.body1,
         justifyContent: 'center',
@@ -30,7 +30,8 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
         margin: isHiding ? '0' : undefined,
         overflow: 'hidden',
         opacity: isHiding ? 0 : 1,
-        transition: 'all 0.3s ease-in-out'
+        transition: 'all 0.3s ease-in-out',
+        willChange: 'height,padding,margin'
       }}>
       <span
         style={{
