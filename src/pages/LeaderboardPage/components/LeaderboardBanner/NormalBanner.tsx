@@ -37,14 +37,13 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          flexWrap: 'wrap',
           transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
           transition: 'transform 0.3s ease-in-out'
         }}>
         <img
           src={icons.airdrop}
           style={{
-            marginRight: '6px',
+            marginRight: '12px',
             height: '24px',
             width: '24px'
           }}

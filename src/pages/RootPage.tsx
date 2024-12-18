@@ -16,8 +16,26 @@ import { TimerBanner } from './LeaderboardPage/components/LeaderboardBanner/Time
 import { useCountdown } from './LeaderboardPage/components/LeaderboardTimer/useCountdown'
 import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/NormalBanner'
 import { LAUNCH_DATE } from './LeaderboardPage/config'
+
+// Constants for localStorage
+const BANNER_STORAGE_KEY = 'invariant-banner-state'
+const BANNER_HIDE_DURATION = 5000 // 24 hours
+
 const RootPage: React.FC = memo(() => {
-  const [showHeader, setShowHeader] = useState(true)
+  const [showHeader, setShowHeader] = useState(() => {
+    const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
+    if (storedData) {
+      try {
+        const { hiddenAt } = JSON.parse(storedData)
+        const currentTime = new Date().getTime()
+        return currentTime - hiddenAt >= BANNER_HIDE_DURATION
+      } catch (error) {
+        return true
+      }
+    }
+    return true
+  })
+
   const [isHiding, setIsHiding] = useState(false)
   const dispatch = useDispatch()
   const signerStatus = useSelector(connectionStatus)
@@ -46,6 +64,7 @@ const RootPage: React.FC = memo(() => {
       dispatch(actions.getPositionsList())
     }
   }, [signerStatus, walletStatus])
+
   const [isExpired, setExpired] = useState(false)
   const targetDate = useMemo(() => {
     const date = new Date(LAUNCH_DATE)
@@ -63,9 +82,42 @@ const RootPage: React.FC = memo(() => {
     setIsHiding(true)
     setTimeout(() => {
       setShowHeader(false)
+      localStorage.setItem(
+        BANNER_STORAGE_KEY,
+        JSON.stringify({
+          hiddenAt: new Date().getTime()
+        })
+      )
       setIsHiding(false)
-    }, 300)
+    }, 400)
   }
+
+  useEffect(() => {
+    const checkBannerState = () => {
+      const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
+      if (storedData) {
+        try {
+          const { hiddenAt } = JSON.parse(storedData)
+          const currentTime = new Date().getTime()
+          if (currentTime - hiddenAt < BANNER_HIDE_DURATION) {
+            setShowHeader(false)
+          } else {
+            localStorage.removeItem(BANNER_STORAGE_KEY)
+            setShowHeader(true)
+          }
+        } catch (error) {
+          console.error('Error parsing banner state:', error)
+          localStorage.removeItem(BANNER_STORAGE_KEY)
+        }
+      }
+    }
+
+    checkBannerState()
+
+    const interval = setInterval(checkBannerState, 60000)
+
+    return () => clearInterval(interval)
+  }, [])
 
   return (
     <>
