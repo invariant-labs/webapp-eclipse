@@ -11,6 +11,7 @@ import { formatLargeNumber } from '@utils/formatBigNumber'
 import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
 import { Timer } from './Timer'
 import { LAUNCH_DATE } from '@pages/LeaderboardPage/config'
+import { trimZeros } from '@utils/utils'
 
 export interface ISelectNetworkModal {
   open: boolean
@@ -57,7 +58,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
               <>
                 {[
                   {
-                    value: formatLargeNumber(userStats?.points ?? 0),
+                    value: trimZeros(formatLargeNumber(userStats?.points ?? 0)),
                     label: 'Your Points',
                     styleVariant: classes.counterYourPoints
                   },

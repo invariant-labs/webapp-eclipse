@@ -176,7 +176,7 @@ const PositionDetails: React.FC<IProps> = ({
       />
       <Grid className={classes.positionDetails} container item direction='column'>
         <Grid className={classes.backContainer} container>
-          <Link to='/liquidity' style={{ textDecoration: 'none' }}>
+          <Link to='/portfolio' style={{ textDecoration: 'none' }}>
             <Grid className={classes.back} container item alignItems='center'>
               <img className={classes.backIcon} src={backIcon} alt='Back' />
               <Typography className={classes.backText}>Positions</Typography>

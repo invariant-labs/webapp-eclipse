@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react'
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import LeaderboardItem from '../LeaderboardItem/LeaderboardItem'
 import PurpleWaves from '@static/png/purple_waves.png'
@@ -13,6 +13,7 @@ import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { actions } from '@store/reducers/leaderboard'
+import { colors, theme } from '@static/theme'
 interface LeaderboardEntry {
   hideBottomLine?: boolean
   points?: BN
@@ -51,11 +52,17 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
   const totalItems = useSelector(leaderboardSelectors.totalItems)
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
 
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+
   const displayData = useMemo(() => {
     return isLoading ? generateMockData(itemsPerPage) : data
   }, [isLoading, data])
-
   const totalPages = useMemo(() => Math.ceil(totalItems / itemsPerPage), [displayData])
+  const lowerBound = useMemo(
+    () => (currentPage - 1) * itemsPerPage + 1,
+    [currentPage, itemsPerPage]
+  )
+  const upperBound = useMemo(() => Math.min(currentPage * itemsPerPage, totalItems), [displayData])
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -113,14 +120,63 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
       </Grid>
 
       {totalPages >= 1 && (
-        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
-          <Grid className={classes.pagination}>
-            <PaginationList
-              pages={totalPages}
-              defaultPage={currentPage}
-              handleChangePage={handlePageChange}
-              variant='center'
-            />
+        <Box
+          sx={{
+            paddingLeft: '24px',
+            paddingRight: '24px',
+            maxWidth: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+          <Grid
+            container
+            sx={{
+              padding: '20px 0 10px 0',
+              maxWidth: '100%',
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              alignItems: 'center',
+              position: 'relative'
+            }}>
+            <Grid
+              item
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center'
+              }}>
+              <Box sx={{ width: '80%' }}>
+                <PaginationList
+                  pages={totalPages}
+                  defaultPage={currentPage}
+                  handleChangePage={handlePageChange}
+                  variant='center'
+                />
+              </Box>
+            </Grid>
+
+            <Grid
+              item
+              sx={{
+                display: 'flex',
+                justifyContent: isMobile ? 'center' : 'flex-end',
+                width: '100%',
+                position: isMobile ? 'static' : 'absolute',
+                right: 0,
+                top: '55%',
+                pointerEvents: 'none',
+                transform: isMobile ? 'none' : 'translateY(-50%)'
+              }}>
+              <Typography
+                sx={{
+                  color: colors.invariant.textGrey,
+                  textWrap: 'nowrap',
+                  textAlign: isMobile ? 'center' : 'right'
+                }}>
+                Showing {lowerBound}-{upperBound} of {totalItems}
+              </Typography>
+            </Grid>
           </Grid>
         </Box>
       )}

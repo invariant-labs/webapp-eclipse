@@ -36,6 +36,7 @@ export interface PoolListInterface {
   network: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
   isLoading: boolean
+  showAPY: boolean
 }
 
 import { Keypair } from '@solana/web3.js'
@@ -44,7 +45,7 @@ import classNames from 'classnames'
 const ITEMS_PER_PAGE = 10
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
-const fees = [0.01, 0.02, 0.1, 0.3, 1]
+const fees = [0.01, 0.02, 0.1, 0.3, 0.9, 1]
 
 const generateMockData = () => {
   return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
@@ -77,7 +78,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   data,
   network,
   copyAddressHandler,
-  isLoading
+  isLoading,
+  showAPY
 }) => {
   const { classes } = useStyles()
   const [page, setPage] = React.useState(1)
@@ -110,10 +112,10 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         return data.sort((a, b) => (a.TVL === b.TVL ? a.volume - b.volume : a.TVL - b.TVL))
       case SortTypePoolList.TVL_DESC:
         return data.sort((a, b) => (a.TVL === b.TVL ? b.volume - a.volume : b.TVL - a.TVL))
-      // case SortType.APY_ASC:
-      //   return data.sort((a, b) => a.apy - b.apy)
-      // case SortType.APY_DESC:
-      //   return data.sort((a, b) => b.apy - a.apy)
+      case SortTypePoolList.APY_ASC:
+        return data.sort((a, b) => a.apy - b.apy)
+      case SortTypePoolList.APY_DESC:
+        return data.sort((a, b) => b.apy - a.apy)
       default:
         return data
     }
@@ -144,6 +146,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             onSort={setSortType}
             sortType={sortType}
             network={network}
+            showAPY={showAPY}
           />
           {data.length > 0 || isLoading ? (
             paginator(page).map((element, index) => (
@@ -173,6 +176,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
                 isUnknownTo={element.isUnknownTo}
                 poolAddress={element.poolAddress}
                 copyAddressHandler={copyAddressHandler}
+                showAPY={showAPY}
               />
             ))
           ) : (

@@ -18,14 +18,18 @@ export const InfoComponent = () => {
           Develop your own liquidity provision strategy and climb to the top of the leaderboard.
           Accumulated points can be used for future exclusive benefits.
         </Typography>
-        <Link
-          to='https://docs.invariant.app/docs/invariant_points/overview'
-          target='_blank'
-          style={{ textDecoration: 'none' }}>
-          <Button className={classes.button} style={{ marginTop: '32px' }}>
-            Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
-          </Button>
-        </Link>
+        <Box className={classes.linkButtonContainer}>
+          <Link
+            to='https://docs.invariant.app/docs/invariant_points/overview'
+            target='_blank'
+            style={{
+              textDecoration: 'none'
+            }}>
+            <Button className={classes.button} style={{ marginTop: '32px' }}>
+              Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+            </Button>
+          </Link>
+        </Box>
       </Box>
       <Box style={{ width: 'auto' }}>
         <img

@@ -421,7 +421,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
         lowerTickExists:
           !ticks.hasError &&
           !ticks.loading &&
-          ticks.allData.find(t => t.index === data.lowerTick) === undefined
+          ticks.allData.find(t => t.index === data.lowerTick) !== undefined
             ? true
             : undefined,
         upperTickExists:

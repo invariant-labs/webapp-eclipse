@@ -22,7 +22,9 @@ export const PaginationList: React.FC<IPaginationList> = ({
   const matches = useMediaQuery(theme.breakpoints.down('xs'))
 
   return (
-    <div className={classes.root} style={{ justifyContent: position ? 'center' : `${variant}` }}>
+    <div
+      className={classes.root}
+      style={{ justifyContent: position ? 'center' : `${variant}`, alignItems: 'center' }}>
       <Pagination
         count={pages}
         shape='rounded'
