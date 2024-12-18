@@ -143,6 +143,9 @@ export const Faq = () => {
               padding: '16px',
               '& .MuiAccordionSummary-content': {
                 margin: 0
+              },
+              '&.Mui-expanded': {
+                margin: '0px !important'
               }
             }}>
             <Typography
