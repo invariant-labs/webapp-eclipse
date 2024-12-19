@@ -2,98 +2,71 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
+  container: {
+    marginBottom: 64
+  },
   title: {
-    color: colors.invariant.text,
     ...typography.heading4,
+    color: colors.invariant.text,
     fontWeight: 700
   },
-  cardsContainer: {
-    width: '100%',
-    display: 'flex',
-    flexDirection: 'row',
-    padding: '24px 0px',
-    flexWrap: 'nowrap',
+  swiperContainer: {
+    background: colors.invariant.component,
     borderRadius: 32,
-    background: colors.invariant.component
+    position: 'relative'
   },
-  slider: {
-    // minWidth: '100%',
-    // '& .slick-track': {
-    //   display: 'flex',
-    //   justifyContent: 'space-between'
-    // },
-    // '& .slick-slide': {
-    //   display: 'flex',
-    //   justifyContent: 'center'
-    // },
-    '& .slick-arrow': {
-      '&::before': {
-        background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
-        fontSize: 24,
-        '-webkit-background-clip': 'text',
-        color: 'transparent',
-        opacity: 1
-      }
-    }
+  swiper: {
+    padding: 24
   },
-  dots: {
+  slide: {
+    width: 238
+  },
+  bullet: {
+    height: 12,
+    width: 12,
+    background: colors.invariant.newDark,
+    borderRadius: '50%',
+    border: `1px solid ${colors.invariant.component}`,
+    cursor: 'pointer'
+  },
+  bulletActive: {
+    background: 'transparent',
+    backgroundImage: `linear-gradient(to bottom, ${colors.invariant.newDark}, ${colors.invariant.newDark}), linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+    backgroundClip: 'padding-box, border-box',
+    backgroundOrigin: 'border-box',
+    border: '1px solid transparent'
+  },
+  horizontal: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: 24
+  },
+  pagination: {
     position: 'absolute',
-    bottom: -54,
-    overflow: 'visible',
-    zIndex: 10,
-
-    '& li.slick-active button::before': {},
-    '& li': {
-      borderRadius: '50%',
-      height: 12,
-      width: 12,
-      margin: '0 8px',
-      background: colors.invariant.newDark,
-      border: `2px solid transparent`,
-      transition: 'all 0.3s ease',
-      position: 'relative',
-      '&.slick-active': {
-        background: colors.invariant.newDark,
-        border: 'none',
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: -1,
-          left: -1,
-          right: -1,
-          bottom: -1,
-          borderRadius: '50%',
-          background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
-          zIndex: -1
-        }
-      },
-      '&': {
-        background: colors.invariant.newDark,
-        border: 'none',
-        '&::after': {
-          content: '""',
-          position: 'absolute',
-          top: -1,
-          left: -1,
-          right: -1,
-          bottom: -1,
-          borderRadius: '50%',
-          background: colors.invariant.component,
-          zIndex: -1
-        }
-      },
-      '& button': {
-        opacity: 0,
-        height: '100%',
-        width: '100%',
-        background: 'transparent',
-        border: 'none',
-        outline: 'none',
-        cursor: 'pointer'
-      },
-      '& button::before': {
-        content: '""'
-      }
-    }
+    bottom: -36,
+    left: 0,
+    right: 0
+  },
+  controlButton: {
+    width: 32,
+    height: 32,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+    borderRadius: '50%',
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    cursor: 'pointer'
+  },
+  controlButtonPrev: {
+    left: -48
+  },
+  controlButtonNext: {
+    right: -48
+  },
+  controlButtonNextImage: {
+    rotate: '180deg'
   }
 }))

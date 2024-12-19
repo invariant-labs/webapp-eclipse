@@ -2,7 +2,7 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
-  root: { width: '226px' },
+  root: { width: 238 },
   container: {
     position: 'relative',
     height: 340,
