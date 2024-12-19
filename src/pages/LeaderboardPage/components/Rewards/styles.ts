@@ -30,9 +30,9 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('md')]: {
       fontSize: '20px'
     },
-    fontSize: '24px',
+    fontSize: '16px',
     fontWeight: '400',
-    lineHeight: '28px',
+    lineHeight: '20px',
     letterSpacing: '-0.03em',
     marginTop: '32px',
     maxWidth: '800px'
@@ -42,9 +42,9 @@ export const useStyles = makeStyles()(() => ({
       fontSize: '30px'
     },
     color: colors.invariant.text,
-    fontSize: '50px',
+    fontSize: '32px',
     fontWeight: '600',
-    lineHeight: '40px',
+    lineHeight: '36px',
     letterSpacing: '-0.03em',
     maxWidth: '800px'
   },
@@ -98,7 +98,7 @@ export const useStyles = makeStyles()(() => ({
   },
   pointsValue: {
     color: colors.invariant.text,
-    fontSize: '64px',
+    fontSize: '40px',
     fontWeight: 700,
     lineHeight: '36px',
     letterSpacing: '-3%',
