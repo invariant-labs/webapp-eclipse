@@ -5,11 +5,20 @@ import { Faq } from './Faq/Faq'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
-import { leaderboardSelectors, topRankedUsers } from '@store/selectors/leaderboard'
-
+import {
+  getPromotedPools,
+  leaderboardSelectors,
+  topRankedUsers
+} from '@store/selectors/leaderboard'
+import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { YourProgress } from './YourProgress/YourProgress'
 import { TopScorers } from './TopScorers/TopScorers'
 import { Switcher } from './Switcher/Switcher'
+import { RewardedPools } from './RewardedPools/RewardedPools'
+import { network } from '@store/selectors/solanaConnection'
+import { VariantType } from 'notistack'
+import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { actions as statsActions } from '@store/reducers/stats'
 
 interface LeaderboardWrapperProps {
   alignment: string
@@ -21,6 +30,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   setAlignment
 }) => {
   const { classes } = useStyles()
+  const currentNetwork = useSelector(network)
 
   const isLoading = useSelector(leaderboardSelectors.loading)
   const leaderboard = useSelector(topRankedUsers)
@@ -28,9 +38,15 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const top3Scorers = useSelector(leaderboardSelectors.top3Scorers)
   const dispatch = useDispatch()
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
-
+  const promotedPools = useSelector(getPromotedPools)
+  const poolsList = useSelector(poolsStatsWithTokensDetails)
+  const promotedPoolsData = promotedPools
+    .map(pool => poolsList.find(poolWithData => poolWithData.poolAddress.toString() === pool))
+    .filter(poolData => !!poolData)
   useEffect(() => {
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
+    dispatch(actions.getLeaderboardConfig())
+    dispatch(statsActions.getCurrentStats())
   }, [dispatch, itemsPerPage])
 
   const content = React.useMemo(() => {
@@ -41,6 +57,15 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
     }
   }, [alignment, leaderboard, isLoading])
 
+  const copyAddressHandler = (message: string, variant: VariantType) => {
+    dispatch(
+      snackbarActions.add({
+        message,
+        variant,
+        persist: false
+      })
+    )
+  }
   return (
     <Box className={classes.pageWrapper}>
       <Box className={classes.leaderBoardWrapper}>
@@ -54,8 +79,14 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             width: '100%'
           }}>
           <YourProgress userStats={userStats} />
+          <RewardedPools
+            network={currentNetwork}
+            copyAddressHandler={copyAddressHandler}
+            rewardedPoolsData={promotedPoolsData}
+          />
           <TopScorers top3Scorers={top3Scorers} />
         </Box>
+
         <Box
           sx={{
             display: 'flex',
