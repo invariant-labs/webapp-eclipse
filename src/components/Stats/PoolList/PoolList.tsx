@@ -2,7 +2,7 @@ import React, { useMemo, useEffect } from 'react'
 import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
 import { useStyles } from './style'
 import { Grid } from '@mui/material'
-import { BTC_DEV, NetworkType, SortTypePoolList, USDC_DEV, WETH_DEV } from '@store/consts/static'
+import { BTC_TEST, NetworkType, SortTypePoolList, USDC_TEST, WETH_TEST } from '@store/consts/static'
 import { PaginationList } from '@components/Pagination/Pagination'
 import { VariantType } from 'notistack'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
@@ -42,8 +42,8 @@ export interface PoolListInterface {
 
 const ITEMS_PER_PAGE = 10
 
-const tokens = [BTC_DEV, USDC_DEV, WETH_DEV]
-const fees = [0.01, 0.02, 0.1, 0.3, 1]
+const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
+const fees = [0.01, 0.02, 0.1, 0.3, 0.9, 1]
 
 const generateMockData = () => {
   return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
