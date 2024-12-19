@@ -33,9 +33,9 @@ export const Rewards = () => {
               <Typography
                 style={{
                   color: colors.invariant.textGrey,
-                  fontSize: '32px',
+                  fontSize: '20px',
                   fontWeight: 400,
-                  lineHeight: '36px',
+                  lineHeight: '24px',
                   letterSpacing: '-3%'
                 }}>
                 You have now:

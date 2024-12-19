@@ -68,7 +68,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
     (page: number) => {
       dispatch(actions.getLeaderboardData({ page, itemsPerPage }))
     },
-    [dispatch, itemsPerPage]
+    [dispatch, itemsPerPage, isConnected]
   )
 
   const renderWaves = (position: 'top' | 'bottom', imageSrc: string) =>

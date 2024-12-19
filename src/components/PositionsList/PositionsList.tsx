@@ -184,7 +184,8 @@ export const PositionsList: React.FC<IProps> = ({
                   <ToggleButton
                     value={LiquidityPools.Standard}
                     disableRipple
-                    className={classes.switchPoolsButton}>
+                    className={classes.switchPoolsButton}
+                    style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
                     Standard
                   </ToggleButton>
                   <ToggleButton
@@ -192,7 +193,8 @@ export const PositionsList: React.FC<IProps> = ({
                     value={LiquidityPools.Locked}
                     disableRipple
                     className={classes.switchPoolsButton}
-                    classes={{ disabled: classes.disabledSwitchButton }}>
+                    classes={{ disabled: classes.disabledSwitchButton }}
+                    style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
                     Locked
                   </ToggleButton>
                 </ToggleButtonGroup>

@@ -1,4 +1,4 @@
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material'
+import { Accordion, AccordionSummary, AccordionDetails, Typography, alpha } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
@@ -17,7 +17,12 @@ const faqData = [
   },
   {
     question: 'How are points calculated?',
-    answer: `In short: </br> <ul><li>The larger the position, the more points you earn.</li><li>The narrower the range of the position (higher concentration), the more points you earn.</li><li>The longer the position remains active, the more points you accumulate.</li><li>The wider the position, the more consistent your point earnings become.</li></ul>The exact formula for calculating points is explained in detail in our docs - <a href="https://docs.invariant.app/docs/tutorial/get_started" target="_blank" style="text-decoration-color: #2EE09A"><span style="color: #2EE09A" target="_blank">CLICK HERE!<span></a>`
+    answer: `
+    The algorithm we have created is unique in the entire DeFi space.
+Every second, a fixed amount of points is distributed and divided among all positions. Players compete for these points by creating the most efficient positions possible.
+The algorithm takes into account factors such as the size of the position (TVL), the time it has been open, and the level of concentration. A higher value in one factor can compensate for another. For example, having a higher level of concentration can allow you to accrue more points than someone with a higher TVL.</br></br>
+
+    In short: </br> <ul><li>The larger the position, the more points you earn.</li><li>The narrower the range of the position (higher concentration), the more points you earn.</li><li>The longer the position remains active, the more points you accumulate.</li><li>The wider the position, the more consistent your point earnings become.</li></ul>The exact formula for calculating points is explained in detail in our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" target="_blank" style="text-decoration-color: #2EE09A"><span style="color: #2EE09A" target="_blank">[docs]<span></a>`
   },
   {
     question: 'On which blockchain can I earn points?',
@@ -29,8 +34,9 @@ const faqData = [
   },
   {
     question: 'Do I get rewarded for being an early user?',
-    answer:
-      'Hell yeah. Our algorithm is designed in such a way as to appreciate OG users. A constant number of points is distributed every second and shared across all positions. As the number of positions increases, the number of points received by each one decreases, so it pays off to be early. One dollar in a position now might be worth as much as 30 dollars in the future.'
+    answer: `Yes. Our algorithm is designed in such a way as to appreciate OG users. A constant number of points is distributed every second and shared across all positions.
+As the number of positions increases, the number of points received by each one decreases, so it pays off to be early.
+One dollar in a position now might be worth as much as 30 dollars in the future.`
   },
   {
     question: 'What are the rewards, and when will we receive them?',
@@ -103,21 +109,39 @@ export const Faq = () => {
     <div className={classes.container}>
       {faqData.map((item, index) => (
         <Accordion
+          disableGutters
           key={index}
           sx={{
             backgroundColor: 'transparent',
             boxShadow: 'none',
+            position: 'relative',
             '&:before': {
               display: 'none'
+            },
+            '&.Mui-expanded': {
+              margin: '0px !important',
+              '&::after': {
+                content: '""',
+                position: 'absolute',
+                left: 0,
+                top: 0,
+                pointerEvents: 'none',
+                height: '100%',
+                padding: '0px 10px',
+                transiton: 'all 1s ease-in-out',
+                width: '100%',
+                background: `linear-gradient(to right, ${alpha(colors.invariant.light, 0.2)} , transparent)`,
+                opacity: 1
+              }
             },
             '&:not(:last-child)': {
               borderBottom: `1px solid ${colors.invariant.light}`
             }
           }}>
           <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: colors.invariant.light }} />}
+            expandIcon={<ExpandMoreIcon sx={{ color: colors.invariant.text }} />}
             sx={{
-              padding: '16px 0',
+              padding: '16px',
               '& .MuiAccordionSummary-content': {
                 margin: 0
               }
@@ -133,7 +157,7 @@ export const Faq = () => {
           </AccordionSummary>
           <AccordionDetails
             sx={{
-              padding: '0 0 16px 0'
+              padding: '16px'
             }}
             className={classes.item}>
             <Typography

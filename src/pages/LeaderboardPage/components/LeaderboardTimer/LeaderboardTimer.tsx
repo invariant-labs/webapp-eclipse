@@ -17,20 +17,22 @@ export const LeaderboardTimer: React.FC<ILeaderboardTimerProps> = ({ hours, minu
 
       <Box className={classes.timerContainer}>
         <Box className={classes.timerWrapper}>
-          <Box className={classes.timerBlock}>
-            <Typography className={classes.timerNumber}>{hours} H</Typography>
-          </Box>
+          <Box className={classes.innerContent}>
+            <Box className={classes.timerBlock}>
+              <Typography className={classes.timerNumber}>{hours} H</Typography>
+            </Box>
 
-          <Box className={classes.separator}>:</Box>
+            <Box className={classes.separator}>:</Box>
 
-          <Box className={classes.timerBlock}>
-            <Typography className={classes.timerNumber}>{minutes} M</Typography>
-          </Box>
+            <Box className={classes.timerBlock}>
+              <Typography className={classes.timerNumber}>{minutes} M</Typography>
+            </Box>
 
-          <Box className={classes.separator}>:</Box>
+            <Box className={classes.separator}>:</Box>
 
-          <Box className={classes.timerBlock}>
-            <Typography className={classes.timerNumber}>{seconds} S</Typography>
+            <Box className={classes.timerBlock}>
+              <Typography className={classes.timerNumber}>{seconds} S</Typography>
+            </Box>
           </Box>
         </Box>
       </Box>

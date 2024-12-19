@@ -21,6 +21,12 @@ export interface ILeaderboardStore {
   currentPage: number
   totalItems: number
   itemsPerPage: number
+  config: {
+    refreshTime: number
+    pointsPerSecond: string
+    pointsDecimal: number
+    promotedPools: string[]
+  }
 }
 
 export const defaultState: ILeaderboardStore = {
@@ -30,7 +36,8 @@ export const defaultState: ILeaderboardStore = {
   isLoading: false,
   currentPage: 1,
   totalItems: 0,
-  itemsPerPage: 25
+  itemsPerPage: 25,
+  config: { refreshTime: 0, pointsPerSecond: '0', pointsDecimal: 0, promotedPools: [] }
 }
 
 export const leaderboardSliceName = 'leaderboard'
@@ -42,7 +49,7 @@ const leaderboardSlice = createSlice({
     setLeaderboardData(
       state,
       action: PayloadAction<{
-        user: UserStats
+        user: UserStats | null
         leaderboard: LeaderboardEntry[]
         totalItems: number
       }>
@@ -69,6 +76,26 @@ const leaderboardSlice = createSlice({
     },
     setLoadingState(state, action: PayloadAction<boolean>) {
       state.isLoading = action.payload
+      return state
+    },
+    getLeaderboardConfig(state) {
+      return state
+    },
+    setLeaderboardConfig(
+      state,
+      action: PayloadAction<{
+        refreshTime: number
+        pointsPerSecond: string
+        pointsDecimal: number
+        promotedPools: string[]
+      }>
+    ) {
+      state.config = {
+        refreshTime: action.payload.refreshTime,
+        pointsPerSecond: action.payload.pointsPerSecond,
+        pointsDecimal: action.payload.pointsDecimal,
+        promotedPools: action.payload.promotedPools ?? []
+      }
       return state
     }
   }

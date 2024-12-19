@@ -18,8 +18,14 @@ export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds, handleCl
   return (
     <>
       <Typography style={{ color: colors.invariant.text }}>
-        <span style={{ color: colors.invariant.pink, textAlign: 'center' }}>Invariant Points</span>{' '}
-        launches in:
+        <span
+          style={{
+            color: colors.invariant.text,
+            textAlign: 'center',
+            textShadow: '0px 0px 5px #FFFFFF80'
+          }}>
+          Invariant Points launches in:
+        </span>
       </Typography>
 
       <Box
@@ -37,16 +43,15 @@ export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds, handleCl
             height: 'fit-content',
             padding: '6px',
             borderRadius: '4px',
-            color: colors.invariant.dark,
+            color: colors.invariant.text,
             fontWeight: 700,
             lineHeight: '20px',
-            fontSize: '24px',
-            background: 'linear-gradient(360deg, #2EE09A 0%, #EF84F5 100%);'
+            fontSize: '24px'
           }}>
           {hours}H
         </Box>
         <Box sx={{ paddingLeft: '2px', paddingRight: '2px' }}>
-          <Typography style={{ ...typography.heading4, color: colors.invariant.light }}>
+          <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
             :
           </Typography>
         </Box>
@@ -56,16 +61,15 @@ export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds, handleCl
             height: 'fit-content',
             padding: '6px',
             borderRadius: '4px',
-            color: colors.invariant.dark,
+            color: colors.invariant.text,
             fontWeight: 700,
             lineHeight: '20px',
-            fontSize: '24px',
-            background: 'linear-gradient(360deg, #2EE09A 0%, #EF84F5 100%);'
+            fontSize: '24px'
           }}>
           {minutes}M
         </Box>
         <Box sx={{ paddingLeft: '2px', paddingRight: '2px' }}>
-          <Typography style={{ ...typography.heading4, color: colors.invariant.light }}>
+          <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
             :
           </Typography>
         </Box>
@@ -75,11 +79,10 @@ export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds, handleCl
             height: 'fit-content',
             padding: '6px',
             borderRadius: '4px',
-            color: colors.invariant.dark,
+            color: colors.invariant.text,
             fontWeight: 700,
             lineHeight: '20px',
-            fontSize: '24px',
-            background: 'linear-gradient(360deg, #2EE09A 0%, #EF84F5 100%);'
+            fontSize: '24px'
           }}>
           {seconds}S
         </Box>

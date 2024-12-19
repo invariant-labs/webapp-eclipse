@@ -41,6 +41,7 @@ export interface PoolListInterface {
 
 import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
+import { BN } from '@coral-xyz/anchor'
 
 const ITEMS_PER_PAGE = 10
 
@@ -177,6 +178,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
                 poolAddress={element.poolAddress}
                 copyAddressHandler={copyAddressHandler}
                 showAPY={showAPY}
+                points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+                isPromoted={element.isPromoted}
               />
             ))
           ) : (
