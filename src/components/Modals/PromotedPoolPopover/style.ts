@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(() => {
   return {
     popover: {
+      marginTop: '8px',
       pointerEvents: 'none',
       [theme.breakpoints.down('sm')]: {
         width: '100%',
