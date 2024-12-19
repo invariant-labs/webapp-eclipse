@@ -6,7 +6,6 @@ const useStyles = makeStyles()(() => {
     root: {
       background: colors.invariant.newDark,
       width: 227,
-      height: 145,
       borderRadius: 16,
       padding: 16
     },
@@ -120,13 +119,15 @@ const useStyles = makeStyles()(() => {
       borderWidth: 2,
       borderColor: colors.invariant.light,
       flexShrink: 0,
-      marginTop: '16px'
+      marginTop: '16px',
+      marginBottom: '16px'
     },
 
     counterLabel: {
       ...typography.body1,
       color: colors.invariant.textGrey,
-      textWrap: 'nowrap'
+      textWrap: 'nowrap',
+      marginTop: '16px'
     },
     counterYourPoints: {
       ...typography.heading1,

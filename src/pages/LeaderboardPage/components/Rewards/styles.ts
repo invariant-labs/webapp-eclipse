@@ -49,7 +49,7 @@ export const useStyles = makeStyles()(() => ({
     maxWidth: '800px'
   },
   clipboardIcon: {
-    width: 32,
+    width: 14,
     cursor: 'pointer',
     color: colors.invariant.newDark,
     '&:hover': {
@@ -59,30 +59,31 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   connectWalletButton: {
-    height: '48px !important',
+    height: '44px !important',
     borderRadius: '16px',
-    width: '100%',
+    width: '200px',
     margin: '30px 0',
-
+    fontSize: '14px',
     [theme.breakpoints.down('sm')]: {
       width: '100%'
-    }
+    },
+    fontWeight: 400
   },
   button: {
+    ...typography.body1,
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
     justifySelf: 'center',
     padding: '13px',
-    gap: '10px',
-    width: 'max-content',
-    height: '50px',
+    gap: '8px',
+    width: '200px',
+    height: '44px',
     background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
     borderRadius: '16px',
     fontFamily: 'Mukta',
     fontStyle: 'normal',
-    ...typography.heading4,
     textTransform: 'none',
     color: colors.invariant.dark,
     transition: 'all 0.3s ease',
@@ -94,6 +95,9 @@ export const useStyles = makeStyles()(() => ({
     '&:active': {
       transform: 'translateY(1px)',
       boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
     }
   },
   pointsValue: {
