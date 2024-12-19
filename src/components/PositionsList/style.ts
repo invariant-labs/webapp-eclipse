@@ -207,7 +207,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   switchPoolsButtonsGroup: { position: 'relative', zIndex: 2, display: 'flex' },
   switchPoolsButton: {
     ...typography.body2,
-    fontWeight: '700',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
