@@ -10,7 +10,7 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { formatLargeNumber } from '@utils/formatBigNumber'
 import { LAUNCH_DATE, LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
-import { printBN, trimZeros } from '@utils/utils'
+import { printBN } from '@utils/utils'
 import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 
@@ -60,7 +60,7 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
             {isSm ? (
               <KeyboardArrowDownIcon id='downIcon' />
             ) : (
-              `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
+              `Points: ${currentUser ? formatLargeNumber(+printBN(new BN(currentUser.points, 'hex'), LEADERBOARD_DECIMAL)) : 0}`
             )}
           </>
         ) : (
