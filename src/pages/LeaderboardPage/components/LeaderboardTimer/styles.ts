@@ -1,29 +1,17 @@
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   pageWrapper: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-around',
     alignItems: 'center',
-    padding: '32px',
     gap: '24px',
     width: '100%',
-    maxWidth: '521px',
-    minHeight: '216px',
-    background: '#202946',
-    borderRadius: '32px',
-    margin: '0 auto',
+    maxWidth: '467px',
+    minHeight: '172px',
     boxSizing: 'border-box',
-    overflow: 'hidden',
-    [theme.breakpoints.up('sm')]: {
-      padding: '24px',
-      gap: '20px',
-      borderRadius: '24px',
-      width: 'calc(100% - 32px)',
-      margin: '0 16px'
-    }
+    overflow: 'hidden'
   },
   headerText: {
     width: '100%',
@@ -41,16 +29,23 @@ export const useStyles = makeStyles()(() => ({
   },
   timerContainer: {
     display: 'flex',
-    flexDirection: 'column',
+    padding: '10px',
+    width: '100%',
+    minHeight: '112px',
+    boxSizing: 'border-box',
+    borderRadius: '24px',
+    position: 'relative',
+    background: 'linear-gradient(269.89deg, #EF84F5 0.89%, #2EE09A 99.11%)'
+  },
+  innerContent: {
+    display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: '16px',
-    gap: '10px',
     width: '100%',
-    minHeight: '92px',
-    background: '#3A466B',
-    borderRadius: '16px',
-    boxSizing: 'border-box'
+    height: '100%',
+    borderRadius: '24px',
+    background: colors.invariant.newDark
   },
   timerWrapper: {
     display: 'flex',
@@ -59,7 +54,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     padding: 0,
     width: '100%',
-    maxWidth: '447px',
+    maxWidth: '467px',
     gap: 10
   },
   timerBlock: {
@@ -68,9 +63,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     justifyContent: 'center',
     flex: 1,
-    minHeight: '60px',
-    background: 'linear-gradient(360deg, #2EE09A 0%, #EF84F5 100%)',
-    borderRadius: '14px'
+    minHeight: '60px'
   },
   timerNumber: {
     fontFamily: 'Mukta',
@@ -82,7 +75,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     textAlign: 'center',
     letterSpacing: '-0.03em',
-    color: '#111931',
+    color: colors.invariant.text,
     whiteSpace: 'nowrap',
     [theme.breakpoints.down('sm')]: {
       fontSize: '24px'
@@ -98,7 +91,7 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     textAlign: 'center',
     letterSpacing: '-0.03em',
-    color: '#111931',
+    color: colors.invariant.text,
     padding: '0 2px'
   }
 }))
