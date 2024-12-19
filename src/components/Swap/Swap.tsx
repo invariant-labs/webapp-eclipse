@@ -815,8 +815,7 @@ export const Swap: React.FC<ISwap> = ({
           {+printBN(simulateResult.priceImpact, DECIMAL - 2) > 25 && (
             <TooltipHover text='Your trade size might be too large'>
               <Box className={classes.unknownWarning}>
-                Price impact is more than{' '}
-                {(+printBN(simulateResult.priceImpact, DECIMAL - 2)).toFixed(2)}%
+                {(+printBN(simulateResult.priceImpact, DECIMAL - 2)).toFixed(2)}% Price impact
               </Box>
             </TooltipHover>
           )}
