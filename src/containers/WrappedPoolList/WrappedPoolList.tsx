@@ -1,7 +1,7 @@
 import { Grid, InputAdornment, InputBase, Typography } from '@mui/material'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { shortenAddress } from '@utils/uiUtils'
-import { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SearchIcon from '@static/svg/lupaDark.svg'
 import useStyles from './styles'
@@ -20,8 +20,7 @@ export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const currentNetwork = useSelector(network)
-  const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
-  const deferredSearchPoolsValue = useDeferredValue(searchPoolsValue)
+  const [searchPoolsValue, setSearchPoolsValue] = useState<string>('a')
   const isLoadingStats = useSelector(isLoading)
   const pointsPerSecond = useSelector(getPointsPerSecond)
   const promotedPools = useSelector(getPromotedPools)
@@ -34,14 +33,14 @@ export const WrappedPoolList: React.FC = () => {
       const reversedPoolName =
         shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
       return (
-        poolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.fee.toString().concat('%').includes(deferredSearchPoolsValue.toLowerCase()) ||
-        reversedPoolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.tokenX.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.tokenY.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase())
+        poolName.toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.fee.toString().concat('%').includes(searchPoolsValue.toLowerCase()) ||
+        reversedPoolName.toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.tokenX.toString().toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.tokenY.toString().toLowerCase().includes(searchPoolsValue.toLowerCase())
       )
     })
-  }, [isLoadingStats, poolsList, deferredSearchPoolsValue])
+  }, [isLoadingStats, poolsList, searchPoolsValue])
 
   const showAPY = useMemo(() => {
     return filteredPoolsList.some(pool => pool.apy !== 0)

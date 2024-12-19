@@ -9,11 +9,13 @@ import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { Chain, WalletType } from '@store/consts/types'
 import { RpcErrorModal } from '@components/RpcErrorModal/RpcErrorModal'
 import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
 import { changeToNightlyAdapter, connectStaticWallet, getEclipseWallet } from '@utils/web3/wallet'
 import { sleep } from '@invariant-labs/sdk-eclipse'
+import { getLeaderboardQueryParams } from '@store/selectors/leaderboard'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -22,7 +24,7 @@ export const HeaderWrapper: React.FC = () => {
   const currentRpc = useSelector(rpcAddress)
   const isThankYouModalShown = useSelector(thankYouModalShown)
   const walletBalance = useSelector(balance)
-
+  const leaderboardQueryParams = useSelector(getLeaderboardQueryParams)
   const location = useLocation()
   const walletAddress = useSelector(address)
   const navigate = useNavigate()
@@ -35,6 +37,12 @@ export const HeaderWrapper: React.FC = () => {
     const reconnectStaticWallet = async (wallet: WalletType) => {
       await connectStaticWallet(wallet)
       dispatch(walletActions.connect(true))
+      dispatch(
+        leaderboardActions.getLeaderboardData({
+          page: leaderboardQueryParams.page,
+          itemsPerPage: leaderboardQueryParams.pageSize
+        })
+      )
     }
 
     const eagerConnectToNightly = async () => {
@@ -49,6 +57,12 @@ export const HeaderWrapper: React.FC = () => {
           await sleep(500)
         }
         dispatch(walletActions.connect(true))
+        dispatch(
+          leaderboardActions.getLeaderboardData({
+            page: leaderboardQueryParams.page,
+            itemsPerPage: leaderboardQueryParams.pageSize
+          })
+        )
       } catch (error) {
         console.error('Error during Nightly eager connection:', error)
       }

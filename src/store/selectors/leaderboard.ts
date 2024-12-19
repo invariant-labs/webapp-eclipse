@@ -131,3 +131,11 @@ export const getLeaderboardPage = createSelector(
     return leaderboardData.slice(start, start + pageSize)
   }
 )
+
+export const getLeaderboardQueryParams = createSelector(
+  itemsPerPage,
+  currentPage,
+  (pageSize, page) => {
+    return { pageSize, page }
+  }
+)
