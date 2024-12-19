@@ -68,7 +68,7 @@ export const WrappedStats: React.FC = () => {
     return poolsList.filter(poolData => {
       const symbolFrom = poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString()
       const symbolTo = poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString()
-
+      console.log(deferredSearchPoolsValue)
       const poolName = shortenAddress(symbolFrom ?? '') + '/' + shortenAddress(symbolTo ?? '')
       const reversedPoolName =
         shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
@@ -215,14 +215,7 @@ export const WrappedStats: React.FC = () => {
                 accumulatedFarmsSingleTick: 0,
                 accumulatedFarmsAvg: 0
               },
-              // apy:
-              //   poolData.apy + (accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0),
-              // apyData: {
-              //   fees: poolData.apy,
-              //   accumulatedFarmsSingleTick:
-              //     accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0,
-              //   accumulatedFarmsAvg: accumulatedAverageAPY?.[poolData.poolAddress.toString()] ?? 0
-              // }
+
               isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
               isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
               poolAddress: poolData.poolAddress.toString()
