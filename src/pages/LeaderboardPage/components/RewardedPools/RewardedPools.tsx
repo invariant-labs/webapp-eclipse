@@ -1,45 +1,55 @@
 import { Box, Typography } from '@mui/material'
 import useStyles from './styles'
-import React from 'react'
+import React, { useMemo } from 'react'
 import PoolList from '../PoolList/PoolList'
 import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
+import icons from '@static/icons'
+import { ExtendedPoolStatsData } from '@store/selectors/stats'
 
 interface IProps {
   network: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
+  rewardedPoolsData: ExtendedPoolStatsData[]
 }
 
-const data = [
-  {
-    symbolFrom: 'BTC',
-    symbolTo: 'USDC',
-    iconFrom:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E/logo.png',
-    iconTo:
-      'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
-    volume: 3002.4589695555414,
-    TVL: 7137.911086153499,
-    fee: 0.01,
-    lockedX: 2673.914699117721,
-    lockedY: 2426.1845704032557,
-    liquidityX: 2450.3091202791084,
-    liquidityY: 3311.2738485696436,
-    addressFrom: '2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo',
-    addressTo: '5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx',
-    apy: 83.69386208883047,
-    apyData: {
-      fees: 10,
-      accumulatedFarmsAvg: 10,
-      accumulatedFarmsSingleTick: 10
-    },
-    isUnknownFrom: false,
-    isUnknownTo: false,
-    poolAddress: '6W8Q5K4ZMx7fAbT2SpcysQ3CahUhX2TPaMFrzmSp3MM6'
-  }
-]
-export const RewardedPools: React.FC<IProps> = ({ network, copyAddressHandler }: IProps) => {
+export const RewardedPools: React.FC<IProps> = ({
+  network,
+  copyAddressHandler,
+  rewardedPoolsData
+}: IProps) => {
   const { classes } = useStyles()
+  const data = useMemo(
+    () =>
+      rewardedPoolsData.map(poolData => {
+        return {
+          symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
+          symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
+          iconFrom: poolData.tokenXDetails?.logoURI ?? icons.unknownToken,
+          iconTo: poolData.tokenYDetails?.logoURI ?? icons.unknownToken,
+          volume: poolData.volume24,
+          TVL: poolData.tvl,
+          fee: poolData.fee,
+          lockedX: poolData.lockedX,
+          lockedY: poolData.lockedY,
+          liquidityX: poolData.liquidityX,
+          liquidityY: poolData.liquidityY,
+          addressFrom: poolData.tokenX.toString(),
+          addressTo: poolData.tokenY.toString(),
+          apy: poolData.apy,
+
+          apyData: {
+            fees: poolData.apy,
+            accumulatedFarmsSingleTick: 0,
+            accumulatedFarmsAvg: 0
+          },
+          isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
+          isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
+          poolAddress: poolData.poolAddress.toString()
+        }
+      }),
+    [rewardedPoolsData]
+  )
 
   return (
     <>

@@ -71,7 +71,6 @@ export const WrappedStats: React.FC = () => {
     return poolsList.filter(poolData => {
       const symbolFrom = poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString()
       const symbolTo = poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString()
-      console.log(deferredSearchPoolsValue)
       const poolName = shortenAddress(symbolFrom ?? '') + '/' + shortenAddress(symbolTo ?? '')
       const reversedPoolName =
         shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
