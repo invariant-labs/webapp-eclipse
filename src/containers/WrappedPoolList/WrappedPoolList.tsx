@@ -22,6 +22,9 @@ export const WrappedPoolList: React.FC = () => {
   const currentNetwork = useSelector(network)
   const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
   const deferredSearchPoolsValue = useDeferredValue(searchPoolsValue)
+  useEffect(() => {
+    console.log(deferredSearchPoolsValue)
+  }, [deferredSearchPoolsValue, searchPoolsValue])
   const isLoadingStats = useSelector(isLoading)
   const pointsPerSecond = useSelector(getPointsPerSecond)
   const promotedPools = useSelector(getPromotedPools)
