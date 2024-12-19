@@ -7,15 +7,16 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType, SortTypePoolList } from '@store/consts/static'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+
 import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
-import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumber } from '@utils/utils'
-import { apyToApr, shortenAddress } from '@utils/uiUtils'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
+import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import classNames from 'classnames'
+import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 
@@ -75,19 +76,20 @@ const PoolListItem: React.FC<IProps> = ({
   addressFrom,
   addressTo,
   network,
+  apy = 0,
   isUnknownFrom,
   isUnknownTo,
   isLocked,
   isPromoted,
   poolAddress,
   copyAddressHandler,
-  apy = 0,
   points,
   showAPY
 }) => {
   const { classes } = useStyles()
+
   const navigate = useNavigate()
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const isSmd = useMediaQuery('(max-width:780px)')
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const lockIconRef = useRef<HTMLButtonElement>(null)
   const airdropIconRef = useRef<HTMLDivElement>(null)
@@ -156,47 +158,43 @@ const PoolListItem: React.FC<IProps> = ({
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
-            {!isSm && (
-              <Box className={classes.iconsWrapper}>
-                <Box className={classes.iconContainer}>
-                  <img
-                    className={classes.tokenIcon}
-                    src={iconFrom}
-                    alt='Token from'
-                    onError={e => {
-                      e.currentTarget.src = icons.unknownToken
-                    }}
-                  />
-                  {isUnknownFrom && <img className={classes.warningIcon} src={icons.warningIcon} />}
-                </Box>
-                <Box className={classes.iconContainer}>
-                  <img
-                    className={classes.tokenIcon}
-                    src={iconTo}
-                    alt='Token to'
-                    onError={e => {
-                      e.currentTarget.src = icons.unknownToken
-                    }}
-                  />
-                  {isUnknownTo && <img className={classes.warningIcon} src={icons.warningIcon} />}
-                </Box>
+            <Box className={classes.iconsWrapper}>
+              <Box className={classes.iconContainer}>
+                <img
+                  className={classes.tokenIcon}
+                  src={iconFrom}
+                  alt='Token from'
+                  onError={e => {
+                    e.currentTarget.src = icons.unknownToken
+                  }}
+                />
+                {isUnknownFrom && <img className={classes.warningIcon} src={icons.warningIcon} />}
               </Box>
-            )}
-            {(!isMd || isSm) && (
-              <Grid className={classes.symbolsContainer}>
-                <Typography>
-                  {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
-                </Typography>
-                <TooltipHover text='Copy pool address'>
-                  <FileCopyOutlinedIcon
-                    onClick={copyToClipboard}
-                    classes={{ root: classes.clipboardIcon }}
-                  />
-                </TooltipHover>
-              </Grid>
-            )}
+              <Box className={classes.iconContainer}>
+                <img
+                  className={classes.tokenIcon}
+                  src={iconTo}
+                  alt='Token to'
+                  onError={e => {
+                    e.currentTarget.src = icons.unknownToken
+                  }}
+                />
+                {isUnknownTo && <img className={classes.warningIcon} src={icons.warningIcon} />}
+              </Box>
+            </Box>
+            <Grid className={classes.symbolsContainer}>
+              <Typography>
+                {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
+              </Typography>
+              <TooltipHover text='Copy pool address'>
+                <FileCopyOutlinedIcon
+                  onClick={copyToClipboard}
+                  classes={{ root: classes.clipboardIcon }}
+                />
+              </TooltipHover>
+            </Grid>
           </Grid>
-          {!isSm && showAPY ? (
+          {!isSmd && showAPY ? (
             <Box className={classes.row}>
               <Typography>
                 {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
@@ -235,7 +233,7 @@ const PoolListItem: React.FC<IProps> = ({
           <Typography>{fee}%</Typography>
           <Typography>{`$${formatNumber(volume)}`}</Typography>
           <Typography>{`$${formatNumber(TVL)}`}</Typography>
-          {!isSm && (
+          {!isMd && (
             <Box className={classes.action}>
               {isLocked && (
                 <>
@@ -300,7 +298,6 @@ const PoolListItem: React.FC<IProps> = ({
               N<sup>o</sup>
             </Typography>
           )}
-
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -317,7 +314,7 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-          {!isSm && showAPY ? (
+          {!isSmd && showAPY ? (
             <Typography
               className={classes.row}
               style={{ cursor: 'pointer' }}
@@ -352,7 +349,6 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
@@ -385,7 +381,7 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
-          {!isSm && <Typography align='right'>Action</Typography>}
+          {!isMd && <Typography align='right'>Action</Typography>}
         </Grid>
       )}
     </Grid>
