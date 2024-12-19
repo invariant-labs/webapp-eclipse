@@ -8,6 +8,7 @@ import { VariantType } from 'notistack'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
+import { BN } from '@coral-xyz/anchor'
 
 export interface PoolListInterface {
   data: Array<{
@@ -172,6 +173,8 @@ const PoolList: React.FC<PoolListInterface> = ({
                 poolAddress={element.poolAddress}
                 copyAddressHandler={copyAddressHandler}
                 showAPY={showAPY}
+                points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+                isPromoted={element.isPromoted}
               />
             ))
           ) : (
