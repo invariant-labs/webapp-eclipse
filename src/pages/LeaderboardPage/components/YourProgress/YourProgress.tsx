@@ -37,6 +37,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'flex-start',
         gap: '24px',
         width: '100%'
       }}>
