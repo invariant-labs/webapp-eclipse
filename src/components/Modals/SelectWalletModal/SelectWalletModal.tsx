@@ -109,6 +109,18 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 item
                 className={classes.button}
                 onClick={async () => {
+                  handleConnectStaticWallet(WalletType.NIGHTLY_WALLET)
+                }}>
+                <Typography className={classes.buttonName}>
+                  <img width={40} rel='preload' src={icons.NightlyConnect} alt='Close'></img>
+
+                  {walletNames[WalletType.NIGHTLY_WALLET]}
+                </Typography>
+              </Grid>
+              <Grid
+                item
+                className={classes.button}
+                onClick={async () => {
                   handleConnectStaticWallet(WalletType.BACKPACK)
                 }}>
                 <Typography className={classes.buttonName}>

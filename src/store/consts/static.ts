@@ -716,6 +716,7 @@ export const TIMEOUT_ERROR_MESSAGE =
 export const MAX_CROSSES_IN_SINGLE_TX = 11
 
 export const walletNames = {
+  [WalletType.NIGHTLY_WALLET]: 'Nightly Wallet',
   [WalletType.BACKPACK]: 'Backpack',
   [WalletType.SALMON]: 'Salmon',
   [WalletType.NIGHTLY]: 'Wallet Selector'
