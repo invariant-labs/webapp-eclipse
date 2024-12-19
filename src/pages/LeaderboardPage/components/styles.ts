@@ -10,7 +10,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
       gap: '24px',
-
       width: 'calc(100% - 10px)',
       padding: '10px'
     },

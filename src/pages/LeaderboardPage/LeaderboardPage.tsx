@@ -32,7 +32,6 @@ export const LeaderBoardPage: React.FC = () => {
         className={classes.container}
         justifyContent='center'
         style={{
-          minHeight: isExpired ? '70vh' : 'auto',
           marginTop: isExpired ? '45px' : 'calc(100vh*0.1)'
         }}>
         <Grid item>
