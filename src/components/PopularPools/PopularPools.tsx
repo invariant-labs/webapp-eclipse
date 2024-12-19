@@ -7,7 +7,7 @@ import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react'
 import { Pagination } from 'swiper/modules'
 import 'swiper/css'
 import 'swiper/css/pagination'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import classNames from 'classnames'
 import backIcon from '@static/svg/back-arrow-3.svg'
 
@@ -22,6 +22,8 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
   const { classes } = useStyles()
 
   const [swiperRef, setSwiperRef] = useState<SwiperClass>()
+  const paginationRef = useRef<HTMLDivElement>(null)
+  const [showArrows, setShowArrows] = useState(false)
 
   const handlePrevious = useCallback(() => {
     swiperRef?.slidePrev()
@@ -54,7 +56,8 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
           }}
           modules={[Pagination]}
           className={classes.swiper}
-          onSwiper={setSwiperRef}>
+          onSwiper={setSwiperRef}
+          onResize={() => setShowArrows((paginationRef.current?.childElementCount || 0) > 1)}>
           {pools.map(pool => (
             <SwiperSlide className={classes.slide}>
               <Card
@@ -79,26 +82,30 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
           ))}
         </Swiper>
         <div className={classes.pagination}>
-          <div className='pagination'></div>
+          <div className='pagination' ref={paginationRef}></div>
         </div>
-        <div
-          className={classNames(
-            'swiper-button-next-unique',
-            classes.controlButton,
-            classes.controlButtonPrev
-          )}
-          onClick={handlePrevious}>
-          <img src={backIcon} alt='Arrow image' />
-        </div>
-        <div
-          className={classNames(
-            'swiper-button-next-unique',
-            classes.controlButton,
-            classes.controlButtonNext
-          )}
-          onClick={handleNext}>
-          <img className={classes.controlButtonNextImage} src={backIcon} alt='Arrow image' />
-        </div>
+        {showArrows && (
+          <>
+            <div
+              className={classNames(
+                'swiper-button-next-unique',
+                classes.controlButton,
+                classes.controlButtonPrev
+              )}
+              onClick={handlePrevious}>
+              <img src={backIcon} alt='Arrow image' />
+            </div>
+            <div
+              className={classNames(
+                'swiper-button-next-unique',
+                classes.controlButton,
+                classes.controlButtonNext
+              )}
+              onClick={handleNext}>
+              <img className={classes.controlButtonNextImage} src={backIcon} alt='Arrow image' />
+            </div>
+          </>
+        )}
       </div>
     </Grid>
   )

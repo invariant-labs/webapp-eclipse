@@ -21,32 +21,6 @@ export const useStyles = makeStyles()(() => ({
   slide: {
     width: 238
   },
-  bullet: {
-    height: 12,
-    width: 12,
-    background: colors.invariant.newDark,
-    borderRadius: '50%',
-    border: `1px solid ${colors.invariant.component}`,
-    cursor: 'pointer'
-  },
-  bulletActive: {
-    background: 'transparent',
-    backgroundImage: `linear-gradient(to bottom, ${colors.invariant.newDark}, ${colors.invariant.newDark}), linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
-    backgroundClip: 'padding-box, border-box',
-    backgroundOrigin: 'border-box',
-    border: '1px solid transparent'
-  },
-  horizontal: {
-    display: 'flex',
-    justifyContent: 'center',
-    gap: 24
-  },
-  pagination: {
-    position: 'absolute',
-    bottom: -36,
-    left: 0,
-    right: 0
-  },
   controlButton: {
     width: 32,
     height: 32,
@@ -68,5 +42,35 @@ export const useStyles = makeStyles()(() => ({
   },
   controlButtonNextImage: {
     rotate: '180deg'
+  },
+  pagination: {
+    position: 'absolute',
+    bottom: -36,
+    left: 0,
+    right: 0
+  },
+  horizontal: {
+    display: 'flex',
+    justifyContent: 'center',
+    gap: 24
+  },
+  bullet: {
+    height: 12,
+    width: 12,
+    background: colors.invariant.newDark,
+    borderRadius: '50%',
+    border: `1px solid ${colors.invariant.component}`,
+    cursor: 'pointer',
+
+    '&:only-child': {
+      visibility: 'hidden'
+    }
+  },
+  bulletActive: {
+    background: 'transparent',
+    backgroundImage: `linear-gradient(to bottom, ${colors.invariant.newDark}, ${colors.invariant.newDark}), linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+    backgroundClip: 'padding-box, border-box',
+    backgroundOrigin: 'border-box',
+    border: '1px solid transparent'
   }
 }))
