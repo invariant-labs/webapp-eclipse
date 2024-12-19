@@ -12,6 +12,9 @@ import { actions as walletActions } from '@store/reducers/solanaWallet'
 
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { Link } from 'react-router-dom'
+import { BN } from '@coral-xyz/anchor'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { formatNumberWithCommas, trimZeros, printBN } from '@utils/utils'
 export const Rewards = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
@@ -49,7 +52,10 @@ export const Rewards = () => {
                 alignItems: 'center'
               }}>
               <Typography className={classes.pointsValue}>
-                {currentUser?.points ?? 0} points
+                {formatNumberWithCommas(
+                  trimZeros(printBN(new BN(currentUser?.points, 'hex') ?? 0, LEADERBOARD_DECIMAL))
+                )}
+                points
               </Typography>
               <Box style={{ width: '250px' }}>
                 <Box sx={{ marginTop: '8px' }}>
