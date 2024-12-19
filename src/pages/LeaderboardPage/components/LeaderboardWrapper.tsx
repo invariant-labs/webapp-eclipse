@@ -92,8 +92,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             flexDirection: 'column',
             alignItems: 'center',
             gap: '24px',
-            marginTop: '56px',
-            width: '100%'
+            width: '100%',
+            marginTop: '24px'
           }}>
           <Typography className={classes.leaderboardHeaderSectionTitle}>
             {(() => {
