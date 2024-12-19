@@ -45,6 +45,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
     .filter(poolData => !!poolData)
   useEffect(() => {
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
+    dispatch(actions.getLeaderboardConfig())
     dispatch(statsActions.getCurrentStats())
   }, [dispatch, itemsPerPage])
 

@@ -178,18 +178,8 @@ const useStyles = makeStyles()((theme: Theme) => {
         width: '800px'
       },
 
-      [`@media (min-width: 480px) and (max-width: ${theme.breakpoints.values.md}px)`]: {
-        width: '436px',
-        gap: '20px',
-        padding: '20px 14px'
-      },
-
-      [`@media (min-width: 395px) and (max-width: 480px)`]: {
-        width: '350px'
-      },
-
-      [`@media (max-width: 394px)`]: {
-        width: '330px'
+      [theme.breakpoints.down('md')]: {
+        width: '100%'
       },
 
       [theme.breakpoints.up('xl')]: {
