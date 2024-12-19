@@ -17,6 +17,8 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import classNames from 'classnames'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
+import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
+import { BN } from '@coral-xyz/anchor'
 
 interface IProps {
   TVL?: number
@@ -47,9 +49,11 @@ interface IProps {
   isUnknownFrom?: boolean
   isUnknownTo?: boolean
   isLocked?: boolean
+  isPromoted?: boolean
   poolAddress?: string
   copyAddressHandler?: (message: string, variant: VariantType) => void
   showAPY: boolean
+  points?: BN
 }
 
 const PoolListItem: React.FC<IProps> = ({
@@ -76,8 +80,10 @@ const PoolListItem: React.FC<IProps> = ({
   isUnknownFrom,
   isUnknownTo,
   isLocked,
+  isPromoted,
   poolAddress,
   copyAddressHandler,
+  points,
   showAPY
 }) => {
   const { classes } = useStyles()
@@ -86,8 +92,10 @@ const PoolListItem: React.FC<IProps> = ({
   const isSmd = useMediaQuery('(max-width:780px)')
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const lockIconRef = useRef<HTMLButtonElement>(null)
+  const airdropIconRef = useRef<HTMLDivElement>(null)
 
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
+  const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
 
   const handleOpenPosition = () => {
     navigate(
@@ -187,13 +195,40 @@ const PoolListItem: React.FC<IProps> = ({
             </Grid>
           </Grid>
           {!isSmd && showAPY ? (
-            <Typography className={classes.row}>
-              {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
-              <span
-                className={
-                  classes.apy
-                }>{`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}</span>
-            </Typography>
+            <Box className={classes.row}>
+              <Typography>
+                {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
+                <span
+                  className={
+                    classes.apy
+                  }>{`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}</span>
+              </Typography>
+              {isPromoted && (
+                <>
+                  <div
+                    className={classes.actionButton}
+                    ref={airdropIconRef}
+                    onPointerLeave={() => {
+                      setIsPromotedPoolPopoverOpen(false)
+                    }}
+                    onPointerEnter={() => {
+                      setIsPromotedPoolPopoverOpen(true)
+                    }}>
+                    <img width={32} height={32} src={icons.airdropRainbow} alt={'Airdrop'} />
+                  </div>
+                  <PromotedPoolPopover
+                    anchorEl={airdropIconRef.current}
+                    open={isPromotedPoolPopoverOpen}
+                    onClose={() => {
+                      setIsPromotedPoolPopoverOpen(false)
+                    }}
+                    apr={apr}
+                    apy={apy}
+                    points={points}
+                  />
+                </>
+              )}
+            </Box>
           ) : null}
           <Typography>{fee}%</Typography>
           <Typography>{`$${formatNumber(volume)}`}</Typography>

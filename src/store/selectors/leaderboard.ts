@@ -18,7 +18,8 @@ export const {
   currentPage,
   itemsPerPage,
   totalItems,
-  top3Scorers
+  top3Scorers,
+  config
 } = keySelectors(store, [
   'currentPage',
   'totalItems',
@@ -26,7 +27,8 @@ export const {
   'isLoading',
   'currentUser',
   'top3Scorers',
-  'leaderboard'
+  'leaderboard',
+  'config'
 ])
 
 export const leaderboardSelectors = {
@@ -36,8 +38,29 @@ export const leaderboardSelectors = {
   totalItems,
   top3Scorers,
   currentUser,
-  leaderboard
+  leaderboard,
+  config
 }
+
+export const getPointsPerSecond = createSelector(
+  config,
+  (config: {
+    refreshTime: number
+    pointsPerSecond: string
+    pointsDecimal: number
+    promotedPools: string[]
+  }) => config.pointsPerSecond
+)
+
+export const getPromotedPools = createSelector(
+  config,
+  (config: {
+    refreshTime: number
+    pointsPerSecond: string
+    pointsDecimal: number
+    promotedPools: string[]
+  }) => config.promotedPools
+)
 
 export const topRankedUsers = createSelector(leaderboard, (leaderboardData: LeaderboardEntry[]) =>
   [...leaderboardData].sort((a, b) => a.rank - b.rank)

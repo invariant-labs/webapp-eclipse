@@ -40,7 +40,7 @@ export const useStyles = makeStyles()(() => ({
   },
 
   containerNoAPY: {
-    gridTemplateColumns: '30px auto 80px 140px 100px 120px',
+    gridTemplateColumns: '30px auto 80px 140px 100px 160px',
 
     [theme.breakpoints.down('md')]: {
       gridTemplateColumns: 'auto 100px 80px 120px'

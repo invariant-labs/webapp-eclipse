@@ -26,7 +26,7 @@ export const InfoComponent = () => {
               textDecoration: 'none'
             }}>
             <Button className={classes.button} style={{ marginTop: '32px' }}>
-              Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+              Learn more <LaunchIcon classes={{ root: classes.clipboardIcon }} />
             </Button>
           </Link>
         </Box>
