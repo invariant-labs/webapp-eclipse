@@ -52,9 +52,13 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           tooltip='Points refresh every hour.'
           desktopLabelAligment='right'
           label='Total points'
-          value={formatNumberWithCommas(
-            trimZeros(printBN(new BN(userStats?.points, 'hex') ?? 0, LEADERBOARD_DECIMAL))
-          )}
+          value={
+            userStats
+              ? formatNumberWithCommas(
+                  printBN(new BN(userStats.points, 'hex') ?? 0, LEADERBOARD_DECIMAL)
+                )
+              : 0
+          }
         />
         <ProgressItem
           background={{
