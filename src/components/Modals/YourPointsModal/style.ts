@@ -4,10 +4,10 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(() => {
   return {
     root: {
-      background: colors.invariant.component,
+      background: colors.invariant.newDark,
       width: 227,
-      height: 'fit-content',
-      borderRadius: 20,
+      height: 145,
+      borderRadius: 16,
       padding: 16
     },
     list: {
@@ -92,7 +92,7 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       padding: '6px 0px',
       gap: '10px',
-      width: '143px',
+      width: '100%',
       height: '27px',
       background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
       borderRadius: '8px',
