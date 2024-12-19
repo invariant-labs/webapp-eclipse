@@ -112,7 +112,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                   handleConnectStaticWallet(WalletType.NIGHTLY_WALLET)
                 }}>
                 <Typography className={classes.buttonName}>
-                  <img width={40} rel='preload' src={icons.NightlyConnect} alt='Close'></img>
+                  <img width={40} rel='preload' src={icons.nightly} alt='Close'></img>
 
                   {walletNames[WalletType.NIGHTLY_WALLET]}
                 </Typography>
