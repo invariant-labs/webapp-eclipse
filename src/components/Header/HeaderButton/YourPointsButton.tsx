@@ -65,15 +65,21 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
           </>
         ) : (
           <>
-            <img
-              src={icons.airdrop}
-              style={{
-                marginRight: '6px',
-                height: '13px',
-                width: '9px'
-              }}
-            />
-            Points
+            {isSm ? (
+              <KeyboardArrowDownIcon id='downIcon' />
+            ) : (
+              <>
+                <img
+                  src={icons.airdrop}
+                  style={{
+                    marginRight: '6px',
+                    height: '13px',
+                    width: '9px'
+                  }}
+                />
+                <span>Points</span>
+              </>
+            )}
           </>
         )}
       </Button>
