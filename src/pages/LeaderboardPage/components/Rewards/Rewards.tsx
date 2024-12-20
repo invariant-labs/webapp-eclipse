@@ -27,18 +27,19 @@ export const Rewards = () => {
         <Typography className={classes.header}>Rewards</Typography>
         <>
           <Typography className={classes.description}>
-            Welcome to the Rewards Tab! Here, you’ll be able to claim airdrops for being an early
-            user on Invariant. Your allocation will depend on the number of points you’ve accrued.
+            Invariant Points are a rewards program designed to incentivize liquidity providers on
+            Invariant. Earn points by providing liquidity and participating in community activities.
+            Develop your own liquidity provision strategy and climb to the top of the leaderboard.
+            Accumulated points can be used for future exclusive benefits.
           </Typography>
-          <Box>
+          <Box sx={{ marginTop: '32px' }}>
             <Box
               style={{
                 display: 'flex',
                 justifyContent: 'center',
-                alignItems: 'center',
-                marginTop: 62
+                alignItems: 'center'
               }}>
-              <img src={icons.airdrop} style={{ height: '48px', marginRight: '24px' }} />
+              <img src={icons.airdrop} style={{ height: '24px', marginRight: '16x' }} />
               <Typography
                 style={{
                   color: colors.invariant.textGrey,
@@ -47,7 +48,7 @@ export const Rewards = () => {
                   lineHeight: '24px',
                   letterSpacing: '-3%'
                 }}>
-                You have now:
+                You currently have:
               </Typography>
             </Box>
             <Box
@@ -55,7 +56,8 @@ export const Rewards = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 flexDirection: 'column',
-                alignItems: 'center'
+                alignItems: 'center',
+                marginTop: '32px'
               }}>
               <Typography className={classes.pointsValue}>
                 {currentUser
@@ -87,14 +89,15 @@ export const Rewards = () => {
               display: 'flex',
               justifyItems: 'center',
               alignItems: 'center',
-              flexDirection: 'column'
+              flexDirection: 'column',
+              marginTop: '32px'
             }}>
             If you want to learn more about rewards and points distribution, check out our docs.
             <Link
               to='https://docs.invariant.app/docs/invariant_points/mechanism'
               target='_blank'
               style={{ textDecoration: 'none' }}>
-              <Button className={classes.button} style={{ marginTop: '32px' }}>
+              <Button className={classes.button} style={{ marginTop: '16px' }}>
                 Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
               </Button>
             </Link>
