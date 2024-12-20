@@ -34,7 +34,9 @@ export const InfoComponent = () => {
           </Link>
         </Box>
       </Box>
-      <Box style={{ width: 'auto', position: 'relative' }}>
+      <Box
+        style={{ width: 'auto', position: 'relative' }}
+        sx={{ display: { xs: 'none', md: 'block' } }}>
         {!imageLoaded && (
           <div
             style={{
