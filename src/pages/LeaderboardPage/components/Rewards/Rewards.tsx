@@ -36,9 +36,9 @@ export const Rewards = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 alignItems: 'center',
-                marginTop: 32
+                marginTop: 62
               }}>
-              <img src={icons.airdrop} style={{ height: '48px', marginRight: '12px' }} />
+              <img src={icons.airdrop} style={{ height: '48px', marginRight: '24px' }} />
               <Typography
                 style={{
                   color: colors.invariant.textGrey,
