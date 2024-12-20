@@ -1,18 +1,13 @@
-import React, { useMemo, useState } from 'react'
+import React, { useMemo } from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Button, useMediaQuery } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import YourPointsModal from '@components/Modals/YourPointsModal/YourPointsModals'
 import { theme } from '@static/theme'
-import { useSelector } from 'react-redux'
-import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { formatLargeNumber } from '@utils/formatBigNumber'
-import { LAUNCH_DATE, LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LAUNCH_DATE } from '@pages/LeaderboardPage/config'
 import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
-import { printBN, trimZeros } from '@utils/utils'
 import icons from '@static/icons'
-import { BN } from '@coral-xyz/anchor'
 
 export interface IProps {
   disabled?: boolean
