@@ -19,11 +19,9 @@ export interface IProps {
 }
 export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-  const [isExpired, setExpired] = useState(false)
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
-  const currentUser = useSelector(leaderboardSelectors.currentUser)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
     blurContent()
@@ -42,9 +40,7 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
 
   useCountdown({
     targetDate,
-    onExpire: () => {
-      setExpired(true)
-    }
+    onExpire: () => {}
   })
 
   return (
@@ -55,33 +51,23 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
         onClick={handleClick}>
-        {isExpired ? (
-          <>
-            {isSm ? (
-              <KeyboardArrowDownIcon id='downIcon' />
-            ) : (
-              `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
-            )}
-          </>
-        ) : (
-          <>
-            {isSm ? (
-              <KeyboardArrowDownIcon id='downIcon' />
-            ) : (
-              <>
-                <img
-                  src={icons.airdrop}
-                  style={{
-                    marginRight: '6px',
-                    height: '13px',
-                    width: '9px'
-                  }}
-                />
-                <span>Points</span>
-              </>
-            )}
-          </>
-        )}
+        <>
+          {isSm ? (
+            <KeyboardArrowDownIcon id='downIcon' />
+          ) : (
+            <>
+              <img
+                src={icons.airdrop}
+                style={{
+                  marginRight: '6px',
+                  height: '13px',
+                  width: '9px'
+                }}
+              />
+              <span>Points</span>
+            </>
+          )}
+        </>
       </Button>
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />
     </>
