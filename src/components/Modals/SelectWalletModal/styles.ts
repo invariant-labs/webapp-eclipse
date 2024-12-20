@@ -176,6 +176,11 @@ const useStyles = makeStyles()(() => {
       [theme.breakpoints.down('sm')]: {
         ...typography.body3
       }
+    },
+    buttonContainer: {
+      width: 150,
+      display: 'flex',
+      justifyContent: 'flex-start'
     }
   }
 })
