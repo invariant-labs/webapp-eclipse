@@ -22,7 +22,7 @@ export const SelectNetworkButton: React.FC<IProps> = ({
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
-  const hideArrow = useMediaQuery('@media (max-width:390px)')
+  const hideArrow = useMediaQuery('@media (max-width:400px)')
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
     blurContent()
