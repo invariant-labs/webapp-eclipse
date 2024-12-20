@@ -24,7 +24,7 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
   }, [])
 
   const TimerContent = () => (
-    <div style={{ display: 'flex', alignItems: 'center' }}>
+    <div style={{ display: 'flex', alignItems: 'center', textWrap: 'nowrap' }}>
       <img
         src={icons.airdrop}
         style={{
@@ -141,7 +141,7 @@ export const TimerBanner: React.FC<ITimerBanner> = ({ hours, minutes, seconds })
           justifyContent: 'center',
           marginLeft: '6px',
           marginRight: '6px',
-          minWidth: showTimer ? '400px' : '400px',
+          width: '100%',
           transition: 'min-width 0.3s ease-in-out'
         }}>
         <Box
