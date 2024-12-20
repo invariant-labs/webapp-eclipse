@@ -197,6 +197,11 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
+  const IS_ERROR_LABEL_SHOW =
+    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 25 ||
+    tokens[tokenFromIndex ?? '']?.isUnknown ||
+    tokens[tokenToIndex ?? '']?.isUnknown
+
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
@@ -804,10 +809,14 @@ export const Swap: React.FC<ISwap> = ({
             network={network}
           />
         </Box>
-        <Box className={classes.unknownWarningContainer}>
+        <Box
+          className={classes.unknownWarningContainer}
+          style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
           {+printBN(simulateResult.priceImpact, DECIMAL - 2) > 25 && (
             <TooltipHover text='Your trade size might be too large'>
-              <Box className={classes.unknownWarning}>Price impact is more than 25%</Box>
+              <Box className={classes.unknownWarning}>
+                {(+printBN(simulateResult.priceImpact, DECIMAL - 2)).toFixed(2)}% Price impact
+              </Box>
             </TooltipHover>
           )}
           {tokens[tokenFromIndex ?? '']?.isUnknown && (
