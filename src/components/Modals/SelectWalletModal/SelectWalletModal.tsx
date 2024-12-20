@@ -111,11 +111,13 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 onClick={async () => {
                   handleConnectStaticWallet(WalletType.NIGHTLY_WALLET)
                 }}>
-                <Typography className={classes.buttonName}>
-                  <img width={40} rel='preload' src={icons.nightly} alt='Close'></img>
+                <Grid className={classes.buttonContainer}>
+                  <Typography className={classes.buttonName}>
+                    <img width={45} rel='preload' src={icons.nightly} alt='Close'></img>
 
-                  {walletNames[WalletType.NIGHTLY_WALLET]}
-                </Typography>
+                    {walletNames[WalletType.NIGHTLY_WALLET]}
+                  </Typography>
+                </Grid>
               </Grid>
               <Grid
                 item
@@ -123,11 +125,13 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 onClick={async () => {
                   handleConnectStaticWallet(WalletType.BACKPACK)
                 }}>
-                <Typography className={classes.buttonName}>
-                  <img width={40} rel='preload' src={icons.BackpackWallet} alt='Close'></img>
+                <Grid className={classes.buttonContainer}>
+                  <Typography className={classes.buttonName}>
+                    <img width={45} rel='preload' src={icons.BackpackWallet} alt='Close'></img>
 
-                  {walletNames[WalletType.BACKPACK]}
-                </Typography>
+                    {walletNames[WalletType.BACKPACK]}
+                  </Typography>
+                </Grid>
               </Grid>
               <Grid
                 item
@@ -135,11 +139,13 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 onClick={async () => {
                   handleConnectStaticWallet(WalletType.SALMON)
                 }}>
-                <Typography className={classes.buttonName}>
-                  <img width={45} rel='preload' src={salamonIcon} alt='Close'></img>
+                <Grid className={classes.buttonContainer}>
+                  <Typography className={classes.buttonName}>
+                    <img width={45} rel='preload' src={salamonIcon} alt='Close'></img>
 
-                  {walletNames[WalletType.SALMON]}
-                </Typography>
+                    {walletNames[WalletType.SALMON]}
+                  </Typography>
+                </Grid>
               </Grid>
             </Grid>
           </Grid>
