@@ -10,8 +10,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
       alignItems: 'center',
       width: '100%',
-      gap: '24px',
-      padding: '10px'
+      gap: '24px'
     },
     tableContainer: {
       width: '100%',
