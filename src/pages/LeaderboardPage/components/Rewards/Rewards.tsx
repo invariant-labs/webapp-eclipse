@@ -39,7 +39,7 @@ export const Rewards = () => {
                 justifyContent: 'center',
                 alignItems: 'center'
               }}>
-              <img src={icons.airdrop} style={{ height: '24px', marginRight: '16x' }} />
+              <img src={icons.airdrop} style={{ height: '32px', marginRight: '16px' }} />
               <Typography
                 style={{
                   color: colors.invariant.textGrey,
