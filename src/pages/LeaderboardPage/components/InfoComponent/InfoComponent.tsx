@@ -4,9 +4,12 @@ import Jupi from '@static/png/jupi.png'
 import './animation.css'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { Link } from 'react-router-dom'
+import { useState } from 'react'
 
 export const InfoComponent = () => {
   const { classes } = useStyles()
+  const [imageLoaded, setImageLoaded] = useState(false)
+
   return (
     <Box className={classes.infoContainer}>
       <Box style={{ width: 'auto' }}>
@@ -31,11 +34,29 @@ export const InfoComponent = () => {
           </Link>
         </Box>
       </Box>
-      <Box style={{ width: 'auto' }}>
+      <Box
+        style={{ width: 'auto', position: 'relative' }}
+        sx={{ display: { xs: 'none', md: 'block' } }}>
+        {!imageLoaded && (
+          <div
+            style={{
+              width: '332px',
+              backgroundColor: 'transparent'
+            }}
+          />
+        )}
         <img
           src={Jupi}
           alt='Astronaut flying in space'
           className={`${classes.astronaut} floating-astronaut`}
+          style={{
+            opacity: imageLoaded ? 1 : 0,
+            transition: 'opacity 0.7s ease-in',
+            position: imageLoaded ? 'relative' : 'absolute',
+            top: 0,
+            left: 0
+          }}
+          onLoad={() => setImageLoaded(true)}
         />
       </Box>
     </Box>
