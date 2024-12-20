@@ -4,8 +4,7 @@ import { Box, Typography } from '@mui/material'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { PublicKey } from '@solana/web3.js'
 import { shortenAddress } from '@utils/uiUtils'
-import { trimZeros, printBN, formatNumberWithCommas } from '@utils/utils'
-
+import { printBN, formatNumberWithCommas } from '@utils/utils'
 import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
 import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
 import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
@@ -101,11 +100,11 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({ address, points, cupVar
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column',
-            width: '100%'
+            width: '100%',
+            textWrap: 'nowrap'
           }}>
           <Typography className={classes.headerBigText}>
-            {formatNumberWithCommas(trimZeros(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)))}{' '}
-            Points
+            {formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))} Points
           </Typography>
           <Typography className={classes.headerSmallText}>
             {shortenAddress(address.toString(), 4)}

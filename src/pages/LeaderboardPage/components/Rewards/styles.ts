@@ -6,7 +6,7 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     marginTop: '14px',
     minHeight: '445px',
-    padding: '25px max(15%, 20px)',
+    padding: '32px 24px',
     display: 'flex',
     textAlign: 'center',
     justifyContent: 'center',
@@ -35,7 +35,7 @@ export const useStyles = makeStyles()(() => ({
     lineHeight: '20px',
     letterSpacing: '-0.03em',
     marginTop: '32px',
-    maxWidth: '800px'
+    maxWidth: '1032px'
   },
   header: {
     [theme.breakpoints.down('md')]: {
@@ -46,7 +46,7 @@ export const useStyles = makeStyles()(() => ({
     fontWeight: '600',
     lineHeight: '36px',
     letterSpacing: '-0.03em',
-    maxWidth: '800px'
+    maxWidth: '1032px'
   },
   clipboardIcon: {
     width: 14,
@@ -62,7 +62,7 @@ export const useStyles = makeStyles()(() => ({
     height: '44px !important',
     borderRadius: '16px',
     width: '200px',
-    margin: '30px 0',
+    marginTop: '32px',
     fontSize: '14px',
     [theme.breakpoints.down('sm')]: {
       width: '100%'
@@ -106,7 +106,6 @@ export const useStyles = makeStyles()(() => ({
     fontWeight: 700,
     lineHeight: '36px',
     letterSpacing: '-3%',
-    marginTop: '24px',
     [theme.breakpoints.down('md')]: {
       fontSize: '32px'
     }
