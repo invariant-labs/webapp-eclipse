@@ -6,8 +6,13 @@ export const useStyles = makeStyles()(() => ({
   container: {
     maxWidth: 1072,
     padding: '0 24px',
-    borderRadius: '24px',
+    borderRadius: '24px'
+  },
+  background: {
     backgroundColor: `${colors.invariant.component} !important`
+  },
+  transparent: {
+    backgroundColor: `transparent`
   },
   pagination: {
     padding: '20px 0 10px 0',

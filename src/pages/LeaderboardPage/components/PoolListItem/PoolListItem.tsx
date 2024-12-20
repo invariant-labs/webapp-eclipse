@@ -14,7 +14,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 import classNames from 'classnames'
 
-interface IProps {
+export interface IProps {
   fee?: number
   displayType: string
   symbolFrom?: string
