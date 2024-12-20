@@ -1,4 +1,4 @@
-import React, { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
 import { Grid, InputAdornment, InputBase, Typography } from '@mui/material'
@@ -23,8 +23,10 @@ import PoolList from '@components/Stats/PoolList/PoolList'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import SearchIcon from '@static/svg/lupaDark.svg'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { VariantType } from 'notistack'
+import { getPointsPerSecond, getPromotedPools } from '@store/selectors/leaderboard'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -40,47 +42,41 @@ export const WrappedStats: React.FC = () => {
   const liquidityPlotData = useSelector(liquidityPlot)
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
-
+  const pointsPerSecond = useSelector(getPointsPerSecond)
+  const promotedPools = useSelector(getPromotedPools)
   const [searchTokensValue, setSearchTokensValue] = useState<string>('')
   const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
 
-  const deferredSearchTokensValue = useDeferredValue(searchTokensValue)
-  const deferredSearchPoolsValue = useDeferredValue(searchPoolsValue)
-
   useEffect(() => {
     dispatch(actions.getCurrentStats())
+    dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
 
   const filteredTokenList = useMemo(() => {
     return tokensList.filter(
       tokenData =>
-        tokenData.tokenDetails?.symbol
-          .toLowerCase()
-          .includes(deferredSearchTokensValue.toLowerCase()) ||
-        tokenData.tokenDetails?.name
-          .toLowerCase()
-          .includes(deferredSearchTokensValue.toLowerCase()) ||
-        tokenData.address.toString().toLowerCase().includes(deferredSearchTokensValue.toLowerCase())
+        tokenData.tokenDetails?.symbol.toLowerCase().includes(searchTokensValue.toLowerCase()) ||
+        tokenData.tokenDetails?.name.toLowerCase().includes(searchTokensValue.toLowerCase()) ||
+        tokenData.address.toString().toLowerCase().includes(searchTokensValue.toLowerCase())
     )
-  }, [tokensList, deferredSearchTokensValue])
+  }, [tokensList, searchTokensValue])
 
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
       const symbolFrom = poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString()
       const symbolTo = poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString()
-
       const poolName = shortenAddress(symbolFrom ?? '') + '/' + shortenAddress(symbolTo ?? '')
       const reversedPoolName =
         shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
       return (
-        poolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.fee.toString().concat('%').includes(deferredSearchPoolsValue.toLowerCase()) ||
-        reversedPoolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.tokenX.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.tokenY.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase())
+        poolName.toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.fee.toString().concat('%').includes(searchPoolsValue.toLowerCase()) ||
+        reversedPoolName.toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.tokenX.toString().toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.tokenY.toString().toLowerCase().includes(searchPoolsValue.toLowerCase())
       )
     })
-  }, [poolsList, deferredSearchPoolsValue])
+  }, [poolsList, searchPoolsValue])
 
   const showAPY = useMemo(() => {
     return filteredPoolsList.some(pool => pool.apy !== 0)
@@ -215,17 +211,12 @@ export const WrappedStats: React.FC = () => {
                 accumulatedFarmsSingleTick: 0,
                 accumulatedFarmsAvg: 0
               },
-              // apy:
-              //   poolData.apy + (accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0),
-              // apyData: {
-              //   fees: poolData.apy,
-              //   accumulatedFarmsSingleTick:
-              //     accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0,
-              //   accumulatedFarmsAvg: accumulatedAverageAPY?.[poolData.poolAddress.toString()] ?? 0
-              // }
+
               isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
               isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
-              poolAddress: poolData.poolAddress.toString()
+              poolAddress: poolData.poolAddress.toString(),
+              pointsPerSecond: pointsPerSecond,
+              isPromoted: promotedPools.some(pool => pool === poolData.poolAddress.toString())
             }))}
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}
