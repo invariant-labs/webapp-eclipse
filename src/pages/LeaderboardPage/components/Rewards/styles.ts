@@ -106,7 +106,6 @@ export const useStyles = makeStyles()(() => ({
     fontWeight: 700,
     lineHeight: '36px',
     letterSpacing: '-3%',
-    marginTop: '24px',
     [theme.breakpoints.down('md')]: {
       fontSize: '32px'
     }

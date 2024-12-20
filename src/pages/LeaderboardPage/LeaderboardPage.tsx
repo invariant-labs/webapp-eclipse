@@ -30,7 +30,6 @@ export const LeaderBoardPage: React.FC = () => {
       <Grid
         container
         className={classes.container}
-        justifyContent='center'
         style={{
           marginTop: 'calc(100vh*0.05)'
         }}>

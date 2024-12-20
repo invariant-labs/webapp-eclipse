@@ -30,8 +30,14 @@ export const Rewards = () => {
             Welcome to the Rewards Tab! Here, you’ll be able to claim airdrops for being an early
             user on Invariant. Your allocation will depend on the number of points you’ve accrued.
           </Typography>
-          <Box style={{ marginTop: '64px' }}>
-            <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Box>
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 62
+              }}>
               <img src={icons.airdrop} style={{ height: '48px', marginRight: '24px' }} />
               <Typography
                 style={{
@@ -56,11 +62,11 @@ export const Rewards = () => {
                   ? formatNumberWithCommas(
                       printBN(new BN(currentUser.points, 'hex'), LEADERBOARD_DECIMAL)
                     )
-                  : 0}
+                  : 0}{' '}
                 points
               </Typography>
               <Box style={{ width: '250px' }}>
-                <Box sx={{ marginTop: '8px' }}>
+                <Box>
                   <ChangeWalletButton
                     isDisabled={isConnected}
                     name={!isConnected ? 'Connect Wallet' : 'Claim'}
@@ -78,7 +84,6 @@ export const Rewards = () => {
           <Typography
             className={classes.description}
             style={{
-              marginTop: '64px',
               display: 'flex',
               justifyItems: 'center',
               alignItems: 'center',

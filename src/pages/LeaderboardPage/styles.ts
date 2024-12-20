@@ -5,8 +5,9 @@ const useStyles = makeStyles()(() => {
   return {
     container: {
       display: 'flex',
-      justifyContent: 'center',
       backgroundColor: 'transparent',
+      justifyContent: 'center',
+      alignItems: 'center',
       paddingInline: 200,
       marginTop: 45,
 
