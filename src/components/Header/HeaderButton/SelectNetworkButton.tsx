@@ -1,11 +1,12 @@
 import React from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import { Button } from '@mui/material'
+import { Button, useMediaQuery } from '@mui/material'
 import SelectNetwork from '@components/Modals/SelectNetwork/SelectNetwork'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { ISelectNetwork } from '@store/consts/types'
 import { NetworkType } from '@store/consts/static'
+import { theme } from '@static/theme'
 
 export interface IProps {
   name: NetworkType
@@ -22,7 +23,7 @@ export const SelectNetworkButton: React.FC<IProps> = ({
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
-
+  const hideArrow = useMediaQuery('@media (max-width:390px)')
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
     blurContent()
@@ -41,7 +42,7 @@ export const SelectNetworkButton: React.FC<IProps> = ({
         variant='contained'
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
-        endIcon={<KeyboardArrowDownIcon id='downIcon' />}
+        endIcon={!hideArrow ? <KeyboardArrowDownIcon id='downIcon' /> : null}
         onClick={handleClick}>
         {name}
       </Button>
