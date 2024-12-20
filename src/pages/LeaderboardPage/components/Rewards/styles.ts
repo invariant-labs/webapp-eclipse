@@ -62,7 +62,7 @@ export const useStyles = makeStyles()(() => ({
     height: '44px !important',
     borderRadius: '16px',
     width: '200px',
-    margin: '30px 0',
+    marginTop: '30px',
     fontSize: '14px',
     [theme.breakpoints.down('sm')]: {
       width: '100%'
