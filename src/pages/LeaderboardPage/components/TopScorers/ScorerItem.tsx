@@ -100,7 +100,8 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({ address, points, cupVar
             justifyContent: 'center',
             alignItems: 'center',
             flexDirection: 'column',
-            width: '100%'
+            width: '100%',
+            textWrap: 'nowrap'
           }}>
           <Typography className={classes.headerBigText}>
             {formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))} Points
