@@ -41,11 +41,12 @@ export interface PoolListInterface {
 
 import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
+import { BN } from '@coral-xyz/anchor'
 
 const ITEMS_PER_PAGE = 10
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
-const fees = [0.01, 0.02, 0.1, 0.3, 1]
+const fees = [0.01, 0.02, 0.1, 0.3, 0.9, 1]
 
 const generateMockData = () => {
   return Array.from({ length: ITEMS_PER_PAGE }, (_, index) => ({
@@ -177,6 +178,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
                 poolAddress={element.poolAddress}
                 copyAddressHandler={copyAddressHandler}
                 showAPY={showAPY}
+                points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+                isPromoted={element.isPromoted}
               />
             ))
           ) : (

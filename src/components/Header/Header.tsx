@@ -21,6 +21,7 @@ import { RpcStatus } from '@store/reducers/solanaConnection'
 import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
 import { PublicKey } from '@solana/web3.js'
 import FaucetButton from './HeaderButton/FaucetButton'
+import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
 
 export interface IHeader {
@@ -68,14 +69,14 @@ export const Header: React.FC<IHeader> = ({
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
 
-  const routes = ['exchange', 'liquidity', 'portfolio', 'creator' /*'leaderboard'*/, 'statistics']
+  const routes = ['exchange', 'liquidity', 'portfolio', 'creator', 'points', 'statistics']
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
     creator: [/^creator\/*/],
-    leaderboard: [/^leaderboard\/*/]
+    leaderboard: [/^points\/*/]
   }
 
   const [activePath, setActive] = useState('exchange')
@@ -180,7 +181,12 @@ export const Header: React.FC<IHeader> = ({
           item
           className={classes.routers}
           wrap='nowrap'
-          sx={{ display: { xs: 'none', lg: 'block' } }}>
+          sx={{
+            display: { lg: 'block' },
+            '@media (max-width: 1450px)': {
+              display: 'none'
+            }
+          }}>
           {routes.map(path => (
             <Link key={`path-${path}`} to={`/${path}`} className={classes.link}>
               <NavbarButton
@@ -211,7 +217,13 @@ export const Header: React.FC<IHeader> = ({
                 </FaucetButton>
               </Box>
             )}
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box
+              sx={{
+                display: { md: 'block' },
+                '@media (max-width: 1050px)': {
+                  display: 'none'
+                }
+              }}>
               <SelectRPCButton
                 rpc={rpc}
                 networks={networks}
@@ -220,7 +232,15 @@ export const Header: React.FC<IHeader> = ({
                 rpcStatus={rpcStatus}
               />
             </Box>
-            <Box sx={{ display: { xs: 'none', md: 'block' } }}>
+            <Box
+              sx={{
+                display: {
+                  md: 'block',
+                  '@media (max-width: 1050px)': {
+                    display: 'none'
+                  }
+                }
+              }}>
               <SelectChainButton
                 activeChain={activeChain}
                 chains={CHAINS}
@@ -252,6 +272,9 @@ export const Header: React.FC<IHeader> = ({
               onSelect={onNetworkSelect}
             />
           </Grid>
+          <Grid>
+            <YourPointsButton />
+          </Grid>
           <ChangeWalletButton
             name={
               walletConnected
@@ -274,7 +297,15 @@ export const Header: React.FC<IHeader> = ({
           />
         </Grid>
 
-        <Grid sx={{ display: { xs: 'block', lg: 'none' } }}>
+        <Grid
+          sx={{
+            display: {
+              md: 'block',
+              '@media (min-width: 1450px)': {
+                display: 'none'
+              }
+            }
+          }}>
           <IconButton
             className={classes.menuButton}
             onClick={(event: React.MouseEvent<HTMLButtonElement>) => {

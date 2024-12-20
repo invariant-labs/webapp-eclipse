@@ -46,6 +46,8 @@ import cat2 from './svg/SolanaCreator/Cat2.svg'
 import dog1 from './svg/SolanaCreator/Dog1.svg'
 import dog2 from './svg/SolanaCreator/Dog2.svg'
 import lockIcon from './svg/lockIcon.svg'
+import airdrop from './svg/airdrop.svg'
+import airdropRainbow from './svg/airdropRainbow.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -95,7 +97,9 @@ const icons: { [key: string]: string } = {
   dog2,
   emptyIcon: empty,
   newTabBtn,
-  lockIcon
+  lockIcon,
+  airdrop,
+  airdropRainbow
 }
 
 export default icons
