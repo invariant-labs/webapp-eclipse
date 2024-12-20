@@ -30,8 +30,9 @@ export const LeaderBoardPage: React.FC = () => {
       <Grid
         container
         className={classes.container}
-        justifyContent='center'
-        style={{ minHeight: isExpired ? '70vh' : 'auto' }}>
+        style={{
+          marginTop: 'calc(100vh*0.05)'
+        }}>
         <Grid item>
           {isExpired ? (
             <LeaderboardWrapper alignment={alignment} setAlignment={setAlignment} />

@@ -5,11 +5,12 @@ export const useStyles = makeStyles()(() => ({
   container: {
     color: colors.white.main,
     display: 'grid',
-    gridTemplateColumns: '30px auto 160px 80px 140px 100px 160px',
+    gridTemplateColumns: '5% auto 15% 12% 15% 12%',
     padding: '18px 0',
     backgroundColor: colors.invariant.component,
     borderBottom: `1px solid ${colors.invariant.light}`,
     whiteSpace: 'nowrap',
+    maxWidth: '100%',
 
     '& p': {
       ...typography.heading4,
@@ -22,15 +23,11 @@ export const useStyles = makeStyles()(() => ({
     },
 
     [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: 'auto 140px 100px 80px 120px'
-    },
-
-    '@media (max-width: 780px)': {
-      gridTemplateColumns: 'auto 100px 140px 80px'
+      gridTemplateColumns: '16% 20% 16% 20% 16% auto'
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: 'auto 80px 80px 60px',
+      gridTemplateColumns: 'auto 20% 24%',
 
       '& p': {
         justifyContent: 'flex-start',
@@ -38,28 +35,14 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
-
   containerNoAPY: {
-    gridTemplateColumns: '30px auto 80px 140px 100px 160px',
-
-    [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: 'auto 100px 80px 120px'
-    },
-
-    '@media (max-width: 780px)': {
-      gridTemplateColumns: 'auto 100px 140px 80px'
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: 'auto 80px 80px 60px',
-
-      '& p': {
-        justifyContent: 'flex-start',
-        ...typography.caption1
-      }
+    gridTemplateColumns: '5% auto 12% 15% 12%'
+  },
+  tooltipIcon: {
+    '&:hover': {
+      cursor: 'pointer'
     }
   },
-
   imageContainer: {
     display: 'flex',
     alignItems: 'center'
@@ -165,16 +148,16 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   iconContainer: {
-    minWidth: 24,
-    maxWidth: 24,
-    height: 24,
+    minWidth: 28,
+    maxWidth: 28,
+    height: 28,
     marginRight: 3,
     position: 'relative'
   },
   tokenIcon: {
-    minWidth: 24,
-    maxWidth: 24,
-    height: 24,
+    minWidth: 28,
+    maxWidth: 28,
+    height: 28,
     marginRight: 3,
     borderRadius: '50%'
   },

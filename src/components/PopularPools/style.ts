@@ -16,7 +16,8 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative'
   },
   swiper: {
-    padding: 24
+    padding: 24,
+    height: 344
   },
   slide: {
     width: 238

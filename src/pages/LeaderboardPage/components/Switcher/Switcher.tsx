@@ -25,13 +25,25 @@ export const Switcher: React.FC<ISwitcherProps> = ({ alignment, setAlignment }) 
         exclusive
         onChange={handleSwitchPools}
         className={classes.switchPoolsButtonsGroup}>
-        <ToggleButton value='leaderboard' disableRipple className={classes.switchPoolsButton}>
+        <ToggleButton
+          value='leaderboard'
+          disableRipple
+          className={classes.switchPoolsButton}
+          style={{ fontWeight: alignment === 'leaderboard' ? 700 : 400 }}>
           Leaderboard
         </ToggleButton>
-        <ToggleButton value='faq' disableRipple className={classes.switchPoolsButton}>
+        <ToggleButton
+          value='faq'
+          disableRipple
+          className={classes.switchPoolsButton}
+          style={{ fontWeight: alignment === 'faq' ? 700 : 400 }}>
           FAQ
         </ToggleButton>
-        <ToggleButton value='rewards' disableRipple className={classes.switchPoolsButton}>
+        <ToggleButton
+          value='rewards'
+          disableRipple
+          className={classes.switchPoolsButton}
+          style={{ fontWeight: alignment === 'rewards' ? 700 : 400 }}>
           Rewards
         </ToggleButton>
       </ToggleButtonGroup>

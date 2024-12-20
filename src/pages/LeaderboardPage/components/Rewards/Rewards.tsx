@@ -12,6 +12,9 @@ import { actions as walletActions } from '@store/reducers/solanaWallet'
 
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { Link } from 'react-router-dom'
+import { BN } from '@coral-xyz/anchor'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { formatNumberWithCommas, printBN } from '@utils/utils'
 export const Rewards = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
@@ -27,15 +30,21 @@ export const Rewards = () => {
             Welcome to the Rewards Tab! Here, you’ll be able to claim airdrops for being an early
             user on Invariant. Your allocation will depend on the number of points you’ve accrued.
           </Typography>
-          <Box style={{ marginTop: '64px' }}>
-            <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Box>
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: 62
+              }}>
               <img src={icons.airdrop} style={{ height: '48px', marginRight: '24px' }} />
               <Typography
                 style={{
                   color: colors.invariant.textGrey,
-                  fontSize: '32px',
+                  fontSize: '20px',
                   fontWeight: 400,
-                  lineHeight: '36px',
+                  lineHeight: '24px',
                   letterSpacing: '-3%'
                 }}>
                 You have now:
@@ -49,10 +58,15 @@ export const Rewards = () => {
                 alignItems: 'center'
               }}>
               <Typography className={classes.pointsValue}>
-                {currentUser?.points ?? 0} points
+                {currentUser
+                  ? formatNumberWithCommas(
+                      printBN(new BN(currentUser.points, 'hex'), LEADERBOARD_DECIMAL)
+                    )
+                  : 0}{' '}
+                points
               </Typography>
               <Box style={{ width: '250px' }}>
-                <Box sx={{ marginTop: '8px' }}>
+                <Box>
                   <ChangeWalletButton
                     isDisabled={isConnected}
                     name={!isConnected ? 'Connect Wallet' : 'Claim'}
@@ -70,7 +84,6 @@ export const Rewards = () => {
           <Typography
             className={classes.description}
             style={{
-              marginTop: '64px',
               display: 'flex',
               justifyItems: 'center',
               alignItems: 'center',

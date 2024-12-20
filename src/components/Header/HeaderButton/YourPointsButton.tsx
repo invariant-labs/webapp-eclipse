@@ -8,9 +8,11 @@ import { theme } from '@static/theme'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { formatLargeNumber } from '@utils/formatBigNumber'
-import { LAUNCH_DATE } from '@pages/LeaderboardPage/config'
+import { LAUNCH_DATE, LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
-import { trimZeros } from '@utils/utils'
+import { printBN } from '@utils/utils'
+import icons from '@static/icons'
+import { BN } from '@coral-xyz/anchor'
 
 export interface IProps {
   disabled?: boolean
@@ -58,11 +60,27 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
             {isSm ? (
               <KeyboardArrowDownIcon id='downIcon' />
             ) : (
-              `Points: ${trimZeros(formatLargeNumber(currentUser?.points ?? 0))}`
+              `Points: ${currentUser ? formatLargeNumber(+printBN(new BN(currentUser.points, 'hex'), LEADERBOARD_DECIMAL)) : 0}`
             )}
           </>
         ) : (
-          'Click!'
+          <>
+            {isSm ? (
+              <KeyboardArrowDownIcon id='downIcon' />
+            ) : (
+              <>
+                <img
+                  src={icons.airdrop}
+                  style={{
+                    marginRight: '6px',
+                    height: '13px',
+                    width: '9px'
+                  }}
+                />
+                <span>Points</span>
+              </>
+            )}
+          </>
         )}
       </Button>
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />

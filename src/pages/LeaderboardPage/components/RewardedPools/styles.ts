@@ -19,26 +19,6 @@ const useStyles = makeStyles()(() => {
       ...typography.heading3,
       color: colors.white.main,
       marginTop: '24px'
-    },
-    topScorersItem: {
-      display: 'flex',
-      alignItems: 'center',
-      flexDirection: 'column',
-      gap: 24
-    },
-    topScorersItemBox: {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: 8,
-      borderRadius: 12,
-      width: 267,
-      border: '2px solid #EF84F580',
-      paddingTop: 12,
-      paddingBottom: 12,
-      paddingLeft: 24,
-      paddingRight: 24,
-      background: colors.invariant.component
     }
   }
 })
