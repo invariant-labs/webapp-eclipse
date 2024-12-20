@@ -4,10 +4,9 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(() => {
   return {
     root: {
-      background: colors.invariant.component,
+      background: colors.invariant.newDark,
       width: 227,
-      height: 'fit-content',
-      borderRadius: 20,
+      borderRadius: 16,
       padding: 16
     },
     list: {
@@ -92,7 +91,7 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       padding: '6px 0px',
       gap: '10px',
-      width: '143px',
+      width: '100%',
       height: '27px',
       background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
       borderRadius: '8px',
@@ -120,13 +119,15 @@ const useStyles = makeStyles()(() => {
       borderWidth: 2,
       borderColor: colors.invariant.light,
       flexShrink: 0,
-      marginTop: '16px'
+      marginTop: '16px',
+      marginBottom: '16px'
     },
 
     counterLabel: {
       ...typography.body1,
       color: colors.invariant.textGrey,
-      textWrap: 'nowrap'
+      textWrap: 'nowrap',
+      marginTop: '16px'
     },
     counterYourPoints: {
       ...typography.heading1,

@@ -349,6 +349,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginTop: 12,
     width: '100%',
     display: 'flex',
+    alignItems: 'center',
     gap: 12
   },
   unknownWarning: {
@@ -357,7 +358,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     border: `1px solid ${colors.invariant.Error}`,
     ...typography.caption2,
     color: colors.invariant.Error,
-    padding: 4,
+    padding: 8,
     paddingInline: 8,
     borderRadius: 10
   }

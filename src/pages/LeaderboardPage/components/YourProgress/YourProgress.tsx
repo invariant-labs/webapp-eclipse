@@ -16,6 +16,9 @@ import { useSelector } from 'react-redux'
 import { BlurOverlay } from './BlurOverlay'
 import { ProgressItem } from './ProgressItem'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { BN } from '@coral-xyz/anchor'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { formatNumberWithCommas, printBN } from '@utils/utils'
 
 interface YourProgressProps {
   userStats: UserStats | null
@@ -34,6 +37,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
+        justifyContent: 'flex-start',
         gap: '24px',
         width: '100%'
       }}>
@@ -49,7 +53,13 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           tooltip='Points refresh every hour.'
           desktopLabelAligment='right'
           label='Total points'
-          value={userStats?.points ?? 0}
+          value={
+            userStats
+              ? formatNumberWithCommas(
+                  printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)
+                )
+              : 0
+          }
         />
         <ProgressItem
           background={{

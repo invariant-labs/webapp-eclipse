@@ -1,7 +1,7 @@
 import { Grid, InputAdornment, InputBase, Typography } from '@mui/material'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { shortenAddress } from '@utils/uiUtils'
-import { useDeferredValue, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import SearchIcon from '@static/svg/lupaDark.svg'
 import useStyles from './styles'
@@ -10,7 +10,9 @@ import { VariantType } from 'notistack'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
+import { getPointsPerSecond, getPromotedPools } from '@store/selectors/leaderboard'
 
 export const WrappedPoolList: React.FC = () => {
   const { classes } = useStyles()
@@ -19,9 +21,9 @@ export const WrappedPoolList: React.FC = () => {
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const currentNetwork = useSelector(network)
   const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
-  const deferredSearchPoolsValue = useDeferredValue(searchPoolsValue)
   const isLoadingStats = useSelector(isLoading)
-
+  const pointsPerSecond = useSelector(getPointsPerSecond)
+  const promotedPools = useSelector(getPromotedPools)
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
       const symbolFrom = poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString()
@@ -31,14 +33,14 @@ export const WrappedPoolList: React.FC = () => {
       const reversedPoolName =
         shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
       return (
-        poolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.fee.toString().concat('%').includes(deferredSearchPoolsValue.toLowerCase()) ||
-        reversedPoolName.toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.tokenX.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase()) ||
-        poolData.tokenY.toString().toLowerCase().includes(deferredSearchPoolsValue.toLowerCase())
+        poolName.toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.fee.toString().concat('%').includes(searchPoolsValue.toLowerCase()) ||
+        reversedPoolName.toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.tokenX.toString().toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
+        poolData.tokenY.toString().toLowerCase().includes(searchPoolsValue.toLowerCase())
       )
     })
-  }, [isLoadingStats, poolsList, deferredSearchPoolsValue])
+  }, [isLoadingStats, poolsList, searchPoolsValue])
 
   const showAPY = useMemo(() => {
     return filteredPoolsList.some(pool => pool.apy !== 0)
@@ -56,6 +58,7 @@ export const WrappedPoolList: React.FC = () => {
 
   useEffect(() => {
     dispatch(actions.getCurrentStats())
+    dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
 
   return (
@@ -113,7 +116,9 @@ export const WrappedPoolList: React.FC = () => {
           // }
           isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
           isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
-          poolAddress: poolData.poolAddress.toString()
+          poolAddress: poolData.poolAddress.toString(),
+          pointsPerSecond: pointsPerSecond,
+          isPromoted: promotedPools.some(pool => pool === poolData.poolAddress.toString())
         }))}
         network={currentNetwork}
         copyAddressHandler={copyAddressHandler}

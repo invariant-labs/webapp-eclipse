@@ -12,6 +12,9 @@ import { actions as walletActions } from '@store/reducers/solanaWallet'
 
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { Link } from 'react-router-dom'
+import { BN } from '@coral-xyz/anchor'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { formatNumberWithCommas, printBN } from '@utils/utils'
 export const Rewards = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
@@ -24,21 +27,28 @@ export const Rewards = () => {
         <Typography className={classes.header}>Rewards</Typography>
         <>
           <Typography className={classes.description}>
-            Welcome to the Rewards Tab! Here, you’ll be able to claim airdrops for being an early
-            user on Invariant. Your allocation will depend on the number of points you’ve accrued.
+            Invariant Points are a rewards program designed to incentivize liquidity providers on
+            Invariant. Earn points by providing liquidity and participating in community activities.
+            Develop your own liquidity provision strategy and climb to the top of the leaderboard.
+            Accumulated points can be used for future exclusive benefits.
           </Typography>
-          <Box style={{ marginTop: '64px' }}>
-            <Box style={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-              <img src={icons.airdrop} style={{ height: '48px', marginRight: '24px' }} />
+          <Box sx={{ marginTop: '32px' }}>
+            <Box
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+              <img src={icons.airdrop} style={{ height: '32px', marginRight: '16px' }} />
               <Typography
                 style={{
                   color: colors.invariant.textGrey,
-                  fontSize: '32px',
+                  fontSize: '20px',
                   fontWeight: 400,
-                  lineHeight: '36px',
+                  lineHeight: '24px',
                   letterSpacing: '-3%'
                 }}>
-                You have now:
+                You currently have:
               </Typography>
             </Box>
             <Box
@@ -46,13 +56,19 @@ export const Rewards = () => {
                 display: 'flex',
                 justifyContent: 'center',
                 flexDirection: 'column',
-                alignItems: 'center'
+                alignItems: 'center',
+                marginTop: '32px'
               }}>
               <Typography className={classes.pointsValue}>
-                {currentUser?.points ?? 0} points
+                {currentUser
+                  ? formatNumberWithCommas(
+                      printBN(new BN(currentUser.points, 'hex'), LEADERBOARD_DECIMAL)
+                    )
+                  : 0}{' '}
+                points
               </Typography>
               <Box style={{ width: '250px' }}>
-                <Box sx={{ marginTop: '8px' }}>
+                <Box>
                   <ChangeWalletButton
                     isDisabled={isConnected}
                     name={!isConnected ? 'Connect Wallet' : 'Claim'}
@@ -70,18 +86,18 @@ export const Rewards = () => {
           <Typography
             className={classes.description}
             style={{
-              marginTop: '64px',
               display: 'flex',
               justifyItems: 'center',
               alignItems: 'center',
-              flexDirection: 'column'
+              flexDirection: 'column',
+              marginTop: '32px'
             }}>
             If you want to learn more about rewards and points distribution, check out our docs.
             <Link
               to='https://docs.invariant.app/docs/invariant_points/mechanism'
               target='_blank'
               style={{ textDecoration: 'none' }}>
-              <Button className={classes.button} style={{ marginTop: '32px' }}>
+              <Button className={classes.button} style={{ marginTop: '16px' }}>
                 Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
               </Button>
             </Link>

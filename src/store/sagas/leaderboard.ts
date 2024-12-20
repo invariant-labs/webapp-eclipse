@@ -1,11 +1,20 @@
-import { call, put, select, takeEvery } from 'typed-redux-saga'
+import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
-import { PublicKey } from '@solana/web3.js'
 import { handleRpcError } from './connection'
-import { actions } from '@store/reducers/leaderboard'
+import { actions, UserStats } from '@store/reducers/leaderboard'
 import { getWallet } from './wallet'
 import { PayloadAction } from '@reduxjs/toolkit'
-
+interface IResponse {
+  user: UserStats | null
+  leaderboard: UserStats[]
+  totalItems: number
+}
+interface IConfigResponse {
+  refreshTime: number
+  pointsPerSecond: string
+  pointsDecimal: number
+  promotedPools: string[]
+}
 async function fetchLeaderboardData(
   network: string,
   userWallet?: string,
@@ -19,7 +28,14 @@ async function fetchLeaderboardData(
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }
-  return response.json()
+  return response.json() as Promise<IResponse>
+}
+async function fetchLeaderboardConfig() {
+  const response = await fetch(`https://points.invariant.app/api/config`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch leaderboard data')
+  }
+  return response.json() as Promise<IConfigResponse>
 }
 export function* getLeaderboard(
   action: PayloadAction<{ page: number; itemsPerPage: number }>
@@ -41,9 +57,10 @@ export function* getLeaderboard(
       user: leaderboardData.user
         ? {
             ...leaderboardData.user,
-            address: new PublicKey(leaderboardData.user.address)
+            address: leaderboardData.user.address
           }
         : null,
+
       leaderboard: leaderboardData.leaderboard.map((entry: any) => ({
         ...entry,
         address: entry.address
@@ -59,10 +76,24 @@ export function* getLeaderboard(
   }
 }
 
+export function* getLeaderboardConfig(): Generator {
+  try {
+    const leaderboardConfig = yield* call(fetchLeaderboardConfig)
+
+    yield* put(actions.setLeaderboardConfig(leaderboardConfig))
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 export function* leaderboardHandler(): Generator {
   yield* takeEvery(actions.getLeaderboardData, getLeaderboard)
 }
 
+export function* leaderboardConfig(): Generator {
+  yield* takeEvery(actions.getLeaderboardConfig, getLeaderboardConfig)
+}
+
 export function* leaderboardSaga(): Generator {
-  yield* takeEvery(actions.getLeaderboardData, getLeaderboard)
+  yield all([leaderboardHandler, leaderboardConfig].map(spawn))
 }

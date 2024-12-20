@@ -665,9 +665,9 @@ export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
 
 export const CHAINS = [
   { name: Chain.Solana, address: 'https://invariant.app/swap' },
-  { name: Chain.AlephZero, address: 'https://azero.invariant.app/exchange' },
+  // { name: Chain.AlephZero, address: 'https://azero.invariant.app/exchange' },
   { name: Chain.Eclipse, address: 'https://eclipse.invariant.app/exchange' },
-  { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
+  // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
   { name: Chain.Alephium, address: 'https://alph.invariant.app/exchange' }
 ]
 
@@ -728,6 +728,11 @@ export const getPopularPools = (network: NetworkType) => {
     case NetworkType.Mainnet:
       return [
         {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '0.09'
+        },
+        {
           tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.3'
@@ -741,11 +746,6 @@ export const getPopularPools = (network: NetworkType) => {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
-        },
-        {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '1'
         }
       ]
     default:
