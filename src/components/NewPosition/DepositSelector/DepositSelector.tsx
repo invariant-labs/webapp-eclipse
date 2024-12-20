@@ -86,6 +86,7 @@ export interface IDepositSelector {
   setTokenBIndex: (index: number | null) => void
   canNavigate: boolean
   isCurrentPoolExisting: boolean
+  promotedPoolTierIndex: number | undefined
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -105,6 +106,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onReverseTokens,
   poolIndex,
   bestTierIndex,
+  promotedPoolTierIndex,
   handleAddToken,
   commonTokens,
   initialHideUnknownTokensValue,
@@ -385,6 +387,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           feeTiers={feeTiers}
           showOnlyPercents
           bestTierIndex={bestTierIndex}
+          promotedPoolTierIndex={promotedPoolTierIndex}
           currentValue={feeTierIndex}
         />
       </Grid>
@@ -395,9 +398,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenAIndex === null) {
@@ -452,9 +453,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenBIndex === null) {
