@@ -507,6 +507,14 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
   [NetworkType.Local]: []
 }
 
+export const promotedTiers = [
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  }
+]
+
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [
