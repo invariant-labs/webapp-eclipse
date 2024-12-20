@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import Card from './Card/Card'
@@ -9,7 +9,7 @@ import 'swiper/css'
 import 'swiper/css/pagination'
 import { useCallback, useRef, useState } from 'react'
 import classNames from 'classnames'
-import backIcon from '@static/svg/back-arrow-3.svg'
+import { theme } from '@static/theme'
 
 export interface IPopularPools {
   pools: PopularPoolData[]
@@ -32,6 +32,8 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
   const handleNext = useCallback(() => {
     swiperRef?.slideNext()
   }, [swiperRef])
+
+  const isSm = useMediaQuery(theme.breakpoints.up('sm'))
 
   return (
     <Grid container mb={6} className={classes.container}>
@@ -84,7 +86,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
         <div className={classes.pagination}>
           <div className='pagination' ref={paginationRef}></div>
         </div>
-        {showArrows && (
+        {showArrows && isSm && (
           <>
             <div
               className={classNames(
@@ -93,7 +95,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
                 classes.controlButtonPrev
               )}
               onClick={handlePrevious}>
-              <img src={backIcon} alt='Arrow image' />
+              &lt;
             </div>
             <div
               className={classNames(
@@ -102,7 +104,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
                 classes.controlButtonNext
               )}
               onClick={handleNext}>
-              <img className={classes.controlButtonNextImage} src={backIcon} alt='Arrow image' />
+              &gt;
             </div>
           </>
         )}

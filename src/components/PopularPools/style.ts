@@ -27,12 +27,21 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+    background: colors.invariant.component,
     borderRadius: '50%',
     position: 'absolute',
     top: '50%',
     transform: 'translateY(-50%)',
-    cursor: 'pointer'
+    cursor: 'pointer',
+    fontWeight: 700,
+    fontSize: 20,
+    color: colors.invariant.textGrey,
+    transition: 'background 0.3s, color 1s',
+
+    '&:hover': {
+      background: colors.invariant.light,
+      color: colors.white.main
+    }
   },
   controlButtonPrev: {
     left: -48
