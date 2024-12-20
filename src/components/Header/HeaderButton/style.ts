@@ -20,6 +20,7 @@ const useStyles = makeStyles()((theme: Theme) => {
           background: 'transparent'
         }
       },
+
       '&:active': {
         '& #downIcon': {
           transform: 'rotateX(180deg)'
