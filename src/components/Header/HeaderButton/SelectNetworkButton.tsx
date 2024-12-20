@@ -6,7 +6,6 @@ import SelectNetwork from '@components/Modals/SelectNetwork/SelectNetwork'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import { ISelectNetwork } from '@store/consts/types'
 import { NetworkType } from '@store/consts/static'
-import { theme } from '@static/theme'
 
 export interface IProps {
   name: NetworkType
