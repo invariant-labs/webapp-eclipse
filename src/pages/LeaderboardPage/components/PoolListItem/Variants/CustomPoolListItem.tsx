@@ -1,5 +1,4 @@
 import React from 'react'
-import { IPoolListItemProps } from '../PoolListItem'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { useMediaQuery, Grid, Typography, Box } from '@mui/material'
 import icons from '@static/icons'
@@ -11,8 +10,9 @@ import { useStyles } from './style'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+import { IProps } from '../PoolListItem'
 
-export const CustomPoolListItem: React.FC<IPoolListItemProps> = ({
+export const CustomPoolListItem: React.FC<IProps> = ({
   fee = 0,
   displayType,
   symbolFrom,
