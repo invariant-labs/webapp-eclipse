@@ -103,8 +103,7 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({ address, points, cupVar
             width: '100%'
           }}>
           <Typography className={classes.headerBigText}>
-            {formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))}
-            Points
+            {formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))} Points
           </Typography>
           <Typography className={classes.headerSmallText}>
             {shortenAddress(address.toString(), 4)}
