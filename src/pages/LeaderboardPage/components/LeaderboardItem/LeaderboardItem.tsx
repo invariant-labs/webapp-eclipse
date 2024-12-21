@@ -12,7 +12,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
 import { network } from '@store/selectors/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
-import { formatNumberWithCommas, printBN, trimZeros } from '@utils/utils'
+import { formatNumberWithCommas, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 interface BaseLeaderboardItemProps {
@@ -109,6 +109,14 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
       })
   }
 
+  const trimZeros = (amount: string) => {
+    try {
+      return parseFloat(amount).toString()
+    } catch (error) {
+      return amount
+    }
+  }
+
   return (
     <Grid maxWidth='100%'>
       <Grid
@@ -161,7 +169,9 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
               }}>
               +{' '}
               {last24hPoints
-                ? formatNumberWithCommas(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL))
+                ? formatNumberWithCommas(
+                    trimZeros(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL))
+                  )
                 : 0}
             </Typography>
           </Typography>
