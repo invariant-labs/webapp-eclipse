@@ -69,14 +69,21 @@ export const Header: React.FC<IHeader> = ({
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
 
-  const routes = ['exchange', 'liquidity', 'portfolio', 'creator', 'points', 'statistics']
+  const routes = [
+    'exchange',
+    'liquidity',
+    'portfolio',
+    'creator',
+    ...(typeOfNetwork === NetworkType.Mainnet ? ['points'] : []),
+    'statistics'
+  ]
 
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
     creator: [/^creator\/*/],
-    leaderboard: [/^points\/*/]
+    ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {})
   }
 
   const [activePath, setActive] = useState('exchange')
@@ -272,9 +279,11 @@ export const Header: React.FC<IHeader> = ({
               onSelect={onNetworkSelect}
             />
           </Grid>
+
           <Grid>
             <YourPointsButton />
           </Grid>
+
           <ChangeWalletButton
             name={
               walletConnected
