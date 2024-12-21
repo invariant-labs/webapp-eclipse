@@ -88,6 +88,27 @@ export const useSingleTabStyles = makeStyles()(() => {
         color: colors.invariant.green
       }
     },
+    promoted: {
+      color: colors.invariant.pink,
+      borderRadius: 10,
+      border: '1px solid transparent',
+      backgroundImage: `linear-gradient(${colors.invariant.newDark},${colors.invariant.newDark}), linear-gradient(0deg, #2EE09A, #EF84F5)`,
+      backgroundOrigin: 'border-box',
+      backgroundClip: 'padding-box, border-box',
+      '&:hover': {
+        color: colors.invariant.pink,
+        backgroundImage:
+          'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
+        backgroundOrigin: 'border-box',
+        backgroundClip: 'padding-box, border-box'
+      },
+      '&.Mui-selected': {
+        backgroundImage:
+          'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
+        backgroundOrigin: 'border-box',
+        backgroundClip: 'padding-box, border-box'
+      }
+    },
     selected: {
       ...typography.heading4,
       color: colors.white.main + ' !important',

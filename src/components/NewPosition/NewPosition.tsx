@@ -8,6 +8,7 @@ import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
   PositionTokenBlock,
+  promotedTiers,
   REFRESHER_INTERVAL
 } from '@store/consts/static'
 import {
@@ -371,6 +372,16 @@ export const NewPosition: React.FC<INewPosition> = ({
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
         )?.bestTierIndex ?? undefined
 
+  const promotedPoolTierIndex =
+    tokenAIndex === null || tokenBIndex === null
+      ? undefined
+      : promotedTiers.find(
+          tier =>
+            (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+              tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+            (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+              tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
+        )?.index ?? undefined
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -740,6 +751,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           onDisconnectWallet={onDisconnectWallet}
           canNavigate={canNavigate}
           isCurrentPoolExisting={isCurrentPoolExisting}
+          promotedPoolTierIndex={promotedPoolTierIndex}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

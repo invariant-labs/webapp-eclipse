@@ -16,7 +16,7 @@ export const useStyles = makeStyles()(() => ({
     background:
       'linear-gradient(90deg, rgba(32, 41, 70, 0.2) 0%, #202946 40%, #202946 80%, rgba(32, 41, 70, 0.2) 100%)',
     boxSizing: 'border-box',
-    overflow: 'hidden'
+    overflowX: 'hidden'
   },
   astronaut: {
     width: '100%',

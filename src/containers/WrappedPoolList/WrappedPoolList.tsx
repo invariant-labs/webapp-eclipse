@@ -20,7 +20,7 @@ export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const currentNetwork = useSelector(network)
-  const [searchPoolsValue, setSearchPoolsValue] = useState<string>('a')
+  const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
   const isLoadingStats = useSelector(isLoading)
   const pointsPerSecond = useSelector(getPointsPerSecond)
   const promotedPools = useSelector(getPromotedPools)

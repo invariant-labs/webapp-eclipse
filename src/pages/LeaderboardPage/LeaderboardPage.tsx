@@ -1,33 +1,28 @@
-import React from 'react'
+import React, { useState } from 'react'
 import useStyles from './styles'
 import { Grid } from '@mui/material'
-import { LeaderboardTimer } from './components/LeaderboardTimer/LeaderboardTimer'
-import { useCountdown } from './components/LeaderboardTimer/useCountdown'
-import { LAUNCH_DATE } from './config'
+import { LeaderboardWrapper } from './components/LeaderboardWrapper'
 import { InfoComponent } from './components/InfoComponent/InfoComponent'
+import { Rewards } from './components/Rewards/Rewards'
 
 export const LeaderBoardPage: React.FC = () => {
   const { classes } = useStyles()
-
-  const { hours, minutes, seconds } = useCountdown({
-    targetDate: LAUNCH_DATE,
-    onExpire: () => {}
-  })
+  const [alignment, setAlignment] = useState<string>('leaderboard')
 
   return (
     <>
       <Grid
         container
         className={classes.container}
-        justifyContent='center'
         style={{
-          marginTop: 'calc(100vh*0.1)'
+          marginTop: 'calc(100vh*0.05)'
         }}>
         <Grid item>
-          <LeaderboardTimer hours={hours} minutes={minutes} seconds={seconds} />
+          <LeaderboardWrapper alignment={alignment} setAlignment={setAlignment} />
         </Grid>
       </Grid>
-      <InfoComponent />
+      {alignment === 'leaderboard' ? <InfoComponent /> : null}
+      {alignment === 'rewards' ? <Rewards /> : null}
     </>
   )
 }

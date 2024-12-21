@@ -5,9 +5,14 @@ import { Button, useMediaQuery } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import YourPointsModal from '@components/Modals/YourPointsModal/YourPointsModals'
 import { theme } from '@static/theme'
-import { LAUNCH_DATE } from '@pages/LeaderboardPage/config'
-import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
-import icons from '@static/icons'
+import { useSelector } from 'react-redux'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { formatLargeNumber } from '@utils/formatBigNumber'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { printBN, trimZeros } from '@utils/utils'
+import { BN } from '@coral-xyz/anchor'
+import { network } from '@store/selectors/solanaConnection'
+import { NetworkType } from '@store/consts/static'
 
 export interface IProps {
   disabled?: boolean
@@ -17,6 +22,8 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
+  const currentUser = useSelector(leaderboardSelectors.currentUser)
+  const currentNetwork = useSelector(network)
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
     blurContent()
@@ -27,11 +34,6 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
     unblurContent()
     setOpenNetworks(false)
   }
-
-  useCountdown({
-    targetDate: LAUNCH_DATE,
-    onExpire: () => {}
-  })
 
   return (
     <>
@@ -44,18 +46,10 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
         <>
           {isSm ? (
             <KeyboardArrowDownIcon id='downIcon' />
+          ) : currentNetwork === NetworkType.Mainnet ? (
+            `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
           ) : (
-            <>
-              <img
-                src={icons.airdrop}
-                style={{
-                  marginRight: '6px',
-                  height: '13px',
-                  width: '9px'
-                }}
-              />
-              <span>Points</span>
-            </>
+            'Points'
           )}
         </>
       </Button>
