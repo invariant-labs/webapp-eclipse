@@ -15,7 +15,7 @@ import { actions } from '@store/reducers/positions'
 import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/NormalBanner'
 
 const BANNER_STORAGE_KEY = 'invariant-banner-state'
-const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
+const BANNER_HIDE_DURATION = 5000 // 24 hours
 
 const RootPage: React.FC = memo(() => {
   const [showHeader, setShowHeader] = useState(() => {

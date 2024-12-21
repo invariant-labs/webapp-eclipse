@@ -10,24 +10,24 @@ interface INormalBannerProps {
 
 export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
   const navigate = useNavigate()
-  const bannerHeight = '44px'
 
   return (
     <Box
       sx={{
-        position: 'relative',
+        position: 'fixed',
+        bottom: '-1px',
+        left: 0,
+        zIndex: 1000,
         background: colors.invariant.light,
-        padding: isHiding ? '0px 0px' : '10px 20px',
         width: '100%',
         maxWidth: '100%',
-        height: isHiding ? '0px' : bannerHeight,
+        height: '32px',
         display: 'flex',
         ...typography.body1,
         justifyContent: 'center',
         alignItems: 'center',
         boxSizing: 'border-box',
         color: colors.invariant.text,
-        margin: isHiding ? '0' : undefined,
         overflow: 'hidden',
         opacity: isHiding ? 0 : 1,
         transition: 'all 0.3s ease-in-out',
@@ -38,7 +38,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           display: 'flex',
           justifyContent: 'center',
           alignItems: 'center',
-          transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
+          transform: isHiding ? 'translateY(100%)' : 'translateY(0)',
           transition: 'transform 0.3s ease-in-out'
         }}>
         <img
