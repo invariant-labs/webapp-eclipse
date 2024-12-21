@@ -355,9 +355,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
     const allPools = yield* select(poolsArraySortedByFees)
-    // TODO: uncomment after fix
-    /* tslint:disable:no-unused-variable */
-    const ticks = yield* select(plotTicks)
+    // const ticks = yield* select(plotTicks)
 
     const pair = new Pair(data.tokenX, data.tokenY, {
       fee: data.fee,
