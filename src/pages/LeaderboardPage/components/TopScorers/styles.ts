@@ -13,7 +13,13 @@ const useStyles = makeStyles()(() => {
         flexDirection: 'column'
       }
     },
-    headerBigText: { ...typography.heading1, color: colors.invariant.text },
+    headerBigText: {
+      ...typography.heading1,
+      color: colors.invariant.text,
+      [theme.breakpoints.down('md')]: {
+        ...typography.heading2
+      }
+    },
     headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
     leaderboardHeaderSectionTitle: {
       ...typography.heading3,
