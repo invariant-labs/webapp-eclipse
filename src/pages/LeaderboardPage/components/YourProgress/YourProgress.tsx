@@ -50,7 +50,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
             dekstop: trapezeLeft,
             mobile: trapezeMobileTop
           }}
-          tooltip='Points refresh every hour.'
+          tooltip='Points amount refreshes roughly every 30 minutes.'
           desktopLabelAligment='right'
           label='Total points'
           value={
