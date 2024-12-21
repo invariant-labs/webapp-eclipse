@@ -13,6 +13,8 @@ import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions } from '@store/reducers/positions'
 import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/NormalBanner'
+import { NetworkType } from '@store/consts/static'
+import { network } from '@store/selectors/solanaConnection'
 
 const BANNER_STORAGE_KEY = 'invariant-banner-state'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
@@ -38,6 +40,7 @@ const RootPage: React.FC = memo(() => {
   const walletStatus = useSelector(status)
   const navigate = useNavigate()
   const location = useLocation()
+  const currentNetwork = useSelector(network)
 
   const { classes } = useStyles()
 
@@ -102,7 +105,7 @@ const RootPage: React.FC = memo(() => {
     <>
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
-        {showHeader && (
+        {showHeader && currentNetwork === NetworkType.Mainnet && (
           <>
             <NormalBanner onClose={handleBannerClose} isHiding={isHiding} />
           </>
