@@ -12,7 +12,7 @@ import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
 import { network } from '@store/selectors/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
-import { formatNumberWithCommas, printBN } from '@utils/utils'
+import { formatNumberWithCommas, printBN, trimZeros } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 interface BaseLeaderboardItemProps {
@@ -147,7 +147,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
         </Typography>
 
         <Typography>
-          {formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))}
+          {trimZeros(formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)))}
         </Typography>
 
         {!isMd && (
@@ -157,7 +157,10 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
                 color: colors.invariant.green,
                 ...typography.heading4
               }}>
-              + {formatNumberWithCommas(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL))}
+              +{' '}
+              {trimZeros(
+                formatNumberWithCommas(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL))
+              )}
             </Typography>
           </Typography>
         )}
