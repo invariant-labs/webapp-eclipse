@@ -109,14 +109,6 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
       })
   }
 
-  const trimZeros = (amount: string) => {
-    try {
-      return parseFloat(amount).toString()
-    } catch (error) {
-      return amount
-    }
-  }
-
   return (
     <Grid maxWidth='100%'>
       <Grid
