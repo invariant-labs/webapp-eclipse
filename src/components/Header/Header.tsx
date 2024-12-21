@@ -279,9 +279,14 @@ export const Header: React.FC<IHeader> = ({
               onSelect={onNetworkSelect}
             />
           </Grid>
-          <Grid>
-            <YourPointsButton />
-          </Grid>
+          {typeOfNetwork === NetworkType.Mainnet ? (
+            <>
+              <Grid>
+                <YourPointsButton />
+              </Grid>
+            </>
+          ) : null}
+
           <ChangeWalletButton
             name={
               walletConnected
