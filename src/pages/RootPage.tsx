@@ -20,6 +20,21 @@ const BANNER_STORAGE_KEY = 'invariant-banner-state'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
+  const [showHeader, setShowHeader] = useState(() => {
+    const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
+    if (storedData) {
+      try {
+        const { hiddenAt } = JSON.parse(storedData)
+        const currentTime = new Date().getTime()
+        return currentTime - hiddenAt >= BANNER_HIDE_DURATION
+      } catch (error) {
+        return true
+      }
+    }
+    return true
+  })
+
+  const [isHiding, setIsHiding] = useState(false)
   const dispatch = useDispatch()
   const signerStatus = useSelector(connectionStatus)
   const walletStatus = useSelector(status)
