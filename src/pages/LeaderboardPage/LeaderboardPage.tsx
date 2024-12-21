@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import useStyles from './styles'
 import { Grid } from '@mui/material'
 import { LeaderboardTimer } from './components/LeaderboardTimer/LeaderboardTimer'
@@ -9,13 +9,8 @@ import { InfoComponent } from './components/InfoComponent/InfoComponent'
 export const LeaderBoardPage: React.FC = () => {
   const { classes } = useStyles()
 
-  const targetDate = useMemo(() => {
-    const date = new Date(LAUNCH_DATE)
-    return date
-  }, [])
-
   const { hours, minutes, seconds } = useCountdown({
-    targetDate,
+    targetDate: LAUNCH_DATE,
     onExpire: () => {}
   })
 

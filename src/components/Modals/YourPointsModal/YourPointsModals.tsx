@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import useStyles from './style'
 import { Box, Grid, Popover } from '@mui/material'
 import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
@@ -12,13 +12,8 @@ export interface ISelectNetworkModal {
 }
 export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open, handleClose }) => {
   const { classes } = useStyles()
-  const targetDate = useMemo(() => {
-    const date = new Date(LAUNCH_DATE)
-    return date
-  }, [])
-
   const { hours, minutes, seconds } = useCountdown({
-    targetDate,
+    targetDate: LAUNCH_DATE,
     onExpire: () => {}
   })
 

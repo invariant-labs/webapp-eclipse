@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Button, useMediaQuery } from '@mui/material'
@@ -28,13 +28,8 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
     setOpenNetworks(false)
   }
 
-  const targetDate = useMemo(() => {
-    const date = new Date(LAUNCH_DATE)
-    return date
-  }, [])
-
   useCountdown({
-    targetDate,
+    targetDate: LAUNCH_DATE,
     onExpire: () => {}
   })
 
