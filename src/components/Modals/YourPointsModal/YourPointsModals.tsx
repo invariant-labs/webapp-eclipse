@@ -66,9 +66,8 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                   textAlign: 'center',
                   marginTop: '16px'
                 }}>
-                You are currently on testnet. Points distribution is not available on the testnet
-                network. Switch to mainnet to access information related to the Invariant Points
-                System
+                You are currently on the testnet, where points distribution is unavailable. Please
+                switch to the mainnet to access the Invariant Points System
               </Typography>
             </Box>
           ) : (
