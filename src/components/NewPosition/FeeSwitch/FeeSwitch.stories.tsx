@@ -28,6 +28,7 @@ const PrimaryComponent: React.FC<typeof Primary.args> = args => {
 
 export const Primary: Story = {
   args: {
+    promotedPoolTierIndex: 0,
     currentValue: 0,
     feeTiers: [0.02, 0.04, 0.1, 0.3, 1],
     onSelect: fn(),

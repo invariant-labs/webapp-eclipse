@@ -1,5 +1,5 @@
 // style.ts
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -20,6 +20,29 @@ export const useStyles = makeStyles()(() => ({
     '&::-webkit-scrollbar-thumb': {
       background: colors.invariant.light,
       borderRadius: '4px'
+    }
+  },
+  item: {
+    '& a': {
+      color: '#2EE09A',
+      textDecoration: 'none',
+      '&:hover': {
+        textDecoration: 'underline'
+      }
+    },
+    '& ul': {
+      paddingLeft: theme.spacing(2),
+      marginTop: theme.spacing(1),
+      marginBottom: theme.spacing(1)
+    },
+    '& li': {
+      marginBottom: theme.spacing(1)
+    },
+    '& img': {
+      maxWidth: '100%',
+      height: 'auto',
+      marginTop: theme.spacing(2),
+      marginBottom: theme.spacing(2)
     }
   }
 }))

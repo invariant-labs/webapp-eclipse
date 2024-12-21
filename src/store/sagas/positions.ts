@@ -355,7 +355,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
     const allPools = yield* select(poolsArraySortedByFees)
-    const ticks = yield* select(plotTicks)
+    // const ticks = yield* select(plotTicks)
 
     const pair = new Pair(data.tokenX, data.tokenY, {
       fee: data.fee,
@@ -418,18 +418,18 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
         knownPrice: data.knownPrice
       },
       {
-        lowerTickExists:
-          !ticks.hasError &&
-          !ticks.loading &&
-          ticks.allData.find(t => t.index === data.lowerTick) !== undefined
-            ? true
-            : undefined,
-        upperTickExists:
-          !ticks.hasError &&
-          !ticks.loading &&
-          ticks.allData.find(t => t.index === data.upperTick) !== undefined
-            ? true
-            : undefined,
+        // lowerTickExists:
+        //   !ticks.hasError &&
+        //   !ticks.loading &&
+        //   ticks.allData.find(t => t.index === data.lowerTick) !== undefined
+        //     ? true
+        //     : undefined,
+        // upperTickExists:
+        //   !ticks.hasError &&
+        //   !ticks.loading &&
+        //   ticks.allData.find(t => t.index === data.upperTick) !== undefined
+        //     ? true
+        //     : undefined,
         pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
         tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
         tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,

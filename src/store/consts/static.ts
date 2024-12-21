@@ -507,6 +507,14 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
   [NetworkType.Local]: []
 }
 
+export const promotedTiers = [
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  }
+]
+
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [
@@ -665,9 +673,9 @@ export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
 
 export const CHAINS = [
   { name: Chain.Solana, address: 'https://invariant.app/swap' },
-  { name: Chain.AlephZero, address: 'https://azero.invariant.app/exchange' },
+  // { name: Chain.AlephZero, address: 'https://azero.invariant.app/exchange' },
   { name: Chain.Eclipse, address: 'https://eclipse.invariant.app/exchange' },
-  { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
+  // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
   { name: Chain.Alephium, address: 'https://alph.invariant.app/exchange' }
 ]
 
@@ -716,6 +724,7 @@ export const TIMEOUT_ERROR_MESSAGE =
 export const MAX_CROSSES_IN_SINGLE_TX = 11
 
 export const walletNames = {
+  [WalletType.NIGHTLY_WALLET]: 'Nightly',
   [WalletType.BACKPACK]: 'Backpack',
   [WalletType.SALMON]: 'Salmon',
   [WalletType.NIGHTLY]: 'Wallet Selector'
@@ -727,6 +736,11 @@ export const getPopularPools = (network: NetworkType) => {
   switch (network) {
     case NetworkType.Mainnet:
       return [
+        {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '0.09'
+        },
         {
           tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
           tokenY: 'So11111111111111111111111111111111111111112',
@@ -741,11 +755,6 @@ export const getPopularPools = (network: NetworkType) => {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
-        },
-        {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '1'
         }
       ]
     default:

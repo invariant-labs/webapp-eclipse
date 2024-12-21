@@ -9,9 +9,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      gap: '24px',
-      width: 'calc(100% - 10px)',
-      padding: '10px'
+      width: '100%',
+      gap: '24px'
     },
     tableContainer: {
       width: '100%',
@@ -41,6 +40,14 @@ const useStyles = makeStyles()((theme: Theme) => {
         color: colors.white.main
       }
     },
+    leaderboardHeader: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'column'
+    },
+    leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main },
     heroLogo: {
       width: 'auto', // Allow natural width
       height: 'auto', // Allow natural height
@@ -151,77 +158,52 @@ const useStyles = makeStyles()((theme: Theme) => {
       WebkitTextFillColor: 'transparent',
       textWrap: 'nowrap'
     },
-    switchPoolsContainer: {
-      position: 'relative',
-      width: 'fit-content',
-      backgroundColor: colors.invariant.component,
-      borderRadius: 10,
-      overflow: 'hidden',
-      display: 'inline-flex',
-      height: 32,
-      [theme.breakpoints.down('sm')]: {
-        height: 48
-      }
-    },
-    switchPoolsMarker: {
-      position: 'absolute',
-      top: 0,
-      bottom: 0,
-      width: '50%',
-      backgroundColor: colors.invariant.light,
-      borderRadius: 10,
-      transition: 'all 0.3s ease',
-      zIndex: 1
-    },
-    switchPoolsButtonsGroup: { position: 'relative', zIndex: 2, display: 'flex' },
-    switchPoolsButton: {
-      ...typography.body2,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      color: 'white',
-      flex: 1,
-      textTransform: 'none',
-      border: 'none',
-      borderRadius: 10,
-      zIndex: 2,
-      '&.Mui-selected': {
-        backgroundColor: 'transparent'
-      },
-      '&:hover': {
-        backgroundColor: 'transparent'
-      },
-      '&.Mui-selected:hover': {
-        backgroundColor: 'transparent'
-      },
-      '&:disabled': {
-        color: colors.invariant.componentBcg,
-        pointerEvents: 'auto',
-        transition: 'all 0.2s',
-        '&:hover': {
-          boxShadow: 'none',
-          cursor: 'not-allowed',
-          filter: 'brightness(1.15)',
-          '@media (hover: none)': {
-            filter: 'none'
-          }
-        }
-      },
-      letterSpacing: '-0.03em',
-      paddingTop: 6,
-      paddingBottom: 6,
-      paddingLeft: 32,
-      paddingRight: 32
-    },
 
-    creatorMainContainer: {
+    leaderBoardWrapper: {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
       gap: '24px',
       paddingTop: '24px',
-      width: '100%'
+      width: '1072px',
+
+      [theme.breakpoints.between('lg', 'xl')]: {
+        width: '1072px'
+      },
+
+      [theme.breakpoints.between('md', 'lg')]: {
+        width: '800px'
+      },
+
+      [theme.breakpoints.down('md')]: {
+        width: '85vw'
+      },
+
+      [theme.breakpoints.up('xl')]: {
+        width: '1120px'
+      }
+    },
+    sectionContent: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: 24,
+      [theme.breakpoints.down(1020)]: {
+        flexDirection: 'column'
+      }
+    },
+
+    headerBigText: { ...typography.heading1, color: colors.invariant.text },
+    headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
+    tooltip: {
+      color: colors.invariant.textGrey,
+      ...typography.caption4,
+      lineHeight: '24px',
+      background: colors.invariant.component,
+      borderRadius: 12,
+      width: 200
     }
   }
 })
