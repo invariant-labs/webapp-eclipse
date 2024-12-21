@@ -54,7 +54,6 @@ const PoolList: React.FC<PoolListInterface> = ({
 
     return data.slice(offest).slice(0, perPage)
   }
-
   const pages = Math.ceil(data.length / 10)
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
