@@ -8,7 +8,7 @@ interface CountdownTime {
 }
 
 interface UseCountdownProps {
-  targetDate: Date | string | number
+  targetDate: number
   onExpire?: () => void
 }
 
@@ -21,8 +21,8 @@ export const useCountdown = ({ targetDate, onExpire }: UseCountdownProps): Count
   })
 
   const calculateTimeLeft = () => {
-    const now = new Date().getTime()
-    const target = new Date(targetDate).getTime()
+    const now = Math.floor(Date.now() / 1000)
+    const target = targetDate
     const difference = target - now
 
     if (difference <= 0) {
@@ -38,7 +38,7 @@ export const useCountdown = ({ targetDate, onExpire }: UseCountdownProps): Count
       return true
     }
 
-    const totalSeconds = Math.floor(difference / 1000)
+    const totalSeconds = difference
     const hours = Math.floor(totalSeconds / 3600)
     const minutes = Math.floor((totalSeconds % 3600) / 60)
     const seconds = totalSeconds % 60

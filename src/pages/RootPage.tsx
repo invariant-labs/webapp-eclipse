@@ -1,4 +1,4 @@
-import { useEffect, useCallback, memo, useMemo } from 'react'
+import { useEffect, useCallback, memo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate, useLocation, Outlet } from 'react-router-dom'
 import EventsHandlers from '@containers/EventsHandlers'
@@ -45,13 +45,8 @@ const RootPage: React.FC = memo(() => {
     }
   }, [signerStatus, walletStatus])
 
-  const targetDate = useMemo(() => {
-    const date = new Date(LAUNCH_DATE)
-    return date
-  }, [])
-
   const { hours, minutes, seconds } = useCountdown({
-    targetDate,
+    targetDate: LAUNCH_DATE,
     onExpire: () => {}
   })
 
