@@ -81,17 +81,17 @@ const PoolList: React.FC<PoolListInterface> = ({
                 <PoolListItem
                   displayType='token'
                   tokenIndex={index + 1 + (page - 1) * 10}
-                  symbolFrom={element.symbolFrom}
-                  symbolTo={element.symbolTo}
-                  iconFrom={element.iconFrom}
-                  iconTo={element.iconTo}
+                  symbolFrom={element.symbolTo}
+                  symbolTo={element.symbolFrom}
+                  iconFrom={element.iconTo}
+                  iconTo={element.iconFrom}
                   fee={element.fee}
                   apy={element.apy}
                   hideBottomLine={pages === 1 && index + 1 === data.length}
                   apyData={element.apyData}
                   key={index}
-                  addressFrom={element.addressFrom}
-                  addressTo={element.addressTo}
+                  addressFrom={element.addressTo}
+                  addressTo={element.addressFrom}
                   network={network}
                   poolAddress={element.poolAddress}
                   copyAddressHandler={copyAddressHandler}
