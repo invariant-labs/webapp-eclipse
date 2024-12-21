@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Button, useMediaQuery } from '@mui/material'
@@ -8,10 +8,8 @@ import { theme } from '@static/theme'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { formatLargeNumber } from '@utils/formatBigNumber'
-import { LAUNCH_DATE, LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
-import { useCountdown } from '@pages/LeaderboardPage/components/LeaderboardTimer/useCountdown'
-import { printBN } from '@utils/utils'
-import icons from '@static/icons'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { printBN, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 
 export interface IProps {
@@ -19,7 +17,6 @@ export interface IProps {
 }
 export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-  const [isExpired, setExpired] = useState(false)
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
@@ -35,18 +32,6 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
     setOpenNetworks(false)
   }
 
-  const targetDate = useMemo(() => {
-    const date = new Date(LAUNCH_DATE)
-    return date
-  }, [])
-
-  useCountdown({
-    targetDate,
-    onExpire: () => {
-      setExpired(true)
-    }
-  })
-
   return (
     <>
       <Button
@@ -55,33 +40,13 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
         classes={{ disabled: classes.disabled }}
         disabled={disabled}
         onClick={handleClick}>
-        {isExpired ? (
-          <>
-            {isSm ? (
-              <KeyboardArrowDownIcon id='downIcon' />
-            ) : (
-              `Points: ${currentUser ? formatLargeNumber(+printBN(new BN(currentUser.points, 'hex'), LEADERBOARD_DECIMAL)) : 0}`
-            )}
-          </>
-        ) : (
-          <>
-            {isSm ? (
-              <KeyboardArrowDownIcon id='downIcon' />
-            ) : (
-              <>
-                <img
-                  src={icons.airdrop}
-                  style={{
-                    marginRight: '6px',
-                    height: '13px',
-                    width: '9px'
-                  }}
-                />
-                <span>Points</span>
-              </>
-            )}
-          </>
-        )}
+        <>
+          {isSm ? (
+            <KeyboardArrowDownIcon id='downIcon' />
+          ) : (
+            `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
+          )}
+        </>
       </Button>
       <YourPointsModal open={openNetworks} anchorEl={anchorEl} handleClose={handleClose} />
     </>

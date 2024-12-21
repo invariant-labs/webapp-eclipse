@@ -147,7 +147,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
         </Typography>
 
         <Typography>
-          {trimZeros(formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)))}
+          {formatNumberWithCommas(trimZeros(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)))}
         </Typography>
 
         {!isMd && (
@@ -158,8 +158,8 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
                 ...typography.heading4
               }}>
               +{' '}
-              {trimZeros(
-                formatNumberWithCommas(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL))
+              {formatNumberWithCommas(
+                trimZeros(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL))
               )}
             </Typography>
           </Typography>
