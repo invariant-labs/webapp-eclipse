@@ -418,18 +418,18 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
         knownPrice: data.knownPrice
       },
       {
-        lowerTickExists:
-          !ticks.hasError &&
-          !ticks.loading &&
-          ticks.allData.find(t => t.index === data.lowerTick) !== undefined
-            ? true
-            : undefined,
-        upperTickExists:
-          !ticks.hasError &&
-          !ticks.loading &&
-          ticks.allData.find(t => t.index === data.upperTick) !== undefined
-            ? true
-            : undefined,
+        // lowerTickExists:
+        //   !ticks.hasError &&
+        //   !ticks.loading &&
+        //   ticks.allData.find(t => t.index === data.lowerTick) !== undefined
+        //     ? true
+        //     : undefined,
+        // upperTickExists:
+        //   !ticks.hasError &&
+        //   !ticks.loading &&
+        //   ticks.allData.find(t => t.index === data.upperTick) !== undefined
+        //     ? true
+        //     : undefined,
         pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
         tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
         tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
