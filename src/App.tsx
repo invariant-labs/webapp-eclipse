@@ -1,6 +1,5 @@
 import { Provider } from 'react-redux'
 import { store } from './store'
-import { RouterProvider } from 'react-router-dom'
 import SnackbarProvider from '@components/Snackbar'
 import { theme } from '@static/theme'
 import { ThemeProvider } from '@mui/material/styles'
