@@ -21,8 +21,7 @@ export const LeaderBoardPage: React.FC = () => {
           <LeaderboardWrapper alignment={alignment} setAlignment={setAlignment} />
         </Grid>
       </Grid>
-      {alignment === 'leaderboard' ? <InfoComponent /> : null}
-      {alignment === 'rewards' ? <Rewards /> : null}
+      <InfoComponent />
     </>
   )
 }
