@@ -10,6 +10,7 @@ export interface IFeeSwitch {
   feeTiers: number[]
   bestTierIndex?: number
   currentValue: number
+  promotedPoolTierIndex: number | undefined
 }
 
 export const FeeSwitch: React.FC<IFeeSwitch> = ({
@@ -17,6 +18,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   showOnlyPercents = false,
   feeTiers,
   bestTierIndex,
+  promotedPoolTierIndex,
   currentValue
 }) => {
   const { classes } = useStyles()
@@ -53,7 +55,11 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
             classes={{
               root: classNames(
                 singleTabClasses.root,
-                index === bestTierIndex ? singleTabClasses.best : undefined
+                index === promotedPoolTierIndex
+                  ? singleTabClasses.promoted
+                  : bestTierIndex
+                    ? singleTabClasses.best
+                    : undefined
               ),
               selected: singleTabClasses.selected
             }}

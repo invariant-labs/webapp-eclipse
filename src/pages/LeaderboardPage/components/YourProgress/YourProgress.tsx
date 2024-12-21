@@ -69,6 +69,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           desktopLabelAligment='left'
           label='Global rank'
           value={userStats?.rank ?? (isConnected ? totalItems + 1 : 0)}
+          tooltip='Lorem ipsum dolor sit amet, consectetur adipiscing elit. '
         />
       </Box>
     </Box>
