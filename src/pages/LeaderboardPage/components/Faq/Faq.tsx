@@ -84,7 +84,7 @@ One dollar in a position now might be worth as much as 30 dollars in the future.
       </br>
       
       Where do the values ⅙ and ⅚ come from? </br>
-      Earnings fees are inversely proportional to the width of a position, assuming the same TVL.
+      Earning fees depends on the width of a position, assuming the same TVL.
       <ul>
       <li><b>Position 1</b> spans 10 ticks (<b>0.9995 - 1.0005</b>).</li>
       <li><b>Position 2</b> spans 2 ticks (<b>0.9999 - 1.0001</b>)</li>
