@@ -76,7 +76,8 @@ import {
   WETH_DEV,
   WETH_TEST,
   WRAPPED_ETH_ADDRESS,
-  MAX_CROSSES_IN_SINGLE_TX
+  MAX_CROSSES_IN_SINGLE_TX,
+  USDT_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -837,7 +838,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       return {
         [WETH_TEST.address.toString()]: WETH_TEST,
         [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
+        [TETH_MAIN.address.toString()]: TETH_MAIN,
         [USDC_MAIN.address.toString()]: USDC_MAIN,
+        [USDT_MAIN.address.toString()]: USDT_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
@@ -858,8 +861,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [BRICK_MAIN.address.toString()]: BRICK_MAIN,
         [PANTY_MAIN.address.toString()]: PANTY_MAIN,
         [PODAVINI_MAIN.address.toString()]: PODAVINI_MAIN,
-        [DOGW_MAIN.address.toString()]: DOGW_MAIN,
-        [TETH_MAIN.address.toString()]: TETH_MAIN
+        [DOGW_MAIN.address.toString()]: DOGW_MAIN
       }
     case NetworkType.Devnet:
       return {
