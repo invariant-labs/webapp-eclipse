@@ -109,14 +109,6 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
       })
   }
 
-  const trimZeros = (amount: string) => {
-    try {
-      return parseFloat(amount).toString()
-    } catch (error) {
-      return amount
-    }
-  }
-
   return (
     <Grid maxWidth='100%'>
       <Grid
@@ -155,9 +147,9 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
         </Typography>
 
         <Typography>
-          {points
-            ? formatNumberWithCommas(trimZeros(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)))
-            : 0}
+          {new BN(points, 'hex').isZero()
+            ? 0
+            : formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))}{' '}
         </Typography>
 
         {!isMd && (
@@ -168,11 +160,11 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
                 ...typography.heading4
               }}>
               +{' '}
-              {last24hPoints
-                ? formatNumberWithCommas(
-                    trimZeros(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL))
-                  )
-                : 0}
+              {new BN(last24hPoints, 'hex').isZero()
+                ? 0
+                : formatNumberWithCommas(
+                    printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL)
+                  )}
             </Typography>
           </Typography>
         )}
