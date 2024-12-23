@@ -430,6 +430,8 @@ export const tokens: Record<NetworkType, Token[]> = {
   Local: []
 }
 
+export const POINTS_PER_DAY = new BN(8640000)
+
 const mainnetBestTiersCreator = () => {
   // const stableTokens: Record<string, PublicKey> = {
   // }
