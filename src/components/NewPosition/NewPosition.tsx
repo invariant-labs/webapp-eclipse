@@ -50,6 +50,7 @@ import icons from '@static/icons'
 
 export interface INewPosition {
   initialTokenFrom: string
+  initialConcentration: string
   initialTokenTo: string
   initialFee: string
   poolAddress: string
@@ -126,6 +127,7 @@ export interface INewPosition {
 export const NewPosition: React.FC<INewPosition> = ({
   initialTokenFrom,
   initialTokenTo,
+  initialConcentration,
   initialFee,
   poolAddress,
   copyPoolAddressHandler,
@@ -211,6 +213,60 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
   }, [tickSpacing, midPrice.index])
+
+  const mapConcentrationValueToIndex = (
+    concentrationValue: number,
+    concentrationArray: number[]
+  ): number => {
+    if (concentrationValue <= concentrationArray[0]) return 0
+    if (concentrationValue >= concentrationArray[concentrationArray.length - 1])
+      return concentrationArray.length - 1
+
+    let closestIndex = 0
+    let smallestDifference = Math.abs(concentrationArray[0] - concentrationValue)
+
+    for (let i = 1; i < concentrationArray.length; i++) {
+      const difference = Math.abs(concentrationArray[i] - concentrationValue)
+      if (difference < smallestDifference) {
+        smallestDifference = difference
+        closestIndex = i
+      }
+    }
+
+    return closestIndex
+  }
+
+  useEffect(() => {
+    console.log({
+      concentrationIndex,
+      minimumSliderIndex,
+      concentrationArray,
+      positionOpeningMethod,
+      concentrationParam: initialConcentration
+    })
+
+    if (initialConcentration) {
+      const concentrationValue = parseFloat(initialConcentration)
+      console.log(
+        concentrationValue,
+        positionOpeningMethod !== 'concentration',
+        !isNaN(concentrationValue)
+      )
+      if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
+        setPositionOpeningMethod('concentration')
+        onPositionOpeningMethodChange('concentration')
+      }
+      const mappedIndex = mapConcentrationValueToIndex(concentrationValue, concentrationArray)
+
+      const validIndex = Math.max(
+        minimumSliderIndex,
+        Math.min(mappedIndex, concentrationArray.length - 1)
+      )
+      setTimeout(() => {
+        setConcentrationIndex(validIndex)
+      }, 2000)
+    }
+  }, [])
 
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
