@@ -53,7 +53,7 @@ const TokenListItem: React.FC<IProps> = ({
   // const isNegative = priceChange < 0
 
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-  const hideName = useMediaQuery(theme.breakpoints.down('xs'))
+  const isXs = useMediaQuery(theme.breakpoints.down('xs'))
 
   const networkUrl = useMemo(() => {
     switch (network) {
@@ -89,27 +89,27 @@ const TokenListItem: React.FC<IProps> = ({
           container
           classes={{ container: classes.container, root: classes.tokenList }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
-          {!hideName && !isSm && <Typography component='p'>{itemNumber}</Typography>}
+          {!isXs && !isSm && <Typography component='p'>{itemNumber}</Typography>}
           <Grid className={classes.tokenName}>
+            <Box className={classes.imageContainer}>
+              <img
+                className={classes.tokenIcon}
+                src={icon}
+                alt='Token icon'
+                onError={e => {
+                  e.currentTarget.src = icons.unknownToken
+                }}
+              />
+              {isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
+            </Box>
             {!isSm && (
-              <Box className={classes.imageContainer}>
-                <img
-                  className={classes.tokenIcon}
-                  src={icon}
-                  alt='Token icon'
-                  onError={e => {
-                    e.currentTarget.src = icons.unknownToken
-                  }}
-                />
-                {isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
-              </Box>
+              <Typography>
+                {isXs ? shortenAddress(symbol) : name}
+                {!isXs && (
+                  <span className={classes.tokenSymbol}>{` (${shortenAddress(symbol)})`}</span>
+                )}
+              </Typography>
             )}
-            <Typography>
-              {hideName ? shortenAddress(symbol) : name}
-              {!hideName && (
-                <span className={classes.tokenSymbol}>{` (${shortenAddress(symbol)})`}</span>
-              )}
-            </Typography>
             <TooltipHover text='Copy token address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}
@@ -149,7 +149,7 @@ const TokenListItem: React.FC<IProps> = ({
           container
           style={{ color: colors.invariant.textGrey, fontWeight: 400 }}
           classes={{ container: classes.container, root: classes.header }}>
-          {!hideName && !isSm && (
+          {!isXs && !isSm && (
             <Typography style={{ lineHeight: '12px' }}>
               N<sup>o</sup>
             </Typography>
