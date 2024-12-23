@@ -149,6 +149,17 @@ export const USDC_MAIN: Token = {
   coingeckoId: 'usd-coin'
 }
 
+export const USDT_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'USDT',
+  address: new PublicKey('CEBP3CqAbW4zdZA57H2wfaSG1QNdzQ72GiQEbQXyW9Tm'),
+  decimals: 6,
+  name: 'Tether USD (Hyperlane)',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.svg',
+  coingeckoId: ''
+}
+
 export const SOL_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'SOL',
@@ -519,13 +530,13 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [
     WETH_MAIN.address,
+    TETH_MAIN.address,
     USDC_MAIN.address,
     SOL_MAIN.address,
+    USDT_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    TURBO_MAIN.address,
-    TIA_MAIN.address,
-    STTIA_MAIN.address
+    TIA_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
