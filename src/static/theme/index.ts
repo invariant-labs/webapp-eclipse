@@ -71,6 +71,7 @@ export const colors = {
     newDark: '#111931',
     component: '#202946',
     componentBcg: '#111931',
+    componentLight: '#3A466B80',
     light: '#3A466B',
     lightHover: '#A9B6BF',
     black: '#010514',

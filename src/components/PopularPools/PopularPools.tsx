@@ -3,11 +3,13 @@ import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import Card from './Card/Card'
 import { NetworkType } from '@store/consts/static'
-import Slider from 'react-slick'
-import 'slick-carousel/slick/slick.css'
-import 'slick-carousel/slick/slick-theme.css'
+import { Swiper, SwiperClass, SwiperSlide } from 'swiper/react'
+import { Pagination } from 'swiper/modules'
+import 'swiper/css'
+import 'swiper/css/pagination'
+import { useCallback, useRef, useState } from 'react'
+import classNames from 'classnames'
 import { theme } from '@static/theme'
-import { useMemo } from 'react'
 
 export interface IPopularPools {
   pools: PopularPoolData[]
@@ -19,57 +21,93 @@ export interface IPopularPools {
 const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, showAPY }) => {
   const { classes } = useStyles()
 
-  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
-  const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
-  const isSmDown = useMediaQuery('@media (max-width:700px)')
+  const [swiperRef, setSwiperRef] = useState<SwiperClass>()
+  const paginationRef = useRef<HTMLDivElement>(null)
+  const [showArrows, setShowArrows] = useState(false)
 
-  const slidesNumber = useMemo(() => {
-    if (isSmDown) return 1
-    if (isMdDown) return 2
-    if (isLgDown) return 3
-    return 4
-  }, [isMdDown, isLgDown, isSmDown])
+  const handlePrevious = useCallback(() => {
+    swiperRef?.slidePrev()
+  }, [swiperRef])
+
+  const handleNext = useCallback(() => {
+    swiperRef?.slideNext()
+  }, [swiperRef])
+
+  const isSm = useMediaQuery(theme.breakpoints.up('sm'))
 
   return (
-    <Grid container mb={6}>
+    <Grid container mb={6} className={classes.container}>
       <Typography className={classes.title} mb={3}>
         Popular pools
       </Typography>
-      <div className={classes.cardsContainer}>
-        <Slider
-          dots={isLgDown}
-          draggable={isLgDown}
-          touchMove={isLgDown}
-          infinite={false}
-          speed={500}
-          slidesToShow={slidesNumber}
-          slidesToScroll={1}
-          arrows={false}
-          className={classes.slider}
-          dotsClass={`slick-dots ${classes.dots}`}
-          appendDots={dots => <ul>{dots}</ul>}
-          rows={1}>
+      <div className={classes.swiperContainer}>
+        <Swiper
+          slidesPerView='auto'
+          spaceBetween={24}
+          pagination={{
+            clickable: true,
+            type: 'bullets',
+            el: '.pagination',
+            bulletClass: classes.bullet,
+            bulletActiveClass: classes.bulletActive,
+            horizontalClass: classes.horizontal
+          }}
+          navigation={{
+            nextEl: '.swiper-button-next-unique',
+            prevEl: '.swiper-button-prev-unique'
+          }}
+          modules={[Pagination]}
+          className={classes.swiper}
+          onSwiper={setSwiperRef}
+          onResize={() => setShowArrows((paginationRef.current?.childElementCount || 0) > 1)}>
           {pools.map(pool => (
-            <Card
-              addressFrom={pool.addressFrom}
-              addressTo={pool.addressTo}
-              iconFrom={pool.iconFrom}
-              iconTo={pool.iconTo}
-              volume={pool.volume}
-              TVL={pool.TVL}
-              fee={pool.fee}
-              symbolFrom={pool.symbolFrom}
-              symbolTo={pool.symbolTo}
-              apy={pool.apy}
-              apyData={pool.apyData}
-              isUnknownFrom={pool.isUnknownFrom}
-              isUnknownTo={pool.isUnknownTo}
-              isLoading={isLoading}
-              network={network}
-              showAPY={showAPY}
-            />
+            <SwiperSlide className={classes.slide}>
+              <Card
+                addressFrom={pool.addressFrom}
+                addressTo={pool.addressTo}
+                iconFrom={pool.iconFrom}
+                iconTo={pool.iconTo}
+                volume={pool.volume}
+                TVL={pool.TVL}
+                fee={pool.fee}
+                symbolFrom={pool.symbolFrom}
+                symbolTo={pool.symbolTo}
+                apy={pool.apy}
+                apyData={pool.apyData}
+                isUnknownFrom={pool.isUnknownFrom}
+                isUnknownTo={pool.isUnknownTo}
+                isLoading={isLoading}
+                network={network}
+                showAPY={showAPY}
+              />
+            </SwiperSlide>
           ))}
-        </Slider>
+        </Swiper>
+        <div className={classes.pagination}>
+          <div className='pagination' ref={paginationRef}></div>
+        </div>
+        {showArrows && isSm && (
+          <>
+            <div
+              className={classNames(
+                'swiper-button-next-unique',
+                classes.controlButton,
+                classes.controlButtonPrev
+              )}
+              onClick={handlePrevious}>
+              &lt;
+            </div>
+            <div
+              className={classNames(
+                'swiper-button-next-unique',
+                classes.controlButton,
+                classes.controlButtonNext
+              )}
+              onClick={handleNext}>
+              &gt;
+            </div>
+          </>
+        )}
       </div>
     </Grid>
   )
