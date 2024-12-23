@@ -9,16 +9,15 @@ export const useStyles = makeStyles<{
   borderRadius: number
 }>()((_theme, { borderWidth, borderColor, opacity, backgroundColor, borderRadius }) => ({
   rootContainer: {
-    position: 'relative'
+    position: 'relative',
+    width: '100%'
   },
   gradientContainer: {
     boxSizing: 'border-box',
-    position: 'relative',
     borderRadius: `calc((${borderWidth}px / 2) + ${borderRadius}px)`,
     padding: borderWidth ?? 1
   },
   gradient: {
-    zIndex: 1,
     background:
       borderColor ??
       `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
@@ -33,20 +32,23 @@ export const useStyles = makeStyles<{
       bottom: borderWidth ?? 1,
       borderRadius: borderRadius ?? 10,
       background: backgroundColor ?? colors.invariant.bodyBackground,
-      maskComposite: 'exclude',
-      zIndex: -1
+      maskComposite: 'exclude'
     }
   },
   positionAbsolute: {
     position: 'absolute',
+    top: 0,
+    left: 0,
     width: '100%',
     height: '100%',
     backgroundColor: colors.invariant.transparentBcg,
-    overflow: 'hidden',
     borderRadius: `calc((${borderWidth}px / 2) + ${borderRadius}px)`
   },
   innerContainer: {
-    borderRadius: borderRadius ?? 10
+    borderRadius: borderRadius ?? 10,
+    overflow: 'visible'
   },
-  noBackground: {}
+  noBackground: {
+    background: 'transparent'
+  }
 }))
