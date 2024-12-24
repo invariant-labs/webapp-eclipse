@@ -33,12 +33,15 @@ export interface IRangeSelector {
   tickSpacing: number
   currentPairReversed: boolean | null
   positionOpeningMethod?: PositionOpeningMethod
+  setPositionOpeningMethod: React.Dispatch<React.SetStateAction<PositionOpeningMethod>>
+  onPositionOpeningMethodChange: (val: PositionOpeningMethod) => void
   poolIndex: number | null
   hasTicksError?: boolean
   reloadHandler: () => void
   concentrationArray: number[]
   minimumSliderIndex: number
   concentrationIndex: number
+  initialConcentration: string
   setConcentrationIndex: (val: number) => void
   getTicksInsideRange: (
     left: number,
@@ -77,9 +80,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   concentrationArray,
   minimumSliderIndex,
   concentrationIndex,
+  onPositionOpeningMethodChange,
+  setPositionOpeningMethod,
   setConcentrationIndex,
   getTicksInsideRange,
-
+  initialConcentration,
   shouldReversePlot,
   setShouldReversePlot,
   shouldNotUpdatePriceRange,
@@ -392,6 +397,49 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     changeRangeHandler(leftRange, rightRange)
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
+
+  useEffect(() => {
+    console.log({
+      concentrationIndex,
+      minimumSliderIndex,
+      concentrationArray,
+      positionOpeningMethod,
+      concentrationParam: initialConcentration
+    })
+
+    if (initialConcentration) {
+      const concentrationValue = parseInt(initialConcentration)
+      console.log(
+        concentrationValue,
+        positionOpeningMethod !== 'concentration',
+        !isNaN(concentrationValue)
+      )
+      if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
+        setPositionOpeningMethod('concentration')
+        onPositionOpeningMethodChange('concentration')
+      }
+      const mappedIndex = findClosestIndexByValue(concentrationArray, concentrationValue)
+
+      const validIndex = Math.max(
+        minimumSliderIndex,
+        Math.min(mappedIndex, concentrationArray.length - 1)
+      )
+      if (!ticksLoading) {
+        setPreviousConcentration(cachedConcentrationArray[validIndex])
+        setConcentrationIndex(validIndex)
+        const { leftRange, rightRange } = calculateConcentrationRange(
+          tickSpacing,
+          cachedConcentrationArray[validIndex],
+          2,
+          midPrice.index,
+          isXtoY
+        )
+
+        changeRangeHandler(leftRange, rightRange)
+        autoZoomHandler(leftRange, rightRange, true)
+      }
+    }
+  }, [ticksLoading])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>

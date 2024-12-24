@@ -17,7 +17,6 @@ import {
   calculateConcentrationRange,
   convertBalanceToBN,
   determinePositionTokenBlock,
-  findClosestIndexByValue,
   parseFeeToPathFee,
   printBN,
   trimLeadingZeros,
@@ -214,40 +213,6 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
   }, [tickSpacing, midPrice.index])
-
-  useEffect(() => {
-    console.log({
-      concentrationIndex,
-      minimumSliderIndex,
-      concentrationArray,
-      positionOpeningMethod,
-      concentrationParam: initialConcentration
-    })
-
-    if (initialConcentration) {
-      const concentrationValue = parseInt(initialConcentration)
-      console.log(
-        concentrationValue,
-        positionOpeningMethod !== 'concentration',
-        !isNaN(concentrationValue)
-      )
-      if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
-        setPositionOpeningMethod('concentration')
-        onPositionOpeningMethodChange('concentration')
-      }
-      const mappedIndex = findClosestIndexByValue(concentrationArray, concentrationValue)
-
-      const validIndex = Math.max(
-        minimumSliderIndex,
-        Math.min(mappedIndex, concentrationArray.length - 1)
-      )
-      if (!ticksLoading) {
-        setTimeout(() => {
-          setConcentrationIndex(validIndex)
-        }, 4000)
-      }
-    }
-  }, [concentrationIndex, concentrationArray])
 
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
@@ -844,11 +809,14 @@ export const NewPosition: React.FC<INewPosition> = ({
             yDecimal={yDecimal}
             currentPairReversed={currentPairReversed}
             positionOpeningMethod={positionOpeningMethod}
+            setPositionOpeningMethod={setPositionOpeningMethod}
+            onPositionOpeningMethodChange={onPositionOpeningMethodChange}
             hasTicksError={hasTicksError}
             reloadHandler={reloadHandler}
             concentrationArray={concentrationArray}
             setConcentrationIndex={setConcentrationIndex}
             concentrationIndex={concentrationIndex}
+            initialConcentration={initialConcentration}
             minimumSliderIndex={minimumSliderIndex}
             getTicksInsideRange={getTicksInsideRange}
             shouldReversePlot={shouldReversePlot}
