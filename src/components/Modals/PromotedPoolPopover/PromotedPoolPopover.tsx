@@ -1,7 +1,6 @@
 import { BN } from '@coral-xyz/anchor'
 import useStyles from './style'
 import { Popover, Typography } from '@mui/material'
-import { useState, useEffect } from 'react'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
 
 export interface IPromotedPoolPopover {
@@ -22,19 +21,6 @@ export const PromotedPoolPopover = ({
   points
 }: IPromotedPoolPopover) => {
   const { classes } = useStyles()
-  const [animationTriggered, setAnimationTriggered] = useState(false)
-
-  useEffect(() => {
-    if (open && !animationTriggered) {
-      const ANIM_TIME = 500
-
-      const timer = setTimeout(() => {
-        setAnimationTriggered(true)
-      }, ANIM_TIME)
-
-      return () => clearTimeout(timer)
-    }
-  }, [open])
 
   if (!anchorEl) return null
 
@@ -64,7 +50,7 @@ export const PromotedPoolPopover = ({
       marginThreshold={16}>
       <div className={classes.root}>
         <div className={classes.container}>
-          <Typography className={classes.greyText}>This pool distribute points: </Typography>
+          <Typography className={classes.greyText}>This pool distributes points: </Typography>
           <div className={classes.insideBox}>
             <Typography className={classes.greyText}>Points per 24H</Typography>
             <Typography className={classes.whiteText}>

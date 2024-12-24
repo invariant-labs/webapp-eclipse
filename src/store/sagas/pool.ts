@@ -1,7 +1,7 @@
 import { call, put, all, spawn, takeEvery, takeLatest, select } from 'typed-redux-saga'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { PayloadAction } from '@reduxjs/toolkit'
-import { Tick } from '@invariant-labs/sdk-eclipse/src/market'
+import { Tick, TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/src/market'
 import { PublicKey } from '@solana/web3.js'
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { getConnection, handleRpcError } from './connection'
@@ -194,7 +194,7 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
         return call(
           [marketProgram, marketProgram.getClosestTicks],
           new Pair(tokenFrom, tokenTo, { fee: pool.fee, tickSpacing: pool.tickSpacing }),
-          300,
+          TICK_CROSSES_PER_IX + 3,
           undefined,
           isXtoY ? IsXtoY.Down : IsXtoY.Up
         )
