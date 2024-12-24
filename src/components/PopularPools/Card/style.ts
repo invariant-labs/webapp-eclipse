@@ -46,13 +46,37 @@ export const useStyles = makeStyles()(() => ({
   },
   symbolsContainer: {
     color: colors.invariant.text,
+    display: 'flex',
     overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
-    display: 'block',
     ...typography.heading4,
     marginBottom: '12px',
-    fontSize: 28
+    fontSize: 28,
+    '& img': {
+      height: '24px',
+      marginLeft: '8px'
+    }
+  },
+  actionButton: {
+    background: 'none',
+    padding: 0,
+    margin: 0,
+    border: 'none',
+    display: 'inline-flex',
+    position: 'relative',
+    color: colors.invariant.black,
+    textTransform: 'none',
+
+    transition: 'filter 0.2s linear',
+
+    '&:hover': {
+      filter: 'brightness(1.2)',
+      cursor: 'pointer',
+      '@media (hover: none)': {
+        filter: 'none'
+      }
+    }
   },
   back: {
     width: 'fit-content',

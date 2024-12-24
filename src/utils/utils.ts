@@ -1070,9 +1070,6 @@ export const handleSimulate = async (
         maxCrosses,
         maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX
       })
-      if (swapSimulateResult.amountPerTick.length > TICK_CROSSES_PER_IX) {
-        errorMessage.push('Too large amount')
-      }
 
       if (!byAmountIn) {
         result = swapSimulateResult.accumulatedAmountIn.add(swapSimulateResult.accumulatedFee)
@@ -1095,7 +1092,7 @@ export const handleSimulate = async (
 
         okChanges += 1
       } else if (
-        byAmountIn ? allFailedData.amountOut.lt(result) : allFailedData.amountOut.gt(result)
+        byAmountIn ? allFailedData.amountOut.lt(result) : allFailedData.amountOut.eq(MAX_U64) ? result : allFailedData.amountOut.lt(result)
       ) {
         allFailedData = {
           amountOut: result,

@@ -51,6 +51,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
           rows={1}>
           {pools.map(pool => (
             <Card
+              poolAddress={pool.poolAddress}
               addressFrom={pool.addressFrom}
               addressTo={pool.addressTo}
               iconFrom={pool.iconFrom}
