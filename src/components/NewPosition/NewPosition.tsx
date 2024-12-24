@@ -50,6 +50,7 @@ import icons from '@static/icons'
 
 export interface INewPosition {
   initialTokenFrom: string
+  initialConcentration: string
   initialTokenTo: string
   initialFee: string
   poolAddress: string
@@ -126,6 +127,7 @@ export interface INewPosition {
 export const NewPosition: React.FC<INewPosition> = ({
   initialTokenFrom,
   initialTokenTo,
+  initialConcentration,
   initialFee,
   poolAddress,
   copyPoolAddressHandler,
@@ -807,11 +809,14 @@ export const NewPosition: React.FC<INewPosition> = ({
             yDecimal={yDecimal}
             currentPairReversed={currentPairReversed}
             positionOpeningMethod={positionOpeningMethod}
+            setPositionOpeningMethod={setPositionOpeningMethod}
+            onPositionOpeningMethodChange={onPositionOpeningMethodChange}
             hasTicksError={hasTicksError}
             reloadHandler={reloadHandler}
             concentrationArray={concentrationArray}
             setConcentrationIndex={setConcentrationIndex}
             concentrationIndex={concentrationIndex}
+            initialConcentration={initialConcentration}
             minimumSliderIndex={minimumSliderIndex}
             getTicksInsideRange={getTicksInsideRange}
             shouldReversePlot={shouldReversePlot}
