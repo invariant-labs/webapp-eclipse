@@ -51,7 +51,6 @@ const TokenListItem: React.FC<IProps> = ({
 }) => {
   const { classes } = useStyles()
   // const isNegative = priceChange < 0
-  const [hasIconError, setHasIconError] = useState(isUnknown ?? false)
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
 
@@ -99,7 +98,6 @@ const TokenListItem: React.FC<IProps> = ({
                 alt='Token icon'
                 onError={e => {
                   e.currentTarget.src = icons.unknownToken
-                  setHasIconError(true)
                 }}
               />
               {isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
