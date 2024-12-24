@@ -73,7 +73,7 @@ export const Header: React.FC<IHeader> = ({
     'exchange',
     'liquidity',
     'portfolio',
-    'creator',
+    ...(typeOfNetwork === NetworkType.Testnet ? ['creator'] : []),
     ...(typeOfNetwork === NetworkType.Mainnet ? ['points'] : []),
     'statistics'
   ]
@@ -82,8 +82,9 @@ export const Header: React.FC<IHeader> = ({
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
-    creator: [/^creator\/*/],
-    ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {})
+
+    ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
+    ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
   }
 
   const [activePath, setActive] = useState('exchange')

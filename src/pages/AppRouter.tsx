@@ -28,7 +28,9 @@ const createRouter = (currentNetwork: NetworkType) =>
         <Route path='/newPosition/:item1?/:item2?/:item3?' element={<NewPositionPage />} />
         <Route path='/position/:id' element={<SinglePositionPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
-        <Route path='/creator' element={<SolanaCreator />} />
+        {currentNetwork === NetworkType.Testnet && (
+          <Route path='/creator' element={<SolanaCreator />} />
+        )}
         {currentNetwork === NetworkType.Mainnet && (
           <Route path='/points' element={<LeaderBoardPage />} />
         )}
