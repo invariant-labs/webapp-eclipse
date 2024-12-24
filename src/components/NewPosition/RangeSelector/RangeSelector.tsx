@@ -115,6 +115,70 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   const isMountedRef = useRef(false)
 
+  // useEffect(() => {
+  //   console.log({
+  //     data,
+  //     midPrice,
+  //     tokenASymbol,
+  //     tokenBSymbol,
+  //     onChangeRange,
+  //     blocked,
+  //     blockerInfo,
+  //     ticksLoading,
+  //     isXtoY,
+  //     xDecimal,
+  //     yDecimal,
+  //     tickSpacing,
+  //     currentPairReversed,
+  //     positionOpeningMethod,
+  //     poolIndex,
+  //     hasTicksError,
+  //     reloadHandler,
+  //     concentrationArray,
+  //     minimumSliderIndex,
+  //     concentrationIndex,
+  //     onPositionOpeningMethodChange,
+  //     setPositionOpeningMethod,
+  //     setConcentrationIndex,
+  //     getTicksInsideRange,
+  //     initialConcentration,
+  //     shouldReversePlot,
+  //     setShouldReversePlot,
+  //     shouldNotUpdatePriceRange,
+  //     unblockUpdatePriceRange
+  //   })
+  // }, [
+  //   data,
+  //   midPrice,
+  //   tokenASymbol,
+  //   tokenBSymbol,
+  //   onChangeRange,
+  //   blocked,
+  //   blockerInfo,
+  //   ticksLoading,
+  //   isXtoY,
+  //   xDecimal,
+  //   yDecimal,
+  //   tickSpacing,
+  //   currentPairReversed,
+  //   positionOpeningMethod,
+  //   poolIndex,
+  //   hasTicksError,
+  //   reloadHandler,
+  //   concentrationArray,
+  //   minimumSliderIndex,
+  //   concentrationIndex,
+  //   onPositionOpeningMethodChange,
+  //   setPositionOpeningMethod,
+  //   setConcentrationIndex,
+  //   getTicksInsideRange,
+  //   initialConcentration,
+  //   shouldReversePlot,
+  //   setShouldReversePlot,
+  //   shouldNotUpdatePriceRange,
+  //   unblockUpdatePriceRange
+  // ])
+
   useEffect(() => {
     isMountedRef.current = true
     return () => {
@@ -400,16 +464,20 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   useEffect(() => {
     console.log({
-      concentrationIndex,
-      minimumSliderIndex,
-      concentrationArray,
-      positionOpeningMethod,
-      concentrationParam: initialConcentration
+      // concentrationIndex,
+      // minimumSliderIndex,
+      // concentrationArray,
+      // positionOpeningMethod,
+      tokenASymbol,
+      tokenBSymbol
+
+      // concentrationParam: initialConcentration
     })
 
-    if (initialConcentration) {
+    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
+      console.log('dziala')
       const concentrationValue = parseInt(initialConcentration)
-
+      console.log(concentrationValue)
       if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
         setPositionOpeningMethod('concentration')
         onPositionOpeningMethodChange('concentration')
@@ -420,22 +488,20 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         minimumSliderIndex,
         Math.min(mappedIndex, concentrationArray.length - 1)
       )
-      if (!ticksLoading) {
-        setPreviousConcentration(cachedConcentrationArray[validIndex])
-        setConcentrationIndex(validIndex)
-        const { leftRange, rightRange } = calculateConcentrationRange(
-          tickSpacing,
-          cachedConcentrationArray[validIndex],
-          2,
-          midPrice.index,
-          isXtoY
-        )
+      setPreviousConcentration(cachedConcentrationArray[validIndex])
+      setConcentrationIndex(validIndex)
+      const { leftRange, rightRange } = calculateConcentrationRange(
+        tickSpacing,
+        cachedConcentrationArray[validIndex],
+        2,
+        midPrice.index,
+        isXtoY
+      )
 
-        changeRangeHandler(leftRange, rightRange)
-        autoZoomHandler(leftRange, rightRange, true)
-      }
+      changeRangeHandler(leftRange, rightRange)
+      autoZoomHandler(leftRange, rightRange, true)
     }
-  }, [ticksLoading])
+  }, [tokenASymbol, tokenBSymbol])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
