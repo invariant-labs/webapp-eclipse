@@ -409,11 +409,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
     if (initialConcentration) {
       const concentrationValue = parseInt(initialConcentration)
-      console.log(
-        concentrationValue,
-        positionOpeningMethod !== 'concentration',
-        !isNaN(concentrationValue)
-      )
+
       if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
         setPositionOpeningMethod('concentration')
         onPositionOpeningMethodChange('concentration')
