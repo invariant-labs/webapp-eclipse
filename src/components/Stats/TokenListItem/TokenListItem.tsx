@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { colors, theme } from '@static/theme'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
@@ -51,7 +51,7 @@ const TokenListItem: React.FC<IProps> = ({
 }) => {
   const { classes } = useStyles()
   // const isNegative = priceChange < 0
-
+  const [hasIconError, setHasIconError] = useState(isUnknown ?? false)
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
 
@@ -81,6 +81,7 @@ const TokenListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy token address to Clipboard', 'error')
       })
   }
+  const shouldShowText = icon === icons.unknownToken || !isSm
 
   return (
     <Grid>
@@ -98,11 +99,12 @@ const TokenListItem: React.FC<IProps> = ({
                 alt='Token icon'
                 onError={e => {
                   e.currentTarget.src = icons.unknownToken
+                  setHasIconError(true)
                 }}
               />
               {isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
             </Box>
-            {!isSm && (
+            {shouldShowText && (
               <Typography>
                 {isXs ? shortenAddress(symbol) : name}
                 {!isXs && (
