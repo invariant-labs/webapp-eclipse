@@ -421,20 +421,18 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         Math.min(mappedIndex, concentrationArray.length - 1)
       )
       if (!ticksLoading) {
-        setTimeout(() => {
-          setPreviousConcentration(cachedConcentrationArray[validIndex])
-          setConcentrationIndex(validIndex)
-          const { leftRange, rightRange } = calculateConcentrationRange(
-            tickSpacing,
-            cachedConcentrationArray[validIndex],
-            2,
-            midPrice.index,
-            isXtoY
-          )
+        setPreviousConcentration(cachedConcentrationArray[validIndex])
+        setConcentrationIndex(validIndex)
+        const { leftRange, rightRange } = calculateConcentrationRange(
+          tickSpacing,
+          cachedConcentrationArray[validIndex],
+          2,
+          midPrice.index,
+          isXtoY
+        )
 
-          changeRangeHandler(leftRange, rightRange)
-          autoZoomHandler(leftRange, rightRange, true)
-        }, 5000)
+        changeRangeHandler(leftRange, rightRange)
+        autoZoomHandler(leftRange, rightRange, true)
       }
     }
   }, [ticksLoading])
