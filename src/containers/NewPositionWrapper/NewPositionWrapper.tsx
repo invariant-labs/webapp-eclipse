@@ -3,6 +3,7 @@ import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_NEW_POSITION_SLIPPAGE,
+  POINTS_PER_DAY,
   bestTiers,
   commonTokensForNetworks
 } from '@store/consts/static'
@@ -45,7 +46,9 @@ import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
-
+import { getPromotedPools } from '@store/selectors/leaderboard'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 export interface IProps {
   initialTokenFrom: string
   initialTokenTo: string
@@ -68,6 +71,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const shouldNotUpdatePriceRange = useSelector(shouldNotUpdateRange)
   const currentNetwork = useSelector(network)
   const { success, inProgress } = useSelector(initPosition)
+  const promotedPools = useSelector(getPromotedPools)
+
   // const [onlyUserPositions, setOnlyUserPositions] = useState(false)
   const { allData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
   const ticksData = allData
@@ -80,6 +85,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
 
+  const [liquidity, setLiquidity] = useState<BN>(new BN(0))
+  // eslint-disable-next-line
+  const [estimatedPointsForPosition, setEstimatedPointsForPosition] = useState<BN>(new BN(0))
   const [currentPairReversed, setCurrentPairReversed] = useState<boolean | null>(null)
   const [initialLoader, setInitialLoader] = useState(true)
   const isMountedRef = useRef(false)
@@ -89,6 +97,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
+
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [])
 
   useEffect(() => {
     const pathTokens: string[] = []
@@ -174,8 +186,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isMountedRef.current = false
     }
   }, [])
-
-  const liquidityRef = useRef<BN>(new BN(0))
 
   useEffect(() => {
     setProgress('none')
@@ -370,6 +380,25 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [poolIndex])
 
+  useEffect(() => {
+    if (!poolIndex) {
+      return
+    }
+
+    const poolState = allPools[poolIndex]
+
+    if (!promotedPools.some(poolAddress => poolAddress === poolState.address.toString())) {
+      return
+    }
+
+    const estimatedPoints = liquidity
+      .mul(POINTS_PER_DAY)
+      .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+      .div(poolState.liquidity.add(liquidity))
+
+    setEstimatedPointsForPosition(estimatedPoints)
+  }, [liquidity])
+
   const addTokenHandler = (address: string) => {
     if (
       connection !== null &&
@@ -504,7 +533,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           true
         )
         if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
+          setLiquidity(result.liquidity)
         }
         return result.y
       }
@@ -516,7 +545,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         true
       )
       if (isMountedRef.current) {
-        liquidityRef.current = result.liquidity
+        setLiquidity(result.liquidity)
       }
       return result.x
     } catch (error) {
@@ -528,7 +557,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         true
       )
       if (isMountedRef.current) {
-        liquidityRef.current = result.liquidity
+        setLiquidity(result.liquidity)
       }
     }
 
@@ -683,7 +712,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             fee,
             lowerTick: lowerTickIndex,
             upperTick: upperTickIndex,
-            liquidityDelta: liquidityRef.current,
+            liquidityDelta: liquidity,
             initPool: poolIndex === null,
             initTick: poolIndex === null ? midPrice.index : undefined,
             xAmount: Math.floor(xAmount),
