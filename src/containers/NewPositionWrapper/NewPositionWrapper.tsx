@@ -152,7 +152,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const { address: fromAddress, index: fromIndex } = getTokenIndex(initialTokenFrom)
     const { address: toAddress, index: toIndex } = getTokenIndex(initialTokenTo)
 
-    const concentrationParam = initialConcentration ? `?concentration=${initialConcentration}` : ''
+    const concentrationParam = initialConcentration ? `?conc=${initialConcentration}` : ''
 
     if (fromAddress && fromIndex !== -1 && toAddress && toIndex !== -1) {
       return `/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}${concentrationParam}`

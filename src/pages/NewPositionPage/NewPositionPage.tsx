@@ -51,7 +51,7 @@ const NewPositionPage: React.FC = () => {
           initialTokenFrom={tokenFrom}
           initialTokenTo={tokenTo}
           initialFee={fee}
-          initialConcentration={searchParams.get('concentration') ?? ''}
+          initialConcentration={searchParams.get('conc') ?? ''}
         />
       </Grid>
     </Grid>
