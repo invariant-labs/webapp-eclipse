@@ -17,7 +17,7 @@ import { NetworkType } from '@store/consts/static'
 import { network } from '@store/selectors/solanaConnection'
 
 const BANNER_STORAGE_KEY = 'invariant-banner-state'
-const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
+const BANNER_HIDE_DURATION = 5000 // 24 hours
 
 const RootPage: React.FC = memo(() => {
   const [showHeader, setShowHeader] = useState(() => {
