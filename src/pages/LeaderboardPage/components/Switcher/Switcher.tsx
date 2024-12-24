@@ -44,7 +44,7 @@ export const Switcher: React.FC<ISwitcherProps> = ({ alignment, setAlignment }) 
           disableRipple
           className={classes.switchPoolsButton}
           style={{ fontWeight: alignment === 'claim' ? 700 : 400 }}>
-          Rewards
+          Claim
         </ToggleButton>
       </ToggleButtonGroup>
     </Box>

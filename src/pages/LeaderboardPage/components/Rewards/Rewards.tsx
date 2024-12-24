@@ -24,7 +24,7 @@ export const Rewards = () => {
   return (
     <Box className={classes.infoContainer}>
       <Box style={{ width: 'auto' }}>
-        <Typography className={classes.header}>Rewards</Typography>
+        <Typography className={classes.header}>Claim</Typography>
         <>
           <Typography className={classes.description}>
             Invariant Points program is designed to incentivize liquidity providers on Invariant.
