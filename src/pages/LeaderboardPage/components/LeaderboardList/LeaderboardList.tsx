@@ -122,8 +122,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
       {totalPages >= 1 && (
         <Box
           sx={{
-            paddingLeft: '24px',
-            paddingRight: '24px',
+            [theme.breakpoints.up('md')]: { paddingLeft: '24px', paddingRight: '24px' },
             maxWidth: '100%',
             display: 'flex',
             justifyContent: 'center',
@@ -146,7 +145,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
                 display: 'flex',
                 justifyContent: 'center'
               }}>
-              <Box sx={{ width: '80%' }}>
+              <Box sx={{ width: '80%', [theme.breakpoints.down('md')]: { width: '90%' } }}>
                 <PaginationList
                   pages={totalPages}
                   defaultPage={currentPage}
