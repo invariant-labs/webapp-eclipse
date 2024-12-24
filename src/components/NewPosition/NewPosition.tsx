@@ -17,6 +17,7 @@ import {
   calculateConcentrationRange,
   convertBalanceToBN,
   determinePositionTokenBlock,
+  findClosestIndexByValue,
   parseFeeToPathFee,
   printBN,
   trimLeadingZeros,
@@ -214,28 +215,6 @@ export const NewPosition: React.FC<INewPosition> = ({
     return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
   }, [tickSpacing, midPrice.index])
 
-  const mapConcentrationValueToIndex = (
-    concentrationValue: number,
-    concentrationArray: number[]
-  ): number => {
-    if (concentrationValue <= concentrationArray[0]) return 0
-    if (concentrationValue >= concentrationArray[concentrationArray.length - 1])
-      return concentrationArray.length - 1
-
-    let closestIndex = 0
-    let smallestDifference = Math.abs(concentrationArray[0] - concentrationValue)
-
-    for (let i = 1; i < concentrationArray.length; i++) {
-      const difference = Math.abs(concentrationArray[i] - concentrationValue)
-      if (difference < smallestDifference) {
-        smallestDifference = difference
-        closestIndex = i
-      }
-    }
-
-    return closestIndex
-  }
-
   useEffect(() => {
     console.log({
       concentrationIndex,
@@ -246,7 +225,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     })
 
     if (initialConcentration) {
-      const concentrationValue = parseFloat(initialConcentration)
+      const concentrationValue = parseInt(initialConcentration)
       console.log(
         concentrationValue,
         positionOpeningMethod !== 'concentration',
@@ -256,17 +235,19 @@ export const NewPosition: React.FC<INewPosition> = ({
         setPositionOpeningMethod('concentration')
         onPositionOpeningMethodChange('concentration')
       }
-      const mappedIndex = mapConcentrationValueToIndex(concentrationValue, concentrationArray)
+      const mappedIndex = findClosestIndexByValue(concentrationArray, concentrationValue)
 
       const validIndex = Math.max(
         minimumSliderIndex,
         Math.min(mappedIndex, concentrationArray.length - 1)
       )
-      setTimeout(() => {
-        setConcentrationIndex(validIndex)
-      }, 2000)
+      if (!ticksLoading) {
+        setTimeout(() => {
+          setConcentrationIndex(validIndex)
+        }, 4000)
+      }
     }
-  }, [])
+  }, [concentrationIndex, concentrationArray])
 
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
