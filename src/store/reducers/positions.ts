@@ -1,4 +1,9 @@
-import { CreatePosition, Position, PositionList, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  CreatePosition,
+  Position,
+  PositionList,
+  Tick
+} from '@invariant-labs/sdk-eclipse/lib/market'
 import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
@@ -23,6 +28,7 @@ export interface PlotTickData {
 }
 
 export interface PlotTicks {
+  rawTickIndexes: number[]
   allData: PlotTickData[]
   userData: PlotTickData[]
   loading: boolean
@@ -83,6 +89,7 @@ export interface SetPositionData {
 export const defaultState: IPositionsStore = {
   lastPage: 1,
   plotTicks: {
+    rawTickIndexes: [],
     allData: [],
     userData: [],
     loading: false
@@ -127,8 +134,13 @@ const positionsSlice = createSlice({
     },
     setPlotTicks(
       state,
-      action: PayloadAction<{ allPlotTicks: PlotTickData[]; userPlotTicks: PlotTickData[] }>
+      action: PayloadAction<{
+        allPlotTicks: PlotTickData[]
+        userPlotTicks: PlotTickData[]
+        rawTickIndexes: number[]
+      }>
     ) {
+      state.plotTicks.rawTickIndexes = action.payload.rawTickIndexes
       state.plotTicks.allData = action.payload.allPlotTicks
       state.plotTicks.userData = action.payload.userPlotTicks
       state.plotTicks.loading = false
