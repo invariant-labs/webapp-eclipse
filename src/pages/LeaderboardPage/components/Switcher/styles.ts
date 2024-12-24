@@ -13,7 +13,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
         return '0'
       case 'faq':
         return '100%'
-      case 'rewards':
+      case 'claim':
         return '200%'
       default:
         return '0'
