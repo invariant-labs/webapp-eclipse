@@ -22,7 +22,7 @@ export const LeaderBoardPage: React.FC = () => {
         </Grid>
       </Grid>
       {alignment === 'leaderboard' ? <InfoComponent /> : null}
-      {alignment === 'rewards' ? <Rewards /> : null}
+      {alignment === 'claim' ? <Rewards /> : null}
     </>
   )
 }

@@ -24,7 +24,10 @@ export const PaginationList: React.FC<IPaginationList> = ({
   return (
     <div
       className={classes.root}
-      style={{ justifyContent: position ? 'center' : `${variant}`, alignItems: 'center' }}>
+      style={{
+        justifyContent: position ? 'center' : `${variant}`,
+        alignItems: 'center'
+      }}>
       <Pagination
         count={pages}
         shape='rounded'
