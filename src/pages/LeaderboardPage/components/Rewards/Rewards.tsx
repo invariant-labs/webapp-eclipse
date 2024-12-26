@@ -24,12 +24,12 @@ export const Rewards = () => {
   return (
     <Box className={classes.infoContainer}>
       <Box style={{ width: 'auto' }}>
-        <Typography className={classes.header}>Rewards</Typography>
+        <Typography className={classes.header}>Claim</Typography>
         <>
           <Typography className={classes.description}>
-            Invariant Points are a rewards program designed to incentivize liquidity providers on
-            Invariant. Earn points by providing liquidity and participating in community activities.
-            Develop your own liquidity provision strategy and climb to the top of the leaderboard.
+            Invariant Points program is designed to incentivize liquidity providers on Invariant.
+            Earn points by providing liquidity and participating in community activities. Develop
+            your own liquidity provision strategy and climb to the top of the leaderboard.
             Accumulated points can be used for future exclusive benefits.
           </Typography>
           <Box sx={{ marginTop: '32px' }}>
@@ -92,7 +92,7 @@ export const Rewards = () => {
               flexDirection: 'column',
               marginTop: '32px'
             }}>
-            If you want to learn more about rewards and points distribution, check out our docs.
+            If you want to learn more about points distribution, check out our docs.
             <Link
               to='https://docs.invariant.app/docs/invariant_points/mechanism'
               target='_blank'
