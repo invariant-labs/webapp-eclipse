@@ -78,9 +78,16 @@ export function* getLeaderboard(
 
 export function* getLeaderboardConfig(): Generator {
   try {
-    const leaderboardConfig = yield* call(fetchLeaderboardConfig)
+    const { pointsDecimal, pointsPerSecond, refreshTime } = yield* call(fetchLeaderboardConfig)
 
-    yield* put(actions.setLeaderboardConfig(leaderboardConfig))
+    yield* put(
+      actions.setLeaderboardConfig({
+        pointsDecimal,
+        pointsPerSecond,
+        refreshTime,
+        promotedPools: ['HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce']
+      })
+    )
   } catch (error) {
     console.log(error)
   }
