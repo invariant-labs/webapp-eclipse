@@ -7,8 +7,7 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
-import { formatNumber, trimZeros } from '@utils/utils'
-import { formatLargeNumber } from '@utils/formatLargeNumber'
+import { formatNumber } from '@utils/utils'
 
 interface StatsInterface {
   percentVolume: number | null
@@ -18,17 +17,17 @@ interface StatsInterface {
   isLoading: boolean
 }
 
-// const GRAPH_ENTRIES = 30
+const GRAPH_ENTRIES = 30
 
-// const generateMockData = () => {
-//   return Array.from({ length: GRAPH_ENTRIES }, (_, index) => ({
-//     timestamp:
-//       Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24) +
-//       1000 * 60 * 60 * 12 -
-//       (GRAPH_ENTRIES - index) * (1000 * 60 * 60 * 24),
-//     value: Math.random() * 10000
-//   }))
-// }
+const generateMockData = () => {
+  return Array.from({ length: GRAPH_ENTRIES }, (_, index) => ({
+    timestamp:
+      Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24) +
+      1000 * 60 * 60 * 12 -
+      (GRAPH_ENTRIES - index) * (1000 * 60 * 60 * 24),
+    value: Math.random() * 10000
+  }))
+}
 
 const Volume: React.FC<StatsInterface> = ({
   percentVolume,
@@ -89,7 +88,9 @@ const Volume: React.FC<StatsInterface> = ({
       <div className={classes.barContainer}>
         <ResponsiveBar
           margin={{ top: 30, bottom: 30, left: 30 }}
-          data={data as Array<{ timestamp: number; value: number }>}
+          data={
+            isLoading ? generateMockData() : (data as Array<{ timestamp: number; value: number }>)
+          }
           keys={['value']}
           indexBy='timestamp'
           axisBottom={{
@@ -122,7 +123,7 @@ const Volume: React.FC<StatsInterface> = ({
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'
                   dominantBaseline='center'>
-                  {trimZeros(formatLargeNumber(value))}
+                  {formatNumber(value, true)}
                 </text>
               </g>
             )
