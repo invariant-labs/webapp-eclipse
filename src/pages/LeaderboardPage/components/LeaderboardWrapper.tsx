@@ -41,9 +41,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const promotedPools = useSelector(getPromotedPools)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const promotedPoolsData = promotedPools
-    .map(pool =>
-      poolsList.find(poolWithData => poolWithData.poolAddress.toString() === pool.address)
-    )
+    .map(pool => poolsList.find(poolWithData => poolWithData.poolAddress.toString() === pool))
     .filter(poolData => !!poolData)
   useEffect(() => {
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
