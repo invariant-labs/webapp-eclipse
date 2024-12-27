@@ -92,11 +92,12 @@ export const HeaderWrapper: React.FC = () => {
 
   const shouldResetRpc = useMemo(() => {
     const defaultRpcNumber = localStorage.getItem(`INVARIANT_DEFAULT_RPC_NUMBER`)
-
+    console.log(defaultRpcNumber)
     const currentRpcNumber =
       RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet].slice(-12, -1) +
       RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet].slice(-15, -5) +
       RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet].slice(-15, -5)
+    console.log(currentRpcNumber)
 
     if (defaultRpcNumber === null || currentRpcNumber !== defaultRpcNumber) {
       localStorage.setItem(`INVARIANT_DEFAULT_RPC_NUMBER`, currentRpcNumber)
