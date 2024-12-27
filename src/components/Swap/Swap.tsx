@@ -39,7 +39,7 @@ import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { DECIMAL, fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
@@ -459,9 +459,8 @@ export const Swap: React.FC<ISwap> = ({
     }
 
     if (
-      isError('At the end of price range') ||
-      isError('Price would cross swap limit') ||
-      isError('Too large liquidity gap')
+      isError(SimulationStatus.SwapStepLimitReached) ||
+      isError(SimulationStatus.PriceLimitReached)
     ) {
       return 'Insufficient liquidity'
     }
@@ -490,15 +489,10 @@ export const Swap: React.FC<ISwap> = ({
     }
 
     if (
-      (convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals).eqn(0) ||
-        isError('Amount out is zero')) &&
-      !simulateResult.error.length
+      convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals).eqn(0) ||
+      isError(SimulationStatus.NoGainSwap)
     ) {
       return 'Insufficient amount'
-    }
-
-    if (isError('Too large amount')) {
-      return 'Not enough liquidity'
     }
 
     if (!isEveryPoolEmpty && amountTo === '') {
@@ -507,6 +501,12 @@ export const Swap: React.FC<ISwap> = ({
 
     if (isEveryPoolEmpty) {
       return 'RPC connection error'
+    }
+
+    // Fallback error message
+    if (simulateResult.error.length !== 0) {
+      console.warn('Errors not handled explictly', simulateResult.error)
+      return 'Not enough liquidity'
     }
 
     return 'Exchange'

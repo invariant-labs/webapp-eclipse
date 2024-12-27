@@ -7,13 +7,19 @@ import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
 import icons from '@static/icons'
 import RevertIcon from '@static/svg/revert.svg'
-import { shortenAddress } from '@utils/uiUtils'
+import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import backIcon from '@static/svg/back-arrow-2.svg'
 import { addressToTicker, formatNumber, parseFeeToPathFee } from '@utils/utils'
 import { useNavigate } from 'react-router-dom'
 import { NetworkType } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { useSelector } from 'react-redux'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { BN } from '@coral-xyz/anchor'
+import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
+
 export interface ICard extends PopularPoolData {
   isLoading: boolean
   network: NetworkType
@@ -26,6 +32,7 @@ const Card: React.FC<ICard> = ({
   TVL,
   apy,
   // apyData,
+  poolAddress,
   isLoading,
   isUnknownFrom,
   fee,
@@ -40,6 +47,23 @@ const Card: React.FC<ICard> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
+  const airdropIconRef = useRef<any>(null)
+
+  const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
+  const { promotedPools } = useSelector(leaderboardSelectors.config)
+  const apr = apyToApr(apy ?? 0)
+
+  const { isPromoted, pointsPerSecond } = useMemo(() => {
+    if (!poolAddress) {
+      return { isPromoted: false, pointsPerSecond: '00' }
+    }
+
+    const promotedPool = promotedPools.find(pool => pool.address === poolAddress.toString())
+    return {
+      isPromoted: Boolean(promotedPool),
+      pointsPerSecond: promotedPool?.pointsPerSecond || '00'
+    }
+  }, [promotedPools, poolAddress])
 
   const handleOpenPosition = () => {
     if (fee === undefined) return
@@ -55,6 +79,9 @@ const Card: React.FC<ICard> = ({
       { state: { referer: 'liquidity' } }
     )
   }
+  useEffect(() => {
+    console.log(airdropIconRef)
+  }, [airdropIconRef.current])
 
   return (
     <Grid className={classes.root}>
@@ -113,7 +140,32 @@ const Card: React.FC<ICard> = ({
               </Grid>
 
               <Typography className={classes.symbolsContainer}>
-                {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}
+                {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}{' '}
+                {isPromoted && (
+                  <>
+                    <div
+                      ref={airdropIconRef}
+                      className={classes.actionButton}
+                      onPointerLeave={() => {
+                        setIsPromotedPoolPopoverOpen(false)
+                      }}
+                      onPointerEnter={() => {
+                        setIsPromotedPoolPopoverOpen(true)
+                      }}>
+                      <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '24px' }} />
+                    </div>
+                    <PromotedPoolPopover
+                      anchorEl={airdropIconRef.current}
+                      open={isPromotedPoolPopoverOpen}
+                      onClose={() => {
+                        setIsPromotedPoolPopoverOpen(false)
+                      }}
+                      apr={apr ?? 0}
+                      apy={apy ?? 0}
+                      points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+                    />
+                  </>
+                )}
               </Typography>
               <Grid container gap='8px'>
                 {apy !== undefined && showAPY && (

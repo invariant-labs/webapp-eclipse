@@ -46,8 +46,7 @@ import {
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
   createNativeAtaInstructions,
-  createNativeAtaWithTransferInstructions,
-  MIN_BALANCE_FOR_RENT_EXEMPT
+  createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 
@@ -139,12 +138,16 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       undefined,
       {
         tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
-        tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
-        minRentExemption: MIN_BALANCE_FOR_RENT_EXEMPT[net]
+        tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram
       }
     )
 
-    combinedTransaction.add(createIx).add(transferIx).add(initIx).add(createPositionTx).add(unwrapIx)
+    combinedTransaction
+      .add(createIx)
+      .add(transferIx)
+      .add(initIx)
+      .add(createPositionTx)
+      .add(unwrapIx)
 
     // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
     // initialTx.recentBlockhash = initialBlockhash.blockhash
@@ -355,7 +358,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     const tokensAccounts = yield* select(accounts)
     const allTokens = yield* select(tokens)
     const allPools = yield* select(poolsArraySortedByFees)
-    // const ticks = yield* select(plotTicks)
+    const ticks = yield* select(plotTicks)
 
     const pair = new Pair(data.tokenX, data.tokenY, {
       fee: data.fee,
@@ -404,6 +407,19 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     combinedTransaction.add(createIx).add(transferIx).add(initIx)
 
+    const upperTickExists =
+      !ticks.hasError &&
+      !ticks.loading &&
+      ticks.rawTickIndexes.find(t => t === data.upperTick) !== undefined
+        ? true
+        : undefined
+    const lowerTickExists =
+      !ticks.hasError &&
+      !ticks.loading &&
+      ticks.rawTickIndexes.find(t => t === data.lowerTick) !== undefined
+        ? true
+        : undefined
+
     const initPositionTx = yield* call(
       [marketProgram, marketProgram.createPositionTx],
       {
@@ -418,22 +434,11 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
         knownPrice: data.knownPrice
       },
       {
-        // lowerTickExists:
-        //   !ticks.hasError &&
-        //   !ticks.loading &&
-        //   ticks.allData.find(t => t.index === data.lowerTick) !== undefined
-        //     ? true
-        //     : undefined,
-        // upperTickExists:
-        //   !ticks.hasError &&
-        //   !ticks.loading &&
-        //   ticks.allData.find(t => t.index === data.upperTick) !== undefined
-        //     ? true
-        //     : undefined,
+        lowerTickExists,
+        upperTickExists,
         pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
         tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
         tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
-        minRentExemption: MIN_BALANCE_FOR_RENT_EXEMPT[net],
         positionsList: !userPositionList.loading ? userPositionList : undefined
       }
     )
@@ -639,13 +644,13 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
           lowerTickExists:
             !ticks.hasError &&
             !ticks.loading &&
-            ticks.userData.find(t => t.index === action.payload.lowerTick) !== undefined
+            ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
               ? true
               : undefined,
           upperTickExists:
             !ticks.hasError &&
             !ticks.loading &&
-            ticks.userData.find(t => t.index === action.payload.upperTick) !== undefined
+            ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
               ? true
               : undefined,
           pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
@@ -788,7 +793,13 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
       yDecimal
     )
 
-    yield put(actions.setPlotTicks({ allPlotTicks: ticksData, userPlotTicks: userTicks }))
+    yield put(
+      actions.setPlotTicks({
+        allPlotTicks: ticksData,
+        userPlotTicks: userTicks,
+        rawTickIndexes: rawTicks.map(t => t.index)
+      })
+    )
   } catch (error) {
     console.log(error)
     const data = createPlaceholderLiquidityPlot(

@@ -7,8 +7,10 @@ import { actions } from '@store/reducers/stats'
 import { Grid } from '@mui/material'
 import { network } from '@store/selectors/solanaConnection'
 import { getPopularPools } from '@store/consts/static'
+import { PublicKey } from '@solana/web3.js'
 
 export interface PopularPoolData {
+  poolAddress?: PublicKey
   symbolFrom?: string
   symbolTo?: string
   iconFrom?: string
@@ -59,6 +61,7 @@ export const PopularPoolsWrapper: React.FC = () => {
       )
       if (poolData) {
         data.push({
+          poolAddress: poolData.poolAddress,
           symbolFrom: poolData?.tokenXDetails?.symbol ?? pool.tokenX,
           symbolTo: poolData?.tokenYDetails?.symbol ?? pool.tokenY,
           iconFrom: poolData?.tokenXDetails?.logoURI ?? icons.unknownToken,
