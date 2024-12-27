@@ -7,6 +7,7 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
 import { formatNumber } from '@utils/utils'
+import { formatLargeNumber } from '@utils/formatBigNumber'
 
 interface LiquidityInterface {
   liquidityPercent: number | null
@@ -75,7 +76,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           data={[
             {
               id: 'liquidity',
-              data: (isLoading ? generateMockData() : data).map(({ timestamp, value }) => ({
+              data: data.map(({ timestamp, value }) => ({
                 x: new Date(timestamp).toLocaleDateString('en-GB'),
                 y: value
               }))
@@ -108,7 +109,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'
                   dominantBaseline='center'>
-                  {formatNumber(value, true)}
+                  {formatLargeNumber(value)}
                 </text>
               </g>
             )

@@ -7,7 +7,8 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
-import { formatNumber } from '@utils/utils'
+import { formatNumber, formatNumberWithCommas } from '@utils/utils'
+import { formatLargeNumber } from '@utils/formatBigNumber'
 
 interface StatsInterface {
   percentVolume: number | null
@@ -88,9 +89,7 @@ const Volume: React.FC<StatsInterface> = ({
       <div className={classes.barContainer}>
         <ResponsiveBar
           margin={{ top: 30, bottom: 30, left: 30 }}
-          data={
-            isLoading ? generateMockData() : (data as Array<{ timestamp: number; value: number }>)
-          }
+          data={data as Array<{ timestamp: number; value: number }>}
           keys={['value']}
           indexBy='timestamp'
           axisBottom={{
@@ -123,7 +122,7 @@ const Volume: React.FC<StatsInterface> = ({
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'
                   dominantBaseline='center'>
-                  {formatNumber(value, true)}
+                  {formatLargeNumber(value)}
                 </text>
               </g>
             )
