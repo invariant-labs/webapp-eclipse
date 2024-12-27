@@ -1,3 +1,5 @@
+import { trimZeros } from './utils'
+
 export const formatLargeNumber = (number: number) => {
   const suffixes = ['', 'K', 'M', 'B', 'T', 'Q']
 
@@ -8,5 +10,5 @@ export const formatLargeNumber = (number: number) => {
   const suffixIndex = Math.floor(Math.log10(number) / 3)
   const scaledNumber = number / Math.pow(1000, suffixIndex)
 
-  return `${scaledNumber.toFixed(1)}${suffixes[suffixIndex]}`
+  return `${trimZeros(scaledNumber.toFixed(1))}${suffixes[suffixIndex]}`
 }
