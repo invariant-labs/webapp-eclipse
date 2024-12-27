@@ -382,6 +382,7 @@ export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
   MAIN_HELIUS = 'https://eclipse.helius-rpc.com',
+  MAIN_TRITON = 'https://invarian-eclipse-1c78.mainnet.eclipse.rpcpool.com/',
   MAIN_LGNS = 'https://eclipse.lgns.net',
   DEV = 'https://staging-rpc.dev2.eclipsenetwork.xyz',
   DEV_EU = 'https://staging-rpc-eu.dev2.eclipsenetwork.xyz',
@@ -718,7 +719,7 @@ export const enum SortTypeTokenList {
 
 export const RECOMMENDED_RPC_ADDRESS = {
   [NetworkType.Testnet]: RPC.TEST,
-  [NetworkType.Mainnet]: RPC.MAIN_HELIUS,
+  [NetworkType.Mainnet]: RPC.MAIN_TRITON,
   [NetworkType.Devnet]: RPC.DEV_EU,
   [NetworkType.Local]: ''
 }
