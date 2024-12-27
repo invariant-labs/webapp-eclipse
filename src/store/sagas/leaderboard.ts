@@ -78,12 +78,12 @@ export function* getLeaderboard(
 
 export function* getLeaderboardConfig(): Generator {
   try {
-    const { pointsDecimal, pointsPerSecond, refreshTime } = yield* call(fetchLeaderboardConfig)
+    const { pointsDecimal, refreshTime } = yield* call(fetchLeaderboardConfig)
 
     yield* put(
       actions.setLeaderboardConfig({
         pointsDecimal,
-        pointsPerSecond,
+        pointsPerSecond: '64',
         refreshTime,
         promotedPools: ['HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce']
       })
