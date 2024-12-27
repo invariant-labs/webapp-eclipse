@@ -6,8 +6,7 @@ import { colors, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
-import { formatNumber, trimZeros } from '@utils/utils'
-import { formatLargeNumber } from '@utils/formatLargeNumber'
+import { formatNumber } from '@utils/utils'
 
 interface LiquidityInterface {
   liquidityPercent: number | null
@@ -17,17 +16,17 @@ interface LiquidityInterface {
   isLoading: boolean
 }
 
-// const GRAPH_ENTRIES = 30
+const GRAPH_ENTRIES = 30
 
-// const generateMockData = () => {
-//   return Array.from({ length: GRAPH_ENTRIES }, (_, index) => ({
-//     timestamp:
-//       Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24) +
-//       1000 * 60 * 60 * 12 -
-//       (GRAPH_ENTRIES - index) * (1000 * 60 * 60 * 24),
-//     value: Math.random() * 10000
-//   }))
-// }
+const generateMockData = () => {
+  return Array.from({ length: GRAPH_ENTRIES }, (_, index) => ({
+    timestamp:
+      Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24) +
+      1000 * 60 * 60 * 12 -
+      (GRAPH_ENTRIES - index) * (1000 * 60 * 60 * 24),
+    value: Math.random() * 10000
+  }))
+}
 
 const Liquidity: React.FC<LiquidityInterface> = ({
   liquidityPercent,
@@ -76,7 +75,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           data={[
             {
               id: 'liquidity',
-              data: data.map(({ timestamp, value }) => ({
+              data: (isLoading ? generateMockData() : data).map(({ timestamp, value }) => ({
                 x: new Date(timestamp).toLocaleDateString('en-GB'),
                 y: value
               }))
@@ -109,7 +108,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'
                   dominantBaseline='center'>
-                  {trimZeros(formatLargeNumber(value))}
+                  {formatNumber(value, true)}
                 </text>
               </g>
             )
