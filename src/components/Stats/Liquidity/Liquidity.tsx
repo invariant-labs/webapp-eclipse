@@ -6,8 +6,8 @@ import { colors, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
-import { formatNumber } from '@utils/utils'
-import { formatLargeNumber } from '@utils/formatBigNumber'
+import { formatNumber, trimZeros } from '@utils/utils'
+import { formatLargeNumber } from '@utils/formatLargeNumber'
 
 interface LiquidityInterface {
   liquidityPercent: number | null
@@ -109,7 +109,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'
                   dominantBaseline='center'>
-                  {formatLargeNumber(value)}
+                  {trimZeros(formatLargeNumber(value))}
                 </text>
               </g>
             )

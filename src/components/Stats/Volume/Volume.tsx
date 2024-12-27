@@ -7,8 +7,8 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
-import { formatNumber } from '@utils/utils'
-import { formatLargeNumber } from '@utils/formatBigNumber'
+import { formatNumber, trimZeros } from '@utils/utils'
+import { formatLargeNumber } from '@utils/formatLargeNumber'
 
 interface StatsInterface {
   percentVolume: number | null
@@ -122,7 +122,7 @@ const Volume: React.FC<StatsInterface> = ({
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'
                   dominantBaseline='center'>
-                  {formatLargeNumber(value)}
+                  {trimZeros(formatLargeNumber(value))}
                 </text>
               </g>
             )
