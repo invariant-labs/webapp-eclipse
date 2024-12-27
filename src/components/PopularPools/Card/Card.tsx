@@ -50,11 +50,19 @@ const Card: React.FC<ICard> = ({
   const airdropIconRef = useRef<any>(null)
 
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
-  const { promotedPools, pointsPerSecond } = useSelector(leaderboardSelectors.config)
+  const { promotedPools } = useSelector(leaderboardSelectors.config)
   const apr = apyToApr(apy ?? 0)
 
-  const isPromoted = useMemo(() => {
-    return promotedPools?.includes(poolAddress?.toString() ?? '')
+  const { isPromoted, pointsPerSecond } = useMemo(() => {
+    if (!poolAddress) {
+      return { isPromoted: false, pointsPerSecond: '00' }
+    }
+
+    const promotedPool = promotedPools.find(pool => pool.address === poolAddress.toString())
+    return {
+      isPromoted: Boolean(promotedPool),
+      pointsPerSecond: promotedPool?.pointsPerSecond || '00'
+    }
   }, [promotedPools, poolAddress])
 
   const handleOpenPosition = () => {

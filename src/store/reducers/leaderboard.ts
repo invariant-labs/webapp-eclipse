@@ -2,6 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
+import { IConfigResponse, IPromotedPoolsResponse } from '@store/sagas/leaderboard'
 
 export interface UserStats {
   points: BN
@@ -21,12 +22,7 @@ export interface ILeaderboardStore {
   currentPage: number
   totalItems: number
   itemsPerPage: number
-  config: {
-    refreshTime: number
-    pointsPerSecond: string
-    pointsDecimal: number
-    promotedPools: string[]
-  }
+  config: IConfigResponse
 }
 
 export const defaultState: ILeaderboardStore = {
@@ -37,7 +33,7 @@ export const defaultState: ILeaderboardStore = {
   currentPage: 1,
   totalItems: 0,
   itemsPerPage: 25,
-  config: { refreshTime: 0, pointsPerSecond: '0', pointsDecimal: 0, promotedPools: [] }
+  config: { refreshTime: 0, pointsDecimal: 0, promotedPools: [] }
 }
 
 export const leaderboardSliceName = 'leaderboard'
@@ -85,14 +81,12 @@ const leaderboardSlice = createSlice({
       state,
       action: PayloadAction<{
         refreshTime: number
-        pointsPerSecond: string
         pointsDecimal: number
-        promotedPools: string[]
+        promotedPools: IPromotedPoolsResponse[]
       }>
     ) {
       state.config = {
         refreshTime: action.payload.refreshTime,
-        pointsPerSecond: action.payload.pointsPerSecond,
         pointsDecimal: action.payload.pointsDecimal,
         promotedPools: action.payload.promotedPools ?? []
       }
