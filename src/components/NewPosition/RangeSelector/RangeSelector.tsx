@@ -23,6 +23,9 @@ export interface IRangeSelector {
   midPrice: TickPlotPositionData
   tokenASymbol: string
   tokenBSymbol: string
+  updatePath: {
+    update: (param?: any) => void
+  }
   onChangeRange: (leftIndex: number, rightIndex: number) => void
   blocked?: boolean
   blockerInfo?: string
@@ -52,6 +55,7 @@ export interface IRangeSelector {
     rightInRange: number
   }
   shouldReversePlot: boolean
+
   setShouldReversePlot: (val: boolean) => void
   shouldNotUpdatePriceRange: boolean
   unblockUpdatePriceRange: () => void
@@ -64,6 +68,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   midPrice,
   tokenASymbol,
   tokenBSymbol,
+  updatePath,
   onChangeRange,
   blocked = false,
   blockerInfo,
@@ -115,70 +120,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   const isMountedRef = useRef(false)
 
-  // useEffect(() => {
-  //   console.log({
-  //     data,
-  //     midPrice,
-  //     tokenASymbol,
-  //     tokenBSymbol,
-  //     onChangeRange,
-  //     blocked,
-  //     blockerInfo,
-  //     ticksLoading,
-  //     isXtoY,
-  //     xDecimal,
-  //     yDecimal,
-  //     tickSpacing,
-  //     currentPairReversed,
-  //     positionOpeningMethod,
-  //     poolIndex,
-  //     hasTicksError,
-  //     reloadHandler,
-  //     concentrationArray,
-  //     minimumSliderIndex,
-  //     concentrationIndex,
-  //     onPositionOpeningMethodChange,
-  //     setPositionOpeningMethod,
-  //     setConcentrationIndex,
-  //     getTicksInsideRange,
-  //     initialConcentration,
-  //     shouldReversePlot,
-  //     setShouldReversePlot,
-  //     shouldNotUpdatePriceRange,
-  //     unblockUpdatePriceRange
-  //   })
-  // }, [
-  //   data,
-  //   midPrice,
-  //   tokenASymbol,
-  //   tokenBSymbol,
-  //   onChangeRange,
-  //   blocked,
-  //   blockerInfo,
-  //   ticksLoading,
-  //   isXtoY,
-  //   xDecimal,
-  //   yDecimal,
-  //   tickSpacing,
-  //   currentPairReversed,
-  //   positionOpeningMethod,
-  //   poolIndex,
-  //   hasTicksError,
-  //   reloadHandler,
-  //   concentrationArray,
-  //   minimumSliderIndex,
-  //   concentrationIndex,
-  //   onPositionOpeningMethodChange,
-  //   setPositionOpeningMethod,
-  //   setConcentrationIndex,
-  //   getTicksInsideRange,
-  //   initialConcentration,
-  //   shouldReversePlot,
-  //   setShouldReversePlot,
-  //   shouldNotUpdatePriceRange,
-  //   unblockUpdatePriceRange
-  // ])
-
   useEffect(() => {
     isMountedRef.current = true
     return () => {
@@ -193,6 +134,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setPlotMin(newMin)
     setPlotMax(newMax)
   }
+
+  useEffect(() => {
+    updatePath.update()
+  }, [concentrationIndex])
 
   const zoomPlus = () => {
     const diff = plotMax - plotMin
@@ -463,21 +408,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }, [tokenASymbol, tokenBSymbol])
 
   useEffect(() => {
-    console.log({
-      // concentrationIndex,
-      // minimumSliderIndex,
-      // concentrationArray,
-      // positionOpeningMethod,
-      tokenASymbol,
-      tokenBSymbol
-
-      // concentrationParam: initialConcentration
-    })
-
     if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
-      console.log('dziala')
       const concentrationValue = parseInt(initialConcentration)
-      console.log(concentrationValue)
       if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
         setPositionOpeningMethod('concentration')
         onPositionOpeningMethodChange('concentration')
