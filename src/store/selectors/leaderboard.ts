@@ -7,6 +7,7 @@ import {
 } from '../reducers/leaderboard'
 import { AnyProps, keySelectors } from './helpers'
 import { PublicKey } from '@solana/web3.js'
+import { IPromotedPoolsResponse } from '@store/sagas/leaderboard'
 
 const store = (s: AnyProps) => s[leaderboardSliceName] as ILeaderboardStore
 
@@ -42,23 +43,12 @@ export const leaderboardSelectors = {
   config
 }
 
-export const getPointsPerSecond = createSelector(
-  config,
-  (config: {
-    refreshTime: number
-    pointsPerSecond: string
-    pointsDecimal: number
-    promotedPools: string[]
-  }) => config.pointsPerSecond
-)
-
 export const getPromotedPools = createSelector(
   config,
   (config: {
     refreshTime: number
-    pointsPerSecond: string
     pointsDecimal: number
-    promotedPools: string[]
+    promotedPools: IPromotedPoolsResponse[]
   }) => config.promotedPools
 )
 
