@@ -9,14 +9,11 @@ interface IResponse {
   leaderboard: UserStats[]
   totalItems: number
 }
-export interface IPromotedPoolsResponse {
-  address: string
-  pointsPerSecond: string
-}
-export interface IConfigResponse {
+interface IConfigResponse {
   refreshTime: number
+  pointsPerSecond: string
   pointsDecimal: number
-  promotedPools: IPromotedPoolsResponse[]
+  promotedPools: string[]
 }
 async function fetchLeaderboardData(
   network: string,
