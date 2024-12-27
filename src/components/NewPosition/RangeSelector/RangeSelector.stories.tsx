@@ -53,6 +53,9 @@ export const Primary: Story = {
     getTicksInsideRange: () => ({ leftInRange: 0, rightInRange: 100 }),
     minimumSliderIndex: 0,
     onChangeRange: fn(),
+    updatePath: {
+      update: fn()
+    },
     initialConcentration: '1100',
     onPositionOpeningMethodChange: fn(),
     setPositionOpeningMethod: fn(),
