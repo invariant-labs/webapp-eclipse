@@ -91,19 +91,39 @@ export const HeaderWrapper: React.FC = () => {
   }, [])
 
   const shouldResetRpc = useMemo(() => {
-    const defaultRpcNumber = localStorage.getItem(`INVARIANT_DEFAULT_RPC_NUMBER`)
-    console.log(defaultRpcNumber)
-    const currentRpcNumber =
-      RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet].slice(-12, -1) +
-      RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet].slice(-15, -5) +
-      RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet].slice(-15, -5)
-    console.log(currentRpcNumber)
+    const generateHash = (str: string): string => {
+      let hash = 0
 
-    if (defaultRpcNumber === null || currentRpcNumber !== defaultRpcNumber) {
-      localStorage.setItem(`INVARIANT_DEFAULT_RPC_NUMBER`, currentRpcNumber)
-      return true
-    } else {
+      for (let i = 0; i < str.length; i++) {
+        const char = str.charCodeAt(i)
+        hash = (hash << 5) - hash + char
+        hash = hash & hash
+      }
+
+      return Math.abs(hash).toString(16).padStart(8, '0')
+    }
+
+    const STORAGE_KEY = 'INVARIANT_RPC_HASH'
+
+    const currentAddresses =
+      RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet] +
+      RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet] +
+      RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet]
+
+    const currentHash = generateHash(currentAddresses)
+
+    try {
+      const storedHash = localStorage.getItem(STORAGE_KEY)
+
+      if (storedHash === null || currentHash !== storedHash) {
+        localStorage.setItem(STORAGE_KEY, currentHash)
+        return true
+      }
+
       return false
+    } catch (error) {
+      console.error('Error accessing localStorage:', error)
+      return true
     }
   }, [])
 
@@ -115,6 +135,7 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet]
       )
+      window.location.reload()
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.TEST : lastRPC
@@ -128,6 +149,7 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet]
       )
+      window.location.reload()
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.DEV_EU : lastRPC
@@ -141,6 +163,7 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet]
       )
+      window.location.reload()
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.MAIN : lastRPC
