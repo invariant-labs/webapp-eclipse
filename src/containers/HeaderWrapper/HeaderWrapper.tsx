@@ -135,6 +135,7 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet]
       )
+      window.location.reload()
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.TEST : lastRPC
