@@ -78,6 +78,7 @@ const VolumeBar: React.FC<Iprops> = ({
           </Typography>
         )}
       </Box>
+
       <Box className={classes.tokenName}>
         <Typography className={classes.tokenHeader}>Fees 24H:</Typography>
         <Typography className={classes.tokenContent}>

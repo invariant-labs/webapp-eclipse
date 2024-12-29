@@ -28,6 +28,23 @@ export const useStyles = makeStyles()(() => ({
       '& p': {
         ...typography.caption4
       }
+    },
+    '&:&:nth-of-type(3)': {
+      width: 'auto',
+      justifyContent: 'flex-start'
+    },
+
+    [theme.breakpoints.down('md')]: {
+      '&:nth-of-type(1), &:nth-of-type(2)': {
+        justifyContent: 'center',
+        gap: 4,
+        textAlign: 'center'
+      },
+      '&:nth-of-type(3)': {
+        width: '100%',
+        marginTop: '8px',
+        justifyContent: 'center'
+      }
     }
   },
 
