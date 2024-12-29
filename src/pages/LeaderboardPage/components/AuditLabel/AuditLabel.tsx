@@ -9,6 +9,7 @@ export const AuditLabel = () => {
         width: '100%',
         justifyContent: 'center',
         margin: '20px 0',
+        opacity: 0.3,
         alignItems: 'center'
       }}>
       <img src={icons.auditIcon} alt='Shield' />
