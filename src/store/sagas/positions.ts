@@ -14,6 +14,8 @@ import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { accounts } from '@store/selectors/solanaWallet'
+import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
+
 import {
   Transaction,
   sendAndConfirmRawTransaction,
@@ -303,6 +305,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
         })
       )
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
@@ -520,6 +523,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
         })
       )
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
@@ -739,6 +743,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
         })
       )
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
@@ -1070,6 +1075,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
         })
       )
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
@@ -1233,7 +1239,9 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
           txid: error.signature
         })
       )
+
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
@@ -1409,6 +1417,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
         })
       )
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
@@ -1582,6 +1591,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
         })
       )
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
