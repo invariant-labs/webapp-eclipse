@@ -11,6 +11,7 @@ import trapezeRight from '@static/png/trapezeRight.png'
 
 import trapezeMobileTop from '@static/png/trapezeMobileTop.png'
 import trapezeMobileBottom from '@static/png/trapezeMobileBottom.png'
+import trapezeNewDesktopBottom from '@static/png/trapezeNewDesktopBottom.png'
 import boxModalMiddle from '@static/png/boxMobileMiddle.png'
 
 import { useSelector } from 'react-redux'
@@ -75,8 +76,11 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
         <Box sx={{ marginTop: '24px' }}>
           <ProgressItem
             background={{
-              desktop: trapezeMobileBottom,
+              desktop: trapezeNewDesktopBottom,
               mobile: trapezeMobileBottom
+            }}
+            blockHeight={{
+              desktop: '89px'
             }}
             tooltip='Points amount refreshes roughly every 30 minutes.'
             desktopLabelAligment='center'

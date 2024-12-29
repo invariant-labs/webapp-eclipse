@@ -50,13 +50,13 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
       sx={{
         width: isWideBlock ? '100%' : '233px',
         height: blockHeight?.desktop ? blockHeight?.desktop : '88px',
+        backgroundSize: 'cover',
         [theme.breakpoints.down('md')]: {
           width: '335px',
           backgroundImage: `url(${background.mobile})`,
-          backgroundSize: 'cover',
           height: blockHeight?.mobile ? blockHeight?.mobile : '88px'
         },
-        backgroundSize: 'contain',
+        // backgroundSize: 'contain',
         backgroundImage: `url(${background.desktop})`,
         backgroundRepeat: 'no-repeat',
         boxSizing: 'border-box',
