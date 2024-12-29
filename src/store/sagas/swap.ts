@@ -30,6 +30,7 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
+import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -290,6 +291,7 @@ export function* handleSwapWithETH(): Generator {
         })
       )
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
@@ -452,6 +454,7 @@ export function* handleSwap(): Generator {
         })
       )
       yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
     } else {
       yield put(
         snackbarsActions.add({
