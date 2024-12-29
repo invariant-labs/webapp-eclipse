@@ -109,6 +109,11 @@ export const Header: React.FC<IHeader> = ({
   const mainnetRPCs: ISelectNetwork[] = [
     {
       networkType: NetworkType.Mainnet,
+      rpc: RPC.MAIN_TRITON,
+      rpcName: 'Triton'
+    },
+    {
+      networkType: NetworkType.Mainnet,
       rpc: RPC.MAIN_HELIUS,
       rpcName: 'Helius'
     },
@@ -240,21 +245,6 @@ export const Header: React.FC<IHeader> = ({
                 rpcStatus={rpcStatus}
               />
             </Box>
-            <Box
-              sx={{
-                display: {
-                  md: 'block',
-                  '@media (max-width: 1050px)': {
-                    display: 'none'
-                  }
-                }
-              }}>
-              <SelectChainButton
-                activeChain={activeChain}
-                chains={CHAINS}
-                onSelect={onChainSelect}
-              />
-            </Box>
             <SelectNetworkButton
               name={typeOfNetwork}
               networks={[
@@ -279,6 +269,21 @@ export const Header: React.FC<IHeader> = ({
               ]}
               onSelect={onNetworkSelect}
             />
+            <Box
+              sx={{
+                display: {
+                  md: 'block',
+                  '@media (max-width: 1050px)': {
+                    display: 'none'
+                  }
+                }
+              }}>
+              <SelectChainButton
+                activeChain={activeChain}
+                chains={CHAINS}
+                onSelect={onChainSelect}
+              />
+            </Box>
           </Grid>
 
           <Grid>
