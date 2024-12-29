@@ -54,7 +54,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           desktopLabelAligment='right'
           label='Total points'
           value={
-            userStats
+            new BN(userStats?.points).isZero() && userStats
               ? formatNumberWithCommas(
                   printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)
                 )
