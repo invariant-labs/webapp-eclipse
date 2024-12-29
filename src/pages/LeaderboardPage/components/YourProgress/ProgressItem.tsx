@@ -1,4 +1,4 @@
-import { Box, Tooltip, Typography, Skeleton } from '@mui/material'
+import { Box, Tooltip, Typography } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
@@ -45,6 +45,30 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
     return alignments[align]
   }
 
+  const blurAnimation = {
+    '@keyframes pulseBlur': {
+      '0%': {
+        filter: 'blur(4px)',
+        opacity: 0.7
+      },
+      '50%': {
+        filter: 'blur(6px)',
+        opacity: 0.5
+      },
+      '100%': {
+        filter: 'blur(4px)',
+        opacity: 0.7
+      }
+    }
+  }
+
+  const loadingStyles = {
+    animation: isLoading ? 'pulseBlur 1.5s ease-in-out infinite' : 'none',
+    transition: 'all 0.3s ease-out',
+    filter: isLoading ? 'blur(4px)' : 'blur(0)',
+    opacity: isLoading ? 0.7 : 1
+  }
+
   return (
     <Box
       sx={{
@@ -56,11 +80,11 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           backgroundImage: `url(${background.mobile})`,
           height: blockHeight?.mobile ? blockHeight?.mobile : '88px'
         },
-        // backgroundSize: 'contain',
         backgroundImage: `url(${background.desktop})`,
         backgroundRepeat: 'no-repeat',
         boxSizing: 'border-box',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        ...blurAnimation
       }}>
       <Box
         sx={{
@@ -101,19 +125,9 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
             </Tooltip>
           ) : null}
         </Box>
-
-        {isLoading ? (
-          <Skeleton
-            variant='rounded'
-            width={150}
-            height={36}
-            sx={{
-              bgcolor: 'rgba(255, 255, 255, 0.11)'
-            }}
-          />
-        ) : (
-          <Typography className={classes.headerBigText}>{value}</Typography>
-        )}
+        <Typography className={classes.headerBigText} sx={loadingStyles}>
+          {value}
+        </Typography>
       </Box>
     </Box>
   )
