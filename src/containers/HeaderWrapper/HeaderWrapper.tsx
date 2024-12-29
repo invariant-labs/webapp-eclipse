@@ -135,6 +135,7 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet]
       )
+      window.location.reload()
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.TEST : lastRPC
@@ -148,6 +149,7 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet]
       )
+      window.location.reload()
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.DEV_EU : lastRPC
@@ -161,6 +163,7 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet]
       )
+      window.location.reload()
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.MAIN : lastRPC
