@@ -120,6 +120,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   const isMountedRef = useRef(false)
 
+  const previousPositionOpeningMethod = useRef(positionOpeningMethod)
+
   useEffect(() => {
     isMountedRef.current = true
     return () => {
@@ -407,6 +409,27 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
+  const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
+    const mappedIndex = findClosestIndexByValue(concentrationArray, concentrationValue)
+
+    const validIndex = Math.max(
+      minimumSliderIndex,
+      Math.min(mappedIndex, concentrationArray.length - 1)
+    )
+    setPreviousConcentration(cachedConcentrationArray[validIndex])
+    setConcentrationIndex(validIndex)
+    const { leftRange, rightRange } = calculateConcentrationRange(
+      tickSpacing,
+      cachedConcentrationArray[validIndex],
+      2,
+      midPrice.index,
+      isXtoY
+    )
+
+    changeRangeHandler(leftRange, rightRange)
+    autoZoomHandler(leftRange, rightRange, true)
+  }
+
   useEffect(() => {
     if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
       const concentrationValue = parseInt(initialConcentration)
@@ -414,26 +437,20 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         setPositionOpeningMethod('concentration')
         onPositionOpeningMethodChange('concentration')
       }
-      const mappedIndex = findClosestIndexByValue(concentrationArray, concentrationValue)
-
-      const validIndex = Math.max(
-        minimumSliderIndex,
-        Math.min(mappedIndex, concentrationArray.length - 1)
-      )
-      setPreviousConcentration(cachedConcentrationArray[validIndex])
-      setConcentrationIndex(validIndex)
-      const { leftRange, rightRange } = calculateConcentrationRange(
-        tickSpacing,
-        cachedConcentrationArray[validIndex],
-        2,
-        midPrice.index,
-        isXtoY
-      )
-
-      changeRangeHandler(leftRange, rightRange)
-      autoZoomHandler(leftRange, rightRange, true)
+      handleUpdateConcentrationFromURL(concentrationValue)
     }
   }, [tokenASymbol, tokenBSymbol])
+
+  useEffect(() => {
+    if (
+      positionOpeningMethod === 'concentration' &&
+      previousPositionOpeningMethod.current === 'range'
+    ) {
+      handleUpdateConcentrationFromURL(previousConcentration)
+    }
+
+    previousPositionOpeningMethod.current = positionOpeningMethod
+  }, [positionOpeningMethod])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
