@@ -52,10 +52,6 @@ As the number of positions increases, the number of points received by each one 
 One dollar in a position now might be worth as much as 30 dollars in the future.`
     },
     {
-      question: 'What are the rewards, and when will we receive them?',
-      answer: `There will be at least a few airdrops, and the allocation for each will depend on the number of points you've accrued. Airdrops will be unannounced and distributed at different times, so it’s worth staying as high in the rankings as possible at all times.`
-    },
-    {
       question: `If I'm not a whale, do I still have a chance at being competitive points? `,
       answer:
         'Yes. Our algorithm unlocks new opportunities for smaller capital by shifting the focus from sheer TVL to skillful liquidity management. Your earnings depend on how effectively you manage and rebalance your position. With smart strategy and focus, you can outperform larger TVL holders.'

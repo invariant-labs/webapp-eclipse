@@ -102,8 +102,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                   return 'Point Leaderboard'
                 case 'faq':
                   return 'Frequent questions'
-                case 'rewards':
-                  return 'Rewards'
+                case 'claim':
+                  return 'Claim'
                 default:
                   return 0
               }
