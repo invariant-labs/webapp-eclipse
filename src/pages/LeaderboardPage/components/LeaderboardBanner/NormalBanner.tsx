@@ -50,8 +50,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           }}
         />
         <span>
-          The second pool is available now to claim Invariant Points! Check out your progress and
-          rewards
+          Invariant Points are live! TETH/ETH is now the next pool distributing points! Check it out
           <span
             style={{
               color: colors.invariant.pink,
