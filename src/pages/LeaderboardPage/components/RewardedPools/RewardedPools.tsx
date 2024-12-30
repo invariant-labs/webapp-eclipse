@@ -9,10 +9,13 @@ import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme, typography } from '@static/theme'
 import infoIcon from '@static/svg/info.svg'
 
+export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
+  pointsPerSecond: string
+}
 interface IProps {
   network: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
-  rewardedPoolsData: ExtendedPoolStatsData[]
+  rewardedPoolsData: ExtendedPoolStatsDataWithPoints[]
 }
 
 export const RewardedPools: React.FC<IProps> = ({
@@ -50,7 +53,8 @@ export const RewardedPools: React.FC<IProps> = ({
           },
           isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
           isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
-          poolAddress: poolData.poolAddress.toString()
+          poolAddress: poolData.poolAddress.toString(),
+          pointsPerSecond: poolData.pointsPerSecond
         }
       }),
     [rewardedPoolsData]
