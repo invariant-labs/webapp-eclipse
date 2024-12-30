@@ -32,7 +32,7 @@ import axios, { AxiosResponse } from 'axios'
 import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
-  ADDRESSES_TO_REVERS_TOKEN_PAIRS,
+  ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   AI16Z_MAIN,
   BRICK_MAIN,
   BTC_DEV,
@@ -1459,10 +1459,10 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
     return true
   }
 
-  const isTokeXStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenXAddress)
-  const isTokenYStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenYAddress)
+  const tokenXIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenXAddress)
+  const tokenYIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenYAddress)
 
-  return isTokeXStablecoin === isTokenYStablecoin || (!isTokeXStablecoin && !isTokenYStablecoin)
+  return tokenXIndex < tokenYIndex
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {
