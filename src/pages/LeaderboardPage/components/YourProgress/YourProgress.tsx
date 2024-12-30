@@ -31,6 +31,23 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
+  const formatUserPoints = (points?: string) => {
+    if (!userStats) return '0'
+
+    try {
+      if (!points) return '0'
+
+      const pointsBN = new BN(points, LEADERBOARD_DECIMAL)
+
+      if (pointsBN.isZero()) return '0'
+
+      return formatNumberWithCommas(printBN(pointsBN, LEADERBOARD_DECIMAL))
+    } catch (error) {
+      console.error('Error formatting points:', error)
+      return '0'
+    }
+  }
+
   return (
     <Box
       sx={{
@@ -53,13 +70,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
           tooltip='Points amount refreshes roughly every 30 minutes.'
           desktopLabelAligment='right'
           label='Total points'
-          value={
-            new BN(userStats?.points).isZero() && userStats
-              ? formatNumberWithCommas(
-                  printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)
-                )
-              : 0
-          }
+          value={formatUserPoints(userStats?.points)}
         />
         <ProgressItem
           background={{
