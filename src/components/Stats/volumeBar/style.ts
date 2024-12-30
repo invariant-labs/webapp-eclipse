@@ -8,7 +8,7 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     backgroundColor: colors.invariant.component,
     borderRadius: 22,
-    padding: '12px 16px',
+    padding: 20,
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
