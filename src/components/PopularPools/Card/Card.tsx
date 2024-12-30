@@ -58,6 +58,8 @@ const Card: React.FC<ICard> = ({
   }, [promotedPools, poolAddress])
 
   const handleOpenPosition = () => {
+    if (fee === undefined) return
+
     const revertRatio = initialXtoY(addressFrom ?? '', addressTo ?? '')
 
     const tokenA = revertRatio
