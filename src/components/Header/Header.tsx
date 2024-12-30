@@ -245,21 +245,6 @@ export const Header: React.FC<IHeader> = ({
                 rpcStatus={rpcStatus}
               />
             </Box>
-            <Box
-              sx={{
-                display: {
-                  md: 'block',
-                  '@media (max-width: 1050px)': {
-                    display: 'none'
-                  }
-                }
-              }}>
-              <SelectChainButton
-                activeChain={activeChain}
-                chains={CHAINS}
-                onSelect={onChainSelect}
-              />
-            </Box>
             <SelectNetworkButton
               name={typeOfNetwork}
               networks={[
@@ -284,6 +269,21 @@ export const Header: React.FC<IHeader> = ({
               ]}
               onSelect={onNetworkSelect}
             />
+            <Box
+              sx={{
+                display: {
+                  md: 'block',
+                  '@media (max-width: 1050px)': {
+                    display: 'none'
+                  }
+                }
+              }}>
+              <SelectChainButton
+                activeChain={activeChain}
+                chains={CHAINS}
+                onSelect={onChainSelect}
+              />
+            </Box>
           </Grid>
 
           <Grid>
