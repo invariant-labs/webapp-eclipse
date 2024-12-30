@@ -304,6 +304,22 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
   }, [poolIndex])
 
+  const reverseTokens = () => {
+    if (ticksLoading) {
+      return
+    }
+
+    if (!tokenBInputState.blocked) {
+      tokenAInputState.setValue(tokenBInputState.value)
+    } else {
+      tokenBInputState.setValue(tokenAInputState.value)
+    }
+    const pom = tokenAIndex
+    setTokenAIndex(tokenBIndex)
+    setTokenBIndex(pom)
+    onReverseTokens()
+  }
+
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
       <Typography className={classes.sectionTitle}>Tokens</Typography>
@@ -334,26 +350,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           </Grid>
 
           <TooltipHover text='Reverse tokens'>
-            <img
-              className={classes.arrows}
-              src={SwapList}
-              alt='Arrow'
-              onClick={() => {
-                if (ticksLoading) {
-                  return
-                }
-
-                if (!tokenBInputState.blocked) {
-                  tokenAInputState.setValue(tokenBInputState.value)
-                } else {
-                  tokenBInputState.setValue(tokenAInputState.value)
-                }
-                const pom = tokenAIndex
-                setTokenAIndex(tokenBIndex)
-                setTokenBIndex(pom)
-                onReverseTokens()
-              }}
-            />
+            <img className={classes.arrows} src={SwapList} alt='Arrow' onClick={reverseTokens} />
           </TooltipHover>
 
           <Grid className={classes.selectWrapper}>

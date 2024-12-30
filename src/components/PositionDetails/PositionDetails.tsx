@@ -97,7 +97,7 @@ const PositionDetails: React.FC<IProps> = ({
   const navigate = useNavigate()
 
   const [xToY, setXToY] = useState<boolean>(
-    initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
+    !initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
 
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
@@ -296,7 +296,15 @@ const PositionDetails: React.FC<IProps> = ({
                   const address1 = addressToTicker(network, tokenXAddress.toString())
                   const address2 = addressToTicker(network, tokenYAddress.toString())
 
-                  navigate(`/newPosition/${address1}/${address2}/${parsedFee}`)
+                  const revertRatio = !initialXtoY(
+                    tokenXAddress.toString() ?? '',
+                    tokenYAddress.toString() ?? ''
+                  )
+
+                  const tokenA = revertRatio ? address1 : address2
+                  const tokenB = revertRatio ? address2 : address1
+
+                  navigate(`/newPosition/${tokenA}/${tokenB}/${parsedFee}`)
                 }}>
                 <span className={classes.buttonText}>+ Add Position</span>
               </Button>
