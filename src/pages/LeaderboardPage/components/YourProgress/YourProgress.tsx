@@ -57,7 +57,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
             desktopLabelAligment='right'
             label='Daily Points Income'
             isLoading
-            value={345}
+            value={0}
           />
 
           <ProgressItem
