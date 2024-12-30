@@ -442,6 +442,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }, [tokenASymbol, tokenBSymbol])
 
   useEffect(() => {
+    // Detect change from range to concentration to prevent reseting slider
     if (
       positionOpeningMethod === 'concentration' &&
       previousPositionOpeningMethod.current === 'range'
