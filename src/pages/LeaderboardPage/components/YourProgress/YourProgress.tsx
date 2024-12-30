@@ -37,7 +37,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
     try {
       if (!points) return '0'
 
-      const pointsBN = new BN(points, LEADERBOARD_DECIMAL)
+      const pointsBN = new BN(points, 'hex')
 
       if (pointsBN.isZero()) return '0'
 
