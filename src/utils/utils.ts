@@ -1092,7 +1092,11 @@ export const handleSimulate = async (
 
         okChanges += 1
       } else if (
-        byAmountIn ? allFailedData.amountOut.lt(result) : allFailedData.amountOut.eq(MAX_U64) ? result : allFailedData.amountOut.lt(result)
+        byAmountIn
+          ? allFailedData.amountOut.lt(result)
+          : allFailedData.amountOut.eq(MAX_U64)
+            ? result
+            : allFailedData.amountOut.lt(result)
       ) {
         allFailedData = {
           amountOut: result,
