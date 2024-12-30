@@ -602,9 +602,13 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
   persist: true
 }
 
-export const ADDRESSES_TO_REVERS_TOKEN_PAIRS: string[] = [
-  'So11111111111111111111111111111111111111112'
-] // ETH
+export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
+  USDT_MAIN.address.toString(),
+  USDC_MAIN.address.toString(),
+  SOL_MAIN.address.toString(),
+  WETH_MAIN.address.toString(),
+  TETH_MAIN.address.toString()
+]
 
 export const FormatConfig = {
   B: 1000000000,
