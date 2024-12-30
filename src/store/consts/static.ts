@@ -524,6 +524,11 @@ export const promotedTiers = [
     tokenX: USDC_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 3
+  },
+  {
+    tokenX: TETH_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 0
   }
 ]
 

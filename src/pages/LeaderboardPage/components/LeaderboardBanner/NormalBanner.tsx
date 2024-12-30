@@ -50,7 +50,8 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           }}
         />
         <span>
-          Invariant Points are available now! Check out your progress and rewards
+          The second pool is available now to claim Invariant Points! Check out your progress and
+          rewards
           <span
             style={{
               color: colors.invariant.pink,
