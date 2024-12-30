@@ -30,6 +30,7 @@ export interface ExtendedPoolStatsData extends PoolStatsData {
   tokenXDetails: Token
   tokenYDetails: Token
 }
+
 export const poolsStatsWithTokensDetails = createSelector(
   poolsData,
   tokens,
