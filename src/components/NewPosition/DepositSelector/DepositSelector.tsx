@@ -304,6 +304,22 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
   }, [poolIndex])
 
+  const reverseTokens = () => {
+    if (ticksLoading) {
+      return
+    }
+
+    if (!tokenBInputState.blocked) {
+      tokenAInputState.setValue(tokenBInputState.value)
+    } else {
+      tokenBInputState.setValue(tokenAInputState.value)
+    }
+    const pom = tokenAIndex
+    setTokenAIndex(tokenBIndex)
+    setTokenBIndex(pom)
+    onReverseTokens()
+  }
+
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
       <Typography className={classes.sectionTitle}>Tokens</Typography>
@@ -334,26 +350,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           </Grid>
 
           <TooltipHover text='Reverse tokens'>
-            <img
-              className={classes.arrows}
-              src={SwapList}
-              alt='Arrow'
-              onClick={() => {
-                if (ticksLoading) {
-                  return
-                }
-
-                if (!tokenBInputState.blocked) {
-                  tokenAInputState.setValue(tokenBInputState.value)
-                } else {
-                  tokenBInputState.setValue(tokenAInputState.value)
-                }
-                const pom = tokenAIndex
-                setTokenAIndex(tokenBIndex)
-                setTokenBIndex(pom)
-                onReverseTokens()
-              }}
-            />
+            <img className={classes.arrows} src={SwapList} alt='Arrow' onClick={reverseTokens} />
           </TooltipHover>
 
           <Grid className={classes.selectWrapper}>
@@ -398,7 +395,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
+          currencyIsUnknown={
+            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
+          }
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenAIndex === null) {
@@ -453,7 +452,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
+          currencyIsUnknown={
+            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
+          }
           placeholder='0.0'
           onMaxClick={() => {
             if (tokenBIndex === null) {

@@ -157,7 +157,7 @@ export const USDT_MAIN: Token = {
   name: 'Tether USD (Hyperlane)',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB/logo.svg',
-  coingeckoId: ''
+  coingeckoId: 'tether'
 }
 
 export const SOL_MAIN: Token = {
@@ -200,7 +200,7 @@ export const LAIKA_MAIN: Token = {
   name: 'Laika',
   logoURI:
     'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f736864772d64726976652e67656e65737973676f2e6e65742f387035714352796b774e767a463433484d6b31356243664c3678413934474b65365a526570696e6d576a44692f6c61696b612e706e67',
-  coingeckoId: ''
+  coingeckoId: 'laika-3'
 }
 
 export const MOON_MAIN: Token = {
@@ -210,7 +210,7 @@ export const MOON_MAIN: Token = {
   decimals: 5,
   name: 'MoonCoin',
   logoURI: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
-  coingeckoId: ''
+  coingeckoId: 'mooncoin-2'
 }
 
 export const GSVM_MAIN: Token = {
@@ -375,7 +375,7 @@ export const TETH_MAIN: Token = {
   name: 'Turbo ETH',
   logoURI:
     'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/06833c4417faafd198ef8cf904612c721e5d96db/deployments/warp_routes/tETH/logo.svg',
-  coingeckoId: ''
+  coingeckoId: 'turbo-eth'
 }
 
 export enum RPC {
@@ -602,9 +602,13 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
   persist: true
 }
 
-export const ADDRESSES_TO_REVERS_TOKEN_PAIRS: string[] = [
-  'So11111111111111111111111111111111111111112'
-] // ETH
+export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
+  USDT_MAIN.address.toString(),
+  USDC_MAIN.address.toString(),
+  SOL_MAIN.address.toString(),
+  WETH_MAIN.address.toString(),
+  TETH_MAIN.address.toString()
+]
 
 export const FormatConfig = {
   B: 1000000000,
@@ -728,7 +732,16 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
 
-export const DEFAULT_TOKENS = ['ethereum', 'solana', 'usd-coin', 'dogwifcoin']
+export const DEFAULT_TOKENS = [
+  'ethereum',
+  'solana',
+  'usd-coin',
+  'dogwifcoin',
+  'tether',
+  'turbo-eth',
+  'laika-3',
+  'mooncoin-2'
+]
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
