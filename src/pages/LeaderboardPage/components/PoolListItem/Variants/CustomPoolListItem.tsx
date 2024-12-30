@@ -8,9 +8,10 @@ import classNames from 'classnames'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
+import { addressToTicker, formatNumberWithCommas, parseFeeToPathFee, printBN } from '@utils/utils'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { IProps } from '../PoolListItem'
+import { BN } from '@coral-xyz/anchor'
 
 export const CustomPoolListItem: React.FC<IProps> = ({
   fee = 0,
@@ -27,6 +28,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
   poolAddress,
   copyAddressHandler,
   apy = 0,
+  pointsPerSecond,
   showAPY
 }) => {
   const { classes } = useStyles()
@@ -181,7 +183,9 @@ export const CustomPoolListItem: React.FC<IProps> = ({
               </Typography>
 
               <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
-                8,640,000
+                {formatNumberWithCommas(
+                  printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+                )}
               </Typography>
             </Box>
           </Grid>

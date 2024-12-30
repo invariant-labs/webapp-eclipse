@@ -6,13 +6,14 @@ import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
+import { addressToTicker, formatNumberWithCommas, parseFeeToPathFee, printBN } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 import classNames from 'classnames'
+import { BN } from '@coral-xyz/anchor'
 
 export interface IProps {
   fee?: number
@@ -27,6 +28,7 @@ export interface IProps {
   addressTo?: string
   network: NetworkType
   apy?: number
+  pointsPerSecond?: string
   apyData?: {
     fees: number
     accumulatedFarmsAvg: number
@@ -51,6 +53,7 @@ const PoolListItem: React.FC<IProps> = ({
   network,
   poolAddress,
   copyAddressHandler,
+  pointsPerSecond,
   apy = 0,
   showAPY
 }) => {
@@ -141,7 +144,11 @@ const PoolListItem: React.FC<IProps> = ({
             </Typography>
           ) : null}
           <Typography>{fee}%</Typography>
-          <Typography>8,640,000</Typography>
+          <Typography>
+            {formatNumberWithCommas(
+              printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+            )}
+          </Typography>
 
           {!isSm && (
             <Box className={classes.action}>
