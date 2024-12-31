@@ -6,7 +6,13 @@ import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { addressToTicker, formatNumberWithCommas, parseFeeToPathFee, printBN } from '@utils/utils'
+import {
+  addressToTicker,
+  formatNumberWithCommas,
+  initialXtoY,
+  parseFeeToPathFee,
+  printBN
+} from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
@@ -63,8 +69,17 @@ const PoolListItem: React.FC<IProps> = ({
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleOpenPosition = () => {
+    const revertRatio = initialXtoY(addressFrom ?? '', addressTo ?? '')
+
+    const tokenA = revertRatio
+      ? addressToTicker(network, addressTo ?? '')
+      : addressToTicker(network, addressFrom ?? '')
+    const tokenB = revertRatio
+      ? addressToTicker(network, addressFrom ?? '')
+      : addressToTicker(network, addressTo ?? '')
+
     navigate(
-      `/newPosition/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
       { state: { referer: 'stats' } }
     )
   }
