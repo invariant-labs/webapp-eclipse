@@ -6,6 +6,7 @@ import {
   calculateConcentrationRange,
   calculateSqrtPriceFromBalance,
   calculateTickFromBalance,
+  findClosestIndexByValue,
   formatNumber,
   nearestTickIndex,
   toMaxNumericPlaces,
@@ -38,6 +39,13 @@ export interface IPoolInit {
   concentrationIndex: number
   concentrationArray: number[]
   minimumSliderIndex: number
+  updatePath: {
+    update: (param?: any) => void
+  }
+  setPositionOpeningMethod: React.Dispatch<React.SetStateAction<PositionOpeningMethod>>
+  onPositionOpeningMethodChange: (val: PositionOpeningMethod) => void
+  initialConcentration: string
+  ticksLoading: boolean
 }
 
 export const PoolInit: React.FC<IPoolInit> = ({
@@ -55,7 +63,11 @@ export const PoolInit: React.FC<IPoolInit> = ({
   setConcentrationIndex,
   concentrationIndex,
   concentrationArray,
-  minimumSliderIndex
+  minimumSliderIndex,
+  updatePath,
+  setPositionOpeningMethod,
+  onPositionOpeningMethodChange,
+  initialConcentration
 }) => {
   const minTick = getMinTick(tickSpacing)
   const maxTick = getMaxTick(tickSpacing)
@@ -172,7 +184,13 @@ export const PoolInit: React.FC<IPoolInit> = ({
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration') {
-      setConcentrationIndex(0)
+      const mappedIndex = findClosestIndexByValue(concentrationArray, +initialConcentration)
+
+      const validIndex = Math.max(
+        minimumSliderIndex,
+        Math.min(mappedIndex, concentrationArray.length - 1)
+      )
+      setConcentrationIndex(validIndex)
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
         concentrationArray[0],
@@ -185,7 +203,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
     } else {
       changeRangeHandler(leftRange, rightRange)
     }
-  }, [positionOpeningMethod])
+  }, [positionOpeningMethod, concentrationArray])
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration') {
@@ -193,7 +211,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
         concentrationIndex > concentrationArray.length - 1
           ? concentrationArray.length - 1
           : concentrationIndex
-      setConcentrationIndex(index)
+
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
         concentrationArray[index],
@@ -272,6 +290,43 @@ export const PoolInit: React.FC<IPoolInit> = ({
       setAnimatedStartingPrice(price)
     }
   }, [price])
+
+  useEffect(() => {
+    if (positionOpeningMethod === 'concentration') {
+      updatePath.update()
+    }
+  }, [concentrationIndex, positionOpeningMethod])
+
+  const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
+    const mappedIndex = findClosestIndexByValue(concentrationArray, concentrationValue)
+
+    const validIndex = Math.max(
+      minimumSliderIndex,
+      Math.min(mappedIndex, concentrationArray.length - 1)
+    )
+
+    setConcentrationIndex(validIndex)
+    const { leftRange, rightRange } = calculateConcentrationRange(
+      tickSpacing,
+      concentrationArray[validIndex],
+      2,
+      midPriceIndex,
+      isXtoY
+    )
+
+    changeRangeHandler(leftRange, rightRange)
+  }
+
+  useEffect(() => {
+    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
+      const concentrationValue = parseInt(initialConcentration)
+      if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
+        setPositionOpeningMethod('concentration')
+        onPositionOpeningMethodChange('concentration')
+      }
+      handleUpdateConcentrationFromURL(concentrationValue)
+    }
+  }, [tokenASymbol, tokenBSymbol])
 
   return (
     <Grid container direction='column' className={classes.wrapper}>

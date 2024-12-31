@@ -367,24 +367,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : bestTiers.find(
+      : (bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined
+        )?.bestTierIndex ?? undefined)
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : promotedTiers.find(
+      : (promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined
+        )?.index ?? undefined)
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -520,6 +520,13 @@ export const NewPosition: React.FC<INewPosition> = ({
         return '?cluster=testnet'
     }
   }, [network])
+
+  const [mounted, setMounted] = useState(false)
+  useEffect(() => {
+    setTimeout(() => {
+      setMounted(true)
+    }, 1000)
+  }, [])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -782,11 +789,12 @@ export const NewPosition: React.FC<INewPosition> = ({
             )}
           </Grid>
         </Hidden>
-        {isCurrentPoolExisting ||
-        tokenAIndex === null ||
-        tokenBIndex === null ||
-        tokenAIndex === tokenBIndex ||
-        isWaitingForNewPool ? (
+        {mounted &&
+        (isCurrentPoolExisting ||
+          tokenAIndex === null ||
+          tokenBIndex === null ||
+          tokenAIndex === tokenBIndex ||
+          isWaitingForNewPool) ? (
           <RangeSelector
             updatePath={{
               update() {
@@ -861,6 +869,20 @@ export const NewPosition: React.FC<INewPosition> = ({
             concentrationIndex={concentrationIndex}
             setConcentrationIndex={setConcentrationIndex}
             minimumSliderIndex={minimumSliderIndex}
+            initialConcentration={initialConcentration}
+            onPositionOpeningMethodChange={onPositionOpeningMethodChange}
+            setPositionOpeningMethod={setPositionOpeningMethod}
+            updatePath={{
+              update() {
+                updatePath(
+                  tokenAIndex,
+                  tokenBIndex,
+                  selectedFee,
+                  Math.round(concentrationArray[concentrationIndex])
+                )
+              }
+            }}
+            ticksLoading={ticksLoading}
           />
         )}
       </Grid>
