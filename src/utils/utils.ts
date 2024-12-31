@@ -122,7 +122,9 @@ export const printBN = (amount: BN, decimals: number): string => {
 }
 
 export const formatNumberWithCommas = (number: string) => {
-  return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
+
+  return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
 export const trimZeros = (numStr: string): string => {
