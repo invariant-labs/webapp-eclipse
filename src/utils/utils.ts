@@ -122,7 +122,9 @@ export const printBN = (amount: BN, decimals: number): string => {
 }
 
 export const formatNumberWithCommas = (number: string) => {
-  return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
+
+  return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
 export const trimZeros = (numStr: string): string => {
@@ -1092,7 +1094,11 @@ export const handleSimulate = async (
 
         okChanges += 1
       } else if (
-        byAmountIn ? allFailedData.amountOut.lt(result) : allFailedData.amountOut.eq(MAX_U64) ? result : allFailedData.amountOut.lt(result)
+        byAmountIn
+          ? allFailedData.amountOut.lt(result)
+          : allFailedData.amountOut.eq(MAX_U64)
+            ? result
+            : allFailedData.amountOut.lt(result)
       ) {
         allFailedData = {
           amountOut: result,
