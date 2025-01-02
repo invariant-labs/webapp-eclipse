@@ -521,13 +521,6 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }, [network])
 
-  const [mounted, setMounted] = useState(false)
-  useEffect(() => {
-    setTimeout(() => {
-      setMounted(true)
-    }, 1000)
-  }, [])
-
   return (
     <Grid container className={classes.wrapper} direction='column'>
       <Link to='/portfolio' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
@@ -789,12 +782,11 @@ export const NewPosition: React.FC<INewPosition> = ({
             )}
           </Grid>
         </Hidden>
-        {mounted &&
-        (isCurrentPoolExisting ||
-          tokenAIndex === null ||
-          tokenBIndex === null ||
-          tokenAIndex === tokenBIndex ||
-          isWaitingForNewPool) ? (
+        {isCurrentPoolExisting ||
+        tokenAIndex === null ||
+        tokenBIndex === null ||
+        tokenAIndex === tokenBIndex ||
+        isWaitingForNewPool ? (
           <RangeSelector
             updatePath={{
               update() {
@@ -882,7 +874,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 )
               }
             }}
-            ticksLoading={ticksLoading}
+            isWaitingForNewPool={isWaitingForNewPool}
           />
         )}
       </Grid>

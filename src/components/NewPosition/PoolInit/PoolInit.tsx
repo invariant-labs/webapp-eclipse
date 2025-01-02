@@ -45,7 +45,7 @@ export interface IPoolInit {
   setPositionOpeningMethod: React.Dispatch<React.SetStateAction<PositionOpeningMethod>>
   onPositionOpeningMethodChange: (val: PositionOpeningMethod) => void
   initialConcentration: string
-  ticksLoading: boolean
+  isWaitingForNewPool: boolean
 }
 
 export const PoolInit: React.FC<IPoolInit> = ({
@@ -67,7 +67,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
   updatePath,
   setPositionOpeningMethod,
   onPositionOpeningMethodChange,
-  initialConcentration
+  initialConcentration,
+  isWaitingForNewPool
 }) => {
   const minTick = getMinTick(tickSpacing)
   const maxTick = getMaxTick(tickSpacing)
@@ -291,8 +292,16 @@ export const PoolInit: React.FC<IPoolInit> = ({
     }
   }, [price])
 
+  const [canUpdateUrl, setCanUpdateUrl] = useState(false)
+
   useEffect(() => {
-    if (positionOpeningMethod === 'concentration') {
+    return () => {
+      if (!isWaitingForNewPool) setCanUpdateUrl(true)
+    }
+  }, [isWaitingForNewPool])
+
+  useEffect(() => {
+    if (positionOpeningMethod === 'concentration' && canUpdateUrl) {
       updatePath.update()
     }
   }, [concentrationIndex, positionOpeningMethod])
@@ -318,7 +327,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   }
 
   useEffect(() => {
-    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
+    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ' && canUpdateUrl) {
       const concentrationValue = parseInt(initialConcentration)
       if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
         setPositionOpeningMethod('concentration')

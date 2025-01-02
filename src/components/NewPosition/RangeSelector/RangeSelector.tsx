@@ -438,16 +438,18 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         onPositionOpeningMethodChange('concentration')
       }
       handleUpdateConcentrationFromURL(concentrationValue)
+      console.log('test1')
     }
-  }, [tokenASymbol, tokenBSymbol])
-
+  }, [poolIndex])
+  console.log('previousConcentration', previousConcentration)
   useEffect(() => {
-    // Detect change from range to concentration to prevent reseting slider
+    // Detect change from range to con, centration to prevent reseting slider
     if (
       positionOpeningMethod === 'concentration' &&
       previousPositionOpeningMethod.current === 'range'
     ) {
       handleUpdateConcentrationFromURL(previousConcentration)
+      console.log('test2')
     }
 
     previousPositionOpeningMethod.current = positionOpeningMethod
