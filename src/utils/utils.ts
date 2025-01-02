@@ -134,7 +134,14 @@ export const removeAdditionalDecimals = (value: string, desiredDecimals: number)
   }
   const decimals = value.length - dotIndex - 1
   if (decimals > desiredDecimals) {
-    return value.slice(0, dotIndex + desiredDecimals + 1)
+    const sliced = value.slice(0, dotIndex + desiredDecimals + 1)
+    const lastCommaIndex = sliced.lastIndexOf(',')
+
+    if (lastCommaIndex === -1 || lastCommaIndex < dotIndex) {
+      return sliced
+    }
+
+    return value.slice(0, lastCommaIndex) + value.slice(lastCommaIndex + 1, lastCommaIndex + 2)
   } else {
     return value
   }
