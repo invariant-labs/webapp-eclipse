@@ -97,7 +97,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
         })
       )
       setIsHiding(false)
-    }, 400)
+    }, 300)
   }
 
   useLayoutEffect(() => {

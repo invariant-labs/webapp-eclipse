@@ -18,7 +18,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { isHiding }) => {
       flexWrap: 'nowrap',
       justifyContent: 'space-between',
       alignItems: 'center',
-
+      transform: isHiding ? 'scaleY(0)' : 'scaleY(1)',
       [theme.breakpoints.down('sm')]: {
         padding: isHiding ? '0px 0px' : '20px 4px 20px 8px'
       }
@@ -37,7 +37,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { isHiding }) => {
     icon: {
       flexShrink: 0,
       marginRight: '12px',
-      height: '24px',
+      height: isHiding ? 0 : '24px',
       width: '24px'
     },
     close: {
@@ -47,7 +47,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { isHiding }) => {
       cursor: 'pointer',
       padding: '12px',
       width: 12,
-      height: 12
+      height: isHiding ? 0 : 12
     }
   }
 })

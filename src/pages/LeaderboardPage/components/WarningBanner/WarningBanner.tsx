@@ -19,7 +19,7 @@ export const WarningBanner = ({ onClose, isHiding }: INormalBannerProps) => {
         borderRadius={24}
         innerClassName={classes.container}
         borderWidth={isHiding ? 0 : 2}
-        opacity={1}>
+        opacity={isHiding ? 0 : 1}>
         <span className={classes.text}>
           <img src={icons.warning2} className={classes.icon} />
           <span>
