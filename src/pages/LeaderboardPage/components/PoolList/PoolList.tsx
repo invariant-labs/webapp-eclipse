@@ -24,6 +24,7 @@ export interface PoolListInterface {
       accumulatedFarmsSingleTick: number
     }
     poolAddress: string
+    pointsPerSecond: string
   }>
   network: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
@@ -81,19 +82,20 @@ const PoolList: React.FC<PoolListInterface> = ({
                 <PoolListItem
                   displayType='token'
                   tokenIndex={index + 1 + (page - 1) * 10}
-                  symbolFrom={element.symbolTo}
-                  symbolTo={element.symbolFrom}
-                  iconFrom={element.iconTo}
-                  iconTo={element.iconFrom}
+                  symbolFrom={element.symbolFrom}
+                  symbolTo={element.symbolTo}
+                  iconFrom={element.iconFrom}
+                  iconTo={element.iconTo}
                   fee={element.fee}
                   apy={element.apy}
                   hideBottomLine={pages === 1 && index + 1 === data.length}
                   apyData={element.apyData}
                   key={index}
-                  addressFrom={element.addressTo}
-                  addressTo={element.addressFrom}
+                  addressFrom={element.addressFrom}
+                  addressTo={element.addressTo}
                   network={network}
                   poolAddress={element.poolAddress}
+                  pointsPerSecond={element.pointsPerSecond}
                   copyAddressHandler={copyAddressHandler}
                   showAPY={showAPY}
                 />
@@ -124,6 +126,7 @@ const PoolList: React.FC<PoolListInterface> = ({
                   addressTo={element.addressFrom}
                   network={network}
                   poolAddress={element.poolAddress}
+                  pointsPerSecond={element.pointsPerSecond}
                   copyAddressHandler={copyAddressHandler}
                   showAPY={showAPY}
                 />

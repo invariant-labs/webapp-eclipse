@@ -4,6 +4,12 @@ import { handleRpcError } from './connection'
 import { actions, UserStats } from '@store/reducers/leaderboard'
 import { getWallet } from './wallet'
 import { PayloadAction } from '@reduxjs/toolkit'
+
+export interface IPromotedPool {
+  address: string
+  pointsPerSecond: string
+  startCountTimestamp: string
+}
 interface IResponse {
   user: UserStats | null
   leaderboard: UserStats[]
@@ -11,9 +17,8 @@ interface IResponse {
 }
 interface IConfigResponse {
   refreshTime: number
-  pointsPerSecond: string
   pointsDecimal: number
-  promotedPools: string[]
+  promotedPools: IPromotedPool[]
 }
 async function fetchLeaderboardData(
   network: string,
@@ -78,14 +83,13 @@ export function* getLeaderboard(
 
 export function* getLeaderboardConfig(): Generator {
   try {
-    const { pointsDecimal, refreshTime } = yield* call(fetchLeaderboardConfig)
+    const { pointsDecimal, refreshTime, promotedPools } = yield* call(fetchLeaderboardConfig)
 
     yield* put(
       actions.setLeaderboardConfig({
         pointsDecimal,
-        pointsPerSecond: '64',
         refreshTime,
-        promotedPools: ['HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce']
+        promotedPools
       })
     )
   } catch (error) {

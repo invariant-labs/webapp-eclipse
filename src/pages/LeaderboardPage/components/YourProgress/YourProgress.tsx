@@ -20,18 +20,41 @@ import { ProgressItem } from './ProgressItem'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
-import { formatNumberWithCommas, printBN } from '@utils/utils'
+import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 
 interface YourProgressProps {
   userStats: UserStats | null
+  estimated24hPoints: BN
+  isLoadingList: boolean
 }
 
-export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
+export const YourProgress: React.FC<YourProgressProps> = ({
+  userStats,
+  estimated24hPoints,
+  isLoadingList
+}) => {
   const { classes } = useStyles()
   const walletStatus = useSelector(status)
   const totalItems = useSelector(leaderboardSelectors.totalItems)
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
+  // const formatUserPoints = (points?: string) => {
+  //   if (!userStats) return '0'
+
+  //   try {
+  //     if (!points) return '0'
+
+  //     const pointsBN = new BN(points, 'hex')
+
+  //     if (pointsBN.isZero()) return '0'
+
+  //     return formatNumberWithCommas(printBN(pointsBN, LEADERBOARD_DECIMAL))
+  //   } catch (error) {
+  //     console.error('Error formatting points:', error)
+  //     return '0'
+  //   }
+  // }
 
   return (
     <Box
@@ -56,8 +79,15 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
             tooltip='Points amount refreshes roughly every 30 minutes.'
             desktopLabelAligment='right'
             label='Daily Points Income'
-            isLoading
-            value={0}
+            isLoading={isLoadingList}
+            value={
+              userStats
+                ? removeAdditionalDecimals(
+                    formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
+                    2
+                  )
+                : 0
+            }
           />
 
           <ProgressItem
