@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useLayoutEffect } from 'react'
 import { Box, Typography } from '@mui/material'
 import useStyles from './styles'
 import { Faq } from './Faq/Faq'
@@ -19,6 +19,10 @@ import { network } from '@store/selectors/solanaConnection'
 import { VariantType } from 'notistack'
 import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { actions as statsActions } from '@store/reducers/stats'
+import { WarningBanner } from './WarningBanner/WarningBanner'
+
+const BANNER_STORAGE_KEY = 'invariant-warning-banner'
+const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 interface LeaderboardWrapperProps {
   alignment: string
@@ -40,6 +44,9 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
   const promotedPools = useSelector(getPromotedPools)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
+
+  const [showWarningBanner, setShowWarningBanner] = React.useState(true)
+
   const promotedPoolsData = promotedPools
     .map(promotedPool =>
       poolsList.find(poolWithData => poolWithData.poolAddress.toString() === promotedPool.address)
@@ -76,8 +83,49 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
       })
     )
   }
+
+  const [isHiding, setIsHiding] = React.useState(false)
+
+  const handleBannerClose = () => {
+    setIsHiding(true)
+    setTimeout(() => {
+      setShowWarningBanner(false)
+      localStorage.setItem(
+        BANNER_STORAGE_KEY,
+        JSON.stringify({
+          hiddenAt: new Date().getTime()
+        })
+      )
+      setIsHiding(false)
+    }, 400)
+  }
+
+  useLayoutEffect(() => {
+    const checkBannerState = () => {
+      const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
+      if (storedData) {
+        try {
+          const { hiddenAt } = JSON.parse(storedData)
+          const currentTime = new Date().getTime()
+          if (currentTime - hiddenAt < BANNER_HIDE_DURATION) {
+            setShowWarningBanner(false)
+          } else {
+            localStorage.removeItem(BANNER_STORAGE_KEY)
+            setShowWarningBanner(true)
+          }
+        } catch (error) {
+          console.error('Error parsing banner state:', error)
+          localStorage.removeItem(BANNER_STORAGE_KEY)
+        }
+      }
+    }
+
+    checkBannerState()
+  }, [])
+
   return (
     <Box className={classes.pageWrapper}>
+      {showWarningBanner && <WarningBanner onClose={handleBannerClose} isHiding={isHiding} />}
       <Box className={classes.leaderBoardWrapper}>
         <Box
           sx={{
