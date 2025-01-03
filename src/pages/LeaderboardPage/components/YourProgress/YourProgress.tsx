@@ -76,9 +76,8 @@ export const YourProgress: React.FC<YourProgressProps> = ({
               desktop: trapezeLeft,
               mobile: trapezeMobileTop
             }}
-            tooltip='Points amount refreshes roughly every 30 minutes.'
             desktopLabelAligment='right'
-            label='Daily Points Income'
+            label='Points Per Day'
             isLoading={isLoadingList}
             value={
               userStats

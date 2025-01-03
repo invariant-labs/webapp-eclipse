@@ -62,13 +62,6 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
     }
   }
 
-  const loadingStyles = {
-    animation: isLoading ? 'pulseBlur 1.5s ease-in-out infinite' : 'none',
-    transition: 'all 0.3s ease-out',
-    filter: isLoading ? 'blur(4px)' : 'blur(0)',
-    opacity: isLoading ? 0.7 : 1
-  }
-
   return (
     <Box
       sx={{
@@ -125,9 +118,11 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
             </Tooltip>
           ) : null}
         </Box>
-        <Typography className={classes.headerBigText} sx={loadingStyles}>
-          {value}
-        </Typography>
+        {isLoading ? (
+          <div className={classes.blur} />
+        ) : (
+          <Typography className={classes.headerBigText}>{value}</Typography>
+        )}
       </Box>
     </Box>
   )
