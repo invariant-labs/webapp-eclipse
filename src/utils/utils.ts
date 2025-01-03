@@ -95,6 +95,7 @@ import {
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
+import { apyToApr } from './uiUtils'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1756,4 +1757,29 @@ export const trimDecimalZeros = (numStr: string): string => {
   const trimmedInteger = integerPart.replace(/^0+/, '')
 
   return trimmedDecimal ? `${trimmedInteger || '0'}.${trimmedDecimal}` : trimmedInteger || '0'
+}
+
+const poolsToRecalculateAPY = ['HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce']
+
+//HOTFIX
+export const calculateAPYAndAPR = (
+  apy: number,
+  poolAddress?: string,
+  volume?: number,
+  fee?: number,
+  tvl?: number
+) => {
+  if (volume === undefined || fee === undefined || tvl === undefined) {
+    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+  }
+
+  if (poolsToRecalculateAPY.includes(poolAddress ?? '')) {
+    const parsedApr = ((volume * fee) / tvl) * 365
+
+    const parsedApy = (Math.pow((volume * fee * 0.01) / tvl + 1, 365) - 1) * 100
+
+    return { convertedApy: parsedApy, convertedApr: parsedApr }
+  } else {
+    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+  }
 }
