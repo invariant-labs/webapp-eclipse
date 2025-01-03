@@ -1778,8 +1778,7 @@ export const calculateAPYAndAPR = (
   if (promotedPools.includes(poolAddress ?? '')) {
     const parsedApr = ((volume * fee) / tvl) * 365
 
-    const dailyRate = (volume * fee) / tvl
-    const parsedApy = Math.pow(dailyRate + 1, 365) - 1
+    const parsedApy = (Math.pow((volume * fee * 0.01) / tvl + 1, 365) - 1) * 100
 
     return { convertedApy: parsedApy, convertedApr: parsedApr }
   } else {
