@@ -14,6 +14,8 @@ export interface PoolListInterface {
     symbolTo: string
     iconFrom: string
     iconTo: string
+    volume: number
+    TVL: number
     fee: number
     addressFrom: string
     addressTo: string
@@ -98,6 +100,8 @@ const PoolList: React.FC<PoolListInterface> = ({
                   pointsPerSecond={element.pointsPerSecond}
                   copyAddressHandler={copyAddressHandler}
                   showAPY={showAPY}
+                  volume={element.volume}
+                  TVL={element.TVL}
                 />
               ))}
             </>

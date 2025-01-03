@@ -8,13 +8,13 @@ import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType, SortTypePoolList } from '@store/consts/static'
 
-import { addressToTicker, initialXtoY, parseFeeToPathFee } from '@utils/utils'
+import { addressToTicker, calculateAPYAndAPR, initialXtoY, parseFeeToPathFee } from '@utils/utils'
 import { formatNumber } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { apyToApr, shortenAddress } from '@utils/uiUtils'
+import { shortenAddress } from '@utils/uiUtils'
 import classNames from 'classnames'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
@@ -155,7 +155,8 @@ const PoolListItem: React.FC<IProps> = ({
     setLockPopoverOpen(false)
   }
 
-  const apr = apyToApr(apy)
+  //HOTFIX
+  const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
     <Grid maxWidth='100%'>
@@ -209,11 +210,11 @@ const PoolListItem: React.FC<IProps> = ({
           {!isSmd && showAPY ? (
             <Box className={classes.row}>
               <Typography>
-                {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
+                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : convertedApr.toFixed(2) + '%'}`}
                 <span
                   className={
                     classes.apy
-                  }>{`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}</span>
+                  }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : convertedApy.toFixed(2) + '%'}`}</span>
               </Typography>
               {isPromoted && (
                 <>
@@ -234,8 +235,8 @@ const PoolListItem: React.FC<IProps> = ({
                     onClose={() => {
                       setIsPromotedPoolPopoverOpen(false)
                     }}
-                    apr={apr}
-                    apy={apy}
+                    apr={convertedApr}
+                    apy={convertedApy}
                     points={points}
                   />
                 </>
