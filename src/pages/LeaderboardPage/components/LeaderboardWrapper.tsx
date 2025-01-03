@@ -24,7 +24,7 @@ import { WarningBanner } from './WarningBanner/WarningBanner'
 import { checkDataDelay, hexToDate } from '@utils/utils'
 
 const BANNER_STORAGE_KEY = 'invariant-warning-banner'
-const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
+const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
 const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
 interface LeaderboardWrapperProps {
   alignment: string
