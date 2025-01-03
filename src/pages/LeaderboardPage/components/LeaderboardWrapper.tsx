@@ -136,7 +136,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   return (
     <Box className={classes.pageWrapper}>
       {showWarningBanner && isDelayWarning && (
-        <WarningBanner onClose={handleBannerClose} isHiding={isHiding} />
+        <WarningBanner
+          onClose={handleBannerClose}
+          isHiding={isHiding}
+          lastTimestamp={hexToDate(lastSnapTimestamp) ?? new Date()}
+        />
       )}
       <Box className={classes.leaderBoardWrapper}>
         <Box

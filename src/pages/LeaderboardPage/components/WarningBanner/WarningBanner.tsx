@@ -7,10 +7,23 @@ import { Grid } from '@mui/material'
 interface INormalBannerProps {
   onClose: () => void
   isHiding: boolean
+  lastTimestamp: Date
 }
 
-export const WarningBanner = ({ onClose, isHiding }: INormalBannerProps) => {
+export const WarningBanner = ({ onClose, isHiding, lastTimestamp }: INormalBannerProps) => {
   const { classes } = useStyles({ isHiding })
+
+  const dateDisplay = (date: Date) => {
+    const formattedDate = date.toLocaleString('en-US', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit'
+    })
+
+    return formattedDate
+  }
 
   return (
     <Grid container alignItems='center' justifyContent='center' mb={6}>
@@ -23,8 +36,14 @@ export const WarningBanner = ({ onClose, isHiding }: INormalBannerProps) => {
         <span className={classes.text}>
           <img src={icons.warning2} className={classes.icon} />
           <span>
-            We are currently having difficulties with refreshing the data, please be patient while
-            we fix the ocuring problem!
+            <span>
+              Last update of Invariants Points - <b>{dateDisplay(lastTimestamp)}</b>
+            </span>
+            <br />
+            <span>
+              Please note, points are still being calculated correctly, but there is a temporary
+              pause in updates. Updates will resume shortly.
+            </span>
           </span>
         </span>
 
