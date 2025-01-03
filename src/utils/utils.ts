@@ -1759,10 +1759,8 @@ export const trimDecimalZeros = (numStr: string): string => {
   return trimmedDecimal ? `${trimmedInteger || '0'}.${trimmedDecimal}` : trimmedInteger || '0'
 }
 
-const promotedPools = [
-  'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce',
-  'FvVsbwsbGVo6PVfimkkPhpcRfBrRitiV946nMNNuz7f9'
-]
+const poolsToRecalculateAPY = ['HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce']
+
 //HOTFIX
 export const calculateAPYAndAPR = (
   apy: number,
@@ -1775,7 +1773,7 @@ export const calculateAPYAndAPR = (
     return { convertedApy: apy, convertedApr: apyToApr(apy) }
   }
 
-  if (promotedPools.includes(poolAddress ?? '')) {
+  if (poolsToRecalculateAPY.includes(poolAddress ?? '')) {
     const parsedApr = ((volume * fee) / tvl) * 365
 
     const parsedApy = (Math.pow((volume * fee * 0.01) / tvl + 1, 365) - 1) * 100
