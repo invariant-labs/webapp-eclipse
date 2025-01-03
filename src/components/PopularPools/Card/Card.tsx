@@ -10,7 +10,13 @@ import RevertIcon from '@static/svg/revert.svg'
 import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import backIcon from '@static/svg/back-arrow-2.svg'
-import { addressToTicker, formatNumber, initialXtoY, parseFeeToPathFee } from '@utils/utils'
+import {
+  addressToTicker,
+  calculateAPYAndAPR,
+  formatNumber,
+  initialXtoY,
+  parseFeeToPathFee
+} from '@utils/utils'
 import { useNavigate } from 'react-router-dom'
 import { NetworkType } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -87,6 +93,9 @@ const Card: React.FC<ICard> = ({
   useEffect(() => {
     console.log(airdropIconRef)
   }, [airdropIconRef.current])
+
+  //HOTFIX
+  const { convertedApy } = calculateAPYAndAPR(apy ?? 0, poolAddress?.toString(), volume, fee, TVL)
 
   return (
     <Grid className={classes.root}>
@@ -166,7 +175,7 @@ const Card: React.FC<ICard> = ({
                         setIsPromotedPoolPopoverOpen(false)
                       }}
                       apr={apr ?? 0}
-                      apy={apy ?? 0}
+                      apy={convertedApy ?? 0}
                       points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
                     />
                   </>
@@ -176,7 +185,7 @@ const Card: React.FC<ICard> = ({
                 {apy !== undefined && showAPY && (
                   <StatsLabel
                     title='APY'
-                    value={`${apy > 1000 ? '>1000%' : apy === 0 ? '-' : apy.toFixed(2) + '%'}`}
+                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : convertedApy.toFixed(2) + '%'}`}
                   />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />

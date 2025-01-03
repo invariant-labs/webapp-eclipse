@@ -8,13 +8,14 @@ import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import {
   addressToTicker,
+  calculateAPYAndAPR,
   formatNumberWithCommas,
   initialXtoY,
   parseFeeToPathFee,
   printBN
 } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { apyToApr, shortenAddress } from '@utils/uiUtils'
+import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
@@ -28,6 +29,8 @@ export interface IProps {
   symbolTo?: string
   iconFrom?: string
   iconTo?: string
+  volume?: number
+  TVL?: number
   tokenIndex?: number
   hideBottomLine?: boolean
   addressFrom?: string
@@ -52,6 +55,8 @@ const PoolListItem: React.FC<IProps> = ({
   symbolTo,
   iconFrom,
   iconTo,
+  volume,
+  TVL,
   tokenIndex,
   hideBottomLine = false,
   addressFrom,
@@ -98,7 +103,8 @@ const PoolListItem: React.FC<IProps> = ({
       })
   }
 
-  const apr = apyToApr(apy)
+  //HOTFIX
+  const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
     <Grid maxWidth='100%'>
@@ -151,11 +157,11 @@ const PoolListItem: React.FC<IProps> = ({
           </Grid>
           {!isSm && showAPY ? (
             <Typography className={classes.row}>
-              {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
+              {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : convertedApr.toFixed(2) + '%'}`}
               <span
                 className={
                   classes.apy
-                }>{`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}</span>
+                }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : convertedApy.toFixed(2) + '%'}`}</span>
             </Typography>
           ) : null}
           <Typography>{fee}%</Typography>
