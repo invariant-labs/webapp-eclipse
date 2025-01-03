@@ -128,6 +128,26 @@ export const formatNumberWithCommas = (number: string) => {
   return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 
+export const removeAdditionalDecimals = (value: string, desiredDecimals: number): string => {
+  const dotIndex = value.indexOf('.')
+  if (dotIndex === -1) {
+    return value
+  }
+  const decimals = value.length - dotIndex - 1
+  if (decimals > desiredDecimals) {
+    const sliced = value.slice(0, dotIndex + desiredDecimals + 1)
+    const lastCommaIndex = sliced.lastIndexOf(',')
+
+    if (lastCommaIndex === -1 || lastCommaIndex < dotIndex) {
+      return sliced
+    }
+
+    return value.slice(0, lastCommaIndex) + value.slice(lastCommaIndex + 1, lastCommaIndex + 2)
+  } else {
+    return value
+  }
+}
+
 export const trimZeros = (numStr: string): string => {
   if (!numStr) {
     return ''
