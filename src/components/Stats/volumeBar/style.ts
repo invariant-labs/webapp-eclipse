@@ -8,7 +8,7 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     backgroundColor: colors.invariant.component,
     borderRadius: 22,
-    padding: 20,
+    padding: '20px 24px',
     display: 'flex',
     flexDirection: 'row',
     flexWrap: 'wrap',
@@ -16,8 +16,8 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'space-between',
 
     [theme.breakpoints.down('sm')]: {
-      padding: '12px',
-      gap: 4
+      padding: '12px 24px',
+      gap: 8
     }
   },
 
@@ -30,14 +30,13 @@ export const useStyles = makeStyles()(() => ({
 
     [theme.breakpoints.down('sm')]: {
       '& p': {
-        ...typography.caption2,
+        ...typography.body2,
         whiteSpace: 'nowrap'
       }
     },
 
     [theme.breakpoints.down('xs')]: {
       '& p': {
-        ...typography.caption4,
         whiteSpace: 'nowrap'
       },
       flex: '0 0 auto',
@@ -53,9 +52,16 @@ export const useStyles = makeStyles()(() => ({
       },
       [theme.breakpoints.up('md')]: {
         justifyContent: 'flex-end'
+      },
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '0px'
       }
     },
 
+    '&:nth-of-type(2)': {
+      justifyContent: 'center',
+      textAlign: 'center'
+    },
     '&:nth-of-type(1), &:nth-of-type(2)': {
       [theme.breakpoints.down('md')]: {
         justifyContent: 'center',
