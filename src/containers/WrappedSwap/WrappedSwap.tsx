@@ -43,7 +43,6 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
-import { AuditLabel } from '@pages/LeaderboardPage/components/AuditLabel/AuditLabel'
 
 type Props = {
   initialTokenFrom: string
@@ -343,7 +342,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   }
 
   return (
-    <>
     <Swap
       isFetchingNewPool={isFetchingNewPool}
       onRefresh={onRefresh}
@@ -429,8 +427,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       }}
       canNavigate={canNavigate}
     />
-    <AuditLabel/>
-    </>
   )
 }
 
