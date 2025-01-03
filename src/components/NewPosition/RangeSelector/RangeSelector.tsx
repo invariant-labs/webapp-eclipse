@@ -23,6 +23,9 @@ export interface IRangeSelector {
   midPrice: TickPlotPositionData
   tokenASymbol: string
   tokenBSymbol: string
+  updatePath: {
+    update: (param?: any) => void
+  }
   onChangeRange: (leftIndex: number, rightIndex: number) => void
   blocked?: boolean
   blockerInfo?: string
@@ -33,12 +36,15 @@ export interface IRangeSelector {
   tickSpacing: number
   currentPairReversed: boolean | null
   positionOpeningMethod?: PositionOpeningMethod
+  setPositionOpeningMethod: React.Dispatch<React.SetStateAction<PositionOpeningMethod>>
+  onPositionOpeningMethodChange: (val: PositionOpeningMethod) => void
   poolIndex: number | null
   hasTicksError?: boolean
   reloadHandler: () => void
   concentrationArray: number[]
   minimumSliderIndex: number
   concentrationIndex: number
+  initialConcentration: string
   setConcentrationIndex: (val: number) => void
   getTicksInsideRange: (
     left: number,
@@ -49,6 +55,7 @@ export interface IRangeSelector {
     rightInRange: number
   }
   shouldReversePlot: boolean
+
   setShouldReversePlot: (val: boolean) => void
   shouldNotUpdatePriceRange: boolean
   unblockUpdatePriceRange: () => void
@@ -61,6 +68,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   midPrice,
   tokenASymbol,
   tokenBSymbol,
+  updatePath,
   onChangeRange,
   blocked = false,
   blockerInfo,
@@ -77,9 +85,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   concentrationArray,
   minimumSliderIndex,
   concentrationIndex,
+  onPositionOpeningMethodChange,
+  setPositionOpeningMethod,
   setConcentrationIndex,
   getTicksInsideRange,
-
+  initialConcentration,
   shouldReversePlot,
   setShouldReversePlot,
   shouldNotUpdatePriceRange,
@@ -110,6 +120,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   const isMountedRef = useRef(false)
 
+  const previousPositionOpeningMethod = useRef(positionOpeningMethod)
+
   useEffect(() => {
     isMountedRef.current = true
     return () => {
@@ -124,6 +136,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     setPlotMin(newMin)
     setPlotMax(newMax)
   }
+
+  useEffect(() => {
+    updatePath.update()
+  }, [concentrationIndex])
 
   const zoomPlus = () => {
     const diff = plotMax - plotMin
@@ -392,6 +408,52 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     changeRangeHandler(leftRange, rightRange)
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
+
+  const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
+    const mappedIndex = findClosestIndexByValue(concentrationArray, concentrationValue)
+
+    const validIndex = Math.max(
+      minimumSliderIndex,
+      Math.min(mappedIndex, concentrationArray.length - 1)
+    )
+    setPreviousConcentration(cachedConcentrationArray[validIndex])
+    setConcentrationIndex(validIndex)
+    const { leftRange, rightRange } = calculateConcentrationRange(
+      tickSpacing,
+      cachedConcentrationArray[validIndex],
+      2,
+      midPrice.index,
+      isXtoY
+    )
+
+    changeRangeHandler(leftRange, rightRange)
+    autoZoomHandler(leftRange, rightRange, true)
+  }
+
+  useEffect(() => {
+    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
+      const concentrationValue = parseInt(initialConcentration)
+      if (!isNaN(concentrationValue) && positionOpeningMethod !== 'concentration') {
+        setPositionOpeningMethod('concentration')
+        onPositionOpeningMethodChange('concentration')
+      }
+      handleUpdateConcentrationFromURL(concentrationValue)
+      console.log('test1')
+    }
+  }, [poolIndex])
+  console.log('previousConcentration', previousConcentration)
+  useEffect(() => {
+    // Detect change from range to con, centration to prevent reseting slider
+    if (
+      positionOpeningMethod === 'concentration' &&
+      previousPositionOpeningMethod.current === 'range'
+    ) {
+      handleUpdateConcentrationFromURL(previousConcentration)
+      console.log('test2')
+    }
+
+    previousPositionOpeningMethod.current = positionOpeningMethod
+  }, [positionOpeningMethod])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>

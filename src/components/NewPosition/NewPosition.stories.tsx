@@ -83,6 +83,7 @@ export const Primary: Story = {
     isWaitingForNewPool: false,
     onChangePositionTokens: fn(),
     onHideUnknownTokensChange: fn(),
+    initialConcentration: '100',
     onPositionOpeningMethodChange: fn(),
     onSlippageChange: fn(),
     poolIndex: 0,
@@ -128,6 +129,7 @@ export const Primary: Story = {
         onSlippageChange={fn()}
         onHideUnknownTokensChange={fn()}
         copyPoolAddressHandler={fn()}
+        initialConcentration='100'
         reloadHandler={fn()}
         setMidPrice={fn()}
         ticksLoading={false}

@@ -50,6 +50,7 @@ import icons from '@static/icons'
 
 export interface INewPosition {
   initialTokenFrom: string
+  initialConcentration: string
   initialTokenTo: string
   initialFee: string
   poolAddress: string
@@ -126,6 +127,7 @@ export interface INewPosition {
 export const NewPosition: React.FC<INewPosition> = ({
   initialTokenFrom,
   initialTokenTo,
+  initialConcentration,
   initialFee,
   poolAddress,
   copyPoolAddressHandler,
@@ -191,6 +193,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
+  const [selectedFee, setSelectedFee] = useState<number>(0)
 
   const [tokenADeposit, setTokenADeposit] = useState<string>('')
   const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
@@ -444,13 +447,21 @@ export const NewPosition: React.FC<INewPosition> = ({
     onSlippageChange(slippage)
   }
 
-  const updatePath = (index1: number | null, index2: number | null, fee: number) => {
+  const updatePath = (
+    index1: number | null,
+    index2: number | null,
+    fee: number,
+    concentration?: number
+  ) => {
     if (canNavigate) {
       const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
       if (index1 != null && index2 != null) {
         const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
         const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-        navigate(`/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}`, { replace: true })
+        const concParam = concentration ? `?conc=${concentration}` : ''
+        navigate(`/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}`, {
+          replace: true
+        })
       } else if (index1 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
         navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
@@ -462,7 +473,6 @@ export const NewPosition: React.FC<INewPosition> = ({
       }
     }
   }
-
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (refresherTime > 0 && isCurrentPoolExisting) {
@@ -625,7 +635,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             setTokenAIndex(index1)
             setTokenBIndex(index2)
             onChangePositionTokens(index1, index2, fee)
-
+            setSelectedFee(fee)
             if (!isLoadingTokens) {
               updatePath(index1, index2, fee)
             }
@@ -721,7 +731,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             setTokenAIndex(tokenBIndex)
             setTokenBIndex(pom)
             onChangePositionTokens(tokenBIndex, tokenAIndex, currentFeeIndex)
-
+            setSelectedFee(currentFeeIndex)
             if (!isLoadingTokens) {
               updatePath(tokenBIndex, tokenAIndex, currentFeeIndex)
             }
@@ -778,6 +788,16 @@ export const NewPosition: React.FC<INewPosition> = ({
         tokenAIndex === tokenBIndex ||
         isWaitingForNewPool ? (
           <RangeSelector
+            updatePath={{
+              update() {
+                updatePath(
+                  tokenAIndex,
+                  tokenBIndex,
+                  selectedFee,
+                  Math.round(concentrationArray[concentrationIndex])
+                )
+              }
+            }}
             poolIndex={poolIndex}
             onChangeRange={onChangeRange}
             blocked={
@@ -807,11 +827,14 @@ export const NewPosition: React.FC<INewPosition> = ({
             yDecimal={yDecimal}
             currentPairReversed={currentPairReversed}
             positionOpeningMethod={positionOpeningMethod}
+            setPositionOpeningMethod={setPositionOpeningMethod}
+            onPositionOpeningMethodChange={onPositionOpeningMethodChange}
             hasTicksError={hasTicksError}
             reloadHandler={reloadHandler}
             concentrationArray={concentrationArray}
             setConcentrationIndex={setConcentrationIndex}
             concentrationIndex={concentrationIndex}
+            initialConcentration={initialConcentration}
             minimumSliderIndex={minimumSliderIndex}
             getTicksInsideRange={getTicksInsideRange}
             shouldReversePlot={shouldReversePlot}
@@ -838,6 +861,20 @@ export const NewPosition: React.FC<INewPosition> = ({
             concentrationIndex={concentrationIndex}
             setConcentrationIndex={setConcentrationIndex}
             minimumSliderIndex={minimumSliderIndex}
+            initialConcentration={initialConcentration}
+            onPositionOpeningMethodChange={onPositionOpeningMethodChange}
+            setPositionOpeningMethod={setPositionOpeningMethod}
+            updatePath={{
+              update() {
+                updatePath(
+                  tokenAIndex,
+                  tokenBIndex,
+                  selectedFee,
+                  Math.round(concentrationArray[concentrationIndex])
+                )
+              }
+            }}
+            isWaitingForNewPool={isWaitingForNewPool}
           />
         )}
       </Grid>
