@@ -8,37 +8,78 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     backgroundColor: colors.invariant.component,
     borderRadius: 22,
-    padding: 20,
+    padding: '20px 24px',
     display: 'flex',
-    whiteSpace: 'nowrap',
-    justifyContent: 'space-between'
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: 8,
+    justifyContent: 'space-between',
+
+    [theme.breakpoints.down('sm')]: {
+      padding: '12px 24px',
+      gap: 8
+    }
   },
 
   tokenName: {
     display: 'flex',
-    whiteSpace: 'nowrap',
+    alignItems: 'center',
+    minWidth: 'auto',
+    flex: '1 1 auto',
+    gap: 4,
 
     [theme.breakpoints.down('sm')]: {
       '& p': {
-        ...typography.caption2
+        ...typography.body2,
+        whiteSpace: 'nowrap'
       }
     },
 
     [theme.breakpoints.down('xs')]: {
       '& p': {
-        ...typography.caption4
+        whiteSpace: 'nowrap'
+      },
+      flex: '0 0 auto',
+      width: '100%',
+      justifyContent: 'center'
+    },
+
+    '&:nth-of-type(3)': {
+      [theme.breakpoints.down('md')]: {
+        width: '100%',
+        justifyContent: 'center',
+        marginTop: '8px'
+      },
+      [theme.breakpoints.up('md')]: {
+        justifyContent: 'flex-end'
+      },
+      [theme.breakpoints.down('sm')]: {
+        marginTop: '0px'
+      }
+    },
+
+    '&:nth-of-type(2)': {
+      justifyContent: 'center',
+      textAlign: 'center'
+    },
+    '&:nth-of-type(1), &:nth-of-type(2)': {
+      [theme.breakpoints.down('md')]: {
+        justifyContent: 'center',
+        textAlign: 'center'
       }
     }
   },
 
   tokenHeader: {
     ...typography.heading4,
-    color: colors.invariant.textGrey
+    color: colors.invariant.textGrey,
+    whiteSpace: 'nowrap'
   },
 
   tokenContent: {
     ...typography.heading4,
     color: colors.white.main,
+    whiteSpace: 'nowrap',
     padding: '0 0 0 5px'
   },
 
@@ -51,6 +92,7 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.green,
     fontWeight: 400
   },
+
   loadingOverlay: {
     position: 'relative',
     '&::after': {
