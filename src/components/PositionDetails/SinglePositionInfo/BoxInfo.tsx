@@ -20,6 +20,7 @@ export const BoxInfo: React.FC<{
   tokenA: BoxInfoToken
   tokenB: BoxInfoToken
   showBalance?: boolean
+  showValue?: boolean
   swapHandler?: () => void
   showLoader?: boolean
   isBalanceLoading: boolean
@@ -29,6 +30,7 @@ export const BoxInfo: React.FC<{
   tokenB,
   tokenA,
   showBalance = false,
+  showValue = false,
   swapHandler,
   showLoader = false,
   isBalanceLoading
@@ -112,22 +114,30 @@ export const BoxInfo: React.FC<{
               {showPrefix(tokenXPrintValue, prefixConfig)}
             </Typography>
           </Grid>
-          {showBalance ? (
+          {showBalance || showValue ? (
             <Grid className={classes.tokenAreaLowerPart}>
-              <Typography className={classes.tokenBalance}>
-                Balance:{' '}
-                {isBalanceLoading ? (
-                  <img src={loadingAnimation} className={classes.loadingBalance} alt='Loading' />
-                ) : (
-                  formatNumber(tokenA.balance)
-                )}{' '}
-                {tokenA.name}
-              </Typography>
+              {showBalance ? (
+                <Typography className={classes.tokenBalance}>
+                  Balance:{' '}
+                  {isBalanceLoading ? (
+                    <img src={loadingAnimation} className={classes.loadingBalance} alt='Loading' />
+                  ) : (
+                    formatNumber(tokenA.balance)
+                  )}{' '}
+                  {tokenA.name}
+                </Typography>
+              ) : (
+                <div />
+              )}
               {typeof tokenA.usdValue !== 'undefined' && tokenA.price ? (
                 <Tooltip
                   enterTouchDelay={0}
                   leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-                  title="Estimated USD Value of the Position's Tokens"
+                  title={
+                    showValue
+                      ? 'Estimated USD Value of unclaimed fee'
+                      : "Estimated USD Value of the Position's Tokens"
+                  }
                   placement='bottom'
                   classes={{
                     tooltip: classes.tooltip
@@ -179,22 +189,30 @@ export const BoxInfo: React.FC<{
               {showPrefix(tokenYPrintValue, prefixConfig)}
             </Typography>
           </Grid>
-          {showBalance ? (
+          {showBalance || showValue ? (
             <Grid className={classes.tokenAreaLowerPart}>
-              <Typography className={classes.tokenBalance}>
-                Balance:{' '}
-                {isBalanceLoading ? (
-                  <img src={loadingAnimation} className={classes.loadingBalance} alt='Loading' />
-                ) : (
-                  formatNumber(tokenB.balance)
-                )}{' '}
-                {tokenB.name}
-              </Typography>
+              {showBalance ? (
+                <Typography className={classes.tokenBalance}>
+                  Balance:{' '}
+                  {isBalanceLoading ? (
+                    <img src={loadingAnimation} className={classes.loadingBalance} alt='Loading' />
+                  ) : (
+                    formatNumber(tokenB.balance)
+                  )}{' '}
+                  {tokenB.name}
+                </Typography>
+              ) : (
+                <div />
+              )}
               {typeof tokenB.usdValue !== 'undefined' && tokenB.price ? (
                 <Tooltip
                   enterTouchDelay={0}
                   leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-                  title="Estimated USD Value of the Position's Tokens"
+                  title={
+                    showValue
+                      ? 'Estimated USD Value of unclaimed fee'
+                      : "Estimated USD Value of the Position's Tokens"
+                  }
                   placement='bottom'
                   classes={{
                     tooltip: classes.tooltip

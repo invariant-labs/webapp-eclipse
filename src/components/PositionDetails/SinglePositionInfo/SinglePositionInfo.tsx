@@ -243,14 +243,19 @@ const SinglePositionInfo: React.FC<IProp> = ({
         <BoxInfo
           title={'Unclaimed fees'}
           tokenA={
-            xToY ? { ...tokenX, value: tokenX.claimValue } : { ...tokenY, value: tokenY.claimValue }
+            xToY
+              ? { ...tokenX, value: tokenX.claimValue, price: tokenXPriceData?.price }
+              : { ...tokenY, value: tokenY.claimValue, price: tokenYPriceData?.price }
           }
           tokenB={
-            xToY ? { ...tokenY, value: tokenY.claimValue } : { ...tokenX, value: tokenX.claimValue }
+            xToY
+              ? { ...tokenY, value: tokenY.claimValue, price: tokenYPriceData?.price }
+              : { ...tokenX, value: tokenX.claimValue, price: tokenXPriceData?.price }
           }
           onClickButton={onClickClaimFee}
           showLoader={showFeesLoader}
           isBalanceLoading={isBalanceLoading}
+          showValue
         />
       </Grid>
     </Grid>
