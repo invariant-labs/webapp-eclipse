@@ -1,4 +1,4 @@
-import React, { useEffect, useLayoutEffect } from 'react'
+import React, { useEffect, useLayoutEffect, useMemo } from 'react'
 import { Box, Typography } from '@mui/material'
 import useStyles from './styles'
 import { Faq } from './Faq/Faq'
@@ -7,6 +7,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import {
   getPromotedPools,
+  lastTimestamp,
   leaderboardSelectors,
   topRankedUsers
 } from '@store/selectors/leaderboard'
@@ -20,10 +21,11 @@ import { VariantType } from 'notistack'
 import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { actions as statsActions } from '@store/reducers/stats'
 import { WarningBanner } from './WarningBanner/WarningBanner'
+import { checkDataDelay, hexToDate } from '@utils/utils'
 
 const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
-
+const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
 interface LeaderboardWrapperProps {
   alignment: string
   setAlignment: React.Dispatch<React.SetStateAction<string>>
@@ -37,6 +39,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const currentNetwork = useSelector(network)
 
   const isLoading = useSelector(leaderboardSelectors.loading)
+  const lastSnapTimestamp = useSelector(lastTimestamp)
   const leaderboard = useSelector(topRankedUsers)
   const userStats = useSelector(leaderboardSelectors.currentUser)
   const top3Scorers = useSelector(leaderboardSelectors.top3Scorers)
@@ -46,6 +49,13 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const poolsList = useSelector(poolsStatsWithTokensDetails)
 
   const [showWarningBanner, setShowWarningBanner] = React.useState(true)
+
+  const isDelayWarning = useMemo(() => {
+    if (!lastSnapTimestamp) return false
+    const snapTime = hexToDate(lastSnapTimestamp)
+
+    return checkDataDelay(snapTime, SNAP_TIME_DELAY)
+  }, [lastSnapTimestamp])
 
   const promotedPoolsData = promotedPools
     .map(promotedPool =>
@@ -125,7 +135,9 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
 
   return (
     <Box className={classes.pageWrapper}>
-      {showWarningBanner && <WarningBanner onClose={handleBannerClose} isHiding={isHiding} />}
+      {showWarningBanner && isDelayWarning && (
+        <WarningBanner onClose={handleBannerClose} isHiding={isHiding} />
+      )}
       <Box className={classes.leaderBoardWrapper}>
         <Box
           sx={{
