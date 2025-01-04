@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Input, Tooltip, Typography } from '@mui/material'
+import { Box, Grid, Input, Tooltip, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumber, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
