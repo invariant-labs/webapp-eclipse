@@ -149,7 +149,7 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
   actionButton: {
     ...typography.tiny2,
     borderRadius: 4,
-    fontWeight: '700',
+    fontWeight: '600',
     width: 26,
     minWidth: 26,
     height: 14,
