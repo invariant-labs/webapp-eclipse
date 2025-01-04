@@ -199,7 +199,6 @@ export const BoxInfo: React.FC<{
                   }}>
                   <Typography className={classes.tokenUSDValue}>
                     ~${formatNumber((tokenB.value * tokenB.price).toFixed(2))}
-                    {showPrefix(tokenB.value * tokenB.price)}
                   </Typography>
                 </Tooltip>
               ) : (
