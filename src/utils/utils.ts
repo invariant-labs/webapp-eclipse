@@ -727,17 +727,6 @@ export const formatNumber = (
   noDecimals?: boolean,
   decimalsAfterDot: number = 3
 ): string => {
-  if (typeof number === 'string') {
-    let upperNumber = number.toUpperCase()
-    while (
-      upperNumber.length > 1 &&
-      (upperNumber.endsWith('KK') || upperNumber.endsWith('MM') || upperNumber.endsWith('BB'))
-    ) {
-      upperNumber = upperNumber.slice(0, -1)
-    }
-    return upperNumber
-  }
-
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)
