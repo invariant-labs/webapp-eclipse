@@ -19,6 +19,8 @@ import { IPositionItem, PositionItem } from './PositionItem/PositionItem'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { PaginationList } from '@components/Pagination/Pagination'
+import { useDispatch } from 'react-redux'
+import { actions } from '@store/reducers/leaderboard'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -69,6 +71,7 @@ export const PositionsList: React.FC<IProps> = ({
   const { classes } = useStyles()
   const navigate = useNavigate()
   const [defaultPage] = useState(initialPage)
+  const dispatch = useDispatch()
   const [page, setPage] = useState(initialPage)
   const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
 
@@ -135,10 +138,13 @@ export const PositionsList: React.FC<IProps> = ({
     handleChangePagination(initialPage)
   }, [initialPage])
 
+  useEffect(() => {
+    dispatch(actions.getLeaderboardConfig())
+  }, [dispatch])
+
   // useEffect(() => {
   //   pageChanged(page)
   // }, [page])
-
   return (
     <Grid container direction='column' className={classes.root}>
       <Grid

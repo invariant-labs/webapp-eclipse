@@ -40,6 +40,26 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       width: 28
     }
   },
+  actionButton: {
+    background: 'none',
+    padding: 0,
+    margin: 0,
+    border: 'none',
+    display: 'inline-flex',
+    position: 'relative',
+    color: colors.invariant.black,
+    textTransform: 'none',
+
+    transition: 'filter 0.2s linear',
+
+    '&:hover': {
+      filter: 'brightness(1.2)',
+      cursor: 'pointer',
+      '@media (hover: none)': {
+        filter: 'none'
+      }
+    }
+  },
   arrows: {
     width: 36,
     marginLeft: 4,

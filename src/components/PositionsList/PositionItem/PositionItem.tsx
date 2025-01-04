@@ -1,15 +1,24 @@
-import { Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import { theme } from '@static/theme'
 import { formatNumber } from '@utils/utils'
 import classNames from 'classnames'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
+import icons from '@static/icons'
+import { PublicKey } from '@solana/web3.js'
+import { useSelector } from 'react-redux'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
+import { BN } from '@coral-xyz/anchor'
+import { estimatePointsForLiquidity } from '@invariant-labs/points-sdk'
+import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
+import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 
 export interface IPositionItem {
   tokenXName: string
@@ -17,6 +26,7 @@ export interface IPositionItem {
   tokenXIcon: string
   tokenYIcon: string
   tokenXLiq: number
+  poolAddress: PublicKey
   tokenYLiq: number
   fee: number
   min: number
@@ -30,18 +40,23 @@ export interface IPositionItem {
   network: NetworkType
   isFullRange: boolean
   isLocked: boolean
+  poolData: PoolWithAddressAndIndex
+  liquidity: BN
 }
 
 export const PositionItem: React.FC<IPositionItem> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,
+  poolAddress,
   tokenYIcon,
   fee,
   min,
   max,
   valueX,
   valueY,
+  liquidity,
+  poolData,
   isActive = false,
   currentPrice,
   tokenXLiq,
@@ -51,6 +66,18 @@ export const PositionItem: React.FC<IPositionItem> = ({
   isLocked
 }) => {
   const { classes } = useStyles()
+  const airdropIconRef = useRef<any>(null)
+
+  const { promotedPools } = useSelector(leaderboardSelectors.config)
+  const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
+
+  const { isPromoted, pointsPerSecond } = useMemo(() => {
+    if (!poolAddress) return { isPromoted: false, pointsPerSecond: '00' }
+    const promotedPool = promotedPools.find(pool => pool.address === poolAddress.toString())
+
+    if (!promotedPool) return { isPromoted: false, pointsPerSecond: '00' }
+    return { isPromoted: true, pointsPerSecond: promotedPool.pointsPerSecond }
+  }, [promotedPools, poolAddress])
 
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
@@ -134,6 +161,15 @@ export const PositionItem: React.FC<IPositionItem> = ({
     ),
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
+  const estimation = useMemo(() => {
+    const estOfPoints = estimatePointsForLiquidity(
+      new BN(liquidity, 'hex'),
+      poolData as PoolStructure,
+      new BN(pointsPerSecond, 'hex'),
+      false
+    ) as BN
+    return estOfPoints
+  }, [liquidity, poolData, pointsPerSecond])
 
   return (
     <Grid
@@ -172,11 +208,40 @@ export const PositionItem: React.FC<IPositionItem> = ({
             {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
           </Typography>
         </Grid>
-
-        <Hidden mdUp>{feeFragment}</Hidden>
       </Grid>
 
       <Grid container item className={classes.mdInfo} direction='row'>
+        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          {isPromoted && (
+            <>
+              <div
+                ref={airdropIconRef}
+                className={classes.actionButton}
+                onPointerLeave={() => {
+                  setIsPromotedPoolPopoverOpen(false)
+                }}
+                onPointerEnter={() => {
+                  setIsPromotedPoolPopoverOpen(true)
+                }}>
+                <img
+                  src={icons.airdropRainbow}
+                  alt={'Airdrop'}
+                  style={{ height: '32px', marginRight: '16px' }}
+                />
+              </div>
+              <PromotedPoolPopover
+                anchorEl={airdropIconRef.current}
+                open={isPromotedPoolPopoverOpen}
+                onClose={() => {
+                  setIsPromotedPoolPopoverOpen(false)
+                }}
+                estPoints={estimation}
+                points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+              />
+            </>
+          )}
+          <Hidden mdUp>{feeFragment}</Hidden>
+        </Box>
         <Hidden mdDown>{feeFragment}</Hidden>
         <Grid
           container

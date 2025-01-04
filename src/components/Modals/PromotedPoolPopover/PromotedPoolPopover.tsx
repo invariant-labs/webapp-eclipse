@@ -2,13 +2,15 @@ import { BN } from '@coral-xyz/anchor'
 import useStyles from './style'
 import { Popover, Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export interface IPromotedPoolPopover {
   open: boolean
   anchorEl: HTMLElement | null
   onClose: () => void
-  apr: number
-  apy: number
+  apr?: BN
+  apy?: number
+  estPoints?: BN
   points: BN
 }
 
@@ -18,6 +20,7 @@ export const PromotedPoolPopover = ({
   anchorEl,
   apr,
   apy,
+  estPoints,
   points
 }: IPromotedPoolPopover) => {
   const { classes } = useStyles()
@@ -57,18 +60,30 @@ export const PromotedPoolPopover = ({
               {formatNumberWithCommas(printBN(points, 0))}
             </Typography>
           </div>
-          <div className={classes.insideBox}>
-            <Typography className={classes.greyText}>
-              APY
-              <span className={classes.apr}>APR</span>
-            </Typography>{' '}
-            <Typography className={classes.whiteText}>
-              {`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}
-              <span className={classes.apr}>
-                {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
-              </span>
-            </Typography>
-          </div>
+          {estPoints ? (
+            <div className={classes.insideBox}>
+              <Typography className={classes.greyText}>Your Points</Typography>
+              <Typography className={classes.whiteText}>{printBN(estPoints, 0)}</Typography>
+            </div>
+          ) : null}
+
+          {apr && apy ? (
+            <>
+              <div className={classes.insideBox}>
+                <Typography className={classes.greyText}>
+                  APY
+                  <span className={classes.apr}>APR</span>
+                </Typography>{' '}
+                <Typography className={classes.whiteText}>
+                  {`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}
+                  <span className={classes.apr}>
+                    {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
+                  </span>
+                  {printBN(apr, LEADERBOARD_DECIMAL)}
+                </Typography>
+              </div>
+            </>
+          ) : null}
         </div>
       </div>
     </Popover>
