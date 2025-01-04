@@ -1,9 +1,19 @@
-import { Box, Button, Grid, Input, Tooltip, Typography } from '@mui/material'
+import { Box, Grid, Input, Tooltip, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumber, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import icons from '@static/icons'
+import { getButtonClassName } from '@utils/uiUtils'
+import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
+
+interface ActionButton {
+  label: string
+  onClick: () => void
+  disabled?: boolean
+  variant?: 'max' | 'half'
+  customClass?: string
+}
 
 interface IProps {
   setValue: (value: string) => void
@@ -12,7 +22,6 @@ interface IProps {
   currencyIsUnknown: boolean
   value?: string
   placeholder?: string
-  onMaxClick: () => void
   style?: CSSProperties
   blocked?: boolean
   blockerInfo?: string
@@ -25,8 +34,8 @@ interface IProps {
   priceLoading?: boolean
   isBalanceLoading: boolean
   walletUninitialized: boolean
+  actionButtons?: ActionButton[]
 }
-
 export const DepositAmountInput: React.FC<IProps> = ({
   currency,
   currencyIconSrc,
@@ -34,7 +43,6 @@ export const DepositAmountInput: React.FC<IProps> = ({
   value,
   setValue,
   placeholder,
-  onMaxClick,
   style,
   blocked = false,
   blockerInfo,
@@ -45,6 +53,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
   disabled = false,
   priceLoading = false,
   isBalanceLoading,
+  actionButtons = [],
   walletUninitialized
 }) => {
   const { classes } = useStyles({ isSelected: !!currency && !walletUninitialized })
@@ -91,6 +100,30 @@ export const DepositAmountInput: React.FC<IProps> = ({
   }
 
   const usdBalance = tokenPrice && value ? tokenPrice * +value : 0
+
+  const renderActionButton = (button: ActionButton) => {
+    const buttonClassName = getButtonClassName({
+      label: button.variant ?? 'max',
+      variants: [
+        { label: 'max', className: classes.maxVariant },
+        { label: 'half', className: classes.halfVariant }
+      ],
+      default: classes.actionButton
+    })
+    return (
+      <OutlinedButton
+        name={button.label}
+        key={button.label}
+        onClick={button.onClick}
+        disabled={button.disabled || walletUninitialized}
+        className={
+          currency && !walletUninitialized
+            ? buttonClassName
+            : `${classes.actionButton} ${classes.actionButtonNotActive}`
+        }
+      />
+    )
+  }
 
   return (
     <Grid container className={classes.wrapper} style={style}>
@@ -151,13 +184,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
           alignItems='center'
           direction='row'
           wrap='nowrap'>
-          <Grid
-            className={classes.balance}
-            container
-            alignItems='center'
-            wrap='nowrap'
-            onClick={walletUninitialized ? () => {} : onMaxClick}>
-            <Typography className={classes.caption2}>
+          <Grid className={classes.balance} container alignItems='center' wrap='nowrap'>
+            <Typography className={classes.caption2} onClick={() => actionButtons[0].onClick()}>
               Balance:{' '}
               {walletUninitialized ? (
                 <>-</>
@@ -168,14 +196,15 @@ export const DepositAmountInput: React.FC<IProps> = ({
               )}{' '}
               {currency}
             </Typography>
-            <Button
+            {actionButtons.map(renderActionButton)}
+            {/* <Button
               className={
                 currency && !walletUninitialized
                   ? classes.maxButton
                   : `${classes.maxButton} ${classes.maxButtonNotActive}`
               }>
               Max
-            </Button>
+            </Button> */}
           </Grid>
           <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
             {currency ? (

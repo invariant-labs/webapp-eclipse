@@ -22,13 +22,12 @@ import {
   findPairs,
   handleSimulate,
   printBN,
-  trimDecimalZeros,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { blurContent, unblurContent } from '@utils/uiUtils'
+import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
@@ -597,6 +596,14 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [tokenFromIndex, tokenToIndex])
 
+  const actions = createButtonActions({
+    tokens,
+    wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
+    minAmount: WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT,
+    onAmountSet: setAmountFrom,
+    onSelectInput: () => setInputRef(inputTarget.FROM)
+  })
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
@@ -674,32 +681,22 @@ export const Swap: React.FC<ISwap> = ({
               }
             }}
             placeholder={`0.${'0'.repeat(6)}`}
-            onMaxClick={() => {
-              if (tokenFromIndex !== null) {
-                setInputRef(inputTarget.FROM)
-
-                if (
-                  tokens[tokenFromIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))
-                ) {
-                  setAmountFrom(
-                    trimDecimalZeros(
-                      printBN(
-                        tokens[tokenFromIndex].balance.gt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                          ? tokens[tokenFromIndex].balance.sub(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
-                          : new BN(0),
-                        tokens[tokenFromIndex].decimals
-                      )
-                    )
-                  )
-
-                  return
+            actionButtons={[
+              {
+                label: 'Max',
+                variant: 'max',
+                onClick: () => {
+                  actions.max(tokenFromIndex)
                 }
-
-                setAmountFrom(
-                  printBN(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
-                )
+              },
+              {
+                label: '50%',
+                variant: 'half',
+                onClick: () => {
+                  actions.half(tokenFromIndex)
+                }
               }
-            }}
+            ]}
             tokens={tokens}
             current={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
             onSelect={setTokenFromIndex}
@@ -783,7 +780,22 @@ export const Swap: React.FC<ISwap> = ({
               }
             }}
             placeholder={`0.${'0'.repeat(6)}`}
-            onMaxClick={() => {}}
+            actionButtons={[
+              {
+                label: 'Max',
+                variant: 'max',
+                onClick: () => {
+                  actions.max(tokenFromIndex)
+                }
+              },
+              {
+                label: '50%',
+                variant: 'half',
+                onClick: () => {
+                  actions.half(tokenFromIndex)
+                }
+              }
+            ]}
             tokens={tokens}
             current={tokenToIndex !== null ? tokens[tokenToIndex] : null}
             onSelect={setTokenToIndex}
