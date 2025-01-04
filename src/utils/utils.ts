@@ -728,10 +728,14 @@ export const formatNumber = (
   decimalsAfterDot: number = 3
 ): string => {
   if (typeof number === 'string') {
-    const upperNumber = number.toUpperCase()
-    if (upperNumber.endsWith('K') || upperNumber.endsWith('M') || upperNumber.endsWith('B')) {
-      return number.toString().slice(0, number.length - 1)
+    let upperNumber = number.toUpperCase()
+    while (
+      upperNumber.length > 1 &&
+      (upperNumber.endsWith('KK') || upperNumber.endsWith('MM') || upperNumber.endsWith('BB'))
+    ) {
+      upperNumber = upperNumber.slice(0, -1)
     }
+    return upperNumber
   }
 
   const numberAsNumber = Number(number)
