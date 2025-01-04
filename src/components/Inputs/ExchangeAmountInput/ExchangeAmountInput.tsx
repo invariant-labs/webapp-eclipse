@@ -136,7 +136,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
         <OutlinedButton
           name={button.label}
           onClick={button.onClick}
-          className={`${buttonClassName}`}
+          className={` ${hideBalances ? `${classes.actionButtonNotActive} ${classes.actionButton}` : buttonClassName}`}
           labelClassName={classes.label}
           disabled={
             disabled && isNaN(Number(balance)) ? disabled : isNaN(Number(balance)) || hideBalances

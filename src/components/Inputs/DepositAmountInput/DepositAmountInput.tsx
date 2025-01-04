@@ -5,6 +5,7 @@ import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import icons from '@static/icons'
 import { getButtonClassName } from '@utils/uiUtils'
+import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
 
 interface ActionButton {
   label: string
@@ -110,7 +111,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
       default: classes.actionButton
     })
     return (
-      <Button
+      <OutlinedButton
+        name={button.label}
         key={button.label}
         onClick={button.onClick}
         disabled={button.disabled || walletUninitialized}
@@ -118,9 +120,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
           currency && !walletUninitialized
             ? buttonClassName
             : `${classes.actionButton} ${classes.actionButtonNotActive}`
-        }>
-        {button.label}
-      </Button>
+        }
+      />
     )
   }
 

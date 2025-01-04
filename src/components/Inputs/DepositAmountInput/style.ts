@@ -149,10 +149,12 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
   actionButton: {
     ...typography.tiny2,
     borderRadius: 4,
+    fontWeight: '700',
     width: 26,
     minWidth: 26,
-    padding: '0px 15px',
     height: 14,
+    padding: '0px 15px',
+
     textTransform: 'none',
     marginLeft: 4,
     lineHeight: '14px',
