@@ -727,6 +727,13 @@ export const formatNumber = (
   noDecimals?: boolean,
   decimalsAfterDot: number = 3
 ): string => {
+  if (typeof number === 'string') {
+    const upperNumber = number.toUpperCase()
+    if (upperNumber.endsWith('K') || upperNumber.endsWith('M') || upperNumber.endsWith('B')) {
+      return number.toString().slice(0, number.length - 1)
+    }
+  }
+
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)
@@ -802,7 +809,6 @@ export const formatNumber = (
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
-
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
