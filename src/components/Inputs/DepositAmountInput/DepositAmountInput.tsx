@@ -115,7 +115,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
         name={button.label}
         key={button.label}
         onClick={button.onClick}
-        disabled={button.disabled || walletUninitialized}
+        disabled={button.disabled || walletUninitialized || !currency}
         className={
           currency && !walletUninitialized
             ? buttonClassName
