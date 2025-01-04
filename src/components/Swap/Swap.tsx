@@ -43,6 +43,7 @@ import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import icons from '@static/icons'
 
 export interface Pools {
   tokenX: PublicKey
@@ -992,6 +993,7 @@ export const Swap: React.FC<ISwap> = ({
           />
         )}
       </Grid>
+      <img src={icons.audit} alt='Audit' style={{ marginTop: '24px' }} width={180} />
     </Grid>
   )
 }
