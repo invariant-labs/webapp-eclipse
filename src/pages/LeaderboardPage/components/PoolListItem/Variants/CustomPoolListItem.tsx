@@ -3,14 +3,22 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { useMediaQuery, Grid, Typography, Box } from '@mui/material'
 import icons from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
-import { apyToApr, shortenAddress } from '@utils/uiUtils'
+import { shortenAddress } from '@utils/uiUtils'
 import classNames from 'classnames'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
+import {
+  addressToTicker,
+  calculateAPYAndAPR,
+  formatNumberWithCommas,
+  initialXtoY,
+  parseFeeToPathFee,
+  printBN
+} from '@utils/utils'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { IProps } from '../PoolListItem'
+import { BN } from '@coral-xyz/anchor'
 
 export const CustomPoolListItem: React.FC<IProps> = ({
   fee = 0,
@@ -27,15 +35,27 @@ export const CustomPoolListItem: React.FC<IProps> = ({
   poolAddress,
   copyAddressHandler,
   apy = 0,
-  showAPY
+  pointsPerSecond,
+  showAPY,
+  volume,
+  TVL
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleOpenPosition = () => {
+    const revertRatio = initialXtoY(addressFrom ?? '', addressTo ?? '')
+
+    const tokenA = revertRatio
+      ? addressToTicker(network, addressTo ?? '')
+      : addressToTicker(network, addressFrom ?? '')
+    const tokenB = revertRatio
+      ? addressToTicker(network, addressFrom ?? '')
+      : addressToTicker(network, addressTo ?? '')
+
     navigate(
-      `/newPosition/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
       { state: { referer: 'stats' } }
     )
   }
@@ -54,7 +74,8 @@ export const CustomPoolListItem: React.FC<IProps> = ({
       })
   }
 
-  const apr = apyToApr(apy)
+  //HOTFIX
+  const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
     <Grid maxWidth='100%'>
@@ -161,7 +182,11 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                     color: colors.invariant.text,
                     alignSelf: 'flex-end'
                   }}>
-                  {apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}
+                  {convertedApy > 1000
+                    ? '>1000%'
+                    : convertedApy === 0
+                      ? ''
+                      : convertedApy.toFixed(2) + '%'}
                 </span>
                 <span
                   style={{
@@ -171,7 +196,11 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                     marginLeft: '8px',
                     marginBottom: '2px'
                   }}>
-                  {apr > 1000 ? '>1000%' : apr === 0 ? '' : apr.toFixed(2) + '%'}
+                  {convertedApr > 1000
+                    ? '>1000%'
+                    : convertedApr === 0
+                      ? ''
+                      : convertedApr.toFixed(2) + '%'}
                 </span>
               </Box>
             </Box>
@@ -181,7 +210,9 @@ export const CustomPoolListItem: React.FC<IProps> = ({
               </Typography>
 
               <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
-                8,640,000
+                {formatNumberWithCommas(
+                  printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+                )}
               </Typography>
             </Box>
           </Grid>

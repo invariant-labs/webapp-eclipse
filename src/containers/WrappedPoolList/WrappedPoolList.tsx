@@ -12,7 +12,7 @@ import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
-import { getPointsPerSecond, getPromotedPools } from '@store/selectors/leaderboard'
+import { getPromotedPools } from '@store/selectors/leaderboard'
 
 export const WrappedPoolList: React.FC = () => {
   const { classes } = useStyles()
@@ -22,7 +22,6 @@ export const WrappedPoolList: React.FC = () => {
   const currentNetwork = useSelector(network)
   const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
   const isLoadingStats = useSelector(isLoading)
-  const pointsPerSecond = useSelector(getPointsPerSecond)
   const promotedPools = useSelector(getPromotedPools)
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
@@ -117,8 +116,10 @@ export const WrappedPoolList: React.FC = () => {
           isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
           isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
           poolAddress: poolData.poolAddress.toString(),
-          pointsPerSecond: pointsPerSecond,
-          isPromoted: promotedPools.some(pool => pool === poolData.poolAddress.toString())
+          pointsPerSecond:
+            promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
+              ?.pointsPerSecond || '0',
+          isPromoted: promotedPools.some(pool => pool.address === poolData.poolAddress.toString())
         }))}
         network={currentNetwork}
         copyAddressHandler={copyAddressHandler}

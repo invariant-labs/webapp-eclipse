@@ -6,13 +6,21 @@ import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { addressToTicker, parseFeeToPathFee } from '@utils/utils'
+import {
+  addressToTicker,
+  calculateAPYAndAPR,
+  formatNumberWithCommas,
+  initialXtoY,
+  parseFeeToPathFee,
+  printBN
+} from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { apyToApr, shortenAddress } from '@utils/uiUtils'
+import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 import classNames from 'classnames'
+import { BN } from '@coral-xyz/anchor'
 
 export interface IProps {
   fee?: number
@@ -21,12 +29,15 @@ export interface IProps {
   symbolTo?: string
   iconFrom?: string
   iconTo?: string
+  volume?: number
+  TVL?: number
   tokenIndex?: number
   hideBottomLine?: boolean
   addressFrom?: string
   addressTo?: string
   network: NetworkType
   apy?: number
+  pointsPerSecond?: string
   apyData?: {
     fees: number
     accumulatedFarmsAvg: number
@@ -44,6 +55,8 @@ const PoolListItem: React.FC<IProps> = ({
   symbolTo,
   iconFrom,
   iconTo,
+  volume,
+  TVL,
   tokenIndex,
   hideBottomLine = false,
   addressFrom,
@@ -51,6 +64,7 @@ const PoolListItem: React.FC<IProps> = ({
   network,
   poolAddress,
   copyAddressHandler,
+  pointsPerSecond,
   apy = 0,
   showAPY
 }) => {
@@ -60,8 +74,17 @@ const PoolListItem: React.FC<IProps> = ({
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleOpenPosition = () => {
+    const revertRatio = initialXtoY(addressFrom ?? '', addressTo ?? '')
+
+    const tokenA = revertRatio
+      ? addressToTicker(network, addressTo ?? '')
+      : addressToTicker(network, addressFrom ?? '')
+    const tokenB = revertRatio
+      ? addressToTicker(network, addressFrom ?? '')
+      : addressToTicker(network, addressTo ?? '')
+
     navigate(
-      `/newPosition/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
       { state: { referer: 'stats' } }
     )
   }
@@ -80,7 +103,8 @@ const PoolListItem: React.FC<IProps> = ({
       })
   }
 
-  const apr = apyToApr(apy)
+  //HOTFIX
+  const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
     <Grid maxWidth='100%'>
@@ -133,15 +157,19 @@ const PoolListItem: React.FC<IProps> = ({
           </Grid>
           {!isSm && showAPY ? (
             <Typography className={classes.row}>
-              {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
+              {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : convertedApr.toFixed(2) + '%'}`}
               <span
                 className={
                   classes.apy
-                }>{`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}</span>
+                }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : convertedApy.toFixed(2) + '%'}`}</span>
             </Typography>
           ) : null}
           <Typography>{fee}%</Typography>
-          <Typography>8,640,000</Typography>
+          <Typography>
+            {formatNumberWithCommas(
+              printBN(new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60), 0)
+            )}
+          </Typography>
 
           {!isSm && (
             <Box className={classes.action}>

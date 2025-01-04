@@ -26,7 +26,7 @@ import SearchIcon from '@static/svg/lupaDark.svg'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { VariantType } from 'notistack'
-import { getPointsPerSecond, getPromotedPools } from '@store/selectors/leaderboard'
+import { getPromotedPools } from '@store/selectors/leaderboard'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -42,7 +42,6 @@ export const WrappedStats: React.FC = () => {
   const liquidityPlotData = useSelector(liquidityPlot)
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
-  const pointsPerSecond = useSelector(getPointsPerSecond)
   const promotedPools = useSelector(getPromotedPools)
   const [searchTokensValue, setSearchTokensValue] = useState<string>('')
   const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
@@ -215,8 +214,12 @@ export const WrappedStats: React.FC = () => {
               isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
               isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
               poolAddress: poolData.poolAddress.toString(),
-              pointsPerSecond: pointsPerSecond,
-              isPromoted: promotedPools.some(pool => pool === poolData.poolAddress.toString())
+              pointsPerSecond:
+                promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
+                  ?.pointsPerSecond || '0',
+              isPromoted: promotedPools.some(
+                pool => pool.address === poolData.poolAddress.toString()
+              )
             }))}
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}

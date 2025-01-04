@@ -34,6 +34,14 @@ const useStyles = makeStyles()(() => {
     icon: {
       height: 40,
       width: 40
+    },
+    blur: {
+      width: 120,
+      height: 36,
+      borderRadius: 16,
+      background: `linear-gradient(90deg, ${colors.invariant.component} 25%, ${colors.invariant.light} 50%, ${colors.invariant.component} 75%)`,
+      backgroundSize: '200% 100%',
+      animation: 'shimmer 2s infinite'
     }
   }
 })
