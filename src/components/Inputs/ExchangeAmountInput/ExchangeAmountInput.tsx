@@ -9,6 +9,15 @@ import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
+import { getButtonClassName } from '@utils/uiUtils'
+
+interface ActionButton {
+  label: string
+  onClick: () => void
+  disabled?: boolean
+  variant?: 'max' | 'half'
+  customClass?: string
+}
 
 interface IProps {
   setValue: (value: string) => void
@@ -18,7 +27,6 @@ interface IProps {
   decimal: number
   placeholder?: string
   style?: CSSProperties
-  onMaxClick: () => void
   current: SwapToken | null
   tokens: SwapToken[]
   onSelect: (index: number) => void
@@ -38,9 +46,10 @@ interface IProps {
   showBlur: boolean
   hiddenUnknownTokens: boolean
   network: NetworkType
+  actionButtons?: ActionButton[]
 }
 
-export const AmountInput: React.FC<IProps> = ({
+export const ExchangeAmountInput: React.FC<IProps> = ({
   value,
   setValue,
   error,
@@ -48,7 +57,6 @@ export const AmountInput: React.FC<IProps> = ({
   decimal,
   placeholder,
   style,
-  onMaxClick,
   current,
   tokens,
   onSelect,
@@ -65,6 +73,7 @@ export const AmountInput: React.FC<IProps> = ({
   isBalanceLoading,
   showMaxButton = true,
   showBlur,
+  actionButtons = [],
   hiddenUnknownTokens,
   network
 }) => {
@@ -112,6 +121,30 @@ export const AmountInput: React.FC<IProps> = ({
   const tokenIcon = !current ? '' : current.symbol
 
   const usdBalance = tokenPrice && value ? tokenPrice * +value : 0
+
+  const renderActionButton = (button: ActionButton) => {
+    const buttonClassName = getButtonClassName({
+      label: button.variant ?? 'max',
+      variants: [
+        { label: 'max', className: classes.maxVariant },
+        { label: 'half', className: classes.halfVariant }
+      ],
+      default: classes.actionButton
+    })
+    return (
+      <>
+        <OutlinedButton
+          name={button.label}
+          onClick={button.onClick}
+          className={`${buttonClassName}`}
+          labelClassName={classes.label}
+          disabled={
+            disabled && isNaN(Number(balance)) ? disabled : isNaN(Number(balance)) || hideBalances
+          }
+        />
+      </>
+    )
+  }
 
   return (
     <>
@@ -166,8 +199,11 @@ export const AmountInput: React.FC<IProps> = ({
           className={classNames(classes.balanceContainer, {
             [classes.showMaxButton]: showMaxButton
           })}
-          onClick={showMaxButton && !hideBalance ? onMaxClick : () => {}}>
-          <Typography className={classes.BalanceTypography}>
+          // onClick={showMaxButton && !hideBalance ? onMaxClick : () => {}}>
+        >
+          <Typography
+            className={classes.BalanceTypography}
+            onClick={() => actionButtons[0].onClick()}>
             Balance:{' '}
             {isBalanceLoading ? (
               <img src={loadingAnimation} className={classes.loadingBalance} alt='loading' />
@@ -179,20 +215,7 @@ export const AmountInput: React.FC<IProps> = ({
             {tokenIcon.slice(0, 8)}
             {tokenIcon.length > 8 ? '...' : ''}
           </Typography>
-          {showMaxButton && (
-            <OutlinedButton
-              name='Max'
-              color='primary'
-              onClick={onMaxClick}
-              className={classes.maxButton}
-              labelClassName={classes.label}
-              disabled={
-                disabled && isNaN(Number(balance))
-                  ? disabled
-                  : isNaN(Number(balance)) || hideBalances
-              }
-            />
-          )}
+          {showMaxButton && <>{actionButtons.map(renderActionButton)}</>}
         </Grid>
 
         <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
@@ -232,4 +255,4 @@ export const AmountInput: React.FC<IProps> = ({
     </>
   )
 }
-export default AmountInput
+export default ExchangeAmountInput
