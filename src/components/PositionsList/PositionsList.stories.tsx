@@ -3,7 +3,6 @@ import { BrowserRouter } from 'react-router-dom'
 import { PositionsList } from './PositionsList'
 import { NetworkType } from '@store/consts/static'
 import { IPositionItem } from './PositionItem/PositionItem'
-import { Pair } from '@invariant-labs/sdk-eclipse'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 
