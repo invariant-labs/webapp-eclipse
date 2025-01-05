@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import icons from '@static/icons'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 
 interface INormalBannerProps {
@@ -59,7 +59,10 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
             display: 'inline',
             width: 'fit-content',
             fontSize: { xs: '14px', sm: '16px' },
-            flex: 1
+            flex: 1,
+            [theme.breakpoints.up('md')]: {
+              textWrap: 'nowrap'
+            }
           }}>
           Invariant Points are live! TETH/ETH is now the next pool distributing points! Check it out
           <span
