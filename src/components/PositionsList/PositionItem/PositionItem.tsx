@@ -220,7 +220,6 @@ export const PositionItem: React.FC<IPositionItem> = ({
     isPromoted && isActive ? (
       <>
         <div
-          ref={airdropIconRef}
           className={classes.actionButton}
           onPointerLeave={() => {
             setIsPromotedPoolPopoverOpen(false)
@@ -312,6 +311,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
           </Typography>
           <Hidden lgUp>
             <Box
+              ref={airdropIconRef}
               sx={{
                 marginLeft: '16px',
                 display: 'flex',
@@ -325,7 +325,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
       </Grid>
 
       <Grid container item className={classes.mdInfo} direction='row'>
-        <Box sx={{ display: 'flex', alignItems: 'center' }}>
+        <Box sx={{ display: 'flex', alignItems: 'center' }} ref={airdropIconRef}>
           <Hidden lgDown>
             <PromotedIcon />
           </Hidden>
