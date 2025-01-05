@@ -216,6 +216,64 @@ export const PositionItem: React.FC<IPositionItem> = ({
     return estimation
   }, [poolAddress, position, poolData, promotedPools])
 
+  const PromotedIcon = () =>
+    isPromoted && isActive ? (
+      <>
+        <div
+          ref={airdropIconRef}
+          className={classes.actionButton}
+          onPointerLeave={() => {
+            setIsPromotedPoolPopoverOpen(false)
+          }}
+          onPointerEnter={() => {
+            setIsPromotedPoolPopoverOpen(true)
+          }}>
+          <img
+            src={icons.airdropRainbow}
+            alt={'Airdrop'}
+            style={{ height: '32px', marginRight: '16px' }}
+          />
+        </div>
+        <PromotedPoolPopover
+          anchorEl={airdropIconRef.current}
+          open={isPromotedPoolPopoverOpen}
+          onClose={() => {
+            setIsPromotedPoolPopoverOpen(false)
+          }}
+          estPoints={estimated24hPoints}
+          points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+        />
+      </>
+    ) : (
+      <>
+        <Tooltip
+          enterTouchDelay={0}
+          leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+          onClick={e => e.stopPropagation()}
+          title={
+            <>
+              This pool generates points, but your position has inactive liquidity.{' '}
+              <b>Create a position within range</b> to start earning points
+            </>
+          }
+          placement='top'
+          classes={{
+            tooltip: classes.tooltip
+          }}>
+          <img
+            src={icons.airdropRainbow}
+            alt={'Airdrop'}
+            style={{
+              height: '32px',
+              marginRight: '16px',
+              opacity: 0.3,
+              filter: 'grayscale(1)'
+            }}
+          />
+        </Tooltip>
+      </>
+    )
+
   return (
     <Grid
       className={classes.root}
@@ -252,67 +310,25 @@ export const PositionItem: React.FC<IPositionItem> = ({
           <Typography className={classes.names}>
             {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
           </Typography>
+          <Hidden lgUp>
+            <Box
+              sx={{
+                marginLeft: '16px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
+              }}>
+              <PromotedIcon />
+            </Box>
+          </Hidden>
         </Grid>
       </Grid>
 
       <Grid container item className={classes.mdInfo} direction='row'>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {isPromoted && isActive ? (
-            <>
-              <div
-                ref={airdropIconRef}
-                className={classes.actionButton}
-                onPointerLeave={() => {
-                  setIsPromotedPoolPopoverOpen(false)
-                }}
-                onPointerEnter={() => {
-                  setIsPromotedPoolPopoverOpen(true)
-                }}>
-                <img
-                  src={icons.airdropRainbow}
-                  alt={'Airdrop'}
-                  style={{ height: '32px', marginRight: '16px' }}
-                />
-              </div>
-              <PromotedPoolPopover
-                anchorEl={airdropIconRef.current}
-                open={isPromotedPoolPopoverOpen}
-                onClose={() => {
-                  setIsPromotedPoolPopoverOpen(false)
-                }}
-                estPoints={estimated24hPoints}
-                points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-              />
-            </>
-          ) : (
-            <>
-              <Tooltip
-                enterTouchDelay={0}
-                leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-                onClick={e => e.stopPropagation()}
-                title={
-                  <>
-                    This pool generates points, but your position has inactive liquidity.{' '}
-                    <b>Create a position within range</b> to start earning points
-                  </>
-                }
-                placement='top'
-                classes={{
-                  tooltip: classes.tooltip
-                }}>
-                <img
-                  src={icons.airdropRainbow}
-                  alt={'Airdrop'}
-                  style={{
-                    height: '32px',
-                    marginRight: '16px',
-                    opacity: 0.3,
-                    filter: 'grayscale(1)'
-                  }}
-                />
-              </Tooltip>
-            </>
-          )}
+          <Hidden lgDown>
+            <PromotedIcon />
+          </Hidden>
           <Hidden mdUp>{feeFragment}</Hidden>
         </Box>
         <Hidden mdDown>{feeFragment}</Hidden>
