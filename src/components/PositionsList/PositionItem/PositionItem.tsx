@@ -16,9 +16,10 @@ import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { estimatePointsForLiquidity } from '@invariant-labs/points-sdk'
-import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
+import { PoolStructure, Position } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export interface IPositionItem {
   tokenXName: string
@@ -27,6 +28,7 @@ export interface IPositionItem {
   tokenYIcon: string
   tokenXLiq: number
   poolAddress: PublicKey
+  position: Position
   tokenYLiq: number
   fee: number
   min: number
@@ -55,6 +57,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
   max,
   valueX,
   valueY,
+  position,
   liquidity,
   poolData,
   isActive = false,
@@ -162,12 +165,15 @@ export const PositionItem: React.FC<IPositionItem> = ({
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
   const estimation = useMemo(() => {
-    const estOfPoints = estimatePointsForLiquidity(
-      new BN(liquidity, 'hex'),
+    const estOfPoints = estimatePointsForUserPositions(
+      [position] as Position[],
       poolData as PoolStructure,
-      new BN(pointsPerSecond, 'hex'),
-      false
-    ) as BN
+      new BN(
+        promotedPools.find(pool => pool.address === [position][0].pool.toString())!.pointsPerSecond,
+        'hex'
+      ).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
     return estOfPoints
   }, [liquidity, poolData, pointsPerSecond, isPromotedPoolPopoverOpen])
 

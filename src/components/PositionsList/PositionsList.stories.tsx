@@ -29,6 +29,21 @@ const data: IPositionItem[] = [
     network: NetworkType.Testnet,
     tokenXName: 'BTC',
     tokenYName: 'SNY',
+    position: {
+      bump: 0,
+      feeGrowthInsideX: new BN(0),
+      feeGrowthInsideY: new BN(0),
+      id: 0,
+      lastSlot: new BN(0),
+      lowerTickIndex: new BN(0),
+      owner: Keypair.generate().publicKey,
+      pool: Keypair.generate().publicKey,
+      secondsPerLiquidityInside: new BN(0),
+      tokensOwedX: new BN(0),
+      tokensOwedY: new BN(0),
+      upperTickIndex: new BN(0),
+      liquidity: new BN(0)
+    },
     tokenXIcon:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     tokenYIcon:
@@ -79,6 +94,21 @@ const data: IPositionItem[] = [
     network: NetworkType.Testnet,
     tokenXName: 'BTC',
     tokenYName: 'SNY',
+    position: {
+      bump: 0,
+      feeGrowthInsideX: new BN(0),
+      feeGrowthInsideY: new BN(0),
+      id: 0,
+      lastSlot: new BN(0),
+      lowerTickIndex: new BN(0),
+      owner: Keypair.generate().publicKey,
+      pool: Keypair.generate().publicKey,
+      secondsPerLiquidityInside: new BN(0),
+      tokensOwedX: new BN(0),
+      tokensOwedY: new BN(0),
+      upperTickIndex: new BN(0),
+      liquidity: new BN(0)
+    },
     tokenXIcon:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     tokenYIcon:
@@ -129,6 +159,21 @@ const data: IPositionItem[] = [
     network: NetworkType.Testnet,
     tokenXName: 'BTC',
     tokenYName: 'SNY',
+    position: {
+      bump: 0,
+      feeGrowthInsideX: new BN(0),
+      feeGrowthInsideY: new BN(0),
+      id: 0,
+      lastSlot: new BN(0),
+      lowerTickIndex: new BN(0),
+      owner: Keypair.generate().publicKey,
+      pool: Keypair.generate().publicKey,
+      secondsPerLiquidityInside: new BN(0),
+      tokensOwedX: new BN(0),
+      tokensOwedY: new BN(0),
+      upperTickIndex: new BN(0),
+      liquidity: new BN(0)
+    },
     tokenXIcon:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     tokenYIcon:
@@ -179,6 +224,21 @@ const data: IPositionItem[] = [
     network: NetworkType.Testnet,
     tokenXName: 'BTC',
     tokenYName: 'SNY',
+    position: {
+      bump: 0,
+      feeGrowthInsideX: new BN(0),
+      feeGrowthInsideY: new BN(0),
+      id: 0,
+      lastSlot: new BN(0),
+      lowerTickIndex: new BN(0),
+      owner: Keypair.generate().publicKey,
+      pool: Keypair.generate().publicKey,
+      secondsPerLiquidityInside: new BN(0),
+      tokensOwedX: new BN(0),
+      tokensOwedY: new BN(0),
+      upperTickIndex: new BN(0),
+      liquidity: new BN(0)
+    },
     tokenXIcon:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     tokenYIcon:
