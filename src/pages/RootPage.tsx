@@ -16,7 +16,7 @@ import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/Nor
 import { NetworkType } from '@store/consts/static'
 import { network } from '@store/selectors/solanaConnection'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-2'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
@@ -105,12 +105,12 @@ const RootPage: React.FC = memo(() => {
     <>
       {signerStatus === Status.Initialized && <EventsHandlers />}
       <div id={toBlur}>
-        {showHeader && currentNetwork === NetworkType.Mainnet && (
-          <>
-            <NormalBanner onClose={handleBannerClose} isHiding={isHiding} />
-          </>
-        )}
         <Grid className={classes.root}>
+          {showHeader && currentNetwork === NetworkType.Mainnet && (
+            <>
+              <NormalBanner onClose={handleBannerClose} isHiding={isHiding} />
+            </>
+          )}
           <HeaderWrapper />
           <Grid className={classes.body}>
             <Outlet />

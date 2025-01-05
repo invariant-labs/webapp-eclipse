@@ -4,15 +4,23 @@ import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
 import { theme } from '@static/theme'
 
+type Aligment = 'left' | 'center' | 'right'
+
 interface IProgressItemProps {
   background: {
     mobile: string
-    dekstop: string
+    desktop: string
   }
-  desktopLabelAligment: 'left' | 'right'
+  desktopLabelAligment: Aligment
+  isWideBlock?: boolean
   label: string
+  blockHeight?: {
+    mobile?: string
+    desktop?: string
+  }
   value: string | number
   tooltip?: string
+  isLoading?: boolean
 }
 
 export const ProgressItem: React.FC<IProgressItemProps> = ({
@@ -20,23 +28,56 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
   label,
   value,
   desktopLabelAligment,
-  tooltip
+  blockHeight,
+  isWideBlock = false,
+  tooltip,
+  isLoading = false
 }) => {
   const { classes } = useStyles()
+
+  const getAlignmentValue = (align: Aligment): string => {
+    const alignments = {
+      left: 'flex-start',
+      center: 'center',
+      right: 'flex-end'
+    }
+
+    return alignments[align]
+  }
+
+  const blurAnimation = {
+    '@keyframes pulseBlur': {
+      '0%': {
+        filter: 'blur(4px)',
+        opacity: 0.7
+      },
+      '50%': {
+        filter: 'blur(6px)',
+        opacity: 0.5
+      },
+      '100%': {
+        filter: 'blur(4px)',
+        opacity: 0.7
+      }
+    }
+  }
 
   return (
     <Box
       sx={{
-        width: '233px',
-        height: '88px',
+        width: isWideBlock ? '100%' : '233px',
+        height: blockHeight?.desktop ? blockHeight?.desktop : '88px',
+        backgroundSize: 'cover',
         [theme.breakpoints.down('md')]: {
           width: '335px',
-          backgroundImage: `url(${background.mobile})`
+          backgroundImage: `url(${background.mobile})`,
+          height: blockHeight?.mobile ? blockHeight?.mobile : '88px'
         },
-        backgroundImage: `url(${background.dekstop})`,
-        backgroundSize: 'cover',
+        backgroundImage: `url(${background.desktop})`,
+        backgroundRepeat: 'no-repeat',
         boxSizing: 'border-box',
-        backgroundPosition: 'center'
+        backgroundPosition: 'center',
+        ...blurAnimation
       }}>
       <Box
         sx={{
@@ -45,13 +86,13 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           height: '100%',
           paddingTop: '12px',
           paddingBottom: '12px',
-          paddingLeft: '24px',
-          paddingRight: '24px',
+          paddingLeft: desktopLabelAligment === 'left' ? '14px' : '24px',
+          paddingRight: desktopLabelAligment === 'right' ? '14px' : '24px',
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
-          alignItems: desktopLabelAligment === 'right' ? 'flex-end' : 'flex-start',
-          justifyContent: 'flex-start',
+          alignItems: getAlignmentValue(desktopLabelAligment),
+          justifyContent: getAlignmentValue(desktopLabelAligment),
           [theme.breakpoints.down('md')]: {
             alignItems: 'center',
             justifyContent: 'center'
@@ -77,7 +118,11 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
             </Tooltip>
           ) : null}
         </Box>
-        <Typography className={classes.headerBigText}>{value}</Typography>
+        {isLoading ? (
+          <div className={classes.blur} />
+        ) : (
+          <Typography className={classes.headerBigText}>{value}</Typography>
+        )}
       </Box>
     </Box>
   )

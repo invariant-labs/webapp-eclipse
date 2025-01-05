@@ -32,7 +32,7 @@ import axios, { AxiosResponse } from 'axios'
 import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
-  ADDRESSES_TO_REVERS_TOKEN_PAIRS,
+  ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   AI16Z_MAIN,
   BRICK_MAIN,
   BTC_DEV,
@@ -95,6 +95,7 @@ import {
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
+import { apyToApr } from './uiUtils'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -122,7 +123,29 @@ export const printBN = (amount: BN, decimals: number): string => {
 }
 
 export const formatNumberWithCommas = (number: string) => {
-  return number.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
+
+  return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+}
+
+export const removeAdditionalDecimals = (value: string, desiredDecimals: number): string => {
+  const dotIndex = value.indexOf('.')
+  if (dotIndex === -1) {
+    return value
+  }
+  const decimals = value.length - dotIndex - 1
+  if (decimals > desiredDecimals) {
+    const sliced = value.slice(0, dotIndex + desiredDecimals + 1)
+    const lastCommaIndex = sliced.lastIndexOf(',')
+
+    if (lastCommaIndex === -1 || lastCommaIndex < dotIndex) {
+      return sliced
+    }
+
+    return value.slice(0, lastCommaIndex) + value.slice(lastCommaIndex + 1, lastCommaIndex + 2)
+  } else {
+    return value
+  }
 }
 
 export const trimZeros = (numStr: string): string => {
@@ -779,7 +802,6 @@ export const formatNumber = (
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
-
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
@@ -1092,7 +1114,11 @@ export const handleSimulate = async (
 
         okChanges += 1
       } else if (
-        byAmountIn ? allFailedData.amountOut.lt(result) : allFailedData.amountOut.eq(MAX_U64) ? result : allFailedData.amountOut.lt(result)
+        byAmountIn
+          ? allFailedData.amountOut.lt(result)
+          : allFailedData.amountOut.eq(MAX_U64)
+            ? result
+            : allFailedData.amountOut.lt(result)
       ) {
         allFailedData = {
           amountOut: result,
@@ -1455,10 +1481,10 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
     return true
   }
 
-  const isTokeXStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenXAddress)
-  const isTokenYStablecoin = ADDRESSES_TO_REVERS_TOKEN_PAIRS.includes(tokenYAddress)
+  const tokenXIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenXAddress)
+  const tokenYIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenYAddress)
 
-  return isTokeXStablecoin === isTokenYStablecoin || (!isTokeXStablecoin && !isTokenYStablecoin)
+  return tokenXIndex < tokenYIndex
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {
@@ -1750,4 +1776,29 @@ export const trimDecimalZeros = (numStr: string): string => {
   const trimmedInteger = integerPart.replace(/^0+/, '')
 
   return trimmedDecimal ? `${trimmedInteger || '0'}.${trimmedDecimal}` : trimmedInteger || '0'
+}
+
+const poolsToRecalculateAPY = ['HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce']
+
+//HOTFIX
+export const calculateAPYAndAPR = (
+  apy: number,
+  poolAddress?: string,
+  volume?: number,
+  fee?: number,
+  tvl?: number
+) => {
+  if (volume === undefined || fee === undefined || tvl === undefined) {
+    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+  }
+
+  if (poolsToRecalculateAPY.includes(poolAddress ?? '')) {
+    const parsedApr = ((volume * fee) / tvl) * 365
+
+    const parsedApy = (Math.pow((volume * fee * 0.01) / tvl + 1, 365) - 1) * 100
+
+    return { convertedApy: parsedApy, convertedApr: parsedApr }
+  } else {
+    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+  }
 }

@@ -31,6 +31,7 @@ import {
   parsePathFeeToFeeString,
   trimDecimalZeros
 } from '@utils/utils'
+import { createButtonActions } from '@utils/uiUtils'
 
 export interface InputState {
   value: string
@@ -304,6 +305,60 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
   }, [poolIndex])
 
+  const reverseTokens = () => {
+    if (ticksLoading) {
+      return
+    }
+
+    if (!tokenBInputState.blocked) {
+      tokenAInputState.setValue(tokenBInputState.value)
+    } else {
+      tokenBInputState.setValue(tokenAInputState.value)
+    }
+    const pom = tokenAIndex
+    setTokenAIndex(tokenBIndex)
+    setTokenBIndex(pom)
+    onReverseTokens()
+  }
+
+  // const ACTIONS_BUTTON_METHODS = {
+  //   max: (tokenIndex: number | null) => {
+  //     if (tokenIndex === null) {
+  //       return
+  //     }
+
+  //     if (tokens[tokenIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
+  //       tokenAInputState.setValue(
+  //         trimDecimalZeros(
+  //           printBN(
+  //             tokens[tokenIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
+  //               ? tokens[tokenIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+  //               : new BN(0),
+  //             tokens[tokenIndex].decimals
+  //           )
+  //         )
+  //       )
+
+  //       return
+  //     }
+
+  //     tokenAInputState.setValue(printBN(tokens[tokenIndex].balance, tokens[tokenIndex].decimals))
+  //   }
+  // }
+
+  const actionsTokenA = createButtonActions({
+    tokens,
+    wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
+    minAmount: WETH_MIN_FEE_LAMPORTS,
+    onAmountSet: tokenAInputState.setValue
+  })
+  const actionsTokenB = createButtonActions({
+    tokens,
+    wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
+    minAmount: WETH_MIN_FEE_LAMPORTS,
+    onAmountSet: tokenBInputState.setValue
+  })
+
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
       <Typography className={classes.sectionTitle}>Tokens</Typography>
@@ -334,26 +389,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           </Grid>
 
           <TooltipHover text='Reverse tokens'>
-            <img
-              className={classes.arrows}
-              src={SwapList}
-              alt='Arrow'
-              onClick={() => {
-                if (ticksLoading) {
-                  return
-                }
-
-                if (!tokenBInputState.blocked) {
-                  tokenAInputState.setValue(tokenBInputState.value)
-                } else {
-                  tokenBInputState.setValue(tokenAInputState.value)
-                }
-                const pom = tokenAIndex
-                setTokenAIndex(tokenBIndex)
-                setTokenBIndex(pom)
-                onReverseTokens()
-              }}
-            />
+            <img className={classes.arrows} src={SwapList} alt='Arrow' onClick={reverseTokens} />
           </TooltipHover>
 
           <Grid className={classes.selectWrapper}>
@@ -400,30 +436,22 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
           currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
-          onMaxClick={() => {
-            if (tokenAIndex === null) {
-              return
+          actionButtons={[
+            {
+              label: 'Max',
+              onClick: () => {
+                actionsTokenA.max(tokenAIndex)
+              },
+              variant: 'max'
+            },
+            {
+              label: '50%',
+              variant: 'half',
+              onClick: () => {
+                actionsTokenA.half(tokenAIndex)
+              }
             }
-
-            if (tokens[tokenAIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-              tokenAInputState.setValue(
-                trimDecimalZeros(
-                  printBN(
-                    tokens[tokenAIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
-                      ? tokens[tokenAIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
-                      : new BN(0),
-                    tokens[tokenAIndex].decimals
-                  )
-                )
-              )
-
-              return
-            }
-
-            tokenAInputState.setValue(
-              printBN(tokens[tokenAIndex].balance, tokens[tokenAIndex].decimals)
-            )
-          }}
+          ]}
           balanceValue={
             tokenAIndex !== null
               ? printBN(tokens[tokenAIndex].balance, tokens[tokenAIndex].decimals)
@@ -455,30 +483,22 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
           currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
-          onMaxClick={() => {
-            if (tokenBIndex === null) {
-              return
+          actionButtons={[
+            {
+              label: 'Max',
+              variant: 'max',
+              onClick: () => {
+                actionsTokenB.max(tokenBIndex)
+              }
+            },
+            {
+              label: '50%',
+              variant: 'half',
+              onClick: () => {
+                actionsTokenB.half(tokenBIndex)
+              }
             }
-
-            if (tokens[tokenBIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-              tokenBInputState.setValue(
-                trimDecimalZeros(
-                  printBN(
-                    tokens[tokenBIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
-                      ? tokens[tokenBIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
-                      : new BN(0),
-                    tokens[tokenBIndex].decimals
-                  )
-                )
-              )
-
-              return
-            }
-
-            tokenBInputState.setValue(
-              printBN(tokens[tokenBIndex].balance, tokens[tokenBIndex].decimals)
-            )
-          }}
+          ]}
           balanceValue={
             tokenBIndex !== null
               ? printBN(tokens[tokenBIndex].balance, tokens[tokenBIndex].decimals)

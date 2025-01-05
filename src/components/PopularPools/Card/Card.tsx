@@ -10,7 +10,13 @@ import RevertIcon from '@static/svg/revert.svg'
 import { apyToApr, shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import backIcon from '@static/svg/back-arrow-2.svg'
-import { addressToTicker, formatNumber, parseFeeToPathFee } from '@utils/utils'
+import {
+  addressToTicker,
+  calculateAPYAndAPR,
+  formatNumber,
+  initialXtoY,
+  parseFeeToPathFee
+} from '@utils/utils'
 import { useNavigate } from 'react-router-dom'
 import { NetworkType } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -50,17 +56,30 @@ const Card: React.FC<ICard> = ({
   const airdropIconRef = useRef<any>(null)
 
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
-  const { promotedPools, pointsPerSecond } = useSelector(leaderboardSelectors.config)
+  const { promotedPools } = useSelector(leaderboardSelectors.config)
   const apr = apyToApr(apy ?? 0)
 
-  const isPromoted = useMemo(() => {
-    return promotedPools?.includes(poolAddress?.toString() ?? '')
+  const { isPromoted, pointsPerSecond } = useMemo(() => {
+    if (!poolAddress) return { isPromoted: false, pointsPerSecond: '00' }
+    const promotedPool = promotedPools.find(pool => pool.address === poolAddress.toString())
+    if (!promotedPool) return { isPromoted: false, pointsPerSecond: '00' }
+    return { isPromoted: true, pointsPerSecond: promotedPool.pointsPerSecond }
   }, [promotedPools, poolAddress])
 
   const handleOpenPosition = () => {
     if (fee === undefined) return
+
+    const revertRatio = initialXtoY(addressFrom ?? '', addressTo ?? '')
+
+    const tokenA = revertRatio
+      ? addressToTicker(network, addressTo ?? '')
+      : addressToTicker(network, addressFrom ?? '')
+    const tokenB = revertRatio
+      ? addressToTicker(network, addressFrom ?? '')
+      : addressToTicker(network, addressTo ?? '')
+
     navigate(
-      `/newPosition/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
       { state: { referer: 'liquidity' } }
     )
   }
@@ -74,6 +93,9 @@ const Card: React.FC<ICard> = ({
   useEffect(() => {
     console.log(airdropIconRef)
   }, [airdropIconRef.current])
+
+  //HOTFIX
+  const { convertedApy } = calculateAPYAndAPR(apy ?? 0, poolAddress?.toString(), volume, fee, TVL)
 
   return (
     <Grid className={classes.root}>
@@ -153,7 +175,7 @@ const Card: React.FC<ICard> = ({
                         setIsPromotedPoolPopoverOpen(false)
                       }}
                       apr={apr ?? 0}
-                      apy={apy ?? 0}
+                      apy={convertedApy ?? 0}
                       points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
                     />
                   </>
@@ -163,7 +185,7 @@ const Card: React.FC<ICard> = ({
                 {apy !== undefined && showAPY && (
                   <StatsLabel
                     title='APY'
-                    value={`${apy > 1000 ? '>1000%' : apy === 0 ? '-' : apy.toFixed(2) + '%'}`}
+                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : convertedApy.toFixed(2) + '%'}`}
                   />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />
