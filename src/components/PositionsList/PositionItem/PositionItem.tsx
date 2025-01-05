@@ -230,17 +230,17 @@ export const PositionItem: React.FC<IPositionItem> = ({
                   them. Your position's liquidity remains <b>inactive</b> and <b>won't</b> earn
                   points as long as the current price is outside its specified price range. <br />
                   <br /> To start earning points again, close the current position and open a new
-                  one with a price range that includes the pool's current price
+                  one with a price range that includes the pool's current price.
                 </p>
               ) : !isPromoted ? (
                 <p>
                   This position <b>isn't</b> earning points because it was opened on a pool that
-                  <b>doesn't</b> generate them.
+                  <b> doesn't</b> generate them.
                   <br />
                   <br /> If you were expecting to earn points, make sure you selected a pool with a
                   fee tier that generates points, as not all pools do. Only pools with the{' '}
-                  <b>specified</b>
-                  fee tier can generate points
+                  <b>specified </b>
+                  fee tier can generate points.
                 </p>
               ) : null}
             </>
