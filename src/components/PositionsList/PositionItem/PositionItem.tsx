@@ -165,18 +165,35 @@ export const PositionItem: React.FC<IPositionItem> = ({
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
   const estimation = useMemo(() => {
-    const estOfPoints = estimatePointsForUserPositions(
-      [position] as Position[],
-      poolData as PoolStructure,
-      new BN(
-        promotedPools.find(pool => pool.address === [position][0].pool.toString())!.pointsPerSecond,
-        'hex'
-      ).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-    )
+    if (!position || !promotedPools || !poolData) {
+      return new BN(0)
+    }
 
-    return estOfPoints
-  }, [liquidity, poolData, pointsPerSecond, isPromotedPoolPopoverOpen])
+    try {
+      const poolAddress = position.pool?.toString()
+      if (!poolAddress) {
+        return new BN(0)
+      }
 
+      const promotedPool = promotedPools.find(pool => pool.address === poolAddress)
+      if (!promotedPool?.pointsPerSecond) {
+        return new BN(0)
+      }
+
+      const pointsPerSecond = new BN(promotedPool.pointsPerSecond, 'hex').mul(
+        new BN(10).pow(new BN(LEADERBOARD_DECIMAL))
+      )
+
+      return estimatePointsForUserPositions(
+        [position] as Position[],
+        poolData as PoolStructure,
+        pointsPerSecond
+      )
+    } catch (error) {
+      console.error('Error calculating estimation:', error)
+      return new BN(0)
+    }
+  }, [position, promotedPools, poolData, liquidity, isPromotedPoolPopoverOpen])
   return (
     <Grid
       className={classes.root}
@@ -218,7 +235,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
 
       <Grid container item className={classes.mdInfo} direction='row'>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {isPromoted && (
+          {isPromoted ? (
             <>
               <div
                 ref={airdropIconRef}
@@ -244,6 +261,21 @@ export const PositionItem: React.FC<IPositionItem> = ({
                 estPoints={estimation}
                 points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
               />
+            </>
+          ) : (
+            <>
+              <Tooltip title='This position is not earning any points'>
+                <img
+                  src={icons.airdropRainbow}
+                  alt={'Airdrop'}
+                  style={{
+                    height: '32px',
+                    marginRight: '16px',
+                    opacity: 0.3,
+                    filter: 'grayscale(1)'
+                  }}
+                />
+              </Tooltip>
             </>
           )}
           <Hidden mdUp>{feeFragment}</Hidden>
