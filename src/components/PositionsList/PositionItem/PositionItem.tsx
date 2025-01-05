@@ -70,7 +70,6 @@ export const PositionItem: React.FC<IPositionItem> = ({
 }) => {
   const { classes } = useStyles()
   const airdropIconRef = useRef<any>(null)
-
   const { promotedPools } = useSelector(leaderboardSelectors.config)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
 
@@ -165,39 +164,6 @@ export const PositionItem: React.FC<IPositionItem> = ({
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
 
-  // const list = useSelector(positionsWithPoolsData)
-
-  // const estimated24hPoints = useMemo(() => {
-  //   const eligiblePositions = {}
-  //   list.forEach(position => {
-  //     if (promotedPools.some(pool => pool.address === position.pool.toString())) {
-  //       const v = eligiblePositions[position.pool.toString()]
-  //       if (!v) {
-  //         eligiblePositions[position.pool.toString()] = [position]
-  //       } else {
-  //         eligiblePositions[position.pool.toString()].push(position)
-  //       }
-  //     }
-  //   })
-
-  //   const estimation: BN = Object.values(eligiblePositions).reduce((acc: BN, positions: any) => {
-  //     const estimation = estimatePointsForUserPositions(
-  //       positions as Position[],
-  //       positions[0].poolData as PoolStructure,
-  //       new BN(
-  //         promotedPools.find(
-  //           pool => pool.address === positions[0].pool.toString()
-  //         )!.pointsPerSecond,
-  //         'hex'
-  //       ).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-  //     )
-
-  //     return acc.add(estimation)
-  //   }, new BN(0))
-
-  //   return estimation
-  // }, [list])
-
   const estimated24hPoints = useMemo(() => {
     if (!promotedPools.some(pool => pool.address === poolAddress.toString())) {
       return new BN(0)
@@ -234,11 +200,18 @@ export const PositionItem: React.FC<IPositionItem> = ({
           />
         </div>
         <PromotedPoolPopover
+          showEstPointsFirst
           anchorEl={airdropIconRef.current}
           open={isPromotedPoolPopoverOpen}
           onClose={() => {
             setIsPromotedPoolPopoverOpen(false)
           }}
+          headerText={
+            <>
+              This position is currently <b>earning points</b>
+            </>
+          }
+          pointsLabel={'Total points distributed across the pool per 24H:'}
           estPoints={estimated24hPoints}
           points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
         />
@@ -251,8 +224,16 @@ export const PositionItem: React.FC<IPositionItem> = ({
           onClick={e => e.stopPropagation()}
           title={
             <>
-              This pool generates points, but your position has inactive liquidity.{' '}
-              <b>Create a position within range</b> to start earning points
+              {!isActive ? (
+                <p>
+                  The position is in a pool that distributes points, but your position is{' '}
+                  <b>inactive</b>.
+                </p>
+              ) : !isPromoted ? (
+                <p>
+                  The position is in a pool that does <b>not distribute points</b>.
+                </p>
+              ) : null}
             </>
           }
           placement='top'

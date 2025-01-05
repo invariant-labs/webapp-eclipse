@@ -12,6 +12,10 @@ export interface IPromotedPoolPopover {
   apy?: number
   estPoints?: BN
   points: BN
+  headerText?: string | React.ReactNode
+  pointsLabel?: string | React.ReactNode
+  // New prop for section order
+  showEstPointsFirst?: boolean
 }
 
 export const PromotedPoolPopover = ({
@@ -21,11 +25,41 @@ export const PromotedPoolPopover = ({
   apr,
   apy,
   estPoints,
-  points
+  points,
+  headerText = 'The pool distributes points:',
+  pointsLabel = 'Points per 24H',
+  showEstPointsFirst = false
 }: IPromotedPoolPopover) => {
   const { classes } = useStyles()
 
   if (!anchorEl) return null
+
+  const TotalPointsSection = (
+    <div className={classes.insideBox}>
+      <Typography
+        className={classes.greyText}
+        dangerouslySetInnerHTML={
+          typeof pointsLabel === 'string' ? { __html: pointsLabel } : undefined
+        }>
+        {typeof pointsLabel !== 'string' ? pointsLabel : null}
+      </Typography>
+      <Typography className={classes.whiteText}>
+        {formatNumberWithCommas(printBN(points, 0))}
+      </Typography>
+    </div>
+  )
+
+  const EstPointsSection = estPoints ? (
+    <div className={classes.insideBox}>
+      <Typography className={classes.greyText}>Points earned by this position per 24H:</Typography>
+      <Typography className={classes.whiteText}>
+        {removeAdditionalDecimals(
+          formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),
+          2
+        )}
+      </Typography>
+    </div>
+  ) : null
 
   return (
     <Popover
@@ -53,24 +87,25 @@ export const PromotedPoolPopover = ({
       marginThreshold={16}>
       <div className={classes.root}>
         <div className={classes.container}>
-          <Typography className={classes.greyText}>This pool distributes points: </Typography>
-          <div className={classes.insideBox}>
-            <Typography className={classes.greyText}>Points per 24H</Typography>
-            <Typography className={classes.whiteText}>
-              {formatNumberWithCommas(printBN(points, 0))}
-            </Typography>
-          </div>
-          {estPoints ? (
-            <div className={classes.insideBox}>
-              <Typography className={classes.greyText}>Your Points</Typography>
-              <Typography className={classes.whiteText}>
-                {removeAdditionalDecimals(
-                  formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),
-                  2
-                )}
-              </Typography>
-            </div>
-          ) : null}
+          <Typography
+            className={classes.greyText}
+            dangerouslySetInnerHTML={
+              typeof headerText === 'string' ? { __html: headerText } : undefined
+            }>
+            {typeof headerText !== 'string' ? headerText : null}
+          </Typography>
+
+          {showEstPointsFirst ? (
+            <>
+              {EstPointsSection}
+              {TotalPointsSection}
+            </>
+          ) : (
+            <>
+              {TotalPointsSection}
+              {EstPointsSection}
+            </>
+          )}
 
           {apr && apy ? (
             <>
