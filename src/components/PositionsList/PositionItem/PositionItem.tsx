@@ -18,7 +18,7 @@ import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/Promoted
 import { BN } from '@coral-xyz/anchor'
 import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { PoolStructure, Position } from '@invariant-labs/sdk-eclipse/lib/market'
-import { PoolWithAddressAndIndex, positionsWithPoolsData } from '@store/selectors/positions'
+import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export interface IPositionItem {
@@ -57,9 +57,9 @@ export const PositionItem: React.FC<IPositionItem> = ({
   max,
   valueX,
   valueY,
-  // position,
+  position,
   // liquidity,
-  // poolData,
+  poolData,
   isActive = false,
   currentPrice,
   tokenXLiq,
@@ -164,68 +164,58 @@ export const PositionItem: React.FC<IPositionItem> = ({
     ),
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
-  // const estimation = useMemo(() => {
-  //   if (!position || !promotedPools || !poolData) {
-  //     return new BN(0)
-  //   }
 
-  //   try {
-  //     const poolAddress = position.pool?.toString()
-  //     if (!poolAddress) {
-  //       return new BN(0)
+  // const list = useSelector(positionsWithPoolsData)
+
+  // const estimated24hPoints = useMemo(() => {
+  //   const eligiblePositions = {}
+  //   list.forEach(position => {
+  //     if (promotedPools.some(pool => pool.address === position.pool.toString())) {
+  //       const v = eligiblePositions[position.pool.toString()]
+  //       if (!v) {
+  //         eligiblePositions[position.pool.toString()] = [position]
+  //       } else {
+  //         eligiblePositions[position.pool.toString()].push(position)
+  //       }
   //     }
+  //   })
 
-  //     const promotedPool = promotedPools.find(pool => pool.address === poolAddress)
-  //     if (!promotedPool?.pointsPerSecond) {
-  //       return new BN(0)
-  //     }
-
-  //     const pointsPerSecond = new BN(promotedPool.pointsPerSecond, 'hex').mul(
-  //       new BN(10).pow(new BN(LEADERBOARD_DECIMAL))
+  //   const estimation: BN = Object.values(eligiblePositions).reduce((acc: BN, positions: any) => {
+  //     const estimation = estimatePointsForUserPositions(
+  //       positions as Position[],
+  //       positions[0].poolData as PoolStructure,
+  //       new BN(
+  //         promotedPools.find(
+  //           pool => pool.address === positions[0].pool.toString()
+  //         )!.pointsPerSecond,
+  //         'hex'
+  //       ).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
   //     )
 
-  //     return estimatePointsForUserPositions(
-  //       [position] as Position[],
-  //       poolData as PoolStructure,
-  //       pointsPerSecond
-  //     )
-  //   } catch (error) {
-  //     console.error('Error calculating estimation:', error)
-  //     return new BN(0)
-  //   }
-  // }, [position, promotedPools, poolData, liquidity, isPromotedPoolPopoverOpen])
-  const list = useSelector(positionsWithPoolsData)
+  //     return acc.add(estimation)
+  //   }, new BN(0))
+
+  //   return estimation
+  // }, [list])
 
   const estimated24hPoints = useMemo(() => {
-    const eligiblePositions = {}
-    list.forEach(position => {
-      if (promotedPools.some(pool => pool.address === position.pool.toString())) {
-        const v = eligiblePositions[position.pool.toString()]
-        if (!v) {
-          eligiblePositions[position.pool.toString()] = [position]
-        } else {
-          eligiblePositions[position.pool.toString()].push(position)
-        }
-      }
-    })
+    if (!promotedPools.some(pool => pool.address === poolAddress.toString())) {
+      return new BN(0)
+    }
 
-    const estimation: BN = Object.values(eligiblePositions).reduce((acc: BN, positions: any) => {
-      const estimation = estimatePointsForUserPositions(
-        positions as Position[],
-        positions[0].poolData as PoolStructure,
-        new BN(
-          promotedPools.find(
-            pool => pool.address === positions[0].pool.toString()
-          )!.pointsPerSecond,
-          'hex'
-        ).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-      )
+    const poolPointsPerSecond = promotedPools.find(
+      pool => pool.address === poolAddress.toString()
+    )!.pointsPerSecond
 
-      return acc.add(estimation)
-    }, new BN(0))
+    const estimation = estimatePointsForUserPositions(
+      [position],
+      poolData as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
 
     return estimation
-  }, [list])
+  }, [poolAddress, position, poolData, promotedPools])
+
   return (
     <Grid
       className={classes.root}
