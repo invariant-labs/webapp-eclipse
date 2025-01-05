@@ -40,7 +40,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
           transition: 'transform 0.3s ease-in-out',
           width: '100%',
-          maxWidth: { xs: '100%', sm: '550px' },
+          maxWidth: { xs: '100%', sm: '650px' },
           position: 'relative',
           gap: '12px'
         }}>
@@ -61,7 +61,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
             fontSize: { xs: '14px', sm: '16px' },
             flex: 1
           }}>
-          Invariant Points are available now! Check out your progress and rewards
+          Invariant Points are live! TETH/ETH is now the next pool distributing points! Check it out
           <span
             style={{
               color: colors.invariant.pink,
