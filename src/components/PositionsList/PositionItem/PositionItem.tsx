@@ -235,7 +235,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
 
       <Grid container item className={classes.mdInfo} direction='row'>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {isPromoted ? (
+          {isPromoted && isActive ? (
             <>
               <div
                 ref={airdropIconRef}
@@ -264,7 +264,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
             </>
           ) : (
             <>
-              <Tooltip title='This position is not earning any points'>
+              <TooltipHover text='This position is not earning any points'>
                 <img
                   src={icons.airdropRainbow}
                   alt={'Airdrop'}
@@ -275,7 +275,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
                     filter: 'grayscale(1)'
                   }}
                 />
-              </Tooltip>
+              </TooltipHover>
             </>
           )}
           <Hidden mdUp>{feeFragment}</Hidden>

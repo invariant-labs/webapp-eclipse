@@ -1,7 +1,8 @@
 import { BN } from '@coral-xyz/anchor'
 import useStyles from './style'
 import { Popover, Typography } from '@mui/material'
-import { formatNumberWithCommas, printBN } from '@utils/utils'
+import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export interface IPromotedPoolPopover {
   open: boolean
@@ -63,7 +64,12 @@ export const PromotedPoolPopover = ({
             <div className={classes.insideBox}>
               <Typography className={classes.greyText}>Your Points</Typography>
               <Typography className={classes.whiteText}>
-                {formatNumberWithCommas(printBN(estPoints, 0))}
+                {estPoints.isZero()
+                  ? removeAdditionalDecimals(
+                      formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),
+                      2
+                    )
+                  : 0}
               </Typography>
             </div>
           ) : null}
