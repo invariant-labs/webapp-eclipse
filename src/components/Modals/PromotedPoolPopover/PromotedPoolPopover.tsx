@@ -79,7 +79,6 @@ export const PromotedPoolPopover = ({
                   <span className={classes.apr}>
                     {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
                   </span>
-                  {printBN(apr, LEADERBOARD_DECIMAL)}
                 </Typography>
               </div>
             </>
