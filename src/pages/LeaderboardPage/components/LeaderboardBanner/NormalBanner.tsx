@@ -10,14 +10,14 @@ interface INormalBannerProps {
 
 export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
   const navigate = useNavigate()
-  const bannerHeight = '44px'
+  const bannerHeight = 'fit-content'
 
   return (
     <Box
       sx={{
         position: 'relative',
         background: colors.invariant.light,
-        padding: isHiding ? '0px 0px' : '10px 20px',
+        padding: isHiding ? '0px 0px' : { xs: '12px 16px', sm: '10px 25px' },
         width: '100%',
         maxWidth: '100%',
         height: isHiding ? '0px' : bannerHeight,
@@ -33,23 +33,32 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
         transition: 'all 0.3s ease-in-out',
         willChange: 'height,padding,margin'
       }}>
-      <span
-        style={{
+      <Box
+        sx={{
           display: 'flex',
-          justifyContent: 'center',
           alignItems: 'center',
           transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
-          transition: 'transform 0.3s ease-in-out'
+          transition: 'transform 0.3s ease-in-out',
+          width: '100%',
+          gap: '12px'
         }}>
-        <img
+        <Box
+          component='img'
           src={icons.airdrop}
-          style={{
-            marginRight: '12px',
-            height: '24px',
-            width: '24px'
+          sx={{
+            width: { xs: '20px', sm: '24px' },
+            height: { xs: '20px', sm: '24px' },
+            minWidth: { xs: '20px', sm: '24px' },
+            objectFit: 'contain',
+            mt: '2px'
           }}
         />
-        <span>
+        <Box
+          sx={{
+            display: 'inline',
+            fontSize: { xs: '14px', sm: '16px' },
+            flex: 1
+          }}>
           Invariant Points are available now! Check out your progress and rewards
           <span
             style={{
@@ -59,24 +68,35 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
               cursor: 'pointer',
               ...typography.body1
             }}
-            onClick={() => {
-              navigate('/points')
-            }}>
+            onClick={() => navigate('/points')}>
             here!
           </span>
-        </span>
-      </span>
+        </Box>
+      </Box>
       <Box
         sx={{
           position: 'absolute',
           top: '50%',
-          right: '10px',
+          right: { xs: '8px', sm: '10px' },
           transform: 'translateY(-50%)',
           cursor: 'pointer',
-          color: colors.invariant.text
+          color: colors.invariant.text,
+          padding: '4px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center'
         }}
         onClick={onClose}>
-        <img width={11} src={icons.closeSmallIcon} alt='Close'></img>
+        <Box
+          component='img'
+          src={icons.closeSmallIcon}
+          sx={{
+            width: { xs: '10px', sm: '11px' },
+            height: { xs: '10px', sm: '11px' },
+            minWidth: { xs: '10px', sm: '11px' }
+          }}
+          alt='Close'
+        />
       </Box>
     </Box>
   )
