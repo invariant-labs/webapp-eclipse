@@ -169,7 +169,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
       false
     ) as BN
     return estOfPoints
-  }, [liquidity, poolData, pointsPerSecond])
+  }, [liquidity, poolData, pointsPerSecond, isPromotedPoolPopoverOpen])
 
   return (
     <Grid
