@@ -346,11 +346,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   //   }
   // }
 
-  const actions = createButtonActions({
+  const actionsTokenA = createButtonActions({
     tokens,
     wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
     minAmount: WETH_MIN_FEE_LAMPORTS,
     onAmountSet: tokenAInputState.setValue
+  })
+  const actionsTokenB = createButtonActions({
+    tokens,
+    wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
+    minAmount: WETH_MIN_FEE_LAMPORTS,
+    onAmountSet: tokenBInputState.setValue
   })
 
   return (
@@ -434,7 +440,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             {
               label: 'Max',
               onClick: () => {
-                actions.max(tokenAIndex)
+                actionsTokenA.max(tokenAIndex)
               },
               variant: 'max'
             },
@@ -442,7 +448,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               label: '50%',
               variant: 'half',
               onClick: () => {
-                actions.half(tokenAIndex)
+                actionsTokenA.half(tokenAIndex)
               }
             }
           ]}
@@ -482,14 +488,14 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               label: 'Max',
               variant: 'max',
               onClick: () => {
-                actions.max(tokenBIndex)
+                actionsTokenB.max(tokenBIndex)
               }
             },
             {
               label: '50%',
               variant: 'half',
               onClick: () => {
-                actions.half(tokenBIndex)
+                actionsTokenB.half(tokenBIndex)
               }
             }
           ]}
