@@ -2,7 +2,6 @@ import { BN } from '@coral-xyz/anchor'
 import useStyles from './style'
 import { Popover, Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export interface IPromotedPoolPopover {
   open: boolean
