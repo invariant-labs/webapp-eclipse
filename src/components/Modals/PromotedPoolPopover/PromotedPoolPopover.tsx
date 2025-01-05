@@ -64,12 +64,10 @@ export const PromotedPoolPopover = ({
             <div className={classes.insideBox}>
               <Typography className={classes.greyText}>Your Points</Typography>
               <Typography className={classes.whiteText}>
-                {estPoints.isZero()
-                  ? removeAdditionalDecimals(
-                      formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),
-                      2
-                    )
-                  : 0}
+                {removeAdditionalDecimals(
+                  formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),
+                  2
+                )}
               </Typography>
             </div>
           ) : null}
