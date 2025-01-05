@@ -62,7 +62,9 @@ export const PromotedPoolPopover = ({
           {estPoints ? (
             <div className={classes.insideBox}>
               <Typography className={classes.greyText}>Your Points</Typography>
-              <Typography className={classes.whiteText}>{printBN(estPoints, 0)}</Typography>
+              <Typography className={classes.whiteText}>
+                {formatNumberWithCommas(printBN(estPoints, 0))}
+              </Typography>
             </div>
           ) : null}
 
