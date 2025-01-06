@@ -145,7 +145,9 @@ export const CustomPoolListItem: React.FC<IProps> = ({
               justifyContent: 'space-between',
               marginBottom: '24px',
               paddingTop: '24px',
-              borderTop: `1px solid ${colors.invariant.light}`
+              paddingBottom: '24px',
+
+              borderBottom: hideBottomLine ? 'none' : `1px solid ${colors.invariant.light}`
             }}>
             <Box>
               <Typography style={{ ...typography.body2, color: colors.invariant.textGrey }}>
