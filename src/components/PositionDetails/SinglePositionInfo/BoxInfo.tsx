@@ -109,7 +109,6 @@ export const BoxInfo: React.FC<{
               {formatNumbers(thresholdsWithTokenDecimal(Number(tokenA.decimal)))(
                 `${tokenXPrintValue}`
               )}
-              {showPrefix(tokenXPrintValue, prefixConfig)}
             </Typography>
           </Grid>
           {showBalance ? (
@@ -134,7 +133,6 @@ export const BoxInfo: React.FC<{
                   }}>
                   <Typography className={classes.tokenUSDValue}>
                     ~${formatNumber((tokenA.value * tokenA.price).toFixed(2))}
-                    {showPrefix(tokenA.value * tokenA.price)}
                   </Typography>
                 </Tooltip>
               ) : (
@@ -201,7 +199,6 @@ export const BoxInfo: React.FC<{
                   }}>
                   <Typography className={classes.tokenUSDValue}>
                     ~${formatNumber((tokenB.value * tokenB.price).toFixed(2))}
-                    {showPrefix(tokenB.value * tokenB.price)}
                   </Typography>
                 </Tooltip>
               ) : (

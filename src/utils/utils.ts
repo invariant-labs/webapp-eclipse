@@ -802,7 +802,6 @@ export const formatNumber = (
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
-
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
