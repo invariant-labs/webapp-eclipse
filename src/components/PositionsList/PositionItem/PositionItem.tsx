@@ -186,6 +186,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
     isPromoted && isActive ? (
       <>
         <div
+          onClick={e => e.stopPropagation()}
           className={classes.actionButton}
           onPointerLeave={() => {
             setIsPromotedPoolPopoverOpen(false)

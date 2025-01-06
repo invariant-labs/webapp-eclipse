@@ -63,6 +63,7 @@ export const PromotedPoolPopover = ({
 
   return (
     <Popover
+      onClick={e => e.stopPropagation()}
       open={open}
       anchorEl={anchorEl}
       classes={{
