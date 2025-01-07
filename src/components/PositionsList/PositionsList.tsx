@@ -8,19 +8,22 @@ import {
   InputBase,
   ToggleButton,
   ToggleButtonGroup,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import SearchIcon from '@static/svg/lupaDark.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { IPositionItem, PositionItem } from './PositionItem/PositionItem'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { PaginationList } from '@components/Pagination/Pagination'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
+import { PositionItemDesktop } from './PositionItem/variants/PositionItemDesktop'
+import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
+import { IPositionItem } from './types'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -74,6 +77,7 @@ export const PositionsList: React.FC<IProps> = ({
   const dispatch = useDispatch()
   const [page, setPage] = useState(initialPage)
   const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
+  const isLg = useMediaQuery('@media (max-width: 1360px)')
 
   const currentData = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
@@ -237,7 +241,11 @@ export const PositionsList: React.FC<IProps> = ({
               }}
               key={element.id}
               className={classes.itemLink}>
-              <PositionItem key={index} {...element} />
+              {isLg ? (
+                <PositionItemMobile key={index} {...element} />
+              ) : (
+                <PositionItemDesktop key={index} {...element} />
+              )}
             </Grid>
           ))
         ) : showNoConnected ? (

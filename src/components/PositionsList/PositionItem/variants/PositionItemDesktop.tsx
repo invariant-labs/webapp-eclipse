@@ -4,49 +4,20 @@ import { theme } from '@static/theme'
 import { formatNumber } from '@utils/utils'
 import classNames from 'classnames'
 import { useMemo, useRef, useState } from 'react'
-import { useStyles } from './style'
+import { useDesktopStyles } from './style/desktop'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
-import { NetworkType } from '@store/consts/static'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import icons from '@static/icons'
-import { PublicKey } from '@solana/web3.js'
-import { useSelector } from 'react-redux'
-import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
-import { PoolStructure, Position } from '@invariant-labs/sdk-eclipse/lib/market'
-import { PoolWithAddressAndIndex } from '@store/selectors/positions'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { usePromotedPool } from '../hooks/usePromotedPool'
+import { calculatePercentageRatio } from '../utils/calculations'
+import { IPositionItem } from '@components/PositionsList/types'
+import { useSharedStyles } from './style/shared'
 
-export interface IPositionItem {
-  tokenXName: string
-  tokenYName: string
-  tokenXIcon: string
-  tokenYIcon: string
-  tokenXLiq: number
-  poolAddress: PublicKey
-  position: Position
-  tokenYLiq: number
-  fee: number
-  min: number
-  max: number
-  valueX: number
-  valueY: number
-  id: string
-  address: string
-  isActive?: boolean
-  currentPrice: number
-  network: NetworkType
-  isFullRange: boolean
-  isLocked: boolean
-  poolData: PoolWithAddressAndIndex
-  liquidity: BN
-}
-
-export const PositionItem: React.FC<IPositionItem> = ({
+export const PositionItemDesktop: React.FC<IPositionItem> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,
@@ -68,18 +39,10 @@ export const PositionItem: React.FC<IPositionItem> = ({
   isFullRange,
   isLocked
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useDesktopStyles()
+  const { classes: sharedClasses } = useSharedStyles()
   const airdropIconRef = useRef<any>(null)
-  const { promotedPools } = useSelector(leaderboardSelectors.config)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
-
-  const { isPromoted, pointsPerSecond } = useMemo(() => {
-    if (!poolAddress) return { isPromoted: false, pointsPerSecond: '00' }
-    const promotedPool = promotedPools.find(pool => pool.address === poolAddress.toString())
-
-    if (!promotedPool) return { isPromoted: false, pointsPerSecond: '00' }
-    return { isPromoted: true, pointsPerSecond: promotedPool.pointsPerSecond }
-  }, [promotedPools, poolAddress])
 
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
@@ -88,22 +51,18 @@ export const PositionItem: React.FC<IPositionItem> = ({
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
 
-  const getPercentageRatio = () => {
-    const firstTokenPercentage =
-      ((tokenXLiq * currentPrice) / (tokenYLiq + tokenXLiq * currentPrice)) * 100
+  const { tokenXPercentage, tokenYPercentage } = calculatePercentageRatio(
+    tokenXLiq,
+    tokenYLiq,
+    currentPrice,
+    xToY
+  )
 
-    const tokenXPercentageFloat = xToY ? firstTokenPercentage : 100 - firstTokenPercentage
-    const tokenXPercentage =
-      tokenXPercentageFloat > 50
-        ? Math.floor(tokenXPercentageFloat)
-        : Math.ceil(tokenXPercentageFloat)
-
-    const tokenYPercentage = 100 - tokenXPercentage
-
-    return { tokenXPercentage, tokenYPercentage }
-  }
-
-  const { tokenXPercentage, tokenYPercentage } = getPercentageRatio()
+  const { isPromoted, pointsPerSecond, estimated24hPoints } = usePromotedPool(
+    poolAddress,
+    position,
+    poolData
+  )
 
   const feeFragment = useMemo(
     () => (
@@ -126,16 +85,20 @@ export const PositionItem: React.FC<IPositionItem> = ({
         }
         placement='top'
         classes={{
-          tooltip: classes.tooltip
+          tooltip: sharedClasses.tooltip
         }}>
         <Grid
           container
           item
-          className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}
+          sx={{ width: 90 }}
+          className={classNames(sharedClasses.fee, isActive ? sharedClasses.activeFee : undefined)}
           justifyContent='center'
           alignItems='center'>
           <Typography
-            className={classNames(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
+            className={classNames(
+              sharedClasses.infoText,
+              isActive ? sharedClasses.activeInfoText : undefined
+            )}>
             {fee}% fee
           </Typography>
         </Grid>
@@ -149,13 +112,25 @@ export const PositionItem: React.FC<IPositionItem> = ({
       <Grid
         container
         item
-        className={classes.value}
+        sx={{
+          width: 160,
+          [theme.breakpoints.down(1029)]: {
+            marginRight: 0
+          },
+          [theme.breakpoints.down('sm')]: {
+            width: 144,
+            paddingInline: 6
+          }
+        }}
+        className={sharedClasses.value}
         justifyContent='space-between'
         alignItems='center'
         wrap='nowrap'>
-        <Typography className={classNames(classes.infoText, classes.label)}>Value</Typography>
-        <Grid className={classes.infoCenter} container item justifyContent='center'>
-          <Typography className={classes.greenText}>
+        <Typography className={classNames(sharedClasses.infoText, sharedClasses.label)}>
+          Value
+        </Typography>
+        <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
+          <Typography className={sharedClasses.greenText}>
             {formatNumber(xToY ? valueX : valueY)} {xToY ? tokenXName : tokenYName}
           </Typography>
         </Grid>
@@ -163,24 +138,6 @@ export const PositionItem: React.FC<IPositionItem> = ({
     ),
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
-
-  const estimated24hPoints = useMemo(() => {
-    if (!promotedPools.some(pool => pool.address === poolAddress.toString())) {
-      return new BN(0)
-    }
-
-    const poolPointsPerSecond = promotedPools.find(
-      pool => pool.address === poolAddress.toString()
-    )!.pointsPerSecond
-
-    const estimation = estimatePointsForUserPositions(
-      [position],
-      poolData as PoolStructure,
-      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-    )
-
-    return estimation
-  }, [poolAddress, position, poolData, promotedPools])
 
   const PromotedIcon = () =>
     isPromoted && isActive ? (
@@ -248,7 +205,7 @@ export const PositionItem: React.FC<IPositionItem> = ({
           }
           placement='top'
           classes={{
-            tooltip: classes.tooltip
+            tooltip: sharedClasses.tooltip
           }}>
           <img
             src={icons.airdropRainbow}
@@ -273,15 +230,15 @@ export const PositionItem: React.FC<IPositionItem> = ({
       justifyContent='space-between'>
       <Grid container item className={classes.mdTop} direction='row' wrap='nowrap'>
         <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
-          <Grid container item className={classes.icons} alignItems='center' wrap='nowrap'>
+          <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
             <img
-              className={classes.tokenIcon}
+              className={sharedClasses.tokenIcon}
               src={xToY ? tokenXIcon : tokenYIcon}
               alt={xToY ? tokenXName : tokenYName}
             />
             <TooltipHover text='Reverse tokens'>
               <img
-                className={classes.arrows}
+                className={sharedClasses.arrows}
                 src={SwapList}
                 alt='Arrow'
                 onClick={e => {
@@ -291,45 +248,47 @@ export const PositionItem: React.FC<IPositionItem> = ({
               />
             </TooltipHover>
             <img
-              className={classes.tokenIcon}
+              className={sharedClasses.tokenIcon}
               src={xToY ? tokenYIcon : tokenXIcon}
               alt={xToY ? tokenYName : tokenXName}
             />
           </Grid>
 
-          <Typography className={classes.names}>
+          <Typography className={sharedClasses.names}>
             {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
           </Typography>
-          <Hidden lgUp>
-            <Box
-              ref={airdropIconRef}
-              sx={{
-                marginLeft: '16px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}>
-              <PromotedIcon />
-            </Box>
-          </Hidden>
         </Grid>
       </Grid>
 
-      <Grid container item className={classes.mdInfo} direction='row'>
+      <Grid
+        container
+        item
+        className={classes.mdInfo}
+        sx={{
+          width: 'fit-content',
+          flexWrap: 'nowrap',
+          [theme.breakpoints.down('lg')]: {
+            flexWrap: 'nowrap',
+            marginTop: 16,
+            width: '100%'
+          },
+          [theme.breakpoints.down(1029)]: {
+            flexWrap: 'wrap'
+          }
+        }}
+        direction='row'>
         <Box sx={{ display: 'flex', alignItems: 'center' }} ref={airdropIconRef}>
-          <Hidden lgDown>
-            <PromotedIcon />
-          </Hidden>
-          <Hidden mdUp>{feeFragment}</Hidden>
+          <PromotedIcon />
         </Box>
         <Hidden mdDown>{feeFragment}</Hidden>
         <Grid
           container
           item
-          className={classes.liquidity}
+          className={sharedClasses.liquidity}
+          sx={{ width: 170 }}
           justifyContent='center'
           alignItems='center'>
-          <Typography className={classes.infoText}>
+          <Typography className={sharedClasses.infoText}>
             {tokenXPercentage === 100 && (
               <span>
                 {tokenXPercentage}
@@ -352,7 +311,6 @@ export const PositionItem: React.FC<IPositionItem> = ({
             )}
           </Typography>
         </Grid>
-        <Hidden mdUp>{valueFragment}</Hidden>
 
         <Grid
           container
@@ -362,14 +320,14 @@ export const PositionItem: React.FC<IPositionItem> = ({
           alignItems='center'
           wrap='nowrap'>
           <>
-            <Typography className={classNames(classes.greenText, classes.label)}>
+            <Typography className={classNames(sharedClasses.greenText, sharedClasses.label)}>
               MIN - MAX
             </Typography>
-            <Grid className={classes.infoCenter} container item justifyContent='center'>
+            <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
               {isFullRange ? (
-                <Typography className={classes.infoText}>FULL RANGE</Typography>
+                <Typography className={sharedClasses.infoText}>FULL RANGE</Typography>
               ) : (
-                <Typography className={classes.infoText}>
+                <Typography className={sharedClasses.infoText}>
                   {formatNumber(xToY ? min : 1 / max)} - {formatNumber(xToY ? max : 1 / min)}{' '}
                   {xToY ? tokenYName : tokenXName} per {xToY ? tokenXName : tokenYName}
                 </Typography>
@@ -384,7 +342,18 @@ export const PositionItem: React.FC<IPositionItem> = ({
           <Grid
             container
             item
-            className={classNames(classes.dropdown, isLocked ? classes.dropdownLocked : undefined)}
+            sx={{
+              width: 57,
+              [theme.breakpoints.down(1029)]: {
+                width: '100%',
+                marginRight: 0,
+                marginTop: 8
+              }
+            }}
+            className={classNames(
+              sharedClasses.dropdown,
+              isLocked ? sharedClasses.dropdownLocked : undefined
+            )}
             justifyContent='center'
             alignItems='center'
             wrap='nowrap'>
