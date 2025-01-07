@@ -1,14 +1,14 @@
 import { NetworkType } from '@store/consts/static'
-import { PositionItem } from './PositionItem'
 
 import type { Meta, StoryObj } from '@storybook/react'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
+import { PositionItemDesktop } from './variants/PositionItemDesktop'
 
 const meta = {
   title: 'Components/PositionItem',
-  component: PositionItem
-} satisfies Meta<typeof PositionItem>
+  component: PositionItemDesktop
+} satisfies Meta<typeof PositionItemDesktop>
 
 export default meta
 type Story = StoryObj<typeof meta>
