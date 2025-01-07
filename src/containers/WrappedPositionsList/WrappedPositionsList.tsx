@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
-import { IPositionItem } from '@components/PositionsList/PositionItem/PositionItem'
+import { IPositionItem } from '@components/PositionsList/types'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)

@@ -2,9 +2,9 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { BrowserRouter } from 'react-router-dom'
 import { PositionsList } from './PositionsList'
 import { NetworkType } from '@store/consts/static'
-import { IPositionItem } from './PositionItem/PositionItem'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
+import { IPositionItem } from './types'
 
 const meta = {
   title: 'Components/PositionsList',
