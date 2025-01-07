@@ -19,6 +19,7 @@ interface IConfigResponse {
   refreshTime: number
   pointsDecimal: number
   promotedPools: IPromotedPool[]
+  lastSnapTimestamp: string
 }
 async function fetchLeaderboardData(
   network: string,
@@ -83,13 +84,15 @@ export function* getLeaderboard(
 
 export function* getLeaderboardConfig(): Generator {
   try {
-    const { pointsDecimal, refreshTime, promotedPools } = yield* call(fetchLeaderboardConfig)
+    const { pointsDecimal, refreshTime, promotedPools, lastSnapTimestamp } =
+      yield* call(fetchLeaderboardConfig)
 
     yield* put(
       actions.setLeaderboardConfig({
         pointsDecimal,
         refreshTime,
-        promotedPools
+        promotedPools,
+        lastSnapTimestamp
       })
     )
   } catch (error) {

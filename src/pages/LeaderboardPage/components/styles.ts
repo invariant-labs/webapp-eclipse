@@ -9,8 +9,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
-      width: '100%',
-      gap: '24px'
+      width: '100%'
     },
     tableContainer: {
       width: '100%',
@@ -165,7 +164,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: '24px',
-      paddingTop: '24px',
       width: '1072px',
 
       [theme.breakpoints.between('lg', 'xl')]: {

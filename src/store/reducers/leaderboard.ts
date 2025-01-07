@@ -26,6 +26,7 @@ export interface ILeaderboardStore {
     refreshTime: number
     pointsDecimal: number
     promotedPools: IPromotedPool[]
+    lastSnapTimestamp: string
   }
 }
 
@@ -37,7 +38,7 @@ export const defaultState: ILeaderboardStore = {
   currentPage: 1,
   totalItems: 0,
   itemsPerPage: 25,
-  config: { refreshTime: 0, pointsDecimal: 0, promotedPools: [] }
+  config: { refreshTime: 0, pointsDecimal: 0, promotedPools: [], lastSnapTimestamp: '' }
 }
 
 export const leaderboardSliceName = 'leaderboard'
@@ -87,12 +88,14 @@ const leaderboardSlice = createSlice({
         refreshTime: number
         pointsDecimal: number
         promotedPools: IPromotedPool[]
+        lastSnapTimestamp: string
       }>
     ) {
       state.config = {
         refreshTime: action.payload.refreshTime,
         pointsDecimal: action.payload.pointsDecimal,
-        promotedPools: action.payload.promotedPools
+        promotedPools: action.payload.promotedPools,
+        lastSnapTimestamp: action.payload.lastSnapTimestamp
       }
       return state
     }
