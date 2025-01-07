@@ -71,8 +71,8 @@ export const WarningBanner = ({ onClose, isHiding, lastTimestamp }: INormalBanne
                 </span>
                 <br />
                 <span>
-                  Please note, points are still being calculated correctly, but there is a temporary
-                  pause in updates. Updates will resume shortly.
+                  Please note, <b>points are still being calculated correctly</b>, but there is a
+                  temporary pause in updates. Updates will resume shortly.
                 </span>
               </span>
             </span>
