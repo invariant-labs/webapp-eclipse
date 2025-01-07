@@ -1802,3 +1802,25 @@ export const calculateAPYAndAPR = (
     return { convertedApy: apy, convertedApr: apyToApr(apy) }
   }
 }
+
+export const hexToDate = (hexTimestamp: string) => {
+  const timestamp = parseInt(hexTimestamp, 16)
+
+  const date = new Date(timestamp * 1000)
+
+  return date
+}
+
+export const checkDataDelay = (date: string | Date, timeInMinutes: number): boolean => {
+  const inputDate = new Date(date)
+
+  if (isNaN(inputDate.getTime())) {
+    throw new Error('Invalid date provided')
+  }
+
+  const currentDate = new Date()
+
+  const differenceInMinutes = (currentDate.getTime() - inputDate.getTime()) / (1000 * 60)
+
+  return differenceInMinutes > timeInMinutes
+}

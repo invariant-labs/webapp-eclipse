@@ -49,6 +49,8 @@ export const getPromotedPools = createSelector(
     config.promotedPools
 )
 
+export const lastTimestamp = createSelector(config, config => config.lastSnapTimestamp)
+
 export const topRankedUsers = createSelector(leaderboard, (leaderboardData: LeaderboardEntry[]) =>
   [...leaderboardData].sort((a, b) => a.rank - b.rank)
 )
