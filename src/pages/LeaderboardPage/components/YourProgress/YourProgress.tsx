@@ -11,6 +11,8 @@ import trapezeRight from '@static/png/trapezeRight.png'
 
 import trapezeMobileTop from '@static/png/trapezeMobileTop.png'
 import trapezeMobileBottom from '@static/png/trapezeMobileBottom.png'
+import trapezeNewDesktopBottom from '@static/png/trapezeNewDesktopBottom.png'
+import boxModalMiddle from '@static/png/boxMobileMiddle.png'
 
 import { useSelector } from 'react-redux'
 import { BlurOverlay } from './BlurOverlay'
@@ -18,35 +20,41 @@ import { ProgressItem } from './ProgressItem'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
-import { formatNumberWithCommas, printBN } from '@utils/utils'
+import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 
 interface YourProgressProps {
   userStats: UserStats | null
+  estimated24hPoints: BN
+  isLoadingList: boolean
 }
 
-export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
+export const YourProgress: React.FC<YourProgressProps> = ({
+  userStats,
+  estimated24hPoints,
+  isLoadingList
+}) => {
   const { classes } = useStyles()
   const walletStatus = useSelector(status)
   const totalItems = useSelector(leaderboardSelectors.totalItems)
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
-  const formatUserPoints = (points?: string) => {
-    if (!userStats) return '0'
+  // const formatUserPoints = (points?: string) => {
+  //   if (!userStats) return '0'
 
-    try {
-      if (!points) return '0'
+  //   try {
+  //     if (!points) return '0'
 
-      const pointsBN = new BN(points, 'hex')
+  //     const pointsBN = new BN(points, 'hex')
 
-      if (pointsBN.isZero()) return '0'
+  //     if (pointsBN.isZero()) return '0'
 
-      return formatNumberWithCommas(printBN(pointsBN, LEADERBOARD_DECIMAL))
-    } catch (error) {
-      console.error('Error formatting points:', error)
-      return '0'
-    }
-  }
+  //     return formatNumberWithCommas(printBN(pointsBN, LEADERBOARD_DECIMAL))
+  //   } catch (error) {
+  //     console.error('Error formatting points:', error)
+  //     return '0'
+  //   }
+  // }
 
   return (
     <Box
@@ -60,27 +68,62 @@ export const YourProgress: React.FC<YourProgressProps> = ({ userStats }) => {
       }}>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
 
-      <Box className={classes.sectionContent} style={{ position: 'relative' }}>
+      <Box style={{ position: 'relative' }}>
         <BlurOverlay isConnected={isConnected} />
-        <ProgressItem
-          background={{
-            dekstop: trapezeLeft,
-            mobile: trapezeMobileTop
-          }}
-          tooltip='Points amount refreshes roughly every 30 minutes.'
-          desktopLabelAligment='right'
-          label='Total points'
-          value={formatUserPoints(userStats?.points)}
-        />
-        <ProgressItem
-          background={{
-            dekstop: trapezeRight,
-            mobile: trapezeMobileBottom
-          }}
-          desktopLabelAligment='left'
-          label='Global rank'
-          value={userStats?.rank ?? (isConnected ? totalItems + 1 : 0)}
-        />
+        <Box className={classes.sectionContent}>
+          <ProgressItem
+            background={{
+              desktop: trapezeLeft,
+              mobile: trapezeMobileTop
+            }}
+            desktopLabelAligment='right'
+            label='Points Per Day'
+            isLoading={isLoadingList}
+            value={
+              userStats
+                ? removeAdditionalDecimals(
+                    formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
+                    2
+                  )
+                : 0
+            }
+          />
+
+          <ProgressItem
+            background={{
+              desktop: trapezeRight,
+              mobile: boxModalMiddle
+            }}
+            blockHeight={{
+              mobile: '90px'
+            }}
+            desktopLabelAligment='left'
+            label='Global rank'
+            value={userStats?.rank ?? (isConnected ? totalItems + 1 : 0)}
+          />
+        </Box>
+        <Box sx={{ marginTop: '24px' }}>
+          <ProgressItem
+            background={{
+              desktop: trapezeNewDesktopBottom,
+              mobile: trapezeMobileBottom
+            }}
+            blockHeight={{
+              desktop: '89px'
+            }}
+            tooltip='Points amount refreshes roughly every 30 minutes.'
+            desktopLabelAligment='center'
+            isWideBlock
+            label='Total points'
+            value={
+              userStats
+                ? formatNumberWithCommas(
+                    printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)
+                  )
+                : 0
+            }
+          />
+        </Box>
       </Box>
     </Box>
   )
