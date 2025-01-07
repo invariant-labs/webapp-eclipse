@@ -11,12 +11,7 @@ export const LeaderBoardPage: React.FC = () => {
 
   return (
     <>
-      <Grid
-        container
-        className={classes.container}
-        style={{
-          marginTop: 'calc(100vh*0.05)'
-        }}>
+      <Grid container className={classes.container}>
         <Grid item>
           <LeaderboardWrapper alignment={alignment} setAlignment={setAlignment} />
         </Grid>
