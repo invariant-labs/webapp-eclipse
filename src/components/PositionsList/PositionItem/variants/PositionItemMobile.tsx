@@ -204,6 +204,8 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
           onClick={e => e.stopPropagation()}
           title={
             <>
+              isActive = {JSON.stringify(isActive)}
+              isPromoted = {JSON.stringify(isPromoted)}
               <PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />
             </>
           }
