@@ -129,18 +129,22 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
 
+  const handleInteraction = (event: React.MouseEvent | React.TouchEvent) => {
+    event.stopPropagation()
+
+    if (event.type === 'touchstart') {
+      event.preventDefault()
+      setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+    }
+  }
+
   const PromotedIcon = () =>
     isPromoted && isActive ? (
       <>
         <div
-          onClick={e => e.stopPropagation()}
           className={classes.actionButton}
-          onPointerLeave={() => {
-            setIsPromotedPoolPopoverOpen(false)
-          }}
-          onPointerEnter={() => {
-            setIsPromotedPoolPopoverOpen(true)
-          }}>
+          onClick={handleInteraction}
+          onTouchStart={handleInteraction}>
           <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
         </div>
         <PromotedPoolPopover

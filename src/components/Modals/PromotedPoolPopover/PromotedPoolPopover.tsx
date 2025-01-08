@@ -14,6 +14,7 @@ export interface IPromotedPoolPopover {
   points: BN
   headerText?: string | React.ReactNode
   pointsLabel?: string | React.ReactNode
+  // New prop for section order
   showEstPointsFirst?: boolean
 }
 
@@ -60,15 +61,9 @@ export const PromotedPoolPopover = ({
     </div>
   ) : null
 
-  const handlePopoverClick = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault()
-    e.stopPropagation()
-  }
-
   return (
     <Popover
-      onClick={handlePopoverClick}
-      onTouchStart={handlePopoverClick}
+      onClick={e => e.stopPropagation()}
       open={open}
       anchorEl={anchorEl}
       classes={{
@@ -83,15 +78,7 @@ export const PromotedPoolPopover = ({
       disableRestoreFocus
       slotProps={{
         paper: {
-          onMouseLeave: onClose,
-          onTouchEnd: e => {
-            if (!e.currentTarget.contains(e.target as Node)) {
-              onClose()
-            }
-          },
-          style: {
-            touchAction: 'none'
-          }
+          onMouseLeave: onClose
         }
       }}
       transformOrigin={{
@@ -99,7 +86,7 @@ export const PromotedPoolPopover = ({
         horizontal: 'center'
       }}
       marginThreshold={32}>
-      <div className={classes.root} onClick={handlePopoverClick} onTouchStart={handlePopoverClick}>
+      <div className={classes.root}>
         <div className={classes.container}>
           <Typography
             className={classes.greyText}
