@@ -33,7 +33,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   addNewTokenToLocalStorage,
-  getCoinGeckoTokenPrice,
+  getTokenPrice,
   getMockedTokenPrice,
   getNewTokenOrThrow,
   tickerToAddress
@@ -204,6 +204,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
   }
 
+  const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
+
   const [tokenFromPriceData, setTokenFromPriceData] = useState<TokenPriceData | undefined>(
     undefined
   )
@@ -219,7 +221,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (id.length) {
       setPriceFromLoading(true)
-      getCoinGeckoTokenPrice(id)
+      getTokenPrice(id)
         .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
@@ -230,7 +232,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     } else {
       setTokenFromPriceData(undefined)
     }
-  }, [tokenFrom])
+  }, [tokenFrom, triggerFetchPrice])
 
   const [tokenToPriceData, setTokenToPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceToLoading, setPriceToLoading] = useState(false)
@@ -243,7 +245,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     const id = tokensDict[tokenTo.toString()]?.coingeckoId ?? ''
     if (id.length) {
       setPriceToLoading(true)
-      getCoinGeckoTokenPrice(id)
+      getTokenPrice(id)
         .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
@@ -254,7 +256,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     } else {
       setTokenToPriceData(undefined)
     }
-  }, [tokenTo])
+  }, [tokenTo, triggerFetchPrice])
 
   const initialSlippage = localStorage.getItem('INVARIANT_SWAP_SLIPPAGE') ?? DEFAULT_SWAP_SLIPPAGE
 
@@ -269,48 +271,14 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
+    setTriggerFetchPrice(!triggerFetchPrice)
+
     dispatch(
       poolsActions.getAllPoolsForPairData({
         first: tokensList[tokenFromIndex].address,
         second: tokensList[tokenToIndex].address
       })
     )
-
-    if (tokenTo === null || tokenFrom === null) {
-      return
-    }
-
-    const idTo = tokensDict[tokenTo.toString()].coingeckoId ?? ''
-
-    if (idTo.length) {
-      setPriceToLoading(true)
-      getCoinGeckoTokenPrice(idTo)
-        .then(data => setTokenToPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenToPriceData(
-            getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, networkType)
-          )
-        )
-        .finally(() => setPriceToLoading(false))
-    } else {
-      setTokenToPriceData(undefined)
-    }
-
-    const idFrom = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
-
-    if (idFrom.length) {
-      setPriceFromLoading(true)
-      getCoinGeckoTokenPrice(idFrom)
-        .then(data => setTokenFromPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenFromPriceData(
-            getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, networkType)
-          )
-        )
-        .finally(() => setPriceFromLoading(false))
-    } else {
-      setTokenFromPriceData(undefined)
-    }
   }
 
   const copyTokenAddressHandler = (message: string, variant: VariantType) => {
