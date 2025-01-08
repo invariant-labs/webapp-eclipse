@@ -14,7 +14,6 @@ export interface IPromotedPoolPopover {
   points: BN
   headerText?: string | React.ReactNode
   pointsLabel?: string | React.ReactNode
-  // New prop for section order
   showEstPointsFirst?: boolean
 }
 
