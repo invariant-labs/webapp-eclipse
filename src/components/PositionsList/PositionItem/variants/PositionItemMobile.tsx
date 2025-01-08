@@ -150,7 +150,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     event.stopPropagation()
 
     if (event.type === 'touchstart') {
-      event.preventDefault()
       setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
       setAllowPropagation(false)
     }
@@ -238,7 +237,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             event.stopPropagation()
 
             if (event.type === 'touchstart') {
-              event.preventDefault()
               setIsPromotedPoolInactive(!isPromotedPoolInactive)
             }
           }}
@@ -256,7 +254,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             event.stopPropagation()
 
             if (event.type === 'touchstart') {
-              event.preventDefault()
               setIsPromotedPoolInactive(!isPromotedPoolInactive)
               setAllowPropagation(false)
             }
