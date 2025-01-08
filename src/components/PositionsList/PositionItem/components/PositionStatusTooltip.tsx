@@ -2,6 +2,23 @@ const PositionStatusTooltip: React.FC<{ isActive: boolean; isPromoted: boolean }
   isActive,
   isPromoted
 }) => {
+  if (!isActive && !isPromoted) {
+    return (
+      <p>
+        This position <b>isn't</b> earning points for two reasons:
+        <br />
+        <br />
+        1. Your position's liquidity remains <b>inactive</b> and <b>won't</b> earn points as long as
+        the current price is outside its specified price range.
+        <br />
+        <br />
+        2. This position was opened on a pool that <b>doesn't</b> generate points. If you were
+        expecting to earn points, make sure you selected a pool with a fee tier that generates
+        points.
+      </p>
+    )
+  }
+
   if (!isActive) {
     return (
       <p>
@@ -14,7 +31,7 @@ const PositionStatusTooltip: React.FC<{ isActive: boolean; isPromoted: boolean }
     )
   }
 
-  if (isActive && !isPromoted) {
+  if (!isPromoted) {
     return (
       <p>
         This position <b>isn't</b> earning points because it was opened on a pool that
