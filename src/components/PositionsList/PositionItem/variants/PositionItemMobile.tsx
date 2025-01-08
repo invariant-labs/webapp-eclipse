@@ -154,6 +154,16 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
           onClose={() => {
             setIsPromotedPoolPopoverOpen(false)
           }}
+          onPointerEnter={() => {
+            if (window.matchMedia('(hover: hover)').matches) {
+              setIsPromotedPoolPopoverOpen(true)
+            }
+          }}
+          onPointerLeave={() => {
+            if (window.matchMedia('(hover: hover)').matches) {
+              setIsPromotedPoolPopoverOpen(false)
+            }
+          }}
           headerText={
             <>
               This position is currently <b>earning points</b>
