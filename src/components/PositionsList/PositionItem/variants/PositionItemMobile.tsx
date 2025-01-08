@@ -16,9 +16,13 @@ import { usePromotedPool } from '../hooks/usePromotedPool'
 import { calculatePercentageRatio } from '../utils/calculations'
 import { IPositionItem } from '@components/PositionsList/types'
 import { useSharedStyles } from './style/shared'
-import PositionStatusTooltip from '../components/PositionStatusTooltip'
+import { InactivePoolsPopover } from '../components/InactivePoolsPopover/InactivePoolsPopover'
 
-export const PositionItemMobile: React.FC<IPositionItem> = ({
+interface IPositionItemMobile extends IPositionItem {
+  setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
+}
+
+export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,
@@ -30,6 +34,7 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
   valueX,
   valueY,
   position,
+  setAllowPropagation,
   // liquidity,
   poolData,
   isActive = false,
@@ -44,6 +49,7 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
   const { classes: sharedClasses } = useSharedStyles()
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
+  const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
 
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
@@ -64,6 +70,17 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
     position,
     poolData
   )
+
+  // const isAnyPopoverActive = isPromotedPoolPopoverOpen || isPromotedPoolInactive
+
+  // const handleGridClick = (e: React.MouseEvent) => {
+  //   // if (isAnyPopoverActive) {
+  //   //   e.preventDefault()
+
+  //   return
+  //   // }
+  //   // e.stopPropagation()
+  // }
 
   const feeFragment = useMemo(
     () => (
@@ -135,22 +152,29 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
     if (event.type === 'touchstart') {
       event.preventDefault()
       setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+      setAllowPropagation(false)
     }
   }
 
   const PromotedIcon = () => {
+    const PROPAGATION_ALLOW_TIME = 500
     useEffect(() => {
       const handleClickOutside = (event: TouchEvent | MouseEvent) => {
         if (
           airdropIconRef.current &&
           !(airdropIconRef.current as HTMLElement).contains(event.target as Node) &&
-          !document.querySelector('.promoted-pool-popover')?.contains(event.target as Node)
+          !document.querySelector('.promoted-pool-popover')?.contains(event.target as Node) &&
+          !document.querySelector('.promoted-pool-inactive-popover')?.contains(event.target as Node)
         ) {
           setIsPromotedPoolPopoverOpen(false)
+          setIsPromotedPoolInactive(false)
+          setTimeout(() => {
+            setAllowPropagation(true)
+          }, PROPAGATION_ALLOW_TIME)
         }
       }
 
-      if (isPromotedPoolPopoverOpen) {
+      if (isPromotedPoolPopoverOpen || isPromotedPoolInactive) {
         document.addEventListener('click', handleClickOutside)
         document.addEventListener('touchstart', handleClickOutside)
       }
@@ -159,7 +183,7 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
         document.removeEventListener('click', handleClickOutside)
         document.removeEventListener('touchstart', handleClickOutside)
       }
-    }, [isPromotedPoolPopoverOpen])
+    }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive])
 
     return isPromoted && isActive ? (
       <>
@@ -198,20 +222,44 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
       </>
     ) : (
       <>
-        <Tooltip
-          enterTouchDelay={0}
-          leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-          onClick={e => e.stopPropagation()}
-          title={
-            <>
-              isActive = {JSON.stringify(isActive)}
-              isPromoted = {JSON.stringify(isPromoted)}
-              <PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />
-            </>
-          }
-          placement='top'
-          classes={{
-            tooltip: sharedClasses.tooltip
+        <InactivePoolsPopover
+          anchorEl={airdropIconRef.current}
+          open={isPromotedPoolInactive}
+          onClose={() => {
+            setIsPromotedPoolInactive(false)
+          }}
+          isActive={isActive}
+          isPromoted={isPromoted}
+        />
+
+        <div
+          className={classes.actionButton}
+          onClick={event => {
+            event.stopPropagation()
+
+            if (event.type === 'touchstart') {
+              event.preventDefault()
+              setIsPromotedPoolInactive(!isPromotedPoolInactive)
+            }
+          }}
+          onPointerEnter={() => {
+            if (window.matchMedia('(hover: hover)').matches) {
+              setIsPromotedPoolInactive(true)
+            }
+          }}
+          onPointerLeave={() => {
+            if (window.matchMedia('(hover: hover)').matches) {
+              setIsPromotedPoolInactive(false)
+            }
+          }}
+          onTouchStart={event => {
+            event.stopPropagation()
+
+            if (event.type === 'touchstart') {
+              event.preventDefault()
+              setIsPromotedPoolInactive(!isPromotedPoolInactive)
+              setAllowPropagation(false)
+            }
           }}>
           <img
             src={icons.airdropRainbow}
@@ -222,7 +270,7 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
               filter: 'grayscale(1)'
             }}
           />
-        </Tooltip>
+        </div>
       </>
     )
   }

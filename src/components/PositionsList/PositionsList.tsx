@@ -146,9 +146,8 @@ export const PositionsList: React.FC<IProps> = ({
     dispatch(actions.getLeaderboardConfig())
   }, [dispatch])
 
-  // useEffect(() => {
-  //   pageChanged(page)
-  // }, [page])
+  const [allowPropagation, setAllowPropagation] = useState(true)
+
   return (
     <Grid container direction='column' className={classes.root}>
       <Grid
@@ -237,12 +236,18 @@ export const PositionsList: React.FC<IProps> = ({
           paginator(page).data.map((element, index) => (
             <Grid
               onClick={() => {
-                navigate(`/position/${element.id}`)
+                if (allowPropagation) {
+                  navigate(`/position/${element.id}`)
+                }
               }}
               key={element.id}
               className={classes.itemLink}>
               {isLg ? (
-                <PositionItemMobile key={index} {...element} />
+                <PositionItemMobile
+                  key={index}
+                  {...element}
+                  setAllowPropagation={setAllowPropagation}
+                />
               ) : (
                 <PositionItemDesktop key={index} {...element} />
               )}

@@ -85,7 +85,7 @@ export const PromotedPoolPopover = ({
         vertical: 'top',
         horizontal: 'center'
       }}
-      marginThreshold={32}>
+      marginThreshold={16}>
       <div className={classes.root}>
         <div className={classes.container}>
           <Typography
