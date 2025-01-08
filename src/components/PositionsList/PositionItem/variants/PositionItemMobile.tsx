@@ -3,7 +3,7 @@ import SwapList from '@static/svg/swap-list.svg'
 import { theme } from '@static/theme'
 import { formatNumber } from '@utils/utils'
 import classNames from 'classnames'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style/mobile'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
@@ -138,8 +138,30 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
     }
   }
 
-  const PromotedIcon = () =>
-    isPromoted && isActive ? (
+  const PromotedIcon = () => {
+    useEffect(() => {
+      const handleClickOutside = (event: TouchEvent | MouseEvent) => {
+        if (
+          airdropIconRef.current &&
+          !(airdropIconRef.current as HTMLElement).contains(event.target as Node) &&
+          !document.querySelector('.promoted-pool-popover')?.contains(event.target as Node)
+        ) {
+          setIsPromotedPoolPopoverOpen(false)
+        }
+      }
+
+      if (isPromotedPoolPopoverOpen) {
+        document.addEventListener('click', handleClickOutside)
+        document.addEventListener('touchstart', handleClickOutside)
+      }
+
+      return () => {
+        document.removeEventListener('click', handleClickOutside)
+        document.removeEventListener('touchstart', handleClickOutside)
+      }
+    }, [isPromotedPoolPopoverOpen])
+
+    return isPromoted && isActive ? (
       <>
         <div
           className={classes.actionButton}
@@ -201,6 +223,7 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
         </Tooltip>
       </>
     )
+  }
 
   return (
     <Grid
