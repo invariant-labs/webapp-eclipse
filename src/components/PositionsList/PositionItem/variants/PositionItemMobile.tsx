@@ -144,16 +144,6 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
         <div
           className={classes.actionButton}
           onClick={handleInteraction}
-          onTouchStart={handleInteraction}>
-          <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
-        </div>
-        <PromotedPoolPopover
-          showEstPointsFirst
-          anchorEl={airdropIconRef.current}
-          open={isPromotedPoolPopoverOpen}
-          onClose={() => {
-            setIsPromotedPoolPopoverOpen(false)
-          }}
           onPointerEnter={() => {
             if (window.matchMedia('(hover: hover)').matches) {
               setIsPromotedPoolPopoverOpen(true)
@@ -163,6 +153,16 @@ export const PositionItemMobile: React.FC<IPositionItem> = ({
             if (window.matchMedia('(hover: hover)').matches) {
               setIsPromotedPoolPopoverOpen(false)
             }
+          }}
+          onTouchStart={handleInteraction}>
+          <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
+        </div>
+        <PromotedPoolPopover
+          showEstPointsFirst
+          anchorEl={airdropIconRef.current}
+          open={isPromotedPoolPopoverOpen}
+          onClose={() => {
+            setIsPromotedPoolPopoverOpen(false)
           }}
           headerText={
             <>
