@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react'
 import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/pools'
-
+import { actions as positionsActions } from '@store/reducers/positions'
 import { poolsArraySortedByFees, poolTicks, tickMaps } from '@store/selectors/pools'
-
 import { swap } from '@store/selectors/swap'
 import { findTickmapChanges, IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
@@ -97,12 +96,14 @@ const MarketEvents = () => {
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
+            console.log('subscribing to pool', pool.address.toString())
             dispatch(
               actions.updatePool({
                 address: pool.address,
                 poolStructure
               })
             )
+            dispatch(positionsActions.triggerFetchTicks())
           }
         )
       })

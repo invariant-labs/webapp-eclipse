@@ -52,6 +52,7 @@ export interface IPositionsStore {
   currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
+  triggerFetchTicks: boolean
 }
 
 export interface InitPositionData
@@ -111,7 +112,8 @@ export const defaultState: IPositionsStore = {
     inProgress: false,
     success: false
   },
-  shouldNotUpdateRange: false
+  shouldNotUpdateRange: false,
+  triggerFetchTicks: false
 }
 
 export const positionsSliceName = 'positions'
@@ -211,6 +213,9 @@ const positionsSlice = createSlice({
     setShouldNotUpdateRange(state, action: PayloadAction<boolean>) {
       state.shouldNotUpdateRange = action.payload
       return state
+    },
+    triggerFetchTicks(state) {
+      state.triggerFetchTicks = !state.triggerFetchTicks
     }
   }
 })
