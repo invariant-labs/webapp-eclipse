@@ -66,6 +66,7 @@ export const PromotedPoolPopover = ({
       onClick={e => e.stopPropagation()}
       open={open}
       anchorEl={anchorEl}
+      className='promoted-pool-popover'
       classes={{
         paper: classes.paper,
         root: classes.popover
