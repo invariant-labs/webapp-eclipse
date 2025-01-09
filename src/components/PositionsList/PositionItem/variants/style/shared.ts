@@ -2,32 +2,10 @@ import { Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((theme: Theme) => ({
-  root: {
-    background: colors.invariant.component,
-    borderRadius: 24,
-    padding: 20,
-    flexWrap: 'nowrap',
-    '&:not(:last-child)': {
-      marginBottom: 20
-    },
-
-    '&:hover': {
-      background: `${colors.invariant.component}B0`
-    },
-
-    [theme.breakpoints.down('lg')]: {
-      padding: 16,
-      flexWrap: 'wrap'
-    },
-    [theme.breakpoints.down('sm')]: {
-      padding: 8
-    }
-  },
+export const useSharedStyles = makeStyles()((theme: Theme) => ({
   icons: {
     marginRight: 12,
     width: 'fit-content',
-
     [theme.breakpoints.down('lg')]: {
       marginRight: 12
     }
@@ -35,24 +13,37 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   tokenIcon: {
     width: 40,
     borderRadius: '100%',
-
     [theme.breakpoints.down('sm')]: {
       width: 28
+    }
+  },
+  actionButton: {
+    background: 'none',
+    padding: 0,
+    margin: 0,
+    border: 'none',
+    position: 'relative',
+    color: colors.invariant.black,
+    textTransform: 'none',
+    transition: 'filter 0.2s linear',
+    '&:hover': {
+      filter: 'brightness(1.2)',
+      cursor: 'pointer',
+      '@media (hover: none)': {
+        filter: 'none'
+      }
     }
   },
   arrows: {
     width: 36,
     marginLeft: 4,
     marginRight: 4,
-
     [theme.breakpoints.down('lg')]: {
       width: 30
     },
-
     [theme.breakpoints.down('sm')]: {
       width: 24
     },
-
     '&:hover': {
       filter: 'brightness(2)'
     }
@@ -105,7 +96,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
-    width: 170,
     marginRight: 8,
     lineHeight: 20,
     paddingInline: 10,
@@ -117,9 +107,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
-    width: 90,
     marginRight: 8,
-
     [theme.breakpoints.down('md')]: {
       marginRight: 0
     }
@@ -130,33 +118,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   infoCenter: {
     flex: '1 1 0%'
   },
-  minMax: {
-    background: colors.invariant.light,
-    borderRadius: 11,
-    height: 36,
-    width: 320,
-    paddingInline: 10,
-    marginRight: 8,
-
-    [theme.breakpoints.down('md')]: {
-      width: '100%',
-      marginRight: 0,
-      marginTop: 8
-    }
-  },
   dropdown: {
     background: colors.invariant.greenLinearGradient,
     borderRadius: 11,
     height: 36,
-    width: 57,
     paddingInline: 10,
-    marginRight: 8,
-
-    [theme.breakpoints.down(1029)]: {
-      width: '100%',
-      marginRight: 0,
-      marginTop: 8
-    }
+    marginRight: 8
   },
   dropdownLocked: {
     background: colors.invariant.lightHover
@@ -169,42 +136,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
-    width: 160,
     paddingInline: 12,
-    marginRight: 8,
-
-    [theme.breakpoints.down(1029)]: {
-      marginRight: 0
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: 144,
-      paddingInline: 6
-    }
-  },
-  mdInfo: {
-    width: 'fit-content',
-    flexWrap: 'nowrap',
-
-    [theme.breakpoints.down('lg')]: {
-      flexWrap: 'nowrap',
-      marginTop: 16,
-      width: '100%'
-    },
-
-    [theme.breakpoints.down(1029)]: {
-      flexWrap: 'wrap'
-    }
-  },
-  mdTop: {
-    width: 'fit-content',
-
-    [theme.breakpoints.down('lg')]: {
-      width: '100%',
-      justifyContent: 'space-between'
-    }
-  },
-  iconsAndNames: {
-    width: 'fit-content'
+    marginRight: 8
   },
   label: {
     marginRight: 2

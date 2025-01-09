@@ -378,6 +378,39 @@ export const TETH_MAIN: Token = {
   coingeckoId: 'turbo-eth'
 }
 
+export const TURBO_AI_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'TURBO',
+  address: new PublicKey('6G61dR9rbcGW4btoLFFFDtebUV8J8LmAobnvvzhdf4Vf'),
+  decimals: 6,
+  name: 'Turbo AI',
+  logoURI:
+    'https://statics.eclipsescan.xyz/cdn/imgs/s60?ref=68747470733a2f2f697066732e696f2f697066732f516d563739564a58697479344a456d454c72526e635254556f664648646a5032626650706a53586a79434b337853',
+  coingeckoId: ''
+}
+
+export const ORCA_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'ORCA',
+  address: new PublicKey('2tGbYEm4nuPFyS6zjDTELzEhvVKizgKewi6xT7AaSKzn'),
+  decimals: 6,
+  name: 'Orca',
+  logoURI:
+    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/refs/heads/main/deployments/warp_routes/ORCA/logo.svg',
+  coingeckoId: 'orca'
+}
+
+export const SOLAR_MAIN: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'SOLAR',
+  address: new PublicKey('CwrZKtPiZJrAK3tTjNPP22rD9VzeoxQv8iHd6EeyNoze'),
+  decimals: 9,
+  name: 'SOLAR STUDIOS',
+  logoURI:
+    'https://statics.eclipsescan.xyz/cdn/imgs/s60?ref=68747470733a2f2f617661746172732e67697468756275736572636f6e74656e742e636f6d2f752f3138343930303638323f733d393626763d34',
+  coingeckoId: ''
+}
+
 export enum RPC {
   TEST = 'https://testnet.dev2.eclipsenetwork.xyz',
   MAIN = 'https://mainnetbeta-rpc.eclipse.xyz',
@@ -676,7 +709,10 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       EBull: EBULL_MAIN.address.toString(),
       EGoat: EGOAT_MAIN.address.toString(),
       DOGO: DOGO_MAIN.address.toString(),
-      PUNKSTAR: PUNKSTAR_MAIN.address.toString()
+      PUNKSTAR: PUNKSTAR_MAIN.address.toString(),
+      TURBO_AI: TURBO_AI_MAIN.address.toString(),
+      ORCA: ORCA_MAIN.address.toString(),
+      SOLAR: SOLAR_MAIN.address.toString()
     }
   }
 }
@@ -737,16 +773,7 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
 
-export const DEFAULT_TOKENS = [
-  'ethereum',
-  'solana',
-  'usd-coin',
-  'dogwifcoin',
-  'tether',
-  'turbo-eth',
-  'laika-3',
-  'mooncoin-2'
-]
+export const DEFAULT_TOKENS = ['solana', 'dogwifcoin', 'turbo-eth', 'laika-3', 'mooncoin-2']
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
@@ -791,3 +818,18 @@ export const getPopularPools = (network: NetworkType) => {
       return []
   }
 }
+
+export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
+  {
+    coingeckoId: 'ethereum',
+    solanaAddress: '7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'
+  },
+  {
+    coingeckoId: 'usd-coin',
+    solanaAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+  },
+  {
+    coingeckoId: 'tether',
+    solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
+  }
+]

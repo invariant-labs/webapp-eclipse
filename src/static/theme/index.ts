@@ -91,7 +91,8 @@ export const colors = {
     yellow: '#EFD063',
     blue: '#43BBFF',
     transparentBcg: 'rgba(1, 5, 20, 0.25)',
-    bodyBackground: '#141b2d'
+    bodyBackground: '#141b2d',
+    warningTransparent: 'rgba(239, 208, 99, 0.2)'
   }
 }
 

@@ -55,6 +55,19 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   //     return '0'
   //   }
   // }
+  const isLessThanMinimal = (value: BN) => {
+    const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
+    return value.lt(minimalValue)
+  }
+
+  const pointsPerDayFormat: string | number = isLessThanMinimal(estimated24hPoints)
+    ? isConnected && !estimated24hPoints.isZero()
+      ? '<0.01'
+      : 0
+    : removeAdditionalDecimals(
+        formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
+        2
+      )
 
   return (
     <Box
@@ -67,7 +80,6 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         width: '100%'
       }}>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
-
       <Box style={{ position: 'relative' }}>
         <BlurOverlay isConnected={isConnected} />
         <Box className={classes.sectionContent}>
@@ -79,14 +91,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
             desktopLabelAligment='right'
             label='Points Per Day'
             isLoading={isLoadingList}
-            value={
-              userStats
-                ? removeAdditionalDecimals(
-                    formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
-                    2
-                  )
-                : 0
-            }
+            value={pointsPerDayFormat}
           />
 
           <ProgressItem
