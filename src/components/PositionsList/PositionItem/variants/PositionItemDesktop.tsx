@@ -44,7 +44,6 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
   const { classes: sharedClasses } = useSharedStyles()
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
-  const timeoutRef = useRef<NodeJS.Timeout>()
 
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
@@ -67,40 +66,21 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
   )
 
   const handleMouseEnter = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
     setIsPromotedPoolPopoverOpen(true)
   }, [])
 
   const handleMouseLeave = useCallback(() => {
-    timeoutRef.current = setTimeout(() => {
-      setIsPromotedPoolPopoverOpen(false)
-    }, 100)
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-    }
+    setIsPromotedPoolPopoverOpen(false)
   }, [])
 
   const [isTooltipOpen, setIsTooltipOpen] = useState(false)
-  const tooltipTimeoutRef = useRef<NodeJS.Timeout>()
 
   const handleTooltipEnter = useCallback(() => {
-    if (tooltipTimeoutRef.current) {
-      clearTimeout(tooltipTimeoutRef.current)
-    }
     setIsTooltipOpen(true)
   }, [])
 
   const handleTooltipLeave = useCallback(() => {
-    tooltipTimeoutRef.current = setTimeout(() => {
-      setIsTooltipOpen(false)
-    }, 100)
+    setIsTooltipOpen(false)
   }, [])
 
   const feeFragment = useMemo(
@@ -177,75 +157,87 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
     ),
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
-
-  const PromotedIcon = () =>
-    isPromoted && isActive ? (
-      <>
-        <div
-          onClick={e => e.stopPropagation()}
-          className={classes.actionButton}
-          onMouseEnter={handleMouseEnter}
-          onMouseLeave={handleMouseLeave}>
-          <img
-            src={icons.airdropRainbow}
-            alt={'Airdrop'}
-            style={{ height: '32px', marginRight: '16px', marginLeft: '16px' }}
-          />
-        </div>
-        <PromotedPoolPopover
-          showEstPointsFirst
-          anchorEl={airdropIconRef.current}
-          open={isPromotedPoolPopoverOpen}
-          onClose={() => {
-            setIsPromotedPoolPopoverOpen(false)
-          }}
-          headerText={
-            <>
-              This position is currently <b>earning points</b>
-            </>
-          }
-          pointsLabel={'Total points distributed across the pool per 24H:'}
-          estPoints={estimated24hPoints}
-          points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-        />
-      </>
-    ) : (
-      <>
-        <Tooltip
-          open={isTooltipOpen}
-          onOpen={() => setIsTooltipOpen(true)}
-          onClose={() => setIsTooltipOpen(false)}
-          enterTouchDelay={0}
-          leaveTouchDelay={0}
-          onClick={e => e.stopPropagation()}
-          title={
-            <div onMouseEnter={handleTooltipEnter} onMouseLeave={handleTooltipLeave}>
-              <PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />
-            </div>
-          }
-          placement='top'
-          classes={{
-            tooltip: sharedClasses.tooltip
-          }}>
+  const promotedIconContent = useMemo(() => {
+    if (isPromoted && isActive) {
+      return (
+        <>
           <div
-            onMouseEnter={handleTooltipEnter}
-            onMouseLeave={handleTooltipLeave}
-            style={{ display: 'flex', justifyContent: 'center' }}>
+            onClick={e => e.stopPropagation()}
+            className={classes.actionButton}
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}>
             <img
               src={icons.airdropRainbow}
               alt={'Airdrop'}
-              style={{
-                height: '32px',
-                marginRight: '16px',
-                marginLeft: '16px',
-                opacity: 0.3,
-                filter: 'grayscale(1)'
-              }}
+              style={{ height: '32px', marginRight: '16px', marginLeft: '16px' }}
             />
           </div>
-        </Tooltip>
-      </>
+          <PromotedPoolPopover
+            showEstPointsFirst
+            isActive={isActive}
+            anchorEl={airdropIconRef.current}
+            open={isPromotedPoolPopoverOpen}
+            onClose={() => setIsPromotedPoolPopoverOpen(false)}
+            headerText={
+              <>
+                This position is currently <b>earning points</b>
+              </>
+            }
+            pointsLabel={'Total points distributed across the pool per 24H:'}
+            estPoints={estimated24hPoints}
+            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+          />
+        </>
+      )
+    }
+
+    return (
+      <Tooltip
+        open={isTooltipOpen}
+        onOpen={() => setIsTooltipOpen(true)}
+        onClose={() => setIsTooltipOpen(false)}
+        enterTouchDelay={0}
+        leaveTouchDelay={0}
+        onClick={e => e.stopPropagation()}
+        title={
+          <div onMouseEnter={handleTooltipEnter} onMouseLeave={handleTooltipLeave}>
+            <PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />
+          </div>
+        }
+        placement='top'
+        classes={{
+          tooltip: sharedClasses.tooltip
+        }}>
+        <div
+          onMouseEnter={handleTooltipEnter}
+          onMouseLeave={handleTooltipLeave}
+          style={{ display: 'flex', justifyContent: 'center' }}>
+          <img
+            src={icons.airdropRainbow}
+            alt={'Airdrop'}
+            style={{
+              height: '32px',
+              marginRight: '16px',
+              marginLeft: '16px',
+              opacity: 0.3,
+              filter: 'grayscale(1)'
+            }}
+          />
+        </div>
+      </Tooltip>
     )
+  }, [
+    isPromoted,
+    isActive,
+    isPromotedPoolPopoverOpen,
+    isTooltipOpen,
+    handleMouseEnter,
+    handleMouseLeave,
+    handleTooltipEnter,
+    handleTooltipLeave,
+    estimated24hPoints,
+    pointsPerSecond
+  ])
 
   return (
     <Grid
@@ -304,7 +296,7 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
         }}
         direction='row'>
         <Box sx={{ display: 'flex', alignItems: 'center' }} ref={airdropIconRef}>
-          <PromotedIcon />
+          {promotedIconContent}
         </Box>
         <Hidden mdDown>{feeFragment}</Hidden>
         <Grid

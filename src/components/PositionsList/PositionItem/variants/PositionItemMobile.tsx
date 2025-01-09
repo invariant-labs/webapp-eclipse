@@ -71,17 +71,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     poolData
   )
 
-  // const isAnyPopoverActive = isPromotedPoolPopoverOpen || isPromotedPoolInactive
-
-  // const handleGridClick = (e: React.MouseEvent) => {
-  //   // if (isAnyPopoverActive) {
-  //   //   e.preventDefault()
-
-  //   return
-  //   // }
-  //   // e.stopPropagation()
-  // }
-
   const feeFragment = useMemo(
     () => (
       <Tooltip
@@ -154,72 +143,77 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
       setAllowPropagation(false)
     }
   }
-
-  const PromotedIcon = () => {
+  useEffect(() => {
     const PROPAGATION_ALLOW_TIME = 500
-    useEffect(() => {
-      const handleClickOutside = (event: TouchEvent | MouseEvent) => {
-        if (
-          airdropIconRef.current &&
-          !(airdropIconRef.current as HTMLElement).contains(event.target as Node) &&
-          !document.querySelector('.promoted-pool-popover')?.contains(event.target as Node) &&
-          !document.querySelector('.promoted-pool-inactive-popover')?.contains(event.target as Node)
-        ) {
-          setIsPromotedPoolPopoverOpen(false)
-          setIsPromotedPoolInactive(false)
-          setTimeout(() => {
-            setAllowPropagation(true)
-          }, PROPAGATION_ALLOW_TIME)
-        }
-      }
 
-      if (isPromotedPoolPopoverOpen || isPromotedPoolInactive) {
-        document.addEventListener('click', handleClickOutside)
-        document.addEventListener('touchstart', handleClickOutside)
+    const handleClickOutside = (event: TouchEvent | MouseEvent) => {
+      if (
+        airdropIconRef.current &&
+        !(airdropIconRef.current as HTMLElement).contains(event.target as Node) &&
+        !document.querySelector('.promoted-pool-popover')?.contains(event.target as Node) &&
+        !document.querySelector('.promoted-pool-inactive-popover')?.contains(event.target as Node)
+      ) {
+        setIsPromotedPoolPopoverOpen(false)
+        setIsPromotedPoolInactive(false)
+        setTimeout(() => {
+          setAllowPropagation(true)
+        }, PROPAGATION_ALLOW_TIME)
       }
+    }
 
-      return () => {
-        document.removeEventListener('click', handleClickOutside)
-        document.removeEventListener('touchstart', handleClickOutside)
-      }
-    }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive])
+    if (isPromotedPoolPopoverOpen || isPromotedPoolInactive) {
+      document.addEventListener('click', handleClickOutside)
+      document.addEventListener('touchstart', handleClickOutside)
+    }
 
-    return isPromoted && isActive ? (
-      <>
-        <div
-          className={classes.actionButton}
-          onClick={handleInteraction}
-          onPointerEnter={() => {
-            if (window.matchMedia('(hover: hover)').matches) {
-              setIsPromotedPoolPopoverOpen(true)
-            }
-          }}
-          onPointerLeave={() => {
-            if (window.matchMedia('(hover: hover)').matches) {
+    return () => {
+      document.removeEventListener('click', handleClickOutside)
+      document.removeEventListener('touchstart', handleClickOutside)
+    }
+  }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive])
+
+  const promotedIconFragment = useMemo(() => {
+    if (isPromoted && isActive) {
+      return (
+        <>
+          <div
+            className={classes.actionButton}
+            onClick={handleInteraction}
+            onPointerEnter={() => {
+              if (window.matchMedia('(hover: hover)').matches) {
+                setIsPromotedPoolPopoverOpen(true)
+              }
+            }}
+            onPointerLeave={() => {
+              if (window.matchMedia('(hover: hover)').matches) {
+                setIsPromotedPoolPopoverOpen(false)
+              }
+            }}
+            onTouchStart={handleInteraction}>
+            <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
+          </div>
+          <PromotedPoolPopover
+            showEstPointsFirst
+            isActive={isActive}
+            anchorEl={airdropIconRef.current}
+            open={isPromotedPoolPopoverOpen}
+            onClose={() => {
               setIsPromotedPoolPopoverOpen(false)
+            }}
+            headerText={
+              <>
+                This position is currently <b>earning points</b>
+              </>
             }
-          }}
-          onTouchStart={handleInteraction}>
-          <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
-        </div>
-        <PromotedPoolPopover
-          showEstPointsFirst
-          anchorEl={airdropIconRef.current}
-          open={isPromotedPoolPopoverOpen}
-          onClose={() => {
-            setIsPromotedPoolPopoverOpen(false)
-          }}
-          headerText={
-            <>
-              This position is currently <b>earning points</b>
-            </>
-          }
-          pointsLabel={'Total points distributed across the pool per 24H:'}
-          estPoints={estimated24hPoints}
-          points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-        />
-      </>
-    ) : (
+            pointsLabel={'Total points distributed across the pool per 24H:'}
+            estPoints={estimated24hPoints}
+            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
+          />
+        </>
+      )
+    }
+
+    return (
       <>
         <InactivePoolsPopover
           anchorEl={airdropIconRef.current}
@@ -270,8 +264,20 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         </div>
       </>
     )
-  }
-
+  }, [
+    isPromoted,
+    isActive,
+    isPromotedPoolPopoverOpen,
+    isPromotedPoolInactive,
+    classes.actionButton,
+    handleInteraction,
+    airdropIconRef,
+    estimated24hPoints,
+    pointsPerSecond,
+    setIsPromotedPoolPopoverOpen,
+    setIsPromotedPoolInactive,
+    setAllowPropagation
+  ])
   return (
     <Grid
       className={classes.root}
@@ -332,7 +338,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 justifyContent: 'center',
                 alignItems: 'center'
               }}>
-              <PromotedIcon />
+              {promotedIconFragment}
             </Box>
           </Box>
         </Grid>

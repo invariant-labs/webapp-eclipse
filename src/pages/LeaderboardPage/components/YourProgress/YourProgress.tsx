@@ -55,8 +55,13 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   //     return '0'
   //   }
   // }
+  const isLessThanMinimal = (value: BN) => {
+    const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
+    return value.lt(minimalValue)
+  }
+
   const pointsPerDayFormat: string | number = userStats
-    ? estimated24hPoints.isZero()
+    ? isLessThanMinimal(estimated24hPoints)
       ? '<0.01'
       : removeAdditionalDecimals(
           formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
@@ -75,7 +80,6 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         width: '100%'
       }}>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
-
       <Box style={{ position: 'relative' }}>
         <BlurOverlay isConnected={isConnected} />
         <Box className={classes.sectionContent}>

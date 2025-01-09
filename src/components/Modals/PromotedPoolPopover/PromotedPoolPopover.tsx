@@ -9,6 +9,7 @@ export interface IPromotedPoolPopover {
   open: boolean
   anchorEl: HTMLElement | null
   onClose: () => void
+  isActive: boolean
   apr?: BN
   apy?: number
   estPoints?: BN
@@ -22,6 +23,7 @@ export const PromotedPoolPopover = ({
   open,
   onClose,
   anchorEl,
+  isActive,
   apr,
   apy,
   estPoints,
@@ -38,6 +40,11 @@ export const PromotedPoolPopover = ({
       clearTimeout(timeoutRef.current)
     }
   }, [])
+
+  const isLessThanMinimal = (value: BN) => {
+    const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
+    return value.lt(minimalValue)
+  }
 
   const handleMouseLeave = useCallback(() => {
     timeoutRef.current = setTimeout(() => {
@@ -69,12 +76,11 @@ export const PromotedPoolPopover = ({
       </Typography>
     </div>
   )
-
   const EstPointsSection = estPoints ? (
     <div className={classes.insideBox}>
       <Typography className={classes.greyText}>Points earned by this position per 24H:</Typography>
       <Typography className={classes.whiteText}>
-        {points.isZero()
+        {isLessThanMinimal(estPoints) && isActive
           ? '<0.01'
           : removeAdditionalDecimals(
               formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),
