@@ -3,6 +3,7 @@ import useStyles from './style'
 import { Popover, Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { useRef, useCallback, useEffect } from 'react'
 
 export interface IPromotedPoolPopover {
   open: boolean
@@ -30,6 +31,27 @@ export const PromotedPoolPopover = ({
   showEstPointsFirst = false
 }: IPromotedPoolPopover) => {
   const { classes } = useStyles()
+  const timeoutRef = useRef<NodeJS.Timeout>()
+
+  const handleMouseEnter = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    timeoutRef.current = setTimeout(() => {
+      onClose()
+    }, 100)
+  }, [onClose])
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
 
   if (!anchorEl) return null
 
@@ -80,7 +102,8 @@ export const PromotedPoolPopover = ({
       disableRestoreFocus
       slotProps={{
         paper: {
-          onMouseLeave: onClose
+          onMouseEnter: handleMouseEnter,
+          onMouseLeave: handleMouseLeave
         }
       }}
       transformOrigin={{
@@ -90,6 +113,7 @@ export const PromotedPoolPopover = ({
       marginThreshold={16}>
       <div className={classes.root}>
         <div className={classes.container}>
+          {/* Content remains the same */}
           <Typography
             className={classes.greyText}
             dangerouslySetInnerHTML={

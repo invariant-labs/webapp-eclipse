@@ -3,7 +3,7 @@ import SwapList from '@static/svg/swap-list.svg'
 import { theme } from '@static/theme'
 import { formatNumber } from '@utils/utils'
 import classNames from 'classnames'
-import { useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useDesktopStyles } from './style/desktop'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
@@ -44,6 +44,7 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
   const { classes: sharedClasses } = useSharedStyles()
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
+  const timeoutRef = useRef<NodeJS.Timeout>()
 
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
@@ -64,6 +65,43 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
     position,
     poolData
   )
+
+  const handleMouseEnter = useCallback(() => {
+    if (timeoutRef.current) {
+      clearTimeout(timeoutRef.current)
+    }
+    setIsPromotedPoolPopoverOpen(true)
+  }, [])
+
+  const handleMouseLeave = useCallback(() => {
+    timeoutRef.current = setTimeout(() => {
+      setIsPromotedPoolPopoverOpen(false)
+    }, 100)
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [])
+
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
+  const tooltipTimeoutRef = useRef<NodeJS.Timeout>()
+
+  const handleTooltipEnter = useCallback(() => {
+    if (tooltipTimeoutRef.current) {
+      clearTimeout(tooltipTimeoutRef.current)
+    }
+    setIsTooltipOpen(true)
+  }, [])
+
+  const handleTooltipLeave = useCallback(() => {
+    tooltipTimeoutRef.current = setTimeout(() => {
+      setIsTooltipOpen(false)
+    }, 100)
+  }, [])
 
   const feeFragment = useMemo(
     () => (
@@ -146,16 +184,12 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
         <div
           onClick={e => e.stopPropagation()}
           className={classes.actionButton}
-          onPointerLeave={() => {
-            setIsPromotedPoolPopoverOpen(false)
-          }}
-          onPointerEnter={() => {
-            setIsPromotedPoolPopoverOpen(true)
-          }}>
+          onMouseEnter={handleMouseEnter}
+          onMouseLeave={handleMouseLeave}>
           <img
             src={icons.airdropRainbow}
             alt={'Airdrop'}
-            style={{ height: '32px', marginRight: '16px' }}
+            style={{ height: '32px', marginRight: '16px', marginLeft: '16px' }}
           />
         </div>
         <PromotedPoolPopover
@@ -178,28 +212,37 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
     ) : (
       <>
         <Tooltip
+          open={isTooltipOpen}
+          onOpen={() => setIsTooltipOpen(true)}
+          onClose={() => setIsTooltipOpen(false)}
           enterTouchDelay={0}
-          leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+          leaveTouchDelay={0}
           onClick={e => e.stopPropagation()}
           title={
-            <>
+            <div onMouseEnter={handleTooltipEnter} onMouseLeave={handleTooltipLeave}>
               <PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />
-            </>
+            </div>
           }
           placement='top'
           classes={{
             tooltip: sharedClasses.tooltip
           }}>
-          <img
-            src={icons.airdropRainbow}
-            alt={'Airdrop'}
-            style={{
-              height: '32px',
-              marginRight: '16px',
-              opacity: 0.3,
-              filter: 'grayscale(1)'
-            }}
-          />
+          <div
+            onMouseEnter={handleTooltipEnter}
+            onMouseLeave={handleTooltipLeave}
+            style={{ display: 'flex', justifyContent: 'center' }}>
+            <img
+              src={icons.airdropRainbow}
+              alt={'Airdrop'}
+              style={{
+                height: '32px',
+                marginRight: '16px',
+                marginLeft: '16px',
+                opacity: 0.3,
+                filter: 'grayscale(1)'
+              }}
+            />
+          </div>
         </Tooltip>
       </>
     )
