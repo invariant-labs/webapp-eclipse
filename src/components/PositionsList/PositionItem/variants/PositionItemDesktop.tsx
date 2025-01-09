@@ -17,6 +17,9 @@ import { calculatePercentageRatio } from '../utils/calculations'
 import { IPositionItem } from '@components/PositionsList/types'
 import { useSharedStyles } from './style/shared'
 import PositionStatusTooltip from '../components/PositionStatusTooltip'
+import { NetworkType } from '@store/consts/static'
+import { useSelector } from 'react-redux'
+import { network as currentNetwork } from '@store/selectors/solanaConnection'
 
 export const PositionItemDesktop: React.FC<IPositionItem> = ({
   tokenXName,
@@ -46,6 +49,7 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
 
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
+  const networkSelector = useSelector(currentNetwork)
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
 
   const [xToY, setXToY] = useState<boolean>(
@@ -295,9 +299,12 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
           }
         }}
         direction='row'>
-        <Box sx={{ display: 'flex', alignItems: 'center' }} ref={airdropIconRef}>
-          {promotedIconContent}
-        </Box>
+        {networkSelector === NetworkType.Mainnet && (
+          <Box sx={{ display: 'flex', alignItems: 'center' }} ref={airdropIconRef}>
+            {promotedIconContent}
+          </Box>
+        )}
+
         <Hidden mdDown>{feeFragment}</Hidden>
         <Grid
           container

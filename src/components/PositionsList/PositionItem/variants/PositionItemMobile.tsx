@@ -17,6 +17,9 @@ import { calculatePercentageRatio } from '../utils/calculations'
 import { IPositionItem } from '@components/PositionsList/types'
 import { useSharedStyles } from './style/shared'
 import { InactivePoolsPopover } from '../components/InactivePoolsPopover/InactivePoolsPopover'
+import { NetworkType } from '@store/consts/static'
+import { network as currentNetwork } from '@store/selectors/solanaConnection'
+import { useSelector } from 'react-redux'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
@@ -50,9 +53,9 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
-
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
+  const networkSelector = useSelector(currentNetwork)
 
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
@@ -330,16 +333,18 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           </Box>
 
           <Box>
-            <Box
-              ref={airdropIconRef}
-              sx={{
-                marginLeft: '16px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }}>
-              {promotedIconFragment}
-            </Box>
+            {networkSelector === NetworkType.Mainnet && (
+              <Box
+                ref={airdropIconRef}
+                sx={{
+                  marginLeft: '16px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                }}>
+                {promotedIconFragment}
+              </Box>
+            )}
           </Box>
         </Grid>
       </Grid>
