@@ -50,6 +50,8 @@ import airdrop from './svg/airdrop.svg'
 import nightly from './svg/nightly.svg'
 import airdropRainbow from './svg/airdropRainbow.svg'
 import audit from './svg/audit.svg'
+import warning2 from './svg/warning2.svg'
+import closeWarning from './svg/closeWarning.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -103,7 +105,9 @@ const icons: { [key: string]: string } = {
   airdrop,
   nightly,
   airdropRainbow,
-  audit
+  audit,
+  warning2,
+  closeWarning
 }
 
 export default icons
