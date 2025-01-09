@@ -12,21 +12,23 @@ const useStyles = makeStyles()(() => {
       }
     },
     root: {
-      background: colors.invariant.component,
-      width: 'fit-content',
+      width: '300px',
       height: 'fit-content',
-      borderRadius: 14,
-      paddingTop: 16,
-      paddingBottom: 16,
-      paddingLeft: 24,
-      paddingRight: 24
+
+      color: colors.invariant.textGrey,
+      ...typography.caption4,
+      lineHeight: '24px',
+      background: colors.black.full,
+      borderRadius: 12,
+      padding: 10,
+      fontSize: 14
     },
     paper: {
       background: 'transparent',
       boxShadow: 'none',
       borderRadius: '14px',
       border: '1px solid transparent',
-      backgroundImage: 'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
+      // backgroundImage: 'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
       backgroundOrigin: 'border-box',
       backgroundClip: 'padding-box, border-box'
     },

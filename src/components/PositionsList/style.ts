@@ -65,6 +65,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       height: 48
     }
   },
+
   button: {
     color: colors.invariant.dark,
     ...typography.body1,
