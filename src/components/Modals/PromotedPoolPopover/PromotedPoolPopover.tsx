@@ -43,7 +43,7 @@ export const PromotedPoolPopover = ({
         {typeof pointsLabel !== 'string' ? pointsLabel : null}
       </Typography>
       <Typography className={classes.whiteText}>
-        {points.isZero ? '<0.01' : formatNumberWithCommas(printBN(points, 0))}
+        {formatNumberWithCommas(printBN(points, 0))}
       </Typography>
     </div>
   )
@@ -52,10 +52,12 @@ export const PromotedPoolPopover = ({
     <div className={classes.insideBox}>
       <Typography className={classes.greyText}>Points earned by this position per 24H:</Typography>
       <Typography className={classes.whiteText}>
-        {removeAdditionalDecimals(
-          formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),
-          2
-        )}
+        {points.isZero
+          ? '<0.01'
+          : removeAdditionalDecimals(
+              formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),
+              2
+            )}
       </Typography>
     </div>
   ) : null
