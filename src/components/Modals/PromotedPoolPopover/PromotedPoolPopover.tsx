@@ -52,7 +52,7 @@ export const PromotedPoolPopover = ({
     <div className={classes.insideBox}>
       <Typography className={classes.greyText}>Points earned by this position per 24H:</Typography>
       <Typography className={classes.whiteText}>
-        {points.isZero
+        {points.isZero()
           ? '<0.01'
           : removeAdditionalDecimals(
               formatNumberWithCommas(printBN(estPoints, LEADERBOARD_DECIMAL)),

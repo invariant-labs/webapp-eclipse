@@ -56,7 +56,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   //   }
   // }
   const pointsPerDayFormat: string | number = userStats
-    ? estimated24hPoints.isZero
+    ? estimated24hPoints.isZero()
       ? '<0.01'
       : removeAdditionalDecimals(
           formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
