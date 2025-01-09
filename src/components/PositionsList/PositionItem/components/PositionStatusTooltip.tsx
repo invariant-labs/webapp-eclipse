@@ -1,4 +1,4 @@
-const PositionStatusTooltip: React.FC<{ isActive: boolean; isPromoted: boolean }> = ({
+const PositionStatusTooltip: React.FC<{ isActive?: boolean; isPromoted?: boolean }> = ({
   isActive,
   isPromoted
 }) => {

@@ -9,7 +9,7 @@ export interface IPromotedPoolPopover {
   open: boolean
   anchorEl: HTMLElement | null
   onClose: () => void
-  isActive: boolean
+  isActive?: boolean
   apr?: BN
   apy?: number
   estPoints?: BN
