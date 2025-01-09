@@ -60,14 +60,14 @@ export const YourProgress: React.FC<YourProgressProps> = ({
     return value.lt(minimalValue)
   }
 
-  const pointsPerDayFormat: string | number = userStats
-    ? isLessThanMinimal(estimated24hPoints)
+  const pointsPerDayFormat: string | number = isLessThanMinimal(estimated24hPoints)
+    ? isConnected && !estimated24hPoints.isZero()
       ? '<0.01'
-      : removeAdditionalDecimals(
-          formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
-          2
-        )
-    : 0
+      : 0
+    : removeAdditionalDecimals(
+        formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
+        2
+      )
 
   return (
     <Box
