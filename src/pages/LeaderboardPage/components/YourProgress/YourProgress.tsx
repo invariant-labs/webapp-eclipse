@@ -55,6 +55,14 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   //     return '0'
   //   }
   // }
+  const pointsPerDayFormat: string | number = userStats
+    ? estimated24hPoints.isZero
+      ? '<0.01'
+      : removeAdditionalDecimals(
+          formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
+          2
+        )
+    : 0
 
   return (
     <Box
@@ -79,14 +87,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
             desktopLabelAligment='right'
             label='Points Per Day'
             isLoading={isLoadingList}
-            value={
-              userStats
-                ? removeAdditionalDecimals(
-                    formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
-                    2
-                  )
-                : 0
-            }
+            value={pointsPerDayFormat}
           />
 
           <ProgressItem

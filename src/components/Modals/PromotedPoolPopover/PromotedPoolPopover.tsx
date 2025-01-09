@@ -43,7 +43,7 @@ export const PromotedPoolPopover = ({
         {typeof pointsLabel !== 'string' ? pointsLabel : null}
       </Typography>
       <Typography className={classes.whiteText}>
-        {formatNumberWithCommas(printBN(points, 0))}
+        {points.isZero ? '<0.01' : formatNumberWithCommas(printBN(points, 0))}
       </Typography>
     </div>
   )
