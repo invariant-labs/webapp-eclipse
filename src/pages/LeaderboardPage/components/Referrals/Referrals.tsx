@@ -13,20 +13,23 @@ const Referrals = () => {
   const dispatch = useDispatch()
 
   const handleConnectWallet = () => {
-    setIsModalOpen(false)
     dispatch(walletActions.connect(false))
   }
+
   const connected = useMemo(() => {
     return walletStatus === Status.Initialized
   }, [walletStatus])
+
   const onReferralModalOpen = () => {
     setIsModalOpen(true)
     blurContent()
   }
+
   const onReferralModalClose = () => {
     setIsModalOpen(false)
     unblurContent()
   }
+
   return (
     <Box
       sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', marginTop: '20px' }}>

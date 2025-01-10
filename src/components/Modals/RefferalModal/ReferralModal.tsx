@@ -3,6 +3,7 @@ import { Box, Button, Divider, Grid, Hidden, Popover, Typography } from '@mui/ma
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
+import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 
 export interface IRefferalModal {
   open: boolean
@@ -111,9 +112,13 @@ export const ReferralModal = ({
                 progress={progress}
               />
             ) : (
-              <Button className={classes.confirmButton} onClick={handleConnectWallet}>
-                Connect wallet
-              </Button>
+              <ChangeWalletButton
+                name='Connect wallet'
+                onConnect={handleConnectWallet}
+                connected={false}
+                onDisconnect={() => null}
+                className={classes.confirmButton}
+              />
             )}
           </Grid>
         </Grid>
