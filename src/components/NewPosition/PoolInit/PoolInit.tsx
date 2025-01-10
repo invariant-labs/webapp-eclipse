@@ -7,6 +7,7 @@ import {
   calculateSqrtPriceFromBalance,
   calculateTickFromBalance,
   formatNumber,
+  getConcentrationIndex,
   nearestTickIndex,
   toMaxNumericPlaces,
   trimZeros,
@@ -172,7 +173,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration') {
-      setConcentrationIndex(0)
+      setConcentrationIndex(getConcentrationIndex(concentrationArray))
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
         concentrationArray[0],

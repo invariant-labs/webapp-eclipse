@@ -9,6 +9,7 @@ import {
   calculateConcentrationRange,
   findClosestIndexByValue,
   formatNumber,
+  getConcentrationIndex,
   nearestTickIndex,
   toMaxNumericPlaces
 } from '@utils/utils'
@@ -104,10 +105,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   const [currentMidPrice, setCurrentMidPrice] = useState(midPrice)
   const [triggerReset, setTriggerReset] = useState(false)
 
-  const [previousConcentration, setPreviousConcentration] = useState(0)
-
   const [cachedConcentrationArray, setCachedConcentrationArray] = useState(concentrationArray)
 
+  const [previousConcentration, setPreviousConcentration] = useState(
+    getConcentrationIndex(concentrationArray)
+  )
   const isMountedRef = useRef(false)
 
   useEffect(() => {
@@ -338,7 +340,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration' && isMountedRef.current && !ticksLoading) {
-      setConcentrationIndex(0)
+      setConcentrationIndex(getConcentrationIndex(concentrationArray))
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
         cachedConcentrationArray[0],
@@ -380,7 +382,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       return
     }
 
-    setConcentrationIndex(0)
+    setConcentrationIndex(getConcentrationIndex(concentrationArray))
     const { leftRange, rightRange } = calculateConcentrationRange(
       tickSpacing,
       cachedConcentrationArray[0],

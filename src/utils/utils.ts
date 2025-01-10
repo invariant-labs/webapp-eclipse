@@ -1861,3 +1861,19 @@ export const checkDataDelay = (date: string | Date, timeInMinutes: number): bool
 
   return differenceInMinutes > timeInMinutes
 }
+
+export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 42) => {
+  let concentrationIndex = 0
+
+  for (let index = 0; index < concentrationArray.length; index++) {
+    const value = concentrationArray[index]
+
+    if (value < neededValue) {
+      concentrationIndex = index + 1
+    } else {
+      break
+    }
+  }
+
+  return concentrationIndex
+}

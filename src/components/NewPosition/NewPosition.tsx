@@ -17,6 +17,7 @@ import {
   calculateConcentrationRange,
   convertBalanceToBN,
   determinePositionTokenBlock,
+  getConcentrationIndex,
   parseFeeToPathFee,
   printBN,
   trimLeadingZeros,
@@ -199,8 +200,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
 
-  const [concentrationIndex, setConcentrationIndex] = useState(0)
-
   const [minimumSliderIndex, setMinimumSliderIndex] = useState<number>(0)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
 
@@ -211,6 +210,10 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
   }, [tickSpacing, midPrice.index])
+
+  const [concentrationIndex, setConcentrationIndex] = useState(
+    getConcentrationIndex(concentrationArray)
+  )
 
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
@@ -382,6 +385,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
         )?.index ?? undefined)
+
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
