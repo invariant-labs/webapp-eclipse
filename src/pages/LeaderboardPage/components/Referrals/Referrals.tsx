@@ -1,11 +1,24 @@
 import ReferralModal from '@components/Modals/RefferalModal/ReferralModal'
 import { Box, Button } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import { useState } from 'react'
+import { useState, useMemo } from 'react'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import { useDispatch, useSelector } from 'react-redux'
+import { status } from '@store/selectors/solanaWallet'
 
 const Referrals = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
+  const walletStatus = useSelector(status)
 
+  const dispatch = useDispatch()
+
+  const handleConnectWallet = () => {
+    setIsModalOpen(false)
+    dispatch(walletActions.connect(false))
+  }
+  const connected = useMemo(() => {
+    return walletStatus === Status.Initialized
+  }, [walletStatus])
   const onReferralModalOpen = () => {
     setIsModalOpen(true)
     blurContent()
@@ -24,6 +37,8 @@ const Referrals = () => {
         success={false}
         inProgress={false}
         referrerAddress={'asd'}
+        connected={connected}
+        handleConnectWallet={handleConnectWallet}
       />
       <Button sx={{ width: '150px', height: '40px' }} onClick={onReferralModalOpen}>
         OPEN MODAL

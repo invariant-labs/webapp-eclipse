@@ -11,6 +11,8 @@ export interface IRefferalModal {
   success: boolean
   inProgress: boolean
   referrerAddress: string
+  connected: boolean
+  handleConnectWallet: () => void
 }
 export const ReferralModal = ({
   open,
@@ -18,7 +20,9 @@ export const ReferralModal = ({
   onConfirm,
   success,
   inProgress,
-  referrerAddress
+  referrerAddress,
+  connected,
+  handleConnectWallet
 }: IRefferalModal) => {
   const { classes } = useStyles()
   const [progress, setProgress] = useState<ProgressState>('none')
@@ -93,18 +97,24 @@ export const ReferralModal = ({
                 <Typography className={classes.whiteSmallText}>• Benefit</Typography>
               </Box>
             </Grid>
-            <AnimatedButton
-              content={'Confirm'}
-              className={classNames(
-                classes.confirmButton,
-                progress === 'none' ? classes.buttonText : null
-              )}
-              onClick={() => {
-                onConfirm()
-                setProgress('progress')
-              }}
-              progress={progress}
-            />
+            {connected ? (
+              <AnimatedButton
+                content={'Confirm'}
+                className={classNames(
+                  classes.confirmButton,
+                  progress === 'none' ? classes.buttonText : null
+                )}
+                onClick={() => {
+                  onConfirm()
+                  setProgress('progress')
+                }}
+                progress={progress}
+              />
+            ) : (
+              <Button className={classes.confirmButton} onClick={handleConnectWallet}>
+                Connect wallet
+              </Button>
+            )}
           </Grid>
         </Grid>
       </Grid>
