@@ -43,6 +43,7 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
+import { getEclipseWallet } from '@utils/web3/wallet'
 
 export interface Pools {
   tokenX: PublicKey
@@ -542,6 +543,13 @@ export const Swap: React.FC<ISwap> = ({
     setDetailsOpen(!detailsOpen)
   }
 
+  const signMessage = async () => {
+    const wallet = getEclipseWallet()
+    const encoder = new TextEncoder()
+    const text = encoder.encode('Test message').buffer
+    const sig = await wallet.signMessage(text)
+    console.log(sig)
+  }
   useEffect(() => {
     let timeoutId: NodeJS.Timeout
 
@@ -615,6 +623,7 @@ export const Swap: React.FC<ISwap> = ({
         </Box>
       )}
       <Grid container className={classes.header}>
+        <Button onClick={signMessage}>Click me!</Button>
         <Typography component='h1'>Exchange tokens</Typography>
         <Box className={classes.swapControls}>
           <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
