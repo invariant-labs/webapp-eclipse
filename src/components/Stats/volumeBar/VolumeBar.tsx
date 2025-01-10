@@ -46,55 +46,61 @@ const VolumeBar: React.FC<Iprops> = ({
       className={classNames({ [classes.loadingOverlay]: isLoading })}>
       <Box className={classes.tokenName}>
         <Typography className={classes.tokenHeader}>Volume 24H:</Typography>
-        <Typography className={classes.tokenContent}>
-          ${formatNumber(isLoading ? Math.random() * 10000 : volume)}
-        </Typography>
-        {!isXDown && (
-          <Typography
-            className={classNames(
-              classes.tokenContent,
-              volumePercentage < 0 ? classes.tokenLow : classes.tokenUp
-            )}>
-            {volumePercentage < 0
-              ? `(${volumePercentage.toFixed(2)}%)`
-              : `(+${volumePercentage.toFixed(2)}%)`}
+        <div className={classes.rightItems}>
+          <Typography className={classes.tokenContent}>
+            ${formatNumber(isLoading ? Math.random() * 10000 : volume)}
           </Typography>
-        )}
+          {!isXDown && (
+            <Typography
+              className={classNames(
+                classes.tokenContent,
+                volumePercentage < 0 ? classes.tokenLow : classes.tokenUp
+              )}>
+              {volumePercentage < 0
+                ? `(${volumePercentage.toFixed(2)}%)`
+                : `(+${volumePercentage.toFixed(2)}%)`}
+            </Typography>
+          )}
+        </div>
       </Box>
       <Box className={classes.tokenName}>
         <Typography className={classes.tokenHeader}>TVL 24H:</Typography>
-        <Typography className={classes.tokenContent}>
-          ${formatNumber(isLoading ? Math.random() * 10000 : tvlVolume)}
-        </Typography>
-        {!isXDown && (
-          <Typography
-            className={classNames(
-              classes.tokenContent,
-              tvlPercentage < 0 ? classes.tokenLow : classes.tokenUp
-            )}>
-            {tvlPercentage < 0
-              ? `(${tvlPercentage.toFixed(2)}%)`
-              : `(+${tvlPercentage.toFixed(2)}%)`}
+        <div className={classes.rightItems}>
+          <Typography className={classes.tokenContent}>
+            ${formatNumber(isLoading ? Math.random() * 10000 : tvlVolume)}
           </Typography>
-        )}
+          {!isXDown && (
+            <Typography
+              className={classNames(
+                classes.tokenContent,
+                tvlPercentage < 0 ? classes.tokenLow : classes.tokenUp
+              )}>
+              {tvlPercentage < 0
+                ? `(${tvlPercentage.toFixed(2)}%)`
+                : `(+${tvlPercentage.toFixed(2)}%)`}
+            </Typography>
+          )}
+        </div>
       </Box>
 
       <Box className={classes.tokenName}>
         <Typography className={classes.tokenHeader}>Fees 24H:</Typography>
-        <Typography className={classes.tokenContent}>
-          ${formatNumber(isLoading ? Math.random() * 1000 : feesVolume)}
-        </Typography>
-        {!isXDown && (
-          <Typography
-            className={classNames(
-              classes.tokenContent,
-              feesPercentage < 0 ? classes.tokenLow : classes.tokenUp
-            )}>
-            {feesPercentage < 0
-              ? `(${feesPercentage.toFixed(2)}%)`
-              : `(+${feesPercentage.toFixed(2)}%)`}
+        <div className={classes.rightItems}>
+          <Typography className={classes.tokenContent}>
+            ${formatNumber(isLoading ? Math.random() * 1000 : feesVolume)}
           </Typography>
-        )}
+          {!isXDown && (
+            <Typography
+              className={classNames(
+                classes.tokenContent,
+                feesPercentage < 0 ? classes.tokenLow : classes.tokenUp
+              )}>
+              {feesPercentage < 0
+                ? `(${feesPercentage.toFixed(2)}%)`
+                : `(+${feesPercentage.toFixed(2)}%)`}
+            </Typography>
+          )}
+        </div>
       </Box>
     </Grid>
   )

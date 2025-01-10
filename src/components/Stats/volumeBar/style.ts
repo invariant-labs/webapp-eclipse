@@ -17,7 +17,8 @@ export const useStyles = makeStyles()(() => ({
 
     [theme.breakpoints.down('sm')]: {
       padding: '12px 24px',
-      gap: 8
+      gap: 8,
+      flexDirection: 'column'
     }
   },
 
@@ -29,6 +30,8 @@ export const useStyles = makeStyles()(() => ({
     gap: 4,
 
     [theme.breakpoints.down('sm')]: {
+      justifyContent: 'space-between',
+
       '& p': {
         ...typography.body2,
         whiteSpace: 'nowrap'
@@ -47,14 +50,13 @@ export const useStyles = makeStyles()(() => ({
     '&:nth-of-type(3)': {
       [theme.breakpoints.down('md')]: {
         width: '100%',
-        justifyContent: 'center',
-        marginTop: '8px'
+        justifyContent: 'center'
+      },
+      [theme.breakpoints.down('sm')]: {
+        justifyContent: 'space-between'
       },
       [theme.breakpoints.up('md')]: {
         justifyContent: 'flex-end'
-      },
-      [theme.breakpoints.down('sm')]: {
-        marginTop: '0px'
       }
     },
 
@@ -66,6 +68,12 @@ export const useStyles = makeStyles()(() => ({
       [theme.breakpoints.down('md')]: {
         justifyContent: 'center',
         textAlign: 'center'
+      },
+
+      ' &:nth-of-type(3), &:nth-of-type(1), &:nth-of-type(2)': {
+        [theme.breakpoints.down('sm')]: {
+          justifyContent: 'space-between'
+        }
       }
     }
   },
@@ -92,7 +100,9 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.green,
     fontWeight: 400
   },
-
+  rightItems: {
+    display: 'flex'
+  },
   loadingOverlay: {
     position: 'relative',
     '&::after': {
