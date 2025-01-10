@@ -4,6 +4,7 @@ import { Grid } from '@mui/material'
 import { LeaderboardWrapper } from './components/LeaderboardWrapper'
 import { InfoComponent } from './components/InfoComponent/InfoComponent'
 import { Rewards } from './components/Rewards/Rewards'
+import Referrals from './components/Referrals/Referrals'
 
 export const LeaderBoardPage: React.FC = () => {
   const { classes } = useStyles()
@@ -18,6 +19,7 @@ export const LeaderBoardPage: React.FC = () => {
       </Grid>
       {alignment === 'leaderboard' ? <InfoComponent /> : null}
       {alignment === 'claim' ? <Rewards /> : null}
+      {alignment === 'referrals' ? <Referrals /> : null}
     </>
   )
 }
