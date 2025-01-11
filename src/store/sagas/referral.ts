@@ -6,6 +6,7 @@ import { getWallet } from './wallet'
 
 async function fetchRefferalCode(address: string) {
   const response = await fetch(`http://localhost:3000/api/leaderboard/get-code/${address}`)
+  console.log(response)
   if (!response.ok) {
     throw new Error('Failed to fetch referral code')
   }
