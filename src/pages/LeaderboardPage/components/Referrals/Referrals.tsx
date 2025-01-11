@@ -1,5 +1,5 @@
 import ReferralModal from '@components/Modals/RefferalModal/ReferralModal'
-import { Box, Button } from '@mui/material'
+import { Box, Button, TextField } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { useState, useMemo, useEffect } from 'react'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
@@ -73,11 +73,14 @@ const Referrals = () => {
         connected={connected}
         handleConnectWallet={handleConnectWallet}
       />
-      <Button sx={{ width: '150px', height: '40px' }} onClick={}>
+      <Button
+        sx={{ width: '150px', height: '40px' }}
+        onClick={() => dispatch(actions.getUserCode())}>
         GET CODE
       </Button>
+      <TextField value={code} onChange={e => setCode(e.target.value)} />
       <Button sx={{ width: '150px', height: '40px' }} onClick={onReferralModalOpen}>
-        OPEN MODAL
+        USE CODE
       </Button>
     </Box>
   )
