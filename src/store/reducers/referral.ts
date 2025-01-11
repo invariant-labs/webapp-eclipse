@@ -15,7 +15,7 @@ export const defaultState: IReferralStore = {
   success: false
 }
 
-export const referralSliceName = 'leaderboard'
+export const referralSliceName = 'referral'
 
 const referralSlice = createSlice({
   name: referralSliceName,
@@ -31,7 +31,6 @@ const referralSlice = createSlice({
       return state
     },
     getUserCode(state) {
-      state.proceeding = true
       return state
     },
     useCode(
@@ -49,11 +48,8 @@ const referralSlice = createSlice({
       return state
     },
     setSuccessState(state, action: PayloadAction<boolean>) {
+      state.proceeding = false
       state.success = action.payload
-      return state
-    },
-    setProceedingState(state, action: PayloadAction<boolean>) {
-      state.proceeding = action.payload
       return state
     }
   }

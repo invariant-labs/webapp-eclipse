@@ -33,9 +33,7 @@ export function* getCode(): Generator {
     const code = yield* call(fetchRefferalCode, wallet.publicKey.toString())
     console.log(code)
     yield* put(actions.setUserCode({ code }))
-    yield* put(actions.setProceedingState(false))
   } catch (error) {
-    yield* put(actions.setProceedingState(false))
     console.log(error)
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -45,7 +43,9 @@ export function* useCode(action: PayloadAction<{ code: string }>): Generator {
   try {
     const wallet = yield* call(getWallet)
     const encoder = new TextEncoder()
-    const message = encoder.encode('Sign message below').buffer
+    const message = encoder.encode(
+      `${wallet.publicKey.toString()} is using referral ${action.payload.code}`
+    )
     const sig = yield* call(wallet.signMessage, message)
     yield* call(useReferralCode, action.payload.code, wallet.publicKey.toString(), sig.toString())
 
@@ -54,10 +54,9 @@ export function* useCode(action: PayloadAction<{ code: string }>): Generator {
         codeUsed: action.payload.code
       })
     )
-    yield* put(actions.setProceedingState(false))
     yield* put(actions.setSuccessState(true))
   } catch (error) {
-    yield* put(actions.setProceedingState(false))
+    yield* put(actions.setSuccessState(false))
     console.log(error)
   }
 }

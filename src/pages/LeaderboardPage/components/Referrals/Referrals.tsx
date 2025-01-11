@@ -5,7 +5,7 @@ import { useState, useMemo, useEffect } from 'react'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { useDispatch, useSelector } from 'react-redux'
 import { status } from '@store/selectors/solanaWallet'
-import { proceeding, success } from '@store/selectors/referral'
+import { referralSelectors } from '@store/selectors/referral'
 import { actions } from '@store/reducers/referral'
 import SelectWalletModal from '@components/Modals/SelectWalletModal/SelectWalletModal'
 
@@ -22,8 +22,9 @@ const Referrals = () => {
     setIsOpenSelectWalletModal(true)
     setIsModalOpen(false)
   }
-  const inProgress = useSelector(proceeding)
-  const succed = useSelector(success)
+
+  const inProgress = useSelector(referralSelectors.proceeding)
+  const succed = useSelector(referralSelectors.success)
 
   const connected = useMemo(() => {
     return walletStatus === Status.Initialized
@@ -40,6 +41,7 @@ const Referrals = () => {
   }
 
   useEffect(() => {
+    console.log(succed, inProgress)
     if (succed && !inProgress) {
       onReferralModalClose()
     }
