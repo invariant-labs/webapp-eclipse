@@ -2,6 +2,7 @@ import { PayloadAction } from '@reduxjs/toolkit'
 import { actions } from '@store/reducers/referral'
 import { all, call, put, spawn, takeEvery } from 'typed-redux-saga'
 import { handleRpcError } from './connection'
+import { getWallet } from './wallet'
 
 async function fetchRefferalCode(address: string) {
   const response = await fetch(`http://localhost:3000/api/leaderboard/get-code/${address}`)
@@ -10,13 +11,13 @@ async function fetchRefferalCode(address: string) {
   }
   return response.json() as Promise<string>
 }
-async function useReferralCode(code: string) {
+async function useReferralCode(code: string, address: string, signature: string) {
   const response = await fetch(`https://points.invariant.app/api/config`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
-    body: JSON.stringify({ code })
+    body: JSON.stringify({ address, code, signature })
   })
 
   if (!response.ok) {
@@ -40,7 +41,11 @@ export function* getCode(action: PayloadAction<{ address: string }>): Generator 
 
 export function* useCode(action: PayloadAction<{ code: string }>): Generator {
   try {
-    yield* call(useReferralCode, action.payload.code)
+    const wallet = yield* call(getWallet)
+    const encoder = new TextEncoder()
+    const message = encoder.encode('Sign message below').buffer
+    const sig = yield* call(wallet.signMessage, message)
+    yield* call(useReferralCode, action.payload.code, wallet.publicKey.toString(), sig.toString())
 
     yield* put(
       actions.setCodeUsed({
