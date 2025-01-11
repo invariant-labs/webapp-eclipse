@@ -11,7 +11,7 @@ import SelectWalletModal from '@components/Modals/SelectWalletModal/SelectWallet
 
 const Referrals = () => {
   const address = 'mocked string'
-  const code = ''
+  const code = 'asd'
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [isOpenSelectWalletModal, setIsOpenSelectWalletModal] = useState<boolean>(false)
   const walletStatus = useSelector(status)

@@ -8,6 +8,7 @@ import { statsHandler } from './stats'
 import { creatorSaga } from './creator'
 import { lockerSaga } from './locker'
 import { leaderboardSaga } from './leaderboard'
+import { referralSaga } from './referral'
 // import { farmsSaga } from './farms'
 // import { bondsSaga } from './bonds'
 
@@ -22,7 +23,8 @@ export function* rootSaga(): Generator {
       statsHandler,
       creatorSaga,
       leaderboardSaga,
-      lockerSaga
+      lockerSaga,
+      referralSaga
       // bondsSaga,
       // farmsSaga
     ].map(spawn)
