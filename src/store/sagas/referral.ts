@@ -5,14 +5,14 @@ import { handleRpcError } from './connection'
 import { getWallet } from './wallet'
 
 async function fetchRefferalCode(address: string) {
-  const response = await fetch(`http://localhost:3000/api/referral/get-code/${address}`)
+  const response = await fetch(`http://localhost:3000/api/leaderboard/get-code/${address}`)
   if (!response.ok) {
     throw new Error('Failed to fetch referral code')
   }
   return response.json() as Promise<string>
 }
 async function useReferralCode(code: string, address: string, signature: string) {
-  const response = await fetch(`http://localhost:3000/api/referral/use-code`, {
+  const response = await fetch(`http://localhost:3000/api/leaderboard/use-code`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
