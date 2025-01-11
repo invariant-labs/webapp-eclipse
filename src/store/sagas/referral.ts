@@ -26,10 +26,11 @@ async function useReferralCode(code: string, address: string, signature: string)
 
   return response
 }
-export function* getCode(action: PayloadAction<{ address: string }>): Generator {
+export function* getCode(): Generator {
   try {
-    const code = yield* call(fetchRefferalCode, action.payload.address)
-
+    const wallet = yield* call(getWallet)
+    const code = yield* call(fetchRefferalCode, wallet.publicKey.toString())
+    console.log(code)
     yield* put(actions.setUserCode({ code }))
     yield* put(actions.setProceedingState(false))
   } catch (error) {

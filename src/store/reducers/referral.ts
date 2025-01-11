@@ -5,7 +5,6 @@ export interface IReferralStore {
   code: string | null
   codeUsed: string | null
   proceeding: boolean
-  user: string
   success: boolean
 }
 
@@ -13,7 +12,6 @@ export const defaultState: IReferralStore = {
   code: null,
   codeUsed: null,
   proceeding: false,
-  user: '',
   success: false
 }
 
@@ -32,14 +30,8 @@ const referralSlice = createSlice({
       state.code = action.payload.code
       return state
     },
-    getUserCode(
-      state,
-      action: PayloadAction<{
-        address: string
-      }>
-    ) {
+    getUserCode(state) {
       state.proceeding = true
-      state.user = action.payload.address
       return state
     },
     useCode(

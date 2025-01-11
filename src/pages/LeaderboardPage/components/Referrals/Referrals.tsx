@@ -10,8 +10,8 @@ import { actions } from '@store/reducers/referral'
 import SelectWalletModal from '@components/Modals/SelectWalletModal/SelectWalletModal'
 
 const Referrals = () => {
+  const [code, setCode] = useState<string>('')
   const address = 'mocked string'
-  const code = 'asd'
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false)
   const [isOpenSelectWalletModal, setIsOpenSelectWalletModal] = useState<boolean>(false)
   const walletStatus = useSelector(status)
@@ -73,6 +73,9 @@ const Referrals = () => {
         connected={connected}
         handleConnectWallet={handleConnectWallet}
       />
+      <Button sx={{ width: '150px', height: '40px' }} onClick={}>
+        GET CODE
+      </Button>
       <Button sx={{ width: '150px', height: '40px' }} onClick={onReferralModalOpen}>
         OPEN MODAL
       </Button>
