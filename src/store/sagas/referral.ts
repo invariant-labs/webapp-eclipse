@@ -47,7 +47,12 @@ export function* useCode(action: PayloadAction<{ code: string }>): Generator {
       `${wallet.publicKey.toString()} is using referral ${action.payload.code}`
     )
     const sig = yield* call(wallet.signMessage, message)
-    yield* call(useReferralCode, action.payload.code, wallet.publicKey.toString(), sig.toString())
+    yield* call(
+      useReferralCode,
+      action.payload.code,
+      wallet.publicKey.toString(),
+      Buffer.from(sig).toString('base64')
+    )
 
     yield* put(
       actions.setCodeUsed({
