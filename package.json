@@ -21,7 +21,7 @@
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
     "@invariant-labs/locker-eclipse-sdk": "^0.0.20",
-    "@invariant-labs/sdk-eclipse": "^0.0.63",
+    "@invariant-labs/sdk-eclipse": "^0.0.66",
     "@invariant-labs/points-sdk": "^0.0.3",
     "@irys/web-upload": "^0.0.14",
     "@irys/web-upload-solana": "^0.1.7",
