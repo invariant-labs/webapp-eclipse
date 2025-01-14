@@ -81,14 +81,30 @@ export const useStyles = makeStyles()(() => ({
   tokenHeader: {
     ...typography.heading4,
     color: colors.invariant.textGrey,
-    whiteSpace: 'nowrap'
+    whiteSpace: 'nowrap',
+
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flex: 1,
+      alignItems: 'center'
+    }
   },
 
   tokenContent: {
     ...typography.heading4,
     color: colors.white.main,
     whiteSpace: 'nowrap',
-    padding: '0 0 0 5px'
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+
+      '&:nth-of-type(3)': {
+        justifyContent: 'flex-end',
+        textAlign: 'center'
+      }
+    }
   },
 
   tokenLow: {
