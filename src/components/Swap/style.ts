@@ -429,7 +429,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     backgroundOrigin: 'border-box',
     backgroundClip: 'padding-box, border-box'
   },
-  textShadow: {
+  textShadowLabel: {
     textShadow: '3px 3px 5px #3A466B'
   }
 }))

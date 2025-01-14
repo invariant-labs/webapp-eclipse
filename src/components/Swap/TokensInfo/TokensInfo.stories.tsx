@@ -46,6 +46,7 @@ export const Primary: Story = {
       decimals: USDC_TEST.decimals,
       isUnknown: false
     },
+    isPairGivingPoints: false,
     tokenFromPrice: 53433,
     tokenToPrice: 3243,
     network: NetworkType.Testnet
