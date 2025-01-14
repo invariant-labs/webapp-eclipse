@@ -7,10 +7,13 @@ export const useWrapperStyles = makeStyles()(theme => ({
     borderRadius: 16,
     border: `1px solid ${colors.invariant.light}`,
     padding: '8px 12px',
-
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column'
     }
+  },
+  darkBackground: {
+    background: colors.invariant.newDark,
+    zIndex: 1
   },
   divider: {
     width: 1,

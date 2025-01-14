@@ -109,6 +109,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'absolute'
   },
   root: {
+    position: 'relative',
     maxWidth: '100%',
     background: colors.invariant.component,
     borderRadius: 24,
@@ -154,7 +155,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.invariant.component,
+    background: colors.invariant.component,
     width: 50,
     height: 50,
     borderRadius: '50%',
@@ -361,6 +362,75 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     padding: 8,
     paddingInline: 8,
     borderRadius: 10
+  },
+  pointsBox: {
+    height: 27,
+    padding: '0px 8px',
+    borderRadius: 8,
+    backgroundColor: colors.invariant.component,
+    color: colors.invariant.textGrey,
+    fontSize: 14,
+    cursor: 'pointer',
+    userSelect: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    textTransform: 'none',
+    gap: 4
+  },
+  pointsAmount: { color: colors.invariant.pink },
+  darkGradientBackground: {
+    background: 'linear-gradient(360deg, #010514 0%, #111931 100%)'
+  },
+  darkGradientBackgroundReverse: {
+    background: 'linear-gradient(360deg, #111931 0%, #010514 100%)'
+  },
+  darkBackground: {
+    background: colors.invariant.newDark
+  },
+  componentBackground: {
+    background: colors.invariant.component
+  },
+  waveImage: {
+    pointerEvents: 'none',
+    display: 'flex',
+    justifyContent: 'center',
+    '& img': {
+      width: '100%',
+      position: 'absolute',
+      objectFit: 'cover',
+      zIndex: 0
+    }
+  },
+  topWave: {
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    '& img': {
+      borderTopLeftRadius: 24
+    }
+  },
+  bottomWave: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    '& img': {
+      borderBottomRightRadius: 24
+    }
+  },
+  gradientBorderContainer: {
+    background: 'transparent',
+    boxShadow: 'none',
+    borderRadius: 24,
+    border: '1px solid transparent',
+    backgroundImage:
+      'linear-gradient(#2A365C, #2A365C), linear-gradient(360deg, #EF84F5 0%, #2EE09A 100%)',
+    backgroundOrigin: 'border-box',
+    backgroundClip: 'padding-box, border-box'
+  },
+  textShadow: {
+    textShadow: '3px 3px 5px #3A466B'
   }
 }))
 
