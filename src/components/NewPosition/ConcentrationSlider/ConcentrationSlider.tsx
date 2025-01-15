@@ -71,7 +71,6 @@ export const ConcentrationSlider: React.FC<IProps> = ({
       track={false}
       slots={{ thumb: ThumbComponent }}
       valueLabelFormat={value => {
-        console.log(value)
         return `${values[value].toFixed(0)}x`
       }}
     />

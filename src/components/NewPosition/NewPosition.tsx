@@ -931,6 +931,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 positionOpeningMethod === 'range'
               )
             }
+            currentFeeIndex={currentFeeIndex}
           />
         )}
       </Grid>

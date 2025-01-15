@@ -350,7 +350,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration' && isMountedRef.current && !ticksLoading) {
-      // setConcentrationIndex(getConcentrationIndex(concentrationArray))
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
         concentrationArray[concentrationIndex],
@@ -393,7 +392,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       return
     }
 
-    // setConcentrationIndex(getConcentrationIndex(concentrationArray))
     const { leftRange, rightRange } = calculateConcentrationRange(
       tickSpacing,
       concentrationArray[concentrationIndex],

@@ -163,10 +163,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     if (fromAddress && fromIndex !== -1) {
-      return `/newPosition/${initialTokenFrom}/${initialFee}${concentrationParam}`
+      return `/newPosition/${initialTokenFrom}/${initialFee}`
     }
 
-    return `/newPosition/${initialFee}${concentrationParam}`
+    return `/newPosition/${initialFee}`
   }
 
   useEffect(() => {

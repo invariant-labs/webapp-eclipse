@@ -41,6 +41,7 @@ export interface IPoolInit {
   concentrationIndex: number
   concentrationArray: number[]
   minimumSliderIndex: number
+  currentFeeIndex: number
 }
 
 export const PoolInit: React.FC<IPoolInit> = ({
@@ -60,7 +61,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
   setConcentrationIndex,
   concentrationIndex,
   concentrationArray,
-  minimumSliderIndex
+  minimumSliderIndex,
+  currentFeeIndex
 }) => {
   const minTick = getMinTick(tickSpacing)
   const maxTick = getMaxTick(tickSpacing)
@@ -107,10 +109,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
   useEffect(() => {
     if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
       const concentrationValue = +initialConcentration
-
       handleUpdateConcentrationFromURL(concentrationValue)
     }
-  }, [concentrationArray])
+  }, [currentFeeIndex, tokenASymbol, tokenBSymbol])
 
   const validConcentrationMidPrice = (midPrice: string) => {
     const minTick = getMinTick(tickSpacing)
@@ -205,8 +206,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration') {
-      // setConcentrationIndex(getConcentrationIndex(concentrationArray))
-
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
         concentrationArray[concentrationIndex],
@@ -227,9 +226,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
         concentrationIndex > concentrationArray.length - 1
           ? concentrationArray.length - 1
           : concentrationIndex
-      console.log('index', index)
 
-      setConcentrationIndex(index)
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
         concentrationArray[index],
