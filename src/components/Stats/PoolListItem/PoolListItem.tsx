@@ -210,11 +210,11 @@ const PoolListItem: React.FC<IProps> = ({
           {!isSmd && showAPY ? (
             <Box className={classes.row}>
               <Typography>
-                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : convertedApr.toFixed(2) + '%'}`}
+                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                 <span
                   className={
                     classes.apy
-                  }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : convertedApy.toFixed(2) + '%'}`}</span>
+                  }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
               </Typography>
               {isPromoted && (
                 <>
