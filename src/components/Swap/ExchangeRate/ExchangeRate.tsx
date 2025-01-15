@@ -3,6 +3,7 @@ import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumber } from '@utils/utils'
 import React from 'react'
 import useStyles from './style'
+import classNames from 'classnames'
 
 interface iProps {
   tokenFromSymbol: string
@@ -11,6 +12,7 @@ interface iProps {
   tokenToDecimals: number
   loading: boolean
   onClick: () => void
+  isPairGivingPoints: boolean
 }
 
 const ExchangeRate: React.FC<iProps> = ({
@@ -19,7 +21,8 @@ const ExchangeRate: React.FC<iProps> = ({
   amount,
   tokenToDecimals,
   loading,
-  onClick
+  onClick,
+  isPairGivingPoints
 }) => {
   const { classes } = useStyles()
   const setLoading = () => {
@@ -28,7 +31,7 @@ const ExchangeRate: React.FC<iProps> = ({
         <img src={loadingAnimation} className={classes.loading} alt='Loading'></img>
       </Box>
     ) : (
-      <Typography className={classes.rateText}>
+      <Typography className={classNames(isPairGivingPoints && classes.whiteText)}>
         1 {tokenFromSymbol} ={' '}
         {isNaN(amount)
           ? 0

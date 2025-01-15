@@ -691,10 +691,7 @@ export const Swap: React.FC<ISwap> = ({
         </Grid>
       </Grid>
       <Box className={isPairGivingPoints ? classes.gradientBorderContainer : ''}>
-        <Grid
-          container
-          className={classNames(classes.root, isPairGivingPoints && classes.darkBackground)}
-          direction='column'>
+        <Grid container className={classes.root} direction='column'>
           {isPairGivingPoints && renderWaves('top', GreenWaves)}
           <Typography
             className={classNames(
@@ -707,7 +704,7 @@ export const Swap: React.FC<ISwap> = ({
             className={classNames(
               classes.exchangeRoot,
               lockAnimation ? classes.amountInputDown : undefined,
-              isPairGivingPoints && classes.darkGradientBackground
+              isPairGivingPoints && classes.darkBackground
             )}>
             <ExchangeAmountInput
               value={amountFrom}
@@ -775,7 +772,7 @@ export const Swap: React.FC<ISwap> = ({
             <Box
               className={classNames(
                 classes.swapArrowBox,
-                isPairGivingPoints && classes.darkGradientBackgroundReverse
+                isPairGivingPoints && classes.darkBackground
               )}
               onClick={() => {
                 if (lockAnimation) return
@@ -819,7 +816,7 @@ export const Swap: React.FC<ISwap> = ({
               classes.exchangeRoot,
               classes.transactionBottom,
               lockAnimation ? classes.amountInputUp : undefined,
-              isPairGivingPoints && classes.darkGradientBackground
+              isPairGivingPoints && classes.darkBackground
             )}>
             <ExchangeAmountInput
               value={amountTo}
@@ -959,7 +956,11 @@ export const Swap: React.FC<ISwap> = ({
                 )}
             </Box>
             {canShowDetails ? (
-              <Box className={classes.exchangeRateWrapper}>
+              <Box
+                className={classNames(
+                  classes.exchangeRateWrapper,
+                  isPairGivingPoints && classes.darkBackground
+                )}>
                 <ExchangeRate
                   onClick={() => setRateReversed(!rateReversed)}
                   tokenFromSymbol={tokens[rateReversed ? tokenToIndex : tokenFromIndex].symbol}
@@ -967,6 +968,7 @@ export const Swap: React.FC<ISwap> = ({
                   amount={rateReversed ? 1 / swapRate : swapRate}
                   tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
                   loading={getStateMessage() === 'Loading'}
+                  isPairGivingPoints={isPairGivingPoints}
                 />
               </Box>
             ) : null}

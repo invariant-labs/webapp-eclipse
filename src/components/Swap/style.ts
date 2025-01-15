@@ -242,6 +242,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    borderRadius: 10,
     [theme.breakpoints.down('sm')]: {
       width: '100%'
     },
