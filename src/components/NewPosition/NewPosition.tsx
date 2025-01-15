@@ -508,33 +508,10 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   useEffect(() => {
     if (poolIndex != lastPoolIndex) {
-      // const mappedIndex = getConcentrationIndex(concentrationArray, concentrationIndex)
-
-      // const validIndex = Math.max(
-      //   minimumSliderIndex,
-      //   Math.min(mappedIndex, concentrationArray.length - 1)
-      // )
-
-      // updatePath(
-      //   tokenAIndex,
-      //   tokenBIndex,
-      //   currentFeeIndex,
-      //   +concentrationArray[concentrationIndex].toFixed(0)
-      // )
       setLastPoolIndex(lastPoolIndex)
       setRefresherTime(REFRESHER_INTERVAL)
     }
   }, [poolIndex])
-
-  // useEffect(() => {
-
-  //   updatePath(
-  //     tokenAIndex,
-  //     tokenBIndex,
-  //     currentFeeIndex,
-  //     +concentrationArray[concentrationIndex].toFixed(0)
-  //   )
-  // }, [concentrationArray])
 
   const blockedToken = useMemo(
     () =>
