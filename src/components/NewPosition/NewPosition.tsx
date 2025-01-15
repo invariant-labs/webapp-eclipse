@@ -17,6 +17,7 @@ import {
   calculateConcentrationRange,
   convertBalanceToBN,
   determinePositionTokenBlock,
+  getConcentrationIndex,
   parseFeeToPathFee,
   printBN,
   trimLeadingZeros,
@@ -52,6 +53,7 @@ export interface INewPosition {
   initialTokenFrom: string
   initialTokenTo: string
   initialFee: string
+  initialConcentration: string
   poolAddress: string
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   tokens: SwapToken[]
@@ -127,6 +129,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   initialTokenFrom,
   initialTokenTo,
   initialFee,
+  initialConcentration,
   poolAddress,
   copyPoolAddressHandler,
   tokens,
@@ -199,8 +202,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
 
-  const [concentrationIndex, setConcentrationIndex] = useState(0)
-
   const [minimumSliderIndex, setMinimumSliderIndex] = useState<number>(0)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
 
@@ -211,6 +212,10 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
   }, [tickSpacing, midPrice.index])
+
+  const [concentrationIndex, setConcentrationIndex] = useState(
+    getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 40)
+  )
 
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
@@ -444,13 +449,36 @@ export const NewPosition: React.FC<INewPosition> = ({
     onSlippageChange(slippage)
   }
 
-  const updatePath = (index1: number | null, index2: number | null, fee: number) => {
+  const updatePath = (
+    index1: number | null,
+    index2: number | null,
+    fee: number,
+    concentration?: number,
+    isRange?: boolean
+  ) => {
     if (canNavigate) {
       const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
+
       if (index1 != null && index2 != null) {
         const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
         const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-        navigate(`/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}`, { replace: true })
+
+        const mappedIndex = getConcentrationIndex(concentrationArray, concentration)
+
+        const validIndex = Math.max(
+          minimumSliderIndex,
+          Math.min(mappedIndex, concentrationArray.length - 1)
+        )
+
+        const concParam = concentration ? `?conc=${concentrationArray[validIndex].toFixed(0)}` : ''
+        const rangeParam = isRange ? '&rangeOn=true' : '&rangeOn=false'
+
+        navigate(
+          `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
+          {
+            replace: true
+          }
+        )
       } else if (index1 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
         navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
@@ -480,10 +508,33 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   useEffect(() => {
     if (poolIndex != lastPoolIndex) {
+      // const mappedIndex = getConcentrationIndex(concentrationArray, concentrationIndex)
+
+      // const validIndex = Math.max(
+      //   minimumSliderIndex,
+      //   Math.min(mappedIndex, concentrationArray.length - 1)
+      // )
+
+      // updatePath(
+      //   tokenAIndex,
+      //   tokenBIndex,
+      //   currentFeeIndex,
+      //   +concentrationArray[concentrationIndex].toFixed(0)
+      // )
       setLastPoolIndex(lastPoolIndex)
       setRefresherTime(REFRESHER_INTERVAL)
     }
   }, [poolIndex])
+
+  // useEffect(() => {
+
+  //   updatePath(
+  //     tokenAIndex,
+  //     tokenBIndex,
+  //     currentFeeIndex,
+  //     +concentrationArray[concentrationIndex].toFixed(0)
+  //   )
+  // }, [concentrationArray])
 
   const blockedToken = useMemo(
     () =>
@@ -575,9 +626,24 @@ export const NewPosition: React.FC<INewPosition> = ({
                       if (val) {
                         setPositionOpeningMethod('concentration')
                         onPositionOpeningMethodChange('concentration')
+                        updatePath(
+                          tokenAIndex,
+                          tokenBIndex,
+                          currentFeeIndex,
+                          +concentrationArray[concentrationIndex].toFixed(0),
+                          false
+                        )
                       } else {
                         setPositionOpeningMethod('range')
                         onPositionOpeningMethodChange('range')
+
+                        updatePath(
+                          tokenAIndex,
+                          tokenBIndex,
+                          currentFeeIndex,
+                          +concentrationArray[concentrationIndex].toFixed(0),
+                          true
+                        )
                       }
                     }}
                     className={classes.switch}
@@ -627,7 +693,8 @@ export const NewPosition: React.FC<INewPosition> = ({
             onChangePositionTokens(index1, index2, fee)
 
             if (!isLoadingTokens) {
-              updatePath(index1, index2, fee)
+              updatePath(index1, index2, fee, +concentrationArray[concentrationIndex].toFixed(0)),
+                positionOpeningMethod === 'range'
             }
           }}
           onAddLiquidity={() => {
@@ -723,7 +790,13 @@ export const NewPosition: React.FC<INewPosition> = ({
             onChangePositionTokens(tokenBIndex, tokenAIndex, currentFeeIndex)
 
             if (!isLoadingTokens) {
-              updatePath(tokenBIndex, tokenAIndex, currentFeeIndex)
+              updatePath(
+                tokenBIndex,
+                tokenAIndex,
+                currentFeeIndex,
+                +concentrationArray[concentrationIndex].toFixed(0),
+                positionOpeningMethod === 'range'
+              )
             }
           }}
           poolIndex={poolIndex}
@@ -778,6 +851,16 @@ export const NewPosition: React.FC<INewPosition> = ({
         tokenAIndex === tokenBIndex ||
         isWaitingForNewPool ? (
           <RangeSelector
+            updatePath={(concIndex: number) =>
+              updatePath(
+                tokenAIndex,
+                tokenBIndex,
+                currentFeeIndex,
+                +concentrationArray[concIndex].toFixed(0),
+                positionOpeningMethod === 'range'
+              )
+            }
+            initialConcentration={initialConcentration}
             poolIndex={poolIndex}
             onChangeRange={onChangeRange}
             blocked={
@@ -838,6 +921,16 @@ export const NewPosition: React.FC<INewPosition> = ({
             concentrationIndex={concentrationIndex}
             setConcentrationIndex={setConcentrationIndex}
             minimumSliderIndex={minimumSliderIndex}
+            initialConcentration={initialConcentration}
+            updatePath={(concIndex: number) =>
+              updatePath(
+                tokenAIndex,
+                tokenBIndex,
+                currentFeeIndex,
+                +concentrationArray[concIndex].toFixed(0),
+                positionOpeningMethod === 'range'
+              )
+            }
           />
         )}
       </Grid>

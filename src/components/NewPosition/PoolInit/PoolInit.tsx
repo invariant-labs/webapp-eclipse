@@ -7,6 +7,7 @@ import {
   calculateSqrtPriceFromBalance,
   calculateTickFromBalance,
   formatNumber,
+  getConcentrationIndex,
   nearestTickIndex,
   toMaxNumericPlaces,
   trimZeros,
@@ -23,6 +24,8 @@ import { BN } from '@coral-xyz/anchor'
 import { priceToTickInRange } from '@invariant-labs/sdk-eclipse/src/tick'
 
 export interface IPoolInit {
+  updatePath: (concIndex: number) => void
+  initialConcentration: string
   tokenASymbol: string
   tokenBSymbol: string
   onChangeRange: (leftIndex: number, rightIndex: number) => void
@@ -41,6 +44,8 @@ export interface IPoolInit {
 }
 
 export const PoolInit: React.FC<IPoolInit> = ({
+  updatePath,
+  initialConcentration,
   tokenASymbol,
   tokenBSymbol,
   onChangeRange,
@@ -78,6 +83,34 @@ export const PoolInit: React.FC<IPoolInit> = ({
   const [midPriceInput, setMidPriceInput] = useState(
     calcPriceByTickIndex(midPriceIndex, isXtoY, xDecimal, yDecimal).toFixed(8)
   )
+
+  const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
+    const mappedIndex = getConcentrationIndex(concentrationArray, concentrationValue)
+
+    const validIndex = Math.max(
+      minimumSliderIndex,
+      Math.min(mappedIndex, concentrationArray.length - 1)
+    )
+
+    setConcentrationIndex(validIndex)
+    const { leftRange, rightRange } = calculateConcentrationRange(
+      tickSpacing,
+      concentrationArray[validIndex],
+      2,
+      midPriceIndex,
+      isXtoY
+    )
+
+    changeRangeHandler(leftRange, rightRange)
+  }
+
+  useEffect(() => {
+    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
+      const concentrationValue = +initialConcentration
+
+      handleUpdateConcentrationFromURL(concentrationValue)
+    }
+  }, [concentrationArray])
 
   const validConcentrationMidPrice = (midPrice: string) => {
     const minTick = getMinTick(tickSpacing)
@@ -172,10 +205,11 @@ export const PoolInit: React.FC<IPoolInit> = ({
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration') {
-      setConcentrationIndex(0)
+      // setConcentrationIndex(getConcentrationIndex(concentrationArray))
+
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
-        concentrationArray[0],
+        concentrationArray[concentrationIndex],
         2,
         validConcentrationMidPriceTick(midPriceIndex, isXtoY, tickSpacing),
         isXtoY
@@ -193,6 +227,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
         concentrationIndex > concentrationArray.length - 1
           ? concentrationArray.length - 1
           : concentrationIndex
+      console.log('index', index)
+
       setConcentrationIndex(index)
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
@@ -391,6 +427,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
               values={concentrationArray}
               valueChangeHandler={value => {
                 setConcentrationIndex(value)
+                updatePath(value)
+
                 const { leftRange, rightRange } = calculateConcentrationRange(
                   tickSpacing,
                   concentrationArray[value],
