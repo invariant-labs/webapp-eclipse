@@ -12,11 +12,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   header: {
-    maxWidth: '100%',
+    maxWidth: 500,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 500,
     position: 'relative',
     paddingBottom: 9,
     rowGap: 8,
@@ -110,13 +109,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   root: {
     position: 'relative',
-    maxWidth: '100%',
+    maxWidth: 500,
     background: colors.invariant.component,
     borderRadius: 24,
     paddingInline: 24,
     paddingBottom: 22,
     paddingTop: 16,
-    width: 500,
+    width: '100%',
     [theme.breakpoints.down('sm')]: {
       padding: '16px 8px'
     }
