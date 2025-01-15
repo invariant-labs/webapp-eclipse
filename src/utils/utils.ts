@@ -1826,7 +1826,7 @@ export const calculateAPYAndAPR = (
   tvl?: number
 ) => {
   if (volume === undefined || fee === undefined || tvl === undefined) {
-    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+    return { convertedApy: Math.abs(apy), convertedApr: Math.abs(apyToApr(apy)) }
   }
 
   if (poolsToRecalculateAPY.includes(poolAddress ?? '')) {
@@ -1834,9 +1834,9 @@ export const calculateAPYAndAPR = (
 
     const parsedApy = (Math.pow((volume * fee * 0.01) / tvl + 1, 365) - 1) * 100
 
-    return { convertedApy: parsedApy, convertedApr: parsedApr }
+    return { convertedApy: Math.abs(parsedApy), convertedApr: Math.abs(parsedApr) }
   } else {
-    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+    return { convertedApy: Math.abs(apy), convertedApr: Math.abs(apyToApr(apy)) }
   }
 }
 
