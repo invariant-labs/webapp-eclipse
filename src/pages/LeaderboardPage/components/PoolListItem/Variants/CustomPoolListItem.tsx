@@ -188,7 +188,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                     ? '>1000%'
                     : convertedApy === 0
                       ? ''
-                      : convertedApy.toFixed(2) + '%'}
+                      : Math.abs(convertedApy).toFixed(2) + '%'}
                 </span>
                 <span
                   style={{
