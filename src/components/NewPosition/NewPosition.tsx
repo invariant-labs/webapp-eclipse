@@ -47,6 +47,7 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
+import PotentialPoints from './PotentialPoints/PotentialPoints'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -841,6 +842,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           />
         )}
       </Grid>
+      <PotentialPoints />
     </Grid>
   )
 }

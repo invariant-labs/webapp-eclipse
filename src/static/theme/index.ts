@@ -92,7 +92,8 @@ export const colors = {
     blue: '#43BBFF',
     transparentBcg: 'rgba(1, 5, 20, 0.25)',
     bodyBackground: '#141b2d',
-    warningTransparent: 'rgba(239, 208, 99, 0.2)'
+    warningTransparent: 'rgba(239, 208, 99, 0.2)',
+    pinkGreenLinearGradient: 'linear-gradient(90deg, #EF84F5 0%, #2EE09A 100%)'
   }
 }
 
