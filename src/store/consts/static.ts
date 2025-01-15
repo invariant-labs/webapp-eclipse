@@ -695,6 +695,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
 
     return {
       ETH: WETH_ADDRESS[network].toString(),
+      tETH: TETH_MAIN.address.toString(),
       MCT: MOCKED_TOKEN_MAIN.address.toString(),
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
@@ -773,16 +774,7 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
 
-export const DEFAULT_TOKENS = [
-  'ethereum',
-  'solana',
-  'usd-coin',
-  'dogwifcoin',
-  'tether',
-  'turbo-eth',
-  'laika-3',
-  'mooncoin-2'
-]
+export const DEFAULT_TOKENS = ['solana', 'dogwifcoin', 'turbo-eth', 'laika-3', 'mooncoin-2']
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
@@ -827,3 +819,18 @@ export const getPopularPools = (network: NetworkType) => {
       return []
   }
 }
+
+export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
+  {
+    coingeckoId: 'ethereum',
+    solanaAddress: '7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'
+  },
+  {
+    coingeckoId: 'usd-coin',
+    solanaAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
+  },
+  {
+    coingeckoId: 'tether',
+    solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
+  }
+]

@@ -12,9 +12,9 @@ import {
   calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   createPlaceholderLiquidityPlot,
-  getCoinGeckoTokenPrice,
   getMockedTokenPrice,
   getNewTokenOrThrow,
+  getTokenPrice,
   printBN,
   tickerToAddress
 } from '@utils/utils'
@@ -434,6 +434,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
   }
 
+  const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
+
   const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceALoading, setPriceALoading] = useState(false)
   useEffect(() => {
@@ -444,7 +446,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const id = tokens[tokenAIndex].coingeckoId ?? ''
     if (id.length) {
       setPriceALoading(true)
-      getCoinGeckoTokenPrice(id)
+      getTokenPrice(id)
         .then(data => setTokenAPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
@@ -453,7 +455,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     } else {
       setTokenAPriceData(undefined)
     }
-  }, [tokenAIndex, tokens])
+  }, [tokenAIndex, tokens, triggerFetchPrice])
 
   const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceBLoading, setPriceBLoading] = useState(false)
@@ -465,7 +467,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const id = tokens[tokenBIndex].coingeckoId ?? ''
     if (id.length) {
       setPriceBLoading(true)
-      getCoinGeckoTokenPrice(id)
+      getTokenPrice(id)
         .then(data => setTokenBPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
@@ -474,7 +476,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     } else {
       setTokenBPriceData(undefined)
     }
-  }, [tokenBIndex, tokens])
+  }, [tokenBIndex, tokens, triggerFetchPrice])
 
   const initialSlippage =
     localStorage.getItem('INVARIANT_NEW_POSITION_SLIPPAGE') ?? DEFAULT_NEW_POSITION_SLIPPAGE
@@ -543,6 +545,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     if (!success) {
       dispatch(positionsActions.setShouldNotUpdateRange(true))
     }
+
+    setTriggerFetchPrice(!triggerFetchPrice)
 
     if (tokenAIndex !== null && tokenBIndex !== null) {
       dispatch(walletActions.getBalance())

@@ -46,6 +46,7 @@ const VolumeBar: React.FC<Iprops> = ({
       className={classNames({ [classes.loadingOverlay]: isLoading })}>
       <Box className={classes.tokenName}>
         <Typography className={classes.tokenHeader}>Volume 24H:</Typography>
+
         <Typography className={classes.tokenContent}>
           ${formatNumber(isLoading ? Math.random() * 10000 : volume)}
         </Typography>
@@ -63,6 +64,7 @@ const VolumeBar: React.FC<Iprops> = ({
       </Box>
       <Box className={classes.tokenName}>
         <Typography className={classes.tokenHeader}>TVL 24H:</Typography>
+
         <Typography className={classes.tokenContent}>
           ${formatNumber(isLoading ? Math.random() * 10000 : tvlVolume)}
         </Typography>
@@ -78,6 +80,7 @@ const VolumeBar: React.FC<Iprops> = ({
           </Typography>
         )}
       </Box>
+
       <Box className={classes.tokenName}>
         <Typography className={classes.tokenHeader}>Fees 24H:</Typography>
         <Typography className={classes.tokenContent}>

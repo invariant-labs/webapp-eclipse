@@ -163,7 +163,9 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
               {new BN(last24hPoints, 'hex').isZero()
                 ? 0
                 : formatNumberWithCommas(
-                    printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL)
+                    parseFloat(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(
+                      1
+                    )
                   )}
             </Typography>
           </Typography>
