@@ -9,7 +9,7 @@ type RouteParams = {
   item2?: string
   item3?: string
   concentration?: string
-  rangeOn?: string
+  rangeMode?: string
 }
 
 interface InitialValues {
@@ -45,7 +45,7 @@ const NewPositionPage: React.FC = () => {
   const { tokenFrom, tokenTo, fee } = getInitialValues(params)
   const [searchParams] = useSearchParams()
   const concentration = searchParams?.get('conc')
-  const isRange = searchParams?.get('rangeOn')
+  const isRange = searchParams?.get('rangeMode')
 
   return (
     <Grid container className={classes.container}>

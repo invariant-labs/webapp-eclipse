@@ -471,7 +471,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         )
 
         const concParam = concentration ? `?conc=${concentrationArray[validIndex].toFixed(0)}` : ''
-        const rangeParam = isRange ? '&rangeOn=true' : '&rangeOn=false'
+        const rangeParam = isRange ? '&rangeMode=true' : '&rangeMode=false'
 
         navigate(
           `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
