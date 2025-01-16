@@ -54,6 +54,9 @@ import warning2 from './svg/warning2.svg'
 import closeWarning from './svg/closeWarning.svg'
 import infoIcon from './svg/info.svg'
 import infoIconPink from './svg/infoIconPink.svg'
+import arrowLeft from './svg/arrowLeft.svg'
+import arrowRight from './svg/arrowRight.svg'
+import slider from './svg/slider.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -111,7 +114,10 @@ const icons: { [key: string]: string } = {
   warning2,
   closeWarning,
   infoIcon,
-  infoIconPink
+  infoIconPink,
+  arrowLeft,
+  arrowRight,
+  slider
 }
 
 export default icons

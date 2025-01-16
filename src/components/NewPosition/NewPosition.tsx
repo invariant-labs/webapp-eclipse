@@ -48,6 +48,7 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
 import PotentialPoints from './PotentialPoints/PotentialPoints'
+import FAQModal from '@components/Modals/FAQModal/FAQModal'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -197,6 +198,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
 
   const [settings, setSettings] = React.useState<boolean>(false)
+  const [isFAQModalOpen, setIsFAQModalOpen] = React.useState<boolean>(true)
+
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
 
@@ -438,6 +441,16 @@ export const NewPosition: React.FC<INewPosition> = ({
   const handleCloseSettings = () => {
     unblurContent()
     setSettings(false)
+  }
+
+  const handleClickFAQ = () => {
+    blurContent()
+    setIsFAQModalOpen(true)
+  }
+
+  const handleCloseFAQ = () => {
+    unblurContent()
+    setIsFAQModalOpen(false)
   }
 
   const setSlippage = (slippage: string): void => {
@@ -842,7 +855,8 @@ export const NewPosition: React.FC<INewPosition> = ({
           />
         )}
       </Grid>
-      <PotentialPoints />
+      <PotentialPoints handleClickFAQ={handleClickFAQ} />
+      <FAQModal handleClose={handleCloseFAQ} open={isFAQModalOpen} />
     </Grid>
   )
 }

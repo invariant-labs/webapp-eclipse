@@ -47,7 +47,10 @@ export const useStyles = makeStyles()(theme => {
       padding: 0,
       border: 'none',
       textDecoration: 'none',
-      background: 'none'
+      background: 'none',
+      '&:hover': {
+        cursor: 'pointer'
+      }
     },
     link: {
       textDecoration: 'underline',

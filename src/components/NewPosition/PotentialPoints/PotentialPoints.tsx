@@ -7,9 +7,11 @@ import { colors, typography } from '@static/theme'
 import icons from '@static/icons'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
-export interface IPotentialPoints {}
+export interface IPotentialPoints {
+  handleClickFAQ: () => void
+}
 
-export const PotentialPoints: React.FC<IPotentialPoints> = () => {
+export const PotentialPoints: React.FC<IPotentialPoints> = ({ handleClickFAQ }) => {
   const { classes } = useStyles()
   return (
     <Box mt={4} mb={8}>
@@ -32,7 +34,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = () => {
                 </Grid>
               </Grid>
               <Grid>
-                <button className={classes.questionButton}>
+                <button className={classes.questionButton} onClick={handleClickFAQ}>
                   <img src={icons.infoIconPink} alt='i' width={14} style={{ marginRight: '8px' }} />
                   <Typography
                     display='inline'
