@@ -16,7 +16,7 @@ import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/Nor
 import { NetworkType } from '@store/consts/static'
 import { network } from '@store/selectors/solanaConnection'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state-2'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-3'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
