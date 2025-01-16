@@ -60,24 +60,6 @@ export const useStyles = makeStyles()(theme => {
       marginTop: 8,
       color: colors.invariant.textGrey,
       letterSpacing: '-0.48px'
-    },
-    tooltip: {
-      backgroundColor: colors.invariant.component,
-      color: colors.invariant.textGrey,
-      padding: '16px 24px',
-      borderRadius: 14
-    },
-    tooltipContainer: {
-      position: 'absolute',
-      top: 100,
-      right: -200
-    },
-    tooltipHover: {
-      cursor: 'pointer',
-      textDecoration: 'underline',
-      '&:hover': {
-        color: colors.invariant.pink
-      }
     }
   }
 })
