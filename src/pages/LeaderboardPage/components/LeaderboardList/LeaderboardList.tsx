@@ -141,11 +141,11 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
             <Grid
               item
               sx={{
-                width: '95%',
+                width: '100%',
                 display: 'flex',
                 justifyContent: 'center'
               }}>
-              <Box sx={{ width: '90%', [theme.breakpoints.down('md')]: { width: '90%' } }}>
+              <Box sx={{ width: '80%', [theme.breakpoints.down('md')]: { width: '90%' } }}>
                 <PaginationList
                   pages={totalPages}
                   defaultPage={currentPage}
