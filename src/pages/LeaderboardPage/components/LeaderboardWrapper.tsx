@@ -215,7 +215,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             width: '100%'
           }}>
           <YourProgress
-            userStats={userStats}
+            userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
             isLoadingList={isLoadingList}
           />

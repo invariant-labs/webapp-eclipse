@@ -86,7 +86,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                       styleVariant: classes.counterYourPoints
                     },
                     {
-                      value: `# ${userStats.total?.rank ?? totalItems + 1}`,
+                      value: `# ${userStats.total?.rank ?? totalItems.total + 1}`,
                       label: 'Your Ranking Position',
                       styleVariant: classes.counterYourRanking
                     }

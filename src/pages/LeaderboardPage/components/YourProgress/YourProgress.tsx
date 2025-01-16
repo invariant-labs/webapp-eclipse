@@ -1,5 +1,4 @@
 import { Box, Typography } from '@mui/material'
-import { UserStats } from '@store/reducers/leaderboard'
 import React, { useMemo } from 'react'
 import useStyles from './styles'
 
@@ -21,9 +20,10 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
+import { ITotalEntry } from '@store/reducers/leaderboard'
 
 interface YourProgressProps {
-  userStats: UserStats | null
+  userStats: ITotalEntry | null
   estimated24hPoints: BN
   isLoadingList: boolean
 }
@@ -104,7 +104,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
             }}
             desktopLabelAligment='left'
             label='Global rank'
-            value={userStats?.rank ?? (isConnected ? totalItems + 1 : 0)}
+            value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
           />
         </Box>
         <Box sx={{ marginTop: '24px' }}>

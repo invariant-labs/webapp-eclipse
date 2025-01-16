@@ -48,7 +48,11 @@ export interface ILeaderboardStore {
   }
   isLoading: boolean
   currentPage: number
-  totalItems: number
+  totalItems: {
+    total: number
+    swap: number
+    lp: number
+  }
   itemsPerPage: number
   config: {
     refreshTime: number
@@ -65,7 +69,7 @@ export const defaultState: ILeaderboardStore = {
   top3Scorers: { total: [], lp: [], swap: [] },
   isLoading: false,
   currentPage: 1,
-  totalItems: 0,
+  totalItems: { total: 0, swap: 0, lp: 0 },
   itemsPerPage: 25,
   config: { refreshTime: 0, pointsDecimal: 0, promotedPools: [], lastSnapTimestamp: '' }
 }
@@ -86,8 +90,7 @@ const leaderboardSlice = createSlice({
     ) {
       state.currentUser.total = action.payload.user
       state.leaderboard.total = action.payload.leaderboard
-      state.totalItems = action.payload.totalItems
-      state.isLoading = false
+      state.totalItems.total = action.payload.totalItems
       if (state.currentPage === 1) {
         state.top3Scorers.total = action.payload.leaderboard
           .filter(entry => entry.rank <= 3)
@@ -105,8 +108,7 @@ const leaderboardSlice = createSlice({
     ) {
       state.currentUser.swap = action.payload.user
       state.leaderboard.swap = action.payload.leaderboard
-      state.totalItems = action.payload.totalItems
-      state.isLoading = false
+      state.totalItems.swap = action.payload.totalItems
       if (state.currentPage === 1) {
         state.top3Scorers.swap = action.payload.leaderboard
           .filter(entry => entry.rank <= 3)
@@ -124,8 +126,7 @@ const leaderboardSlice = createSlice({
     ) {
       state.currentUser.lp = action.payload.user
       state.leaderboard.lp = action.payload.leaderboard
-      state.totalItems = action.payload.totalItems
-      state.isLoading = false
+      state.totalItems.lp = action.payload.totalItems
       if (state.currentPage === 1) {
         state.top3Scorers.lp = action.payload.leaderboard
           .filter(entry => entry.rank <= 3)
@@ -167,6 +168,7 @@ const leaderboardSlice = createSlice({
       return state
     },
     setLeaderBoardType(state, action: PayloadAction<LeaderBoardType>) {
+      state.currentPage = 1
       state.type = action.payload
       return state
     }

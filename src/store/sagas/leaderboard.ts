@@ -54,7 +54,7 @@ async function fetchSwapLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `https://points.invariant.app/api/eclipse-${network}/swaps/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -69,7 +69,7 @@ async function fetchTotalLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `https://points.invariant.app/api/eclipse-${network}/total/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -98,6 +98,7 @@ export function* getLeaderboard(
       page,
       itemsPerPage
     )
+
     yield* put(actions.setLpLeaderboardData(leaderboardLpData))
     const leaderboardSwapData: ISwapLeaderboardResponse = yield* call(
       fetchSwapLeaderboardData,
@@ -116,6 +117,8 @@ export function* getLeaderboard(
     )
 
     yield* put(actions.setTotalLeaderboardData(leaderboardTotalData))
+
+    yield* put(actions.setLoadingState(false))
   } catch (error) {
     yield* put(actions.setLoadingState(false))
     console.log(error)

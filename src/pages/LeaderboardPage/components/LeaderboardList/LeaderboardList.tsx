@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo, useCallback, useEffect } from 'react'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import PurpleWaves from '@static/png/purple_waves.png'
@@ -25,7 +25,7 @@ import { colors, theme } from '@static/theme'
 import LeaderboardSwapItem from '../LeaderboardItem/LeaderboardSwapItem'
 import LeaderboardLpItem from '../LeaderboardItem/LeaderboardLpItem'
 import LeaderboardTotalItem from '../LeaderboardItem/LeaderboardTotalItem'
-import { PublicKey } from '@solana/web3.js'
+import { Keypair, PublicKey } from '@solana/web3.js'
 
 interface LeaderboardListProps {}
 
@@ -36,6 +36,8 @@ const MemoizedTotalLeaderboardItem = React.memo(LeaderboardTotalItem)
 const getContent = (
   type: LeaderBoardType,
   isConnected: Boolean,
+  isLoading: Boolean,
+  itemsPerPage: number,
   lpData: ILpEntry[],
   swapData: ISwapEntry[],
   totalData: ITotalEntry[],
@@ -43,6 +45,27 @@ const getContent = (
   userSwapStats: ISwapEntry | null,
   userTotalStats: ITotalEntry | null
 ) => {
+  if (isLoading) {
+    return (
+      <>
+        <MemoizedLpLeaderboardItem displayType='header' />
+
+        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+          {new Array(itemsPerPage).map((number, idx) => (
+            <MemoizedLpLeaderboardItem
+              key={number}
+              displayType='item'
+              rank={number}
+              positions={number + idx}
+              last24hPoints={number + idx}
+              points={number + idx}
+              address={Keypair.generate().publicKey}
+            />
+          ))}
+        </Box>
+      </>
+    )
+  }
   if (type === 'Liquidity') {
     return (
       <>
@@ -165,7 +188,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
   const isLoading = useSelector(leaderboardSelectors.loading)
   const dispatch = useDispatch()
   const currentPage = useSelector(leaderboardSelectors.currentPage)
-  const totalItems = useSelector(leaderboardSelectors.totalItems)
+  const totalItemsObject = useSelector(leaderboardSelectors.totalItems)
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
   const type = useSelector(leaderboardSelectors.type)
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
@@ -175,6 +198,13 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
     if (type === 'Swap') return swapData
     return totalData
   }, [lpData, swapData, totalData, type])
+
+  const totalItems = useMemo(() => {
+    if (type === 'Liquidity') return totalItemsObject.lp
+    if (type === 'Swap') return totalItemsObject.swap
+    return totalItemsObject.total
+  }, [totalItemsObject, type])
+
   const totalPages = useMemo(
     () => Math.ceil(totalItems / itemsPerPage),
     [lpData, swapData, totalData, type]
@@ -192,6 +222,8 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
       getContent(
         type,
         isConnected,
+        isLoading,
+        itemsPerPage,
         lpData,
         swapData,
         totalData,
@@ -199,8 +231,11 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
         userStats.swap,
         userStats.total
       ),
-    [type]
+    [type, isLoading, lpData, swapData, totalData, isConnected, userStats]
   )
+  useEffect(() => {
+    console.log(lpData.length, swapData.length, totalData.length)
+  }, [lpData, swapData, totalData])
   const handlePageChange = useCallback(
     (page: number) => {
       dispatch(actions.getLeaderboardData({ page, itemsPerPage }))

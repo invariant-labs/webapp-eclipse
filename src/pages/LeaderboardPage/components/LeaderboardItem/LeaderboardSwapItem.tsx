@@ -147,7 +147,9 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
         <Typography>
           {new BN(points, 'hex').isZero()
             ? 0
-            : formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))}{' '}
+            : formatNumberWithCommas(
+                Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+              )}
         </Typography>
         {!isMd && <Typography>{swaps}</Typography>}
 

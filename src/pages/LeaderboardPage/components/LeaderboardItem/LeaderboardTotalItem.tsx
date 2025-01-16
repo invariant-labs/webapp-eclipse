@@ -46,7 +46,7 @@ const LeaderboardTotalHeader: React.FC = () => {
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
-    <Grid container classes={{ container: classes.container, root: classes.header }}>
+    <Grid container classes={{ container: classes.totalContainer, root: classes.header }}>
       <Typography style={{ lineHeight: '11px' }}>Rank</Typography>
       <Typography style={{ cursor: 'pointer' }}>Address</Typography>
       <Typography style={{ cursor: 'pointer' }}>Total points</Typography>
@@ -116,7 +116,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
     <Grid maxWidth='100%'>
       <Grid
         container
-        classes={{ container: classes.container }}
+        classes={{ container: classes.totalContainer }}
         style={{
           border: hideBottomLine ? 'none' : undefined,
           background: isYou ? alpha(colors.invariant.light, 0.2) : 'transparent',
@@ -152,20 +152,26 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         <Typography>
           {new BN(points, 'hex').isZero()
             ? 0
-            : formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))}{' '}
+            : formatNumberWithCommas(
+                Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+              )}
         </Typography>
         {!isMd && (
           <Typography>
             {new BN(swapPoints, 'hex').isZero()
               ? 0
-              : formatNumberWithCommas(printBN(new BN(swapPoints, 'hex'), LEADERBOARD_DECIMAL))}
+              : formatNumberWithCommas(
+                  Number(printBN(new BN(swapPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                )}
           </Typography>
         )}
         {!isMd && (
           <Typography>
             {new BN(lpPoints, 'hex').isZero()
               ? 0
-              : formatNumberWithCommas(printBN(new BN(lpPoints, 'hex'), LEADERBOARD_DECIMAL))}{' '}
+              : formatNumberWithCommas(
+                  Number(printBN(new BN(lpPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                )}
           </Typography>
         )}
         {!isMd && (
