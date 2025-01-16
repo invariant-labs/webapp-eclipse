@@ -19,7 +19,7 @@ export const PaginationList: React.FC<IPaginationList> = ({
 }) => {
   const { classes } = useStyles()
   const position = useMediaQuery(theme.breakpoints.down('sm'))
-  const matches = useMediaQuery(theme.breakpoints.down('md'))
+  const matches = useMediaQuery(theme.breakpoints.down('xs'))
 
   return (
     <div
@@ -33,7 +33,7 @@ export const PaginationList: React.FC<IPaginationList> = ({
         shape='rounded'
         defaultPage={defaultPage}
         onChange={(_e, page) => handleChangePage(page)}
-        siblingCount={matches ? -1 : 0}
+        siblingCount={matches ? 0 : 1}
         page={page}
       />
     </div>
