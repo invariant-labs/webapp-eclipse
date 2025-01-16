@@ -1,5 +1,5 @@
-import React, { useEffect, useLayoutEffect, useMemo } from 'react'
-import { Box, Typography } from '@mui/material'
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { Box, Button, Typography } from '@mui/material'
 import useStyles from './styles'
 import { Faq } from './Faq/Faq'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
@@ -29,6 +29,9 @@ import { PoolStructure, Position } from '@invariant-labs/sdk-eclipse/src/market'
 import { isLoadingPositionsList } from '@store/selectors/positions'
 import { WarningBanner } from './WarningBanner/WarningBanner'
 import { checkDataDelay, hexToDate } from '@utils/utils'
+import icons from '@static/icons'
+import { blurContent, unblurContent } from '@utils/uiUtils'
+import LeaderboardTypeModal from '@components/Modals/LeaderboardTypeModal/LeaderboardTypeModal'
 
 const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
@@ -174,8 +177,31 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
     checkBannerState()
   }, [])
 
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  const [selectedOption, setSelectedOption] = useState<string>('Total points')
+  const availableOptions = ['Liquidity', 'Swap', 'Total points']
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+    blurContent()
+    setMenuOpen(true)
+  }
+
+  const handleClose = () => {
+    unblurContent()
+    setMenuOpen(false)
+  }
+
   return (
     <Box className={classes.pageWrapper}>
+      <LeaderboardTypeModal
+        open={menuOpen}
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+        options={availableOptions}
+        selectOption={setSelectedOption}
+      />
+
       {showWarningBanner && isDelayWarning && (
         <WarningBanner
           onClose={handleBannerClose}
@@ -228,7 +254,29 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
               }
             })()}
           </Typography>
-          <Switcher alignment={alignment} setAlignment={setAlignment} />
+          <Box
+            sx={{
+              display: 'flex',
+              position: 'relative',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              flexWrap: 'wrap-reverse'
+            }}>
+            {alignment === 'leaderboard' && (
+              <Box className={classes.leaderboardTypeBox}>
+                <Button
+                  className={classes.leaderboardTypeButton}
+                  disableRipple
+                  disableFocusRipple
+                  onClick={handleClick}>
+                  <Typography className={classes.leaderboardTypeText}>{selectedOption}</Typography>
+                  <img src={icons.dropdown} alt=''></img>
+                </Button>
+              </Box>
+            )}
+            <Switcher alignment={alignment} setAlignment={setAlignment} />
+          </Box>
         </Box>
 
         {content}

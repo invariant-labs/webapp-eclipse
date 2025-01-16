@@ -202,6 +202,39 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: colors.invariant.component,
       borderRadius: 12,
       width: 200
+    },
+    leaderboardTypeBox: {
+      position: 'absolute',
+      left: 0,
+      [theme.breakpoints.down('md')]: {
+        marginTop: 20,
+        position: 'relative'
+      }
+    },
+    leaderboardTypeButton: {
+      position: 'relative',
+      width: 140,
+      height: 32,
+      borderRadius: 10,
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 10,
+      paddingTop: 10,
+      paddingBottom: 10,
+      paddingLeft: 16,
+      paddingRight: 16,
+      backgroundColor: colors.invariant.light,
+      textDecoration: 'none',
+      textTransform: 'none',
+      '&:hover': {
+        backgroundColor: colors.invariant.light
+      }
+    },
+    leaderboardTypeText: {
+      color: colors.invariant.text,
+      ...typography.body2
     }
   }
 })
