@@ -19,7 +19,7 @@ export const PaginationList: React.FC<IPaginationList> = ({
 }) => {
   const { classes } = useStyles()
   const position = useMediaQuery(theme.breakpoints.down('sm'))
-  const matches = useMediaQuery(theme.breakpoints.down('xs'))
+  const matches = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
     <div
