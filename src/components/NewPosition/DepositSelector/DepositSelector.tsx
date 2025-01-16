@@ -455,7 +455,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       </Grid>
 
       <Box className={classes.sectionContainer}>
-        <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
+        <Typography className={classes.depositAmountSectionTitle}>Deposit Amount</Typography>
         <Box className={classes.sliderContainer}>
           <Slider
             min={0}

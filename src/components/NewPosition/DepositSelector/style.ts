@@ -15,6 +15,11 @@ export const useStyles = makeStyles()(theme => {
     },
     sectionTitle: {
       ...typography.heading4,
+      color: colors.white.main,
+      marginBottom: 24
+    },
+    depositAmountSectionTitle: {
+      ...typography.heading4,
       color: colors.white.main
     },
     sectionWrapper: {
