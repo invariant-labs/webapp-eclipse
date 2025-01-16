@@ -29,6 +29,7 @@ export const Primary: Story = {
     onClick: fn(),
     tokenFromSymbol: 'ETH',
     tokenToDecimals: 14,
-    tokenToSymbol: 'USDC'
+    tokenToSymbol: 'USDC',
+    isPairGivingPoints: false
   }
 }
