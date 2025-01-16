@@ -46,6 +46,9 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
     transition: 'all .4s',
     '& ::placeholder': {
       textAlign: 'right'
+    },
+    '& .Mui-disabled': {
+      '-webkit-text-fill-color': `${colors.invariant.textGrey} !important`
     }
   },
   innerInput: {

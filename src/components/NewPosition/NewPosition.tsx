@@ -9,7 +9,11 @@ import {
   NetworkType,
   PositionTokenBlock,
   promotedTiers,
-  REFRESHER_INTERVAL
+  REFRESHER_INTERVAL,
+  WETH_POOL_INIT_LAMPORTS_MAIN,
+  WETH_POOL_INIT_LAMPORTS_TEST,
+  WETH_POSITION_INIT_LAMPORTS_MAIN,
+  WETH_POSITION_INIT_LAMPORTS_TEST
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -47,6 +51,8 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
+import { getMaxLiquidityWithPercentage } from '@invariant-labs/sdk-eclipse/lib/math'
+import { DENOMINATOR } from '@invariant-labs/sdk-eclipse/src'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -121,6 +127,8 @@ export interface INewPosition {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   canNavigate: boolean
+  isAllFundsChecked: boolean
+  setIsAllFundsChecked: (value: boolean) => void
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -177,7 +185,9 @@ export const NewPosition: React.FC<INewPosition> = ({
   walletStatus,
   onConnectWallet,
   onDisconnectWallet,
-  canNavigate
+  canNavigate,
+  isAllFundsChecked,
+  setIsAllFundsChecked
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -364,24 +374,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -510,6 +520,52 @@ export const NewPosition: React.FC<INewPosition> = ({
         return '?cluster=testnet'
     }
   }, [network])
+
+  const [allFundsPercentage, setAllFundsPercentage] = useState(0)
+
+  const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
+    if (network === NetworkType.Testnet) {
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
+    } else {
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_MAIN : WETH_POOL_INIT_LAMPORTS_MAIN
+    }
+  }, [network, isCurrentPoolExisting])
+
+  useEffect(() => {
+    if (tokenAIndex !== null && tokenBIndex !== null && isAllFundsChecked) {
+      const balanceA =
+        tokens[tokenAIndex].assetAddress.toString() ===
+        'So11111111111111111111111111111111111111112'
+          ? tokens[tokenAIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+          : tokens[tokenAIndex].balance
+      const balanceB =
+        tokens[tokenBIndex].assetAddress.toString() ===
+        'So11111111111111111111111111111111111111112'
+          ? tokens[tokenBIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+          : tokens[tokenBIndex].balance
+      const decimalA = tokens[tokenAIndex].decimals
+      const decimalB = tokens[tokenBIndex].decimals
+
+      const [lowerTick, upperTick] = isXtoY ? [leftRange, rightRange] : [rightRange, leftRange]
+      const [x, y] = isXtoY ? [balanceA, balanceB] : [balanceB, balanceA]
+      const [decimalX, decimalY] = isXtoY ? [decimalA, decimalB] : [decimalB, decimalA]
+
+      try {
+        const values = getMaxLiquidityWithPercentage(
+          x,
+          y,
+          lowerTick,
+          upperTick,
+          currentPriceSqrt,
+          new BN(DENOMINATOR).mul(new BN(allFundsPercentage)).div(new BN(100))
+        )
+        setTokenADeposit(isXtoY ? printBN(values.x, decimalX) : printBN(values.y, decimalY))
+        setTokenBDeposit(isXtoY ? printBN(values.y, decimalY) : printBN(values.x, decimalX))
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }, [isAllFundsChecked, tokenAIndex, tokenBIndex, leftRange, rightRange, allFundsPercentage])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -752,6 +808,9 @@ export const NewPosition: React.FC<INewPosition> = ({
           canNavigate={canNavigate}
           isCurrentPoolExisting={isCurrentPoolExisting}
           promotedPoolTierIndex={promotedPoolTierIndex}
+          isAllFundsChecked={isAllFundsChecked}
+          setIsAllFundsChecked={setIsAllFundsChecked}
+          setAllFundsPercentage={setAllFundsPercentage}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>
