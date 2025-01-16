@@ -33,7 +33,7 @@ export const PaginationList: React.FC<IPaginationList> = ({
         shape='rounded'
         defaultPage={defaultPage}
         onChange={(_e, page) => handleChangePage(page)}
-        siblingCount={matches ? -1 : 1}
+        siblingCount={matches ? -1 : 0}
         page={page}
       />
     </div>
