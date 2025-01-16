@@ -26,10 +26,10 @@ const useStyles = makeStyles<{ top?: number }>()((_theme, { top }) => ({
     '&::before': {
       content: '""',
       position: 'absolute',
-      top: '-2px', // border thickness
-      left: '-2px',
-      right: '-2px',
-      bottom: '-2px',
+      top: '-1px', // border thickness
+      left: '-1px',
+      right: '-1px',
+      bottom: '-1px',
       zIndex: -1,
       borderRadius: 14,
       background: colors.invariant.pinkGreenLinearGradient,
