@@ -45,6 +45,11 @@ import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { estimatePointsForLiquidity } from '@invariant-labs/points-sdk'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 
 export interface IProps {
   initialTokenFrom: string
@@ -68,11 +73,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const shouldNotUpdatePriceRange = useSelector(shouldNotUpdateRange)
   const currentNetwork = useSelector(network)
   const { success, inProgress } = useSelector(initPosition)
+  const { promotedPools } = useSelector(leaderboardSelectors.config)
   // const [onlyUserPositions, setOnlyUserPositions] = useState(false)
   const { allData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
   const ticksData = allData
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
-
+  const [liquidity, setLiquidity] = useState<BN>(new BN(0))
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
 
   const [progress, setProgress] = useState<ProgressState>('none')
@@ -170,6 +176,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   useEffect(() => {
     isMountedRef.current = true
+
+    dispatch(leaderboardActions.getLeaderboardConfig())
     return () => {
       isMountedRef.current = false
     }
@@ -507,6 +515,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         )
         if (isMountedRef.current) {
           liquidityRef.current = result.liquidity
+          setLiquidity(result.liquidity)
         }
         return result.y
       }
@@ -519,6 +528,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       )
       if (isMountedRef.current) {
         liquidityRef.current = result.liquidity
+        setLiquidity(result.liquidity)
       }
       return result.x
     } catch (error) {
@@ -531,6 +541,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       )
       if (isMountedRef.current) {
         liquidityRef.current = result.liquidity
+        setLiquidity(result.liquidity)
       }
     }
 
@@ -579,6 +590,34 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       dispatch(connectionActions.setTimeoutError(false))
     }
   }, [isTimeoutError])
+
+  const isPromotedPool = useMemo(() => {
+    if (poolIndex === null) {
+      return false
+    }
+
+    return promotedPools.some(pool => pool.address === allPools[poolIndex].address.toString())
+  }, [promotedPools, poolIndex, allPools])
+
+  const estimatedPointsPerDay: BN = useMemo(() => {
+    const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
+
+    if (!isPromotedPool || poolIndex === null) {
+      return new BN(0)
+    }
+
+    const poolPointsPerSecond = promotedPools.find(
+      pool => pool.address === poolAddress.toString()
+    )!.pointsPerSecond
+
+    const estimatedPoints = estimatePointsForLiquidity(
+      liquidity,
+      allPools[poolIndex] as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
+    return estimatedPoints as BN
+  }, [liquidity, poolIndex, isPromotedPool])
 
   return (
     <NewPosition
@@ -760,6 +799,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
       canNavigate={canNavigate}
+      estimatedPointsPerDay={estimatedPointsPerDay}
+      isPromotedPool={isPromotedPool}
     />
   )
 }

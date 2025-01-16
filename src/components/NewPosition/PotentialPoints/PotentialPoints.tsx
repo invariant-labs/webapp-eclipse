@@ -1,18 +1,57 @@
 import { Box, Grid, Typography } from '@mui/material'
 import classNames from 'classnames'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useStyles } from './style'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
 import { colors, typography } from '@static/theme'
 import icons from '@static/icons'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { BN } from '@coral-xyz/anchor'
+import { formatNumber, printBN } from '@utils/utils'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export interface IPotentialPoints {
   handleClickFAQ: () => void
+  concentrationArray: number[]
+  concentrationIndex: number
+  estimatedPointsPerDay: BN
+  isConnected: boolean
 }
 
-export const PotentialPoints: React.FC<IPotentialPoints> = ({ handleClickFAQ }) => {
-  const { classes } = useStyles()
+export const PotentialPoints: React.FC<IPotentialPoints> = ({
+  handleClickFAQ,
+  concentrationArray,
+  concentrationIndex,
+  estimatedPointsPerDay,
+  isConnected
+}) => {
+  const { minConc, middleConc, maxConc } = useMemo(() => {
+    return {
+      minConc: concentrationArray[0].toFixed(0),
+      middleConc: concentrationArray[Math.floor(concentrationArray.length / 2)].toFixed(0),
+      maxConc: concentrationArray[concentrationArray.length - 1].toFixed(0)
+    }
+  }, [concentrationArray])
+
+  const percentage = useMemo(() => {
+    return +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0)
+  }, [concentrationIndex])
+
+  const { classes } = useStyles({
+    percentage: percentage
+  })
+
+  const isLessThanMinimal = (value: BN) => {
+    const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
+    return value.lt(minimalValue)
+  }
+
+  const pointsPerDayFormat: string | number = isLessThanMinimal(estimatedPointsPerDay)
+    ? isConnected && !estimatedPointsPerDay.isZero()
+      ? '<0.01'
+      : 0
+    : formatNumber(printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL))
+
   return (
     <Box mt={4} mb={8}>
       <GradientBorder borderRadius={24} borderWidth={2}>
@@ -29,7 +68,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({ handleClickFAQ }) 
                   height={24}>
                   <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '12px' }} />
                   <Typography style={typography.caption2}>
-                    Points: <span className={classes.pinkText}>{123.32}</span>
+                    Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
                   </Typography>
                 </Grid>
               </Grid>
@@ -53,7 +92,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({ handleClickFAQ }) 
             <Typography style={(typography.caption1, { position: 'relative' })}>
               Your Potential Points: &nbsp;
               <span className={classes.pinkText}>
-                {12333} &nbsp;
+                {pointsPerDayFormat} &nbsp;
                 <TooltipGradient title='PDD - Points Per 24H' top={-10}>
                   <span>PDD</span>
                 </TooltipGradient>
@@ -68,9 +107,9 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({ handleClickFAQ }) 
                 flexDirection='column'
                 gap={1}
                 style={(typography.caption1, { color: colors.invariant.textGrey })}>
-                <Typography>1x</Typography>
+                <Typography>{minConc}x</Typography>
                 <Typography>
-                  <span>{1}</span>{' '}
+                  <span>{4}</span>{' '}
                   <TooltipGradient title='PDD - Points Per 24H' top={-10}>
                     <span>PDD</span>
                   </TooltipGradient>
@@ -83,7 +122,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({ handleClickFAQ }) 
                 style={
                   (typography.caption1, { color: colors.invariant.textGrey, textAlign: 'center' })
                 }>
-                <Typography>2000x</Typography>
+                <Typography>{middleConc}x</Typography>
                 <Typography>
                   <span>{1}</span>{' '}
                   <TooltipGradient title='PDD - Points Per 24H' top={-10}>
@@ -98,7 +137,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({ handleClickFAQ }) 
                 style={
                   (typography.caption1, { color: colors.invariant.textGrey, textAlign: 'right' })
                 }>
-                <Typography>45666x</Typography>
+                <Typography>{maxConc}x</Typography>
                 <Typography>
                   <span>{1}</span>{' '}
                   <TooltipGradient title='PDD - Points Per 24H' top={-10}>

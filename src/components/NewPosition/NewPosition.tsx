@@ -123,6 +123,8 @@ export interface INewPosition {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   canNavigate: boolean
+  estimatedPointsPerDay: BN
+  isPromotedPool: boolean
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -179,7 +181,9 @@ export const NewPosition: React.FC<INewPosition> = ({
   walletStatus,
   onConnectWallet,
   onDisconnectWallet,
-  canNavigate
+  canNavigate,
+  estimatedPointsPerDay,
+  isPromotedPool
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -198,7 +202,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
 
   const [settings, setSettings] = React.useState<boolean>(false)
-  const [isFAQModalOpen, setIsFAQModalOpen] = React.useState<boolean>(true)
+  const [isFAQModalOpen, setIsFAQModalOpen] = React.useState<boolean>(false)
 
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -855,7 +859,15 @@ export const NewPosition: React.FC<INewPosition> = ({
           />
         )}
       </Grid>
-      <PotentialPoints handleClickFAQ={handleClickFAQ} />
+      {isPromotedPool && (
+        <PotentialPoints
+          handleClickFAQ={handleClickFAQ}
+          concentrationArray={concentrationArray}
+          concentrationIndex={concentrationIndex}
+          estimatedPointsPerDay={estimatedPointsPerDay}
+          isConnected={walletStatus === Status.Init}
+        />
+      )}
       <FAQModal handleClose={handleCloseFAQ} open={isFAQModalOpen} />
     </Grid>
   )

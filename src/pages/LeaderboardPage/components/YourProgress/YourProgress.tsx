@@ -59,7 +59,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
     return value.lt(minimalValue)
   }
-
+  console.log(estimated24hPoints)
   const pointsPerDayFormat: string | number = isLessThanMinimal(estimated24hPoints)
     ? isConnected && !estimated24hPoints.isZero()
       ? '<0.01'
