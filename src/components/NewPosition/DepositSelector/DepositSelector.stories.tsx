@@ -130,7 +130,10 @@ export const Primary: Story = {
     tokenAIndex: 0,
     tokenBIndex: 1,
     canNavigate: true,
-    isCurrentPoolExisting: true
+    isCurrentPoolExisting: true,
+    isAllFundsChecked: false,
+    setIsAllFundsChecked: () => {},
+    setAllFundsPercentage: () => {}
   },
   render: args => <PrimaryComponent {...args} />
 }

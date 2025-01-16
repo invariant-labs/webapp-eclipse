@@ -111,7 +111,9 @@ export const Primary: Story = {
     onConnectWallet: () => {},
     onDisconnectWallet: () => {},
     poolAddress: '',
-    canNavigate: true
+    canNavigate: true,
+    isAllFundsChecked: false,
+    setIsAllFundsChecked: () => {}
   },
   render: () => {
     return (
@@ -173,6 +175,8 @@ export const Primary: Story = {
         onDisconnectWallet={() => {}}
         poolAddress=''
         canNavigate={true}
+        isAllFundsChecked={false}
+        setIsAllFundsChecked={() => {}}
       />
     )
   }
