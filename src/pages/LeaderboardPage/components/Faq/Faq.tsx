@@ -41,6 +41,7 @@ export const Faq = () => {
       Pools currently distributing points: <br></br>
        <ul>
        <li>ETH/USDC (<b>0.09%</b> fee tier)</li>
+       <li>SOL/ETH (<b>0.09%</b> fee tier)</li>
        <li>tETH/ETH (<b>0.01%</b> fee tier)</li>
        </ul>
       <br></br>

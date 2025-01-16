@@ -64,7 +64,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
               textWrap: 'nowrap'
             }
           }}>
-          Invariant Points are live! TETH/ETH is now the next pool distributing points! Check it out
+          Invariant Points are live! SOL/ETH is now the next pool distributing points! Check it out
           <span
             style={{
               color: colors.invariant.pink,
