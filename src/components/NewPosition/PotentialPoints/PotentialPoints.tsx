@@ -109,7 +109,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 style={(typography.caption1, { color: colors.invariant.textGrey })}>
                 <Typography>{minConc}x</Typography>
                 <Typography>
-                  <span>{4}</span>{' '}
+                  <span>{1}</span>{' '}
                   <TooltipGradient title='PDD - Points Per 24H' top={-10}>
                     <span>PDD</span>
                   </TooltipGradient>
