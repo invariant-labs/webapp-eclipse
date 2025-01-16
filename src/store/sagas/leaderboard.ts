@@ -1,7 +1,7 @@
 import { all, call, put, select, spawn, takeEvery } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
 import { handleRpcError } from './connection'
-import { actions, UserStats } from '@store/reducers/leaderboard'
+import { actions, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
 import { getWallet } from './wallet'
 import { PayloadAction } from '@reduxjs/toolkit'
 
@@ -10,9 +10,19 @@ export interface IPromotedPool {
   pointsPerSecond: string
   startCountTimestamp: string
 }
-interface IResponse {
-  user: UserStats | null
-  leaderboard: UserStats[]
+interface ILpLeaderboardResponse {
+  user: ILpEntry | null
+  leaderboard: ILpEntry[]
+  totalItems: number
+}
+interface ISwapLeaderboardResponse {
+  user: ISwapEntry | null
+  leaderboard: ISwapEntry[]
+  totalItems: number
+}
+interface ITotalLeaderboardResponse {
+  user: ITotalEntry | null
+  leaderboard: ITotalEntry[]
   totalItems: number
 }
 interface IConfigResponse {
@@ -21,7 +31,7 @@ interface IConfigResponse {
   promotedPools: IPromotedPool[]
   lastSnapTimestamp: string
 }
-async function fetchLeaderboardData(
+async function fetchLpLeaderboardData(
   network: string,
   userWallet?: string,
   page: number = 1,
@@ -29,12 +39,42 @@ async function fetchLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `https://points.invariant.app/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }
-  return response.json() as Promise<IResponse>
+  return response.json() as Promise<ILpLeaderboardResponse>
+}
+async function fetchSwapLeaderboardData(
+  network: string,
+  userWallet?: string,
+  page: number = 1,
+  itemsPerPage: number = 25
+) {
+  const offset = (page - 1) * itemsPerPage
+  const response = await fetch(
+    `https://points.invariant.app/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+  )
+  if (!response.ok) {
+    throw new Error('Failed to fetch leaderboard data')
+  }
+  return response.json() as Promise<ISwapLeaderboardResponse>
+}
+async function fetchTotalLeaderboardData(
+  network: string,
+  userWallet?: string,
+  page: number = 1,
+  itemsPerPage: number = 25
+) {
+  const offset = (page - 1) * itemsPerPage
+  const response = await fetch(
+    `https://points.invariant.app/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+  )
+  if (!response.ok) {
+    throw new Error('Failed to fetch leaderboard data')
+  }
+  return response.json() as Promise<ITotalLeaderboardResponse>
 }
 async function fetchLeaderboardConfig() {
   const response = await fetch(`https://points.invariant.app/api/config`)
@@ -51,30 +91,31 @@ export function* getLeaderboard(
     const wallet = yield* call(getWallet)
     const { page, itemsPerPage } = action.payload
 
-    const leaderboardData = yield* call(
-      fetchLeaderboardData,
+    const leaderboardLpData: ILpLeaderboardResponse = yield* call(
+      fetchLpLeaderboardData,
+      currentNetwork.toLowerCase(),
+      wallet?.publicKey?.toString() ?? null,
+      page,
+      itemsPerPage
+    )
+    yield* put(actions.setLpLeaderboardData(leaderboardLpData))
+    const leaderboardSwapData: ISwapLeaderboardResponse = yield* call(
+      fetchSwapLeaderboardData,
+      currentNetwork.toLowerCase(),
+      wallet?.publicKey?.toString() ?? null,
+      page,
+      itemsPerPage
+    )
+    yield* put(actions.setSwapLeaderboardData(leaderboardSwapData))
+    const leaderboardTotalData: ITotalLeaderboardResponse = yield* call(
+      fetchTotalLeaderboardData,
       currentNetwork.toLowerCase(),
       wallet?.publicKey?.toString() ?? null,
       page,
       itemsPerPage
     )
 
-    const parsedData = {
-      user: leaderboardData.user
-        ? {
-            ...leaderboardData.user,
-            address: leaderboardData.user.address
-          }
-        : null,
-
-      leaderboard: leaderboardData.leaderboard.map((entry: any) => ({
-        ...entry,
-        address: entry.address
-      })),
-      totalItems: leaderboardData.totalItems
-    }
-
-    yield* put(actions.setLeaderboardData(parsedData))
+    yield* put(actions.setTotalLeaderboardData(leaderboardTotalData))
   } catch (error) {
     yield* put(actions.setLoadingState(false))
     console.log(error)

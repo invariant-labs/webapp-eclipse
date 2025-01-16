@@ -79,14 +79,14 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                       value:
                         trimZeros(
                           formatLargeNumber(
-                            +printBN(new BN(userStats?.points, 'hex'), LEADERBOARD_DECIMAL)
+                            +printBN(new BN(userStats.total?.points, 'hex'), LEADERBOARD_DECIMAL)
                           )
                         ) ?? 0,
                       label: 'Your Points',
                       styleVariant: classes.counterYourPoints
                     },
                     {
-                      value: `# ${userStats?.rank ?? totalItems + 1}`,
+                      value: `# ${userStats.total?.rank ?? totalItems + 1}`,
                       label: 'Your Ranking Position',
                       styleVariant: classes.counterYourRanking
                     }

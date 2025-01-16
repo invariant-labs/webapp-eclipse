@@ -1,13 +1,14 @@
 import React from 'react'
 import useStyles from './style'
 import { Button, Grid, Popover, Typography } from '@mui/material'
+import { LeaderBoardType } from '@store/reducers/leaderboard'
 
 export interface ISelectNetworkModal {
   open: boolean
   anchorEl: HTMLButtonElement | null
   handleClose: () => void
-  selectOption: (option: string) => void
-  options: string[]
+  selectOption: (option: LeaderBoardType) => void
+  options: LeaderBoardType[]
 }
 
 export const LeaderboardTypeModal: React.FC<ISelectNetworkModal> = ({
@@ -18,7 +19,7 @@ export const LeaderboardTypeModal: React.FC<ISelectNetworkModal> = ({
   options
 }) => {
   const { classes } = useStyles()
-  const handleSave = (opt: string) => {
+  const handleSave = (opt: LeaderBoardType) => {
     selectOption(opt)
     handleClose()
   }
