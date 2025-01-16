@@ -214,7 +214,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [tickSpacing, midPrice.index])
 
   const [concentrationIndex, setConcentrationIndex] = useState(
-    getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 40)
+    getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 34)
   )
 
   const setRangeBlockerInfo = () => {
@@ -471,7 +471,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         )
 
         const concParam = concentration ? `?conc=${concentrationArray[validIndex].toFixed(0)}` : ''
-        const rangeParam = isRange ? '&rangeMode=true' : '&rangeMode=false'
+        const rangeParam = isRange ? '&range=true' : '&range=false'
 
         navigate(
           `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,

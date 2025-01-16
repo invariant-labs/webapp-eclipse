@@ -156,7 +156,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
     const concentrationParam = initialConcentration ? `?conc=${initialConcentration}` : ''
     const rangeParam =
-      initialIsRange && !initialIsConcentrationOpening ? `&rangeMode=true` : '&rangeMode=false'
+      initialIsRange && !initialIsConcentrationOpening ? `&range=true` : '&range=false'
 
     if (fromAddress && fromIndex !== -1 && toAddress && toIndex !== -1) {
       return `/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}${concentrationParam}${rangeParam}`
