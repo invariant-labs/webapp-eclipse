@@ -1,13 +1,15 @@
 import React from 'react'
 import useStyles from './style'
-import { Button, Grid, Popover, Typography } from '@mui/material'
+import { Button, Grid, Popover } from '@mui/material'
+import { LeaderBoardType } from '@store/reducers/leaderboard'
 
 export interface ISelectNetworkModal {
   open: boolean
   anchorEl: HTMLButtonElement | null
   handleClose: () => void
-  selectOption: (option: string) => void
-  options: string[]
+  selectOption: (option: LeaderBoardType) => void
+  options: LeaderBoardType[]
+  currentOption: LeaderBoardType
 }
 
 export const LeaderboardTypeModal: React.FC<ISelectNetworkModal> = ({
@@ -15,10 +17,11 @@ export const LeaderboardTypeModal: React.FC<ISelectNetworkModal> = ({
   open,
   handleClose,
   selectOption,
-  options
+  options,
+  currentOption
 }) => {
   const { classes } = useStyles()
-  const handleSave = (opt: string) => {
+  const handleSave = (opt: LeaderBoardType) => {
     selectOption(opt)
     handleClose()
   }
@@ -37,12 +40,13 @@ export const LeaderboardTypeModal: React.FC<ISelectNetworkModal> = ({
         horizontal: 'center'
       }}>
       <Grid className={classes.root}>
-        <Typography className={classes.modalTitle}>Leaderboard types:</Typography>
-        {options.map(opt => (
-          <Button onClick={() => handleSave(opt)} className={classes.optionButton} disableRipple>
-            {opt}
-          </Button>
-        ))}
+        {options
+          .filter(item => item !== currentOption)
+          .map(opt => (
+            <Button onClick={() => handleSave(opt)} className={classes.optionButton} disableRipple>
+              {opt}
+            </Button>
+          ))}
       </Grid>
     </Popover>
   )

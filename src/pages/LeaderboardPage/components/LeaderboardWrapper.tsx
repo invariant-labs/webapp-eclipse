@@ -4,13 +4,8 @@ import useStyles from './styles'
 import { Faq } from './Faq/Faq'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions } from '@store/reducers/leaderboard'
-import {
-  getPromotedPools,
-  lastTimestamp,
-  leaderboardSelectors,
-  topRankedUsers
-} from '@store/selectors/leaderboard'
+import { actions, LeaderBoardType } from '@store/reducers/leaderboard'
+import { getPromotedPools, lastTimestamp, leaderboardSelectors } from '@store/selectors/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as positionListActions } from '@store/reducers/positions'
 import { YourProgress } from './YourProgress/YourProgress'
@@ -30,7 +25,6 @@ import { isLoadingPositionsList } from '@store/selectors/positions'
 import { WarningBanner } from './WarningBanner/WarningBanner'
 import { checkDataDelay, hexToDate } from '@utils/utils'
 import icons from '@static/icons'
-import { blurContent, unblurContent } from '@utils/uiUtils'
 import LeaderboardTypeModal from '@components/Modals/LeaderboardTypeModal/LeaderboardTypeModal'
 
 const BANNER_STORAGE_KEY = 'invariant-warning-banner'
@@ -48,14 +42,13 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const { classes } = useStyles()
   const currentNetwork = useSelector(network)
 
-  const isLoading = useSelector(leaderboardSelectors.loading)
   const lastSnapTimestamp = useSelector(lastTimestamp)
-  const leaderboard = useSelector(topRankedUsers)
   const userStats = useSelector(leaderboardSelectors.currentUser)
   const top3Scorers = useSelector(leaderboardSelectors.top3Scorers)
   const list = useSelector(positionsWithPoolsData)
   const dispatch = useDispatch()
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
+  const type = useSelector(leaderboardSelectors.type)
   const promotedPools = useSelector(getPromotedPools)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
@@ -122,11 +115,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
 
   const content = React.useMemo(() => {
     if (alignment === 'leaderboard') {
-      return <LeaderboardList data={leaderboard} isLoading={isLoading} />
+      return <LeaderboardList />
     } else if (alignment === 'faq') {
       return <Faq />
     }
-  }, [alignment, leaderboard, isLoading])
+  }, [alignment])
 
   const copyAddressHandler = (message: string, variant: VariantType) => {
     dispatch(
@@ -179,19 +172,23 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
 
   const [menuOpen, setMenuOpen] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-  const [selectedOption, setSelectedOption] = useState<string>('Total points')
-  const availableOptions = ['Liquidity', 'Swap', 'Total points']
+  const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total points')
+  const availableOptions: LeaderBoardType[] = ['Total points', 'Liquidity', 'Swap']
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (menuOpen) {
+      handleClose()
+      return
+    }
     setAnchorEl(event.currentTarget)
-    blurContent()
     setMenuOpen(true)
   }
 
   const handleClose = () => {
-    unblurContent()
     setMenuOpen(false)
   }
-
+  useEffect(() => {
+    dispatch(actions.setLeaderBoardType(selectedOption))
+  }, [selectedOption])
   return (
     <Box className={classes.pageWrapper}>
       <LeaderboardTypeModal
@@ -200,6 +197,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
         handleClose={handleClose}
         options={availableOptions}
         selectOption={setSelectedOption}
+        currentOption={selectedOption}
       />
 
       {showWarningBanner && isDelayWarning && (
@@ -219,7 +217,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             width: '100%'
           }}>
           <YourProgress
-            userStats={userStats}
+            userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
             isLoadingList={isLoadingList}
           />
@@ -228,7 +226,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             copyAddressHandler={copyAddressHandler}
             rewardedPoolsData={promotedPoolsData}
           />
-          <TopScorers top3Scorers={top3Scorers} />
+          <TopScorers top3Scorers={top3Scorers} type={type} />
         </Box>
 
         <Box
@@ -271,7 +269,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                   disableFocusRipple
                   onClick={handleClick}>
                   <Typography className={classes.leaderboardTypeText}>{selectedOption}</Typography>
-                  <img src={icons.dropdown} alt=''></img>
+                  {!menuOpen ? (
+                    <img src={icons.dropdown} alt='' />
+                  ) : (
+                    <img src={icons.dropdownReverse} alt='' />
+                  )}
                 </Button>
               </Box>
             )}

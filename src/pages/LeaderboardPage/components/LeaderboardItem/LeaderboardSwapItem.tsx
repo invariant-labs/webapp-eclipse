@@ -15,32 +15,30 @@ import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
-interface BaseLeaderboardItemProps {
+interface BaseLeaderboardSwapItemProps {
   displayType: 'item' | 'header'
 }
 
-interface LeaderboardHeaderProps extends BaseLeaderboardItemProps {
+interface LeaderboardSwapHeaderProps extends BaseLeaderboardSwapItemProps {
   displayType: 'header'
 }
 
-interface LeaderboardItemDetailProps extends BaseLeaderboardItemProps {
+interface LeaderboardSwapItemDetailProps extends BaseLeaderboardSwapItemProps {
   displayType: 'item'
   isYou?: boolean
-
   hideBottomLine?: boolean
-
   points?: string
-  positions?: number
+  swaps?: number
   last24hPoints?: string
   rank?: number
   address?: PublicKey
 }
 
-export type LeaderboardItemProps = LeaderboardHeaderProps | LeaderboardItemDetailProps
+export type LeaderboardSwapItemProps = LeaderboardSwapHeaderProps | LeaderboardSwapItemDetailProps
 
 const PLACE_COLORS = [colors.invariant.yellow, colors.invariant.silver, colors.invariant.bronze]
 
-const LeaderboardHeader: React.FC = () => {
+const LeaderboardSwapHeader: React.FC = () => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -48,18 +46,18 @@ const LeaderboardHeader: React.FC = () => {
     <Grid container classes={{ container: classes.container, root: classes.header }}>
       <Typography style={{ lineHeight: '11px' }}>Rank</Typography>
       <Typography style={{ cursor: 'pointer' }}>Address</Typography>
-      <Typography style={{ cursor: 'pointer' }}>Total points</Typography>
+      <Typography style={{ cursor: 'pointer' }}>Swap points</Typography>
       {!isMd && (
         <>
+          <Typography style={{ cursor: 'pointer' }}>Swaps counts</Typography>
           <Typography style={{ cursor: 'pointer' }}>24H points</Typography>
-          <Typography style={{ cursor: 'pointer' }}>Positions</Typography>
         </>
       )}
     </Grid>
   )
 }
 
-const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
+const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
   const { displayType } = props
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
@@ -67,7 +65,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
   const currentNetwork = useSelector(network)
 
   if (displayType === 'header') {
-    return <LeaderboardHeader />
+    return <LeaderboardSwapHeader />
   }
 
   const {
@@ -76,7 +74,7 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
     isYou = false,
     address = '',
     last24hPoints = 0,
-    positions = 0,
+    swaps = 0,
     hideBottomLine = false
   } = props
 
@@ -149,8 +147,11 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
         <Typography>
           {new BN(points, 'hex').isZero()
             ? 0
-            : formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))}{' '}
+            : formatNumberWithCommas(
+                Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+              )}
         </Typography>
+        {!isMd && <Typography>{swaps}</Typography>}
 
         {!isMd && (
           <Typography>
@@ -170,11 +171,9 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
             </Typography>
           </Typography>
         )}
-
-        {!isMd && <Typography>{positions}</Typography>}
       </Grid>
     </Grid>
   )
 }
 
-export default LeaderboardItem
+export default LeaderboardSwapItem
