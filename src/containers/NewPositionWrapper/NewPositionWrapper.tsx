@@ -6,7 +6,7 @@ import {
   bestTiers,
   commonTokensForNetworks
 } from '@store/consts/static'
-import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+import { PositionOpeningMethod, PotentialLiquidity, TokenPriceData } from '@store/consts/types'
 import {
   addNewTokenToLocalStorage,
   calcPriceBySqrtPrice,
@@ -78,7 +78,15 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const { allData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
   const ticksData = allData
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
+
+  const [potentialLiquidity, setPotentialLiquidity] = useState<{
+    min: BN
+    middle: BN
+    max: BN
+  }>({ min: new BN(0), middle: new BN(0), max: new BN(0) })
+
   const [liquidity, setLiquidity] = useState<BN>(new BN(0))
+
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
 
   const [progress, setProgress] = useState<ProgressState>('none')
@@ -493,7 +501,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_NEW_POSITION_SLIPPAGE', slippage)
   }
 
-  const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
+  const calcAmount = (
+    amount: BN,
+    left: number,
+    right: number,
+    tokenAddress: PublicKey,
+    calcPotentialLiquidity?: PotentialLiquidity
+  ) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
       return new BN(0)
     }
@@ -513,11 +527,32 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
           true
         )
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
+
+        if (calcPotentialLiquidity) {
+          switch (calcPotentialLiquidity) {
+            case PotentialLiquidity.Min:
+              setPotentialLiquidity(prev => ({ ...prev, min: result.liquidity }))
+              break
+
+            case PotentialLiquidity.Middle:
+              setPotentialLiquidity(prev => ({ ...prev, middle: result.liquidity }))
+              break
+
+            case PotentialLiquidity.Max:
+              setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
+              break
+
+            default:
+              break
+          }
+        } else {
+          if (isMountedRef.current) {
+            liquidityRef.current = result.liquidity
+          }
+
           setLiquidity(result.liquidity)
+          return result.y
         }
-        return result.y
       }
       const result = getLiquidityByY(
         amount,
@@ -526,11 +561,33 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
         true
       )
-      if (isMountedRef.current) {
-        liquidityRef.current = result.liquidity
+
+      if (calcPotentialLiquidity) {
+        switch (calcPotentialLiquidity) {
+          case PotentialLiquidity.Min:
+            setPotentialLiquidity(prev => ({ ...prev, min: result.liquidity }))
+            break
+
+          case PotentialLiquidity.Middle:
+            setPotentialLiquidity(prev => ({ ...prev, middle: result.liquidity }))
+            break
+
+          case PotentialLiquidity.Max:
+            setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
+            break
+
+          default:
+            break
+        }
+      } else {
+        if (isMountedRef.current) {
+          liquidityRef.current = result.liquidity
+        }
+
         setLiquidity(result.liquidity)
+
+        return result.x
       }
-      return result.x
     } catch (error) {
       const result = (byX ? getLiquidityByY : getLiquidityByX)(
         amount,
@@ -541,7 +598,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       )
       if (isMountedRef.current) {
         liquidityRef.current = result.liquidity
-        setLiquidity(result.liquidity)
       }
     }
 
@@ -618,6 +674,42 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
     return estimatedPoints as BN
   }, [liquidity, poolIndex, isPromotedPool])
+
+  const estimatedPointsForScale = (): { min: BN; middle: BN; max: BN } => {
+    const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
+
+    if (!isPromotedPool || poolIndex === null) {
+      return { min: new BN(0), middle: new BN(0), max: new BN(0) }
+    }
+
+    const poolPointsPerSecond = promotedPools.find(
+      pool => pool.address === poolAddress.toString()
+    )!.pointsPerSecond
+
+    const estimatedMinPoints = estimatePointsForLiquidity(
+      potentialLiquidity.min,
+      allPools[poolIndex] as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
+    const estimatedMiddlePoints = estimatePointsForLiquidity(
+      potentialLiquidity.middle,
+      allPools[poolIndex] as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
+    const estimatedMaxPoints = estimatePointsForLiquidity(
+      potentialLiquidity.max,
+      allPools[poolIndex] as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
+    return {
+      min: estimatedMinPoints as BN,
+      middle: estimatedMiddlePoints as BN,
+      max: estimatedMaxPoints as BN
+    }
+  }
 
   return (
     <NewPosition
@@ -800,6 +892,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       initialSlippage={initialSlippage}
       canNavigate={canNavigate}
       estimatedPointsPerDay={estimatedPointsPerDay}
+      estimatedPointsForScale={estimatedPointsForScale}
       isPromotedPool={isPromotedPool}
     />
   )

@@ -113,6 +113,11 @@ export const Primary: Story = {
     poolAddress: '',
     canNavigate: true,
     estimatedPointsPerDay: new BN(100000000),
+    estimatedPointsForScale: () => ({
+      min: new BN(100000000),
+      middle: new BN(100000000000),
+      max: new BN(10000000000000)
+    }),
     isPromotedPool: false
   },
   render: () => {
@@ -177,6 +182,11 @@ export const Primary: Story = {
         canNavigate={true}
         estimatedPointsPerDay={new BN(100000000)}
         isPromotedPool={false}
+        estimatedPointsForScale={() => ({
+          min: new BN(100000000),
+          middle: new BN(100000000000),
+          max: new BN(10000000000000)
+        })}
       />
     )
   }

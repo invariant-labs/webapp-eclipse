@@ -15,6 +15,7 @@ export interface IPotentialPoints {
   concentrationArray: number[]
   concentrationIndex: number
   estimatedPointsPerDay: BN
+  estimatedScalePoints: { min: BN; middle: BN; max: BN }
   isConnected: boolean
 }
 
@@ -23,7 +24,8 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
   concentrationArray,
   concentrationIndex,
   estimatedPointsPerDay,
-  isConnected
+  isConnected,
+  estimatedScalePoints
 }) => {
   const { minConc, middleConc, maxConc } = useMemo(() => {
     return {
@@ -51,6 +53,32 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
       ? '<0.01'
       : 0
     : formatNumber(printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL))
+
+  const estimatedPointsForScaleFormat = useMemo(() => {
+    const minPoints = isLessThanMinimal(estimatedScalePoints.min)
+      ? isConnected && !estimatedScalePoints.min.isZero()
+        ? '<0.01'
+        : 0
+      : formatNumber(printBN(estimatedScalePoints.min, LEADERBOARD_DECIMAL))
+
+    const middlePoints = isLessThanMinimal(estimatedScalePoints.middle)
+      ? isConnected && !estimatedScalePoints.middle.isZero()
+        ? '<0.01'
+        : 0
+      : formatNumber(printBN(estimatedScalePoints.middle, LEADERBOARD_DECIMAL))
+
+    const maxPoints = isLessThanMinimal(estimatedScalePoints.max)
+      ? isConnected && !estimatedScalePoints.max.isZero()
+        ? '<0.01'
+        : 0
+      : formatNumber(printBN(estimatedScalePoints.max, LEADERBOARD_DECIMAL))
+
+    return {
+      min: minPoints,
+      middle: middlePoints,
+      max: maxPoints
+    }
+  }, [estimatedScalePoints])
 
   return (
     <Box mt={4} mb={8}>
@@ -109,7 +137,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 style={(typography.caption1, { color: colors.invariant.textGrey })}>
                 <Typography>{minConc}x</Typography>
                 <Typography>
-                  <span>{1}</span>{' '}
+                  <span>{estimatedPointsForScaleFormat.min}</span>{' '}
                   <TooltipGradient title='PDD - Points Per 24H' top={-10}>
                     <span>PDD</span>
                   </TooltipGradient>
@@ -124,7 +152,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 }>
                 <Typography>{middleConc}x</Typography>
                 <Typography>
-                  <span>{1}</span>{' '}
+                  <span>{estimatedPointsForScaleFormat.middle}</span>{' '}
                   <TooltipGradient title='PDD - Points Per 24H' top={-10}>
                     <span>PDD</span>
                   </TooltipGradient>
@@ -139,7 +167,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 }>
                 <Typography>{maxConc}x</Typography>
                 <Typography>
-                  <span>{1}</span>{' '}
+                  <span>{estimatedPointsForScaleFormat.max}</span>{' '}
                   <TooltipGradient title='PDD - Points Per 24H' top={-10}>
                     <span>PDD</span>
                   </TooltipGradient>

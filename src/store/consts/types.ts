@@ -255,3 +255,9 @@ export enum WalletType {
   BACKPACK = 'BACKPACK',
   SALMON = 'SALMON'
 }
+
+export enum PotentialLiquidity {
+  Min = 'min',
+  Middle = 'middle',
+  Max = 'max'
+}
