@@ -124,8 +124,8 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
               Your Potential Points: &nbsp;
               <span className={classes.pinkText}>
                 {pointsPerDayFormat} &nbsp;
-                <TooltipGradient title='PDD - Points Per 24H' top={-10}>
-                  <span>PDD</span>
+                <TooltipGradient title='PPD - Points Per 24H' top={-10}>
+                  <span>PPD</span>
                 </TooltipGradient>
               </span>
             </Typography>
@@ -141,8 +141,8 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 <Typography>{minConc}x</Typography>
                 <Typography>
                   <span>{estimatedPointsForScaleFormat.min}</span>{' '}
-                  <TooltipGradient title='PDD - Points Per 24H' top={-10}>
-                    <span>PDD</span>
+                  <TooltipGradient title='PPD - Points Per 24H' top={-10}>
+                    <span>PPD</span>
                   </TooltipGradient>
                 </Typography>
               </Grid>
@@ -156,8 +156,8 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 <Typography>{middleConc}x</Typography>
                 <Typography>
                   <span>{estimatedPointsForScaleFormat.middle}</span>{' '}
-                  <TooltipGradient title='PDD - Points Per 24H' top={-10}>
-                    <span>PDD</span>
+                  <TooltipGradient title='PPD - Points Per 24H' top={-10}>
+                    <span>PPD</span>
                   </TooltipGradient>
                 </Typography>
               </Grid>
@@ -171,8 +171,8 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 <Typography>{maxConc}x</Typography>
                 <Typography>
                   <span>{estimatedPointsForScaleFormat.max}</span>{' '}
-                  <TooltipGradient title='PDD - Points Per 24H' top={-10}>
-                    <span>PDD</span>
+                  <TooltipGradient title='PPD - Points Per 24H' top={-10}>
+                    <span>PPD</span>
                   </TooltipGradient>
                 </Typography>
               </Grid>
