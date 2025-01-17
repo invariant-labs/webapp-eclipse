@@ -10,6 +10,7 @@ import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions } from '@store/reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
@@ -43,6 +44,7 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
+import { feeds, pointsPerUsd } from '@store/selectors/leaderboard'
 
 type Props = {
   initialTokenFrom: string
@@ -64,6 +66,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const isBalanceLoading = useSelector(balanceLoading)
   const { success, inProgress } = useSelector(swapPool)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
+  const pointsPerUsdFee = useSelector(pointsPerUsd)
+  const priceFeeds = useSelector(feeds)
   const networkType = useSelector(network)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
@@ -73,6 +77,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
+
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -110,8 +118,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
       ? tickerToAddress(networkType, initialTokenFrom)
-      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString())
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
     tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
@@ -394,6 +402,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         dispatch(connectionActions.setTimeoutError(false))
       }}
       canNavigate={canNavigate}
+      pointsPerUsdFee={pointsPerUsdFee}
+      feeds={priceFeeds}
     />
   )
 }

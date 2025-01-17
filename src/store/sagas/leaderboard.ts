@@ -29,8 +29,10 @@ interface IConfigResponse {
   refreshTime: number
   pointsDecimal: number
   promotedPools: IPromotedPool[]
+  pointsPerUSD: number
   lastSnapTimestamp: string
 }
+
 async function fetchLpLeaderboardData(
   network: string,
   userWallet?: string,
@@ -83,6 +85,13 @@ async function fetchLeaderboardConfig() {
   }
   return response.json() as Promise<IConfigResponse>
 }
+async function fetchLeaderboardPriceFeed() {
+  const response = await fetch(`https://points.invariant.app/api/swap/price-feeds`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch leaderboard data')
+  }
+  return response.json()
+}
 export function* getLeaderboard(
   action: PayloadAction<{ page: number; itemsPerPage: number }>
 ): Generator {
@@ -128,17 +137,21 @@ export function* getLeaderboard(
 
 export function* getLeaderboardConfig(): Generator {
   try {
-    const { pointsDecimal, refreshTime, promotedPools, lastSnapTimestamp } =
+    const { pointsDecimal, refreshTime, promotedPools, lastSnapTimestamp, pointsPerUSD } =
       yield* call(fetchLeaderboardConfig)
 
+    const priceFeeds = yield* call(fetchLeaderboardPriceFeed)
     yield* put(
       actions.setLeaderboardConfig({
         pointsDecimal,
         refreshTime,
         promotedPools,
-        lastSnapTimestamp
+        lastSnapTimestamp,
+        pointsPerUSD
       })
     )
+
+    yield* put(actions.setLeaderboardPriceFeeds(priceFeeds))
   } catch (error) {
     console.log(error)
   }

@@ -1,5 +1,6 @@
 import {
   calculatePriceSqrt,
+  DENOMINATOR,
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
@@ -98,6 +99,7 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1860,4 +1862,21 @@ export const checkDataDelay = (date: string | Date, timeInMinutes: number): bool
   const differenceInMinutes = (currentDate.getTime() - inputDate.getTime()) / (1000 * 60)
 
   return differenceInMinutes > timeInMinutes
+}
+
+export const calculatePoints = (
+  amount: BN,
+  decimals: number,
+  feePercentage: BN,
+  priceFeed: string,
+  priceDecimals: number,
+  pointsPerUSD: BN
+) => {
+  const fee = amount.mul(feePercentage).div(new BN(DENOMINATOR))
+  const nominator = fee
+    .mul(new BN(priceFeed))
+    .mul(pointsPerUSD)
+    .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+  const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
+  return nominator.div(denominator)
 }

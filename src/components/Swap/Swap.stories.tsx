@@ -106,7 +106,9 @@ export const Primary: Story = {
     wrappedETHAccountExist: true,
     deleteTimeoutError: fn(),
     isTimeoutError: false,
-    canNavigate: true
+    canNavigate: true,
+    feeds: {},
+    pointsPerUsdFee: new BN(0)
   },
   render: args => {
     return <Swap {...args} />
