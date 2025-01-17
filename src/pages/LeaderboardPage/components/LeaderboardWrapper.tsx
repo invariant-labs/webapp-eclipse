@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Skeleton, Typography } from '@mui/material'
 import useStyles from './styles'
 import { Faq } from './Faq/Faq'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
@@ -119,7 +119,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
 
   const content = React.useMemo(() => {
     if (alignment === 'leaderboard') {
-      return <LeaderboardList data={leaderboard} isLoading={isLoading} />
+      return leaderboard.length === 0 ? (
+        <Skeleton className={classes.skeleton} />
+      ) : (
+        <LeaderboardList data={leaderboard} isLoading={isLoading} />
+      )
     } else if (alignment === 'faq') {
       return <Faq />
     }

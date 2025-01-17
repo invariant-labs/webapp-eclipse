@@ -45,6 +45,15 @@ const useStyles = makeStyles()(() => {
       paddingLeft: 24,
       paddingRight: 24,
       background: colors.invariant.component
+    },
+    skeleton: {
+      borderRadius: 24,
+      opacity: 0.7,
+      height: 267,
+      width: 319,
+      [theme.breakpoints.down('md')]: {
+        height: 122
+      }
     }
   }
 })
