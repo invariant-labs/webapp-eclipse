@@ -1,17 +1,23 @@
 import { styled, Switch } from '@mui/material'
 import { colors } from '@static/theme'
 
-export const AllFundsSwitch = styled(Switch)(({ theme }) => ({
+export const DepositPercentageSwitch = styled(Switch)(({ theme }) => ({
   width: 26,
   height: 14,
   padding: 0,
   '& .MuiSwitch-switchBase': {
     padding: 1,
+
     '&.Mui-checked': {
       transform: 'translateX(12px)',
+
       '& + .MuiSwitch-track': {
         opacity: 1,
-        background: colors.invariant.greenLinearGradientOpacity
+        background: colors.invariant.dark
+      },
+
+      '& .MuiSwitch-thumb': {
+        background: colors.invariant.pink
       }
     }
   },
@@ -24,6 +30,8 @@ export const AllFundsSwitch = styled(Switch)(({ theme }) => ({
     })
   },
   '& .MuiSwitch-track': {
+    opacity: 1,
+    background: colors.invariant.dark,
     boxSizing: 'border-box',
     border: `1px solid ${colors.invariant.light}`
   }

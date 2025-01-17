@@ -127,8 +127,6 @@ export interface INewPosition {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   canNavigate: boolean
-  isAllFundsChecked: boolean
-  setIsAllFundsChecked: (value: boolean) => void
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -185,9 +183,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   walletStatus,
   onConnectWallet,
   onDisconnectWallet,
-  canNavigate,
-  isAllFundsChecked,
-  setIsAllFundsChecked
+  canNavigate
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -521,7 +517,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }, [network])
 
-  const [allFundsPercentage, setAllFundsPercentage] = useState(0)
+  const [depositPercentage, setDepositPercentage] = useState(0)
+  const [isCustomAmounts, setIsCustomAmounts] = useState(true)
 
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -532,7 +529,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [network, isCurrentPoolExisting])
 
   useEffect(() => {
-    if (tokenAIndex !== null && tokenBIndex !== null && isAllFundsChecked) {
+    if (tokenAIndex !== null && tokenBIndex !== null && !isCustomAmounts) {
       const balanceA =
         tokens[tokenAIndex].assetAddress.toString() ===
         'So11111111111111111111111111111111111111112'
@@ -557,15 +554,35 @@ export const NewPosition: React.FC<INewPosition> = ({
           lowerTick,
           upperTick,
           currentPriceSqrt,
-          new BN(DENOMINATOR).mul(new BN(allFundsPercentage)).div(new BN(100))
+          new BN(DENOMINATOR).mul(new BN(depositPercentage)).div(new BN(100))
         )
-        setTokenADeposit(isXtoY ? printBN(values.x, decimalX) : printBN(values.y, decimalY))
-        setTokenBDeposit(isXtoY ? printBN(values.y, decimalY) : printBN(values.x, decimalX))
+
+        if (!(x.lt(new BN(0)) || y.lt(new BN(0)))) {
+          setTokenADeposit(
+            trimLeadingZeros(isXtoY ? printBN(values.x, decimalX) : printBN(values.y, decimalY))
+          )
+          setTokenBDeposit(
+            trimLeadingZeros(isXtoY ? printBN(values.y, decimalY) : printBN(values.x, decimalX))
+          )
+        } else {
+          setTokenADeposit('0')
+          setTokenBDeposit('0')
+        }
       } catch (e) {
         console.log(e)
       }
     }
-  }, [isAllFundsChecked, tokenAIndex, tokenBIndex, leftRange, rightRange, allFundsPercentage])
+  }, [
+    isCustomAmounts,
+    tokenAIndex,
+    tokenBIndex,
+    leftRange,
+    rightRange,
+    currentPriceSqrt,
+    isBalanceLoading,
+    walletStatus,
+    depositPercentage
+  ])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -808,9 +825,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           canNavigate={canNavigate}
           isCurrentPoolExisting={isCurrentPoolExisting}
           promotedPoolTierIndex={promotedPoolTierIndex}
-          isAllFundsChecked={isAllFundsChecked}
-          setIsAllFundsChecked={setIsAllFundsChecked}
-          setAllFundsPercentage={setAllFundsPercentage}
+          isCustomAmounts={isCustomAmounts}
+          setIsCustomAmounts={setIsCustomAmounts}
+          depositPercentage={depositPercentage}
+          setDepositPercentage={setDepositPercentage}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

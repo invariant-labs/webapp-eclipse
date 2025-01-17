@@ -259,6 +259,16 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
     padding: '0 10px 0 20px',
     width: 15,
     height: 15
+  },
+  disabled: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    zIndex: 11,
+    width: '100%',
+    height: '100%',
+    backgroundColor: 'rgba(11, 12, 13, 0.2)',
+    filter: 'blur(4px) brightness(0.4)'
   }
 }))
 export default useStyles

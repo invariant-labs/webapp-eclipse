@@ -580,8 +580,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [isTimeoutError])
 
-  const [isAllFundsChecked, setIsAllFundsChecked] = useState(false)
-
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
@@ -762,8 +760,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
       canNavigate={canNavigate}
-      isAllFundsChecked={isAllFundsChecked}
-      setIsAllFundsChecked={setIsAllFundsChecked}
     />
   )
 }

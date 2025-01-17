@@ -131,9 +131,10 @@ export const Primary: Story = {
     tokenBIndex: 1,
     canNavigate: true,
     isCurrentPoolExisting: true,
-    isAllFundsChecked: false,
-    setIsAllFundsChecked: () => {},
-    setAllFundsPercentage: () => {}
+    isCustomAmounts: false,
+    setIsCustomAmounts: () => {},
+    depositPercentage: 0,
+    setDepositPercentage: () => {}
   },
   render: args => <PrimaryComponent {...args} />
 }

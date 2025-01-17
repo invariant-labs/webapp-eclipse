@@ -1,7 +1,7 @@
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
-import { Box, Grid, Slider, SliderThumb, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
@@ -15,7 +15,7 @@ import {
 import classNames from 'classnames'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import FeeSwitch from '../FeeSwitch/FeeSwitch'
-import { useSliderStyles, useStyles, useThumbStyles } from './style'
+import { useStyles } from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
@@ -32,7 +32,8 @@ import {
   trimDecimalZeros
 } from '@utils/utils'
 import { createButtonActions } from '@utils/uiUtils'
-import { AllFundsSwitch } from './Switch/Switch'
+import { DepositPercentageSwitch } from './DepositPercentageSwitch/DepositPercentageSwitch'
+import { DepositPercentageSlider } from './DepositPercentageSlider/DepositPercentageSlider'
 
 export interface InputState {
   value: string
@@ -40,21 +41,6 @@ export interface InputState {
   blocked: boolean
   blockerInfo?: string
   decimalsLimit: number
-}
-
-interface ThumbComponentProps extends React.HTMLAttributes<unknown> {}
-
-function ThumbComponent(props: ThumbComponentProps) {
-  const { classes } = useThumbStyles()
-  const { children, ...other } = props
-  return (
-    <SliderThumb {...other} aria-label='slider thumb'>
-      {children}
-      <Grid className={classes.outerCircle}>
-        <Grid className={classes.innerCircle} />
-      </Grid>
-    </SliderThumb>
-  )
 }
 
 export interface IDepositSelector {
@@ -104,9 +90,10 @@ export interface IDepositSelector {
   canNavigate: boolean
   isCurrentPoolExisting: boolean
   promotedPoolTierIndex: number | undefined
-  isAllFundsChecked: boolean
-  setIsAllFundsChecked: (value: boolean) => void
-  setAllFundsPercentage: (value: number) => void
+  isCustomAmounts: boolean
+  setIsCustomAmounts: (value: boolean) => void
+  depositPercentage: number
+  setDepositPercentage: (value: number) => void
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -148,15 +135,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   ethBalance,
   canNavigate,
   isCurrentPoolExisting,
-  isAllFundsChecked,
-  setIsAllFundsChecked,
-  setAllFundsPercentage
+  isCustomAmounts,
+  setIsCustomAmounts,
+  depositPercentage,
+  setDepositPercentage
 }) => {
   const { classes } = useStyles()
-  const { classes: sliderClasses } = useSliderStyles({
-    valuesLength: 99,
-    disabledRange: !isAllFundsChecked ? 99 : 0
-  })
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
@@ -457,23 +441,19 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       <Box className={classes.sectionContainer}>
         <Typography className={classes.depositAmountSectionTitle}>Deposit Amount</Typography>
         <Box className={classes.sliderContainer}>
-          <Slider
-            min={0}
-            max={100}
-            marks={[{ value: 0 }, { value: 50 }, { value: 100 }]}
-            classes={sliderClasses}
-            slots={{ thumb: ThumbComponent }}
-            track={false}
-            valueLabelDisplay='on'
-            valueLabelFormat={value => `${value}%`}
-            onChange={e => setAllFundsPercentage(+(e.target as HTMLInputElement).value)}
-            disabled={!isAllFundsChecked}
+          <DepositPercentageSlider
+            depositPercentage={depositPercentage}
+            setDepositPercentage={setDepositPercentage}
+            isCustomAmounts={isCustomAmounts}
           />
         </Box>
         <Box className={classes.allFundsSwitchContainer}>
-          <AllFundsSwitch onClick={() => setIsAllFundsChecked(!isAllFundsChecked)} />
-          <p className={classes.allFundsText}>Use all funds</p>
-          <TooltipHover text='Click to add maximum possible liquidity'>
+          <DepositPercentageSwitch
+            checked={isCustomAmounts}
+            onClick={() => setIsCustomAmounts(!isCustomAmounts)}
+          />
+          <p className={classes.allFundsText}>Custom amounts</p>
+          <TooltipHover text='Switch between custom liquidity and max liquidity percentage deposits'>
             <span className={classes.allFundsInfo}>i</span>
           </TooltipHover>
         </Box>
@@ -524,7 +504,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           priceLoading={priceALoading}
           isBalanceLoading={isBalanceLoading}
           walletUninitialized={walletStatus !== Status.Initialized}
-          disabled={isAllFundsChecked}
+          disabled={!isCustomAmounts}
         />
 
         <DepositAmountInput
@@ -569,7 +549,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           priceLoading={priceBLoading}
           isBalanceLoading={isBalanceLoading}
           walletUninitialized={walletStatus !== Status.Initialized}
-          disabled={isAllFundsChecked}
+          disabled={!isCustomAmounts}
         />
       </Grid>
       {walletStatus !== Status.Initialized ? (
