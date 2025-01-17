@@ -25,7 +25,6 @@ import { isLoadingPositionsList } from '@store/selectors/positions'
 import { WarningBanner } from './WarningBanner/WarningBanner'
 import { checkDataDelay, hexToDate } from '@utils/utils'
 import icons from '@static/icons'
-import { blurContent, unblurContent } from '@utils/uiUtils'
 import LeaderboardTypeModal from '@components/Modals/LeaderboardTypeModal/LeaderboardTypeModal'
 
 const BANNER_STORAGE_KEY = 'invariant-warning-banner'
@@ -174,15 +173,17 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const [menuOpen, setMenuOpen] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total points')
-  const availableOptions: LeaderBoardType[] = ['Liquidity', 'Swap', 'Total points']
+  const availableOptions: LeaderBoardType[] = ['Total points', 'Liquidity', 'Swap']
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (menuOpen) {
+      handleClose()
+      return
+    }
     setAnchorEl(event.currentTarget)
-    blurContent()
     setMenuOpen(true)
   }
 
   const handleClose = () => {
-    unblurContent()
     setMenuOpen(false)
   }
   useEffect(() => {
@@ -196,6 +197,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
         handleClose={handleClose}
         options={availableOptions}
         selectOption={setSelectedOption}
+        currentOption={selectedOption}
       />
 
       {showWarningBanner && isDelayWarning && (
@@ -267,7 +269,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                   disableFocusRipple
                   onClick={handleClick}>
                   <Typography className={classes.leaderboardTypeText}>{selectedOption}</Typography>
-                  <img src={icons.dropdown} alt=''></img>
+                  {!menuOpen ? (
+                    <img src={icons.dropdown} alt='' />
+                  ) : (
+                    <img src={icons.dropdownReverse} alt='' />
+                  )}
                 </Button>
               </Box>
             )}

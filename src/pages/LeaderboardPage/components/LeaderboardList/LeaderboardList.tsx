@@ -1,4 +1,4 @@
-import React, { useMemo, useCallback, useEffect } from 'react'
+import React, { useMemo, useCallback } from 'react'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import PurpleWaves from '@static/png/purple_waves.png'
@@ -51,14 +51,14 @@ const getContent = (
         <MemoizedLpLeaderboardItem displayType='header' />
 
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
-          {new Array(itemsPerPage).map((number, idx) => (
+          {Array.from({ length: itemsPerPage }, (_, index) => (
             <MemoizedLpLeaderboardItem
-              key={number}
+              key={index + 1}
               displayType='item'
-              rank={number}
-              positions={number + idx}
-              last24hPoints={number + idx}
-              points={number + idx}
+              rank={index + 1}
+              positions={index + 1}
+              last24hPoints={'00'}
+              points={'00'}
               address={Keypair.generate().publicKey}
             />
           ))}
@@ -233,9 +233,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
       ),
     [type, isLoading, lpData, swapData, totalData, isConnected, userStats]
   )
-  useEffect(() => {
-    console.log(lpData.length, swapData.length, totalData.length)
-  }, [lpData, swapData, totalData])
+
   const handlePageChange = useCallback(
     (page: number) => {
       dispatch(actions.getLeaderboardData({ page, itemsPerPage }))

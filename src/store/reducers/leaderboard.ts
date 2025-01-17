@@ -168,7 +168,6 @@ const leaderboardSlice = createSlice({
       return state
     },
     setLeaderBoardType(state, action: PayloadAction<LeaderBoardType>) {
-      state.currentPage = 1
       state.type = action.payload
       return state
     }
