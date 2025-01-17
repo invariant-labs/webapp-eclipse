@@ -13,37 +13,37 @@ export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers }) => {
   const [firstPlace, secondPlace, thirdPlace] = top3Scorers
   return (
     <>
-      {firstPlace && secondPlace && thirdPlace && (
-        <>
-          <Typography className={classes.leaderboardHeaderSectionTitle}>Top Scorers</Typography>
-          <Box className={classes.sectionContent}>
-            <Hidden lgUp>
-              <ScorerItem
-                points={firstPlace.points}
-                cupVariant='gold'
-                address={firstPlace.address}
-              />
-            </Hidden>
-            <ScorerItem
-              points={secondPlace.points}
-              cupVariant='silver'
-              address={secondPlace.address}
-            />
-            <Hidden lgDown>
-              <ScorerItem
-                points={firstPlace.points}
-                cupVariant='gold'
-                address={firstPlace.address}
-              />
-            </Hidden>
-            <ScorerItem
-              points={thirdPlace.points}
-              cupVariant='bronze'
-              address={thirdPlace.address}
-            />
-          </Box>
-        </>
-      )}
+      <Typography className={classes.leaderboardHeaderSectionTitle}>Top Scorers</Typography>
+      <Box className={classes.sectionContent}>
+        <Hidden lgUp>
+          <ScorerItem
+            points={firstPlace?.points ?? null}
+            cupVariant='gold'
+            address={firstPlace?.address ?? null}
+            showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+          />
+        </Hidden>
+        <ScorerItem
+          points={firstPlace?.points ?? null}
+          cupVariant='silver'
+          address={firstPlace?.address ?? null}
+          showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+        />
+        <Hidden lgDown>
+          <ScorerItem
+            points={firstPlace?.points ?? null}
+            cupVariant='gold'
+            address={firstPlace?.address ?? null}
+            showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+          />
+        </Hidden>
+        <ScorerItem
+          points={firstPlace?.points ?? null}
+          cupVariant='bronze'
+          address={firstPlace?.address ?? null}
+          showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+        />
+      </Box>
     </>
   )
 }
