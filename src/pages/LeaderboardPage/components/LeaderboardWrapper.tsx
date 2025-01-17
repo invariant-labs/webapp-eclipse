@@ -172,8 +172,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
 
   const [menuOpen, setMenuOpen] = useState(false)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-  const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total points')
-  const availableOptions: LeaderBoardType[] = ['Total points', 'Liquidity', 'Swap']
+  const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
+  const availableOptions: LeaderBoardType[] = ['Total', 'Liquidity', 'Swap']
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (menuOpen) {
       handleClose()
@@ -186,9 +186,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const handleClose = () => {
     setMenuOpen(false)
   }
+
   useEffect(() => {
     dispatch(actions.setLeaderBoardType(selectedOption))
   }, [selectedOption])
+
   return (
     <Box className={classes.pageWrapper}>
       <LeaderboardTypeModal

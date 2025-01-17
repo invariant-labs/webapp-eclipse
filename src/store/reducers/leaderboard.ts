@@ -27,7 +27,7 @@ export interface ILpEntry {
   positions: number
 }
 
-export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total points'
+export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
 
 export interface ILeaderboardStore {
   type: LeaderBoardType
@@ -63,7 +63,7 @@ export interface ILeaderboardStore {
 }
 
 export const defaultState: ILeaderboardStore = {
-  type: 'Total points',
+  type: 'Total',
   currentUser: { total: null, lp: null, swap: null },
   leaderboard: { total: [], lp: [], swap: [] },
   top3Scorers: { total: [], lp: [], swap: [] },
