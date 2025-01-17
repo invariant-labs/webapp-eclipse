@@ -161,13 +161,18 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
                 ...typography.heading4
               }}>
               +{' '}
-              {new BN(last24hPoints, 'hex').isZero()
-                ? 0
-                : formatNumberWithCommas(
+              {new BN(last24hPoints, 'hex').isZero() ? (
+                <span style={{ color: colors.invariant.text }}>0</span>
+              ) : (
+                <span>
+                  +{' '}
+                  {formatNumberWithCommas(
                     parseFloat(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(
                       1
                     )
                   )}
+                </span>
+              )}
             </Typography>
           </Typography>
         )}

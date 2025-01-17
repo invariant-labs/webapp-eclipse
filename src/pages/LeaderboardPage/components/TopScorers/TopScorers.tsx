@@ -20,7 +20,7 @@ export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers, type }) =>
     if (type === 'Liquidity') return top3Scorers.lp
     if (type === 'Swap') return top3Scorers.swap
     return top3Scorers.total
-  }, [type])
+  }, [type, top3Scorers])
   const [firstPlace, secondPlace, thirdPlace] = currentTop3
   return (
     <>
