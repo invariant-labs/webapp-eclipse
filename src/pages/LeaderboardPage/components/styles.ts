@@ -206,10 +206,15 @@ const useStyles = makeStyles()((theme: Theme) => {
     leaderboardTypeBox: {
       position: 'absolute',
       left: 0,
-      [theme.breakpoints.down('md')]: {
+      [theme.breakpoints.down(960)]: {
         marginTop: 20,
+        width: '100%',
         position: 'relative'
       }
+    },
+    mobileTypeSwitcherTitle: {
+      color: colors.invariant.text,
+      ...typography.heading4
     },
     leaderboardTypeButton: {
       position: 'relative',

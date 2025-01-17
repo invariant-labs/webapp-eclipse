@@ -1,5 +1,5 @@
 import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './styles'
 import { Faq } from './Faq/Faq'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
@@ -26,6 +26,7 @@ import { WarningBanner } from './WarningBanner/WarningBanner'
 import { checkDataDelay, hexToDate } from '@utils/utils'
 import icons from '@static/icons'
 import LeaderboardTypeModal from '@components/Modals/LeaderboardTypeModal/LeaderboardTypeModal'
+import { theme } from '@static/theme'
 
 const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
@@ -174,6 +175,12 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
   const availableOptions: LeaderBoardType[] = ['Total', 'Liquidity', 'Swap']
+  const isSm = useMediaQuery(theme.breakpoints.down(960))
+  const mobileTitles: Record<string, string> = {
+    ['Total']: 'Total Points',
+    ['Liquidity']: 'Liquidity Points',
+    ['Swap']: 'Swap Points'
+  }
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (menuOpen) {
       handleClose()
@@ -244,7 +251,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             {(() => {
               switch (alignment) {
                 case 'leaderboard':
-                  return 'Point Leaderboard'
+                  return type === 'Liquidity'
+                    ? 'Liquidity Leaderboard'
+                    : type === 'Swap'
+                      ? 'Swap Leaderboard'
+                      : 'Total Leaderboard'
                 case 'faq':
                   return 'Frequent questions'
                 case 'claim':
@@ -265,18 +276,63 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             }}>
             {alignment === 'leaderboard' && (
               <Box className={classes.leaderboardTypeBox}>
-                <Button
-                  className={classes.leaderboardTypeButton}
-                  disableRipple
-                  disableFocusRipple
-                  onClick={handleClick}>
-                  <Typography className={classes.leaderboardTypeText}>{selectedOption}</Typography>
-                  {!menuOpen ? (
-                    <img src={icons.dropdown} alt='' />
-                  ) : (
-                    <img src={icons.dropdownReverse} alt='' />
-                  )}
-                </Button>
+                {!isSm ? (
+                  <Button
+                    className={classes.leaderboardTypeButton}
+                    disableRipple
+                    disableFocusRipple
+                    onClick={handleClick}>
+                    <Typography className={classes.leaderboardTypeText}>
+                      {selectedOption}
+                    </Typography>
+                    {!menuOpen ? (
+                      <img src={icons.dropdown} alt='' />
+                    ) : (
+                      <img src={icons.dropdownReverse} alt='' />
+                    )}
+                  </Button>
+                ) : (
+                  <Box
+                    sx={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexDirection: 'row'
+                    }}>
+                    <img
+                      src={icons.arrowLeft}
+                      alt=''
+                      style={{ cursor: 'pointer' }}
+                      onClick={() =>
+                        setSelectedOption(prev => {
+                          const idx = availableOptions.findIndex(item => item === prev)!
+                          if (idx - 1 < 0) {
+                            return availableOptions[availableOptions.length - 1]
+                          }
+                          return availableOptions[idx - 1]
+                        })
+                      }
+                    />
+                    <Typography className={classes.mobileTypeSwitcherTitle}>
+                      {mobileTitles[selectedOption]}
+                    </Typography>
+                    <img
+                      src={icons.arrowRight}
+                      alt=''
+                      style={{ cursor: 'pointer' }}
+                      onClick={() =>
+                        setSelectedOption(prev => {
+                          const idx = availableOptions.findIndex(item => item === prev)!
+                          if (idx + 1 === availableOptions.length) {
+                            return availableOptions[0]
+                          }
+                          return availableOptions[idx + 1]
+                        })
+                      }
+                    />
+                  </Box>
+                )}
               </Box>
             )}
             <Switcher alignment={alignment} setAlignment={setAlignment} />

@@ -690,7 +690,11 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Grid>
       </Grid>
-      <Box className={isPairGivingPoints ? classes.gradientBorderContainer : ''}>
+      <Box
+        className={classNames(
+          classes.borderContainer,
+          isPairGivingPoints && classes.gradientBorderForContainer
+        )}>
         <Grid container className={classes.root} direction='column'>
           {isPairGivingPoints && renderWaves('top', GreenWaves)}
           <Typography

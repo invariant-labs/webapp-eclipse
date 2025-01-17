@@ -419,7 +419,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       borderBottomRightRadius: 24
     }
   },
-  gradientBorderContainer: {
+  gradientBorderForContainer: {
     background: 'transparent',
     boxShadow: 'none',
     borderRadius: 24,
@@ -429,6 +429,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     backgroundOrigin: 'border-box',
     backgroundClip: 'padding-box, border-box'
   },
+  borderContainer: { maxWidth: 500, width: '100%' },
   textShadowLabel: {
     textShadow: '3px 3px 5px #3A466B'
   }
