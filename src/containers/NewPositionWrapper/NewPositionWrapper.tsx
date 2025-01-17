@@ -51,7 +51,7 @@ export interface IProps {
   initialTokenTo: string
   initialFee: string
   initialConcentration: string
-  initialIsRange: boolean
+  initialIsRange: boolean | null
 }
 
 export const NewPositionWrapper: React.FC<IProps> = ({
@@ -93,6 +93,21 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
+
+  const initialIsConcentrationOpening =
+    localStorage.getItem('OPENING_METHOD') === 'concentration' ||
+    localStorage.getItem('OPENING_METHOD') === null
+
+  const [initialOpeningPositionMethod, setInitialOpeningPositionMethod] =
+    useState<PositionOpeningMethod>(
+      initialIsRange !== null
+        ? initialIsRange
+          ? 'range'
+          : 'concentration'
+        : initialIsConcentrationOpening
+          ? 'concentration'
+          : 'range'
+    )
 
   useEffect(() => {
     const pathTokens: string[] = []
@@ -155,8 +170,23 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const { address: toAddress, index: toIndex } = getTokenIndex(initialTokenTo)
 
     const concentrationParam = initialConcentration ? `?conc=${initialConcentration}` : ''
+
     const rangeParam =
-      initialIsRange && !initialIsConcentrationOpening ? `&range=true` : '&range=false'
+      initialIsRange !== null
+        ? initialIsRange
+          ? `&range=true`
+          : '&range=false'
+        : initialIsConcentrationOpening
+          ? '&range=false'
+          : '&range=true'
+
+    if (rangeParam === '&range=true') {
+      setPositionOpeningMethod('range')
+      setInitialOpeningPositionMethod('range')
+    } else {
+      setPositionOpeningMethod('concentration')
+      setInitialOpeningPositionMethod('concentration')
+    }
 
     if (fromAddress && fromIndex !== -1 && toAddress && toIndex !== -1) {
       return `/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}${concentrationParam}${rangeParam}`
@@ -425,10 +455,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       })
     )
   }
-
-  const initialIsConcentrationOpening =
-    localStorage.getItem('OPENING_METHOD') === 'concentration' ||
-    localStorage.getItem('OPENING_METHOD') === null
 
   const setPositionOpeningMethod = (val: PositionOpeningMethod) => {
     localStorage.setItem('OPENING_METHOD', val)
@@ -744,9 +770,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       }
       handleAddToken={addTokenHandler}
       commonTokens={commonTokensForNetworks[currentNetwork]}
-      initialOpeningPositionMethod={
-        initialIsConcentrationOpening && !initialIsRange ? 'concentration' : 'range'
-      }
+      initialOpeningPositionMethod={initialOpeningPositionMethod}
       onPositionOpeningMethodChange={setPositionOpeningMethod}
       initialHideUnknownTokensValue={initialHideUnknownTokensValue}
       onHideUnknownTokensChange={setHideUnknownTokensValue}
