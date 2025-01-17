@@ -664,6 +664,8 @@ export const Swap: React.FC<ISwap> = ({
       <img src={imageSrc} alt={`${position === 'top' ? 'Purple' : 'Green'} waves`} />
     </div>
   )
+  const stringPointsValue = useMemo(() => printBN(pointsForSwap, 8), [pointsForSwap])
+  const isLessThanOne = useMemo(() => Number(stringPointsValue) < 1, [stringPointsValue])
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -681,12 +683,14 @@ export const Swap: React.FC<ISwap> = ({
           {isPairGivingPoints && (
             <Box className={classes.pointsBox}>
               <img src={icons.airdropRainbow} alt='' />
-              <p>
-                Points:{' '}
-                <span className={classes.pointsAmount}>
-                  {removeAdditionalDecimals(formatNumberWithCommas(printBN(pointsForSwap, 8)), 2)}
-                </span>
-              </p>
+              Points:{' '}
+              <span className={classes.pointsAmount}>
+                {removeAdditionalDecimals(
+                  formatNumberWithCommas(stringPointsValue),
+                  isLessThanOne ? 4 : 2
+                )}
+              </span>{' '}
+              <img src={icons.infoCircle} alt='' width={'14px'} style={{ marginTop: '-2px' }} />
             </Box>
           )}
         </Box>

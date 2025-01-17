@@ -56,6 +56,7 @@ import dropdown from './svg/dropdown.svg'
 import dropdownReverse from './svg/dropdownReverse.svg'
 import arrowLeft from './svg/arrowLeft.svg'
 import arrowRight from './svg/arrowRight.svg'
+import infoCircle from './svg/infoCircle.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -115,7 +116,8 @@ const icons: { [key: string]: string } = {
   dropdown,
   dropdownReverse,
   arrowLeft,
-  arrowRight
+  arrowRight,
+  infoCircle
 }
 
 export default icons
