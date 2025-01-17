@@ -21,7 +21,8 @@ export const {
   itemsPerPage,
   totalItems,
   top3Scorers,
-  config
+  config,
+  priceFeeds
 } = keySelectors(store, [
   'type',
   'currentPage',
@@ -31,7 +32,8 @@ export const {
   'currentUser',
   'top3Scorers',
   'leaderboard',
-  'config'
+  'config',
+  'priceFeeds'
 ])
 
 export const leaderboardSelectors = {
@@ -53,6 +55,8 @@ export const getPromotedPools = createSelector(
 )
 
 export const lastTimestamp = createSelector(config, config => config.lastSnapTimestamp)
+export const pointsPerUsd = createSelector(config, config => config.pointsPerUsd)
+export const feeds = createSelector(priceFeeds, priceFeeds => priceFeeds)
 
 export const topRankedLpUsers = createSelector(
   leaderboard,

@@ -59,7 +59,16 @@ export interface ILeaderboardStore {
     pointsDecimal: number
     promotedPools: IPromotedPool[]
     lastSnapTimestamp: string
+    pointsPerUsd: number
   }
+  priceFeeds: Record<
+    string,
+    {
+      pricePublishTime: number
+      priceDecimals: number
+      price: string
+    }
+  >
 }
 
 export const defaultState: ILeaderboardStore = {
@@ -71,7 +80,14 @@ export const defaultState: ILeaderboardStore = {
   currentPage: 1,
   totalItems: { total: 0, swap: 0, lp: 0 },
   itemsPerPage: 25,
-  config: { refreshTime: 0, pointsDecimal: 0, promotedPools: [], lastSnapTimestamp: '' }
+  config: {
+    refreshTime: 0,
+    pointsDecimal: 0,
+    promotedPools: [],
+    lastSnapTimestamp: '',
+    pointsPerUsd: 0
+  },
+  priceFeeds: {}
 }
 
 export const leaderboardSliceName = 'leaderboard'
@@ -157,14 +173,32 @@ const leaderboardSlice = createSlice({
         pointsDecimal: number
         promotedPools: IPromotedPool[]
         lastSnapTimestamp: string
+        pointsPerUSD: number
       }>
     ) {
       state.config = {
         refreshTime: action.payload.refreshTime,
         pointsDecimal: action.payload.pointsDecimal,
         promotedPools: action.payload.promotedPools,
-        lastSnapTimestamp: action.payload.lastSnapTimestamp
+        lastSnapTimestamp: action.payload.lastSnapTimestamp,
+        pointsPerUsd: action.payload.pointsPerUSD
       }
+      return state
+    },
+    setLeaderboardPriceFeeds(
+      state,
+      action: PayloadAction<
+        Record<
+          string,
+          {
+            pricePublishTime: number
+            priceDecimals: number
+            price: string
+          }
+        >
+      >
+    ) {
+      state.priceFeeds = action.payload
       return state
     },
     setLeaderBoardType(state, action: PayloadAction<LeaderBoardType>) {

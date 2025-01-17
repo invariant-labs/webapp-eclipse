@@ -19,10 +19,13 @@ import {
 } from '@store/consts/static'
 import {
   addressToTicker,
+  calculatePoints,
   convertBalanceToBN,
   findPairs,
+  formatNumberWithCommas,
   handleSimulate,
   printBN,
+  removeAdditionalDecimals,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
@@ -112,6 +115,15 @@ export interface ISwap {
   isTimeoutError: boolean
   deleteTimeoutError: () => void
   canNavigate: boolean
+  pointsPerUsdFee: number
+  feeds: Record<
+    string,
+    {
+      pricePublishTime: number
+      priceDecimals: number
+      price: string
+    }
+  >
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -148,7 +160,9 @@ export const Swap: React.FC<ISwap> = ({
   wrappedETHAccountExist,
   isTimeoutError,
   deleteTimeoutError,
-  canNavigate
+  canNavigate,
+  pointsPerUsdFee,
+  feeds
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -175,6 +189,7 @@ export const Swap: React.FC<ISwap> = ({
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
+  const [pointsForSwap, setPointsForSwap] = React.useState<BN>(new BN(0))
   const [simulateResult, setSimulateResult] = React.useState<{
     amountOut: BN
     poolIndex: number
@@ -228,6 +243,7 @@ export const Swap: React.FC<ISwap> = ({
       )
 
       setIsPairGivingPoints(isPoints)
+      setPointsForSwap(new BN(0))
     }
 
     if (canNavigate) {
@@ -239,6 +255,27 @@ export const Swap: React.FC<ISwap> = ({
       )
     }
   }, [tokenFromIndex, tokenToIndex])
+
+  useEffect(() => {
+    if (simulateResult && simulateResult.poolIndex && isPairGivingPoints) {
+      const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
+      const feePercentage = pools[simulateResult.poolIndex].fee
+      const feed = feeds[tokens[tokenFromIndex!].assetAddress.toString()]
+      const amount = convertBalanceToBN(amountFrom, tokens[tokenFromIndex!].decimals)
+
+      const points = calculatePoints(
+        amount,
+        tokens[tokenFromIndex!].decimals,
+        feePercentage,
+        feed.price,
+        feed.priceDecimals,
+        pointsPerUSD
+      )
+      setPointsForSwap(points)
+    } else {
+      setPointsForSwap(new BN(0))
+    }
+  }, [simulateResult])
 
   useEffect(() => {
     if (!!tokens.length && tokenFromIndex === null && tokenToIndex === null && canNavigate) {
@@ -645,7 +682,10 @@ export const Swap: React.FC<ISwap> = ({
             <Box className={classes.pointsBox}>
               <img src={icons.airdropRainbow} alt='' />
               <p>
-                Points: <span className={classes.pointsAmount}>8.64K</span>
+                Points:{' '}
+                <span className={classes.pointsAmount}>
+                  {removeAdditionalDecimals(formatNumberWithCommas(printBN(pointsForSwap, 8)), 2)}
+                </span>
               </p>
             </Box>
           )}
