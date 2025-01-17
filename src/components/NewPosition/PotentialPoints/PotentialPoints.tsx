@@ -85,22 +85,25 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
       <GradientBorder borderRadius={24} borderWidth={2}>
         <Grid display='flex' className={classNames(classes.wrapper)}>
           <Grid className={classes.column}>
-            <Grid container alignItems='center' justifyContent='space-between'>
-              <Grid display='flex' gap={1}>
-                <Typography style={typography.heading4}>Potential Points</Typography>
+            <Grid container className={classes.leftHeaderItems}>
+              <Grid display='flex' gap={1} alignItems='center'>
+                <Typography style={(typography.heading4, { textWrap: 'nowrap' })}>
+                  Potential Points
+                </Typography>
                 <Grid
                   display='flex'
                   alignItems='center'
                   justifyContent='center'
                   className={classes.pointsLabel}
-                  height={24}>
+                  height={24}
+                  flexWrap='nowrap'>
                   <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '12px' }} />
-                  <Typography style={typography.caption2}>
+                  <Typography style={(typography.caption2, { textWrap: 'nowrap' })}>
                     Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
                   </Typography>
                 </Grid>
               </Grid>
-              <Grid>
+              <Grid className={classes.rightHeaderItems}>
                 <button className={classes.questionButton} onClick={handleClickFAQ}>
                   <img src={icons.infoIconPink} alt='i' width={14} style={{ marginRight: '8px' }} />
                   <Typography

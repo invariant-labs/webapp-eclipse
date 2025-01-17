@@ -8,7 +8,9 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     padding: 24,
     gap: 24,
     color: colors.invariant.text,
-    [theme.breakpoints.down('sm')]: {}
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    }
   },
   column: {
     display: 'flex',
@@ -62,5 +64,21 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     marginTop: 8,
     color: colors.invariant.textGrey,
     letterSpacing: '-0.48px'
+  },
+  leftHeaderItems: {
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column',
+      gap: 8
+    }
+  },
+  rightHeaderItems: {
+    marginLeft: 8,
+
+    [theme.breakpoints.down('md')]: {
+      marginLeft: 0
+    }
   }
 }))
