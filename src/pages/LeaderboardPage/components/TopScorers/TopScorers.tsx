@@ -12,7 +12,6 @@ interface ITopScorersProps {
 export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers }) => {
   const { classes } = useStyles()
   const [firstPlace, secondPlace, thirdPlace] = top3Scorers
-  console.log(firstPlace, secondPlace, thirdPlace)
   return (
     <>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Top Scorers</Typography>
