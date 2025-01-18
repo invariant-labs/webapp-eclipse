@@ -49,6 +49,7 @@ import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
 import PurpleWaves from '@static/png/purpleWavesFromBottom.png'
 import GreenWaves from '@static/png/greenWavesFromTop.png'
+import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 
 export interface Pools {
   tokenX: PublicKey
@@ -207,6 +208,14 @@ export const Swap: React.FC<ISwap> = ({
     priceImpact: new BN(0),
     error: []
   })
+  const [isPointsPopoverOpen, setIsPointsPopoverOpen] = useState(false)
+  const pointsBoxRef = useRef<HTMLDivElement>(null)
+  const handlePointerEnter = () => {
+    setIsPointsPopoverOpen(true)
+  }
+  const handlePointerLeave = () => {
+    setIsPointsPopoverOpen(false)
+  }
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -669,6 +678,12 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
+      <SwapPointsPopover
+        anchorEl={pointsBoxRef.current}
+        open={isPointsPopoverOpen}
+        onClose={() => setIsPointsPopoverOpen(false)}
+        network={network}
+      />
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}
@@ -681,7 +696,11 @@ export const Swap: React.FC<ISwap> = ({
         <Box display={'flex'} flexDirection={'row'} gap={1}>
           <Typography component='h1'>Swap tokens</Typography>
           {isPairGivingPoints && (
-            <Box className={classes.pointsBox}>
+            <Box
+              className={classes.pointsBox}
+              ref={pointsBoxRef}
+              onPointerLeave={handlePointerLeave}
+              onPointerEnter={handlePointerEnter}>
               <img src={icons.airdropRainbow} alt='' />
               Points:{' '}
               <span className={classes.pointsAmount}>
