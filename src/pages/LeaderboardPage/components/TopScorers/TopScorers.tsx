@@ -24,37 +24,37 @@ export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers, type }) =>
   const [firstPlace, secondPlace, thirdPlace] = currentTop3
   return (
     <>
-      {firstPlace && secondPlace && thirdPlace && (
-        <>
-          <Typography className={classes.leaderboardHeaderSectionTitle}>Top Scorers</Typography>
-          <Box className={classes.sectionContent}>
-            <Hidden lgUp>
-              <ScorerItem
-                points={firstPlace.points}
-                cupVariant='gold'
-                address={new PublicKey(firstPlace.address)}
-              />
-            </Hidden>
-            <ScorerItem
-              points={secondPlace.points}
-              cupVariant='silver'
-              address={new PublicKey(secondPlace.address)}
-            />
-            <Hidden lgDown>
-              <ScorerItem
-                points={firstPlace.points}
-                cupVariant='gold'
-                address={new PublicKey(firstPlace.address)}
-              />
-            </Hidden>
-            <ScorerItem
-              points={thirdPlace.points}
-              cupVariant='bronze'
-              address={new PublicKey(thirdPlace.address)}
-            />
-          </Box>
-        </>
-      )}
+      <Typography className={classes.leaderboardHeaderSectionTitle}>Top Scorers</Typography>
+      <Box className={classes.sectionContent}>
+        <Hidden lgUp>
+          <ScorerItem
+            points={firstPlace?.points}
+            cupVariant='gold'
+            address={new PublicKey(firstPlace?.address)}
+            showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+          />
+        </Hidden>
+        <ScorerItem
+          points={secondPlace?.points}
+          cupVariant='silver'
+          address={new PublicKey(secondPlace?.address)}
+          showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+        />
+        <Hidden lgDown>
+          <ScorerItem
+            points={firstPlace?.points}
+            cupVariant='gold'
+            address={new PublicKey(firstPlace?.address)}
+            showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+          />
+        </Hidden>
+        <ScorerItem
+          points={thirdPlace?.points}
+          cupVariant='bronze'
+          address={new PublicKey(thirdPlace?.address)}
+          showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+        />
+      </Box>
     </>
   )
 }

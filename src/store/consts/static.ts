@@ -40,7 +40,7 @@ export const USDC_ADDRESS = {
   [NetworkType.Local]: emptyPublicKey
 }
 
-export const REFRESHER_INTERVAL = 120
+export const REFRESHER_INTERVAL = 30
 
 export const PRICE_DECIMAL = 24
 export const USDC_DEV: Token = {
@@ -559,6 +559,11 @@ export const promotedTiers = [
     index: 3
   },
   {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
     tokenX: TETH_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 0
@@ -807,19 +812,19 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
+          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '0.09'
+        },
+        {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
         },
         {
-          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '0.3'
-        },
-        {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '0.3'
+          tokenX: 'CEBP3CqAbW4zdZA57H2wfaSG1QNdzQ72GiQEbQXyW9Tm',
+          tokenY: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          fee: '0.01'
         }
       ]
     default:

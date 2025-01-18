@@ -203,6 +203,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       borderRadius: 12,
       width: 200
     },
+
     leaderboardTypeBox: {
       position: 'absolute',
       left: 0,

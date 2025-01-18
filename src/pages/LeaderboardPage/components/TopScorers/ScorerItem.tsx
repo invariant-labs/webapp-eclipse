@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
-import { Box, Typography } from '@mui/material'
+import { Box, Skeleton, Typography } from '@mui/material'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { PublicKey } from '@solana/web3.js'
 import { shortenAddress } from '@utils/uiUtils'
@@ -12,12 +12,19 @@ import { theme } from '@static/theme'
 import useStyles from './styles'
 
 interface IScorerItemProps {
-  points: BN
+  points?: BN
   address: PublicKey
   cupVariant: 'gold' | 'silver' | 'bronze'
+  showPlaceholder: boolean
 }
 
-const ImageWithPlaceholder = ({ src, alt, style }) => {
+interface ImageWithPlaceholderProps {
+  src: string
+  alt: string
+  style?: React.CSSProperties
+}
+
+const ImageWithPlaceholder: React.FC<ImageWithPlaceholderProps> = ({ src, alt, style }) => {
   const [isLoading, setIsLoading] = useState(true)
 
   return (
@@ -59,7 +66,13 @@ const ImageWithPlaceholder = ({ src, alt, style }) => {
     </Box>
   )
 }
-export const ScorerItem: React.FC<IScorerItemProps> = ({ address, points, cupVariant }) => {
+
+export const ScorerItem: React.FC<IScorerItemProps> = ({
+  points,
+  address,
+  cupVariant,
+  showPlaceholder
+}) => {
   const { classes } = useStyles()
   const getIconByCupVariant = () => {
     switch (cupVariant) {
@@ -71,50 +84,55 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({ address, points, cupVar
         return leaderboardBronze
     }
   }
-
   return (
-    <Box className={classes.topScorersItem}>
-      <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
-        <ImageWithPlaceholder
-          src={getIconByCupVariant()}
-          alt={cupVariant}
-          style={{ height: '150px', width: 'auto' }}
-        />
-      </Box>
-      <Box className={classes.topScorersItemBox}>
-        <Box sx={{ display: { sm: 'block', lg: 'none' } }}>
-          <ImageWithPlaceholder
-            src={getIconByCupVariant()}
-            alt={cupVariant}
-            style={{
-              height: '110px',
-              [theme.breakpoints.down('lg')]: {
-                height: '85px'
-              }
-            }}
-          />
+    <>
+      {showPlaceholder ? (
+        <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
+      ) : (
+        <Box className={classes.topScorersItem}>
+          <Box sx={{ display: { xs: 'none', lg: 'block' } }}>
+            <ImageWithPlaceholder
+              src={getIconByCupVariant()}
+              alt={cupVariant}
+              style={{ height: '150px', width: 'auto' }}
+            />
+          </Box>
+          <Box className={classes.topScorersItemBox}>
+            <Box sx={{ display: { sm: 'block', lg: 'none' } }}>
+              <ImageWithPlaceholder
+                src={getIconByCupVariant()}
+                alt={cupVariant}
+                style={{
+                  height: '110px',
+                  [theme.breakpoints.down('lg')]: {
+                    height: '85px'
+                  }
+                }}
+              />
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                flexDirection: 'column',
+                width: '100%',
+                textWrap: 'nowrap'
+              }}>
+              <Typography className={classes.headerBigText}>
+                {formatNumberWithCommas(
+                  Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                )}{' '}
+                Points
+              </Typography>
+              <Typography className={classes.headerSmallText}>
+                {shortenAddress(address.toString(), 4)}
+              </Typography>
+            </Box>
+          </Box>
         </Box>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            flexDirection: 'column',
-            width: '100%',
-            textWrap: 'nowrap'
-          }}>
-          <Typography className={classes.headerBigText}>
-            {formatNumberWithCommas(
-              Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
-            )}{' '}
-            Points
-          </Typography>
-          <Typography className={classes.headerSmallText}>
-            {shortenAddress(address.toString(), 4)}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
+      )}
+    </>
   )
 }
 

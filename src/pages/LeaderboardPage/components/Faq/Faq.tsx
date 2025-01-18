@@ -6,6 +6,7 @@ import { colors, typography } from '@static/theme'
 import FAQ1 from '@static/png/faq-1.png'
 import FAQ2 from '@static/png/faq-2.png'
 import FAQ3 from '@static/png/faq-3.png'
+import FAQ4 from '@static/png/faq-4.png'
 
 export const Faq = () => {
   const { classes } = useStyles()
@@ -13,14 +14,39 @@ export const Faq = () => {
   const faqData = [
     {
       question: 'What is Invariant Points?',
-      answer:
-        'Invariant Points is a program designed to incentivize Invariant liquidity providers. Earn points by providing liquidity, completing tasks, and through referrals(coming soon). Accumulated points can be used for future exclusive benefits.'
+      answer: `
+        Invariant Points is a program designed to incentivize Invariant liquidity providers. 
+        <br></br>
+        Users can earn points that can be redeemed for future exclusive benefits.
+        
+        
+
+   `
     },
     {
       question: 'How do I earn points?',
-      answer: `At the moment, providing liquidity in the ETH/USDC (0.09% fee tier) pool will earn you points. </br>
-    The fee tier is crucial because providing liquidity on the ETH/USDC pair with a fee tier other than 0.09% does not generate points.</br>
-    The more efficient(concentrated) your liquidity is, the more points you’ll earn. In the future, we plan to introduce additional ways to earn points.
+      answer: `
+      
+      Currently, you can earn points by <a href="https://docs.invariant.app/docs/invariant_points/get_started" style="color: #2EE09A" target="_blank">providing liquidity in rewarded pools.</a>
+      <br></br>
+      The more efficient and concentrated your liquidity, the more points you’ll earn. 
+      <br></br>
+      In the future, we plan to introduce even more ways to earn points.
+      
+      `
+    },
+    {
+      question: `Which pool should I add liquidity to?`,
+      answer: `
+      Pools currently distributing points: <br></br>
+       <ul>
+       <li>ETH/USDC (<b>0.09%</b> fee tier)</li>
+       <li>SOL/ETH (<b>0.09%</b> fee tier)</li>
+       <li>tETH/ETH (<b>0.01%</b> fee tier)</li>
+       </ul>
+      <br></br>
+       
+       All pools distributing points are listed in the <b>"Rewarded Pools"</b> list.
       
       `
     },
@@ -31,7 +57,7 @@ export const Faq = () => {
 Every second, a fixed amount of points is distributed and divided among all positions. Players compete for these points by creating the most efficient positions possible.</br></br>
 The algorithm takes into account factors such as the size of the position (TVL), the time it has been open, and the level of concentration (position range). A higher value in one factor can compensate for another. For example, having a higher level of concentration can allow you to accrue more points than someone with a higher TVL.</br></br>
 
-    In short: </br> <ul><li>The larger the position, the more points you earn.</li><li>The narrower the range of the position (higher concentration), the more points you earn.</li><li>The longer the position remains active, the more points you accumulate.</li><li>The wider the position, the more consistent your point earnings become.</li></ul>  <img src="${FAQ3}"/> </br>The exact formula for calculating points is explained in detail in our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" target="_blank" style="text-decoration-color: #2EE09A"><span style="color: #2EE09A" target="_blank">[docs]<span></a>
+    In short: </br> <b><ul><li>The larger the position, the more points you earn.</li><li>The narrower the range of the position (higher concentration), the more points you earn.</li><li>The longer the position remains active, the more points you accumulate.</li><li>The wider the position, the more consistent your point earnings become.</li></ul>  <img src="${FAQ3}"/> </br>The exact formula for calculating points is explained in detail in our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" target="_blank" style="text-decoration-color: #2EE09A"><span style="color: #2EE09A" target="_blank">docs.<span></b></a>
      
   
     
@@ -47,18 +73,30 @@ The algorithm takes into account factors such as the size of the position (TVL),
     },
     {
       question: 'Do I get rewarded for being an early user?',
-      answer: `Yes. Our algorithm is designed in such a way as to appreciate OG users. A constant number of points is distributed every second and shared across all positions.
-As the number of positions increases, the number of points received by each one decreases, so it pays off to be early.
-One dollar in a position now might be worth as much as 30 dollars in the future.`
+      answer: `
+      Yes. 
+      <br></br>
+      Our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" style="color: #2EE09A" target="_blank">point distribution system</a> is designed in such a way as to appreciate OG users. A constant number of points is distributed every second and shared across all positions.
+      <br></br>
+      As the number of positions increases, the number of points received by each one decreases, so it pays off to be early.
+      <br></br>
+      One dollar in a position now might be worth as much as 30 dollars in the future.`
     },
     {
       question: `If I'm not a whale, do I still have a chance at being competitive points? `,
-      answer:
-        'Yes. Our algorithm unlocks new opportunities for smaller capital by shifting the focus from sheer TVL to skillful liquidity management. Your earnings depend on how effectively you manage and rebalance your position. With smart strategy and focus, you can outperform larger TVL holders.'
-    },
-    {
-      question: `Which pool should I add liquidity to?`,
-      answer: 'ETH/USDC (0.09% fee tier)'
+      answer: `
+        Yes.
+        <br></br>
+        Invariant Points is the fairest point system ever created.
+        <br></br>
+        That was our goal, and it’s confirmed by users who, with less than 0.5 ETH in capital, made it to the TOP 50.
+        <br></br>
+        Find out how you can achieve this <b> <a href="https://docs.invariant.app/docs/invariant_points/concentration" style="color: #2EE09A" target="_blank">here.</a> </b>
+        <br></br>
+        <img src="${FAQ4}"/>
+        
+       
+        `
     },
 
     {
@@ -101,21 +139,26 @@ One dollar in a position now might be worth as much as 30 dollars in the future.
       <li><b>Position 2</b> is no longer active (falls out of range, not collecting fee and accruing points).</li>
       </ul>
       <img src="${FAQ2}" />
+      <br></br>
+      Check out more details about points about <b><a href="https://docs.invariant.app/docs/invariant_points/mechanism" style="color: #2EE09A" target="_blank">point distribution system</a></b>.
     
     `
     },
     {
       question: `I'm new to providing liquidity, how can I learn how to do it correctly?`,
       answer:
-        'No worries, everyone started somewhere. You can start by reading our docs about concentrated liquidity provision <a href="https://docs.invariant.app/docs/tutorial/get_started" style="color: #2EE09A" target="_blank">here.</a>'
+        'No worries, everyone started somewhere. You can start by reading our docs about concentrated liquidity provision <b> <a href="https://docs.invariant.app/docs/tutorial/get_started" style="color: #2EE09A" target="_blank">here.</a> </b>'
     },
     {
       question: `My position is out of range and isn’t earning points. What should I do?`,
-      answer: `It's a normal situation in concentrated liquidity. You need to rebalance your position, which means closing it, adjusting the token ratio to match the ratio required for the new position, and then reopening it within the new price range.`
+      answer: `
+      It's a normal situation in concentrated liquidity. 
+      <br></br>
+      You need to <a href="https://docs.invariant.app/docs/invariant_points/get_started" style="color: #2EE09A" target="_blank">rebalance</a> your position, which means closing it, adjusting the token ratio to match the ratio required for the new position, and then reopening it within the new price range.`
     },
     {
       question: `How to contact us?`,
-      answer: `You can contact us via: </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p>`
+      answer: `You can contact us via: <b> </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p> </b>`
     }
   ]
 

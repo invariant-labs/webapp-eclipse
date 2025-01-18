@@ -1,5 +1,5 @@
 import React, { useMemo, useCallback } from 'react'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
@@ -250,7 +250,9 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
         <img src={imageSrc} alt={`${position === 'top' ? 'Purple' : 'Green'} waves`} />
       </div>
     )
-
+  if (currentData.length === 0) {
+    return <Skeleton className={classes.skeleton} />
+  }
   return (
     <div className={classes.container}>
       {renderWaves('top', PurpleWaves)}

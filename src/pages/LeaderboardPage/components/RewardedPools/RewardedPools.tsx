@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery } from '@mui/material'
+import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './styles'
 import React, { useMemo } from 'react'
 import PoolList from '../PoolList/PoolList'
@@ -69,31 +69,34 @@ export const RewardedPools: React.FC<IProps> = ({
   return (
     <>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Rewarded Pools</Typography>
+      {data.length === 0 ? (
+        <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
+      ) : (
+        <Box className={classes.sectionContent} width={'100%'} style={mobileStyle}>
+          {isMd && (
+            <Box style={{ width: '100%', marginLeft: '42px' }}>
+              <Typography
+                style={{
+                  ...typography.heading4,
+                  color: colors.invariant.textGrey,
+                  justifySelf: 'self-start'
+                }}>
+                Pools Distributing Points
+                <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
+              </Typography>
+            </Box>
+          )}
 
-      <Box className={classes.sectionContent} width={'100%'} style={mobileStyle}>
-        {isMd && (
-          <Box style={{ width: '100%', marginLeft: '42px' }}>
-            <Typography
-              style={{
-                ...typography.heading4,
-                color: colors.invariant.textGrey,
-                justifySelf: 'self-start'
-              }}>
-              Pools Distributing Points
-              <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
-            </Typography>
-          </Box>
-        )}
-
-        <PoolList
-          disableBackground={isMd}
-          data={data}
-          network={network}
-          copyAddressHandler={copyAddressHandler}
-          isLoading={false}
-          showAPY={true}
-        />
-      </Box>
+          <PoolList
+            disableBackground={isMd}
+            data={data}
+            network={network}
+            copyAddressHandler={copyAddressHandler}
+            isLoading={false}
+            showAPY={true}
+          />
+        </Box>
+      )}
     </>
   )
 }
