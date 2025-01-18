@@ -202,6 +202,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: colors.invariant.component,
       borderRadius: 12,
       width: 200
+    },
+    skeleton: {
+      borderRadius: 24,
+      opacity: 0.7,
+      height: 1072,
+      width: '100%',
+      transform: 'translateY(0px)'
     }
   }
 })

@@ -247,6 +247,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
   }, [shouldReversePlot])
 
+  const [lastPoolIndex, setLastPoolIndex] = useState(poolIndex)
+
   useEffect(() => {
     if (
       !ticksLoading &&
@@ -256,10 +258,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       !shouldReversePlot
     ) {
       if (!shouldNotUpdatePriceRange) {
-        resetPlot()
         setCurrentMidPrice(midPrice)
+
+        if (poolIndex !== lastPoolIndex) {
+          resetPlot()
+        }
       }
     }
+
+    setLastPoolIndex(poolIndex)
   }, [triggerReset])
 
   useEffect(() => {
