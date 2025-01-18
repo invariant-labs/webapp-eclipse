@@ -40,7 +40,7 @@ export const USDC_ADDRESS = {
   [NetworkType.Local]: emptyPublicKey
 }
 
-export const REFRESHER_INTERVAL = 120
+export const REFRESHER_INTERVAL = 30
 
 export const PRICE_DECIMAL = 24
 export const USDC_DEV: Token = {
