@@ -779,7 +779,14 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
 
-export const DEFAULT_TOKENS = ['solana', 'dogwifcoin', 'turbo-eth', 'laika-3', 'mooncoin-2']
+export const DEFAULT_TOKENS = [
+  'solana',
+  'dogwifcoin',
+  'turbo-eth',
+  'laika-3',
+  'mooncoin-2',
+  'bridged-wrapped-ether-eclipse'
+]
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
@@ -827,8 +834,8 @@ export const getPopularPools = (network: NetworkType) => {
 
 export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
   {
-    coingeckoId: 'ethereum',
-    solanaAddress: '7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'
+    coingeckoId: 'bridged-wrapped-ether-eclipse',
+    solanaAddress: ''
   },
   {
     coingeckoId: 'usd-coin',

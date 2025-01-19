@@ -1711,6 +1711,10 @@ export const getJupTokenPrice = async (solanaAddress: string): Promise<number | 
 }
 
 export const getTokenPrice = async (id: string): Promise<number | undefined> => {
+  if (id === 'ethereum') {
+    id = 'bridged-wrapped-ether-eclipse'
+  }
+
   const token = TOKENS_PRICES_FROM_JUP.find(token => token.coingeckoId === id)
   if (token && token.solanaAddress) {
     return await getJupTokenPrice(token.solanaAddress)
