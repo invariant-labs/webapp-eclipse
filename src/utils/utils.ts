@@ -1872,11 +1872,12 @@ export const calculatePoints = (
   priceDecimals: number,
   pointsPerUSD: BN
 ) => {
-  const fee = amount.mul(feePercentage).div(new BN(DENOMINATOR))
-  const nominator = fee
+  const nominator = amount
+    .mul(feePercentage)
     .mul(new BN(priceFeed))
     .mul(pointsPerUSD)
     .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
   const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
-  return nominator.div(denominator)
+
+  return nominator.div(denominator).div(new BN(DENOMINATOR))
 }

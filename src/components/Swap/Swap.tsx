@@ -22,7 +22,7 @@ import {
   calculatePoints,
   convertBalanceToBN,
   findPairs,
-  formatNumberWithCommas,
+  formatNumber,
   handleSimulate,
   printBN,
   removeAdditionalDecimals,
@@ -720,9 +720,8 @@ export const Swap: React.FC<ISwap> = ({
               <img src={icons.airdropRainbow} alt='' />
               Points:{' '}
               <span className={classes.pointsAmount}>
-                {removeAdditionalDecimals(
-                  formatNumberWithCommas(stringPointsValue),
-                  isLessThanOne ? decimalIndex : 2
+                {formatNumber(
+                  removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
                 )}
               </span>{' '}
               <img src={icons.infoCircle} alt='' width={'14px'} style={{ marginTop: '-2px' }} />
