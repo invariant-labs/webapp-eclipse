@@ -67,6 +67,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
+  const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
 
   if (displayType === 'header') {
     return <LeaderboardTotalHeader />
@@ -181,7 +182,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
                 color: colors.invariant.green,
                 ...typography.heading4
               }}>
-              {new BN(last24hPoints, 'hex').isZero() ? (
+              {new BN(last24hPoints, 'hex').lt(pointOneValue) ? (
                 <span style={{ color: colors.invariant.text }}>0</span>
               ) : (
                 <span>
