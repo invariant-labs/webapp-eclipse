@@ -378,7 +378,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'center',
     textTransform: 'none',
-    gap: 4
+    gap: 4,
+    transition: 'all 0.2s ease-in-out'
   },
   pointsAmount: { color: colors.invariant.pink },
   darkGradientBackground: {
@@ -431,9 +432,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       'linear-gradient(#2A365C, #2A365C), linear-gradient(360deg, #EF84F5 0%, #2EE09A 100%)',
     backgroundOrigin: 'border-box',
     backgroundClip: 'padding-box, border-box',
-    transition: 'all 0.3s ease-in-out'
+    transition: 'all 0.2s ease-in-out'
   },
-  borderContainer: { maxWidth: 500, width: '100%', transition: 'all 0.3s ease-in-out' },
+  borderContainer: { maxWidth: 500, width: '100%', transition: 'all 0.2s ease-in-out' },
   textShadowLabel: {
     textShadow: '3px 3px 5px #3A466B'
   },
