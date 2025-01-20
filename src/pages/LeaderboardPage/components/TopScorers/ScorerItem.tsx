@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import { Box, Skeleton, Typography } from '@mui/material'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
-import { PublicKey } from '@solana/web3.js'
 import { shortenAddress } from '@utils/uiUtils'
 import { printBN, formatNumberWithCommas } from '@utils/utils'
 import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
@@ -12,8 +11,8 @@ import { theme } from '@static/theme'
 import useStyles from './styles'
 
 interface IScorerItemProps {
-  points?: BN
-  address: PublicKey
+  points: string
+  address: string
   cupVariant: 'gold' | 'silver' | 'bronze'
   showPlaceholder: boolean
 }
@@ -126,7 +125,7 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({
                 Points
               </Typography>
               <Typography className={classes.headerSmallText}>
-                {shortenAddress(address.toString(), 4)}
+                {shortenAddress(address, 4)}
               </Typography>
             </Box>
           </Box>

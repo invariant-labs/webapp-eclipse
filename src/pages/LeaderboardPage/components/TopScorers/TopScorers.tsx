@@ -3,7 +3,6 @@ import React, { useMemo } from 'react'
 import useStyles from './styles'
 import { ScorerItem } from './ScorerItem'
 import { ILpEntry, ISwapEntry, ITotalEntry, LeaderBoardType } from '@store/reducers/leaderboard'
-import { PublicKey } from '@solana/web3.js'
 
 interface ITopScorersProps {
   top3Scorers: {
@@ -28,30 +27,30 @@ export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers, type }) =>
       <Box className={classes.sectionContent}>
         <Hidden lgUp>
           <ScorerItem
-            points={firstPlace?.points}
+            points={firstPlace?.points ?? '00'}
             cupVariant='gold'
-            address={new PublicKey(firstPlace?.address)}
+            address={firstPlace?.address ?? ''}
             showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
           />
         </Hidden>
         <ScorerItem
-          points={secondPlace?.points}
+          points={secondPlace?.points ?? '00'}
           cupVariant='silver'
-          address={new PublicKey(secondPlace?.address)}
+          address={secondPlace?.address ?? ''}
           showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
         />
         <Hidden lgDown>
           <ScorerItem
-            points={firstPlace?.points}
+            points={firstPlace?.points ?? '00'}
             cupVariant='gold'
-            address={new PublicKey(firstPlace?.address)}
+            address={firstPlace?.address ?? ''}
             showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
           />
         </Hidden>
         <ScorerItem
-          points={thirdPlace?.points}
+          points={thirdPlace?.points ?? '00'}
           cupVariant='bronze'
-          address={new PublicKey(thirdPlace?.address)}
+          address={thirdPlace?.address ?? ''}
           showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
         />
       </Box>
