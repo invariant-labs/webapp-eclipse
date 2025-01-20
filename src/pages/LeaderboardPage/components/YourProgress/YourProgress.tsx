@@ -123,7 +123,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
             value={
               userStats
                 ? formatNumberWithCommas(
-                    printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)
+                    Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
                   )
                 : 0
             }
