@@ -264,7 +264,7 @@ export const Swap: React.FC<ISwap> = ({
         }
       )
     }
-  }, [tokenFromIndex, tokenToIndex])
+  }, [tokenFromIndex, tokenToIndex, promotedSwapPairs])
 
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
