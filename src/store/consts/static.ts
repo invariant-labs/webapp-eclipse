@@ -570,13 +570,6 @@ export const promotedTiers = [
   }
 ]
 
-export const promotedSwapPairs = [
-  {
-    tokenX: USDC_MAIN.address,
-    tokenY: WETH_MAIN.address
-  }
-]
-
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
   Devnet: [USDC_DEV.address, BTC_DEV.address, WETH_DEV.address],
   Mainnet: [

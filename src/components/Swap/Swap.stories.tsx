@@ -61,6 +61,7 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
+    promotedSwapPairs: [],
     commonTokens: [
       new PublicKey('So11111111111111111111111111111111111111112'),
       new PublicKey('9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E'),

@@ -60,6 +60,7 @@ export interface ILeaderboardStore {
     promotedPools: IPromotedPool[]
     lastSnapTimestamp: string
     pointsPerUsd: number
+    swapPairs: { tokenX: string; tokenY: string }[]
   }
   priceFeeds: Record<
     string,
@@ -84,6 +85,7 @@ export const defaultState: ILeaderboardStore = {
     refreshTime: 0,
     pointsDecimal: 0,
     promotedPools: [],
+    swapPairs: [],
     lastSnapTimestamp: '',
     pointsPerUsd: 0
   },
@@ -172,6 +174,7 @@ const leaderboardSlice = createSlice({
         refreshTime: number
         pointsDecimal: number
         promotedPools: IPromotedPool[]
+        swapPairs: { tokenX: string; tokenY: string }[]
         lastSnapTimestamp: string
         pointsPerUSD: number
       }>
@@ -180,6 +183,7 @@ const leaderboardSlice = createSlice({
         refreshTime: action.payload.refreshTime,
         pointsDecimal: action.payload.pointsDecimal,
         promotedPools: action.payload.promotedPools,
+        swapPairs: action.payload.swapPairs,
         lastSnapTimestamp: action.payload.lastSnapTimestamp,
         pointsPerUsd: action.payload.pointsPerUSD
       }

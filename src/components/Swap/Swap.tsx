@@ -11,7 +11,6 @@ import SwapArrows from '@static/svg/swap-arrows.svg'
 import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
-  promotedSwapPairs,
   REFRESHER_INTERVAL,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
@@ -125,6 +124,7 @@ export interface ISwap {
       price: string
     }
   >
+  promotedSwapPairs: { tokenX: string; tokenY: string }[]
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -163,7 +163,8 @@ export const Swap: React.FC<ISwap> = ({
   deleteTimeoutError,
   canNavigate,
   pointsPerUsdFee,
-  feeds
+  feeds,
+  promotedSwapPairs
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -245,10 +246,10 @@ export const Swap: React.FC<ISwap> = ({
     if (tokenFromIndex !== null && tokenToIndex !== null) {
       const isPoints = promotedSwapPairs.some(
         item =>
-          (item.tokenX.equals(tokens[tokenToIndex].assetAddress) &&
-            item.tokenY.equals(tokens[tokenFromIndex].assetAddress)) ||
-          (item.tokenX.equals(tokens[tokenFromIndex].assetAddress) &&
-            item.tokenY.equals(tokens[tokenToIndex].assetAddress))
+          (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+            new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+          (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+            new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
       )
 
       setIsPairGivingPoints(isPoints)
@@ -699,6 +700,7 @@ export const Swap: React.FC<ISwap> = ({
         open={isPointsPopoverOpen}
         onClose={() => setIsPointsPopoverOpen(false)}
         network={network}
+        promotedSwapPairs={promotedSwapPairs}
       />
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>

@@ -1,7 +1,7 @@
 import useStyles from './style'
 import { Popover, Typography, Box } from '@mui/material'
 import { colors } from '@static/theme'
-import { NetworkType, promotedSwapPairs } from '@store/consts/static'
+import { NetworkType } from '@store/consts/static'
 import { addressToTicker } from '@utils/utils'
 import { useState, useEffect } from 'react'
 
@@ -10,9 +10,16 @@ export interface ISwapPointsPopover {
   anchorEl: HTMLElement | null
   onClose: () => void
   network: NetworkType
+  promotedSwapPairs: { tokenX: string; tokenY: string }[]
 }
 
-export const SwapPointsPopover = ({ open, anchorEl, onClose, network }: ISwapPointsPopover) => {
+export const SwapPointsPopover = ({
+  open,
+  anchorEl,
+  onClose,
+  network,
+  promotedSwapPairs
+}: ISwapPointsPopover) => {
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
 
