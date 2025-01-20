@@ -205,7 +205,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column-reverse',
       gap: 4
-    }
+    },
+    zIndex: 1
   },
   transactionDetailsInner: {
     display: 'flex',

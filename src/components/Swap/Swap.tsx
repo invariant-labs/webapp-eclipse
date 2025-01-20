@@ -1072,6 +1072,7 @@ export const Swap: React.FC<ISwap> = ({
               connected={false}
               onDisconnect={onDisconnectWallet}
               className={classes.connectWalletButton}
+              isSwap={true}
             />
           ) : getStateMessage() === 'Insufficient Wrapped ETH' ? (
             <TooltipHover
