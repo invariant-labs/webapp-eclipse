@@ -26,7 +26,8 @@ import {
   handleSimulate,
   printBN,
   removeAdditionalDecimals,
-  trimLeadingZeros
+  trimLeadingZeros,
+  trimZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
 import { Status } from '@store/reducers/solanaWallet'
@@ -49,6 +50,7 @@ import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
 import PurpleWaves from '@static/png/purpleWavesFromBottom.png'
 import GreenWaves from '@static/png/greenWavesFromTop.png'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export interface Pools {
   tokenX: PublicKey
@@ -257,7 +259,7 @@ export const Swap: React.FC<ISwap> = ({
   }, [tokenFromIndex, tokenToIndex])
 
   useEffect(() => {
-    if (simulateResult && simulateResult.poolIndex && isPairGivingPoints) {
+    if (simulateResult && isPairGivingPoints) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
       const feePercentage = pools[simulateResult.poolIndex].fee
       const feed = feeds[tokens[tokenFromIndex!].assetAddress.toString()]
@@ -684,7 +686,12 @@ export const Swap: React.FC<ISwap> = ({
               <p>
                 Points:{' '}
                 <span className={classes.pointsAmount}>
-                  {removeAdditionalDecimals(formatNumberWithCommas(printBN(pointsForSwap, 8)), 2)}
+                  {trimZeros(
+                    removeAdditionalDecimals(
+                      formatNumberWithCommas(printBN(pointsForSwap, LEADERBOARD_DECIMAL)),
+                      4
+                    )
+                  )}
                 </span>
               </p>
             </Box>
