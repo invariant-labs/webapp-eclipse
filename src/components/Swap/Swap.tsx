@@ -266,7 +266,7 @@ export const Swap: React.FC<ISwap> = ({
   }, [tokenFromIndex, tokenToIndex])
 
   useEffect(() => {
-    if (simulateResult && simulateResult.poolIndex && isPairGivingPoints) {
+    if (simulateResult && isPairGivingPoints) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
       const feePercentage = pools[simulateResult.poolIndex].fee
       const feed = feeds[tokens[tokenFromIndex!].assetAddress.toString()]
@@ -674,7 +674,23 @@ export const Swap: React.FC<ISwap> = ({
     </div>
   )
   const stringPointsValue = useMemo(() => printBN(pointsForSwap, 8), [pointsForSwap])
-  const isLessThanOne = useMemo(() => Number(stringPointsValue) < 1, [stringPointsValue])
+  const { decimalIndex, isLessThanOne } = useMemo(() => {
+    const dotIndex = stringPointsValue.indexOf('.')
+    let decimalIndex
+    if (dotIndex === -1) {
+      decimalIndex = 2
+    } else {
+      for (let i = dotIndex + 1; i < stringPointsValue.length; i++) {
+        if (stringPointsValue[i] !== '0') {
+          decimalIndex = i - dotIndex
+          break
+        }
+      }
+    }
+
+    const isLessThanOne = Number(stringPointsValue) < 1
+    return { decimalIndex, isLessThanOne }
+  }, [stringPointsValue])
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -706,7 +722,7 @@ export const Swap: React.FC<ISwap> = ({
               <span className={classes.pointsAmount}>
                 {removeAdditionalDecimals(
                   formatNumberWithCommas(stringPointsValue),
-                  isLessThanOne ? 4 : 2
+                  isLessThanOne ? decimalIndex : 2
                 )}
               </span>{' '}
               <img src={icons.infoCircle} alt='' width={'14px'} style={{ marginTop: '-2px' }} />
