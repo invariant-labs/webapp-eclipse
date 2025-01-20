@@ -160,7 +160,6 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
                 color: colors.invariant.green,
                 ...typography.heading4
               }}>
-              +{' '}
               {new BN(last24hPoints, 'hex').isZero() ? (
                 <span style={{ color: colors.invariant.text }}>0</span>
               ) : (
