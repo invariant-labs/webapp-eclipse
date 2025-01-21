@@ -32,6 +32,7 @@ interface IConfigResponse {
   pointsPerUSD: number
   lastSnapTimestamp: string
   swapPairs: { tokenX: string; tokenY: string }[]
+  swapMultiplier: string
 }
 
 async function fetchLpLeaderboardData(
@@ -144,7 +145,8 @@ export function* getLeaderboardConfig(): Generator {
       promotedPools,
       lastSnapTimestamp,
       pointsPerUSD,
-      swapPairs
+      swapPairs,
+      swapMultiplier
     } = yield* call(fetchLeaderboardConfig)
 
     const priceFeeds = yield* call(fetchLeaderboardPriceFeed)
@@ -155,7 +157,8 @@ export function* getLeaderboardConfig(): Generator {
         promotedPools,
         lastSnapTimestamp,
         pointsPerUSD,
-        swapPairs
+        swapPairs,
+        swapMultiplier
       })
     )
 

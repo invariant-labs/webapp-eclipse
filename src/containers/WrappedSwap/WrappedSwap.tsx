@@ -44,7 +44,7 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
-import { feeds, pointsPerUsd, swapPairs } from '@store/selectors/leaderboard'
+import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors/leaderboard'
 
 type Props = {
   initialTokenFrom: string
@@ -63,6 +63,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const allPools = useSelector(poolsArraySortedByFees)
   const tokensList = useSelector(swapTokens)
   const tokensDict = useSelector(swapTokensDict)
+  const multiplyer = useSelector(swapMultiplier)
   const isBalanceLoading = useSelector(balanceLoading)
   const { success, inProgress } = useSelector(swapPool)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
@@ -406,6 +407,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       pointsPerUsdFee={pointsPerUsdFee}
       feeds={priceFeeds}
       promotedSwapPairs={promotedSwapPairs}
+      swapMultiplier={multiplyer}
     />
   )
 }

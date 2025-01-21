@@ -125,6 +125,7 @@ export interface ISwap {
     }
   >
   promotedSwapPairs: { tokenX: string; tokenY: string }[]
+  swapMultiplier: string
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -164,7 +165,8 @@ export const Swap: React.FC<ISwap> = ({
   canNavigate,
   pointsPerUsdFee,
   feeds,
-  promotedSwapPairs
+  promotedSwapPairs,
+  swapMultiplier
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -723,7 +725,10 @@ export const Swap: React.FC<ISwap> = ({
               onPointerLeave={handlePointerLeave}
               onPointerEnter={handlePointerEnter}>
               <img src={icons.airdropRainbow} alt='' />
-              Points {'(5x)'}:{' '}
+              Points{' '}
+              {new BN(swapMultiplier, 'hex').gt(new BN(1)) &&
+                `${new BN(swapMultiplier, 'hex').toNumber()}x`}
+              :{' '}
               <span className={classes.pointsAmount}>
                 {formatNumber(
                   removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
