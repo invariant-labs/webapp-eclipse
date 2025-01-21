@@ -11,6 +11,7 @@ interface IEstimatedPointsLabel {
   handlePointerEnter: () => void
   swapMultiplier: string
   stringPointsValue: string
+  pointsForSwap: BN
   isLessThanOne: boolean
   decimalIndex: any
   isAnimating: boolean
@@ -21,15 +22,25 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   handlePointerLeave,
   pointsBoxRef,
   swapMultiplier,
+  pointsForSwap,
   isLessThanOne,
   decimalIndex,
   isAnimating,
   stringPointsValue
 }) => {
   const [width, setWidth] = useState<number>(187)
+  const [displayedValue, setDisplayedValue] = useState<string>(stringPointsValue)
   const contentRef = useRef<HTMLDivElement>(null)
   const alternativeRef = useRef<HTMLDivElement>(null)
+  const previousValueRef = useRef<string>(stringPointsValue)
   const { classes } = useStyles({ isVisible: isAnimating, width })
+
+  useEffect(() => {
+    if (isAnimating && !pointsForSwap.isZero()) {
+      setDisplayedValue(stringPointsValue)
+      previousValueRef.current = stringPointsValue
+    }
+  }, [stringPointsValue, isAnimating])
 
   useEffect(() => {
     const updateWidth = () => {
@@ -44,7 +55,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
     if (alternativeRef.current) observer.observe(alternativeRef.current)
 
     return () => observer.disconnect()
-  }, [swapMultiplier, stringPointsValue])
+  }, [swapMultiplier, displayedValue])
 
   return (
     <Box
@@ -59,9 +70,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
           `${new BN(swapMultiplier, 'hex').toNumber()}x`}
         :{' '}
         <span className={classes.pointsAmount}>
-          {formatNumber(
-            removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
-          )}
+          {formatNumber(removeAdditionalDecimals(displayedValue, isLessThanOne ? decimalIndex : 2))}
         </span>{' '}
         <img src={icons.infoCircle} alt='' width='14px' style={{ marginTop: '-2px' }} />
       </div>

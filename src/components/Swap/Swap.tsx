@@ -716,6 +716,7 @@ export const Swap: React.FC<ISwap> = ({
           <EstimatedPointsLabel
             isAnimating={isPairGivingPoints}
             decimalIndex={decimalIndex}
+            pointsForSwap={pointsForSwap}
             handlePointerEnter={handlePointerEnter}
             handlePointerLeave={handlePointerLeave}
             pointsBoxRef={pointsBoxRef}
