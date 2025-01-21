@@ -433,7 +433,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       'linear-gradient(#2A365C, #2A365C), linear-gradient(360deg, #EF84F5 0%, #2EE09A 100%)',
     backgroundOrigin: 'border-box',
     backgroundClip: 'padding-box, border-box',
-    transition: 'border 0.2s ease-in-out'
+    transition: 'all 0.2s ease-in-out'
   },
   borderContainer: {
     maxWidth: 500,

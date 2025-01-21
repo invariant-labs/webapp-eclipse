@@ -774,8 +774,8 @@ export const Swap: React.FC<ISwap> = ({
       </Grid>
       <Box
         className={classNames(
-          classes.borderContainer
-          // isPairGivingPoints && classes.gradientBorderForContainer
+          classes.borderContainer,
+          isPairGivingPoints && classes.gradientBorderForContainer
         )}>
         <Grid container className={classes.root} direction='column'>
           <AnimatedWaves wavePosition={'top'} isAnimating={isPairGivingPoints} />
