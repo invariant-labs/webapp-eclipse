@@ -26,7 +26,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   isAnimating,
   stringPointsValue
 }) => {
-  const [width, setWidth] = useState<number>(0)
+  const [width, setWidth] = useState<number>(200)
   const contentRef = useRef<HTMLDivElement>(null)
   const alternativeRef = useRef<HTMLDivElement>(null)
   const { classes } = useStyles({ isVisible: isAnimating, width })
