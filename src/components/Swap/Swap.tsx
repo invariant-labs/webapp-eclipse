@@ -726,7 +726,7 @@ export const Swap: React.FC<ISwap> = ({
               onPointerEnter={handlePointerEnter}>
               <img src={icons.airdropRainbow} alt='' />
               Points{' '}
-              {new BN(swapMultiplier, 'hex').gt(new BN(1)) &&
+              {new BN(swapMultiplier, 'hex').gte(new BN(1)) &&
                 `${new BN(swapMultiplier, 'hex').toNumber()}x`}
               :{' '}
               <span className={classes.pointsAmount}>
