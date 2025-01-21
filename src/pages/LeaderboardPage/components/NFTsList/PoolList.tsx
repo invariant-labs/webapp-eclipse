@@ -60,8 +60,6 @@ const NFTsList: React.FC<NFTsListInterface> = () => {
         classes={{
           thumbVertical: listClasses.scrollbarThumb,
           trackVertical: listClasses.scrollbarTrack,
-          thumbHorizontal: listClasses.root,
-          trackHorizontal: listClasses.root,
 
           view: listClasses.scrollbarView
         }}>

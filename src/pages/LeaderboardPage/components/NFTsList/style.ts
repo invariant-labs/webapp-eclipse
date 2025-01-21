@@ -12,7 +12,7 @@ export const useStylesList = makeStyles()(theme => ({
     }
   },
   list: {
-    paddingRight: 32,
+    paddingRight: 48,
 
     [theme.breakpoints.down('md')]: {
       paddingRight: 12
@@ -40,9 +40,7 @@ export const useStylesList = makeStyles()(theme => ({
       borderRadius: 6
     }
   },
-  root: {
-    display: 'none'
-  },
+
   scrollbar: {
     margin: '72px auto 72px'
   }
