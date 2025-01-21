@@ -6,7 +6,7 @@ import icons from '@static/icons'
 import { useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { status } from '@store/selectors/solanaWallet'
+import { address, status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 
@@ -20,6 +20,8 @@ export const Rewards = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
   const walletStatus = useSelector(status)
+  const userAddress = useSelector(address)
+
   const dispatch = useDispatch()
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   return (
@@ -107,7 +109,7 @@ export const Rewards = () => {
           </>
         </Box>
       </Box>
-      <NFTsList />
+      <NFTsList userAddress={userAddress} />
     </>
   )
 }

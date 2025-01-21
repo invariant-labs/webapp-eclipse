@@ -4,7 +4,7 @@ import { Grid } from '@mui/material'
 import NFTItem from './NFTItem'
 import Scrollbars from 'rc-scrollbars'
 import useIsMobile from '@store/hooks/isMobile'
-
+import { PublicKey } from '@solana/web3.js'
 export interface NFT {
   name: string
   image: string
@@ -12,14 +12,16 @@ export interface NFT {
   eligible: number
 }
 
-export interface NFTsListInterface {}
+export interface NFTsListInterface {
+  userAddress: PublicKey
+}
 
 const NFTsList: React.FC<NFTsListInterface> = () => {
   const { classes } = useStylesList({
     isMobile: useIsMobile()
   })
 
-  const userAddress = 'BtGH2WkM1oNyPVgzYT51xV2gJqHhVQ4QiGwWirBUW5xN'
+  const userAddress = 'BtGH2WkM1oNyPVgzYT51xV2gJqHhVQ4QiGwWirBUW5xN' //delete mock address
 
   const nftArray: NFT[] = [
     {
