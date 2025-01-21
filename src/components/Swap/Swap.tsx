@@ -711,6 +711,8 @@ export const Swap: React.FC<ISwap> = ({
           <Typography component='h1' style={{ height: '27px', textAlign: 'center' }}>
             Swap tokens
           </Typography>
+        </Box>
+        <Box sx={{ width: 'fit-content' }}>
           <EstimatedPointsLabel
             isAnimating={isPairGivingPoints}
             decimalIndex={decimalIndex}
@@ -722,6 +724,7 @@ export const Swap: React.FC<ISwap> = ({
             stringPointsValue={stringPointsValue}
           />
         </Box>
+
         <Box className={classes.swapControls}>
           <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
             <p>
