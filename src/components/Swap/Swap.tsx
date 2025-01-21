@@ -46,9 +46,8 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
-import PurpleWaves from '@static/png/purpleWavesFromBottom.png'
-import GreenWaves from '@static/png/greenWavesFromTop.png'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
+import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 
 export interface Pools {
   tokenX: PublicKey
@@ -672,13 +671,6 @@ export const Swap: React.FC<ISwap> = ({
     onSelectInput: () => setInputRef(inputTarget.FROM)
   })
 
-  const renderWaves = (position: 'top' | 'bottom', imageSrc: string) => (
-    <div
-      className={`${classes.waveImage} ${classes[`${position}Wave`]}`}
-      style={{ alignItems: position === 'top' ? 'flex-start' : 'flex-end' }}>
-      <img src={imageSrc} alt={`${position === 'top' ? 'Purple' : 'Green'} waves`} />
-    </div>
-  )
   const stringPointsValue = useMemo(() => printBN(pointsForSwap, 8), [pointsForSwap])
   const { decimalIndex, isLessThanOne } = useMemo(() => {
     const dotIndex = stringPointsValue.indexOf('.')
@@ -780,11 +772,11 @@ export const Swap: React.FC<ISwap> = ({
       </Grid>
       <Box
         className={classNames(
-          classes.borderContainer,
-          isPairGivingPoints && classes.gradientBorderForContainer
+          classes.borderContainer
+          // isPairGivingPoints && classes.gradientBorderForContainer
         )}>
         <Grid container className={classes.root} direction='column'>
-          {isPairGivingPoints && renderWaves('top', GreenWaves)}
+          <AnimatedWaves wavePosition={'top'} isAnimating={isPairGivingPoints} />
           <Typography
             className={classNames(
               classes.swapLabel,
@@ -1160,7 +1152,7 @@ export const Swap: React.FC<ISwap> = ({
               progress={progress}
             />
           )}
-          {isPairGivingPoints && renderWaves('bottom', PurpleWaves)}
+          <AnimatedWaves wavePosition={'bottom'} isAnimating={isPairGivingPoints} />
         </Grid>
       </Box>
       <img src={icons.audit} alt='Audit' style={{ marginTop: '24px' }} width={180} />
