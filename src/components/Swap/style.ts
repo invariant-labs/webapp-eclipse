@@ -433,9 +433,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       'linear-gradient(#2A365C, #2A365C), linear-gradient(360deg, #EF84F5 0%, #2EE09A 100%)',
     backgroundOrigin: 'border-box',
     backgroundClip: 'padding-box, border-box',
-    transition: 'all 0.2s ease-in-out'
+    transition: 'border 0.2s ease-in-out'
   },
-  borderContainer: { maxWidth: 500, width: '100%', transition: 'all 0.2s ease-in-out' },
+  borderContainer: {
+    maxWidth: 500,
+    width: '100%',
+    borderRadius: 24,
+    border: `1px solid ${colors.invariant.component}`
+  },
   textShadowLabel: {
     textShadow: '3px 3px 5px #3A466B'
   },

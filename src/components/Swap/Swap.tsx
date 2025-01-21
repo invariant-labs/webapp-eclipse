@@ -709,7 +709,9 @@ export const Swap: React.FC<ISwap> = ({
       )}
       <Grid container className={classes.header}>
         <Box display={'flex'} flexDirection={'row'} gap={1}>
-          <Typography component='h1'>Swap tokens</Typography>
+          <Typography component='h1' style={{ height: '27px', textAlign: 'center' }}>
+            Swap tokens
+          </Typography>
           {isPairGivingPoints && (
             <Box
               className={classes.pointsBox}
