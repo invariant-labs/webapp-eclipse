@@ -3,7 +3,7 @@ import React from 'react'
 import GreenWaves from '@static/png/greenWavesFromTop.png'
 import PurpleWaves from '@static/png/purpleWavesFromBottom.png'
 
-const useStyles = makeStyles<{ isVisible: boolean }>()((theme, { isVisible }) => ({
+const useStyles = makeStyles<{ isVisible: boolean }>()((_theme, { isVisible }) => ({
   waveImage: {
     pointerEvents: 'none',
     display: 'flex',
