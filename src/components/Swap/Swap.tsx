@@ -21,10 +21,8 @@ import {
   calculatePoints,
   convertBalanceToBN,
   findPairs,
-  formatNumber,
   handleSimulate,
   printBN,
-  removeAdditionalDecimals,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
