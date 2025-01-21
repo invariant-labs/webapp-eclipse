@@ -1,8 +1,9 @@
 import React from 'react'
 import { useStyles } from './style'
-import { Button, Grid, Typography } from '@mui/material'
+import { Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import { NFT } from './PoolList'
 import icons from '@static/icons'
+import { theme } from '@static/theme'
 
 export interface NFTItemInterface {
   number: number
@@ -12,31 +13,43 @@ export interface NFTItemInterface {
 
 const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userPosition }) => {
   const { classes } = useStyles({ isEven: number % 2 === 0 })
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
     <Grid className={classes.container} container alignItems='center'>
-      <div className={classes.background} />
-      <Typography className={classes.number}>{number}</Typography>
+      {isMd ? (
+        <>
+          <div className={classes.mobileBackgroundTop} />
+          <div className={classes.mobileBackgroundBottom} />
+        </>
+      ) : (
+        <div className={classes.background} />
+      )}
       <Grid
         display='flex'
         flex={1}
         alignItems='center'
         justifyContent='space-between'
-        gap={4}
         className={classes.innerContainer}>
-        <Grid display='flex' justifyContent='center' alignItems='center'>
-          <img
-            src='https://thenftbrief.com/wp-content/uploads/2023/05/image-27.png'
-            alt=''
-            style={{ width: '200px', borderRadius: 8 }}
-          />
+        <Grid className={classes.leftItems}>
+          <Typography className={classes.number}>{number}</Typography>
+          <Grid display='flex' justifyContent='center' alignItems='center'>
+            <img
+              src='https://thenftbrief.com/wp-content/uploads/2023/05/image-27.png'
+              alt=''
+              style={{ width: isMd ? '100px' : '200px', borderRadius: 8 }}
+            />
+          </Grid>
+          {isMd && <div style={{ width: '36px' }} />}
         </Grid>
+
         <Grid
           display='flex'
           gap={3}
           flexDirection='column'
           justifyContent='center'
-          alignItems='center'>
+          alignItems='center'
+          m={6}>
           <Grid display='flex' justifyContent='center' alignItems='center'>
             <img src={icons.airdropGrey} alt='points' />
             <Typography className={classes.subtitle}>{nft.name}</Typography>
@@ -53,8 +66,9 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userPosition }) => {
           </Button>
         </Grid>
         <Grid
+          container={isMd}
           display='flex'
-          gap={3}
+          gap={isMd ? 2 : 3}
           flexDirection='column'
           justifyContent='center'
           alignItems='center'>

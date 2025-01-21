@@ -1,7 +1,7 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
-import pinkBackground from '@static/png/nftBackgroundPink.png'
-import greenBackground from '@static/png/nftBackgroundGreen.png'
+import fingerprintPink from '@static/png/fingerprintPink.png'
+import fingerprintGreen from '@static/png/fingerprintGreen.png'
 
 export const useStylesList = makeStyles()(theme => ({
   container: {
@@ -12,7 +12,7 @@ export const useStylesList = makeStyles()(theme => ({
     }
   },
   list: {
-    paddingRight: 48,
+    paddingRight: 24,
 
     [theme.breakpoints.down('md')]: {
       paddingRight: 12
@@ -61,6 +61,15 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
       flexDirection: 'column'
     }
   },
+  leftItems: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'space-between',
+      width: '100%'
+    }
+  },
   background: {
     position: 'absolute',
     zIndex: -1,
@@ -68,10 +77,47 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     left: 0,
     width: '100%',
     height: '100%',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
+    backgroundSize: '95%',
+    backgroundPosition: '0% 70%',
+    backgroundRepeat: 'no-repeat',
+    opacity: 0.45,
     borderRadius: '12px',
-    backgroundImage: isEven ? `url(${greenBackground})` : `url(${pinkBackground})`
+    backgroundImage: isEven ? `url(${fingerprintGreen})` : `url(${fingerprintPink})`
+  },
+  mobileBackgroundTop: {
+    position: 'absolute',
+    zIndex: -1,
+    top: 0,
+    left: 0,
+    width: '100%',
+    height: '45%',
+    backgroundSize: '130% 100%',
+    backgroundPosition: 'center top',
+    backgroundRepeat: 'no-repeat',
+    opacity: 0.45,
+    borderRadius: '12px',
+    backgroundImage: isEven ? `url(${fingerprintGreen})` : `url(${fingerprintPink})`,
+    [theme.breakpoints.down('sm')]: {
+      backgroundSize: '160% 100%'
+    }
+  },
+  mobileBackgroundBottom: {
+    position: 'absolute',
+    zIndex: -1,
+    bottom: 0,
+    left: 0,
+    width: '100%',
+    height: '45%',
+    backgroundSize: '100% 100%',
+    backgroundPosition: 'center bottom',
+    backgroundRepeat: 'no-repeat',
+    opacity: 0.45,
+    borderRadius: '12px',
+    backgroundImage: isEven ? `url(${fingerprintGreen})` : `url(${fingerprintPink})`,
+    transform: 'scale(-1)',
+    [theme.breakpoints.down('sm')]: {
+      backgroundSize: '160% 100%'
+    }
   },
   number: {
     color: colors.invariant.text,
@@ -87,8 +133,7 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     marginLeft: 10
   },
   title: {
-    ...typography.heading1,
-    fontSize: 40,
+    ...typography.heading3,
     color: colors.invariant.text,
     textAlign: 'center'
   },
@@ -118,7 +163,12 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     backgroundColor: colors.invariant.light,
     padding: '8px 16px',
     borderRadius: 16,
+    maxWidth: 282,
     width: 282,
+
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+    },
 
     p: {
       ...typography.body2,
