@@ -1,24 +1,24 @@
 import React, { useMemo } from 'react'
 import { useStyles } from './style'
 import { Button, Grid, Typography, useMediaQuery } from '@mui/material'
-import { NFT } from './PoolList'
 import icons from '@static/icons'
 import { theme } from '@static/theme'
 import { eligibleAddresses } from '@store/consts/static'
-
-export interface NFTItemInterface {
+import { Reward } from '@store/consts/types'
+import rewardsImages from '@static/png/nft/nftImages'
+export interface RewardItemInterface {
   number: number
-  nft: NFT
+  nft: Reward
   userAddress: string
 }
 
-const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userAddress }) => {
+const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress }) => {
   const { classes } = useStyles({ isEven: number % 2 === 0 })
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const isEligible = useMemo(() => {
     const reward = eligibleAddresses.find(
-      a => a.rewardKey === nft.name && a.addresses.includes(userAddress)
+      a => a.rewardKey === nft.key && a.addresses.includes(userAddress)
     )
 
     return reward && nft.distributionDate < new Date().toISOString()
@@ -44,8 +44,8 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userAddress }) => {
           <Typography className={classes.number}>{number}</Typography>
           <Grid display='flex' justifyContent='center' alignItems='center'>
             <img
-              src='https://thenftbrief.com/wp-content/uploads/2023/05/image-27.png'
-              alt=''
+              src={rewardsImages[nft.key]}
+              alt={nft.name}
               style={{ width: isMd ? '100px' : '200px', borderRadius: 8 }}
             />
           </Grid>
@@ -71,7 +71,7 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userAddress }) => {
             onClick={() => {}}
             variant='contained'
             disabled={!isEligible}>
-            {isEligible ? 'Sent' : 'Claim'}
+            {isEligible ? 'Received' : 'Claim'}
           </Button>
         </Grid>
         <Grid
@@ -110,4 +110,4 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userAddress }) => {
     </Grid>
   )
 }
-export default NFTItem
+export default RewardItem

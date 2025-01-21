@@ -15,7 +15,7 @@ import { Link } from 'react-router-dom'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
-import NFTsList from '../NFTsList/PoolList'
+import NFTsList from '../RewardsList/PoolList'
 export const Rewards = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
