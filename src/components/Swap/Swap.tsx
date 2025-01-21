@@ -720,7 +720,7 @@ export const Swap: React.FC<ISwap> = ({
               onPointerLeave={handlePointerLeave}
               onPointerEnter={handlePointerEnter}>
               <img src={icons.airdropRainbow} alt='' />
-              Points:{' '}
+              Points {'(5x)'}:{' '}
               <span className={classes.pointsAmount}>
                 {formatNumber(
                   removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
