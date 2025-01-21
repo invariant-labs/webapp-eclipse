@@ -15,6 +15,7 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userPosition }) => {
 
   return (
     <Grid className={classes.container} container flexDirection='row' alignItems='center'>
+      <div className={classes.background} />
       <Typography className={classes.number}>{number}</Typography>
       <Grid display='flex' flex={1} alignItems='center' justifyContent='space-between' gap={4}>
         <Grid display='flex' justifyContent='center' alignItems='center'>
@@ -37,7 +38,11 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userPosition }) => {
           <Typography className={classes.title}>
             {userPosition >= nft.eligible ? 'Eligible' : 'Not eligible'}
           </Typography>
-          <Button className={classes.button} onClick={() => {}} variant='contained'>
+          <Button
+            className={classes.button}
+            onClick={() => {}}
+            variant='contained'
+            disabled={userPosition >= nft.eligible}>
             Claim
           </Button>
         </Grid>
@@ -52,8 +57,24 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userPosition }) => {
             justifyContent='space-between'
             alignItems='center'
             className={classes.label}>
+            <Typography>Distribution date:</Typography>
+            <span>{nft.distributionDate}</span>
+          </Grid>
+          <Grid
+            display='flex'
+            justifyContent='space-between'
+            alignItems='center'
+            className={classes.label}>
             <Typography>Type:</Typography>
-            <span className={classes.pink}>{nft.distributionDate}</span>
+            <span>NFT</span>
+          </Grid>
+          <Grid
+            display='flex'
+            justifyContent='space-between'
+            alignItems='center'
+            className={classes.label}>
+            <Typography>Eligible:</Typography>
+            <span>Top {nft.eligible}</span>
           </Grid>
         </Grid>
       </Grid>

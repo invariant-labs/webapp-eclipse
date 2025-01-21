@@ -57,7 +57,7 @@ const NFTsList: React.FC<NFTsListInterface> = () => {
   return (
     <Grid container justifyContent='center' alignItems='center' gap={3} mt={9}>
       {nftArray.map((nft, index) => (
-        <NFTItem number={index + 1} nft={nft} userPosition={userPosition} />
+        <NFTItem key={index} number={index + 1} nft={nft} userPosition={userPosition} />
       ))}
     </Grid>
   )
