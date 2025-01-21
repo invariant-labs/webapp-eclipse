@@ -26,7 +26,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   isAnimating,
   stringPointsValue
 }) => {
-  const [width, setWidth] = useState<number>(200)
+  const [width, setWidth] = useState<number>(187)
   const contentRef = useRef<HTMLDivElement>(null)
   const alternativeRef = useRef<HTMLDivElement>(null)
   const { classes } = useStyles({ isVisible: isAnimating, width })
@@ -35,7 +35,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
     const updateWidth = () => {
       const contentWidth = contentRef.current?.offsetWidth || 0
       const alternativeWidth = alternativeRef.current?.offsetWidth || 0
-      setWidth(Math.max(contentWidth, alternativeWidth))
+      setWidth(Math.max(contentWidth, alternativeWidth) + 16)
     }
 
     updateWidth()

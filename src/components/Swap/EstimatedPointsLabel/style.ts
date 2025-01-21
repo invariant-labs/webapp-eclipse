@@ -6,7 +6,6 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number }>()(
     pointsBox: {
       height: 27,
       width: `${width}px`,
-      padding: '0px 8px',
       borderRadius: 8,
       backgroundColor: colors.invariant.component,
       color: colors.invariant.textGrey,
@@ -32,9 +31,8 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number }>()(
     contentWrapper: {
       display: 'flex',
       alignItems: 'center',
-      justifySelf: 'anchor-center',
+      justifySelf: 'center',
       gap: 4,
-      left: 8,
       willChange: 'opacity, transform',
       opacity: isVisible ? 1 : 0,
       position: 'absolute',
@@ -48,8 +46,9 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number }>()(
     alternativeContent: {
       display: 'flex',
       alignItems: 'center',
+      justifySelf: 'anchor-center',
+
       gap: 4,
-      left: 8,
       willChange: 'opacity, transform',
       position: 'absolute',
       opacity: isVisible ? 0 : 1,
