@@ -10,6 +10,7 @@ import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
 import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
 import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
+import eligibleAddressesArray from '@store/consts/rewards/eligibleAddresses.json'
 
 export enum NetworkType {
   Local = 'Local',
@@ -839,3 +840,10 @@ export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: strin
     solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
   }
 ]
+
+type EligibleAddresses = {
+  rewardKey: string
+  addresses: string[]
+}
+
+export const eligibleAddresses = eligibleAddressesArray as EligibleAddresses[]

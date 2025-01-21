@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui'
 import fingerprintPink from '@static/png/fingerprintPink.png'
 import fingerprintGreen from '@static/png/fingerprintGreen.png'
 
-export const useStylesList = makeStyles()(theme => ({
+export const useStylesList = makeStyles<{ isMobile: boolean }>()((theme, { isMobile }) => ({
   container: {
     marginInline: 40,
 
@@ -12,11 +12,7 @@ export const useStylesList = makeStyles()(theme => ({
     }
   },
   list: {
-    paddingRight: 24,
-
-    [theme.breakpoints.down('md')]: {
-      paddingRight: 12
-    }
+    paddingRight: isMobile ? 12 : 48
   },
   scrollbarThumb: {
     backgroundColor: `${colors.invariant.pink} !important`,
@@ -157,6 +153,37 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
       ...typography.body1,
       color: colors.invariant.textGrey,
       textTransform: 'none'
+    }
+  },
+  buttonGreen: {
+    ...typography.body1,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    justifySelf: 'center',
+    padding: '13px',
+    gap: '8px',
+    width: '200px',
+    height: '44px',
+    background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
+    borderRadius: '16px',
+    fontFamily: 'Mukta',
+    fontStyle: 'normal',
+    textTransform: 'none',
+    color: colors.invariant.dark,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
+    },
+    '&:active': {
+      transform: 'translateY(1px)',
+      boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
     }
   },
   label: {

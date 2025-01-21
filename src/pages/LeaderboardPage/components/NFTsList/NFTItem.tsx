@@ -1,19 +1,28 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useStyles } from './style'
 import { Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import { NFT } from './PoolList'
 import icons from '@static/icons'
 import { theme } from '@static/theme'
+import { eligibleAddresses } from '@store/consts/static'
 
 export interface NFTItemInterface {
   number: number
   nft: NFT
-  userPosition: number
+  userAddress: string
 }
 
-const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userPosition }) => {
+const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userAddress }) => {
   const { classes } = useStyles({ isEven: number % 2 === 0 })
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+
+  const isEligible = useMemo(() => {
+    const reward = eligibleAddresses.find(
+      a => a.rewardKey === nft.name && a.addresses.includes(userAddress)
+    )
+
+    return reward && nft.distributionDate < new Date().toISOString()
+  }, [eligibleAddresses, userAddress, nft])
 
   return (
     <Grid className={classes.container} container alignItems='center'>
@@ -55,14 +64,14 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userPosition }) => {
             <Typography className={classes.subtitle}>{nft.name}</Typography>
           </Grid>
           <Typography className={classes.title}>
-            {userPosition >= nft.eligible ? 'Eligible' : 'Not eligible'}
+            {isEligible ? 'Eligible' : 'Not eligible'}
           </Typography>
           <Button
-            className={classes.button}
+            className={isEligible ? classes.buttonGreen : classes.button}
             onClick={() => {}}
             variant='contained'
-            disabled={userPosition >= nft.eligible}>
-            Claim
+            disabled={!isEligible}>
+            {isEligible ? 'Sent' : 'Claim'}
           </Button>
         </Grid>
         <Grid

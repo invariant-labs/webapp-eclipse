@@ -3,6 +3,7 @@ import { useStylesList } from './style'
 import { Grid } from '@mui/material'
 import NFTItem from './NFTItem'
 import Scrollbars from 'rc-scrollbars'
+import useIsMobile from '@store/hooks/isMobile'
 
 export interface NFT {
   name: string
@@ -14,14 +15,17 @@ export interface NFT {
 export interface NFTsListInterface {}
 
 const NFTsList: React.FC<NFTsListInterface> = () => {
-  const { classes: listClasses } = useStylesList()
-  const userPosition = 56
+  const { classes } = useStylesList({
+    isMobile: useIsMobile()
+  })
+
+  const userAddress = 'BtGH2WkM1oNyPVgzYT51xV2gJqHhVQ4QiGwWirBUW5xN'
 
   const nftArray: NFT[] = [
     {
-      name: 'NFT1',
+      name: 'moon',
       image: 'https://thenftbrief.com/wp-content/uploads/2023/05/image-27.png',
-      distributionDate: '2023-05-27',
+      distributionDate: '2025-05-27',
       eligible: 100
     },
     {
@@ -31,7 +35,7 @@ const NFTsList: React.FC<NFTsListInterface> = () => {
       eligible: 25
     },
     {
-      name: 'NFT3',
+      name: 'moon',
       image: 'https://thenftbrief.com/wp-content/uploads/2023/05/image-27.png',
       distributionDate: '2023-05-27',
       eligible: 10
@@ -51,26 +55,26 @@ const NFTsList: React.FC<NFTsListInterface> = () => {
   ]
 
   return (
-    <div className={listClasses.container}>
+    <div className={classes.container}>
       <Scrollbars
         style={{ maxWidth: 1072, height: 1064, overflowX: 'hidden' }}
-        className={listClasses.scrollbar}
+        className={classes.scrollbar}
         autoHide
         universal
         classes={{
-          thumbVertical: listClasses.scrollbarThumb,
-          trackVertical: listClasses.scrollbarTrack,
+          thumbVertical: classes.scrollbarThumb,
+          trackVertical: classes.scrollbarTrack,
 
-          view: listClasses.scrollbarView
+          view: classes.scrollbarView
         }}>
         <Grid
           container
           justifyContent='center'
           alignItems='center'
           gap={3}
-          className={listClasses.list}>
+          className={classes.list}>
           {nftArray.map((nft, index) => (
-            <NFTItem key={index} number={index + 1} nft={nft} userPosition={userPosition} />
+            <NFTItem key={index} number={index + 1} nft={nft} userAddress={userAddress} />
           ))}
         </Grid>
       </Scrollbars>
