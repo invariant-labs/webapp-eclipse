@@ -14,10 +14,16 @@ const NFTItem: React.FC<NFTItemInterface> = ({ number, nft, userPosition }) => {
   const { classes } = useStyles({ isEven: number % 2 === 0 })
 
   return (
-    <Grid className={classes.container} container flexDirection='row' alignItems='center'>
+    <Grid className={classes.container} container alignItems='center'>
       <div className={classes.background} />
       <Typography className={classes.number}>{number}</Typography>
-      <Grid display='flex' flex={1} alignItems='center' justifyContent='space-between' gap={4}>
+      <Grid
+        display='flex'
+        flex={1}
+        alignItems='center'
+        justifyContent='space-between'
+        gap={4}
+        className={classes.innerContainer}>
         <Grid display='flex' justifyContent='center' alignItems='center'>
           <img
             src='https://thenftbrief.com/wp-content/uploads/2023/05/image-27.png'

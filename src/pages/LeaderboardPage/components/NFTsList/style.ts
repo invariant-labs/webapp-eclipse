@@ -3,9 +3,53 @@ import { makeStyles } from 'tss-react/mui'
 import pinkBackground from '@static/png/nftBackgroundPink.png'
 import greenBackground from '@static/png/nftBackgroundGreen.png'
 
-export const useStyles = makeStyles<{ isEven: boolean }>()((_theme, { isEven }) => ({
+export const useStylesList = makeStyles()(theme => ({
   container: {
-    maxWidth: 1072,
+    marginInline: 40,
+
+    [theme.breakpoints.down('sm')]: {
+      marginInline: 8
+    }
+  },
+  list: {
+    paddingRight: 32,
+
+    [theme.breakpoints.down('md')]: {
+      paddingRight: 12
+    }
+  },
+  scrollbarThumb: {
+    backgroundColor: `${colors.invariant.pink} !important`,
+    borderRadius: 5,
+    width: 8
+  },
+  scrollbarTrack: {
+    background: `${colors.invariant.light} !important`,
+    borderRadius: 5,
+    width: '8px !important'
+  },
+  scrollbarView: {
+    overflowX: 'hidden !important' as any,
+
+    '&::-webkit-scrollbar': {
+      width: 6,
+      background: colors.invariant.component
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: colors.invariant.pink,
+      borderRadius: 6
+    }
+  },
+  root: {
+    display: 'none'
+  },
+  scrollbar: {
+    margin: '72px auto 72px'
+  }
+}))
+
+export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) => ({
+  container: {
     padding: 24,
     borderRadius: 12,
     backgroundSize: 'cover',
@@ -13,6 +57,11 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((_theme, { isEven }) 
     position: 'relative',
     background: isEven ? colors.invariant.darkGreenGradient : colors.invariant.darkPinkGradient,
     zIndex: 2
+  },
+  innerContainer: {
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    }
   },
   background: {
     position: 'absolute',

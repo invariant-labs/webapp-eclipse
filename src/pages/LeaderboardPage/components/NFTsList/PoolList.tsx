@@ -1,13 +1,8 @@
-import React, { useEffect } from 'react'
-import PoolListItem from '../PoolListItem/PoolListItem'
-import { useStyles } from './style'
-import { Grid, useMediaQuery } from '@mui/material'
-import { NetworkType } from '@store/consts/static'
-import { VariantType } from 'notistack'
-import classNames from 'classnames'
-import { CustomPoolListItem } from '../PoolListItem/Variants/CustomPoolListItem'
-import { theme } from '@static/theme'
+import React from 'react'
+import { useStylesList } from './style'
+import { Grid } from '@mui/material'
 import NFTItem from './NFTItem'
+import Scrollbars from 'rc-scrollbars'
 
 export interface NFT {
   name: string
@@ -19,6 +14,7 @@ export interface NFT {
 export interface NFTsListInterface {}
 
 const NFTsList: React.FC<NFTsListInterface> = () => {
+  const { classes: listClasses } = useStylesList()
   const userPosition = 56
 
   const nftArray: NFT[] = [
@@ -55,11 +51,32 @@ const NFTsList: React.FC<NFTsListInterface> = () => {
   ]
 
   return (
-    <Grid container justifyContent='center' alignItems='center' gap={3} mt={9}>
-      {nftArray.map((nft, index) => (
-        <NFTItem key={index} number={index + 1} nft={nft} userPosition={userPosition} />
-      ))}
-    </Grid>
+    <div className={listClasses.container}>
+      <Scrollbars
+        style={{ maxWidth: 1072, height: 1064, overflowX: 'hidden' }}
+        className={listClasses.scrollbar}
+        autoHide
+        universal
+        classes={{
+          thumbVertical: listClasses.scrollbarThumb,
+          trackVertical: listClasses.scrollbarTrack,
+          thumbHorizontal: listClasses.root,
+          trackHorizontal: listClasses.root,
+
+          view: listClasses.scrollbarView
+        }}>
+        <Grid
+          container
+          justifyContent='center'
+          alignItems='center'
+          gap={3}
+          className={listClasses.list}>
+          {nftArray.map((nft, index) => (
+            <NFTItem key={index} number={index + 1} nft={nft} userPosition={userPosition} />
+          ))}
+        </Grid>
+      </Scrollbars>
+    </div>
   )
 }
 export default NFTsList
