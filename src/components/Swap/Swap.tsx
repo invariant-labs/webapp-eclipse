@@ -48,6 +48,7 @@ import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
+import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 
 export interface Pools {
   tokenX: PublicKey
@@ -712,25 +713,16 @@ export const Swap: React.FC<ISwap> = ({
           <Typography component='h1' style={{ height: '27px', textAlign: 'center' }}>
             Swap tokens
           </Typography>
-          {isPairGivingPoints && (
-            <Box
-              className={classes.pointsBox}
-              ref={pointsBoxRef}
-              onPointerLeave={handlePointerLeave}
-              onPointerEnter={handlePointerEnter}>
-              <img src={icons.airdropRainbow} alt='' />
-              Points{' '}
-              {new BN(swapMultiplier, 'hex').gte(new BN(1)) &&
-                `${new BN(swapMultiplier, 'hex').toNumber()}x`}
-              :{' '}
-              <span className={classes.pointsAmount}>
-                {formatNumber(
-                  removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
-                )}
-              </span>{' '}
-              <img src={icons.infoCircle} alt='' width={'14px'} style={{ marginTop: '-2px' }} />
-            </Box>
-          )}
+          <EstimatedPointsLabel
+            isAnimating={isPairGivingPoints}
+            decimalIndex={decimalIndex}
+            handlePointerEnter={handlePointerEnter}
+            handlePointerLeave={handlePointerLeave}
+            pointsBoxRef={pointsBoxRef}
+            swapMultiplier={swapMultiplier}
+            isLessThanOne={isLessThanOne}
+            stringPointsValue={stringPointsValue}
+          />
         </Box>
         <Box className={classes.swapControls}>
           <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
