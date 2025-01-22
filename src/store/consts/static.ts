@@ -189,7 +189,7 @@ export const WETH_MAIN: Token = {
   name: 'Ethereum',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const LAIKA_MAIN: Token = {
@@ -833,10 +833,6 @@ export const getPopularPools = (network: NetworkType) => {
 }
 
 export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
-  {
-    coingeckoId: 'bridged-wrapped-ether-eclipse',
-    solanaAddress: ''
-  },
   {
     coingeckoId: 'usd-coin',
     solanaAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
