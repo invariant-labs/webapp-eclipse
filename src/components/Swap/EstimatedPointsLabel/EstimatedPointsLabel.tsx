@@ -52,7 +52,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         }, 10)
 
         return () => clearTimeout(resetTimeout)
-      }, 300)
+      }, 100)
 
       return () => clearTimeout(blurTimeout)
     }
