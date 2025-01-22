@@ -31,7 +31,6 @@ export const LockStatsPopover = ({
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
 
-  console.log(lockedX, lockedY, liquidityX, liquidityY)
   const percentagesAndValues = useMemo(() => {
     const totalLocked = lockedX + lockedY
 
@@ -66,17 +65,11 @@ export const LockStatsPopover = ({
 
     if (lockedX > liquidityX) {
       values.xStandard = '100.00'
-      values.yStandard = '0.00'
-      values.xStandardVal = lockedX
-      values.yStandardVal = 0
-      return values
+      values.xStandardVal = liquidityX
     }
     if (lockedY > liquidityY) {
       values.yStandard = '100.00'
-      values.xStandard = '0.00'
-      values.yStandardVal = lockedY
-      values.xStandardVal = 0
-      return values
+      values.yStandardVal = liquidityY
     }
     return values
   }, [lockedX, lockedY, liquidityX, liquidityY])
