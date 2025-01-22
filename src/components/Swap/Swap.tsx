@@ -689,6 +689,14 @@ export const Swap: React.FC<ISwap> = ({
     return { decimalIndex, isLessThanOne }
   }, [stringPointsValue])
 
+  const isAnyBlurShowed =
+    lockAnimation ||
+    (getStateMessage() === 'Loading' &&
+      (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT)) ||
+    lockAnimation ||
+    (getStateMessage() === 'Loading' &&
+      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <SwapPointsPopover
@@ -722,6 +730,7 @@ export const Swap: React.FC<ISwap> = ({
             swapMultiplier={swapMultiplier}
             isLessThanOne={isLessThanOne}
             stringPointsValue={stringPointsValue}
+            isBlurShowed={isAnyBlurShowed}
           />
         </Box>
 
