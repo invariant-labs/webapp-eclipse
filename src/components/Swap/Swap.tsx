@@ -21,10 +21,8 @@ import {
   calculatePoints,
   convertBalanceToBN,
   findPairs,
-  formatNumber,
   handleSimulate,
   printBN,
-  removeAdditionalDecimals,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
@@ -46,9 +44,9 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
-import PurpleWaves from '@static/png/purpleWavesFromBottom.png'
-import GreenWaves from '@static/png/greenWavesFromTop.png'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
+import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
+import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 
 export interface Pools {
   tokenX: PublicKey
@@ -672,13 +670,6 @@ export const Swap: React.FC<ISwap> = ({
     onSelectInput: () => setInputRef(inputTarget.FROM)
   })
 
-  const renderWaves = (position: 'top' | 'bottom', imageSrc: string) => (
-    <div
-      className={`${classes.waveImage} ${classes[`${position}Wave`]}`}
-      style={{ alignItems: position === 'top' ? 'flex-start' : 'flex-end' }}>
-      <img src={imageSrc} alt={`${position === 'top' ? 'Purple' : 'Green'} waves`} />
-    </div>
-  )
   const stringPointsValue = useMemo(() => printBN(pointsForSwap, 8), [pointsForSwap])
   const { decimalIndex, isLessThanOne } = useMemo(() => {
     const dotIndex = stringPointsValue.indexOf('.')
@@ -698,9 +689,18 @@ export const Swap: React.FC<ISwap> = ({
     return { decimalIndex, isLessThanOne }
   }, [stringPointsValue])
 
+  const isAnyBlurShowed =
+    lockAnimation ||
+    (getStateMessage() === 'Loading' &&
+      (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT)) ||
+    lockAnimation ||
+    (getStateMessage() === 'Loading' &&
+      (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <SwapPointsPopover
+        isPairGivingPoints={isPairGivingPoints}
         anchorEl={pointsBoxRef.current}
         open={isPointsPopoverOpen}
         onClose={() => setIsPointsPopoverOpen(false)}
@@ -715,61 +715,60 @@ export const Swap: React.FC<ISwap> = ({
           </u>
         </Box>
       )}
+
       <Grid container className={classes.header}>
-        <Box display={'flex'} flexDirection={'row'} gap={1}>
-          <Typography component='h1' style={{ height: '27px', textAlign: 'center' }}>
+        <Box className={classes.leftSection}>
+          <Typography component='h1' style={{ height: '27px' }}>
             Swap tokens
           </Typography>
-          {isPairGivingPoints && (
-            <Box
-              className={classes.pointsBox}
-              ref={pointsBoxRef}
-              onPointerLeave={handlePointerLeave}
-              onPointerEnter={handlePointerEnter}>
-              <img src={icons.airdropRainbow} alt='' />
-              Points{' '}
-              {new BN(swapMultiplier, 'hex').gte(new BN(1)) &&
-                `${new BN(swapMultiplier, 'hex').toNumber()}x`}
-              :{' '}
-              <span className={classes.pointsAmount}>
-                {formatNumber(
-                  removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
-                )}
-              </span>{' '}
-              <img src={icons.infoCircle} alt='' width={'14px'} style={{ marginTop: '-2px' }} />
-            </Box>
-          )}
+          <EstimatedPointsLabel
+            isAnimating={isPairGivingPoints}
+            decimalIndex={decimalIndex}
+            pointsForSwap={pointsForSwap}
+            handlePointerEnter={handlePointerEnter}
+            handlePointerLeave={handlePointerLeave}
+            pointsBoxRef={pointsBoxRef}
+            swapMultiplier={swapMultiplier}
+            isLessThanOne={isLessThanOne}
+            stringPointsValue={stringPointsValue}
+            isAnyBlurShowed={isAnyBlurShowed}
+          />
         </Box>
-        <Box className={classes.swapControls}>
+
+        <Box className={classes.rightSection}>
           <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
             <p>
               Slippage: <span className={classes.slippageAmount}>{slippTolerance}%</span>
             </p>
           </Button>
-          <TooltipHover text='Refresh'>
-            <Grid display='flex' alignItems='center'>
-              <Button
-                onClick={handleRefresh}
-                className={classes.refreshIconBtn}
-                disabled={
-                  priceFromLoading ||
-                  priceToLoading ||
-                  isBalanceLoading ||
-                  getStateMessage() === 'Loading' ||
-                  tokenFromIndex === null ||
-                  tokenToIndex === null ||
-                  tokenFromIndex === tokenToIndex
-                }>
-                <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+
+          <Box className={classes.swapControls}>
+            <TooltipHover text='Refresh'>
+              <Grid display='flex' alignItems='center'>
+                <Button
+                  onClick={handleRefresh}
+                  className={classes.refreshIconBtn}
+                  disabled={
+                    priceFromLoading ||
+                    priceToLoading ||
+                    isBalanceLoading ||
+                    getStateMessage() === 'Loading' ||
+                    tokenFromIndex === null ||
+                    tokenToIndex === null ||
+                    tokenFromIndex === tokenToIndex
+                  }>
+                  <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                </Button>
+              </Grid>
+            </TooltipHover>
+            <TooltipHover text='Settings'>
+              <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
+                <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
               </Button>
-            </Grid>
-          </TooltipHover>
-          <TooltipHover text='Settings'>
-            <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
-              <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
-            </Button>
-          </TooltipHover>
+            </TooltipHover>
+          </Box>
         </Box>
+
         <Grid className={classes.slippage}>
           <Slippage
             open={settings}
@@ -780,13 +779,14 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Grid>
       </Grid>
+
       <Box
         className={classNames(
           classes.borderContainer,
           isPairGivingPoints && classes.gradientBorderForContainer
         )}>
         <Grid container className={classes.root} direction='column'>
-          {isPairGivingPoints && renderWaves('top', GreenWaves)}
+          <AnimatedWaves wavePosition={'top'} isAnimating={isPairGivingPoints} />
           <Typography
             className={classNames(
               classes.swapLabel,
@@ -1162,7 +1162,7 @@ export const Swap: React.FC<ISwap> = ({
               progress={progress}
             />
           )}
-          {isPairGivingPoints && renderWaves('bottom', PurpleWaves)}
+          <AnimatedWaves wavePosition={'bottom'} isAnimating={isPairGivingPoints} />
         </Grid>
       </Box>
       <img src={icons.audit} alt='Audit' style={{ marginTop: '24px' }} width={180} />

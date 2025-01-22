@@ -11,6 +11,32 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       padding: '0 8px'
     }
   },
+
+  leftSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      gap: 8
+    }
+  },
+  rightSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+
+    [theme.breakpoints.down('sm')]: {
+      marginTop: '5px',
+      flexDirection: 'column-reverse',
+      alignItems: 'flex-end',
+      gap: 8
+    }
+  },
   header: {
     maxWidth: 500,
     display: 'flex',
@@ -19,10 +45,17 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'relative',
     paddingBottom: 9,
     rowGap: 8,
+    flexWrap: 'wrap',
 
     '& h1': {
       ...typography.heading4,
       color: colors.white.main
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '12px'
     }
   },
   refreshIcon: {
@@ -80,7 +113,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
   swapControls: {
     display: 'flex',
-    gap: 8
+    gap: 8,
+
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'flex-end'
+    }
   },
 
   refreshIconBtn: {
@@ -409,6 +446,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: '100%',
     position: 'absolute',
     top: 0,
+    opacity: 0,
     left: 0,
     '& img': {
       borderTopLeftRadius: 24
@@ -432,7 +470,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       'linear-gradient(#2A365C, #2A365C), linear-gradient(360deg, #EF84F5 0%, #2EE09A 100%)',
     backgroundOrigin: 'border-box',
     backgroundClip: 'padding-box, border-box',
-    transition: 'border 0.2s ease-in-out'
+    transition: 'all 0.5s ease-in-out'
   },
   borderContainer: {
     maxWidth: 500,

@@ -64,6 +64,21 @@ const useStyles = makeStyles()((theme: Theme) => {
         width: 'fit-content'
       }
     },
+    errorText: {
+      color: colors.invariant.Error,
+      ...typography.caption1
+    },
+    halfContainer: {
+      display: 'flex',
+      width: '50%',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+      gap: 8,
+      flexDirection: 'column',
+      [theme.breakpoints.down(671)]: {
+        width: 'fit-content'
+      }
+    },
     promotedSwapsContainer: {
       display: 'flex',
       width: 137,

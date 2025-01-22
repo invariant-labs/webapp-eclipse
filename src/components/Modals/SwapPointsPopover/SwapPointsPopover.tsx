@@ -9,6 +9,7 @@ export interface ISwapPointsPopover {
   open: boolean
   anchorEl: HTMLElement | null
   onClose: () => void
+  isPairGivingPoints: boolean
   network: NetworkType
   promotedSwapPairs: { tokenX: string; tokenY: string }[]
 }
@@ -18,6 +19,7 @@ export const SwapPointsPopover = ({
   anchorEl,
   onClose,
   network,
+  isPairGivingPoints,
   promotedSwapPairs
 }: ISwapPointsPopover) => {
   const { classes } = useStyles()
@@ -26,11 +28,9 @@ export const SwapPointsPopover = ({
   useEffect(() => {
     if (open && !animationTriggered) {
       const ANIM_TIME = 500
-
       const timer = setTimeout(() => {
         setAnimationTriggered(true)
       }, ANIM_TIME)
-
       return () => clearTimeout(timer)
     }
   }, [open])
@@ -62,20 +62,33 @@ export const SwapPointsPopover = ({
       }}
       marginThreshold={16}>
       <div className={classes.backgroundContainer}>
-        <div className={classes.explanationContainer}>
-          <Typography className={classes.sectionTitle}>
-            Estimated points for completing this swap.{' '}
-          </Typography>
-          <Typography className={classes.standardText}>
-            The number of points you will receive depends on the fees your swap generates for
-            liquidity providers.
-          </Typography>
-          <Typography className={classes.sectionTitle}>Why not base it on volume?</Typography>
-          <Typography className={classes.standardText}>
-            Because we want to avoid artificially inflating volume on highly correlated pairs. Our
-            goal is for the volume on Invariant to reflect genuine activity from normal swaps, not
-            artificial transactions. We are committed to discouraging wash trading.
-          </Typography>
+        <div className={isPairGivingPoints ? classes.explanationContainer : classes.halfContainer}>
+          {isPairGivingPoints ? (
+            <>
+              <Typography className={classes.sectionTitle}>
+                Estimated points for completing this swap.{' '}
+              </Typography>
+              <Typography className={classes.standardText}>
+                The number of points you will receive depends on the fees your swap generates for
+                liquidity providers.
+              </Typography>
+              <Typography className={classes.sectionTitle}>Why not base it on volume?</Typography>
+              <Typography className={classes.standardText}>
+                Because we want to avoid artificially inflating volume on highly correlated pairs.
+                Our goal is for the volume on Invariant to reflect genuine activity from normal
+                swaps, not artificial transactions. We are committed to discouraging wash trading.
+              </Typography>
+            </>
+          ) : (
+            <>
+              <Typography className={classes.errorText}>
+                This pair is not currently distributing points.
+              </Typography>
+              <Typography className={classes.standardText}>
+                Swaps on selected pairs will earn you points for the leaderboard.
+              </Typography>
+            </>
+          )}
         </div>
         <Box
           sx={{
@@ -84,7 +97,8 @@ export const SwapPointsPopover = ({
             alignSelf: 'stretch'
           }}
         />
-        <div className={classes.promotedSwapsContainer}>
+        <div
+          className={isPairGivingPoints ? classes.promotedSwapsContainer : classes.halfContainer}>
           <Typography className={classes.standardText}>
             Currently, swaps on the following pairs distribute points (all fee tiers):
           </Typography>
