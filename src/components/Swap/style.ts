@@ -31,6 +31,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
 
     [theme.breakpoints.down('sm')]: {
+      marginTop: '5px',
       flexDirection: 'column-reverse',
       alignItems: 'flex-end',
       gap: 8
