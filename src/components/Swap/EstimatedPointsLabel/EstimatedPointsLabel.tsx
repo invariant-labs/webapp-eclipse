@@ -78,15 +78,15 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
 
   useLayoutEffect(() => {
+    setIsChanging(true)
     if (isAnimating || !pointsForSwap.isZero()) {
-      setIsChanging(true)
       setTimeout(() => {
         setDisplayedValue(stablePointsValue)
-        setTimeout(() => {
-          setIsChanging(false)
-        }, 500)
       }, 300)
     }
+    setTimeout(() => {
+      setIsChanging(false)
+    }, 500)
   }, [stablePointsValue, isAnimating, pointsForSwap])
 
   return (
