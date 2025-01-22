@@ -15,6 +15,7 @@ interface IEstimatedPointsLabel {
   isLessThanOne: boolean
   decimalIndex: any
   isAnimating: boolean
+  isAnyBlurShowed: boolean
 }
 
 export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
@@ -25,6 +26,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   pointsForSwap,
   isLessThanOne,
   decimalIndex,
+  isAnyBlurShowed,
   isAnimating,
   stringPointsValue
 }) => {
@@ -46,15 +48,15 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         )
 
         const resetTimeout = setTimeout(() => {
-          setIsChanging(false)
-        }, 200)
+          setIsChanging(isAnyBlurShowed)
+        }, 100)
 
         return () => clearTimeout(resetTimeout)
       }, 300)
 
       return () => clearTimeout(blurTimeout)
     }
-  }, [stringPointsValue, isAnimating, pointsForSwap])
+  }, [stringPointsValue, isAnimating, isAnyBlurShowed, pointsForSwap])
 
   return (
     <Box
