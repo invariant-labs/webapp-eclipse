@@ -1653,6 +1653,9 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
 let isCoinGeckoQueryRunning = false
 
 export const getCoinGeckoTokenPrice = async (id: string): Promise<number | undefined> => {
+  const defaultTokensHash = generateHash(JSON.stringify(DEFAULT_TOKENS))
+  const cachedHash = localStorage.getItem('COINGECKO_DEFAULT_TOKEN_LIST_CHANGED')
+
   while (isCoinGeckoQueryRunning) {
     await sleep(100)
   }
@@ -1664,23 +1667,32 @@ export const getCoinGeckoTokenPrice = async (id: string): Promise<number | undef
     lastQueryTimestamp = Number(cachedLastQueryTimestamp)
   }
 
+  const isHashOutdated = cachedHash !== defaultTokensHash
+
   const cachedPriceData = localStorage.getItem('COINGECKO_PRICE_DATA')
   let priceData: CoinGeckoAPIData = []
-  if (cachedPriceData && Number(lastQueryTimestamp) + COINGECKO_QUERY_COOLDOWN > Date.now()) {
-    priceData = JSON.parse(cachedPriceData)
-  } else {
+
+  if (
+    isHashOutdated ||
+    !cachedPriceData ||
+    Number(lastQueryTimestamp) + COINGECKO_QUERY_COOLDOWN <= Date.now()
+  ) {
     try {
       const { data } = await axios.get<CoinGeckoAPIData>(
         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${DEFAULT_TOKENS}`
       )
       priceData = data
+
       localStorage.setItem('COINGECKO_PRICE_DATA', JSON.stringify(priceData))
       localStorage.setItem('COINGECKO_LAST_QUERY_TIMESTAMP', String(Date.now()))
+      localStorage.setItem('COINGECKO_DEFAULT_TOKEN_LIST_CHANGED', defaultTokensHash)
     } catch (e) {
       localStorage.removeItem('COINGECKO_LAST_QUERY_TIMESTAMP')
       localStorage.removeItem('COINGECKO_PRICE_DATA')
       console.log(e)
     }
+  } else {
+    priceData = JSON.parse(cachedPriceData)
   }
 
   isCoinGeckoQueryRunning = false
@@ -1860,4 +1872,16 @@ export const checkDataDelay = (date: string | Date, timeInMinutes: number): bool
   const differenceInMinutes = (currentDate.getTime() - inputDate.getTime()) / (1000 * 60)
 
   return differenceInMinutes > timeInMinutes
+}
+
+export const generateHash = (str: string): string => {
+  let hash = 0
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
+  }
+
+  return Math.abs(hash).toString(16).padStart(8, '0')
 }
