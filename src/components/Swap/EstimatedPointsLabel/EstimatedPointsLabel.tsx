@@ -1,8 +1,8 @@
 import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
 import icons from '@static/icons'
-import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { formatNumber } from '@utils/utils'
+import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
 
 interface IEstimatedPointsLabel {
@@ -17,46 +17,46 @@ interface IEstimatedPointsLabel {
   isAnimating: boolean
 }
 
-const useStableValue = (value: string, delay: number = 500) => {
-  const [stableValue, setStableValue] = useState<string>(value)
-  const timeoutRef = useRef<NodeJS.Timeout>()
-  const initialValueRef = useRef<string>(value)
-  const lastValueRef = useRef<string>(value)
-  const hasStabilizedRef = useRef<boolean>(false)
+// const useStableValue = (value: string, delay: number = 500) => {
+//   const [stableValue, setStableValue] = useState<string>(value)
+//   const timeoutRef = useRef<NodeJS.Timeout>()
+//   const initialValueRef = useRef<string>(value)
+//   const lastValueRef = useRef<string>(value)
+//   const hasStabilizedRef = useRef<boolean>(false)
 
-  useLayoutEffect(() => {
-    if (!hasStabilizedRef.current && value !== initialValueRef.current) {
-      hasStabilizedRef.current = true
-    }
+//   useLayoutEffect(() => {
+//     if (!hasStabilizedRef.current && value !== initialValueRef.current) {
+//       hasStabilizedRef.current = true
+//     }
 
-    if (value !== lastValueRef.current) {
-      lastValueRef.current = value
+//     if (value !== lastValueRef.current) {
+//       lastValueRef.current = value
 
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-        if (hasStabilizedRef.current) {
-          setStableValue(initialValueRef.current)
-        }
-      }
+//       if (timeoutRef.current) {
+//         clearTimeout(timeoutRef.current)
+//         if (hasStabilizedRef.current) {
+//           setStableValue(initialValueRef.current)
+//         }
+//       }
 
-      timeoutRef.current = setTimeout(() => {
-        if (lastValueRef.current === value) {
-          setStableValue(value)
-        } else {
-          setStableValue(initialValueRef.current)
-        }
-      }, delay)
-    }
+//       timeoutRef.current = setTimeout(() => {
+//         if (lastValueRef.current === value) {
+//           setStableValue(value)
+//         } else {
+//           setStableValue(initialValueRef.current)
+//         }
+//       }, delay)
+//     }
 
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-    }
-  }, [value, delay])
+//     return () => {
+//       if (timeoutRef.current) {
+//         clearTimeout(timeoutRef.current)
+//       }
+//     }
+//   }, [value, delay])
 
-  return stableValue
-}
+//   return stableValue
+// }
 
 export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   handlePointerEnter,
@@ -64,13 +64,13 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   pointsBoxRef,
   swapMultiplier,
   pointsForSwap,
-  isLessThanOne,
-  decimalIndex,
+  //   isLessThanOne,
+  //   decimalIndex,
   isAnimating,
   stringPointsValue
 }) => {
-  const stablePointsValue = useStableValue(stringPointsValue)
-  const [displayedValue, setDisplayedValue] = useState<string>(stringPointsValue)
+  //   const stablePointsValue = useStableValue(stringPointsValue)
+  const [displayedValue, setDisplayedValue] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
   const [isChanging, setIsChanging] = useState(false)
 
@@ -78,11 +78,12 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
 
   useEffect(() => {
+    console.log(stringPointsValue)
     if (isAnimating || !pointsForSwap.isZero()) {
       setIsChanging(true)
 
       const blurTimeout = setTimeout(() => {
-        setDisplayedValue(stablePointsValue)
+        setDisplayedValue(stringPointsValue)
 
         const resetTimeout = setTimeout(() => {
           setIsChanging(false)
@@ -93,7 +94,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
 
       return () => clearTimeout(blurTimeout)
     }
-  }, [stablePointsValue, isAnimating, pointsForSwap])
+  }, [stringPointsValue, isAnimating, pointsForSwap])
 
   return (
     <Box
@@ -107,12 +108,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         <span
           className={classes.pointsAmount}
           style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
-          <p className={classes.pointsValue}>
-            {' '}
-            {formatNumber(
-              removeAdditionalDecimals(displayedValue, isLessThanOne ? decimalIndex : 2)
-            )}
-          </p>
+          <p className={classes.pointsValue}> {formatNumber(displayedValue)}</p>
 
           <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
         </span>{' '}
