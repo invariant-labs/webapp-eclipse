@@ -48,8 +48,8 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
       position: 'absolute',
       transform: `translateY(${isVisible ? '0' : '-100%'})`,
       transition: isVisible
-        ? 'opacity 0.7s ease-in-out, transform 0.5s ease-in-out'
-        : 'opacity 0.7s ease-in-out 0.7s, transform 0.5s ease-in-out 0.7s',
+        ? 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out'
+        : 'opacity 0.3s ease-in-out 0.3s, transform 0.3s ease-in-out 0.3s',
       whiteSpace: 'nowrap'
     },
 
@@ -64,8 +64,8 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
       opacity: isVisible ? 0 : 1,
       transform: `translateY(${isVisible ? '100%' : '0'})`,
       transition: isVisible
-        ? 'opacity 0.7s ease-in-out, transform 0.5s ease-in-out'
-        : 'opacity 0.7s ease-in-out 0.7s, transform 0.5s ease-in-out 0.7s',
+        ? 'opacity 0.3s ease-in-out, transform 0.3s ease-in-out'
+        : 'opacity 0.3s ease-in-out 0.3s, transform 0.3s ease-in-out 0.3s',
       whiteSpace: 'nowrap'
     },
 
