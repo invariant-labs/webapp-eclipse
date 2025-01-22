@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
-import React, { useLayoutEffect, useRef, useState, useEffect } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import useStyles from './style'
 
 interface IEstimatedPointsLabel {
