@@ -31,11 +31,14 @@ export const LockStatsPopover = ({
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
 
+  console.log(lockedX, lockedY, liquidityX, liquidityY)
   const percentagesAndValues = useMemo(() => {
     const totalLocked = lockedX + lockedY
 
     const standardXRatio = ((lockedX / liquidityX) * 100).toFixed(2)
     const standardYRatio = ((lockedY / liquidityY) * 100).toFixed(2)
+    console.log(lockedX, lockedY, liquidityX, liquidityY)
+
     const values = {
       xLocked: ((lockedX / totalLocked) * 100).toFixed(1),
       yLocked: ((lockedY / totalLocked) * 100).toFixed(1),
@@ -44,7 +47,23 @@ export const LockStatsPopover = ({
       xStandardVal: (lockedX * liquidityX) / liquidityX,
       yStandardVal: (lockedY * liquidityY) / liquidityY
     }
-    // ADDITIONAL VALIDATION
+
+    if (liquidityX === 0) {
+      values.xStandardVal = 0
+      values.xStandard = '0.00'
+    }
+    if (liquidityY === 0) {
+      values.yStandardVal = 0
+      values.yStandard = '0.00'
+    }
+
+    if (values.xStandardVal > liquidityX) {
+      values.xStandardVal = liquidityX
+    }
+    if (values.yStandardVal > liquidityY) {
+      values.yStandardVal = liquidityY
+    }
+
     if (lockedX > liquidityX) {
       values.xStandard = '100.00'
       values.yStandard = '0.00'
@@ -205,7 +224,12 @@ export const LockStatsPopover = ({
                     ${formatNumber(percentagesAndValues.xStandardVal)}
                   </span>{' '}
                   <span style={{ color: colors.invariant.textGrey }}>
-                    ({percentagesAndValues.xStandard}%)
+                    (
+                    {percentagesAndValues.xStandard >= '0.01' ||
+                    percentagesAndValues.xStandard === '0.00'
+                      ? +percentagesAndValues.xStandard
+                      : '<0.01'}
+                    %)
                   </span>
                 </Typography>
                 <Box
@@ -248,7 +272,12 @@ export const LockStatsPopover = ({
                     ${formatNumber(percentagesAndValues.yStandardVal)}
                   </span>{' '}
                   <span style={{ color: colors.invariant.textGrey }}>
-                    ({percentagesAndValues.yStandard}%)
+                    (
+                    {percentagesAndValues.yStandard >= '0.01' ||
+                    percentagesAndValues.yStandard == '0.00'
+                      ? percentagesAndValues.yStandard
+                      : '<0.01'}
+                    %)
                   </span>
                 </Typography>
 
