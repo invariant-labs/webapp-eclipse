@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
-import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState } from 'react'
 import useStyles from './style'
 
 interface IEstimatedPointsLabel {
@@ -28,12 +28,11 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   isAnimating,
   stringPointsValue
 }) => {
-  const [width, setWidth] = useState<number>(187)
   const [displayedValue, setDisplayedValue] = useState<string>(stringPointsValue)
   const contentRef = useRef<HTMLDivElement>(null)
   const alternativeRef = useRef<HTMLDivElement>(null)
   const previousValueRef = useRef<string>(stringPointsValue)
-  const { classes } = useStyles({ isVisible: isAnimating, width })
+  const { classes } = useStyles({ isVisible: isAnimating, width: 200 })
 
   useLayoutEffect(() => {
     if (isAnimating || !pointsForSwap.isZero()) {
@@ -41,21 +40,6 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
       previousValueRef.current = stringPointsValue
     }
   }, [stringPointsValue, isAnimating])
-
-  useEffect(() => {
-    const updateWidth = () => {
-      const contentWidth = contentRef.current?.offsetWidth || 0
-      const alternativeWidth = alternativeRef.current?.offsetWidth || 0
-      setWidth(Math.max(contentWidth, alternativeWidth) + 16)
-    }
-
-    updateWidth()
-    const observer = new ResizeObserver(updateWidth)
-    if (contentRef.current) observer.observe(contentRef.current)
-    if (alternativeRef.current) observer.observe(alternativeRef.current)
-
-    return () => observer.disconnect()
-  }, [swapMultiplier, displayedValue])
 
   return (
     <Box
@@ -69,7 +53,6 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         <span
           className={classes.pointsAmount}
           style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
-          {/* 435.9M */}
           {formatNumber(removeAdditionalDecimals(displayedValue, isLessThanOne ? decimalIndex : 2))}
           <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
         </span>{' '}
