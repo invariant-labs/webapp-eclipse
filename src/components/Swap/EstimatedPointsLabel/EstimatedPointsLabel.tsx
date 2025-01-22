@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useLayoutEffect, useRef, useState, useEffect } from 'react'
 import useStyles from './style'
 
 interface IEstimatedPointsLabel {
@@ -17,6 +17,36 @@ interface IEstimatedPointsLabel {
   isAnimating: boolean
 }
 
+const useStableValue = (value: string, delay: number = 500) => {
+  const [stableValue, setStableValue] = useState<string>(value)
+  const timeoutRef = useRef<NodeJS.Timeout>()
+  const lastValueRef = useRef<string>(value)
+
+  useEffect(() => {
+    if (value !== lastValueRef.current) {
+      lastValueRef.current = value
+
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+
+      timeoutRef.current = setTimeout(() => {
+        if (lastValueRef.current === value) {
+          setStableValue(value)
+        }
+      }, delay)
+    }
+
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current)
+      }
+    }
+  }, [value, delay])
+
+  return stableValue
+}
+
 export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   handlePointerEnter,
   handlePointerLeave,
@@ -28,18 +58,17 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   isAnimating,
   stringPointsValue
 }) => {
-  const [displayedValue, setDisplayedValue] = useState<string>(stringPointsValue)
+  const stablePointsValue = useStableValue(stringPointsValue)
+  const [displayedValue, setDisplayedValue] = useState<string>(stablePointsValue)
   const contentRef = useRef<HTMLDivElement>(null)
   const alternativeRef = useRef<HTMLDivElement>(null)
-  const previousValueRef = useRef<string>(stringPointsValue)
   const { classes } = useStyles({ isVisible: isAnimating, width: 200 })
 
   useLayoutEffect(() => {
     if (isAnimating || !pointsForSwap.isZero()) {
-      setDisplayedValue(stringPointsValue)
-      previousValueRef.current = stringPointsValue
+      setDisplayedValue(stablePointsValue)
     }
-  }, [stringPointsValue, isAnimating])
+  }, [stablePointsValue, isAnimating, pointsForSwap])
 
   return (
     <Box
