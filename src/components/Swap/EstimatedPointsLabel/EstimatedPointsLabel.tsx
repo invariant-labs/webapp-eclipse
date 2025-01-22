@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useStyles from './style'
 
 interface IEstimatedPointsLabel {
@@ -35,7 +35,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const previousValueRef = useRef<string>(stringPointsValue)
   const { classes } = useStyles({ isVisible: isAnimating, width })
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     if (isAnimating || !pointsForSwap.isZero()) {
       setDisplayedValue(stringPointsValue)
       previousValueRef.current = stringPointsValue
