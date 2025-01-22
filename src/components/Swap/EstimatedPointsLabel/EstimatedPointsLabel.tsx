@@ -38,23 +38,18 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
 
   useEffect(() => {
-    console.log(stringPointsValue)
     if (isAnimating || !pointsForSwap.isZero()) {
       setIsChanging(true)
 
-      const blurTimeout = setTimeout(() => {
-        setDisplayedValue(
-          removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
-        )
+      setDisplayedValue(
+        removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
+      )
 
-        const resetTimeout = setTimeout(() => {
-          setIsChanging(isAnyBlurShowed)
-        }, 10)
+      const resetTimeout = setTimeout(() => {
+        setIsChanging(isAnyBlurShowed)
+      }, 10)
 
-        return () => clearTimeout(resetTimeout)
-      }, 100)
-
-      return () => clearTimeout(blurTimeout)
+      return () => clearTimeout(resetTimeout)
     }
   }, [stringPointsValue, isAnimating, isAnyBlurShowed, pointsForSwap])
 
