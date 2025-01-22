@@ -1,8 +1,8 @@
 import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles<{ isVisible: boolean; width: number }>()(
-  (_theme, { isVisible, width }) => ({
+const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: boolean }>()(
+  (_theme, { isVisible, width, isChanging }) => ({
     pointsBox: {
       height: 27,
       width: `${width}px`,
@@ -28,8 +28,13 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number }>()(
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-
       color: colors.invariant.pink
+    },
+    pointsValue: {
+      width: '50px',
+      textAlign: 'center',
+      transition: 'filter 0.3s ease-in-out',
+      filter: isChanging ? 'blur(10px)' : 'blur(0)'
     },
 
     contentWrapper: {

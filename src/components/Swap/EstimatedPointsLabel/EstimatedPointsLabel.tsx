@@ -72,12 +72,20 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const stablePointsValue = useStableValue(stringPointsValue)
   const [displayedValue, setDisplayedValue] = useState<string>(stablePointsValue)
   const contentRef = useRef<HTMLDivElement>(null)
+  const [isChanging, setIsChanging] = useState(false)
+
   const alternativeRef = useRef<HTMLDivElement>(null)
-  const { classes } = useStyles({ isVisible: isAnimating, width: 200 })
+  const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
 
   useLayoutEffect(() => {
     if (isAnimating || !pointsForSwap.isZero()) {
-      setDisplayedValue(stablePointsValue)
+      setIsChanging(true)
+      setTimeout(() => {
+        setDisplayedValue(stablePointsValue)
+        setTimeout(() => {
+          setIsChanging(false)
+        }, 500)
+      }, 300)
     }
   }, [stablePointsValue, isAnimating, pointsForSwap])
 
@@ -93,7 +101,13 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         <span
           className={classes.pointsAmount}
           style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
-          {formatNumber(removeAdditionalDecimals(displayedValue, isLessThanOne ? decimalIndex : 2))}
+          <p className={classes.pointsValue}>
+            {' '}
+            {formatNumber(
+              removeAdditionalDecimals(displayedValue, isLessThanOne ? decimalIndex : 2)
+            )}
+          </p>
+
           <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
         </span>{' '}
         <span
