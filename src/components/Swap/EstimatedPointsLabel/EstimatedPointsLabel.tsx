@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
-import React, { useLayoutEffect, useRef, useState } from 'react'
+import React, { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import useStyles from './style'
 
 interface IEstimatedPointsLabel {
@@ -70,23 +70,29 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   stringPointsValue
 }) => {
   const stablePointsValue = useStableValue(stringPointsValue)
-  const [displayedValue, setDisplayedValue] = useState<string>(stablePointsValue)
+  const [displayedValue, setDisplayedValue] = useState<string>(stringPointsValue)
   const contentRef = useRef<HTMLDivElement>(null)
   const [isChanging, setIsChanging] = useState(false)
 
   const alternativeRef = useRef<HTMLDivElement>(null)
   const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
 
-  useLayoutEffect(() => {
-    setIsChanging(true)
+  useEffect(() => {
     if (isAnimating || !pointsForSwap.isZero()) {
-      setTimeout(() => {
+      setIsChanging(true)
+
+      const blurTimeout = setTimeout(() => {
         setDisplayedValue(stablePointsValue)
-      }, 500)
+
+        const resetTimeout = setTimeout(() => {
+          setIsChanging(false)
+        }, 200)
+
+        return () => clearTimeout(resetTimeout)
+      }, 300)
+
+      return () => clearTimeout(blurTimeout)
     }
-    setTimeout(() => {
-      setIsChanging(false)
-    }, 500)
   }, [stablePointsValue, isAnimating, pointsForSwap])
 
   return (
