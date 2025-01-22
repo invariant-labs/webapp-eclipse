@@ -37,7 +37,6 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
       }, 200)
     }
   }
-
   return (
     <Grid className={classes.wrapper}>
       <Tabs
