@@ -25,6 +25,10 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number }>()(
     },
 
     pointsAmount: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+
       color: colors.invariant.pink
     },
 

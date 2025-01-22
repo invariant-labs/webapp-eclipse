@@ -706,13 +706,12 @@ export const Swap: React.FC<ISwap> = ({
           </u>
         </Box>
       )}
+
       <Grid container className={classes.header}>
-        <Box display={'flex'} flexDirection={'row'} gap={1}>
-          <Typography component='h1' style={{ height: '27px', textAlign: 'center' }}>
+        <Box className={classes.leftSection}>
+          <Typography component='h1' style={{ height: '27px' }}>
             Swap tokens
           </Typography>
-        </Box>
-        <Box sx={{ width: 'fit-content' }}>
           <EstimatedPointsLabel
             isAnimating={isPairGivingPoints}
             decimalIndex={decimalIndex}
@@ -726,36 +725,40 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Box>
 
-        <Box className={classes.swapControls}>
+        <Box className={classes.rightSection}>
           <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
             <p>
               Slippage: <span className={classes.slippageAmount}>{slippTolerance}%</span>
             </p>
           </Button>
-          <TooltipHover text='Refresh'>
-            <Grid display='flex' alignItems='center'>
-              <Button
-                onClick={handleRefresh}
-                className={classes.refreshIconBtn}
-                disabled={
-                  priceFromLoading ||
-                  priceToLoading ||
-                  isBalanceLoading ||
-                  getStateMessage() === 'Loading' ||
-                  tokenFromIndex === null ||
-                  tokenToIndex === null ||
-                  tokenFromIndex === tokenToIndex
-                }>
-                <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+
+          <Box className={classes.swapControls}>
+            <TooltipHover text='Refresh'>
+              <Grid display='flex' alignItems='center'>
+                <Button
+                  onClick={handleRefresh}
+                  className={classes.refreshIconBtn}
+                  disabled={
+                    priceFromLoading ||
+                    priceToLoading ||
+                    isBalanceLoading ||
+                    getStateMessage() === 'Loading' ||
+                    tokenFromIndex === null ||
+                    tokenToIndex === null ||
+                    tokenFromIndex === tokenToIndex
+                  }>
+                  <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                </Button>
+              </Grid>
+            </TooltipHover>
+            <TooltipHover text='Settings'>
+              <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
+                <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
               </Button>
-            </Grid>
-          </TooltipHover>
-          <TooltipHover text='Settings'>
-            <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
-              <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
-            </Button>
-          </TooltipHover>
+            </TooltipHover>
+          </Box>
         </Box>
+
         <Grid className={classes.slippage}>
           <Slippage
             open={settings}
@@ -766,6 +769,7 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Grid>
       </Grid>
+
       <Box
         className={classNames(
           classes.borderContainer,

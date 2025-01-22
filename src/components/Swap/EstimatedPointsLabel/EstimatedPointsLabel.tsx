@@ -68,9 +68,10 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         Points:{' '}
         <span
           className={classes.pointsAmount}
-          style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
+          style={{ borderRight: '1px solid #3A466B', paddingRight: '5px' }}>
           {/* 435.9M */}
           {formatNumber(removeAdditionalDecimals(displayedValue, isLessThanOne ? decimalIndex : 2))}
+          <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
         </span>{' '}
         <span
           style={{
@@ -78,12 +79,11 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
             justifyContent: 'center',
             alignItems: 'center',
             gap: 4,
-            marginLeft: '5px'
+            marginLeft: '10px'
           }}>
-          <img src={icons.boostPoints} alt='' style={{ height: '18px', width: '12px' }} />
           {new BN(swapMultiplier, 'hex').gte(new BN(1)) &&
             `${new BN(swapMultiplier, 'hex').toNumber()}x`}
-          <img src={icons.infoCircle} alt='' width='15px' />
+          <img src={icons.boostPoints} alt='' style={{ height: '18px', width: '12px' }} />
         </span>
       </div>
 
