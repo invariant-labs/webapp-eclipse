@@ -57,7 +57,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                 singleTabClasses.root,
                 index === promotedPoolTierIndex
                   ? singleTabClasses.promoted
-                  : bestTierIndex
+                  : index === bestTierIndex
                     ? singleTabClasses.best
                     : undefined
               ),
