@@ -36,7 +36,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const { classes } = useStyles({ isVisible: isAnimating, width })
 
   useEffect(() => {
-    if (isAnimating && !pointsForSwap.isZero()) {
+    if (isAnimating || !pointsForSwap.isZero()) {
       setDisplayedValue(stringPointsValue)
       previousValueRef.current = stringPointsValue
     }
