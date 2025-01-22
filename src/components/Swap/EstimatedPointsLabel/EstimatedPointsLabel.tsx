@@ -20,19 +20,30 @@ interface IEstimatedPointsLabel {
 const useStableValue = (value: string, delay: number = 500) => {
   const [stableValue, setStableValue] = useState<string>(value)
   const timeoutRef = useRef<NodeJS.Timeout>()
+  const initialValueRef = useRef<string>(value)
   const lastValueRef = useRef<string>(value)
+  const hasStabilizedRef = useRef<boolean>(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
+    if (!hasStabilizedRef.current && value !== initialValueRef.current) {
+      hasStabilizedRef.current = true
+    }
+
     if (value !== lastValueRef.current) {
       lastValueRef.current = value
 
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
+        if (hasStabilizedRef.current) {
+          setStableValue(initialValueRef.current)
+        }
       }
 
       timeoutRef.current = setTimeout(() => {
         if (lastValueRef.current === value) {
           setStableValue(value)
+        } else {
+          setStableValue(initialValueRef.current)
         }
       }, delay)
     }
