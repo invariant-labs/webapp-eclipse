@@ -54,9 +54,10 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
     },
 
     alternativeContent: {
+      width: '100%',
       display: 'flex',
       alignItems: 'center',
-      justifySelf: 'anchor-center',
+      justifyContent: 'space-around',
 
       gap: 4,
       willChange: 'opacity, transform',
