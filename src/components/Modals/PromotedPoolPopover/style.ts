@@ -50,7 +50,7 @@ const useStyles = makeStyles()(() => {
       color: colors.invariant.textGrey
     },
     whiteText: { ...typography.heading4, color: colors.invariant.text },
-    apr: {
+    apy: {
       ...typography.tiny2,
       color: colors.invariant.textGrey,
       marginLeft: 8

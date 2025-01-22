@@ -68,6 +68,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
               isLoading={isLoading}
               network={network}
               showAPY={showAPY}
+              key={pool.poolAddress?.toString()}
             />
           ))}
         </Slider>
