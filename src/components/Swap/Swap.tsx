@@ -198,7 +198,7 @@ export const Swap: React.FC<ISwap> = ({
   }, [network])
 
   const IS_ERROR_LABEL_SHOW =
-    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 25 ||
+    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 10 ||
     tokens[tokenFromIndex ?? '']?.isUnknown ||
     tokens[tokenToIndex ?? '']?.isUnknown
 
