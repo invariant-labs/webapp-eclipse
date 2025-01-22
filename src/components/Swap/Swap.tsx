@@ -700,6 +700,7 @@ export const Swap: React.FC<ISwap> = ({
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       <SwapPointsPopover
+        isPairGivingPoints={isPairGivingPoints}
         anchorEl={pointsBoxRef.current}
         open={isPointsPopoverOpen}
         onClose={() => setIsPointsPopoverOpen(false)}
