@@ -31,6 +31,7 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number }>()(
     contentWrapper: {
       display: 'flex',
       alignItems: 'center',
+      justifyContent: 'space-around',
       justifySelf: 'center',
       gap: 4,
       willChange: 'opacity, transform',
