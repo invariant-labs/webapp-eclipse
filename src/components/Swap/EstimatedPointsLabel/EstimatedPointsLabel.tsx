@@ -1,7 +1,7 @@
 import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
 import icons from '@static/icons'
-import { formatNumber } from '@utils/utils'
+import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
 
@@ -17,59 +17,17 @@ interface IEstimatedPointsLabel {
   isAnimating: boolean
 }
 
-// const useStableValue = (value: string, delay: number = 500) => {
-//   const [stableValue, setStableValue] = useState<string>(value)
-//   const timeoutRef = useRef<NodeJS.Timeout>()
-//   const initialValueRef = useRef<string>(value)
-//   const lastValueRef = useRef<string>(value)
-//   const hasStabilizedRef = useRef<boolean>(false)
-
-//   useLayoutEffect(() => {
-//     if (!hasStabilizedRef.current && value !== initialValueRef.current) {
-//       hasStabilizedRef.current = true
-//     }
-
-//     if (value !== lastValueRef.current) {
-//       lastValueRef.current = value
-
-//       if (timeoutRef.current) {
-//         clearTimeout(timeoutRef.current)
-//         if (hasStabilizedRef.current) {
-//           setStableValue(initialValueRef.current)
-//         }
-//       }
-
-//       timeoutRef.current = setTimeout(() => {
-//         if (lastValueRef.current === value) {
-//           setStableValue(value)
-//         } else {
-//           setStableValue(initialValueRef.current)
-//         }
-//       }, delay)
-//     }
-
-//     return () => {
-//       if (timeoutRef.current) {
-//         clearTimeout(timeoutRef.current)
-//       }
-//     }
-//   }, [value, delay])
-
-//   return stableValue
-// }
-
 export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   handlePointerEnter,
   handlePointerLeave,
   pointsBoxRef,
   swapMultiplier,
   pointsForSwap,
-  //   isLessThanOne,
-  //   decimalIndex,
+  isLessThanOne,
+  decimalIndex,
   isAnimating,
   stringPointsValue
 }) => {
-  //   const stablePointsValue = useStableValue(stringPointsValue)
   const [displayedValue, setDisplayedValue] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
   const [isChanging, setIsChanging] = useState(false)
@@ -83,7 +41,9 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
       setIsChanging(true)
 
       const blurTimeout = setTimeout(() => {
-        setDisplayedValue(stringPointsValue)
+        setDisplayedValue(
+          removeAdditionalDecimals(stringPointsValue, isLessThanOne ? decimalIndex : 2)
+        )
 
         const resetTimeout = setTimeout(() => {
           setIsChanging(false)
