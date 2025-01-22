@@ -49,7 +49,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
 
         const resetTimeout = setTimeout(() => {
           setIsChanging(isAnyBlurShowed)
-        }, 100)
+        }, 10)
 
         return () => clearTimeout(resetTimeout)
       }, 300)
