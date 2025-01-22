@@ -730,7 +730,7 @@ export const Swap: React.FC<ISwap> = ({
             swapMultiplier={swapMultiplier}
             isLessThanOne={isLessThanOne}
             stringPointsValue={stringPointsValue}
-            isBlurShowed={isAnyBlurShowed}
+            isAnyBlurShowed={isAnyBlurShowed}
           />
         </Box>
 
