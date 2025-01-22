@@ -82,7 +82,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
     if (isAnimating || !pointsForSwap.isZero()) {
       setTimeout(() => {
         setDisplayedValue(stablePointsValue)
-      }, 300)
+      }, 500)
     }
     setTimeout(() => {
       setIsChanging(false)
