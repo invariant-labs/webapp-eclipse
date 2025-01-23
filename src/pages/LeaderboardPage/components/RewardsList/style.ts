@@ -5,7 +5,11 @@ import fingerprintGreen from '@static/png/fingerprintGreen.png'
 
 export const useStylesList = makeStyles<{ isMobile: boolean }>()((theme, { isMobile }) => ({
   container: {
-    marginInline: 40,
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+    margin: '72px 40px 72px',
 
     [theme.breakpoints.down('sm')]: {
       marginInline: 8
@@ -37,9 +41,7 @@ export const useStylesList = makeStyles<{ isMobile: boolean }>()((theme, { isMob
     }
   },
 
-  scrollbar: {
-    margin: '72px auto 72px'
-  }
+  scrollbar: {}
 }))
 
 export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) => ({
