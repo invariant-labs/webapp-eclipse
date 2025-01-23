@@ -62,6 +62,8 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
   const { displayType } = props
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const isNarrowMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'))
   const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
   const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
@@ -109,6 +111,8 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
       })
   }
 
+  const shortDomain = domain && domain.slice(0, 8) + '...'
+
   return (
     <Grid maxWidth='100%'>
       <Grid
@@ -123,7 +127,11 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
         <Typography>
-          {domain ? domain : shortenAddress(address.toString(), 4)}
+          {domain
+            ? isVerySmallScreen || isNarrowMediumScreen
+              ? shortDomain
+              : domain
+            : shortenAddress(address.toString(), 4)}
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)
