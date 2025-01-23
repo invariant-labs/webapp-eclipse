@@ -307,31 +307,23 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                         justifyContent: 'flex-start',
                         alignItems: 'flex-start',
                         gap: '8px'
-                      }}>
-                      <img
-                        src={icons.arrowLeft}
-                        alt=''
-                        style={{ cursor: 'pointer' }}
-                        onClick={() =>
-                          setSelectedOption(prev => {
-                            const idx = availableOptions.findIndex(item => item === prev)!
-                            if (idx - 1 < 0) {
-                              return availableOptions[availableOptions.length - 1]
-                            }
-                            return availableOptions[idx - 1]
-                          })
-                        }
-                      />
+                      }}
+                      onClick={() =>
+                        setSelectedOption(prev => {
+                          const idx = availableOptions.findIndex(item => item === prev)!
+                          if (idx - 1 < 0) {
+                            return availableOptions[availableOptions.length - 1]
+                          }
+                          return availableOptions[idx - 1]
+                        })
+                      }>
+                      <img src={icons.arrowLeft} alt='' style={{ cursor: 'pointer' }} />
                       <Typography className={classes.mobileTypeSwitcherSubtitle}>
-                        {
-                          mobileTitles[
-                            availableOptions.findIndex(item => item === selectedOption)! - 1 < 0
-                              ? availableOptions[availableOptions.length - 1]
-                              : availableOptions[
-                                  availableOptions.findIndex(item => item === selectedOption)! - 1
-                                ]
-                          ]
-                        }
+                        {availableOptions.findIndex(item => item === selectedOption)! - 1 < 0
+                          ? availableOptions[availableOptions.length - 1]
+                          : availableOptions[
+                              availableOptions.findIndex(item => item === selectedOption)! - 1
+                            ]}
                       </Typography>
                     </Box>
                     <Typography className={classes.mobileTypeSwitcherTitle}>
@@ -344,33 +336,25 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                         justifyContent: 'flex-end',
                         alignItems: 'flex-start',
                         gap: '8px'
-                      }}>
+                      }}
+                      onClick={() =>
+                        setSelectedOption(prev => {
+                          const idx = availableOptions.findIndex(item => item === prev)!
+                          if (idx + 1 === availableOptions.length) {
+                            return availableOptions[0]
+                          }
+                          return availableOptions[idx + 1]
+                        })
+                      }>
                       <Typography className={classes.mobileTypeSwitcherSubtitle}>
-                        {
-                          mobileTitles[
-                            availableOptions.findIndex(item => item === selectedOption)! + 1 ===
-                            availableOptions.length
-                              ? availableOptions[0]
-                              : availableOptions[
-                                  availableOptions.findIndex(item => item === selectedOption)! + 1
-                                ]
-                          ]
-                        }
+                        {availableOptions.findIndex(item => item === selectedOption)! + 1 ===
+                        availableOptions.length
+                          ? availableOptions[0]
+                          : availableOptions[
+                              availableOptions.findIndex(item => item === selectedOption)! + 1
+                            ]}
                       </Typography>
-                      <img
-                        src={icons.arrowRight}
-                        alt=''
-                        style={{ cursor: 'pointer' }}
-                        onClick={() =>
-                          setSelectedOption(prev => {
-                            const idx = availableOptions.findIndex(item => item === prev)!
-                            if (idx + 1 === availableOptions.length) {
-                              return availableOptions[0]
-                            }
-                            return availableOptions[idx + 1]
-                          })
-                        }
-                      />
+                      <img src={icons.arrowRight} alt='' style={{ cursor: 'pointer' }} />
                     </Box>
                   </Box>
                 )}
