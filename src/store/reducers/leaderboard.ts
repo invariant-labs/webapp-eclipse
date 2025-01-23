@@ -9,7 +9,7 @@ export interface ITotalEntry {
   swapPoints: string
   lpPoints: string
   last24hPoints: string
-  domains?: string
+  domain?: string
 }
 
 export interface ISwapEntry {
@@ -18,7 +18,7 @@ export interface ISwapEntry {
   points: string
   last24hPoints: string
   swaps: number
-  domains?: string
+  domain?: string
 }
 
 export interface ILpEntry {
@@ -27,7 +27,7 @@ export interface ILpEntry {
   points: string
   last24hPoints: string
   positions: number
-  domains?: string
+  domain?: string
 }
 
 export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
