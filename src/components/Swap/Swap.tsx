@@ -272,7 +272,8 @@ export const Swap: React.FC<ISwap> = ({
       const feePercentage = pools[simulateResult.poolIndex].fee
       const feed = feeds[tokens[tokenFromIndex!].assetAddress.toString()]
       const amount = convertBalanceToBN(amountFrom, tokens[tokenFromIndex!].decimals)
-      if (!feed || !feed.price) {
+
+      if (!feed || !feed.price || simulateResult.amountOut.eqn(0)) {
         setPointsForSwap(new BN(0))
         return
       }
