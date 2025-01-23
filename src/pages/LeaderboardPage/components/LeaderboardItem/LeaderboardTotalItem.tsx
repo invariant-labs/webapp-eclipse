@@ -44,6 +44,7 @@ const PLACE_COLORS = [colors.invariant.yellow, colors.invariant.silver, colors.i
 const LeaderboardTotalHeader: React.FC = () => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
   return (
     <Grid container classes={{ container: classes.totalContainer, root: classes.header }}>
@@ -54,9 +55,9 @@ const LeaderboardTotalHeader: React.FC = () => {
         <>
           <Typography style={{ cursor: 'pointer' }}>Swap points</Typography>
           <Typography style={{ cursor: 'pointer' }}>Liquidity points</Typography>
-          <Typography style={{ cursor: 'pointer' }}>24H points</Typography>
         </>
       )}
+      {!isLg && <Typography style={{ cursor: 'pointer' }}>24H points</Typography>}
     </Grid>
   )
 }
@@ -65,6 +66,8 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
   const { displayType } = props
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
+
   const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
   const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
@@ -175,7 +178,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
                 )}
           </Typography>
         )}
-        {!isMd && (
+        {!isLg && (
           <Typography>
             <Typography
               style={{

@@ -35,7 +35,7 @@ const useStyles = makeStyles()(() => {
       textDecoration: 'none',
       textTransform: 'none',
       '&:hover': {
-        backgroundColor: colors.invariant.component
+        backgroundColor: colors.invariant.newDark
       },
       ...typography.body2,
       color: colors.invariant.textGrey

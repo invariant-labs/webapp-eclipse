@@ -1062,7 +1062,6 @@ export const Swap: React.FC<ISwap> = ({
                   amount={rateReversed ? 1 / swapRate : swapRate}
                   tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
                   loading={getStateMessage() === 'Loading'}
-                  isPairGivingPoints={isPairGivingPoints}
                 />
               </Box>
             ) : null}

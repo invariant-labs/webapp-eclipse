@@ -217,6 +217,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       color: colors.invariant.text,
       ...typography.heading4
     },
+    mobileTypeSwitcherSubtitle: {
+      color: colors.invariant.textGrey,
+      ...typography.body2
+    },
     leaderboardTypeButton: {
       position: 'relative',
       zIndex: 1301,

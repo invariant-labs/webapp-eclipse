@@ -10,7 +10,6 @@ interface iProps {
   tokenToDecimals: number
   loading: boolean
   onClick: () => void
-  isPairGivingPoints: boolean
 }
 
 const ExchangeRate: React.FC<iProps> = ({
@@ -19,8 +18,7 @@ const ExchangeRate: React.FC<iProps> = ({
   amount,
   tokenToDecimals,
   loading,
-  onClick,
-  isPairGivingPoints
+  onClick
 }) => {
   const { classes } = useStyles()
   const setLoading = () => {
@@ -29,7 +27,7 @@ const ExchangeRate: React.FC<iProps> = ({
         <img src={loadingAnimation} className={classes.loading} alt='Loading'></img>
       </Box>
     ) : (
-      <Typography className={isPairGivingPoints ? classes.whiteText : classes.rateText}>
+      <Typography className={classes.rateText}>
         1 {tokenFromSymbol} ={' '}
         {isNaN(amount)
           ? 0

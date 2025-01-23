@@ -40,10 +40,6 @@ export const useStyles = makeStyles()(() => ({
       width: '100%',
       flex: 1
     }
-  },
-
-  whiteText: {
-    color: colors.invariant.text
   }
 }))
 
