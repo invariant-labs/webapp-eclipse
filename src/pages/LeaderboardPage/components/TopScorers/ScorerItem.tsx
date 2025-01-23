@@ -15,6 +15,7 @@ interface IScorerItemProps {
   address: string
   cupVariant: 'gold' | 'silver' | 'bronze'
   showPlaceholder: boolean
+  domain?: string
 }
 
 interface ImageWithPlaceholderProps {
@@ -70,7 +71,8 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({
   points,
   address,
   cupVariant,
-  showPlaceholder
+  showPlaceholder,
+  domain
 }) => {
   const { classes } = useStyles()
   const getIconByCupVariant = () => {
@@ -125,7 +127,7 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({
                 Points
               </Typography>
               <Typography className={classes.headerSmallText}>
-                {shortenAddress(address, 4)}
+                {domain ? domain : shortenAddress(address.toString(), 4)}
               </Typography>
             </Box>
           </Box>

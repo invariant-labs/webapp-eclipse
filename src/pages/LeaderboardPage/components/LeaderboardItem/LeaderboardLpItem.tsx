@@ -32,6 +32,7 @@ interface LeaderboardLpItemDetailProps extends BaseLeaderboardLpItemProps {
   last24hPoints?: string
   rank?: number
   address?: PublicKey
+  domain?: string
 }
 
 export type LeaderboardLpItemProps = LeaderboardLpHeaderProps | LeaderboardLpItemDetailProps
@@ -76,7 +77,8 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
     address = '',
     last24hPoints = 0,
     positions = 0,
-    hideBottomLine = false
+    hideBottomLine = false,
+    domain
   } = props
 
   const getColorByPlace = (index: number) => {
@@ -121,8 +123,17 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
-        <Typography>
-          {shortenAddress(address.toString(), 4)}
+        <Typography style={{ paddingRight: '24px', width: 'auto' }}>
+          <span
+            style={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              color: colors.invariant.text
+            }}>
+            {domain ? domain : shortenAddress(address.toString(), 4)}
+          </span>
+
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)

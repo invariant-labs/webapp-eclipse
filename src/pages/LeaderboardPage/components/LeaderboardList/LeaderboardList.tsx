@@ -186,6 +186,8 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
   const swapData = useSelector(topRankedSwapUsers)
   const totalData = useSelector(topRankedTotalUsers)
   const isLoading = useSelector(leaderboardSelectors.loading)
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
+
   const dispatch = useDispatch()
   const currentPage = useSelector(leaderboardSelectors.currentPage)
   const totalItemsObject = useSelector(leaderboardSelectors.totalItems)
@@ -289,6 +291,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
               }}>
               <Box sx={{ width: '80%', [theme.breakpoints.down('md')]: { width: '90%' } }}>
                 <PaginationList
+                  squeeze={isLg}
                   pages={totalPages}
                   defaultPage={currentPage}
                   handleChangePage={handlePageChange}
