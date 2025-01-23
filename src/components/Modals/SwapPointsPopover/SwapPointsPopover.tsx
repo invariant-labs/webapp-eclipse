@@ -88,8 +88,8 @@ export const SwapPointsPopover = ({
                 This pair is not currently distributing points.
               </Typography>
               <Typography className={classes.standardText}>
-                Swapping to a rewarded pair can earn you points for the leaderboard. To learn more,
-                check out the Points tab.
+                Swapping to a points distributing pair can earn you points for the leaderboard. To
+                learn more, check out the Points tab.
               </Typography>
             </>
           )}
