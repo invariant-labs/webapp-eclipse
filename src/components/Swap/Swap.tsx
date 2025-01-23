@@ -270,8 +270,17 @@ export const Swap: React.FC<ISwap> = ({
     if (simulateResult && isPairGivingPoints) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
       const feePercentage = pools[simulateResult.poolIndex].fee
-      const feed = feeds[tokens[tokenFromIndex!].assetAddress.toString()]
-      const amount = convertBalanceToBN(amountFrom, tokens[tokenFromIndex!].decimals)
+      let desiredAmount: string
+      let desiredIndex: number | null
+      if (inputRef === inputTarget.FROM) {
+        desiredIndex = tokenFromIndex
+        desiredAmount = amountFrom
+      } else {
+        desiredIndex = tokenToIndex
+        desiredAmount = amountTo
+      }
+      const feed = feeds[tokens[desiredIndex!].assetAddress.toString()]
+      const amount = convertBalanceToBN(desiredAmount, tokens[desiredIndex!].decimals)
 
       if (!feed || !feed.price || simulateResult.amountOut.eqn(0)) {
         setPointsForSwap(new BN(0))
@@ -279,7 +288,7 @@ export const Swap: React.FC<ISwap> = ({
       }
       const points = calculatePoints(
         amount,
-        tokens[tokenFromIndex!].decimals,
+        tokens[desiredIndex!].decimals,
         feePercentage,
         feed.price,
         feed.priceDecimals,
@@ -421,31 +430,27 @@ export const Swap: React.FC<ISwap> = ({
       }
 
       if (inputRef === inputTarget.FROM) {
-        setSimulateResult(
-          await handleSimulate(
-            pools,
-            poolTicks,
-            tickmap,
-            fromFee(new BN(Number(+slippTolerance * 1000))),
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-            true
-          )
-        )
+        await handleSimulate(
+          pools,
+          poolTicks,
+          tickmap,
+          fromFee(new BN(Number(+slippTolerance * 1000))),
+          tokens[tokenFromIndex].assetAddress,
+          tokens[tokenToIndex].assetAddress,
+          convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+          true
+        ).then(value => setSimulateResult(value))
       } else if (inputRef === inputTarget.TO) {
-        setSimulateResult(
-          await handleSimulate(
-            pools,
-            poolTicks,
-            tickmap,
-            fromFee(new BN(Number(+slippTolerance * 1000))),
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-            false
-          )
-        )
+        await handleSimulate(
+          pools,
+          poolTicks,
+          tickmap,
+          fromFee(new BN(Number(+slippTolerance * 1000))),
+          tokens[tokenFromIndex].assetAddress,
+          tokens[tokenToIndex].assetAddress,
+          convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+          false
+        ).then(value => setSimulateResult(value))
       }
     }
   }
