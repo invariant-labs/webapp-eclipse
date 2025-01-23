@@ -22,6 +22,7 @@ export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers }) => {
             cupVariant='gold'
             address={firstPlace?.address ?? null}
             showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+            domain={firstPlace?.domain}
           />
         </Hidden>
         <ScorerItem
@@ -29,6 +30,7 @@ export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers }) => {
           cupVariant='silver'
           address={secondPlace?.address ?? null}
           showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+          domain={secondPlace?.domain}
         />
         <Hidden lgDown>
           <ScorerItem
@@ -36,6 +38,7 @@ export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers }) => {
             cupVariant='gold'
             address={firstPlace?.address ?? null}
             showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+            domain={firstPlace?.domain}
           />
         </Hidden>
         <ScorerItem
@@ -43,6 +46,7 @@ export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers }) => {
           cupVariant='bronze'
           address={thirdPlace?.address ?? null}
           showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+          domain={thirdPlace?.domain}
         />
       </Box>
     </>

@@ -16,11 +16,18 @@ const useStyles = makeStyles()(() => {
     headerBigText: {
       ...typography.heading1,
       color: colors.invariant.text,
-      [theme.breakpoints.down('md')]: {
+      [theme.breakpoints.down('lg')]: {
         ...typography.heading2
       }
     },
-    headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
+    headerSmallText: {
+      maxWidth: '100%',
+      ...typography.body1,
+      color: colors.invariant.textGrey,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    },
     leaderboardHeaderSectionTitle: {
       ...typography.heading3,
       color: colors.white.main,
