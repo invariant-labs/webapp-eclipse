@@ -215,7 +215,8 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     mobileTypeSwitcherTitle: {
       color: colors.invariant.text,
-      ...typography.heading4
+      ...typography.heading4,
+      textAlign: 'center'
     },
     mobileTypeSwitcherSubtitle: {
       color: colors.invariant.textGrey,
