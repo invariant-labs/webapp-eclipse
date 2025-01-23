@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()((theme: Theme) => {
   return {
     popover: {
-      marginTop: 'max(calc(50vh - 247px), 0px)',
+      marginTop: '100px',
       marginLeft: 'calc(50vw - 336px)',
       [theme.breakpoints.down(671)]: {
         display: 'flex',
@@ -30,7 +30,14 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-start',
-      gap: 32
+      gap: 32,
+
+      '& .MuiCheckbox-root': {
+        color: colors.invariant.lightGrey
+      },
+      '& .MuiCheckbox-root.Mui-checked': {
+        color: colors.invariant.warning
+      }
     },
     lockWarningText: { textWrap: 'wrap', ...typography.body2 },
     lockExplanation: {
@@ -117,6 +124,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       height: 46.5,
       width: '100%',
       letterSpacing: -0.03,
+
+      '&:disabled': {
+        background: colors.invariant.light,
+        color: colors.invariant.newDark,
+
+        '&:hover': { background: colors.invariant.light, color: colors.invariant.newDark }
+      },
       '&:hover': {
         background: colors.invariant.pinkLinearGradient,
         boxShadow: `0 0 16px ${colors.invariant.pink}`,
@@ -124,12 +138,6 @@ const useStyles = makeStyles()((theme: Theme) => {
           background: colors.invariant.pinkLinearGradientOpacity,
           boxShadow: 'none'
         }
-      }
-    },
-    buttonText: {
-      WebkitPaddingBefore: '2px',
-      [theme.breakpoints.down('sm')]: {
-        WebkitPaddingBefore: 0
       }
     },
     positionDetails: {
@@ -293,6 +301,11 @@ const useStyles = makeStyles()((theme: Theme) => {
     greenText: {
       color: colors.invariant.green,
       ...typography.body1
+    },
+    checkboxText: {
+      textWrap: 'wrap',
+      ...typography.body2,
+      color: colors.invariant.warning
     }
   }
 })

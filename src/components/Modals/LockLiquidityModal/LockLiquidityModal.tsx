@@ -1,6 +1,14 @@
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import useStyles from './style'
-import { Button, Grid, Popover, Tooltip, Typography } from '@mui/material'
+import {
+  Button,
+  Checkbox,
+  FormControlLabel,
+  Grid,
+  Popover,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import warningExclamationMarkCircle from '@static/svg/warningExclamationMarkCircle.svg'
 import icons from '@static/icons'
 import { formatNumber } from '@utils/utils'
@@ -41,6 +49,7 @@ export const LockLiquidityModal = ({
 }: ILockLiquidityModal) => {
   const { classes } = useStyles()
   const [progress, setProgress] = useState<ProgressState>('none')
+  const [isChecked, setIsChecked] = useState(false)
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -72,7 +81,7 @@ export const LockLiquidityModal = ({
       className={classes.popover}
       anchorReference='none'
       anchorOrigin={{
-        vertical: 'bottom',
+        vertical: 'top',
         horizontal: 'left'
       }}
       transformOrigin={{
@@ -109,7 +118,7 @@ export const LockLiquidityModal = ({
                   className={classes.icon}
                   src={xToY ? tokenX.icon : tokenY.icon}
                   alt={xToY ? tokenX.name : tokenY.name}
-                />{' '}
+                />
                 <TooltipHover text='Reverse tokens'>
                   <img
                     className={classes.arrowIcon}
@@ -170,25 +179,45 @@ export const LockLiquidityModal = ({
               </Grid>
             </Grid>
           </Grid>
-          <Grid item className={classes.lockWarning}>
-            <img src={warningExclamationMarkCircle} alt='' />
-            <Typography className={classes.lockWarningText}>
-              Once locked, the position cannot be closed, and the tokens cannot be withdrawn. Please
-              ensure you fully understand the consequences before proceeding.
-            </Typography>
+          <Grid>
+            <Grid item className={classes.lockWarning}>
+              <img src={warningExclamationMarkCircle} alt='' />
+              <Typography className={classes.lockWarningText}>
+                Once locked, the position cannot be closed, and the tokens cannot be withdrawn.
+                Please ensure you fully understand the consequences before proceeding.
+              </Typography>
+            </Grid>
+            <Grid display='flex' alignItems='center' mt={2}>
+              <FormControlLabel
+                className={classes.checkboxText}
+                control={
+                  <Checkbox
+                    checked={isChecked}
+                    onChange={e => {
+                      setIsChecked(e.target.checked)
+                    }}
+                    name='hideUnknown'
+                  />
+                }
+                label='I understand the irreversible nature of liquidity locking and agree to all terms.'></FormControlLabel>
+            </Grid>
           </Grid>
-          <AnimatedButton
-            content={'Lock Position'}
-            className={classNames(
-              classes.lockButton,
-              progress === 'none' ? classes.buttonText : null
-            )}
-            onClick={() => {
-              onLock()
-              setProgress('progress')
-            }}
-            progress={progress}
-          />
+          <TooltipHover
+            text={isChecked ? '' : 'Check the box to confirm you understand the terms.'}
+            top={-40}>
+            <div>
+              <AnimatedButton
+                content={'Lock Position'}
+                className={classNames(classes.lockButton)}
+                onClick={() => {
+                  onLock()
+                  setProgress('progress')
+                }}
+                progress={progress}
+                disabled={!isChecked}
+              />
+            </div>
+          </TooltipHover>
         </Grid>
       </Grid>
     </Popover>
