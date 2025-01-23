@@ -36,7 +36,6 @@ export const LockStatsPopover = ({
 
     const standardXRatio = ((lockedX / liquidityX) * 100).toFixed(2)
     const standardYRatio = ((lockedY / liquidityY) * 100).toFixed(2)
-    console.log(lockedX, lockedY, liquidityX, liquidityY)
 
     const values = {
       xLocked: ((lockedX / totalLocked) * 100).toFixed(1),
@@ -207,19 +206,24 @@ export const LockStatsPopover = ({
             <Typography
               className={classes.chartTitle}
               style={{ textAlign: 'center', width: 'fit-content', alignSelf: 'center' }}>
-              Standard Positions Share
+              Positions Liquidity Share
             </Typography>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography style={{ textWrap: 'nowrap', width: '120px' }}>
+                <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
                   {symbolX}:{' '}
                   <span style={{ color: colors.invariant.pink }}>
-                    ${formatNumber(percentagesAndValues.xStandardVal)}
+                    ${formatNumber(percentagesAndValues.xStandardVal)}{' '}
+                  </span>
+                  of
+                  <span style={{ color: colors.invariant.pink }}>
+                    {' '}
+                    ${formatNumber(liquidityX)}
                   </span>{' '}
                   <span style={{ color: colors.invariant.textGrey }}>
                     (
                     {percentagesAndValues.xStandard >= '0.01' ||
-                    percentagesAndValues.xStandard === '0.00'
+                    percentagesAndValues.xLocked === '0.0'
                       ? +percentagesAndValues.xStandard
                       : '<0.01'}
                     %)
@@ -259,16 +263,18 @@ export const LockStatsPopover = ({
               </div>
 
               <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Typography style={{ textWrap: 'nowrap', width: '120px' }}>
+                <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
                   {symbolY}:{' '}
                   <span style={{ color: colors.invariant.green }}>
-                    ${formatNumber(percentagesAndValues.yStandardVal)}
-                  </span>{' '}
+                    ${formatNumber(percentagesAndValues.yStandardVal)}{' '}
+                  </span>
+                  of{' '}
+                  <span style={{ color: colors.invariant.green }}>${formatNumber(liquidityY)}</span>{' '}
                   <span style={{ color: colors.invariant.textGrey }}>
                     (
                     {percentagesAndValues.yStandard >= '0.01' ||
-                    percentagesAndValues.yStandard == '0.00'
-                      ? percentagesAndValues.yStandard
+                    percentagesAndValues.yLocked == '0.0'
+                      ? +percentagesAndValues.yStandard
                       : '<0.01'}
                     %)
                   </span>
@@ -308,8 +314,9 @@ export const LockStatsPopover = ({
               </div>
             </div>
             <Typography className={classes.description}>
-              Amount and percentage of tokens secured in standard positions. More locked token value
-              (TVL) provides stronger pool stability and better resistance to price impact.
+              Amount and percentage of tokens secured in locked positions against standard
+              positions. More locked token value (TVL) provides stronger pool stability and better
+              resistance to price impact.
             </Typography>
           </div>
         </div>
