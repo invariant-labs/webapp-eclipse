@@ -81,6 +81,7 @@ const getContent = (
             last24hPoints={userLpStats.last24hPoints}
             points={userLpStats.points ?? 0}
             address={new PublicKey(userLpStats.address)}
+            domain={userLpStats.domain}
           />
         )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
@@ -94,6 +95,7 @@ const getContent = (
                 last24hPoints={element.last24hPoints}
                 points={element.points ?? 0}
                 address={new PublicKey(element.address)}
+                domain={element.domain}
               />
             ))
           ) : (
@@ -118,6 +120,7 @@ const getContent = (
             last24hPoints={userSwapStats.last24hPoints}
             points={userSwapStats.points ?? 0}
             address={new PublicKey(userSwapStats.address)}
+            domain={userSwapStats.domain}
           />
         )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
@@ -131,6 +134,7 @@ const getContent = (
                 last24hPoints={element.last24hPoints}
                 points={element.points ?? 0}
                 address={new PublicKey(element.address)}
+                domain={element.domain}
               />
             ))
           ) : (
@@ -154,6 +158,7 @@ const getContent = (
           last24hPoints={userTotalStats.last24hPoints}
           points={userTotalStats.points}
           address={new PublicKey(userTotalStats.address)}
+          domain={userTotalStats.domain}
         />
       )}
       <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
@@ -168,6 +173,7 @@ const getContent = (
               last24hPoints={element.last24hPoints}
               points={element.points}
               address={new PublicKey(element.address)}
+              domain={element.domain}
             />
           ))
         ) : (

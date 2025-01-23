@@ -32,6 +32,7 @@ interface LeaderboardSwapItemDetailProps extends BaseLeaderboardSwapItemProps {
   last24hPoints?: string
   rank?: number
   address?: PublicKey
+  domain?: string
 }
 
 export type LeaderboardSwapItemProps = LeaderboardSwapHeaderProps | LeaderboardSwapItemDetailProps
@@ -75,7 +76,8 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
     address = '',
     last24hPoints = 0,
     swaps = 0,
-    hideBottomLine = false
+    hideBottomLine = false,
+    domain
   } = props
 
   const getColorByPlace = (index: number) => {
@@ -121,7 +123,7 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
         <Typography>
-          {shortenAddress(address.toString(), 4)}
+          {domain ? domain : shortenAddress(address.toString(), 4)}
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)

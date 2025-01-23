@@ -33,6 +33,7 @@ interface LeaderboardTotalItemDetailProps extends BaseLeaderboardTotalItemProps 
   last24hPoints?: string
   rank?: number
   address?: PublicKey
+  domain?: string
 }
 
 export type LeaderboardTotalItemProps =
@@ -84,7 +85,8 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
     last24hPoints = 0,
     lpPoints,
     swapPoints,
-    hideBottomLine = false
+    hideBottomLine = false,
+    domain
   } = props
 
   const getColorByPlace = (index: number) => {
@@ -130,7 +132,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
         <Typography>
-          {shortenAddress(address.toString(), 4)}
+          {domain ? domain : shortenAddress(address.toString(), 4)}
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)
