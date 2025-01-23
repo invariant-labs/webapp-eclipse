@@ -65,7 +65,10 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         <span
           className={classes.pointsAmount}
           style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
-          <p className={classes.pointsValue}> {formatNumber(displayedValue)}</p>
+          <p className={classes.pointsValue}>
+            {' '}
+            {pointsForSwap.isZero() ? '0.00' : formatNumber(displayedValue)}
+          </p>
 
           <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
         </span>{' '}
