@@ -65,7 +65,10 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         <span
           className={classes.pointsAmount}
           style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
-          <p className={classes.pointsValue}> {formatNumber(displayedValue)}</p>
+          <p className={classes.pointsValue}>
+            {' '}
+            {pointsForSwap.isZero() ? '0.00' : formatNumber(displayedValue)}
+          </p>
 
           <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
         </span>{' '}
@@ -79,18 +82,23 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
           }}>
           {new BN(swapMultiplier, 'hex').gte(new BN(1)) &&
             `${new BN(swapMultiplier, 'hex').toNumber()}x`}
-          <img src={icons.boostPoints} alt='' style={{ height: '18px', width: '12px' }} />
+          <img src={icons.boostPoints} alt='' style={{ height: '14px', width: '12px' }} />
         </span>
       </div>
 
       <div className={classes.alternativeContent} ref={alternativeRef}>
-        <img src={icons.airdropRainbow} alt='' className={classes.grayscaleIcon} />
+        <img
+          src={icons.airdropRainbow}
+          alt=''
+          className={classes.grayscaleIcon}
+          style={{ marginLeft: '2px', marginRight: '4px' }}
+        />
         How to earn points?
         <img
           src={icons.infoCircle}
           alt=''
           width='14px'
-          style={{ marginTop: '-2px' }}
+          style={{ marginTop: '-2px', marginLeft: '4px' }}
           className={classes.grayscaleIcon}
         />
       </div>
