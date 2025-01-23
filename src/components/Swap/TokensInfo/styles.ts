@@ -17,7 +17,7 @@ export const useWrapperStyles = makeStyles()(theme => ({
   },
   divider: {
     width: 1,
-    height: '100%',
+    height: 40,
     backgroundColor: colors.invariant.light,
     margin: '0 24px',
     [theme.breakpoints.down('sm')]: {
