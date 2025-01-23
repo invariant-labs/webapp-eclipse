@@ -120,7 +120,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         )
       })
   }
-  const shortDomain = domain && domain.slice(0, 8) + '...'
+  const shortDomain = domain && domain.slice(0, 13) + '...'
 
   return (
     <Grid maxWidth='100%'>
