@@ -89,7 +89,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
         <img
           src={icons.infoCircle}
           alt=''
-          width='14px'
+          width='12px'
           style={{ marginTop: '-2px' }}
           className={classes.grayscaleIcon}
         />

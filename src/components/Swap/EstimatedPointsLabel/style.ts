@@ -57,7 +57,7 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
       width: '100%',
       display: 'flex',
       alignItems: 'center',
-      justifyContent: 'space-around',
+      justifyContent: 'center',
 
       gap: 4,
       willChange: 'opacity, transform',
