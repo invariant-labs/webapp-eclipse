@@ -81,7 +81,8 @@ import {
   TURBO_AI_MAIN,
   ORCA_MAIN,
   SOLAR_MAIN,
-  TOKENS_PRICES_FROM_JUP
+  TOKENS_PRICES_FROM_JUP,
+  WETH_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -860,7 +861,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       // })
       // return obj
       return {
-        [WETH_TEST.address.toString()]: WETH_TEST,
+        [WETH_MAIN.address.toString()]: WETH_MAIN,
         [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
         [TETH_MAIN.address.toString()]: TETH_MAIN,
         [USDC_MAIN.address.toString()]: USDC_MAIN,
