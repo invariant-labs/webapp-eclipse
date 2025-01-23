@@ -314,9 +314,9 @@ export const LockStatsPopover = ({
               </div>
             </div>
             <Typography className={classes.description}>
-              Amount and percentage of tokens secured in locked positions against standard
-              positions. More locked token value (TVL) provides stronger pool stability and better
-              resistance to price impact.
+              Represents secured token value in locked positions vs. standard positions. A higher
+              proportion of locked tokens (TVL) enhances pool stability by reducing price volatility
+              during swaps and improving slippage resistance.
             </Typography>
           </div>
         </div>
