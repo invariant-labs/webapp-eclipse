@@ -66,7 +66,7 @@ export const SwapPointsPopover = ({
           {isPairGivingPoints ? (
             <>
               <Typography className={classes.sectionTitle}>
-                Estimated points for completing this swap.{' '}
+                Estimated points for completing this swap.
               </Typography>
               <Typography className={classes.standardText}>
                 The number of points you will receive depends on the fees your swap generates for
@@ -109,7 +109,6 @@ export const SwapPointsPopover = ({
           <Box display={'flex'} gap={'4px'} flexDirection={'column'} padding={'4px'}>
             {promotedSwapPairs.map(item => (
               <Typography className={classes.listText}>
-                {' '}
                 • {addressToTicker(network, item.tokenX.toString())}/
                 {addressToTicker(network, item.tokenY.toString())}
               </Typography>
