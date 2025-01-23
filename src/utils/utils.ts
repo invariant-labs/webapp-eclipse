@@ -745,7 +745,29 @@ export const formatNumber = (
 
   let formattedNumber
 
-  if (Math.abs(numberAsNumber) >= FormatConfig.B) {
+  if (Math.abs(numberAsNumber) >= FormatConfig.Q) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.QDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.QDecimals) + (noDecimals ? '' : formattedDecimals) + 'Q'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.T) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.TDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.TDecimals) + (noDecimals ? '' : formattedDecimals) + 'T'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.B) {
     const formattedDecimals = noDecimals
       ? ''
       : (FormatConfig.DecimalsAfterDot ? '.' : '') +
