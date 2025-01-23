@@ -9,6 +9,7 @@ export interface ITotalEntry {
   swapPoints: string
   lpPoints: string
   last24hPoints: string
+  domains?: string
 }
 
 export interface ISwapEntry {
