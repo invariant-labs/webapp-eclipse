@@ -88,13 +88,13 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
           src={icons.airdropRainbow}
           alt=''
           className={classes.grayscaleIcon}
-          style={{ marginLeft: '4px', marginRight: '4px' }}
+          style={{ marginLeft: '2px', marginRight: '4px' }}
         />
         How to earn points?
         <img
           src={icons.infoCircle}
           alt=''
-          width='12px'
+          width='14px'
           style={{ marginTop: '-2px', marginLeft: '4px' }}
           className={classes.grayscaleIcon}
         />
