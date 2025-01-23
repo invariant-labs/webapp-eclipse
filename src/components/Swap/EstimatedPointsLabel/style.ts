@@ -73,8 +73,8 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
     grayscaleIcon: {
       filter: 'grayscale(100%)',
       transition: 'filter 0.7s ease-in-out',
-      minWidth: '14px',
-      minHeight: '14px'
+      minWidth: '12px',
+      minHeight: '12px'
     }
   })
 )
