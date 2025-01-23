@@ -69,6 +69,9 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
+  const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const isNarrowMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'))
+
   const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
   const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
@@ -117,6 +120,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         )
       })
   }
+  const shortDomain = domain && domain.slice(0, 13) + '...'
 
   return (
     <Grid maxWidth='100%'>
@@ -132,7 +136,11 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
         <Typography>
-          {domain ? domain : shortenAddress(address.toString(), 4)}
+          {domain
+            ? isVerySmallScreen || isNarrowMediumScreen
+              ? shortDomain
+              : domain
+            : shortenAddress(address.toString(), 4)}{' '}
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)

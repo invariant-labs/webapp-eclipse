@@ -63,6 +63,8 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const dispatch = useDispatch()
+  const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const isNarrowMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'))
   const currentNetwork = useSelector(network)
   const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
 
@@ -110,6 +112,8 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
       })
   }
 
+  const shortDomain = domain && domain.slice(0, 13) + '...'
+
   return (
     <Grid maxWidth='100%'>
       <Grid
@@ -131,7 +135,11 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
               textOverflow: 'ellipsis',
               color: colors.invariant.text
             }}>
-            {domain ? domain : shortenAddress(address.toString(), 4)}
+            {domain
+              ? isVerySmallScreen || isNarrowMediumScreen
+                ? shortDomain
+                : domain
+              : shortenAddress(address.toString(), 4)}{' '}
           </span>
 
           {isYou ? (
