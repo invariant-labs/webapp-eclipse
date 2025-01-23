@@ -9,13 +9,13 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { address, status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
-
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { Link } from 'react-router-dom'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
-import NFTsList from '../RewardsList/PoolList'
+import RewardsList from '../RewardsList/PoolList'
+
 export const Rewards = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
@@ -109,7 +109,7 @@ export const Rewards = () => {
           </>
         </Box>
       </Box>
-      <NFTsList userAddress={userAddress} />
+      <RewardsList userAddress={userAddress} />
     </>
   )
 }

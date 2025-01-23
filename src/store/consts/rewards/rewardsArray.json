@@ -3,35 +3,7 @@
     "key": "nft_moon_odyssey",
     "name": "Moon Odyssey Club NFT",
     "image": "static/png/nft/nft_moon_odyssey.png",
-    "distributionDate": "2025-01-19",
+    "distributionDate": "2025-01-24",
     "eligible": 10
-  },
-  {
-    "key": "eclipse_cat",
-    "name": "Eclipse Cat Business NFT1",
-    "image": "@static/png/nft/nft_eclipse_cat.png",
-    "distributionDate": "2023-05-27",
-    "eligible": 25
-  },
-  {
-    "key": "eclipse_cat",
-    "name": "Eclipse Cat Business NFT2",
-    "image": "@static/png/nft/nft_eclipse_cat.png",
-    "distributionDate": "2023-05-27",
-    "eligible": 10
-  },
-  {
-    "key": "eclipse_cat",
-    "name": "Eclipse Cat Business NFT3",
-    "image": "@static/png/nft/nft_eclipse_cat.png",
-    "distributionDate": "2023-05-27",
-    "eligible": 1000
-  },
-  {
-    "key": "eclipse_cat",
-    "name": "Eclipse Cat Business NFT4",
-    "image": "@static/png/nft/nft_eclipse_cat.png",
-    "distributionDate": "2023-05-27",
-    "eligible": 600
   }
 ]

@@ -12,28 +12,32 @@ export interface NFTsListInterface {
 }
 
 const NFTsList: React.FC<NFTsListInterface> = ({ userAddress }) => {
+  const isMobile = useIsMobile()
   const { classes } = useStylesList({
-    isMobile: useIsMobile()
+    isMobile
   })
 
   return (
     <div className={classes.container}>
       <Scrollbars
-        style={{ maxWidth: 1072, height: 1064, overflowX: 'hidden' }}
+        style={{ maxWidth: 1072, overflowX: 'hidden' }}
         className={classes.scrollbar}
         autoHide
         universal
         classes={{
           thumbVertical: classes.scrollbarThumb,
           trackVertical: classes.scrollbarTrack,
-
           view: classes.scrollbarView
-        }}>
+        }}
+        autoHeight
+        hideTracksWhenNotNeeded
+        autoHeightMax={1064}>
         <Grid
           container
           justifyContent='center'
           alignItems='center'
           gap={3}
+          mb={isMobile ? 0 : 2}
           className={classes.list}>
           {rewards.map((nft, index) => (
             <RewardItem
