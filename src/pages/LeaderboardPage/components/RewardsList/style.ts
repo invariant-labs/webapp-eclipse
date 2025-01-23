@@ -133,58 +133,21 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     color: colors.invariant.text,
     textAlign: 'center'
   },
-  button: {
+  infoText: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     height: 44,
     width: 200,
     background: colors.invariant.light,
     ...typography.body1,
     color: colors.invariant.textGrey,
-    textTransform: 'none',
     borderRadius: 16,
-
-    '&:hover': {
-      background: colors.invariant.lightHover2,
-      '@media (hover: none)': {
-        background: colors.invariant.light
-      }
-    },
-    '&:disabled': {
-      background: colors.invariant.light,
-      ...typography.body1,
-      color: colors.invariant.textGrey,
-      textTransform: 'none'
-    }
+    textDecoration: 'none',
+    border: 'none'
   },
-  buttonGreen: {
-    ...typography.body1,
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    justifySelf: 'center',
-    padding: '13px',
-    gap: '8px',
-    width: '200px',
-    height: '44px',
-    background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
-    borderRadius: '16px',
-    fontFamily: 'Mukta',
-    fontStyle: 'normal',
-    textTransform: 'none',
-    color: colors.invariant.dark,
-    transition: 'all 0.3s ease',
-    '&:hover': {
-      background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
-      transform: 'translateY(-2px)',
-      boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
-    },
-    '&:active': {
-      transform: 'translateY(1px)',
-      boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: '100%'
-    }
+  textGreen: {
+    color: colors.invariant.green
   },
   label: {
     backgroundColor: colors.invariant.light,

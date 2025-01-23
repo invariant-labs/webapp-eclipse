@@ -1,11 +1,13 @@
 import React, { useMemo } from 'react'
 import { useStyles } from './style'
-import { Button, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
 import { theme } from '@static/theme'
 import { eligibleAddresses } from '@store/consts/static'
 import { Reward } from '@store/consts/types'
 import rewardsImages from '@static/png/nft/nftImages'
+import classNames from 'classnames'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 export interface RewardItemInterface {
   number: number
   nft: Reward
@@ -66,13 +68,16 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress })
           <Typography className={classes.title}>
             {isEligible ? 'Eligible' : 'Not eligible'}
           </Typography>
-          <Button
-            className={isEligible ? classes.buttonGreen : classes.button}
-            onClick={() => {}}
-            variant='contained'
-            disabled={!isEligible}>
-            {isEligible ? 'Received' : 'Claim'}
-          </Button>
+          <TooltipGradient
+            title={
+              isEligible ? 'The reward has already been distributed.' : 'Reward not available.'
+            }
+            placement='bottom'
+            top={3}>
+            <Typography className={classNames(classes.infoText, isEligible && classes.textGreen)}>
+              {isEligible ? 'Received' : 'Claim'}
+            </Typography>
+          </TooltipGradient>
         </Grid>
         <Grid
           container={isMd}
