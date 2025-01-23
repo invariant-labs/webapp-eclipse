@@ -654,18 +654,25 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
 ]
 
 export const FormatConfig = {
-  Q: 1000000000000000000, // 10^18
+  Q: 1000000000000000000n, // 10^18
   T: 1000000000000000, // 10^15
-  B: 1000000000,
+  H: 100000000000000, // 10^14 (Hundred T)
+  Tr: 1000000000000, // 10^12 (Trillion)
+  HTr: 100000000000, // 10^11 (Hundred B)
+  B: 1000000000, // 10^9
   M: 1000000,
   K: 1000,
   QDecimals: 18,
   TDecimals: 15,
+  HDecimals: 14,
+  TrDecimals: 12,
+  HTrDecimals: 11,
   BDecimals: 9,
   MDecimals: 6,
   KDecimals: 3,
   DecimalsAfterDot: 2
 }
+
 export enum PositionTokenBlock {
   None,
   A,
