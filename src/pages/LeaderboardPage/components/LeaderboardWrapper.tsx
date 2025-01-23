@@ -176,11 +176,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
   const availableOptions: LeaderBoardType[] = ['Total', 'Liquidity', 'Swap']
   const isSm = useMediaQuery(theme.breakpoints.down(960))
-  const mobileTitles: Record<string, string> = {
-    ['Total']: 'Total Points',
-    ['Liquidity']: 'Liquidity Points',
-    ['Swap']: 'Swap Points'
-  }
+
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (menuOpen) {
       handleClose()
@@ -327,7 +323,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                       </Typography>
                     </Box>
                     <Typography className={classes.mobileTypeSwitcherTitle}>
-                      {mobileTitles[selectedOption]}
+                      {selectedOption}
                     </Typography>
                     <Box
                       sx={{
