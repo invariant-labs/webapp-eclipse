@@ -16,6 +16,7 @@ import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
 import { changeToNightlyAdapter, connectStaticWallet, getEclipseWallet } from '@utils/web3/wallet'
 import { sleep } from '@invariant-labs/sdk-eclipse'
 import { getLeaderboardQueryParams } from '@store/selectors/leaderboard'
+import { generateHash } from '@utils/utils'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -91,18 +92,6 @@ export const HeaderWrapper: React.FC = () => {
   }, [])
 
   const shouldResetRpc = useMemo(() => {
-    const generateHash = (str: string): string => {
-      let hash = 0
-
-      for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i)
-        hash = (hash << 5) - hash + char
-        hash = hash & hash
-      }
-
-      return Math.abs(hash).toString(16).padStart(8, '0')
-    }
-
     const STORAGE_KEY = 'INVARIANT_RPC_HASH'
 
     const currentAddresses =

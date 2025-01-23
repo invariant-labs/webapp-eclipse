@@ -10,6 +10,7 @@ export interface UserStats {
   last24hPoints: BN
   rank: number
   address: PublicKey
+  domain?: string
 }
 
 export interface LeaderboardEntry extends UserStats {}

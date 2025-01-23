@@ -21,6 +21,7 @@ interface LeaderboardEntry {
   last24hPoints?: BN
   rank?: number
   address?: PublicKey
+  domain?: string
 }
 
 interface LeaderboardListProps {
@@ -46,6 +47,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
   const walletStatus = useSelector(status)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const userStats = useSelector(leaderboardSelectors.currentUser)
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
   const dispatch = useDispatch()
   const currentPage = useSelector(leaderboardSelectors.currentPage)
@@ -99,6 +101,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
             last24hPoints={userStats.last24hPoints}
             points={userStats.points ?? 0}
             address={userStats.address}
+            domain={userStats?.domain}
           />
         )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
@@ -112,6 +115,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
                 last24hPoints={element.last24hPoints}
                 points={element.points ?? 0}
                 address={element.address}
+                domain={element?.domain}
               />
             ))
           ) : (
@@ -148,6 +152,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
               }}>
               <Box sx={{ width: '80%', [theme.breakpoints.down('md')]: { width: '90%' } }}>
                 <PaginationList
+                  squeeze={isLg}
                   pages={totalPages}
                   defaultPage={currentPage}
                   handleChangePage={handlePageChange}
