@@ -679,7 +679,10 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
       closeSnackbar(loaderSigningTx)
 
       yield put(snackbarsActions.remove(loaderSigningTx))
+      console.log('additional signers', poolSigners, poolSigners.length)
       signedTx.partialSign(...poolSigners)
+      console.log('Signed Tx', signedTx)
+      console.log('Signatures', signedTx.signatures)
 
       yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
         skipPreflight: false
