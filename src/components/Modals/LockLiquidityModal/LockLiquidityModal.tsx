@@ -9,7 +9,6 @@ import {
   Tooltip,
   Typography
 } from '@mui/material'
-import warningExclamationMarkCircle from '@static/svg/warningExclamationMarkCircle.svg'
 import icons from '@static/icons'
 import { formatNumber } from '@utils/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
@@ -180,26 +179,29 @@ export const LockLiquidityModal = ({
             </Grid>
           </Grid>
           <Grid>
-            <Grid item className={classes.lockWarning}>
-              <img src={warningExclamationMarkCircle} alt='' />
-              <Typography className={classes.lockWarningText}>
-                Once locked, the position cannot be closed, and the tokens cannot be withdrawn.
-                Please ensure you fully understand the consequences before proceeding.
-              </Typography>
-            </Grid>
-            <Grid display='flex' alignItems='center' mt={2}>
-              <FormControlLabel
-                className={classes.checkboxText}
-                control={
-                  <Checkbox
-                    checked={isChecked}
-                    onChange={e => {
-                      setIsChecked(e.target.checked)
-                    }}
-                    name='hideUnknown'
-                  />
-                }
-                label='I understand the irreversible nature of liquidity locking and agree to all terms.'></FormControlLabel>
+            <Grid className={classes.lockWarning}>
+              <Grid display='flex'>
+                <img src={icons.infoError} alt='info' style={{ minWidth: 20, marginRight: 12 }} />
+                <Typography className={classes.lockWarningText}>
+                  Once locked, the position cannot be closed, and the tokens cannot be withdrawn.
+                  Please ensure you fully understand the consequences before proceeding.
+                </Typography>
+              </Grid>
+              <div>
+                <FormControlLabel
+                  className={classes.checkboxText}
+                  control={
+                    <Checkbox
+                      checked={isChecked}
+                      onChange={e => {
+                        setIsChecked(e.target.checked)
+                      }}
+                      name='hideUnknown'
+                    />
+                  }
+                  label='I understand the irreversible nature of liquidity locking and agree to all terms.
+                  The team will not refund an unwise decision.'></FormControlLabel>
+              </div>
             </Grid>
           </Grid>
           <TooltipHover

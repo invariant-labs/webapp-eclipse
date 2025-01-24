@@ -80,6 +80,7 @@ export const colors = {
     silver: '#C6C5C7',
     bronze: '#C48643',
     Error: '#FB555F',
+    errorTransparent: 'rgba(251, 85, 95, 0.2)',
     greenLinearGradient: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
     greenLinearGradientOpacity:
       'linear-gradient(180deg, rgba(46, 224, 154, 0.8) 0%, rgba(33, 164, 124, 0.8) 100%)',

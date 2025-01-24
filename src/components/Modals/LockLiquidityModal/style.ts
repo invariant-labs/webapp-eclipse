@@ -33,13 +33,24 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 32,
 
       '& .MuiCheckbox-root': {
-        color: colors.invariant.lightGrey
+        color: colors.invariant.Error,
+        width: 'auto',
+        marginLeft: 4,
+        marginRight: 6
       },
       '& .MuiCheckbox-root.Mui-checked': {
-        color: colors.invariant.warning
+        color: colors.invariant.Error
       }
     },
-    lockWarningText: { textWrap: 'wrap', ...typography.body2 },
+    lockWarningText: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      textWrap: 'wrap',
+      ...typography.body2,
+      color: colors.invariant.Error
+    },
     lockExplanation: {
       color: '#A9B6BF',
       ...typography.body2,
@@ -98,7 +109,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     lockWarning: {
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'flex-start',
       gap: 12,
@@ -108,7 +119,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       paddingLeft: 12,
       ...typography.body2,
       textTransform: 'none',
-      background: colors.invariant.Error,
+      background: colors.invariant.errorTransparent,
+      border: `2px solid ${colors.invariant.Error}`,
       borderRadius: 8,
       minHeight: 40,
       width: '100%',
@@ -305,7 +317,11 @@ const useStyles = makeStyles()((theme: Theme) => {
     checkboxText: {
       textWrap: 'wrap',
       ...typography.body2,
-      color: colors.invariant.warning
+      color: colors.invariant.Error,
+      width: 'auto',
+      '& span': {
+        ...typography.body2
+      }
     }
   }
 })
