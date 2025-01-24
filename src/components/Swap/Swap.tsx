@@ -48,8 +48,8 @@ import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPo
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
-import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { useDispatch } from 'react-redux'
+// import { actions as snackbarsActions } from '@store/reducers/snackbars'
+// import { useDispatch } from 'react-redux'
 
 export interface Pools {
   tokenX: PublicKey
