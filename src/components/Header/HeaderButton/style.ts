@@ -96,6 +96,19 @@ const useStyles = makeStyles()((theme: Theme) => {
         }
       }
     },
+    swapChangeWallet: {
+      zIndex: 1,
+      background: colors.invariant.pinkLinearGradient,
+      '&:hover': {
+        boxShadow: `0 0 15px ${colors.invariant.light}`,
+        backgroundColor: colors.invariant.light,
+        '@media (hover: none)': {
+          zIndex: 1,
+          background: colors.invariant.pinkLinearGradient,
+          boxShadow: 'none'
+        }
+      }
+    },
     headerButtonConnect: {
       background: colors.invariant.pinkLinearGradientOpacity,
       color: colors.invariant.newDark,
