@@ -47,7 +47,7 @@ import icons from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 // import { actions as snackbarsActions } from '@store/reducers/snackbars'
 // import { useDispatch } from 'react-redux'
 
@@ -236,7 +236,7 @@ export const Swap: React.FC<ISwap> = ({
 
   const timeoutRef = useRef<number>(0)
 
-  const navigate = useNavigate()
+  // const navigate = useNavigate()
 
   useEffect(() => {
     if (isTimeoutError) {
@@ -245,23 +245,8 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [isTimeoutError])
 
-  const [urlSyncEnabled, setUrlSyncEnabled] = useState(false)
-
   useEffect(() => {
-    if (
-      tokens.length > 0 &&
-      !urlSyncEnabled &&
-      initialTokenFromIndex !== null &&
-      initialTokenToIndex !== null
-    ) {
-      setTokenFromIndex(initialTokenFromIndex)
-      setTokenToIndex(initialTokenToIndex)
-      setUrlSyncEnabled(true)
-    }
-  }, [tokens.length, initialTokenFromIndex, initialTokenToIndex, urlSyncEnabled])
-
-  useEffect(() => {
-    if (!urlSyncEnabled || !tokens.length) return
+    if (!tokens.length) return
 
     if (tokenFromIndex !== null && tokenToIndex !== null) {
       const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
@@ -269,7 +254,7 @@ export const Swap: React.FC<ISwap> = ({
       const newPath = `/exchange/${fromTicker}/${toTicker}`
 
       if (newPath !== window.location.pathname) {
-        navigate(newPath, { replace: true })
+        window.history.replaceState(null, '', newPath)
       }
 
       const isPoints = promotedSwapPairs.some(
@@ -282,8 +267,7 @@ export const Swap: React.FC<ISwap> = ({
       setIsPairGivingPoints(isPoints)
       setPointsForSwap(new BN(0))
     }
-  }, [urlSyncEnabled, tokenFromIndex, tokenToIndex, tokens])
-
+  }, [tokenFromIndex, tokenToIndex, tokens, network, promotedSwapPairs])
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
