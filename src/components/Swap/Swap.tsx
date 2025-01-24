@@ -48,6 +48,8 @@ import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPo
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { useDispatch } from 'react-redux'
 
 export interface Pools {
   tokenX: PublicKey
@@ -235,6 +237,7 @@ export const Swap: React.FC<ISwap> = ({
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (isTimeoutError) {
@@ -269,10 +272,17 @@ export const Swap: React.FC<ISwap> = ({
       }
 
       const newPath = `/exchange/${fromTicker}/${toTicker}`
-      // alert(`${newPath} ${window.location.pathname}`)
-      // if (newPath !== window.location.pathname) {
-      navigate(newPath, { replace: true })
-      // }
+      dispatch(
+        snackbarsActions.add({
+          message: `${newPath} ${window.location.pathname}`,
+          variant: 'success',
+          persist: false
+        })
+      )
+      // alert()
+      if (newPath !== window.location.pathname) {
+        navigate(newPath, { replace: true })
+      }
     }
   }, [tokenFromIndex, tokenToIndex])
 
