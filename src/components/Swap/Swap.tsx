@@ -245,19 +245,12 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [isTimeoutError])
 
+  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
+
   useEffect(() => {
     if (!tokens.length) return
     if (tokenFromIndex === null || tokenToIndex === null) return
-
     if (!tokens[tokenFromIndex] || !tokens[tokenToIndex]) return
-
-    const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
-    const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-    const newPath = `/exchange/${fromTicker}/${toTicker}`
-
-    if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
-      window.history.replaceState(null, '', newPath)
-    }
 
     const isPoints = promotedSwapPairs.some(
       item =>
@@ -268,6 +261,19 @@ export const Swap: React.FC<ISwap> = ({
     )
     setIsPairGivingPoints(isPoints)
     setPointsForSwap(new BN(0))
+
+    clearTimeout(urlUpdateTimeoutRef.current)
+    urlUpdateTimeoutRef.current = setTimeout(() => {
+      const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+      const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+      const newPath = `/exchange/${fromTicker}/${toTicker}`
+
+      if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
+        window.history.replaceState(null, '', newPath)
+      }
+    }, 500)
+
+    return () => clearTimeout(urlUpdateTimeoutRef.current)
   }, [tokenFromIndex, tokenToIndex, tokens, network, promotedSwapPairs])
 
   useEffect(() => {
