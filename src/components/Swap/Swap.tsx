@@ -242,38 +242,38 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [isTimeoutError])
 
-  const navigationEffect = useCallback(() => {
-    if (canNavigate && tokens.length > 0 && (tokenFromIndex !== null || tokenToIndex !== null)) {
-      const fromTicker =
-        tokenFromIndex !== null
-          ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
-          : '-'
+  // const navigationEffect = useCallback(() => {
+  //   if (canNavigate && tokens.length > 0 && (tokenFromIndex !== null || tokenToIndex !== null)) {
+  //     const fromTicker =
+  //       tokenFromIndex !== null
+  //         ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+  //         : '-'
 
-      const toTicker =
-        tokenToIndex !== null
-          ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-          : '-'
+  //     const toTicker =
+  //       tokenToIndex !== null
+  //         ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+  //         : '-'
 
-      if (tokenFromIndex !== null && tokenToIndex !== null) {
-        const isPoints = promotedSwapPairs.some(
-          item =>
-            (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-              new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-            (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-              new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-        )
+  //     if (tokenFromIndex !== null && tokenToIndex !== null) {
+  //       const isPoints = promotedSwapPairs.some(
+  //         item =>
+  //           (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+  //             new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+  //           (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+  //             new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+  //       )
 
-        setIsPairGivingPoints(isPoints)
-        setPointsForSwap(new BN(0))
-      }
+  //       setIsPairGivingPoints(isPoints)
+  //       setPointsForSwap(new BN(0))
+  //     }
 
-      const newPath = `/exchange/${fromTicker}/${toTicker}`
+  //     const newPath = `/exchange/${fromTicker}/${toTicker}`
 
-      if (newPath !== window.location.pathname) {
-        navigate(newPath, { replace: true })
-      }
-    }
-  }, [tokenFromIndex, tokenToIndex])
+  //     if (newPath !== window.location.pathname) {
+  //       navigate(newPath, { replace: true })
+  //     }
+  //   }
+  // }, [tokenFromIndex, tokenToIndex])
 
   useEffect(navigationEffect, [navigationEffect])
 
