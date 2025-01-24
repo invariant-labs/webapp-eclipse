@@ -74,6 +74,7 @@ const meta = {
     showMaxButton: true,
     showBlur: false,
     hiddenUnknownTokens: false,
+    isPairGivingPoints: false,
     network: NetworkType.Testnet,
     percentageChange: 0
   }

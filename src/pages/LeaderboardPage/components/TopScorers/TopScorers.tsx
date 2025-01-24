@@ -1,48 +1,61 @@
 import { Typography, Box, Hidden } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 import useStyles from './styles'
-import { LeaderboardEntry } from '@store/reducers/leaderboard'
 import { ScorerItem } from './ScorerItem'
-import { BN } from '@coral-xyz/anchor'
+import { ILpEntry, ISwapEntry, ITotalEntry, LeaderBoardType } from '@store/reducers/leaderboard'
 
 interface ITopScorersProps {
-  top3Scorers: LeaderboardEntry[]
+  top3Scorers: {
+    total: ITotalEntry[]
+    swap: ISwapEntry[]
+    lp: ILpEntry[]
+  }
+  type: LeaderBoardType
 }
 
-export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers }) => {
+export const TopScorers: React.FC<ITopScorersProps> = ({ top3Scorers, type }) => {
   const { classes } = useStyles()
-  const [firstPlace, secondPlace, thirdPlace] = top3Scorers
+  const currentTop3 = useMemo(() => {
+    if (type === 'Liquidity') return top3Scorers.lp
+    if (type === 'Swap') return top3Scorers.swap
+    return top3Scorers.total
+  }, [type, top3Scorers])
+  const [firstPlace, secondPlace, thirdPlace] = currentTop3
   return (
     <>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Top Scorers</Typography>
       <Box className={classes.sectionContent}>
         <Hidden lgUp>
           <ScorerItem
-            points={new BN(firstPlace?.points, 'hex') ?? null}
+            points={firstPlace?.points ?? '00'}
             cupVariant='gold'
-            address={firstPlace?.address ?? null}
+            address={firstPlace?.address ?? ''}
             showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+            domain={firstPlace?.domain}
           />
         </Hidden>
         <ScorerItem
-          points={new BN(secondPlace?.points, 'hex') ?? null}
+          points={secondPlace?.points ?? '00'}
           cupVariant='silver'
-          address={secondPlace?.address ?? null}
+          address={secondPlace?.address ?? ''}
           showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+          domain={secondPlace?.domain}
         />
         <Hidden lgDown>
           <ScorerItem
-            points={new BN(firstPlace?.points, 'hex') ?? null}
+            points={firstPlace?.points ?? '00'}
             cupVariant='gold'
-            address={firstPlace?.address ?? null}
+            address={firstPlace?.address ?? ''}
             showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+            domain={firstPlace?.domain}
           />
         </Hidden>
         <ScorerItem
-          points={new BN(thirdPlace?.points, 'hex') ?? null}
+          points={thirdPlace?.points ?? '00'}
           cupVariant='bronze'
-          address={thirdPlace?.address ?? null}
+          address={thirdPlace?.address ?? ''}
           showPlaceholder={!firstPlace || !secondPlace || !thirdPlace}
+          domain={thirdPlace?.domain}
         />
       </Box>
     </>

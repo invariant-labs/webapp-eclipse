@@ -52,6 +52,12 @@ import airdropRainbow from './svg/airdropRainbow.svg'
 import audit from './svg/audit.svg'
 import warning2 from './svg/warning2.svg'
 import closeWarning from './svg/closeWarning.svg'
+import dropdown from './svg/dropdown.svg'
+import dropdownReverse from './svg/dropdownReverse.svg'
+import arrowLeft from './svg/arrowLeft.svg'
+import arrowRight from './svg/arrowRight.svg'
+import infoCircle from './svg/infoCircle.svg'
+import boostPoints from './svg/boostPoints.svg'
 import airdropGrey from './svg/airdropGrey.svg'
 
 const icons: { [key: string]: string } = {
@@ -109,6 +115,12 @@ const icons: { [key: string]: string } = {
   audit,
   warning2,
   closeWarning,
+  dropdown,
+  dropdownReverse,
+  arrowLeft,
+  arrowRight,
+  infoCircle,
+  boostPoints,
   airdropGrey
 }
 

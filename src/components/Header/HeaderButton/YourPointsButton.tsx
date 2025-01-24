@@ -47,7 +47,7 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
           {isSm ? (
             <KeyboardArrowDownIcon id='downIcon' />
           ) : currentNetwork === NetworkType.Mainnet ? (
-            `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
+            `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser.total?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
           ) : (
             'Points'
           )}

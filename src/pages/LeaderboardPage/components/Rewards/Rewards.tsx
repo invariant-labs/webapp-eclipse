@@ -66,7 +66,7 @@ export const Rewards = () => {
                 <Typography className={classes.pointsValue}>
                   {currentUser
                     ? formatNumberWithCommas(
-                        printBN(new BN(currentUser.points, 'hex'), LEADERBOARD_DECIMAL)
+                        printBN(new BN(currentUser.total?.points, 'hex'), LEADERBOARD_DECIMAL)
                       )
                     : 0}{' '}
                   points
