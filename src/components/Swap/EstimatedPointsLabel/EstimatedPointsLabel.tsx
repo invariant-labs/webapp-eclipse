@@ -4,6 +4,7 @@ import icons from '@static/icons'
 import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 interface IEstimatedPointsLabel {
   pointsBoxRef: React.RefObject<HTMLDivElement>
@@ -67,7 +68,13 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
           style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
           <p className={classes.pointsValue}>
             {' '}
-            {pointsForSwap.isZero() ? '0.00' : formatNumber(displayedValue)}
+            {pointsForSwap.isZero()
+              ? '0.00'
+              : pointsForSwap.gte(
+                    new BN('1000000000').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+                  )
+                ? '>1B'
+                : formatNumber(displayedValue)}
           </p>
 
           <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
