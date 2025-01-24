@@ -17,7 +17,7 @@ import {
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import {
-  // addressToTicker,
+  addressToTicker,
   calculatePoints,
   convertBalanceToBN,
   findPairs,
@@ -247,27 +247,29 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (!tokens.length) return
+    if (tokenFromIndex === null || tokenToIndex === null) return
 
-    if (tokenFromIndex !== null && tokenToIndex !== null) {
-      // const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
-      // const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-      // const newPath = `/exchange/${fromTicker}/${toTicker}`
+    if (!tokens[tokenFromIndex] || !tokens[tokenToIndex]) return
 
-      // if (newPath !== window.location.pathname) {
-      //   window.history.replaceState(null, '', newPath)
-      // }
+    const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+    const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+    const newPath = `/exchange/${fromTicker}/${toTicker}`
 
-      const isPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-          (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-      )
-      setIsPairGivingPoints(isPoints)
-      setPointsForSwap(new BN(0))
+    if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
+      window.history.replaceState(null, '', newPath)
     }
+
+    const isPoints = promotedSwapPairs.some(
+      item =>
+        (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+        (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+    )
+    setIsPairGivingPoints(isPoints)
+    setPointsForSwap(new BN(0))
   }, [tokenFromIndex, tokenToIndex, tokens, network, promotedSwapPairs])
+
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
