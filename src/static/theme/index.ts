@@ -81,9 +81,11 @@ export const colors = {
     bronze: '#C48643',
     Error: '#FB555F',
     greenLinearGradient: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
+    greenLinearGradinetHover: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
     greenLinearGradientOpacity:
       'linear-gradient(180deg, rgba(46, 224, 154, 0.8) 0%, rgba(33, 164, 124, 0.8) 100%)',
     pinkLinearGradient: 'linear-gradient(180deg, #EF84F5 0%, #9C3EBD 100%)',
+    pinkLinearGradientHover: 'linear-gradient(180deg, #ec82f3 0%, #9c3ebd 100%)',
     pinkLinearGradientOpacity:
       'linear-gradient(180deg, rgba(239, 132, 245, 0.8) 0%, rgba(156, 62, 189, 0.8) 100%)',
     mixedLinearGradient:

@@ -40,6 +40,13 @@ export const Switcher: React.FC<ISwitcherProps> = ({ alignment, setAlignment }) 
           FAQ
         </ToggleButton>
         <ToggleButton
+          value='referral'
+          disableRipple
+          className={classes.switchPoolsButton}
+          style={{ fontWeight: alignment === 'referral' ? 700 : 400 }}>
+          Referral
+        </ToggleButton>
+        <ToggleButton
           value='claim'
           disableRipple
           className={classes.switchPoolsButton}
