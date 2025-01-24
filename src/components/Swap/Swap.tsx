@@ -17,7 +17,7 @@ import {
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import {
-  addressToTicker,
+  // addressToTicker,
   calculatePoints,
   convertBalanceToBN,
   findPairs,
@@ -249,13 +249,13 @@ export const Swap: React.FC<ISwap> = ({
     if (!tokens.length) return
 
     if (tokenFromIndex !== null && tokenToIndex !== null) {
-      const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
-      const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-      const newPath = `/exchange/${fromTicker}/${toTicker}`
+      // const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+      // const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+      // const newPath = `/exchange/${fromTicker}/${toTicker}`
 
-      if (newPath !== window.location.pathname) {
-        window.history.replaceState(null, '', newPath)
-      }
+      // if (newPath !== window.location.pathname) {
+      //   window.history.replaceState(null, '', newPath)
+      // }
 
       const isPoints = promotedSwapPairs.some(
         item =>
