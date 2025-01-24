@@ -17,7 +17,7 @@ import {
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import {
-  // addressToTicker,
+  addressToTicker,
   calculatePoints,
   convertBalanceToBN,
   findPairs,
@@ -30,7 +30,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
@@ -185,7 +185,7 @@ export const Swap: React.FC<ISwap> = ({
   const [settings, setSettings] = React.useState<boolean>(false)
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
-  const [isPairGivingPoints, _setIsPairGivingPoints] = React.useState<boolean>(false)
+  const [isPairGivingPoints, setIsPairGivingPoints] = React.useState<boolean>(false)
   const [rateReversed, setRateReversed] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
@@ -242,40 +242,40 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [isTimeoutError])
 
-  // const navigationEffect = useCallback(() => {
-  //   if (canNavigate && tokens.length > 0 && (tokenFromIndex !== null || tokenToIndex !== null)) {
-  //     const fromTicker =
-  //       tokenFromIndex !== null
-  //         ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
-  //         : '-'
+  const navigationEffect = useCallback(() => {
+    if (canNavigate && tokens.length > 0 && (tokenFromIndex !== null || tokenToIndex !== null)) {
+      const fromTicker =
+        tokenFromIndex !== null
+          ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+          : '-'
 
-  //     const toTicker =
-  //       tokenToIndex !== null
-  //         ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-  //         : '-'
+      const toTicker =
+        tokenToIndex !== null
+          ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+          : '-'
 
-  //     if (tokenFromIndex !== null && tokenToIndex !== null) {
-  //       const isPoints = promotedSwapPairs.some(
-  //         item =>
-  //           (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-  //             new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-  //           (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-  //             new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-  //       )
+      if (tokenFromIndex !== null && tokenToIndex !== null) {
+        const isPoints = promotedSwapPairs.some(
+          item =>
+            (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+              new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+            (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+              new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+        )
 
-  //       setIsPairGivingPoints(isPoints)
-  //       setPointsForSwap(new BN(0))
-  //     }
+        setIsPairGivingPoints(isPoints)
+        setPointsForSwap(new BN(0))
+      }
 
-  //     const newPath = `/exchange/${fromTicker}/${toTicker}`
+      const newPath = `/exchange/${fromTicker}/${toTicker}`
+      alert(`${newPath} ${window.location.pathname}`)
+      // if (newPath !== window.location.pathname) {
+      //   navigate(newPath, { replace: true })
+      // }
+    }
+  }, [tokenFromIndex, tokenToIndex])
 
-  //     if (newPath !== window.location.pathname) {
-  //       navigate(newPath, { replace: true })
-  //     }
-  //   }
-  // }, [tokenFromIndex, tokenToIndex])
-
-  // useEffect(navigationEffect, [navigationEffect])
+  useEffect(navigationEffect, [navigationEffect])
 
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
