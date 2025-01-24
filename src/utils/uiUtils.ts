@@ -1,5 +1,5 @@
 import { BN } from '@coral-xyz/anchor'
-import { printBN, trimDecimalZeros } from './utils'
+import { printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
 
 export const toBlur = 'global-blur'
@@ -115,4 +115,17 @@ export const getButtonClassName = ({
 }: GetButtonClassNameParams): string => {
   const variant = variants.find(v => v.label.toLowerCase() === label.toLowerCase())
   return `${defaultClass}  ${variant?.className}`
+}
+
+export const formatLargeNumber = (number: number) => {
+  const suffixes = ['', 'K', 'M', 'B', 'T', 'Q']
+
+  if (number < 1000) {
+    return number.toFixed(1)
+  }
+
+  const suffixIndex = Math.floor(Math.log10(number) / 3)
+  const scaledNumber = number / Math.pow(1000, suffixIndex)
+
+  return `${trimZeros(scaledNumber.toFixed(1))}${suffixes[suffixIndex]}`
 }

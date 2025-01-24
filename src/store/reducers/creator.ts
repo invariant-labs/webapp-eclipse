@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PayloadType } from '../consts/types'
 import { NetworkType } from '@store/consts/static'
-import { FormData } from '@pages/SolanaCreator/utils/solanaCreatorUtils'
+import { FormData } from '@pages/TokenCreatorPage/utils/solanaCreatorUtils'
 
 export interface ICreator {
   creatorState: ICreatorState

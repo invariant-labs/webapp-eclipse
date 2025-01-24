@@ -7,12 +7,12 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
 import { colors, typography } from '@static/theme'
-import { formatLargeNumber } from '@utils/formatLargeNumber'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { printBN, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { network } from '@store/selectors/solanaConnection'
 import { NetworkType } from '@store/consts/static'
+import { formatLargeNumber } from '@utils/uiUtils'
 
 export interface ISelectNetworkModal {
   open: boolean
