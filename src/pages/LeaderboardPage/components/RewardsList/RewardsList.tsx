@@ -10,9 +10,10 @@ import { colors, typography } from '@static/theme'
 
 export interface NFTsListInterface {
   userAddress: PublicKey
+  isConnected?: boolean
 }
 
-const NFTsList: React.FC<NFTsListInterface> = ({ userAddress }) => {
+const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => {
   const isMobile = useIsMobile()
   const { classes } = useStylesList({
     isMobile
@@ -49,6 +50,7 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress }) => {
               number={index + 1}
               nft={nft}
               userAddress={userAddress.toString()}
+              isConnected={isConnected}
             />
           ))}
         </Grid>

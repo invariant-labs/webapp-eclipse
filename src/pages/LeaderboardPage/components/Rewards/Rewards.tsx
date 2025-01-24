@@ -14,7 +14,7 @@ import { Link } from 'react-router-dom'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
-import RewardsList from '../RewardsList/PoolList'
+import RewardsList from '../RewardsList/RewardsList'
 
 export const Rewards = () => {
   const { classes } = useStyles()
@@ -109,7 +109,7 @@ export const Rewards = () => {
           </>
         </Box>
       </Box>
-      <RewardsList userAddress={userAddress} />
+      <RewardsList userAddress={userAddress} isConnected={isConnected} />
     </>
   )
 }
