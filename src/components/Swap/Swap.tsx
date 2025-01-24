@@ -17,7 +17,7 @@ import {
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import {
-  addressToTicker,
+  // addressToTicker,
   calculatePoints,
   convertBalanceToBN,
   findPairs,
@@ -30,14 +30,14 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
-import { useNavigate } from 'react-router-dom'
+// import { useNavigate } from 'react-router-dom'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
@@ -185,7 +185,7 @@ export const Swap: React.FC<ISwap> = ({
   const [settings, setSettings] = React.useState<boolean>(false)
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
-  const [isPairGivingPoints, setIsPairGivingPoints] = React.useState<boolean>(false)
+  const [isPairGivingPoints, _setIsPairGivingPoints] = React.useState<boolean>(false)
   const [rateReversed, setRateReversed] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
@@ -275,7 +275,7 @@ export const Swap: React.FC<ISwap> = ({
   //   }
   // }, [tokenFromIndex, tokenToIndex])
 
-  useEffect(navigationEffect, [navigationEffect])
+  // useEffect(navigationEffect, [navigationEffect])
 
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
