@@ -269,7 +269,7 @@ export const Swap: React.FC<ISwap> = ({
       }
 
       const newPath = `/exchange/${fromTicker}/${toTicker}`
-      alert(`${newPath} ${window.location.pathname}`)
+      // alert(`${newPath} ${window.location.pathname}`)
       // if (newPath !== window.location.pathname) {
       navigate(newPath, { replace: true })
       // }
