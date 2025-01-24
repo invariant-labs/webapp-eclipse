@@ -47,6 +47,7 @@ import icons from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
+import { useNavigate } from 'react-router-dom'
 
 export interface Pools {
   tokenX: PublicKey
