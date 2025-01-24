@@ -2,7 +2,8 @@ import React from 'react'
 import { Controller } from 'react-hook-form'
 import { TextInput } from '../TextInput/TextInput'
 import { NumericInput } from '../NumericInput/NumericInput'
-import getErrorMessages, { FormData } from '@utils/tokenCreatorUtils'
+import getErrorMessages from '@utils/tokenCreatorUtils'
+import { FormData } from '@store/consts/tokenCreator/types'
 
 interface ControlledInputProps {
   name: keyof FormData

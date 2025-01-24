@@ -4,7 +4,8 @@ import { ControlledTextInput } from './ControlledInputs'
 import { ImagePicker } from '../ImagePicker/ImagePicker'
 import { Box } from '@mui/material'
 import useStyles from './styles'
-import { FormData, validateSocialLink } from '@utils/tokenCreatorUtils'
+import { validateSocialLink } from '@utils/tokenCreatorUtils'
+import { FormData } from '@store/consts/tokenCreator/types'
 
 interface TokenMetadataInputsProps {
   formMethods: UseFormReturn<FormData>

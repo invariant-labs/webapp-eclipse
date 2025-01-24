@@ -7,19 +7,7 @@ import { actions } from '@store/reducers/creator'
 import { creatorState } from '@store/selectors/creator'
 import { TokenCreator } from '@components/TokenCreator/TokenCreator'
 import { validateDecimals, validateSupply } from '@utils/tokenCreatorUtils'
-
-interface FormData {
-  name: string
-  symbol: string
-  decimals: string
-  supply: string
-  description: string
-  website: string
-  twitter: string
-  telegram: string
-  discord: string
-  image: string
-}
+import { FormData } from '@store/consts/tokenCreator/types'
 
 export const TokenCreatorWrapper: React.FC = () => {
   const currentNetwork = useSelector(network)

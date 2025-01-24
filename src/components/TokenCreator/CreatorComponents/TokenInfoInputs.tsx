@@ -11,7 +11,8 @@ import { getCreateTokenLamports, NetworkType } from '@store/consts/static'
 import { printBN, trimZeros } from '@utils/utils'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import useStyles from './styles'
-import { FormData, validateSupply } from '@utils/tokenCreatorUtils'
+import { validateSupply } from '@utils/tokenCreatorUtils'
+import { FormData } from '@store/consts/tokenCreator/types'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>

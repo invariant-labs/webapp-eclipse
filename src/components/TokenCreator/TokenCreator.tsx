@@ -5,7 +5,7 @@ import { TokenInfoInputs } from './CreatorComponents/TokenInfoInputs'
 import { TokenMetadataInputs } from './CreatorComponents/TokenMetadataInputs'
 import { BN } from '@coral-xyz/anchor'
 import { NetworkType } from '@store/consts/static'
-import { FormData } from '@utils/tokenCreatorUtils'
+import { FormData } from '@store/consts/tokenCreator/types'
 
 export interface ITokenCreator {
   onSubmit: (data: FormData) => void
