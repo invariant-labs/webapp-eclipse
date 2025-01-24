@@ -247,17 +247,30 @@ export const Swap: React.FC<ISwap> = ({
   }, [isTimeoutError])
 
   const navigationEffect = useCallback(() => {
-    if (canNavigate && tokens.length > 0 && (tokenFromIndex !== null || tokenToIndex !== null)) {
-      const fromTicker =
-        tokenFromIndex !== null
-          ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
-          : '-'
+    // Only proceed if we have valid data to work with
+    if (!canNavigate || tokens.length === 0) {
+      return
+    }
 
-      const toTicker =
-        tokenToIndex !== null
-          ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-          : '-'
+    // Get current path from window.location
+    const currentPath = window.location.pathname
 
+    // Calculate new path only if we have valid indices
+    const fromTicker =
+      tokenFromIndex !== null
+        ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+        : '-'
+
+    const toTicker =
+      tokenToIndex !== null
+        ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+        : '-'
+
+    const newPath = `/exchange/${fromTicker}/${toTicker}`
+
+    // Only navigate if path actually changed
+    if (newPath !== currentPath) {
+      // Update points status if we have both tokens
       if (tokenFromIndex !== null && tokenToIndex !== null) {
         const isPoints = promotedSwapPairs.some(
           item =>
@@ -271,23 +284,33 @@ export const Swap: React.FC<ISwap> = ({
         setPointsForSwap(new BN(0))
       }
 
-      const newPath = `/exchange/${fromTicker}/${toTicker}`
+      // Navigate only if path changed
+      navigate(newPath, { replace: true })
+
+      // Notify about navigation
       dispatch(
         snackbarsActions.add({
-          message: `${newPath} ${window.location.pathname}`,
+          message: `Navigated from ${currentPath} to ${newPath}`,
           variant: 'success',
           persist: false
         })
       )
-      // alert()
-      if (newPath !== window.location.pathname) {
-        navigate(newPath, { replace: true })
-      }
     }
-  }, [tokenFromIndex, tokenToIndex])
+  }, [
+    canNavigate,
+    tokens,
+    tokenFromIndex,
+    tokenToIndex,
+    network,
+    navigate,
+    dispatch,
+    promotedSwapPairs
+  ])
 
-  useEffect(navigationEffect, [navigationEffect])
-
+  // Only trigger effect when tokens or indices change
+  useEffect(() => {
+    navigationEffect()
+  }, [tokenFromIndex, tokenToIndex, navigationEffect])
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
