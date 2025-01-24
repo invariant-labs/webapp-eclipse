@@ -61,6 +61,8 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
+    swapMultiplier: '01',
+    promotedSwapPairs: [],
     commonTokens: [
       new PublicKey('So11111111111111111111111111111111111111112'),
       new PublicKey('9n4nbM75f5Ui33ZbPYXn59EwSgE8CGsHtAeTH5YFeJ9E'),
@@ -106,7 +108,9 @@ export const Primary: Story = {
     wrappedETHAccountExist: true,
     deleteTimeoutError: fn(),
     isTimeoutError: false,
-    canNavigate: true
+    canNavigate: true,
+    feeds: {},
+    pointsPerUsdFee: new BN(0)
   },
   render: args => {
     return <Swap {...args} />

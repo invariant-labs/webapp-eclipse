@@ -21,6 +21,7 @@ export interface IProps {
   onCopyAddress?: () => void
   textClassName?: string
   isDisabled?: boolean
+  isSwap?: boolean
 }
 export const ChangeWalletButton: React.FC<IProps> = ({
   name,
@@ -32,7 +33,8 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   isDisabled = false,
   className,
   onCopyAddress = () => {},
-  textClassName
+  textClassName,
+  isSwap
 }) => {
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -101,7 +103,8 @@ export const ChangeWalletButton: React.FC<IProps> = ({
         className={classNames(
           connected ? classes.headerButtonConnected : classes.headerButtonConnect,
           isDisabled && classes.disabled,
-          className
+          className,
+          isSwap && classes.swapChangeWallet
         )}
         variant={'contained'}
         disabled={isDisabled}
