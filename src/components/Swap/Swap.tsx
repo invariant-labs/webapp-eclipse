@@ -236,7 +236,7 @@ export const Swap: React.FC<ISwap> = ({
 
   const timeoutRef = useRef<number>(0)
 
-  // const navigate = useNavigate()
+  const navigate = useNavigate()
 
   useEffect(() => {
     if (isTimeoutError) {
@@ -269,7 +269,8 @@ export const Swap: React.FC<ISwap> = ({
       const newPath = `/exchange/${fromTicker}/${toTicker}`
 
       if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
-        window.history.replaceState(null, '', newPath)
+        navigate(newPath, { replace: true })
+        // window.history.replaceState(null, '', newPath)
       }
     }, 500)
 
