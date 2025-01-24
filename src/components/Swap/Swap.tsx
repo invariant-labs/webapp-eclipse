@@ -198,7 +198,7 @@ export const Swap: React.FC<ISwap> = ({
   }, [network])
 
   const IS_ERROR_LABEL_SHOW =
-    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 25 ||
+    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 10 ||
     tokens[tokenFromIndex ?? '']?.isUnknown ||
     tokens[tokenToIndex ?? '']?.isUnknown
 
@@ -825,7 +825,7 @@ export const Swap: React.FC<ISwap> = ({
         <Box
           className={classes.unknownWarningContainer}
           style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
-          {+printBN(simulateResult.priceImpact, DECIMAL - 2) > 25 && (
+          {+printBN(simulateResult.priceImpact, DECIMAL - 2) > 10 && (
             <TooltipHover text='Your trade size might be too large'>
               <Box className={classes.unknownWarning}>
                 {(+printBN(simulateResult.priceImpact, DECIMAL - 2)).toFixed(2)}% Price impact

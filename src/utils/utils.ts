@@ -81,7 +81,8 @@ import {
   TURBO_AI_MAIN,
   ORCA_MAIN,
   SOLAR_MAIN,
-  TOKENS_PRICES_FROM_JUP
+  TOKENS_PRICES_FROM_JUP,
+  WETH_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -860,7 +861,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       // })
       // return obj
       return {
-        [WETH_TEST.address.toString()]: WETH_TEST,
+        [WETH_MAIN.address.toString()]: WETH_MAIN,
         [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
         [TETH_MAIN.address.toString()]: TETH_MAIN,
         [USDC_MAIN.address.toString()]: USDC_MAIN,
@@ -1653,6 +1654,9 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
 let isCoinGeckoQueryRunning = false
 
 export const getCoinGeckoTokenPrice = async (id: string): Promise<number | undefined> => {
+  const defaultTokensHash = generateHash(JSON.stringify(DEFAULT_TOKENS))
+  const cachedHash = localStorage.getItem('COINGECKO_DEFAULT_TOKEN_LIST_CHANGED')
+
   while (isCoinGeckoQueryRunning) {
     await sleep(100)
   }
@@ -1664,23 +1668,32 @@ export const getCoinGeckoTokenPrice = async (id: string): Promise<number | undef
     lastQueryTimestamp = Number(cachedLastQueryTimestamp)
   }
 
+  const isHashOutdated = cachedHash !== defaultTokensHash
+
   const cachedPriceData = localStorage.getItem('COINGECKO_PRICE_DATA')
   let priceData: CoinGeckoAPIData = []
-  if (cachedPriceData && Number(lastQueryTimestamp) + COINGECKO_QUERY_COOLDOWN > Date.now()) {
-    priceData = JSON.parse(cachedPriceData)
-  } else {
+
+  if (
+    isHashOutdated ||
+    !cachedPriceData ||
+    Number(lastQueryTimestamp) + COINGECKO_QUERY_COOLDOWN <= Date.now()
+  ) {
     try {
       const { data } = await axios.get<CoinGeckoAPIData>(
         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${DEFAULT_TOKENS}`
       )
       priceData = data
+
       localStorage.setItem('COINGECKO_PRICE_DATA', JSON.stringify(priceData))
       localStorage.setItem('COINGECKO_LAST_QUERY_TIMESTAMP', String(Date.now()))
+      localStorage.setItem('COINGECKO_DEFAULT_TOKEN_LIST_CHANGED', defaultTokensHash)
     } catch (e) {
       localStorage.removeItem('COINGECKO_LAST_QUERY_TIMESTAMP')
       localStorage.removeItem('COINGECKO_PRICE_DATA')
       console.log(e)
     }
+  } else {
+    priceData = JSON.parse(cachedPriceData)
   }
 
   isCoinGeckoQueryRunning = false
@@ -1826,7 +1839,7 @@ export const calculateAPYAndAPR = (
   tvl?: number
 ) => {
   if (volume === undefined || fee === undefined || tvl === undefined) {
-    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+    return { convertedApy: Math.abs(apy), convertedApr: Math.abs(apyToApr(apy)) }
   }
 
   if (poolsToRecalculateAPY.includes(poolAddress ?? '')) {
@@ -1834,9 +1847,9 @@ export const calculateAPYAndAPR = (
 
     const parsedApy = (Math.pow((volume * fee * 0.01) / tvl + 1, 365) - 1) * 100
 
-    return { convertedApy: parsedApy, convertedApr: parsedApr }
+    return { convertedApy: Math.abs(parsedApy), convertedApr: Math.abs(parsedApr) }
   } else {
-    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+    return { convertedApy: Math.abs(apy), convertedApr: Math.abs(apyToApr(apy)) }
   }
 }
 
@@ -1860,6 +1873,18 @@ export const checkDataDelay = (date: string | Date, timeInMinutes: number): bool
   const differenceInMinutes = (currentDate.getTime() - inputDate.getTime()) / (1000 * 60)
 
   return differenceInMinutes > timeInMinutes
+}
+
+export const generateHash = (str: string): string => {
+  let hash = 0
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
+  }
+
+  return Math.abs(hash).toString(16).padStart(8, '0')
 }
 
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {

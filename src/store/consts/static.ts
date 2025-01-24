@@ -40,7 +40,7 @@ export const USDC_ADDRESS = {
   [NetworkType.Local]: emptyPublicKey
 }
 
-export const REFRESHER_INTERVAL = 120
+export const REFRESHER_INTERVAL = 30
 
 export const PRICE_DECIMAL = 24
 export const USDC_DEV: Token = {
@@ -72,7 +72,7 @@ export const WETH_DEV: Token = {
   name: 'Ethereum',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const USDC_TEST: Token = {
@@ -105,7 +105,7 @@ export const WETH_TEST: Token = {
   name: 'Ether',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const MOON_TEST: Token = {
@@ -189,7 +189,7 @@ export const WETH_MAIN: Token = {
   name: 'Ethereum',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const LAIKA_MAIN: Token = {
@@ -559,6 +559,11 @@ export const promotedTiers = [
     index: 3
   },
   {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
     tokenX: TETH_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 0
@@ -774,7 +779,14 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
 
-export const DEFAULT_TOKENS = ['solana', 'dogwifcoin', 'turbo-eth', 'laika-3', 'mooncoin-2']
+export const DEFAULT_TOKENS = [
+  'solana',
+  'dogwifcoin',
+  'turbo-eth',
+  'laika-3',
+  'mooncoin-2',
+  'bridged-wrapped-ether-eclipse'
+]
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
@@ -800,19 +812,19 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
+          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '0.09'
+        },
+        {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
         },
         {
-          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '0.3'
-        },
-        {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '0.3'
+          tokenX: 'CEBP3CqAbW4zdZA57H2wfaSG1QNdzQ72GiQEbQXyW9Tm',
+          tokenY: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          fee: '0.01'
         }
       ]
     default:
@@ -821,10 +833,6 @@ export const getPopularPools = (network: NetworkType) => {
 }
 
 export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
-  {
-    coingeckoId: 'ethereum',
-    solanaAddress: '7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'
-  },
   {
     coingeckoId: 'usd-coin',
     solanaAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'

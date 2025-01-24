@@ -148,9 +148,9 @@ export const PromotedPoolPopover = ({
                   <span className={classes.apr}>APR</span>
                 </Typography>{' '}
                 <Typography className={classes.whiteText}>
-                  {`${apy > 1000 ? '>1000%' : apy === 0 ? '' : apy.toFixed(2) + '%'}`}
+                  {`${apy > 1000 ? '>1000%' : apy === 0 ? '' : Math.abs(apy).toFixed(2) + '%'}`}
                   <span className={classes.apr}>
-                    {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : apr.toFixed(2) + '%'}`}
+                    {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : Math.abs(apr).toFixed(2) + '%'}`}
                   </span>
                 </Typography>
               </div>

@@ -16,11 +16,18 @@ const useStyles = makeStyles()(() => {
     headerBigText: {
       ...typography.heading1,
       color: colors.invariant.text,
-      [theme.breakpoints.down('md')]: {
+      [theme.breakpoints.down('lg')]: {
         ...typography.heading2
       }
     },
-    headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
+    headerSmallText: {
+      maxWidth: '100%',
+      ...typography.body1,
+      color: colors.invariant.textGrey,
+      whiteSpace: 'nowrap',
+      overflow: 'hidden',
+      textOverflow: 'ellipsis'
+    },
     leaderboardHeaderSectionTitle: {
       ...typography.heading3,
       color: colors.white.main,
@@ -45,6 +52,15 @@ const useStyles = makeStyles()(() => {
       paddingLeft: 24,
       paddingRight: 24,
       background: colors.invariant.component
+    },
+    skeleton: {
+      borderRadius: 24,
+      opacity: 0.7,
+      height: 267,
+      width: 319,
+      [theme.breakpoints.down('md')]: {
+        height: 122
+      }
     }
   }
 })
