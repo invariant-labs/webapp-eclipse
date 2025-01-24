@@ -2,7 +2,7 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { BoxInfo } from './BoxInfo'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
@@ -13,7 +13,12 @@ import unlockIcon from '@static/svg/unlock.svg'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import icons from '@static/icons'
 import { addressToTicker } from '@utils/utils'
-import { NetworkType } from '@store/consts/static'
+import {
+  NetworkType,
+  WETH_CLOSE_POSITION_LAMPORTS_MAIN,
+  WETH_CLOSE_POSITION_LAMPORTS_TEST
+} from '@store/consts/static'
+import { BN } from '@coral-xyz/anchor'
 
 interface IProp {
   fee: number
@@ -32,6 +37,7 @@ interface IProp {
   network: NetworkType
   isLocked: boolean
   onModalOpen: () => void
+  ethBalance: BN
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -50,12 +56,21 @@ const SinglePositionInfo: React.FC<IProp> = ({
   isActive,
   network,
   onModalOpen,
-  isLocked
+  isLocked,
+  ethBalance
 }) => {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
   const { classes } = useStyles()
 
+  const canClosePosition = useMemo(() => {
+    if (network === NetworkType.Testnet) {
+      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_TEST)
+    } else {
+      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_MAIN)
+    }
+  }, [ethBalance, network])
+  console.log(ethBalance.toString())
   return (
     <Grid className={classes.root}>
       <ClosePositionWarning
@@ -166,13 +181,15 @@ const SinglePositionInfo: React.FC<IProp> = ({
             text={
               isLocked
                 ? 'Closing positions is disabled when position is locked'
-                : tokenX.claimValue > 0 || tokenY.claimValue > 0
-                  ? 'Unclaimed fees will be returned when closing the position'
-                  : ''
+                : canClosePosition
+                  ? tokenX.claimValue > 0 || tokenY.claimValue > 0
+                    ? 'Unclaimed fees will be returned when closing the position'
+                    : ''
+                  : 'Insufficient ETH to close position'
             }>
             <Button
               className={classes.closeButton}
-              disabled={isLocked}
+              disabled={isLocked || !canClosePosition}
               variant='contained'
               onClick={() => {
                 if (!userHasStakes) {
@@ -182,7 +199,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   blurContent()
                 }
               }}>
-              Close position
+              {canClosePosition ? 'Close position' : 'Lacking ETH'}
             </Button>
           </TooltipHover>
           <Hidden mdUp>

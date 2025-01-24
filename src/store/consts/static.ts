@@ -619,6 +619,9 @@ export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
 export const WETH_CREATE_TOKEN_LAMPORTS_MAIN = new BN(2000000)
 export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
+export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
+export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
+
 export const getCreateTokenLamports = (network: NetworkType): BN => {
   switch (network) {
     case NetworkType.Testnet:
