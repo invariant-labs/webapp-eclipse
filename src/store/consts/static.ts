@@ -72,7 +72,7 @@ export const WETH_DEV: Token = {
   name: 'Ethereum',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const USDC_TEST: Token = {
@@ -105,7 +105,7 @@ export const WETH_TEST: Token = {
   name: 'Ether',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const MOON_TEST: Token = {
