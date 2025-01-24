@@ -30,7 +30,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
@@ -237,7 +237,6 @@ export const Swap: React.FC<ISwap> = ({
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
-  // const dispatch = useDispatch()
 
   useEffect(() => {
     if (isTimeoutError) {
@@ -246,54 +245,45 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [isTimeoutError])
 
-  const navigationEffect = useCallback(() => {
-    if (!canNavigate || tokens.length === 0) return
-
-    const currentPath = window.location.pathname
-
-    // Only proceed if we're not already in a transition
-    if (currentPath.includes('/-/') && (tokenFromIndex === null || tokenToIndex === null)) {
-      return
-    }
-
-    const fromTicker =
-      tokenFromIndex !== null
-        ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
-        : '-'
-
-    const toTicker =
-      tokenToIndex !== null
-        ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-        : '-'
-
-    const newPath = `/exchange/${fromTicker}/${toTicker}`
-
-    // Avoid navigation to partial paths
-    if (newPath.includes('/-/') && currentPath.includes(`/exchange/${fromTicker}/`)) {
-      return
-    }
-
-    if (newPath !== currentPath) {
-      if (tokenFromIndex !== null && tokenToIndex !== null) {
-        const isPoints = promotedSwapPairs.some(
-          item =>
-            (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-              new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-            (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-              new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-        )
-
-        setIsPairGivingPoints(isPoints)
-        setPointsForSwap(new BN(0))
-      }
-
-      navigate(newPath, { replace: true })
-    }
-  }, [canNavigate, tokens, tokenFromIndex, tokenToIndex, network, navigate])
+  const [urlSyncEnabled, setUrlSyncEnabled] = useState(false)
 
   useEffect(() => {
-    navigationEffect()
-  }, [tokenFromIndex, tokenToIndex, navigationEffect])
+    if (
+      tokens.length > 0 &&
+      !urlSyncEnabled &&
+      initialTokenFromIndex !== null &&
+      initialTokenToIndex !== null
+    ) {
+      setTokenFromIndex(initialTokenFromIndex)
+      setTokenToIndex(initialTokenToIndex)
+      setUrlSyncEnabled(true)
+    }
+  }, [tokens.length, initialTokenFromIndex, initialTokenToIndex, urlSyncEnabled])
+
+  useEffect(() => {
+    if (!urlSyncEnabled || !tokens.length) return
+
+    if (tokenFromIndex !== null && tokenToIndex !== null) {
+      const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+      const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+      const newPath = `/exchange/${fromTicker}/${toTicker}`
+
+      if (newPath !== window.location.pathname) {
+        navigate(newPath, { replace: true })
+      }
+
+      const isPoints = promotedSwapPairs.some(
+        item =>
+          (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+            new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+          (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+            new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+      )
+      setIsPairGivingPoints(isPoints)
+      setPointsForSwap(new BN(0))
+    }
+  }, [urlSyncEnabled, tokenFromIndex, tokenToIndex, tokens])
+
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
