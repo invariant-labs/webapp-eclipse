@@ -237,7 +237,7 @@ export const Swap: React.FC<ISwap> = ({
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
-  const dispatch = useDispatch()
+  // const dispatch = useDispatch()
 
   useEffect(() => {
     if (isTimeoutError) {
@@ -247,15 +247,15 @@ export const Swap: React.FC<ISwap> = ({
   }, [isTimeoutError])
 
   const navigationEffect = useCallback(() => {
-    // Only proceed if we have valid data to work with
-    if (!canNavigate || tokens.length === 0) {
+    if (!canNavigate || tokens.length === 0) return
+
+    const currentPath = window.location.pathname
+
+    // Only proceed if we're not already in a transition
+    if (currentPath.includes('/-/') && (tokenFromIndex === null || tokenToIndex === null)) {
       return
     }
 
-    // Get current path from window.location
-    const currentPath = window.location.pathname
-
-    // Calculate new path only if we have valid indices
     const fromTicker =
       tokenFromIndex !== null
         ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
@@ -268,9 +268,12 @@ export const Swap: React.FC<ISwap> = ({
 
     const newPath = `/exchange/${fromTicker}/${toTicker}`
 
-    // Only navigate if path actually changed
+    // Avoid navigation to partial paths
+    if (newPath.includes('/-/') && currentPath.includes(`/exchange/${fromTicker}/`)) {
+      return
+    }
+
     if (newPath !== currentPath) {
-      // Update points status if we have both tokens
       if (tokenFromIndex !== null && tokenToIndex !== null) {
         const isPoints = promotedSwapPairs.some(
           item =>
@@ -284,30 +287,10 @@ export const Swap: React.FC<ISwap> = ({
         setPointsForSwap(new BN(0))
       }
 
-      // Navigate only if path changed
       navigate(newPath, { replace: true })
-
-      // Notify about navigation
-      dispatch(
-        snackbarsActions.add({
-          message: `Navigated from ${currentPath} to ${newPath}`,
-          variant: 'success',
-          persist: false
-        })
-      )
     }
-  }, [
-    canNavigate,
-    tokens,
-    tokenFromIndex,
-    tokenToIndex,
-    network,
-    navigate,
-    dispatch,
-    promotedSwapPairs
-  ])
+  }, [canNavigate, tokens, tokenFromIndex, tokenToIndex, network, navigate])
 
-  // Only trigger effect when tokens or indices change
   useEffect(() => {
     navigationEffect()
   }, [tokenFromIndex, tokenToIndex, navigationEffect])
