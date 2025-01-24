@@ -71,9 +71,9 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
             {pointsForSwap.isZero()
               ? '0.00'
               : pointsForSwap.gte(
-                    new BN('100000000000').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+                    new BN('1000000').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
                   )
-                ? '>1T'
+                ? '>1M'
                 : formatNumber(displayedValue)}
           </p>
 
