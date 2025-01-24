@@ -3,6 +3,13 @@ import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
+  skeleton: {
+    borderRadius: 24,
+    opacity: 0.7,
+    height: 1072,
+    width: '100%',
+    transform: 'translateY(0px)'
+  },
   container: {
     width: '100%',
     borderRadius: '24px',

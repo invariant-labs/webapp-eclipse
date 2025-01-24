@@ -1,5 +1,6 @@
 import {
   calculatePriceSqrt,
+  DENOMINATOR,
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
@@ -99,6 +100,7 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -744,7 +746,62 @@ export const formatNumber = (
 
   let formattedNumber
 
-  if (Math.abs(numberAsNumber) >= FormatConfig.B) {
+  if (Math.abs(numberAsNumber) >= FormatConfig.T) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.QDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.QDecimals) + (noDecimals ? '' : formattedDecimals) + 'Q'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.Q) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.TDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.TDecimals) + (noDecimals ? '' : formattedDecimals) + 'T'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.HT) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.HDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.HDecimals) + (noDecimals ? '' : formattedDecimals) + 'HT'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.Bn) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.TrDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.TrDecimals) + (noDecimals ? '' : formattedDecimals) + 'Bn'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.HBn) {
+    const formattedDecimals = noDecimals
+      ? ''
+      : (FormatConfig.DecimalsAfterDot ? '.' : '') +
+        (beforeDot.slice(-FormatConfig.HTrDecimals) + (afterDot ? afterDot : '')).slice(
+          0,
+          FormatConfig.DecimalsAfterDot
+        )
+
+    formattedNumber =
+      beforeDot.slice(0, -FormatConfig.HTrDecimals) + (noDecimals ? '' : formattedDecimals) + 'HBn'
+  } else if (Math.abs(numberAsNumber) >= FormatConfig.B) {
     const formattedDecimals = noDecimals
       ? ''
       : (FormatConfig.DecimalsAfterDot ? '.' : '') +
@@ -805,6 +862,7 @@ export const formatNumber = (
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
+
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
@@ -1885,4 +1943,22 @@ export const generateHash = (str: string): string => {
   }
 
   return Math.abs(hash).toString(16).padStart(8, '0')
+}
+
+export const calculatePoints = (
+  amount: BN,
+  decimals: number,
+  feePercentage: BN,
+  priceFeed: string,
+  priceDecimals: number,
+  pointsPerUSD: BN
+) => {
+  const nominator = amount
+    .mul(feePercentage)
+    .mul(new BN(priceFeed))
+    .mul(pointsPerUSD)
+    .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+  const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
+
+  return nominator.div(denominator).div(new BN(DENOMINATOR))
 }
