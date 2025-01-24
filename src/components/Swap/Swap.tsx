@@ -278,30 +278,6 @@ export const Swap: React.FC<ISwap> = ({
   useEffect(navigationEffect, [navigationEffect])
 
   useEffect(() => {
-    if (tokenFromIndex !== null && tokenToIndex !== null) {
-      const isPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-          (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-      )
-
-      setIsPairGivingPoints(isPoints)
-      setPointsForSwap(new BN(0))
-    }
-
-    if (canNavigate) {
-      navigate(
-        `/exchange/${tokenFromIndex !== null ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString()) : '-'}/${tokenToIndex !== null ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString()) : '-'}`,
-        {
-          replace: true
-        }
-      )
-    }
-  }, [tokenFromIndex, tokenToIndex, promotedSwapPairs])
-
-  useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
       const feePercentage = pools[simulateResult.poolIndex].fee
