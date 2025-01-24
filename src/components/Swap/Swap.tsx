@@ -29,7 +29,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
@@ -213,16 +213,27 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [isTimeoutError])
 
-  useEffect(() => {
-    if (canNavigate) {
-      navigate(
-        `/exchange/${tokenFromIndex !== null ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString()) : '-'}/${tokenToIndex !== null ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString()) : '-'}`,
-        {
-          replace: true
-        }
-      )
+  const navigationEffect = useCallback(() => {
+    if (canNavigate && tokens.length > 0 && (tokenFromIndex !== null || tokenToIndex !== null)) {
+      const fromTicker =
+        tokenFromIndex !== null
+          ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+          : '-'
+
+      const toTicker =
+        tokenToIndex !== null
+          ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+          : '-'
+
+      const newPath = `/exchange/${fromTicker}/${toTicker}`
+
+      if (newPath !== window.location.pathname) {
+        navigate(newPath, { replace: true })
+      }
     }
   }, [tokenFromIndex, tokenToIndex])
+
+  useEffect(navigationEffect, [navigationEffect])
 
   useEffect(() => {
     if (!!tokens.length && tokenFromIndex === null && tokenToIndex === null && canNavigate) {
