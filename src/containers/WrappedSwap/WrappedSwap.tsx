@@ -10,6 +10,7 @@ import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions } from '@store/reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
@@ -33,7 +34,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   addNewTokenToLocalStorage,
-  getCoinGeckoTokenPrice,
+  getTokenPrice,
   getMockedTokenPrice,
   getNewTokenOrThrow,
   tickerToAddress
@@ -43,6 +44,7 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
+import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors/leaderboard'
 
 type Props = {
   initialTokenFrom: string
@@ -61,9 +63,13 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const allPools = useSelector(poolsArraySortedByFees)
   const tokensList = useSelector(swapTokens)
   const tokensDict = useSelector(swapTokensDict)
+  const multiplyer = useSelector(swapMultiplier)
   const isBalanceLoading = useSelector(balanceLoading)
   const { success, inProgress } = useSelector(swapPool)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
+  const pointsPerUsdFee = useSelector(pointsPerUsd)
+  const promotedSwapPairs = useSelector(swapPairs)
+  const priceFeeds = useSelector(feeds)
   const networkType = useSelector(network)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
@@ -73,6 +79,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
+
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -110,8 +120,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
       ? tickerToAddress(networkType, initialTokenFrom)
-      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString())
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
     tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
@@ -204,6 +214,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
   }
 
+  const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
+
   const [tokenFromPriceData, setTokenFromPriceData] = useState<TokenPriceData | undefined>(
     undefined
   )
@@ -219,7 +231,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
     if (id.length) {
       setPriceFromLoading(true)
-      getCoinGeckoTokenPrice(id)
+      getTokenPrice(id)
         .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
@@ -230,7 +242,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     } else {
       setTokenFromPriceData(undefined)
     }
-  }, [tokenFrom])
+  }, [tokenFrom, triggerFetchPrice])
 
   const [tokenToPriceData, setTokenToPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [priceToLoading, setPriceToLoading] = useState(false)
@@ -243,7 +255,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     const id = tokensDict[tokenTo.toString()]?.coingeckoId ?? ''
     if (id.length) {
       setPriceToLoading(true)
-      getCoinGeckoTokenPrice(id)
+      getTokenPrice(id)
         .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
@@ -254,7 +266,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     } else {
       setTokenToPriceData(undefined)
     }
-  }, [tokenTo])
+  }, [tokenTo, triggerFetchPrice])
 
   const initialSlippage = localStorage.getItem('INVARIANT_SWAP_SLIPPAGE') ?? DEFAULT_SWAP_SLIPPAGE
 
@@ -269,48 +281,14 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
+    setTriggerFetchPrice(!triggerFetchPrice)
+
     dispatch(
       poolsActions.getAllPoolsForPairData({
         first: tokensList[tokenFromIndex].address,
         second: tokensList[tokenToIndex].address
       })
     )
-
-    if (tokenTo === null || tokenFrom === null) {
-      return
-    }
-
-    const idTo = tokensDict[tokenTo.toString()].coingeckoId ?? ''
-
-    if (idTo.length) {
-      setPriceToLoading(true)
-      getCoinGeckoTokenPrice(idTo)
-        .then(data => setTokenToPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenToPriceData(
-            getMockedTokenPrice(tokensDict[tokenTo.toString()].symbol, networkType)
-          )
-        )
-        .finally(() => setPriceToLoading(false))
-    } else {
-      setTokenToPriceData(undefined)
-    }
-
-    const idFrom = tokensDict[tokenFrom.toString()].coingeckoId ?? ''
-
-    if (idFrom.length) {
-      setPriceFromLoading(true)
-      getCoinGeckoTokenPrice(idFrom)
-        .then(data => setTokenFromPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenFromPriceData(
-            getMockedTokenPrice(tokensDict[tokenFrom.toString()].symbol, networkType)
-          )
-        )
-        .finally(() => setPriceFromLoading(false))
-    } else {
-      setTokenFromPriceData(undefined)
-    }
   }
 
   const copyTokenAddressHandler = (message: string, variant: VariantType) => {
@@ -426,6 +404,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         dispatch(connectionActions.setTimeoutError(false))
       }}
       canNavigate={canNavigate}
+      pointsPerUsdFee={pointsPerUsdFee}
+      feeds={priceFeeds}
+      promotedSwapPairs={promotedSwapPairs}
+      swapMultiplier={multiplyer}
     />
   )
 }

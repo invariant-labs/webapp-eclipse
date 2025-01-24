@@ -1,15 +1,11 @@
-import React, { useEffect, useMemo } from 'react'
-import { Box, Typography } from '@mui/material'
+import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import { Box, Button, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './styles'
 import { Faq } from './Faq/Faq'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
 import { useDispatch, useSelector } from 'react-redux'
-import { actions } from '@store/reducers/leaderboard'
-import {
-  getPromotedPools,
-  leaderboardSelectors,
-  topRankedUsers
-} from '@store/selectors/leaderboard'
+import { actions, LeaderBoardType } from '@store/reducers/leaderboard'
+import { getPromotedPools, lastTimestamp, leaderboardSelectors } from '@store/selectors/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as positionListActions } from '@store/reducers/positions'
 import { YourProgress } from './YourProgress/YourProgress'
@@ -26,6 +22,15 @@ import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '../config'
 import { PoolStructure, Position } from '@invariant-labs/sdk-eclipse/src/market'
 import { isLoadingPositionsList } from '@store/selectors/positions'
+import { WarningBanner } from './WarningBanner/WarningBanner'
+import { checkDataDelay, hexToDate } from '@utils/utils'
+import icons from '@static/icons'
+import LeaderboardTypeModal from '@components/Modals/LeaderboardTypeModal/LeaderboardTypeModal'
+import { theme } from '@static/theme'
+
+const BANNER_STORAGE_KEY = 'invariant-warning-banner'
+const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
+const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
 interface LeaderboardWrapperProps {
   alignment: string
   setAlignment: React.Dispatch<React.SetStateAction<string>>
@@ -38,16 +43,26 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
   const { classes } = useStyles()
   const currentNetwork = useSelector(network)
 
-  const isLoading = useSelector(leaderboardSelectors.loading)
-  const leaderboard = useSelector(topRankedUsers)
+  const lastSnapTimestamp = useSelector(lastTimestamp)
   const userStats = useSelector(leaderboardSelectors.currentUser)
   const top3Scorers = useSelector(leaderboardSelectors.top3Scorers)
   const list = useSelector(positionsWithPoolsData)
   const dispatch = useDispatch()
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
+  const type = useSelector(leaderboardSelectors.type)
   const promotedPools = useSelector(getPromotedPools)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
+
+  const [showWarningBanner, setShowWarningBanner] = React.useState(true)
+
+  const isDelayWarning = useMemo(() => {
+    if (!lastSnapTimestamp) return false
+    const snapTime = hexToDate(lastSnapTimestamp)
+
+    return checkDataDelay(snapTime, SNAP_TIME_DELAY)
+  }, [lastSnapTimestamp])
+
   const promotedPoolsData = promotedPools
     .map(promotedPool =>
       poolsList.find(poolWithData => poolWithData.poolAddress.toString() === promotedPool.address)
@@ -101,11 +116,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
 
   const content = React.useMemo(() => {
     if (alignment === 'leaderboard') {
-      return <LeaderboardList data={leaderboard} isLoading={isLoading} />
+      return <LeaderboardList />
     } else if (alignment === 'faq') {
       return <Faq />
     }
-  }, [alignment, leaderboard, isLoading])
+  }, [alignment])
 
   const copyAddressHandler = (message: string, variant: VariantType) => {
     dispatch(
@@ -116,8 +131,87 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
       })
     )
   }
+
+  const [isHiding, setIsHiding] = React.useState(false)
+
+  const handleBannerClose = () => {
+    setIsHiding(true)
+    setTimeout(() => {
+      setShowWarningBanner(false)
+      localStorage.setItem(
+        BANNER_STORAGE_KEY,
+        JSON.stringify({
+          hiddenAt: new Date().getTime()
+        })
+      )
+      setIsHiding(false)
+    }, 300)
+  }
+
+  useLayoutEffect(() => {
+    const checkBannerState = () => {
+      const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
+      if (storedData) {
+        try {
+          const { hiddenAt } = JSON.parse(storedData)
+          const currentTime = new Date().getTime()
+          if (currentTime - hiddenAt < BANNER_HIDE_DURATION) {
+            setShowWarningBanner(false)
+          } else {
+            localStorage.removeItem(BANNER_STORAGE_KEY)
+            setShowWarningBanner(true)
+          }
+        } catch (error) {
+          console.error('Error parsing banner state:', error)
+          localStorage.removeItem(BANNER_STORAGE_KEY)
+        }
+      }
+    }
+
+    checkBannerState()
+  }, [])
+
+  const [menuOpen, setMenuOpen] = useState(false)
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+  const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
+  const availableOptions: LeaderBoardType[] = ['Total', 'Liquidity', 'Swap']
+  const isSm = useMediaQuery(theme.breakpoints.down(960))
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    if (menuOpen) {
+      handleClose()
+      return
+    }
+    setAnchorEl(event.currentTarget)
+    setMenuOpen(true)
+  }
+
+  const handleClose = () => {
+    setMenuOpen(false)
+  }
+
+  useEffect(() => {
+    dispatch(actions.setLeaderBoardType(selectedOption))
+  }, [selectedOption])
+
   return (
     <Box className={classes.pageWrapper}>
+      <LeaderboardTypeModal
+        open={menuOpen}
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+        options={availableOptions}
+        selectOption={setSelectedOption}
+        currentOption={selectedOption}
+      />
+
+      {showWarningBanner && isDelayWarning && (
+        <WarningBanner
+          onClose={handleBannerClose}
+          isHiding={isHiding}
+          lastTimestamp={hexToDate(lastSnapTimestamp) ?? new Date()}
+        />
+      )}
       <Box className={classes.leaderBoardWrapper}>
         <Box
           sx={{
@@ -128,7 +222,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             width: '100%'
           }}>
           <YourProgress
-            userStats={userStats}
+            userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
             isLoadingList={isLoadingList}
           />
@@ -137,7 +231,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             copyAddressHandler={copyAddressHandler}
             rewardedPoolsData={promotedPoolsData}
           />
-          <TopScorers top3Scorers={top3Scorers} />
+          <TopScorers top3Scorers={top3Scorers} type={type} />
         </Box>
 
         <Box
@@ -153,7 +247,11 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
             {(() => {
               switch (alignment) {
                 case 'leaderboard':
-                  return 'Point Leaderboard'
+                  return type === 'Liquidity'
+                    ? 'Liquidity Leaderboard'
+                    : type === 'Swap'
+                      ? 'Swap Leaderboard'
+                      : 'Total Leaderboard'
                 case 'faq':
                   return 'Frequent questions'
                 case 'claim':
@@ -163,7 +261,103 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
               }
             })()}
           </Typography>
-          <Switcher alignment={alignment} setAlignment={setAlignment} />
+          <Box
+            sx={{
+              display: 'flex',
+              position: 'relative',
+              justifyContent: 'center',
+              alignItems: 'center',
+              width: '100%',
+              flexWrap: 'wrap-reverse'
+            }}>
+            {alignment === 'leaderboard' && (
+              <Box className={classes.leaderboardTypeBox}>
+                {!isSm ? (
+                  <Button
+                    className={classes.leaderboardTypeButton}
+                    disableRipple
+                    disableFocusRipple
+                    onClick={handleClick}>
+                    <Typography className={classes.leaderboardTypeText}>
+                      {selectedOption}
+                    </Typography>
+                    {!menuOpen ? (
+                      <img src={icons.dropdown} alt='' />
+                    ) : (
+                      <img src={icons.dropdownReverse} alt='' />
+                    )}
+                  </Button>
+                ) : (
+                  <Box
+                    sx={{
+                      width: '100%',
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      alignItems: 'center',
+                      flexDirection: 'row'
+                    }}>
+                    <Box
+                      sx={{
+                        width: '30%',
+                        display: 'flex',
+                        justifyContent: 'flex-start',
+                        alignItems: 'flex-start',
+                        gap: '8px'
+                      }}
+                      onClick={() =>
+                        setSelectedOption(prev => {
+                          const idx = availableOptions.findIndex(item => item === prev)!
+                          if (idx - 1 < 0) {
+                            return availableOptions[availableOptions.length - 1]
+                          }
+                          return availableOptions[idx - 1]
+                        })
+                      }>
+                      <img src={icons.arrowLeft} alt='' style={{ cursor: 'pointer' }} />
+                      <Typography className={classes.mobileTypeSwitcherSubtitle}>
+                        {availableOptions.findIndex(item => item === selectedOption)! - 1 < 0
+                          ? availableOptions[availableOptions.length - 1]
+                          : availableOptions[
+                              availableOptions.findIndex(item => item === selectedOption)! - 1
+                            ]}
+                      </Typography>
+                    </Box>
+                    <Typography className={classes.mobileTypeSwitcherTitle}>
+                      {selectedOption}
+                    </Typography>
+                    <Box
+                      sx={{
+                        width: '30%',
+                        display: 'flex',
+                        justifyContent: 'flex-end',
+                        alignItems: 'flex-start',
+                        gap: '8px'
+                      }}
+                      onClick={() =>
+                        setSelectedOption(prev => {
+                          const idx = availableOptions.findIndex(item => item === prev)!
+                          if (idx + 1 === availableOptions.length) {
+                            return availableOptions[0]
+                          }
+                          return availableOptions[idx + 1]
+                        })
+                      }>
+                      <Typography className={classes.mobileTypeSwitcherSubtitle}>
+                        {availableOptions.findIndex(item => item === selectedOption)! + 1 ===
+                        availableOptions.length
+                          ? availableOptions[0]
+                          : availableOptions[
+                              availableOptions.findIndex(item => item === selectedOption)! + 1
+                            ]}
+                      </Typography>
+                      <img src={icons.arrowRight} alt='' style={{ cursor: 'pointer' }} />
+                    </Box>
+                  </Box>
+                )}
+              </Box>
+            )}
+            <Switcher alignment={alignment} setAlignment={setAlignment} />
+          </Box>
         </Box>
 
         {content}

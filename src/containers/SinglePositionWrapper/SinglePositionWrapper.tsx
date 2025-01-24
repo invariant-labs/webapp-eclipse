@@ -7,7 +7,7 @@ import {
   calcPriceByTickIndex,
   calcYPerXPriceBySqrtPrice,
   createPlaceholderLiquidityPlot,
-  getCoinGeckoTokenPrice,
+  getTokenPrice,
   getMockedTokenPrice,
   printBN
 } from '@utils/utils'
@@ -267,6 +267,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     return ticksData
   }, [ticksData, ticksLoading, position?.id])
 
+  const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
+
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
   const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
 
@@ -277,7 +279,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
     const xId = position.tokenX.coingeckoId ?? ''
     if (xId.length) {
-      getCoinGeckoTokenPrice(xId)
+      getTokenPrice(xId)
         .then(data => setTokenXPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork))
@@ -288,7 +290,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
     const yId = position.tokenY.coingeckoId ?? ''
     if (yId.length) {
-      getCoinGeckoTokenPrice(yId)
+      getTokenPrice(yId)
         .then(data => setTokenYPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork))
@@ -296,7 +298,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     } else {
       setTokenYPriceData(undefined)
     }
-  }, [position?.id])
+  }, [position?.id, triggerFetchPrice])
 
   const copyPoolAddressHandler = (message: string, variant: VariantType) => {
     dispatch(
@@ -344,6 +346,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     if (position?.positionIndex === undefined) {
       return
     }
+    setTriggerFetchPrice(!triggerFetchPrice)
     setShowFeesLoader(true)
     dispatch(
       actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })

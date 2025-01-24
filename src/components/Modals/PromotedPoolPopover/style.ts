@@ -13,7 +13,7 @@ const useStyles = makeStyles()(() => {
     },
     root: {
       background: colors.invariant.component,
-      width: 217,
+      width: 'fit-content',
       height: 'fit-content',
       borderRadius: 14,
       paddingTop: 16,

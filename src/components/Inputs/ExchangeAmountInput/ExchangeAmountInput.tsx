@@ -46,6 +46,7 @@ interface IProps {
   showBlur: boolean
   hiddenUnknownTokens: boolean
   network: NetworkType
+  isPairGivingPoints: boolean
   actionButtons?: ActionButton[]
 }
 
@@ -75,7 +76,8 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
   showBlur,
   actionButtons = [],
   hiddenUnknownTokens,
-  network
+  network,
+  isPairGivingPoints
 }) => {
   const hideBalance = balance === '- -' || !balance || hideBalances
   const { classes } = useStyles()
@@ -169,7 +171,11 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           <Input
             inputRef={inputRef}
             error={!!error}
-            className={classNames(classes.amountInput, className)}
+            className={classNames(
+              classes.amountInput,
+              className,
+              isPairGivingPoints && classes.pointsPairBackground
+            )}
             classes={{ input: classes.input }}
             style={style}
             value={value}

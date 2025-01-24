@@ -91,7 +91,7 @@ export const useSingleTabStyles = makeStyles()(() => {
     promoted: {
       color: colors.invariant.pink,
       borderRadius: 10,
-      border: '1px solid transparent',
+      border: '2px solid transparent',
       backgroundImage: `linear-gradient(${colors.invariant.newDark},${colors.invariant.newDark}), linear-gradient(0deg, #2EE09A, #EF84F5)`,
       backgroundOrigin: 'border-box',
       backgroundClip: 'padding-box, border-box',

@@ -1,5 +1,6 @@
 import {
   calculatePriceSqrt,
+  DENOMINATOR,
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
@@ -28,7 +29,7 @@ import {
   parsePosition,
   parseTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
-import axios, { AxiosResponse } from 'axios'
+import axios from 'axios'
 import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
@@ -77,14 +78,17 @@ import {
   WETH_TEST,
   WRAPPED_ETH_ADDRESS,
   MAX_CROSSES_IN_SINGLE_TX,
-  USDT_MAIN
+  USDT_MAIN,
+  TURBO_AI_MAIN,
+  ORCA_MAIN,
+  SOLAR_MAIN,
+  TOKENS_PRICES_FROM_JUP,
+  WETH_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
 import {
   CoinGeckoAPIData,
-  CoingeckoApiPriceData,
-  CoingeckoPriceData,
   FormatNumberThreshold,
   FullSnap,
   IncentiveRewardData,
@@ -96,6 +100,7 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -802,6 +807,7 @@ export const formatNumber = (
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
+
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
@@ -858,7 +864,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       // })
       // return obj
       return {
-        [WETH_TEST.address.toString()]: WETH_TEST,
+        [WETH_MAIN.address.toString()]: WETH_MAIN,
         [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
         [TETH_MAIN.address.toString()]: TETH_MAIN,
         [USDC_MAIN.address.toString()]: USDC_MAIN,
@@ -883,7 +889,10 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [BRICK_MAIN.address.toString()]: BRICK_MAIN,
         [PANTY_MAIN.address.toString()]: PANTY_MAIN,
         [PODAVINI_MAIN.address.toString()]: PODAVINI_MAIN,
-        [DOGW_MAIN.address.toString()]: DOGW_MAIN
+        [DOGW_MAIN.address.toString()]: DOGW_MAIN,
+        [TURBO_AI_MAIN.address.toString()]: TURBO_AI_MAIN,
+        [ORCA_MAIN.address.toString()]: ORCA_MAIN,
+        [SOLAR_MAIN.address.toString()]: SOLAR_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -1225,43 +1234,43 @@ export const getPools = async (
   }
 }
 
-export const getCoingeckoPricesData = async (
-  ids: string[]
-): Promise<Record<string, CoingeckoPriceData>> => {
-  const requests: Array<Promise<AxiosResponse<CoingeckoApiPriceData[]>>> = []
-  for (let i = 0; i < ids.length; i += 250) {
-    const idsSlice = ids.slice(i, i + 250)
-    let idsList = ''
-    idsSlice.forEach((id, index) => {
-      idsList += id + (index < 249 ? ',' : '')
-    })
-    requests.push(
-      axios.get<CoingeckoApiPriceData[]>(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsList}&per_page=250`
-      )
-    )
-  }
+// export const getCoingeckoPricesData = async (
+//   ids: string[]
+// ): Promise<Record<string, CoingeckoPriceData>> => {
+//   const requests: Array<Promise<AxiosResponse<CoingeckoApiPriceData[]>>> = []
+//   for (let i = 0; i < ids.length; i += 250) {
+//     const idsSlice = ids.slice(i, i + 250)
+//     let idsList = ''
+//     idsSlice.forEach((id, index) => {
+//       idsList += id + (index < 249 ? ',' : '')
+//     })
+//     requests.push(
+//       axios.get<CoingeckoApiPriceData[]>(
+//         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${idsList}&per_page=250`
+//       )
+//     )
+//   }
 
-  return await Promise.all(requests).then(responses => {
-    let concatRes: CoingeckoApiPriceData[] = []
-    responses
-      .map(res => res.data)
-      .forEach(data => {
-        concatRes = [...concatRes, ...data]
-      })
+//   return await Promise.all(requests).then(responses => {
+//     let concatRes: CoingeckoApiPriceData[] = []
+//     responses
+//       .map(res => res.data)
+//       .forEach(data => {
+//         concatRes = [...concatRes, ...data]
+//       })
 
-    const data: Record<string, CoingeckoPriceData> = {}
+//     const data: Record<string, CoingeckoPriceData> = {}
 
-    concatRes.forEach(({ id, current_price, price_change_percentage_24h }) => {
-      data[id] = {
-        price: current_price ?? 0,
-        priceChange: price_change_percentage_24h ?? 0
-      }
-    })
+//     concatRes.forEach(({ id, current_price, price_change_percentage_24h }) => {
+//       data[id] = {
+//         price: current_price ?? 0,
+//         priceChange: price_change_percentage_24h ?? 0
+//       }
+//     })
 
-    return data
-  })
-}
+//     return data
+//   })
+// }
 
 export const trimLeadingZeros = (amount: string): string => {
   const amountParts = amount.split('.')
@@ -1648,6 +1657,9 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
 let isCoinGeckoQueryRunning = false
 
 export const getCoinGeckoTokenPrice = async (id: string): Promise<number | undefined> => {
+  const defaultTokensHash = generateHash(JSON.stringify(DEFAULT_TOKENS))
+  const cachedHash = localStorage.getItem('COINGECKO_DEFAULT_TOKEN_LIST_CHANGED')
+
   while (isCoinGeckoQueryRunning) {
     await sleep(100)
   }
@@ -1659,27 +1671,68 @@ export const getCoinGeckoTokenPrice = async (id: string): Promise<number | undef
     lastQueryTimestamp = Number(cachedLastQueryTimestamp)
   }
 
+  const isHashOutdated = cachedHash !== defaultTokensHash
+
   const cachedPriceData = localStorage.getItem('COINGECKO_PRICE_DATA')
   let priceData: CoinGeckoAPIData = []
-  if (cachedPriceData && Number(lastQueryTimestamp) + COINGECKO_QUERY_COOLDOWN > Date.now()) {
-    priceData = JSON.parse(cachedPriceData)
-  } else {
+
+  if (
+    isHashOutdated ||
+    !cachedPriceData ||
+    Number(lastQueryTimestamp) + COINGECKO_QUERY_COOLDOWN <= Date.now()
+  ) {
     try {
       const { data } = await axios.get<CoinGeckoAPIData>(
         `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${DEFAULT_TOKENS}`
       )
       priceData = data
+
       localStorage.setItem('COINGECKO_PRICE_DATA', JSON.stringify(priceData))
       localStorage.setItem('COINGECKO_LAST_QUERY_TIMESTAMP', String(Date.now()))
+      localStorage.setItem('COINGECKO_DEFAULT_TOKEN_LIST_CHANGED', defaultTokensHash)
     } catch (e) {
       localStorage.removeItem('COINGECKO_LAST_QUERY_TIMESTAMP')
       localStorage.removeItem('COINGECKO_PRICE_DATA')
       console.log(e)
     }
+  } else {
+    priceData = JSON.parse(cachedPriceData)
   }
 
   isCoinGeckoQueryRunning = false
   return priceData.find(entry => entry.id === id)?.current_price
+}
+
+interface RawJupApiResponse {
+  data: Record<
+    string,
+    {
+      id: string
+      price: string
+    }
+  >
+  timeTaken: number
+}
+
+export const getJupTokenPrice = async (solanaAddress: string): Promise<number | undefined> => {
+  try {
+    const response = await axios.get<RawJupApiResponse>(
+      `https://api.jup.ag/price/v2?ids=${solanaAddress}`
+    )
+
+    return Number(response.data.data[solanaAddress].price)
+  } catch (error) {
+    return 0
+  }
+}
+
+export const getTokenPrice = async (id: string): Promise<number | undefined> => {
+  const token = TOKENS_PRICES_FROM_JUP.find(token => token.coingeckoId === id)
+  if (token && token.solanaAddress) {
+    return await getJupTokenPrice(token.solanaAddress)
+  } else {
+    return await getCoinGeckoTokenPrice(id)
+  }
 }
 
 export const getTicksList = async (
@@ -1789,7 +1842,7 @@ export const calculateAPYAndAPR = (
   tvl?: number
 ) => {
   if (volume === undefined || fee === undefined || tvl === undefined) {
-    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+    return { convertedApy: Math.abs(apy), convertedApr: Math.abs(apyToApr(apy)) }
   }
 
   if (poolsToRecalculateAPY.includes(poolAddress ?? '')) {
@@ -1797,8 +1850,60 @@ export const calculateAPYAndAPR = (
 
     const parsedApy = (Math.pow((volume * fee * 0.01) / tvl + 1, 365) - 1) * 100
 
-    return { convertedApy: parsedApy, convertedApr: parsedApr }
+    return { convertedApy: Math.abs(parsedApy), convertedApr: Math.abs(parsedApr) }
   } else {
-    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+    return { convertedApy: Math.abs(apy), convertedApr: Math.abs(apyToApr(apy)) }
   }
+}
+
+export const hexToDate = (hexTimestamp: string) => {
+  const timestamp = parseInt(hexTimestamp, 16)
+
+  const date = new Date(timestamp * 1000)
+
+  return date
+}
+
+export const checkDataDelay = (date: string | Date, timeInMinutes: number): boolean => {
+  const inputDate = new Date(date)
+
+  if (isNaN(inputDate.getTime())) {
+    throw new Error('Invalid date provided')
+  }
+
+  const currentDate = new Date()
+
+  const differenceInMinutes = (currentDate.getTime() - inputDate.getTime()) / (1000 * 60)
+
+  return differenceInMinutes > timeInMinutes
+}
+
+export const generateHash = (str: string): string => {
+  let hash = 0
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
+  }
+
+  return Math.abs(hash).toString(16).padStart(8, '0')
+}
+
+export const calculatePoints = (
+  amount: BN,
+  decimals: number,
+  feePercentage: BN,
+  priceFeed: string,
+  priceDecimals: number,
+  pointsPerUSD: BN
+) => {
+  const nominator = amount
+    .mul(feePercentage)
+    .mul(new BN(priceFeed))
+    .mul(pointsPerUSD)
+    .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+  const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
+
+  return nominator.div(denominator).div(new BN(DENOMINATOR))
 }

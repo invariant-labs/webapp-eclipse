@@ -19,6 +19,15 @@ const useStyles = makeStyles()(() => {
       ...typography.heading3,
       color: colors.white.main,
       marginTop: '24px'
+    },
+    skeleton: {
+      borderRadius: 24,
+      width: '100%',
+      opacity: 0.7,
+      height: 275,
+      [theme.breakpoints.down('md')]: {
+        height: 750
+      }
     }
   }
 })

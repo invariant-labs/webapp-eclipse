@@ -16,7 +16,7 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
-import { IPositionItem } from '@components/PositionsList/PositionItem/PositionItem'
+import { IPositionItem } from '@components/PositionsList/types'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
@@ -115,9 +115,13 @@ export const WrappedPositionsList: React.FC = () => {
         tokenYName: position.tokenY.symbol,
         tokenXIcon: position.tokenX.logoURI,
         tokenYIcon: position.tokenY.logoURI,
+        poolAddress: position.poolData.address,
+        liquidity: position.liquidity,
+        poolData: position.poolData,
         fee: +printBN(position.poolData.fee, DECIMAL - 2),
         min,
         max,
+        position,
         valueX,
         valueY,
         address: walletAddress.toString(),
@@ -205,7 +209,11 @@ export const WrappedPositionsList: React.FC = () => {
         min,
         max,
         valueX,
+        position,
         valueY,
+        poolAddress: position.poolData.address,
+        liquidity: position.liquidity,
+        poolData: position.poolData,
         address: walletAddress.toString(),
         id: position.id.toString() + '_' + position.pool.toString(),
         isActive: currentPrice >= min && currentPrice <= max,

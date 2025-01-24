@@ -1,5 +1,4 @@
 import { Box, Typography } from '@mui/material'
-import { UserStats } from '@store/reducers/leaderboard'
 import React, { useMemo } from 'react'
 import useStyles from './styles'
 
@@ -21,9 +20,10 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
+import { ITotalEntry } from '@store/reducers/leaderboard'
 
 interface YourProgressProps {
-  userStats: UserStats | null
+  userStats: ITotalEntry | null
   estimated24hPoints: BN
   isLoadingList: boolean
 }
@@ -55,6 +55,19 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   //     return '0'
   //   }
   // }
+  const isLessThanMinimal = (value: BN) => {
+    const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
+    return value.lt(minimalValue)
+  }
+
+  const pointsPerDayFormat: string | number = isLessThanMinimal(estimated24hPoints)
+    ? isConnected && !estimated24hPoints.isZero()
+      ? '<0.01'
+      : 0
+    : removeAdditionalDecimals(
+        formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
+        2
+      )
 
   return (
     <Box
@@ -67,7 +80,6 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         width: '100%'
       }}>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
-
       <Box style={{ position: 'relative' }}>
         <BlurOverlay isConnected={isConnected} />
         <Box className={classes.sectionContent}>
@@ -79,14 +91,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
             desktopLabelAligment='right'
             label='Points Per Day'
             isLoading={isLoadingList}
-            value={
-              userStats
-                ? removeAdditionalDecimals(
-                    formatNumberWithCommas(printBN(estimated24hPoints, LEADERBOARD_DECIMAL)),
-                    2
-                  )
-                : 0
-            }
+            value={pointsPerDayFormat}
           />
 
           <ProgressItem
@@ -99,7 +104,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
             }}
             desktopLabelAligment='left'
             label='Global rank'
-            value={userStats?.rank ?? (isConnected ? totalItems + 1 : 0)}
+            value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
           />
         </Box>
         <Box sx={{ marginTop: '24px' }}>
@@ -118,7 +123,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
             value={
               userStats
                 ? formatNumberWithCommas(
-                    printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)
+                    Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
                   )
                 : 0
             }
