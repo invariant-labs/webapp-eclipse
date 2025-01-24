@@ -208,6 +208,9 @@ export const LockStatsPopover = ({
               style={{ textAlign: 'center', width: 'fit-content', alignSelf: 'center' }}>
               Positions Liquidity Share
             </Typography>
+            <Typography className={classes.description}>
+              Represents the ratio of locked liquidity to the total TVL in the pool.
+            </Typography>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
@@ -314,9 +317,8 @@ export const LockStatsPopover = ({
               </div>
             </div>
             <Typography className={classes.description}>
-              Represents secured token value in locked positions vs. standard positions. A higher
-              proportion of locked tokens (TVL) enhances pool stability by reducing price volatility
-              during swaps and improving slippage resistance.
+              A higher locked liquidity share helps stabilize prices, reduces volatility, and
+              minimizes slippage for swaps.
             </Typography>
           </div>
         </div>
