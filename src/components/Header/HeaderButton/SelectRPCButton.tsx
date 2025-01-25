@@ -1,7 +1,7 @@
 import React from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import { Button } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import SelectTestnetRPC from '@components/Modals/SelectTestnetRPC/SelectTestnetRPC'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import SelectMainnetRPC from '@components/Modals/SelectMainnetRPC/SelectMainnetRPC'
@@ -9,6 +9,7 @@ import { NetworkType, RECOMMENDED_RPC_ADDRESS } from '@store/consts/static'
 import icons from '@static/icons'
 import { ISelectNetwork } from '@store/consts/types'
 import { RpcStatus } from '@store/reducers/solanaConnection'
+import { colors, typography } from '@static/theme'
 
 export interface IProps {
   rpc: string
@@ -53,7 +54,14 @@ export const SelectRPCButton: React.FC<IProps> = ({
         {rpcStatus === RpcStatus.IgnoredWithError && rpc !== RECOMMENDED_RPC_ADDRESS[network] && (
           <img className={classes.warningIcon} src={icons.warningIcon} alt='Warning icon' />
         )}
-        RPC
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography style={{ color: colors.invariant.textGrey, ...typography.caption4 }}>
+            RPC
+          </Typography>
+          <Box style={{ color: colors.invariant.text, ...typography.caption1 }}>
+            {networks.filter(network => network.rpc === rpc)[0].rpcName}
+          </Box>
+        </Box>
       </Button>
       {network === NetworkType.Testnet ? (
         <SelectTestnetRPC

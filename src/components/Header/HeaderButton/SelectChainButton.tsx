@@ -1,10 +1,11 @@
 import React from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import { Button } from '@mui/material'
+import { Box, Button, Typography } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import SelectChain from '@components/Modals/SelectChain/SelectChain'
 import { ISelectChain } from '@store/consts/types'
+import { colors, typography } from '@static/theme'
 
 export interface IProps {
   activeChain: ISelectChain
@@ -42,7 +43,14 @@ export const SelectChainButton: React.FC<IProps> = ({
         disabled={disabled}
         endIcon={<KeyboardArrowDownIcon id='downIcon' />}
         onClick={handleClick}>
-        {activeChain.name}
+        <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+          <Typography style={{ color: colors.invariant.textGrey, ...typography.caption4 }}>
+            Chain
+          </Typography>
+          <Box style={{ color: colors.invariant.text, ...typography.caption1 }}>
+            {activeChain.name}
+          </Box>
+        </Box>
       </Button>
       <SelectChain
         chains={chains}
