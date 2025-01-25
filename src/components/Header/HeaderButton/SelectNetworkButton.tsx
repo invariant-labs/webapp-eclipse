@@ -47,7 +47,7 @@ export const SelectNetworkButton: React.FC<IProps> = ({
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
           <Box style={{ color: colors.invariant.text, ...typography.caption1 }}>{name}</Box>
           <Typography
-            style={{ color: colors.invariant.textGrey, ...typography.tiny2, textAlign: 'left' }}>
+            style={{ color: colors.invariant.textGrey, ...typography.caption4, textAlign: 'left' }}>
             Network
           </Typography>
         </Box>

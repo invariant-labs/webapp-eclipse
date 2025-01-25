@@ -61,7 +61,7 @@ export const SelectRPCButton: React.FC<IProps> = ({
             {rpc && rpcName.length > 0 ? rpcName[0].rpcName : 'Custom'}
           </Box>
           <Typography
-            style={{ color: colors.invariant.textGrey, ...typography.tiny2, textAlign: 'left' }}>
+            style={{ color: colors.invariant.textGrey, ...typography.caption4, textAlign: 'left' }}>
             RPC
           </Typography>
         </Box>

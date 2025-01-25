@@ -48,7 +48,7 @@ export const SelectChainButton: React.FC<IProps> = ({
             {activeChain.name}
           </Box>
           <Typography
-            style={{ color: colors.invariant.textGrey, ...typography.tiny2, textAlign: 'left' }}>
+            style={{ color: colors.invariant.textGrey, ...typography.caption4, textAlign: 'left' }}>
             Chain
           </Typography>
         </Box>
