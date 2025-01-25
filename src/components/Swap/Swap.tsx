@@ -705,14 +705,17 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
-      <SwapPointsPopover
-        isPairGivingPoints={isPairGivingPoints}
-        anchorEl={pointsBoxRef.current}
-        open={isPointsPopoverOpen}
-        onClose={() => setIsPointsPopoverOpen(false)}
-        network={network}
-        promotedSwapPairs={promotedSwapPairs}
-      />
+      {network === NetworkType.Mainnet ? (
+        <SwapPointsPopover
+          isPairGivingPoints={isPairGivingPoints}
+          anchorEl={pointsBoxRef.current}
+          open={isPointsPopoverOpen}
+          onClose={() => setIsPointsPopoverOpen(false)}
+          network={network}
+          promotedSwapPairs={promotedSwapPairs}
+        />
+      ) : null}
+
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}
@@ -727,18 +730,20 @@ export const Swap: React.FC<ISwap> = ({
           <Typography component='h1' style={{ height: '27px' }}>
             Swap tokens
           </Typography>
-          <EstimatedPointsLabel
-            isAnimating={isPairGivingPoints}
-            decimalIndex={decimalIndex}
-            pointsForSwap={pointsForSwap}
-            handlePointerEnter={handlePointerEnter}
-            handlePointerLeave={handlePointerLeave}
-            pointsBoxRef={pointsBoxRef}
-            swapMultiplier={swapMultiplier}
-            isLessThanOne={isLessThanOne}
-            stringPointsValue={stringPointsValue}
-            isAnyBlurShowed={isAnyBlurShowed}
-          />
+          {network === NetworkType.Mainnet ? (
+            <EstimatedPointsLabel
+              isAnimating={isPairGivingPoints}
+              decimalIndex={decimalIndex}
+              pointsForSwap={pointsForSwap}
+              handlePointerEnter={handlePointerEnter}
+              handlePointerLeave={handlePointerLeave}
+              pointsBoxRef={pointsBoxRef}
+              swapMultiplier={swapMultiplier}
+              isLessThanOne={isLessThanOne}
+              stringPointsValue={stringPointsValue}
+              isAnyBlurShowed={isAnyBlurShowed}
+            />
+          ) : null}
         </Box>
 
         <Box className={classes.rightSection}>
