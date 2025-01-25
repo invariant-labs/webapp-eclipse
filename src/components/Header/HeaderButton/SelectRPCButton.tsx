@@ -42,6 +42,8 @@ export const SelectRPCButton: React.FC<IProps> = ({
     setOpenTestnetRpcs(false)
   }
 
+  const rpcName = networks.filter(network => network.rpc === rpc)
+
   return (
     <>
       <Button
@@ -59,7 +61,7 @@ export const SelectRPCButton: React.FC<IProps> = ({
             RPC
           </Typography>
           <Box style={{ color: colors.invariant.text, ...typography.caption1 }}>
-            {networks.filter(network => network.rpc === rpc)[0].rpcName}
+            {rpc && rpcName.length > 0 ? rpcName[0].rpcName : 'Custom'}
           </Box>
         </Box>
       </Button>
