@@ -45,10 +45,11 @@ export const SelectNetworkButton: React.FC<IProps> = ({
         endIcon={!hideArrow ? <KeyboardArrowDownIcon id='downIcon' /> : null}
         onClick={handleClick}>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography style={{ color: colors.invariant.textGrey, ...typography.caption4 }}>
+          <Box style={{ color: colors.invariant.text, ...typography.caption1 }}>{name}</Box>
+          <Typography
+            style={{ color: colors.invariant.textGrey, ...typography.tiny2, textAlign: 'left' }}>
             Network
           </Typography>
-          <Box style={{ color: colors.invariant.text, ...typography.caption1 }}>{name}</Box>
         </Box>
       </Button>
       <SelectNetwork

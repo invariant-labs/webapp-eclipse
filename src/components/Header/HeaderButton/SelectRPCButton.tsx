@@ -57,12 +57,13 @@ export const SelectRPCButton: React.FC<IProps> = ({
           <img className={classes.warningIcon} src={icons.warningIcon} alt='Warning icon' />
         )}
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography style={{ color: colors.invariant.textGrey, ...typography.caption4 }}>
-            RPC
-          </Typography>
           <Box style={{ color: colors.invariant.text, ...typography.caption1 }}>
             {rpc && rpcName.length > 0 ? rpcName[0].rpcName : 'Custom'}
           </Box>
+          <Typography
+            style={{ color: colors.invariant.textGrey, ...typography.tiny2, textAlign: 'left' }}>
+            RPC
+          </Typography>
         </Box>
       </Button>
       {network === NetworkType.Testnet ? (

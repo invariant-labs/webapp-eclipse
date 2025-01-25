@@ -44,12 +44,13 @@ export const SelectChainButton: React.FC<IProps> = ({
         endIcon={<KeyboardArrowDownIcon id='downIcon' />}
         onClick={handleClick}>
         <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-          <Typography style={{ color: colors.invariant.textGrey, ...typography.caption4 }}>
-            Chain
-          </Typography>
           <Box style={{ color: colors.invariant.text, ...typography.caption1 }}>
             {activeChain.name}
           </Box>
+          <Typography
+            style={{ color: colors.invariant.textGrey, ...typography.tiny2, textAlign: 'left' }}>
+            Chain
+          </Typography>
         </Box>
       </Button>
       <SelectChain
