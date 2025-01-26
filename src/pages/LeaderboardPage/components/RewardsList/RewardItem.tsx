@@ -37,10 +37,10 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, i
         tooltip: 'The reward has already been distributed.'
       }
     } else if (isEligible) {
-      return { text: 'Claim', tooltip: `Reward will be distributed at ${nft.distributionDate}` }
+      return { text: 'Claim', tooltip: `Prize will be distributed at ${nft.distributionDate}` }
     }
 
-    return { text: 'Claim', tooltip: 'Reward not available.' }
+    return { text: 'Claim', tooltip: 'Prize not available.' }
   }, [isConnected, rewardReceived])
 
   return (
