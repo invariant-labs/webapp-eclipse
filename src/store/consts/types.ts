@@ -255,3 +255,16 @@ export enum WalletType {
   BACKPACK = 'BACKPACK',
   SALMON = 'SALMON'
 }
+
+export interface EligibleAddresses {
+  rewardKey: string
+  addresses: string[]
+}
+
+export interface Reward {
+  key: string
+  name: string
+  image: string
+  distributionDate: string
+  eligible: number
+}
