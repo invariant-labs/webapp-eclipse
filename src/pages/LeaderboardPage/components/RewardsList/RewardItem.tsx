@@ -34,7 +34,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, i
     if (rewardReceived) {
       return {
         text: 'Received',
-        tooltip: 'The reward has already been distributed.'
+        tooltip: 'The prize has already been distributed.'
       }
     } else if (isEligible) {
       return { text: 'Claim', tooltip: `Prize will be distributed at ${nft.distributionDate}` }
