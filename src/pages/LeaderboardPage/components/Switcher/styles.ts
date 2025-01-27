@@ -72,7 +72,8 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
         backgroundColor: 'transparent'
       },
       '&:hover': {
-        backgroundColor: 'transparent'
+        filter: 'brightness(1.2)',
+        borderRadius: 10
       },
       '&.Mui-selected:hover': {
         backgroundColor: 'transparent'

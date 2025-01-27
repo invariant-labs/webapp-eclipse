@@ -1,5 +1,6 @@
 import {
   calculatePriceSqrt,
+  DENOMINATOR,
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
@@ -99,6 +100,7 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
+import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -805,6 +807,7 @@ export const formatNumber = (
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
+
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
@@ -1885,6 +1888,24 @@ export const generateHash = (str: string): string => {
   }
 
   return Math.abs(hash).toString(16).padStart(8, '0')
+}
+
+export const calculatePoints = (
+  amount: BN,
+  decimals: number,
+  feePercentage: BN,
+  priceFeed: string,
+  priceDecimals: number,
+  pointsPerUSD: BN
+) => {
+  const nominator = amount
+    .mul(feePercentage)
+    .mul(new BN(priceFeed))
+    .mul(pointsPerUSD)
+    .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+  const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
+
+  return nominator.div(denominator).div(new BN(DENOMINATOR))
 }
 
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {

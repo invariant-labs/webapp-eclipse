@@ -35,6 +35,39 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
+  totalContainer: {
+    color: colors.white.main,
+    display: 'grid',
+    gridTemplateColumns: '10% auto 16.6% 16.6% 16.6% 10%',
+    padding: '18px 18px',
+    backgroundColor: colors.invariant.component,
+    borderBottom: `1px solid ${colors.invariant.light}`,
+    whiteSpace: 'nowrap',
+    maxWidth: '100%',
+
+    '& p': {
+      ...typography.heading4,
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'center'
+    },
+    '& p:last-child': {
+      justifyContent: 'flex-end'
+    },
+
+    [theme.breakpoints.down('md')]: {
+      gridTemplateColumns: '15% auto 17.5%'
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '15% auto 17.5%',
+
+      '& p': {
+        justifyContent: 'flex-start',
+        ...typography.caption1
+      }
+    }
+  },
   iconContainer: {
     minWidth: 28,
     maxWidth: 28,

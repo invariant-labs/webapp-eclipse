@@ -144,13 +144,13 @@ export const PromotedPoolPopover = ({
             <>
               <div className={classes.insideBox}>
                 <Typography className={classes.greyText}>
-                  APY
-                  <span className={classes.apr}>APR</span>
+                  APR
+                  <span className={classes.apy}>APY</span>
                 </Typography>{' '}
                 <Typography className={classes.whiteText}>
-                  {`${apy > 1000 ? '>1000%' : apy === 0 ? '' : Math.abs(apy).toFixed(2) + '%'}`}
-                  <span className={classes.apr}>
-                    {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : Math.abs(apr).toFixed(2) + '%'}`}
+                  {`${apr > 1000 ? '>1000%' : apr === 0 ? '-' : Math.abs(apr).toFixed(2) + '%'}`}
+                  <span className={classes.apy}>
+                    {`${apy > 1000 ? '>1000%' : apy === 0 ? '' : Math.abs(apy).toFixed(2) + '%'}`}
                   </span>
                 </Typography>
               </div>
