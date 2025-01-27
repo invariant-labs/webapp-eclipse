@@ -37,7 +37,6 @@ import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
-import { useNavigate } from 'react-router-dom'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
@@ -47,6 +46,7 @@ import icons from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
+import { useNavigate } from 'react-router-dom'
 
 export interface Pools {
   tokenX: PublicKey
@@ -242,29 +242,36 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [isTimeoutError])
 
+  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
+
   useEffect(() => {
-    if (tokenFromIndex !== null && tokenToIndex !== null) {
-      const isPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-          (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-      )
+    if (!tokens.length) return
+    if (tokenFromIndex === null || tokenToIndex === null) return
+    if (!tokens[tokenFromIndex] || !tokens[tokenToIndex]) return
 
-      setIsPairGivingPoints(isPoints)
-      setPointsForSwap(new BN(0))
-    }
+    const isPoints = promotedSwapPairs.some(
+      item =>
+        (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+        (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+    )
+    setIsPairGivingPoints(isPoints)
+    setPointsForSwap(new BN(0))
 
-    if (canNavigate) {
-      navigate(
-        `/exchange/${tokenFromIndex !== null ? addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString()) : '-'}/${tokenToIndex !== null ? addressToTicker(network, tokens[tokenToIndex].assetAddress.toString()) : '-'}`,
-        {
-          replace: true
-        }
-      )
-    }
-  }, [tokenFromIndex, tokenToIndex, promotedSwapPairs])
+    clearTimeout(urlUpdateTimeoutRef.current)
+    urlUpdateTimeoutRef.current = setTimeout(() => {
+      const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
+      const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
+      const newPath = `/exchange/${fromTicker}/${toTicker}`
+
+      if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
+        navigate(newPath, { replace: true })
+      }
+    }, 500)
+
+    return () => clearTimeout(urlUpdateTimeoutRef.current)
+  }, [tokenFromIndex, tokenToIndex, tokens, network, promotedSwapPairs])
 
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {
@@ -705,14 +712,17 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
-      <SwapPointsPopover
-        isPairGivingPoints={isPairGivingPoints}
-        anchorEl={pointsBoxRef.current}
-        open={isPointsPopoverOpen}
-        onClose={() => setIsPointsPopoverOpen(false)}
-        network={network}
-        promotedSwapPairs={promotedSwapPairs}
-      />
+      {network === NetworkType.Mainnet ? (
+        <SwapPointsPopover
+          isPairGivingPoints={isPairGivingPoints}
+          anchorEl={pointsBoxRef.current}
+          open={isPointsPopoverOpen}
+          onClose={() => setIsPointsPopoverOpen(false)}
+          network={network}
+          promotedSwapPairs={promotedSwapPairs}
+        />
+      ) : null}
+
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}
@@ -727,18 +737,20 @@ export const Swap: React.FC<ISwap> = ({
           <Typography component='h1' style={{ height: '27px' }}>
             Swap tokens
           </Typography>
-          <EstimatedPointsLabel
-            isAnimating={isPairGivingPoints}
-            decimalIndex={decimalIndex}
-            pointsForSwap={pointsForSwap}
-            handlePointerEnter={handlePointerEnter}
-            handlePointerLeave={handlePointerLeave}
-            pointsBoxRef={pointsBoxRef}
-            swapMultiplier={swapMultiplier}
-            isLessThanOne={isLessThanOne}
-            stringPointsValue={stringPointsValue}
-            isAnyBlurShowed={isAnyBlurShowed}
-          />
+          {network === NetworkType.Mainnet ? (
+            <EstimatedPointsLabel
+              isAnimating={isPairGivingPoints}
+              decimalIndex={decimalIndex}
+              pointsForSwap={pointsForSwap}
+              handlePointerEnter={handlePointerEnter}
+              handlePointerLeave={handlePointerLeave}
+              pointsBoxRef={pointsBoxRef}
+              swapMultiplier={swapMultiplier}
+              isLessThanOne={isLessThanOne}
+              stringPointsValue={stringPointsValue}
+              isAnyBlurShowed={isAnyBlurShowed}
+            />
+          ) : null}
         </Box>
 
         <Box className={classes.rightSection}>

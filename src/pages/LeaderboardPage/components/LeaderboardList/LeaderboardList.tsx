@@ -35,8 +35,8 @@ const MemoizedTotalLeaderboardItem = React.memo(LeaderboardTotalItem)
 
 const getContent = (
   type: LeaderBoardType,
-  isConnected: Boolean,
-  isLoading: Boolean,
+  isConnected: boolean,
+  isLoading: boolean,
   itemsPerPage: number,
   lpData: ILpEntry[],
   swapData: ISwapEntry[],
@@ -46,12 +46,13 @@ const getContent = (
   userTotalStats: ITotalEntry | null
 ) => {
   if (isLoading) {
+    const userDataExist = userLpStats || userSwapStats || userTotalStats
     return (
       <>
         <MemoizedLpLeaderboardItem displayType='header' />
 
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
-          {Array.from({ length: itemsPerPage }, (_, index) => (
+          {Array.from({ length: userDataExist ? itemsPerPage + 1 : itemsPerPage }, (_, index) => (
             <MemoizedLpLeaderboardItem
               key={index + 1}
               displayType='item'

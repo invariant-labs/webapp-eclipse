@@ -2,7 +2,16 @@ import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
-import { BestTier, Chain, PrefixConfig, Token, TokenPriceData, WalletType } from './types'
+import {
+  BestTier,
+  Chain,
+  EligibleAddresses,
+  PrefixConfig,
+  Reward,
+  Token,
+  TokenPriceData,
+  WalletType
+} from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -10,6 +19,8 @@ import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
 import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
 import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
+import eligibleAddressesArray from '@store/consts/rewards/eligibleAddresses.json'
+import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
   Local = 'Local',
@@ -654,25 +665,14 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
 ]
 
 export const FormatConfig = {
-  T: 1000000000000000000n, // 10^18
-  Q: 1000000000000000, // 10^15
-  HT: 100000000000000, // 10^14 (Hundred T)
-  Bn: 1000000000000, // 10^12 (Trillion)
-  HBn: 100000000000, // 10^11 (Hundred B)
-  B: 1000000000, // 10^9
+  B: 1000000000,
   M: 1000000,
   K: 1000,
-  QDecimals: 18,
-  TDecimals: 15,
-  HDecimals: 14,
-  TrDecimals: 12,
-  HTrDecimals: 11,
   BDecimals: 9,
   MDecimals: 6,
   KDecimals: 3,
   DecimalsAfterDot: 2
 }
-
 export enum PositionTokenBlock {
   None,
   A,
@@ -852,3 +852,7 @@ export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: strin
     solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
   }
 ]
+
+export const eligibleAddresses = eligibleAddressesArray as EligibleAddresses[]
+
+export const rewards = rewardsArray as Reward[]
