@@ -74,18 +74,24 @@ export const FaucetButton: React.FC<IProps> = ({
             className={classNames(classes.headerButton, { [classes.disabled]: isDisabled })}
             variant='contained'
             onClick={isDisabled ? () => {} : handleClick}>
-            <Box sx={{ display: 'flex', flexDirection: 'column' }}>
-              <Box
-                style={{ color: colors.invariant.text, ...typography.caption1, textAlign: 'left' }}>
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                height: '100%'
+              }}>
+              <Box style={{ color: colors.invariant.text, lineHeight: '12px', textAlign: 'left' }}>
                 {children}
               </Box>
               <Typography
                 style={{
                   color: colors.invariant.textGrey,
                   ...typography.caption4,
+                  marginTop: '4px',
                   textAlign: 'left'
                 }}>
-                Get Tokens
+                Get tokens
               </Typography>
             </Box>
           </Button>
