@@ -1,6 +1,6 @@
-import { Box } from '@mui/material'
+import { Box, Grid } from '@mui/material'
 import icons from '@static/icons'
-import { colors, theme, typography } from '@static/theme'
+import { colors, typography } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 
 interface INormalBannerProps {
@@ -39,44 +39,54 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           alignItems: 'center',
           transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
           transition: 'transform 0.3s ease-in-out',
-          width: '100%',
-          maxWidth: { xs: '100%', sm: '650px' },
           position: 'relative',
           gap: '12px'
         }}>
-        <Box
-          component='img'
-          src={icons.airdrop}
-          sx={{
-            width: { xs: '20px', sm: '24px' },
-            height: { xs: '20px', sm: '24px' },
-            minWidth: { xs: '20px', sm: '24px' },
-            objectFit: 'contain'
-          }}
-        />
-        <Box
-          sx={{
-            display: 'inline',
-            width: 'fit-content',
-            fontSize: { xs: '14px', sm: '16px' },
-            flex: 1,
-            [theme.breakpoints.up('md')]: {
-              textWrap: 'nowrap'
-            }
-          }}>
-          Invariant Points are live! SOL/ETH is now the next pool distributing points! Check it out
-          <span
-            style={{
-              color: colors.invariant.pink,
-              textDecoration: 'underline',
-              marginLeft: '6px',
-              cursor: 'pointer',
-              ...typography.body1
+        <Grid display='flex' justifyContent='center' alignItems='center' width='100%' mr={3}>
+          <Box
+            component='img'
+            src={icons.airdrop}
+            sx={{
+              width: { xs: '20px', sm: '24px' },
+              height: { xs: '20px', sm: '24px' },
+              minWidth: { xs: '20px', sm: '24px' },
+              objectFit: 'contain',
+              marginRight: '12px'
             }}
-            onClick={() => navigate('/points')}>
-            here!
-          </span>
-        </Box>
+          />
+          <Box
+            sx={{
+              fontSize: { xs: '14px', sm: '16px' }
+            }}>
+            <span>
+              Invariant Points new feature just started! Collect more points by exchanging tokens.
+              Check it out!
+              <span
+                style={{
+                  color: colors.invariant.pink,
+                  textDecoration: 'underline',
+                  marginLeft: '6px',
+                  cursor: 'pointer',
+                  ...typography.body1
+                }}
+                onClick={() => navigate('/exchange/ETH/USDC')}>
+                here!
+              </span>{' '}
+              ... And see also distribution of points in the
+              <span
+                style={{
+                  color: colors.invariant.pink,
+                  textDecoration: 'underline',
+                  marginLeft: '6px',
+                  cursor: 'pointer',
+                  ...typography.body1
+                }}
+                onClick={() => navigate('/points')}>
+                leaderboard!
+              </span>
+            </span>
+          </Box>
+        </Grid>
       </Box>
       <Box
         sx={{
