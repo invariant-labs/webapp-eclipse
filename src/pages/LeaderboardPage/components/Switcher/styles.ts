@@ -15,6 +15,8 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
         return '100%'
       case 'claim':
         return '200%'
+      case 'referrals':
+        return '300%'
       default:
         return '0'
     }
@@ -40,7 +42,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       position: 'absolute',
       top: 0,
       bottom: 0,
-      width: 'calc(100% / 3)',
+      width: 'calc(100% / 4)',
       backgroundColor: colors.invariant.light,
       borderRadius: 10,
       transition: 'transform 0.3s ease',
@@ -61,7 +63,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       alignItems: 'center',
       color: 'white',
       flex: 1,
-      width: 'calc(100% / 3)', // Ustawienie dokładnej szerokości dla każdego przycisku
+      width: 'calc(100% / 4)', // Ustawienie dokładnej szerokości dla każdego przycisku
       minWidth: 'unset', // Usuwa domyślny minWidth z MUI
       textTransform: 'none',
       textWrap: 'nowrap',

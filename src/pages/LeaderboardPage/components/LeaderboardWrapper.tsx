@@ -256,6 +256,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = ({
                   return 'Frequent questions'
                 case 'claim':
                   return 'Claim'
+                case 'referrals':
+                  return 'Referrals'
                 default:
                   return 0
               }
