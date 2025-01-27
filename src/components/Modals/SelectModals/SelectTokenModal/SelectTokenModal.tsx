@@ -41,7 +41,7 @@ export interface ISelectTokenModal {
   network: NetworkType
 }
 
-interface IScroll {
+export interface IScroll {
   onScroll: (e: React.UIEvent<HTMLElement>) => void
   children: React.ReactNode
 }

@@ -1,68 +1,247 @@
 import React, { useMemo, useCallback } from 'react'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
-import LeaderboardItem from '../LeaderboardItem/LeaderboardItem'
 import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
 import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
-import { Keypair, PublicKey } from '@solana/web3.js'
-import { BN } from '@coral-xyz/anchor'
 import { useDispatch, useSelector } from 'react-redux'
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
-import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { actions } from '@store/reducers/leaderboard'
+import {
+  leaderboardSelectors,
+  topRankedLpUsers,
+  topRankedSwapUsers,
+  topRankedTotalUsers
+} from '@store/selectors/leaderboard'
+import {
+  actions,
+  ILpEntry,
+  ISwapEntry,
+  ITotalEntry,
+  LeaderBoardType
+} from '@store/reducers/leaderboard'
 import { colors, theme } from '@static/theme'
-interface LeaderboardEntry {
-  hideBottomLine?: boolean
-  points?: BN
-  positions?: number
-  last24hPoints?: BN
-  rank?: number
-  address?: PublicKey
+import LeaderboardSwapItem from '../LeaderboardItem/LeaderboardSwapItem'
+import LeaderboardLpItem from '../LeaderboardItem/LeaderboardLpItem'
+import LeaderboardTotalItem from '../LeaderboardItem/LeaderboardTotalItem'
+import { Keypair, PublicKey } from '@solana/web3.js'
+
+interface LeaderboardListProps {}
+
+const MemoizedLpLeaderboardItem = React.memo(LeaderboardLpItem)
+const MemoizedSwapLeaderboardItem = React.memo(LeaderboardSwapItem)
+const MemoizedTotalLeaderboardItem = React.memo(LeaderboardTotalItem)
+
+const getContent = (
+  type: LeaderBoardType,
+  isConnected: boolean,
+  isLoading: boolean,
+  itemsPerPage: number,
+  lpData: ILpEntry[],
+  swapData: ISwapEntry[],
+  totalData: ITotalEntry[],
+  userLpStats: ILpEntry | null,
+  userSwapStats: ISwapEntry | null,
+  userTotalStats: ITotalEntry | null
+) => {
+  if (isLoading) {
+    const userDataExist = userLpStats || userSwapStats || userTotalStats
+    return (
+      <>
+        <MemoizedLpLeaderboardItem displayType='header' />
+
+        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+          {Array.from({ length: userDataExist ? itemsPerPage + 1 : itemsPerPage }, (_, index) => (
+            <MemoizedLpLeaderboardItem
+              key={index + 1}
+              displayType='item'
+              rank={index + 1}
+              positions={index + 1}
+              last24hPoints={'00'}
+              points={'00'}
+              address={Keypair.generate().publicKey}
+            />
+          ))}
+        </Box>
+      </>
+    )
+  }
+  if (type === 'Liquidity') {
+    return (
+      <>
+        <MemoizedLpLeaderboardItem displayType='header' />
+
+        {isConnected && userLpStats && (
+          <MemoizedLpLeaderboardItem
+            key={userLpStats.rank}
+            displayType='item'
+            rank={userLpStats.rank}
+            isYou
+            positions={userLpStats.positions}
+            last24hPoints={userLpStats.last24hPoints}
+            points={userLpStats.points ?? 0}
+            address={new PublicKey(userLpStats.address)}
+            domain={userLpStats.domain}
+          />
+        )}
+        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+          {lpData.length > 0 ? (
+            lpData.map((element, index) => (
+              <MemoizedLpLeaderboardItem
+                key={index}
+                displayType='item'
+                rank={element.rank}
+                positions={element.positions}
+                last24hPoints={element.last24hPoints}
+                points={element.points ?? 0}
+                address={new PublicKey(element.address)}
+                domain={element.domain}
+              />
+            ))
+          ) : (
+            <NotFoundPlaceholder title='Leaderboard is empty...' />
+          )}
+        </Box>
+      </>
+    )
+  }
+  if (type === 'Swap')
+    return (
+      <>
+        <MemoizedSwapLeaderboardItem displayType='header' />
+
+        {isConnected && userSwapStats && (
+          <MemoizedSwapLeaderboardItem
+            key={userSwapStats.rank}
+            displayType='item'
+            rank={userSwapStats.rank}
+            isYou
+            swaps={userSwapStats.swaps}
+            last24hPoints={userSwapStats.last24hPoints}
+            points={userSwapStats.points ?? 0}
+            address={new PublicKey(userSwapStats.address)}
+            domain={userSwapStats.domain}
+          />
+        )}
+        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+          {swapData.length > 0 ? (
+            swapData.map((element, index) => (
+              <MemoizedSwapLeaderboardItem
+                key={index}
+                displayType='item'
+                rank={element.rank}
+                swaps={element.swaps}
+                last24hPoints={element.last24hPoints}
+                points={element.points ?? 0}
+                address={new PublicKey(element.address)}
+                domain={element.domain}
+              />
+            ))
+          ) : (
+            <NotFoundPlaceholder title='Leaderboard is empty...' />
+          )}
+        </Box>
+      </>
+    )
+  return (
+    <>
+      <MemoizedTotalLeaderboardItem displayType='header' />
+
+      {isConnected && userTotalStats && (
+        <MemoizedTotalLeaderboardItem
+          key={userTotalStats.rank}
+          displayType='item'
+          rank={userTotalStats.rank}
+          isYou
+          swapPoints={userTotalStats.swapPoints}
+          lpPoints={userTotalStats.lpPoints}
+          last24hPoints={userTotalStats.last24hPoints}
+          points={userTotalStats.points}
+          address={new PublicKey(userTotalStats.address)}
+          domain={userTotalStats.domain}
+        />
+      )}
+      <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+        {totalData.length > 0 ? (
+          totalData.map((element, index) => (
+            <MemoizedTotalLeaderboardItem
+              key={index}
+              displayType='item'
+              rank={element.rank}
+              swapPoints={element.swapPoints}
+              lpPoints={element.lpPoints}
+              last24hPoints={element.last24hPoints}
+              points={element.points}
+              address={new PublicKey(element.address)}
+              domain={element.domain}
+            />
+          ))
+        ) : (
+          <NotFoundPlaceholder title='Leaderboard is empty...' />
+        )}
+      </Box>
+    </>
+  )
 }
-
-interface LeaderboardListProps {
-  data: LeaderboardEntry[]
-  isLoading?: boolean
-}
-
-const generateMockData = (itemsPerPage: number): LeaderboardEntry[] => {
-  return Array.from({ length: itemsPerPage }, (_, index) => ({
-    displayType: 'item',
-    address: Keypair.generate().publicKey,
-    points: 10000 - index * 100,
-    pointsIncome: 1000 - index * 10,
-    liquidityPositions: 100 - index,
-    tokenIndex: index + 1
-  }))
-}
-
-const MemoizedLeaderboardItem = React.memo(LeaderboardItem)
-
-const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = false }) => {
+const LeaderboardList: React.FC<LeaderboardListProps> = () => {
   const { classes } = useStyles()
   const walletStatus = useSelector(status)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const userStats = useSelector(leaderboardSelectors.currentUser)
+  const lpData = useSelector(topRankedLpUsers)
+  const swapData = useSelector(topRankedSwapUsers)
+  const totalData = useSelector(topRankedTotalUsers)
+  const isLoading = useSelector(leaderboardSelectors.loading)
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
   const dispatch = useDispatch()
   const currentPage = useSelector(leaderboardSelectors.currentPage)
-  const totalItems = useSelector(leaderboardSelectors.totalItems)
+  const totalItemsObject = useSelector(leaderboardSelectors.totalItems)
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
-
+  const type = useSelector(leaderboardSelectors.type)
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
-  const displayData = useMemo(() => {
-    return isLoading ? generateMockData(itemsPerPage) : data
-  }, [isLoading, data])
-  const totalPages = useMemo(() => Math.ceil(totalItems / itemsPerPage), [displayData])
+  const currentData = useMemo(() => {
+    if (type === 'Liquidity') return lpData
+    if (type === 'Swap') return swapData
+    return totalData
+  }, [lpData, swapData, totalData, type])
+
+  const totalItems = useMemo(() => {
+    if (type === 'Liquidity') return totalItemsObject.lp
+    if (type === 'Swap') return totalItemsObject.swap
+    return totalItemsObject.total
+  }, [totalItemsObject, type])
+
+  const totalPages = useMemo(
+    () => Math.ceil(totalItems / itemsPerPage),
+    [lpData, swapData, totalData, type]
+  )
   const lowerBound = useMemo(
     () => (currentPage - 1) * itemsPerPage + 1,
-    [currentPage, itemsPerPage]
+    [currentPage, itemsPerPage, type]
   )
-  const upperBound = useMemo(() => Math.min(currentPage * itemsPerPage, totalItems), [displayData])
+  const upperBound = useMemo(
+    () => Math.min(currentPage * itemsPerPage, totalItems),
+    [lpData, swapData, totalData, type]
+  )
+  const content = useMemo(
+    () =>
+      getContent(
+        type,
+        isConnected,
+        isLoading,
+        itemsPerPage,
+        lpData,
+        swapData,
+        totalData,
+        userStats.lp,
+        userStats.swap,
+        userStats.total
+      ),
+    [type, isLoading, lpData, swapData, totalData, isConnected, userStats]
+  )
 
   const handlePageChange = useCallback(
     (page: number) => {
@@ -73,50 +252,22 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
 
   const renderWaves = (position: 'top' | 'bottom', imageSrc: string) =>
     totalPages > 1 &&
-    data.length > 20 && (
+    currentData.length > 20 && (
       <div
         className={`${classes.waveImage} ${classes[`${position}Wave`]}`}
         style={{ alignItems: position === 'top' ? 'flex-start' : 'flex-end' }}>
         <img src={imageSrc} alt={`${position === 'top' ? 'Purple' : 'Green'} waves`} />
       </div>
     )
-
+  if (currentData.length === 0) {
+    return <Skeleton className={classes.skeleton} />
+  }
   return (
     <div className={classes.container}>
       {renderWaves('top', PurpleWaves)}
 
       <Grid container direction='column' className={isLoading ? classes.loadingOverlay : ''}>
-        <MemoizedLeaderboardItem displayType='header' />
-
-        {isConnected && userStats && (
-          <MemoizedLeaderboardItem
-            key={userStats.rank}
-            displayType='item'
-            rank={userStats.rank}
-            isYou
-            positions={userStats.positions}
-            last24hPoints={userStats.last24hPoints}
-            points={userStats.points ?? 0}
-            address={userStats.address}
-          />
-        )}
-        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
-          {displayData.length > 0 ? (
-            data.map((element, index) => (
-              <MemoizedLeaderboardItem
-                key={index}
-                displayType='item'
-                rank={index + 1 + (currentPage - 1) * itemsPerPage}
-                positions={element.positions}
-                last24hPoints={element.last24hPoints}
-                points={element.points ?? 0}
-                address={element.address}
-              />
-            ))
-          ) : (
-            <NotFoundPlaceholder title='Leaderboard is empty...' />
-          )}
-        </Box>
+        {content}
       </Grid>
 
       {totalPages >= 1 && (
@@ -147,6 +298,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({ data, isLoading = fal
               }}>
               <Box sx={{ width: '80%', [theme.breakpoints.down('md')]: { width: '90%' } }}>
                 <PaginationList
+                  squeeze={isLg}
                   pages={totalPages}
                   defaultPage={currentPage}
                   handleChangePage={handlePageChange}

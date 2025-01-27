@@ -16,7 +16,7 @@ export const TooltipGradient = ({ top, children, ...props }: Props) => {
       placement='bottom'
       TransitionComponent={TooltipTransition}
       {...props}>
-      <span style={{ textDecoration: 'underline' }}>{children}</span>
+      <span>{children}</span>
     </Tooltip>
   )
 }

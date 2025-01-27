@@ -8,10 +8,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: 'transparent',
       color: colors.white.main,
       paddingInline: 12,
-      borderRadius: 14,
+      borderRadius: 12,
       textTransform: 'none',
       ...typography.body1,
-      lineHeight: '22px',
       height: 32,
       boxShadow: 'none',
       '&:hover': {
@@ -93,6 +92,19 @@ const useStyles = makeStyles()((theme: Theme) => {
           background: colors.invariant.componentBcg,
           boxShadow: 'none',
           cursor: 'not-allowed'
+        }
+      }
+    },
+    swapChangeWallet: {
+      zIndex: 1,
+      background: colors.invariant.pinkLinearGradient,
+      '&:hover': {
+        boxShadow: `0 0 15px ${colors.invariant.light}`,
+        backgroundColor: colors.invariant.light,
+        '@media (hover: none)': {
+          zIndex: 1,
+          background: colors.invariant.pinkLinearGradient,
+          boxShadow: 'none'
         }
       }
     },

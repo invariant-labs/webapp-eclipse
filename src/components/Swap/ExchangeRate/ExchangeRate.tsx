@@ -3,7 +3,6 @@ import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumber } from '@utils/utils'
 import React from 'react'
 import useStyles from './style'
-
 interface iProps {
   tokenFromSymbol: string
   tokenToSymbol: string

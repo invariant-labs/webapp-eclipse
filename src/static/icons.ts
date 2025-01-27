@@ -52,10 +52,15 @@ import airdropRainbow from './svg/airdropRainbow.svg'
 import audit from './svg/audit.svg'
 import warning2 from './svg/warning2.svg'
 import closeWarning from './svg/closeWarning.svg'
-import infoIcon from './svg/info.svg'
-import infoIconPink from './svg/infoIconPink.svg'
+import dropdown from './svg/dropdown.svg'
+import dropdownReverse from './svg/dropdownReverse.svg'
 import arrowLeft from './svg/arrowLeft.svg'
 import arrowRight from './svg/arrowRight.svg'
+import infoCircle from './svg/infoCircle.svg'
+import boostPoints from './svg/boostPoints.svg'
+import airdropGrey from './svg/airdropGrey.svg'
+import infoIcon from './svg/info.svg'
+import infoIconPink from './svg/infoIconPink.svg'
 import slider from './svg/slider.svg'
 
 const icons: { [key: string]: string } = {
@@ -117,7 +122,12 @@ const icons: { [key: string]: string } = {
   infoIconPink,
   arrowLeft,
   arrowRight,
-  slider
+  slider,
+  dropdown,
+  dropdownReverse,
+  infoCircle,
+  boostPoints,
+  airdropGrey
 }
 
 export default icons

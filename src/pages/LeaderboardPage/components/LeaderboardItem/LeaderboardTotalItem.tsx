@@ -15,59 +15,69 @@ import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
-interface BaseLeaderboardItemProps {
+interface BaseLeaderboardTotalItemProps {
   displayType: 'item' | 'header'
 }
 
-interface LeaderboardHeaderProps extends BaseLeaderboardItemProps {
+interface LeaderboardTotalHeaderProps extends BaseLeaderboardTotalItemProps {
   displayType: 'header'
 }
 
-interface LeaderboardItemDetailProps extends BaseLeaderboardItemProps {
+interface LeaderboardTotalItemDetailProps extends BaseLeaderboardTotalItemProps {
   displayType: 'item'
   isYou?: boolean
-
   hideBottomLine?: boolean
-
   points?: string
-  positions?: number
+  lpPoints?: string
+  swapPoints?: string
   last24hPoints?: string
   rank?: number
   address?: PublicKey
+  domain?: string
 }
 
-export type LeaderboardItemProps = LeaderboardHeaderProps | LeaderboardItemDetailProps
+export type LeaderboardTotalItemProps =
+  | LeaderboardTotalHeaderProps
+  | LeaderboardTotalItemDetailProps
 
 const PLACE_COLORS = [colors.invariant.yellow, colors.invariant.silver, colors.invariant.bronze]
 
-const LeaderboardHeader: React.FC = () => {
+const LeaderboardTotalHeader: React.FC = () => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
   return (
-    <Grid container classes={{ container: classes.container, root: classes.header }}>
+    <Grid container classes={{ container: classes.totalContainer, root: classes.header }}>
       <Typography style={{ lineHeight: '11px' }}>Rank</Typography>
       <Typography style={{ cursor: 'pointer' }}>Address</Typography>
       <Typography style={{ cursor: 'pointer' }}>Total points</Typography>
       {!isMd && (
         <>
-          <Typography style={{ cursor: 'pointer' }}>24H points</Typography>
-          <Typography style={{ cursor: 'pointer' }}>Positions</Typography>
+          <Typography style={{ cursor: 'pointer' }}>Swap points</Typography>
+          <Typography style={{ cursor: 'pointer' }}>Liquidity points</Typography>
         </>
       )}
+      {!isLg && <Typography style={{ cursor: 'pointer' }}>24H points</Typography>}
     </Grid>
   )
 }
 
-const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
+const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
   const { displayType } = props
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
+
+  const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
+  const isNarrowMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'))
+
   const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
+  const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
 
   if (displayType === 'header') {
-    return <LeaderboardHeader />
+    return <LeaderboardTotalHeader />
   }
 
   const {
@@ -76,8 +86,10 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
     isYou = false,
     address = '',
     last24hPoints = 0,
-    positions = 0,
-    hideBottomLine = false
+    lpPoints,
+    swapPoints,
+    hideBottomLine = false,
+    domain
   } = props
 
   const getColorByPlace = (index: number) => {
@@ -108,12 +120,13 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
         )
       })
   }
+  const shortDomain = domain && domain.slice(0, 13) + '...'
 
   return (
     <Grid maxWidth='100%'>
       <Grid
         container
-        classes={{ container: classes.container }}
+        classes={{ container: classes.totalContainer }}
         style={{
           border: hideBottomLine ? 'none' : undefined,
           background: isYou ? alpha(colors.invariant.light, 0.2) : 'transparent',
@@ -123,7 +136,11 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
         <Typography>
-          {shortenAddress(address.toString(), 4)}
+          {domain
+            ? isVerySmallScreen || isNarrowMediumScreen
+              ? shortDomain
+              : domain
+            : shortenAddress(address.toString(), 4)}{' '}
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)
@@ -149,32 +166,53 @@ const LeaderboardItem: React.FC<LeaderboardItemProps> = props => {
         <Typography>
           {new BN(points, 'hex').isZero()
             ? 0
-            : formatNumberWithCommas(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL))}{' '}
+            : formatNumberWithCommas(
+                Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+              )}
         </Typography>
-
         {!isMd && (
+          <Typography>
+            {new BN(swapPoints, 'hex').isZero()
+              ? 0
+              : formatNumberWithCommas(
+                  Number(printBN(new BN(swapPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                )}
+          </Typography>
+        )}
+        {!isMd && (
+          <Typography>
+            {new BN(lpPoints, 'hex').isZero()
+              ? 0
+              : formatNumberWithCommas(
+                  Number(printBN(new BN(lpPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                )}
+          </Typography>
+        )}
+        {!isLg && (
           <Typography>
             <Typography
               style={{
                 color: colors.invariant.green,
                 ...typography.heading4
               }}>
-              +{' '}
-              {new BN(last24hPoints, 'hex').isZero()
-                ? 0
-                : formatNumberWithCommas(
+              {new BN(last24hPoints, 'hex').lt(pointOneValue) ? (
+                <span style={{ color: colors.invariant.text }}>0</span>
+              ) : (
+                <span>
+                  +{' '}
+                  {formatNumberWithCommas(
                     parseFloat(printBN(new BN(last24hPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(
                       1
                     )
                   )}
+                </span>
+              )}
             </Typography>
           </Typography>
         )}
-
-        {!isMd && <Typography>{positions}</Typography>}
       </Grid>
     </Grid>
   )
 }
 
-export default LeaderboardItem
+export default LeaderboardTotalItem

@@ -5,6 +5,7 @@ import SingleToken from './SingleToken/SingleToken'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
 import { NetworkType } from '@store/consts/static'
+import classNames from 'classnames'
 
 interface IProps {
   tokenFrom: SwapToken | null
@@ -13,6 +14,7 @@ interface IProps {
   tokenToPrice?: number
   tokenFromPrice?: number
   copyTokenAddressHandler: (message: string, variant: VariantType) => void
+  isPairGivingPoints: boolean
 }
 
 const TokensInfo: React.FC<IProps> = ({
@@ -21,14 +23,15 @@ const TokensInfo: React.FC<IProps> = ({
   network,
   tokenToPrice,
   tokenFromPrice,
-  copyTokenAddressHandler
+  copyTokenAddressHandler,
+  isPairGivingPoints
 }) => {
   const { classes } = useWrapperStyles()
 
   return (
     <Grid
       container
-      className={classes.wrapper}
+      className={classNames(classes.wrapper, isPairGivingPoints && classes.darkBackground)}
       direction='row'
       justifyContent='center'
       alignItems='center'>
