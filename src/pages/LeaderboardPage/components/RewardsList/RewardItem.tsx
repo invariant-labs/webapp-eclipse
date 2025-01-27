@@ -46,7 +46,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({
 
     return { text: 'Claim', tooltip: 'Prize not available.' }
   }, [isConnected, rewardReceived])
-  console.log(rewardsImages[reward.image])
+
   return (
     <Grid className={classes.container} container alignItems='center'>
       {isMd ? (
