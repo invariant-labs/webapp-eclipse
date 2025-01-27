@@ -58,6 +58,7 @@ import arrowLeft from './svg/arrowLeft.svg'
 import arrowRight from './svg/arrowRight.svg'
 import infoCircle from './svg/infoCircle.svg'
 import boostPoints from './svg/boostPoints.svg'
+import airdropGrey from './svg/airdropGrey.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -119,7 +120,8 @@ const icons: { [key: string]: string } = {
   arrowLeft,
   arrowRight,
   infoCircle,
-  boostPoints
+  boostPoints,
+  airdropGrey
 }
 
 export default icons
