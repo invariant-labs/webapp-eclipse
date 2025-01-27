@@ -3,7 +3,6 @@ import React from 'react'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Box, Button, Typography } from '@mui/material'
-import { Box, Button, Typography } from '@mui/material'
 import { BN } from '@coral-xyz/anchor'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import {
@@ -12,7 +11,6 @@ import {
   WETH_MIN_FAUCET_FEE_TEST
 } from '@store/consts/static'
 import classNames from 'classnames'
-import { typography, colors } from '@static/theme'
 import { typography, colors } from '@static/theme'
 
 export interface IProps {
