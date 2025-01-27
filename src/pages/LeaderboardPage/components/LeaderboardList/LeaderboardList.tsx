@@ -35,8 +35,8 @@ const MemoizedTotalLeaderboardItem = React.memo(LeaderboardTotalItem)
 
 const getContent = (
   type: LeaderBoardType,
-  isConnected: Boolean,
-  isLoading: Boolean,
+  isConnected: boolean,
+  isLoading: boolean,
   itemsPerPage: number,
   lpData: ILpEntry[],
   swapData: ISwapEntry[],
