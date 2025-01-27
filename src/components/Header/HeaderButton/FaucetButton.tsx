@@ -82,7 +82,6 @@ export const FaucetButton: React.FC<IProps> = ({
                 height: '100%'
               }}>
               <Box style={{ color: colors.invariant.text, lineHeight: '12px', textAlign: 'left' }}>
-                {' '}
                 {children}
               </Box>
               <Typography
