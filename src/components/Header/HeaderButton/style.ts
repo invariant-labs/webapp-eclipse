@@ -11,7 +11,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       borderRadius: 12,
       textTransform: 'none',
       ...typography.body1,
-      // lineHeight: '22px',
       height: 32,
       boxShadow: 'none',
       '&:hover': {
