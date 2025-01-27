@@ -65,7 +65,6 @@ export const SelectRPCButton: React.FC<IProps> = ({
             height: '100%'
           }}>
           <Box style={{ color: colors.invariant.text, lineHeight: '12px' }}>
-            {' '}
             {rpc && rpcName.length > 0 ? rpcName[0].rpcName : 'Custom'}
           </Box>
           <Typography
