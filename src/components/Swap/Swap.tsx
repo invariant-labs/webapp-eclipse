@@ -37,7 +37,6 @@ import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
-// import { useNavigate } from 'react-router-dom'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
@@ -48,9 +47,6 @@ import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPo
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
-// import { useNavigate } from 'react-router-dom'
-// import { actions as snackbarsActions } from '@store/reducers/snackbars'
-// import { useDispatch } from 'react-redux'
 
 export interface Pools {
   tokenX: PublicKey
@@ -271,7 +267,6 @@ export const Swap: React.FC<ISwap> = ({
 
       if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
         navigate(newPath, { replace: true })
-        // window.history.replaceState(null, '', newPath)
       }
     }, 500)
 
