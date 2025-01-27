@@ -5,6 +5,7 @@ import { BackpackWalletAdapter } from './adapters/backpack'
 import { WalletType } from '@store/consts/types'
 import { sleep } from '@invariant-labs/sdk-eclipse'
 import { NightlyAdapter } from './adapters/nightly-wallet'
+import { OkxWalletAdapter } from './adapters/okx'
 
 let _wallet: WalletAdapter
 
@@ -26,6 +27,9 @@ const connectStaticWallet = async (wallet: WalletType) => {
       break
     case WalletType.NIGHTLY_WALLET:
       _wallet = new NightlyAdapter()
+      break
+    case WalletType.OKX:
+      _wallet = new OkxWalletAdapter()
       break
     default:
       _wallet = new BackpackWalletAdapter()

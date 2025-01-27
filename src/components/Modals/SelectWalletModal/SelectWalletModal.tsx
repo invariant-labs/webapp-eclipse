@@ -147,6 +147,19 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                   </Typography>
                 </Grid>
               </Grid>
+              <Grid
+                item
+                className={classes.button}
+                onClick={async () => {
+                  handleConnectStaticWallet(WalletType.OKX)
+                }}>
+                <Grid className={classes.buttonContainer}>
+                  <Typography className={classes.buttonName}>
+                    <img width={45} rel='preload' src={icons.okxLogo} alt='Close'></img>
+                    {walletNames[WalletType.OKX]}
+                  </Typography>
+                </Grid>
+              </Grid>
             </Grid>
           </Grid>
 
