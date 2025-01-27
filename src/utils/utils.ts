@@ -1831,7 +1831,10 @@ export const trimDecimalZeros = (numStr: string): string => {
   return trimmedDecimal ? `${trimmedInteger || '0'}.${trimmedDecimal}` : trimmedInteger || '0'
 }
 
-const poolsToRecalculateAPY = ['HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce']
+const poolsToRecalculateAPY = [
+  'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
+  '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM' //SOL_ETH 0.09%
+]
 
 //HOTFIX
 export const calculateAPYAndAPR = (
