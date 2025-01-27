@@ -1,9 +1,10 @@
 import useStyles from './style'
-import { Popover, Typography, Box, useMediaQuery } from '@mui/material'
-import { colors, theme } from '@static/theme'
+import { Popover, Typography, Box } from '@mui/material'
+import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
 import { addressToTicker } from '@utils/utils'
 import { useState, useEffect } from 'react'
+import useIsMobile from '@store/hooks/isMobile'
 
 export interface ISwapPointsPopover {
   open: boolean
@@ -24,7 +25,7 @@ export const SwapPointsPopover = ({
 }: ISwapPointsPopover) => {
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (open && !animationTriggered) {

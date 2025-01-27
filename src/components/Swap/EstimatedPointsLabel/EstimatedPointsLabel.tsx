@@ -1,11 +1,11 @@
 import { BN } from '@coral-xyz/anchor'
-import { Box, useMediaQuery } from '@mui/material'
+import { Box } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
-import { theme } from '@static/theme'
+import useIsMobile from '@store/hooks/isMobile'
 
 interface IEstimatedPointsLabel {
   pointsBoxRef: React.RefObject<HTMLDivElement>
@@ -35,7 +35,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const [displayedValue, setDisplayedValue] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
   const [isChanging, setIsChanging] = useState(false)
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const isMobile = useIsMobile()
 
   const alternativeRef = useRef<HTMLDivElement>(null)
   const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
