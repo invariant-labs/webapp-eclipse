@@ -262,9 +262,9 @@ export interface EligibleAddresses {
 }
 
 export interface Reward {
-  key: string
   name: string
   image: string
   distributionDate: string
   eligible: number
+  addresses: string[]
 }

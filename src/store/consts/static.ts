@@ -2,16 +2,7 @@ import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
-import {
-  BestTier,
-  Chain,
-  EligibleAddresses,
-  PrefixConfig,
-  Reward,
-  Token,
-  TokenPriceData,
-  WalletType
-} from './types'
+import { BestTier, Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -19,7 +10,6 @@ import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
 import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
 import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
-import eligibleAddressesArray from '@store/consts/rewards/eligibleAddresses.json'
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
@@ -852,7 +842,5 @@ export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: strin
     solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
   }
 ]
-
-export const eligibleAddresses = eligibleAddressesArray as EligibleAddresses[]
 
 export const rewards = rewardsArray as Reward[]

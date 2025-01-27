@@ -1,9 +1,33 @@
 [
   {
-    "key": "nft_moon_odyssey",
+    "name": "January Contest",
+    "image": "contest_1",
+    "distributionDate": "2025-01-07",
+    "eligible": 3,
+    "addresses": [
+      "JDn5Ttup4ur8aeH2cs5vf6HBE2nqRgZwea9c3bbv75Dj",
+      "HmHFrfMYS9irC6Zk1ZmsPMJvzC85kLLdfgMypE8USZj4",
+      "EzTR6Dh3ZzKNoXtfCa3AbqWeoATT6gD9zoiEK7waBGW3",
+      "2HCXJYgv8Vx45oJ3JECSShGmNdt8nEtFpggj2y81M9XM"
+    ]
+  },
+  {
     "name": "Moon Odyssey Club NFT",
-    "image": "static/png/nft/nft_moon_odyssey.png",
+    "image": "nft_moon_odyssey",
     "distributionDate": "2025-01-26",
-    "eligible": 10
+    "eligible": 10,
+    "addresses": [
+      "JDn5Ttup4ur8aeH2cs5vf6HBE2nqRgZwea9c3bbv75Dj",
+      "BtGH2WkM1oNyPVgzYT51xV2gJqHhVQ4QiGwWirBUW5xN",
+      "A3sjWSa4rNspqqZQFjMMbmmnbgvYDRRMiWjyaTbMyYG4",
+      "9BNu7C9f3cGS4fBS5jKvG2XASHGVVnBxR2XAW4q4ZYUE",
+      "63CQPyL9xzCSy4ejNuqxxqfjRpAGVKa1KbJUvXfRSKZK",
+      "6usfBWrWdKoA5BvyAqjjU4R8yKuWbP8JkofrtPk3Rupw",
+      "3JGoa27LJUvtJvNkEvAzefpb4v1NuRc2yp4BRQeCPCZk",
+      "G2s2wqs4gqKyt3htBpP3DdRaUFSJZF3WqNCv9JiiVq7w",
+      "bD5LhCwB4dGByDh5smBX8iqCuVdYxkbGnm9QhhdyMpa",
+      "8gmh6prYK2j1DDo2VXDHGM1DhKMgunbrwVKQdY7ToLkH",
+      "CJ9VRUYQhN8nsrpyZkh9pwY5yDi8vpSDgLY5XtPucgX4"
+    ]
   }
 ]
