@@ -2,6 +2,7 @@ import { Box, IconButton, Input, Tooltip, Typography } from '@mui/material'
 import useStyles from './styles'
 import React, { useRef, useState } from 'react'
 import InfoIcon from '@mui/icons-material/Info'
+
 interface INumericInput {
   label: string
   value: string
