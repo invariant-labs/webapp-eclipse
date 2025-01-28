@@ -5,6 +5,7 @@ import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import useIsMobile from '@store/hooks/isMobile'
 
 interface IEstimatedPointsLabel {
   pointsBoxRef: React.RefObject<HTMLDivElement>
@@ -34,6 +35,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const [displayedValue, setDisplayedValue] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
   const [isChanging, setIsChanging] = useState(false)
+  const isMobile = useIsMobile()
 
   const alternativeRef = useRef<HTMLDivElement>(null)
   const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
@@ -58,8 +60,9 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
     <Box
       className={classes.pointsBox}
       ref={pointsBoxRef}
-      onPointerLeave={handlePointerLeave}
-      onPointerEnter={handlePointerEnter}>
+      onClick={isMobile ? handlePointerEnter : () => {}}
+      onPointerLeave={!isMobile ? handlePointerLeave : () => {}}
+      onPointerEnter={!isMobile ? handlePointerEnter : () => {}}>
       <div className={classes.contentWrapper} ref={contentRef}>
         <img src={icons.airdropRainbow} alt='' />
         Points:{' '}
