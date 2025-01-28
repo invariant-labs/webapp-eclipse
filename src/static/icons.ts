@@ -59,6 +59,7 @@ import arrowRight from './svg/arrowRight.svg'
 import infoCircle from './svg/infoCircle.svg'
 import boostPoints from './svg/boostPoints.svg'
 import airdropGrey from './svg/airdropGrey.svg'
+import infoError from './svg/infoError.svg'
 import infoIcon from './svg/info.svg'
 import infoIconPink from './svg/infoIconPink.svg'
 import slider from './svg/slider.svg'
@@ -127,7 +128,8 @@ const icons: { [key: string]: string } = {
   dropdownReverse,
   infoCircle,
   boostPoints,
-  airdropGrey
+  airdropGrey,
+  infoError
 }
 
 export default icons
