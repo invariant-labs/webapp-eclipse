@@ -62,7 +62,7 @@ export const SwapPointsPopover = ({
         vertical: 'top',
         horizontal: 'center'
       }}
-      marginThreshold={16}>
+      marginThreshold={isMobile ? 0 : 16}>
       <div className={classes.backgroundContainer}>
         <div className={isPairGivingPoints ? classes.explanationContainer : classes.halfContainer}>
           {isPairGivingPoints ? (

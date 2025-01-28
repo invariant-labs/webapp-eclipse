@@ -12,6 +12,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     paper: {
+      margin: '0px 8px',
       background: 'transparent',
       maxWidth: 519,
       maxHeight: '100vh',
