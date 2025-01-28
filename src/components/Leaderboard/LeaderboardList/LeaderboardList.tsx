@@ -1,28 +1,39 @@
-import React, { useMemo, useCallback } from 'react'
+import React, { useMemo } from 'react'
 import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
 import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
-import { useDispatch, useSelector } from 'react-redux'
-import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
-import {
-  leaderboardSelectors,
-  topRankedLpUsers,
-  topRankedSwapUsers,
-  topRankedTotalUsers
-} from '@store/selectors/leaderboard'
-import { actions, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
+import { CurrentUser, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
 import { colors, theme } from '@static/theme'
 import LeaderboardSwapItem from './LeaderboardItem/LeaderboardSwapItem'
 import LeaderboardLpItem from './LeaderboardItem/LeaderboardLpItem'
 import LeaderboardTotalItem from './LeaderboardItem/LeaderboardTotalItem'
 import { Keypair, PublicKey } from '@solana/web3.js'
-import { LeaderBoardType } from '@store/consts/static'
+import { LeaderBoardType, NetworkType } from '@store/consts/static'
+import { VariantType } from 'notistack'
 
-interface LeaderboardListProps {}
+interface LeaderboardListProps {
+  copyAddressHandler: (message: string, variant: VariantType) => void
+  currentNetwork: NetworkType
+  type: LeaderBoardType
+  lpData: ILpEntry[]
+  swapData: ISwapEntry[]
+  totalData: ITotalEntry[]
+  totalItemsObject: {
+    total: number
+    swap: number
+    lp: number
+  }
+  itemsPerPage: number
+  currentPage: number
+  walletStatus: Status
+  isLoading: boolean
+  userStats: CurrentUser
+  handlePageChange: (page: number) => void
+}
 
 const MemoizedLpLeaderboardItem = React.memo(LeaderboardLpItem)
 const MemoizedSwapLeaderboardItem = React.memo(LeaderboardSwapItem)
@@ -38,13 +49,19 @@ const getContent = (
   totalData: ITotalEntry[],
   userLpStats: ILpEntry | null,
   userSwapStats: ISwapEntry | null,
-  userTotalStats: ITotalEntry | null
+  userTotalStats: ITotalEntry | null,
+  copyAddressHandler: (message: string, variant: VariantType) => void,
+  currentNetwork: NetworkType
 ) => {
   if (isLoading) {
     const userDataExist = userLpStats || userSwapStats || userTotalStats
     return (
       <>
-        <MemoizedLpLeaderboardItem displayType='header' />
+        <MemoizedLpLeaderboardItem
+          displayType='header'
+          copyAddressHandler={copyAddressHandler}
+          currentNetwork={currentNetwork}
+        />
 
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
           {Array.from({ length: userDataExist ? itemsPerPage + 1 : itemsPerPage }, (_, index) => (
@@ -56,16 +73,23 @@ const getContent = (
               last24hPoints={'00'}
               points={'00'}
               address={Keypair.generate().publicKey}
+              copyAddressHandler={copyAddressHandler}
+              currentNetwork={currentNetwork}
             />
           ))}
         </Box>
       </>
     )
   }
+
   if (type === 'Liquidity') {
     return (
       <>
-        <MemoizedLpLeaderboardItem displayType='header' />
+        <MemoizedLpLeaderboardItem
+          displayType='header'
+          copyAddressHandler={copyAddressHandler}
+          currentNetwork={currentNetwork}
+        />
 
         {isConnected && userLpStats && (
           <MemoizedLpLeaderboardItem
@@ -78,6 +102,8 @@ const getContent = (
             points={userLpStats.points ?? 0}
             address={new PublicKey(userLpStats.address)}
             domain={userLpStats.domain}
+            copyAddressHandler={copyAddressHandler}
+            currentNetwork={currentNetwork}
           />
         )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
@@ -92,6 +118,8 @@ const getContent = (
                 points={element.points ?? 0}
                 address={new PublicKey(element.address)}
                 domain={element.domain}
+                copyAddressHandler={copyAddressHandler}
+                currentNetwork={currentNetwork}
               />
             ))
           ) : (
@@ -104,7 +132,11 @@ const getContent = (
   if (type === 'Swap')
     return (
       <>
-        <MemoizedSwapLeaderboardItem displayType='header' />
+        <MemoizedSwapLeaderboardItem
+          displayType='header'
+          copyAddressHandler={copyAddressHandler}
+          currentNetwork={currentNetwork}
+        />
 
         {isConnected && userSwapStats && (
           <MemoizedSwapLeaderboardItem
@@ -117,6 +149,8 @@ const getContent = (
             points={userSwapStats.points ?? 0}
             address={new PublicKey(userSwapStats.address)}
             domain={userSwapStats.domain}
+            copyAddressHandler={copyAddressHandler}
+            currentNetwork={currentNetwork}
           />
         )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
@@ -131,6 +165,8 @@ const getContent = (
                 points={element.points ?? 0}
                 address={new PublicKey(element.address)}
                 domain={element.domain}
+                copyAddressHandler={copyAddressHandler}
+                currentNetwork={currentNetwork}
               />
             ))
           ) : (
@@ -141,7 +177,11 @@ const getContent = (
     )
   return (
     <>
-      <MemoizedTotalLeaderboardItem displayType='header' />
+      <MemoizedTotalLeaderboardItem
+        displayType='header'
+        copyAddressHandler={copyAddressHandler}
+        currentNetwork={currentNetwork}
+      />
 
       {isConnected && userTotalStats && (
         <MemoizedTotalLeaderboardItem
@@ -155,6 +195,8 @@ const getContent = (
           points={userTotalStats.points}
           address={new PublicKey(userTotalStats.address)}
           domain={userTotalStats.domain}
+          copyAddressHandler={copyAddressHandler}
+          currentNetwork={currentNetwork}
         />
       )}
       <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
@@ -170,6 +212,8 @@ const getContent = (
               points={element.points}
               address={new PublicKey(element.address)}
               domain={element.domain}
+              copyAddressHandler={copyAddressHandler}
+              currentNetwork={currentNetwork}
             />
           ))
         ) : (
@@ -179,22 +223,24 @@ const getContent = (
     </>
   )
 }
-const LeaderboardList: React.FC<LeaderboardListProps> = () => {
+const LeaderboardList: React.FC<LeaderboardListProps> = ({
+  copyAddressHandler,
+  currentNetwork,
+  type,
+  lpData,
+  swapData,
+  totalData,
+  totalItemsObject,
+  itemsPerPage,
+  currentPage,
+  walletStatus,
+  isLoading,
+  userStats,
+  handlePageChange
+}) => {
   const { classes } = useStyles()
-  const walletStatus = useSelector(status)
-  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
-  const userStats = useSelector(leaderboardSelectors.currentUser)
-  const lpData = useSelector(topRankedLpUsers)
-  const swapData = useSelector(topRankedSwapUsers)
-  const totalData = useSelector(topRankedTotalUsers)
-  const isLoading = useSelector(leaderboardSelectors.loading)
-  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
-  const dispatch = useDispatch()
-  const currentPage = useSelector(leaderboardSelectors.currentPage)
-  const totalItemsObject = useSelector(leaderboardSelectors.totalItems)
-  const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
-  const type = useSelector(leaderboardSelectors.type)
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const currentData = useMemo(() => {
@@ -221,6 +267,9 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
     () => Math.min(currentPage * itemsPerPage, totalItems),
     [lpData, swapData, totalData, type]
   )
+
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
   const content = useMemo(
     () =>
       getContent(
@@ -233,16 +282,11 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
         totalData,
         userStats.lp,
         userStats.swap,
-        userStats.total
+        userStats.total,
+        copyAddressHandler,
+        currentNetwork
       ),
     [type, isLoading, lpData, swapData, totalData, isConnected, userStats]
-  )
-
-  const handlePageChange = useCallback(
-    (page: number) => {
-      dispatch(actions.getLeaderboardData({ page, itemsPerPage }))
-    },
-    [dispatch, itemsPerPage, isConnected]
   )
 
   const renderWaves = (position: 'top' | 'bottom', imageSrc: string) =>
@@ -257,6 +301,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = () => {
   if (currentData.length === 0) {
     return <Skeleton className={classes.skeleton} />
   }
+
   return (
     <div className={classes.container}>
       {renderWaves('top', PurpleWaves)}

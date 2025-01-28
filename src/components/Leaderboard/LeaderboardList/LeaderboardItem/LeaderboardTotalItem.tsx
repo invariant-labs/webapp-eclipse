@@ -1,8 +1,6 @@
 import React from 'react'
 import { alpha, Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { useDispatch, useSelector } from 'react-redux'
-import { actions as snackbarActions } from '@store/reducers/snackbars'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
@@ -10,13 +8,15 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
-import { network } from '@store/selectors/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
-import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { LEADERBOARD_DECIMAL, NetworkType } from '@store/consts/static'
+import { VariantType } from 'notistack'
 
 interface BaseLeaderboardTotalItemProps {
   displayType: 'item' | 'header'
+  currentNetwork: NetworkType
+  copyAddressHandler: (message: string, variant: VariantType) => void
 }
 
 interface LeaderboardTotalHeaderProps extends BaseLeaderboardTotalItemProps {
@@ -64,7 +64,7 @@ const LeaderboardTotalHeader: React.FC = () => {
 }
 
 const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
-  const { displayType } = props
+  const { displayType, copyAddressHandler, currentNetwork } = props
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
@@ -72,8 +72,6 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
   const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
   const isNarrowMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'))
 
-  const dispatch = useDispatch()
-  const currentNetwork = useSelector(network)
   const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
 
   if (displayType === 'header') {
@@ -102,24 +100,13 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
     navigator.clipboard
       .writeText(address.toString())
       .then(() => {
-        dispatch(
-          snackbarActions.add({
-            message: 'Address copied!',
-            variant: 'success',
-            persist: false
-          })
-        )
+        copyAddressHandler('Address copied!', 'success')
       })
       .catch(() => {
-        dispatch(
-          snackbarActions.add({
-            message: 'Failed to copy address!',
-            variant: 'error',
-            persist: false
-          })
-        )
+        copyAddressHandler('Failed to copy address!', 'error')
       })
   }
+
   const shortDomain = domain && domain.slice(0, 13) + '...'
 
   return (

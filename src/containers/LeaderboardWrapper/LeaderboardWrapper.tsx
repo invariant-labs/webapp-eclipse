@@ -1,7 +1,14 @@
-import React, { useEffect, useLayoutEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
-import { getPromotedPools, lastTimestamp, leaderboardSelectors } from '@store/selectors/leaderboard'
+import {
+  getPromotedPools,
+  lastTimestamp,
+  leaderboardSelectors,
+  topRankedLpUsers,
+  topRankedSwapUsers,
+  topRankedTotalUsers
+} from '@store/selectors/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { actions as positionListActions } from '@store/reducers/positions'
 import { network } from '@store/selectors/solanaConnection'
@@ -22,6 +29,8 @@ import {
   SNAP_TIME_DELAY
 } from '@store/consts/static'
 import { Leaderboard } from '@components/Leaderboard/Leaderboard'
+import { address, status } from '@store/selectors/solanaWallet'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 
 interface LeaderboardWrapperProps {}
 
@@ -38,6 +47,14 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const promotedPools = useSelector(getPromotedPools)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
+  const walletStatus = useSelector(status)
+  const userAddress = useSelector(address)
+  const lpData = useSelector(topRankedLpUsers)
+  const swapData = useSelector(topRankedSwapUsers)
+  const totalData = useSelector(topRankedTotalUsers)
+  const isLoadingLeaderboardList = useSelector(leaderboardSelectors.loading)
+  const currentPage = useSelector(leaderboardSelectors.currentPage)
+  const totalItemsObject = useSelector(leaderboardSelectors.totalItems)
 
   const [showWarningBanner, setShowWarningBanner] = React.useState(true)
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
@@ -49,6 +66,18 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
     return checkDataDelay(snapTime, SNAP_TIME_DELAY)
   }, [lastSnapTimestamp])
 
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
+  const handlePageChange = useCallback(
+    (page: number) => {
+      dispatch(actions.getLeaderboardData({ page, itemsPerPage }))
+    },
+    [dispatch, itemsPerPage, isConnected]
+  )
+
+  const onConnectWallet = () => {
+    dispatch(walletActions.connect(false))
+  }
   const promotedPoolsData = useMemo(() => {
     return promotedPools
       .map(promotedPool =>
@@ -107,6 +136,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   }
 
   useEffect(() => {
+    console.log('test')
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.getLeaderboardConfig())
     dispatch(statsActions.getCurrentStats())
@@ -156,6 +186,18 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       setSelectedOption={setSelectedOption}
       showWarningBanner={showWarningBanner}
       setShowWarningBanner={setShowWarningBanner}
+      currentPage={currentPage}
+      handlePageChange={handlePageChange}
+      itemsPerPage={itemsPerPage}
+      lpData={lpData}
+      swapData={swapData}
+      totalData={totalData}
+      totalItems={totalItemsObject}
+      onConnectWallet={onConnectWallet}
+      totalItemsObject={totalItemsObject}
+      userAddress={userAddress}
+      walletStatus={walletStatus}
+      isLoadingLeaderboardList={isLoadingLeaderboardList}
     />
   )
 }

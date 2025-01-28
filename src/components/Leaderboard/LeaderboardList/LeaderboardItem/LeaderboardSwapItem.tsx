@@ -1,8 +1,6 @@
 import React from 'react'
 import { alpha, Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { useDispatch, useSelector } from 'react-redux'
-import { actions as snackbarActions } from '@store/reducers/snackbars'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
@@ -10,13 +8,15 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
-import { network } from '@store/selectors/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
-import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { LEADERBOARD_DECIMAL, NetworkType } from '@store/consts/static'
+import { VariantType } from 'notistack'
 
 interface BaseLeaderboardSwapItemProps {
   displayType: 'item' | 'header'
+  currentNetwork: NetworkType
+  copyAddressHandler: (message: string, variant: VariantType) => void
 }
 
 interface LeaderboardSwapHeaderProps extends BaseLeaderboardSwapItemProps {
@@ -59,13 +59,13 @@ const LeaderboardSwapHeader: React.FC = () => {
 }
 
 const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
-  const { displayType } = props
+  const { displayType, copyAddressHandler, currentNetwork } = props
   const { classes } = useStyles()
+
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
   const isNarrowMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'))
-  const dispatch = useDispatch()
-  const currentNetwork = useSelector(network)
+
   const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
   if (displayType === 'header') {
     return <LeaderboardSwapHeader />
@@ -92,22 +92,10 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
     navigator.clipboard
       .writeText(address.toString())
       .then(() => {
-        dispatch(
-          snackbarActions.add({
-            message: 'Address copied!',
-            variant: 'success',
-            persist: false
-          })
-        )
+        copyAddressHandler('Address copied!', 'success')
       })
       .catch(() => {
-        dispatch(
-          snackbarActions.add({
-            message: 'Failed to copy address!',
-            variant: 'error',
-            persist: false
-          })
-        )
+        copyAddressHandler('Failed to copy address!', 'error')
       })
   }
 

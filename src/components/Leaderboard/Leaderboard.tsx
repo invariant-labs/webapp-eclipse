@@ -18,9 +18,17 @@ import LeaderboardList from './LeaderboardList/LeaderboardList'
 import { InfoComponent } from './InfoComponent/InfoComponent'
 import { Faq } from './Faq/Faq'
 import { Claim } from './Claim/Claim'
-import { CurrentUser, LeaderboardUser } from '@store/reducers/leaderboard'
+import {
+  CurrentUser,
+  ILpEntry,
+  ISwapEntry,
+  ITotalEntry,
+  LeaderboardUser
+} from '@store/reducers/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { VariantType } from 'notistack'
+import { Status } from '@store/reducers/solanaWallet'
+import { PublicKey } from '@solana/web3.js'
 
 interface LeaderboardProps {
   isDelayWarning: boolean
@@ -37,6 +45,26 @@ interface LeaderboardProps {
   setSelectedOption: React.Dispatch<React.SetStateAction<LeaderBoardType>>
   showWarningBanner: boolean
   setShowWarningBanner: React.Dispatch<React.SetStateAction<boolean>>
+  totalItems: {
+    total: number
+    swap: number
+    lp: number
+  }
+  walletStatus: Status
+  currentPage: number
+  handlePageChange: (page: number) => void
+  itemsPerPage: number
+  lpData: ILpEntry[]
+  swapData: ISwapEntry[]
+  totalData: ITotalEntry[]
+  totalItemsObject: {
+    total: number
+    swap: number
+    lp: number
+  }
+  onConnectWallet: () => void
+  userAddress: PublicKey
+  isLoadingLeaderboardList: boolean
 }
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({
@@ -53,7 +81,19 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   selectedOption,
   setSelectedOption,
   showWarningBanner,
-  setShowWarningBanner
+  setShowWarningBanner,
+  totalItems,
+  walletStatus,
+  currentPage,
+  handlePageChange,
+  itemsPerPage,
+  lpData,
+  swapData,
+  totalData,
+  totalItemsObject,
+  onConnectWallet,
+  userAddress,
+  isLoadingLeaderboardList
 }) => {
   const { classes } = useStyles()
 
@@ -88,21 +128,6 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
     }, 300)
   }
 
-  const content = React.useMemo(() => {
-    if (alignment === PointsPageContent.Leaderboard) {
-      return (
-        <>
-          <LeaderboardList />
-          <InfoComponent />
-        </>
-      )
-    } else if (alignment === PointsPageContent.FAQ) {
-      return <Faq />
-    } else if (alignment === PointsPageContent.Claim) {
-      return <Claim />
-    }
-  }, [alignment])
-
   return (
     <Box className={classes.pageWrapper}>
       <LeaderboardTypeModal
@@ -126,6 +151,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
             isLoadingList={isLoadingList}
+            totalItems={totalItems}
+            walletStatus={walletStatus}
           />
           <RewardedPools
             network={currentNetwork}
@@ -144,7 +171,36 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
           setSelectedOption={setSelectedOption}
           availableOptions={availableOptions}
         />
-        {content}
+        {alignment === PointsPageContent.Leaderboard && (
+          <>
+            <LeaderboardList
+              type={leaderboardType}
+              copyAddressHandler={copyAddressHandler}
+              currentNetwork={currentNetwork}
+              currentPage={currentPage}
+              handlePageChange={handlePageChange}
+              isLoading={isLoadingLeaderboardList}
+              itemsPerPage={itemsPerPage}
+              lpData={lpData}
+              swapData={swapData}
+              totalData={totalData}
+              totalItemsObject={totalItemsObject}
+              userStats={userStats}
+              walletStatus={walletStatus}
+            />
+            <InfoComponent />
+          </>
+        )}
+
+        {alignment === PointsPageContent.FAQ && <Faq />}
+        {alignment === PointsPageContent.Claim && (
+          <Claim
+            currentUser={userStats}
+            onConnectWallet={onConnectWallet}
+            userAddress={userAddress}
+            walletStatus={walletStatus}
+          />
+        )}
       </Box>
     </Box>
   )

@@ -4,25 +4,31 @@ import LaunchIcon from '@mui/icons-material/Launch'
 import { colors } from '@static/theme'
 import icons from '@static/icons'
 import { useMemo } from 'react'
-import { useDispatch, useSelector } from 'react-redux'
-import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { address, status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
-import { actions as walletActions } from '@store/reducers/solanaWallet'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { Link } from 'react-router-dom'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import RewardsList from './RewardsList/RewardsList'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { CurrentUser } from '@store/reducers/leaderboard'
+import { PublicKey } from '@solana/web3.js'
 
-export const Claim = () => {
+interface ClaimProps {
+  walletStatus: Status
+  currentUser: CurrentUser
+  onConnectWallet: () => void
+  userAddress: PublicKey
+}
+
+export const Claim: React.FC<ClaimProps> = ({
+  walletStatus,
+  currentUser,
+  onConnectWallet,
+  userAddress
+}) => {
   const { classes } = useStyles()
-  const currentUser = useSelector(leaderboardSelectors.currentUser)
-  const walletStatus = useSelector(status)
-  const userAddress = useSelector(address)
 
-  const dispatch = useDispatch()
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   return (
     <Grid position='relative'>
@@ -79,9 +85,7 @@ export const Claim = () => {
                     <ChangeWalletButton
                       isDisabled={isConnected}
                       name={!isConnected ? 'Connect Wallet' : 'Claim'}
-                      onConnect={() => {
-                        dispatch(walletActions.connect(false))
-                      }}
+                      onConnect={onConnectWallet}
                       connected={false}
                       onDisconnect={() => {}}
                       className={classes.connectWalletButton}
