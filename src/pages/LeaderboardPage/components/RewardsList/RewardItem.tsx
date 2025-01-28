@@ -117,7 +117,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({
             alignItems='center'
             className={classes.label}>
             <Typography>Type:</Typography>
-            <span>NFT</span>
+            <span>{reward.type}</span>
           </Grid>
           <Grid
             display='flex'
@@ -125,7 +125,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({
             alignItems='center'
             className={classes.label}>
             <Typography>Eligible:</Typography>
-            <span>Top {reward.eligible}</span>
+            <span>{reward.eligible}</span>
           </Grid>
         </Grid>
       </Grid>

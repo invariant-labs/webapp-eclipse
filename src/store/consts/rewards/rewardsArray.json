@@ -3,7 +3,8 @@
     "name": "January Contest",
     "image": "contest_1",
     "distributionDate": "2025-01-07",
-    "eligible": 3,
+    "eligible": "3 random contributors on X",
+    "type": "USDC",
     "addresses": [
       "JDn5Ttup4ur8aeH2cs5vf6HBE2nqRgZwea9c3bbv75Dj",
       "HmHFrfMYS9irC6Zk1ZmsPMJvzC85kLLdfgMypE8USZj4",
@@ -15,7 +16,8 @@
     "name": "Moon Odyssey Club NFT",
     "image": "nft_moon_odyssey",
     "distributionDate": "2025-01-26",
-    "eligible": 10,
+    "eligible": "Top 10",
+    "type": "NFT",
     "addresses": [
       "JDn5Ttup4ur8aeH2cs5vf6HBE2nqRgZwea9c3bbv75Dj",
       "BtGH2WkM1oNyPVgzYT51xV2gJqHhVQ4QiGwWirBUW5xN",

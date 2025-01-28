@@ -265,6 +265,7 @@ export interface Reward {
   name: string
   image: string
   distributionDate: string
-  eligible: number
+  eligible: string
+  type: string
   addresses: string[]
 }
