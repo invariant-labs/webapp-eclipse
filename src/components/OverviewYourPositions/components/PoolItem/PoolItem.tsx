@@ -46,7 +46,7 @@ export const PoolItem: React.FC<PoolItemProps> = ({ pool, onAddClick }) => {
       <Box
         sx={{ display: 'flex', alignItems: 'center' }}
         className={classes.actionIcon}
-        onClick={() => onAddClick?.(pool.id)}>
+        onClick={() => onAddClick?.(pool.id.toString())}>
         <img src={icons.plusIcon} height={24} width={24} alt='Add' />
       </Box>
     </Box>

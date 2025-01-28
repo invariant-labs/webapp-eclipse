@@ -18,12 +18,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool 
     <Box className={classes.container}>
       <Box className={classes.header}>
         <Typography className={classes.headerText}>Your Wallet</Typography>
-        <Typography className={classes.headerText}>${totalValue.toLocaleString()}</Typography>
+        <Typography className={classes.headerText}>
+          ${totalValue.toLocaleString().replace(',', '.')}
+        </Typography>
       </Box>
 
       <Box className={classes.poolsGrid}>
         {pools.map(pool => (
-          <PoolItem key={pool.id} pool={pool} onAddClick={onAddToPool} />
+          <PoolItem key={pool.id.toString()} pool={pool} onAddClick={onAddToPool} />
         ))}
       </Box>
     </Box>
