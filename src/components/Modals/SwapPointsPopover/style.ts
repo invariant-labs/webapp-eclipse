@@ -12,7 +12,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     paper: {
-      marginRight: '7px',
+      marginRight: '6px',
       marginLeft: '8px',
       background: 'transparent',
       maxWidth: 519,
