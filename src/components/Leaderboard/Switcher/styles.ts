@@ -96,7 +96,8 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       paddingBottom: 6,
       paddingLeft: 32,
       paddingRight: 32
-    }
+    },
+    leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main }
   }
 })
 

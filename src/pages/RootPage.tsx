@@ -12,9 +12,10 @@ import useStyles from './style'
 import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions } from '@store/reducers/positions'
-import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/NormalBanner'
+
 import { NetworkType } from '@store/consts/static'
 import { network } from '@store/selectors/solanaConnection'
+import { NormalBanner } from '@components/Leaderboard/LeaderboardBanner/NormalBanner'
 
 const BANNER_STORAGE_KEY = 'invariant-banner-state-3'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours

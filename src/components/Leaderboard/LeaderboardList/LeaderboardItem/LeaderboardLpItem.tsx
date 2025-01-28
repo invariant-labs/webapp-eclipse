@@ -13,33 +13,33 @@ import { Link } from 'react-router-dom'
 import { network } from '@store/selectors/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 
-interface BaseLeaderboardSwapItemProps {
+interface BaseLeaderboardLpItemProps {
   displayType: 'item' | 'header'
 }
 
-interface LeaderboardSwapHeaderProps extends BaseLeaderboardSwapItemProps {
+interface LeaderboardLpHeaderProps extends BaseLeaderboardLpItemProps {
   displayType: 'header'
 }
 
-interface LeaderboardSwapItemDetailProps extends BaseLeaderboardSwapItemProps {
+interface LeaderboardLpItemDetailProps extends BaseLeaderboardLpItemProps {
   displayType: 'item'
   isYou?: boolean
   hideBottomLine?: boolean
   points?: string
-  swaps?: number
+  positions?: number
   last24hPoints?: string
   rank?: number
   address?: PublicKey
   domain?: string
 }
 
-export type LeaderboardSwapItemProps = LeaderboardSwapHeaderProps | LeaderboardSwapItemDetailProps
+export type LeaderboardLpItemProps = LeaderboardLpHeaderProps | LeaderboardLpItemDetailProps
 
 const PLACE_COLORS = [colors.invariant.yellow, colors.invariant.silver, colors.invariant.bronze]
 
-const LeaderboardSwapHeader: React.FC = () => {
+const LeaderboardLpHeader: React.FC = () => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -47,10 +47,10 @@ const LeaderboardSwapHeader: React.FC = () => {
     <Grid container classes={{ container: classes.container, root: classes.header }}>
       <Typography style={{ lineHeight: '11px' }}>Rank</Typography>
       <Typography style={{ cursor: 'pointer' }}>Address</Typography>
-      <Typography style={{ cursor: 'pointer' }}>Swap points</Typography>
+      <Typography style={{ cursor: 'pointer' }}>Liquidity points</Typography>
       {!isMd && (
         <>
-          <Typography style={{ cursor: 'pointer' }}>Swaps counts</Typography>
+          <Typography style={{ cursor: 'pointer' }}>Positions</Typography>
           <Typography style={{ cursor: 'pointer' }}>24H points</Typography>
         </>
       )}
@@ -58,17 +58,18 @@ const LeaderboardSwapHeader: React.FC = () => {
   )
 }
 
-const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
+const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
   const { displayType } = props
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const dispatch = useDispatch()
   const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
   const isNarrowMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'))
-  const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
   const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
+
   if (displayType === 'header') {
-    return <LeaderboardSwapHeader />
+    return <LeaderboardLpHeader />
   }
 
   const {
@@ -77,7 +78,7 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
     isYou = false,
     address = '',
     last24hPoints = 0,
-    swaps = 0,
+    positions = 0,
     hideBottomLine = false,
     domain
   } = props
@@ -126,12 +127,21 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
-        <Typography>
-          {domain
-            ? isVerySmallScreen || isNarrowMediumScreen
-              ? shortDomain
-              : domain
-            : shortenAddress(address.toString(), 4)}
+        <Typography style={{ paddingRight: '24px', width: 'auto' }}>
+          <span
+            style={{
+              whiteSpace: 'nowrap',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              color: colors.invariant.text
+            }}>
+            {domain
+              ? isVerySmallScreen || isNarrowMediumScreen
+                ? shortDomain
+                : domain
+              : shortenAddress(address.toString(), 4)}{' '}
+          </span>
+
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)
@@ -161,7 +171,7 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
                 Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
               )}
         </Typography>
-        {!isMd && <Typography>{swaps}</Typography>}
+        {!isMd && <Typography>{positions}</Typography>}
 
         {!isMd && (
           <Typography>
@@ -190,4 +200,4 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
   )
 }
 
-export default LeaderboardSwapItem
+export default LeaderboardLpItem

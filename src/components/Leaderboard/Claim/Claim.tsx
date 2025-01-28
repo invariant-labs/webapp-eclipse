@@ -1,4 +1,4 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors } from '@static/theme'
@@ -12,11 +12,11 @@ import { actions as walletActions } from '@store/reducers/solanaWallet'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { Link } from 'react-router-dom'
 import { BN } from '@coral-xyz/anchor'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
-import RewardsList from '../RewardsList/RewardsList'
+import RewardsList from './RewardsList/RewardsList'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 
-export const Rewards = () => {
+export const Claim = () => {
   const { classes } = useStyles()
   const currentUser = useSelector(leaderboardSelectors.currentUser)
   const walletStatus = useSelector(status)
@@ -25,7 +25,7 @@ export const Rewards = () => {
   const dispatch = useDispatch()
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   return (
-    <>
+    <Grid position='relative'>
       <Box className={classes.infoContainer}>
         <Box style={{ width: 'auto' }}>
           <Typography className={classes.header}>Claim</Typography>
@@ -113,6 +113,6 @@ export const Rewards = () => {
         </Box>
       </Box>
       <RewardsList userAddress={userAddress} isConnected={isConnected} />
-    </>
+    </Grid>
   )
 }

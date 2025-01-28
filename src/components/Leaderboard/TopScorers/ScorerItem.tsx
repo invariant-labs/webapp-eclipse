@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import { Box, Skeleton, Typography } from '@mui/material'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { shortenAddress } from '@utils/uiUtils'
 import { printBN, formatNumberWithCommas } from '@utils/utils'
 import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
@@ -9,6 +8,7 @@ import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
 import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
 import { theme } from '@static/theme'
 import useStyles from './styles'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 
 interface IScorerItemProps {
   points: string

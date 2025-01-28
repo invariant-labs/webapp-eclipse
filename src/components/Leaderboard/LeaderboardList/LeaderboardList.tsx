@@ -14,18 +14,13 @@ import {
   topRankedSwapUsers,
   topRankedTotalUsers
 } from '@store/selectors/leaderboard'
-import {
-  actions,
-  ILpEntry,
-  ISwapEntry,
-  ITotalEntry,
-  LeaderBoardType
-} from '@store/reducers/leaderboard'
+import { actions, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
 import { colors, theme } from '@static/theme'
-import LeaderboardSwapItem from '../LeaderboardItem/LeaderboardSwapItem'
-import LeaderboardLpItem from '../LeaderboardItem/LeaderboardLpItem'
-import LeaderboardTotalItem from '../LeaderboardItem/LeaderboardTotalItem'
+import LeaderboardSwapItem from './LeaderboardItem/LeaderboardSwapItem'
+import LeaderboardLpItem from './LeaderboardItem/LeaderboardLpItem'
+import LeaderboardTotalItem from './LeaderboardItem/LeaderboardTotalItem'
 import { Keypair, PublicKey } from '@solana/web3.js'
+import { LeaderBoardType } from '@store/consts/static'
 
 interface LeaderboardListProps {}
 

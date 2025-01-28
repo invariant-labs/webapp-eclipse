@@ -844,3 +844,19 @@ export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: strin
 ]
 
 export const rewards = rewardsArray as Reward[]
+
+export const LEADERBOARD_DECIMAL = 8
+
+export const LAUNCH_DATE = '2024-12-10T17:20:00'
+
+export enum PointsPageContent {
+  Leaderboard = 'leaderboard',
+  FAQ = 'faq',
+  Claim = 'claim'
+}
+
+export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
+
+export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
+export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
+export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)

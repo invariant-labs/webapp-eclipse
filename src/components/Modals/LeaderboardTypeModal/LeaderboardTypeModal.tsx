@@ -1,7 +1,7 @@
 import React from 'react'
 import useStyles from './style'
 import { Button, Grid, Popover } from '@mui/material'
-import { LeaderBoardType } from '@store/reducers/leaderboard'
+import { LeaderBoardType } from '@store/consts/static'
 
 export interface ISelectNetworkModal {
   open: boolean

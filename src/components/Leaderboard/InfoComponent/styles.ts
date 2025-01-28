@@ -3,22 +3,24 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   infoContainer: {
-    width: '100%',
-    marginTop: '14px',
-    minHeight: '445px',
-    padding: '32px 24px',
+    width: '100vw',
+    marginTop: '72px',
+    minHeight: '264px',
+    padding: '25px max(15%, 20px)',
     display: 'flex',
-    textAlign: 'center',
+    [theme.breakpoints.down('md')]: {
+      textAlign: 'center'
+    },
     justifyContent: 'center',
     alignItems: 'center',
     background:
-      'linear-gradient(90deg, rgba(32, 41, 70, 0.2) 0%, #202946 22%, #202946 78%, rgba(32, 41, 70, 0.2) 100%)',
+      'linear-gradient(90deg, rgba(32, 41, 70, 0.2) 0%, #202946 40%, #202946 80%, rgba(32, 41, 70, 0.2) 100%)',
     boxSizing: 'border-box',
-    overflowX: 'hidden'
+    overflow: 'hidden'
   },
   astronaut: {
     width: '100%',
-    maxWidth: '400px',
+    maxWidth: '276px',
     height: 'auto',
     marginLeft: '56px',
     [theme.breakpoints.down('md')]: {
@@ -27,15 +29,12 @@ export const useStyles = makeStyles()(() => ({
   },
   description: {
     color: colors.invariant.textGrey,
-    [theme.breakpoints.down('md')]: {
-      fontSize: '20px'
-    },
     fontSize: '16px',
     fontWeight: '400',
     lineHeight: '20px',
     letterSpacing: '-0.03em',
     marginTop: '32px',
-    maxWidth: '1032px'
+    maxWidth: '400px'
   },
   header: {
     [theme.breakpoints.down('md')]: {
@@ -46,10 +45,10 @@ export const useStyles = makeStyles()(() => ({
     fontWeight: '600',
     lineHeight: '36px',
     letterSpacing: '-0.03em',
-    maxWidth: '1032px'
+    maxWidth: '800px'
   },
   clipboardIcon: {
-    width: 14,
+    fontSize: '16px',
     cursor: 'pointer',
     color: colors.invariant.newDark,
     '&:hover': {
@@ -58,32 +57,24 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
-  connectWalletButton: {
-    height: '44px !important',
-    borderRadius: '16px',
-    width: '200px',
-    marginTop: '32px',
-    fontSize: '14px',
-    [theme.breakpoints.down('sm')]: {
-      width: '100%'
-    },
-    fontWeight: 400
-  },
   button: {
-    ...typography.body1,
+    boxShadow: '0px 0px 16px 0px #EF84F559',
+    width: '185px',
     display: 'flex',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    justifySelf: 'center',
+    [theme.breakpoints.down('md')]: {
+      justifySelf: 'center'
+    },
     padding: '13px',
     gap: '8px',
-    width: '200px',
     height: '44px',
     background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
     borderRadius: '16px',
     fontFamily: 'Mukta',
     fontStyle: 'normal',
+    ...typography.body1,
     textTransform: 'none',
     color: colors.invariant.dark,
     transition: 'all 0.3s ease',
@@ -95,19 +86,12 @@ export const useStyles = makeStyles()(() => ({
     '&:active': {
       transform: 'translateY(1px)',
       boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: '100%'
     }
   },
-  pointsValue: {
-    color: colors.invariant.text,
-    fontSize: '40px',
-    fontWeight: 700,
-    lineHeight: '36px',
-    letterSpacing: '-3%',
+  linkButtonContainer: {
     [theme.breakpoints.down('md')]: {
-      fontSize: '32px'
+      display: 'flex',
+      justifyContent: 'center'
     }
   }
 }))

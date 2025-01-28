@@ -83,7 +83,8 @@ import {
   ORCA_MAIN,
   SOLAR_MAIN,
   TOKENS_PRICES_FROM_JUP,
-  WETH_MAIN
+  WETH_MAIN,
+  LEADERBOARD_DECIMAL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -100,7 +101,6 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()

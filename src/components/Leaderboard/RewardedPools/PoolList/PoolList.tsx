@@ -1,11 +1,11 @@
 import React, { useEffect } from 'react'
-import PoolListItem from '../PoolListItem/PoolListItem'
+import PoolListItem from './PoolListItem/PoolListItem'
 import { useStyles } from './style'
 import { Grid, useMediaQuery } from '@mui/material'
 import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import classNames from 'classnames'
-import { CustomPoolListItem } from '../PoolListItem/Variants/CustomPoolListItem'
+import { CustomPoolListItem } from './PoolListItem/Variants/CustomPoolListItem'
 import { theme } from '@static/theme'
 
 export interface PoolListInterface {

@@ -1,24 +1,20 @@
 import { Box, Typography } from '@mui/material'
 import React, { useMemo } from 'react'
 import useStyles from './styles'
-
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
-
 import trapezeLeft from '@static/png/trapezeLeft.png'
 import trapezeRight from '@static/png/trapezeRight.png'
-
 import trapezeMobileTop from '@static/png/trapezeMobileTop.png'
 import trapezeMobileBottom from '@static/png/trapezeMobileBottom.png'
 import trapezeNewDesktopBottom from '@static/png/trapezeNewDesktopBottom.png'
 import boxModalMiddle from '@static/png/boxMobileMiddle.png'
-
 import { useSelector } from 'react-redux'
 import { BlurOverlay } from './BlurOverlay'
 import { ProgressItem } from './ProgressItem'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { BN } from '@coral-xyz/anchor'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { ITotalEntry } from '@store/reducers/leaderboard'
 
