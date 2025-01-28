@@ -1,21 +1,5 @@
-import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
-import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
-import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
-import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
-export interface FormData {
-  name: string
-  symbol: string
-  decimals: string
-  supply: string
-  description: string
-  website: string
-  twitter: string
-  telegram: string
-  discord: string
-  image: string
-}
-
-type SocialPlatform = 'x' | 'telegram' | 'discord' | 'website'
+import { ErrorMessage, SocialPlatform } from '@store/consts/tokenCreator/types'
+import { errorMessages, MAX_VALUE } from '@store/consts/tokenCreator/static'
 
 export const validateSocialLink = (value: string, platform: SocialPlatform): true | string => {
   if (!value) return true
@@ -33,8 +17,6 @@ export const validateSocialLink = (value: string, platform: SocialPlatform): tru
   }
   return patterns[platform].test(value) || `Invalid ${platform} link`
 }
-
-const MAX_VALUE = BigInt(2) ** BigInt(64) - BigInt(1)
 
 export const validateDecimals = (decimals: string): string | null => {
   if (!decimals) return null
@@ -69,26 +51,6 @@ export const validateSupply = (supply: string, decimals: string): string | null 
   return null
 }
 
-interface ErrorMessage {
-  shortErrorMessage: string
-  fullErrorMessage: string
-}
-
-const errorMessages: Record<string, ErrorMessage> = {
-  required: {
-    shortErrorMessage: 'This field is required',
-    fullErrorMessage: 'This field is required'
-  },
-  decimals: {
-    shortErrorMessage: 'Invalid decimals',
-    fullErrorMessage: 'Decimals must be between 5 and 9'
-  },
-  supply: {
-    shortErrorMessage: 'Supply exceeds limit',
-    fullErrorMessage: '(Supply * 10^decimal) must be less than (2^64) and greater than 0'
-  }
-}
-
 const getErrorMessages = (error: any): ErrorMessage => {
   if (!error) {
     return { shortErrorMessage: '', fullErrorMessage: '' }
@@ -120,5 +82,3 @@ const getErrorMessages = (error: any): ErrorMessage => {
 }
 
 export default getErrorMessages
-
-export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]

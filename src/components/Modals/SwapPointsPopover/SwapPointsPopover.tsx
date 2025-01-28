@@ -4,6 +4,7 @@ import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
 import { addressToTicker } from '@utils/utils'
 import { useState, useEffect } from 'react'
+import useIsMobile from '@store/hooks/isMobile'
 
 export interface ISwapPointsPopover {
   open: boolean
@@ -24,6 +25,7 @@ export const SwapPointsPopover = ({
 }: ISwapPointsPopover) => {
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
+  const isMobile = useIsMobile()
 
   useEffect(() => {
     if (open && !animationTriggered) {
@@ -43,7 +45,7 @@ export const SwapPointsPopover = ({
       anchorEl={anchorEl}
       classes={{
         paper: classes.paper,
-        root: classes.popover
+        root: !isMobile ? classes.popover : undefined
       }}
       onClose={onClose}
       anchorOrigin={{
@@ -60,7 +62,7 @@ export const SwapPointsPopover = ({
         vertical: 'top',
         horizontal: 'center'
       }}
-      marginThreshold={16}>
+      marginThreshold={isMobile ? 0 : 16}>
       <div className={classes.backgroundContainer}>
         <div className={isPairGivingPoints ? classes.explanationContainer : classes.halfContainer}>
           {isPairGivingPoints ? (

@@ -44,11 +44,11 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
           gap={3}
           mb={isMobile ? 0 : 2}
           className={classes.list}>
-          {rewards.map((nft, index) => (
+          {rewards.map((reward, index) => (
             <RewardItem
               key={index}
               number={index + 1}
-              nft={nft}
+              reward={reward}
               userAddress={userAddress.toString()}
               isConnected={isConnected}
             />
