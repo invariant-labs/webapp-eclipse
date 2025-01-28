@@ -1,3 +1,5 @@
+import { PublicKey } from '@solana/web3.js'
+
 export interface Token {
   name: string
   icon: string
@@ -21,7 +23,7 @@ export interface PoolAsset {
 }
 
 export interface TokenPool {
-  id: string
+  id: PublicKey
   symbol: string
   icon: string
   value: number

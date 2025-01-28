@@ -2,6 +2,9 @@ import { Box, Grid, Typography } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
+import { useSelector } from 'react-redux'
+import { swapTokens } from '@store/selectors/solanaWallet'
+import { useProcessedTokens } from './hooks/useProcessedToken'
 
 export const OverviewYourPositions = () => {
   const poolAssets = [
@@ -72,54 +75,12 @@ export const OverviewYourPositions = () => {
     console.log(`Claiming fee: ${feeId}`)
   }
 
-  const pools = [
-    {
-      id: '1',
-      symbol: 'Foo1',
-      icon: '/btc-icon.png',
-      value: 2343,
-      amount: 0.324
-    },
-    {
-      id: '2',
-      symbol: 'Foo2',
-      icon: '/btc-icon.png',
-      value: 343,
-      amount: 0.324
-    },
-    {
-      id: '3',
-      symbol: 'Foo3',
-      icon: '/btc-icon.png',
-      value: 2343,
-      amount: 0.124
-    },
-    {
-      id: '4',
-      symbol: 'Foo4',
-      icon: '/btc-icon.png',
-      value: 2343,
-      amount: 0.224
-    },
-    {
-      id: '5',
-      symbol: 'Foo5',
-      icon: '/btc-icon.png',
-      value: 2943,
-      amount: 0.324
-    },
-    {
-      id: '6',
-      symbol: 'Foo6',
-      icon: '/btc-icon.png',
-      value: 233,
-      amount: 0.324
-    }
-  ]
-
   const handleAddToPool = (poolId: string) => {
     console.log(`Adding to pool: ${poolId}`)
   }
+
+  const tokensList = useSelector(swapTokens)
+  const { processedPools } = useProcessedTokens(tokensList)
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
@@ -146,7 +107,7 @@ export const OverviewYourPositions = () => {
           onClaimAll={handleClaimAll}
           onClaimFee={handleClaimFee}
         />
-        <YourWallet pools={pools} onAddToPool={handleAddToPool} />
+        <YourWallet pools={processedPools} onAddToPool={handleAddToPool} />
       </Box>
     </Box>
   )

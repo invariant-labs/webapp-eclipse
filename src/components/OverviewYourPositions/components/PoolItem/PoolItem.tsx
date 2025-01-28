@@ -33,7 +33,9 @@ export const PoolItem: React.FC<PoolItemProps> = ({ pool, onAddClick }) => {
 
       <Box className={classes.statsContainer}>
         <Typography className={classes.statsLabel}>Value</Typography>
-        <Typography className={classes.statsValue}>{pool.value.toLocaleString()} USD</Typography>
+        <Typography className={classes.statsValue}>
+          {pool.value.toLocaleString().replace(',', '.')} USD
+        </Typography>
       </Box>
 
       <Box className={classes.statsContainer}>
