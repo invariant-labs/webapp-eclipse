@@ -471,6 +471,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
 
   const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
+
   const [priceALoading, setPriceALoading] = useState(false)
   useEffect(() => {
     if (tokenAIndex === null || (tokenAIndex !== null && !tokens[tokenAIndex])) {

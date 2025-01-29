@@ -777,16 +777,7 @@ export const RECOMMENDED_RPC_ADDRESS = {
 
 export const DEFAULT_TOKEN_DECIMAL = 6
 
-export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
-
-export const DEFAULT_TOKENS = [
-  'solana',
-  'dogwifcoin',
-  'turbo-eth',
-  'laika-3',
-  'mooncoin-2',
-  'bridged-wrapped-ether-eclipse'
-]
+export const PRICE_QUERY_COOLDOWN = 60 * 1000
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
@@ -831,16 +822,5 @@ export const getPopularPools = (network: NetworkType) => {
       return []
   }
 }
-
-export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
-  {
-    coingeckoId: 'usd-coin',
-    solanaAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-  },
-  {
-    coingeckoId: 'tether',
-    solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
-  }
-]
 
 export const rewards = rewardsArray as Reward[]
