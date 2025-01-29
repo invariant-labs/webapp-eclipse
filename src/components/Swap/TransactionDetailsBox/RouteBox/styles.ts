@@ -12,8 +12,12 @@ export const useStyles = makeStyles<{ useTwoPools: boolean }>()((_theme, { useTw
     borderBottomLeftRadius: 10,
     borderBottomRightRadius: 10
   },
-  routeIcon: {
-    width: useTwoPools ? 80 : 230
+  tokenContainer: {
+    gap: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    display: 'flex',
+    flexDirection: 'column'
   },
   arrowContainer: {
     display: 'flex',
@@ -21,16 +25,19 @@ export const useStyles = makeStyles<{ useTwoPools: boolean }>()((_theme, { useTw
     gap: 5,
     alignItems: 'center'
   },
+  routeIcon: {
+    width: useTwoPools ? 80 : 230
+  },
+
   routeLabel: {
-    ...typography.tiny2,
+    ...typography.caption4,
     color: colors.invariant.text
   },
-  tokenLabel: {
-    ...typography.body1,
-    color: colors.invariant.textGrey
+  tokenIcon: {
+    width: 24
   },
-  tokenContinaer: {
-    display: 'flex',
-    flexDirection: 'column'
+  tokenLabel: {
+    ...typography.heading4,
+    color: colors.invariant.textGrey
   }
 }))
