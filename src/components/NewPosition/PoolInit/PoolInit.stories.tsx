@@ -65,7 +65,10 @@ export const Primary: Story = {
     concentrationIndex: 2,
     minimumSliderIndex: 0,
     setConcentrationIndex: fn(),
-    positionOpeningMethod: 'range'
+    positionOpeningMethod: 'range',
+    currentFeeIndex: 10,
+    initialConcentration: '30',
+    updatePath: fn()
   },
   render: args => <PrimaryComponent {...args} />
 }

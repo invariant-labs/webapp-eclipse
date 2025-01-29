@@ -111,7 +111,8 @@ export const Primary: Story = {
     onConnectWallet: () => {},
     onDisconnectWallet: () => {},
     poolAddress: '',
-    canNavigate: true
+    canNavigate: true,
+    initialConcentration: '40'
   },
   render: () => {
     return (
@@ -173,6 +174,7 @@ export const Primary: Story = {
         onDisconnectWallet={() => {}}
         poolAddress=''
         canNavigate={true}
+        initialConcentration='40'
       />
     )
   }

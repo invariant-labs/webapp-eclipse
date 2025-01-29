@@ -1910,3 +1910,22 @@ export const calculatePoints = (
 
   return nominator.div(denominator).div(new BN(DENOMINATOR))
 }
+
+export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
+  let concentrationIndex = 0
+
+  for (let index = 0; index < concentrationArray.length; index++) {
+    const value = +concentrationArray[index].toFixed(0)
+
+    if (value === neededValue) {
+      break
+    } else if (value > neededValue) {
+      concentrationIndex = index - 1
+      break
+    } else {
+      concentrationIndex = index + 1
+    }
+  }
+
+  return concentrationIndex
+}
