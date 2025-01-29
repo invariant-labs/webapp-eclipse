@@ -478,18 +478,14 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return
     }
 
-    const id = tokens[tokenAIndex].coingeckoId ?? ''
-    if (id.length) {
-      setPriceALoading(true)
-      getTokenPrice(id)
-        .then(data => setTokenAPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
-        )
-        .finally(() => setPriceALoading(false))
-    } else {
-      setTokenAPriceData(undefined)
-    }
+    const addr = tokens[tokenAIndex].address.toString()
+    setPriceALoading(true)
+    getTokenPrice(addr)
+      .then(data => setTokenAPriceData({ price: data ?? 0 }))
+      .catch(() =>
+        setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
+      )
+      .finally(() => setPriceALoading(false))
   }, [tokenAIndex, tokens, triggerFetchPrice])
 
   const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -499,18 +495,14 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return
     }
 
-    const id = tokens[tokenBIndex].coingeckoId ?? ''
-    if (id.length) {
-      setPriceBLoading(true)
-      getTokenPrice(id)
-        .then(data => setTokenBPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
-        )
-        .finally(() => setPriceBLoading(false))
-    } else {
-      setTokenBPriceData(undefined)
-    }
+    const addr = tokens[tokenBIndex].address.toString()
+    setPriceBLoading(true)
+    getTokenPrice(addr)
+      .then(data => setTokenBPriceData({ price: data ?? 0 }))
+      .catch(() =>
+        setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
+      )
+      .finally(() => setPriceBLoading(false))
   }, [tokenBIndex, tokens, triggerFetchPrice])
 
   const initialSlippage =

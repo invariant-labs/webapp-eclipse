@@ -1651,7 +1651,7 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
   }
 }
 
-export const getTokenPrice = async (id: string): Promise<number | undefined> => {
+export const getTokenPrice = async (addr: string): Promise<number | undefined> => {
   const cachedLastQueryTimestamp = localStorage.getItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
   let lastQueryTimestamp = 0
   if (cachedLastQueryTimestamp) {
@@ -1678,7 +1678,7 @@ export const getTokenPrice = async (id: string): Promise<number | undefined> => 
     priceData = JSON.parse(cachedPriceData)
   }
 
-  return priceData && priceData[id] ? priceData[id].price : undefined
+  return priceData && priceData[addr] ? priceData[addr].price : undefined
 }
 
 export const getTicksList = async (
