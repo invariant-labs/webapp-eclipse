@@ -770,7 +770,7 @@ export const enum SortTypeTokenList {
 
 export const RECOMMENDED_RPC_ADDRESS = {
   [NetworkType.Testnet]: RPC.TEST,
-  [NetworkType.Mainnet]: RPC.MAIN_HELIUS,
+  [NetworkType.Mainnet]: RPC.MAIN_TRITON,
   [NetworkType.Devnet]: RPC.DEV_EU,
   [NetworkType.Local]: ''
 }
