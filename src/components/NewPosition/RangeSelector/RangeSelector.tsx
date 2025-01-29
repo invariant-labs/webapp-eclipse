@@ -7,8 +7,8 @@ import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
   calculateConcentrationRange,
-  findClosestIndexByValue,
   formatNumber,
+  getConcentrationIndex,
   nearestTickIndex,
   toMaxNumericPlaces
 } from '@utils/utils'
@@ -19,6 +19,8 @@ import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 export interface IRangeSelector {
+  updatePath: (concIndex: number) => void
+  initialConcentration: string
   data: PlotTickData[]
   midPrice: TickPlotPositionData
   tokenASymbol: string
@@ -57,6 +59,8 @@ export interface IRangeSelector {
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
+  updatePath,
+  initialConcentration,
   data,
   midPrice,
   tokenASymbol,
@@ -79,7 +83,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   concentrationIndex,
   setConcentrationIndex,
   getTicksInsideRange,
-
   shouldReversePlot,
   setShouldReversePlot,
   shouldNotUpdatePriceRange,
@@ -104,11 +107,36 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   const [currentMidPrice, setCurrentMidPrice] = useState(midPrice)
   const [triggerReset, setTriggerReset] = useState(false)
 
-  const [previousConcentration, setPreviousConcentration] = useState(0)
-
-  const [cachedConcentrationArray, setCachedConcentrationArray] = useState(concentrationArray)
-
   const isMountedRef = useRef(false)
+
+  const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
+    const mappedIndex = getConcentrationIndex(concentrationArray, concentrationValue)
+
+    const validIndex = Math.max(
+      minimumSliderIndex,
+      Math.min(mappedIndex, concentrationArray.length - 1)
+    )
+
+    setConcentrationIndex(validIndex)
+    const { leftRange, rightRange } = calculateConcentrationRange(
+      tickSpacing,
+      concentrationArray[validIndex],
+      2,
+      midPrice.index,
+      isXtoY
+    )
+
+    changeRangeHandler(leftRange, rightRange)
+    autoZoomHandler(leftRange, rightRange, true)
+  }
+
+  useEffect(() => {
+    if (tokenASymbol !== 'ABC' && tokenBSymbol !== 'XYZ') {
+      const concentrationValue = +initialConcentration
+
+      handleUpdateConcentrationFromURL(concentrationValue)
+    }
+  }, [poolIndex])
 
   useEffect(() => {
     isMountedRef.current = true
@@ -191,16 +219,9 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       setPlotMin(midPrice.x - initSideDist)
       setPlotMax(midPrice.x + initSideDist)
     } else {
-      const newConcentrationIndex = findClosestIndexByValue(
-        cachedConcentrationArray,
-        previousConcentration
-      )
-
-      setConcentrationIndex(newConcentrationIndex)
-      setPreviousConcentration(cachedConcentrationArray[newConcentrationIndex])
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
-        cachedConcentrationArray[newConcentrationIndex],
+        concentrationArray[concentrationIndex],
         2,
         midPrice.index,
         isXtoY
@@ -285,15 +306,6 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
   }, [ticksLoading, isMountedRef, midPrice.index, poolIndex])
 
-  useEffect(() => {
-    setCachedConcentrationArray(concentrationArray)
-
-    const newConcentrationIndex = findClosestIndexByValue(concentrationArray, previousConcentration)
-
-    setConcentrationIndex(newConcentrationIndex)
-    setPreviousConcentration(concentrationArray[newConcentrationIndex])
-  }, [concentrationArray])
-
   const autoZoomHandler = (left: number, right: number, canZoomCloser: boolean = false) => {
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
 
@@ -345,10 +357,9 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   useEffect(() => {
     if (positionOpeningMethod === 'concentration' && isMountedRef.current && !ticksLoading) {
-      setConcentrationIndex(0)
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
-        cachedConcentrationArray[0],
+        concentrationArray[concentrationIndex],
         2,
         midPrice.index,
         isXtoY
@@ -364,14 +375,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   useEffect(() => {
     if (positionOpeningMethod === 'concentration' && !ticksLoading && isMountedRef.current) {
       const index =
-        concentrationIndex > cachedConcentrationArray.length - 1
-          ? cachedConcentrationArray.length - 1
+        concentrationIndex > concentrationArray.length - 1
+          ? concentrationArray.length - 1
           : concentrationIndex
+
       setConcentrationIndex(index)
 
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
-        cachedConcentrationArray[index],
+        concentrationArray[index],
         2,
         midPrice.index,
         isXtoY
@@ -387,10 +399,9 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       return
     }
 
-    setConcentrationIndex(0)
     const { leftRange, rightRange } = calculateConcentrationRange(
       tickSpacing,
-      cachedConcentrationArray[0],
+      concentrationArray[concentrationIndex],
       2,
       midPrice.index,
       isXtoY
@@ -582,13 +593,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           <Grid container className={classes.sliderWrapper}>
             <ConcentrationSlider
               valueIndex={concentrationIndex}
-              values={cachedConcentrationArray}
+              values={concentrationArray}
               valueChangeHandler={value => {
-                setPreviousConcentration(cachedConcentrationArray[value])
                 setConcentrationIndex(value)
+
+                updatePath(value)
+
                 const { leftRange, rightRange } = calculateConcentrationRange(
                   tickSpacing,
-                  cachedConcentrationArray[value],
+                  concentrationArray[value],
                   2,
                   midPrice.index,
                   isXtoY
