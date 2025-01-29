@@ -26,8 +26,8 @@ const RouteBox = () => {
       className={classes.swapFlowContainer}>
       {isSmallDevice ? (
         <Typography className={classes.tokenLabel}>
-          {mockedData.mockedTicker} {'🠒 '}
-          {useTwoPools && `${mockedData.mockedTicker} 🠒 `}
+          {mockedData.mockedTicker} {'-> '}
+          {useTwoPools && `${mockedData.mockedTicker} -> `}
           {mockedData.mockedTicker}
         </Typography>
       ) : (
