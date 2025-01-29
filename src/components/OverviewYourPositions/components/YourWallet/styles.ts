@@ -15,6 +15,7 @@ export const useStyles = makeStyles()(() => ({
     ...typography.heading1,
     color: colors.invariant.text
   },
+
   poolsGrid: {
     marginTop: '24px',
     height: '260px',
@@ -28,6 +29,15 @@ export const useStyles = makeStyles()(() => ({
     '&::-webkit-scrollbar-thumb': {
       background: colors.invariant.pink,
       borderRadius: '3px'
+    }
+  },
+  skeletonItem: {
+    padding: '16px',
+    marginBottom: '16px',
+    background: colors.invariant.newDark,
+    borderRadius: '16px',
+    '& .MuiSkeleton-root': {
+      backgroundColor: `${colors.invariant.text}20`
     }
   }
 }))

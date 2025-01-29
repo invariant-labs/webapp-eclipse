@@ -3,18 +3,25 @@ import { Box, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { usePoolItemStyles } from './styles'
 import { TokenPool } from '@components/OverviewYourPositions/types/types'
+import { STRATEGIES } from '@components/OverviewYourPositions/config/config'
+import { useNavigate } from 'react-router-dom'
 
 interface PoolItemProps {
   pool: TokenPool
   onAddClick?: (poolId: string) => void
 }
 
-export const PoolItem: React.FC<PoolItemProps> = ({ pool, onAddClick }) => {
+export const PoolItem: React.FC<PoolItemProps> = ({ pool }) => {
+  const navigate = useNavigate()
   const { classes } = usePoolItemStyles()
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = icons.unknownToken
   }
+
+  const strategy = STRATEGIES.find(
+    s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool?.symbol
+  )
 
   return (
     <Box className={classes.container}>
@@ -46,7 +53,11 @@ export const PoolItem: React.FC<PoolItemProps> = ({ pool, onAddClick }) => {
       <Box
         sx={{ display: 'flex', alignItems: 'center' }}
         className={classes.actionIcon}
-        onClick={() => onAddClick?.(pool.id.toString())}>
+        onClick={() => {
+          navigate(
+            `/newPosition/${strategy?.tokenSymbolA}/${strategy?.tokenSymbolB}/${strategy?.feeTier}`
+          )
+        }}>
         <img src={icons.plusIcon} height={24} width={24} alt='Add' />
       </Box>
     </Box>

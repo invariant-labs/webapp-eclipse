@@ -3,11 +3,11 @@ import { Box } from '@mui/material'
 import { UnclaimedFeeList } from '../UnclaimedFeeList/UnclaimedFeeList'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
-import { UnclaimedFee } from '@components/OverviewYourPositions/types/types'
+import { ProcessedPool } from '@components/OverviewYourPositions/types/types'
 import { useStyles } from './styles'
 
 interface OverviewProps {
-  poolAssets: UnclaimedFee[]
+  poolAssets: ProcessedPool[]
   isLoading?: boolean
   onClaimAll: () => void
   onClaimFee?: (feeId: number) => void

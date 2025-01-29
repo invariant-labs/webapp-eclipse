@@ -81,15 +81,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     // if (position?.id && waitingForTicksData === null && allTickMaps[poolKey] !== undefined) {
     if (position?.id && waitingForTicksData === null) {
       setWaitingForTicksData(true)
+
       dispatch(actions.getCurrentPositionRangeTicks(id))
-      dispatch(
-        actions.getCurrentPlotTicks({
-          poolIndex: position.poolData.poolIndex,
-          isXtoY: true
-        })
-      )
     }
   }, [position?.id])
+
+  useEffect(() => {
+    console.log({ lowerTickIndex: lowerTick?.index, upperTickIndex: upperTick?.index })
+  }, [lowerTick, upperTick])
 
   useEffect(() => {
     if (waitingForTicksData === true && !currentPositionTicksLoading) {
@@ -252,6 +251,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
     return [0, 0]
   }, [position, lowerTick, upperTick, waitingForTicksData])
+
+  console.log({ tokenXClaim, tokenYClaim })
 
   const data = useMemo(() => {
     if (ticksLoading && position) {
