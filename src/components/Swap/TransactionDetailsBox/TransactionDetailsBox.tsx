@@ -71,7 +71,18 @@ const TransactionDetailsBox: React.FC<IProps> = ({
         tokenFrom={tokenFrom}
         tokenTo={tokenTo}
         baseFee={fee}
-        poolType={null}
+        onePoolType={true}
+        tokenBetween={null}
+        firstFee={null}
+        secondFee={null}
+        amountIn={null}
+        amountOut={null}
+      />
+      <RouteBox
+        tokenFrom={tokenFrom}
+        tokenTo={tokenTo}
+        baseFee={fee}
+        onePoolType={false}
         tokenBetween={null}
         firstFee={null}
         secondFee={null}

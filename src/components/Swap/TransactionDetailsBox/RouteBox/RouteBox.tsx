@@ -17,22 +17,21 @@ interface IProps {
   baseFee: BN
   firstFee: BN | null
   secondFee: BN | null
-  poolType: any
+  onePoolType: boolean
   amountIn: any
   amountOut: any
 }
 
-const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee }) => {
+const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee, onePoolType }) => {
   const mockedData = {
     mockedFee: 0.01,
     mockedTicker: 'ETH',
-    mockedAmont: 3203,
-    useTwoPools: false
+    mockedAmont: 3203
   }
 
   const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
-  const { useTwoPools } = mockedData
-  const { classes } = useStyles({ useTwoPools })
+
+  const { classes } = useStyles({ onePoolType })
   const feePercent = Number(printBN(baseFee, DECIMAL - 2))
 
   return (
@@ -44,7 +43,7 @@ const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee }) => {
       {isSmallDevice ? (
         <Typography className={classes.tokenLabel}>
           {tokenFrom?.symbol} {'-> '}
-          {useTwoPools && `${mockedData.mockedTicker} -> `}
+          {onePoolType && `${mockedData.mockedTicker} -> `}
           {tokenTo?.symbol}
         </Typography>
       ) : (
@@ -56,19 +55,19 @@ const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee }) => {
           </Box>
           <Box className={classes.arrowContainer}>
             <Typography className={classes.routeLabel}>
-              {useTwoPools ? mockedData.mockedFee : feePercent}% fee
+              {onePoolType ? mockedData.mockedFee : feePercent}% fee
             </Typography>
             <img
               className={classes.routeIcon}
-              src={mockedData.useTwoPools ? routeArrow1 : routeArrow2}
+              src={onePoolType ? routeArrow1 : routeArrow2}
               alt='route arrow'
             />
 
             <Typography className={classes.routeLabel}>
-              {useTwoPools ? `${mockedData.mockedAmont} ${mockedData.mockedTicker}` : '100%'}
+              {onePoolType ? `${mockedData.mockedAmont} ${mockedData.mockedTicker}` : '100%'}
             </Typography>
           </Box>
-          {useTwoPools && (
+          {onePoolType && (
             <>
               <Box className={classes.tokenContainer}>
                 <img src={tokenImg} className={classes.tokenIcon} />

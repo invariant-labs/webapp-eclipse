@@ -1,7 +1,7 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles<{ useTwoPools: boolean }>()((_theme, { useTwoPools }) => ({
+export const useStyles = makeStyles<{ onePoolType: boolean }>()((_theme, { onePoolType }) => ({
   swapFlowContainer: {
     maxHeight: 70,
     margin: '1px',
@@ -26,7 +26,7 @@ export const useStyles = makeStyles<{ useTwoPools: boolean }>()((_theme, { useTw
     alignItems: 'center'
   },
   routeIcon: {
-    width: useTwoPools ? 80 : 230
+    width: onePoolType ? 80 : 230
   },
 
   routeLabel: {
