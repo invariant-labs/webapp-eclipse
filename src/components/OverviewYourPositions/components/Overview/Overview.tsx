@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Box } from '@mui/material'
 import { UnclaimedFeeList } from '../UnclaimedFeeList/UnclaimedFeeList'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
@@ -10,14 +10,12 @@ interface OverviewProps {
   poolAssets: ProcessedPool[]
   isLoading?: boolean
   onClaimAll: () => void
-  onClaimFee?: (feeId: number) => void
 }
 
 export const Overview: React.FC<OverviewProps> = ({
   poolAssets = [],
   isLoading = false,
-  onClaimAll,
-  onClaimFee
+  onClaimAll
 }) => {
   const { classes } = useStyles()
   const [totalValue, setTotalValue] = useState(0)
@@ -38,7 +36,6 @@ export const Overview: React.FC<OverviewProps> = ({
         <UnclaimedFeeList
           fees={poolAssets}
           isLoading={isLoading}
-          onClaimFee={onClaimFee}
           onValuesUpdate={handleValuesUpdate}
         />
       </Box>

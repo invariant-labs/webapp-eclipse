@@ -14,11 +14,6 @@ export const OverviewYourPositions = () => {
     console.log('Claiming all fees')
   }
 
-  const handleClaimFee = (feeId: number) => {
-    // Handle claiming individual fee
-    console.log(`Claiming fee: ${feeId}`)
-  }
-
   const handleAddToPool = (poolId: string) => {
     console.log(`Adding to pool: ${poolId}`)
   }
@@ -26,22 +21,14 @@ export const OverviewYourPositions = () => {
   const tokensList = useSelector(swapTokens)
   const { processedPools, isLoading } = useProcessedTokens(tokensList)
 
-  const list = useSelector(positionsWithPoolsData)
+  const list: any = useSelector(positionsWithPoolsData)
 
   const data: Pick<
     ProcessedPool,
-    | 'id'
-    | 'fee'
-    | 'tokenX'
-    | 'position'
-    | 'poolData'
-    | 'tokenY'
-    | 'lowerTickIndex'
-    | 'upperTickIndex'
+    'id' | 'fee' | 'tokenX' | 'poolData' | 'tokenY' | 'lowerTickIndex' | 'upperTickIndex'
   >[] = list.map(position => {
     return {
       id: position.id.toString() + '_' + position.pool.toString(),
-
       poolData: position.poolData,
       lowerTickIndex: position.lowerTickIndex,
       upperTickIndex: position.upperTickIndex,
@@ -82,12 +69,7 @@ export const OverviewYourPositions = () => {
         </Grid>
       </Box>
       <Box sx={{ display: 'flex', gap: 4 }}>
-        <Overview
-          poolAssets={data}
-          isLoading={false}
-          onClaimAll={handleClaimAll}
-          onClaimFee={handleClaimFee}
-        />
+        <Overview poolAssets={data} isLoading={false} onClaimAll={handleClaimAll} />
         <YourWallet pools={processedPools} onAddToPool={handleAddToPool} isLoading={isLoading} />
       </Box>
     </Box>

@@ -15,7 +15,6 @@ interface UnclaimedFeeListProps {
 export const UnclaimedFeeList: React.FC<UnclaimedFeeListProps> = ({
   fees = [],
   isLoading = false,
-  onClaimFee,
   onValuesUpdate
 }) => {
   const { classes } = useStyles()

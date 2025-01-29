@@ -1,4 +1,3 @@
-import { IPositionItem } from '@components/PositionsList/types'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
@@ -41,7 +40,6 @@ export interface ProcessedPool {
   fee: number
   lowerTickIndex: number
   upperTickIndex: number
-  position: IPositionItem
   poolData: PoolWithAddressAndIndex
   tokenX: Token
   tokenY: Token

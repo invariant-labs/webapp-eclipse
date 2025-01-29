@@ -196,7 +196,6 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
       const xAmount = +printBN(bnX, position.tokenX.decimals)
       const yAmount = +printBN(bnY, position.tokenY.decimals)
 
-      // Calculate USD value
       const xValueInUSD = xAmount * tokenXPriceData.price
       const yValueInUSD = yAmount * tokenYPriceData.price
       const totalValueInUSD = xValueInUSD + yValueInUSD
