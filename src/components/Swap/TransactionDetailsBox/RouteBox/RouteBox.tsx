@@ -22,23 +22,12 @@ interface IProps {
   amountOut: any
 }
 
-const RouteBox: React.FC<IProps> = ({
-  tokenFrom,
-  tokenTo,
-  baseFee,
-  poolType,
-  tokenBetween,
-  firstFee,
-  secondFee,
-  amountIn,
-  amountOut
-}) => {
+const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee }) => {
   const mockedData = {
     mockedFee: 0.01,
     mockedTicker: 'ETH',
     mockedAmont: 3203,
-    useTwoPools: true,
-    amountPrecent: 100
+    useTwoPools: false
   }
 
   const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
@@ -76,9 +65,7 @@ const RouteBox: React.FC<IProps> = ({
             />
 
             <Typography className={classes.routeLabel}>
-              {useTwoPools
-                ? `${mockedData.mockedAmont} ${mockedData.mockedTicker}`
-                : `${mockedData.amountPrecent}%`}
+              {useTwoPools ? `${mockedData.mockedAmont} ${mockedData.mockedTicker}` : '100%'}
             </Typography>
           </Box>
           {useTwoPools && (

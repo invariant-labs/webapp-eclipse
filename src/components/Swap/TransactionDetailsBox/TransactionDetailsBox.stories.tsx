@@ -27,6 +27,8 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
+    tokenFrom: null,
+    tokenTo: null,
     exchangeRate: { val: 123, symbol: 'ABC', decimal: 12 },
     slippage: 0.5,
     priceImpact: new BN(1000000000),
