@@ -34,7 +34,8 @@ export const useStyles = makeStyles<{ useTwoPools: boolean }>()((_theme, { useTw
     color: colors.invariant.text
   },
   tokenIcon: {
-    width: 24
+    width: 24,
+    borderRadius: '50%'
   },
   tokenLabel: {
     ...typography.heading4,

@@ -5,7 +5,34 @@ import routeArrow1 from '@static/svg/routeArrow1.svg'
 import routeArrow2 from '@static/svg/routeArrow2.svg'
 import tokenImg from '@static/svg/unknownToken.svg'
 import { theme } from '@static/theme'
-const RouteBox = () => {
+import { SwapToken } from '@store/selectors/solanaWallet'
+import { BN } from '@coral-xyz/anchor'
+import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { printBN } from '@utils/utils'
+
+interface IProps {
+  tokenFrom: SwapToken | null
+  tokenTo: SwapToken | null
+  tokenBetween: SwapToken | null
+  baseFee: BN
+  firstFee: BN | null
+  secondFee: BN | null
+  poolType: any
+  amountIn: any
+  amountOut: any
+}
+
+const RouteBox: React.FC<IProps> = ({
+  tokenFrom,
+  tokenTo,
+  baseFee,
+  poolType,
+  tokenBetween,
+  firstFee,
+  secondFee,
+  amountIn,
+  amountOut
+}) => {
   const mockedData = {
     mockedFee: 0.01,
     mockedTicker: 'ETH',
@@ -17,6 +44,7 @@ const RouteBox = () => {
   const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
   const { useTwoPools } = mockedData
   const { classes } = useStyles({ useTwoPools })
+  const feePercent = Number(printBN(baseFee, DECIMAL - 2))
 
   return (
     <Grid
@@ -26,19 +54,21 @@ const RouteBox = () => {
       className={classes.swapFlowContainer}>
       {isSmallDevice ? (
         <Typography className={classes.tokenLabel}>
-          {mockedData.mockedTicker} {'-> '}
+          {tokenFrom?.symbol} {'-> '}
           {useTwoPools && `${mockedData.mockedTicker} -> `}
-          {mockedData.mockedTicker}
+          {tokenTo?.symbol}
         </Typography>
       ) : (
         <>
           {' '}
           <Box className={classes.tokenContainer}>
-            <img src={tokenImg} className={classes.tokenIcon} />
-            <Typography className={classes.tokenLabel}>{mockedData.mockedTicker}</Typography>
+            <img src={tokenFrom?.logoURI} className={classes.tokenIcon} />
+            <Typography className={classes.tokenLabel}>{tokenFrom?.symbol}</Typography>
           </Box>
           <Box className={classes.arrowContainer}>
-            <Typography className={classes.routeLabel}>{mockedData.mockedFee}% fee</Typography>
+            <Typography className={classes.routeLabel}>
+              {useTwoPools ? mockedData.mockedFee : feePercent}% fee
+            </Typography>
             <img
               className={classes.routeIcon}
               src={mockedData.useTwoPools ? routeArrow1 : routeArrow2}
@@ -67,8 +97,8 @@ const RouteBox = () => {
             </>
           )}
           <Box className={classes.tokenContainer}>
-            <img src={tokenImg} className={classes.tokenIcon} />
-            <Typography className={classes.tokenLabel}>{mockedData.mockedTicker}</Typography>
+            <img src={tokenTo?.logoURI} className={classes.tokenIcon} />
+            <Typography className={classes.tokenLabel}>{tokenTo?.symbol}</Typography>
           </Box>
         </>
       )}

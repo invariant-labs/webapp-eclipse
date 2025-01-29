@@ -1099,6 +1099,8 @@ export const Swap: React.FC<ISwap> = ({
             priceImpact={simulateResult.priceImpact}
             slippage={+slippTolerance}
             isLoadingRate={getStateMessage() === 'Loading'}
+            tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
+            tokenTo={tokenToIndex !== null ? tokens[tokenToIndex] : null}
           />
           <TokensInfo
             tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}

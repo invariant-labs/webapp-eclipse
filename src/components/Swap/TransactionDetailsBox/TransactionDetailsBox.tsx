@@ -7,8 +7,11 @@ import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 import RouteBox from './RouteBox/RouteBox'
+import { SwapToken } from '@store/selectors/solanaWallet'
 
 interface IProps {
+  tokenFrom: SwapToken | null
+  tokenTo: SwapToken | null
   open: boolean
   fee: BN
   exchangeRate: { val: number; symbol: string; decimal: number }
@@ -19,6 +22,8 @@ interface IProps {
 
 const TransactionDetailsBox: React.FC<IProps> = ({
   open,
+  tokenFrom,
+  tokenTo,
   fee,
   exchangeRate,
   slippage,
@@ -62,7 +67,17 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           <Typography className={classes.value}>{slippage}%</Typography>
         </Grid>
       </Grid>
-      <RouteBox />
+      <RouteBox
+        tokenFrom={tokenFrom}
+        tokenTo={tokenTo}
+        baseFee={fee}
+        poolType={null}
+        tokenBetween={null}
+        firstFee={null}
+        secondFee={null}
+        amountIn={null}
+        amountOut={null}
+      />
     </Grid>
   )
 }
