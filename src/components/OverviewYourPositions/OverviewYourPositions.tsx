@@ -27,7 +27,6 @@ export const OverviewYourPositions = () => {
   const { processedPools, isLoading } = useProcessedTokens(tokensList)
 
   const list = useSelector(positionsWithPoolsData)
-  // const walletAddress = useSelector(address)
 
   const data: Pick<
     ProcessedPool,
@@ -36,8 +35,6 @@ export const OverviewYourPositions = () => {
     | 'tokenX'
     | 'position'
     | 'poolData'
-    | 'unclaimedFee'
-    | 'value'
     | 'tokenY'
     | 'lowerTickIndex'
     | 'upperTickIndex'
@@ -62,13 +59,9 @@ export const OverviewYourPositions = () => {
         coingeckoId: position.tokenY.coingeckoId,
         icon: position.tokenY.logoURI,
         name: position.tokenY.symbol
-      },
-      unclaimedFee: 234.34,
-      value: 343.24
+      }
     }
   })
-
-  // console.log(data)
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
@@ -91,7 +84,6 @@ export const OverviewYourPositions = () => {
       <Box sx={{ display: 'flex', gap: 4 }}>
         <Overview
           poolAssets={data}
-          userTokens={processedPools}
           isLoading={false}
           onClaimAll={handleClaimAll}
           onClaimFee={handleClaimFee}

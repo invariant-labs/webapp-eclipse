@@ -45,6 +45,4 @@ export interface ProcessedPool {
   poolData: PoolWithAddressAndIndex
   tokenX: Token
   tokenY: Token
-  unclaimedFee: number
-  value: number
 }

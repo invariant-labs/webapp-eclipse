@@ -5,7 +5,7 @@ import classNames from 'classnames'
 import { Token } from '@components/OverviewYourPositions/types/types'
 import { useStyles } from './styles'
 import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { singlePositionData } from '@store/selectors/positions'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumber, getMockedTokenPrice, getTokenPrice, printBN } from '@utils/utils'
@@ -14,6 +14,7 @@ import { getMarketProgram } from '@utils/web3/programs/amm'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
+import { actions } from '@store/reducers/positions'
 
 interface TokenPriceData {
   price: number
@@ -34,21 +35,17 @@ interface UnclaimedFeeItemProps {
     tokenX: Token
     tokenY: Token
     fee: number
-    value: number
-    unclaimedFee: number
   }
   onValueUpdate?: (id: string, value: number, unclaimedFee: number) => void
 
   hideBottomLine?: boolean
-  onClaim?: () => void
 }
 
 export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
   type,
   data,
   hideBottomLine,
-  onValueUpdate,
-  onClaim
+  onValueUpdate
 }) => {
   const { classes } = useStyles()
   const [positionTicks, setPositionTicks] = useState<PositionTicks>({
@@ -56,6 +53,7 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
     upperTick: undefined,
     loading: false
   })
+  const dispatch = useDispatch()
   const [showFeesLoader, setShowFeesLoader] = useState(true)
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData>({
     price: 0,
@@ -293,7 +291,13 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
         ) : (
           <Button
             className={classes.claimButton}
-            onClick={onClaim}
+            onClick={() => {
+              if (!position) return undefined
+              setShowFeesLoader(true)
+              dispatch(
+                actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked })
+              )
+            }}
             disabled={isLoading || unclaimedFeesInUSD === 0}>
             {isLoading ? 'Loading...' : 'Claim fee'}
           </Button>

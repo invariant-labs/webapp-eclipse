@@ -56,13 +56,10 @@ export const UnclaimedFeeList: React.FC<UnclaimedFeeListProps> = ({
                 index: index + 1,
                 tokenX: fee.tokenX,
                 tokenY: fee.tokenY,
-                fee: fee.fee,
-                value: fee.value,
-                unclaimedFee: fee.unclaimedFee
+                fee: fee.fee
               }}
               onValueUpdate={handleValueUpdate}
               hideBottomLine={index === fees.length - 1}
-              onClaim={() => onClaimFee?.(fee.id.toString())}
             />
           ))}
         </Box>
