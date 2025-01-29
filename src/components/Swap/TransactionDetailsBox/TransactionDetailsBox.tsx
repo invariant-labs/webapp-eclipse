@@ -6,6 +6,8 @@ import { useStyles } from './styles'
 import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 
+import RouteBox from './RouteBox/RouteBox'
+
 interface IProps {
   open: boolean
   fee: BN
@@ -60,6 +62,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           <Typography className={classes.value}>{slippage}%</Typography>
         </Grid>
       </Grid>
+      <RouteBox />
     </Grid>
   )
 }
