@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Box, Grid } from '@mui/material'
 import classNames from 'classnames'
 import { ProcessedPool } from '@components/OverviewYourPositions/types/types'
@@ -9,14 +9,35 @@ interface UnclaimedFeeListProps {
   fees: ProcessedPool[]
   isLoading?: boolean
   onClaimFee?: (feeId: string) => void
+  onValuesUpdate?: (totalValue: number, totalUnclaimedFees: number) => void
 }
 
 export const UnclaimedFeeList: React.FC<UnclaimedFeeListProps> = ({
   fees = [],
   isLoading = false,
-  onClaimFee
+  onClaimFee,
+  onValuesUpdate
 }) => {
   const { classes } = useStyles()
+  const [itemValues, setItemValues] = useState<
+    Record<string, { value: number; unclaimedFee: number }>
+  >({})
+
+  useEffect(() => {
+    const totalValue = Object.values(itemValues).reduce((sum, item) => sum + item.value, 0)
+    const totalUnclaimedFees = Object.values(itemValues).reduce(
+      (sum, item) => sum + item.unclaimedFee,
+      0
+    )
+    onValuesUpdate?.(totalValue, totalUnclaimedFees)
+  }, [itemValues, onValuesUpdate])
+
+  const handleValueUpdate = useCallback((id: string, value: number, unclaimedFee: number) => {
+    setItemValues(prev => ({
+      ...prev,
+      [id]: { value, unclaimedFee }
+    }))
+  }, [])
 
   return (
     <Grid
@@ -33,13 +54,13 @@ export const UnclaimedFeeList: React.FC<UnclaimedFeeListProps> = ({
               data={{
                 id: fee.id,
                 index: index + 1,
-                // position: fee.position,
                 tokenX: fee.tokenX,
                 tokenY: fee.tokenY,
                 fee: fee.fee,
                 value: fee.value,
                 unclaimedFee: fee.unclaimedFee
               }}
+              onValueUpdate={handleValueUpdate}
               hideBottomLine={index === fees.length - 1}
               onClaim={() => onClaimFee?.(fee.id.toString())}
             />

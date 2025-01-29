@@ -37,6 +37,8 @@ interface UnclaimedFeeItemProps {
     value: number
     unclaimedFee: number
   }
+  onValueUpdate?: (id: string, value: number, unclaimedFee: number) => void
+
   hideBottomLine?: boolean
   onClaim?: () => void
 }
@@ -45,6 +47,7 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
   type,
   data,
   hideBottomLine,
+  onValueUpdate,
   onClaim
 }) => {
   const { classes } = useStyles()
@@ -221,6 +224,13 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
     console.log('Liq:' + tokenXLiquidity)
     return totalValueOfTokensInUSD
   }, [data?.tokenX, data?.tokenY])
+  useEffect(() => {
+    if (data?.id && !isLoading) {
+      const currentValue = tokenValueInUsd
+      const currentUnclaimedFee = unclaimedFeesInUSD
+      onValueUpdate?.(data.id, currentValue, currentUnclaimedFee)
+    }
+  }, [data?.id, tokenValueInUsd, unclaimedFeesInUSD, isLoading, onValueUpdate])
   return (
     <Grid
       container
