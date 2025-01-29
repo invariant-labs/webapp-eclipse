@@ -8,11 +8,17 @@ import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { useSelector } from 'react-redux'
 import { singlePositionData } from '@store/selectors/positions'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { printBN } from '@utils/utils'
-import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
+import { formatNumber, getMockedTokenPrice, getTokenPrice, printBN } from '@utils/utils'
+import { calculatePriceSqrt, IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getEclipseWallet } from '@utils/web3/wallet'
+import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
+
+interface TokenPriceData {
+  price: number
+  loading: boolean
+}
 
 interface PositionTicks {
   lowerTick: Tick | undefined
@@ -48,16 +54,91 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
     loading: false
   })
   const [showFeesLoader, setShowFeesLoader] = useState(true)
+  const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData>({
+    price: 0,
+    loading: true
+  })
+  const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData>({
+    price: 0,
+    loading: true
+  })
 
   const position = useSelector(singlePositionData(data?.id ?? ''))
+
+  const tokenXLiquidity = useMemo(() => {
+    if (position) {
+      try {
+        return +printBN(
+          getX(
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
+          ),
+          position.tokenX.decimals
+        )
+      } catch (error) {
+        return 0
+      }
+    }
+
+    return 0
+  }, [position])
+
+  const tokenYLiquidity = useMemo(() => {
+    if (position) {
+      try {
+        return +printBN(
+          getY(
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
+          ),
+          position.tokenY.decimals
+        )
+      } catch (error) {
+        console.log(error)
+        return 0
+      }
+    }
+
+    return 0
+  }, [position])
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = icons.unknownToken
   }
-  const wallet = getEclipseWallet()
 
+  const wallet = getEclipseWallet()
   const networkType = useSelector(network)
   const rpc = useSelector(rpcAddress)
+
+  useEffect(() => {
+    if (!data?.tokenX.coingeckoId || !data?.tokenY.coingeckoId) return
+
+    const fetchPrices = async () => {
+      getTokenPrice(data.tokenX.coingeckoId ?? '')
+        .then(price => setTokenXPriceData({ price: price ?? 0, loading: false }))
+        .catch(() => {
+          setTokenXPriceData({
+            price: getMockedTokenPrice(data.tokenX.name, networkType).price,
+            loading: false
+          })
+        })
+
+      getTokenPrice(data.tokenY.coingeckoId ?? '')
+        .then(price => setTokenYPriceData({ price: price ?? 0, loading: false }))
+        .catch(() => {
+          setTokenYPriceData({
+            price: getMockedTokenPrice(data.tokenY.name, networkType).price,
+            loading: false
+          })
+        })
+    }
+
+    fetchPrices()
+  }, [data?.tokenX.coingeckoId, data?.tokenY.coingeckoId, networkType])
 
   useEffect(() => {
     const fetchTicksForPosition = async () => {
@@ -77,8 +158,6 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
           marketProgram.getTick(pair, position.upperTickIndex)
         ])
 
-        console.log({ lowerTick: lowerTick.index, upperTick: upperTick.index, position })
-
         setPositionTicks({
           lowerTick,
           upperTick,
@@ -97,7 +176,7 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
     fetchTicksForPosition()
   }, [data?.id, position])
 
-  const [tokenXClaim, tokenYClaim] = useMemo(() => {
+  const [_tokenXClaim, _tokenYClaim, unclaimedFeesInUSD] = useMemo(() => {
     if (
       !positionTicks.loading &&
       position?.poolData &&
@@ -113,14 +192,35 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
         feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
       })
 
+      const xAmount = +printBN(bnX, position.tokenX.decimals)
+      const yAmount = +printBN(bnY, position.tokenY.decimals)
+
+      // Calculate USD value
+      const xValueInUSD = xAmount * tokenXPriceData.price
+      const yValueInUSD = yAmount * tokenYPriceData.price
+      const totalValueInUSD = xValueInUSD + yValueInUSD
+
       setShowFeesLoader(false)
 
-      return [+printBN(bnX, position.tokenX.decimals), +printBN(bnY, position.tokenY.decimals)]
+      return [xAmount, yAmount, totalValueInUSD]
     }
 
-    return [0, 0]
-  }, [position, positionTicks])
-  console.log({ tokenXClaim, tokenYClaim })
+    return [0, 0, 0]
+  }, [position, positionTicks, tokenXPriceData.price, tokenYPriceData.price])
+
+  const isLoading = showFeesLoader || tokenXPriceData.loading || tokenYPriceData.loading
+  const tokenValueInUsd = useMemo(() => {
+    if (!tokenXLiquidity && !tokenYLiquidity) {
+      return 0
+    }
+
+    const totalValueOfTokensInUSD =
+      tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
+
+    console.log('Price:' + tokenXPriceData.price)
+    console.log('Liq:' + tokenXLiquidity)
+    return totalValueOfTokensInUSD
+  }, [data?.tokenX, data?.tokenY])
   return (
     <Grid
       container
@@ -166,15 +266,15 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
       </Typography>
 
       <Typography style={{ alignSelf: 'center' }}>
-        {type === 'header' ? 'Value' : `$${data?.value.toFixed(2)}`}
+        {type === 'header' ? 'Value' : `$${formatNumber(tokenValueInUsd.toFixed(6))}`}
       </Typography>
 
       <Typography style={{ alignSelf: 'center' }}>
         {type === 'header'
           ? 'Unclaimed fee'
-          : showFeesLoader
+          : isLoading
             ? 'Loading...'
-            : `$${(tokenXClaim + tokenYClaim).toFixed(6)}`}
+            : `$${unclaimedFeesInUSD.toFixed(6)}`}
       </Typography>
 
       <Grid container justifyContent='flex-end' alignItems='center'>
@@ -184,8 +284,8 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
           <Button
             className={classes.claimButton}
             onClick={onClaim}
-            disabled={showFeesLoader || tokenXClaim + tokenYClaim === 0}>
-            {showFeesLoader ? 'Loading...' : 'Claim fee'}
+            disabled={isLoading || unclaimedFeesInUSD === 0}>
+            {isLoading ? 'Loading...' : 'Claim fee'}
           </Button>
         )}
       </Grid>

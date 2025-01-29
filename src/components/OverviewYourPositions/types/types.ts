@@ -1,10 +1,13 @@
 import { IPositionItem } from '@components/PositionsList/types'
+import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 
 export interface Token {
   name: string
   decimal: number
+  balance: BN
+  coingeckoId?: string
   icon: string
 }
 
@@ -40,16 +43,8 @@ export interface ProcessedPool {
   upperTickIndex: number
   position: IPositionItem
   poolData: PoolWithAddressAndIndex
-  tokenX: {
-    decimal: number
-    icon: string
-    name: string
-  }
-  tokenY: {
-    decimal: number
-    icon: string
-    name: string
-  }
+  tokenX: Token
+  tokenY: Token
   unclaimedFee: number
   value: number
 }

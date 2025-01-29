@@ -33,7 +33,7 @@ export const UnclaimedFeeList: React.FC<UnclaimedFeeListProps> = ({
               data={{
                 id: fee.id,
                 index: index + 1,
-                position: fee.position,
+                // position: fee.position,
                 tokenX: fee.tokenX,
                 tokenY: fee.tokenY,
                 fee: fee.fee,

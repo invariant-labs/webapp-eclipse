@@ -87,10 +87,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [position?.id])
 
   useEffect(() => {
-    console.log({ lowerTickIndex: lowerTick?.index, upperTickIndex: upperTick?.index })
-  }, [lowerTick, upperTick])
-
-  useEffect(() => {
     if (waitingForTicksData === true && !currentPositionTicksLoading) {
       setWaitingForTicksData(false)
     }
