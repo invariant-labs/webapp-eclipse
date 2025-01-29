@@ -1,110 +1,92 @@
-import { useState, useCallback } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
-
-import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { printBN } from '@utils/utils'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { getMarketProgram } from '@utils/web3/programs/amm'
+import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 import { NetworkType } from '@store/consts/static'
-import { getEclipseWallet } from '@utils/web3/wallet'
 
-interface TickData {
-  lower: Tick
-  upper: Tick
-  lowerIndex: number
-  upperIndex: number
-  poolAddress: string
+interface PositionTicks {
+  lowerTick: Tick | undefined
+  upperTick: Tick | undefined
+  loading: boolean
+  error?: string
 }
 
-interface PositionTicksMap {
-  [positionId: string]: TickData
+interface UsePositionTicksProps {
+  positionId: string | undefined
+  poolData: PoolWithAddressAndIndex | undefined
+  lowerTickIndex: number
+  upperTickIndex: number
+  networkType: NetworkType
+  rpc: string
+  wallet: IWallet | null
 }
 
-interface UsePositionTicksReturn {
-  positionTicks: PositionTicksMap
-  isLoading: boolean
-  error: Error | null
-  fetchPositionTicks: (
-    positionId: string,
-    poolData: any,
-    lowerTickIndex: number,
-    upperTickIndex: number
-  ) => Promise<void>
-  calculateFeesForPosition: (positionId: string, position: any) => [number, number] | null
-}
+export const usePositionTicks = ({
+  positionId,
+  poolData,
+  lowerTickIndex,
+  upperTickIndex,
+  networkType,
+  rpc,
+  wallet
+}: UsePositionTicksProps): PositionTicks => {
+  const [positionTicks, setPositionTicks] = useState<PositionTicks>({
+    lowerTick: undefined,
+    upperTick: undefined,
+    loading: false
+  })
 
-export const usePositionTicks = (
-  networkType: NetworkType,
-  rpcAddress: string
-): UsePositionTicksReturn => {
-  const [positionTicks, setPositionTicks] = useState<PositionTicksMap>({})
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [error, setError] = useState<Error | null>(null)
+  const fetchTicksForPosition = useCallback(async () => {
+    if (!positionId || !poolData || !wallet) {
+      setPositionTicks(prev => ({ ...prev, loading: false }))
+      return
+    }
 
-  const fetchPositionTicks = useCallback(
-    async (positionId: string, poolData: any, lowerTickIndex: number, upperTickIndex: number) => {
-      setIsLoading(true)
-      setError(null)
+    setPositionTicks(prev => ({ ...prev, loading: true, error: undefined }))
 
-      try {
-        const wallet = getEclipseWallet()
-
-        const marketProgram = await getMarketProgram(networkType, rpcAddress, wallet as IWallet)
-
-        const pair = new Pair(poolData.tokenX, poolData.tokenY, {
-          fee: poolData.fee,
-          tickSpacing: poolData.tickSpacing
-        })
-
-        const [lowerTick, upperTick] = await Promise.all([
-          marketProgram.getTick(pair, lowerTickIndex),
-          marketProgram.getTick(pair, upperTickIndex)
-        ])
-
-        setPositionTicks(prev => ({
-          ...prev,
-          [positionId]: {
-            lower: lowerTick,
-            upper: upperTick,
-            lowerIndex: lowerTickIndex,
-            upperIndex: upperTickIndex,
-            poolAddress: poolData.address
-          }
-        }))
-      } catch (err) {
-        setError(err as Error)
-        console.error('Error fetching position ticks:', err)
-      } finally {
-        setIsLoading(false)
-      }
-    },
-    [networkType, rpcAddress]
-  )
-
-  const calculateFeesForPosition = useCallback(
-    (positionId: string, position: any): [number, number] | null => {
-      const tickData = positionTicks[positionId]
-      if (!tickData || !position?.poolData) return null
-
-      const [bnX, bnY] = calculateClaimAmount({
-        position,
-        tickLower: tickData.lower,
-        tickUpper: tickData.upper,
-        tickCurrent: position.poolData.currentTickIndex,
-        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
-        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+    try {
+      const marketProgram = await getMarketProgram(networkType, rpc, wallet)
+      const pair = new Pair(poolData.tokenX, poolData.tokenY, {
+        fee: poolData.fee,
+        tickSpacing: poolData.tickSpacing
       })
 
-      return [+printBN(bnX, position.tokenX.decimals), +printBN(bnY, position.tokenY.decimals)]
-    },
-    [positionTicks]
-  )
+      const [lowerTick, upperTick] = await Promise.all([
+        marketProgram.getTick(pair, lowerTickIndex),
+        marketProgram.getTick(pair, upperTickIndex)
+      ])
 
-  return {
-    positionTicks,
-    isLoading,
-    error,
-    fetchPositionTicks,
-    calculateFeesForPosition
-  }
+      setPositionTicks({
+        lowerTick,
+        upperTick,
+        loading: false
+      })
+    } catch (error) {
+      console.error('Error fetching ticks:', error)
+      setPositionTicks({
+        lowerTick: undefined,
+        upperTick: undefined,
+        loading: false,
+        error: error instanceof Error ? error.message : 'Unknown error occurred'
+      })
+    }
+  }, [positionId, poolData, networkType, rpc, wallet, lowerTickIndex, upperTickIndex])
+
+  useEffect(() => {
+    let mounted = true
+
+    const fetch = async () => {
+      if (!mounted) return
+      await fetchTicksForPosition()
+    }
+
+    fetch()
+
+    return () => {
+      mounted = false
+    }
+  }, [fetchTicksForPosition])
+
+  return positionTicks
 }
