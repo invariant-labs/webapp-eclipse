@@ -80,7 +80,9 @@ import {
   TURBO_AI_MAIN,
   ORCA_MAIN,
   SOLAR_MAIN,
-  WETH_MAIN
+  WETH_MAIN,
+  KYSOL_MAIN,
+  EZSOL_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -889,7 +891,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [DOGW_MAIN.address.toString()]: DOGW_MAIN,
         [TURBO_AI_MAIN.address.toString()]: TURBO_AI_MAIN,
         [ORCA_MAIN.address.toString()]: ORCA_MAIN,
-        [SOLAR_MAIN.address.toString()]: SOLAR_MAIN
+        [SOLAR_MAIN.address.toString()]: SOLAR_MAIN,
+        [KYSOL_MAIN.address.toString()]: KYSOL_MAIN,
+        [EZSOL_MAIN.address.toString()]: EZSOL_MAIN
       }
     case NetworkType.Devnet:
       return {
