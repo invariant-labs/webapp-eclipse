@@ -13,7 +13,7 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 import { Link } from 'react-router-dom'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
-import { formatNumberWithCommas, printBN } from '@utils/utils'
+import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import RewardsList from '../RewardsList/RewardsList'
 
 export const Rewards = () => {
@@ -65,8 +65,11 @@ export const Rewards = () => {
                 }}>
                 <Typography className={classes.pointsValue}>
                   {currentUser
-                    ? formatNumberWithCommas(
-                        printBN(new BN(currentUser.total?.points, 'hex'), LEADERBOARD_DECIMAL)
+                    ? removeAdditionalDecimals(
+                        formatNumberWithCommas(
+                          printBN(new BN(currentUser.total?.points, 'hex'), LEADERBOARD_DECIMAL)
+                        ),
+                        2
                       )
                     : 0}{' '}
                   points

@@ -59,6 +59,7 @@ import arrowRight from './svg/arrowRight.svg'
 import infoCircle from './svg/infoCircle.svg'
 import boostPoints from './svg/boostPoints.svg'
 import airdropGrey from './svg/airdropGrey.svg'
+import infoError from './svg/infoError.svg'
 import okxLogo from './svg/okx-logo.svg'
 
 const icons: { [key: string]: string } = {
@@ -123,6 +124,7 @@ const icons: { [key: string]: string } = {
   infoCircle,
   boostPoints,
   airdropGrey,
+  infoError,
   okxLogo
 }
 

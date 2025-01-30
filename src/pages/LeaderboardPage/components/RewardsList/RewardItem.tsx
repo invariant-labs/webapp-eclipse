@@ -3,29 +3,33 @@ import { useStyles } from './style'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
 import { theme } from '@static/theme'
-import { eligibleAddresses } from '@store/consts/static'
 import { Reward } from '@store/consts/types'
-import rewardsImages from '@static/png/nft/nftImages'
+import rewardsImages from '@static/png/rewards/rewardsImages'
 import classNames from 'classnames'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 export interface RewardItemInterface {
   number: number
-  nft: Reward
+  reward: Reward
   userAddress: string
   isConnected?: boolean
 }
 
-const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, isConnected }) => {
+const RewardItem: React.FC<RewardItemInterface> = ({
+  number,
+  reward,
+  userAddress,
+  isConnected
+}) => {
   const { classes } = useStyles({ isEven: number % 2 === 0 })
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const isEligible = useMemo(() => {
-    return eligibleAddresses.find(a => a.rewardKey === nft.key && a.addresses.includes(userAddress))
-  }, [eligibleAddresses, userAddress, nft])
+    return reward.addresses.includes(userAddress)
+  }, [userAddress, reward])
 
   const rewardReceived = useMemo(() => {
-    return isEligible && nft.distributionDate < new Date().toISOString()
-  }, [isEligible, nft])
+    return isEligible && reward.distributionDate < new Date().toISOString()
+  }, [isEligible, reward])
 
   const textInfo = useMemo(() => {
     if (!isConnected) {
@@ -37,7 +41,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, i
         tooltip: 'The prize has already been distributed.'
       }
     } else if (isEligible) {
-      return { text: 'Claim', tooltip: `Prize will be distributed at ${nft.distributionDate}` }
+      return { text: 'Claim', tooltip: `Prize will be distributed at ${reward.distributionDate}` }
     }
 
     return { text: 'Claim', tooltip: 'Prize not available.' }
@@ -63,8 +67,8 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, i
           <Typography className={classes.number}>{number}</Typography>
           <Grid display='flex' justifyContent='center' alignItems='center'>
             <img
-              src={rewardsImages[nft.key]}
-              alt={nft.name}
+              src={rewardsImages[reward.image]}
+              alt={reward.name}
               style={{ width: isMd ? '100px' : '200px', borderRadius: 8 }}
             />
           </Grid>
@@ -80,7 +84,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, i
           m={6}>
           <Grid display='flex' justifyContent='center' alignItems='center'>
             <img src={icons.airdropGrey} alt='points' />
-            <Typography className={classes.subtitle}>{nft.name}</Typography>
+            <Typography className={classes.subtitle}>{reward.name}</Typography>
           </Grid>
           <Typography className={classes.title}>
             {isEligible ? 'Eligible' : 'Not eligible'}
@@ -105,7 +109,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, i
             alignItems='center'
             className={classes.label}>
             <Typography>Distribution date:</Typography>
-            <span>{nft.distributionDate}</span>
+            <span>{reward.distributionDate}</span>
           </Grid>
           <Grid
             display='flex'
@@ -113,7 +117,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, i
             alignItems='center'
             className={classes.label}>
             <Typography>Type:</Typography>
-            <span>NFT</span>
+            <span>{reward.type}</span>
           </Grid>
           <Grid
             display='flex'
@@ -121,7 +125,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({ number, nft, userAddress, i
             alignItems='center'
             className={classes.label}>
             <Typography>Eligible:</Typography>
-            <span>Top {nft.eligible}</span>
+            <span>{reward.eligible}</span>
           </Grid>
         </Grid>
       </Grid>
