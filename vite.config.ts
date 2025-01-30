@@ -44,7 +44,8 @@ export default defineConfig({
     rollupOptions: {
       external: ['fs/promises', 'path'],
       plugins: [inject({ Buffer: ['buffer', 'Buffer'] })]
-    }
+    },
+    minify: false
   },
   optimizeDeps: {
     esbuildOptions: {
