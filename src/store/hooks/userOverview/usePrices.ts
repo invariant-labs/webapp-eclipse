@@ -1,8 +1,8 @@
 import { getTokenPrice, getMockedTokenPrice } from '@utils/utils'
 import { useState, useEffect } from 'react'
-import { UnclaimedFeeItemProps } from '../components/UnclaimedFeeList/UnclaimedFeeItem/UnclaimedFeeItem'
 import { network } from '@store/selectors/solanaConnection'
 import { useSelector } from 'react-redux'
+import { UnclaimedFeeItemProps } from '@components/OverviewYourPositions/components/UnclaimedFeeList/UnclaimedFeeItem/UnclaimedFeeItem'
 
 interface TokenPriceData {
   price: number

@@ -6,13 +6,11 @@ export const useDebounceLoading = (isLoading: boolean, delay: number = 500) => {
 
   useEffect(() => {
     if (isLoading) {
-      // If we're going into loading state, only show it after delay
       const newTimer = setTimeout(() => {
         setDebouncedLoading(true)
       }, delay)
       setTimer(newTimer)
     } else {
-      // If we're leaving loading state, clear timer and update immediately
       if (timer) {
         clearTimeout(timer)
         setTimer(null)
