@@ -9,7 +9,6 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       flexDirection: 'row',
       gap: 24,
-      width: '100%',
       [theme.breakpoints.down('lg')]: {
         flexDirection: 'column'
       }
