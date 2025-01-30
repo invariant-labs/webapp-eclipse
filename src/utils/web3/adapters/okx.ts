@@ -80,7 +80,7 @@ export class OkxWalletAdapter implements WalletAdapter {
     if ((window as any)?.okxwallet) {
       provider = (window as any).okxwallet.solana
     } else {
-      window.open('https://www.okx.com/', '_blank')
+      window.open('https://www.okx.com/download', '_blank')
       return
     }
 
