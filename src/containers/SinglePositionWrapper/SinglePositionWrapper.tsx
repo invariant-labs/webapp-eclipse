@@ -81,8 +81,13 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     // if (position?.id && waitingForTicksData === null && allTickMaps[poolKey] !== undefined) {
     if (position?.id && waitingForTicksData === null) {
       setWaitingForTicksData(true)
-
       dispatch(actions.getCurrentPositionRangeTicks(id))
+      dispatch(
+        actions.getCurrentPlotTicks({
+          poolIndex: position.poolData.poolIndex,
+          isXtoY: true
+        })
+      )
     }
   }, [position?.id])
 
