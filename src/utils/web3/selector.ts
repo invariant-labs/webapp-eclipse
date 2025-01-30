@@ -1,22 +1,24 @@
 import { NightlyConnectAdapter } from '@nightlylabs/wallet-selector-solana'
 
-export const nightlyConnectAdapter: NightlyConnectAdapter = await NightlyConnectAdapter.build({
-  appMetadata: {
-    name: 'Invariant',
-    description: 'Invariant - AMM DEX provided concentrated liquidity',
-    icon: 'https://invariant.app/favicon-192x192.png'
+export const nightlyConnectAdapter: NightlyConnectAdapter = await NightlyConnectAdapter.build(
+  {
+    appMetadata: {
+      name: 'Invariant',
+      description: 'Invariant - AMM DEX provided concentrated liquidity',
+      icon: 'https://invariant.app/favicon-192x192.png'
+    },
+    url: 'https://nc2.nightly.app',
+    persistent: true
   },
-  url: 'https://nc2.nightly.app'
-})
+  true
+)
 
 export const openWalletSelectorModal = async () => {
   try {
     if (nightlyConnectAdapter.connected) {
       return
     }
-    console.log('nightlyConnectAdapter.connect()')
-    const connect = await nightlyConnectAdapter.connect()
-    console.log(connect)
+    await nightlyConnectAdapter.connect()
   } catch (error) {
     console.log(error)
   }

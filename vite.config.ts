@@ -42,8 +42,8 @@ export default defineConfig({
   build: {
     target: 'es2020',
     rollupOptions: {
-      // external: ['fs/promises', 'path']
-      // plugins: [inject({ Buffer: ['buffer', 'Buffer'] })]
+      external: ['fs/promises', 'path'],
+      plugins: [inject({ Buffer: ['buffer', 'Buffer'] })]
     },
     minify: false
   },
