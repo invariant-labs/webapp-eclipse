@@ -3,6 +3,7 @@ import { Box, Typography, Skeleton } from '@mui/material'
 import { useStyles } from './styles'
 import { PoolItem } from '../PoolItem/PoolItem'
 import { TokenPool } from '@components/OverviewYourPositions/types/types'
+import { useDebounceLoading } from '@components/OverviewYourPositions/hooks/useDebounceLoading'
 
 interface YourWalletProps {
   pools: TokenPool[]
@@ -12,8 +13,11 @@ interface YourWalletProps {
 
 export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool, isLoading }) => {
   const { classes } = useStyles()
+  const debouncedIsLoading = useDebounceLoading(isLoading)
 
   const totalValue = useMemo(() => pools.reduce((sum, pool) => sum + pool.value, 0), [pools])
+
+  const shouldShowSkeletons = debouncedIsLoading || pools.length <= 0
 
   const renderSkeletons = () => {
     return Array(2)
@@ -27,10 +31,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
               <Skeleton variant='text' width='40%' height={20} />
             </Box>
           </Box>
-          {/* <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 1 }}>
-            <Skeleton variant='text' width='30%' height={24} />
-            <Skeleton variant='text' width='20%' height={24} />
-          </Box> */}
         </Box>
       ))
   }
@@ -39,7 +39,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
     <Box className={classes.container}>
       <Box className={classes.header}>
         <Typography className={classes.headerText}>Your Wallet</Typography>
-        {isLoading ? (
+        {debouncedIsLoading ? (
           <Skeleton variant='text' width={120} height={32} />
         ) : (
           <Typography className={classes.headerText}>
@@ -49,7 +49,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
       </Box>
 
       <Box className={classes.poolsGrid}>
-        {isLoading || pools.length <= 0
+        {shouldShowSkeletons
           ? renderSkeletons()
           : pools.map(pool => (
               <PoolItem key={pool.id.toString()} pool={pool} onAddClick={onAddToPool} />

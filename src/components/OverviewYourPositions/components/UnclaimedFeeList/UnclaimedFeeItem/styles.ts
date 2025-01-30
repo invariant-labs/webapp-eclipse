@@ -44,7 +44,7 @@ export const useStyles = makeStyles()(() => ({
   },
   blur: {
     width: 120,
-    height: 40,
+    height: 30,
     borderRadius: 16,
     background: `linear-gradient(90deg, ${colors.invariant.component} 25%, ${colors.invariant.light} 50%, ${colors.invariant.component} 75%)`,
     backgroundSize: '200% 100%',

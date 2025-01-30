@@ -16,6 +16,7 @@ import { usePositionTicks } from '@components/OverviewYourPositions/hooks/usePos
 import { usePrices } from '@components/OverviewYourPositions/hooks/usePrices'
 import { useLiquidity } from '@components/OverviewYourPositions/hooks/useLiquidity'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
+import { useDebounceLoading } from '@components/OverviewYourPositions/hooks/useDebounceLoading'
 
 interface PositionTicks {
   lowerTick: Tick | undefined
@@ -33,7 +34,6 @@ export interface UnclaimedFeeItemProps {
     fee: number
   }
   onValueUpdate?: (id: string, value: number, unclaimedFee: number) => void
-
   hideBottomLine?: boolean
 }
 
@@ -44,22 +44,23 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
   onValueUpdate
 }) => {
   const { classes } = useStyles()
+  const dispatch = useDispatch()
+
+  const [isClaimLoading, setIsClaimLoading] = useState(false)
+  const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number | null>(null)
   const [positionTicks, setPositionTicks] = useState<PositionTicks>({
     lowerTick: undefined,
     upperTick: undefined,
     loading: false
   })
 
-  const dispatch = useDispatch()
-  const [showFeesLoader, setShowFeesLoader] = useState(true)
-
   const position = useSelector(singlePositionData(data?.id ?? ''))
   const wallet = getEclipseWallet()
   const networkType = useSelector(network)
   const rpc = useSelector(rpcAddress)
   const { tokenXLiquidity, tokenYLiquidity } = useLiquidity(position)
-
   const { tokenXPriceData, tokenYPriceData } = usePrices({ data })
+
   const {
     lowerTick,
     upperTick,
@@ -109,34 +110,53 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
       const yValueInUSD = yAmount * tokenYPriceData.price
       const totalValueInUSD = xValueInUSD + yValueInUSD
 
-      setShowFeesLoader(false)
+      if (!isClaimLoading && totalValueInUSD > 0) {
+        setPreviousUnclaimedFees(totalValueInUSD)
+      }
 
       return [xAmount, yAmount, totalValueInUSD]
     }
 
-    return [0, 0, 0]
-  }, [position, positionTicks, tokenXPriceData.price, tokenYPriceData.price])
+    return [0, 0, previousUnclaimedFees ?? 0]
+  }, [
+    position,
+    positionTicks,
+    tokenXPriceData.price,
+    tokenYPriceData.price,
+    isClaimLoading,
+    previousUnclaimedFees
+  ])
 
-  const isLoading = showFeesLoader || tokenXPriceData.loading || tokenYPriceData.loading
+  const rawIsLoading =
+    ticksLoading || tokenXPriceData.loading || tokenYPriceData.loading || isClaimLoading
+  const isLoading = useDebounceLoading(rawIsLoading)
+
   const tokenValueInUsd = useMemo(() => {
     if (!tokenXLiquidity && !tokenYLiquidity) {
       return 0
     }
 
-    const totalValueOfTokensInUSD =
-      tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
+    return tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
+  }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData.price, tokenYPriceData.price])
 
-    console.log('Price:' + tokenXPriceData.price)
-    console.log('Liq:' + tokenXLiquidity)
-    return totalValueOfTokensInUSD
-  }, [data?.tokenX, data?.tokenY])
   useEffect(() => {
     if (data?.id && !isLoading) {
-      const currentValue = tokenValueInUsd
-      const currentUnclaimedFee = unclaimedFeesInUSD
-      onValueUpdate?.(data.id, currentValue, currentUnclaimedFee)
+      onValueUpdate?.(data.id, tokenValueInUsd, unclaimedFeesInUSD)
     }
   }, [data?.id, tokenValueInUsd, unclaimedFeesInUSD, isLoading, onValueUpdate])
+
+  const handleClaimFee = async () => {
+    if (!position) return
+
+    setIsClaimLoading(true)
+    try {
+      dispatch(actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked }))
+    } finally {
+      setIsClaimLoading(false)
+      setPreviousUnclaimedFees(0)
+    }
+  }
+
   return (
     <Grid
       container
@@ -186,11 +206,13 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
       </Typography>
 
       <Typography style={{ alignSelf: 'center' }}>
-        {type === 'header'
-          ? 'Unclaimed fee'
-          : isLoading
-            ? 'Loading...'
-            : `$${unclaimedFeesInUSD.toFixed(6)}`}
+        {type === 'header' ? (
+          'Unclaimed fee'
+        ) : isLoading ? (
+          <div className={classes.blur} />
+        ) : (
+          `$${unclaimedFeesInUSD.toFixed(6)}`
+        )}
       </Typography>
 
       <Grid container justifyContent='flex-end' alignItems='center'>
@@ -199,15 +221,15 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
         ) : (
           <Button
             className={classes.claimButton}
-            onClick={() => {
-              if (!position) return undefined
-              setShowFeesLoader(true)
-              dispatch(
-                actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked })
-              )
-            }}
+            onClick={handleClaimFee}
             disabled={isLoading || unclaimedFeesInUSD === 0}>
-            {isLoading ? 'Loading...' : 'Claim fee'}
+            {isClaimLoading ? (
+              <div className={classes.blur} />
+            ) : isLoading ? (
+              <div className={classes.blur} />
+            ) : (
+              'Claim fee'
+            )}
           </Button>
         )}
       </Grid>
