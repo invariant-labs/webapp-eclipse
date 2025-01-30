@@ -7,6 +7,7 @@ export const useStyles = makeStyles()(() => ({
     minHeight: '280px',
     borderRadius: '24px'
   },
+
   header: {
     display: 'flex',
     justifyContent: 'space-between'
