@@ -4,9 +4,9 @@ import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from './static'
 
 declare global {
-  interface Window {
-    solana: any
-  }
+  // interface Window {
+  //   solana: any
+  // }
 
   interface ImportMeta {
     globEager: (x: string) => { [propertyName: string]: { default: string } }
