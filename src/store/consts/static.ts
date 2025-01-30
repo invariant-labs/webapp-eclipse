@@ -443,6 +443,27 @@ export const DOGO_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const EZSOL_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'ezSOL',
+  address: new PublicKey('Fu5P5ikrnQ8BKZECJ1XeeDAaTgWJUrcjw8JmFrNA8TJk'),
+  decimals: 9,
+  name: 'Renzo Restaked SOL',
+  logoURI:
+    'https://nhjibgkrkpvjc4pzb3bk3v2ocom53mu3ruaslsclskqbteianmea.arweave.net/adKAmVFT6pFx-Q7CrddOE5ndspuNASXIS5KgGZEAawg',
+  coingeckoId: ''
+}
+
+export const KYSOL_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'kySOL',
+  address: new PublicKey('8jN7xMDqJucigQphWHvqAPQPAmk7VJKKsqLmgCkE7XzP'),
+  decimals: 9,
+  name: 'Token Kyros Restaked SOL',
+  logoURI: 'https://bafybeif3jzrcvwktu5bi7wcuxzr36fygo4vqctatapy7zqxawojxrnexwi.ipfs.dweb.link/',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -718,7 +739,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       PUNKSTAR: PUNKSTAR_MAIN.address.toString(),
       TURBO_AI: TURBO_AI_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
-      SOLAR: SOLAR_MAIN.address.toString()
+      SOLAR: SOLAR_MAIN.address.toString(),
+      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
+      EZSOL_MAIN: EZSOL_MAIN.address.toString()
     }
   }
 }
@@ -777,16 +800,7 @@ export const RECOMMENDED_RPC_ADDRESS = {
 
 export const DEFAULT_TOKEN_DECIMAL = 6
 
-export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
-
-export const DEFAULT_TOKENS = [
-  'solana',
-  'dogwifcoin',
-  'turbo-eth',
-  'laika-3',
-  'mooncoin-2',
-  'bridged-wrapped-ether-eclipse'
-]
+export const PRICE_QUERY_COOLDOWN = 60 * 1000
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
@@ -831,16 +845,5 @@ export const getPopularPools = (network: NetworkType) => {
       return []
   }
 }
-
-export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
-  {
-    coingeckoId: 'usd-coin',
-    solanaAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-  },
-  {
-    coingeckoId: 'tether',
-    solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
-  }
-]
 
 export const rewards = rewardsArray as Reward[]
