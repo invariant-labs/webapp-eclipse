@@ -8,15 +8,18 @@ import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { useDispatch, useSelector } from 'react-redux'
 import { singlePositionData } from '@store/selectors/positions'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { formatNumber, printBN } from '@utils/utils'
+import { formatNumber, getMockedTokenPrice, getTokenPrice, printBN } from '@utils/utils'
+import { calculatePriceSqrt, IWallet, Pair } from '@invariant-labs/sdk-eclipse'
+import { getMarketProgram } from '@utils/web3/programs/amm'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getEclipseWallet } from '@utils/web3/wallet'
+import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { actions } from '@store/reducers/positions'
-import { usePositionTicks } from '@components/OverviewYourPositions/hooks/usePositionTicks'
-import { usePrices } from '@components/OverviewYourPositions/hooks/usePrices'
-import { useLiquidity } from '@components/OverviewYourPositions/hooks/useLiquidity'
-import { IWallet } from '@invariant-labs/sdk-eclipse'
-import { useDebounceLoading } from '@components/OverviewYourPositions/hooks/useDebounceLoading'
+
+interface TokenPriceData {
+  price: number
+  loading: boolean
+}
 
 interface PositionTicks {
   lowerTick: Tick | undefined
@@ -24,7 +27,7 @@ interface PositionTicks {
   loading: boolean
 }
 
-export interface UnclaimedFeeItemProps {
+interface UnclaimedFeeItemProps {
   type: 'header' | 'item'
   data?: {
     id: string
@@ -53,39 +56,129 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
     upperTick: undefined,
     loading: false
   })
-
-  const position = useSelector(singlePositionData(data?.id ?? ''))
-  const wallet = getEclipseWallet()
-  const networkType = useSelector(network)
-  const rpc = useSelector(rpcAddress)
-  const { tokenXLiquidity, tokenYLiquidity } = useLiquidity(position)
-  const { tokenXPriceData, tokenYPriceData } = usePrices({ data })
-
-  const {
-    lowerTick,
-    upperTick,
-    loading: ticksLoading
-  } = usePositionTicks({
-    positionId: data?.id,
-    poolData: position?.poolData,
-    lowerTickIndex: position?.lowerTickIndex ?? 0,
-    upperTickIndex: position?.upperTickIndex ?? 0,
-    networkType,
-    rpc,
-    wallet: wallet as IWallet
+  const dispatch = useDispatch()
+  const [showFeesLoader, setShowFeesLoader] = useState(true)
+  const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData>({
+    price: 0,
+    loading: true
+  })
+  const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData>({
+    price: 0,
+    loading: true
   })
 
-  useEffect(() => {
-    setPositionTicks({
-      lowerTick,
-      upperTick,
-      loading: ticksLoading
-    })
-  }, [lowerTick, upperTick, ticksLoading])
+  const position = useSelector(singlePositionData(data?.id ?? ''))
+
+  const tokenXLiquidity = useMemo(() => {
+    if (position) {
+      try {
+        return +printBN(
+          getX(
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
+          ),
+          position.tokenX.decimals
+        )
+      } catch (error) {
+        return 0
+      }
+    }
+
+    return 0
+  }, [position])
+
+  const tokenYLiquidity = useMemo(() => {
+    if (position) {
+      try {
+        return +printBN(
+          getY(
+            position.liquidity,
+            calculatePriceSqrt(position.upperTickIndex),
+            position.poolData.sqrtPrice,
+            calculatePriceSqrt(position.lowerTickIndex)
+          ),
+          position.tokenY.decimals
+        )
+      } catch (error) {
+        console.log(error)
+        return 0
+      }
+    }
+
+    return 0
+  }, [position])
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = icons.unknownToken
   }
+
+  const wallet = getEclipseWallet()
+  const networkType = useSelector(network)
+  const rpc = useSelector(rpcAddress)
+
+  useEffect(() => {
+    if (!data?.tokenX.coingeckoId || !data?.tokenY.coingeckoId) return
+
+    const fetchPrices = async () => {
+      getTokenPrice(data.tokenX.coingeckoId ?? '')
+        .then(price => setTokenXPriceData({ price: price ?? 0, loading: false }))
+        .catch(() => {
+          setTokenXPriceData({
+            price: getMockedTokenPrice(data.tokenX.name, networkType).price,
+            loading: false
+          })
+        })
+
+      getTokenPrice(data.tokenY.coingeckoId ?? '')
+        .then(price => setTokenYPriceData({ price: price ?? 0, loading: false }))
+        .catch(() => {
+          setTokenYPriceData({
+            price: getMockedTokenPrice(data.tokenY.name, networkType).price,
+            loading: false
+          })
+        })
+    }
+
+    fetchPrices()
+  }, [data?.tokenX.coingeckoId, data?.tokenY.coingeckoId, networkType])
+
+  useEffect(() => {
+    const fetchTicksForPosition = async () => {
+      if (!data?.id || !position?.poolData) return
+
+      try {
+        setPositionTicks(prev => ({ ...prev, loading: true }))
+
+        const marketProgram = await getMarketProgram(networkType, rpc, wallet as IWallet)
+        const pair = new Pair(position.poolData.tokenX, position.poolData.tokenY, {
+          fee: position.poolData.fee,
+          tickSpacing: position.poolData.tickSpacing
+        })
+
+        const [lowerTick, upperTick] = await Promise.all([
+          marketProgram.getTick(pair, position.lowerTickIndex),
+          marketProgram.getTick(pair, position.upperTickIndex)
+        ])
+
+        setPositionTicks({
+          lowerTick,
+          upperTick,
+          loading: false
+        })
+      } catch (error) {
+        console.error('Error fetching ticks:', error)
+        setPositionTicks({
+          lowerTick: undefined,
+          upperTick: undefined,
+          loading: false
+        })
+      }
+    }
+
+    fetchTicksForPosition()
+  }, [data?.id, position])
 
   const [_tokenXClaim, _tokenYClaim, unclaimedFeesInUSD] = useMemo(() => {
     if (
