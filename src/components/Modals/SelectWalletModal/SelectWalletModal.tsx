@@ -92,8 +92,11 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                   }, 300)
                 }}>
                 <Typography className={classes.buttonName}>
-                  {' '}
-                  <img width={53} rel='preload' src={icons.NightlyConnect} alt='Close'></img>
+                  <img
+                    width={53}
+                    rel='preload'
+                    src={icons.NightlyConnect}
+                    alt='nightly connect logo'></img>
                   {walletNames[WalletType.NIGHTLY]}
                 </Typography>
               </Grid>
@@ -113,7 +116,11 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 }}>
                 <Grid className={classes.buttonContainer}>
                   <Typography className={classes.buttonName}>
-                    <img width={45} rel='preload' src={icons.nightly} alt='Close'></img>
+                    <img
+                      width={45}
+                      rel='preload'
+                      src={icons.nightly}
+                      alt='nightly wallet icon'></img>
 
                     {walletNames[WalletType.NIGHTLY_WALLET]}
                   </Typography>
@@ -127,7 +134,11 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 }}>
                 <Grid className={classes.buttonContainer}>
                   <Typography className={classes.buttonName}>
-                    <img width={45} rel='preload' src={icons.BackpackWallet} alt='Close'></img>
+                    <img
+                      width={45}
+                      rel='preload'
+                      src={icons.BackpackWallet}
+                      alt='backpack wallet icon'></img>
 
                     {walletNames[WalletType.BACKPACK]}
                   </Typography>
@@ -141,7 +152,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 }}>
                 <Grid className={classes.buttonContainer}>
                   <Typography className={classes.buttonName}>
-                    <img width={45} rel='preload' src={salamonIcon} alt='Close'></img>
+                    <img width={45} rel='preload' src={salamonIcon} alt='salamon wallet icon'></img>
 
                     {walletNames[WalletType.SALMON]}
                   </Typography>
