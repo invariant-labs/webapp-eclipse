@@ -227,11 +227,11 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    const id = tokensDict[tokenFrom.toString()]?.coingeckoId ?? ''
+    const addr = tokensDict[tokenFrom.toString()]?.assetAddress.toString()
 
-    if (id.length) {
+    if (addr) {
       setPriceFromLoading(true)
-      getTokenPrice(id)
+      getTokenPrice(addr)
         .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
@@ -252,10 +252,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    const id = tokensDict[tokenTo.toString()]?.coingeckoId ?? ''
-    if (id.length) {
+    const addr = tokensDict[tokenTo.toString()]?.assetAddress.toString()
+    if (addr) {
       setPriceToLoading(true)
-      getTokenPrice(id)
+      getTokenPrice(addr)
         .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
