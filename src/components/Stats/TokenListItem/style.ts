@@ -1,7 +1,7 @@
 import { Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
-//Token list item
+
 export const useStyles = makeStyles()((theme: Theme) => ({
   container: {
     display: 'grid',

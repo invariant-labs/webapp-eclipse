@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Box, Grid } from '@mui/material'
 import classNames from 'classnames'
-import { ProcessedPool } from '@components/OverviewYourPositions/types/types'
 import { UnclaimedFeeItem } from './UnclaimedFeeItem/UnclaimedFeeItem'
 import { useStyles } from './styles'
+import { ProcessedPool } from '@store/types/userOverview'
 
 interface UnclaimedFeeListProps {
   fees: ProcessedPool[]

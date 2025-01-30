@@ -3,8 +3,8 @@ import { Box } from '@mui/material'
 import { UnclaimedFeeList } from '../UnclaimedFeeList/UnclaimedFeeList'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
-import { ProcessedPool } from '@components/OverviewYourPositions/types/types'
 import { useStyles } from './styles'
+import { ProcessedPool } from '@store/types/userOverview'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]

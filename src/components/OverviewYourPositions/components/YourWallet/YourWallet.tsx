@@ -2,8 +2,8 @@ import React, { useMemo } from 'react'
 import { Box, Typography, Skeleton } from '@mui/material'
 import { useStyles } from './styles'
 import { PoolItem } from '../PoolItem/PoolItem'
-import { TokenPool } from '@components/OverviewYourPositions/types/types'
-import { useDebounceLoading } from '@components/OverviewYourPositions/hooks/useDebounceLoading'
+import { TokenPool } from '@store/types/userOverview'
+import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
 
 interface YourWalletProps {
   pools: TokenPool[]

@@ -1,7 +1,7 @@
 import { alpha } from '@mui/material'
 import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
-//Token list styles
+
 export const useStyles = makeStyles()(() => ({
   container: {
     maxWidth: 1072,

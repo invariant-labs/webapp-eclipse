@@ -2,9 +2,9 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { usePoolItemStyles } from './styles'
-import { TokenPool } from '@components/OverviewYourPositions/types/types'
-import { STRATEGIES } from '@components/OverviewYourPositions/config/config'
 import { useNavigate } from 'react-router-dom'
+import { TokenPool } from '@store/types/userOverview'
+import { STRATEGIES } from '@store/consts/userStrategies'
 
 interface PoolItemProps {
   pool: TokenPool

@@ -4,12 +4,12 @@ import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
 import { useSelector } from 'react-redux'
 import { swapTokens } from '@store/selectors/solanaWallet'
-import { useProcessedTokens } from './hooks/useProcessedToken'
 import { positionsWithPoolsData } from '@store/selectors/positions'
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { ProcessedPool } from './types/types'
+import { ProcessedPool } from '@store/types/userOverview'
+import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 
-export const OverviewYourPositions = () => {
+export const UserOverview = () => {
   const handleClaimAll = () => {
     console.log('Claiming all fees')
   }

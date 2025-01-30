@@ -2,6 +2,12 @@ import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 
+export interface StrategyConfig {
+  tokenSymbolA: string
+  tokenSymbolB?: string
+  feeTier: string
+}
+
 export interface Token {
   name: string
   decimal: number

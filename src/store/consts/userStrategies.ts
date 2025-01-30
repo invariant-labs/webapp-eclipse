@@ -1,8 +1,4 @@
-export interface StrategyConfig {
-  tokenSymbolA: string
-  tokenSymbolB?: string
-  feeTier: string
-}
+import { StrategyConfig } from '@store/types/userOverview'
 
 export const STRATEGIES: StrategyConfig[] = [
   {
