@@ -93,7 +93,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 }}>
                 <Typography className={classes.buttonName}>
                   {' '}
-                  <img width={35} rel='preload' src={icons.NightlyConnect} alt='Close'></img>
+                  <img width={53} rel='preload' src={icons.NightlyConnect} alt='Close'></img>
                   {walletNames[WalletType.NIGHTLY]}
                 </Typography>
               </Grid>
