@@ -72,7 +72,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
                 }}
                 onClick={() => navigate('/exchange/ETH/USDC')}>
                 here!
-              </span>{' '}
+              </span>
               {!isSmallDevice && `...`} And see also distribution of points in the
               <span
                 style={{
