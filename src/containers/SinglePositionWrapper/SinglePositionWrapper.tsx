@@ -277,27 +277,15 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return
     }
 
-    const xId = position.tokenX.coingeckoId ?? ''
-    if (xId.length) {
-      getTokenPrice(xId)
-        .then(data => setTokenXPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork))
-        )
-    } else {
-      setTokenXPriceData(undefined)
-    }
+    const xAddr = position.tokenX.assetAddress.toString()
+    getTokenPrice(xAddr)
+      .then(data => setTokenXPriceData({ price: data ?? 0 }))
+      .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
 
-    const yId = position.tokenY.coingeckoId ?? ''
-    if (yId.length) {
-      getTokenPrice(yId)
-        .then(data => setTokenYPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork))
-        )
-    } else {
-      setTokenYPriceData(undefined)
-    }
+    const yAddr = position.tokenY.assetAddress.toString()
+    getTokenPrice(yAddr)
+      .then(data => setTokenYPriceData({ price: data ?? 0 }))
+      .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
   }, [position?.id, triggerFetchPrice])
 
   const copyPoolAddressHandler = (message: string, variant: VariantType) => {

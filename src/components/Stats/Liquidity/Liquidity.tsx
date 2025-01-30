@@ -7,7 +7,7 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
 import { formatNumber, trimZeros } from '@utils/utils'
-import { formatLargeNumber } from '@utils/formatLargeNumber'
+import { formatLargeNumber } from '@utils/uiUtils'
 
 interface LiquidityInterface {
   liquidityPercent: number | null

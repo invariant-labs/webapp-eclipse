@@ -67,7 +67,10 @@ export const Primary: Story = {
     shouldNotUpdatePriceRange: false,
     unblockUpdatePriceRange: fn(),
     onlyUserPositions: false,
-    setOnlyUserPositions: fn()
+    setOnlyUserPositions: fn(),
+    initialConcentration: '40',
+    updatePath: fn(),
+    positionOpeningMethod: 'range'
   },
   render: args => <PrimaryComponent {...args} />
 }

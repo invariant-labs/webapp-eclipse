@@ -2,9 +2,10 @@ import React from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput } from './ControlledInputs'
 import { ImagePicker } from '../ImagePicker/ImagePicker'
-import { FormData, validateSocialLink } from '../../utils/solanaCreatorUtils'
-import useStyles from '../CreateToken/styles'
 import { Box } from '@mui/material'
+import useStyles from './styles'
+import { validateSocialLink } from '@utils/tokenCreatorUtils'
+import { FormData } from '@store/consts/tokenCreator/types'
 
 interface TokenMetadataInputsProps {
   formMethods: UseFormReturn<FormData>

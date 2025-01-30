@@ -112,6 +112,7 @@ export const Primary: Story = {
     onDisconnectWallet: () => {},
     poolAddress: '',
     canNavigate: true,
+    initialConcentration: '40',
     estimatedPointsPerDay: new BN(100000000),
     estimatedPointsForScale: () => ({
       min: new BN(100000000),
@@ -180,6 +181,7 @@ export const Primary: Story = {
         onDisconnectWallet={() => {}}
         poolAddress=''
         canNavigate={true}
+        initialConcentration='40'
         estimatedPointsPerDay={new BN(100000000)}
         isPromotedPool={false}
         estimatedPointsForScale={() => ({
