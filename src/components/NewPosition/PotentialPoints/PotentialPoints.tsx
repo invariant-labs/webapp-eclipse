@@ -81,7 +81,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
   }, [estimatedScalePoints])
 
   return (
-    <Box mt={4} mb={8}>
+    <Box mt={3} mb={4}>
       <GradientBorder borderRadius={24} borderWidth={2}>
         <Grid display='flex' className={classNames(classes.wrapper)}>
           <Grid className={classes.column}>
