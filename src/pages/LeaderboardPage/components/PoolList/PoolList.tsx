@@ -65,8 +65,7 @@ const PoolList: React.FC<PoolListInterface> = ({
     <div
       className={classNames({ [classes.loadingOverlay]: isLoading })}
       style={{
-        width: '100%',
-        maxWidth: '1072px'
+        width: '100%'
       }}>
       <Grid
         container

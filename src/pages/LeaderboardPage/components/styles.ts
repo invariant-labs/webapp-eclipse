@@ -164,7 +164,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: '24px',
-      width: '1072px',
+      maxWidth: '1072px',
 
       [theme.breakpoints.between('lg', 'xl')]: {
         width: '1072px'
