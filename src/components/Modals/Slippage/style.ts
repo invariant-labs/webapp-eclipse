@@ -61,6 +61,15 @@ export const useStyles = makeStyles()(() => {
       },
       '&:focus': {
         outline: 'none'
+      },
+      transition: '0.3s',
+      '&:hover': {
+        backgroundColor: colors.invariant.light,
+        color: colors.invariant.text
+      },
+      '&:focus-within': {
+        backgroundColor: colors.invariant.light,
+        color: colors.invariant.text
       }
     },
     activeForm: {
@@ -123,6 +132,11 @@ export const useStyles = makeStyles()(() => {
     },
     inputAdornedStart: {
       color: colors.invariant.pink
+    },
+    customSlippageActive: {
+      backgroundColor: colors.invariant.light,
+      color: colors.invariant.text,
+      fontWeight: 'bold'
     }
   }
 })
