@@ -6,6 +6,7 @@ export interface Token {
   name: string
   decimal: number
   balance: BN
+  assetsAddress: string
   coingeckoId?: string
   icon: string
 }

@@ -36,6 +36,7 @@ export const OverviewYourPositions = () => {
       tokenX: {
         decimal: position.tokenX.decimals,
         coingeckoId: position.tokenX.coingeckoId,
+        assetsAddress: position.tokenX.address,
         balance: position.tokenX.balance,
         icon: position.tokenX.logoURI,
         name: position.tokenX.symbol
@@ -43,6 +44,7 @@ export const OverviewYourPositions = () => {
       tokenY: {
         decimal: position.tokenY.decimals,
         balance: position.tokenY.balance,
+        assetsAddress: position.tokenY.address,
         coingeckoId: position.tokenY.coingeckoId,
         icon: position.tokenY.logoURI,
         name: position.tokenY.symbol

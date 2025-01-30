@@ -21,10 +21,10 @@ export const usePrices = ({ data }: Pick<UnclaimedFeeItemProps, 'data'>) => {
     loading: true
   })
   useEffect(() => {
-    if (!data?.tokenX.coingeckoId || !data?.tokenY.coingeckoId) return
+    if (!data?.tokenX.assetsAddress || !data?.tokenY.assetsAddress) return
 
     const fetchPrices = async () => {
-      getTokenPrice(data.tokenX.coingeckoId ?? '')
+      getTokenPrice(data.tokenX.assetsAddress ?? '')
         .then(price => setTokenXPriceData({ price: price ?? 0, loading: false }))
         .catch(() => {
           setTokenXPriceData({
@@ -33,7 +33,7 @@ export const usePrices = ({ data }: Pick<UnclaimedFeeItemProps, 'data'>) => {
           })
         })
 
-      getTokenPrice(data.tokenY.coingeckoId ?? '')
+      getTokenPrice(data.tokenY.assetsAddress ?? '')
         .then(price => setTokenYPriceData({ price: price ?? 0, loading: false }))
         .catch(() => {
           setTokenYPriceData({
@@ -44,6 +44,6 @@ export const usePrices = ({ data }: Pick<UnclaimedFeeItemProps, 'data'>) => {
     }
 
     fetchPrices()
-  }, [data?.tokenX.coingeckoId, data?.tokenY.coingeckoId, networkType])
+  }, [data?.tokenX.assetsAddress, data?.tokenY.assetsAddress, networkType])
   return { tokenXPriceData, tokenYPriceData }
 }

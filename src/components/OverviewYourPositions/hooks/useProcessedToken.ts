@@ -42,7 +42,7 @@ export const useProcessedTokens = (tokensList: Token[]) => {
 
           let price = 0
           try {
-            const priceData = await getTokenPrice(token.coingeckoId ?? '')
+            const priceData = await getTokenPrice(token.assetAddress.toString() ?? '')
             price = priceData ?? 0
           } catch (error) {
             console.error(`Failed to fetch price for ${token.symbol}:`, error)

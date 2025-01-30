@@ -248,8 +248,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     return [0, 0]
   }, [position, lowerTick, upperTick, waitingForTicksData])
 
-  console.log({ tokenXClaim, tokenYClaim })
-
   const data = useMemo(() => {
     if (ticksLoading && position) {
       return createPlaceholderLiquidityPlot(

@@ -202,7 +202,7 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
       </Typography>
 
       <Typography style={{ alignSelf: 'center' }}>
-        {type === 'header' ? 'Value' : `$${formatNumber(tokenValueInUsd.toFixed(6))}`}
+        {type === 'header' ? 'Value' : `$${tokenValueInUsd.toFixed(6)}`}
       </Typography>
 
       <Typography style={{ alignSelf: 'center' }}>

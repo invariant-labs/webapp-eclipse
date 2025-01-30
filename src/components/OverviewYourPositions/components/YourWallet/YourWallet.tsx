@@ -17,7 +17,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
 
   const totalValue = useMemo(() => pools.reduce((sum, pool) => sum + pool.value, 0), [pools])
 
-  const shouldShowSkeletons = debouncedIsLoading || pools.length <= 0
+  const shouldShowSkeletons = debouncedIsLoading
 
   const renderSkeletons = () => {
     return Array(2)
