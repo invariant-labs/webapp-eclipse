@@ -18,8 +18,8 @@ interface IProps {
   firstFee: BN | null
   secondFee: BN | null
   onePoolType: boolean
-  amountIn: any
-  amountOut: any
+  amountIn: BN | null
+  amountOut: BN | null
 }
 
 const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee, onePoolType }) => {
@@ -48,7 +48,6 @@ const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee, onePoolType }
         </Typography>
       ) : (
         <>
-          {' '}
           <Box className={classes.tokenContainer}>
             <img src={tokenFrom?.logoURI} className={classes.tokenIcon} />
             <Typography className={classes.tokenLabel}>{tokenFrom?.symbol}</Typography>
