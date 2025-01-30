@@ -63,6 +63,7 @@ export const useStyles = makeStyles()(() => {
         outline: 'none'
       },
       transition: '0.3s',
+
       '&:hover': {
         backgroundColor: colors.invariant.light,
         color: colors.invariant.text
@@ -72,9 +73,7 @@ export const useStyles = makeStyles()(() => {
         color: colors.invariant.text
       }
     },
-    activeForm: {
-      outline: `1px solid ${colors.invariant.light}`
-    },
+
     innerInput: {
       paddingBlock: 0,
       textAlign: 'right'
@@ -134,6 +133,7 @@ export const useStyles = makeStyles()(() => {
       color: colors.invariant.pink
     },
     customSlippageActive: {
+      border: `1px solid ${colors.invariant.component}`,
       backgroundColor: colors.invariant.light,
       color: colors.invariant.text,
       fontWeight: 'bold'

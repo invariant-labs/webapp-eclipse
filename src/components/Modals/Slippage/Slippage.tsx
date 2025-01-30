@@ -126,7 +126,8 @@ const Slippage: React.FC<Props> = ({
                 className={classNames(classes.slippagePercentageButton, {
                   [classes.slippagePercentageButtonActive]: index === tierIndex
                 })}
-                onClick={() => {
+                onClick={e => {
+                  e.preventDefault()
                   setTieredSlippage(index)
                   handleClose()
                 }}>
