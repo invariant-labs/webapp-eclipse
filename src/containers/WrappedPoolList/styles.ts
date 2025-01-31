@@ -44,8 +44,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   searchBar: {
-    width: 221,
-    height: 32,
+    maxWidth: 400,
+    width: 400,
+    height: 50,
     padding: '7px 12px',
     borderRadius: 10,
     background: colors.invariant.black,
@@ -55,7 +56,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginBottom: 8,
     [theme.breakpoints.down('sm')]: {
       width: '100%',
-      height: 48
+      height: 50
     }
   },
   searchIcon: {
@@ -69,6 +70,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   container: {
     width: '100%'
+  },
+  searchResultIcon: {
+    width: 20,
+    height: 20,
+    marginRight: 8,
+    borderRadius: '50%'
   },
   paper: {
     background: colors.invariant.bodyBackground,

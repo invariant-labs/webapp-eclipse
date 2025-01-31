@@ -7,7 +7,9 @@ import {
   InputBase,
   Typography,
   Paper,
-  Box
+  Box,
+  Avatar,
+  TextField
 } from '@mui/material'
 import {
   isLoading,
@@ -120,6 +122,16 @@ export const WrappedPoolList: React.FC = () => {
         </Typography>
 
         <Autocomplete
+          sx={{
+            '& .MuiOutlinedInput-root': {
+              '&:hover .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'transparent'
+              },
+              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+                borderColor: 'transparent'
+              }
+            }
+          }}
           multiple
           PaperComponent={PaperComponentForward}
           classes={{ paper: classes.paper }}
@@ -140,30 +152,38 @@ export const WrappedPoolList: React.FC = () => {
           disableClearable
           popupIcon={null}
           renderTags={(value, getTagProps) =>
-            value.map((option, index) => <Chip label={option.symbol} {...getTagProps({ index })} />)
+            value.map((option, index) => (
+              <Chip
+                {...getTagProps({ index })}
+                avatar={<Avatar src={option.icon} />}
+                label={shortenAddress(option.symbol)}
+              />
+            ))
           }
           renderOption={(props, option) => (
             <Box component='li' {...props}>
-              <img
-                src={option.icon}
-                alt={option.symbol}
-                style={{ width: 20, height: 20, marginRight: 8 }}
-              />
+              <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
               <Typography>{shortenAddress(option.symbol)}</Typography>
             </Box>
           )}
           renderInput={params => (
-            <InputBase
-              {...params.InputProps}
-              type='text'
-              className={classes.searchBar}
+            <TextField
+              {...params}
+              variant='outlined'
               placeholder={!selectedTokens.length ? 'Select token' : ''}
-              endAdornment={
-                <InputAdornment position='end'>
-                  <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
-                </InputAdornment>
-              }
-              inputProps={{ ...params.inputProps, readOnly: selectedTokens.length >= 2 }}
+              className={classes.searchBar}
+              InputProps={{
+                ...params.InputProps,
+                readOnly: selectedTokens.length >= 2,
+                endAdornment: (
+                  <>
+                    {params.InputProps.endAdornment}
+                    <InputAdornment position='end'>
+                      <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
+                    </InputAdornment>
+                  </>
+                )
+              }}
               onClick={() => {
                 if (selectedTokens.length < 2) setOpen(true)
               }}
