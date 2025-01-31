@@ -13,6 +13,7 @@ import {
 import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
+import { toDecimal } from '@invariant-labs/sdk-eclipse/src/utils'
 import { accounts } from '@store/selectors/solanaWallet'
 import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
 
@@ -423,28 +424,73 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
         ? true
         : undefined
 
-    const initPositionTx = yield* call(
-      [marketProgram, marketProgram.createPositionTx],
-      {
-        pair,
-        userTokenX,
-        userTokenY,
-        lowerTick: data.lowerTick,
-        upperTick: data.upperTick,
-        liquidityDelta: data.liquidityDelta,
-        owner: wallet.publicKey,
-        slippage: data.slippage,
-        knownPrice: data.knownPrice
-      },
-      {
-        lowerTickExists,
-        upperTickExists,
-        pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
-        tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
-        tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
-        positionsList: !userPositionList.loading ? userPositionList : undefined
-      }
-    )
+    const initPositionTx = action.payload.isCustomAmount
+      ? yield* call(
+          [marketProgram, marketProgram.createPositionTx],
+          {
+            pair,
+            userTokenX,
+            userTokenY,
+            lowerTick: data.lowerTick,
+            upperTick: data.upperTick,
+            liquidityDelta: data.liquidityDelta,
+            owner: wallet.publicKey,
+            slippage: data.slippage,
+            knownPrice: data.knownPrice
+          },
+          {
+            lowerTickExists,
+            upperTickExists,
+            pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
+            tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
+            tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
+            positionsList: !userPositionList.loading ? userPositionList : undefined
+          }
+        )
+      : yield* call(
+          [marketProgram, marketProgram.createPositionWithMaxTokensTx],
+          {
+            pair,
+            userTokenX,
+            userTokenY,
+            lowerTick: data.lowerTick,
+            upperTick: data.upperTick,
+            maxLiquidityPercentage: toDecimal(action.payload.depositPercentage, 2),
+            owner: wallet.publicKey,
+            slippage: data.slippage,
+            knownPrice: data.knownPrice
+          },
+          {
+            lowerTickExists,
+            upperTickExists,
+            pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
+            tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
+            tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
+            positionsList: !userPositionList.loading ? userPositionList : undefined
+          }
+        )
+    // const initPositionTx = yield* call(
+    //   [marketProgram, marketProgram.createPositionTx],
+    //   {
+    //     pair,
+    //     userTokenX,
+    //     userTokenY,
+    //     lowerTick: data.lowerTick,
+    //     upperTick: data.upperTick,
+    //     liquidityDelta: data.liquidityDelta,
+    //     owner: wallet.publicKey,
+    //     slippage: data.slippage,
+    //     knownPrice: data.knownPrice
+    //   },
+    //   {
+    //     lowerTickExists,
+    //     upperTickExists,
+    //     pool: data.poolIndex !== null ? allPools[data.poolIndex] : undefined,
+    //     tokenXProgramAddress: allTokens[data.tokenX.toString()].tokenProgram,
+    //     tokenYProgramAddress: allTokens[data.tokenY.toString()].tokenProgram,
+    //     positionsList: !userPositionList.loading ? userPositionList : undefined
+    //   }
+    // )
 
     combinedTransaction.add(initPositionTx)
     combinedTransaction.add(unwrapIx)
@@ -631,38 +677,75 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
       createPoolTx = txs.createPoolTx
       poolSigners = txs.createPoolSigners
     } else {
-      tx = yield* call(
-        [marketProgram, marketProgram.createPositionTx],
-        {
-          pair,
-          userTokenX,
-          userTokenY,
-          lowerTick: action.payload.lowerTick,
-          upperTick: action.payload.upperTick,
-          liquidityDelta: action.payload.liquidityDelta,
-          owner: wallet.publicKey,
-          slippage: action.payload.slippage,
-          knownPrice: action.payload.knownPrice
-        },
-        {
-          lowerTickExists:
-            !ticks.hasError &&
-            !ticks.loading &&
-            ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
-              ? true
-              : undefined,
-          upperTickExists:
-            !ticks.hasError &&
-            !ticks.loading &&
-            ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
-              ? true
-              : undefined,
-          pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
-          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
-          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
-          positionsList: !userPositionList.loading ? userPositionList : undefined
-        }
-      )
+      if (action.payload.isCustomAmount) {
+        tx = yield* call(
+          [marketProgram, marketProgram.createPositionTx],
+          {
+            pair,
+            userTokenX,
+            userTokenY,
+            lowerTick: action.payload.lowerTick,
+            upperTick: action.payload.upperTick,
+            liquidityDelta: action.payload.liquidityDelta,
+            owner: wallet.publicKey,
+            slippage: action.payload.slippage,
+            knownPrice: action.payload.knownPrice
+          },
+          {
+            lowerTickExists:
+              !ticks.hasError &&
+              !ticks.loading &&
+              ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
+                ? true
+                : undefined,
+            upperTickExists:
+              !ticks.hasError &&
+              !ticks.loading &&
+              ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
+                ? true
+                : undefined,
+            pool:
+              action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
+            tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+            tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
+            positionsList: !userPositionList.loading ? userPositionList : undefined
+          }
+        )
+      } else {
+        tx = yield* call(
+          [marketProgram, marketProgram.createPositionWithMaxTokensTx],
+          {
+            pair,
+            userTokenX,
+            userTokenY,
+            lowerTick: action.payload.lowerTick,
+            upperTick: action.payload.upperTick,
+            owner: wallet.publicKey,
+            slippage: action.payload.slippage,
+            knownPrice: action.payload.knownPrice,
+            maxLiquidityPercentage: toDecimal(action.payload.depositPercentage, 2)
+          },
+          {
+            lowerTickExists:
+              !ticks.hasError &&
+              !ticks.loading &&
+              ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
+                ? true
+                : undefined,
+            upperTickExists:
+              !ticks.hasError &&
+              !ticks.loading &&
+              ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
+                ? true
+                : undefined,
+            pool:
+              action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
+            tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+            tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
+            positionsList: !userPositionList.loading ? userPositionList : undefined
+          }
+        )
+      }
     }
 
     const blockhash = yield* call([connection, connection.getLatestBlockhash])

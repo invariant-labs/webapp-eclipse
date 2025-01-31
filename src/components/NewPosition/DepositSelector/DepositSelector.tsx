@@ -452,7 +452,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             checked={isCustomAmounts}
             onClick={() => setIsCustomAmounts(!isCustomAmounts)}
           />
-          <p className={classes.allFundsText}>Custom amounts</p>
+          <p className={classes.allFundsText}>Exact amounts</p>
           <TooltipHover text='Switch between custom liquidity and max liquidity percentage deposits'>
             <span className={classes.allFundsInfo}>i</span>
           </TooltipHover>
@@ -463,9 +463,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -513,9 +511,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {

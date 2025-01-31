@@ -71,7 +71,9 @@ export interface INewPosition {
     rightTickIndex: number,
     xAmount: number,
     yAmount: number,
-    slippage: BN
+    slippage: BN,
+    isCustomAmounts: boolean,
+    depositPercentage: number
   ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
@@ -768,7 +770,9 @@ export const NewPosition: React.FC<INewPosition> = ({
                 isXtoY
                   ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
                   : convertBalanceToBN(tokenADeposit, tokenADecimals),
-                fromFee(new BN(Number(+slippTolerance * 1000)))
+                fromFee(new BN(Number(+slippTolerance * 1000))),
+                isCustomAmounts,
+                depositPercentage
               )
             }
           }}
