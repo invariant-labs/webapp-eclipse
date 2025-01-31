@@ -201,6 +201,9 @@ const positionsSlice = createSlice({
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
     },
+    claimAllFee(state) {
+      return state
+    },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {
       return state
     },

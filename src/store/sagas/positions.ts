@@ -51,6 +51,7 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
+import { ClaimAllFee } from '@invariant-labs/sdk-eclipse/lib/market'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -1256,6 +1257,136 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
   }
 }
 
+export function* handleClaimAllFees() {
+  const loaderClaimAllFees = createLoaderKey()
+  const loaderSigningTx = createLoaderKey()
+
+  try {
+    yield put(
+      snackbarsActions.add({
+        message: 'Claiming all fees',
+        variant: 'pending',
+        persist: true,
+        key: loaderClaimAllFees
+      })
+    )
+
+    const connection = yield* call(getConnection)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const wallet = yield* call(getWallet)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    const allPositionsData = yield* select(positionsWithPoolsData)
+    const tokensAccounts = yield* select(accounts)
+    // const allTokens = yield* select(tokens)
+
+    if (allPositionsData.length === 0) {
+      closeSnackbar(loaderClaimAllFees)
+      yield put(snackbarsActions.remove(loaderClaimAllFees))
+      return
+    }
+
+    for (const position of allPositionsData) {
+      const pool = allPositionsData[position.positionIndex].poolData
+
+      if (!tokensAccounts[pool.tokenX.toString()]) {
+        yield* call(createAccount, pool.tokenX)
+      }
+      if (!tokensAccounts[pool.tokenY.toString()]) {
+        yield* call(createAccount, pool.tokenY)
+      }
+    }
+
+    const formattedPositions = allPositionsData.map(position => ({
+      pair: new Pair(position.poolData.tokenX, position.poolData.tokenY, {
+        fee: position.poolData.fee,
+        tickSpacing: position.poolData.tickSpacing
+      }),
+      index: position.positionIndex,
+      lowerTickIndex: position.lowerTickIndex,
+      upperTickIndex: position.upperTickIndex
+    }))
+
+    const txs = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
+      owner: wallet.publicKey,
+      positions: formattedPositions
+    } as ClaimAllFee)
+
+    yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+    for (const { tx } of txs) {
+      const blockhash = yield* call([connection, connection.getLatestBlockhash])
+      tx.recentBlockhash = blockhash.blockhash
+      tx.feePayer = wallet.publicKey
+
+      const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+
+      const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+        skipPreflight: false
+      })
+
+      if (!txid.length) {
+        yield put(
+          snackbarsActions.add({
+            message: 'Failed to claim some fees. Please try again.',
+            variant: 'error',
+            persist: false,
+            txid
+          })
+        )
+      }
+    }
+
+    yield put(
+      snackbarsActions.add({
+        message: 'All fees claimed successfully.',
+        variant: 'success',
+        persist: false
+      })
+    )
+
+    for (const position of formattedPositions) {
+      yield put(actions.getSinglePosition({ index: position.index, isLocked: false }))
+    }
+
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+    closeSnackbar(loaderClaimAllFees)
+    yield put(snackbarsActions.remove(loaderClaimAllFees))
+  } catch (error) {
+    console.log(error)
+
+    closeSnackbar(loaderClaimAllFees)
+    yield put(snackbarsActions.remove(loaderClaimAllFees))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to claim fees. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
+
 export function* handleClosePositionWithETH(data: ClosePositionData) {
   const loaderClosePosition = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
@@ -1686,6 +1817,11 @@ export function* getPositionsListHandler(): Generator {
 export function* claimFeeHandler(): Generator {
   yield* takeEvery(actions.claimFee, handleClaimFee)
 }
+
+export function* claimAllFeeHandler(): Generator {
+  yield* takeEvery(actions.claimAllFee, handleClaimAllFees)
+}
+
 export function* closePositionHandler(): Generator {
   yield* takeEvery(actions.closePosition, handleClosePosition)
 }
@@ -1703,6 +1839,7 @@ export function* positionsSaga(): Generator {
       getCurrentPlotTicksHandler,
       getPositionsListHandler,
       claimFeeHandler,
+      claimAllFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,
       getCurrentPositionRangeTicksHandler
