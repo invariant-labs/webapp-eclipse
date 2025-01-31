@@ -1287,6 +1287,7 @@ export function* handleClaimAllFees() {
     }
 
     for (const position of allPositionsData) {
+      console.log(position)
       const pool = allPositionsData[position.positionIndex].poolData
 
       if (!tokensAccounts[pool.tokenX.toString()]) {
