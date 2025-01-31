@@ -57,7 +57,8 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     textDecoration: 'underline',
     ...typography.body2,
     lineHeight: '24px',
-    textAlign: 'left'
+    textAlign: 'left',
+    textWrap: 'nowrap'
   },
   description: {
     ...typography.body2,
