@@ -641,6 +641,9 @@ export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
 export const WETH_CREATE_TOKEN_LAMPORTS_MAIN = new BN(2000000)
 export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
+export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
+export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
+
 export const getCreateTokenLamports = (network: NetworkType): BN => {
   switch (network) {
     case NetworkType.Testnet:
@@ -811,6 +814,7 @@ export const walletNames = {
   [WalletType.NIGHTLY_WALLET]: 'Nightly',
   [WalletType.BACKPACK]: 'Backpack',
   [WalletType.SALMON]: 'Salmon',
+  [WalletType.OKX]: 'OKX',
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
@@ -847,3 +851,19 @@ export const getPopularPools = (network: NetworkType) => {
 }
 
 export const rewards = rewardsArray as Reward[]
+
+export const LEADERBOARD_DECIMAL = 8
+
+export const LAUNCH_DATE = '2024-12-10T17:20:00'
+
+export enum PointsPageContent {
+  Leaderboard = 'leaderboard',
+  FAQ = 'faq',
+  Claim = 'claim'
+}
+
+export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
+
+export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
+export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
+export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)

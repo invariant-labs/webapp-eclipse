@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import useStyles from './style'
 import { Popover, Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { useRef, useCallback, useEffect } from 'react'
 
 export interface IPromotedPoolPopover {

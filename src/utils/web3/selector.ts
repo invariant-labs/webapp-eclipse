@@ -17,7 +17,6 @@ export const openWalletSelectorModal = async () => {
     if (nightlyConnectAdapter.connected) {
       return
     }
-
     await nightlyConnectAdapter.connect()
   } catch (error) {
     console.log(error)
