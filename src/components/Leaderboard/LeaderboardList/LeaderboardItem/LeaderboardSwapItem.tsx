@@ -1,8 +1,6 @@
 import React from 'react'
 import { alpha, Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { useDispatch, useSelector } from 'react-redux'
-import { actions as snackbarActions } from '@store/reducers/snackbars'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
@@ -10,74 +8,67 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
-import { network } from '@store/selectors/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBN } from '@utils/utils'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LEADERBOARD_DECIMAL, NetworkType } from '@store/consts/static'
+import { VariantType } from 'notistack'
 
-interface BaseLeaderboardTotalItemProps {
+interface BaseLeaderboardSwapItemProps {
   displayType: 'item' | 'header'
+  currentNetwork: NetworkType
+  copyAddressHandler: (message: string, variant: VariantType) => void
 }
 
-interface LeaderboardTotalHeaderProps extends BaseLeaderboardTotalItemProps {
+interface LeaderboardSwapHeaderProps extends BaseLeaderboardSwapItemProps {
   displayType: 'header'
 }
 
-interface LeaderboardTotalItemDetailProps extends BaseLeaderboardTotalItemProps {
+interface LeaderboardSwapItemDetailProps extends BaseLeaderboardSwapItemProps {
   displayType: 'item'
   isYou?: boolean
   hideBottomLine?: boolean
   points?: string
-  lpPoints?: string
-  swapPoints?: string
+  swaps?: number
   last24hPoints?: string
   rank?: number
   address?: PublicKey
   domain?: string
 }
 
-export type LeaderboardTotalItemProps =
-  | LeaderboardTotalHeaderProps
-  | LeaderboardTotalItemDetailProps
+export type LeaderboardSwapItemProps = LeaderboardSwapHeaderProps | LeaderboardSwapItemDetailProps
 
 const PLACE_COLORS = [colors.invariant.yellow, colors.invariant.silver, colors.invariant.bronze]
 
-const LeaderboardTotalHeader: React.FC = () => {
+const LeaderboardSwapHeader: React.FC = () => {
   const { classes } = useStyles()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
   return (
-    <Grid container classes={{ container: classes.totalContainer, root: classes.header }}>
+    <Grid container classes={{ container: classes.container, root: classes.header }}>
       <Typography style={{ lineHeight: '11px' }}>Rank</Typography>
       <Typography style={{ cursor: 'pointer' }}>Address</Typography>
-      <Typography style={{ cursor: 'pointer' }}>Total points</Typography>
+      <Typography style={{ cursor: 'pointer' }}>Swap points</Typography>
       {!isMd && (
         <>
-          <Typography style={{ cursor: 'pointer' }}>Swap points</Typography>
-          <Typography style={{ cursor: 'pointer' }}>Liquidity points</Typography>
+          <Typography style={{ cursor: 'pointer' }}>Swaps counts</Typography>
+          <Typography style={{ cursor: 'pointer' }}>24H points</Typography>
         </>
       )}
-      {!isLg && <Typography style={{ cursor: 'pointer' }}>24H points</Typography>}
     </Grid>
   )
 }
 
-const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
-  const { displayType } = props
+const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
+  const { displayType, copyAddressHandler, currentNetwork } = props
   const { classes } = useStyles()
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const isVerySmallScreen = useMediaQuery(theme.breakpoints.down('sm'))
   const isNarrowMediumScreen = useMediaQuery(theme.breakpoints.between('md', 'lg'))
 
-  const dispatch = useDispatch()
-  const currentNetwork = useSelector(network)
   const pointOneValue = new BN(10).pow(new BN(LEADERBOARD_DECIMAL)).div(new BN(10))
-
   if (displayType === 'header') {
-    return <LeaderboardTotalHeader />
+    return <LeaderboardSwapHeader />
   }
 
   const {
@@ -86,8 +77,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
     isYou = false,
     address = '',
     last24hPoints = 0,
-    lpPoints,
-    swapPoints,
+    swaps = 0,
     hideBottomLine = false,
     domain
   } = props
@@ -102,31 +92,20 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
     navigator.clipboard
       .writeText(address.toString())
       .then(() => {
-        dispatch(
-          snackbarActions.add({
-            message: 'Address copied!',
-            variant: 'success',
-            persist: false
-          })
-        )
+        copyAddressHandler('Address copied!', 'success')
       })
       .catch(() => {
-        dispatch(
-          snackbarActions.add({
-            message: 'Failed to copy address!',
-            variant: 'error',
-            persist: false
-          })
-        )
+        copyAddressHandler('Failed to copy address!', 'error')
       })
   }
+
   const shortDomain = domain && domain.slice(0, 13) + '...'
 
   return (
     <Grid maxWidth='100%'>
       <Grid
         container
-        classes={{ container: classes.totalContainer }}
+        classes={{ container: classes.container }}
         style={{
           border: hideBottomLine ? 'none' : undefined,
           background: isYou ? alpha(colors.invariant.light, 0.2) : 'transparent',
@@ -140,7 +119,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
             ? isVerySmallScreen || isNarrowMediumScreen
               ? shortDomain
               : domain
-            : shortenAddress(address.toString(), 4)}{' '}
+            : shortenAddress(address.toString(), 4)}
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)
@@ -170,25 +149,9 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
                 Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
               )}
         </Typography>
+        {!isMd && <Typography>{swaps}</Typography>}
+
         {!isMd && (
-          <Typography>
-            {new BN(swapPoints, 'hex').isZero()
-              ? 0
-              : formatNumberWithCommas(
-                  Number(printBN(new BN(swapPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
-                )}
-          </Typography>
-        )}
-        {!isMd && (
-          <Typography>
-            {new BN(lpPoints, 'hex').isZero()
-              ? 0
-              : formatNumberWithCommas(
-                  Number(printBN(new BN(lpPoints, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
-                )}
-          </Typography>
-        )}
-        {!isLg && (
           <Typography>
             <Typography
               style={{
@@ -215,4 +178,4 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
   )
 }
 
-export default LeaderboardTotalItem
+export default LeaderboardSwapItem

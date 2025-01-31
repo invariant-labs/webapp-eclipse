@@ -2,7 +2,6 @@ import { Accordion, AccordionSummary, AccordionDetails, Typography, alpha } from
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
-
 import FAQ1 from '@static/png/faq-1.png'
 import FAQ2 from '@static/png/faq-2.png'
 import FAQ3 from '@static/png/faq-3.png'

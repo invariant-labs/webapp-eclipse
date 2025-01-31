@@ -1,24 +1,17 @@
 import { Box, Typography } from '@mui/material'
 import React, { useMemo } from 'react'
 import useStyles from './styles'
-
-import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
-
 import trapezeLeft from '@static/png/trapezeLeft.png'
 import trapezeRight from '@static/png/trapezeRight.png'
-
 import trapezeMobileTop from '@static/png/trapezeMobileTop.png'
 import trapezeMobileBottom from '@static/png/trapezeMobileBottom.png'
 import trapezeNewDesktopBottom from '@static/png/trapezeNewDesktopBottom.png'
 import boxModalMiddle from '@static/png/boxMobileMiddle.png'
-
-import { useSelector } from 'react-redux'
 import { BlurOverlay } from './BlurOverlay'
 import { ProgressItem } from './ProgressItem'
-import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { BN } from '@coral-xyz/anchor'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { ITotalEntry } from '@store/reducers/leaderboard'
 
@@ -26,35 +19,25 @@ interface YourProgressProps {
   userStats: ITotalEntry | null
   estimated24hPoints: BN
   isLoadingList: boolean
+  walletStatus: Status
+  totalItems: {
+    total: number
+    swap: number
+    lp: number
+  }
 }
 
 export const YourProgress: React.FC<YourProgressProps> = ({
   userStats,
   estimated24hPoints,
-  isLoadingList
+  isLoadingList,
+  totalItems,
+  walletStatus
 }) => {
   const { classes } = useStyles()
-  const walletStatus = useSelector(status)
-  const totalItems = useSelector(leaderboardSelectors.totalItems)
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
-  // const formatUserPoints = (points?: string) => {
-  //   if (!userStats) return '0'
-
-  //   try {
-  //     if (!points) return '0'
-
-  //     const pointsBN = new BN(points, 'hex')
-
-  //     if (pointsBN.isZero()) return '0'
-
-  //     return formatNumberWithCommas(printBN(pointsBN, LEADERBOARD_DECIMAL))
-  //   } catch (error) {
-  //     console.error('Error formatting points:', error)
-  //     return '0'
-  //   }
-  // }
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
     return value.lt(minimalValue)

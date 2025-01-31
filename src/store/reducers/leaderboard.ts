@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
+import { LeaderBoardType } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
 import { IPromotedPool } from '@store/sagas/leaderboard'
 
@@ -30,25 +31,23 @@ export interface ILpEntry {
   domain?: string
 }
 
-export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
+export interface CurrentUser {
+  total: ITotalEntry | null
+  swap: ISwapEntry | null
+  lp: ILpEntry | null
+}
+
+export interface LeaderboardUser {
+  total: ITotalEntry[]
+  swap: ISwapEntry[]
+  lp: ILpEntry[]
+}
 
 export interface ILeaderboardStore {
   type: LeaderBoardType
-  currentUser: {
-    total: ITotalEntry | null
-    swap: ISwapEntry | null
-    lp: ILpEntry | null
-  }
-  leaderboard: {
-    total: ITotalEntry[]
-    swap: ISwapEntry[]
-    lp: ILpEntry[]
-  }
-  top3Scorers: {
-    total: ITotalEntry[]
-    swap: ISwapEntry[]
-    lp: ILpEntry[]
-  }
+  currentUser: CurrentUser
+  leaderboard: LeaderboardUser
+  top3Scorers: LeaderboardUser
   isLoading: boolean
   currentPage: number
   totalItems: {

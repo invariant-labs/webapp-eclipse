@@ -1,7 +1,7 @@
 import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './styles'
 import React, { useMemo } from 'react'
-import PoolList from '../PoolList/PoolList'
+import PoolList from './PoolList/PoolList'
 import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import icons from '@static/icons'

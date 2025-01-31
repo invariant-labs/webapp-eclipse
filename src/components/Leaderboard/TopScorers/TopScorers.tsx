@@ -2,7 +2,8 @@ import { Typography, Box, Hidden } from '@mui/material'
 import React, { useMemo } from 'react'
 import useStyles from './styles'
 import { ScorerItem } from './ScorerItem'
-import { ILpEntry, ISwapEntry, ITotalEntry, LeaderBoardType } from '@store/reducers/leaderboard'
+import { ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
+import { LeaderBoardType } from '@store/consts/static'
 
 interface ITopScorersProps {
   top3Scorers: {
