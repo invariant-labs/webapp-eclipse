@@ -6,7 +6,7 @@ import { WalletType } from '@store/consts/types'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { changeToNightlyAdapter, connectStaticWallet } from '@utils/web3/wallet'
 import icons from '@static/icons'
-import salamonIcon from '@static/png/salmonLogo.png'
+import salmonIcon from '@static/png/salmonLogo.png'
 
 export interface ISelectWalletModal {
   open: boolean
@@ -112,24 +112,6 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 item
                 className={classes.button}
                 onClick={async () => {
-                  handleConnectStaticWallet(WalletType.NIGHTLY_WALLET)
-                }}>
-                <Grid className={classes.buttonContainer}>
-                  <Typography className={classes.buttonName}>
-                    <img
-                      width={45}
-                      rel='preload'
-                      src={icons.nightly}
-                      alt='nightly wallet icon'></img>
-
-                    {walletNames[WalletType.NIGHTLY_WALLET]}
-                  </Typography>
-                </Grid>
-              </Grid>
-              <Grid
-                item
-                className={classes.button}
-                onClick={async () => {
                   handleConnectStaticWallet(WalletType.BACKPACK)
                 }}>
                 <Grid className={classes.buttonContainer}>
@@ -148,11 +130,42 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 item
                 className={classes.button}
                 onClick={async () => {
+                  handleConnectStaticWallet(WalletType.NIGHTLY_WALLET)
+                }}>
+                <Grid className={classes.buttonContainer}>
+                  <Typography className={classes.buttonName}>
+                    <img
+                      width={45}
+                      rel='preload'
+                      src={icons.nightly}
+                      alt='nightly wallet icon'></img>
+
+                    {walletNames[WalletType.NIGHTLY_WALLET]}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                className={classes.button}
+                onClick={async () => {
+                  handleConnectStaticWallet(WalletType.OKX)
+                }}>
+                <Grid className={classes.buttonContainer}>
+                  <Typography className={classes.buttonName}>
+                    <img width={45} rel='preload' src={icons.okxLogo} alt='Close'></img>
+                    {walletNames[WalletType.OKX]}
+                  </Typography>
+                </Grid>
+              </Grid>
+              <Grid
+                item
+                className={classes.button}
+                onClick={async () => {
                   handleConnectStaticWallet(WalletType.SALMON)
                 }}>
                 <Grid className={classes.buttonContainer}>
                   <Typography className={classes.buttonName}>
-                    <img width={45} rel='preload' src={salamonIcon} alt='salamon wallet icon'></img>
+                    <img width={45} rel='preload' src={salmonIcon} alt='salmon wallet icon'></img>
 
                     {walletNames[WalletType.SALMON]}
                   </Typography>

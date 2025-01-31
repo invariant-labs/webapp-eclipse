@@ -7,11 +7,10 @@ import YourPointsModal from '@components/Modals/YourPointsModal/YourPointsModals
 import { theme } from '@static/theme'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { printBN, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { network } from '@store/selectors/solanaConnection'
-import { NetworkType } from '@store/consts/static'
+import { LEADERBOARD_DECIMAL, NetworkType } from '@store/consts/static'
 
 export interface IProps {
   disabled?: boolean

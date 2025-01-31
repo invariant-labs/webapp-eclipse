@@ -1,7 +1,7 @@
 import { BN } from '@coral-xyz/anchor'
 import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { Position, PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { PublicKey } from '@solana/web3.js'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
