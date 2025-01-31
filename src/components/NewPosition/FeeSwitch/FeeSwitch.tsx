@@ -37,7 +37,6 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
       }, 200)
     }
   }
-
   return (
     <Grid className={classes.wrapper}>
       <Tabs
@@ -57,7 +56,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                 singleTabClasses.root,
                 index === promotedPoolTierIndex
                   ? singleTabClasses.promoted
-                  : bestTierIndex
+                  : index === bestTierIndex
                     ? singleTabClasses.best
                     : undefined
               ),

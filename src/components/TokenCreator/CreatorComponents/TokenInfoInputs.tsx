@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
-import { FormData, validateSupply } from '../../utils/solanaCreatorUtils'
-import useStyles from '../CreateToken/styles'
 import { Box, Typography } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
@@ -12,6 +10,9 @@ import classNames from 'classnames'
 import { getCreateTokenLamports, NetworkType } from '@store/consts/static'
 import { printBN, trimZeros } from '@utils/utils'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
+import useStyles from './styles'
+import { validateSupply } from '@utils/tokenCreatorUtils'
+import { FormData } from '@store/consts/tokenCreator/types'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
@@ -36,7 +37,6 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
   const {
     control,
     watch,
-
     formState: { errors, isValid }
   } = formMethods
   const isSubmitButton = buttonText === 'Create token'

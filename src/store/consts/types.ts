@@ -53,14 +53,6 @@ export interface PrefixConfig {
   K?: number
 }
 
-export type CoinGeckoAPIData = CoinGeckoAPIPriceData[]
-
-export type CoinGeckoAPIPriceData = {
-  id: string
-  current_price: number
-  price_change_percentage_24h: number
-}
-
 export type SimulateResult = {
   amountOut: BN
   poolIndex: number
@@ -254,4 +246,23 @@ export enum WalletType {
   NIGHTLY_WALLET = 'NIGHTLY_WALLET',
   BACKPACK = 'BACKPACK',
   SALMON = 'SALMON'
+}
+
+export interface IPriceData {
+  data: Record<string, { price: number }>
+  lastUpdateTimestamp: number
+}
+
+export interface EligibleAddresses {
+  rewardKey: string
+  addresses: string[]
+}
+
+export interface Reward {
+  name: string
+  image: string
+  distributionDate: string
+  eligible: string
+  type: string
+  addresses: string[]
 }

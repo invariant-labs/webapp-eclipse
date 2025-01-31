@@ -103,7 +103,6 @@ const PoolListItem: React.FC<IProps> = ({
       })
   }
 
-  //HOTFIX
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (

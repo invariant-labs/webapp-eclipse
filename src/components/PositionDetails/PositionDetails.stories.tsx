@@ -52,7 +52,8 @@ const defaultArgs = {
   tokenXAddress: new PublicKey('32'),
   tokenYAddress: new PublicKey('22'),
   poolAddress: new PublicKey('32'),
-  isLocked: false
+  isLocked: false,
+  ethBalance: new BN(10000000)
 }
 
 const meta = {

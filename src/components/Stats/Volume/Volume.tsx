@@ -8,7 +8,7 @@ import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
 import { formatNumber, trimZeros } from '@utils/utils'
-import { formatLargeNumber } from '@utils/formatLargeNumber'
+import { formatLargeNumber } from '@utils/uiUtils'
 
 interface StatsInterface {
   percentVolume: number | null

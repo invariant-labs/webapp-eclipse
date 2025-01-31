@@ -3,6 +3,7 @@ import { fn } from '@storybook/test'
 import { MemoryRouter } from 'react-router-dom'
 import SinglePositionInfo from './SinglePositionInfo'
 import { NetworkType } from '@store/consts/static'
+import { BN } from '@coral-xyz/anchor'
 
 const meta = {
   title: 'Components/SinglePositionInfo',
@@ -47,7 +48,8 @@ export const Primary: Story = {
     isBalanceLoading: false,
     isActive: true,
     network: NetworkType.Testnet,
-    isLocked: false
+    isLocked: false,
+    ethBalance: new BN(10000000)
   },
   render: args => {
     return (

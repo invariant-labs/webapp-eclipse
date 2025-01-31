@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()((theme: Theme) => {
   return {
     popover: {
-      marginTop: 'max(calc(50vh - 247px), 0px)',
+      marginTop: '100px',
       marginLeft: 'calc(50vw - 336px)',
       [theme.breakpoints.down(671)]: {
         display: 'flex',
@@ -30,9 +30,27 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'flex-start',
-      gap: 32
+      gap: 32,
+
+      '& .MuiCheckbox-root': {
+        color: colors.invariant.Error,
+        width: 'auto',
+        marginLeft: 4,
+        marginRight: 6
+      },
+      '& .MuiCheckbox-root.Mui-checked': {
+        color: colors.invariant.Error
+      }
     },
-    lockWarningText: { textWrap: 'wrap', ...typography.body2 },
+    lockWarningText: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+      textWrap: 'wrap',
+      ...typography.body2,
+      color: colors.invariant.Error
+    },
     lockExplanation: {
       color: '#A9B6BF',
       ...typography.body2,
@@ -91,7 +109,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     lockWarning: {
       display: 'flex',
-      flexDirection: 'row',
+      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'flex-start',
       gap: 12,
@@ -101,7 +119,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       paddingLeft: 12,
       ...typography.body2,
       textTransform: 'none',
-      background: colors.invariant.Error,
+      background: colors.invariant.errorTransparent,
+      border: `2px solid ${colors.invariant.Error}`,
       borderRadius: 8,
       minHeight: 40,
       width: '100%',
@@ -117,6 +136,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       height: 46.5,
       width: '100%',
       letterSpacing: -0.03,
+
+      '&:disabled': {
+        background: colors.invariant.light,
+        color: colors.invariant.newDark,
+
+        '&:hover': { background: colors.invariant.light, color: colors.invariant.newDark }
+      },
       '&:hover': {
         background: colors.invariant.pinkLinearGradient,
         boxShadow: `0 0 16px ${colors.invariant.pink}`,
@@ -124,12 +150,6 @@ const useStyles = makeStyles()((theme: Theme) => {
           background: colors.invariant.pinkLinearGradientOpacity,
           boxShadow: 'none'
         }
-      }
-    },
-    buttonText: {
-      WebkitPaddingBefore: '2px',
-      [theme.breakpoints.down('sm')]: {
-        WebkitPaddingBefore: 0
       }
     },
     positionDetails: {
@@ -293,6 +313,15 @@ const useStyles = makeStyles()((theme: Theme) => {
     greenText: {
       color: colors.invariant.green,
       ...typography.body1
+    },
+    checkboxText: {
+      textWrap: 'wrap',
+      ...typography.body2,
+      color: colors.invariant.Error,
+      width: 'auto',
+      '& span': {
+        ...typography.body2
+      }
     }
   }
 })

@@ -14,7 +14,7 @@ import NewPositionPage from './NewPositionPage/NewPositionPage'
 import PortfolioPage from './PortfolioPage/PortfolioPage'
 import RootPage from './RootPage'
 import SinglePositionPage from './SinglePositionPage/SinglePositionPage'
-import SolanaCreator from './SolanaCreator/SolanaCreator'
+import TokenCreatorPage from './TokenCreatorPage/TokenCreatorPage'
 import StatsPage from './StatsPage/StatsPage'
 import SwapPage from './SwapPage/SwapPage'
 
@@ -29,7 +29,7 @@ const createRouter = (currentNetwork: NetworkType) =>
         <Route path='/position/:id' element={<SinglePositionPage />} />
         <Route path='/portfolio' element={<PortfolioPage />} />
         {currentNetwork === NetworkType.Testnet && (
-          <Route path='/creator' element={<SolanaCreator />} />
+          <Route path='/creator' element={<TokenCreatorPage />} />
         )}
         {currentNetwork === NetworkType.Mainnet && (
           <Route path='/points' element={<LeaderBoardPage />} />

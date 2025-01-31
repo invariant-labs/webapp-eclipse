@@ -1,13 +1,12 @@
 import React from 'react'
 import useStyles from './style'
-import { blurContent, unblurContent } from '@utils/uiUtils'
+import { blurContent, formatLargeNumber, unblurContent } from '@utils/uiUtils'
 import { Button, useMediaQuery } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import YourPointsModal from '@components/Modals/YourPointsModal/YourPointsModals'
 import { theme } from '@static/theme'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { formatLargeNumber } from '@utils/formatLargeNumber'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { printBN, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
@@ -47,7 +46,7 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
           {isSm ? (
             <KeyboardArrowDownIcon id='downIcon' />
           ) : currentNetwork === NetworkType.Mainnet ? (
-            `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
+            `Points: ${trimZeros(formatLargeNumber(+printBN(new BN(currentUser.total?.points, 'hex'), LEADERBOARD_DECIMAL))) ?? 0}`
           ) : (
             'Points'
           )}
