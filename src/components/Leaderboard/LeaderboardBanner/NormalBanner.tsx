@@ -1,6 +1,6 @@
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 
 interface INormalBannerProps {
@@ -11,6 +11,7 @@ interface INormalBannerProps {
 export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
   const navigate = useNavigate()
   const bannerHeight = 'fit-content'
+  const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
 
   return (
     <Box
@@ -59,8 +60,8 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
               fontSize: { xs: '14px', sm: '16px' }
             }}>
             <span>
-              Invariant Points new feature just started! Collect more points by exchanging tokens.
-              Check it out!
+              {!isSmallDevice && `Invariant Points new feature just started!`} Collect more points
+              by exchanging tokens. Check it out!
               <span
                 style={{
                   color: colors.invariant.pink,
@@ -71,8 +72,8 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
                 }}
                 onClick={() => navigate('/exchange/ETH/USDC')}>
                 here!
-              </span>{' '}
-              ... And see also distribution of points in the
+              </span>
+              {!isSmallDevice && `...`} And see also distribution of points in the
               <span
                 style={{
                   color: colors.invariant.pink,
