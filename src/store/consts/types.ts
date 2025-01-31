@@ -245,7 +245,8 @@ export enum WalletType {
   NIGHTLY = 'NIGHTLY',
   NIGHTLY_WALLET = 'NIGHTLY_WALLET',
   BACKPACK = 'BACKPACK',
-  SALMON = 'SALMON'
+  SALMON = 'SALMON',
+  OKX = 'OKX'
 }
 
 export interface IPriceData {

@@ -814,6 +814,7 @@ export const walletNames = {
   [WalletType.NIGHTLY_WALLET]: 'Nightly',
   [WalletType.BACKPACK]: 'Backpack',
   [WalletType.SALMON]: 'Salmon',
+  [WalletType.OKX]: 'OKX',
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
