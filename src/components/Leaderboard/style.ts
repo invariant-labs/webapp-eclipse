@@ -16,9 +16,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: '24px',
-      width: '1072px',
+      maxWidth: '1072px',
 
-      [theme.breakpoints.between('lg', 'xl')]: {
+      [theme.breakpoints.up('lg')]: {
         width: '1072px'
       },
 
@@ -28,10 +28,6 @@ const useStyles = makeStyles()((theme: Theme) => {
 
       [theme.breakpoints.down('md')]: {
         width: '85vw'
-      },
-
-      [theme.breakpoints.up('xl')]: {
-        width: '1120px'
       }
     }
   }
