@@ -10,10 +10,6 @@ import { ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 
 export const UserOverview = () => {
-  const handleClaimAll = () => {
-    console.log('Claiming all fees')
-  }
-
   const handleAddToPool = (poolId: string) => {
     console.log(`Adding to pool: ${poolId}`)
   }
@@ -71,7 +67,7 @@ export const UserOverview = () => {
         </Grid>
       </Box>
       <Box sx={{ display: 'flex', gap: 4 }}>
-        <Overview poolAssets={data} isLoading={false} onClaimAll={handleClaimAll} />
+        <Overview poolAssets={data} isLoading={false} />
         <YourWallet pools={processedPools} onAddToPool={handleAddToPool} isLoading={isLoading} />
       </Box>
     </Box>

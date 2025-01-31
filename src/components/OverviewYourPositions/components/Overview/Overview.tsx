@@ -9,14 +9,9 @@ import { ProcessedPool } from '@store/types/userOverview'
 interface OverviewProps {
   poolAssets: ProcessedPool[]
   isLoading?: boolean
-  onClaimAll: () => void
 }
 
-export const Overview: React.FC<OverviewProps> = ({
-  poolAssets = [],
-  isLoading = false,
-  onClaimAll
-}) => {
+export const Overview: React.FC<OverviewProps> = ({ poolAssets = [], isLoading = false }) => {
   const { classes } = useStyles()
   const [totalValue, setTotalValue] = useState(0)
   const [totalUnclaimedFees, setTotalUnclaimedFees] = useState(0)
@@ -30,7 +25,7 @@ export const Overview: React.FC<OverviewProps> = ({
     <Box className={classes.container}>
       <HeaderSection totalValue={totalValue} />
 
-      <UnclaimedSection unclaimedTotal={totalUnclaimedFees} onClaimAll={() => onClaimAll()} />
+      <UnclaimedSection unclaimedTotal={totalUnclaimedFees} />
 
       <Box sx={{ marginTop: 2 }}>
         <UnclaimedFeeList

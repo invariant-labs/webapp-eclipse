@@ -5,13 +5,9 @@ import { actions } from '@store/reducers/positions'
 
 interface UnclaimedSectionProps {
   unclaimedTotal: number
-  onClaimAll: () => void
 }
 
-export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
-  unclaimedTotal,
-  onClaimAll
-}) => {
+export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({ unclaimedTotal }) => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
   const handleClaimAll = () => {
