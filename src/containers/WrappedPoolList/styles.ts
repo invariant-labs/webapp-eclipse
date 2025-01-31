@@ -69,6 +69,21 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   container: {
     width: '100%'
+  },
+  paper: {
+    background: colors.invariant.bodyBackground,
+    boxShadow: 'none',
+    maxWidth: 500,
+    maxHeight: '100vh',
+    marginTop: 8,
+    '&::-webkit-scrollbar': {
+      width: 6,
+      background: colors.invariant.component
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: colors.invariant.light,
+      borderRadius: 6
+    }
   }
 }))
 
