@@ -1279,7 +1279,6 @@ export function* handleClaimAllFees() {
 
     const allPositionsData = yield* select(positionsWithPoolsData)
     const tokensAccounts = yield* select(accounts)
-    // const allTokens = yield* select(tokens)
 
     if (allPositionsData.length === 0) {
       closeSnackbar(loaderClaimAllFees)
@@ -1315,12 +1314,19 @@ export function* handleClaimAllFees() {
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    for (const { tx } of txs) {
+    for (const { tx, additionalSigner } of txs) {
       const blockhash = yield* call([connection, connection.getLatestBlockhash])
       tx.recentBlockhash = blockhash.blockhash
       tx.feePayer = wallet.publicKey
 
-      const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+      let signedTx: Transaction
+      if (additionalSigner) {
+        const partiallySignedTx = yield* call([wallet, wallet.signTransaction], tx)
+        partiallySignedTx.partialSign(additionalSigner)
+        signedTx = partiallySignedTx
+      } else {
+        signedTx = yield* call([wallet, wallet.signTransaction], tx)
+      }
 
       const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
         skipPreflight: false
