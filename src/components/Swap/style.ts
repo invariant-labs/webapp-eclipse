@@ -43,7 +43,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between',
     position: 'relative',
-    paddingBottom: 9,
+    paddingBottom: 16,
     rowGap: 8,
     flexWrap: 'wrap',
 

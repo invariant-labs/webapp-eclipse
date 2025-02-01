@@ -23,7 +23,7 @@ import {
   plotTicks,
   singlePositionData
 } from '@store/selectors/positions'
-import { balanceLoading, status } from '@store/selectors/solanaWallet'
+import { balance, balanceLoading, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -64,6 +64,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   } = useSelector(currentPositionTicks)
 
   const walletStatus = useSelector(status)
+  const ethBalance = useSelector(balance)
   const isBalanceLoading = useSelector(balanceLoading)
 
   const isTimeoutError = useSelector(timeoutError)
@@ -452,6 +453,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         isLocked={position.isLocked}
         success={success}
         inProgress={inProgress}
+        ethBalance={ethBalance}
       />
     )
   }

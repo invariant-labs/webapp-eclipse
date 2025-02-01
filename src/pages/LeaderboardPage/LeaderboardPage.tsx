@@ -1,24 +1,16 @@
-import React, { useState } from 'react'
+import React from 'react'
 import useStyles from './styles'
 import { Grid } from '@mui/material'
-import { LeaderboardWrapper } from './components/LeaderboardWrapper'
-import { InfoComponent } from './components/InfoComponent/InfoComponent'
-import { Rewards } from './components/Rewards/Rewards'
-
+import { LeaderboardWrapper } from '../../containers/LeaderboardWrapper/LeaderboardWrapper'
 export const LeaderBoardPage: React.FC = () => {
   const { classes } = useStyles()
-  const [alignment, setAlignment] = useState<string>('leaderboard')
 
   return (
-    <>
-      <Grid container className={classes.container}>
-        <Grid item>
-          <LeaderboardWrapper alignment={alignment} setAlignment={setAlignment} />
-        </Grid>
+    <Grid container className={classes.container}>
+      <Grid item>
+        <LeaderboardWrapper />
       </Grid>
-      {alignment === 'leaderboard' ? <InfoComponent /> : null}
-      {alignment === 'claim' ? <Rewards /> : null}
-    </>
+    </Grid>
   )
 }
 

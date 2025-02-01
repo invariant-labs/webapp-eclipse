@@ -4,7 +4,7 @@ import icons from '@static/icons'
 import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import useIsMobile from '@store/hooks/isMobile'
 
 interface IEstimatedPointsLabel {
