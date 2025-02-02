@@ -29,30 +29,14 @@ import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import PositionStatusTooltip from './PositionItem/components/PositionStatusTooltip'
 
 const useStyles = makeStyles()((theme: Theme) => ({
-  bodyRow: {
-    '&:nth-of-type(odd)': {
-      background: colors.invariant.component,
-      '&:hover': {
-        background: `${colors.invariant.component}B0`
-      }
-    },
-
-    '&:first-of-type td': {
-      borderTop: `1px solid ${colors.invariant.light}`
-    }
-  },
-
-  // Base cell styles
   cellBase: {
     padding: '20px',
     background: 'inherit',
     border: 'none',
     whiteSpace: 'nowrap',
     textAlign: 'center'
-    // borderBottom: `1px solid ${colors.invariant.light}`
   },
 
-  // Column specific styles with consistent widths
   pairNameCell: {
     width: '25%',
     textAlign: 'left',
@@ -110,7 +94,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
 
-  // Content styling
   iconsAndNames: {
     width: 'fit-content',
     display: 'flex',
@@ -216,7 +199,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     poolData
   )
 
-  // Reuse existing components and logic for cell contents
   const pairNameContent = (
     <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
       <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>

@@ -31,7 +31,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
     flexDirection: 'column',
     overflow: 'hidden'
   },
-  // Base styles for cells
   cellBase: {
     padding: '14px 20px',
     background: 'inherit',
@@ -39,7 +38,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
     whiteSpace: 'nowrap',
     textAlign: 'center'
   },
-  // Header specific styles
   headerRow: {
     height: '50px',
     background: colors.invariant.component,
@@ -136,6 +134,26 @@ const useStyles = makeStyles()((theme: Theme) => ({
     '&::-webkit-scrollbar-thumb': {
       background: colors.invariant.pink,
       borderRadius: '4px'
+    },
+    '& > tr:nth-of-type(odd)': {
+      background: colors.invariant.component,
+      '&:hover': {
+        background: `${colors.invariant.component}B0`
+      }
+    },
+    '& > tr:nth-of-type(even)': {
+      background: `${colors.invariant.component}80`,
+      '&:hover': {
+        background: `${colors.invariant.component}90`
+      }
+    },
+    '& > tr': {
+      '& td': {
+        borderBottom: `1px solid ${colors.invariant.light}`
+      }
+    },
+    '& > tr:first-of-type td': {
+      borderTop: `1px solid ${colors.invariant.light}`
     }
   },
   tableBodyRow: {
