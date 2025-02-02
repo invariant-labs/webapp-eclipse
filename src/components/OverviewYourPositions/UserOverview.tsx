@@ -67,7 +67,8 @@ export const UserOverview = () => {
         </Grid>
       </Box>
       <Box sx={{ display: 'flex', gap: 4 }}>
-        <Overview poolAssets={data} isLoading={false} />
+        {/* <Overview poolAssets={data} isLoading={false} /> */}
+        <YourWallet pools={processedPools} onAddToPool={handleAddToPool} isLoading={isLoading} />
         <YourWallet pools={processedPools} onAddToPool={handleAddToPool} isLoading={isLoading} />
       </Box>
     </Box>

@@ -19,7 +19,7 @@ import icons from '@static/icons'
 
 const useStyles = makeStyles()(() => ({
   container: {
-    minWidth: '559px',
+    width: '100vw',
     maxHeight: '352px'
   },
   divider: {
@@ -48,17 +48,18 @@ const useStyles = makeStyles()(() => ({
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',
     backgroundColor: colors.invariant.component,
-    maxHeight: '240px',
-    overflow: 'auto',
+    maxHeight: '240px', // Height for approximately 3 rows
+    overflowY: 'auto',
+
     '&::-webkit-scrollbar': {
-      width: '6px'
+      width: '4px'
     },
     '&::-webkit-scrollbar-track': {
       background: 'transparent'
     },
     '&::-webkit-scrollbar-thumb': {
       background: colors.invariant.pink,
-      borderRadius: '6px'
+      borderRadius: '4px'
     }
   },
   tableCell: {
@@ -93,8 +94,12 @@ const useStyles = makeStyles()(() => ({
   statsContainer: {
     backgroundColor: colors.invariant.light,
     display: 'inline-flex',
+    width: '100%',
+    justifyContent: 'center',
+    alignItems: 'center',
     padding: '4px 12px',
-    borderRadius: '6px',
+    height: '25px',
+    borderRadius: '10px',
     gap: '16px'
   },
   statsLabel: {
@@ -163,16 +168,16 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
         )}
       </Box>
       <TableContainer className={classes.tableContainer}>
-        <Table stickyHeader>
+        <Table stickyHeader sx={{ paddingRight: '5px' }}>
           <TableHead>
             <TableRow>
               <TableCell className={classes.headerCell} align='left'>
                 Token Name
               </TableCell>
-              <TableCell className={classes.headerCell} align='right'>
+              <TableCell className={classes.headerCell} align='center'>
                 Value
               </TableCell>
-              <TableCell className={classes.headerCell} align='right'>
+              <TableCell className={classes.headerCell} align='center'>
                 Amount
               </TableCell>
               <TableCell className={classes.headerCell} align='right'>
