@@ -184,11 +184,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({ positions }) =>
             <TableCell className={`${classes.headerCell} ${classes.pairNameCell}`}>
               Pair name
             </TableCell>
-            {networkSelector === NetworkType.Mainnet && (
-              <TableCell className={`${classes.headerCell} ${classes.pointsCell}`}>
-                Points
-              </TableCell>
-            )}
+
             <TableCell className={`${classes.headerCell} ${classes.feeTierCell}`}>
               Fee tier
             </TableCell>

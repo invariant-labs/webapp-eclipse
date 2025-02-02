@@ -174,10 +174,10 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
               <TableCell className={classes.headerCell} align='left'>
                 Token Name
               </TableCell>
-              <TableCell className={classes.headerCell} align='center'>
+              <TableCell className={classes.headerCell} align='left'>
                 Value
               </TableCell>
-              <TableCell className={classes.headerCell} align='center'>
+              <TableCell className={classes.headerCell} align='left'>
                 Amount
               </TableCell>
               <TableCell className={classes.headerCell} align='right'>

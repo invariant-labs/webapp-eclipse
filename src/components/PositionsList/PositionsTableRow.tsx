@@ -439,7 +439,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   ])
 
   return (
-    <TableRow className={classes.bodyRow}>
+    <TableRow>
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
       </TableCell>
@@ -455,6 +455,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
           style={{
             background: colors.invariant.light,
             padding: '8px 12px',
+            minWidth: '180px',
             borderRadius: '12px'
           }}>
           {tokenXPercentage === 100 && (
