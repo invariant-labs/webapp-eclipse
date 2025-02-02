@@ -5,7 +5,8 @@ export const useStyles = makeStyles()(() => ({
   container: {
     minWidth: '424px',
     minHeight: '280px',
-    borderRadius: '24px'
+    borderRadius: '24px',
+    padding: 0
   },
 
   header: {
