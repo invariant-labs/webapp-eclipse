@@ -19,12 +19,12 @@ import { IPositionItem } from './types'
 
 const useStyles = makeStyles()((theme: Theme) => ({
   tableContainer: {
+    width: 'fit-content',
     background: 'transparent',
     boxShadow: 'none'
   },
   table: {
-    borderCollapse: 'separate',
-    maxWidth: '950px' // Set minimum width to prevent content from breaking
+    borderCollapse: 'separate'
   },
   headerRow: {
     height: '50px',

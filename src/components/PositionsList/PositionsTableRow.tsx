@@ -29,9 +29,20 @@ import PositionStatusTooltip from './PositionItem/components/PositionStatusToolt
 
 const useStyles = makeStyles()((theme: Theme) => ({
   bodyRow: {
-    background: colors.invariant.component,
-    '&:hover': {
-      background: `${colors.invariant.component}B0`
+    '&:nth-of-type(odd)': {
+      background: colors.invariant.component,
+      '&:hover': {
+        background: `${colors.invariant.component}B0`
+      }
+    },
+    '&:nth-of-type(even)': {
+      background: `${colors.invariant.component}80`,
+      '&:hover': {
+        background: `${colors.invariant.component}90`
+      }
+    },
+    '&:first-of-type td': {
+      borderTop: `1px solid ${colors.invariant.light}`
     }
   },
   lastRow: {
@@ -43,10 +54,9 @@ const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   bodyCell: {
-    padding: '20px',
     background: 'inherit',
-    border: 'none',
-    textAlign: 'center'
+    textAlign: 'center',
+    borderBottom: `1px solid ${colors.invariant.light} `
   },
   pairNameCell: {
     textAlign: 'left'
@@ -167,6 +177,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     width: 36
   }
 }))
+
 interface Row extends IPositionItem {
   isLastRow: boolean
 }
