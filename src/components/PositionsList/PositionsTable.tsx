@@ -31,6 +31,15 @@ const useStyles = makeStyles()((theme: Theme) => ({
     flexDirection: 'column',
     overflow: 'hidden'
   },
+  // Base styles for cells
+  cellBase: {
+    padding: '14px 20px',
+    background: 'inherit',
+    border: 'none',
+    whiteSpace: 'nowrap',
+    textAlign: 'center'
+  },
+  // Header specific styles
   headerRow: {
     height: '50px',
     background: colors.invariant.component,
@@ -44,19 +53,12 @@ const useStyles = makeStyles()((theme: Theme) => ({
   headerCell: {
     fontSize: '16px',
     lineHeight: '24px',
+    border: 'none',
     color: colors.invariant.textGrey,
     fontWeight: 400,
-    whiteSpace: 'nowrap',
-    padding: '12px 20px',
-    background: 'inherit',
-    textAlign: 'center',
-    border: 'none'
+    textAlign: 'center'
   },
-  pairNameHeaderCell: {
-    textAlign: 'left',
-    paddingLeft: '72px',
-    width: '25%'
-  },
+  // Footer styles
   footerRow: {
     background: colors.invariant.component,
     height: '50px',
@@ -67,26 +69,55 @@ const useStyles = makeStyles()((theme: Theme) => ({
       borderBottomRightRadius: '24px'
     }
   },
-  footerCell: {
-    padding: '12px 20px',
-    background: 'inherit',
-    border: 'none'
+  pairNameCell: {
+    width: '25%',
+    textAlign: 'left',
+    padding: '14px 20px 14px 22px !important'
   },
-  narrowCell: {
-    width: '4%'
+  pointsCell: {
+    width: '8%',
+    '& > div': {
+      justifyContent: 'center'
+    }
   },
-  mediumCell: {
-    width: '9%'
+  feeTierCell: {
+    width: '12%',
+    '& > div': {
+      justifyContent: 'center'
+    }
   },
-  wideCell: {
-    width: '15%'
+  tokenRatioCell: {
+    width: '15%',
+    '& > div': {
+      margin: '0 auto'
+    }
+  },
+  valueCell: {
+    width: '10%',
+    '& .MuiGrid-root': {
+      justifyContent: 'center'
+    }
+  },
+  feeCell: {
+    width: '10%',
+    '& .MuiGrid-root': {
+      justifyContent: 'center'
+    }
   },
   chartCell: {
-    width: '20%'
+    width: '16%',
+    '& > div': {
+      margin: '0 auto'
+    }
   },
   actionCell: {
-    width: '4%'
+    width: '4%',
+    padding: '14px 8px',
+    '& > button': {
+      margin: '0 auto'
+    }
   },
+  // Table layout styles
   tableHead: {
     display: 'table',
     width: '100%',
@@ -94,7 +125,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
   tableBody: {
     display: 'block',
-    maxHeight: 'calc(3 * (20px + 50px))',
+    maxHeight: 'calc(4 * (20px + 50px))',
     overflowY: 'auto',
     '&::-webkit-scrollbar': {
       width: '4px'
@@ -132,20 +163,22 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({ positions }) =>
       <Table className={classes.table}>
         <TableHead className={classes.tableHead}>
           <TableRow className={classes.headerRow}>
-            <TableCell className={`${classes.headerCell} ${classes.pairNameHeaderCell}`}>
+            <TableCell className={`${classes.headerCell} ${classes.pairNameCell}`}>
               Pair name
             </TableCell>
             {networkSelector === NetworkType.Mainnet && (
-              <TableCell className={classes.headerCell}>Points</TableCell>
+              <TableCell className={`${classes.headerCell} ${classes.pointsCell}`}>
+                Points
+              </TableCell>
             )}
-            <TableCell className={`${classes.headerCell} ${classes.narrowCell}`}>
+            <TableCell className={`${classes.headerCell} ${classes.feeTierCell}`}>
               Fee tier
             </TableCell>
-            <TableCell className={`${classes.headerCell} ${classes.wideCell}`}>
+            <TableCell className={`${classes.headerCell} ${classes.tokenRatioCell}`}>
               Token ratio
             </TableCell>
-            <TableCell className={`${classes.headerCell} ${classes.mediumCell}`}>Value</TableCell>
-            <TableCell className={`${classes.headerCell} ${classes.mediumCell}`}>Fee</TableCell>
+            <TableCell className={`${classes.headerCell} ${classes.valueCell}`}>Value</TableCell>
+            <TableCell className={`${classes.headerCell} ${classes.feeCell}`}>Fee</TableCell>
             <TableCell className={`${classes.headerCell} ${classes.chartCell}`}>Chart</TableCell>
             <TableCell className={`${classes.headerCell} ${classes.actionCell}`}>Action</TableCell>
           </TableRow>
@@ -161,16 +194,16 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({ positions }) =>
         </TableBody>
         <TableFooter className={classes.tableFooter}>
           <TableRow className={classes.footerRow}>
-            <TableCell className={classes.footerCell} />
+            <TableCell className={`${classes.cellBase} ${classes.pairNameCell}`} />
             {networkSelector === NetworkType.Mainnet && (
-              <TableCell className={classes.footerCell} />
+              <TableCell className={`${classes.cellBase} ${classes.pointsCell}`} />
             )}
-            <TableCell className={classes.footerCell} />
-            <TableCell className={classes.footerCell} />
-            <TableCell className={classes.footerCell} />
-            <TableCell className={classes.footerCell} />
-            <TableCell className={classes.footerCell} />
-            <TableCell className={classes.footerCell} />
+            <TableCell className={`${classes.cellBase} ${classes.feeTierCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.valueCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.feeCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.chartCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.actionCell}`} />
           </TableRow>
         </TableFooter>
       </Table>

@@ -6,7 +6,8 @@ import {
   Theme,
   Tooltip,
   Typography,
-  useMediaQuery
+  useMediaQuery,
+  Box
 } from '@mui/material'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from './PositionItem/components/MinMaxChart/MinMaxChart'
@@ -35,40 +36,94 @@ const useStyles = makeStyles()((theme: Theme) => ({
         background: `${colors.invariant.component}B0`
       }
     },
-    '&:nth-of-type(even)': {
-      background: `${colors.invariant.component}80`,
-      '&:hover': {
-        background: `${colors.invariant.component}90`
-      }
-    },
+
     '&:first-of-type td': {
       borderTop: `1px solid ${colors.invariant.light}`
     }
   },
-  lastRow: {
-    '& td:first-of-type': {
-      borderBottomLeftRadius: '24px'
-    },
-    '& td:last-child': {
-      borderBottomRightRadius: '24px'
+
+  // Base cell styles
+  cellBase: {
+    padding: '20px',
+    background: 'inherit',
+    border: 'none',
+    whiteSpace: 'nowrap',
+    textAlign: 'center'
+    // borderBottom: `1px solid ${colors.invariant.light}`
+  },
+
+  // Column specific styles with consistent widths
+  pairNameCell: {
+    width: '25%',
+    textAlign: 'left',
+    paddingLeft: '22px !important'
+  },
+
+  pointsCell: {
+    width: '8%',
+    '& > div': {
+      justifyContent: 'center'
     }
   },
-  bodyCell: {
-    background: 'inherit',
-    textAlign: 'center',
-    padding: '14px',
-    borderBottom: `1px solid ${colors.invariant.light} `
+
+  feeTierCell: {
+    width: '12%',
+    '& > .MuiBox-root': {
+      justifyContent: 'center',
+      gap: '8px'
+    }
   },
-  pairNameCell: {
-    textAlign: 'left'
+
+  tokenRatioCell: {
+    width: '18%',
+    '& > .MuiTypography-root': {
+      margin: '0 auto',
+      maxWidth: '90%'
+    }
   },
+
+  valueCell: {
+    width: '10%',
+    '& .MuiGrid-root': {
+      margin: '0 auto',
+      justifyContent: 'center'
+    }
+  },
+
+  feeCell: {
+    width: '10%',
+    '& .MuiGrid-root': {
+      margin: '0 auto',
+      justifyContent: 'center'
+    }
+  },
+
+  chartCell: {
+    width: '16%'
+  },
+
+  actionCell: {
+    width: '4%',
+    padding: '14px 8px',
+    '& > .MuiButton-root': {
+      margin: '0 auto'
+    }
+  },
+
+  // Content styling
+  iconsAndNames: {
+    width: 'fit-content',
+    display: 'flex',
+    alignItems: 'center'
+  },
+
   icons: {
     marginRight: 12,
-    width: 'fit-content',
-    [theme.breakpoints.down('lg')]: {
-      marginRight: 12
-    }
+    display: 'flex',
+    alignItems: 'center',
+    gap: '4px'
   },
+
   tokenIcon: {
     width: 40,
     borderRadius: '100%',
@@ -76,80 +131,16 @@ const useStyles = makeStyles()((theme: Theme) => ({
       width: 28
     }
   },
+
   arrows: {
     width: 36,
-    marginLeft: 4,
-    marginRight: 4,
-    [theme.breakpoints.down('lg')]: {
-      width: 30
-    },
-    [theme.breakpoints.down('sm')]: {
-      width: 24
-    },
+    cursor: 'pointer',
+    transition: 'filter 0.2s',
     '&:hover': {
       filter: 'brightness(2)'
     }
   },
-  names: {
-    textOverflow: 'ellipsis',
-    overflow: 'hidden',
-    color: colors.invariant.text,
-    lineHeight: '40px',
-    whiteSpace: 'nowrap',
-    width: 180,
-    [theme.breakpoints.down('lg')]: {
-      lineHeight: '32px',
-      width: 'unset'
-    }
-  },
-  infoText: {
-    color: colors.invariant.lightGrey,
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden'
-  },
-  activeInfoText: {
-    color: colors.invariant.black
-  },
-  greenText: {
-    color: colors.invariant.green,
-    whiteSpace: 'nowrap',
-    textOverflow: 'ellipsis',
-    overflow: 'hidden'
-  },
-  fee: {
-    background: colors.invariant.light,
-    borderRadius: 11,
-    height: 36,
-    width: 65,
-    marginRight: 8
-  },
-  activeFee: {
-    background: colors.invariant.greenLinearGradient
-  },
-  tooltip: {
-    color: colors.invariant.textGrey,
-    lineHeight: '24px',
-    background: colors.black.full,
-    borderRadius: 12,
-    fontSize: 14
-  },
-  actionButton: {
-    display: 'inline-flex',
-    position: 'relative'
-  },
-  liquidity: {
-    background: colors.invariant.light,
-    borderRadius: 11,
-    height: 36,
-    marginRight: 8,
-    color: colors.invariant.text,
-    lineHeight: 20,
-    paddingInline: 10,
-    [theme.breakpoints.down('lg')]: {
-      flex: '1 1 0%'
-    }
-  },
+
   button: {
     minWidth: '36px',
     width: '36px',
@@ -166,29 +157,15 @@ const useStyles = makeStyles()((theme: Theme) => ({
       background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
       transform: 'translateY(-2px)',
       boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
-    },
-    '&:active': {
-      transform: 'translateY(1px)',
-      boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
     }
   },
-  iconsAndNames: {
-    width: 'fit-content'
-  },
-  narrowCell: {
-    width: 65
-  },
-  mediumCell: {
-    width: 100
-  },
-  wideCell: {
-    width: 170
-  },
-  chartCell: {
-    width: 230
-  },
-  actionCell: {
-    width: 36
+
+  valueWrapper: {
+    margin: '0 auto',
+    width: '100%',
+    maxWidth: 144,
+    display: 'flex',
+    justifyContent: 'center'
   }
 }))
 
@@ -395,13 +372,19 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
         <>
           <div
             onClick={e => e.stopPropagation()}
-            className={classes.actionButton}
+            // className={classes.actionButton}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
             <img
               src={icons.airdropRainbow}
               alt={'Airdrop'}
-              style={{ height: '32px', marginRight: '16px', marginLeft: '16px' }}
+              style={{
+                flexShrink: '0',
+                height: '32px',
+                width: '32px',
+                marginRight: '16px',
+                marginLeft: '16px'
+              }}
             />
           </div>
           <PromotedPoolPopover
@@ -448,7 +431,9 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
             src={icons.airdropRainbow}
             alt={'Airdrop'}
             style={{
+              flexShrink: '0',
               height: '32px',
+              width: '32px',
               marginRight: '16px',
               marginLeft: '16px',
               opacity: 0.3,
@@ -473,9 +458,16 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
 
   return (
     <TableRow className={classes.bodyRow}>
-      <TableCell className={classes.bodyCell}>{pairNameContent}</TableCell>
-      <TableCell className={`${classes.bodyCell} ${classes.narrowCell}`}>{feeFragment}</TableCell>
-      <TableCell className={`${classes.bodyCell} ${classes.wideCell} ${classes}`}>
+      <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
+        {pairNameContent}
+      </TableCell>
+      <TableCell className={`${classes.cellBase} ${classes.feeTierCell}`}>
+        <Box sx={{ display: 'flex' }}>
+          {promotedIconContent}
+          {feeFragment}
+        </Box>
+      </TableCell>
+      <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell} ${classes}`}>
         <Typography
           className={`${sharedClasses.infoText} `}
           style={{
@@ -505,12 +497,12 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
           )}
         </Typography>
       </TableCell>
-      <TableCell className={`${classes.bodyCell} ${classes.mediumCell}`}>{valueFragment}</TableCell>
-      <TableCell className={`${classes.bodyCell} ${classes.mediumCell}`}>{unclaimedFee}</TableCell>
-      <TableCell className={`${classes.bodyCell} ${classes.chartCell}`}>
+      <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>{valueFragment}</TableCell>
+      <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>{unclaimedFee}</TableCell>
+      <TableCell className={`${classes.cellBase} ${classes.chartCell}`}>
         <MinMaxChart min={0.3453} max={0.3853} current={0.35653} />
       </TableCell>
-      <TableCell className={`${classes.bodyCell} ${classes.actionCell}`}>
+      <TableCell className={`${classes.cellBase} ${classes.actionCell}`}>
         <Button className={classes.button}>...</Button>
       </TableCell>
     </TableRow>
