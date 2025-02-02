@@ -3,14 +3,12 @@ import { Box, Typography } from '@mui/material'
 import { MaxHandleNarrower, MinHandleNarrower } from '@components/PriceRangePlot/Brush/svgHandles'
 import { colors, typography } from '@static/theme'
 
-// Constants
 const CONSTANTS = {
   MAX_HANDLE_OFFSET: 99,
   OVERFLOW_LIMIT: 3,
   CHART_PADDING: 21
 } as const
 
-// Types
 interface MinMaxChartProps {
   min: number
   max: number
@@ -22,7 +20,6 @@ interface GradientBoxProps {
   showGradient: boolean
 }
 
-// Styled components
 const GradientBox: React.FC<GradientBoxProps> = ({ color, showGradient }) => (
   <Box
     sx={{
@@ -46,7 +43,7 @@ const CurrentValueIndicator: React.FC<{ position: number; value: number }> = ({
       position: 'absolute',
       left: `${position}%`,
       transform: 'translateX(-50%)',
-      top: '-10px',
+      top: '-16px',
       whiteSpace: 'nowrap',
       zIndex: 101
     }}>
@@ -103,6 +100,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         width: '100%',
         height: '55px',
         display: 'flex',
+        marginTop: '10px',
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
         position: 'relative',

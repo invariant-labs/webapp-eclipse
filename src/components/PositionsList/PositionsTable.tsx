@@ -73,10 +73,10 @@ const useStyles = makeStyles()((theme: Theme) => ({
     border: 'none'
   },
   narrowCell: {
-    width: '8%'
+    width: '4%'
   },
   mediumCell: {
-    width: '10%'
+    width: '9%'
   },
   wideCell: {
     width: '15%'

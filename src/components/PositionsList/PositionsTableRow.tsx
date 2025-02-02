@@ -138,6 +138,18 @@ const useStyles = makeStyles()((theme: Theme) => ({
     display: 'inline-flex',
     position: 'relative'
   },
+  liquidity: {
+    background: colors.invariant.light,
+    borderRadius: 11,
+    height: 36,
+    marginRight: 8,
+    color: colors.invariant.text,
+    lineHeight: 20,
+    paddingInline: 10,
+    [theme.breakpoints.down('lg')]: {
+      flex: '1 1 0%'
+    }
+  },
   button: {
     minWidth: '36px',
     width: '36px',
@@ -463,8 +475,14 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     <TableRow className={classes.bodyRow}>
       <TableCell className={classes.bodyCell}>{pairNameContent}</TableCell>
       <TableCell className={`${classes.bodyCell} ${classes.narrowCell}`}>{feeFragment}</TableCell>
-      <TableCell className={`${classes.bodyCell} ${classes.wideCell}`}>
-        <Typography className={sharedClasses.infoText}>
+      <TableCell className={`${classes.bodyCell} ${classes.wideCell} ${classes}`}>
+        <Typography
+          className={`${sharedClasses.infoText} `}
+          style={{
+            background: colors.invariant.light,
+            padding: '8px 12px',
+            borderRadius: '12px'
+          }}>
           {tokenXPercentage === 100 && (
             <span>
               {tokenXPercentage}
