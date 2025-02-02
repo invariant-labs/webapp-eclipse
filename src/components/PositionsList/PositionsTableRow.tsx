@@ -56,6 +56,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
   bodyCell: {
     background: 'inherit',
     textAlign: 'center',
+    padding: '14px',
     borderBottom: `1px solid ${colors.invariant.light} `
   },
   pairNameCell: {
@@ -138,12 +139,13 @@ const useStyles = makeStyles()((theme: Theme) => ({
     position: 'relative'
   },
   button: {
+    minWidth: '36px',
+    width: '36px',
+    height: '36px',
+    padding: 0,
     display: 'flex',
-    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    maxWidth: '36px',
-    maxHeight: '36px',
     background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
     borderRadius: '16px',
     color: colors.invariant.dark,
@@ -178,10 +180,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
   }
 }))
 
-interface Row extends IPositionItem {
-  isLastRow: boolean
-}
-export const PositionTableRow: React.FC<Row> = ({
+export const PositionTableRow: React.FC<IPositionItem> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,
@@ -491,10 +490,10 @@ export const PositionTableRow: React.FC<Row> = ({
       <TableCell className={`${classes.bodyCell} ${classes.mediumCell}`}>{valueFragment}</TableCell>
       <TableCell className={`${classes.bodyCell} ${classes.mediumCell}`}>{unclaimedFee}</TableCell>
       <TableCell className={`${classes.bodyCell} ${classes.chartCell}`}>
-        <MinMaxChart min={0.3453} max={0.3853} current={0.36653} />
+        <MinMaxChart min={0.3453} max={0.3853} current={0.35653} />
       </TableCell>
       <TableCell className={`${classes.bodyCell} ${classes.actionCell}`}>
-        <Button className={classes.button} />
+        <Button className={classes.button}>...</Button>
       </TableCell>
     </TableRow>
   )
