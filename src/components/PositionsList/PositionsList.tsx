@@ -24,6 +24,8 @@ import { actions } from '@store/reducers/leaderboard'
 import { PositionItemDesktop } from './PositionItem/variants/PositionItemDesktop'
 import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
+import { PositionItemHeaderDesktop } from './PositionItem/variants/PositionItemHeaderDesktop'
+import PositionsTable from './PositionsTable'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -233,27 +235,30 @@ export const PositionsList: React.FC<IProps> = ({
       </Grid>
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
         {currentData.length > 0 && !loading && !showNoConnected ? (
-          paginator(page).data.map((element, index) => (
-            <Grid
-              onClick={() => {
-                if (allowPropagation) {
-                  navigate(`/position/${element.id}`)
-                }
-              }}
-              key={element.id}
-              className={classes.itemLink}>
-              {isLg ? (
-                <PositionItemMobile
-                  key={index}
-                  {...element}
-                  setAllowPropagation={setAllowPropagation}
-                />
-              ) : (
-                <PositionItemDesktop key={index} {...element} />
-              )}
-            </Grid>
-          ))
-        ) : showNoConnected ? (
+          <PositionsTable positions={currentData} />
+        ) : // paginator(page).data.map((element, index) => (
+        // <Grid
+        //   onClick={() => {
+        //     if (allowPropagation) {
+        //       navigate(`/position/${element.id}`)
+        //     }
+        //   }}
+        //   key={element.id}
+        //   className={classes.itemLink}>
+        //   {isLg ? (
+        //     <PositionItemMobile
+        //       key={index}
+        //       {...element}
+        //       setAllowPropagation={setAllowPropagation}
+        //     />
+        //   ) : (
+        //     <PositionItemDesktop key={index} {...element} />
+        //   )}
+        // </Grid>
+
+        // )
+
+        showNoConnected ? (
           <NoConnected {...noConnectedBlockerProps} />
         ) : loading ? (
           <Grid container style={{ flex: 1 }}>
@@ -272,7 +277,7 @@ export const PositionsList: React.FC<IProps> = ({
           />
         )}
       </Grid>
-      {paginator(page).totalPages > 1 ? (
+      {/* {paginator(page).totalPages > 1 ? (
         <PaginationList
           pages={paginator(page).totalPages}
           defaultPage={defaultPage}
@@ -280,7 +285,7 @@ export const PositionsList: React.FC<IProps> = ({
           variant='end'
           page={page}
         />
-      ) : null}
+      ) : null} */}
     </Grid>
   )
 }

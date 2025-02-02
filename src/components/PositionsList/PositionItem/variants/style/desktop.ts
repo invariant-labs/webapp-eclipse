@@ -244,9 +244,13 @@ export const useDesktopStyles = makeStyles()((theme: Theme) => ({
     padding: 20,
     flexWrap: 'nowrap',
     background: colors.invariant.component,
-    borderRadius: 24,
+    '&:not(:first-child)': {
+      borderTopLeftRadius: '24px',
+      borderTopRightRadius: '24px'
+    },
+
     '&:not(:last-child)': {
-      marginBottom: 20
+      // marginBottom: 20
     },
     '&:hover': {
       background: `${colors.invariant.component}B0`
@@ -256,16 +260,15 @@ export const useDesktopStyles = makeStyles()((theme: Theme) => ({
     display: 'inline-flex'
   },
   minMax: {
-    background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
-    width: 320,
+    width: 230,
     paddingInline: 10,
     marginRight: 8,
     [theme.breakpoints.down('md')]: {
       width: '100%',
-      marginRight: 0,
-      marginTop: 8
+      marginRight: 0
+      // marginTop: 16
     }
   },
   mdInfo: {

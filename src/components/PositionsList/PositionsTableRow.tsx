@@ -1,28 +1,176 @@
-import { Box, Button, Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
-import { theme } from '@static/theme'
-import { formatNumber } from '@utils/utils'
-import classNames from 'classnames'
+import {
+  Grid,
+  TableRow,
+  TableCell,
+  Button,
+  Theme,
+  Tooltip,
+  Typography,
+  useMediaQuery
+} from '@mui/material'
 import { useCallback, useMemo, useRef, useState } from 'react'
-import { useDesktopStyles } from './style/desktop'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { initialXtoY, tickerToAddress } from '@utils/utils'
-import lockIcon from '@static/svg/lock.svg'
-import unlockIcon from '@static/svg/unlock.svg'
-import icons from '@static/icons'
+import { MinMaxChart } from './PositionItem/components/MinMaxChart/MinMaxChart'
+import { IPositionItem } from './types'
+import { makeStyles } from 'tss-react/mui'
+import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { usePromotedPool } from '../hooks/usePromotedPool'
-import { calculatePercentageRatio } from '../utils/calculations'
-import { IPositionItem } from '@components/PositionsList/types'
-import { useSharedStyles } from './style/shared'
-import PositionStatusTooltip from '../components/PositionStatusTooltip'
-import { NetworkType } from '@store/consts/static'
+import icons from '@static/icons'
+import { initialXtoY, tickerToAddress, formatNumber } from '@utils/utils'
+import classNames from 'classnames'
 import { useSelector } from 'react-redux'
+import { usePromotedPool } from './PositionItem/hooks/usePromotedPool'
+import { calculatePercentageRatio } from './PositionItem/utils/calculations'
+import { useSharedStyles } from './PositionItem/variants/style/shared'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import SwapList from '@static/svg/swap-list.svg'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
-import { MinMaxChart } from '../components/MinMaxChart/MinMaxChart'
+import PositionStatusTooltip from './PositionItem/components/PositionStatusTooltip'
 
-export const PositionItemDesktop: React.FC<IPositionItem> = ({
+const useStyles = makeStyles()((theme: Theme) => ({
+  bodyRow: {
+    background: colors.invariant.component,
+    '&:hover': {
+      background: `${colors.invariant.component}B0`
+    }
+  },
+  lastRow: {
+    '& td:first-of-type': {
+      borderBottomLeftRadius: '24px'
+    },
+    '& td:last-child': {
+      borderBottomRightRadius: '24px'
+    }
+  },
+  bodyCell: {
+    padding: '20px',
+    background: 'inherit',
+    border: 'none',
+    textAlign: 'center'
+  },
+  pairNameCell: {
+    textAlign: 'left'
+  },
+  icons: {
+    marginRight: 12,
+    width: 'fit-content',
+    [theme.breakpoints.down('lg')]: {
+      marginRight: 12
+    }
+  },
+  tokenIcon: {
+    width: 40,
+    borderRadius: '100%',
+    [theme.breakpoints.down('sm')]: {
+      width: 28
+    }
+  },
+  arrows: {
+    width: 36,
+    marginLeft: 4,
+    marginRight: 4,
+    [theme.breakpoints.down('lg')]: {
+      width: 30
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: 24
+    },
+    '&:hover': {
+      filter: 'brightness(2)'
+    }
+  },
+  names: {
+    textOverflow: 'ellipsis',
+    overflow: 'hidden',
+    color: colors.invariant.text,
+    lineHeight: '40px',
+    whiteSpace: 'nowrap',
+    width: 180,
+    [theme.breakpoints.down('lg')]: {
+      lineHeight: '32px',
+      width: 'unset'
+    }
+  },
+  infoText: {
+    color: colors.invariant.lightGrey,
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
+  },
+  activeInfoText: {
+    color: colors.invariant.black
+  },
+  greenText: {
+    color: colors.invariant.green,
+    whiteSpace: 'nowrap',
+    textOverflow: 'ellipsis',
+    overflow: 'hidden'
+  },
+  fee: {
+    background: colors.invariant.light,
+    borderRadius: 11,
+    height: 36,
+    width: 65,
+    marginRight: 8
+  },
+  activeFee: {
+    background: colors.invariant.greenLinearGradient
+  },
+  tooltip: {
+    color: colors.invariant.textGrey,
+    lineHeight: '24px',
+    background: colors.black.full,
+    borderRadius: 12,
+    fontSize: 14
+  },
+  actionButton: {
+    display: 'inline-flex',
+    position: 'relative'
+  },
+  button: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: '36px',
+    maxHeight: '36px',
+    background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
+    borderRadius: '16px',
+    color: colors.invariant.dark,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
+      transform: 'translateY(-2px)',
+      boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
+    },
+    '&:active': {
+      transform: 'translateY(1px)',
+      boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
+    }
+  },
+  iconsAndNames: {
+    width: 'fit-content'
+  },
+  narrowCell: {
+    width: 65
+  },
+  mediumCell: {
+    width: 100
+  },
+  wideCell: {
+    width: 170
+  },
+  chartCell: {
+    width: 230
+  },
+  actionCell: {
+    width: 36
+  }
+}))
+interface Row extends IPositionItem {
+  isLastRow: boolean
+}
+export const PositionTableRow: React.FC<Row> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,
@@ -44,18 +192,17 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
   isFullRange,
   isLocked
 }) => {
-  const { classes } = useDesktopStyles()
+  const { classes } = useStyles()
   const { classes: sharedClasses } = useSharedStyles()
+  const [xToY, setXToY] = useState<boolean>(
+    initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
+  )
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
 
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const networkSelector = useSelector(currentNetwork)
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
-
-  const [xToY, setXToY] = useState<boolean>(
-    initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
-  )
 
   const { tokenXPercentage, tokenYPercentage } = calculatePercentageRatio(
     tokenXLiq,
@@ -68,6 +215,39 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
     poolAddress,
     position,
     poolData
+  )
+
+  // Reuse existing components and logic for cell contents
+  const pairNameContent = (
+    <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
+      <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
+        <img
+          className={sharedClasses.tokenIcon}
+          src={xToY ? tokenXIcon : tokenYIcon}
+          alt={xToY ? tokenXName : tokenYName}
+        />
+        <TooltipHover text='Reverse tokens'>
+          <img
+            className={sharedClasses.arrows}
+            src={SwapList}
+            alt='Arrow'
+            onClick={e => {
+              e.stopPropagation()
+              setXToY(!xToY)
+            }}
+          />
+        </TooltipHover>
+        <img
+          className={sharedClasses.tokenIcon}
+          src={xToY ? tokenYIcon : tokenXIcon}
+          alt={xToY ? tokenYName : tokenXName}
+        />
+      </Grid>
+
+      <Typography className={sharedClasses.names}>
+        {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+      </Typography>
+    </Grid>
   )
 
   const handleMouseEnter = useCallback(() => {
@@ -270,161 +450,41 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
   ])
 
   return (
-    <Grid
-      className={classes.root}
-      container
-      direction='row'
-      alignItems='center'
-      justifyContent='space-between'>
-      <Grid container item className={classes.mdTop} direction='row' wrap='nowrap'>
-        <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
-          <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
-            <img
-              className={sharedClasses.tokenIcon}
-              src={xToY ? tokenXIcon : tokenYIcon}
-              alt={xToY ? tokenXName : tokenYName}
-            />
-            <TooltipHover text='Reverse tokens'>
-              <img
-                className={sharedClasses.arrows}
-                src={SwapList}
-                alt='Arrow'
-                onClick={e => {
-                  e.stopPropagation()
-                  setXToY(!xToY)
-                }}
-              />
-            </TooltipHover>
-            <img
-              className={sharedClasses.tokenIcon}
-              src={xToY ? tokenYIcon : tokenXIcon}
-              alt={xToY ? tokenYName : tokenXName}
-            />
-          </Grid>
+    <TableRow className={classes.bodyRow}>
+      <TableCell className={classes.bodyCell}>{pairNameContent}</TableCell>
+      <TableCell className={`${classes.bodyCell} ${classes.narrowCell}`}>{feeFragment}</TableCell>
+      <TableCell className={`${classes.bodyCell} ${classes.wideCell}`}>
+        <Typography className={sharedClasses.infoText}>
+          {tokenXPercentage === 100 && (
+            <span>
+              {tokenXPercentage}
+              {'%'} {xToY ? tokenXName : tokenYName}
+            </span>
+          )}
+          {tokenYPercentage === 100 && (
+            <span>
+              {tokenYPercentage}
+              {'%'} {xToY ? tokenYName : tokenXName}
+            </span>
+          )}
 
-          <Typography className={sharedClasses.names}>
-            {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
-          </Typography>
-        </Grid>
-      </Grid>
-
-      <Grid
-        container
-        item
-        className={classes.mdInfo}
-        sx={{
-          width: 'fit-content',
-          flexWrap: 'nowrap',
-          [theme.breakpoints.down('lg')]: {
-            flexWrap: 'nowrap',
-            marginTop: 16,
-            width: '100%'
-          },
-          [theme.breakpoints.down(1029)]: {
-            flexWrap: 'wrap'
-          }
-        }}
-        direction='row'>
-        {networkSelector === NetworkType.Mainnet && (
-          <Box sx={{ display: 'flex', alignItems: 'center' }} ref={airdropIconRef}>
-            {promotedIconContent}
-          </Box>
-        )}
-
-        <Hidden mdDown>{feeFragment}</Hidden>
-        <Grid
-          container
-          item
-          className={sharedClasses.liquidity}
-          sx={{ width: 170 }}
-          justifyContent='center'
-          alignItems='center'>
-          <Typography className={sharedClasses.infoText}>
-            {tokenXPercentage === 100 && (
-              <span>
-                {tokenXPercentage}
-                {'%'} {xToY ? tokenXName : tokenYName}
-              </span>
-            )}
-            {tokenYPercentage === 100 && (
-              <span>
-                {tokenYPercentage}
-                {'%'} {xToY ? tokenYName : tokenXName}
-              </span>
-            )}
-
-            {tokenYPercentage !== 100 && tokenXPercentage !== 100 && (
-              <span>
-                {tokenXPercentage}
-                {'%'} {xToY ? tokenXName : tokenYName} {' - '} {tokenYPercentage}
-                {'%'} {xToY ? tokenYName : tokenXName}
-              </span>
-            )}
-          </Typography>
-        </Grid>
-
-        <Hidden mdDown>{valueFragment}</Hidden>
-        <Hidden mdDown>{unclaimedFee}</Hidden>
-
-        <Grid
-          container
-          item
-          className={classes.minMax}
-          justifyContent='space-between'
-          alignItems='center'
-          wrap='nowrap'>
-          <>
-            {/* <Typography className={classNames(sharedClasses.greenText, sharedClasses.label)}>
-              MIN - MAX
-            </Typography> */}
-            <Grid container item justifyContent='center' sx={{ marginTop: 2 }}>
-              <MinMaxChart min={0.3453} max={0.3853} current={0.36653} />
-
-              {/* {isFullRange ? (
-                <Typography className={sharedClasses.infoText}>FULL RANGE</Typography>
-              ) : (
-                <Typography className={sharedClasses.infoText}>
-                  {formatNumber(xToY ? min : 1 / max)} - {formatNumber(xToY ? max : 1 / min)}{' '}
-                  {xToY ? tokenYName : tokenXName} per {xToY ? tokenXName : tokenYName}
-                </Typography>
-              )} */}
-            </Grid>
-          </>
-        </Grid>
-
-        <Button className={sharedClasses.button}></Button>
-
-        {isLocked && (
-          <Grid
-            container
-            item
-            sx={{
-              width: 57,
-              [theme.breakpoints.down(1029)]: {
-                width: '100%',
-                marginRight: 0,
-                marginTop: 8
-              }
-            }}
-            className={classNames(
-              sharedClasses.dropdown,
-              isLocked ? sharedClasses.dropdownLocked : undefined
-            )}
-            justifyContent='center'
-            alignItems='center'
-            wrap='nowrap'>
-            {isLocked ? (
-              <TooltipHover text={'Liquidity locked'}>
-                <img src={lockIcon} alt='Lock' />
-              </TooltipHover>
-            ) : (
-              <TooltipHover text={'Liquidity not locked'}>
-                <img src={unlockIcon} alt='Lock' />
-              </TooltipHover>
-            )}
-          </Grid>
-        )}
-      </Grid>
-    </Grid>
+          {tokenYPercentage !== 100 && tokenXPercentage !== 100 && (
+            <span>
+              {tokenXPercentage}
+              {'%'} {xToY ? tokenXName : tokenYName} {' - '} {tokenYPercentage}
+              {'%'} {xToY ? tokenYName : tokenXName}
+            </span>
+          )}
+        </Typography>
+      </TableCell>
+      <TableCell className={`${classes.bodyCell} ${classes.mediumCell}`}>{valueFragment}</TableCell>
+      <TableCell className={`${classes.bodyCell} ${classes.mediumCell}`}>{unclaimedFee}</TableCell>
+      <TableCell className={`${classes.bodyCell} ${classes.chartCell}`}>
+        <MinMaxChart min={0.3453} max={0.3853} current={0.36653} />
+      </TableCell>
+      <TableCell className={`${classes.bodyCell} ${classes.actionCell}`}>
+        <Button className={classes.button} />
+      </TableCell>
+    </TableRow>
   )
 }
