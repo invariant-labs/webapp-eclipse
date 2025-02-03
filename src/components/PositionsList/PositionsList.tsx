@@ -18,13 +18,10 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { PaginationList } from '@components/Pagination/Pagination'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
-import { PositionItemDesktop } from './PositionItem/variants/PositionItemDesktop'
 import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
-import { PositionItemHeaderDesktop } from './PositionItem/variants/PositionItemHeaderDesktop'
 import PositionsTable from './PositionsTable'
 
 export enum LiquidityPools {
@@ -54,14 +51,11 @@ interface IProps {
 }
 
 export const PositionsList: React.FC<IProps> = ({
-  initialPage,
-  setLastPage,
   data,
   onAddPositionClick,
   loading = false,
   showNoConnected = false,
   noConnectedBlockerProps,
-  itemsPerPage,
   searchValue,
   searchSetValue,
   handleRefresh,
@@ -75,9 +69,7 @@ export const PositionsList: React.FC<IProps> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
-  const [defaultPage] = useState(initialPage)
   const dispatch = useDispatch()
-  const [page, setPage] = useState(initialPage)
   const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
   const isLg = useMediaQuery('@media (max-width: 1360px)')
 
@@ -103,46 +95,14 @@ export const PositionsList: React.FC<IProps> = ({
     searchSetValue(e.target.value.toLowerCase())
   }
 
-  const handleChangePagination = (page: number): void => {
-    setLastPage(page)
-    setPage(page)
-  }
-
   const handleSwitchPools = (
     _: React.MouseEvent<HTMLElement>,
     newAlignment: LiquidityPools | null
   ) => {
     if (newAlignment !== null) {
       setAlignment(newAlignment)
-      setPage(1)
     }
   }
-
-  const paginator = (currentPage: number) => {
-    const page = currentPage || 1
-    const perPage = itemsPerPage || 10
-    const offset = (page - 1) * perPage
-    const paginatedItems = currentData.slice(offset).slice(0, itemsPerPage)
-    const totalPages = Math.ceil(currentData.length / perPage)
-
-    return {
-      page: page,
-      totalPages: totalPages,
-      data: paginatedItems
-    }
-  }
-
-  useEffect(() => {
-    setPage(1)
-  }, [searchValue])
-
-  useEffect(() => {
-    setPage(initialPage)
-  }, [])
-
-  useEffect(() => {
-    handleChangePagination(initialPage)
-  }, [initialPage])
 
   useEffect(() => {
     dispatch(actions.getLeaderboardConfig())

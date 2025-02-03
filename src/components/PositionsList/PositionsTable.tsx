@@ -18,7 +18,7 @@ import { PositionTableRow } from './PositionsTableRow'
 import { IPositionItem } from './types'
 import { useNavigate } from 'react-router-dom'
 
-const useStyles = makeStyles()((theme: Theme) => ({
+const useStyles = makeStyles()((_theme: Theme) => ({
   tableContainer: {
     width: 'fit-content',
     background: 'transparent',

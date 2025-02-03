@@ -1,52 +1,13 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { typography, colors, theme } from '@static/theme'
-import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
 import { useSelector } from 'react-redux'
 import { swapTokens } from '@store/selectors/solanaWallet'
-import { positionsWithPoolsData } from '@store/selectors/positions'
-import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 
 export const UserOverview = () => {
-  const handleAddToPool = (poolId: string) => {
-    console.log(`Adding to pool: ${poolId}`)
-  }
-
   const tokensList = useSelector(swapTokens)
   const { processedPools, isLoading } = useProcessedTokens(tokensList)
-
-  const list: any = useSelector(positionsWithPoolsData)
-
-  const data: Pick<
-    ProcessedPool,
-    'id' | 'fee' | 'tokenX' | 'poolData' | 'tokenY' | 'lowerTickIndex' | 'upperTickIndex'
-  >[] = list.map(position => {
-    return {
-      id: position.id.toString() + '_' + position.pool.toString(),
-      poolData: position.poolData,
-      lowerTickIndex: position.lowerTickIndex,
-      upperTickIndex: position.upperTickIndex,
-      fee: +printBN(position.poolData.fee, DECIMAL - 2),
-      tokenX: {
-        decimal: position.tokenX.decimals,
-        coingeckoId: position.tokenX.coingeckoId,
-        assetsAddress: position.tokenX.address,
-        balance: position.tokenX.balance,
-        icon: position.tokenX.logoURI,
-        name: position.tokenX.symbol
-      },
-      tokenY: {
-        decimal: position.tokenY.decimals,
-        balance: position.tokenY.balance,
-        assetsAddress: position.tokenY.address,
-        coingeckoId: position.tokenY.coingeckoId,
-        icon: position.tokenY.logoURI,
-        name: position.tokenY.symbol
-      }
-    }
-  })
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
@@ -75,8 +36,8 @@ export const UserOverview = () => {
           }
         }}>
         {/* <Overview poolAssets={data} isLoading={false} /> */}
-        <YourWallet pools={processedPools} onAddToPool={handleAddToPool} isLoading={isLoading} />
-        <YourWallet pools={processedPools} onAddToPool={handleAddToPool} isLoading={isLoading} />
+        <YourWallet pools={processedPools} isLoading={isLoading} />
+        <YourWallet pools={processedPools} isLoading={isLoading} />
       </Box>
     </Box>
   )

@@ -19,7 +19,7 @@ import { BN } from '@coral-xyz/anchor'
 import icons from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumber, printBN } from '@utils/utils'
 import classNames from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { usePromotedPool } from './PositionItem/hooks/usePromotedPool'
 import { calculatePercentageRatio } from './PositionItem/utils/calculations'
 import { useSharedStyles } from './PositionItem/variants/style/shared'
@@ -31,14 +31,12 @@ import PositionViewActionPopover from '@components/Modals/PositionViewActionPopo
 import React from 'react'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { singlePositionData } from '@store/selectors/positions'
-import { Token } from '@store/types/userOverview'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { usePositionTicks } from '@store/hooks/userOverview/usePositionTicks'
 import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { usePrices } from '@store/hooks/userOverview/usePrices'
-import { actions } from '@store/reducers/positions'
 import { useLiquidity } from '@store/hooks/userOverview/useLiquidity'
 import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
 
@@ -200,17 +198,14 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   isActive = false,
   tokenXLiq,
   tokenYLiq,
-  network,
-  isFullRange,
-  isLocked
+  network
 }) => {
   const { classes } = useStyles()
-  const actionRef = useRef()
   const { classes: sharedClasses } = useSharedStyles()
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
-  const [isClaimLoading, setIsClaimLoading] = useState(false)
+  const [isClaimLoading, _setIsClaimLoading] = useState(false)
   const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number | null>(null)
   const positionSingleData = useSelector(singlePositionData(id ?? ''))
   const wallet = getEclipseWallet()
@@ -218,7 +213,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   const rpc = useSelector(rpcAddress)
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
-  const dispatch = useDispatch()
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
   const [positionTicks, setPositionTicks] = useState<PositionTicks>({
@@ -340,7 +334,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
 
   const rawIsLoading =
     ticksLoading || tokenXPriceData.loading || tokenYPriceData.loading || isClaimLoading
-  const isLoading = useDebounceLoading(rawIsLoading)
+  const _isLoading = useDebounceLoading(rawIsLoading)
 
   // const handleClaimFee = async () => {
   //   if (!positionSingleData) return

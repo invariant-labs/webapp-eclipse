@@ -53,7 +53,7 @@ const useStyles = makeStyles()(() => ({
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',
     backgroundColor: colors.invariant.component,
-    maxHeight: '240px', // Height for approximately 3 rows
+    maxHeight: '240px',
     overflowY: 'auto',
 
     '&::-webkit-scrollbar': {
@@ -147,10 +147,9 @@ const useStyles = makeStyles()(() => ({
 interface YourWalletProps {
   pools: TokenPool[]
   isLoading: boolean
-  onAddToPool?: (poolId: string) => void
 }
 
-export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool, isLoading }) => {
+export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
 

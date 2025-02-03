@@ -7,6 +7,13 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { unblurContent } from '@utils/uiUtils'
 
+export interface IPositionViewActionPopover {
+  open: boolean
+  anchorEl: HTMLButtonElement | null
+  position?: any
+  handleClose: () => void
+}
+
 export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = ({
   anchorEl,
   open,

@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { MaxHandleNarrower, MinHandleNarrower } from '@components/PriceRangePlot/Brush/svgHandles'
 import { colors, typography } from '@static/theme'
-import { formatNumber, formatNumbers } from '@utils/utils'
+import { formatNumber } from '@utils/utils'
 
 const CONSTANTS = {
   MAX_HANDLE_OFFSET: 99,
