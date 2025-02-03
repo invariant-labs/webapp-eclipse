@@ -291,53 +291,63 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
   }, [lowerTick, upperTick, ticksLoading])
 
   const [_tokenXClaim, _tokenYClaim, unclaimedFeesInUSD] = useMemo(() => {
-    if (
-      !positionTicks.loading &&
-      positionSingleData?.poolData &&
-      typeof positionTicks.lowerTick !== 'undefined' &&
-      typeof positionTicks.upperTick !== 'undefined'
-    ) {
-      const [bnX, bnY] = calculateClaimAmount({
-        position,
-        tickLower: positionTicks.lowerTick,
-        tickUpper: positionTicks.upperTick,
-        tickCurrent: positionSingleData.poolData.currentTickIndex,
-        feeGrowthGlobalX: positionSingleData.poolData.feeGrowthGlobalX,
-        feeGrowthGlobalY: positionSingleData.poolData.feeGrowthGlobalY
-      })
-
-      const xAmount = +printBN(bnX, positionSingleData.tokenX.decimals)
-      const yAmount = +printBN(bnY, positionSingleData.tokenY.decimals)
-
-      const xValueInUSD = xAmount * tokenXPriceData.price
-      const yValueInUSD = yAmount * tokenYPriceData.price
-      const totalValueInUSD = xValueInUSD + yValueInUSD
-
-      if (!isClaimLoading && totalValueInUSD > 0) {
-        setPreviousUnclaimedFees(totalValueInUSD)
-      }
-
-      return [xAmount, yAmount, totalValueInUSD]
+    if (positionTicks.loading || !positionSingleData?.poolData) {
+      return [0, 0, previousUnclaimedFees ?? null]
     }
 
-    return [0, 0, previousUnclaimedFees ?? 0]
+    if (tokenXPriceData.loading || tokenYPriceData.loading) {
+      return [0, 0, previousUnclaimedFees ?? null]
+    }
+
+    if (
+      typeof positionTicks.lowerTick === 'undefined' ||
+      typeof positionTicks.upperTick === 'undefined'
+    ) {
+      return [0, 0, previousUnclaimedFees ?? null]
+    }
+
+    const [bnX, bnY] = calculateClaimAmount({
+      position,
+      tickLower: positionTicks.lowerTick,
+      tickUpper: positionTicks.upperTick,
+      tickCurrent: positionSingleData.poolData.currentTickIndex,
+      feeGrowthGlobalX: positionSingleData.poolData.feeGrowthGlobalX,
+      feeGrowthGlobalY: positionSingleData.poolData.feeGrowthGlobalY
+    })
+
+    const xAmount = +printBN(bnX, positionSingleData.tokenX.decimals)
+    const yAmount = +printBN(bnY, positionSingleData.tokenY.decimals)
+
+    const xValueInUSD = xAmount * tokenXPriceData.price
+    const yValueInUSD = yAmount * tokenYPriceData.price
+    const totalValueInUSD = xValueInUSD + yValueInUSD
+
+    if (!isClaimLoading && totalValueInUSD > 0) {
+      setPreviousUnclaimedFees(totalValueInUSD)
+    }
+
+    return [xAmount, yAmount, totalValueInUSD]
   }, [
     positionSingleData,
     position,
     positionTicks,
-    tokenXPriceData.price,
-    tokenYPriceData.price,
+    tokenXPriceData,
+    tokenYPriceData,
     isClaimLoading,
     previousUnclaimedFees
   ])
 
   const tokenValueInUsd = useMemo(() => {
+    if (tokenXPriceData.loading || tokenYPriceData.loading) {
+      return null // Return null to indicate loading
+    }
+
     if (!tokenXLiquidity && !tokenYLiquidity) {
       return 0
     }
 
     return tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
-  }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData.price, tokenYPriceData.price])
+  }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData])
 
   const rawIsLoading =
     ticksLoading || tokenXPriceData.loading || tokenYPriceData.loading || isClaimLoading
@@ -474,13 +484,13 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            ${isLoading ? '...' : formatNumber(tokenValueInUsd)}
+            $ {tokenValueInUsd === null ? '...' : formatNumber(tokenValueInUsd)}
             {/* {formatNumber(xToY ? valueX : valueY)} {xToY ? tokenXName : tokenYName} */}
           </Typography>
         </Grid>
       </Grid>
     ),
-    [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
+    [tokenValueInUsd, valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
 
   const unclaimedFee = useMemo(
@@ -504,12 +514,12 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            {isLoading ? '...' : formatNumber(unclaimedFeesInUSD)}
+            {unclaimedFeesInUSD === null ? '...' : formatNumber(unclaimedFeesInUSD)}
           </Typography>
         </Grid>
       </Grid>
     ),
-    [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
+    [unclaimedFeesInUSD, valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
 
   const promotedIconContent = useMemo(() => {
