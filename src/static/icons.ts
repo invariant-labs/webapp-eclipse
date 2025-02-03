@@ -60,6 +60,7 @@ import infoCircle from './svg/infoCircle.svg'
 import boostPoints from './svg/boostPoints.svg'
 import airdropGrey from './svg/airdropGrey.svg'
 import infoError from './svg/infoError.svg'
+import okxLogo from './svg/okx-logo.svg'
 import infoIcon from './svg/info.svg'
 import infoIconPink from './svg/infoIconPink.svg'
 import slider from './svg/slider.svg'
@@ -129,7 +130,8 @@ const icons: { [key: string]: string } = {
   infoCircle,
   boostPoints,
   airdropGrey,
-  infoError
+  infoError,
+  okxLogo
 }
 
 export default icons
