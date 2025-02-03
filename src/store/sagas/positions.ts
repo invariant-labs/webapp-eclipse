@@ -8,7 +8,8 @@ import {
   ClosePositionData,
   GetCurrentTicksData,
   InitPositionData,
-  PositionWithAddress
+  PositionWithAddress,
+  SwapAndCreatePosition
 } from '@store/reducers/positions'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
@@ -538,6 +539,388 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
   }
 }
 
+export function* handleSwapAndInitPositionWithETH(
+  action: PayloadAction<SwapAndCreatePosition>
+): Generator {
+  const loaderCreatePosition = createLoaderKey()
+  const loaderSigningTx = createLoaderKey()
+
+  try {
+    const allTokens = yield* select(tokens)
+
+    yield put(
+      snackbarsActions.add({
+        message: 'Creating position',
+        variant: 'pending',
+        persist: true,
+        key: loaderCreatePosition
+      })
+    )
+
+    const connection = yield* call(getConnection)
+    const wallet = yield* call(getWallet)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    marketProgram.setWallet({
+      signAllTransactions: wallet.signAllTransactions,
+      signTransaction: wallet.signTransaction,
+      publicKey: wallet.publicKey
+    } as IWallet)
+
+    const allPools = yield* select(poolsArraySortedByFees)
+    const ticks = yield* select(plotTicks)
+    const pair = new Pair(action.payload.tokenX, action.payload.tokenY, {
+      fee: action.payload.fee,
+      tickSpacing: action.payload.tickSpacing
+    })
+    const userPositionList = yield* select(positionsList)
+
+    const tokensAccounts = yield* select(accounts)
+
+    const wrappedEthAccount = Keypair.generate()
+    const net = networkTypetoProgramNetwork(networkType)
+
+    const { createIx, initIx, transferIx, unwrapIx } = createNativeAtaWithTransferInstructions(
+      wrappedEthAccount.publicKey,
+      wallet.publicKey,
+      net,
+      allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? action.payload.xAmount
+        : action.payload.yAmount
+    )
+
+    let userTokenX =
+      allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? wrappedEthAccount.publicKey
+        : tokensAccounts[action.payload.tokenX.toString()]
+          ? tokensAccounts[action.payload.tokenX.toString()].address
+          : null
+
+    if (userTokenX === null) {
+      userTokenX = yield* call(createAccount, action.payload.tokenX)
+    }
+
+    let userTokenY =
+      allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
+        ? wrappedEthAccount.publicKey
+        : tokensAccounts[action.payload.tokenY.toString()]
+          ? tokensAccounts[action.payload.tokenY.toString()].address
+          : null
+
+    if (userTokenY === null) {
+      userTokenY = yield* call(createAccount, action.payload.tokenY)
+    }
+
+    const xToY = pair.tokenX.equals(action.payload.tokenX)
+
+    const combinedTransaction = new Transaction()
+    const tx = (yield* call(
+      [marketProgram, marketProgram.swapAndCreatePositionTx],
+      {
+        pair,
+        userTokenX,
+        userTokenY,
+        lowerTick: action.payload.lowerTick,
+        upperTick: action.payload.upperTick,
+        owner: wallet.publicKey,
+        slippage: action.payload.slippage,
+        knownPrice: action.payload.knownPrice,
+        xToY,
+        estimatedPriceAfterSwap: action.payload.estimatedPriceAfterSwap,
+        maxLiquidityPercentage: action.payload.maxLiquidtiyPercentage,
+        minUtilizationPercentage: action.payload.minUtilizationPercentage,
+        amount: action.payload.swapAmount,
+        byAmountIn: true
+      },
+      undefined,
+      {
+        position: {
+          lowerTickExists:
+            !ticks.hasError &&
+            !ticks.loading &&
+            ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
+              ? true
+              : undefined,
+          upperTickExists:
+            !ticks.hasError &&
+            !ticks.loading &&
+            ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
+              ? true
+              : undefined,
+          pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
+          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
+          positionsList: !userPositionList.loading ? userPositionList : undefined
+        }
+      }
+    )) as Transaction
+
+    combinedTransaction.add(createIx).add(transferIx).add(initIx).add(tx).add(unwrapIx)
+
+    const blockhash = yield* call([connection, connection.getLatestBlockhash])
+    combinedTransaction.recentBlockhash = blockhash.blockhash
+    combinedTransaction.feePayer = wallet.publicKey
+
+    yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+    const signedTx = (yield* call(
+      [wallet, wallet.signTransaction],
+      combinedTransaction
+    )) as Transaction
+
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
+
+    yield put(actions.setInitPositionSuccess(!!txid.length))
+
+    if (!txid.length) {
+      yield put(
+        snackbarsActions.add({
+          message: 'Position adding failed. Please try again.',
+          variant: 'error',
+          persist: false,
+          txid
+        })
+      )
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Position added successfully.',
+          variant: 'success',
+          persist: false,
+          txid
+        })
+      )
+
+      yield put(actions.getPositionsList())
+    }
+
+    closeSnackbar(loaderCreatePosition)
+    yield put(snackbarsActions.remove(loaderCreatePosition))
+  } catch (error) {
+    console.log(error)
+
+    yield put(actions.setInitPositionSuccess(false))
+
+    closeSnackbar(loaderCreatePosition)
+    yield put(snackbarsActions.remove(loaderCreatePosition))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
+
+export function* handleSwapAndInitPosition(
+  action: PayloadAction<SwapAndCreatePosition>
+): Generator {
+  const loaderCreatePosition = createLoaderKey()
+  const loaderSigningTx = createLoaderKey()
+
+  try {
+    const allTokens = yield* select(tokens)
+
+    if (
+      (allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
+        action.payload.xAmount !== 0) ||
+      (allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
+        action.payload.yAmount !== 0)
+    ) {
+      return yield* call(handleSwapAndInitPositionWithETH, action)
+    }
+
+    yield put(
+      snackbarsActions.add({
+        message: 'Creating position',
+        variant: 'pending',
+        persist: true,
+        key: loaderCreatePosition
+      })
+    )
+
+    const connection = yield* call(getConnection)
+    const wallet = yield* call(getWallet)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    marketProgram.setWallet({
+      signAllTransactions: wallet.signAllTransactions,
+      signTransaction: wallet.signTransaction,
+      publicKey: wallet.publicKey
+    } as IWallet)
+
+    const allPools = yield* select(poolsArraySortedByFees)
+    const ticks = yield* select(plotTicks)
+    const pair = new Pair(action.payload.tokenX, action.payload.tokenY, {
+      fee: action.payload.fee,
+      tickSpacing: action.payload.tickSpacing
+    })
+    const userPositionList = yield* select(positionsList)
+
+    const tokensAccounts = yield* select(accounts)
+
+    let userTokenX = tokensAccounts[action.payload.tokenX.toString()]
+      ? tokensAccounts[action.payload.tokenX.toString()].address
+      : null
+
+    if (userTokenX === null) {
+      userTokenX = yield* call(createAccount, action.payload.tokenX)
+    }
+
+    let userTokenY = tokensAccounts[action.payload.tokenY.toString()]
+      ? tokensAccounts[action.payload.tokenY.toString()].address
+      : null
+
+    if (userTokenY === null) {
+      userTokenY = yield* call(createAccount, action.payload.tokenY)
+    }
+
+    const xToY = pair.tokenX.equals(action.payload.tokenX)
+
+    const tx = (yield* call(
+      [marketProgram, marketProgram.swapAndCreatePositionTx],
+      {
+        pair,
+        userTokenX,
+        userTokenY,
+        lowerTick: action.payload.lowerTick,
+        upperTick: action.payload.upperTick,
+        owner: wallet.publicKey,
+        slippage: action.payload.slippage,
+        knownPrice: action.payload.knownPrice,
+        xToY,
+        estimatedPriceAfterSwap: action.payload.estimatedPriceAfterSwap,
+        maxLiquidityPercentage: action.payload.maxLiquidtiyPercentage,
+        minUtilizationPercentage: action.payload.minUtilizationPercentage,
+        amount: action.payload.swapAmount,
+        byAmountIn: true
+      },
+      undefined,
+      {
+        position: {
+          lowerTickExists:
+            !ticks.hasError &&
+            !ticks.loading &&
+            ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
+              ? true
+              : undefined,
+          upperTickExists:
+            !ticks.hasError &&
+            !ticks.loading &&
+            ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
+              ? true
+              : undefined,
+          pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
+          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
+          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
+          positionsList: !userPositionList.loading ? userPositionList : undefined
+        }
+      }
+    )) as Transaction
+
+    const blockhash = yield* call([connection, connection.getLatestBlockhash])
+    tx.recentBlockhash = blockhash.blockhash
+    tx.feePayer = wallet.publicKey
+
+    yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+    const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+      skipPreflight: false
+    })
+
+    yield put(actions.setInitPositionSuccess(!!txid.length))
+
+    if (!txid.length) {
+      yield put(
+        snackbarsActions.add({
+          message: 'Position adding failed. Please try again.',
+          variant: 'error',
+          persist: false,
+          txid
+        })
+      )
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Position added successfully.',
+          variant: 'success',
+          persist: false,
+          txid
+        })
+      )
+
+      yield put(actions.getPositionsList())
+    }
+
+    closeSnackbar(loaderCreatePosition)
+    yield put(snackbarsActions.remove(loaderCreatePosition))
+  } catch (error) {
+    console.log(error)
+
+    yield put(actions.setInitPositionSuccess(false))
+
+    closeSnackbar(loaderCreatePosition)
+    yield put(snackbarsActions.remove(loaderCreatePosition))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to send. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
 export function* handleInitPosition(action: PayloadAction<InitPositionData>): Generator {
   const loaderCreatePosition = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
