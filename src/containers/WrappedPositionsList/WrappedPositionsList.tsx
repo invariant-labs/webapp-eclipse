@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
 import { IPositionItem } from '@components/PositionsList/types'
-import { ProcessedPool } from '@store/types/userOverview'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
@@ -145,7 +144,7 @@ export const WrappedPositionsList: React.FC = () => {
         tokenY: {
           decimal: position.tokenY.decimals,
           balance: position.tokenY.balance,
-          assetsAddress: position.tokenY.address,
+          assetsAddress: position.tokenY.assetAddress,
           coingeckoId: position.tokenY.coingeckoId,
           icon: position.tokenY.logoURI,
           name: position.tokenY.symbol
