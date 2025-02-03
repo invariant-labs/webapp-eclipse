@@ -17,6 +17,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
 import { IPositionItem } from '@components/PositionsList/types'
+import { ProcessedPool } from '@store/types/userOverview'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
@@ -132,7 +133,23 @@ export const WrappedPositionsList: React.FC = () => {
         tokenYLiq,
         network: NetworkType.Testnet,
         isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
-        isLocked: position.isLocked
+        isLocked: position.isLocked,
+        tokenX: {
+          decimal: position.tokenX.decimals,
+          coingeckoId: position.tokenX.coingeckoId,
+          assetsAddress: position.tokenX.assetAddress,
+          balance: position.tokenX.balance,
+          icon: position.tokenX.logoURI,
+          name: position.tokenX.symbol
+        },
+        tokenY: {
+          decimal: position.tokenY.decimals,
+          balance: position.tokenY.balance,
+          assetsAddress: position.tokenY.address,
+          coingeckoId: position.tokenY.coingeckoId,
+          icon: position.tokenY.logoURI,
+          name: position.tokenY.symbol
+        }
       }
     })
     .filter(item => {

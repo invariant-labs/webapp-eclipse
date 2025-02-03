@@ -9,7 +9,7 @@ import {
   useMediaQuery,
   Box
 } from '@mui/material'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from './PositionItem/components/MinMaxChart/MinMaxChart'
 import { IPositionItem } from './types'
 import { makeStyles } from 'tss-react/mui'
@@ -17,19 +17,29 @@ import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import icons from '@static/icons'
-import { initialXtoY, tickerToAddress, formatNumber } from '@utils/utils'
+import { initialXtoY, tickerToAddress, formatNumber, printBN } from '@utils/utils'
 import classNames from 'classnames'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { usePromotedPool } from './PositionItem/hooks/usePromotedPool'
 import { calculatePercentageRatio } from './PositionItem/utils/calculations'
 import { useSharedStyles } from './PositionItem/variants/style/shared'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import SwapList from '@static/svg/swap-list.svg'
-import { network as currentNetwork } from '@store/selectors/solanaConnection'
+import { network as currentNetwork, rpcAddress } from '@store/selectors/solanaConnection'
 import PositionStatusTooltip from './PositionItem/components/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import React from 'react'
 import { blurContent, unblurContent } from '@utils/uiUtils'
+import { singlePositionData } from '@store/selectors/positions'
+import { Token } from '@store/types/userOverview'
+import { IWallet } from '@invariant-labs/sdk-eclipse'
+import { getEclipseWallet } from '@utils/web3/wallet'
+import { usePositionTicks } from '@store/hooks/userOverview/usePositionTicks'
+import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { usePrices } from '@store/hooks/userOverview/usePrices'
+import { actions } from '@store/reducers/positions'
+import { useLiquidity } from '@store/hooks/userOverview/useLiquidity'
 
 const useStyles = makeStyles()((theme: Theme) => ({
   cellBase: {
@@ -155,19 +165,37 @@ const useStyles = makeStyles()((theme: Theme) => ({
   }
 }))
 
-export const PositionTableRow: React.FC<IPositionItem> = ({
+interface IPositionTableRow extends IPositionItem {
+  data: {
+    id: number
+    index: number
+    tokenX: Token
+    tokenY: Token
+    fee: string
+  }
+}
+
+interface PositionTicks {
+  lowerTick: Tick | undefined
+  upperTick: Tick | undefined
+  loading: boolean
+}
+
+export const PositionTableRow: React.FC<IPositionTableRow> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,
   poolAddress,
   tokenYIcon,
   currentPrice,
+  data,
+  id,
   fee,
   min,
+  position,
   max,
   valueX,
   valueY,
-  position,
   // liquidity,
   poolData,
   isActive = false,
@@ -183,12 +211,22 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
+  const [isClaimLoading, setIsClaimLoading] = useState(false)
+  const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number | null>(null)
+  const positionSingleData = useSelector(singlePositionData(id ?? ''))
+  const wallet = getEclipseWallet()
+  const networkType = useSelector(currentNetwork)
+  const rpc = useSelector(rpcAddress)
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
-
+  const dispatch = useDispatch()
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
-  const networkSelector = useSelector(currentNetwork)
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
+  const [positionTicks, setPositionTicks] = useState<PositionTicks>({
+    lowerTick: undefined,
+    upperTick: undefined,
+    loading: false
+  })
 
   const { tokenXPercentage, tokenYPercentage } = calculatePercentageRatio(
     tokenXLiq,
@@ -197,11 +235,115 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     xToY
   )
 
+  const { tokenXLiquidity, tokenYLiquidity } = useLiquidity(positionSingleData)
+
   const { isPromoted, pointsPerSecond, estimated24hPoints } = usePromotedPool(
     poolAddress,
     position,
     poolData
   )
+
+  const { tokenXPriceData, tokenYPriceData } = usePrices({
+    tokenX: {
+      assetsAddress: positionSingleData?.tokenX.assetAddress.toString(),
+      name: positionSingleData?.tokenX.name
+    },
+    tokenY: {
+      assetsAddress: positionSingleData?.tokenY.assetAddress.toString(),
+      name: positionSingleData?.tokenY.name
+    }
+  })
+
+  useEffect(() => {
+    console.log({ tokenXPriceData, tokenYPriceData })
+  }, [tokenXPriceData, tokenYPriceData])
+
+  const {
+    lowerTick,
+    upperTick,
+    loading: ticksLoading
+  } = usePositionTicks({
+    positionId: id,
+    poolData: positionSingleData?.poolData,
+    lowerTickIndex: positionSingleData?.lowerTickIndex ?? 0,
+    upperTickIndex: positionSingleData?.upperTickIndex ?? 0,
+    networkType,
+    rpc,
+    wallet: wallet as IWallet
+  })
+
+  useEffect(() => {
+    setPositionTicks({
+      lowerTick,
+      upperTick,
+      loading: ticksLoading
+    })
+  }, [lowerTick, upperTick, ticksLoading])
+
+  const [_tokenXClaim, _tokenYClaim, unclaimedFeesInUSD] = useMemo(() => {
+    if (
+      !positionTicks.loading &&
+      positionSingleData?.poolData &&
+      typeof positionTicks.lowerTick !== 'undefined' &&
+      typeof positionTicks.upperTick !== 'undefined'
+    ) {
+      const [bnX, bnY] = calculateClaimAmount({
+        position,
+        tickLower: positionTicks.lowerTick,
+        tickUpper: positionTicks.upperTick,
+        tickCurrent: positionSingleData.poolData.currentTickIndex,
+        feeGrowthGlobalX: positionSingleData.poolData.feeGrowthGlobalX,
+        feeGrowthGlobalY: positionSingleData.poolData.feeGrowthGlobalY
+      })
+
+      const xAmount = +printBN(bnX, positionSingleData.tokenX.decimals)
+      const yAmount = +printBN(bnY, positionSingleData.tokenY.decimals)
+
+      const xValueInUSD = xAmount * tokenXPriceData.price
+      const yValueInUSD = yAmount * tokenYPriceData.price
+      const totalValueInUSD = xValueInUSD + yValueInUSD
+
+      if (!isClaimLoading && totalValueInUSD > 0) {
+        setPreviousUnclaimedFees(totalValueInUSD)
+      }
+
+      return [xAmount, yAmount, totalValueInUSD]
+    }
+
+    return [0, 0, previousUnclaimedFees ?? 0]
+  }, [
+    position,
+    positionTicks,
+    tokenXPriceData.price,
+    tokenYPriceData.price,
+    isClaimLoading,
+    previousUnclaimedFees
+  ])
+
+  const tokenValueInUsd = useMemo(() => {
+    if (!tokenXLiquidity && !tokenYLiquidity) {
+      return 0
+    }
+
+    return tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
+  }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData.price, tokenYPriceData.price])
+
+  // const handleClaimFee = async () => {
+  //   if (!positionSingleData) return
+
+  //   setIsClaimLoading(true)
+  //   try {
+  //     dispatch(
+  //       actions.claimFee({
+  //         index: positionSingleData.positionIndex,
+  //         isLocked: positionSingleData.isLocked
+  //       })
+  //     )
+  //   } finally {
+  //     setIsClaimLoading(false)
+  //     setPreviousUnclaimedFees(0)
+  //   }
+  // }
 
   const pairNameContent = (
     <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
@@ -317,7 +459,8 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            {formatNumber(xToY ? valueX : valueY)} {xToY ? tokenXName : tokenYName}
+            ${formatNumber(tokenValueInUsd)}
+            {/* {formatNumber(xToY ? valueX : valueY)} {xToY ? tokenXName : tokenYName} */}
           </Typography>
         </Grid>
       </Grid>
@@ -345,7 +488,9 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
         alignItems='center'
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
-          <Typography className={sharedClasses.greenText}>345.4$</Typography>
+          <Typography className={sharedClasses.greenText}>
+            ${formatNumber(unclaimedFeesInUSD)}
+          </Typography>
         </Grid>
       </Grid>
     ),
@@ -462,6 +607,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}
+        position={position}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
@@ -507,8 +653,8 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
       <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>{unclaimedFee}</TableCell>
       <TableCell className={`${classes.cellBase} ${classes.chartCell}`}>
         <MinMaxChart
-          min={Number(formatNumber(xToY ? min : 1 / max))}
-          max={Number(formatNumber(xToY ? max : 1 / min))}
+          min={Number(xToY ? min : 1 / max)}
+          max={Number(xToY ? max : 1 / min)}
           current={
             xToY ? currentPrice : currentPrice !== 0 ? 1 / currentPrice : Number.MAX_SAFE_INTEGER
           }

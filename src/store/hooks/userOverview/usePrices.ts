@@ -2,14 +2,19 @@ import { getTokenPrice, getMockedTokenPrice } from '@utils/utils'
 import { useState, useEffect } from 'react'
 import { network } from '@store/selectors/solanaConnection'
 import { useSelector } from 'react-redux'
-import { UnclaimedFeeItemProps } from '@components/OverviewYourPositions/components/UnclaimedFeeList/UnclaimedFeeItem/UnclaimedFeeItem'
 
 interface TokenPriceData {
   price: number
   loading: boolean
 }
 
-export const usePrices = ({ data }: Pick<UnclaimedFeeItemProps, 'data'>) => {
+export const usePrices = ({
+  tokenX,
+  tokenY
+}: {
+  tokenY: { assetsAddress?: string; name?: string }
+  tokenX: { assetsAddress?: string; name?: string }
+}) => {
   const networkType = useSelector(network)
 
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData>({
@@ -21,29 +26,30 @@ export const usePrices = ({ data }: Pick<UnclaimedFeeItemProps, 'data'>) => {
     loading: true
   })
   useEffect(() => {
-    if (!data?.tokenX.assetsAddress || !data?.tokenY.assetsAddress) return
+    if (!tokenX || !tokenY) return
 
     const fetchPrices = async () => {
-      getTokenPrice(data.tokenX.assetsAddress ?? '')
-        .then(price => setTokenXPriceData({ price: price ?? 0, loading: false }))
-        .catch(() => {
-          setTokenXPriceData({
-            price: getMockedTokenPrice(data.tokenX.name, networkType).price,
-            loading: false
+      if (tokenX)
+        getTokenPrice(tokenX.assetsAddress ?? '')
+          .then(price => setTokenXPriceData({ price: price ?? 0, loading: false }))
+          .catch(() => {
+            setTokenXPriceData({
+              price: getMockedTokenPrice(tokenX.name ?? '', networkType).price,
+              loading: false
+            })
           })
-        })
 
-      getTokenPrice(data.tokenY.assetsAddress ?? '')
+      getTokenPrice(tokenY.assetsAddress ?? '')
         .then(price => setTokenYPriceData({ price: price ?? 0, loading: false }))
         .catch(() => {
           setTokenYPriceData({
-            price: getMockedTokenPrice(data.tokenY.name, networkType).price,
+            price: getMockedTokenPrice(tokenY.name ?? '', networkType).price,
             loading: false
           })
         })
     }
 
     fetchPrices()
-  }, [data?.tokenX.assetsAddress, data?.tokenY.assetsAddress, networkType])
+  }, [tokenX.assetsAddress, tokenY.assetsAddress, networkType])
   return { tokenXPriceData, tokenYPriceData }
 }

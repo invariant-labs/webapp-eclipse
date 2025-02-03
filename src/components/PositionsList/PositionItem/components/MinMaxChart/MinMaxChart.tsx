@@ -47,7 +47,7 @@ const CurrentValueIndicator: React.FC<{ position: number; value: number }> = ({
       whiteSpace: 'nowrap',
       zIndex: 101
     }}>
-    {value.toFixed(4)}
+    {value.toFixed(9)}
   </Typography>
 )
 
@@ -75,10 +75,10 @@ const MinMaxLabels: React.FC<{ min: number; max: number }> = ({ min, max }) => (
       marginTop: '6px'
     }}>
     <Typography sx={{ ...typography.caption2, color: colors.invariant.light }}>
-      {min.toFixed(4)}
+      {min.toFixed(9)}
     </Typography>
     <Typography sx={{ ...typography.caption2, color: colors.invariant.light }}>
-      {max.toFixed(4)}
+      {max.toFixed(9)}
     </Typography>
   </Box>
 )
