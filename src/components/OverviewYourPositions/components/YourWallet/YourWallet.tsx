@@ -11,7 +11,7 @@ import {
   TableRow
 } from '@mui/material'
 import { makeStyles } from 'tss-react/mui'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { TokenPool } from '@store/types/userOverview'
 import { useNavigate } from 'react-router-dom'
 import { STRATEGIES } from '@store/consts/userStrategies'
@@ -21,6 +21,9 @@ import { printBN } from '@utils/utils'
 
 const useStyles = makeStyles()(() => ({
   container: {
+    [theme.breakpoints.down('lg')]: {
+      width: 'calc(100vw - 35%)'
+    },
     width: '100vw',
     maxHeight: '352px'
   },
@@ -156,7 +159,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = icons.unknownToken
   }
-  console.log(JSON.stringify(ALL_FEE_TIERS_DATA))
 
   return (
     <Box className={classes.container}>

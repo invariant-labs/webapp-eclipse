@@ -16,6 +16,7 @@ import { useSelector } from 'react-redux'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { PositionTableRow } from './PositionsTableRow'
 import { IPositionItem } from './types'
+import { useNavigate } from 'react-router-dom'
 
 const useStyles = makeStyles()((theme: Theme) => ({
   tableContainer: {
@@ -138,13 +139,15 @@ const useStyles = makeStyles()((theme: Theme) => ({
     '& > tr:nth-of-type(odd)': {
       background: colors.invariant.component,
       '&:hover': {
-        background: `${colors.invariant.component}B0`
+        background: `${colors.invariant.component}B0`,
+        cursor: 'pointer'
       }
     },
     '& > tr:nth-of-type(even)': {
       background: `${colors.invariant.component}80`,
       '&:hover': {
-        background: `${colors.invariant.component}90`
+        background: `${colors.invariant.component}90`,
+        cursor: 'pointer'
       }
     },
     '& > tr': {
@@ -175,7 +178,7 @@ interface IPositionsTableProps {
 export const PositionsTable: React.FC<IPositionsTableProps> = ({ positions }) => {
   const { classes } = useStyles()
   const networkSelector = useSelector(currentNetwork)
-
+  const navigate = useNavigate()
   return (
     <TableContainer className={classes.tableContainer}>
       <Table className={classes.table}>
@@ -200,6 +203,11 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({ positions }) =>
         <TableBody className={classes.tableBody}>
           {positions.map((position, index) => (
             <TableRow
+              onClick={e => {
+                if (!(e.target as HTMLElement).closest('.action-button')) {
+                  navigate(`/position/${position.id}`)
+                }
+              }}
               key={position.poolAddress.toString() + index}
               className={classes.tableBodyRow}>
               <PositionTableRow {...position} />

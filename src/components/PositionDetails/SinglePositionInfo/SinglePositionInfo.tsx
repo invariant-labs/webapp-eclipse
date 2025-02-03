@@ -70,7 +70,6 @@ const SinglePositionInfo: React.FC<IProp> = ({
       return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_MAIN)
     }
   }, [ethBalance, network])
-  console.log(ethBalance.toString())
   return (
     <Grid className={classes.root}>
       <ClosePositionWarning

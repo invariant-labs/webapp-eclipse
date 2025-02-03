@@ -1,5 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
-import { typography, colors } from '@static/theme'
+import { typography, colors, theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
 import { useSelector } from 'react-redux'
@@ -66,7 +66,14 @@ export const UserOverview = () => {
           </Typography>
         </Grid>
       </Box>
-      <Box sx={{ display: 'flex', gap: 4 }}>
+      <Box
+        sx={{
+          display: 'flex',
+          gap: 4,
+          [theme.breakpoints.down('lg')]: {
+            flexDirection: 'column'
+          }
+        }}>
         {/* <Overview poolAssets={data} isLoading={false} /> */}
         <YourWallet pools={processedPools} onAddToPool={handleAddToPool} isLoading={isLoading} />
         <YourWallet pools={processedPools} onAddToPool={handleAddToPool} isLoading={isLoading} />

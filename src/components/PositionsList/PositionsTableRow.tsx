@@ -175,30 +175,19 @@ const useStyles = makeStyles()((theme: Theme) => ({
   }
 }))
 
-interface IPositionTableRow extends IPositionItem {
-  data: {
-    id: number
-    index: number
-    tokenX: Token
-    tokenY: Token
-    fee: string
-  }
-}
-
 interface PositionTicks {
   lowerTick: Tick | undefined
   upperTick: Tick | undefined
   loading: boolean
 }
 
-export const PositionTableRow: React.FC<IPositionTableRow> = ({
+export const PositionTableRow: React.FC<IPositionItem> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,
   poolAddress,
   tokenYIcon,
   currentPrice,
-  data,
   id,
   fee,
   min,
@@ -484,8 +473,7 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            $ {tokenValueInUsd === null ? '...' : formatNumber(tokenValueInUsd)}
-            {/* {formatNumber(xToY ? valueX : valueY)} {xToY ? tokenXName : tokenYName} */}
+            {tokenValueInUsd === null ? '...' : `$${formatNumber(tokenValueInUsd)}`}
           </Typography>
         </Grid>
       </Grid>
@@ -514,7 +502,7 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            {unclaimedFeesInUSD === null ? '...' : formatNumber(unclaimedFeesInUSD)}
+            {unclaimedFeesInUSD === null ? '...' : `$${formatNumber(unclaimedFeesInUSD)}`}
           </Typography>
         </Grid>
       </Grid>
@@ -632,7 +620,7 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}
-        position={position}
+        position={positionSingleData}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
@@ -685,8 +673,13 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
           }
         />
       </TableCell>
-      <TableCell className={`${classes.cellBase} ${classes.actionCell}`}>
-        <Button className={classes.button} onClick={handleClick}>
+      <TableCell className={`${classes.cellBase} ${classes.actionCell} action-button`}>
+        <Button
+          className={classes.button}
+          onClick={e => {
+            e.stopPropagation()
+            handleClick(e)
+          }}>
           ...
         </Button>
       </TableCell>

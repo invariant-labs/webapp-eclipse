@@ -235,30 +235,27 @@ export const PositionsList: React.FC<IProps> = ({
       </Grid>
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
         {currentData.length > 0 && !loading && !showNoConnected ? (
-          <PositionsTable positions={currentData} />
-        ) : // paginator(page).data.map((element, index) => (
-        // <Grid
-        //   onClick={() => {
-        //     if (allowPropagation) {
-        //       navigate(`/position/${element.id}`)
-        //     }
-        //   }}
-        //   key={element.id}
-        //   className={classes.itemLink}>
-        //   {isLg ? (
-        //     <PositionItemMobile
-        //       key={index}
-        //       {...element}
-        //       setAllowPropagation={setAllowPropagation}
-        //     />
-        //   ) : (
-        //     <PositionItemDesktop key={index} {...element} />
-        //   )}
-        // </Grid>
-
-        // )
-
-        showNoConnected ? (
+          !isLg ? (
+            <PositionsTable positions={currentData} />
+          ) : (
+            currentData.map((element, index) => (
+              <Grid
+                onClick={() => {
+                  if (allowPropagation) {
+                    navigate(`/position/${element.id}`)
+                  }
+                }}
+                key={element.id}
+                className={classes.itemLink}>
+                <PositionItemMobile
+                  key={index}
+                  {...element}
+                  setAllowPropagation={setAllowPropagation}
+                />
+              </Grid>
+            ))
+          )
+        ) : showNoConnected ? (
           <NoConnected {...noConnectedBlockerProps} />
         ) : loading ? (
           <Grid container style={{ flex: 1 }}>
