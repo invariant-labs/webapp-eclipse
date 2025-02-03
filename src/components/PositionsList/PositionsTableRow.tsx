@@ -19,7 +19,7 @@ import { BN } from '@coral-xyz/anchor'
 import icons from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumber, printBN } from '@utils/utils'
 import classNames from 'classnames'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { usePromotedPool } from './PositionItem/hooks/usePromotedPool'
 import { calculatePercentageRatio } from './PositionItem/utils/calculations'
 import { useSharedStyles } from './PositionItem/variants/style/shared'
@@ -38,7 +38,9 @@ import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { usePrices } from '@store/hooks/userOverview/usePrices'
 import { useLiquidity } from '@store/hooks/userOverview/useLiquidity'
-import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
+import { actions } from '@store/reducers/overview'
+import { action } from '@storybook/addon-actions'
+// import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
 
 const useStyles = makeStyles()((theme: Theme) => ({
   cellBase: {
@@ -193,7 +195,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   max,
   valueX,
   valueY,
-  // liquidity,
   poolData,
   isActive = false,
   tokenXLiq,
@@ -214,6 +215,8 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
+  const dispatch = useDispatch()
+
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
   const [positionTicks, setPositionTicks] = useState<PositionTicks>({
     lowerTick: undefined,
@@ -235,7 +238,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     position,
     poolData
   )
-
   const { tokenXPriceData, tokenYPriceData } = usePrices({
     tokenX: {
       assetsAddress: positionSingleData?.tokenX.assetAddress.toString(),
@@ -247,9 +249,9 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     }
   })
 
-  useEffect(() => {
-    console.log({ tokenXPriceData, tokenYPriceData })
-  }, [tokenXPriceData, tokenYPriceData])
+  // useEffect(() => {
+  //   console.log({ tokenXPriceData, tokenYPriceData })
+  // }, [tokenXPriceData, tokenYPriceData])
 
   const {
     lowerTick,
@@ -307,6 +309,12 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
 
     if (!isClaimLoading && totalValueInUSD > 0) {
       setPreviousUnclaimedFees(totalValueInUSD)
+      dispatch(
+        actions.addTotalUnclaimedFee({
+          positionId: id,
+          value: totalValueInUSD
+        })
+      )
     }
 
     return [xAmount, yAmount, totalValueInUSD]
@@ -322,14 +330,42 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
 
   const tokenValueInUsd = useMemo(() => {
     if (tokenXPriceData.loading || tokenYPriceData.loading) {
-      return null // Return null to indicate loading
+      return null
     }
 
     if (!tokenXLiquidity && !tokenYLiquidity) {
       return 0
     }
 
-    return tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
+    const xValue = tokenXLiquidity * tokenXPriceData.price
+    const yValue = tokenYLiquidity * tokenYPriceData.price
+    console.log({ tokenXLiquidity, tokenYLiquidity })
+    const totalValue = xValue + yValue
+    dispatch(
+      actions.addTotalAssets({
+        positionId: id,
+        value: totalValue
+      })
+    )
+    if (tokenXLiquidity > 0) {
+      dispatch(
+        actions.addTokenPosition({
+          token: tokenXName,
+          value: xValue
+        })
+      )
+    }
+
+    if (tokenYLiquidity > 0) {
+      dispatch(
+        actions.addTokenPosition({
+          token: tokenYName,
+          value: yValue
+        })
+      )
+    }
+
+    return totalValue
   }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData])
 
   // const rawIsLoading =
