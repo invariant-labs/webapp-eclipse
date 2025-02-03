@@ -8,7 +8,6 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import { theme } from '@static/theme'
 import { useMemo } from 'react'
-
 export interface IPopularPools {
   pools: PopularPoolData[]
   isLoading: boolean
@@ -44,7 +43,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
           speed={500}
           slidesToShow={slidesNumber}
           slidesToScroll={1}
-          arrows={false}
+          arrows={true}
           className={classes.slider}
           dotsClass={`slick-dots ${classes.dots}`}
           appendDots={dots => <ul>{dots}</ul>}
