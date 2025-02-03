@@ -437,9 +437,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [poolData, tokenAIndex, tokenBIndex])
 
   const simulateAutoSwapResult = async () => {
-    console.log(poolData, ticks, tickmap, tokenAIndex, tokenBIndex)
     if (!poolData || !ticks || !tickmap || !tokenAIndex || !tokenBIndex) return
-    console.log(2)
     const result = await simulateAutoSwap(
       tokens[tokenAIndex].balance,
       tokens[tokenBIndex].balance,
