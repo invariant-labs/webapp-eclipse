@@ -332,9 +332,9 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     return tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
   }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData])
 
-  const rawIsLoading =
-    ticksLoading || tokenXPriceData.loading || tokenYPriceData.loading || isClaimLoading
-  const _isLoading = useDebounceLoading(rawIsLoading)
+  // const rawIsLoading =
+  //   ticksLoading || tokenXPriceData.loading || tokenYPriceData.loading || isClaimLoading
+  // const isLoading = useDebounceLoading(rawIsLoading)
 
   // const handleClaimFee = async () => {
   //   if (!positionSingleData) return

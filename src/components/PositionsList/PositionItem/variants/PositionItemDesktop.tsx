@@ -29,8 +29,8 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
   poolAddress,
   tokenYIcon,
   fee,
-  min,
-  max,
+  // min,
+  // max,
   valueX,
   valueY,
   position,
@@ -41,7 +41,7 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
   tokenXLiq,
   tokenYLiq,
   network,
-  isFullRange,
+  // isFullRange,
   isLocked
 }) => {
   const { classes } = useDesktopStyles()

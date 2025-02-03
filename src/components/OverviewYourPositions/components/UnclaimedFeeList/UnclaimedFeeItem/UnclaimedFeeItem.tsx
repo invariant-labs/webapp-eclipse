@@ -59,7 +59,16 @@ export const UnclaimedFeeItem: React.FC<UnclaimedFeeItemProps> = ({
   const networkType = useSelector(network)
   const rpc = useSelector(rpcAddress)
   const { tokenXLiquidity, tokenYLiquidity } = useLiquidity(position)
-  const { tokenXPriceData, tokenYPriceData } = usePrices({ data })
+  const { tokenXPriceData, tokenYPriceData } = usePrices({
+    tokenX: {
+      assetsAddress: position?.tokenX.assetAddress.toString(),
+      name: position?.tokenX.name
+    },
+    tokenY: {
+      assetsAddress: position?.tokenY.assetAddress.toString(),
+      name: position?.tokenY.name
+    }
+  })
 
   const {
     lowerTick,

@@ -61,7 +61,7 @@ export const PositionItemHeaderDesktop: React.FC = () => {
 }
 
 // Styles
-const useStyles = makeStyles()(theme => ({
+const useStyles = makeStyles()(() => ({
   headerRoot: {
     padding: '12px 20px',
     background: colors.invariant.component,
