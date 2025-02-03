@@ -1,7 +1,7 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@components/Refresher/Refresher'
-import { Box, Button, Grid, Hidden, Slide, Typography } from '@mui/material'
+import { Box, Button, Fade, Grid, Hidden, Typography } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import {
@@ -1013,10 +1013,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Slide
-        in={isPromotedPool && positionOpeningMethod === 'concentration'}
-        direction='up'
-        timeout={300}>
+      <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
         <div>
           <PotentialPoints
             handleClickFAQ={handleClickFAQ}
@@ -1027,7 +1024,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             isConnected={walletStatus === Status.Init}
           />
         </div>
-      </Slide>
+      </Fade>
 
       <FAQModal handleClose={handleCloseFAQ} open={isFAQModalOpen} />
     </Grid>
