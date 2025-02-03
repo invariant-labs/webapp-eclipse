@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { MaxHandleNarrower, MinHandleNarrower } from '@components/PriceRangePlot/Brush/svgHandles'
 import { colors, typography } from '@static/theme'
+import { formatNumber, formatNumbers } from '@utils/utils'
 
 const CONSTANTS = {
   MAX_HANDLE_OFFSET: 99,
@@ -47,7 +48,7 @@ const CurrentValueIndicator: React.FC<{ position: number; value: number }> = ({
       whiteSpace: 'nowrap',
       zIndex: 101
     }}>
-    {value.toFixed(9)}
+    {formatNumber(value.toFixed(9))}
   </Typography>
 )
 
@@ -75,10 +76,10 @@ const MinMaxLabels: React.FC<{ min: number; max: number }> = ({ min, max }) => (
       marginTop: '6px'
     }}>
     <Typography sx={{ ...typography.caption2, color: colors.invariant.light }}>
-      {min.toFixed(9)}
+      {formatNumber(min.toFixed(9))}
     </Typography>
     <Typography sx={{ ...typography.caption2, color: colors.invariant.light }}>
-      {max.toFixed(9)}
+      {formatNumber(max.toFixed(9))}
     </Typography>
   </Box>
 )

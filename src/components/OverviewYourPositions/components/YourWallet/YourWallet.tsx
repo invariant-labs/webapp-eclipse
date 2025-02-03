@@ -16,6 +16,8 @@ import { TokenPool } from '@store/types/userOverview'
 import { useNavigate } from 'react-router-dom'
 import { STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
+import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
+import { printBN } from '@utils/utils'
 
 const useStyles = makeStyles()(() => ({
   container: {
@@ -154,6 +156,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = icons.unknownToken
   }
+  console.log(JSON.stringify(ALL_FEE_TIERS_DATA))
 
   return (
     <Box className={classes.container}>
@@ -187,9 +190,22 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
           </TableHead>
           <TableBody className={classes.zebraRow}>
             {pools.map(pool => {
-              const strategy = STRATEGIES.find(
+              let strategy = STRATEGIES.find(
                 s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool.symbol
               )
+
+              if (!strategy) {
+                const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
+                  if (!lowest) return current
+                  return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
+                })
+
+                strategy = {
+                  tokenSymbolA: pool.symbol,
+                  tokenSymbolB: '-',
+                  feeTier: printBN(lowestFeeTierData.tier.fee, 10).replace('.', '_').substring(0, 4)
+                }
+              }
 
               return (
                 <TableRow key={pool.id.toString()}>
@@ -207,7 +223,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
                   <TableCell className={classes.tableCell} align='right'>
                     <Box className={classes.statsContainer}>
                       <Typography className={classes.statsValue}>
-                        {pool.value.toLocaleString().replace(',', '.')} USD
+                        ${pool.value.toLocaleString().replace(',', '.')}
                       </Typography>
                     </Box>
                   </TableCell>
@@ -223,7 +239,8 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
                       className={classes.actionIcon}
                       onClick={() => {
                         navigate(
-                          `/newPosition/${strategy?.tokenSymbolA}/${strategy?.tokenSymbolB}/${strategy?.feeTier}`
+                          `/newPosition/${strategy?.tokenSymbolA}/${strategy?.tokenSymbolB}/${strategy?.feeTier}`,
+                          { state: { referer: 'portfolio' } }
                         )
                       }}>
                       <img src={icons.plusIcon} height={24} width={24} alt='Add' />
@@ -231,9 +248,10 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], onAddToPool,
                     <Box
                       className={classes.actionIcon}
                       onClick={() => {
-                        navigate(
-                          `/newPosition/${strategy?.tokenSymbolA}/${strategy?.tokenSymbolB}/${strategy?.feeTier}`
-                        )
+                        const targetToken = pool.symbol === 'ETH' ? 'USDC' : 'ETH'
+                        navigate(`/exchange/${pool.symbol}/${targetToken}`, {
+                          state: { referer: 'portfolio' }
+                        })
                       }}>
                       <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
                     </Box>

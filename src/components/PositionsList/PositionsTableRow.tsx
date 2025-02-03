@@ -40,6 +40,7 @@ import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { usePrices } from '@store/hooks/userOverview/usePrices'
 import { actions } from '@store/reducers/positions'
 import { useLiquidity } from '@store/hooks/userOverview/useLiquidity'
+import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
 
 const useStyles = makeStyles()((theme: Theme) => ({
   cellBase: {
@@ -154,6 +155,15 @@ const useStyles = makeStyles()((theme: Theme) => ({
       transform: 'translateY(-2px)',
       boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
     }
+  },
+
+  blur: {
+    width: 120,
+    height: 30,
+    borderRadius: 16,
+    background: `linear-gradient(90deg, ${colors.invariant.component} 25%, ${colors.invariant.light} 50%, ${colors.invariant.component} 75%)`,
+    backgroundSize: '200% 100%',
+    animation: 'shimmer 2s infinite'
   },
 
   valueWrapper: {
@@ -312,6 +322,7 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
 
     return [0, 0, previousUnclaimedFees ?? 0]
   }, [
+    positionSingleData,
     position,
     positionTicks,
     tokenXPriceData.price,
@@ -327,6 +338,10 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
 
     return tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
   }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData.price, tokenYPriceData.price])
+
+  const rawIsLoading =
+    ticksLoading || tokenXPriceData.loading || tokenYPriceData.loading || isClaimLoading
+  const isLoading = useDebounceLoading(rawIsLoading)
 
   // const handleClaimFee = async () => {
   //   if (!positionSingleData) return
@@ -459,7 +474,7 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            ${formatNumber(tokenValueInUsd)}
+            ${isLoading ? '...' : formatNumber(tokenValueInUsd)}
             {/* {formatNumber(xToY ? valueX : valueY)} {xToY ? tokenXName : tokenYName} */}
           </Typography>
         </Grid>
@@ -489,7 +504,7 @@ export const PositionTableRow: React.FC<IPositionTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            ${formatNumber(unclaimedFeesInUSD)}
+            {isLoading ? '...' : formatNumber(unclaimedFeesInUSD)}
           </Typography>
         </Grid>
       </Grid>
