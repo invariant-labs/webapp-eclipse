@@ -76,6 +76,10 @@ const PrimaryComponent: React.FC<IDepositSelector> = args => {
 
 export const Primary: Story = {
   args: {
+    poolData: null,
+    tickmap: null,
+    ticks: null,
+    isAutoSwapAvailable: false,
     promotedPoolTierIndex: 0,
     commonTokens: [
       new PublicKey('So11111111111111111111111111111111111111112'),

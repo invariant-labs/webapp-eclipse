@@ -13,9 +13,30 @@ export const useStyles = makeStyles()(theme => {
         padding: '16px 8px  16px 8px '
       }
     },
+    depositHeader: {
+      width: '100%',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: 24,
+      alignItems: 'center',
+      [theme.breakpoints.down('sm')]: {
+        flexDirection: 'column',
+        justifyContent: 'center'
+      }
+    },
+    depositOptions: {
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'flex-end',
+      alignItems: 'center',
+      gap: 2,
+      [theme.breakpoints.down('sm')]: {
+        alignItems: 'center',
+        justifyContent: 'center'
+      }
+    },
     sectionTitle: {
       ...typography.heading4,
-      marginBottom: 24,
       color: colors.white.main
     },
     sectionWrapper: {
@@ -91,6 +112,67 @@ export const useStyles = makeStyles()(theme => {
       [theme.breakpoints.down('sm')]: {
         width: '100%'
       }
-    }
+    },
+    switchDepositTypeContainer: {
+      position: 'relative',
+      width: 'fit-content',
+      backgroundColor: colors.invariant.dark,
+      borderRadius: 10,
+      overflow: 'hidden',
+      display: 'inline-flex',
+      height: 26,
+      [theme.breakpoints.down('sm')]: {
+        height: 32
+      }
+    },
+    switchDepositTypeMarker: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      width: '50%',
+      backgroundColor: colors.invariant.light,
+      borderRadius: 10,
+      transition: 'all 0.3s ease',
+      zIndex: 1
+    },
+    switchDepositTypeButtonsGroup: { position: 'relative', zIndex: 2, display: 'flex' },
+    switchDepositTypeButton: {
+      ...typography.caption1,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flex: 1,
+      textTransform: 'none',
+      border: 'none',
+      borderRadius: 10,
+      zIndex: 2,
+      '&.Mui-selected': {
+        backgroundColor: 'transparent'
+      },
+      '&:hover': {
+        backgroundColor: 'transparent'
+      },
+      '&.Mui-selected:hover': {
+        backgroundColor: 'transparent'
+      },
+      '&:disabled': {
+        color: colors.invariant.componentBcg,
+        pointerEvents: 'auto',
+        transition: 'all 0.2s',
+        '&:hover': {
+          boxShadow: 'none',
+          cursor: 'not-allowed',
+          filter: 'brightness(1.15)',
+          '@media (hover: none)': {
+            filter: 'none'
+          }
+        }
+      },
+      letterSpacing: '-0.03em',
+      width: 46,
+      height: 26
+    },
+    switchSelected: { colort: colors.invariant.text, fontWeight: 700 },
+    switchNotSelected: { color: colors.invariant.component, fontWeight: 400 }
   }
 })

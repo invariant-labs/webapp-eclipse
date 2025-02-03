@@ -30,7 +30,9 @@ import {
   isLoadingPathTokens,
   isLoadingTicksAndTickMaps,
   isLoadingTokens,
-  poolsArraySortedByFees
+  nearestPoolTicksForPair,
+  poolsArraySortedByFees,
+  tickMaps
 } from '@store/selectors/pools'
 import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
 import { balanceLoading, status, balance, poolTokens } from '@store/selectors/solanaWallet'
@@ -67,6 +69,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const tokens = useSelector(poolTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
+  const tickmap = useSelector(tickMaps)
+  const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
   const loadingTicksAndTickMaps = useSelector(isLoadingTicksAndTickMaps)
   const isBalanceLoading = useSelector(balanceLoading)
   const shouldNotUpdatePriceRange = useSelector(shouldNotUpdateRange)
@@ -788,6 +792,17 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
       canNavigate={canNavigate}
+      poolData={poolIndex !== null ? allPools[poolIndex] : null}
+      tickmap={
+        poolIndex !== null && tickmap[allPools[poolIndex].tickmap.toString()]
+          ? tickmap[allPools[poolIndex].tickmap.toString()]
+          : null
+      }
+      ticks={
+        poolIndex !== null && poolTicksForSimulation[allPools[poolIndex].address.toString()]
+          ? poolTicksForSimulation[allPools[poolIndex].address.toString()]
+          : null
+      }
     />
   )
 }

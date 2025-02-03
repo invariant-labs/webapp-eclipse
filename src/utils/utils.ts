@@ -1174,6 +1174,90 @@ export const handleSimulate = async (
   }
 }
 
+export const simulateSingleSwap = async (
+  pool: PoolWithAddress,
+  poolTicks: Tick[],
+  tickmap: Tickmap,
+  slippage: BN,
+  fromToken: PublicKey,
+  amount: BN,
+  byAmountIn: boolean
+): Promise<{
+  amountOut: BN
+  amountOutWithFee: BN
+  estimatedPriceAfterSwap: BN
+  minimumReceived: BN
+  priceImpact: BN
+}> => {
+  const isXtoY = fromToken.equals(pool.tokenX)
+
+  if (amount.eq(new BN(0))) {
+    return {
+      amountOut: new BN(0),
+      amountOutWithFee: new BN(0),
+      estimatedPriceAfterSwap: new BN(0),
+      minimumReceived: new BN(0),
+      priceImpact: new BN(0)
+    }
+  }
+
+  const ticks: Map<number, Tick> = new Map<number, Tick>()
+  for (const tick of poolTicks) {
+    ticks.set(tick.index, tick)
+  }
+
+  const maxCrosses =
+    pool.tokenX.toString() === WRAPPED_ETH_ADDRESS || pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+
+  try {
+    const swapSimulateResult = simulateSwap({
+      xToY: isXtoY,
+      byAmountIn: byAmountIn,
+      swapAmount: amount,
+      slippage: slippage,
+      pool: pool,
+      ticks: ticks,
+      tickmap: tickmap,
+      maxCrosses,
+      maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX
+    })
+
+    const result = swapSimulateResult.accumulatedAmountOut
+
+    if (
+      swapSimulateResult.status === SimulationStatus.Ok &&
+      swapSimulateResult.amountPerTick.length <= TICK_CROSSES_PER_IX
+    ) {
+      return {
+        amountOut: result,
+        amountOutWithFee: result.add(swapSimulateResult.accumulatedFee),
+        estimatedPriceAfterSwap: swapSimulateResult.priceAfterSwap,
+        minimumReceived: swapSimulateResult.minReceived,
+        priceImpact: swapSimulateResult.priceImpact
+      }
+    } else {
+      return {
+        amountOut: new BN(0),
+        amountOutWithFee: new BN(0),
+        estimatedPriceAfterSwap: new BN(0),
+        minimumReceived: new BN(0),
+        priceImpact: new BN(0)
+      }
+    }
+  } catch (e) {
+    console.log(e)
+    return {
+      amountOut: new BN(0),
+      amountOutWithFee: new BN(0),
+      estimatedPriceAfterSwap: new BN(0),
+      minimumReceived: new BN(0),
+      priceImpact: new BN(0)
+    }
+  }
+}
+
 export const toMaxNumericPlaces = (num: number, places: number): string => {
   const log = Math.floor(Math.log10(num))
 

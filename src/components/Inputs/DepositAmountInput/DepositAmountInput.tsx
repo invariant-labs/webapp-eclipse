@@ -1,4 +1,4 @@
-import { Box, Grid, Input, Tooltip, Typography } from '@mui/material'
+import { Box, Grid, Input, Tooltip, Typography, Checkbox } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumber, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
@@ -35,6 +35,9 @@ interface IProps {
   isBalanceLoading: boolean
   walletUninitialized: boolean
   actionButtons?: ActionButton[]
+  autoSwapEnabled: boolean
+  checkBoxValue: boolean
+  setCheckBoxValue: (val: boolean) => void
 }
 export const DepositAmountInput: React.FC<IProps> = ({
   currency,
@@ -54,7 +57,10 @@ export const DepositAmountInput: React.FC<IProps> = ({
   priceLoading = false,
   isBalanceLoading,
   actionButtons = [],
-  walletUninitialized
+  walletUninitialized,
+  autoSwapEnabled,
+  checkBoxValue,
+  setCheckBoxValue
 }) => {
   const { classes } = useStyles({ isSelected: !!currency && !walletUninitialized })
 
@@ -135,6 +141,15 @@ export const DepositAmountInput: React.FC<IProps> = ({
           direction='row'
           wrap='nowrap'
           className={classes.inputContainer}>
+          {autoSwapEnabled && (
+            <Checkbox
+              checked={checkBoxValue}
+              onChange={e => {
+                setCheckBoxValue(e.target.checked)
+              }}
+              className={classes.checkbox}
+            />
+          )}
           <Grid
             className={classes.currency}
             container
@@ -171,7 +186,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
             placeholder={placeholder}
             onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
             onBlur={onBlur}
-            disabled={disabled}
+            disabled={disabled || !checkBoxValue}
             inputProps={{
               inputMode: 'decimal'
             }}
