@@ -3,6 +3,7 @@ import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_NEW_POSITION_SLIPPAGE,
+  LEADERBOARD_DECIMAL,
   bestTiers,
   commonTokensForNetworks
 } from '@store/consts/static'
@@ -47,7 +48,6 @@ import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/li
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { estimatePointsForLiquidity } from '@invariant-labs/points-sdk'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
 import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 
