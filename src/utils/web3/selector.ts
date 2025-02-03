@@ -7,10 +7,9 @@ export const nightlyConnectAdapter: NightlyConnectAdapter = await NightlyConnect
       description: 'Invariant - AMM DEX provided concentrated liquidity',
       icon: 'https://invariant.app/favicon-192x192.png'
     },
-    url: 'https://nc2.nightly.app',
-    persistent: true
+    url: 'https://nc2.nightly.app'
   },
-  true
+  { initOnConnect: true }
 )
 
 export const openWalletSelectorModal = async () => {
