@@ -283,6 +283,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       !shouldReversePlot
     ) {
       if (!shouldNotUpdatePriceRange) {
+        setCurrentMidPrice(midPrice)
+
         if (poolIndex !== lastPoolIndex || initReset) {
           resetPlot()
           setInitReset(false)
