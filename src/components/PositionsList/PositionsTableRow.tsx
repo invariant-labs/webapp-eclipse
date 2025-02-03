@@ -27,6 +27,9 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import SwapList from '@static/svg/swap-list.svg'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import PositionStatusTooltip from './PositionItem/components/PositionStatusTooltip'
+import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
+import React from 'react'
+import { blurContent, unblurContent } from '@utils/uiUtils'
 
 const useStyles = makeStyles()((theme: Theme) => ({
   cellBase: {
@@ -158,6 +161,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   tokenXIcon,
   poolAddress,
   tokenYIcon,
+  currentPrice,
   fee,
   min,
   max,
@@ -167,7 +171,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   // liquidity,
   poolData,
   isActive = false,
-  currentPrice,
   tokenXLiq,
   tokenYLiq,
   network,
@@ -175,6 +178,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   isLocked
 }) => {
   const { classes } = useStyles()
+  const actionRef = useRef()
   const { classes: sharedClasses } = useSharedStyles()
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
@@ -437,9 +441,28 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     estimated24hPoints,
     pointsPerSecond
   ])
+  const [isActionPopoverOpen, setActionPopoverOpen] = React.useState<boolean>(false)
+
+  const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
+
+  const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+    blurContent()
+    setActionPopoverOpen(true)
+  }
+
+  const handleClose = () => {
+    unblurContent()
+    setActionPopoverOpen(false)
+  }
 
   return (
     <TableRow>
+      <PositionViewActionPopover
+        anchorEl={anchorEl}
+        handleClose={handleClose}
+        open={isActionPopoverOpen}
+      />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
       </TableCell>
@@ -483,10 +506,18 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
       <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>{valueFragment}</TableCell>
       <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>{unclaimedFee}</TableCell>
       <TableCell className={`${classes.cellBase} ${classes.chartCell}`}>
-        <MinMaxChart min={0.3453} max={0.3853} current={0.35653} />
+        <MinMaxChart
+          min={Number(formatNumber(xToY ? min : 1 / max))}
+          max={Number(formatNumber(xToY ? max : 1 / min))}
+          current={
+            xToY ? currentPrice : currentPrice !== 0 ? 1 / currentPrice : Number.MAX_SAFE_INTEGER
+          }
+        />
       </TableCell>
       <TableCell className={`${classes.cellBase} ${classes.actionCell}`}>
-        <Button className={classes.button}>...</Button>
+        <Button className={classes.button} onClick={handleClick}>
+          ...
+        </Button>
       </TableCell>
     </TableRow>
   )
