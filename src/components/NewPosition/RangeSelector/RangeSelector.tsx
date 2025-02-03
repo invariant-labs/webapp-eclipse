@@ -104,6 +104,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   const [plotMin, setPlotMin] = useState(0)
   const [plotMax, setPlotMax] = useState(1)
 
+  const [initReset, setInitReset] = useState(true)
+
   const [currentMidPrice, setCurrentMidPrice] = useState(midPrice)
   const [triggerReset, setTriggerReset] = useState(false)
 
@@ -136,6 +138,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
       handleUpdateConcentrationFromURL(concentrationValue)
     }
+
+    setInitReset(true)
   }, [poolIndex])
 
   useEffect(() => {
@@ -268,6 +272,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
   }, [shouldReversePlot])
 
+  const [lastPoolIndex, setLastPoolIndex] = useState(poolIndex)
+
   useEffect(() => {
     if (
       !ticksLoading &&
@@ -277,12 +283,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       !shouldReversePlot
     ) {
       if (!shouldNotUpdatePriceRange) {
-        setCurrentMidPrice(midPrice)
-
-        resetPlot()
+        if (poolIndex !== lastPoolIndex || initReset) {
+          resetPlot()
+          setInitReset(false)
+        }
       }
     }
-  }, [triggerReset])
+
+    setLastPoolIndex(poolIndex)
+  }, [triggerReset, initReset])
 
   useEffect(() => {
     if (
