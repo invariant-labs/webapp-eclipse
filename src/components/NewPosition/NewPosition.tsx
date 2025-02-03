@@ -563,6 +563,14 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }, [network])
 
+  const simulationParams = useMemo(() => {
+    return {
+      positionSlippageTolerance: fromFee(new BN(Number(+slippTolerance * 1000))),
+      lowerTickIndex: Math.min(leftRange, rightRange),
+      upperTickIndex: Math.max(leftRange, rightRange)
+    }
+  }, [leftRange, rightRange, slippTolerance])
+
   return (
     <Grid container className={classes.wrapper} direction='column'>
       <Link to='/portfolio' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
@@ -830,6 +838,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           poolData={poolData}
           tickmap={tickmap}
           ticks={ticks}
+          simulationParams={simulationParams}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

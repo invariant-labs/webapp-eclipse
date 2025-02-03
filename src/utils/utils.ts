@@ -29,7 +29,13 @@ import {
   parseTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios from 'axios'
-import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  getMaxTick,
+  getMinTick,
+  PRICE_SCALE,
+  Range,
+  simulateSwapAndCreatePosition
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
@@ -1174,33 +1180,19 @@ export const handleSimulate = async (
   }
 }
 
-export const simulateSingleSwap = async (
+export const simulateAutoSwap = async (
+  amountX: BN,
+  amountY: BN,
   pool: PoolWithAddress,
   poolTicks: Tick[],
   tickmap: Tickmap,
-  slippage: BN,
-  fromToken: PublicKey,
-  amount: BN,
-  byAmountIn: boolean
-): Promise<{
-  amountOut: BN
-  amountOutWithFee: BN
-  estimatedPriceAfterSwap: BN
-  minimumReceived: BN
-  priceImpact: BN
-}> => {
-  const isXtoY = fromToken.equals(pool.tokenX)
-
-  if (amount.eq(new BN(0))) {
-    return {
-      amountOut: new BN(0),
-      amountOutWithFee: new BN(0),
-      estimatedPriceAfterSwap: new BN(0),
-      minimumReceived: new BN(0),
-      priceImpact: new BN(0)
-    }
-  }
-
+  positionSlippage: BN,
+  swapSlippage: BN,
+  lowerTick: number,
+  upperTick: number,
+  knownPrice: BN,
+  maxLiquidityPercentage: BN
+) => {
   const ticks: Map<number, Tick> = new Map<number, Tick>()
   for (const tick of poolTicks) {
     ticks.set(tick.index, tick)
@@ -1212,49 +1204,24 @@ export const simulateSingleSwap = async (
       : TICK_CROSSES_PER_IX
 
   try {
-    const swapSimulateResult = simulateSwap({
-      xToY: isXtoY,
-      byAmountIn: byAmountIn,
-      swapAmount: amount,
-      slippage: slippage,
-      pool: pool,
-      ticks: ticks,
-      tickmap: tickmap,
-      maxCrosses,
-      maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX
-    })
-
-    const result = swapSimulateResult.accumulatedAmountOut
-
-    if (
-      swapSimulateResult.status === SimulationStatus.Ok &&
-      swapSimulateResult.amountPerTick.length <= TICK_CROSSES_PER_IX
-    ) {
-      return {
-        amountOut: result,
-        amountOutWithFee: result.add(swapSimulateResult.accumulatedFee),
-        estimatedPriceAfterSwap: swapSimulateResult.priceAfterSwap,
-        minimumReceived: swapSimulateResult.minReceived,
-        priceImpact: swapSimulateResult.priceImpact
-      }
-    } else {
-      return {
-        amountOut: new BN(0),
-        amountOutWithFee: new BN(0),
-        estimatedPriceAfterSwap: new BN(0),
-        minimumReceived: new BN(0),
-        priceImpact: new BN(0)
-      }
-    }
+    const simulateResult = simulateSwapAndCreatePosition(
+      amountX,
+      amountY,
+      {
+        ticks,
+        tickmap,
+        pool,
+        maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
+        maxCrosses,
+        slippage: swapSlippage
+      },
+      { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
+      maxLiquidityPercentage
+    )
+    return simulateResult
   } catch (e) {
     console.log(e)
-    return {
-      amountOut: new BN(0),
-      amountOutWithFee: new BN(0),
-      estimatedPriceAfterSwap: new BN(0),
-      minimumReceived: new BN(0),
-      priceImpact: new BN(0)
-    }
+    return null
   }
 }
 

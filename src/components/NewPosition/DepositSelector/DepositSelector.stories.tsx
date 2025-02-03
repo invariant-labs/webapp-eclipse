@@ -76,6 +76,11 @@ const PrimaryComponent: React.FC<IDepositSelector> = args => {
 
 export const Primary: Story = {
   args: {
+    simulationParams: {
+      lowerTickIndex: 0,
+      upperTickIndex: 0,
+      positionSlippageTolerance: new BN(0)
+    },
     poolData: null,
     tickmap: null,
     ticks: null,

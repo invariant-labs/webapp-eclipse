@@ -31,14 +31,14 @@ import {
   tickerToAddress,
   parsePathFeeToFeeString,
   trimDecimalZeros,
-  simulateSingleSwap
+  simulateAutoSwap
 } from '@utils/utils'
 import { createButtonActions } from '@utils/uiUtils'
 import icons from '@static/icons'
-import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { actions, PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import { useDispatch } from 'react-redux'
+import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 export interface InputState {
   value: string
@@ -104,6 +104,11 @@ export interface IDepositSelector {
   poolData: PoolWithAddress | null
   tickmap: Tickmap | null
   ticks: Tick[] | null
+  simulationParams: {
+    lowerTickIndex: number
+    upperTickIndex: number
+    positionSlippageTolerance: BN
+  }
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -148,10 +153,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   isAutoSwapAvailable,
   poolData,
   tickmap,
-  ticks
+  ticks,
+  simulationParams
 }) => {
   // todo: change it later
-  const slippTolerance = DEFAULT_SWAP_SLIPPAGE
+  const swapSlippTolerance = DEFAULT_SWAP_SLIPPAGE
+  const maxLiquidityPercentage = fromFee(new BN(Number(90 * 1000))) // 90%
+
   const { classes } = useStyles()
   const dispatch = useDispatch()
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
@@ -160,13 +168,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [tokenACheckbox, setTokenACheckbox] = useState<boolean>(true)
   const [tokenBCheckbox, setTokenBCheckbox] = useState<boolean>(true)
 
-  const [simulation, setSimulation] = useState<{
-    amountOut: BN
-    amountOutWithFee: BN
-    estimatedPriceAfterSwap: BN
-    minimumReceived: BN
-    priceImpact: BN
-  } | null>(null)
   const [alignment, setAlignment] = useState<string>(DepositOptions.Basic)
 
   useEffect(() => {
@@ -416,44 +417,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     onAmountSet: tokenBInputState.setValue
   })
 
-  const simulateAutoSwap = async () => {
-    const tokenFromIndex = tokenACheckbox ? tokenAIndex : tokenBIndex
-    const tokenToIndex = tokenBCheckbox ? tokenAIndex : tokenBIndex
-    const tokenFromState = tokenACheckbox ? tokenAInputState : tokenBInputState
-    if (
-      !tokenFromIndex ||
-      !tokenToIndex ||
-      tokenACheckbox === tokenBCheckbox ||
-      !tokenFromState ||
-      !poolData ||
-      !ticks ||
-      !tickmap
-    )
-      return null
-    const result = await simulateSingleSwap(
-      poolData,
-      ticks,
-      tickmap,
-      fromFee(new BN(Number(+slippTolerance * 1000))),
-      tokens[tokenFromIndex].assetAddress,
-      convertBalanceToBN(tokenFromState.value, tokens[tokenFromIndex].decimals),
-      true
-    )
-    return result
-  }
-  const { value: valueA } = tokenAInputState
-
-  useEffect(() => {
-    if (tokenACheckbox !== tokenBCheckbox) {
-      simulateAutoSwap().then(res => setSimulation(res))
-    }
-  }, [tokenACheckbox, tokenBCheckbox, valueA])
-
-  useEffect(() => {
-    console.log(simulation)
-  }, [simulation])
-
-  // todo: query it in different place?
   useEffect(() => {
     if (tokenAIndex && tokenBIndex && poolData) {
       dispatch(
@@ -472,6 +435,31 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     }
   }, [poolData, tokenAIndex, tokenBIndex])
+
+  const simulateAutoSwapResult = async () => {
+    console.log(poolData, ticks, tickmap, tokenAIndex, tokenBIndex)
+    if (!poolData || !ticks || !tickmap || !tokenAIndex || !tokenBIndex) return
+    console.log(2)
+    const result = await simulateAutoSwap(
+      tokens[tokenAIndex].balance,
+      tokens[tokenBIndex].balance,
+      poolData,
+      ticks,
+      tickmap,
+      simulationParams.positionSlippageTolerance,
+      swapSlippTolerance,
+      simulationParams.lowerTickIndex,
+      simulationParams.upperTickIndex,
+      poolData.sqrtPrice,
+      maxLiquidityPercentage
+    )
+    console.log(result)
+  }
+  useEffect(() => {
+    if (tokenACheckbox !== tokenBCheckbox) {
+      simulateAutoSwapResult()
+    }
+  }, [tokenACheckbox, tokenBCheckbox])
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
       <Typography className={classes.sectionTitle}>Tokens</Typography>

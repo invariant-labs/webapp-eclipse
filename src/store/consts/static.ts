@@ -574,7 +574,7 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
   [NetworkType.Local]: []
 }
 
-export const autoSwapPools = ['HHHGD7BZ7H5fPLh3DNEPFezpLoYBJ16WsmbwRJXXEFSg']
+export const autoSwapPools = ['QdZBPTvDyJ3Dqv5PYe8mqrZPxTb2H1HWKapNoXfb6r2']
 export const promotedTiers = [
   {
     tokenX: USDC_MAIN.address,
