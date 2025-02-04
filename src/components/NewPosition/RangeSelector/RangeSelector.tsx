@@ -104,6 +104,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   const [plotMin, setPlotMin] = useState(0)
   const [plotMax, setPlotMax] = useState(1)
 
+  const [initReset, setInitReset] = useState(true)
+
   const [currentMidPrice, setCurrentMidPrice] = useState(midPrice)
   const [triggerReset, setTriggerReset] = useState(false)
 
@@ -136,6 +138,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
       handleUpdateConcentrationFromURL(concentrationValue)
     }
+
+    setInitReset(true)
   }, [poolIndex])
 
   useEffect(() => {
@@ -281,14 +285,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       if (!shouldNotUpdatePriceRange) {
         setCurrentMidPrice(midPrice)
 
-        if (poolIndex !== lastPoolIndex) {
+        if (poolIndex !== lastPoolIndex || initReset) {
           resetPlot()
+          setInitReset(false)
         }
       }
     }
 
     setLastPoolIndex(poolIndex)
-  }, [triggerReset])
+  }, [triggerReset, initReset])
 
   useEffect(() => {
     if (
