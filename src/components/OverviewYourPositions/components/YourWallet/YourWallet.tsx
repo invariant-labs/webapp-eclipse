@@ -39,7 +39,6 @@ const useStyles = makeStyles()(() => ({
       borderTopLeftRadius: '24px'
     },
     borderTopLeftRadius: 0,
-
     borderTopRightRadius: '24px',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -86,6 +85,16 @@ const useStyles = makeStyles()(() => ({
     zIndex: 1
   },
   tokenContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    [theme.breakpoints.down('md')]: {
+      gap: '16px',
+      width: '100%',
+      justifyContent: 'space-between'
+    }
+  },
+  tokenInfo: {
     display: 'flex',
     alignItems: 'center',
     gap: '8px'
@@ -138,13 +147,34 @@ const useStyles = makeStyles()(() => ({
       }
     }
   },
-
   zebraRow: {
     '& > tr:nth-of-type(odd)': {
       background: `${colors.invariant.componentBcg}60`,
       '&:hover': {
         background: `${colors.invariant.component}B0`
       }
+    }
+  },
+  // Modified mobile-specific styles
+  mobileActionContainer: {
+    display: 'none',
+    [theme.breakpoints.down('md')]: {
+      display: 'flex',
+      gap: '8px',
+      padding: '12px 16px',
+      borderBottom: `1px solid ${colors.invariant.light}`
+    }
+  },
+  desktopActionCell: {
+    [theme.breakpoints.down('md')]: {
+      display: 'none'
+    }
+  },
+  mobileActions: {
+    display: 'none',
+    [theme.breakpoints.down('md')]: {
+      display: 'flex',
+      gap: '8px'
     }
   }
 }))
@@ -164,6 +194,30 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
     e.currentTarget.src = icons.unknownToken
   }
 
+  const renderActions = (pool: TokenPool, strategy: any) => (
+    <>
+      <Box
+        className={classes.actionIcon}
+        onClick={() => {
+          navigate(
+            `/newPosition/${strategy?.tokenSymbolA}/${strategy?.tokenSymbolB}/${strategy?.feeTier}`,
+            { state: { referer: 'portfolio' } }
+          )
+        }}>
+        <img src={icons.plusIcon} height={24} width={24} alt='Add' />
+      </Box>
+      <Box
+        className={classes.actionIcon}
+        onClick={() => {
+          const targetToken = pool.symbol === 'ETH' ? 'USDC' : 'ETH'
+          navigate(`/exchange/${pool.symbol}/${targetToken}`, {
+            state: { referer: 'portfolio' }
+          })
+        }}>
+        <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
+      </Box>
+    </>
+  )
   return (
     <Box className={classes.container}>
       <Box className={classes.header}>
@@ -189,8 +243,9 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
               <TableCell className={classes.headerCell} align='left'>
                 Amount
               </TableCell>
-              {/* Move actions button somewhere */}
-              <TableCell className={classes.headerCell} align='right'>
+              <TableCell
+                className={`${classes.headerCell} ${classes.desktopActionCell}`}
+                align='right'>
                 Action
               </TableCell>
             </TableRow>
@@ -218,13 +273,16 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                 <TableRow key={pool.id.toString()}>
                   <TableCell className={classes.tableCell}>
                     <Box className={classes.tokenContainer}>
-                      <img
-                        src={pool.icon}
-                        className={classes.tokenIcon}
-                        onError={handleImageError}
-                        alt={pool.symbol}
-                      />
-                      <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
+                      <Box className={classes.tokenInfo}>
+                        <img
+                          src={pool.icon}
+                          className={classes.tokenIcon}
+                          onError={handleImageError}
+                          alt={pool.symbol}
+                        />
+                        <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
+                      </Box>
+                      <Box className={classes.mobileActions}>{renderActions(pool, strategy)}</Box>
                     </Box>
                   </TableCell>
                   <TableCell className={classes.tableCell} align='right'>
@@ -241,27 +299,11 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell className={classes.tableCell} align='right' sx={{ display: 'flex' }}>
-                    <Box
-                      className={classes.actionIcon}
-                      onClick={() => {
-                        navigate(
-                          `/newPosition/${strategy?.tokenSymbolA}/${strategy?.tokenSymbolB}/${strategy?.feeTier}`,
-                          { state: { referer: 'portfolio' } }
-                        )
-                      }}>
-                      <img src={icons.plusIcon} height={24} width={24} alt='Add' />
-                    </Box>
-                    <Box
-                      className={classes.actionIcon}
-                      onClick={() => {
-                        const targetToken = pool.symbol === 'ETH' ? 'USDC' : 'ETH'
-                        navigate(`/exchange/${pool.symbol}/${targetToken}`, {
-                          state: { referer: 'portfolio' }
-                        })
-                      }}>
-                      <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
-                    </Box>
+                  <TableCell
+                    className={`${classes.tableCell} ${classes.desktopActionCell}`}
+                    align='right'
+                    sx={{ display: 'flex' }}>
+                    {renderActions(pool, strategy)}
                   </TableCell>
                 </TableRow>
               )
