@@ -390,11 +390,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             gap: 1,
             marginTop: '8px'
           }}>
-          <Box sx={{ width: '50%' }}>
-            {feeFragment}
-
-            {/* <Hidden mdDown>{feeFragment}</Hidden> */}
-          </Box>
+          <Box sx={{ width: '50%' }}>{feeFragment}</Box>
           <Box sx={{ width: '50%' }}>{valueFragment}</Box>
         </Box>
 

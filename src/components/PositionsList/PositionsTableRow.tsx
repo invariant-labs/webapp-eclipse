@@ -583,11 +583,10 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
                 marginLeft: '16px'
               }}
             />
-            {JSON.stringify(isActive)}
           </div>
           <PromotedPoolPopover
             showEstPointsFirst
-            isActive={isActive}
+            isActive={true}
             anchorEl={airdropIconRef.current}
             open={isPromotedPoolPopoverOpen}
             onClose={() => setIsPromotedPoolPopoverOpen(false)}
