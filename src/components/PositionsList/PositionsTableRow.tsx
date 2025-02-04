@@ -568,6 +568,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
       return (
         <>
           <div
+            ref={airdropIconRef} // Add ref here
             onClick={e => e.stopPropagation()}
             className={classes.actionButton}
             onMouseEnter={handleMouseEnter}
