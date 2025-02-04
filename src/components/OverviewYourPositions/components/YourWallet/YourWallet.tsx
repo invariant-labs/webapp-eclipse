@@ -22,7 +22,7 @@ import { printBN } from '@utils/utils'
 const useStyles = makeStyles()(() => ({
   container: {
     minWidth: '50%',
-    maxHeight: '352px'
+    overflowX: 'hidden'
   },
   divider: {
     width: '100%',
@@ -59,6 +59,7 @@ const useStyles = makeStyles()(() => ({
     backgroundColor: colors.invariant.component,
     maxHeight: '251px',
     overflowY: 'auto',
+    overflowX: 'hidden',
 
     '&::-webkit-scrollbar': {
       width: '4px'
@@ -188,9 +189,10 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
               <TableCell className={classes.headerCell} align='left'>
                 Amount
               </TableCell>
-              <TableCell className={classes.headerCell} align='right'>
+              {/* Move actions button somewhere */}
+              {/* <TableCell className={classes.headerCell} align='right'>
                 Action
-              </TableCell>
+              </TableCell> */}
             </TableRow>
           </TableHead>
           <TableBody className={classes.zebraRow}>
@@ -239,7 +241,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       </Typography>
                     </Box>
                   </TableCell>
-                  <TableCell className={classes.tableCell} align='right' sx={{ display: 'flex' }}>
+                  {/* <TableCell className={classes.tableCell} align='right' sx={{ display: 'flex' }}>
                     <Box
                       className={classes.actionIcon}
                       onClick={() => {
@@ -260,7 +262,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       }}>
                       <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
                     </Box>
-                  </TableCell>
+                  </TableCell> */}
                 </TableRow>
               )
             })}

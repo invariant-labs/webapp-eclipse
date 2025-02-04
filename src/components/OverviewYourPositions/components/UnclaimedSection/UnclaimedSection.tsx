@@ -17,12 +17,12 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({ unclaimedTot
   return (
     <Box className={classes.unclaimedSection}>
       <Typography className={classes.unclaimedTitle}>Unclaimed fees</Typography>
-      <Box sx={{ display: 'flex', alignItems: 'center' }}>
+      <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
         <Typography className={classes.unclaimedAmount}>${unclaimedTotal.toFixed(6)}</Typography>
-        <Button className={classes.claimAllButton} onClick={handleClaimAll}>
-          Claim all fees
-        </Button>
       </Box>
+      <Button className={classes.claimAllButton} onClick={handleClaimAll}>
+        Claim all fees
+      </Button>
     </Box>
   )
 }

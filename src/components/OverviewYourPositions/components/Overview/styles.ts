@@ -4,7 +4,10 @@ import { colors, theme, typography } from '@static/theme'
 export const useStyles = makeStyles()(() => ({
   container: {
     minWidth: '47%',
-    maxHeight: '280px',
+
+    [theme.breakpoints.down('lg')]: {
+      maxHeight: 'fit-content'
+    },
     backgroundColor: colors.invariant.component,
 
     borderTopLeftRadius: '24px',
@@ -31,14 +34,18 @@ export const useStyles = makeStyles()(() => ({
   unclaimedSection: {
     marginTop: '20px',
     display: 'flex',
+
     justifyContent: 'space-between',
+    [theme.breakpoints.down('lg')]: {
+      flexWrap: 'wrap'
+    },
+    flexWrap: 'nowrap',
     alignItems: 'center',
     minHeight: '32px'
   },
   unclaimedTitle: {
     ...typography.heading4,
-    color: colors.invariant.text,
-    marginTop: '12px'
+    color: colors.invariant.text
   },
   unclaimedAmount: {
     ...typography.heading3,

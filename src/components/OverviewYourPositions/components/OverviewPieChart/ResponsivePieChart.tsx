@@ -8,7 +8,7 @@ const ResponsivePieChart = ({ data, chartColors }) => {
       sx={{
         width: '100%',
         height: '100%',
-        maxHeight: '180px',
+        maxHeight: '200px',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center'
@@ -17,10 +17,10 @@ const ResponsivePieChart = ({ data, chartColors }) => {
         series={[
           {
             data: data,
-            outerRadius: '80%', // Use percentage instead of fixed value
+            outerRadius: '90%', // Use percentage instead of fixed value
             startAngle: -45,
             endAngle: 315,
-            cx: '50%', // Center horizontally
+            cx: '75%', // Center horizontally
             cy: '50%' // Center vertically
           }
         ]}

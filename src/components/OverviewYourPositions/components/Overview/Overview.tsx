@@ -1,12 +1,12 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Box, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles'
 import { ProcessedPool } from '@store/types/userOverview'
 import { useSelector } from 'react-redux'
 import { overviewSelectors } from '@store/selectors/overview'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
 
 interface OverviewProps {
@@ -128,53 +128,107 @@ export const Overview: React.FC<OverviewProps> = () => {
     <Box className={classes.container}>
       <HeaderSection totalValue={totalAssets} />
       <UnclaimedSection unclaimedTotal={totalUnclaimedFee} />
-      <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row-reverse' }}>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          flexDirection: 'row-reverse',
+          [theme.breakpoints.down('lg')]: {
+            justifyContent: 'center',
+            flexDirection: 'column'
+          }
+        }}>
         <Box sx={{ marginTop: 2 }}>
           <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
             Tokens
           </Typography>
 
-          {positions.map(position => {
-            const textColor = logoColors[position.logo ?? 0] || colors.invariant.text
+          <Grid
+            container
+            spacing={1}
+            sx={{
+              marginTop: 1,
+              minHeight: '120px',
+              overflowY: 'auto',
 
-            return (
-              <Box
-                key={position.token}
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  marginTop: '8px'
-                }}>
-                <Typography
-                  style={{
-                    ...typography.heading4,
-                    color: textColor,
+              '&::-webkit-scrollbar': {
+                width: '4px'
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent'
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: colors.invariant.pink,
+                borderRadius: '4px'
+              }
+            }}>
+            {positions.map(position => {
+              const textColor = logoColors[position.logo ?? 0] || colors.invariant.text
+
+              return (
+                <Grid
+                  item
+                  container
+                  key={position.token}
+                  sx={{
+                    paddingLeft: '0 !important',
+
                     display: 'flex',
-                    justifyContent: 'center'
+                    [theme.breakpoints.down('lg')]: {
+                      justifyContent: 'space-between'
+                    },
+                    justifyContent: 'flex-start'
                   }}>
-                  <img
-                    src={position.logo}
-                    alt={'Token logo'}
-                    style={{
-                      width: '24px',
-                      height: '24px',
-                      borderRadius: '100%',
-                      marginRight: '8px'
-                    }}
-                  />
-                  {position.token}:
-                </Typography>
-                <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
-                  ${position.value.toFixed(9)}
-                </Typography>
-              </Box>
-            )
-          })}
+                  <Grid
+                    item
+                    xs={2}
+                    alignContent={'center'}
+                    sx={{
+                      display: 'flex',
+
+                      alignItems: 'center'
+                    }}>
+                    <img
+                      src={position.logo}
+                      alt={'Token logo'}
+                      style={{
+                        width: '24px',
+                        height: '24px',
+                        borderRadius: '100%'
+                      }}
+                    />
+                  </Grid>
+
+                  <Grid item xs={2} alignContent={'center'}>
+                    <Typography
+                      style={{
+                        ...typography.heading4,
+                        color: textColor
+                      }}>
+                      {position.token}:
+                    </Typography>
+                  </Grid>
+
+                  <Grid item xs={5} alignContent={'center'}>
+                    <Typography
+                      style={{
+                        ...typography.heading4,
+                        color: colors.invariant.text,
+                        textAlign: 'right',
+                        paddingLeft: '8px'
+                      }}>
+                      ${position.value.toFixed(9)}
+                    </Typography>
+                  </Grid>
+                </Grid>
+              )
+            })}
+          </Grid>
         </Box>
         <Box
           sx={{
-            flex: '1 1 40%',
-            minHeight: '300px'
+            flex: '1 1 100%',
+            minHeight: 'fit-content'
           }}>
           <ResponsivePieChart data={data} chartColors={chartColors} />
         </Box>
