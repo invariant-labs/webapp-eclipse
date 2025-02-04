@@ -17,7 +17,7 @@ export const useStyles = makeStyles()(theme => ({
     background: colors.invariant.component,
 
     [theme.breakpoints.down('sm')]: {
-      padding: '24px 32px'
+      padding: '24px 38px'
     }
   },
   slider: {
@@ -33,25 +33,25 @@ export const useStyles = makeStyles()(theme => ({
     '& .slick-arrow': {
       height: '40px',
       [theme.breakpoints.down('sm')]: {
-        height: '20px'
+        height: '30px'
       }
     },
     '& .slick-arrow::before': {
       fontSize: '40px',
       [theme.breakpoints.down('sm')]: {
-        fontSize: '24px'
+        fontSize: '34px'
       }
     },
     '& .slick-prev': {
       left: -40,
       [theme.breakpoints.down('sm')]: {
-        left: -24
+        left: -35
       }
     },
     '& .slick-next': {
       right: -20,
       [theme.breakpoints.down('sm')]: {
-        right: -20
+        right: -21
       }
     },
     height: 344
