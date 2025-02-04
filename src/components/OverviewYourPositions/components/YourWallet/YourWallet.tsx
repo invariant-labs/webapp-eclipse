@@ -91,7 +91,8 @@ const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('md')]: {
       gap: '16px',
       width: '100%',
-      justifyContent: 'space-between'
+      flexDirection: 'column',
+      justifyContent: 'center'
     }
   },
   tokenInfo: {
