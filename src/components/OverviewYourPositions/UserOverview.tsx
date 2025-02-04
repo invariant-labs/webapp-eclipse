@@ -45,7 +45,7 @@ export const UserOverview = () => {
   })
 
   return (
-    <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px' }}>
+    <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px', width: '100%' }}>
       <Box>
         <Grid
           style={{
@@ -66,7 +66,8 @@ export const UserOverview = () => {
         sx={{
           display: 'flex',
           [theme.breakpoints.down('lg')]: {
-            flexDirection: 'column'
+            flexDirection: 'column',
+            gap: 4
           }
         }}>
         <Overview poolAssets={data} isLoading={false} />

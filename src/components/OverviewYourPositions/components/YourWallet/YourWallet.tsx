@@ -21,10 +21,7 @@ import { printBN } from '@utils/utils'
 
 const useStyles = makeStyles()(() => ({
   container: {
-    [theme.breakpoints.down('lg')]: {
-      width: 'calc(100vw - 35%)'
-    },
-    width: '100vw',
+    minWidth: '50%',
     maxHeight: '352px'
   },
   divider: {
@@ -38,6 +35,11 @@ const useStyles = makeStyles()(() => ({
     width: '100%',
     display: 'flex',
     padding: '22px 0px',
+    [theme.breakpoints.down('lg')]: {
+      borderTopLeftRadius: '24px'
+    },
+    borderTopLeftRadius: 0,
+
     borderTopRightRadius: '24px',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -50,6 +52,10 @@ const useStyles = makeStyles()(() => ({
   },
   tableContainer: {
     borderBottomRightRadius: '24px',
+    [theme.breakpoints.down('lg')]: {
+      borderBottomLeftRadius: '24px'
+    },
+    borderBottomLeftRadius: 0,
     backgroundColor: colors.invariant.component,
     maxHeight: '251px',
     overflowY: 'auto',

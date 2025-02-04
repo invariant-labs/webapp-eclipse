@@ -4,8 +4,6 @@ import useStyles from './style'
 import { Grid, Popover, Typography } from '@mui/material'
 import { actions } from '@store/reducers/positions'
 import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
-import { unblurContent } from '@utils/uiUtils'
 
 export interface IPositionViewActionPopover {
   open: boolean
@@ -21,7 +19,6 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   handleClose
 }) => {
   const { classes } = useStyles()
-  const navigate = useNavigate()
   const dispatch = useDispatch()
 
   return (
@@ -65,29 +62,17 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
               e.stopPropagation()
               handleClose()
             }}>
-            <Typography className={classes.name}>Lock position</Typography>
-          </Grid>
-          <Grid
-            className={classNames(classes.listItem)}
-            item
-            onClick={e => {
-              e.stopPropagation()
-              unblurContent()
-              const positionId = position.id.toString() + '_' + position.pool.toString()
-              handleClose()
-              navigate(`/position/${positionId}`)
-            }}>
-            <Typography className={classes.name}>Manage Liquidity</Typography>
-          </Grid>
-          <Grid
-            className={classNames(classes.listItem)}
-            item
-            onClick={e => {
-              e.stopPropagation()
-              handleClose()
-            }}>
             <Typography className={classes.name}>Close position</Typography>
           </Grid>
+        </Grid>
+        <Grid
+          className={classNames(classes.listItem)}
+          item
+          onClick={e => {
+            e.stopPropagation()
+            handleClose()
+          }}>
+          <Typography className={classes.name}>Lock position</Typography>
         </Grid>
       </Grid>
     </Popover>

@@ -1,9 +1,9 @@
 import { makeStyles } from 'tss-react/mui'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    minWidth: '424px',
+    minWidth: '50%',
     maxHeight: '280px',
     borderTopRightRadius: '24px',
     borderBottomRightRadius: '24px',

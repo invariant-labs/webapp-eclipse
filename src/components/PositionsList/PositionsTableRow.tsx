@@ -171,6 +171,26 @@ const useStyles = makeStyles()((theme: Theme) => ({
     maxWidth: 144,
     display: 'flex',
     justifyContent: 'center'
+  },
+  actionButton: {
+    background: 'none',
+    padding: 0,
+    margin: 0,
+    border: 'none',
+    display: 'inline-flex',
+    position: 'relative',
+    color: colors.invariant.black,
+    textTransform: 'none',
+
+    transition: 'filter 0.2s linear',
+
+    '&:hover': {
+      filter: 'brightness(1.2)',
+      cursor: 'pointer',
+      '@media (hover: none)': {
+        filter: 'none'
+      }
+    }
   }
 }))
 
@@ -549,7 +569,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
         <>
           <div
             onClick={e => e.stopPropagation()}
-            // className={classes.actionButton}
+            className={classes.actionButton}
             onMouseEnter={handleMouseEnter}
             onMouseLeave={handleMouseLeave}>
             <img
@@ -563,6 +583,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
                 marginLeft: '16px'
               }}
             />
+            {JSON.stringify(isActive)}
           </div>
           <PromotedPoolPopover
             showEstPointsFirst
@@ -632,6 +653,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     estimated24hPoints,
     pointsPerSecond
   ])
+
   const [isActionPopoverOpen, setActionPopoverOpen] = React.useState<boolean>(false)
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
