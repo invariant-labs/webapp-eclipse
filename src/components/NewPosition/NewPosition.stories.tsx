@@ -55,6 +55,10 @@ const tokens: SwapToken[] = [
 
 export const Primary: Story = {
   args: {
+    initialMaxPriceImpact: '',
+    onMaxPriceImpactChange: fn(),
+    initialMinUtilization: '',
+    onMinUtilizationChange: fn(),
     poolData: null,
     tickmap: null,
     ticks: null,
@@ -181,6 +185,10 @@ export const Primary: Story = {
         poolData={null}
         tickmap={null}
         ticks={null}
+        initialMaxPriceImpact={''}
+        onMaxPriceImpactChange={() => {}}
+        initialMinUtilization={''}
+        onMinUtilizationChange={() => {}}
       />
     )
   }

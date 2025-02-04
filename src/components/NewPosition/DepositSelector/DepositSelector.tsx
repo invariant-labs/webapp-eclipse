@@ -1,11 +1,10 @@
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
-import { Box, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import { Box, Button, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
-  DEFAULT_SWAP_SLIPPAGE,
   NetworkType,
   WETH_POOL_INIT_LAMPORTS_MAIN,
   WETH_POOL_INIT_LAMPORTS_TEST,
@@ -33,12 +32,13 @@ import {
   trimDecimalZeros,
   simulateAutoSwap
 } from '@utils/utils'
-import { createButtonActions } from '@utils/uiUtils'
+import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import icons from '@static/icons'
 import { actions, PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import { useDispatch } from 'react-redux'
 import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
+import DepoSitOptionsModal from '@components/Modals/DepoSitOptionsModal/DepoSitOptionsModal'
 
 export interface InputState {
   value: string
@@ -109,6 +109,10 @@ export interface IDepositSelector {
     upperTickIndex: number
     positionSlippageTolerance: BN
   }
+  initialMaxPriceImpact: string
+  onMaxPriceImpactChange: (val: string) => void
+  initialMinUtilization: string
+  onMinUtilizationChange: (val: string) => void
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -154,14 +158,18 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   poolData,
   tickmap,
   ticks,
-  simulationParams
+  simulationParams,
+  initialMaxPriceImpact,
+  onMaxPriceImpactChange,
+  initialMinUtilization,
+  onMinUtilizationChange
 }) => {
-  // todo: change it later
-  const swapSlippTolerance = DEFAULT_SWAP_SLIPPAGE
-  const maxLiquidityPercentage = fromFee(new BN(Number(90 * 1000))) // 90%
-
   const { classes } = useStyles()
   const dispatch = useDispatch()
+
+  const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
+  const [utilization, setUtilization] = useState<string>(initialMinUtilization)
+
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
 
@@ -169,6 +177,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [tokenBCheckbox, setTokenBCheckbox] = useState<boolean>(true)
 
   const [alignment, setAlignment] = useState<string>(DepositOptions.Basic)
+
+  const [settings, setSettings] = useState<boolean>(false)
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
   useEffect(() => {
     if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
@@ -333,6 +344,27 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     minimumSliderIndex
   ])
 
+  const handleClickDepositOptions = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+    blurContent()
+    setSettings(true)
+  }
+
+  const handleCloseDepositOptions = () => {
+    unblurContent()
+    setSettings(false)
+  }
+
+  const setMaxPriceImpact = (priceImpact: string): void => {
+    setPriceImpact(priceImpact)
+    onMaxPriceImpactChange(priceImpact)
+  }
+
+  const setMinUtilization = (utilization: string): void => {
+    setUtilization(utilization)
+    onMinUtilizationChange(utilization)
+  }
+
   useEffect(() => {
     if (tokenAIndex !== null) {
       if (getScaleFromString(tokenAInputState.value) > tokens[tokenAIndex].decimals) {
@@ -418,6 +450,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   })
 
   useEffect(() => {
+    setTokenACheckbox(true)
+    setTokenBCheckbox(true)
     if (tokenAIndex && tokenBIndex && poolData) {
       dispatch(
         actions.getNearestTicksForPair({
@@ -445,11 +479,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       ticks,
       tickmap,
       simulationParams.positionSlippageTolerance,
-      swapSlippTolerance,
+      fromFee(new BN(Number(+priceImpact * 1000))),
       simulationParams.lowerTickIndex,
       simulationParams.upperTickIndex,
       poolData.sqrtPrice,
-      maxLiquidityPercentage
+      fromFee(new BN(Number(+utilization * 1000)))
     )
     console.log(result)
   }
@@ -460,6 +494,15 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [tokenACheckbox, tokenBCheckbox])
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
+      <DepoSitOptionsModal
+        initialMaxPriceImpact={initialMaxPriceImpact}
+        setMaxPriceImpact={setMaxPriceImpact}
+        initialMinUtilization={initialMinUtilization}
+        setMinUtilization={setMinUtilization}
+        handleClose={handleCloseDepositOptions}
+        anchorEl={anchorEl}
+        open={settings}
+      />
       <Typography className={classes.sectionTitle}>Tokens</Typography>
 
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
@@ -566,7 +609,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
-          <img src={icons.autoSwapOptions} alt='options' />
+          <Button onClick={handleClickDepositOptions} className={classes.optionsIconBtn}>
+            <img src={icons.autoSwapOptions} alt='options' />
+          </Button>
         </Box>
       </Grid>
       <Grid container className={classes.sectionWrapper}>

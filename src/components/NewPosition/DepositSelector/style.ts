@@ -173,6 +173,15 @@ export const useStyles = makeStyles()(theme => {
       height: 26
     },
     switchSelected: { colort: colors.invariant.text, fontWeight: 700 },
-    switchNotSelected: { color: colors.invariant.component, fontWeight: 400 }
+    switchNotSelected: { color: colors.invariant.component, fontWeight: 400 },
+    optionsIconBtn: {
+      padding: 0,
+      margin: 0,
+      minWidth: 'auto',
+      background: 'none',
+      '&:hover': {
+        background: 'none'
+      }
+    }
   }
 })

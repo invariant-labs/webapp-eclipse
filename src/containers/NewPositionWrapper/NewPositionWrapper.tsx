@@ -2,6 +2,8 @@ import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
+  DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT,
+  DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
   bestTiers,
   commonTokensForNetworks
@@ -516,6 +518,20 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_NEW_POSITION_SLIPPAGE', slippage)
   }
 
+  const initialMaxPriceImpact =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_PRICE_IMPACT') ?? DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT
+
+  const onMaxPriceImpactChange = (priceImpact: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MAX_PRICE_IMPACT', priceImpact)
+  }
+
+  const initialMinUtilization =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION') ?? DEFAULT_AUTOSWAP_MIN_UTILIZATION
+
+  const onMinUtilizationChange = (utilization: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION', utilization)
+  }
+
   const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
       return new BN(0)
@@ -803,6 +819,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           ? poolTicksForSimulation[allPools[poolIndex].address.toString()]
           : null
       }
+      initialMaxPriceImpact={initialMaxPriceImpact}
+      onMaxPriceImpactChange={onMaxPriceImpactChange}
+      initialMinUtilization={initialMinUtilization}
+      onMinUtilizationChange={onMinUtilizationChange}
     />
   )
 }

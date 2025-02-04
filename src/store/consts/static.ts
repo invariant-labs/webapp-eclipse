@@ -760,6 +760,8 @@ export const MINIMAL_POOL_INIT_PRICE = 0.00000001
 
 export const DEFAULT_SWAP_SLIPPAGE = '0.50'
 export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
+export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '0.50'
+export const DEFAULT_AUTOSWAP_MIN_UTILIZATION = '95'
 
 export const CHAINS = [
   { name: Chain.Solana, address: 'https://invariant.app/swap' },

@@ -129,6 +129,10 @@ export interface INewPosition {
   poolData: PoolWithAddress | null
   tickmap: Tickmap | null
   ticks: Tick[] | null
+  initialMaxPriceImpact: string
+  onMaxPriceImpactChange: (val: string) => void
+  initialMinUtilization: string
+  onMinUtilizationChange: (val: string) => void
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -189,7 +193,11 @@ export const NewPosition: React.FC<INewPosition> = ({
   canNavigate,
   poolData,
   tickmap,
-  ticks
+  ticks,
+  initialMaxPriceImpact,
+  onMaxPriceImpactChange,
+  initialMinUtilization,
+  onMinUtilizationChange
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -839,6 +847,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           tickmap={tickmap}
           ticks={ticks}
           simulationParams={simulationParams}
+          initialMaxPriceImpact={initialMaxPriceImpact}
+          onMaxPriceImpactChange={onMaxPriceImpactChange}
+          initialMinUtilization={initialMinUtilization}
+          onMinUtilizationChange={onMinUtilizationChange}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>
