@@ -1,7 +1,7 @@
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
-import { Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
@@ -29,9 +29,16 @@ import {
   printBN,
   tickerToAddress,
   parsePathFeeToFeeString,
-  trimDecimalZeros
+  trimDecimalZeros,
+  simulateAutoSwap
 } from '@utils/utils'
-import { createButtonActions } from '@utils/uiUtils'
+import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
+import icons from '@static/icons'
+import { actions, PoolWithAddress } from '@store/reducers/pools'
+import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { useDispatch } from 'react-redux'
+import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
+import DepoSitOptionsModal from '@components/Modals/DepoSitOptionsModal/DepoSitOptionsModal'
 
 export interface InputState {
   value: string
@@ -39,6 +46,11 @@ export interface InputState {
   blocked: boolean
   blockerInfo?: string
   decimalsLimit: number
+}
+
+export enum DepositOptions {
+  Basic = 'Basic',
+  Auto = 'Auto'
 }
 
 export interface IDepositSelector {
@@ -88,6 +100,19 @@ export interface IDepositSelector {
   canNavigate: boolean
   isCurrentPoolExisting: boolean
   promotedPoolTierIndex: number | undefined
+  isAutoSwapAvailable: boolean
+  poolData: PoolWithAddress | null
+  tickmap: Tickmap | null
+  ticks: Tick[] | null
+  simulationParams: {
+    lowerTickIndex: number
+    upperTickIndex: number
+    positionSlippageTolerance: BN
+  }
+  initialMaxPriceImpact: string
+  onMaxPriceImpactChange: (val: string) => void
+  initialMinUtilization: string
+  onMinUtilizationChange: (val: string) => void
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -128,13 +153,39 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onDisconnectWallet,
   ethBalance,
   canNavigate,
-  isCurrentPoolExisting
+  isCurrentPoolExisting,
+  isAutoSwapAvailable,
+  poolData,
+  tickmap,
+  ticks,
+  simulationParams,
+  initialMaxPriceImpact,
+  onMaxPriceImpactChange,
+  initialMinUtilization,
+  onMinUtilizationChange
 }) => {
   const { classes } = useStyles()
+  const dispatch = useDispatch()
+
+  const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
+  const [utilization, setUtilization] = useState<string>(initialMinUtilization)
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
 
+  const [tokenACheckbox, setTokenACheckbox] = useState<boolean>(true)
+  const [tokenBCheckbox, setTokenBCheckbox] = useState<boolean>(true)
+
+  const [alignment, setAlignment] = useState<string>(DepositOptions.Basic)
+
+  const [settings, setSettings] = useState<boolean>(false)
+  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
+
+  useEffect(() => {
+    if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
+      setAlignment(DepositOptions.Basic)
+    }
+  }, [isAutoSwapAvailable])
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
@@ -224,6 +275,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Select different tokens'
     }
 
+    if (isAutoSwapAvailable && !tokenACheckbox && !tokenBCheckbox) {
+      return 'At least one checkbox needs to be marked'
+    }
     if (positionOpeningMethod === 'concentration' && concentrationIndex < minimumSliderIndex) {
       return concentrationArray[minimumSliderIndex]
         ? `Set concentration to at least ${concentrationArray[minimumSliderIndex].toFixed(0)}x`
@@ -276,6 +330,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
     return 'Add Position'
   }, [
+    isAutoSwapAvailable,
+    tokenACheckbox,
+    tokenBCheckbox,
     tokenAIndex,
     tokenBIndex,
     tokenAInputState,
@@ -286,6 +343,27 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     feeTierIndex,
     minimumSliderIndex
   ])
+
+  const handleClickDepositOptions = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget)
+    blurContent()
+    setSettings(true)
+  }
+
+  const handleCloseDepositOptions = () => {
+    unblurContent()
+    setSettings(false)
+  }
+
+  const setMaxPriceImpact = (priceImpact: string): void => {
+    setPriceImpact(priceImpact)
+    onMaxPriceImpactChange(priceImpact)
+  }
+
+  const setMinUtilization = (utilization: string): void => {
+    setUtilization(utilization)
+    onMinUtilizationChange(utilization)
+  }
 
   useEffect(() => {
     if (tokenAIndex !== null) {
@@ -318,7 +396,19 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     const pom = tokenAIndex
     setTokenAIndex(tokenBIndex)
     setTokenBIndex(pom)
+    const pom2 = tokenACheckbox
+    setTokenACheckbox(tokenBCheckbox)
+    setTokenBCheckbox(pom2)
     onReverseTokens()
+  }
+
+  const handleSwitchDepositType = (
+    _: React.MouseEvent<HTMLElement>,
+    newAlignment: DepositOptions | null
+  ) => {
+    if (newAlignment !== null) {
+      setAlignment(newAlignment)
+    }
   }
 
   // const ACTIONS_BUTTON_METHODS = {
@@ -359,8 +449,64 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     onAmountSet: tokenBInputState.setValue
   })
 
+  useEffect(() => {
+    if (tokenAIndex && tokenBIndex && poolData) {
+      dispatch(
+        actions.getNearestTicksForPair({
+          tokenFrom: tokens[tokenAIndex].assetAddress,
+          tokenTo: tokens[tokenBIndex].assetAddress,
+          allPools: [poolData]
+        })
+      )
+      dispatch(
+        actions.getTicksAndTickMaps({
+          tokenFrom: tokens[tokenAIndex].assetAddress,
+          tokenTo: tokens[tokenBIndex].assetAddress,
+          allPools: [poolData]
+        })
+      )
+    }
+  }, [poolData, tokenAIndex, tokenBIndex])
+
+  useEffect(() => {
+    setTokenACheckbox(true)
+    setTokenBCheckbox(true)
+  }, [feeTierIndex, tokenAIndex, tokenBIndex])
+
+  const simulateAutoSwapResult = async () => {
+    console.log(poolData, ticks, tickmap)
+    if (!poolData || !ticks || !tickmap || !tokenAIndex || !tokenBIndex) return
+    const result = await simulateAutoSwap(
+      tokens[tokenAIndex].balance,
+      tokens[tokenBIndex].balance,
+      poolData,
+      ticks,
+      tickmap,
+      simulationParams.positionSlippageTolerance,
+      fromFee(new BN(Number(+priceImpact * 1000))),
+      simulationParams.lowerTickIndex,
+      simulationParams.upperTickIndex,
+      poolData.sqrtPrice,
+      fromFee(new BN(Number(+utilization * 1000)))
+    )
+    console.log(result)
+  }
+  useEffect(() => {
+    if (tokenACheckbox !== tokenBCheckbox) {
+      simulateAutoSwapResult()
+    }
+  }, [tokenACheckbox, tokenBCheckbox])
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
+      <DepoSitOptionsModal
+        initialMaxPriceImpact={initialMaxPriceImpact}
+        setMaxPriceImpact={setMaxPriceImpact}
+        initialMinUtilization={initialMinUtilization}
+        setMinUtilization={setMinUtilization}
+        handleClose={handleCloseDepositOptions}
+        anchorEl={anchorEl}
+        open={settings}
+      />
       <Typography className={classes.sectionTitle}>Tokens</Typography>
 
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
@@ -427,16 +573,57 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           currentValue={feeTierIndex}
         />
       </Grid>
-
-      <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
+      <Grid container className={classes.depositHeader}>
+        <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
+        <Box className={classes.depositOptions}>
+          <Box className={classes.switchDepositTypeContainer}>
+            <Box
+              className={classes.switchDepositTypeMarker}
+              sx={{
+                left: alignment === DepositOptions.Basic ? 0 : '50%'
+              }}
+            />
+            <ToggleButtonGroup
+              value={alignment}
+              exclusive
+              onChange={handleSwitchDepositType}
+              className={classes.switchDepositTypeButtonsGroup}>
+              <ToggleButton
+                value={DepositOptions.Basic}
+                disableRipple
+                className={classNames(
+                  classes.switchDepositTypeButton,
+                  alignment === DepositOptions.Basic
+                    ? classes.switchSelected
+                    : classes.switchNotSelected
+                )}>
+                Basic
+              </ToggleButton>
+              <ToggleButton
+                disabled={!isAutoSwapAvailable}
+                value={DepositOptions.Auto}
+                disableRipple
+                className={classNames(
+                  classes.switchDepositTypeButton,
+                  alignment === DepositOptions.Auto
+                    ? classes.switchSelected
+                    : classes.switchNotSelected
+                )}>
+                Auto
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
+          <Button onClick={handleClickDepositOptions} className={classes.optionsIconBtn}>
+            <img src={icons.autoSwapOptions} alt='options' />
+          </Button>
+        </Box>
+      </Grid>
       <Grid container className={classes.sectionWrapper}>
         <DepositAmountInput
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -474,18 +661,20 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             tokenAInputState.setValue(trimDecimalZeros(tokenAInputState.value))
           }}
           {...tokenAInputState}
+          value={tokenACheckbox ? tokenAInputState.value : '0'}
           priceLoading={priceALoading}
           isBalanceLoading={isBalanceLoading}
           walletUninitialized={walletStatus !== Status.Initialized}
+          autoSwapEnabled={alignment === DepositOptions.Auto}
+          checkBoxValue={tokenACheckbox}
+          setCheckBoxValue={setTokenACheckbox}
         />
 
         <DepositAmountInput
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -520,9 +709,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             tokenBInputState.setValue(trimDecimalZeros(tokenBInputState.value))
           }}
           {...tokenBInputState}
+          value={tokenBCheckbox ? tokenBInputState.value : '0'}
           priceLoading={priceBLoading}
           isBalanceLoading={isBalanceLoading}
           walletUninitialized={walletStatus !== Status.Initialized}
+          autoSwapEnabled={alignment === DepositOptions.Auto}
+          checkBoxValue={tokenBCheckbox}
+          setCheckBoxValue={setTokenBCheckbox}
         />
       </Grid>
       {walletStatus !== Status.Initialized ? (

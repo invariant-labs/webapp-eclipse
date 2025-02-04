@@ -19,6 +19,9 @@ const meta = {
     )
   ],
   args: {
+    checkBoxValue: false,
+    setCheckBoxValue: fn(),
+    autoSwapEnabled: false,
     currency: null,
     setValue: fn(),
     value: '0',

@@ -6,6 +6,7 @@ import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import {
   ALL_FEE_TIERS_DATA,
+  autoSwapPools,
   NetworkType,
   PositionTokenBlock,
   promotedTiers,
@@ -48,6 +49,8 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
+import { PoolWithAddress } from '@store/reducers/pools'
+import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -123,6 +126,13 @@ export interface INewPosition {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   canNavigate: boolean
+  poolData: PoolWithAddress | null
+  tickmap: Tickmap | null
+  ticks: Tick[] | null
+  initialMaxPriceImpact: string
+  onMaxPriceImpactChange: (val: string) => void
+  initialMinUtilization: string
+  onMinUtilizationChange: (val: string) => void
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -180,7 +190,14 @@ export const NewPosition: React.FC<INewPosition> = ({
   walletStatus,
   onConnectWallet,
   onDisconnectWallet,
-  canNavigate
+  canNavigate,
+  poolData,
+  tickmap,
+  ticks,
+  initialMaxPriceImpact,
+  onMaxPriceImpactChange,
+  initialMinUtilization,
+  onMinUtilizationChange
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -215,6 +232,14 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const [concentrationIndex, setConcentrationIndex] = useState(
     getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 34)
+  )
+
+  const isAutoSwapAvailable = useMemo(
+    () =>
+      poolAddress.length > 0 &&
+      autoSwapPools.some(pool => pool.address === poolAddress) &&
+      walletStatus === Status.Initialized,
+    [poolAddress, walletStatus]
   )
 
   const setRangeBlockerInfo = () => {
@@ -369,24 +394,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -545,6 +570,14 @@ export const NewPosition: React.FC<INewPosition> = ({
         return '?cluster=testnet'
     }
   }, [network])
+
+  const simulationParams = useMemo(() => {
+    return {
+      positionSlippageTolerance: fromFee(new BN(Number(+slippTolerance * 1000))),
+      lowerTickIndex: Math.min(leftRange, rightRange),
+      upperTickIndex: Math.max(leftRange, rightRange)
+    }
+  }, [leftRange, rightRange, slippTolerance])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -809,6 +842,15 @@ export const NewPosition: React.FC<INewPosition> = ({
           canNavigate={canNavigate}
           isCurrentPoolExisting={isCurrentPoolExisting}
           promotedPoolTierIndex={promotedPoolTierIndex}
+          isAutoSwapAvailable={isAutoSwapAvailable}
+          poolData={poolData}
+          tickmap={tickmap}
+          ticks={ticks}
+          simulationParams={simulationParams}
+          initialMaxPriceImpact={initialMaxPriceImpact}
+          onMaxPriceImpactChange={onMaxPriceImpactChange}
+          initialMinUtilization={initialMinUtilization}
+          onMinUtilizationChange={onMinUtilizationChange}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

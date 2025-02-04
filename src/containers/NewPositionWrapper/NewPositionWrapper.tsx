@@ -2,6 +2,8 @@ import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
+  DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT,
+  DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
   bestTiers,
   commonTokensForNetworks
@@ -30,7 +32,9 @@ import {
   isLoadingPathTokens,
   isLoadingTicksAndTickMaps,
   isLoadingTokens,
-  poolsArraySortedByFees
+  nearestPoolTicksForPair,
+  poolsArraySortedByFees,
+  tickMaps
 } from '@store/selectors/pools'
 import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
 import { balanceLoading, status, balance, poolTokens } from '@store/selectors/solanaWallet'
@@ -67,6 +71,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const tokens = useSelector(poolTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
+  const tickmap = useSelector(tickMaps)
+  const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
   const loadingTicksAndTickMaps = useSelector(isLoadingTicksAndTickMaps)
   const isBalanceLoading = useSelector(balanceLoading)
   const shouldNotUpdatePriceRange = useSelector(shouldNotUpdateRange)
@@ -512,6 +518,20 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_NEW_POSITION_SLIPPAGE', slippage)
   }
 
+  const initialMaxPriceImpact =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_PRICE_IMPACT') ?? DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT
+
+  const onMaxPriceImpactChange = (priceImpact: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MAX_PRICE_IMPACT', priceImpact)
+  }
+
+  const initialMinUtilization =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION') ?? DEFAULT_AUTOSWAP_MIN_UTILIZATION
+
+  const onMinUtilizationChange = (utilization: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION', utilization)
+  }
+
   const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
       return new BN(0)
@@ -788,6 +808,21 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
       canNavigate={canNavigate}
+      poolData={poolIndex !== null ? allPools[poolIndex] : null}
+      tickmap={
+        poolIndex !== null && tickmap[allPools[poolIndex].tickmap.toString()]
+          ? tickmap[allPools[poolIndex].tickmap.toString()]
+          : null
+      }
+      ticks={
+        poolIndex !== null && poolTicksForSimulation[allPools[poolIndex].address.toString()]
+          ? poolTicksForSimulation[allPools[poolIndex].address.toString()]
+          : null
+      }
+      initialMaxPriceImpact={initialMaxPriceImpact}
+      onMaxPriceImpactChange={onMaxPriceImpactChange}
+      initialMinUtilization={initialMinUtilization}
+      onMinUtilizationChange={onMinUtilizationChange}
     />
   )
 }

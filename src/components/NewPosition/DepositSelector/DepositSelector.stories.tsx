@@ -76,6 +76,19 @@ const PrimaryComponent: React.FC<IDepositSelector> = args => {
 
 export const Primary: Story = {
   args: {
+    initialMaxPriceImpact: '',
+    onMaxPriceImpactChange: fn(),
+    initialMinUtilization: '',
+    onMinUtilizationChange: fn(),
+    simulationParams: {
+      lowerTickIndex: 0,
+      upperTickIndex: 0,
+      positionSlippageTolerance: new BN(0)
+    },
+    poolData: null,
+    tickmap: null,
+    ticks: null,
+    isAutoSwapAvailable: false,
     promotedPoolTierIndex: 0,
     commonTokens: [
       new PublicKey('So11111111111111111111111111111111111111112'),

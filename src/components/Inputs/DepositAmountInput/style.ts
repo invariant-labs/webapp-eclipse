@@ -256,6 +256,18 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
     padding: '0 10px 0 20px',
     width: 15,
     height: 15
+  },
+  checkbox: {
+    width: 16,
+    height: 16,
+    marginRight: 8,
+    color: colors.invariant.light,
+    '&.Mui-checked': {
+      color: colors.invariant.green
+    },
+    '& .MuiSvgIcon-root': {
+      fontSize: 16
+    }
   }
 }))
 export default useStyles
