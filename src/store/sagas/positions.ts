@@ -666,7 +666,7 @@ export function* handleSwapAndInitPositionWithETH(
     if (action.payload.poolIndex === null || !allPools[action.payload.poolIndex]) return
 
     const lookupTableAddresses = autoSwapPools.find(
-      item => item.address === allPools[action.payload.poolIndex!].address.toString()
+      item => item.address === allPools[action.payload.poolIndex!].address
     )!.lookupTable
 
     const lookupTableCalls = lookupTableAddresses.map(address =>
@@ -870,7 +870,7 @@ export function* handleSwapAndInitPosition(
     if (action.payload.poolIndex === null || !allPools[action.payload.poolIndex]) return
 
     const lookupTableAddresses = autoSwapPools.find(
-      item => item.address === allPools[action.payload.poolIndex!].address.toString()
+      item => item.address === allPools[action.payload.poolIndex!].address
     )!.lookupTable
 
     const lookupTableCalls = lookupTableAddresses.map(address =>

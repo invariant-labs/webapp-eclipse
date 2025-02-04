@@ -621,6 +621,25 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }
 
   useEffect(() => {
+    if (tokenAIndex && tokenBIndex && allPools) {
+      dispatch(
+        poolsActions.getNearestTicksForPair({
+          tokenFrom: tokens[tokenAIndex].assetAddress,
+          tokenTo: tokens[tokenBIndex].assetAddress,
+          allPools: allPools
+        })
+      )
+      dispatch(
+        poolsActions.getTicksAndTickMaps({
+          tokenFrom: tokens[tokenAIndex].assetAddress,
+          tokenTo: tokens[tokenBIndex].assetAddress,
+          allPools: allPools
+        })
+      )
+    }
+  }, [allPools, tokenAIndex, tokenBIndex, feeIndex])
+
+  useEffect(() => {
     if (isTimeoutError) {
       void onRefresh()
       dispatch(connectionActions.setTimeoutError(false))

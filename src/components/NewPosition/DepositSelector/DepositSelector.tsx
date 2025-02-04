@@ -30,14 +30,17 @@ import {
   tickerToAddress,
   parsePathFeeToFeeString,
   trimDecimalZeros,
-  simulateAutoSwap
+  simulateAutoSwap,
+  simulateAutoSwapOnTheSamePool
 } from '@utils/utils'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import icons from '@static/icons'
-import { actions, PoolWithAddress } from '@store/reducers/pools'
+import { PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
-import { useDispatch } from 'react-redux'
-import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  fromFee,
+  SimulateSwapAndCreatePositionSimulation
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import DepoSitOptionsModal from '@components/Modals/DepoSitOptionsModal/DepoSitOptionsModal'
 
 export interface InputState {
@@ -101,6 +104,7 @@ export interface IDepositSelector {
   isCurrentPoolExisting: boolean
   promotedPoolTierIndex: number | undefined
   isAutoSwapAvailable: boolean
+  isAutoSwapOnTheSamePool: boolean
   poolData: PoolWithAddress | null
   tickmap: Tickmap | null
   ticks: Tick[] | null
@@ -162,11 +166,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   initialMaxPriceImpact,
   onMaxPriceImpactChange,
   initialMinUtilization,
-  onMinUtilizationChange
+  onMinUtilizationChange,
+  isAutoSwapOnTheSamePool
 }) => {
   const { classes } = useStyles()
-  const dispatch = useDispatch()
-
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
   const [utilization, setUtilization] = useState<string>(initialMinUtilization)
 
@@ -175,6 +178,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const [tokenACheckbox, setTokenACheckbox] = useState<boolean>(true)
   const [tokenBCheckbox, setTokenBCheckbox] = useState<boolean>(true)
+
+  const [simulation, setSimulation] = useState<SimulateSwapAndCreatePositionSimulation | null>(null)
 
   const [alignment, setAlignment] = useState<string>(DepositOptions.Basic)
 
@@ -186,6 +191,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       setAlignment(DepositOptions.Basic)
     }
   }, [isAutoSwapAvailable])
+
+  useEffect(() => {
+    console.log(simulation)
+  }, [simulation])
+
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
@@ -407,6 +417,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     newAlignment: DepositOptions | null
   ) => {
     if (newAlignment !== null) {
+      if (newAlignment === DepositOptions.Basic) {
+        setTokenACheckbox(true)
+        setTokenBCheckbox(true)
+      }
       setAlignment(newAlignment)
     }
   }
@@ -450,52 +464,52 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   })
 
   useEffect(() => {
-    if (tokenAIndex && tokenBIndex && poolData) {
-      dispatch(
-        actions.getNearestTicksForPair({
-          tokenFrom: tokens[tokenAIndex].assetAddress,
-          tokenTo: tokens[tokenBIndex].assetAddress,
-          allPools: [poolData]
-        })
-      )
-      dispatch(
-        actions.getTicksAndTickMaps({
-          tokenFrom: tokens[tokenAIndex].assetAddress,
-          tokenTo: tokens[tokenBIndex].assetAddress,
-          allPools: [poolData]
-        })
-      )
-    }
-  }, [poolData, tokenAIndex, tokenBIndex])
-
-  useEffect(() => {
     setTokenACheckbox(true)
     setTokenBCheckbox(true)
-  }, [feeTierIndex, tokenAIndex, tokenBIndex])
+  }, [tokenAIndex, tokenBIndex])
 
   const simulateAutoSwapResult = async () => {
-    console.log(poolData, ticks, tickmap)
     if (!poolData || !ticks || !tickmap || !tokenAIndex || !tokenBIndex) return
-    const result = await simulateAutoSwap(
-      tokens[tokenAIndex].balance,
-      tokens[tokenBIndex].balance,
-      poolData,
-      ticks,
-      tickmap,
-      simulationParams.positionSlippageTolerance,
-      fromFee(new BN(Number(+priceImpact * 1000))),
-      simulationParams.lowerTickIndex,
-      simulationParams.upperTickIndex,
-      poolData.sqrtPrice,
-      fromFee(new BN(Number(+utilization * 1000)))
-    )
-    console.log(result)
+    let result: SimulateSwapAndCreatePositionSimulation | null = null
+    if (isAutoSwapOnTheSamePool) {
+      result = await simulateAutoSwapOnTheSamePool(
+        tokens[tokenAIndex].balance,
+        tokens[tokenBIndex].balance,
+        poolData,
+        ticks,
+        tickmap,
+        simulationParams.positionSlippageTolerance,
+        fromFee(new BN(Number(+priceImpact * 1000))),
+        simulationParams.lowerTickIndex,
+        simulationParams.upperTickIndex,
+        poolData.sqrtPrice,
+        fromFee(new BN(Number(+utilization * 1000)))
+      )
+    } else {
+      result = await simulateAutoSwap(
+        tokens[tokenAIndex].balance,
+        tokens[tokenBIndex].balance,
+        poolData,
+        ticks,
+        tickmap,
+        simulationParams.positionSlippageTolerance,
+        fromFee(new BN(Number(+priceImpact * 1000))),
+        simulationParams.lowerTickIndex,
+        simulationParams.upperTickIndex,
+        poolData.sqrtPrice,
+        fromFee(new BN(Number(+utilization * 1000)))
+      )
+    }
+    if (!!result) {
+      setSimulation(result)
+    }
   }
   useEffect(() => {
     if (tokenACheckbox !== tokenBCheckbox) {
       simulateAutoSwapResult()
     }
-  }, [tokenACheckbox, tokenBCheckbox])
+  }, [tokenACheckbox, tokenBCheckbox, tickmap, ticks])
+
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
       <DepoSitOptionsModal
@@ -755,7 +769,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           )}
           onClick={() => {
             if (progress === 'none') {
-              onAddLiquidity()
+              alignment === DepositOptions.Auto && tokenACheckbox !== tokenBCheckbox
+                ? () => {}
+                : onAddLiquidity()
             }
           }}
           disabled={getButtonMessage() !== 'Add Position'}

@@ -236,10 +236,23 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const isAutoSwapAvailable = useMemo(
     () =>
-      poolAddress.length > 0 &&
-      autoSwapPools.some(pool => pool.address === poolAddress) &&
+      !!tokenAIndex &&
+      !!tokenBIndex &&
+      autoSwapPools.some(
+        item =>
+          (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+            item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+          (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+            item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+      ) &&
       walletStatus === Status.Initialized,
-    [poolAddress, walletStatus]
+    [tokenAIndex, tokenBIndex, walletStatus]
+  )
+
+  const isAutoSwapOnTheSamePool = useMemo(
+    () =>
+      poolAddress.length > 0 && autoSwapPools.some(item => item.address.toString() === poolAddress),
+    [poolAddress]
   )
 
   const setRangeBlockerInfo = () => {
@@ -843,6 +856,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           isCurrentPoolExisting={isCurrentPoolExisting}
           promotedPoolTierIndex={promotedPoolTierIndex}
           isAutoSwapAvailable={isAutoSwapAvailable}
+          isAutoSwapOnTheSamePool={isAutoSwapOnTheSamePool}
           poolData={poolData}
           tickmap={tickmap}
           ticks={ticks}

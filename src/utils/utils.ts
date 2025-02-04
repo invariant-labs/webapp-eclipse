@@ -34,6 +34,7 @@ import {
   getMinTick,
   PRICE_SCALE,
   Range,
+  simulateSwapAndCreatePosition,
   simulateSwapAndCreatePositionOnTheSamePool
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
@@ -1180,7 +1181,7 @@ export const handleSimulate = async (
   }
 }
 
-export const simulateAutoSwap = async (
+export const simulateAutoSwapOnTheSamePool = async (
   amountX: BN,
   amountY: BN,
   pool: PoolWithAddress,
@@ -1205,6 +1206,51 @@ export const simulateAutoSwap = async (
 
   try {
     const simulateResult = simulateSwapAndCreatePositionOnTheSamePool(
+      amountX,
+      amountY,
+      {
+        ticks,
+        tickmap,
+        pool,
+        maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
+        maxCrosses,
+        slippage: swapSlippage
+      },
+      { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
+      maxLiquidityPercentage
+    )
+    return simulateResult
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
+
+export const simulateAutoSwap = async (
+  amountX: BN,
+  amountY: BN,
+  pool: PoolWithAddress,
+  poolTicks: Tick[],
+  tickmap: Tickmap,
+  positionSlippage: BN,
+  swapSlippage: BN,
+  lowerTick: number,
+  upperTick: number,
+  knownPrice: BN,
+  maxLiquidityPercentage: BN
+) => {
+  const ticks: Map<number, Tick> = new Map<number, Tick>()
+  for (const tick of poolTicks) {
+    ticks.set(tick.index, tick)
+  }
+
+  const maxCrosses =
+    pool.tokenX.toString() === WRAPPED_ETH_ADDRESS || pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+
+  try {
+    const simulateResult = simulateSwapAndCreatePosition(
       amountX,
       amountY,
       {
