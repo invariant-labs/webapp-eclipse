@@ -8,7 +8,6 @@ import { positionsWithPoolsData } from '@store/selectors/positions'
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
-import LoadingWallet from './components/YourWallet/LoadingWallet'
 
 export const UserOverview = () => {
   const tokensList = useSelector(swapTokens)
