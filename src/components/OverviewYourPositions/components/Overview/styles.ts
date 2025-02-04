@@ -13,10 +13,11 @@ export const useStyles = makeStyles()(() => ({
     borderTopLeftRadius: '24px',
     borderBottomLeftRadius: '24px',
     [theme.breakpoints.down('lg')]: {
-      borderRadius: '24px'
+      borderRadius: '24px',
+      padding: '0px 16px 0px 16px'
     },
     borderRight: `1px solid  ${colors.invariant.light}`,
-    padding: '24px'
+    padding: '0px 24px 0px 24px'
   },
   subtitle: {
     ...typography.body2,

@@ -190,9 +190,9 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                 Amount
               </TableCell>
               {/* Move actions button somewhere */}
-              {/* <TableCell className={classes.headerCell} align='right'>
+              <TableCell className={classes.headerCell} align='right'>
                 Action
-              </TableCell> */}
+              </TableCell>
             </TableRow>
           </TableHead>
           <TableBody className={classes.zebraRow}>
@@ -241,7 +241,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       </Typography>
                     </Box>
                   </TableCell>
-                  {/* <TableCell className={classes.tableCell} align='right' sx={{ display: 'flex' }}>
+                  <TableCell className={classes.tableCell} align='right' sx={{ display: 'flex' }}>
                     <Box
                       className={classes.actionIcon}
                       onClick={() => {
@@ -262,7 +262,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       }}>
                       <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
                     </Box>
-                  </TableCell> */}
+                  </TableCell>
                 </TableRow>
               )
             })}
