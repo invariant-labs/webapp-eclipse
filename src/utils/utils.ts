@@ -34,7 +34,7 @@ import {
   getMinTick,
   PRICE_SCALE,
   Range,
-  simulateSwapAndCreatePosition
+  simulateSwapAndCreatePositionOnTheSamePool
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
@@ -1204,7 +1204,7 @@ export const simulateAutoSwap = async (
       : TICK_CROSSES_PER_IX
 
   try {
-    const simulateResult = simulateSwapAndCreatePosition(
+    const simulateResult = simulateSwapAndCreatePositionOnTheSamePool(
       amountX,
       amountY,
       {
