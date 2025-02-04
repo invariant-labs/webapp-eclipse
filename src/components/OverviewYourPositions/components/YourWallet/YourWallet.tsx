@@ -155,7 +155,6 @@ const useStyles = makeStyles()(() => ({
       }
     }
   },
-  // Modified mobile-specific styles
   mobileActionContainer: {
     display: 'none',
     [theme.breakpoints.down('md')]: {
