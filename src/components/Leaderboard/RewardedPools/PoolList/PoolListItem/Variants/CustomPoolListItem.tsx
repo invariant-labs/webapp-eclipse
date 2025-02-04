@@ -78,7 +78,12 @@ export const CustomPoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
-    <Grid maxWidth='100%'>
+    <Grid
+      maxWidth='100%'
+      className={classes.wrapper}
+      style={{
+        border: hideBottomLine ? 'none' : undefined
+      }}>
       {displayType === 'token' ? (
         <>
           <Grid
@@ -143,11 +148,8 @@ export const CustomPoolListItem: React.FC<IProps> = ({
             style={{
               display: 'flex',
               justifyContent: 'space-between',
-              marginBottom: '24px',
               paddingTop: '24px',
-              paddingBottom: '24px',
-
-              borderBottom: hideBottomLine ? 'none' : `1px solid ${colors.invariant.light}`
+              paddingBottom: '24px'
             }}>
             <Box>
               <Typography style={{ ...typography.body2, color: colors.invariant.textGrey }}>

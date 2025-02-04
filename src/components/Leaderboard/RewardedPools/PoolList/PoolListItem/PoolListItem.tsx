@@ -106,7 +106,7 @@ const PoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
-    <Grid maxWidth='100%'>
+    <Grid maxWidth='100%' className={classes.wrapper}>
       {displayType === 'token' ? (
         <Grid
           container

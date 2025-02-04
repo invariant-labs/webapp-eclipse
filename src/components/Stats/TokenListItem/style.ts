@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()((theme: Theme) => ({
   wrapper: {
     '&:nth-of-type(odd)': {
-      background: `${colors.invariant.component}80`
+      background: `${colors.invariant.componentDark}`
     },
     '&:nth-of-type(even)': {
       background: colors.invariant.component
