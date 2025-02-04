@@ -574,7 +574,22 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
   [NetworkType.Local]: []
 }
 
-export const autoSwapPools = ['QdZBPTvDyJ3Dqv5PYe8mqrZPxTb2H1HWKapNoXfb6r2']
+export const autoSwapPools = [
+  {
+    address: 'F89YjPNUfP5Q6xxnk8ZSiV3tHzCYKH7TvgLE1Mc9s7H',
+    lookupTable: [
+      'BV1y3iAWVDSf1EiHqUrAK2VxnRDfpzAGvRSrHv29tyQB',
+      'AxWj1HZdNGezUU4KVbrydJmtdChdK8aMeYLNKoHGFQtT',
+      'HzSak6e6y1hGG2os2koM8fC7cMGyVSNaBHk75eNPXN3Q',
+      'CV7onkr6z336UD6a2a414qFUcFV4bBhHAvSKDMzw2GDK',
+      'Drws1AyHWNjdxYUjgdDnLNCBe2ycaXrBHaJHQXxD9Dtq',
+      '6aKMBamuZc41ogv9sgYKu6U53cDxgbesYDh3cGLP13HS',
+      'CPDetJvs7D8nar5EbK1RXvxsxwpt2ZRPvnWvc9F9B29B',
+      '57bT2g9PWHM17jRAnXSzNngMBDWJvBFzJJ8pTSdPmESs',
+      'DKNAwoCqQy2boxz8M47B4F3A3q2x3JLGbUoMA32RiPzb'
+    ]
+  }
+]
 export const promotedTiers = [
   {
     tokenX: USDC_MAIN.address,

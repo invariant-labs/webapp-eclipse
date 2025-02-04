@@ -237,7 +237,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   const isAutoSwapAvailable = useMemo(
     () =>
       poolAddress.length > 0 &&
-      autoSwapPools.some(pool => pool === poolAddress) &&
+      autoSwapPools.some(pool => pool.address === poolAddress) &&
       walletStatus === Status.Initialized,
     [poolAddress, walletStatus]
   )

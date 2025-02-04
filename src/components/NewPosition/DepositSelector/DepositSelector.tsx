@@ -450,8 +450,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   })
 
   useEffect(() => {
-    setTokenACheckbox(true)
-    setTokenBCheckbox(true)
     if (tokenAIndex && tokenBIndex && poolData) {
       dispatch(
         actions.getNearestTicksForPair({
@@ -470,7 +468,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
   }, [poolData, tokenAIndex, tokenBIndex])
 
+  useEffect(() => {
+    setTokenACheckbox(true)
+    setTokenBCheckbox(true)
+  }, [feeTierIndex, tokenAIndex, tokenBIndex])
+
   const simulateAutoSwapResult = async () => {
+    console.log(poolData, ticks, tickmap)
     if (!poolData || !ticks || !tickmap || !tokenAIndex || !tokenBIndex) return
     const result = await simulateAutoSwap(
       tokens[tokenAIndex].balance,
