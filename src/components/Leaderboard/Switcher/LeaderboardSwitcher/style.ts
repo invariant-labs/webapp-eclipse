@@ -22,7 +22,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'flex-start',
+      justifyContent: 'space-between',
       gap: 10,
       paddingTop: 10,
       paddingBottom: 10,
