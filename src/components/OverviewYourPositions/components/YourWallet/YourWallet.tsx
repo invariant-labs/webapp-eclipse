@@ -117,6 +117,9 @@ const useStyles = makeStyles()(() => ({
     width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
+    [theme.breakpoints.down('lg')]: {
+      padding: '4px 6px'
+    },
     padding: '4px 12px',
     height: '25px',
     borderRadius: '10px',
