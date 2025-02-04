@@ -1,5 +1,5 @@
 import { makeStyles } from 'tss-react/mui'
-import { colors, theme, typography } from '@static/theme'
+import { colors, typography } from '@static/theme'
 
 export const useStyles = makeStyles()(() => ({
   container: {

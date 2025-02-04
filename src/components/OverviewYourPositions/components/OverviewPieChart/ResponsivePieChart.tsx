@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box } from '@mui/material'
 import { PieChart } from '@mui/x-charts'
 
@@ -17,11 +16,11 @@ const ResponsivePieChart = ({ data, chartColors }) => {
         series={[
           {
             data: data,
-            outerRadius: '90%', // Use percentage instead of fixed value
+            outerRadius: '90%',
             startAngle: -45,
             endAngle: 315,
-            cx: '75%', // Center horizontally
-            cy: '50%' // Center vertically
+            cx: '75%',
+            cy: '50%'
           }
         ]}
         colors={chartColors}
