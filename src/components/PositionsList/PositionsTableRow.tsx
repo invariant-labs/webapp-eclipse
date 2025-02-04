@@ -351,7 +351,9 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
       dispatch(
         actions.addTokenPosition({
           token: tokenXName,
-          value: xValue
+          value: xValue,
+          positionId: id,
+          logo: positionSingleData?.tokenX.logoURI
         })
       )
     }
@@ -360,7 +362,9 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
       dispatch(
         actions.addTokenPosition({
           token: tokenYName,
-          value: yValue
+          value: yValue,
+          positionId: id,
+          logo: positionSingleData?.tokenY.logoURI
         })
       )
     }

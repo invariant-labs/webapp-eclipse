@@ -3,22 +3,26 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 export interface TokenPositionEntry {
   token: string
   value: number
+  positionId: string
+  logo?: string
 }
 
-export interface TokenPosititionsStore {
+export interface TokenPositionsStore {
   positions: TokenPositionEntry[]
   totalAssets: number
   totalUnclaimedFee: number
   processedUnclaimedFeePositionIds: string[]
   processedAssetsPositionIds: string[]
+  processedTokenPositionIds: string[]
 }
 
-export const defaultState: TokenPosititionsStore = {
+export const defaultState: TokenPositionsStore = {
   positions: [],
   totalAssets: 0,
   totalUnclaimedFee: 0,
   processedUnclaimedFeePositionIds: [],
-  processedAssetsPositionIds: []
+  processedAssetsPositionIds: [],
+  processedTokenPositionIds: []
 }
 
 export const tokenPositionsSliceName = 'tokenOverviewPositions'
@@ -28,26 +32,71 @@ const tokenPositionsSlice = createSlice({
   initialState: defaultState,
   reducers: {
     addTokenPosition(state, action: PayloadAction<TokenPositionEntry>) {
-      const existingTokenIndex = state.positions.findIndex(
-        pos => pos.token === action.payload.token
-      )
-      if (existingTokenIndex !== -1) {
-        state.positions[existingTokenIndex].value += action.payload.value
-      } else {
-        state.positions.push(action.payload)
+      console.log('=== START addTokenPosition ===')
+      console.log('Current positions:', JSON.stringify(state.positions))
+      console.log('Adding position:', JSON.stringify(action.payload))
+
+      const processedId = `${action.payload.token}_${action.payload.positionId}`
+
+      if (state.processedTokenPositionIds.includes(processedId)) {
+        console.log(
+          `Token ${action.payload.token} for position ${action.payload.positionId} already processed`
+        )
+        console.log('=== END addTokenPosition ===')
+        return
       }
+
+      const existingToken = state.positions.find(pos => pos.token === action.payload.token)
+
+      if (existingToken) {
+        console.log('Found existing token:', existingToken.token)
+        console.log('Current value:', existingToken.value)
+        console.log('Adding value:', action.payload.value)
+
+        state.positions = state.positions.map(pos =>
+          pos.token === action.payload.token
+            ? {
+                ...pos,
+                value: Number(pos.value) + Number(action.payload.value)
+              }
+            : pos
+        )
+      } else {
+        console.log('Adding new token')
+        state.positions = [
+          ...state.positions,
+          {
+            token: action.payload.token,
+            value: Number(action.payload.value),
+            logo: action.payload.logo,
+            positionId: action.payload.positionId
+          }
+        ]
+      }
+
+      state.processedTokenPositionIds = [...state.processedTokenPositionIds, processedId]
+
+      console.log('Final positions:', JSON.stringify(state.positions))
+      console.log('=== END addTokenPosition ===')
     },
 
     removeTokenPosition(state, action: PayloadAction<string>) {
-      state.positions = state.positions.filter(pos => pos.token !== action.payload)
+      const positionToRemove = state.positions.find(pos => pos.positionId === action.payload)
+      if (positionToRemove) {
+        state.positions = state.positions.filter(pos => pos.positionId !== action.payload)
+        state.processedTokenPositionIds = state.processedTokenPositionIds.filter(
+          id => !id.endsWith(`_${action.payload}`)
+        )
+      }
     },
 
     clearTokenPositions(state) {
       state.positions = []
       state.totalAssets = 0
       state.totalUnclaimedFee = 0
-      state.processedAssetsPositionIds = []
       state.processedUnclaimedFeePositionIds = []
+      state.processedAssetsPositionIds = []
+      state.processedTokenPositionIds = []
     },
 
     addTotalAssets(
@@ -92,10 +141,12 @@ const tokenPositionsSlice = createSlice({
 
     resetTotalAssets(state) {
       state.totalAssets = 0
+      state.processedAssetsPositionIds = []
     },
 
     resetTotalUnclaimedFee(state) {
       state.totalUnclaimedFee = 0
+      state.processedUnclaimedFeePositionIds = []
     }
   }
 })
