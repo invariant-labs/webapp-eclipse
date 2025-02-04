@@ -30,6 +30,22 @@ export const Overview: React.FC<OverviewProps> = () => {
     b: number
   }
 
+  interface TokenColorOverride {
+    token: string
+    color: string
+  }
+
+  const tokenColorOverrides: TokenColorOverride[] = [{ token: 'SOL', color: '#9945FF' }]
+
+  const getTokenColor = (
+    token: string,
+    logoColor: string | undefined,
+    overrides: TokenColorOverride[]
+  ): string => {
+    const override = overrides.find(item => item.token === token)
+    return override?.color || logoColor || '#000000'
+  }
+
   const rgbToHex = ({ r, g, b }: RGBColor): string => {
     const componentToHex = (c: number): string => {
       const hex = c.toString(16)
@@ -122,7 +138,9 @@ export const Overview: React.FC<OverviewProps> = () => {
     value: position.value
   }))
 
-  const chartColors = positions.map(position => logoColors[position.logo ?? 0] || '#000000')
+  const chartColors = positions.map(position =>
+    getTokenColor(position.token, logoColors[position.logo ?? 0], tokenColorOverrides)
+  )
 
   return (
     <Box className={classes.container}>
@@ -163,8 +181,11 @@ export const Overview: React.FC<OverviewProps> = () => {
               }
             }}>
             {positions.map(position => {
-              const textColor = logoColors[position.logo ?? 0] || colors.invariant.text
-
+              const textColor = getTokenColor(
+                position.token,
+                logoColors[position.logo ?? 0],
+                tokenColorOverrides
+              )
               return (
                 <Grid
                   item
