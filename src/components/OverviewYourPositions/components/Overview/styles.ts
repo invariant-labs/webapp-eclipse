@@ -3,10 +3,12 @@ import { colors, theme, typography } from '@static/theme'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    width: '697px',
-    minHeight: '280px',
+    minWidth: '50%',
+    maxHeight: '280px',
     backgroundColor: colors.invariant.component,
-    borderRadius: '24px',
+    borderTopLeftRadius: '24px',
+    borderBottomLeftRadius: '24px',
+    borderRight: `1px solid  ${colors.invariant.light}`,
     padding: '24px'
   },
   subtitle: {

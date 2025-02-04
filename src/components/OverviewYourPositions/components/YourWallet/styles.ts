@@ -4,8 +4,9 @@ import { colors, typography } from '@static/theme'
 export const useStyles = makeStyles()(() => ({
   container: {
     minWidth: '424px',
-    minHeight: '280px',
-    borderRadius: '24px',
+    maxHeight: '280px',
+    borderTopRightRadius: '24px',
+    borderBottomRightRadius: '24px',
     padding: 0
   },
 
@@ -23,7 +24,8 @@ export const useStyles = makeStyles()(() => ({
     height: '260px',
     overflowY: 'auto',
     '&::-webkit-scrollbar': {
-      width: '6px'
+      width: '6px',
+      paddingLeft: '6px'
     },
     '&::-webkit-scrollbar-track': {
       background: colors.invariant.newDark

@@ -39,7 +39,6 @@ import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { usePrices } from '@store/hooks/userOverview/usePrices'
 import { useLiquidity } from '@store/hooks/userOverview/useLiquidity'
 import { actions } from '@store/reducers/overview'
-import { action } from '@storybook/addon-actions'
 // import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
 
 const useStyles = makeStyles()((theme: Theme) => ({

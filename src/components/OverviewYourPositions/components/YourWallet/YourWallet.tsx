@@ -38,7 +38,6 @@ const useStyles = makeStyles()(() => ({
     width: '100%',
     display: 'flex',
     padding: '22px 0px',
-    borderTopLeftRadius: '24px',
     borderTopRightRadius: '24px',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -50,10 +49,9 @@ const useStyles = makeStyles()(() => ({
     color: colors.invariant.text
   },
   tableContainer: {
-    borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',
     backgroundColor: colors.invariant.component,
-    maxHeight: '240px',
+    maxHeight: '251px',
     overflowY: 'auto',
 
     '&::-webkit-scrollbar': {

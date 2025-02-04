@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Box, Typography } from '@mui/material'
-import { UnclaimedFeeList } from '../UnclaimedFeeList/UnclaimedFeeList'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles'
@@ -8,6 +7,7 @@ import { ProcessedPool } from '@store/types/userOverview'
 import { useSelector } from 'react-redux'
 import { overviewSelectors } from '@store/selectors/overview'
 import { colors, typography } from '@static/theme'
+import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -20,7 +20,6 @@ export const Overview: React.FC<OverviewProps> = () => {
   const positions = useSelector(overviewSelectors.positions)
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
 
-  // Move color detection logic outside of render
   interface ColorFrequency {
     [key: string]: number
   }
@@ -118,48 +117,67 @@ export const Overview: React.FC<OverviewProps> = () => {
     })
   }, [positions, getDominantColor, logoColors])
 
+  const data = positions.map(position => ({
+    label: position.token,
+    value: position.value
+  }))
+
+  const chartColors = positions.map(position => logoColors[position.logo ?? 0] || '#000000')
+
   return (
     <Box className={classes.container}>
       <HeaderSection totalValue={totalAssets} />
       <UnclaimedSection unclaimedTotal={totalUnclaimedFee} />
+      <Box sx={{ display: 'flex', justifyContent: 'space-between', flexDirection: 'row-reverse' }}>
+        <Box sx={{ marginTop: 2 }}>
+          <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
+            Tokens
+          </Typography>
 
-      <Box sx={{ marginTop: 2 }}>
-        {positions.map(position => {
-          const textColor = logoColors[position.logo ?? 0] || colors.invariant.text
+          {positions.map(position => {
+            const textColor = logoColors[position.logo ?? 0] || colors.invariant.text
 
-          return (
-            <Box
-              key={position.token}
-              sx={{
-                display: 'flex',
-                justifyContent: 'space-between',
-                marginTop: '8px'
-              }}>
-              <Typography
-                style={{
-                  ...typography.heading4,
-                  color: textColor,
+            return (
+              <Box
+                key={position.token}
+                sx={{
                   display: 'flex',
-                  justifyContent: 'center'
+                  justifyContent: 'space-between',
+                  marginTop: '8px'
                 }}>
-                <img
-                  src={position.logo}
-                  alt={'Token logo'}
+                <Typography
                   style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '100%',
-                    marginRight: '8px'
-                  }}
-                />
-                {position.token}:
-              </Typography>
-              <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
-                ${position.value.toFixed(9)}
-              </Typography>
-            </Box>
-          )
-        })}
+                    ...typography.heading4,
+                    color: textColor,
+                    display: 'flex',
+                    justifyContent: 'center'
+                  }}>
+                  <img
+                    src={position.logo}
+                    alt={'Token logo'}
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '100%',
+                      marginRight: '8px'
+                    }}
+                  />
+                  {position.token}:
+                </Typography>
+                <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
+                  ${position.value.toFixed(9)}
+                </Typography>
+              </Box>
+            )
+          })}
+        </Box>
+        <Box
+          sx={{
+            flex: '1 1 40%',
+            minHeight: '300px'
+          }}>
+          <ResponsivePieChart data={data} chartColors={chartColors} />
+        </Box>
       </Box>
     </Box>
   )

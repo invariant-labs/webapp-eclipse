@@ -65,13 +65,12 @@ export const UserOverview = () => {
       <Box
         sx={{
           display: 'flex',
-          gap: 4,
           [theme.breakpoints.down('lg')]: {
             flexDirection: 'column'
           }
         }}>
         <Overview poolAssets={data} isLoading={false} />
-        {/* <YourWallet pools={processedPools} isLoading={isLoading} /> */}
+        <YourWallet pools={processedPools} isLoading={isLoading} />
       </Box>
     </Box>
   )
