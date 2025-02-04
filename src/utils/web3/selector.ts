@@ -1,6 +1,7 @@
 import { NightlyConnectAdapter } from '@nightlylabs/wallet-selector-solana'
+import { WalletAdapter } from './adapters/types'
 
-export const nightlyConnectAdapter: NightlyConnectAdapter = await NightlyConnectAdapter.build(
+export const nightlyConnectAdapter: WalletAdapter = (await NightlyConnectAdapter.build(
   {
     appMetadata: {
       name: 'Invariant',
@@ -10,7 +11,7 @@ export const nightlyConnectAdapter: NightlyConnectAdapter = await NightlyConnect
     url: 'https://nc2.nightly.app'
   },
   { initOnConnect: true }
-)
+)) as WalletAdapter
 
 export const openWalletSelectorModal = async () => {
   try {
