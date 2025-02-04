@@ -208,7 +208,7 @@ const PoolListItem: React.FC<IProps> = ({
             </Grid>
           </Grid>
           {!isSmd && showAPY ? (
-            <Box className={classes.row}>
+            <Grid className={classes.row} justifyContent='space-between'>
               <Typography>
                 {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                 <span
@@ -217,8 +217,8 @@ const PoolListItem: React.FC<IProps> = ({
                   }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
               </Typography>
               {isPromoted && (
-                <>
-                  <div
+                <Box mr={1}>
+                  <Box
                     className={classes.actionButton}
                     ref={airdropIconRef}
                     onPointerLeave={() => {
@@ -226,9 +226,10 @@ const PoolListItem: React.FC<IProps> = ({
                     }}
                     onPointerEnter={() => {
                       setIsPromotedPoolPopoverOpen(true)
-                    }}>
+                    }}
+                    mr={3}>
                     <img width={32} height={32} src={icons.airdropRainbow} alt={'Airdrop'} />
-                  </div>
+                  </Box>
                   <PromotedPoolPopover
                     anchorEl={airdropIconRef.current}
                     open={isPromotedPoolPopoverOpen}
@@ -239,9 +240,9 @@ const PoolListItem: React.FC<IProps> = ({
                     apy={convertedApy}
                     points={points}
                   />
-                </>
+                </Box>
               )}
-            </Box>
+            </Grid>
           ) : null}
           <Typography>{fee}%</Typography>
           <Typography>{`$${formatNumber(volume)}`}</Typography>
