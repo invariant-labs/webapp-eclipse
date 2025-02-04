@@ -21,9 +21,16 @@ import {
   Transaction,
   sendAndConfirmRawTransaction,
   Keypair,
-  TransactionExpiredTimeoutError
+  TransactionExpiredTimeoutError,
+  TransactionInstruction,
+  TransactionMessage,
+  VersionedTransaction,
+  PublicKey,
+  RpcResponseAndContext,
+  AddressLookupTableAccount
 } from '@solana/web3.js'
 import {
+  autoSwapPools,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   WRAPPED_ETH_ADDRESS
@@ -615,9 +622,8 @@ export function* handleSwapAndInitPositionWithETH(
 
     const xToY = pair.tokenX.equals(action.payload.tokenX)
 
-    const combinedTransaction = new Transaction()
-    const tx = (yield* call(
-      [marketProgram, marketProgram.swapAndCreatePositionTx],
+    const ix = (yield* call(
+      [marketProgram, marketProgram.swapAndCreatePositionIx],
       {
         pair,
         userTokenX,
@@ -655,27 +661,42 @@ export function* handleSwapAndInitPositionWithETH(
           positionsList: !userPositionList.loading ? userPositionList : undefined
         }
       }
-    )) as Transaction
+    )) as TransactionInstruction
 
-    combinedTransaction.add(createIx).add(transferIx).add(initIx).add(tx).add(unwrapIx)
+    if (action.payload.poolIndex === null || !allPools[action.payload.poolIndex]) return
+
+    const lookupTableAddresses = autoSwapPools.find(
+      item => item.address === allPools[action.payload.poolIndex!].address.toString()
+    )!.lookupTable
+
+    const lookupTableCalls = lookupTableAddresses.map(address =>
+      call([connection, connection.getAddressLookupTable], new PublicKey(address))
+    )
+
+    const lookupTablesResults = (yield all(
+      lookupTableCalls
+    )) as RpcResponseAndContext<AddressLookupTableAccount | null>[]
+
+    const lookupTables = lookupTablesResults.map(result => result.value).filter(val => !!val)
 
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
-    combinedTransaction.recentBlockhash = blockhash.blockhash
-    combinedTransaction.feePayer = wallet.publicKey
+
+    const message = new TransactionMessage({
+      payerKey: wallet.publicKey,
+      recentBlockhash: blockhash.blockhash,
+      instructions: [createIx, transferIx, initIx, ix, unwrapIx]
+    }).compileToV0Message(lookupTables)
+
+    const tx = new VersionedTransaction(message)
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const signedTx = (yield* call(
-      [wallet, wallet.signTransaction],
-      combinedTransaction
-    )) as Transaction
+    const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as VersionedTransaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
-      skipPreflight: false
-    })
+    const txid = yield* call([connection, connection.sendTransaction], signedTx)
 
     yield put(actions.setInitPositionSuccess(!!txid.length))
 
@@ -805,8 +826,8 @@ export function* handleSwapAndInitPosition(
 
     const xToY = pair.tokenX.equals(action.payload.tokenX)
 
-    const tx = (yield* call(
-      [marketProgram, marketProgram.swapAndCreatePositionTx],
+    const ix = (yield* call(
+      [marketProgram, marketProgram.swapAndCreatePositionIx],
       {
         pair,
         userTokenX,
@@ -844,22 +865,42 @@ export function* handleSwapAndInitPosition(
           positionsList: !userPositionList.loading ? userPositionList : undefined
         }
       }
-    )) as Transaction
+    )) as TransactionInstruction
+
+    if (action.payload.poolIndex === null || !allPools[action.payload.poolIndex]) return
+
+    const lookupTableAddresses = autoSwapPools.find(
+      item => item.address === allPools[action.payload.poolIndex!].address.toString()
+    )!.lookupTable
+
+    const lookupTableCalls = lookupTableAddresses.map(address =>
+      call([connection, connection.getAddressLookupTable], new PublicKey(address))
+    )
+
+    const lookupTablesResults = (yield all(
+      lookupTableCalls
+    )) as RpcResponseAndContext<AddressLookupTableAccount | null>[]
+
+    const lookupTables = lookupTablesResults.map(result => result.value).filter(val => !!val)
 
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
-    tx.recentBlockhash = blockhash.blockhash
-    tx.feePayer = wallet.publicKey
+
+    const message = new TransactionMessage({
+      payerKey: wallet.publicKey,
+      recentBlockhash: blockhash.blockhash,
+      instructions: [ix]
+    }).compileToV0Message(lookupTables)
+
+    const tx = new VersionedTransaction(message)
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+    const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as VersionedTransaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
-      skipPreflight: false
-    })
+    const txid = yield* call([connection, connection.sendTransaction], signedTx)
 
     yield put(actions.setInitPositionSuccess(!!txid.length))
 
@@ -2059,6 +2100,9 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
 
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)
+}
+export function* swapAndInitPositionHandler(): Generator {
+  yield* takeEvery(actions.swapAndInitPosition, handleSwapAndInitPosition)
 }
 export function* getCurrentPlotTicksHandler(): Generator {
   yield* takeLatest(actions.getCurrentPlotTicks, handleGetCurrentPlotTicks)

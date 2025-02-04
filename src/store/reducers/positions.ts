@@ -147,6 +147,10 @@ const positionsSlice = createSlice({
       state.initPosition.inProgress = true
       return state
     },
+    swapAndInitPosition(state, _action: PayloadAction<SwapAndCreatePosition>) {
+      state.initPosition.inProgress = true
+      return state
+    },
     setInitPositionSuccess(state, action: PayloadAction<boolean>) {
       state.initPosition.inProgress = false
       state.initPosition.success = action.payload

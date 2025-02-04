@@ -1,4 +1,4 @@
-import { PublicKey, Transaction } from '@solana/web3.js'
+import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 
@@ -9,8 +9,12 @@ interface SalmonProvider {
   publicKey?: PublicKey
   isConnected?: boolean
   autoApprove?: boolean
-  signTransaction: (transaction: Transaction) => Promise<Transaction>
-  signAllTransactions: (transactions: Transaction[]) => Promise<Transaction[]>
+  signTransaction: (
+    transaction: Transaction | VersionedTransaction
+  ) => Promise<Transaction | VersionedTransaction>
+  signAllTransactions: (
+    transactions: Transaction[] | VersionedTransaction[]
+  ) => Promise<Transaction[] | VersionedTransaction[]>
   signMessage: (message: Uint8Array) => Promise<any>
   sendMessage: (message: Uint8Array) => Promise<Uint8Array>
   connect: () => Promise<void>
@@ -33,7 +37,9 @@ export class SalmonWalletAdapter implements WalletAdapter {
     return this._salmonProvider?.autoApprove || false
   }
 
-  signAllTransactions = async (transactions: Transaction[]): Promise<Transaction[]> => {
+  signAllTransactions = async (
+    transactions: Transaction[] | VersionedTransaction[]
+  ): Promise<Transaction[] | VersionedTransaction[]> => {
     if (!this._salmonProvider) {
       return transactions
     }
@@ -47,7 +53,7 @@ export class SalmonWalletAdapter implements WalletAdapter {
       : DEFAULT_PUBLICKEY
   }
 
-  signTransaction = async (transaction: Transaction) => {
+  signTransaction = async (transaction: Transaction | VersionedTransaction) => {
     if (!this._salmonProvider) {
       return transaction
     }

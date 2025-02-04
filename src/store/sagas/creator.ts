@@ -231,7 +231,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
 
     transaction.partialSign(mintKeypair)
 
-    const signedTx = yield* call([wallet, wallet.signTransaction], transaction)
+    const signedTx = (yield* call([wallet, wallet.signTransaction], transaction)) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
