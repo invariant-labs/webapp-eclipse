@@ -56,7 +56,7 @@ const useStyles = makeStyles()(() => ({
     },
     borderBottomLeftRadius: 0,
     backgroundColor: colors.invariant.component,
-    maxHeight: '255px',
+    maxHeight: '265px',
     overflowY: 'auto',
     overflowX: 'hidden',
 
