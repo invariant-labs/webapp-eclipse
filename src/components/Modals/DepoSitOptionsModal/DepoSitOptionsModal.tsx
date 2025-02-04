@@ -100,8 +100,8 @@ const DepoSitOptionsModal: React.FC<Props> = ({
 
     if (Number(value) > 100) {
       setUtilization('100')
-    } else if (Number(value) < 50 || isNaN(Number(value))) {
-      setUtilization('50')
+    } else if (Number(value) < 0 || isNaN(Number(value))) {
+      setUtilization('00.00')
     } else {
       const onlyTwoDigits = '^\\d*\\.?\\d{0,2}$'
       const regex = new RegExp(onlyTwoDigits, 'g')
@@ -131,7 +131,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
 
   const setTieredUtilization = (tierIndex: number) => {
     setUtilizationTierIndex(tierIndex)
-    setMinUtilization(String(Number(priceImpactTiers[tierIndex]).toFixed(2)))
+    setMinUtilization(String(Number(utilizationTiers[tierIndex]).toFixed(2)))
     setUtilization('')
   }
 
@@ -270,8 +270,8 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                   <button
                     className={classes.detailsInfoBtn}
                     onClick={() => {
-                      setUtilization(Number(priceImpact).toFixed(2))
-                      setMinUtilization(String(Number(priceImpact).toFixed(2)))
+                      setUtilization(Number(utilization).toFixed(2))
+                      setMinUtilization(String(Number(utilization).toFixed(2)))
                       setUtilizationTierIndex(-1)
                     }}>
                     Save
