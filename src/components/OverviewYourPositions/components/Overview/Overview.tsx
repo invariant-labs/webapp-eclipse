@@ -249,7 +249,10 @@ export const Overview: React.FC<OverviewProps> = () => {
         <Box
           sx={{
             flex: '1 1 100%',
-            minHeight: 'fit-content'
+            minHeight: 'fit-content',
+            [theme.breakpoints.down('lg')]: {
+              marginTop: '100px'
+            }
           }}>
           <ResponsivePieChart data={data} chartColors={chartColors} />
         </Box>

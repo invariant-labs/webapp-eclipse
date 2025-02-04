@@ -24,7 +24,10 @@ export const useStyles = makeStyles()(() => ({
   },
   subtitle: {
     ...typography.body2,
-    color: colors.invariant.textGrey
+    color: colors.invariant.textGrey,
+    [theme.breakpoints.down('lg')]: {
+      marginTop: '16px'
+    }
   },
   headerRow: {
     display: 'flex',

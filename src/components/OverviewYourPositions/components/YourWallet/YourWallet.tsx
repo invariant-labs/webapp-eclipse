@@ -166,6 +166,7 @@ const useStyles = makeStyles()(() => ({
     }
   },
   desktopActionCell: {
+    padding: '17px',
     [theme.breakpoints.down('md')]: {
       display: 'none'
     }
