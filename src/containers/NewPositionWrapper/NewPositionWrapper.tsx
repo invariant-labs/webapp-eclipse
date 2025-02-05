@@ -733,6 +733,56 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         feeValue: +printBN(tier.tier.fee, DECIMAL - 2)
       }))}
       isCurrentPoolExisting={poolIndex !== null && !!allPools[poolIndex]}
+      swapAndAddLiquidityHandler={(
+        leftTickIndex,
+        rightTickIndex,
+        xAmount,
+        yAmount,
+        slippage,
+        maxLiquidtiyPercentage,
+        minUtilizationPercentage,
+        tokenFrom,
+        tokenTo,
+        estimatedPriceAfterSwap,
+        swapAmount
+      ) => {
+        if (tokenAIndex === null || tokenBIndex === null) {
+          return
+        }
+        if (poolIndex !== null) {
+          dispatch(positionsActions.setShouldNotUpdateRange(true))
+        }
+        if (progress === 'none') {
+          setProgress('progress')
+        }
+
+        const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
+        const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
+        dispatch(
+          positionsActions.swapAndInitPosition({
+            lowerTick: lowerTickIndex,
+            upperTick: upperTickIndex,
+            liquidityDelta: liquidityRef.current,
+            knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
+            tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
+            tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
+            fee,
+            tickSpacing,
+            initPool: poolIndex === null,
+            poolIndex,
+            initTick: poolIndex === null ? midPrice.index : undefined,
+            xAmount: Math.floor(xAmount),
+            yAmount: Math.floor(yAmount),
+            maxLiquidtiyPercentage,
+            minUtilizationPercentage,
+            tokenFrom,
+            tokenTo,
+            estimatedPriceAfterSwap,
+            slippage,
+            swapAmount
+          })
+        )
+      }}
       addLiquidityHandler={(leftTickIndex, rightTickIndex, xAmount, yAmount, slippage) => {
         if (tokenAIndex === null || tokenBIndex === null) {
           return

@@ -76,6 +76,7 @@ const PrimaryComponent: React.FC<IDepositSelector> = args => {
 
 export const Primary: Story = {
   args: {
+    onSwapAndAddLiquidity: fn(),
     isAutoSwapOnTheSamePool: false,
     initialMaxPriceImpact: '',
     onMaxPriceImpactChange: fn(),
