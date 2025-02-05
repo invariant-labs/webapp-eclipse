@@ -1,13 +1,14 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import classNames from 'classnames'
 import React, { useMemo } from 'react'
 import { useStyles } from './style'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumber, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 export interface IEstimatedPoints {
   handleClickFAQ: () => void
@@ -26,6 +27,8 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   isConnected,
   estimatedScalePoints
 }) => {
+  const isSm = useMediaQuery(theme.breakpoints.down('md'))
+
   const { minConc, middleConc, maxConc } = useMemo(() => {
     return {
       minConc: concentrationArray[0].toFixed(0),
@@ -119,8 +122,8 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
             </Typography>
           </Grid>
           <Grid className={classes.column}>
-            <Typography style={(typography.caption1, { position: 'relative' })}>
-              Your Estimated Points: &nbsp;
+            <Typography className={classes.estimatedPoints}>
+              <span>Your Estimated Points: &nbsp;</span>
               <span className={classes.pinkText}>{pointsPerDayFormat} Points/Day</span>
             </Typography>
             <Box className={classes.darkBackground}>
@@ -134,7 +137,16 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                 style={(typography.caption1, { color: colors.invariant.textGrey })}>
                 <Typography>{minConc}x</Typography>
                 <Typography>
-                  <span>{estimatedPointsForScaleFormat.min} Points/Day</span>
+                  <span>
+                    {estimatedPointsForScaleFormat.min}{' '}
+                    {isSm ? (
+                      <TooltipGradient title='PPD - Points Per 24H' top={-10} underline>
+                        <span>PPD</span>
+                      </TooltipGradient>
+                    ) : (
+                      'Points/Day'
+                    )}
+                  </span>
                 </Typography>
               </Grid>
               <Grid
@@ -146,7 +158,16 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                 }>
                 <Typography>{middleConc}x</Typography>
                 <Typography>
-                  <span>{estimatedPointsForScaleFormat.middle} Points/Day</span>
+                  <span>
+                    {estimatedPointsForScaleFormat.middle}{' '}
+                    {isSm ? (
+                      <TooltipGradient title='PPD - Points Per 24H' top={-10} underline>
+                        <span>PPD</span>
+                      </TooltipGradient>
+                    ) : (
+                      'Points/Day'
+                    )}
+                  </span>
                 </Typography>
               </Grid>
               <Grid
@@ -158,7 +179,16 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                 }>
                 <Typography>{maxConc}x</Typography>
                 <Typography>
-                  <span>{estimatedPointsForScaleFormat.max} Points/Day</span>
+                  <span>
+                    {estimatedPointsForScaleFormat.max}{' '}
+                    {isSm ? (
+                      <TooltipGradient title='PPD - Points Per 24H' top={-10} underline>
+                        <span>PPD</span>
+                      </TooltipGradient>
+                    ) : (
+                      'Points/Day'
+                    )}
+                  </span>
                 </Typography>
               </Grid>
             </Grid>

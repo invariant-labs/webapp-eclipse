@@ -85,5 +85,14 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     [theme.breakpoints.down('md')]: {
       marginLeft: 0
     }
+  },
+  estimatedPoints: {
+    ...typography.caption1,
+    [theme.breakpoints.down('sm')]: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center'
+    }
   }
 }))
