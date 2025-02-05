@@ -1022,6 +1022,12 @@ export const NewPosition: React.FC<INewPosition> = ({
             estimatedPointsPerDay={estimatedPointsPerDay}
             estimatedScalePoints={estimatedScalePoints}
             isConnected={walletStatus === Status.Init}
+            showWarning={
+              tokenADeposit === '' ||
+              tokenBDeposit === '' ||
+              parseInt(tokenADeposit) === 0 ||
+              parseInt(tokenBDeposit) === 0
+            }
           />
         </div>
       </Fade>

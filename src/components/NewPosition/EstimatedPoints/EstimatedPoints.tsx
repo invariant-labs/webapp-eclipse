@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React, { useMemo } from 'react'
 import { useStyles } from './style'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
-import { colors, theme, typography } from '@static/theme'
+import { theme, typography } from '@static/theme'
 import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumber, printBN } from '@utils/utils'
@@ -16,6 +16,7 @@ export interface IEstimatedPoints {
   estimatedPointsPerDay: BN
   estimatedScalePoints: { min: BN; middle: BN; max: BN }
   isConnected: boolean
+  showWarning: boolean
 }
 
 export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
@@ -24,9 +25,11 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   concentrationIndex,
   estimatedPointsPerDay,
   isConnected,
-  estimatedScalePoints
+  estimatedScalePoints,
+  showWarning
 }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const { minConc, middleConc, maxConc } = useMemo(() => {
     return {
@@ -84,88 +87,110 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   return (
     <Box mt={3} mb={4}>
       <GradientBorder borderRadius={24} borderWidth={2}>
-        <Grid display='flex' className={classNames(classes.wrapper)}>
-          <Grid className={classes.column}>
-            <Grid container className={classes.leftHeaderItems}>
-              <Grid display='flex' gap={1} alignItems='center'>
-                <Typography style={(typography.heading4, { textWrap: 'nowrap' })}>
-                  Estimated Points
-                </Typography>
-                <Grid
-                  display='flex'
-                  alignItems='center'
-                  justifyContent='center'
-                  className={classes.pointsLabel}
-                  height={24}
-                  flexWrap='nowrap'>
-                  <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '12px' }} />
-                  <Typography noWrap>
-                    Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
+        <Grid className={classNames(classes.wrapper)}>
+          <Grid display='flex' gap={3} className={classNames(classes.innerWrapper)}>
+            <Grid className={classes.column}>
+              <Grid container className={classes.leftHeaderItems}>
+                <Grid display='flex' gap={1} alignItems='center'>
+                  <Typography style={{ textWrap: 'nowrap', ...typography.heading4 }}>
+                    Estimated Points
                   </Typography>
+                  <Grid
+                    display='flex'
+                    alignItems='center'
+                    justifyContent='center'
+                    className={classes.pointsLabel}
+                    height={24}
+                    flexWrap='nowrap'>
+                    <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '12px' }} />
+                    <Typography noWrap>
+                      Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid className={classes.rightHeaderItems}>
+                  <button className={classes.questionButton} onClick={handleClickFAQ}>
+                    <img
+                      src={icons.infoIconPink}
+                      alt='i'
+                      width={14}
+                      style={{ marginRight: '4px' }}
+                    />
+                    <Typography
+                      display='inline'
+                      className={classNames(classes.pinkText, classes.link)}>
+                      How to get more points?
+                    </Typography>
+                  </button>
                 </Grid>
               </Grid>
-              <Grid className={classes.rightHeaderItems}>
-                <button className={classes.questionButton} onClick={handleClickFAQ}>
-                  <img src={icons.infoIconPink} alt='i' width={14} style={{ marginRight: '8px' }} />
+              <Typography className={classes.description}>
+                Points you accrue depend on the concentration of your position. Adjust the
+                concentration slider to see how many points your current position will accrue.
+              </Typography>
+            </Grid>
+            <Grid className={classes.column}>
+              <Typography className={classes.estimatedPoints}>
+                <span>Your Estimated Points: &nbsp;</span>
+                <span className={classes.pinkText}>{pointsPerDayFormat} Points/24h</span>
+              </Typography>
+              <Grid display='flex' justifyContent='space-between' container mt={1}>
+                <Typography className={classes.sliderLabel}>{minConc}x</Typography>
+                <Typography className={classes.sliderLabel}>{middleConc}x</Typography>
+                <Typography className={classes.sliderLabel}>{maxConc}x</Typography>
+              </Grid>
+              <Box className={classes.darkBackground}>
+                <Box className={classes.gradientProgress} />
+              </Box>
+
+              {!showWarning ? (
+                <Grid container justifyContent='space-between' alignItems='center'>
                   <Typography
-                    display='inline'
-                    className={classNames(classes.pinkText, classes.link)}>
-                    How to get more points?
+                    display='flex'
+                    flexDirection={isSm ? 'column' : 'row'}
+                    className={classes.sliderLabel}>
+                    {estimatedPointsForScaleFormat.min} {isSm ? <span>Pts/24h</span> : 'Points/24h'}
                   </Typography>
-                </button>
-              </Grid>
-            </Grid>
-            <Typography className={classes.description}>
-              Points you accrue depend on the concentration of your position. Adjust the
-              concentration slider to see how many points your current position will accrue.
-            </Typography>
-          </Grid>
-          <Grid className={classes.column}>
-            <Typography className={classes.estimatedPoints}>
-              <span>Your Estimated Points: &nbsp;</span>
-              <span className={classes.pinkText}>{pointsPerDayFormat} Points/24h</span>
-            </Typography>
-            <Box className={classes.darkBackground}>
-              <Box className={classes.gradientProgress} />
-            </Box>
-            <Grid container justifyContent='space-between' alignItems='center'>
-              <Grid
-                display='flex'
-                flexDirection='column'
-                gap={1}
-                style={(typography.caption1, { color: colors.invariant.textGrey })}>
-                <Typography>{minConc}x</Typography>
-                <Typography display='flex' flexDirection={isSm ? 'column' : 'row'}>
-                  {estimatedPointsForScaleFormat.min} {isSm ? <span>Pts/24h</span> : 'Points/24h'}
-                </Typography>
-              </Grid>
-              <Grid
-                display='flex'
-                flexDirection='column'
-                gap={1}
-                style={
-                  (typography.caption1, { color: colors.invariant.textGrey, textAlign: 'center' })
-                }>
-                <Typography>{middleConc}x</Typography>
-                <Typography display='flex' flexDirection={isSm ? 'column' : 'row'}>
-                  {estimatedPointsForScaleFormat.middle}{' '}
-                  {isSm ? <span>Pts/24h</span> : 'Points/24h'}
-                </Typography>
-              </Grid>
-              <Grid
-                display='flex'
-                flexDirection='column'
-                gap={1}
-                style={
-                  (typography.caption1, { color: colors.invariant.textGrey, textAlign: 'right' })
-                }>
-                <Typography>{maxConc}x</Typography>
-                <Typography display='flex' flexDirection={isSm ? 'column' : 'row'}>
-                  {estimatedPointsForScaleFormat.max} {isSm ? <span>Pts/24h</span> : 'Points/24h'}
-                </Typography>
-              </Grid>
+                  <Typography
+                    display='flex'
+                    alignItems='center'
+                    flexDirection={isSm ? 'column' : 'row'}
+                    className={classes.sliderLabel}>
+                    {estimatedPointsForScaleFormat.middle}{' '}
+                    {isSm ? <span>Pts/24h</span> : 'Points/24h'}
+                  </Typography>
+                  <Typography
+                    display='flex'
+                    alignItems='flex-end'
+                    flexDirection={isSm ? 'column' : 'row'}
+                    className={classes.sliderLabel}>
+                    {estimatedPointsForScaleFormat.max} {isSm ? <span>Pts/24h</span> : 'Points/24h'}
+                  </Typography>
+                </Grid>
+              ) : (
+                <Grid container height={isMd ? 0 : 17} />
+              )}
             </Grid>
           </Grid>
+          {showWarning ? (
+            <Typography
+              display='flex'
+              mt={isSm ? '24px' : '16px'}
+              alignItems='center'
+              columnGap={2}>
+              <img
+                width={20}
+                src={icons.warning2}
+                alt='Warning icon'
+                style={{ minWidth: '20px' }}
+              />
+              <span className={classes.warningText}>
+                First, enter your deposit amounts to estimate your points per day
+              </span>
+            </Typography>
+          ) : (
+            <Grid container height={isMd ? 0 : 40} />
+          )}
         </Grid>
       </GradientBorder>
     </Box>

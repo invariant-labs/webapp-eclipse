@@ -6,8 +6,9 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     backgroundColor: colors.invariant.component,
     borderRadius: 24,
     padding: 24,
-    gap: 24,
-    color: colors.invariant.text,
+    color: colors.invariant.text
+  },
+  innerWrapper: {
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column'
     }
@@ -20,6 +21,7 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
   },
   darkBackground: {
     marginTop: 8,
+    marginBottom: 8,
     width: '100%',
     height: 24,
     backgroundColor: colors.invariant.dark,
@@ -59,6 +61,8 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
   },
   link: {
     textDecoration: 'underline',
+    textDecorationStyle: 'solid',
+    textDecorationThickness: 'auto',
     ...typography.body2,
     lineHeight: '24px',
     textAlign: 'left',
@@ -87,12 +91,23 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     }
   },
   estimatedPoints: {
-    ...typography.caption1,
+    ...typography.body1,
     [theme.breakpoints.down('sm')]: {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center'
     }
+  },
+  warningText: {
+    color: colors.invariant.warning,
+    ...typography.body3,
+    [theme.breakpoints.down('md')]: {
+      ...typography.body2
+    }
+  },
+  sliderLabel: {
+    ...typography.caption1,
+    color: colors.invariant.textGrey
   }
 }))
