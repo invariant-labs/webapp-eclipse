@@ -1,16 +1,7 @@
-import SearchIcon from '@static/svg/lupaDark.svg'
-import {
-  Autocomplete,
-  Avatar,
-  Box,
-  Chip,
-  Fade,
-  InputAdornment,
-  Paper,
-  TextField,
-  Typography
-} from '@mui/material'
+import { Autocomplete, Box, Divider, Fade, Paper, TextField, Typography } from '@mui/material'
 import { forwardRef, useState } from 'react'
+import copyAddressIcon from '@static/svg/copyIcon.svg'
+
 import useStyles from './styles'
 import { shortenAddress } from '@utils/uiUtils'
 import icons from '@static/icons'
@@ -28,21 +19,32 @@ interface IFilterSearch {
   mappedTokens: ISearchToken[]
 }
 
-function PaperComponent(paperProps, ref) {
-  return (
-    <Fade in>
-      <Paper {...paperProps} ref={ref} />
-    </Fade>
-  )
-}
-const PaperComponentForward = forwardRef(PaperComponent)
-
 export const FilterSearch: React.FC<IFilterSearch> = ({
   selectedTokens,
   setSelectedTokens,
   mappedTokens
 }) => {
-  const [open, setOpen] = useState(false)
+  const PaperComponent = (paperProps, ref) => {
+    return (
+      <Fade in timeout={600}>
+        <Paper {...paperProps} ref={ref}>
+          <Box onMouseDown={e => e.stopPropagation()}>
+            <Box className={classes.commonTokens}>
+              <Typography className={classes.headerText}>Commons Tokens</Typography>
+              <Box height='80px'></Box>
+              <Divider className={classes.divider} orientation='horizontal' flexItem />
+            </Box>
+          </Box>
+          <Box>{paperProps.children}</Box>
+        </Paper>
+      </Fade>
+    )
+  }
+
+  const PaperComponentForward = forwardRef(PaperComponent)
+
+  const [openh, setOpen] = useState(false)
+  const open = true
   const fullWidth = open || selectedTokens.length >= 1
   const { classes } = useStyles({ fullWidth })
 
@@ -59,6 +61,8 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
         }
       }}
       multiple
+      disableCloseOnSelect
+      classes={{ paper: classes.paper }}
       PaperComponent={PaperComponentForward}
       id='token-selector'
       options={mappedTokens.filter(
@@ -108,10 +112,28 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
         })
       }
       renderOption={(props, option) => (
-        <Box>
-          <Box component='li' {...props}>
-            <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
-            <Typography>{shortenAddress(option.symbol)}</Typography>
+        <Box component='li' {...props}>
+          <Box className={classes.tokenContainer}>
+            <Box display='flex' alignItems='center'>
+              <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
+              <Box display='flex' flexDirection='column'>
+                <Box display='flex' flexDirection='row' alignItems='center' gap='6px'>
+                  <Typography className={classes.tokenLabel}>
+                    {shortenAddress(option.symbol)}
+                  </Typography>
+                  <Box className={classes.labelContainer}>
+                    <Typography className={classes.addressLabel}>
+                      {shortenAddress(option.address)}
+                    </Typography>
+                    <img width={8} src={copyAddressIcon} />
+                  </Box>
+                </Box>
+                <Typography className={classes.tokenName}>
+                  {option.name === option.address ? shortenAddress(option.name) : option.name}
+                </Typography>
+              </Box>
+            </Box>
+            <Typography className={classes.balaceLabel}>Balance: 1.3468</Typography>
           </Box>
         </Box>
       )}

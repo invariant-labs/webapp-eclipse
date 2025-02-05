@@ -18,18 +18,19 @@ export const useStyles = makeStyles<{ fullWidth: boolean }>()((theme: Theme, { f
   },
 
   searchResultIcon: {
-    width: 20,
-    height: 20,
+    width: 36,
+    height: 36,
     marginRight: 8,
     borderRadius: '50%'
   },
   paper: {
-    background: colors.invariant.bodyBackground,
+    width: 392,
     boxShadow: 'none',
-    minWidth: 424,
-    width: 424,
-    maxHeight: '100vh',
-    marginTop: 20,
+    maxWidth: 392,
+    padding: '16px 16px 10px 16px',
+
+    marginTop: 8,
+    background: colors.invariant.bodyBackground,
     '&::-webkit-scrollbar': {
       width: 6,
       background: colors.invariant.component
@@ -66,6 +67,60 @@ export const useStyles = makeStyles<{ fullWidth: boolean }>()((theme: Theme, { f
     '&:hover': {
       opacity: 0.7
     }
+  },
+  header: {
+    position: 'sticky',
+    top: 0,
+    backgroundColor: 'white',
+    zIndex: 10,
+    padding: 2
+  },
+  headerText: {
+    ...typography.body2,
+    color: colors.invariant.textGrey
+  },
+  commonTokens: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 12
+  },
+  divider: {
+    background: colors.invariant.light,
+    height: 1,
+    width: 'fullWidth'
+  },
+  tokenContainer: {
+    width: '100%',
+    display: 'flex',
+    borderRadius: 24,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: '8px',
+    padding: '8px',
+    '&:hover': {
+      background: colors.invariant.greenLinearGradientOpacity
+    }
+  },
+  tokenLabel: {
+    ...typography.heading3
+  },
+  labelContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4,
+    padding: '2px 4px 2px 4px'
+  },
+  addressLabel: {
+    ...typography.caption4,
+    color: colors.invariant.textGrey
+  },
+  tokenName: {
+    ...typography.caption2,
+    color: colors.invariant.textGrey
+  },
+  balaceLabel: {
+    ...typography.body2,
+    color: colors.invariant.textGrey
   }
 }))
 
