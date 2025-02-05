@@ -10,6 +10,18 @@ export const useStyles = makeStyles()(() => {
         backgroundColor: 'transparent'
       }
     },
+    tooltip: {
+      width: 159,
+      paddingTop: 4,
+      paddingBottom: 4,
+      paddingLeft: 8,
+      paddingRight: 8,
+      color: '#EFD063',
+      ...typography.caption4,
+      lineHeight: '24px',
+      background: colors.invariant.component,
+      borderRadius: 8
+    },
     detailsWrapper: {
       width: 332,
       display: 'flex',
@@ -124,9 +136,9 @@ export const useStyles = makeStyles()(() => {
       }
     },
     slippagePercentageButtonActive: {
-      backgroundColor: colors.invariant.light,
-      color: colors.invariant.text,
-      fontWeight: 'bold'
+      backgroundColor: `${colors.invariant.light} !important`,
+      color: `${colors.invariant.text} !important`,
+      fontWeight: 'bold !important'
     },
     inputAdornedEnd: {
       marginRight: 2

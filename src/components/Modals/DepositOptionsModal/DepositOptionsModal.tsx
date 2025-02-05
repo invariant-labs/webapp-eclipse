@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
-import { Box, Button, Divider, Grid, Input, Popover, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Input, Popover, Tooltip, Typography } from '@mui/material'
 import classNames from 'classnames'
 import icons from '@static/icons'
 
@@ -131,13 +131,14 @@ const DepoSitOptionsModal: React.FC<Props> = ({
       message: 'Increases execution likelihood but allows for greater price movement.'
     }
   ]
-  const initialPriceImpactTierIndex = priceImpactTiers.findIndex(tier => tier.value === priceImpact)
 
-  const [priceImpactTierIndex, setPriceImpactTierIndex] = useState(initialPriceImpactTierIndex)
+  const [priceImpactTierIndex, setPriceImpactTierIndex] = useState(
+    priceImpactTiers.findIndex(tier => Number(tier.value) === Number(initialMaxPriceImpact))
+  )
 
   const setTieredPriceImpact = (tierIndex: number) => {
     setPriceImpactTierIndex(tierIndex)
-    setMaxPriceImpact(String(Number(priceImpactTiers[tierIndex]).toFixed(2)))
+    setMaxPriceImpact(Number(priceImpactTiers[tierIndex].value).toFixed(2))
     setPriceImpact('')
   }
 
@@ -160,19 +161,20 @@ const DepoSitOptionsModal: React.FC<Props> = ({
         'Ensures the pool retains at least 95% liquidity after the swap, balancing execution probability and price stability.'
     }
   ]
-  const initialUtilizationIndex = utilizationTiers.findIndex(tier => tier.value === utilization)
 
-  const [utilizationTierIndex, setUtilizationTierIndex] = useState(initialUtilizationIndex)
+  const [utilizationTierIndex, setUtilizationTierIndex] = useState(
+    utilizationTiers.findIndex(tier => Number(tier.value) === Number(initialMinUtilization))
+  )
 
   const setTieredUtilization = (tierIndex: number) => {
     setUtilizationTierIndex(tierIndex)
-    setMinUtilization(String(Number(utilizationTiers[tierIndex]).toFixed(2)))
+    setMinUtilization(Number(utilizationTiers[tierIndex].value).toFixed(2))
     setUtilization('')
   }
 
   useEffect(() => {
     const initialUtilizationTier = utilizationTiers.findIndex(
-      tier => String(Number(tier).toFixed(2)) === utilization
+      tier => Number(tier.value) === Number(initialMinUtilization)
     )
     setUtilizationTierIndex(initialUtilizationTier)
 
@@ -181,7 +183,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
     }
 
     const initialPriceImpactTier = priceImpactTiers.findIndex(
-      tier => String(Number(tier).toFixed(2)) === priceImpact
+      tier => Number(tier.value) === Number(initialMaxPriceImpact)
     )
     setPriceImpactTierIndex(initialPriceImpactTier)
 
@@ -220,9 +222,10 @@ const DepoSitOptionsModal: React.FC<Props> = ({
           <Grid container gap='9px'>
             {priceImpactTiers.map((tier, index) => (
               <Button
-                className={classNames(classes.slippagePercentageButton, {
-                  [classes.slippagePercentageButtonActive]: index === priceImpactTierIndex
-                })}
+                className={classNames(
+                  classes.slippagePercentageButton,
+                  priceImpactTierIndex === index && classes.slippagePercentageButtonActive
+                )}
                 key={tier.value}
                 onClick={e => {
                   e.preventDefault()
@@ -244,25 +247,43 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                     }}>
                     {tier.value}%
                   </Box>
-                  <Typography
-                    style={{
-                      fontWeight: 400,
-                      fontSize: 10,
-                      letterSpacing: '-0.03%',
-                      textTransform: 'none',
-                      marginLeft: '-4px'
-                    }}>
-                    {tier.label}
-                    {tier.message !== '' ? (
-                      <img
-                        src={icons.infoCircle}
-                        alt=''
-                        width='8px'
-                        style={{ marginTop: '0px', marginLeft: '2px' }}
-                        className={classes.grayscaleIcon}
-                      />
-                    ) : null}
-                  </Typography>
+                  <Tooltip
+                    title={
+                      <Box
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          flexDirection: 'row',
+                          justifyContent: 'center'
+                        }}>
+                        <Box width={'12px'}>
+                          <img src={icons.goldenInfoCircle} alt='' width={'12px'} height={'12px'} />
+                        </Box>
+                        <span style={{ width: '141px' }}>{tier.message}</span>
+                      </Box>
+                    }
+                    classes={{ tooltip: classes.tooltip }}>
+                    <Typography
+                      style={{
+                        fontWeight: 400,
+                        fontSize: 10,
+                        letterSpacing: '-0.03%',
+                        textTransform: 'none',
+                        marginLeft: '-4px'
+                      }}>
+                      {tier.label}
+                      {tier.message !== '' ? (
+                        <img
+                          src={icons.infoCircle}
+                          alt=''
+                          width='8px'
+                          style={{ marginTop: '0px', marginLeft: '2px' }}
+                          className={classes.grayscaleIcon}
+                        />
+                      ) : null}
+                    </Typography>
+                  </Tooltip>
                 </Box>
               </Button>
             ))}
@@ -270,7 +291,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
           <Box marginTop='6px'>
             <Input
               disableUnderline
-              // placeholder='0.00'
+              placeholder='0.00'
               className={classNames(
                 classes.detailsInfoForm,
                 priceImpactTierIndex === -1 && classes.customSlippageActive
@@ -285,12 +306,11 @@ const DepoSitOptionsModal: React.FC<Props> = ({
               startAdornment='Custom'
               endAdornment={
                 <>
-                  {/* % */}
+                  %
                   <button
                     className={classes.detailsInfoBtn}
                     onClick={() => {
-                      setPriceImpact(Number(priceImpact).toFixed(2))
-                      setMaxPriceImpact(String(Number(priceImpact).toFixed(2)))
+                      setMaxPriceImpact(Number(priceImpact).toFixed(2))
                       setPriceImpactTierIndex(-1)
                     }}>
                     Save
@@ -313,9 +333,10 @@ const DepoSitOptionsModal: React.FC<Props> = ({
           <Grid container gap='9px'>
             {utilizationTiers.map((tier, index) => (
               <Button
-                className={classNames(classes.slippagePercentageButton, {
-                  [classes.slippagePercentageButtonActive]: index === utilizationTierIndex
-                })}
+                className={classNames(
+                  classes.slippagePercentageButton,
+                  utilizationTierIndex === index && classes.slippagePercentageButtonActive
+                )}
                 key={tier.value}
                 onClick={e => {
                   e.preventDefault()
@@ -337,25 +358,43 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                     }}>
                     {tier.value}%
                   </Box>
-                  <Typography
-                    style={{
-                      fontWeight: 400,
-                      fontSize: 10,
-                      letterSpacing: '-0.03%',
-                      textTransform: 'none',
-                      marginLeft: '-4px'
-                    }}>
-                    {tier.label}
-                    {tier.message !== '' ? (
-                      <img
-                        src={icons.infoCircle}
-                        alt=''
-                        width='8px'
-                        style={{ marginTop: '0px', marginLeft: '2px' }}
-                        className={classes.grayscaleIcon}
-                      />
-                    ) : null}
-                  </Typography>
+                  <Tooltip
+                    title={
+                      <Box
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          flexDirection: 'row',
+                          justifyContent: 'center'
+                        }}>
+                        <Box width={'12px'}>
+                          <img src={icons.goldenInfoCircle} alt='' width={'12px'} height={'12px'} />
+                        </Box>
+                        <span style={{ width: '141px' }}>{tier.message}</span>
+                      </Box>
+                    }
+                    classes={{ tooltip: classes.tooltip }}>
+                    <Typography
+                      style={{
+                        fontWeight: 400,
+                        fontSize: 10,
+                        letterSpacing: '-0.03%',
+                        textTransform: 'none',
+                        marginLeft: '-4px'
+                      }}>
+                      {tier.label}
+                      {tier.message !== '' ? (
+                        <img
+                          src={icons.infoCircle}
+                          alt=''
+                          width='8px'
+                          style={{ marginTop: '0px', marginLeft: '2px' }}
+                          className={classes.grayscaleIcon}
+                        />
+                      ) : null}
+                    </Typography>
+                  </Tooltip>
                 </Box>
               </Button>
             ))}
@@ -363,7 +402,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
           <Box marginTop='6px'>
             <Input
               disableUnderline
-              // placeholder='0.00'
+              placeholder='0.00'
               className={classNames(
                 classes.detailsInfoForm,
                 utilizationTierIndex === -1 && classes.customSlippageActive
@@ -378,11 +417,11 @@ const DepoSitOptionsModal: React.FC<Props> = ({
               startAdornment='Custom'
               endAdornment={
                 <>
+                  %
                   <button
                     className={classes.detailsInfoBtn}
                     onClick={() => {
-                      setUtilization(Number(utilization).toFixed(2))
-                      setMinUtilization(String(Number(utilization).toFixed(2)))
+                      setMinUtilization(Number(utilization).toFixed(2))
                       setUtilizationTierIndex(-1)
                     }}>
                     Save

@@ -41,7 +41,7 @@ import {
   fromFee,
   SimulateSwapAndCreatePositionSimulation
 } from '@invariant-labs/sdk-eclipse/lib/utils'
-import DepoSitOptionsModal from '@components/Modals/DepoSitOptionsModal/DepoSitOptionsModal'
+import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
 
 export interface InputState {
   value: string
@@ -512,19 +512,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
-      {isAutoSwapAvailable ? (
-        <DepoSitOptionsModal
-          initialMaxPriceImpact={initialMaxPriceImpact}
-          setMaxPriceImpact={setMaxPriceImpact}
-          initialMinUtilization={initialMinUtilization}
-          setMinUtilization={setMinUtilization}
-          handleClose={handleCloseDepositOptions}
-          anchorEl={anchorEl}
-          open={settings}
-        />
-      ) : null}
+      <DepoSitOptionsModal
+        initialMaxPriceImpact={initialMaxPriceImpact}
+        setMaxPriceImpact={setMaxPriceImpact}
+        initialMinUtilization={initialMinUtilization}
+        setMinUtilization={setMinUtilization}
+        handleClose={handleCloseDepositOptions}
+        anchorEl={anchorEl}
+        open={settings}
+      />
       <Typography className={classes.sectionTitle}>Tokens</Typography>
-
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
         <Grid container className={classes.selects} direction='row' justifyContent='space-between'>
           <Grid className={classes.selectWrapper}>
@@ -629,11 +626,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
-          {isAutoSwapAvailable ? (
-            <Button onClick={handleClickDepositOptions} className={classes.optionsIconBtn}>
-              <img src={icons.autoSwapOptions} alt='options' />
-            </Button>
-          ) : null}
+          <Button
+            onClick={handleClickDepositOptions}
+            className={classes.optionsIconBtn}
+            disabled={!isAutoSwapAvailable}>
+            <img src={icons.autoSwapOptions} alt='options' />
+          </Button>
         </Box>
       </Grid>
       <Grid container className={classes.sectionWrapper}>
