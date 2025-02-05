@@ -45,14 +45,14 @@ export const CustomPoolListItem: React.FC<IProps> = ({
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const handleOpenPosition = () => {
-    const revertRatio = initialXtoY(addressFrom ?? '', addressTo ?? '')
+    const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
 
-    const tokenA = revertRatio
-      ? addressToTicker(network, addressTo ?? '')
-      : addressToTicker(network, addressFrom ?? '')
-    const tokenB = revertRatio
+    const tokenA = isXtoY
       ? addressToTicker(network, addressFrom ?? '')
       : addressToTicker(network, addressTo ?? '')
+    const tokenB = isXtoY
+      ? addressToTicker(network, addressTo ?? '')
+      : addressToTicker(network, addressFrom ?? '')
 
     navigate(
       `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
@@ -76,6 +76,28 @@ export const CustomPoolListItem: React.FC<IProps> = ({
 
   //HOTFIX
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
+
+  const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
+
+  const tokenAData = isXtoY
+    ? {
+        symbol: symbolFrom,
+        icon: iconFrom
+      }
+    : {
+        symbol: symbolTo,
+        icon: iconTo
+      }
+
+  const tokenBData = isXtoY
+    ? {
+        symbol: symbolTo,
+        icon: iconTo
+      }
+    : {
+        symbol: symbolFrom,
+        icon: iconFrom
+      }
 
   return (
     <Grid
@@ -102,7 +124,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                 <Box className={classes.iconContainer}>
                   <img
                     className={classes.tokenIcon}
-                    src={iconFrom}
+                    src={tokenAData.icon}
                     alt='Token from'
                     onError={e => {
                       e.currentTarget.src = icons.unknownToken
@@ -112,7 +134,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                 <Box className={classes.iconContainer}>
                   <img
                     className={classes.tokenIcon}
-                    src={iconTo}
+                    src={tokenBData.icon}
                     alt='Token to'
                     onError={e => {
                       e.currentTarget.src = icons.unknownToken
@@ -123,7 +145,8 @@ export const CustomPoolListItem: React.FC<IProps> = ({
               {isMd && (
                 <Grid className={classes.symbolsContainer}>
                   <Typography>
-                    {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
+                    {shortenAddress(tokenAData.symbol ?? '')}/
+                    {shortenAddress(tokenBData.symbol ?? '')}
                   </Typography>
                   <TooltipHover text='Copy pool address'>
                     <FileCopyOutlinedIcon
