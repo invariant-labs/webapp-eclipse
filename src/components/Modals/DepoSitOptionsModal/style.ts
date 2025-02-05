@@ -83,11 +83,13 @@ export const useStyles = makeStyles()(() => {
       backgroundColor: colors.invariant.green,
       borderRadius: 9,
       border: 'none',
-      padding: 0,
+      padding: 4,
       width: 49,
       height: 28,
       cursor: 'pointer',
       marginLeft: 8,
+      color: colors.invariant.black,
+      letterSpacing: '-0.03%',
       ...typography.body2,
       '&:hover': {
         filter: 'brightness(1.15)',
@@ -106,12 +108,12 @@ export const useStyles = makeStyles()(() => {
       marginTop: 10
     },
     slippagePercentageButton: {
-      height: 28,
+      height: 30,
       borderRadius: 8,
       backgroundColor: colors.invariant.newDark,
       color: colors.invariant.textGrey,
       flex: 1,
-
+      letterSpacing: '-0.03%',
       '&:hover': {
         backgroundColor: colors.invariant.light,
         color: colors.invariant.text,
@@ -143,6 +145,12 @@ export const useStyles = makeStyles()(() => {
       borderBottom: `1px solid ${colors.invariant.light}`,
       marginTop: 10,
       marginBottom: 10
+    },
+    grayscaleIcon: {
+      filter: 'grayscale(100%)',
+      transition: 'filter 0.7s ease-in-out',
+      minWidth: '8px',
+      minHeight: '8px'
     }
   }
 })
