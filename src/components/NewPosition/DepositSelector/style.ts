@@ -182,6 +182,21 @@ export const useStyles = makeStyles()(theme => {
       '&:hover': {
         background: 'none'
       }
+    },
+    unknownWarning: {
+      width: 'fit-content',
+      border: `1px solid ${colors.invariant.lightHover}`,
+      ...typography.caption2,
+      color: colors.invariant.lightHover,
+      padding: '5px 8px',
+      paddingInline: 8,
+      borderRadius: 9
+    },
+    grayscaleIcon: {
+      filter: 'grayscale(100%)',
+      transition: 'filter 0.7s ease-in-out',
+      minWidth: '12px',
+      minHeight: '12px'
     }
   }
 })

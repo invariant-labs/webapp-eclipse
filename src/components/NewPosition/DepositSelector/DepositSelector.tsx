@@ -589,6 +589,21 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       </Grid>
       <Grid container className={classes.depositHeader}>
         <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
+        {/* TODO: CONFIGURE PRICE IMPACT WARNING & PRICE IMPACT THRESHOLD */}
+        {simulation?.swapSimulation?.priceImpact >= 1 ? (
+          <TooltipHover text='PRICE IMPACT WARNING'>
+            <Box className={classes.unknownWarning}>
+              <img
+                src={icons.infoCircle}
+                alt=''
+                width='12px'
+                style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+                className={classes.grayscaleIcon}
+              />
+              Price impact: 10%
+            </Box>
+          </TooltipHover>
+        ) : null}
         <Box className={classes.depositOptions}>
           <Box className={classes.switchDepositTypeContainer}>
             <Box
