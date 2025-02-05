@@ -23,7 +23,7 @@ export const useStyles = makeStyles()(() => {
       borderRadius: 8
     },
     detailsWrapper: {
-      width: 332,
+      width: 662,
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: colors.invariant.component,
