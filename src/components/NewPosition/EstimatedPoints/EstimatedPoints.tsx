@@ -8,7 +8,6 @@ import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumber, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 export interface IEstimatedPoints {
   handleClickFAQ: () => void
