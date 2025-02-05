@@ -136,7 +136,9 @@ export const WrappedPoolList: React.FC = () => {
           PaperComponent={PaperComponentForward}
           classes={{ paper: classes.paper }}
           id='token-selector'
-          options={mappedTokens}
+          options={mappedTokens.filter(
+            option => !selectedTokens.some(selected => selected.address === option.address)
+          )}
           getOptionLabel={option => option.symbol}
           value={selectedTokens}
           onChange={(_, newValue) => {
@@ -151,6 +153,13 @@ export const WrappedPoolList: React.FC = () => {
           open={open}
           disableClearable
           popupIcon={null}
+          filterOptions={(options, { inputValue }) =>
+            options.filter(
+              option =>
+                option.symbol.toLowerCase().includes(inputValue.toLowerCase()) ||
+                option.address.toLowerCase().includes(inputValue.toLowerCase())
+            )
+          }
           renderTags={(value, getTagProps) =>
             value.map((option, index) => (
               <Chip

@@ -46,7 +46,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   searchBar: {
     maxWidth: 400,
     width: 400,
-    height: 50,
+    height: 45,
     padding: '7px 12px',
     borderRadius: 10,
     background: colors.invariant.black,
