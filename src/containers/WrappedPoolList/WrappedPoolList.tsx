@@ -1,24 +1,12 @@
-import {
-  Autocomplete,
-  Fade,
-  Chip,
-  Grid,
-  InputAdornment,
-  InputBase,
-  Typography,
-  Paper,
-  Box,
-  Avatar,
-  TextField
-} from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import {
   isLoading,
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails
 } from '@store/selectors/stats'
-import React, { forwardRef, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import SearchIcon from '@static/svg/lupaDark.svg'
+
 import useStyles from './styles'
 import icons from '@static/icons'
 import { VariantType } from 'notistack'
@@ -28,7 +16,8 @@ import { actions } from '@store/reducers/stats'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
-import { shortenAddress } from '@utils/uiUtils'
+
+import { FilterSearch } from '@components/FilterSearch/FilterSearch'
 
 interface ISearchToken {
   icon: string
@@ -49,7 +38,6 @@ export const WrappedPoolList: React.FC = () => {
   const isLoadingStats = useSelector(isLoading)
 
   const [selectedTokens, setSelectedTokens] = useState<ISearchToken[]>([])
-  const [open, setOpen] = useState<boolean>(false)
 
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
@@ -101,15 +89,6 @@ export const WrappedPoolList: React.FC = () => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
 
-  function PaperComponent(paperProps, ref) {
-    return (
-      <Fade in>
-        <Paper {...paperProps} ref={ref} />
-      </Fade>
-    )
-  }
-  const PaperComponentForward = forwardRef(PaperComponent)
-
   return (
     <div className={classes.container}>
       <Grid
@@ -121,83 +100,10 @@ export const WrappedPoolList: React.FC = () => {
           All pools
         </Typography>
 
-        <Autocomplete
-          sx={{
-            '& .MuiOutlinedInput-root': {
-              '&:hover .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'transparent'
-              },
-              '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-                borderColor: 'transparent'
-              }
-            }
-          }}
-          multiple
-          PaperComponent={PaperComponentForward}
-          classes={{ paper: classes.paper }}
-          id='token-selector'
-          options={mappedTokens.filter(
-            option => !selectedTokens.some(selected => selected.address === option.address)
-          )}
-          getOptionLabel={option => option.symbol}
-          value={selectedTokens}
-          onChange={(_, newValue) => {
-            if (newValue.length <= 2) {
-              setSelectedTokens(newValue)
-            }
-          }}
-          onOpen={() => {
-            if (selectedTokens.length < 2) setOpen(true)
-          }}
-          onClose={() => setOpen(false)}
-          open={open}
-          disableClearable
-          popupIcon={null}
-          filterOptions={(options, { inputValue }) =>
-            options.filter(
-              option =>
-                option.symbol.toLowerCase().includes(inputValue.toLowerCase()) ||
-                option.address.toLowerCase().includes(inputValue.toLowerCase())
-            )
-          }
-          renderTags={(value, getTagProps) =>
-            value.map((option, index) => (
-              <Chip
-                {...getTagProps({ index })}
-                avatar={<Avatar src={option.icon} />}
-                label={shortenAddress(option.symbol)}
-              />
-            ))
-          }
-          renderOption={(props, option) => (
-            <Box component='li' {...props}>
-              <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
-              <Typography>{shortenAddress(option.symbol)}</Typography>
-            </Box>
-          )}
-          renderInput={params => (
-            <TextField
-              {...params}
-              variant='outlined'
-              placeholder={!selectedTokens.length ? 'Select token' : ''}
-              className={classes.searchBar}
-              InputProps={{
-                ...params.InputProps,
-                readOnly: selectedTokens.length >= 2,
-                endAdornment: (
-                  <>
-                    {params.InputProps.endAdornment}
-                    <InputAdornment position='end'>
-                      <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
-                    </InputAdornment>
-                  </>
-                )
-              }}
-              onClick={() => {
-                if (selectedTokens.length < 2) setOpen(true)
-              }}
-            />
-          )}
+        <FilterSearch
+          selectedTokens={selectedTokens}
+          setSelectedTokens={setSelectedTokens}
+          mappedTokens={mappedTokens}
         />
       </Grid>
       <LiquidityPoolList
