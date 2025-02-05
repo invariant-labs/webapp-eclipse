@@ -1494,7 +1494,7 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
   const tokenXIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenXAddress)
   const tokenYIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenYAddress)
 
-  return tokenXIndex < tokenYIndex
+  return !(tokenXIndex < tokenYIndex)
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {
