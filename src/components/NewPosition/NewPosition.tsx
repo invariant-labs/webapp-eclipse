@@ -53,8 +53,8 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
-import PotentialPoints from './PotentialPoints/PotentialPoints'
 import FAQModal from '@components/Modals/FAQModal/FAQModal'
+import EstimatedPoints from './EstimatedPoints/EstimatedPoints'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -1015,7 +1015,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
       <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
         <div>
-          <PotentialPoints
+          <EstimatedPoints
             handleClickFAQ={handleClickFAQ}
             concentrationArray={concentrationArray}
             concentrationIndex={concentrationIndex}

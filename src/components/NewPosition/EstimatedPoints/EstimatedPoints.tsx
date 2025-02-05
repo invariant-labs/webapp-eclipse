@@ -5,12 +5,11 @@ import { useStyles } from './style'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
 import { colors, typography } from '@static/theme'
 import icons from '@static/icons'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumber, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 
-export interface IPotentialPoints {
+export interface IEstimatedPoints {
   handleClickFAQ: () => void
   concentrationArray: number[]
   concentrationIndex: number
@@ -19,7 +18,7 @@ export interface IPotentialPoints {
   isConnected: boolean
 }
 
-export const PotentialPoints: React.FC<IPotentialPoints> = ({
+export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   handleClickFAQ,
   concentrationArray,
   concentrationIndex,
@@ -88,7 +87,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
             <Grid container className={classes.leftHeaderItems}>
               <Grid display='flex' gap={1} alignItems='center'>
                 <Typography style={(typography.heading4, { textWrap: 'nowrap' })}>
-                  Potential Points
+                  Estimated Points
                 </Typography>
                 <Grid
                   display='flex'
@@ -98,7 +97,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                   height={24}
                   flexWrap='nowrap'>
                   <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '12px' }} />
-                  <Typography style={(typography.caption2, { textWrap: 'nowrap' })}>
+                  <Typography noWrap>
                     Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
                   </Typography>
                 </Grid>
@@ -121,13 +120,8 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
           </Grid>
           <Grid className={classes.column}>
             <Typography style={(typography.caption1, { position: 'relative' })}>
-              Your Potential Points: &nbsp;
-              <span className={classes.pinkText}>
-                {pointsPerDayFormat} &nbsp;
-                <TooltipGradient title='PPD - Points Per 24H' top={-10}>
-                  <span>PPD</span>
-                </TooltipGradient>
-              </span>
+              Your Estimated Points: &nbsp;
+              <span className={classes.pinkText}>{pointsPerDayFormat} Points/Day</span>
             </Typography>
             <Box className={classes.darkBackground}>
               <Box className={classes.gradientProgress} />
@@ -140,10 +134,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 style={(typography.caption1, { color: colors.invariant.textGrey })}>
                 <Typography>{minConc}x</Typography>
                 <Typography>
-                  <span>{estimatedPointsForScaleFormat.min}</span>{' '}
-                  <TooltipGradient title='PPD - Points Per 24H' top={-10}>
-                    <span>PPD</span>
-                  </TooltipGradient>
+                  <span>{estimatedPointsForScaleFormat.min} Points/Day</span>
                 </Typography>
               </Grid>
               <Grid
@@ -155,10 +146,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 }>
                 <Typography>{middleConc}x</Typography>
                 <Typography>
-                  <span>{estimatedPointsForScaleFormat.middle}</span>{' '}
-                  <TooltipGradient title='PPD - Points Per 24H' top={-10}>
-                    <span>PPD</span>
-                  </TooltipGradient>
+                  <span>{estimatedPointsForScaleFormat.middle} Points/Day</span>
                 </Typography>
               </Grid>
               <Grid
@@ -170,10 +158,7 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
                 }>
                 <Typography>{maxConc}x</Typography>
                 <Typography>
-                  <span>{estimatedPointsForScaleFormat.max}</span>{' '}
-                  <TooltipGradient title='PPD - Points Per 24H' top={-10}>
-                    <span>PPD</span>
-                  </TooltipGradient>
+                  <span>{estimatedPointsForScaleFormat.max} Points/Day</span>
                 </Typography>
               </Grid>
             </Grid>
@@ -184,4 +169,4 @@ export const PotentialPoints: React.FC<IPotentialPoints> = ({
   )
 }
 
-export default PotentialPoints
+export default EstimatedPoints

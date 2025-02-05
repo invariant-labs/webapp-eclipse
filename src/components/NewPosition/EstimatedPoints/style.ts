@@ -35,7 +35,11 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     backgroundColor: colors.invariant.light,
     borderRadius: 8,
     padding: '5px 8px',
-    gap: 4
+    gap: 4,
+
+    '& p': {
+      ...typography.caption2
+    }
   },
   pinkText: {
     color: colors.invariant.pink
