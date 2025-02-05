@@ -13,6 +13,7 @@ import {
 import { forwardRef, useState } from 'react'
 import useStyles from './styles'
 import { shortenAddress } from '@utils/uiUtils'
+import icons from '@static/icons'
 
 interface ISearchToken {
   icon: string
@@ -41,8 +42,13 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   setSelectedTokens,
   mappedTokens
 }) => {
-  const { classes } = useStyles()
   const [open, setOpen] = useState(false)
+  const fullWidth = open || selectedTokens.length >= 1
+  const { classes } = useStyles({ fullWidth })
+
+  const handleRemoveToken = (tokenToRemove: ISearchToken) => {
+    setSelectedTokens(selectedTokens.filter(token => token.address !== tokenToRemove.address))
+  }
 
   return (
     <Autocomplete
@@ -54,7 +60,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
       }}
       multiple
       PaperComponent={PaperComponentForward}
-      classes={{ paper: classes.paper }}
       id='token-selector'
       options={mappedTokens.filter(
         option => !selectedTokens.some(selected => selected.address === option.address)
@@ -81,37 +86,43 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
         )
       }
       renderTags={(value, getTagProps) =>
-        value.map((option, index) => (
-          <Chip
-            {...getTagProps({ index })}
-            avatar={<Avatar src={option.icon} />}
-            label={shortenAddress(option.symbol)}
-          />
-        ))
+        value.map((option, index) => {
+          const tagProps = getTagProps({ index })
+          return (
+            // Chip
+
+            <Box {...tagProps} margin={0} className={`${tagProps.className} ${classes.boxChip}`}>
+              <img src={option.icon} className={classes.avatarChip} alt={option.symbol} />
+              <Typography>{shortenAddress(option.symbol)}</Typography>
+              <img
+                src={icons.closeIcon}
+                className={classes.closeIcon}
+                alt='close'
+                onClick={e => {
+                  e.stopPropagation()
+                  handleRemoveToken(option)
+                }}
+              />
+            </Box>
+          )
+        })
       }
       renderOption={(props, option) => (
-        <Box component='li' {...props}>
-          <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
-          <Typography>{shortenAddress(option.symbol)}</Typography>
+        <Box>
+          <Box component='li' {...props}>
+            <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
+            <Typography>{shortenAddress(option.symbol)}</Typography>
+          </Box>
         </Box>
       )}
       renderInput={params => (
         <TextField
           {...params}
           variant='outlined'
-          placeholder={!selectedTokens.length ? 'Select token' : ''}
           className={classes.searchBar}
           InputProps={{
             ...params.InputProps,
-            readOnly: selectedTokens.length >= 2,
-            endAdornment: (
-              <>
-                {params.InputProps.endAdornment}
-                <InputAdornment position='end'>
-                  <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
-                </InputAdornment>
-              </>
-            )
+            readOnly: selectedTokens.length >= 2
           }}
           onClick={() => {
             if (selectedTokens.length < 2) setOpen(true)

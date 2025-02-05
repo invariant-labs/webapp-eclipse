@@ -2,22 +2,16 @@ import { Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((theme: Theme) => ({
+export const useStyles = makeStyles<{ fullWidth: boolean }>()((theme: Theme, { fullWidth }) => ({
   searchBar: {
-    maxWidth: 400,
-    width: 400,
-    height: 45,
-    padding: '7px 12px',
+    height: 32,
     borderRadius: 10,
+    marginBottom: 8,
     background: colors.invariant.black,
     border: '1px solid #202946',
-    color: colors.invariant.lightGrey,
-    ...typography.body2,
-    marginBottom: 8,
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
-      height: 50
-    }
+    color: colors.invariant.light,
+    transition: 'width 0.3s ease-in-out',
+    width: fullWidth ? 424 : 221
   },
   searchIcon: {
     width: 17
@@ -32,9 +26,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   paper: {
     background: colors.invariant.bodyBackground,
     boxShadow: 'none',
-    maxWidth: 500,
+    minWidth: 424,
+    width: 424,
     maxHeight: '100vh',
-    marginTop: 8,
+    marginTop: 20,
     '&::-webkit-scrollbar': {
       width: 6,
       background: colors.invariant.component
@@ -42,6 +37,34 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '&::-webkit-scrollbar-thumb': {
       background: colors.invariant.light,
       borderRadius: 6
+    }
+  },
+  avatarChip: {
+    width: 14,
+    height: 14,
+    borderRadius: '50%'
+  },
+  typographyChip: {
+    ...typography.body2,
+    color: colors.invariant.text
+  },
+  boxChip: {
+    display: 'flex',
+    padding: '6px 4px 6px 4px',
+    borderRadius: 8,
+    gap: 6,
+
+    height: 26,
+    maxHeight: 26,
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: colors.invariant.component
+  },
+  closeIcon: {
+    cursor: 'pointer',
+    transition: 'opacity 0.2s ease-in-out',
+    '&:hover': {
+      opacity: 0.7
     }
   }
 }))

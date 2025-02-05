@@ -93,8 +93,9 @@ export const WrappedPoolList: React.FC = () => {
     <div className={classes.container}>
       <Grid
         display='flex'
-        alignItems='end'
-        justifyContent='space-between'
+        direction='column'
+        alignItems='flex-start'
+        justifyContent='start'
         className={classes.rowContainer}>
         <Typography className={classes.subheader} mb={2}>
           All pools
