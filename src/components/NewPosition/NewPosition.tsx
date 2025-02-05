@@ -236,8 +236,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const isAutoSwapAvailable = useMemo(
     () =>
-      !!tokenAIndex &&
-      !!tokenBIndex &&
+      tokenAIndex !== null &&
+      tokenBIndex !== null &&
       autoSwapPools.some(
         item =>
           (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&

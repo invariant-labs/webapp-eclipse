@@ -512,15 +512,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
-      <DepoSitOptionsModal
-        initialMaxPriceImpact={initialMaxPriceImpact}
-        setMaxPriceImpact={setMaxPriceImpact}
-        initialMinUtilization={initialMinUtilization}
-        setMinUtilization={setMinUtilization}
-        handleClose={handleCloseDepositOptions}
-        anchorEl={anchorEl}
-        open={settings}
-      />
+      {isAutoSwapAvailable ? (
+        <DepoSitOptionsModal
+          initialMaxPriceImpact={initialMaxPriceImpact}
+          setMaxPriceImpact={setMaxPriceImpact}
+          initialMinUtilization={initialMinUtilization}
+          setMinUtilization={setMinUtilization}
+          handleClose={handleCloseDepositOptions}
+          anchorEl={anchorEl}
+          open={settings}
+        />
+      ) : null}
       <Typography className={classes.sectionTitle}>Tokens</Typography>
 
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
@@ -627,9 +629,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
-          <Button onClick={handleClickDepositOptions} className={classes.optionsIconBtn}>
-            <img src={icons.autoSwapOptions} alt='options' />
-          </Button>
+          {isAutoSwapAvailable ? (
+            <Button onClick={handleClickDepositOptions} className={classes.optionsIconBtn}>
+              <img src={icons.autoSwapOptions} alt='options' />
+            </Button>
+          ) : null}
         </Box>
       </Grid>
       <Grid container className={classes.sectionWrapper}>

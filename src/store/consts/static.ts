@@ -592,6 +592,14 @@ export const autoSwapPools = [
       new PublicKey('57bT2g9PWHM17jRAnXSzNngMBDWJvBFzJJ8pTSdPmESs'),
       new PublicKey('DKNAwoCqQy2boxz8M47B4F3A3q2x3JLGbUoMA32RiPzb')
     ]
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    address: new PublicKey('HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce'),
+    lookupTable: []
   }
 ]
 export const promotedTiers = [
