@@ -105,14 +105,15 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
             </li>
             <li className={classes.text}>
               <Typography className={classes.text}>
-                Start Small: Experiment by setting narrower ranges for your liquidity around the
-                current market price.
+                Monitor Price Movement: Keep an eye on price changes. If the price moves out of your
+                range, your position stops earning points and fees. To resume, you&#39;ll need to
+                rebalance (link do docs) within the new price range.
               </Typography>
             </li>
             <li className={classes.text}>
               <Typography className={classes.text}>
-                Start Small: Experiment by setting narrower ranges for your liquidity around the
-                current market price.
+                Practice Makes Perfect: The most skilled users open and close hundreds of positions
+                to refine their strategies.
               </Typography>
             </li>
           </ol>
@@ -162,7 +163,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
             <div style={{ width: '16px', height: '16px' }} />
             <Typography className={classes.subTitle}>How to make more Points?</Typography>
             <Grid className={classes.topCloseButton} onClick={handleClose}>
-              <img width={16} src={icons.closeIcon} alt='Close' />
+              {'\u2715'}
             </Grid>
           </Grid>
 

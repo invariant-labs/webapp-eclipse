@@ -60,7 +60,6 @@ const useStyles = makeStyles()(() => {
     title: {
       ...typography.heading2,
       textAlign: 'center',
-      marginInline: 32,
       minWidth: 320,
       [theme.breakpoints.down('md')]: {
         minWidth: 'auto',
@@ -69,8 +68,12 @@ const useStyles = makeStyles()(() => {
     },
     titleContainer: {
       display: 'flex',
-      justifyContent: 'center',
-      width: 'auto'
+      justifyContent: 'space-between',
+      width: 'auto',
+      paddingInline: 24,
+      [theme.breakpoints.down('sm')]: {
+        paddingInline: 0
+      }
     },
     subTitle: {
       ...typography.body2,
@@ -113,22 +116,16 @@ const useStyles = makeStyles()(() => {
       pointerEvents: 'auto',
       display: 'flex',
       justifyContent: 'flex-end',
-      '&:hover': {
-        cursor: 'pointer',
-        filter: 'brightness(1.5)'
-      }
-    },
+      fontSize: 20,
+      paddingInline: 8,
+      textAlign: 'center',
+      verticalAlign: 'middle',
+      transition: 'transform 0.2s',
 
-    bottomCloseButton: {
-      pointerEvents: 'auto',
-      textDecoration: 'none',
       '&:hover': {
         cursor: 'pointer',
-        textDecoration: 'underline'
-      },
-      marginTop: '10px',
-      borderBottomColor: colors.invariant.light,
-      color: colors.invariant.textGrey
+        transform: 'scale(1.1)'
+      }
     },
     arrowBtn: {
       background: 'none',
