@@ -3,6 +3,8 @@ import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
   bestTiers,
@@ -532,6 +534,25 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION', utilization)
   }
 
+  const initialMaxSlippageToleranceSwap =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP
+
+  const onMaxSlippageToleranceSwapChange = (slippageToleranceSwap: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP', slippageToleranceSwap)
+  }
+
+  const initialMaxSlippageToleranceCreatePosition =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION
+
+  const onMaxSlippageToleranceCreatePositionChange = (slippageToleranceCreatePosition: string) => {
+    localStorage.setItem(
+      'INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION',
+      slippageToleranceCreatePosition
+    )
+  }
+
   const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
       return new BN(0)
@@ -842,6 +863,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onMaxPriceImpactChange={onMaxPriceImpactChange}
       initialMinUtilization={initialMinUtilization}
       onMinUtilizationChange={onMinUtilizationChange}
+      onMaxSlippageToleranceSwapChange={onMaxSlippageToleranceSwapChange}
+      initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
+      onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
+      initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
     />
   )
 }

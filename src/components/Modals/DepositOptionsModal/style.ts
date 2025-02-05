@@ -90,6 +90,28 @@ export const useStyles = makeStyles()(() => {
       paddingBlock: 0,
       textAlign: 'right'
     },
+    setAsDefaultBtn: {
+      width: 118,
+      height: 44,
+      color: colors.invariant.newDark,
+      backgroundColor: `${colors.invariant.green} !important`,
+      textTransform: 'none',
+      textDecoration: 'none',
+      borderRadius: 10,
+      cursor: 'pointer',
+      ...typography.body1,
+      '&:hover': {
+        backgroundColor: `${colors.invariant.green} !important`,
+        filter: 'brightness(1.15)',
+        transition: ' .4s filter',
+        boxShadow:
+          '0px 3px 1px -2px rgba(43, 193, 144, 0.2),0px 1px 2px 0px rgba(45, 168, 128, 0.14),0px 0px 5px 7px rgba(59, 183, 142, 0.12)',
+        '@media (hover: none)': {
+          filter: 'none',
+          boxShadow: 'none'
+        }
+      }
+    },
     detailsInfoBtn: {
       minWidth: 49,
       backgroundColor: colors.invariant.green,

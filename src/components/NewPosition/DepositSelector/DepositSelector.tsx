@@ -111,12 +111,15 @@ export interface IDepositSelector {
   simulationParams: {
     lowerTickIndex: number
     upperTickIndex: number
-    positionSlippageTolerance: BN
   }
   initialMaxPriceImpact: string
   onMaxPriceImpactChange: (val: string) => void
   initialMinUtilization: string
   onMinUtilizationChange: (val: string) => void
+  onMaxSlippageToleranceSwapChange: (val: string) => void
+  initialMaxSlippageToleranceSwap: string
+  onMaxSlippageToleranceCreatePositionChange: (val: string) => void
+  initialMaxSlippageToleranceCreatePosition: string
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -167,11 +170,21 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onMaxPriceImpactChange,
   initialMinUtilization,
   onMinUtilizationChange,
-  isAutoSwapOnTheSamePool
+  isAutoSwapOnTheSamePool,
+  onMaxSlippageToleranceSwapChange,
+  initialMaxSlippageToleranceSwap,
+  onMaxSlippageToleranceCreatePositionChange,
+  initialMaxSlippageToleranceCreatePosition
 }) => {
   const { classes } = useStyles()
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
   const [utilization, setUtilization] = useState<string>(initialMinUtilization)
+  const [slippageToleranceSwap, setSlippageToleranceSwap] = useState<string>(
+    initialMaxSlippageToleranceSwap
+  )
+  const [slippageToleranceCreatePosition, setSlippageToleranceCreatePosition] = useState<string>(
+    initialMaxSlippageToleranceCreatePosition
+  )
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
@@ -375,6 +388,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     onMinUtilizationChange(utilization)
   }
 
+  const setMaxSlippageToleranceSwap = (slippageToleranceSwap: string): void => {
+    setSlippageToleranceSwap(slippageToleranceSwap)
+    onMaxSlippageToleranceSwapChange(slippageToleranceSwap)
+  }
+
+  const setMaxSlippageToleranceCreatePosition = (slippageToleranceCreatePosition: string): void => {
+    setSlippageToleranceCreatePosition(slippageToleranceCreatePosition)
+    onMaxSlippageToleranceCreatePositionChange(slippageToleranceCreatePosition)
+  }
+
   useEffect(() => {
     if (tokenAIndex !== null) {
       if (getScaleFromString(tokenAInputState.value) > tokens[tokenAIndex].decimals) {
@@ -478,8 +501,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         poolData,
         ticks,
         tickmap,
-        simulationParams.positionSlippageTolerance,
-        fromFee(new BN(Number(+priceImpact * 1000))),
+        fromFee(new BN(Number(+slippageToleranceCreatePosition * 1000))),
+        fromFee(new BN(Number(+slippageToleranceSwap * 1000))),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
         poolData.sqrtPrice,
@@ -492,8 +515,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         poolData,
         ticks,
         tickmap,
-        simulationParams.positionSlippageTolerance,
-        fromFee(new BN(Number(+priceImpact * 1000))),
+        fromFee(new BN(Number(+slippageToleranceCreatePosition * 1000))),
+        fromFee(new BN(Number(+slippageToleranceSwap * 1000))),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
         poolData.sqrtPrice,
@@ -517,6 +540,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         setMaxPriceImpact={setMaxPriceImpact}
         initialMinUtilization={initialMinUtilization}
         setMinUtilization={setMinUtilization}
+        initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
+        setMaxSlippageToleranceSwap={setMaxSlippageToleranceSwap}
+        initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
+        setMaxSlippageToleranceCreatePosition={setMaxSlippageToleranceCreatePosition}
         handleClose={handleCloseDepositOptions}
         anchorEl={anchorEl}
         open={settings}

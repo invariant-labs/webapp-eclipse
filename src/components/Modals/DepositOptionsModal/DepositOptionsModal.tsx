@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import useStyles from './style'
-import { Button, Grid, Popover, Typography } from '@mui/material'
+import { Box, Button, Grid, Popover, Typography } from '@mui/material'
 import DepositOption from './DepositOption'
 
 const priceImpactTiers = [
@@ -41,12 +41,52 @@ const utilizationTiers = [
   }
 ]
 
+const slippageToleranceSwapTiers = [
+  {
+    value: '0.3',
+    label: 'Low Slippage',
+    message: 'Minimizes slippage but may reduce execution probability.'
+  },
+  {
+    value: '0.5',
+    label: 'Default',
+    message: 'Balanced setting ensuring stable execution and fair pricing.'
+  },
+  {
+    value: '1',
+    label: 'High Tolerance',
+    message: 'Increases execution likelihood but allows for greater price movement.'
+  }
+]
+
+const slippageToleranceCreatePositionTiers = [
+  {
+    value: '0.3',
+    label: 'Low Slippage',
+    message: 'Minimizes slippage but may reduce execution probability.'
+  },
+  {
+    value: '0.5',
+    label: 'Default',
+    message: 'Balanced setting ensuring stable execution and fair pricing.'
+  },
+  {
+    value: '1',
+    label: 'High Tolerance',
+    message: 'Increases execution likelihood but allows for greater price movement.'
+  }
+]
+
 interface Props {
   initialMaxPriceImpact: string
-  setMaxPriceImpact: (maxPriceImpact: string) => void
+  setMaxPriceImpact: (priceImpact: string) => void
   initialMinUtilization: string
   setMinUtilization: (utilization: string) => void
   handleClose: () => void
+  initialMaxSlippageToleranceSwap: string
+  setMaxSlippageToleranceSwap: (slippageToleranceSwap: string) => void
+  initialMaxSlippageToleranceCreatePosition: string
+  setMaxSlippageToleranceCreatePosition: (slippageToleranceCreatePosition: string) => void
   open: boolean
   anchorEl: HTMLButtonElement | null
 }
@@ -54,6 +94,12 @@ interface Props {
 const DepoSitOptionsModal: React.FC<Props> = ({
   initialMaxPriceImpact,
   initialMinUtilization,
+  initialMaxSlippageToleranceSwap,
+  initialMaxSlippageToleranceCreatePosition,
+  setMaxPriceImpact,
+  setMinUtilization,
+  setMaxSlippageToleranceCreatePosition,
+  setMaxSlippageToleranceSwap,
   handleClose,
   open,
   anchorEl
@@ -61,21 +107,38 @@ const DepoSitOptionsModal: React.FC<Props> = ({
   const { classes } = useStyles()
 
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
-  const [priceImpactTierIndex, setPriceImpactTierIndex] = useState(
-    priceImpactTiers.findIndex(tier => Number(tier.value) === Number(initialMaxPriceImpact))
+  const priceImpactTierIndex = useMemo(
+    () => priceImpactTiers.findIndex(tier => Number(tier.value) === Number(priceImpact)),
+    [priceImpact]
   )
   const [utilization, setUtilization] = useState<string>(initialMinUtilization)
-  const [utilizationTierIndex, setUtilizationTierIndex] = useState(
-    utilizationTiers.findIndex(tier => Number(tier.value) === Number(initialMinUtilization))
+  const utilizationTierIndex = useMemo(
+    () => utilizationTiers.findIndex(tier => Number(tier.value) === Number(utilization)),
+    [utilization]
   )
 
-  const [swapSlippageTolerance, setSwapSlippageTolerance] = useState<string>('0.5')
-  const [swapSlippageToleranceTierIndex, setSwapSlippageToleranceTierIndex] = useState(1)
+  const [swapSlippageTolerance, setSwapSlippageTolerance] = useState<string>(
+    initialMaxSlippageToleranceSwap
+  )
+  const swapSlippageToleranceTierIndex = useMemo(
+    () =>
+      slippageToleranceSwapTiers.findIndex(
+        tier => Number(tier.value) === Number(swapSlippageTolerance)
+      ),
+    [swapSlippageTolerance]
+  )
 
-  const [createPositionSlippageTolerance, setCreatePositionSlippageTolerance] =
-    useState<string>('0.5')
-  const [createPositionSlippageToleranceTierIndex, setCreatePositionSlippageToleranceTierIndex] =
-    useState(1)
+  const [createPositionSlippageTolerance, setCreatePositionSlippageTolerance] = useState<string>(
+    initialMaxSlippageToleranceCreatePosition
+  )
+
+  const createPositionSlippageToleranceTierIndex = useMemo(
+    () =>
+      slippageToleranceCreatePositionTiers.findIndex(
+        tier => Number(tier.value) === Number(createPositionSlippageTolerance)
+      ),
+    [createPositionSlippageTolerance]
+  )
 
   return (
     <>
@@ -94,13 +157,78 @@ const DepoSitOptionsModal: React.FC<Props> = ({
         }}>
         <Grid container className={classes.detailsWrapper}>
           <Grid container justifyContent='space-between' style={{ marginBottom: 6 }}>
-            <Typography component='h2'>Deposit Settings</Typography>
-            <Button className={classes.selectTokenClose} onClick={handleClose} aria-label='Close' />
-            <Typography className={classes.info}>
-              These settings enable liquidity addition with any token ratio while ensuring safe
-              swaps. Adjusting these parameters is recommended for advanced users familiar with
-              their purpose
-            </Typography>
+            <Box
+              width={'100%'}
+              display={'flex'}
+              flexDirection={'row'}
+              justifyContent={'center'}
+              alignItems={'center'}
+              gap={'12px'}>
+              <Box
+                width={'100%'}
+                display={'flex'}
+                flexDirection={'column'}
+                justifyContent={'flex-start'}
+                alignItems={'flex-start'}>
+                <Typography component='h2'>Deposit Settings</Typography>
+                <Typography className={classes.info}>
+                  These settings enable liquidity addition with any token ratio while ensuring safe
+                  swaps. Adjusting these parameters is recommended for advanced users familiar with
+                  their purpose
+                </Typography>
+              </Box>
+              <Button
+                className={classes.setAsDefaultBtn}
+                disableRipple
+                disableElevation
+                disableFocusRipple
+                onClick={() => {
+                  setMaxPriceImpact(
+                    Number(priceImpactTiers.find(item => item.label === 'Default')!.value).toFixed(
+                      2
+                    )
+                  )
+                  setMinUtilization(
+                    Number(utilizationTiers.find(item => item.label === 'Default')!.value).toFixed(
+                      2
+                    )
+                  )
+                  setMaxSlippageToleranceCreatePosition(
+                    Number(
+                      slippageToleranceCreatePositionTiers.find(item => item.label === 'Default')!
+                        .value
+                    ).toFixed(2)
+                  )
+                  setMaxSlippageToleranceSwap(
+                    Number(
+                      slippageToleranceSwapTiers.find(item => item.label === 'Default')!.value
+                    ).toFixed(2)
+                  )
+                  setCreatePositionSlippageTolerance(
+                    Number(
+                      slippageToleranceCreatePositionTiers.find(item => item.label === 'Default')!
+                        .value
+                    ).toFixed(2)
+                  )
+                  setSwapSlippageTolerance(
+                    Number(
+                      slippageToleranceSwapTiers.find(item => item.label === 'Default')!.value
+                    ).toFixed(2)
+                  )
+                  setUtilization(
+                    Number(utilizationTiers.find(item => item.label === 'Default')!.value).toFixed(
+                      2
+                    )
+                  )
+                  setPriceImpact(
+                    Number(priceImpactTiers.find(item => item.label === 'Default')!.value).toFixed(
+                      2
+                    )
+                  )
+                }}>
+                Set as Default
+              </Button>
+            </Box>
           </Grid>
 
           <Grid container item spacing={3}>
@@ -112,7 +240,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 label='Maximum Price Impact'
                 options={priceImpactTiers}
                 setValue={setPriceImpact}
-                setValueIndex={setPriceImpactTierIndex}
+                saveValue={setMaxPriceImpact}
                 value={priceImpact}
                 valueIndex={priceImpactTierIndex}
               />
@@ -123,9 +251,9 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                   'The higher the value, the greater the potential impact of your transaction on the price. A high price impact can result in a worse exchange rate, so it is recommended to choose default settings.'
                 }
                 label='Slippage Tolerance Swap'
-                options={priceImpactTiers}
+                options={slippageToleranceSwapTiers}
                 setValue={setSwapSlippageTolerance}
-                setValueIndex={setSwapSlippageToleranceTierIndex}
+                saveValue={setMaxSlippageToleranceSwap}
                 value={swapSlippageTolerance}
                 valueIndex={swapSlippageToleranceTierIndex}
               />
@@ -138,7 +266,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 label='Minimum Utilization'
                 options={utilizationTiers}
                 setValue={setUtilization}
-                setValueIndex={setUtilizationTierIndex}
+                saveValue={setMinUtilization}
                 value={utilization}
                 valueIndex={utilizationTierIndex}
               />
@@ -149,9 +277,9 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                   'The higher the value, the more liquidity must remain in the pool after auto swap. A high minimum utilization helps prevent excessive price impact and ensures stability for liquidity providers. The default setting balances execution and pool stability.'
                 }
                 label='Slippage Tolerance Create Position'
-                options={utilizationTiers}
+                options={slippageToleranceCreatePositionTiers}
                 setValue={setCreatePositionSlippageTolerance}
-                setValueIndex={setCreatePositionSlippageToleranceTierIndex}
+                saveValue={setMaxSlippageToleranceCreatePosition}
                 value={createPositionSlippageTolerance}
                 valueIndex={createPositionSlippageToleranceTierIndex}
               />

@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React, { useRef, useState } from 'react'
 import useStyles from './style'
 import { Box, Button, Divider, Grid, Input, Tooltip, Typography } from '@mui/material'
 import classNames from 'classnames'
@@ -8,7 +8,7 @@ interface Props {
   value: string
   valueIndex: number
   setValue: (value: string) => void
-  setValueIndex: (value: number) => void
+  saveValue: (value: string) => void
   options: { value: string; label: string; message: string }[]
   label: string
   description: string
@@ -17,15 +17,15 @@ interface Props {
 const DepositOption: React.FC<Props> = ({
   value,
   setValue,
+  saveValue,
   valueIndex,
-  setValueIndex,
   description,
   label,
   options
 }) => {
   const { classes } = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
-
+  const [temp, setTemp] = useState<string>(valueIndex === -1 ? value : '')
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
   > = e => {
@@ -48,7 +48,7 @@ const DepositOption: React.FC<Props> = ({
 
       const diff = startValue.length - parsed.length
 
-      setValue(parsed)
+      setTemp(parsed)
 
       if (caretPosition !== null && parsed !== startValue) {
         setTimeout(() => {
@@ -59,36 +59,9 @@ const DepositOption: React.FC<Props> = ({
         }, 0)
       }
     } else if (!regex.test(value)) {
-      setValue('0.00')
+      setTemp('0.00')
     }
   }
-
-  const checkValue: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = e => {
-    const value = e.target.value
-
-    if (Number(value) > 50) {
-      setValue('50.00')
-    } else if (Number(value) < 0 || isNaN(Number(value))) {
-      setValue('00.00')
-    } else {
-      const onlyTwoDigits = '^\\d*\\.?\\d{0,2}$'
-      const regex = new RegExp(onlyTwoDigits, 'g')
-      if (regex.test(value)) {
-        setValue(value)
-      } else {
-        setValue(Number(value).toFixed(2))
-      }
-    }
-  }
-
-  useEffect(() => {
-    const initialUtilizationTier = options.findIndex(tier => Number(tier.value) === Number(value))
-    setValueIndex(initialUtilizationTier)
-
-    if (initialUtilizationTier !== -1) {
-      setValue('')
-    }
-  }, [])
 
   return (
     <>
@@ -104,7 +77,8 @@ const DepositOption: React.FC<Props> = ({
             key={tier.value}
             onClick={e => {
               e.preventDefault()
-              setValueIndex(index)
+              setValue(Number(options[index].value).toFixed(2))
+              saveValue(Number(options[index].value).toFixed(2))
             }}>
             <Box
               sx={{
@@ -172,10 +146,9 @@ const DepositOption: React.FC<Props> = ({
             valueIndex === -1 && classes.customSlippageActive
           )}
           type={'text'}
-          value={value}
+          value={temp}
           onChange={e => {
             allowOnlyDigitsAndTrimUnnecessaryZeros(e)
-            checkValue(e)
           }}
           ref={inputRef}
           startAdornment='Custom'
@@ -185,8 +158,8 @@ const DepositOption: React.FC<Props> = ({
               <button
                 className={classes.detailsInfoBtn}
                 onClick={() => {
-                  setValue(Number(value).toFixed(2))
-                  setValueIndex(-1)
+                  setValue(Number(temp).toFixed(2))
+                  saveValue(Number(temp).toFixed(2))
                 }}>
                 Save
               </button>
