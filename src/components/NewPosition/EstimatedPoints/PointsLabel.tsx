@@ -42,7 +42,7 @@ export const PointsLabel: React.FC<IPointsLabel> = ({
       <div>
         <Box className={classes.wrapper} onClick={() => setShowModal(true)}>
           <img src={icons.airdropRainbow} alt='' width={12} />
-          <Typography className={classes.text}>Estimated Points:</Typography>
+          <Typography className={classes.text}>Points:</Typography>
           <Typography className={classes.pointsAmount}>
             {pointsPerDayFormat.toString() === '0' ? '0.00' : pointsPerDayFormat}
           </Typography>

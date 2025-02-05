@@ -9,7 +9,6 @@ const useStyles = makeStyles()(theme => {
     },
     headerContainer: {
       columnGap: 24
-      // height: 46
     },
     back: {
       height: 24,
@@ -96,7 +95,6 @@ const useStyles = makeStyles()(theme => {
     },
     options: {
       width: 'calc(50% - 12px)',
-      marginBottom: 18,
       height: 28,
       display: 'flex',
       flexWrap: 'nowrap',
@@ -120,7 +118,8 @@ const useStyles = makeStyles()(theme => {
       alignItems: 'center',
       flexGrow: 1,
       [theme.breakpoints.down('md')]: {
-        maxWidth: 'none'
+        maxWidth: 'none',
+        marginBottom: 8
       }
     },
     optionsWrapper: {

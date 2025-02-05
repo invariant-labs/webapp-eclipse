@@ -649,61 +649,48 @@ export const NewPosition: React.FC<INewPosition> = ({
         justifyContent='space-between'
         alignItems='center'
         className={classes.headerContainer}
-        mb={isMd ? 2 : 0}>
+        mb={1}>
         <Box className={classes.titleContainer}>
-          <Grid display='flex' justifyContent='center' alignItems='center'>
-            <Typography className={classes.title}>Add new position</Typography>
-            {isMd && (
-              <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
-                <div>
-                  <PointsLabel
-                    handleClickFAQ={handleClickFAQ}
-                    concentrationArray={concentrationArray}
-                    concentrationIndex={concentrationIndex}
-                    estimatedPointsPerDay={estimatedPointsPerDay}
-                    estimatedScalePoints={estimatedScalePoints}
-                    isConnected={walletStatus === Status.Init}
-                    showWarning={
-                      tokenADeposit === '' ||
-                      tokenBDeposit === '' ||
-                      parseInt(tokenADeposit) === 0 ||
-                      parseInt(tokenBDeposit) === 0
-                    }
-                  />
-                </div>
-              </Fade>
-            )}
-          </Grid>
-          <Grid display='flex' justifyContent='center' alignItems='center' gap={1}>
-            {poolIndex !== null && (
-              <TooltipHover text='Settings'>
-                <Button
-                  onClick={handleClickSettings}
-                  className={classes.settingsIconBtn}
-                  disableRipple>
-                  <img src={settingIcon} className={classes.settingsIcon} alt='settings' />
-                </Button>
-              </TooltipHover>
-            )}
-            {poolIndex !== null && tokenAIndex !== tokenBIndex && (
-              <TooltipHover text='Refresh'>
-                <Box>
-                  <Refresher
-                    currentIndex={refresherTime}
-                    maxIndex={REFRESHER_INTERVAL}
-                    onClick={() => {
-                      onRefresh()
-                      setRefresherTime(REFRESHER_INTERVAL)
-                    }}
-                  />
-                </Box>
-              </TooltipHover>
-            )}
-          </Grid>
+          <Typography className={classes.title}>Add new position</Typography>
+
+          {isMd && (
+            <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+              <div>
+                <PointsLabel
+                  handleClickFAQ={handleClickFAQ}
+                  concentrationArray={concentrationArray}
+                  concentrationIndex={concentrationIndex}
+                  estimatedPointsPerDay={estimatedPointsPerDay}
+                  estimatedScalePoints={estimatedScalePoints}
+                  isConnected={walletStatus === Status.Init}
+                  showWarning={
+                    tokenADeposit === '' ||
+                    tokenBDeposit === '' ||
+                    parseInt(tokenADeposit) === 0 ||
+                    parseInt(tokenBDeposit) === 0
+                  }
+                />
+              </div>
+            </Fade>
+          )}
+          {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
+            <TooltipHover text='Refresh'>
+              <Box mr={2}>
+                <Refresher
+                  currentIndex={refresherTime}
+                  maxIndex={REFRESHER_INTERVAL}
+                  onClick={() => {
+                    onRefresh()
+                    setRefresherTime(REFRESHER_INTERVAL)
+                  }}
+                />
+              </Box>
+            </TooltipHover>
+          )}
         </Box>
-        {tokenAIndex !== null && tokenBIndex !== null && !isMd && (
+        {tokenAIndex !== null && tokenBIndex !== null && (
           <Grid container item alignItems='center' className={classes.options}>
-            {poolIndex !== null && poolAddress && !isMd ? (
+            {poolIndex !== null && poolAddress ? (
               <>
                 <MarketIdLabel
                   displayLength={4}
@@ -759,6 +746,20 @@ export const NewPosition: React.FC<INewPosition> = ({
                   />
                 )}
               </Hidden>
+              {poolIndex !== null && tokenAIndex !== tokenBIndex && isMd && (
+                <TooltipHover text='Refresh'>
+                  <Box>
+                    <Refresher
+                      currentIndex={refresherTime}
+                      maxIndex={REFRESHER_INTERVAL}
+                      onClick={() => {
+                        onRefresh()
+                        setRefresherTime(REFRESHER_INTERVAL)
+                      }}
+                    />
+                  </Box>
+                </TooltipHover>
+              )}
               {poolIndex !== null && (
                 <TooltipHover text='Settings'>
                   <Button
@@ -946,14 +947,14 @@ export const NewPosition: React.FC<INewPosition> = ({
         />
         <Hidden mdUp>
           <Grid display='flex' justifyContent='space-between' alignItems='flex-start'>
-            <Box mt={0.5}>
+            {/* <Box mt={0.5}>
               <MarketIdLabel
                 displayLength={3}
                 marketId={poolAddress}
                 copyPoolAddressHandler={copyPoolAddressHandler}
                 short
               />
-            </Box>
+            </Box> */}
             <Grid container justifyContent='end' mb={2} width='200px'>
               {tokenAIndex !== null && tokenBIndex !== null && (
                 <ConcentrationTypeSwitch
