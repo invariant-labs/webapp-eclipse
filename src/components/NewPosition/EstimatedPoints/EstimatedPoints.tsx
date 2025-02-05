@@ -27,7 +27,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   isConnected,
   estimatedScalePoints
 }) => {
-  const isSm = useMediaQuery(theme.breakpoints.down('md'))
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const { minConc, middleConc, maxConc } = useMemo(() => {
     return {
