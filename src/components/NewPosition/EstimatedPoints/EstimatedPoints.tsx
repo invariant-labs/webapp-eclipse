@@ -124,7 +124,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
           <Grid className={classes.column}>
             <Typography className={classes.estimatedPoints}>
               <span>Your Estimated Points: &nbsp;</span>
-              <span className={classes.pinkText}>{pointsPerDayFormat} Points/Day</span>
+              <span className={classes.pinkText}>{pointsPerDayFormat} Points/24h</span>
             </Typography>
             <Box className={classes.darkBackground}>
               <Box className={classes.gradientProgress} />
@@ -136,17 +136,8 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                 gap={1}
                 style={(typography.caption1, { color: colors.invariant.textGrey })}>
                 <Typography>{minConc}x</Typography>
-                <Typography>
-                  <span>
-                    {estimatedPointsForScaleFormat.min}{' '}
-                    {isSm ? (
-                      <TooltipGradient title='PPD - Points Per 24H' top={-10} underline>
-                        <span>PPD</span>
-                      </TooltipGradient>
-                    ) : (
-                      'Points/Day'
-                    )}
-                  </span>
+                <Typography display='flex' flexDirection={isSm ? 'column' : 'row'}>
+                  {estimatedPointsForScaleFormat.min} {isSm ? <span>Pts/24h</span> : 'Points/24h'}
                 </Typography>
               </Grid>
               <Grid
@@ -157,17 +148,9 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                   (typography.caption1, { color: colors.invariant.textGrey, textAlign: 'center' })
                 }>
                 <Typography>{middleConc}x</Typography>
-                <Typography>
-                  <span>
-                    {estimatedPointsForScaleFormat.middle}{' '}
-                    {isSm ? (
-                      <TooltipGradient title='PPD - Points Per 24H' top={-10} underline>
-                        <span>PPD</span>
-                      </TooltipGradient>
-                    ) : (
-                      'Points/Day'
-                    )}
-                  </span>
+                <Typography display='flex' flexDirection={isSm ? 'column' : 'row'}>
+                  {estimatedPointsForScaleFormat.middle}{' '}
+                  {isSm ? <span>Pts/24h</span> : 'Points/24h'}
                 </Typography>
               </Grid>
               <Grid
@@ -178,17 +161,8 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                   (typography.caption1, { color: colors.invariant.textGrey, textAlign: 'right' })
                 }>
                 <Typography>{maxConc}x</Typography>
-                <Typography>
-                  <span>
-                    {estimatedPointsForScaleFormat.max}{' '}
-                    {isSm ? (
-                      <TooltipGradient title='PPD - Points Per 24H' top={-10} underline>
-                        <span>PPD</span>
-                      </TooltipGradient>
-                    ) : (
-                      'Points/Day'
-                    )}
-                  </span>
+                <Typography display='flex' flexDirection={isSm ? 'column' : 'row'}>
+                  {estimatedPointsForScaleFormat.max} {isSm ? <span>Pts/24h</span> : 'Points/24h'}
                 </Typography>
               </Grid>
             </Grid>

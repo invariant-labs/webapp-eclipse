@@ -66,7 +66,7 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
   },
   description: {
     ...typography.body2,
-    marginTop: 8,
+    marginTop: 12,
     color: colors.invariant.textGrey,
     letterSpacing: '-0.48px'
   },
