@@ -9,6 +9,7 @@ export interface IProps {
   displayLength: number
   marketId: string
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
+  short?: boolean
   style?: React.CSSProperties
 }
 
@@ -16,7 +17,8 @@ export const MarketIdLabel: React.FC<IProps> = ({
   displayLength,
   marketId,
   copyPoolAddressHandler,
-  style
+  style,
+  short
 }) => {
   const { classes } = useLabelStyles()
 
@@ -33,7 +35,7 @@ export const MarketIdLabel: React.FC<IProps> = ({
 
   return (
     <Typography className={classes.marketId} style={style}>
-      Market ID: {marketId.slice(0, displayLength)}...
+      {short ? 'ID' : 'Market ID'} : {marketId.slice(0, displayLength)}...
       {marketId.slice(marketId.length - displayLength, marketId.length)}{' '}
       <TooltipHover text='Copy'>
         <FileCopyOutlinedIcon className={classes.clipboardIcon} onClick={copyToClipboard} />

@@ -1,7 +1,7 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@components/Refresher/Refresher'
-import { Box, Button, Fade, Grid, Hidden, Typography } from '@mui/material'
+import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import {
@@ -55,6 +55,8 @@ import {
 import icons from '@static/icons'
 import FAQModal from '@components/Modals/FAQModal/FAQModal'
 import EstimatedPoints from './EstimatedPoints/EstimatedPoints'
+import { theme } from '@static/theme'
+import PointsLabel from './EstimatedPoints/PointsLabel'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -198,6 +200,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
+
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const [positionOpeningMethod, setPositionOpeningMethod] = useState<PositionOpeningMethod>(
     initialOpeningPositionMethod
@@ -644,49 +648,84 @@ export const NewPosition: React.FC<INewPosition> = ({
         container
         justifyContent='space-between'
         alignItems='center'
-        className={classes.headerContainer}>
+        className={classes.headerContainer}
+        mb={isMd ? 2 : 0}>
         <Box className={classes.titleContainer}>
-          <Typography className={classes.title}>Add new position</Typography>
-          {poolIndex !== null && tokenAIndex !== tokenBIndex && (
-            <TooltipHover text='Refresh'>
-              <Box>
-                <Refresher
-                  currentIndex={refresherTime}
-                  maxIndex={REFRESHER_INTERVAL}
-                  onClick={() => {
-                    onRefresh()
-                    setRefresherTime(REFRESHER_INTERVAL)
-                  }}
-                />
-              </Box>
-            </TooltipHover>
-          )}
-        </Box>
-        {tokenAIndex !== null && tokenBIndex !== null && (
-          <Grid container item alignItems='center' className={classes.options}>
-            {poolIndex !== null ? (
-              <MarketIdLabel
-                displayLength={4}
-                marketId={poolAddress}
-                copyPoolAddressHandler={copyPoolAddressHandler}
-              />
-            ) : null}
-            {poolAddress && (
-              <TooltipHover text='Open pool in explorer'>
-                <Grid width={'12px'} height={'24px'}>
-                  <a
-                    href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    onClick={event => {
-                      event.stopPropagation()
-                    }}
-                    className={classes.link}>
-                    <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
-                  </a>
-                </Grid>
+          <Grid display='flex' justifyContent='center' alignItems='center'>
+            <Typography className={classes.title}>Add new position</Typography>
+            {isMd && (
+              <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+                <div>
+                  <PointsLabel
+                    handleClickFAQ={handleClickFAQ}
+                    concentrationArray={concentrationArray}
+                    concentrationIndex={concentrationIndex}
+                    estimatedPointsPerDay={estimatedPointsPerDay}
+                    estimatedScalePoints={estimatedScalePoints}
+                    isConnected={walletStatus === Status.Init}
+                    showWarning={
+                      tokenADeposit === '' ||
+                      tokenBDeposit === '' ||
+                      parseInt(tokenADeposit) === 0 ||
+                      parseInt(tokenBDeposit) === 0
+                    }
+                  />
+                </div>
+              </Fade>
+            )}
+          </Grid>
+          <Grid display='flex' justifyContent='center' alignItems='center' gap={1}>
+            {poolIndex !== null && (
+              <TooltipHover text='Settings'>
+                <Button
+                  onClick={handleClickSettings}
+                  className={classes.settingsIconBtn}
+                  disableRipple>
+                  <img src={settingIcon} className={classes.settingsIcon} alt='settings' />
+                </Button>
               </TooltipHover>
             )}
+            {poolIndex !== null && tokenAIndex !== tokenBIndex && (
+              <TooltipHover text='Refresh'>
+                <Box>
+                  <Refresher
+                    currentIndex={refresherTime}
+                    maxIndex={REFRESHER_INTERVAL}
+                    onClick={() => {
+                      onRefresh()
+                      setRefresherTime(REFRESHER_INTERVAL)
+                    }}
+                  />
+                </Box>
+              </TooltipHover>
+            )}
+          </Grid>
+        </Box>
+        {tokenAIndex !== null && tokenBIndex !== null && !isMd && (
+          <Grid container item alignItems='center' className={classes.options}>
+            {poolIndex !== null && poolAddress && !isMd ? (
+              <>
+                <MarketIdLabel
+                  displayLength={4}
+                  marketId={poolAddress}
+                  copyPoolAddressHandler={copyPoolAddressHandler}
+                />
+                <TooltipHover text='Open pool in explorer'>
+                  <Grid width={'12px'} height={'24px'}>
+                    <a
+                      href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      onClick={event => {
+                        event.stopPropagation()
+                      }}
+                      className={classes.link}>
+                      <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
+                    </a>
+                  </Grid>
+                </TooltipHover>
+              </>
+            ) : null}
             <Grid className={classes.optionsWrapper}>
               <Hidden mdDown>
                 {tokenAIndex !== null && tokenBIndex !== null && (
@@ -735,15 +774,17 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Slippage
-        open={settings}
-        setSlippage={setSlippage}
-        handleClose={handleCloseSettings}
-        anchorEl={anchorEl}
-        initialSlippage={initialSlippage}
-        infoText='Slippage tolerance is a pricing difference between the price at the confirmation time and the actual price of the transaction users are willing to accept when initializing position.'
-        headerText='Position Settings'
-      />
+      {
+        <Slippage
+          open={settings}
+          setSlippage={setSlippage}
+          handleClose={handleCloseSettings}
+          anchorEl={anchorEl}
+          initialSlippage={initialSlippage}
+          infoText='Slippage tolerance is a pricing difference between the price at the confirmation time and the actual price of the transaction users are willing to accept when initializing position.'
+          headerText='Position Settings'
+        />
+      }
 
       <Grid container className={classes.row} alignItems='stretch'>
         <DepositSelector
@@ -904,22 +945,32 @@ export const NewPosition: React.FC<INewPosition> = ({
           promotedPoolTierIndex={promotedPoolTierIndex}
         />
         <Hidden mdUp>
-          <Grid container justifyContent='end' mb={2}>
-            {tokenAIndex !== null && tokenBIndex !== null && (
-              <ConcentrationTypeSwitch
-                onSwitch={val => {
-                  if (val) {
-                    setPositionOpeningMethod('concentration')
-                    onPositionOpeningMethodChange('concentration')
-                  } else {
-                    setPositionOpeningMethod('range')
-                    onPositionOpeningMethodChange('range')
-                  }
-                }}
-                className={classes.switch}
-                currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
+          <Grid display='flex' justifyContent='space-between' alignItems='flex-start'>
+            <Box mt={0.5}>
+              <MarketIdLabel
+                displayLength={3}
+                marketId={poolAddress}
+                copyPoolAddressHandler={copyPoolAddressHandler}
+                short
               />
-            )}
+            </Box>
+            <Grid container justifyContent='end' mb={2} width='200px'>
+              {tokenAIndex !== null && tokenBIndex !== null && (
+                <ConcentrationTypeSwitch
+                  onSwitch={val => {
+                    if (val) {
+                      setPositionOpeningMethod('concentration')
+                      onPositionOpeningMethodChange('concentration')
+                    } else {
+                      setPositionOpeningMethod('range')
+                      onPositionOpeningMethodChange('range')
+                    }
+                  }}
+                  className={classes.switch}
+                  currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
+                />
+              )}
+            </Grid>
           </Grid>
         </Hidden>
         {isCurrentPoolExisting ||

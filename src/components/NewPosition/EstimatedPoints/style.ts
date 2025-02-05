@@ -111,3 +111,45 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     color: colors.invariant.textGrey
   }
 }))
+
+export const useStylesPointsLabel = makeStyles()(() => ({
+  rootBackground: {
+    zIndex: 10,
+    width: '100vw',
+    height: '100vh',
+    position: 'absolute',
+    top: 0,
+    left: 0
+  },
+
+  wrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    gap: 4,
+    whiteSpace: 'nowrap',
+    backgroundColor: colors.invariant.light,
+    padding: '2px 8px',
+    borderRadius: 8,
+    marginLeft: 16
+  },
+  text: {
+    ...typography.caption2,
+    color: colors.invariant.text
+  },
+  pointsAmount: {
+    ...typography.caption1,
+    color: colors.invariant.pink,
+    minWidth: 50,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  modal: {
+    position: 'absolute',
+    zIndex: 11,
+    width: 'calc(100vw - 32px)',
+    left: '50%',
+    transform: 'translateX(-50%)'
+  }
+}))

@@ -1,8 +1,8 @@
 import { useState } from 'react'
-import { Tooltip, TooltipProps, useMediaQuery } from '@mui/material'
+import { Tooltip, TooltipProps } from '@mui/material'
 import useStyles from './style'
 import { TooltipTransition } from './TooltipTransition/TooltipTransition'
-import { theme } from '@static/theme'
+import useIsMobile from '@store/hooks/isMobile'
 
 interface Props extends TooltipProps {
   top?: number
@@ -14,16 +14,16 @@ export const TooltipGradient = ({ top, children, underline, ...props }: Props) =
   const { classes } = useStyles({ top })
   const [open, setOpen] = useState(false)
 
-  const isSm = useMediaQuery(theme.breakpoints.down('md'))
+  const isMobile = useIsMobile()
 
   const handleClick = () => {
-    if (isSm) {
+    if (isMobile) {
       setOpen(prev => !prev)
     }
   }
 
   const handleClose = () => {
-    if (isSm) {
+    if (isMobile) {
       setOpen(false)
     }
   }

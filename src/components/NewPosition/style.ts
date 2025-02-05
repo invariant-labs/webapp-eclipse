@@ -8,8 +8,8 @@ const useStyles = makeStyles()(theme => {
       maxWidth: '100%'
     },
     headerContainer: {
-      columnGap: 24,
-      height: 46
+      columnGap: 24
+      // height: 46
     },
     back: {
       height: 24,
@@ -113,7 +113,7 @@ const useStyles = makeStyles()(theme => {
     },
     titleContainer: {
       maxWidth: 464,
-      marginBottom: 18,
+      marginBottom: 0,
       display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
