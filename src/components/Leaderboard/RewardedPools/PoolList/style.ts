@@ -4,18 +4,14 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    maxWidth: 1072,
-    padding: '0 24px',
-    borderRadius: '24px'
+    maxWidth: 1072
   },
-  background: {
-    backgroundColor: `${colors.invariant.component} !important`
-  },
+  background: {},
   transparent: {
     backgroundColor: `transparent`
   },
   pagination: {
-    padding: '20px 0 10px 0',
+    padding: '20px 2 10px 0',
     maxWidth: '100%'
   },
   loadingOverlay: {
@@ -30,5 +26,12 @@ export const useStyles = makeStyles()(() => ({
       pointerEvents: 'none',
       borderRadius: '24px'
     }
+  },
+  tableFooter: {
+    width: '100%',
+    height: 24,
+    background: colors.invariant.component,
+    borderBottomLeftRadius: '24px',
+    borderBottomRightRadius: '24px'
   }
 }))
