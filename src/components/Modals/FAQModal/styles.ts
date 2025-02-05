@@ -10,7 +10,7 @@ const useStyles = makeStyles()(() => {
       right: 0,
       bottom: 0,
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       pointerEvents: 'none',
       zIndex: 1300
@@ -22,11 +22,13 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      overflow: 'auto'
+      overflow: 'auto',
+      top: 0
     },
     paper: {
       position: 'relative',
       margin: 'auto',
+      marginTop: 100,
       maxWidth: '90%',
       background: 'transparent',
       boxShadow: 'none',
