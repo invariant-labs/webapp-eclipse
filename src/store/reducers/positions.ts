@@ -83,7 +83,6 @@ export interface SwapAndCreatePosition
   tokenFrom: PublicKey
   tokenTo: PublicKey
   estimatedPriceAfterSwap: BN
-  slippage: number
   swapAmount: BN
 }
 
