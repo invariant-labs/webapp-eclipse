@@ -10,6 +10,18 @@ export const useStyles = makeStyles()(() => {
         backgroundColor: 'transparent'
       }
     },
+    tooltip: {
+      width: 159,
+      paddingTop: 4,
+      paddingBottom: 4,
+      paddingLeft: 8,
+      paddingRight: 8,
+      color: '#EFD063',
+      ...typography.caption4,
+      lineHeight: '24px',
+      background: colors.invariant.component,
+      borderRadius: 8
+    },
     detailsWrapper: {
       width: 332,
       display: 'flex',
@@ -83,11 +95,13 @@ export const useStyles = makeStyles()(() => {
       backgroundColor: colors.invariant.green,
       borderRadius: 9,
       border: 'none',
-      padding: 0,
+      padding: 4,
       width: 49,
       height: 28,
       cursor: 'pointer',
       marginLeft: 8,
+      color: colors.invariant.black,
+      letterSpacing: '-0.03%',
       ...typography.body2,
       '&:hover': {
         filter: 'brightness(1.15)',
@@ -106,12 +120,12 @@ export const useStyles = makeStyles()(() => {
       marginTop: 10
     },
     slippagePercentageButton: {
-      height: 28,
+      height: 30,
       borderRadius: 8,
       backgroundColor: colors.invariant.newDark,
       color: colors.invariant.textGrey,
       flex: 1,
-
+      letterSpacing: '-0.03%',
       '&:hover': {
         backgroundColor: colors.invariant.light,
         color: colors.invariant.text,
@@ -122,9 +136,9 @@ export const useStyles = makeStyles()(() => {
       }
     },
     slippagePercentageButtonActive: {
-      backgroundColor: colors.invariant.light,
-      color: colors.invariant.text,
-      fontWeight: 'bold'
+      backgroundColor: `${colors.invariant.light} !important`,
+      color: `${colors.invariant.text} !important`,
+      fontWeight: 'bold !important'
     },
     inputAdornedEnd: {
       marginRight: 2
@@ -143,6 +157,12 @@ export const useStyles = makeStyles()(() => {
       borderBottom: `1px solid ${colors.invariant.light}`,
       marginTop: 10,
       marginBottom: 10
+    },
+    grayscaleIcon: {
+      filter: 'grayscale(100%)',
+      transition: 'filter 0.7s ease-in-out',
+      minWidth: '8px',
+      minHeight: '8px'
     }
   }
 })

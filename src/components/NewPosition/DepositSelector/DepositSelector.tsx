@@ -41,7 +41,7 @@ import {
   fromFee,
   SimulateSwapAndCreatePositionSimulation
 } from '@invariant-labs/sdk-eclipse/lib/utils'
-import DepoSitOptionsModal from '@components/Modals/DepoSitOptionsModal/DepoSitOptionsModal'
+import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
 
 export interface InputState {
   value: string
@@ -522,7 +522,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         open={settings}
       />
       <Typography className={classes.sectionTitle}>Tokens</Typography>
-
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
         <Grid container className={classes.selects} direction='row' justifyContent='space-between'>
           <Grid className={classes.selectWrapper}>
@@ -627,7 +626,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               </ToggleButton>
             </ToggleButtonGroup>
           </Box>
-          <Button onClick={handleClickDepositOptions} className={classes.optionsIconBtn}>
+          <Button
+            onClick={handleClickDepositOptions}
+            className={classes.optionsIconBtn}
+            disabled={!isAutoSwapAvailable}>
             <img src={icons.autoSwapOptions} alt='options' />
           </Button>
         </Box>

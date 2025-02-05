@@ -1,7 +1,8 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
-import { Box, Button, Divider, Grid, Input, Popover, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Input, Popover, Tooltip, Typography } from '@mui/material'
 import classNames from 'classnames'
+import icons from '@static/icons'
 
 interface Props {
   initialMaxPriceImpact: string
@@ -113,31 +114,67 @@ const DepoSitOptionsModal: React.FC<Props> = ({
     }
   }
 
-  const priceImpactTiers = ['0.3', '0.5', '1']
-  const initialPriceImpactTierIndex = priceImpactTiers.findIndex(tier => tier === priceImpact)
+  const priceImpactTiers = [
+    {
+      value: '0.1',
+      label: 'Low Slippage',
+      message: 'Minimizes slippage but may reduce execution probability.'
+    },
+    {
+      value: '0.3',
+      label: 'Default',
+      message: 'Balanced setting ensuring stable execution and fair pricing.'
+    },
+    {
+      value: '1',
+      label: 'High Tolerance',
+      message: 'Increases execution likelihood but allows for greater price movement.'
+    }
+  ]
 
-  const [priceImpactTierIndex, setPriceImpactTierIndex] = useState(initialPriceImpactTierIndex)
+  const [priceImpactTierIndex, setPriceImpactTierIndex] = useState(
+    priceImpactTiers.findIndex(tier => Number(tier.value) === Number(initialMaxPriceImpact))
+  )
 
   const setTieredPriceImpact = (tierIndex: number) => {
     setPriceImpactTierIndex(tierIndex)
-    setMaxPriceImpact(String(Number(priceImpactTiers[tierIndex]).toFixed(2)))
+    setMaxPriceImpact(Number(priceImpactTiers[tierIndex].value).toFixed(2))
     setPriceImpact('')
   }
 
-  const utilizationTiers = ['90', '95', '100']
-  const initialUtilizationIndex = priceImpactTiers.findIndex(tier => tier === priceImpact)
+  const utilizationTiers = [
+    {
+      value: '75',
+      label: 'Volatile Market',
+      message: 'Allows swaps even if the pool retains only 75% of its initial liquidity.'
+    },
+    {
+      value: '95',
+      label: 'Default',
+      message:
+        'Prioritizes minimal price impact but may lead to failed swaps if liquidity is insufficient.'
+    },
+    {
+      value: '99',
+      label: 'Maximize Capital',
+      message:
+        'Ensures the pool retains at least 95% liquidity after the swap, balancing execution probability and price stability.'
+    }
+  ]
 
-  const [utilizationTierIndex, setUtilizationTierIndex] = useState(initialUtilizationIndex)
+  const [utilizationTierIndex, setUtilizationTierIndex] = useState(
+    utilizationTiers.findIndex(tier => Number(tier.value) === Number(initialMinUtilization))
+  )
 
   const setTieredUtilization = (tierIndex: number) => {
     setUtilizationTierIndex(tierIndex)
-    setMinUtilization(String(Number(utilizationTiers[tierIndex]).toFixed(2)))
+    setMinUtilization(Number(utilizationTiers[tierIndex].value).toFixed(2))
     setUtilization('')
   }
 
   useEffect(() => {
     const initialUtilizationTier = utilizationTiers.findIndex(
-      tier => String(Number(tier).toFixed(2)) === utilization
+      tier => Number(tier.value) === Number(initialMinUtilization)
     )
     setUtilizationTierIndex(initialUtilizationTier)
 
@@ -146,7 +183,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
     }
 
     const initialPriceImpactTier = priceImpactTiers.findIndex(
-      tier => String(Number(tier).toFixed(2)) === priceImpact
+      tier => Number(tier.value) === Number(initialMaxPriceImpact)
     )
     setPriceImpactTierIndex(initialPriceImpactTier)
 
@@ -174,20 +211,80 @@ const DepoSitOptionsModal: React.FC<Props> = ({
           <Grid container justifyContent='space-between' style={{ marginBottom: 6 }}>
             <Typography component='h2'>Deposit Settings</Typography>
             <Button className={classes.selectTokenClose} onClick={handleClose} aria-label='Close' />
+            <Typography className={classes.info}>
+              These settings enable liquidity addition with any token ratio while ensuring safe
+              swaps. Adjusting these parameters is recommended for advanced users familiar with
+              their purpose
+            </Typography>
           </Grid>
+          <Divider className={classes.divider} />
           <Typography className={classes.label}>Maximum Price Impact</Typography>
           <Grid container gap='9px'>
             {priceImpactTiers.map((tier, index) => (
               <Button
-                key={tier}
-                className={classNames(classes.slippagePercentageButton, {
-                  [classes.slippagePercentageButtonActive]: index === priceImpactTierIndex
-                })}
+                className={classNames(
+                  classes.slippagePercentageButton,
+                  priceImpactTierIndex === index && classes.slippagePercentageButtonActive
+                )}
+                key={tier.value}
                 onClick={e => {
                   e.preventDefault()
                   setTieredPriceImpact(index)
                 }}>
-                {tier}%
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    height: '100%',
+                    gap: '2px'
+                  }}>
+                  <Box
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: 14,
+                      marginTop: '-8px'
+                    }}>
+                    {tier.value}%
+                  </Box>
+                  <Tooltip
+                    title={
+                      <Box
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          flexDirection: 'row',
+                          justifyContent: 'center'
+                        }}>
+                        <Box width={'12px'}>
+                          <img src={icons.goldenInfoCircle} alt='' width={'12px'} height={'12px'} />
+                        </Box>
+                        <span style={{ width: '141px' }}>{tier.message}</span>
+                      </Box>
+                    }
+                    classes={{ tooltip: classes.tooltip }}>
+                    <Typography
+                      style={{
+                        fontWeight: 400,
+                        fontSize: 10,
+                        letterSpacing: '-0.03%',
+                        textTransform: 'none',
+                        marginLeft: '-4px'
+                      }}>
+                      {tier.label}
+                      {tier.message !== '' ? (
+                        <img
+                          src={icons.infoCircle}
+                          alt=''
+                          width='8px'
+                          style={{ marginTop: '0px', marginLeft: '2px' }}
+                          className={classes.grayscaleIcon}
+                        />
+                      ) : null}
+                    </Typography>
+                  </Tooltip>
+                </Box>
               </Button>
             ))}
           </Grid>
@@ -213,8 +310,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                   <button
                     className={classes.detailsInfoBtn}
                     onClick={() => {
-                      setPriceImpact(Number(priceImpact).toFixed(2))
-                      setMaxPriceImpact(String(Number(priceImpact).toFixed(2)))
+                      setMaxPriceImpact(Number(priceImpact).toFixed(2))
                       setPriceImpactTierIndex(-1)
                     }}>
                     Save
@@ -228,23 +324,78 @@ const DepoSitOptionsModal: React.FC<Props> = ({
             />
           </Box>
           <Typography className={classes.info}>
-            lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum
-            lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum
+            The higher the value, the greater the potential impact of your transaction on the price.
+            A high price impact can result in a worse exchange rate, so it is recommended to choose
+            default settings.
           </Typography>
           <Divider className={classes.divider} />
           <Typography className={classes.label}>Minimum Utilization</Typography>
           <Grid container gap='9px'>
             {utilizationTiers.map((tier, index) => (
               <Button
-                key={tier}
-                className={classNames(classes.slippagePercentageButton, {
-                  [classes.slippagePercentageButtonActive]: index === utilizationTierIndex
-                })}
+                className={classNames(
+                  classes.slippagePercentageButton,
+                  utilizationTierIndex === index && classes.slippagePercentageButtonActive
+                )}
+                key={tier.value}
                 onClick={e => {
                   e.preventDefault()
                   setTieredUtilization(index)
                 }}>
-                {tier}%
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'center',
+                    height: '100%',
+                    gap: '2px'
+                  }}>
+                  <Box
+                    sx={{
+                      fontWeight: 700,
+                      fontSize: 14,
+                      marginTop: '-8px'
+                    }}>
+                    {tier.value}%
+                  </Box>
+                  <Tooltip
+                    title={
+                      <Box
+                        style={{
+                          display: 'flex',
+                          alignItems: 'center',
+                          gap: '6px',
+                          flexDirection: 'row',
+                          justifyContent: 'center'
+                        }}>
+                        <Box width={'12px'}>
+                          <img src={icons.goldenInfoCircle} alt='' width={'12px'} height={'12px'} />
+                        </Box>
+                        <span style={{ width: '141px' }}>{tier.message}</span>
+                      </Box>
+                    }
+                    classes={{ tooltip: classes.tooltip }}>
+                    <Typography
+                      style={{
+                        fontWeight: 400,
+                        fontSize: 10,
+                        letterSpacing: '-0.03%',
+                        textTransform: 'none',
+                        marginLeft: '-4px'
+                      }}>
+                      {tier.label}
+                      {tier.message !== '' ? (
+                        <img
+                          src={icons.infoCircle}
+                          alt=''
+                          width='8px'
+                          style={{ marginTop: '0px', marginLeft: '2px' }}
+                          className={classes.grayscaleIcon}
+                        />
+                      ) : null}
+                    </Typography>
+                  </Tooltip>
+                </Box>
               </Button>
             ))}
           </Grid>
@@ -270,8 +421,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                   <button
                     className={classes.detailsInfoBtn}
                     onClick={() => {
-                      setUtilization(Number(utilization).toFixed(2))
-                      setMinUtilization(String(Number(utilization).toFixed(2)))
+                      setMinUtilization(Number(utilization).toFixed(2))
                       setUtilizationTierIndex(-1)
                     }}>
                     Save
@@ -285,8 +435,9 @@ const DepoSitOptionsModal: React.FC<Props> = ({
             />
           </Box>
           <Typography className={classes.info}>
-            lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum
-            lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum lorem ipsum
+            The higher the value, the more liquidity must remain in the pool after auto swap. A high
+            minimum utilization helps prevent excessive price impact and ensures stability for
+            liquidity providers. The default setting balances execution and pool stability.
           </Typography>
         </Grid>
       </Popover>
