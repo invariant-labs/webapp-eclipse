@@ -448,24 +448,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -666,8 +666,8 @@ export const NewPosition: React.FC<INewPosition> = ({
                   showWarning={
                     tokenADeposit === '' ||
                     tokenBDeposit === '' ||
-                    parseInt(tokenADeposit) === 0 ||
-                    parseInt(tokenBDeposit) === 0
+                    +tokenADeposit === 0 ||
+                    +tokenBDeposit === 0
                   }
                 />
               </div>
@@ -1077,8 +1077,8 @@ export const NewPosition: React.FC<INewPosition> = ({
             showWarning={
               tokenADeposit === '' ||
               tokenBDeposit === '' ||
-              parseInt(tokenADeposit) === 0 ||
-              parseInt(tokenBDeposit) === 0
+              +tokenADeposit === 0 ||
+              +tokenBDeposit === 0
             }
           />
         </div>
