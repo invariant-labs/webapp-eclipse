@@ -558,7 +558,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     priceImpact,
     slippageToleranceCreatePosition,
     slippageToleranceSwap,
-    utilization
+    utilization,
+    tokenAInputState,
+    tokenBInputState
   ])
 
   return (
