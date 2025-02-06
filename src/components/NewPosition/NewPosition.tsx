@@ -146,6 +146,10 @@ export interface INewPosition {
   onMaxPriceImpactChange: (val: string) => void
   initialMinUtilization: string
   onMinUtilizationChange: (val: string) => void
+  onMaxSlippageToleranceSwapChange: (val: string) => void
+  initialMaxSlippageToleranceSwap: string
+  onMaxSlippageToleranceCreatePositionChange: (val: string) => void
+  initialMaxSlippageToleranceCreatePosition: string
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -211,7 +215,11 @@ export const NewPosition: React.FC<INewPosition> = ({
   onMaxPriceImpactChange,
   initialMinUtilization,
   onMinUtilizationChange,
-  swapAndAddLiquidityHandler
+  swapAndAddLiquidityHandler,
+  onMaxSlippageToleranceSwapChange,
+  initialMaxSlippageToleranceSwap,
+  onMaxSlippageToleranceCreatePositionChange,
+  initialMaxSlippageToleranceCreatePosition
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -600,11 +608,10 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const simulationParams = useMemo(() => {
     return {
-      positionSlippageTolerance: fromFee(new BN(Number(+slippTolerance * 1000))),
       lowerTickIndex: Math.min(leftRange, rightRange),
       upperTickIndex: Math.max(leftRange, rightRange)
     }
-  }, [leftRange, rightRange, slippTolerance])
+  }, [leftRange, rightRange])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -911,6 +918,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           onMaxPriceImpactChange={onMaxPriceImpactChange}
           initialMinUtilization={initialMinUtilization}
           onMinUtilizationChange={onMinUtilizationChange}
+          onMaxSlippageToleranceSwapChange={onMaxSlippageToleranceSwapChange}
+          initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
+          onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
+          initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

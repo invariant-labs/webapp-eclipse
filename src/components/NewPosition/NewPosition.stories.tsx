@@ -55,6 +55,10 @@ const tokens: SwapToken[] = [
 
 export const Primary: Story = {
   args: {
+    onMaxSlippageToleranceSwapChange: fn(),
+    initialMaxSlippageToleranceSwap: '',
+    onMaxSlippageToleranceCreatePositionChange: fn(),
+    initialMaxSlippageToleranceCreatePosition: '',
     swapAndAddLiquidityHandler: fn(),
     initialMaxPriceImpact: '',
     onMaxPriceImpactChange: fn(),
@@ -191,6 +195,10 @@ export const Primary: Story = {
         onMaxPriceImpactChange={() => {}}
         initialMinUtilization={''}
         onMinUtilizationChange={() => {}}
+        onMaxSlippageToleranceSwapChange={() => {}}
+        initialMaxSlippageToleranceSwap={''}
+        onMaxSlippageToleranceCreatePositionChange={() => {}}
+        initialMaxSlippageToleranceCreatePosition={''}
       />
     )
   }
