@@ -817,6 +817,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       autoSwapPool ? allPools.find(pool => pool.address.equals(autoSwapPool.address)) : undefined,
     [allPools, autoSwapPool]
   )
+  const autoSwapPoolTickmap = useMemo(
+    () =>
+      !!autoSwapPoolData && tickmap[autoSwapPoolData.tickmap.toString()]
+        ? tickmap[autoSwapPoolData.tickmap.toString()]
+        : null,
+    [autoSwapPoolData, tickmap]
+  )
   useEffect(() => {
     if (!tokenAIndex || !tokenBIndex || !autoSwapPool) return
     dispatch(
@@ -935,7 +942,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           tokenBIndex === null ||
           !autoSwapPoolData ||
           poolIndex === null ||
-          !allPools[poolIndex]
+          !allPools[poolIndex] ||
+          !autoSwapPoolTickmap
         ) {
           return
         }
@@ -978,7 +986,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               y: tokens[tokenBIndex].assetAddress,
               fee: ALL_FEE_TIERS_DATA[feeIndex].tier.fee,
               tickSpacing: ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing
-            }
+            },
+            positionPoolIndex: poolIndex,
+            swapPoolTickmap: autoSwapPoolTickmap,
+            swapPool: autoSwapPoolData
           })
         )
       }}
@@ -1081,11 +1092,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isPromotedPool={isPromotedPool}
       actualPoolPrice={poolIndex !== null ? allPools[poolIndex].sqrtPrice : null}
       autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
-      autoSwapTickmap={
-        !!autoSwapPoolData && tickmap[autoSwapPoolData.tickmap.toString()]
-          ? tickmap[autoSwapPoolData.tickmap.toString()]
-          : null
-      }
+      autoSwapTickmap={autoSwapPoolTickmap}
       autoSwapTicks={
         !!autoSwapPoolData && poolTicksForSimulation[autoSwapPoolData.address.toString()]
           ? poolTicksForSimulation[autoSwapPoolData.address.toString()]
