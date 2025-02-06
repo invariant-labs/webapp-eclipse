@@ -123,7 +123,8 @@ export const useStylesPointsLabel = makeStyles()(() => ({
   },
   text: {
     ...typography.caption2,
-    color: colors.invariant.text
+    color: colors.invariant.text,
+    fontWeight: 500
   },
   pointsAmount: {
     ...typography.caption1,
@@ -131,7 +132,8 @@ export const useStylesPointsLabel = makeStyles()(() => ({
     minWidth: 50,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    fontWeight: 500
   },
   modal: {
     position: 'absolute',
