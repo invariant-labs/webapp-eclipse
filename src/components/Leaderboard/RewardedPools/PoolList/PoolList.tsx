@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import PoolListItem from './PoolListItem/PoolListItem'
 import { useStyles } from './style'
-import { Grid, useMediaQuery } from '@mui/material'
+import { Box, Grid, useMediaQuery } from '@mui/material'
 import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import classNames from 'classnames'
@@ -60,7 +60,7 @@ const PoolList: React.FC<PoolListInterface> = ({
 
   const pages = Math.ceil(data.length / 10)
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
+  console.log(isMd)
   return (
     <div
       className={classNames({ [classes.loadingOverlay]: isLoading })}
@@ -104,6 +104,7 @@ const PoolList: React.FC<PoolListInterface> = ({
                   TVL={element.TVL}
                 />
               ))}
+              <Box className={classes.tableFooter} />
             </>
           ) : (
             <>
@@ -135,6 +136,7 @@ const PoolList: React.FC<PoolListInterface> = ({
                   showAPY={showAPY}
                 />
               ))}
+              <Box className={classes.tableFooter} />
             </>
           )}
         </>

@@ -691,9 +691,12 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
 export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   USDT_MAIN.address.toString(),
   USDC_MAIN.address.toString(),
-  SOL_MAIN.address.toString(),
   WETH_MAIN.address.toString(),
-  TETH_MAIN.address.toString()
+  TETH_MAIN.address.toString(),
+  SOL_MAIN.address.toString(),
+  KYSOL_MAIN.address.toString(),
+  EZSOL_MAIN.address.toString(),
+  TIA_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
