@@ -68,22 +68,28 @@ export interface InitPositionData
 }
 
 export interface SwapAndCreatePosition
-  extends Omit<CreatePosition, 'owner' | 'userTokenX' | 'userTokenY' | 'pair'> {
+  extends Omit<
+    CreatePosition,
+    'pair' | 'liquidityDelta' | 'knownPrice' | 'userTokenX' | 'userTokenY' | 'slippage'
+  > {
   tokenX: PublicKey
   tokenY: PublicKey
-  fee: BN
-  tickSpacing: number
-  initPool?: boolean
-  poolIndex: number | null
-  initTick?: number
+  swapFee: BN
+  swapPoolTickspacing: number
   xAmount: number
   yAmount: number
   maxLiquidtiyPercentage: BN
   minUtilizationPercentage: BN
-  tokenFrom: PublicKey
-  tokenTo: PublicKey
   estimatedPriceAfterSwap: BN
   swapAmount: BN
+  ticks: number[]
+  swapSlippage: BN
+  positionPoolPrice: BN
+  positionSlippage: BN
+  positionPair: { x: PublicKey; y: PublicKey; fee: BN; tickSpacing: number }
+  isSamePool: Boolean
+  positionPoolLowerTick: number
+  positionPoolUpperTick: number
 }
 
 export interface GetCurrentTicksData {

@@ -1,7 +1,7 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@components/Refresher/Refresher'
-import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
+import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import {
@@ -35,7 +35,12 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+import {
+  BestTier,
+  PositionOpeningMethod,
+  PotentialLiquidity,
+  TokenPriceData
+} from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -49,6 +54,10 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
+import FAQModal from '@components/Modals/FAQModal/FAQModal'
+import EstimatedPoints from './EstimatedPoints/EstimatedPoints'
+import { theme } from '@static/theme'
+import PointsLabel from './EstimatedPoints/PointsLabel'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 
@@ -75,13 +84,13 @@ export interface INewPosition {
     rightTickIndex: number,
     xAmount: number,
     yAmount: number,
-    slippage: BN,
+    swapSlippage: BN,
+    positionSlippage: BN,
     maxLiquidtiyPercentage: BN,
     minUtilizationPercentage: BN,
-    tokenFrom: PublicKey,
-    tokenTo: PublicKey,
     estimatedPriceAfterSwap: BN,
-    swapAmount: BN
+    swapAmount: BN,
+    ticks: number[]
   ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
@@ -93,7 +102,8 @@ export interface INewPosition {
     amount: BN,
     leftRangeTickIndex: number,
     rightRangeTickIndex: number,
-    tokenAddress: PublicKey
+    tokenAddress: PublicKey,
+    calcPotentialLiquidity?: PotentialLiquidity
   ) => BN
   feeTiers: Array<{
     feeValue: number
@@ -135,13 +145,17 @@ export interface INewPosition {
   network: NetworkType
   isLoadingTokens: boolean
   ethBalance: BN
+  actualPoolPrice: BN
   walletStatus: Status
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   canNavigate: boolean
-  poolData: PoolWithAddress | null
-  tickmap: Tickmap | null
-  ticks: Tick[] | null
+  estimatedPointsPerDay: BN
+  estimatedPointsForScale: () => { min: BN; middle: BN; max: BN }
+  isPromotedPool: boolean
+  autoSwapPoolData: PoolWithAddress | null
+  autoSwapTickmap: Tickmap | null
+  autoSwapTicks: Tick[] | null
   initialMaxPriceImpact: string
   onMaxPriceImpactChange: (val: string) => void
   initialMinUtilization: string
@@ -208,9 +222,12 @@ export const NewPosition: React.FC<INewPosition> = ({
   onConnectWallet,
   onDisconnectWallet,
   canNavigate,
-  poolData,
-  tickmap,
-  ticks,
+  estimatedPointsPerDay,
+  estimatedPointsForScale,
+  isPromotedPool,
+  autoSwapPoolData,
+  autoSwapTickmap,
+  autoSwapTicks,
   initialMaxPriceImpact,
   onMaxPriceImpactChange,
   initialMinUtilization,
@@ -219,10 +236,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   onMaxSlippageToleranceSwapChange,
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
-  initialMaxSlippageToleranceCreatePosition
+  initialMaxSlippageToleranceCreatePosition,
+  actualPoolPrice
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
+
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const [positionOpeningMethod, setPositionOpeningMethod] = useState<PositionOpeningMethod>(
     initialOpeningPositionMethod
@@ -238,6 +258,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
 
   const [settings, setSettings] = React.useState<boolean>(false)
+  const [isFAQModalOpen, setIsFAQModalOpen] = React.useState<boolean>(false)
+
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
 
@@ -316,6 +338,65 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return trimLeadingZeros(printBN(result, tokens[printIndex].decimals))
   }
+
+  const getTokenAmountForPotentialPoints = (amount: BN, byFirst: boolean) => {
+    const printIndex = byFirst ? tokenBIndex : tokenAIndex
+    const calcIndex = byFirst ? tokenAIndex : tokenBIndex
+    if (printIndex === null || calcIndex === null) {
+      return '0.0'
+    }
+
+    const { leftRange: leftRangeMin, rightRange: rightRangeMin } = calculateConcentrationRange(
+      tickSpacing,
+      concentrationArray[0],
+      2,
+      midPrice.index,
+      isXtoY
+    )
+
+    const { leftRange: leftRangeMiddle, rightRange: rightRangeMiddle } =
+      calculateConcentrationRange(
+        tickSpacing,
+        +concentrationArray[Math.floor(concentrationArray.length / 2) - 1].toFixed(0),
+        2,
+        midPrice.index,
+        isXtoY
+      )
+
+    const { leftRange: leftRangeMax, rightRange: rightRangeMax } = calculateConcentrationRange(
+      tickSpacing,
+      +concentrationArray[concentrationArray.length - 1].toFixed(0),
+      2,
+      midPrice.index,
+      isXtoY
+    )
+
+    calcAmount(
+      amount,
+      leftRangeMin,
+      rightRangeMin,
+      tokens[calcIndex].assetAddress,
+      PotentialLiquidity.Min
+    )
+    calcAmount(
+      amount,
+      leftRangeMiddle,
+      rightRangeMiddle,
+      tokens[calcIndex].assetAddress,
+      PotentialLiquidity.Middle
+    )
+    calcAmount(
+      amount,
+      leftRangeMax,
+      rightRangeMax,
+      tokens[calcIndex].assetAddress,
+      PotentialLiquidity.Max
+    )
+  }
+
+  const estimatedScalePoints = useMemo(() => {
+    return estimatedPointsForScale()
+  }, [poolAddress, tokenADeposit, tokenBDeposit])
 
   const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
     const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
@@ -504,6 +585,16 @@ export const NewPosition: React.FC<INewPosition> = ({
     setSettings(false)
   }
 
+  const handleClickFAQ = () => {
+    blurContent()
+    setIsFAQModalOpen(true)
+  }
+
+  const handleCloseFAQ = () => {
+    unblurContent()
+    setIsFAQModalOpen(false)
+  }
+
   const setSlippage = (slippage: string): void => {
     setSlippTolerance(slippage)
     onSlippageChange(slippage)
@@ -626,12 +717,34 @@ export const NewPosition: React.FC<INewPosition> = ({
         container
         justifyContent='space-between'
         alignItems='center'
-        className={classes.headerContainer}>
+        className={classes.headerContainer}
+        mb={1}>
         <Box className={classes.titleContainer}>
           <Typography className={classes.title}>Add new position</Typography>
-          {poolIndex !== null && tokenAIndex !== tokenBIndex && (
+
+          {isMd && (
+            <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+              <div>
+                <PointsLabel
+                  handleClickFAQ={handleClickFAQ}
+                  concentrationArray={concentrationArray}
+                  concentrationIndex={concentrationIndex}
+                  estimatedPointsPerDay={estimatedPointsPerDay}
+                  estimatedScalePoints={estimatedScalePoints}
+                  isConnected={walletStatus === Status.Init}
+                  showWarning={
+                    tokenADeposit === '' ||
+                    tokenBDeposit === '' ||
+                    +tokenADeposit === 0 ||
+                    +tokenBDeposit === 0
+                  }
+                />
+              </div>
+            </Fade>
+          )}
+          {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
             <TooltipHover text='Refresh'>
-              <Box>
+              <Box mr={2}>
                 <Refresher
                   currentIndex={refresherTime}
                   maxIndex={REFRESHER_INTERVAL}
@@ -646,29 +759,29 @@ export const NewPosition: React.FC<INewPosition> = ({
         </Box>
         {tokenAIndex !== null && tokenBIndex !== null && (
           <Grid container item alignItems='center' className={classes.options}>
-            {poolIndex !== null ? (
-              <MarketIdLabel
-                displayLength={4}
-                marketId={poolAddress}
-                copyPoolAddressHandler={copyPoolAddressHandler}
-              />
+            {poolIndex !== null && poolAddress ? (
+              <>
+                <MarketIdLabel
+                  displayLength={4}
+                  marketId={poolAddress}
+                  copyPoolAddressHandler={copyPoolAddressHandler}
+                />
+                <TooltipHover text='Open pool in explorer'>
+                  <Grid width={'12px'} height={'24px'}>
+                    <a
+                      href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      onClick={event => {
+                        event.stopPropagation()
+                      }}
+                      className={classes.link}>
+                      <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
+                    </a>
+                  </Grid>
+                </TooltipHover>
+              </>
             ) : null}
-            {poolAddress && (
-              <TooltipHover text='Open pool in explorer'>
-                <Grid width={'12px'} height={'24px'}>
-                  <a
-                    href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    onClick={event => {
-                      event.stopPropagation()
-                    }}
-                    className={classes.link}>
-                    <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
-                  </a>
-                </Grid>
-              </TooltipHover>
-            )}
             <Grid className={classes.optionsWrapper}>
               <Hidden mdDown>
                 {tokenAIndex !== null && tokenBIndex !== null && (
@@ -702,6 +815,20 @@ export const NewPosition: React.FC<INewPosition> = ({
                   />
                 )}
               </Hidden>
+              {poolIndex !== null && tokenAIndex !== tokenBIndex && isMd && (
+                <TooltipHover text='Refresh'>
+                  <Box>
+                    <Refresher
+                      currentIndex={refresherTime}
+                      maxIndex={REFRESHER_INTERVAL}
+                      onClick={() => {
+                        onRefresh()
+                        setRefresherTime(REFRESHER_INTERVAL)
+                      }}
+                    />
+                  </Box>
+                </TooltipHover>
+              )}
               {poolIndex !== null && (
                 <TooltipHover text='Settings'>
                   <Button
@@ -717,15 +844,17 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Slippage
-        open={settings}
-        setSlippage={setSlippage}
-        handleClose={handleCloseSettings}
-        anchorEl={anchorEl}
-        initialSlippage={initialSlippage}
-        infoText='Slippage tolerance is a pricing difference between the price at the confirmation time and the actual price of the transaction users are willing to accept when initializing position.'
-        headerText='Position Settings'
-      />
+      {
+        <Slippage
+          open={settings}
+          setSlippage={setSlippage}
+          handleClose={handleCloseSettings}
+          anchorEl={anchorEl}
+          initialSlippage={initialSlippage}
+          infoText='Slippage tolerance is a pricing difference between the price at the confirmation time and the actual price of the transaction users are willing to accept when initializing position.'
+          headerText='Position Settings'
+        />
+      }
 
       <Grid container className={classes.row} alignItems='stretch'>
         <DepositSelector
@@ -769,11 +898,11 @@ export const NewPosition: React.FC<INewPosition> = ({
           onSwapAndAddLiquidity={(
             maxLiquidityPercentage,
             minUtilizationPercentage,
-            tokenFrom,
-            tokenTo,
             estimatedPriceAfterSwap,
             swapAmount,
-            slippage
+            swapSlippage,
+            positionSlippage,
+            ticks
           ) => {
             if (tokenAIndex !== null && tokenBIndex !== null) {
               const tokenADecimals = tokens[tokenAIndex].decimals
@@ -788,13 +917,13 @@ export const NewPosition: React.FC<INewPosition> = ({
                 isXtoY
                   ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
                   : convertBalanceToBN(tokenADeposit, tokenADecimals),
-                slippage,
+                swapSlippage,
+                positionSlippage,
                 maxLiquidityPercentage,
                 minUtilizationPercentage,
-                tokenFrom,
-                tokenTo,
                 estimatedPriceAfterSwap,
-                swapAmount
+                swapAmount,
+                ticks
               )
             }
           }}
@@ -820,6 +949,10 @@ export const NewPosition: React.FC<INewPosition> = ({
                   true
                 )
               )
+              getTokenAmountForPotentialPoints(
+                convertBalanceToBN(value, tokens[tokenAIndex].decimals),
+                true
+              )
             },
             blocked:
               tokenAIndex !== null &&
@@ -830,6 +963,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             blockerInfo: 'Range only for single-asset deposit.',
             decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
           }}
+          actualPoolPrice={actualPoolPrice}
           tokenBInputState={{
             value:
               tokenAIndex !== null &&
@@ -850,6 +984,10 @@ export const NewPosition: React.FC<INewPosition> = ({
                   rightRange,
                   false
                 )
+              )
+              getTokenAmountForPotentialPoints(
+                convertBalanceToBN(value, tokens[tokenBIndex].decimals),
+                false
               )
             },
             blocked:
@@ -910,9 +1048,9 @@ export const NewPosition: React.FC<INewPosition> = ({
           promotedPoolTierIndex={promotedPoolTierIndex}
           isAutoSwapAvailable={isAutoSwapAvailable}
           isAutoSwapOnTheSamePool={isAutoSwapOnTheSamePool}
-          poolData={poolData}
-          tickmap={tickmap}
-          ticks={ticks}
+          autoSwapPoolData={autoSwapPoolData}
+          autoSwapTickmap={autoSwapTickmap}
+          autoSwapTicks={autoSwapTicks}
           simulationParams={simulationParams}
           initialMaxPriceImpact={initialMaxPriceImpact}
           onMaxPriceImpactChange={onMaxPriceImpactChange}
@@ -924,22 +1062,32 @@ export const NewPosition: React.FC<INewPosition> = ({
           initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
         />
         <Hidden mdUp>
-          <Grid container justifyContent='end' mb={2}>
-            {tokenAIndex !== null && tokenBIndex !== null && (
-              <ConcentrationTypeSwitch
-                onSwitch={val => {
-                  if (val) {
-                    setPositionOpeningMethod('concentration')
-                    onPositionOpeningMethodChange('concentration')
-                  } else {
-                    setPositionOpeningMethod('range')
-                    onPositionOpeningMethodChange('range')
-                  }
-                }}
-                className={classes.switch}
-                currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
+          <Grid display='flex' justifyContent='space-between' alignItems='flex-start'>
+            {/* <Box mt={0.5}>
+              <MarketIdLabel
+                displayLength={3}
+                marketId={poolAddress}
+                copyPoolAddressHandler={copyPoolAddressHandler}
+                short
               />
-            )}
+            </Box> */}
+            <Grid container justifyContent='end' mb={2} width='200px'>
+              {tokenAIndex !== null && tokenBIndex !== null && (
+                <ConcentrationTypeSwitch
+                  onSwitch={val => {
+                    if (val) {
+                      setPositionOpeningMethod('concentration')
+                      onPositionOpeningMethodChange('concentration')
+                    } else {
+                      setPositionOpeningMethod('range')
+                      onPositionOpeningMethodChange('range')
+                    }
+                  }}
+                  className={classes.switch}
+                  currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
+                />
+              )}
+            </Grid>
           </Grid>
         </Hidden>
         {isCurrentPoolExisting ||
@@ -1032,6 +1180,27 @@ export const NewPosition: React.FC<INewPosition> = ({
           />
         )}
       </Grid>
+
+      <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+        <div>
+          <EstimatedPoints
+            handleClickFAQ={handleClickFAQ}
+            concentrationArray={concentrationArray}
+            concentrationIndex={concentrationIndex}
+            estimatedPointsPerDay={estimatedPointsPerDay}
+            estimatedScalePoints={estimatedScalePoints}
+            isConnected={walletStatus === Status.Init}
+            showWarning={
+              tokenADeposit === '' ||
+              tokenBDeposit === '' ||
+              +tokenADeposit === 0 ||
+              +tokenBDeposit === 0
+            }
+          />
+        </div>
+      </Fade>
+
+      <FAQModal handleClose={handleCloseFAQ} open={isFAQModalOpen} />
     </Grid>
   )
 }

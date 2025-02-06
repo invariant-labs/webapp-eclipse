@@ -70,6 +70,7 @@ export const colors = {
     dark: '#040B22',
     newDark: '#111931',
     component: '#202946',
+    componentDark: '#1c243d',
     componentBcg: '#111931',
     light: '#3A466B',
     lightHover: '#A9B6BF',
@@ -95,11 +96,11 @@ export const colors = {
     transparentBcg: 'rgba(1, 5, 20, 0.25)',
     bodyBackground: '#141b2d',
     warningTransparent: 'rgba(239, 208, 99, 0.2)',
+    pinkGreenLinearGradient: 'linear-gradient(90deg, #EF84F5 0%, #2EE09A 100%)',
     darkPinkGradient:
       'linear-gradient(180deg, rgba(239, 132, 245, 0.00) 0%, rgba(239, 132, 245, 0.10) 100%), #111931',
     darkGreenGradient:
-      'linear-gradient(180deg, rgba(46, 224, 154, 0.00) 0%, rgba(46, 224, 154, 0.10) 100%), #111931',
-    pinkGreenLinearGradient: 'linear-gradient(90deg, #EF84F5 0%, #2EE09A 100%)'
+      'linear-gradient(180deg, rgba(46, 224, 154, 0.00) 0%, rgba(46, 224, 154, 0.10) 100%), #111931'
   }
 }
 

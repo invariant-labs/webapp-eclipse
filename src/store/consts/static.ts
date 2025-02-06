@@ -581,17 +581,7 @@ export const autoSwapPools = [
       tokenY: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo')
     },
     address: new PublicKey('F89YjPNUfP5Q6xxnk8ZSiV3tHzCYKH7TvgLE1Mc9s7H'),
-    lookupTable: [
-      new PublicKey('BV1y3iAWVDSf1EiHqUrAK2VxnRDfpzAGvRSrHv29tyQB'),
-      new PublicKey('AxWj1HZdNGezUU4KVbrydJmtdChdK8aMeYLNKoHGFQtT'),
-      new PublicKey('HzSak6e6y1hGG2os2koM8fC7cMGyVSNaBHk75eNPXN3Q'),
-      new PublicKey('CV7onkr6z336UD6a2a414qFUcFV4bBhHAvSKDMzw2GDK'),
-      new PublicKey('Drws1AyHWNjdxYUjgdDnLNCBe2ycaXrBHaJHQXxD9Dtq'),
-      new PublicKey('6aKMBamuZc41ogv9sgYKu6U53cDxgbesYDh3cGLP13HS'),
-      new PublicKey('CPDetJvs7D8nar5EbK1RXvxsxwpt2ZRPvnWvc9F9B29B'),
-      new PublicKey('57bT2g9PWHM17jRAnXSzNngMBDWJvBFzJJ8pTSdPmESs'),
-      new PublicKey('DKNAwoCqQy2boxz8M47B4F3A3q2x3JLGbUoMA32RiPzb')
-    ]
+    feeIndex: 0
   },
   {
     pair: {
@@ -599,7 +589,7 @@ export const autoSwapPools = [
       tokenY: new PublicKey('So11111111111111111111111111111111111111112')
     },
     address: new PublicKey('HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce'),
-    lookupTable: []
+    feeIndex: 0
   }
 ]
 export const promotedTiers = [
@@ -701,9 +691,12 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
 export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   USDT_MAIN.address.toString(),
   USDC_MAIN.address.toString(),
-  SOL_MAIN.address.toString(),
   WETH_MAIN.address.toString(),
-  TETH_MAIN.address.toString()
+  TETH_MAIN.address.toString(),
+  SOL_MAIN.address.toString(),
+  KYSOL_MAIN.address.toString(),
+  EZSOL_MAIN.address.toString(),
+  TIA_MAIN.address.toString()
 ]
 
 export const FormatConfig = {

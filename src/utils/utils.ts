@@ -814,6 +814,32 @@ export const formatNumber = (
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
 
+function trimEndingZeros(num) {
+  return num.toString().replace(/0+$/, '')
+}
+
+export const formatNumber2 = (number: number | bigint | string): string => {
+  const numberAsNumber = Number(number)
+  const isNegative = numberAsNumber < 0
+  const absNumberAsNumber = Math.abs(numberAsNumber)
+
+  const absNumberAsString = numberToString(absNumberAsNumber)
+
+  const [beforeDot, afterDot] = absNumberAsString.split('.')
+
+  const leadingZeros = afterDot ? countLeadingZeros(afterDot) : 0
+
+  const parsedBeforeDot = beforeDot.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  const parsedAfterDot =
+    leadingZeros >= 4 && absNumberAsNumber < 1
+      ? '0' + printSubNumber(leadingZeros) + trimEndingZeros(String(parseInt(afterDot)).slice(0, 3))
+      : trimEndingZeros(String(afterDot).slice(0, absNumberAsNumber >= 1 ? 2 : leadingZeros + 3))
+
+  const formattedNumber = parsedBeforeDot + (afterDot && parsedAfterDot ? '.' + parsedAfterDot : '')
+
+  return isNegative ? '-' + formattedNumber : formattedNumber
+}
+
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
@@ -1187,11 +1213,9 @@ export const simulateAutoSwapOnTheSamePool = async (
   pool: PoolWithAddress,
   poolTicks: Tick[],
   tickmap: Tickmap,
-  positionSlippage: BN,
   swapSlippage: BN,
   lowerTick: number,
   upperTick: number,
-  knownPrice: BN,
   maxLiquidityPercentage: BN
 ) => {
   const ticks: Map<number, Tick> = new Map<number, Tick>()
@@ -1208,15 +1232,15 @@ export const simulateAutoSwapOnTheSamePool = async (
     const simulateResult = simulateSwapAndCreatePositionOnTheSamePool(
       amountX,
       amountY,
+      swapSlippage,
       {
         ticks,
         tickmap,
         pool,
         maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
-        maxCrosses,
-        slippage: swapSlippage
+        maxCrosses
       },
-      { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
+      { lowerTick, upperTick },
       maxLiquidityPercentage
     )
     return simulateResult
@@ -1591,7 +1615,7 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
   const tokenXIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenXAddress)
   const tokenYIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenYAddress)
 
-  return tokenXIndex < tokenYIndex
+  return !(tokenXIndex < tokenYIndex)
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {

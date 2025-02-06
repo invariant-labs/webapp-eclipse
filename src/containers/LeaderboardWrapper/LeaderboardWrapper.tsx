@@ -136,7 +136,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   }
 
   useEffect(() => {
-    console.log('test')
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.getLeaderboardConfig())
     dispatch(statsActions.getCurrentStats())
