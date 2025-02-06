@@ -9,7 +9,13 @@ interface Props {
   valueIndex: number
   setValue: (value: string) => void
   saveValue: (value: string) => void
-  options: { value: string; label: string; message: string }[]
+  options: {
+    value: string
+    label: string
+    message: string
+  }[]
+  upperValueTreshHold: string
+  lowerValueTreshHold: string
   label: string
   description: string
 }
@@ -21,7 +27,9 @@ const DepositOption: React.FC<Props> = ({
   valueIndex,
   description,
   label,
-  options
+  options,
+  upperValueTreshHold,
+  lowerValueTreshHold
 }) => {
   const { classes } = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -60,6 +68,23 @@ const DepositOption: React.FC<Props> = ({
       }
     } else if (!regex.test(value)) {
       setTemp('0.00')
+    }
+  }
+
+  const checkValue: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = e => {
+    const value = e.target.value
+    if (Number(value) > Number(upperValueTreshHold)) {
+      setTemp(upperValueTreshHold)
+    } else if (Number(value) < Number(lowerValueTreshHold) || isNaN(Number(value))) {
+      setTemp(lowerValueTreshHold)
+    } else {
+      const onlyTwoDigits = '^\\d*\\.?\\d{0,2}$'
+      const regex = new RegExp(onlyTwoDigits, 'g')
+      if (regex.test(value)) {
+        setTemp(value)
+      } else {
+        setTemp(Number(value).toFixed(2))
+      }
     }
   }
 
@@ -149,6 +174,7 @@ const DepositOption: React.FC<Props> = ({
           value={temp}
           onChange={e => {
             allowOnlyDigitsAndTrimUnnecessaryZeros(e)
+            checkValue(e)
           }}
           ref={inputRef}
           startAdornment='Custom'

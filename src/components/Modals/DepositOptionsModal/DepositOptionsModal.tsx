@@ -243,6 +243,8 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 saveValue={setMaxPriceImpact}
                 value={priceImpact}
                 valueIndex={priceImpactTierIndex}
+                upperValueTreshHold={'50'}
+                lowerValueTreshHold={'0'}
               />
             </Grid>
             <Grid item xs={6}>
@@ -256,6 +258,8 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 saveValue={setMaxSlippageToleranceSwap}
                 value={swapSlippageTolerance}
                 valueIndex={swapSlippageToleranceTierIndex}
+                upperValueTreshHold={'50'}
+                lowerValueTreshHold={'0'}
               />
             </Grid>
             <Grid item xs={6}>
@@ -269,6 +273,8 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 saveValue={setMinUtilization}
                 value={utilization}
                 valueIndex={utilizationTierIndex}
+                upperValueTreshHold={'100'}
+                lowerValueTreshHold={'0'}
               />
             </Grid>
             <Grid item xs={6}>
@@ -282,6 +288,8 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 saveValue={setMaxSlippageToleranceCreatePosition}
                 value={createPositionSlippageTolerance}
                 valueIndex={createPositionSlippageToleranceTierIndex}
+                upperValueTreshHold={'50'}
+                lowerValueTreshHold={'0'}
               />
             </Grid>
           </Grid>
