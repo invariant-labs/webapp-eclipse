@@ -182,6 +182,37 @@ export const useStyles = makeStyles()(theme => {
       '&:hover': {
         background: 'none'
       }
+    },
+    unknownWarning: {
+      width: 'fit-content',
+      border: `1px solid ${colors.invariant.lightGrey}`,
+      ...typography.caption2,
+      color: colors.invariant.lightGrey,
+      padding: '5px 8px',
+      paddingInline: 8,
+      borderRadius: 9
+    },
+    errorWarning: {
+      width: 'fit-content',
+      border: `1px solid ${colors.invariant.Error}`,
+      ...typography.caption2,
+      color: colors.invariant.Error,
+      padding: '5px 8px',
+      paddingInline: 8,
+      borderRadius: 9
+    },
+    grayscaleIcon: {
+      filter: 'grayscale(100%)',
+      transition: 'filter 0.7s ease-in-out',
+      minWidth: '12px',
+      minHeight: '12px'
+    },
+    errorIcon: {
+      filter:
+        'brightness(0) saturate(100%) invert(45%) sepia(83%) saturate(1283%) hue-rotate(327deg) brightness(98%) contrast(98%)',
+      transition: 'filter 0.7s ease-in-out',
+      minWidth: '12px',
+      minHeight: '12px'
     }
   }
 })
