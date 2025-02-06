@@ -115,9 +115,9 @@ export const DepositAmountInput: React.FC<IProps> = ({
         name={button.label}
         key={button.label}
         onClick={button.onClick}
-        disabled={button.disabled || walletUninitialized || !currency}
+        disabled={disabled || button.disabled || walletUninitialized || !currency}
         className={
-          currency && !walletUninitialized
+          !disabled && currency && !walletUninitialized
             ? buttonClassName
             : `${classes.actionButton} ${classes.actionButtonNotActive}`
         }
@@ -185,7 +185,9 @@ export const DepositAmountInput: React.FC<IProps> = ({
           direction='row'
           wrap='nowrap'>
           <Grid className={classes.balance} container alignItems='center' wrap='nowrap'>
-            <Typography className={classes.caption2} onClick={() => actionButtons[0].onClick()}>
+            <Typography
+              className={classes.caption2}
+              onClick={() => (disabled ? () => {} : actionButtons[0].onClick())}>
               Balance:{' '}
               {walletUninitialized ? (
                 <>-</>
@@ -253,6 +255,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
           </Grid>
         </>
       )}
+      {disabled && <Grid container className={classes.disabled} />}
     </Grid>
   )
 }

@@ -694,7 +694,15 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         feeValue: +printBN(tier.tier.fee, DECIMAL - 2)
       }))}
       isCurrentPoolExisting={poolIndex !== null && !!allPools[poolIndex]}
-      addLiquidityHandler={(leftTickIndex, rightTickIndex, xAmount, yAmount, slippage) => {
+      addLiquidityHandler={(
+        leftTickIndex,
+        rightTickIndex,
+        xAmount,
+        yAmount,
+        slippage,
+        isCustomAmount,
+        depositPercentage
+      ) => {
         if (tokenAIndex === null || tokenBIndex === null) {
           return
         }
@@ -723,7 +731,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             slippage,
             tickSpacing,
             knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
-            poolIndex
+            poolIndex,
+            isCustomAmount,
+            depositPercentage
           })
         )
       }}

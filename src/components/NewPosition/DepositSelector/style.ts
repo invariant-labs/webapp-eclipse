@@ -15,7 +15,11 @@ export const useStyles = makeStyles()(theme => {
     },
     sectionTitle: {
       ...typography.heading4,
-      marginBottom: 24,
+      color: colors.white.main,
+      marginBottom: 24
+    },
+    depositAmountSectionTitle: {
+      ...typography.heading4,
       color: colors.white.main
     },
     sectionWrapper: {
@@ -91,6 +95,41 @@ export const useStyles = makeStyles()(theme => {
       [theme.breakpoints.down('sm')]: {
         width: '100%'
       }
+    },
+    sectionContainer: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: 8
+    },
+    allFundsSwitchContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 8
+    },
+    allFundsText: {
+      ...typography.caption2,
+      color: colors.white.main
+    },
+    allFundsInfo: {
+      height: 14,
+      width: 14,
+      border: `1px solid ${colors.invariant.textGrey}`,
+      color: colors.invariant.textGrey,
+      borderRadius: '50%',
+      fontSize: 8,
+      lineHeight: '10px',
+      textAlign: 'center',
+      boxSizing: 'border-box',
+      paddingTop: 3,
+      userSelect: 'none'
+    },
+    sliderContainer: {
+      height: 20,
+      flex: 1,
+      marginInline: 24,
+      display: 'flex',
+      alignItems: 'center'
     }
   }
 })

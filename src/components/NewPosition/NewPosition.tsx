@@ -9,7 +9,11 @@ import {
   NetworkType,
   PositionTokenBlock,
   promotedTiers,
-  REFRESHER_INTERVAL
+  REFRESHER_INTERVAL,
+  WETH_POOL_INIT_LAMPORTS_MAIN,
+  WETH_POOL_INIT_LAMPORTS_TEST,
+  WETH_POSITION_INIT_LAMPORTS_MAIN,
+  WETH_POSITION_INIT_LAMPORTS_TEST
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -48,6 +52,8 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
+import { getMaxLiquidityWithPercentage } from '@invariant-labs/sdk-eclipse/lib/math'
+import { DENOMINATOR } from '@invariant-labs/sdk-eclipse/src'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -65,7 +71,9 @@ export interface INewPosition {
     rightTickIndex: number,
     xAmount: number,
     yAmount: number,
-    slippage: BN
+    slippage: BN,
+    isCustomAmounts: boolean,
+    depositPercentage: number
   ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
@@ -369,24 +377,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -546,6 +554,73 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }, [network])
 
+  const [depositPercentage, setDepositPercentage] = useState(0)
+  const [isCustomAmounts, setIsCustomAmounts] = useState(true)
+
+  const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
+    if (network === NetworkType.Testnet) {
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
+    } else {
+      return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_MAIN : WETH_POOL_INIT_LAMPORTS_MAIN
+    }
+  }, [network, isCurrentPoolExisting])
+
+  useEffect(() => {
+    if (tokenAIndex !== null && tokenBIndex !== null && !isCustomAmounts) {
+      const balanceA =
+        tokens[tokenAIndex].assetAddress.toString() ===
+        'So11111111111111111111111111111111111111112'
+          ? tokens[tokenAIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+          : tokens[tokenAIndex].balance
+      const balanceB =
+        tokens[tokenBIndex].assetAddress.toString() ===
+        'So11111111111111111111111111111111111111112'
+          ? tokens[tokenBIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
+          : tokens[tokenBIndex].balance
+      const decimalA = tokens[tokenAIndex].decimals
+      const decimalB = tokens[tokenBIndex].decimals
+
+      const [lowerTick, upperTick] = isXtoY ? [leftRange, rightRange] : [rightRange, leftRange]
+      const [x, y] = isXtoY ? [balanceA, balanceB] : [balanceB, balanceA]
+      const [decimalX, decimalY] = isXtoY ? [decimalA, decimalB] : [decimalB, decimalA]
+
+      try {
+        const values = getMaxLiquidityWithPercentage(
+          x,
+          y,
+          lowerTick,
+          upperTick,
+          currentPriceSqrt,
+          new BN(DENOMINATOR).mul(new BN(depositPercentage)).div(new BN(100))
+        )
+
+        if (!(x.lt(new BN(0)) || y.lt(new BN(0)))) {
+          setTokenADeposit(
+            trimLeadingZeros(isXtoY ? printBN(values.x, decimalX) : printBN(values.y, decimalY))
+          )
+          setTokenBDeposit(
+            trimLeadingZeros(isXtoY ? printBN(values.y, decimalY) : printBN(values.x, decimalX))
+          )
+        } else {
+          setTokenADeposit('0')
+          setTokenBDeposit('0')
+        }
+      } catch (e) {
+        console.log(e)
+      }
+    }
+  }, [
+    isCustomAmounts,
+    tokenAIndex,
+    tokenBIndex,
+    leftRange,
+    rightRange,
+    currentPriceSqrt,
+    isBalanceLoading,
+    walletStatus,
+    depositPercentage
+  ])
+
   return (
     <Grid container className={classes.wrapper} direction='column'>
       <Link to='/portfolio' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
@@ -695,7 +770,9 @@ export const NewPosition: React.FC<INewPosition> = ({
                 isXtoY
                   ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
                   : convertBalanceToBN(tokenADeposit, tokenADecimals),
-                fromFee(new BN(Number(+slippTolerance * 1000)))
+                fromFee(new BN(Number(+slippTolerance * 1000))),
+                isCustomAmounts,
+                depositPercentage
               )
             }
           }}
@@ -809,6 +886,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           canNavigate={canNavigate}
           isCurrentPoolExisting={isCurrentPoolExisting}
           promotedPoolTierIndex={promotedPoolTierIndex}
+          isCustomAmounts={isCustomAmounts}
+          setIsCustomAmounts={setIsCustomAmounts}
+          depositPercentage={depositPercentage}
+          setDepositPercentage={setDepositPercentage}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

@@ -1,7 +1,7 @@
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
@@ -32,6 +32,8 @@ import {
   trimDecimalZeros
 } from '@utils/utils'
 import { createButtonActions } from '@utils/uiUtils'
+import { DepositPercentageSwitch } from './DepositPercentageSwitch/DepositPercentageSwitch'
+import { DepositPercentageSlider } from './DepositPercentageSlider/DepositPercentageSlider'
 
 export interface InputState {
   value: string
@@ -88,6 +90,10 @@ export interface IDepositSelector {
   canNavigate: boolean
   isCurrentPoolExisting: boolean
   promotedPoolTierIndex: number | undefined
+  isCustomAmounts: boolean
+  setIsCustomAmounts: (value: boolean) => void
+  depositPercentage: number
+  setDepositPercentage: (value: number) => void
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -128,7 +134,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onDisconnectWallet,
   ethBalance,
   canNavigate,
-  isCurrentPoolExisting
+  isCurrentPoolExisting,
+  isCustomAmounts,
+  setIsCustomAmounts,
+  depositPercentage,
+  setDepositPercentage
 }) => {
   const { classes } = useStyles()
 
@@ -428,15 +438,32 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         />
       </Grid>
 
-      <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
+      <Box className={classes.sectionContainer}>
+        <Typography className={classes.depositAmountSectionTitle}>Deposit Amount</Typography>
+        <Box className={classes.sliderContainer}>
+          <DepositPercentageSlider
+            depositPercentage={depositPercentage}
+            setDepositPercentage={setDepositPercentage}
+            isCustomAmounts={isCustomAmounts}
+          />
+        </Box>
+        <Box className={classes.allFundsSwitchContainer}>
+          <DepositPercentageSwitch
+            checked={isCustomAmounts}
+            onClick={() => setIsCustomAmounts(!isCustomAmounts)}
+          />
+          <p className={classes.allFundsText}>Exact amounts</p>
+          <TooltipHover text='Switch between custom liquidity and max liquidity percentage deposits'>
+            <span className={classes.allFundsInfo}>i</span>
+          </TooltipHover>
+        </Box>
+      </Box>
       <Grid container className={classes.sectionWrapper}>
         <DepositAmountInput
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -477,15 +504,14 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           priceLoading={priceALoading}
           isBalanceLoading={isBalanceLoading}
           walletUninitialized={walletStatus !== Status.Initialized}
+          disabled={!isCustomAmounts}
         />
 
         <DepositAmountInput
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -523,6 +549,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           priceLoading={priceBLoading}
           isBalanceLoading={isBalanceLoading}
           walletUninitialized={walletStatus !== Status.Initialized}
+          disabled={!isCustomAmounts}
         />
       </Grid>
       {walletStatus !== Status.Initialized ? (

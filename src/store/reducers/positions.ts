@@ -65,6 +65,8 @@ export interface InitPositionData
   initTick?: number
   xAmount: number
   yAmount: number
+  isCustomAmount: boolean
+  depositPercentage: number
 }
 
 export interface GetCurrentTicksData {
