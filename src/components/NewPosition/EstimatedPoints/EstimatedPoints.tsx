@@ -102,7 +102,11 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                       justifyContent='center'
                       className={classes.pointsLabel}
                       flexWrap='nowrap'>
-                      <img src={icons.airdropRainbow} alt='Airdrop' style={{ height: '16px' }} />
+                      <img
+                        src={icons.airdropRainbow}
+                        alt='Airdrop'
+                        style={{ height: '16px', marginLeft: '-8px' }}
+                      />
                       <Typography noWrap>
                         Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
                       </Typography>
@@ -119,7 +123,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                       src={icons.infoIconPink}
                       alt='i'
                       width={14}
-                      style={{ marginLeft: '2px', marginRight: '4px', marginBottom: '-2px' }}
+                      style={{ marginLeft: '-2px', marginRight: '4px', marginBottom: '-2px' }}
                     />
                     <Typography
                       display='inline'
@@ -131,7 +135,8 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
               </Grid>
             </Grid>
             <Grid className={classes.column} style={{ alignItems: 'center' }}>
-              <Typography style={{ whiteSpace: 'nowrap', ...typography.heading4 }}>
+              <Typography
+                style={{ whiteSpace: 'nowrap', ...typography.heading4, fontSize: '18px' }}>
                 <span>Your Estimated Points: &nbsp;</span>
                 <span className={classes.pinkText}>{pointsPerDayFormat} Points/24h</span>
               </Typography>

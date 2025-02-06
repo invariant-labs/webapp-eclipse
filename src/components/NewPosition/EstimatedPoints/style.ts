@@ -42,10 +42,12 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     height: 32,
     display: 'flex',
     alignItems: 'center',
+    fontWeight: 500,
     justifyContent: 'center',
     '& p': {
       ...typography.caption2,
-      fontSize: '1rem'
+      fontSize: '1rem',
+      fontWeight: 500
     }
   },
   pinkText: {
