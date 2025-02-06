@@ -62,6 +62,7 @@ import airdropGrey from './svg/airdropGrey.svg'
 import infoError from './svg/infoError.svg'
 import okxLogo from './svg/okx-logo.svg'
 import autoSwapOptions from './svg/autoSwapOptions.svg'
+import goldenInfoCircle from './svg/goldenInfoCircle.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -127,7 +128,8 @@ const icons: { [key: string]: string } = {
   airdropGrey,
   infoError,
   okxLogo,
-  autoSwapOptions
+  autoSwapOptions,
+  goldenInfoCircle
 }
 
 export default icons

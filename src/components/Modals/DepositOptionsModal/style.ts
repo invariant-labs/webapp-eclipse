@@ -10,8 +10,20 @@ export const useStyles = makeStyles()(() => {
         backgroundColor: 'transparent'
       }
     },
+    tooltip: {
+      width: 159,
+      paddingTop: 4,
+      paddingBottom: 4,
+      paddingLeft: 8,
+      paddingRight: 8,
+      color: '#EFD063',
+      ...typography.caption4,
+      lineHeight: '24px',
+      background: colors.invariant.component,
+      borderRadius: 8
+    },
     detailsWrapper: {
-      width: 332,
+      width: 664,
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: colors.invariant.component,
@@ -29,7 +41,10 @@ export const useStyles = makeStyles()(() => {
       color: colors.invariant.lightHover,
       marginBottom: 8
     },
-
+    headerText: {
+      ...typography.heading4,
+      color: colors.invariant.text
+    },
     selectTokenClose: {
       minWidth: 0,
       background: 'none',
@@ -78,16 +93,40 @@ export const useStyles = makeStyles()(() => {
       paddingBlock: 0,
       textAlign: 'right'
     },
+    setAsDefaultBtn: {
+      width: 118,
+      height: 44,
+      color: colors.invariant.newDark,
+      backgroundColor: `${colors.invariant.green} !important`,
+      textTransform: 'none',
+      textDecoration: 'none',
+      borderRadius: 10,
+      cursor: 'pointer',
+      ...typography.body1,
+      '&:hover': {
+        backgroundColor: `${colors.invariant.green} !important`,
+        filter: 'brightness(1.15)',
+        transition: ' .4s filter',
+        boxShadow:
+          '0px 3px 1px -2px rgba(43, 193, 144, 0.2),0px 1px 2px 0px rgba(45, 168, 128, 0.14),0px 0px 5px 7px rgba(59, 183, 142, 0.12)',
+        '@media (hover: none)': {
+          filter: 'none',
+          boxShadow: 'none'
+        }
+      }
+    },
     detailsInfoBtn: {
       minWidth: 49,
       backgroundColor: colors.invariant.green,
       borderRadius: 9,
       border: 'none',
-      padding: 0,
+      padding: 4,
       width: 49,
       height: 28,
       cursor: 'pointer',
       marginLeft: 8,
+      color: colors.invariant.black,
+      letterSpacing: '-0.03%',
       ...typography.body2,
       '&:hover': {
         filter: 'brightness(1.15)',
@@ -106,12 +145,12 @@ export const useStyles = makeStyles()(() => {
       marginTop: 10
     },
     slippagePercentageButton: {
-      height: 28,
+      height: 30,
       borderRadius: 8,
       backgroundColor: colors.invariant.newDark,
       color: colors.invariant.textGrey,
       flex: 1,
-
+      letterSpacing: '-0.03%',
       '&:hover': {
         backgroundColor: colors.invariant.light,
         color: colors.invariant.text,
@@ -122,9 +161,9 @@ export const useStyles = makeStyles()(() => {
       }
     },
     slippagePercentageButtonActive: {
-      backgroundColor: colors.invariant.light,
-      color: colors.invariant.text,
-      fontWeight: 'bold'
+      backgroundColor: `${colors.invariant.light} !important`,
+      color: `${colors.invariant.text} !important`,
+      fontWeight: 'bold !important'
     },
     inputAdornedEnd: {
       marginRight: 2
@@ -141,8 +180,21 @@ export const useStyles = makeStyles()(() => {
     divider: {
       width: '100%',
       borderBottom: `1px solid ${colors.invariant.light}`,
-      marginTop: 10,
-      marginBottom: 10
+      marginTop: 9.5,
+      marginBottom: 9.5
+    },
+    dividerHorizontal: {
+      height: 414,
+      width: 1,
+      borderLeft: `1px solid ${colors.invariant.light}`,
+      marginLeft: 9.5,
+      marginRight: 9.5
+    },
+    grayscaleIcon: {
+      filter: 'grayscale(100%)',
+      transition: 'filter 0.7s ease-in-out',
+      minWidth: '8px',
+      minHeight: '8px'
     }
   }
 })

@@ -78,12 +78,11 @@ export interface SwapAndCreatePosition
   initTick?: number
   xAmount: number
   yAmount: number
-  maxLiquidtiyPercentage: number
-  minUtilizationPercentage: number
+  maxLiquidtiyPercentage: BN
+  minUtilizationPercentage: BN
   tokenFrom: PublicKey
   tokenTo: PublicKey
   estimatedPriceAfterSwap: BN
-  slippage: number
   swapAmount: BN
 }
 

@@ -3,6 +3,8 @@ import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
   bestTiers,
@@ -532,6 +534,25 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION', utilization)
   }
 
+  const initialMaxSlippageToleranceSwap =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP
+
+  const onMaxSlippageToleranceSwapChange = (slippageToleranceSwap: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP', slippageToleranceSwap)
+  }
+
+  const initialMaxSlippageToleranceCreatePosition =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION
+
+  const onMaxSlippageToleranceCreatePositionChange = (slippageToleranceCreatePosition: string) => {
+    localStorage.setItem(
+      'INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION',
+      slippageToleranceCreatePosition
+    )
+  }
+
   const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
       return new BN(0)
@@ -733,6 +754,56 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         feeValue: +printBN(tier.tier.fee, DECIMAL - 2)
       }))}
       isCurrentPoolExisting={poolIndex !== null && !!allPools[poolIndex]}
+      swapAndAddLiquidityHandler={(
+        leftTickIndex,
+        rightTickIndex,
+        xAmount,
+        yAmount,
+        slippage,
+        maxLiquidtiyPercentage,
+        minUtilizationPercentage,
+        tokenFrom,
+        tokenTo,
+        estimatedPriceAfterSwap,
+        swapAmount
+      ) => {
+        if (tokenAIndex === null || tokenBIndex === null) {
+          return
+        }
+        if (poolIndex !== null) {
+          dispatch(positionsActions.setShouldNotUpdateRange(true))
+        }
+        if (progress === 'none') {
+          setProgress('progress')
+        }
+
+        const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
+        const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
+        dispatch(
+          positionsActions.swapAndInitPosition({
+            lowerTick: lowerTickIndex,
+            upperTick: upperTickIndex,
+            liquidityDelta: liquidityRef.current,
+            knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
+            tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
+            tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
+            fee,
+            tickSpacing,
+            initPool: poolIndex === null,
+            poolIndex,
+            initTick: poolIndex === null ? midPrice.index : undefined,
+            xAmount: Math.floor(xAmount),
+            yAmount: Math.floor(yAmount),
+            maxLiquidtiyPercentage,
+            minUtilizationPercentage,
+            tokenFrom,
+            tokenTo,
+            estimatedPriceAfterSwap,
+            slippage,
+            swapAmount
+          })
+        )
+      }}
       addLiquidityHandler={(leftTickIndex, rightTickIndex, xAmount, yAmount, slippage) => {
         if (tokenAIndex === null || tokenBIndex === null) {
           return
@@ -842,6 +913,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onMaxPriceImpactChange={onMaxPriceImpactChange}
       initialMinUtilization={initialMinUtilization}
       onMinUtilizationChange={onMinUtilizationChange}
+      onMaxSlippageToleranceSwapChange={onMaxSlippageToleranceSwapChange}
+      initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
+      onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
+      initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
     />
   )
 }

@@ -70,6 +70,19 @@ export interface INewPosition {
     yAmount: number,
     slippage: BN
   ) => void
+  swapAndAddLiquidityHandler: (
+    leftTickIndex: number,
+    rightTickIndex: number,
+    xAmount: number,
+    yAmount: number,
+    slippage: BN,
+    maxLiquidtiyPercentage: BN,
+    minUtilizationPercentage: BN,
+    tokenFrom: PublicKey,
+    tokenTo: PublicKey,
+    estimatedPriceAfterSwap: BN,
+    swapAmount: BN
+  ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
     tokenBindex: number | null,
@@ -133,6 +146,10 @@ export interface INewPosition {
   onMaxPriceImpactChange: (val: string) => void
   initialMinUtilization: string
   onMinUtilizationChange: (val: string) => void
+  onMaxSlippageToleranceSwapChange: (val: string) => void
+  initialMaxSlippageToleranceSwap: string
+  onMaxSlippageToleranceCreatePositionChange: (val: string) => void
+  initialMaxSlippageToleranceCreatePosition: string
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -197,7 +214,12 @@ export const NewPosition: React.FC<INewPosition> = ({
   initialMaxPriceImpact,
   onMaxPriceImpactChange,
   initialMinUtilization,
-  onMinUtilizationChange
+  onMinUtilizationChange,
+  swapAndAddLiquidityHandler,
+  onMaxSlippageToleranceSwapChange,
+  initialMaxSlippageToleranceSwap,
+  onMaxSlippageToleranceCreatePositionChange,
+  initialMaxSlippageToleranceCreatePosition
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -236,8 +258,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const isAutoSwapAvailable = useMemo(
     () =>
-      !!tokenAIndex &&
-      !!tokenBIndex &&
+      tokenAIndex !== null &&
+      tokenBIndex !== null &&
       autoSwapPools.some(
         item =>
           (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
@@ -586,11 +608,10 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const simulationParams = useMemo(() => {
     return {
-      positionSlippageTolerance: fromFee(new BN(Number(+slippTolerance * 1000))),
       lowerTickIndex: Math.min(leftRange, rightRange),
       upperTickIndex: Math.max(leftRange, rightRange)
     }
-  }, [leftRange, rightRange, slippTolerance])
+  }, [leftRange, rightRange])
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
@@ -745,6 +766,38 @@ export const NewPosition: React.FC<INewPosition> = ({
               )
             }
           }}
+          onSwapAndAddLiquidity={(
+            maxLiquidityPercentage,
+            minUtilizationPercentage,
+            tokenFrom,
+            tokenTo,
+            estimatedPriceAfterSwap,
+            swapAmount,
+            slippage
+          ) => {
+            if (tokenAIndex !== null && tokenBIndex !== null) {
+              const tokenADecimals = tokens[tokenAIndex].decimals
+              const tokenBDecimals = tokens[tokenBIndex].decimals
+
+              swapAndAddLiquidityHandler(
+                leftRange,
+                rightRange,
+                isXtoY
+                  ? convertBalanceToBN(tokenADeposit, tokenADecimals)
+                  : convertBalanceToBN(tokenBDeposit, tokenBDecimals),
+                isXtoY
+                  ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
+                  : convertBalanceToBN(tokenADeposit, tokenADecimals),
+                slippage,
+                maxLiquidityPercentage,
+                minUtilizationPercentage,
+                tokenFrom,
+                tokenTo,
+                estimatedPriceAfterSwap,
+                swapAmount
+              )
+            }
+          }}
           tokenAInputState={{
             value:
               tokenAIndex !== null &&
@@ -865,6 +918,10 @@ export const NewPosition: React.FC<INewPosition> = ({
           onMaxPriceImpactChange={onMaxPriceImpactChange}
           initialMinUtilization={initialMinUtilization}
           onMinUtilizationChange={onMinUtilizationChange}
+          onMaxSlippageToleranceSwapChange={onMaxSlippageToleranceSwapChange}
+          initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
+          onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
+          initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
         />
         <Hidden mdUp>
           <Grid container justifyContent='end' mb={2}>

@@ -592,6 +592,14 @@ export const autoSwapPools = [
       new PublicKey('57bT2g9PWHM17jRAnXSzNngMBDWJvBFzJJ8pTSdPmESs'),
       new PublicKey('DKNAwoCqQy2boxz8M47B4F3A3q2x3JLGbUoMA32RiPzb')
     ]
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    address: new PublicKey('HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce'),
+    lookupTable: []
   }
 ]
 export const promotedTiers = [
@@ -779,8 +787,10 @@ export const MINIMAL_POOL_INIT_PRICE = 0.00000001
 
 export const DEFAULT_SWAP_SLIPPAGE = '0.50'
 export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
-export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '0.50'
+export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '0.3'
 export const DEFAULT_AUTOSWAP_MIN_UTILIZATION = '95'
+export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION = '0.50'
+export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP = '0.50'
 
 export const CHAINS = [
   { name: Chain.Solana, address: 'https://invariant.app/swap' },
