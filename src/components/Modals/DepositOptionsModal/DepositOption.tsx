@@ -18,6 +18,7 @@ interface Props {
   lowerValueTreshHold: string
   label: string
   description: string
+  divider?: boolean
 }
 
 const DepositOption: React.FC<Props> = ({
@@ -29,7 +30,8 @@ const DepositOption: React.FC<Props> = ({
   label,
   options,
   upperValueTreshHold,
-  lowerValueTreshHold
+  lowerValueTreshHold,
+  divider
 }) => {
   const { classes } = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
@@ -90,7 +92,7 @@ const DepositOption: React.FC<Props> = ({
 
   return (
     <>
-      <Divider className={classes.divider} />
+      {divider && <Divider className={classes.divider} />}
       <Typography className={classes.label}>{label}</Typography>
       <Grid container gap='9px'>
         {options.map((tier, index) => (

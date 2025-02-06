@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import useStyles from './style'
-import { Box, Button, Grid, Popover, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Popover, Typography } from '@mui/material'
 import DepositOption from './DepositOption'
 
 const priceImpactTiers = [
@@ -148,7 +148,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
         classes={{ paper: classes.paper }}
         anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: 'bottom',
+          vertical: 'top',
           horizontal: 'center'
         }}
         transformOrigin={{
@@ -156,7 +156,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
           horizontal: 'center'
         }}>
         <Grid container className={classes.detailsWrapper}>
-          <Grid container justifyContent='space-between' style={{ marginBottom: 6 }}>
+          <Grid container>
             <Box
               width={'100%'}
               display={'flex'}
@@ -169,8 +169,9 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 display={'flex'}
                 flexDirection={'column'}
                 justifyContent={'flex-start'}
-                alignItems={'flex-start'}>
-                <Typography component='h2'>Deposit Settings</Typography>
+                alignItems={'flex-start'}
+                maxWidth={'502px'}>
+                <Typography className={classes.headerText}>Deposit Settings</Typography>
                 <Typography className={classes.info}>
                   These settings enable liquidity addition with any token ratio while ensuring safe
                   swaps. Adjusting these parameters is recommended for advanced users familiar with
@@ -230,9 +231,17 @@ const DepoSitOptionsModal: React.FC<Props> = ({
               </Button>
             </Box>
           </Grid>
-
-          <Grid container item spacing={3}>
-            <Grid item xs={6}>
+          <Divider className={classes.divider} />
+          <Box
+            display={'flex'}
+            justifyContent={'space-between'}
+            alignItems={'center'}
+            flexDirection={'row'}>
+            <Box
+              display={'flex'}
+              justifyContent={'flex-start'}
+              alignItems={'flex-start'}
+              flexDirection={'column'}>
               <DepositOption
                 description={
                   'The higher the value, the greater the potential impact of your transaction on the price. A high price impact can result in a worse exchange rate, so it is recommended to choose default settings.'
@@ -246,8 +255,27 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 upperValueTreshHold={'50'}
                 lowerValueTreshHold={'0'}
               />
-            </Grid>
-            <Grid item xs={6}>
+              <DepositOption
+                description={
+                  'The higher the value, the more liquidity must remain in the pool after auto swap. A high minimum utilization helps prevent excessive price impact and ensures stability for liquidity providers. The default setting balances execution and pool stability.'
+                }
+                label='Minimum Utilization'
+                options={utilizationTiers}
+                setValue={setUtilization}
+                saveValue={setMinUtilization}
+                value={utilization}
+                valueIndex={utilizationTierIndex}
+                upperValueTreshHold={'100'}
+                lowerValueTreshHold={'0'}
+                divider
+              />
+            </Box>
+            <Divider className={classes.dividerHorizontal} />
+            <Box
+              display={'flex'}
+              justifyContent={'flex-start'}
+              alignItems={'flex-start'}
+              flexDirection={'column'}>
               <DepositOption
                 description={
                   'The higher the value, the greater the potential impact of your transaction on the price. A high price impact can result in a worse exchange rate, so it is recommended to choose default settings.'
@@ -261,23 +289,6 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 upperValueTreshHold={'50'}
                 lowerValueTreshHold={'0'}
               />
-            </Grid>
-            <Grid item xs={6}>
-              <DepositOption
-                description={
-                  'The higher the value, the more liquidity must remain in the pool after auto swap. A high minimum utilization helps prevent excessive price impact and ensures stability for liquidity providers. The default setting balances execution and pool stability.'
-                }
-                label='Minimum Utilization'
-                options={utilizationTiers}
-                setValue={setUtilization}
-                saveValue={setMinUtilization}
-                value={utilization}
-                valueIndex={utilizationTierIndex}
-                upperValueTreshHold={'100'}
-                lowerValueTreshHold={'0'}
-              />
-            </Grid>
-            <Grid item xs={6}>
               <DepositOption
                 description={
                   'The higher the value, the more liquidity must remain in the pool after auto swap. A high minimum utilization helps prevent excessive price impact and ensures stability for liquidity providers. The default setting balances execution and pool stability.'
@@ -290,9 +301,10 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 valueIndex={createPositionSlippageToleranceTierIndex}
                 upperValueTreshHold={'50'}
                 lowerValueTreshHold={'0'}
+                divider
               />
-            </Grid>
-          </Grid>
+            </Box>
+          </Box>
         </Grid>
       </Popover>
     </>

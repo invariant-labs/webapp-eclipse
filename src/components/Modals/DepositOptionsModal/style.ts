@@ -23,7 +23,7 @@ export const useStyles = makeStyles()(() => {
       borderRadius: 8
     },
     detailsWrapper: {
-      width: 662,
+      width: 664,
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: colors.invariant.component,
@@ -41,7 +41,10 @@ export const useStyles = makeStyles()(() => {
       color: colors.invariant.lightHover,
       marginBottom: 8
     },
-
+    headerText: {
+      ...typography.heading4,
+      color: colors.invariant.text
+    },
     selectTokenClose: {
       minWidth: 0,
       background: 'none',
@@ -177,8 +180,15 @@ export const useStyles = makeStyles()(() => {
     divider: {
       width: '100%',
       borderBottom: `1px solid ${colors.invariant.light}`,
-      marginTop: 10,
-      marginBottom: 10
+      marginTop: 9.5,
+      marginBottom: 9.5
+    },
+    dividerHorizontal: {
+      height: 414,
+      width: 1,
+      borderLeft: `1px solid ${colors.invariant.light}`,
+      marginLeft: 9.5,
+      marginRight: 9.5
     },
     grayscaleIcon: {
       filter: 'grayscale(100%)',
