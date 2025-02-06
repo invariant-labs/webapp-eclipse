@@ -543,6 +543,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
   }, [tokenACheckbox, tokenBCheckbox, tickmap, ticks])
 
+  console.log(simulation)
+
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
       <DepoSitOptionsModal
@@ -628,13 +630,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         {/* TODO: CONFIGURE PRICE IMPACT WARNING & PRICE IMPACT THRESHOLD */}
         {simulation?.swapSimulation?.priceImpact >= 1 ? (
           <TooltipHover text='PRICE IMPACT WARNING'>
-            <Box className={classes.unknownWarning}>
+            <Box
+              className={
+                !(simulation || !simulation) ? classes.unknownWarning : classes.errorWarning
+              }>
               <img
                 src={icons.infoCircle}
                 alt=''
                 width='12px'
                 style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-                className={classes.grayscaleIcon}
+                className={!(simulation || !simulation) ? classes.grayscaleIcon : classes.errorIcon}
               />
               Price impact: 10%
             </Box>
