@@ -842,14 +842,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             swapPoolTickspacing: autoSwapPoolData.tickSpacing,
             positionPoolPrice: allPools[poolIndex].sqrtPrice,
             positionSlippage,
-            positionPair: new Pair(
-              tokens[tokenAIndex].assetAddress,
-              tokens[tokenBIndex].assetAddress,
-              {
-                fee: ALL_FEE_TIERS_DATA[feeIndex].tier.fee,
-                tickSpacing: ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing
-              }
-            )
+            positionPair: {
+              x: tokens[tokenAIndex].assetAddress,
+              y: tokens[tokenBIndex].assetAddress,
+              fee: ALL_FEE_TIERS_DATA[feeIndex].tier.fee,
+              tickSpacing: ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing
+            }
           })
         )
       }}

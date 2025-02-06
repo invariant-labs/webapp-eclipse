@@ -321,6 +321,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
     if (
       !tokenAInputState.blocked &&
+      tokenACheckbox &&
       convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).gt(
         tokens[tokenAIndex].balance
       )
@@ -330,6 +331,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
     if (
       !tokenBInputState.blocked &&
+      tokenBCheckbox &&
       convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals).gt(
         tokens[tokenBIndex].balance
       )
@@ -500,7 +502,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [tokenAIndex, tokenBIndex])
 
   const simulateAutoSwapResult = async () => {
-    console.log(autoSwapTicks, autoSwapPoolData, autoSwapTickmap, actualPoolPrice)
     if (
       !autoSwapPoolData ||
       !autoSwapTicks ||

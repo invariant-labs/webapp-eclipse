@@ -616,7 +616,10 @@ export function* handleSwapAndInitPositionWithETH(
     const swapAndCreateOnDifferentPools = action.payload.isSamePool
       ? undefined
       : {
-          positionPair: action.payload.positionPair,
+          positionPair: new Pair(action.payload.positionPair.x, action.payload.positionPair.y, {
+            fee: action.payload.positionPair.fee,
+            tickSpacing: action.payload.positionPair.tickSpacing
+          }),
           positionPoolPrice: action.payload.positionPoolPrice,
           positionSlippage: action.payload.positionSlippage
         }
@@ -780,7 +783,10 @@ export function* handleSwapAndInitPosition(
     const swapAndCreateOnDifferentPools = action.payload.isSamePool
       ? undefined
       : {
-          positionPair: action.payload.positionPair,
+          positionPair: new Pair(action.payload.positionPair.x, action.payload.positionPair.y, {
+            fee: action.payload.positionPair.fee,
+            tickSpacing: action.payload.positionPair.tickSpacing
+          }),
           positionPoolPrice: action.payload.positionPoolPrice,
           positionSlippage: action.payload.positionSlippage
         }

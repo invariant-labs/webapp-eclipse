@@ -8,7 +8,6 @@ import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
-import { Pair } from '@invariant-labs/sdk-eclipse'
 
 export interface PositionWithAddress extends Position {
   address: PublicKey
@@ -87,7 +86,7 @@ export interface SwapAndCreatePosition
   swapSlippage: BN
   positionPoolPrice: BN
   positionSlippage: BN
-  positionPair: Pair
+  positionPair: { x: PublicKey; y: PublicKey; fee: BN; tickSpacing: number }
   isSamePool: Boolean
   positionPoolLowerTick: number
   positionPoolUpperTick: number
