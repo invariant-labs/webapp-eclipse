@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
+    height: 850, // testing
     maxWidth: 1072,
     padding: '0 24px',
     borderRadius: '24px',

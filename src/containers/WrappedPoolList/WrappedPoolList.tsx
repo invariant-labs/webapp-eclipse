@@ -18,12 +18,16 @@ import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 
 import { FilterSearch } from '@components/FilterSearch/FilterSearch'
+import { swapTokens } from '@store/selectors/solanaWallet'
+import { printBN } from '@utils/utils'
 
 interface ISearchToken {
   icon: string
   name: string
   symbol: string
   address: string
+  balance: any
+  decimals: number
 }
 
 export const WrappedPoolList: React.FC = () => {
@@ -31,44 +35,63 @@ export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
-  const tokensList = useSelector(tokensStatsWithTokensDetails)
-
+  //const tokensList = useSelector(tokensStatsWithTokensDetails)
+  const tokensList = useSelector(swapTokens)
+  const networkType = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
   const currentNetwork = useSelector(network)
   const isLoadingStats = useSelector(isLoading)
 
-  const [selectedTokens, setSelectedTokens] = useState<ISearchToken[]>([])
+  const [selectedFilters, setSelectedFilters] = useState<{
+    feeTier: string
+    tokens: ISearchToken[]
+  }>({
+    feeTier: '',
+    tokens: []
+  })
 
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
-      const isTokenXSelected = selectedTokens.some(
+      const isTokenXSelected = selectedFilters.tokens.some(
         token => token.address.toString() === poolData.tokenX.toString()
       )
-      const isTokenYSelected = selectedTokens.some(
+      const isTokenYSelected = selectedFilters.tokens.some(
         token => token.address.toString() === poolData.tokenY.toString()
       )
 
-      if (selectedTokens.length === 1) {
+      if (selectedFilters.tokens.length === 1) {
         return isTokenXSelected || isTokenYSelected
       }
 
-      if (selectedTokens.length === 2) {
-        return isTokenXSelected && isTokenYSelected
+      if (selectedFilters.tokens.length === 2) {
+        if (!(isTokenXSelected && isTokenYSelected)) return false
+
+        if (selectedFilters.feeTier) {
+          return poolData.fee.toString() === selectedFilters.feeTier.replace('%', '')
+        }
       }
 
       return true
     })
-  }, [isLoadingStats, poolsList, selectedTokens])
+  }, [isLoadingStats, poolsList, selectedFilters.tokens, selectedFilters.feeTier])
   useEffect(() => {
     console.log(filteredPoolsList)
   }, [filteredPoolsList])
 
   const mappedTokens = tokensList.map(tokenData => ({
-    icon: tokenData.tokenDetails?.logoURI ?? icons.unknownToken,
-    name: tokenData.tokenDetails?.name ?? tokenData.address.toString(),
-    symbol: tokenData.tokenDetails?.symbol ?? tokenData.address.toString(),
-    address: tokenData.address.toString()
+    icon: tokenData.logoURI ?? icons.unknownToken,
+    name: tokenData.name ?? tokenData.address.toString(),
+    symbol: tokenData.symbol ?? tokenData.address.toString(),
+    address: tokenData.address.toString(),
+    balance: tokenData.balance,
+    decimals: tokenData.decimals
   }))
+
+  const sortedTokens = mappedTokens.sort((a, b) => {
+    const aBalance = +printBN(a.balance, a.decimals)
+    const bBalance = +printBN(b.balance, b.decimals)
+    return bBalance - aBalance
+  })
 
   const showAPY = useMemo(() => {
     return filteredPoolsList.some(pool => pool.apy !== 0)
@@ -102,9 +125,10 @@ export const WrappedPoolList: React.FC = () => {
         </Typography>
 
         <FilterSearch
-          selectedTokens={selectedTokens}
-          setSelectedTokens={setSelectedTokens}
-          mappedTokens={mappedTokens}
+          networkType={networkType}
+          selectedFilters={selectedFilters}
+          setSelectedFilters={setSelectedFilters}
+          mappedTokens={sortedTokens}
         />
       </Grid>
       <LiquidityPoolList

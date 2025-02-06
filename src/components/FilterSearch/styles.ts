@@ -2,7 +2,7 @@ import { Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles<{ fullWidth: boolean }>()((theme: Theme, { fullWidth }) => ({
+export const useStyles = makeStyles<{ fullWidth: boolean }>()((_theme: Theme, { fullWidth }) => ({
   searchBar: {
     height: 32,
     borderRadius: 10,
@@ -87,10 +87,12 @@ export const useStyles = makeStyles<{ fullWidth: boolean }>()((theme: Theme, { f
   divider: {
     background: colors.invariant.light,
     height: 1,
-    width: 'fullWidth'
+    width: 'fullWidth',
+    marginBottom: 16
   },
   tokenContainer: {
     width: '100%',
+    height: 54,
     display: 'flex',
     borderRadius: 24,
     alignItems: 'center',
@@ -98,9 +100,10 @@ export const useStyles = makeStyles<{ fullWidth: boolean }>()((theme: Theme, { f
     marginBottom: '8px',
     padding: '8px',
     '&:hover': {
-      background: colors.invariant.greenLinearGradientOpacity
+      background: colors.invariant.lightHover2
     }
   },
+  liqudityLabel: { ...typography.body2, color: colors.invariant.textGrey },
   tokenLabel: {
     ...typography.heading3
   },
@@ -120,6 +123,72 @@ export const useStyles = makeStyles<{ fullWidth: boolean }>()((theme: Theme, { f
   },
   balaceLabel: {
     ...typography.body2,
+    color: colors.invariant.textGrey
+  },
+  commonTokenIcon: {
+    width: 24,
+    borderRadius: '50%'
+  },
+  commonTokenContainer: {
+    justifyContent: 'center',
+    cursor: 'pointer',
+
+    borderRadius: 12,
+    height: 24,
+    alignItems: 'center',
+    display: 'flex',
+    padding: '6px 12px 6px 12px',
+    gap: 8,
+    background: colors.invariant.dark,
+    '&:hover': {
+      background: colors.invariant.light,
+      '@media (hover: none)': {
+        background: colors.invariant.newDark
+      }
+    }
+  },
+  commonTokenLabel: {
+    ...typography.body2,
+    color: colors.invariant.text
+  },
+  tokenAddress: {
+    backgroundColor: colors.invariant.newDark,
+    borderRadius: 4,
+    padding: '2px 4px',
+    width: 'min-content',
+    height: 'min-content',
+    '& a': {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '12px',
+      textDecoration: 'none',
+
+      '&:hover': {
+        filter: 'brightness(1.2)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
+      },
+      '& p': {
+        color: colors.invariant.lightGrey,
+        ...typography.caption4,
+        letterSpacing: '0.03em'
+      }
+    }
+  },
+  feeTierLabel: {
+    display: 'flex',
+    gap: 6,
+    alignItems: 'center'
+  },
+  feeTierProcent: {
+    ...typography.heading3,
+    color: colors.invariant.text
+  },
+  feeTierText: {
+    padding: '2px 4px 2px 4px',
+    ...typography.caption4,
     color: colors.invariant.textGrey
   }
 }))

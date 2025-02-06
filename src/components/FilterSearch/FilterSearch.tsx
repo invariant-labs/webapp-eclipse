@@ -1,37 +1,97 @@
-import { Autocomplete, Box, Divider, Fade, Paper, TextField, Typography } from '@mui/material'
-import { forwardRef, useState } from 'react'
-import copyAddressIcon from '@static/svg/copyIcon.svg'
+import {
+  Autocomplete,
+  Box,
+  Divider,
+  Fade,
+  Grid,
+  Paper,
+  Popper,
+  TextField,
+  Typography
+} from '@mui/material'
+import { forwardRef, useMemo, useState } from 'react'
 
 import useStyles from './styles'
 import { shortenAddress } from '@utils/uiUtils'
 import icons from '@static/icons'
+import { printBN } from '@utils/utils'
+import { NetworkType } from '@store/consts/static'
 
 interface ISearchToken {
   icon: string
   name: string
   symbol: string
   address: string
+  balance: any
+  decimals: number
 }
 
 interface IFilterSearch {
-  selectedTokens: ISearchToken[]
-  setSelectedTokens: (tokens: ISearchToken[]) => void
+  networkType: string
+  selectedFilters: { feeTier: string; tokens: ISearchToken[] }
+  setSelectedFilters: React.Dispatch<
+    React.SetStateAction<{ feeTier: string; tokens: ISearchToken[] }>
+  >
   mappedTokens: ISearchToken[]
 }
 
+interface FeeTierOption {
+  type: 'feeTier'
+  feeTier: string
+}
+
+type Option = ISearchToken | FeeTierOption
+
 export const FilterSearch: React.FC<IFilterSearch> = ({
-  selectedTokens,
-  setSelectedTokens,
+  networkType,
+  selectedFilters,
+  setSelectedFilters,
   mappedTokens
 }) => {
+  const [open, setOpen] = useState(false)
+  const fullWidth = open || selectedFilters.tokens.length >= 1
+  const { classes } = useStyles({ fullWidth })
+
   const PaperComponent = (paperProps, ref) => {
     return (
       <Fade in timeout={600}>
         <Paper {...paperProps} ref={ref}>
-          <Box onMouseDown={e => e.stopPropagation()}>
+          <Box onClick={e => e.stopPropagation()}>
             <Box className={classes.commonTokens}>
               <Typography className={classes.headerText}>Commons Tokens</Typography>
-              <Box height='80px'></Box>
+              <Box display='flex' gap='8px' flexDirection='column' height='80px'>
+                <Box gap='8px' display='flex'>
+                  {mappedTokens.slice(0, 3).map(token => (
+                    <Box
+                      key={token.address}
+                      className={classes.commonTokenContainer}
+                      onMouseDown={e => handleSelectToken(e, token)}>
+                      <img
+                        className={classes.commonTokenIcon}
+                        src={token.icon}
+                        alt={token.symbol}
+                      />
+                      <Typography className={classes.commonTokenLabel}>{token.symbol}</Typography>
+                    </Box>
+                  ))}
+                </Box>
+
+                <Box gap='8px' display='flex'>
+                  {mappedTokens.slice(3, 6).map(token => (
+                    <Box
+                      key={token.address}
+                      className={classes.commonTokenContainer}
+                      onMouseDown={e => handleSelectToken(e, token)}>
+                      <img
+                        className={classes.commonTokenIcon}
+                        src={token.icon}
+                        alt={token.symbol}
+                      />
+                      <Typography className={classes.commonTokenLabel}>{token.symbol}</Typography>
+                    </Box>
+                  ))}
+                </Box>
+              </Box>
               <Divider className={classes.divider} orientation='horizontal' flexItem />
             </Box>
           </Box>
@@ -41,19 +101,120 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
     )
   }
 
+  const CustomPopper = props => {
+    return <Popper {...props} placement='bottom-start' modifiers={[]} />
+  }
+
   const PaperComponentForward = forwardRef(PaperComponent)
 
-  const [openh, setOpen] = useState(false)
-  const open = true
-  const fullWidth = open || selectedTokens.length >= 1
-  const { classes } = useStyles({ fullWidth })
+  const feeTiers = ['0.01', '0.02', '0.05', '0.09', '0.1', '0.3', '1']
+  const isSelectionComplete = selectedFilters.tokens.length === 2 && selectedFilters.feeTier
+
+  const networkUrl = useMemo(() => {
+    switch (networkType) {
+      case NetworkType.Mainnet:
+        return ''
+      case NetworkType.Testnet:
+        return '?cluster=testnet'
+      case NetworkType.Devnet:
+        return '?cluster=devnet'
+      default:
+        return '?cluster=testnet'
+    }
+  }, [networkType])
 
   const handleRemoveToken = (tokenToRemove: ISearchToken) => {
-    setSelectedTokens(selectedTokens.filter(token => token.address !== tokenToRemove.address))
+    setSelectedFilters(prevFilters => {
+      const updatedTokens = prevFilters.tokens.filter(
+        token => token.address !== tokenToRemove.address
+      )
+      return {
+        ...prevFilters,
+        tokens: updatedTokens,
+        feeTier: updatedTokens.length === 2 ? prevFilters.feeTier : ''
+      }
+    })
+  }
+
+  const handleRemoveFeeTier = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setSelectedFilters(prevFilters => ({ ...prevFilters, feeTier: '' }))
+  }
+
+  const handleSelectToken = (e: React.MouseEvent, token: ISearchToken) => {
+    e.stopPropagation()
+    e.preventDefault()
+
+    setSelectedFilters(prevFilters => {
+      if (
+        prevFilters.tokens.length >= 2 ||
+        prevFilters.tokens.some(selected => selected.address === token.address)
+      ) {
+        return prevFilters
+      }
+      return {
+        ...prevFilters,
+        tokens: [...prevFilters.tokens, token]
+      }
+    })
+
+    setOpen(true)
+  }
+
+  const combinedValue: Option[] = [...selectedFilters.tokens]
+  if (selectedFilters.tokens.length === 2 && selectedFilters.feeTier) {
+    combinedValue.push({ type: 'feeTier', feeTier: selectedFilters.feeTier })
+  }
+
+  let options: Option[] = []
+  if (selectedFilters.tokens.length < 2) {
+    options = mappedTokens.filter(
+      token => !selectedFilters.tokens.some(selected => selected.address === token.address)
+    )
+  } else if (selectedFilters.tokens.length === 2) {
+    options = feeTiers.map(ft => ({ type: 'feeTier', feeTier: ft }))
+  }
+
+  const filterOptions = (opts: Option[], state: { inputValue: string }) => {
+    if (selectedFilters.tokens.length < 2) {
+      return opts.filter(option => {
+        const token = option as ISearchToken
+        return (
+          token.symbol?.toLowerCase().includes(state.inputValue.toLowerCase()) ||
+          token.address?.toLowerCase().includes(state.inputValue.toLowerCase())
+        )
+      })
+    } else {
+      return opts.filter(option => {
+        const feeOpt = option as FeeTierOption
+        return feeOpt.feeTier.toLowerCase().includes(state.inputValue.toLowerCase())
+      })
+    }
+  }
+
+  const handleAutoCompleteChange = (_event: any, newValue: Option[]) => {
+    const tokens = newValue.filter((item): item is ISearchToken => !('feeTier' in item))
+    const feeTierOption = newValue.find(item => 'feeTier' in item) as FeeTierOption | undefined
+
+    if (tokens.length < 2) {
+      setSelectedFilters(prevFilters => ({
+        ...prevFilters,
+        tokens,
+        feeTier: ''
+      }))
+    } else {
+      setSelectedFilters(prevFilters => ({
+        ...prevFilters,
+        tokens,
+        feeTier: feeTierOption ? feeTierOption.feeTier : prevFilters.feeTier
+      }))
+    }
+    setOpen(true)
   }
 
   return (
     <Autocomplete
+      disableCloseOnSelect={selectedFilters.tokens.length < 2}
       sx={{
         '& .MuiOutlinedInput-root': {
           '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
@@ -61,93 +222,132 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
         }
       }}
       multiple
-      disableCloseOnSelect
+      ListboxProps={{ autoFocus: true }}
+      disablePortal
+      value={combinedValue}
+      onChange={handleAutoCompleteChange}
       classes={{ paper: classes.paper }}
+      PopperComponent={CustomPopper}
       PaperComponent={PaperComponentForward}
       id='token-selector'
-      options={mappedTokens.filter(
-        option => !selectedTokens.some(selected => selected.address === option.address)
-      )}
-      getOptionLabel={option => option.symbol}
-      value={selectedTokens}
-      onChange={(_, newValue) => {
-        if (newValue.length <= 2) {
-          setSelectedTokens(newValue)
+      options={options}
+      open={isSelectionComplete ? false : open}
+      getOptionLabel={option => {
+        if ('feeTier' in option) {
+          return option.feeTier
+        } else {
+          return option.symbol
         }
       }}
       onOpen={() => {
-        if (selectedTokens.length < 2) setOpen(true)
+        if (!isSelectionComplete) {
+          setOpen(true)
+        }
       }}
       onClose={() => setOpen(false)}
-      open={open}
       disableClearable
       popupIcon={null}
-      filterOptions={(options, { inputValue }) =>
-        options.filter(
-          option =>
-            option.symbol.toLowerCase().includes(inputValue.toLowerCase()) ||
-            option.address.toLowerCase().includes(inputValue.toLowerCase())
-        )
-      }
+      filterOptions={filterOptions}
       renderTags={(value, getTagProps) =>
         value.map((option, index) => {
-          const tagProps = getTagProps({ index })
-          return (
-            // Chip
-
-            <Box {...tagProps} margin={0} className={`${tagProps.className} ${classes.boxChip}`}>
-              <img src={option.icon} className={classes.avatarChip} alt={option.symbol} />
-              <Typography>{shortenAddress(option.symbol)}</Typography>
-              <img
-                src={icons.closeIcon}
-                className={classes.closeIcon}
-                alt='close'
-                onClick={e => {
-                  e.stopPropagation()
-                  handleRemoveToken(option)
-                }}
-              />
-            </Box>
-          )
+          if ('feeTier' in option) {
+            return (
+              <Box
+                key={`feeTier-${option.feeTier}`}
+                className={`${getTagProps({ index }).className} ${classes.boxChip}`}>
+                <Typography>{option.feeTier}% Fee</Typography>
+                <img
+                  src={icons.closeIcon}
+                  className={classes.closeIcon}
+                  alt='close'
+                  onClick={e => {
+                    e.stopPropagation()
+                    handleRemoveFeeTier(e)
+                  }}
+                />
+              </Box>
+            )
+          } else {
+            return (
+              <Box
+                {...getTagProps({ index })}
+                margin={0}
+                className={`${getTagProps({ index }).className} ${classes.boxChip}`}>
+                <img src={option.icon} className={classes.avatarChip} alt={option.symbol} />
+                <Typography>{shortenAddress(option.symbol)}</Typography>
+                <img
+                  src={icons.closeIcon}
+                  className={classes.closeIcon}
+                  alt='close'
+                  onClick={e => {
+                    e.stopPropagation()
+                    handleRemoveToken(option)
+                  }}
+                />
+              </Box>
+            )
+          }
         })
       }
-      renderOption={(props, option) => (
-        <Box component='li' {...props}>
-          <Box className={classes.tokenContainer}>
-            <Box display='flex' alignItems='center'>
-              <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
-              <Box display='flex' flexDirection='column'>
-                <Box display='flex' flexDirection='row' alignItems='center' gap='6px'>
-                  <Typography className={classes.tokenLabel}>
-                    {shortenAddress(option.symbol)}
-                  </Typography>
-                  <Box className={classes.labelContainer}>
-                    <Typography className={classes.addressLabel}>
-                      {shortenAddress(option.address)}
+      renderOption={(props, option) => {
+        if ('feeTier' in option) {
+          return (
+            <Box component='li' {...props}>
+              <Box className={classes.tokenContainer}>
+                <Box className={classes.feeTierLabel}>
+                  <Typography className={classes.feeTierProcent}>{option.feeTier}%</Typography>
+                  <Typography className={classes.feeTierText}>fee tier</Typography>
+                </Box>
+                <Typography className={classes.liqudityLabel}>Liqudity Pool</Typography>
+              </Box>
+            </Box>
+          )
+        } else {
+          return (
+            <Box component='li' {...props}>
+              <Box className={classes.tokenContainer}>
+                <Box display='flex' alignItems='center'>
+                  <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
+                  <Box display='flex' flexDirection='column'>
+                    <Box display='flex' flexDirection='row' alignItems='center' gap='6px'>
+                      <Typography className={classes.tokenLabel}>
+                        {shortenAddress(option.symbol)}
+                      </Typography>
+                      <Grid className={classes.tokenAddress} container direction='column'>
+                        <a
+                          href={`https://eclipsescan.xyz/token/${option.address.toString()}${networkUrl}`}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          onClick={event => {
+                            event.stopPropagation()
+                          }}>
+                          <Typography>{shortenAddress(option.address)}</Typography>
+                          <img width={8} height={8} src={icons.newTab} alt='Token address' />
+                        </a>
+                      </Grid>
+                    </Box>
+                    <Typography className={classes.tokenName}>
+                      {option.name === option.address ? shortenAddress(option.name) : option.name}
                     </Typography>
-                    <img width={8} src={copyAddressIcon} />
                   </Box>
                 </Box>
-                <Typography className={classes.tokenName}>
-                  {option.name === option.address ? shortenAddress(option.name) : option.name}
+                <Typography className={classes.balaceLabel}>
+                  {option.balance > 0 && `Balance: ${printBN(option.balance, option.decimals)}`}
                 </Typography>
               </Box>
             </Box>
-            <Typography className={classes.balaceLabel}>Balance: 1.3468</Typography>
-          </Box>
-        </Box>
-      )}
+          )
+        }
+      }}
       renderInput={params => (
         <TextField
           {...params}
           variant='outlined'
           className={classes.searchBar}
-          InputProps={{
-            ...params.InputProps,
-            readOnly: selectedTokens.length >= 2
-          }}
           onClick={() => {
-            if (selectedTokens.length < 2) setOpen(true)
+            if (!isSelectionComplete) {
+              setOpen(true)
+            }
           }}
         />
       )}
