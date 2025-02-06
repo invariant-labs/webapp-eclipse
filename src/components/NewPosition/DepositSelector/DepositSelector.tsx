@@ -73,7 +73,8 @@ export interface IDepositSelector {
     tokenFrom: PublicKey,
     tokenTo: PublicKey,
     estimatedPriceAfterSwap: BN,
-    swapAmount: BN
+    swapAmount: BN,
+    slippage: BN
   ) => void
   tokenAInputState: InputState
   tokenBInputState: InputState
@@ -798,7 +799,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                     tokenFrom,
                     tokenTo,
                     simulation.swapSimulation.priceAfterSwap,
-                    simulation.swapInput.swapAmount
+                    simulation.swapInput.swapAmount,
+                    fromFee(new BN(Number(+priceImpact * 1000)))
                   )
                 : onAddLiquidity()
             }

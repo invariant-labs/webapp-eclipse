@@ -765,7 +765,8 @@ export const NewPosition: React.FC<INewPosition> = ({
             tokenFrom,
             tokenTo,
             estimatedPriceAfterSwap,
-            swapAmount
+            swapAmount,
+            slippage
           ) => {
             if (tokenAIndex !== null && tokenBIndex !== null) {
               const tokenADecimals = tokens[tokenAIndex].decimals
@@ -780,7 +781,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 isXtoY
                   ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
                   : convertBalanceToBN(tokenADeposit, tokenADecimals),
-                fromFee(new BN(Number(+slippTolerance * 1000))),
+                slippage,
                 maxLiquidityPercentage,
                 minUtilizationPercentage,
                 tokenFrom,
