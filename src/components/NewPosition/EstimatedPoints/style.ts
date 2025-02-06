@@ -17,7 +17,7 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     display: 'flex',
     flexDirection: 'column',
     flex: 1,
-    alignItems: 'center'
+    alignItems: 'left'
   },
   darkBackground: {
     marginTop: 8,
@@ -36,22 +36,23 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
   pointsLabel: {
     backgroundColor: colors.invariant.light,
     borderRadius: 8,
-    padding: '5px 8px',
+    padding: '8px 16px',
     gap: 4,
-
+    minWidth: '120px',
+    height: 32,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     '& p': {
-      ...typography.caption2
+      ...typography.caption2,
+      fontSize: '1rem'
     }
   },
   pinkText: {
     color: colors.invariant.pink
   },
   questionButton: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
     margin: 0,
-    padding: 0,
     border: 'none',
     textDecoration: 'none',
     background: 'none',
@@ -62,34 +63,20 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
   link: {
     textDecoration: 'underline',
     textDecorationStyle: 'solid',
-    textDecorationThickness: 'auto',
-    ...typography.body2,
-    lineHeight: '24px',
-    textAlign: 'left',
-    textWrap: 'nowrap'
+    textDecorationThickness: 'auto'
   },
   description: {
     ...typography.body2,
     marginTop: 12,
     color: colors.invariant.textGrey,
-    letterSpacing: '-0.48px'
+    letterSpacing: '-0.03em'
   },
   leftHeaderItems: {
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    flexWrap: 'nowrap',
-    [theme.breakpoints.down('md')]: {
-      flexDirection: 'column',
-      gap: 8
-    }
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: theme.spacing(1)
   },
-  rightHeaderItems: {
-    marginLeft: 8,
 
-    [theme.breakpoints.down('md')]: {
-      marginLeft: 0
-    }
-  },
   estimatedPoints: {
     ...typography.body1,
     [theme.breakpoints.down('sm')]: {
@@ -121,7 +108,6 @@ export const useStylesPointsLabel = makeStyles()(() => ({
     top: 0,
     left: 0
   },
-
   wrapper: {
     display: 'flex',
     alignItems: 'center',

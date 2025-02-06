@@ -31,21 +31,21 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
-  const { minConc, middleConc, maxConc } = useMemo(() => {
-    return {
+  const { minConc, middleConc, maxConc } = useMemo(
+    () => ({
       minConc: concentrationArray[0].toFixed(0),
       middleConc: concentrationArray[Math.floor(concentrationArray.length / 2)].toFixed(0),
       maxConc: concentrationArray[concentrationArray.length - 1].toFixed(0)
-    }
-  }, [concentrationArray])
+    }),
+    [concentrationArray]
+  )
 
-  const percentage = useMemo(() => {
-    return +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0)
-  }, [concentrationIndex])
+  const percentage = useMemo(
+    () => +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0),
+    [concentrationIndex, concentrationArray]
+  )
 
-  const { classes } = useStyles({
-    percentage: percentage
-  })
+  const { classes } = useStyles({ percentage })
 
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
@@ -82,39 +82,44 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
       middle: middlePoints,
       max: maxPoints
     }
-  }, [estimatedScalePoints])
+  }, [estimatedScalePoints, isConnected])
 
   return (
     <Box mt={3} mb={4}>
       <GradientBorder borderRadius={24} borderWidth={2}>
         <Grid className={classNames(classes.wrapper)}>
-          <Grid display='flex' gap={3} className={classNames(classes.innerWrapper)}>
+          <Grid display='flex' gap={3} className={classNames(classes.innerWrapper)} spacing={3}>
             <Grid className={classes.column}>
-              <Grid container className={classes.leftHeaderItems}>
-                <Grid display='flex' gap={1} alignItems='center'>
-                  <Typography style={{ textWrap: 'nowrap', ...typography.heading4 }}>
-                    Estimated Points
-                  </Typography>
-                  <Grid
-                    display='flex'
-                    alignItems='center'
-                    justifyContent='center'
-                    className={classes.pointsLabel}
-                    height={24}
-                    flexWrap='nowrap'>
-                    <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '12px' }} />
-                    <Typography noWrap>
-                      Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
+              <Grid container direction='column' spacing={1} className={classes.leftHeaderItems}>
+                <Grid item>
+                  <Grid display='flex' gap={1} alignItems='center' justifyContent={'space-between'}>
+                    <Typography style={{ whiteSpace: 'nowrap', ...typography.heading4 }}>
+                      Estimated Points
                     </Typography>
+                    <Grid
+                      display='flex'
+                      alignItems='center'
+                      justifyContent='center'
+                      className={classes.pointsLabel}
+                      flexWrap='nowrap'>
+                      <img src={icons.airdropRainbow} alt='Airdrop' style={{ height: '16px' }} />
+                      <Typography noWrap>
+                        Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
+                      </Typography>
+                    </Grid>
                   </Grid>
                 </Grid>
-                <Grid className={classes.rightHeaderItems}>
+              </Grid>
+              <Grid item>
+                <Typography className={classes.description}>
+                  Points you accrue depend on the concentration of your position. Adjust the
+                  concentration slider to see how many points your current position will accrue.{' '}
                   <button className={classes.questionButton} onClick={handleClickFAQ}>
                     <img
                       src={icons.infoIconPink}
                       alt='i'
                       width={14}
-                      style={{ marginRight: '4px' }}
+                      style={{ marginLeft: '2px', marginRight: '4px', marginBottom: '-2px' }}
                     />
                     <Typography
                       display='inline'
@@ -122,15 +127,11 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                       How to get more points?
                     </Typography>
                   </button>
-                </Grid>
+                </Typography>
               </Grid>
-              <Typography className={classes.description}>
-                Points you accrue depend on the concentration of your position. Adjust the
-                concentration slider to see how many points your current position will accrue.
-              </Typography>
             </Grid>
-            <Grid className={classes.column}>
-              <Typography className={classes.estimatedPoints}>
+            <Grid className={classes.column} style={{ alignItems: 'center' }}>
+              <Typography style={{ whiteSpace: 'nowrap', ...typography.heading4 }}>
                 <span>Your Estimated Points: &nbsp;</span>
                 <span className={classes.pinkText}>{pointsPerDayFormat} Points/24h</span>
               </Typography>
