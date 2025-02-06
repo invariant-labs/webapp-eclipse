@@ -950,8 +950,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       actualPoolPrice={poolIndex !== null ? allPools[poolIndex].sqrtPrice : null}
       autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
       autoSwapTickmap={
-        !!autoSwapPoolData && tickmap[autoSwapPoolData.address.toString()]
-          ? tickmap[autoSwapPoolData.address.toString()]
+        !!autoSwapPoolData && tickmap[autoSwapPoolData.tickmap.toString()]
+          ? tickmap[autoSwapPoolData.tickmap.toString()]
           : null
       }
       autoSwapTicks={

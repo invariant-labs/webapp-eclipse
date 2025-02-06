@@ -217,10 +217,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
   }, [isAutoSwapAvailable])
 
-  useEffect(() => {
-    console.log(simulation)
-  }, [simulation])
-
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
@@ -504,6 +500,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [tokenAIndex, tokenBIndex])
 
   const simulateAutoSwapResult = async () => {
+    console.log(autoSwapTicks, autoSwapPoolData, autoSwapTickmap, actualPoolPrice)
     if (
       !autoSwapPoolData ||
       !autoSwapTicks ||
@@ -541,6 +538,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         fromFee(new BN(Number(100 * 1000)))
       )
     }
+    console.log(result)
     if (!!result) {
       setSimulation(result)
     }
@@ -555,7 +553,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     actualPoolPrice,
     autoSwapPoolData,
     autoSwapTickmap,
-    autoSwapTicks
+    autoSwapTicks,
+    priceImpact,
+    slippageToleranceCreatePosition,
+    slippageToleranceSwap,
+    utilization
   ])
 
   return (
