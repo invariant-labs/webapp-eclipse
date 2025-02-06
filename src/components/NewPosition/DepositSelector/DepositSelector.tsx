@@ -38,6 +38,7 @@ import icons from '@static/icons'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
+  DECIMAL,
   fromFee,
   SimulateSwapAndCreatePositionSimulation
 } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -540,6 +541,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     }
     console.log(result)
+
     if (!!result) {
       setSimulation(result)
     }
@@ -562,8 +564,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     tokenAInputState,
     tokenBInputState
   ])
-
-  console.log(simulation)
 
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
@@ -647,24 +647,37 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       </Grid>
       <Grid container className={classes.depositHeader}>
         <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
-        {/* TODO: CONFIGURE PRICE IMPACT WARNING & PRICE IMPACT THRESHOLD */}
-        {simulation?.swapSimulation?.priceImpact >= 1 ? (
+        {simulation?.swapSimulation?.priceImpact && (
           <TooltipHover text='PRICE IMPACT WARNING'>
             <Box
               className={
-                !(simulation || !simulation) ? classes.unknownWarning : classes.errorWarning
+                new BN(simulation?.swapSimulation?.priceImpact).lt(
+                  fromFee(new BN(Number(+priceImpact * 1000)))
+                )
+                  ? classes.unknownWarning
+                  : classes.errorWarning
               }>
               <img
                 src={icons.infoCircle}
                 alt=''
                 width='12px'
                 style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-                className={!(simulation || !simulation) ? classes.grayscaleIcon : classes.errorIcon}
+                className={
+                  new BN(simulation?.swapSimulation?.priceImpact).lt(
+                    fromFee(new BN(Number(+priceImpact * 1000)))
+                  )
+                    ? classes.grayscaleIcon
+                    : classes.errorIcon
+                }
               />
-              Price impact: 10%
+              Price impact:{' '}
+              {Number(
+                printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
+              ).toFixed(3)}
+              %
             </Box>
           </TooltipHover>
-        ) : null}
+        )}
         <Box className={classes.depositOptions}>
           <Box className={classes.switchDepositTypeContainer}>
             <Box
