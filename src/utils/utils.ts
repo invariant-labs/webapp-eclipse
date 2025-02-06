@@ -1187,11 +1187,9 @@ export const simulateAutoSwapOnTheSamePool = async (
   pool: PoolWithAddress,
   poolTicks: Tick[],
   tickmap: Tickmap,
-  positionSlippage: BN,
   swapSlippage: BN,
   lowerTick: number,
   upperTick: number,
-  knownPrice: BN,
   maxLiquidityPercentage: BN
 ) => {
   const ticks: Map<number, Tick> = new Map<number, Tick>()
@@ -1208,15 +1206,15 @@ export const simulateAutoSwapOnTheSamePool = async (
     const simulateResult = simulateSwapAndCreatePositionOnTheSamePool(
       amountX,
       amountY,
+      swapSlippage,
       {
         ticks,
         tickmap,
         pool,
         maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
-        maxCrosses,
-        slippage: swapSlippage
+        maxCrosses
       },
-      { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
+      { lowerTick, upperTick },
       maxLiquidityPercentage
     )
     return simulateResult

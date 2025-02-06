@@ -8,6 +8,7 @@ import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
+import { Pair } from '@invariant-labs/sdk-eclipse'
 
 export interface PositionWithAddress extends Position {
   address: PublicKey
@@ -68,22 +69,28 @@ export interface InitPositionData
 }
 
 export interface SwapAndCreatePosition
-  extends Omit<CreatePosition, 'owner' | 'userTokenX' | 'userTokenY' | 'pair'> {
+  extends Omit<
+    CreatePosition,
+    'pair' | 'liquidityDelta' | 'knownPrice' | 'userTokenX' | 'userTokenY' | 'slippage'
+  > {
   tokenX: PublicKey
   tokenY: PublicKey
-  fee: BN
-  tickSpacing: number
-  initPool?: boolean
-  poolIndex: number | null
-  initTick?: number
+  swapFee: BN
+  swapPoolTickspacing: number
   xAmount: number
   yAmount: number
   maxLiquidtiyPercentage: BN
   minUtilizationPercentage: BN
-  tokenFrom: PublicKey
-  tokenTo: PublicKey
   estimatedPriceAfterSwap: BN
   swapAmount: BN
+  ticks: number[]
+  swapSlippage: BN
+  positionPoolPrice: BN
+  positionSlippage: BN
+  positionPair: Pair
+  isSamePool: Boolean
+  positionPoolLowerTick: number
+  positionPoolUpperTick: number
 }
 
 export interface GetCurrentTicksData {

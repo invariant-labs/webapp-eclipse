@@ -90,9 +90,10 @@ export const Primary: Story = {
       lowerTickIndex: 0,
       upperTickIndex: 0
     },
-    poolData: null,
-    tickmap: null,
-    ticks: null,
+    actualPoolPrice: null,
+    autoSwapPoolData: null,
+    autoSwapTickmap: null,
+    autoSwapTicks: null,
     isAutoSwapAvailable: false,
     promotedPoolTierIndex: 0,
     commonTokens: [

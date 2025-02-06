@@ -70,11 +70,11 @@ export interface IDepositSelector {
   onSwapAndAddLiquidity: (
     maxLiquidityPercentage: BN,
     minUtilizationPercentage: BN,
-    tokenFrom: PublicKey,
-    tokenTo: PublicKey,
     estimatedPriceAfterSwap: BN,
     swapAmount: BN,
-    slippage: BN
+    swapSlippage: BN,
+    positionSlippage: BN,
+    ticks: number[]
   ) => void
   tokenAInputState: InputState
   tokenBInputState: InputState
@@ -114,9 +114,10 @@ export interface IDepositSelector {
   promotedPoolTierIndex: number | undefined
   isAutoSwapAvailable: boolean
   isAutoSwapOnTheSamePool: boolean
-  poolData: PoolWithAddress | null
-  tickmap: Tickmap | null
-  ticks: Tick[] | null
+  autoSwapPoolData: PoolWithAddress | null
+  autoSwapTickmap: Tickmap | null
+  autoSwapTicks: Tick[] | null
+  actualPoolPrice: BN | null
   simulationParams: {
     lowerTickIndex: number
     upperTickIndex: number
@@ -171,9 +172,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   canNavigate,
   isCurrentPoolExisting,
   isAutoSwapAvailable,
-  poolData,
-  tickmap,
-  ticks,
+  autoSwapPoolData,
+  autoSwapTickmap,
+  autoSwapTicks,
   simulationParams,
   initialMaxPriceImpact,
   onMaxPriceImpactChange,
@@ -184,7 +185,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onMaxSlippageToleranceSwapChange,
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
-  initialMaxSlippageToleranceCreatePosition
+  initialMaxSlippageToleranceCreatePosition,
+  actualPoolPrice
 }) => {
   const { classes } = useStyles()
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
@@ -502,35 +504,41 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [tokenAIndex, tokenBIndex])
 
   const simulateAutoSwapResult = async () => {
-    if (!poolData || !ticks || !tickmap || !tokenAIndex || !tokenBIndex) return
+    if (
+      !autoSwapPoolData ||
+      !autoSwapTicks ||
+      !autoSwapTickmap ||
+      !tokenAIndex ||
+      !tokenBIndex ||
+      !actualPoolPrice
+    )
+      return
     let result: SimulateSwapAndCreatePositionSimulation | null = null
     if (isAutoSwapOnTheSamePool) {
       result = await simulateAutoSwapOnTheSamePool(
         tokens[tokenAIndex].balance,
         tokens[tokenBIndex].balance,
-        poolData,
-        ticks,
-        tickmap,
-        fromFee(new BN(Number(+slippageToleranceCreatePosition * 1000))),
+        autoSwapPoolData,
+        autoSwapTicks,
+        autoSwapTickmap,
         fromFee(new BN(Number(+slippageToleranceSwap * 1000))),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
-        poolData.sqrtPrice,
-        fromFee(new BN(Number(+utilization * 1000)))
+        fromFee(new BN(Number(100 * 1000)))
       )
     } else {
       result = await simulateAutoSwap(
         tokens[tokenAIndex].balance,
         tokens[tokenBIndex].balance,
-        poolData,
-        ticks,
-        tickmap,
+        autoSwapPoolData,
+        autoSwapTicks,
+        autoSwapTickmap,
         fromFee(new BN(Number(+slippageToleranceCreatePosition * 1000))),
         fromFee(new BN(Number(+slippageToleranceSwap * 1000))),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
-        poolData.sqrtPrice,
-        fromFee(new BN(Number(+utilization * 1000)))
+        actualPoolPrice,
+        fromFee(new BN(Number(100 * 1000)))
       )
     }
     if (!!result) {
@@ -541,7 +549,14 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (tokenACheckbox !== tokenBCheckbox) {
       simulateAutoSwapResult()
     }
-  }, [tokenACheckbox, tokenBCheckbox, tickmap, ticks])
+  }, [
+    tokenACheckbox,
+    tokenBCheckbox,
+    actualPoolPrice,
+    autoSwapPoolData,
+    autoSwapTickmap,
+    autoSwapTicks
+  ])
 
   return (
     <Grid container direction='column' className={classNames(classes.wrapper, className)}>
@@ -808,26 +823,24 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           )}
           onClick={() => {
             if (progress === 'none' && tokenAIndex && tokenBIndex) {
-              const tokenFrom = tokenACheckbox
-                ? tokens[tokenAIndex].assetAddress
-                : tokens[tokenBIndex].assetAddress
-              const tokenTo = tokenACheckbox
-                ? tokens[tokenBIndex].assetAddress
-                : tokens[tokenAIndex].assetAddress
+              const userMinUtilization = fromFee(new BN(Number(+utilization * 1000)))
 
               alignment === DepositOptions.Auto &&
               tokenACheckbox !== tokenBCheckbox &&
               simulation &&
               simulation.swapSimulation &&
-              simulation.swapInput
+              simulation.swapInput &&
+              simulation.utilization
                 ? onSwapAndAddLiquidity(
                     fromFee(new BN(Number(100 * 1000))),
-                    fromFee(new BN(Number(+utilization * 1000))),
-                    tokenFrom,
-                    tokenTo,
+                    userMinUtilization.lt(simulation.utilization)
+                      ? userMinUtilization
+                      : simulation.utilization,
                     simulation.swapSimulation.priceAfterSwap,
                     simulation.swapInput.swapAmount,
-                    fromFee(new BN(Number(+priceImpact * 1000)))
+                    simulation.swapSimulation.priceImpact,
+                    fromFee(new BN(Number(+slippageToleranceCreatePosition * 1000))),
+                    simulation.swapSimulation.crossedTicks
                   )
                 : onAddLiquidity()
             }

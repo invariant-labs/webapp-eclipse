@@ -22,15 +22,9 @@ import {
   sendAndConfirmRawTransaction,
   Keypair,
   TransactionExpiredTimeoutError,
-  TransactionInstruction,
-  TransactionMessage,
-  VersionedTransaction,
-  PublicKey,
-  RpcResponseAndContext,
-  AddressLookupTableAccount
+  VersionedTransaction
 } from '@solana/web3.js'
 import {
-  autoSwapPools,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   WRAPPED_ETH_ADDRESS
@@ -576,13 +570,10 @@ export function* handleSwapAndInitPositionWithETH(
       publicKey: wallet.publicKey
     } as IWallet)
 
-    const allPools = yield* select(poolsArraySortedByFees)
-    const ticks = yield* select(plotTicks)
-    const pair = new Pair(action.payload.tokenX, action.payload.tokenY, {
-      fee: action.payload.fee,
-      tickSpacing: action.payload.tickSpacing
+    const swapPair = new Pair(action.payload.tokenX, action.payload.tokenY, {
+      fee: action.payload.swapFee,
+      tickSpacing: action.payload.swapPoolTickspacing
     })
-    const userPositionList = yield* select(positionsList)
 
     const tokensAccounts = yield* select(accounts)
 
@@ -620,74 +611,38 @@ export function* handleSwapAndInitPositionWithETH(
       userTokenY = yield* call(createAccount, action.payload.tokenY)
     }
 
-    const xToY = pair.tokenX.equals(action.payload.tokenX)
+    const xToY = swapPair.tokenX.equals(action.payload.tokenX)
 
-    const ix = (yield* call(
-      [marketProgram, marketProgram.swapAndCreatePositionIx],
+    const swapAndCreateOnDifferentPools = action.payload.isSamePool
+      ? undefined
+      : {
+          positionPair: action.payload.positionPair,
+          positionPoolPrice: action.payload.positionPoolPrice,
+          positionSlippage: action.payload.positionSlippage
+        }
+    const tx = yield* call(
+      [marketProgram, marketProgram.versionedSwapAndCreatePositionTx],
       {
-        pair,
+        swapPair,
         userTokenX,
         userTokenY,
-        lowerTick: action.payload.lowerTick,
-        upperTick: action.payload.upperTick,
+        lowerTick: action.payload.positionPoolLowerTick,
+        upperTick: action.payload.positionPoolUpperTick,
         owner: wallet.publicKey,
-        slippage: action.payload.slippage,
-        knownPrice: action.payload.knownPrice,
+        slippage: action.payload.swapSlippage,
+        amount: action.payload.swapAmount,
         xToY,
+        byAmountIn: true,
         estimatedPriceAfterSwap: action.payload.estimatedPriceAfterSwap,
         maxLiquidityPercentage: action.payload.maxLiquidtiyPercentage,
         minUtilizationPercentage: action.payload.minUtilizationPercentage,
-        amount: action.payload.swapAmount,
-        byAmountIn: true
+        swapAndCreateOnDifferentPools
       },
+      { tickIndexes: action.payload.ticks },
       undefined,
-      {
-        position: {
-          lowerTickExists:
-            !ticks.hasError &&
-            !ticks.loading &&
-            ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
-              ? true
-              : undefined,
-          upperTickExists:
-            !ticks.hasError &&
-            !ticks.loading &&
-            ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
-              ? true
-              : undefined,
-          pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
-          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
-          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
-          positionsList: !userPositionList.loading ? userPositionList : undefined
-        }
-      }
-    )) as TransactionInstruction
-
-    if (action.payload.poolIndex === null || !allPools[action.payload.poolIndex]) return
-
-    const lookupTableAddresses = autoSwapPools.find(
-      item => item.address === allPools[action.payload.poolIndex!].address
-    )!.lookupTable
-
-    const lookupTableCalls = lookupTableAddresses.map(address =>
-      call([connection, connection.getAddressLookupTable], new PublicKey(address))
+      [createIx, transferIx, initIx],
+      [unwrapIx]
     )
-
-    const lookupTablesResults = (yield all(
-      lookupTableCalls
-    )) as RpcResponseAndContext<AddressLookupTableAccount | null>[]
-
-    const lookupTables = lookupTablesResults.map(result => result.value).filter(val => !!val)
-
-    const blockhash = yield* call([connection, connection.getLatestBlockhash])
-
-    const message = new TransactionMessage({
-      payerKey: wallet.publicKey,
-      recentBlockhash: blockhash.blockhash,
-      instructions: [createIx, transferIx, initIx, ix, unwrapIx]
-    }).compileToV0Message(lookupTables)
-
-    const tx = new VersionedTransaction(message)
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
@@ -798,13 +753,10 @@ export function* handleSwapAndInitPosition(
       publicKey: wallet.publicKey
     } as IWallet)
 
-    const allPools = yield* select(poolsArraySortedByFees)
-    const ticks = yield* select(plotTicks)
-    const pair = new Pair(action.payload.tokenX, action.payload.tokenY, {
-      fee: action.payload.fee,
-      tickSpacing: action.payload.tickSpacing
+    const swapPair = new Pair(action.payload.tokenX, action.payload.tokenY, {
+      fee: action.payload.swapFee,
+      tickSpacing: action.payload.swapPoolTickspacing
     })
-    const userPositionList = yield* select(positionsList)
 
     const tokensAccounts = yield* select(accounts)
 
@@ -824,74 +776,35 @@ export function* handleSwapAndInitPosition(
       userTokenY = yield* call(createAccount, action.payload.tokenY)
     }
 
-    const xToY = pair.tokenX.equals(action.payload.tokenX)
-
-    const ix = (yield* call(
-      [marketProgram, marketProgram.swapAndCreatePositionIx],
+    const xToY = swapPair.tokenX.equals(action.payload.tokenX)
+    const swapAndCreateOnDifferentPools = action.payload.isSamePool
+      ? undefined
+      : {
+          positionPair: action.payload.positionPair,
+          positionPoolPrice: action.payload.positionPoolPrice,
+          positionSlippage: action.payload.positionSlippage
+        }
+    const tx = yield* call(
+      [marketProgram, marketProgram.versionedSwapAndCreatePositionTx],
       {
-        pair,
+        swapPair,
         userTokenX,
         userTokenY,
-        lowerTick: action.payload.lowerTick,
-        upperTick: action.payload.upperTick,
+        lowerTick: action.payload.positionPoolLowerTick,
+        upperTick: action.payload.positionPoolUpperTick,
         owner: wallet.publicKey,
-        slippage: action.payload.slippage,
-        knownPrice: action.payload.knownPrice,
+        slippage: action.payload.swapSlippage,
+        amount: action.payload.swapAmount,
         xToY,
+        byAmountIn: true,
         estimatedPriceAfterSwap: action.payload.estimatedPriceAfterSwap,
         maxLiquidityPercentage: action.payload.maxLiquidtiyPercentage,
         minUtilizationPercentage: action.payload.minUtilizationPercentage,
-        amount: action.payload.swapAmount,
-        byAmountIn: true
+        swapAndCreateOnDifferentPools
       },
-      undefined,
-      {
-        position: {
-          lowerTickExists:
-            !ticks.hasError &&
-            !ticks.loading &&
-            ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
-              ? true
-              : undefined,
-          upperTickExists:
-            !ticks.hasError &&
-            !ticks.loading &&
-            ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
-              ? true
-              : undefined,
-          pool: action.payload.poolIndex !== null ? allPools[action.payload.poolIndex] : undefined,
-          tokenXProgramAddress: allTokens[action.payload.tokenX.toString()].tokenProgram,
-          tokenYProgramAddress: allTokens[action.payload.tokenY.toString()].tokenProgram,
-          positionsList: !userPositionList.loading ? userPositionList : undefined
-        }
-      }
-    )) as TransactionInstruction
-
-    if (action.payload.poolIndex === null || !allPools[action.payload.poolIndex]) return
-
-    const lookupTableAddresses = autoSwapPools.find(
-      item => item.address === allPools[action.payload.poolIndex!].address
-    )!.lookupTable
-
-    const lookupTableCalls = lookupTableAddresses.map(address =>
-      call([connection, connection.getAddressLookupTable], new PublicKey(address))
+      { tickIndexes: action.payload.ticks },
+      undefined
     )
-
-    const lookupTablesResults = (yield all(
-      lookupTableCalls
-    )) as RpcResponseAndContext<AddressLookupTableAccount | null>[]
-
-    const lookupTables = lookupTablesResults.map(result => result.value).filter(val => !!val)
-
-    const blockhash = yield* call([connection, connection.getLatestBlockhash])
-
-    const message = new TransactionMessage({
-      payerKey: wallet.publicKey,
-      recentBlockhash: blockhash.blockhash,
-      instructions: [ix]
-    }).compileToV0Message(lookupTables)
-
-    const tx = new VersionedTransaction(message)
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 

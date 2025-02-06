@@ -55,6 +55,7 @@ const tokens: SwapToken[] = [
 
 export const Primary: Story = {
   args: {
+    actualPoolPrice: new BN(0),
     onMaxSlippageToleranceSwapChange: fn(),
     initialMaxSlippageToleranceSwap: '',
     onMaxSlippageToleranceCreatePositionChange: fn(),
@@ -64,9 +65,9 @@ export const Primary: Story = {
     onMaxPriceImpactChange: fn(),
     initialMinUtilization: '',
     onMinUtilizationChange: fn(),
-    poolData: null,
-    tickmap: null,
-    ticks: null,
+    autoSwapPoolData: null,
+    autoSwapTickmap: null,
+    autoSwapTicks: null,
     currentPairReversed: false,
     isXtoY: true,
     addLiquidityHandler: fn(),
@@ -132,6 +133,7 @@ export const Primary: Story = {
         midPrice={{ x: 1234, index: 23, sqrtPrice: 123 }}
         currentPriceSqrt={123}
         tickSpacing={1}
+        actualPoolPrice={new BN(0)}
         xDecimal={9}
         yDecimal={12}
         commonTokens={[]}
@@ -188,9 +190,9 @@ export const Primary: Story = {
         poolAddress=''
         canNavigate={true}
         initialConcentration='40'
-        poolData={null}
-        tickmap={null}
-        ticks={null}
+        autoSwapPoolData={null}
+        autoSwapTickmap={null}
+        autoSwapTicks={null}
         initialMaxPriceImpact={''}
         onMaxPriceImpactChange={() => {}}
         initialMinUtilization={''}

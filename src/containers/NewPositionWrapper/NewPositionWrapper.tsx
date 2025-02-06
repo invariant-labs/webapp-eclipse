@@ -7,6 +7,7 @@ import {
   DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
+  autoSwapPools,
   bestTiers,
   commonTokensForNetworks
 } from '@store/consts/static'
@@ -667,6 +668,37 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [isTimeoutError])
 
+  const autoSwapPool = useMemo(
+    () =>
+      tokenAIndex && tokenBIndex
+        ? autoSwapPools.find(
+            item =>
+              (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+                item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+              (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+                item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+          )
+        : undefined,
+    [tokenAIndex, tokenBIndex]
+  )
+  const autoSwapPoolData = useMemo(
+    () =>
+      autoSwapPool ? allPools.find(pool => pool.address.equals(autoSwapPool.address)) : undefined,
+    [allPools, autoSwapPool]
+  )
+  useEffect(() => {
+    if (!tokenAIndex || !tokenBIndex || !autoSwapPool) return
+    dispatch(
+      poolsActions.getPoolData(
+        new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+          fee: ALL_FEE_TIERS_DATA[feeIndex].tier.fee,
+          tickSpacing:
+            ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing ??
+            feeToTickSpacing(ALL_FEE_TIERS_DATA[feeIndex].tier.fee)
+        })
+      )
+    )
+  }, [tokenAIndex, tokenBIndex, autoSwapPool])
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
@@ -759,15 +791,21 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         rightTickIndex,
         xAmount,
         yAmount,
-        slippage,
+        swapSlippage,
+        positionSlippage,
         maxLiquidtiyPercentage,
         minUtilizationPercentage,
-        tokenFrom,
-        tokenTo,
         estimatedPriceAfterSwap,
-        swapAmount
+        swapAmount,
+        ticks
       ) => {
-        if (tokenAIndex === null || tokenBIndex === null) {
+        if (
+          tokenAIndex === null ||
+          tokenBIndex === null ||
+          !autoSwapPoolData ||
+          poolIndex === null ||
+          !allPools[poolIndex]
+        ) {
           return
         }
         if (poolIndex !== null) {
@@ -783,24 +821,35 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           positionsActions.swapAndInitPosition({
             lowerTick: lowerTickIndex,
             upperTick: upperTickIndex,
-            liquidityDelta: liquidityRef.current,
-            knownPrice: poolIndex === null ? midPrice.sqrtPrice : allPools[poolIndex].sqrtPrice,
-            tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
-            tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
-            fee,
-            tickSpacing,
-            initPool: poolIndex === null,
-            poolIndex,
-            initTick: poolIndex === null ? midPrice.index : undefined,
             xAmount: Math.floor(xAmount),
             yAmount: Math.floor(yAmount),
+            tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
+            tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
+            swapSlippage,
+            positionPoolLowerTick: lowerTickIndex,
             maxLiquidtiyPercentage,
             minUtilizationPercentage,
-            tokenFrom,
-            tokenTo,
             estimatedPriceAfterSwap,
-            slippage,
-            swapAmount
+            positionPoolUpperTick: upperTickIndex,
+            swapAmount,
+            ticks,
+            isSamePool:
+              poolIndex !== null &&
+              !!allPools[poolIndex] &&
+              !!autoSwapPool &&
+              allPools[poolIndex].address.equals(autoSwapPool.address),
+            swapFee: autoSwapPoolData.fee,
+            swapPoolTickspacing: autoSwapPoolData.tickSpacing,
+            positionPoolPrice: allPools[poolIndex].sqrtPrice,
+            positionSlippage,
+            positionPair: new Pair(
+              tokens[tokenAIndex].assetAddress,
+              tokens[tokenBIndex].assetAddress,
+              {
+                fee: ALL_FEE_TIERS_DATA[feeIndex].tier.fee,
+                tickSpacing: ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing
+              }
+            )
           })
         )
       }}
@@ -898,15 +947,16 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
       canNavigate={canNavigate}
-      poolData={poolIndex !== null ? allPools[poolIndex] : null}
-      tickmap={
-        poolIndex !== null && tickmap[allPools[poolIndex].tickmap.toString()]
-          ? tickmap[allPools[poolIndex].tickmap.toString()]
+      actualPoolPrice={poolIndex !== null ? allPools[poolIndex].sqrtPrice : null}
+      autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
+      autoSwapTickmap={
+        !!autoSwapPoolData && tickmap[autoSwapPoolData.address.toString()]
+          ? tickmap[autoSwapPoolData.address.toString()]
           : null
       }
-      ticks={
-        poolIndex !== null && poolTicksForSimulation[allPools[poolIndex].address.toString()]
-          ? poolTicksForSimulation[allPools[poolIndex].address.toString()]
+      autoSwapTicks={
+        !!autoSwapPoolData && poolTicksForSimulation[autoSwapPoolData.address.toString()]
+          ? poolTicksForSimulation[autoSwapPoolData.address.toString()]
           : null
       }
       initialMaxPriceImpact={initialMaxPriceImpact}

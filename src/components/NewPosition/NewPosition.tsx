@@ -75,13 +75,13 @@ export interface INewPosition {
     rightTickIndex: number,
     xAmount: number,
     yAmount: number,
-    slippage: BN,
+    swapSlippage: BN,
+    positionSlippage: BN,
     maxLiquidtiyPercentage: BN,
     minUtilizationPercentage: BN,
-    tokenFrom: PublicKey,
-    tokenTo: PublicKey,
     estimatedPriceAfterSwap: BN,
-    swapAmount: BN
+    swapAmount: BN,
+    ticks: number[]
   ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
@@ -135,13 +135,14 @@ export interface INewPosition {
   network: NetworkType
   isLoadingTokens: boolean
   ethBalance: BN
+  actualPoolPrice: BN
   walletStatus: Status
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   canNavigate: boolean
-  poolData: PoolWithAddress | null
-  tickmap: Tickmap | null
-  ticks: Tick[] | null
+  autoSwapPoolData: PoolWithAddress | null
+  autoSwapTickmap: Tickmap | null
+  autoSwapTicks: Tick[] | null
   initialMaxPriceImpact: string
   onMaxPriceImpactChange: (val: string) => void
   initialMinUtilization: string
@@ -208,9 +209,9 @@ export const NewPosition: React.FC<INewPosition> = ({
   onConnectWallet,
   onDisconnectWallet,
   canNavigate,
-  poolData,
-  tickmap,
-  ticks,
+  autoSwapPoolData,
+  autoSwapTickmap,
+  autoSwapTicks,
   initialMaxPriceImpact,
   onMaxPriceImpactChange,
   initialMinUtilization,
@@ -219,7 +220,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   onMaxSlippageToleranceSwapChange,
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
-  initialMaxSlippageToleranceCreatePosition
+  initialMaxSlippageToleranceCreatePosition,
+  actualPoolPrice
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -769,11 +771,11 @@ export const NewPosition: React.FC<INewPosition> = ({
           onSwapAndAddLiquidity={(
             maxLiquidityPercentage,
             minUtilizationPercentage,
-            tokenFrom,
-            tokenTo,
             estimatedPriceAfterSwap,
             swapAmount,
-            slippage
+            swapSlippage,
+            positionSlippage,
+            ticks
           ) => {
             if (tokenAIndex !== null && tokenBIndex !== null) {
               const tokenADecimals = tokens[tokenAIndex].decimals
@@ -788,13 +790,13 @@ export const NewPosition: React.FC<INewPosition> = ({
                 isXtoY
                   ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
                   : convertBalanceToBN(tokenADeposit, tokenADecimals),
-                slippage,
+                swapSlippage,
+                positionSlippage,
                 maxLiquidityPercentage,
                 minUtilizationPercentage,
-                tokenFrom,
-                tokenTo,
                 estimatedPriceAfterSwap,
-                swapAmount
+                swapAmount,
+                ticks
               )
             }
           }}
@@ -830,6 +832,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             blockerInfo: 'Range only for single-asset deposit.',
             decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
           }}
+          actualPoolPrice={actualPoolPrice}
           tokenBInputState={{
             value:
               tokenAIndex !== null &&
@@ -910,9 +913,9 @@ export const NewPosition: React.FC<INewPosition> = ({
           promotedPoolTierIndex={promotedPoolTierIndex}
           isAutoSwapAvailable={isAutoSwapAvailable}
           isAutoSwapOnTheSamePool={isAutoSwapOnTheSamePool}
-          poolData={poolData}
-          tickmap={tickmap}
-          ticks={ticks}
+          autoSwapPoolData={autoSwapPoolData}
+          autoSwapTickmap={autoSwapTickmap}
+          autoSwapTicks={autoSwapTicks}
           simulationParams={simulationParams}
           initialMaxPriceImpact={initialMaxPriceImpact}
           onMaxPriceImpactChange={onMaxPriceImpactChange}
