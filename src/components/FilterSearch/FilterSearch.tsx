@@ -4,11 +4,14 @@ import {
   Divider,
   Fade,
   Grid,
+  InputAdornment,
   Paper,
   Popper,
   TextField,
   Typography
 } from '@mui/material'
+import SearchIcon from '@static/svg/lupaDark.svg'
+
 import { forwardRef, useMemo, useState } from 'react'
 
 import useStyles from './styles'
@@ -49,8 +52,12 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   mappedTokens
 }) => {
   const [open, setOpen] = useState(false)
+
+  const feeTiers = ['0.01', '0.02', '0.05', '0.09', '0.1', '0.3', '1']
+  const isSelectionComplete = selectedFilters.tokens.length === 2 && selectedFilters.feeTier
+  const isTokensSelected = selectedFilters.tokens.length === 2
   const fullWidth = open || selectedFilters.tokens.length >= 1
-  const { classes } = useStyles({ fullWidth })
+  const { classes } = useStyles({ fullWidth, isTokensSelected })
 
   const PaperComponent = (paperProps, ref) => {
     return (
@@ -107,9 +114,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
 
   const PaperComponentForward = forwardRef(PaperComponent)
 
-  const feeTiers = ['0.01', '0.02', '0.05', '0.09', '0.1', '0.3', '1']
-  const isSelectionComplete = selectedFilters.tokens.length === 2 && selectedFilters.feeTier
-
   const networkUrl = useMemo(() => {
     switch (networkType) {
       case NetworkType.Mainnet:
@@ -162,21 +166,21 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   }
 
   const combinedValue: Option[] = [...selectedFilters.tokens]
-  if (selectedFilters.tokens.length === 2 && selectedFilters.feeTier) {
+  if (isSelectionComplete) {
     combinedValue.push({ type: 'feeTier', feeTier: selectedFilters.feeTier })
   }
 
   let options: Option[] = []
-  if (selectedFilters.tokens.length < 2) {
+  if (!isTokensSelected) {
     options = mappedTokens.filter(
       token => !selectedFilters.tokens.some(selected => selected.address === token.address)
     )
-  } else if (selectedFilters.tokens.length === 2) {
+  } else if (isTokensSelected) {
     options = feeTiers.map(ft => ({ type: 'feeTier', feeTier: ft }))
   }
 
   const filterOptions = (opts: Option[], state: { inputValue: string }) => {
-    if (selectedFilters.tokens.length < 2) {
+    if (!isTokensSelected) {
       return opts.filter(option => {
         const token = option as ISearchToken
         return (
@@ -214,7 +218,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
 
   return (
     <Autocomplete
-      disableCloseOnSelect={selectedFilters.tokens.length < 2}
+      disableCloseOnSelect={!isTokensSelected}
       sx={{
         '& .MuiOutlinedInput-root': {
           '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
@@ -344,6 +348,34 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
           {...params}
           variant='outlined'
           className={classes.searchBar}
+          InputProps={
+            {
+              ...params.InputProps,
+              style: { padding: 0, height: '100%', display: 'flex', alignItems: 'center' },
+              endAdornment: (
+                <InputAdornment position='end'>
+                  <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
+                </InputAdornment>
+              ),
+              inputProps: {
+                ...params.inputProps,
+                readOnly: isSelectionComplete ? true : false
+              },
+              onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
+                if (params.inputProps.onKeyDown) {
+                  params.inputProps.onKeyDown(event)
+                }
+                if (event.key === 'Backspace' && event.currentTarget.value === '') {
+                  if (isSelectionComplete) {
+                    handleRemoveFeeTier(event as any)
+                  } else if (selectedFilters.tokens.length > 0) {
+                    const lastToken = selectedFilters.tokens[selectedFilters.tokens.length - 1]
+                    handleRemoveToken(lastToken)
+                  }
+                }
+              }
+            } as any
+          }
           onClick={() => {
             if (!isSelectionComplete) {
               setOpen(true)

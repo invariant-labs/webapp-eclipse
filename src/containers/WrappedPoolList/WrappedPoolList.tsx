@@ -1,9 +1,5 @@
 import { Grid, Typography } from '@mui/material'
-import {
-  isLoading,
-  poolsStatsWithTokensDetails,
-  tokensStatsWithTokensDetails
-} from '@store/selectors/stats'
+import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
