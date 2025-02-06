@@ -61,6 +61,9 @@ import boostPoints from './svg/boostPoints.svg'
 import airdropGrey from './svg/airdropGrey.svg'
 import infoError from './svg/infoError.svg'
 import okxLogo from './svg/okx-logo.svg'
+import infoIcon from './svg/info.svg'
+import infoIconPink from './svg/infoIconPink.svg'
+import slider from './svg/slider.svg'
 
 const icons: { [key: string]: string } = {
   clear: clearIcon,
@@ -117,10 +120,13 @@ const icons: { [key: string]: string } = {
   audit,
   warning2,
   closeWarning,
-  dropdown,
-  dropdownReverse,
+  infoIcon,
+  infoIconPink,
   arrowLeft,
   arrowRight,
+  slider,
+  dropdown,
+  dropdownReverse,
   infoCircle,
   boostPoints,
   airdropGrey,
