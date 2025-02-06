@@ -70,6 +70,19 @@ export interface INewPosition {
     yAmount: number,
     slippage: BN
   ) => void
+  swapAndAddLiquidityHandler: (
+    leftTickIndex: number,
+    rightTickIndex: number,
+    xAmount: number,
+    yAmount: number,
+    slippage: BN,
+    maxLiquidtiyPercentage: BN,
+    minUtilizationPercentage: BN,
+    tokenFrom: PublicKey,
+    tokenTo: PublicKey,
+    estimatedPriceAfterSwap: BN,
+    swapAmount: BN
+  ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
     tokenBindex: number | null,
@@ -202,6 +215,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   onMaxPriceImpactChange,
   initialMinUtilization,
   onMinUtilizationChange,
+  swapAndAddLiquidityHandler,
   onMaxSlippageToleranceSwapChange,
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
@@ -749,6 +763,38 @@ export const NewPosition: React.FC<INewPosition> = ({
                   ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
                   : convertBalanceToBN(tokenADeposit, tokenADecimals),
                 fromFee(new BN(Number(+slippTolerance * 1000)))
+              )
+            }
+          }}
+          onSwapAndAddLiquidity={(
+            maxLiquidityPercentage,
+            minUtilizationPercentage,
+            tokenFrom,
+            tokenTo,
+            estimatedPriceAfterSwap,
+            swapAmount,
+            slippage
+          ) => {
+            if (tokenAIndex !== null && tokenBIndex !== null) {
+              const tokenADecimals = tokens[tokenAIndex].decimals
+              const tokenBDecimals = tokens[tokenBIndex].decimals
+
+              swapAndAddLiquidityHandler(
+                leftRange,
+                rightRange,
+                isXtoY
+                  ? convertBalanceToBN(tokenADeposit, tokenADecimals)
+                  : convertBalanceToBN(tokenBDeposit, tokenBDecimals),
+                isXtoY
+                  ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
+                  : convertBalanceToBN(tokenADeposit, tokenADecimals),
+                slippage,
+                maxLiquidityPercentage,
+                minUtilizationPercentage,
+                tokenFrom,
+                tokenTo,
+                estimatedPriceAfterSwap,
+                swapAmount
               )
             }
           }}

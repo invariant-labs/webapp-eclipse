@@ -59,6 +59,7 @@ export const Primary: Story = {
     initialMaxSlippageToleranceSwap: '',
     onMaxSlippageToleranceCreatePositionChange: fn(),
     initialMaxSlippageToleranceCreatePosition: '',
+    swapAndAddLiquidityHandler: fn(),
     initialMaxPriceImpact: '',
     onMaxPriceImpactChange: fn(),
     initialMinUtilization: '',
@@ -138,6 +139,7 @@ export const Primary: Story = {
         onChangePositionTokens={fn()}
         onPositionOpeningMethodChange={fn()}
         onSlippageChange={fn()}
+        swapAndAddLiquidityHandler={fn()}
         onHideUnknownTokensChange={fn()}
         copyPoolAddressHandler={fn()}
         reloadHandler={fn()}

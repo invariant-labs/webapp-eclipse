@@ -80,6 +80,7 @@ export const Primary: Story = {
     initialMaxSlippageToleranceSwap: '',
     onMaxSlippageToleranceCreatePositionChange: fn(),
     initialMaxSlippageToleranceCreatePosition: '',
+    onSwapAndAddLiquidity: fn(),
     isAutoSwapOnTheSamePool: false,
     initialMaxPriceImpact: '',
     onMaxPriceImpactChange: fn(),

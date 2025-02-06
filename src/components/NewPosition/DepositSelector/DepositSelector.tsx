@@ -67,6 +67,15 @@ export interface IDepositSelector {
     feeTierIndex: number
   ) => void
   onAddLiquidity: () => void
+  onSwapAndAddLiquidity: (
+    maxLiquidityPercentage: BN,
+    minUtilizationPercentage: BN,
+    tokenFrom: PublicKey,
+    tokenTo: PublicKey,
+    estimatedPriceAfterSwap: BN,
+    swapAmount: BN,
+    slippage: BN
+  ) => void
   tokenAInputState: InputState
   tokenBInputState: InputState
   feeTiers: number[]
@@ -171,6 +180,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   initialMinUtilization,
   onMinUtilizationChange,
   isAutoSwapOnTheSamePool,
+  onSwapAndAddLiquidity,
   onMaxSlippageToleranceSwapChange,
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
@@ -797,9 +807,28 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             progress === 'none' ? classes.hoverButton : undefined
           )}
           onClick={() => {
-            if (progress === 'none') {
-              alignment === DepositOptions.Auto && tokenACheckbox !== tokenBCheckbox
-                ? () => {}
+            if (progress === 'none' && tokenAIndex && tokenBIndex) {
+              const tokenFrom = tokenACheckbox
+                ? tokens[tokenAIndex].assetAddress
+                : tokens[tokenBIndex].assetAddress
+              const tokenTo = tokenACheckbox
+                ? tokens[tokenBIndex].assetAddress
+                : tokens[tokenAIndex].assetAddress
+
+              alignment === DepositOptions.Auto &&
+              tokenACheckbox !== tokenBCheckbox &&
+              simulation &&
+              simulation.swapSimulation &&
+              simulation.swapInput
+                ? onSwapAndAddLiquidity(
+                    fromFee(new BN(Number(100 * 1000))),
+                    fromFee(new BN(Number(+utilization * 1000))),
+                    tokenFrom,
+                    tokenTo,
+                    simulation.swapSimulation.priceAfterSwap,
+                    simulation.swapInput.swapAmount,
+                    fromFee(new BN(Number(+priceImpact * 1000)))
+                  )
                 : onAddLiquidity()
             }
           }}
