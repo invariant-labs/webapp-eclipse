@@ -130,37 +130,76 @@ export const Overview: React.FC<OverviewProps> = () => {
     const positions: TokenPositionEntry[] = []
 
     positionList.map(position => {
-      positions.push({
-        token: position.tokenX.symbol,
-        value:
-          +printBN(
-            getX(
-              position.liquidity,
-              calculatePriceSqrt(position.upperTickIndex),
-              position.poolData.sqrtPrice,
-              calculatePriceSqrt(position.lowerTickIndex)
-            ),
-            position.tokenX.decimals
-          ) * prices[position.tokenX.assetAddress.toString()],
-        logo: position.tokenX.logoURI,
-        positionId: position.id
-      })
+      let foundTokenX = false
+      let foundTokenY = false
 
-      positions.push({
-        token: position.tokenY.symbol,
-        value:
-          +printBN(
-            getY(
-              position.liquidity,
-              calculatePriceSqrt(position.upperTickIndex),
-              position.poolData.sqrtPrice,
-              calculatePriceSqrt(position.lowerTickIndex)
-            ),
-            position.tokenY.decimals
-          ) * prices[position.tokenY.assetAddress.toString()],
-        logo: position.tokenY.logoURI,
-        positionId: position.id
-      })
+      for (let i = 0; i < positions.length; i++) {
+        if (positions[i].token === position.tokenX.symbol) {
+          positions[i].value +=
+            +printBN(
+              getX(
+                position.liquidity,
+                calculatePriceSqrt(position.upperTickIndex),
+                position.poolData.sqrtPrice,
+                calculatePriceSqrt(position.lowerTickIndex)
+              ),
+              position.tokenX.decimals
+            ) * prices[position.tokenX.assetAddress.toString()]
+          foundTokenX = true
+        }
+      }
+
+      if (!foundTokenX) {
+        positions.push({
+          token: position.tokenX.symbol,
+          value:
+            +printBN(
+              getX(
+                position.liquidity,
+                calculatePriceSqrt(position.upperTickIndex),
+                position.poolData.sqrtPrice,
+                calculatePriceSqrt(position.lowerTickIndex)
+              ),
+              position.tokenX.decimals
+            ) * prices[position.tokenX.assetAddress.toString()],
+          logo: position.tokenX.logoURI,
+          positionId: position.id
+        })
+      }
+
+      for (let i = 0; i < positions.length; i++) {
+        if (positions[i].token === position.tokenY.symbol) {
+          positions[i].value +=
+            +printBN(
+              getY(
+                position.liquidity,
+                calculatePriceSqrt(position.upperTickIndex),
+                position.poolData.sqrtPrice,
+                calculatePriceSqrt(position.lowerTickIndex)
+              ),
+              position.tokenY.decimals
+            ) * prices[position.tokenY.assetAddress.toString()]
+          foundTokenY = true
+        }
+      }
+
+      if (!foundTokenY) {
+        positions.push({
+          token: position.tokenY.symbol,
+          value:
+            +printBN(
+              getY(
+                position.liquidity,
+                calculatePriceSqrt(position.upperTickIndex),
+                position.poolData.sqrtPrice,
+                calculatePriceSqrt(position.lowerTickIndex)
+              ),
+              position.tokenY.decimals
+            ) * prices[position.tokenY.assetAddress.toString()],
+          logo: position.tokenY.logoURI,
+          positionId: position.id
+        })
+      }
     })
 
     return positions
