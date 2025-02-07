@@ -38,38 +38,28 @@ export const WrappedPoolList: React.FC = () => {
   const currentNetwork = useSelector(network)
   const isLoadingStats = useSelector(isLoading)
 
-  const [selectedFilters, setSelectedFilters] = useState<{
-    feeTier: string
-    tokens: ISearchToken[]
-  }>({
-    feeTier: '',
-    tokens: []
-  })
+  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
 
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
-      const isTokenXSelected = selectedFilters.tokens.some(
+      const isTokenXSelected = selectedFilters.some(
         token => token.address.toString() === poolData.tokenX.toString()
       )
-      const isTokenYSelected = selectedFilters.tokens.some(
+      const isTokenYSelected = selectedFilters.some(
         token => token.address.toString() === poolData.tokenY.toString()
       )
 
-      if (selectedFilters.tokens.length === 1) {
+      if (selectedFilters.length === 1) {
         return isTokenXSelected || isTokenYSelected
       }
 
-      if (selectedFilters.tokens.length === 2) {
+      if (selectedFilters.length === 2) {
         if (!(isTokenXSelected && isTokenYSelected)) return false
-
-        if (selectedFilters.feeTier) {
-          return poolData.fee.toString() === selectedFilters.feeTier.replace('%', '')
-        }
       }
 
       return true
     })
-  }, [isLoadingStats, poolsList, selectedFilters.tokens, selectedFilters.feeTier])
+  }, [isLoadingStats, poolsList, selectedFilters])
   useEffect(() => {
     console.log(filteredPoolsList)
   }, [filteredPoolsList])
@@ -82,7 +72,7 @@ export const WrappedPoolList: React.FC = () => {
     balance: tokenData.balance,
     decimals: tokenData.decimals
   }))
-
+  console.log(mappedTokens)
   const sortedTokens = mappedTokens.sort((a, b) => {
     const aBalance = +printBN(a.balance, a.decimals)
     const bBalance = +printBN(b.balance, b.decimals)

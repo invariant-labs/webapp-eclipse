@@ -34,15 +34,7 @@ export const useStyles = makeStyles<{ fullWidth: boolean; isTokensSelected: bool
       padding: '16px 16px 10px 16px',
 
       marginTop: 8,
-      background: colors.invariant.bodyBackground,
-      '&::-webkit-scrollbar': {
-        width: 6,
-        background: colors.invariant.component
-      },
-      '&::-webkit-scrollbar-thumb': {
-        background: colors.invariant.light,
-        borderRadius: 6
-      }
+      background: colors.invariant.bodyBackground
     },
     avatarChip: {
       width: 14,
