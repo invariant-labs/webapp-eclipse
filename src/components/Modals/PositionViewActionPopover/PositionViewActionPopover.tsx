@@ -3,7 +3,10 @@ import classNames from 'classnames'
 import useStyles from './style'
 import { Grid, Popover, Typography } from '@mui/material'
 import { actions } from '@store/reducers/positions'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { actions as lockerActions } from '@store/reducers/locker'
+import { network } from '@store/selectors/solanaConnection'
 
 export interface IPositionViewActionPopover {
   open: boolean
@@ -20,6 +23,8 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
 }) => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
+  const currentNetwork = useSelector(network)
 
   return (
     <Popover
@@ -60,6 +65,14 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             item
             onClick={e => {
               e.stopPropagation()
+              dispatch(
+                actions.closePosition({
+                  positionIndex: position.positionIndex,
+                  onSuccess: () => {
+                    navigate('/portfolio')
+                  }
+                })
+              )
               handleClose()
             }}>
             <Typography className={classes.name}>Close position</Typography>
@@ -70,6 +83,9 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           item
           onClick={e => {
             e.stopPropagation()
+            dispatch(
+              lockerActions.lockPosition({ index: position.positionIndex, network: currentNetwork })
+            )
             handleClose()
           }}>
           <Typography className={classes.name}>Lock position</Typography>
