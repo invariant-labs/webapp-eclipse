@@ -17,7 +17,6 @@ import { RPC } from '@utils/web3/connection'
 import { reducer as creatorReducer, creatorSliceName } from './creator'
 import { reducer as lockerReducer, lockerSliceName } from './locker'
 import { reducer as leaderboardReducer, leaderboardSliceName } from './leaderboard'
-import { reducer as overviewReducer, tokenPositionsSliceName } from './overview'
 // import { farmsSliceName, reducer as farmsReducer } from './farms'
 // import { bondsSliceName, reducer as bondsReducer } from './bonds'
 
@@ -85,8 +84,7 @@ const combinedReducers = combineReducers({
   [statsSliceName]: statsReducer,
   [leaderboardSliceName]: leaderboardReducer,
   [creatorSliceName]: creatorReducer,
-  [lockerSliceName]: lockerReducer,
-  [tokenPositionsSliceName]: overviewReducer
+  [lockerSliceName]: lockerReducer
   // [farmsSliceName]: farmsReducer
   // [bondsSliceName]: bondsReducer
 })

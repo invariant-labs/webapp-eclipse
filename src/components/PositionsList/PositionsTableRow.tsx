@@ -19,7 +19,7 @@ import { BN } from '@coral-xyz/anchor'
 import icons from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumber, printBN } from '@utils/utils'
 import classNames from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { usePromotedPool } from './PositionItem/hooks/usePromotedPool'
 import { calculatePercentageRatio } from './PositionItem/utils/calculations'
 import { useSharedStyles } from './PositionItem/variants/style/shared'
@@ -38,7 +38,6 @@ import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { usePrices } from '@store/hooks/userOverview/usePrices'
 import { useLiquidity } from '@store/hooks/userOverview/useLiquidity'
-import { actions } from '@store/reducers/overview'
 // import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -234,7 +233,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
-  const dispatch = useDispatch()
 
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
   const [positionTicks, setPositionTicks] = useState<PositionTicks>({
@@ -328,12 +326,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
 
     if (!isClaimLoading && totalValueInUSD > 0) {
       setPreviousUnclaimedFees(totalValueInUSD)
-      dispatch(
-        actions.addTotalUnclaimedFee({
-          positionId: id,
-          value: totalValueInUSD
-        })
-      )
     }
 
     return [xAmount, yAmount, totalValueInUSD]
@@ -360,33 +352,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     const yValue = tokenYLiquidity * tokenYPriceData.price
     console.log({ tokenXLiquidity, tokenYLiquidity })
     const totalValue = xValue + yValue
-    dispatch(
-      actions.addTotalAssets({
-        positionId: id,
-        value: totalValue
-      })
-    )
-    if (tokenXLiquidity > 0) {
-      dispatch(
-        actions.addTokenPosition({
-          token: tokenXName,
-          value: xValue,
-          positionId: id,
-          logo: positionSingleData?.tokenX.logoURI
-        })
-      )
-    }
-
-    if (tokenYLiquidity > 0) {
-      dispatch(
-        actions.addTokenPosition({
-          token: tokenYName,
-          value: yValue,
-          positionId: id,
-          logo: positionSingleData?.tokenY.logoURI
-        })
-      )
-    }
 
     return totalValue
   }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData])

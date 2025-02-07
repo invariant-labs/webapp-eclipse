@@ -17,7 +17,6 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
 import { IPositionItem } from '@components/PositionsList/types'
-import { actions as overviewActions } from '@store/reducers/overview'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
@@ -50,7 +49,6 @@ export const WrappedPositionsList: React.FC = () => {
   }, [list])
 
   const handleRefresh = () => {
-    dispatch(overviewActions.clearTokenPositions())
     dispatch(actions.getPositionsList())
   }
 

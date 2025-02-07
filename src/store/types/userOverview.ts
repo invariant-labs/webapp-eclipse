@@ -51,3 +51,10 @@ export interface ProcessedPool {
   tokenX: Token
   tokenY: Token
 }
+
+export interface TokenPositionEntry {
+  token: string
+  value: number
+  positionId: string
+  logo?: string
+}
