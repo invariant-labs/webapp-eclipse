@@ -30,10 +30,10 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   },
   boxChip: {
     display: 'flex',
-    padding: '6px 4px 6px 4px',
+    padding: '2px 4px 2px 4px',
     borderRadius: 8,
     gap: 8,
-    marginRight: 4,
+    margin: 4,
 
     height: 26,
     maxHeight: 26,

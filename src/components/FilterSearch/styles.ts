@@ -5,9 +5,9 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles<{ fullWidth: boolean; isSmall: boolean }>()(
   (_theme: Theme, { fullWidth, isSmall }) => ({
     searchBar: {
-      minHeight: 32,
+      mHeight: 32,
       borderRadius: 10,
-      padding: 4,
+
       marginBottom: 8,
       background: colors.invariant.black,
       border: '1px solid #202946',
