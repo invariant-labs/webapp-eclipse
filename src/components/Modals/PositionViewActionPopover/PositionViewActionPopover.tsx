@@ -3,28 +3,27 @@ import classNames from 'classnames'
 import useStyles from './style'
 import { Grid, Popover, Typography } from '@mui/material'
 import { actions } from '@store/reducers/positions'
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { actions as lockerActions } from '@store/reducers/locker'
-import { network } from '@store/selectors/solanaConnection'
 
 export interface IPositionViewActionPopover {
   open: boolean
   anchorEl: HTMLButtonElement | null
   position?: any
   handleClose: () => void
+  onLockPosition: () => void
 }
 
 export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = ({
   anchorEl,
   open,
   position,
-  handleClose
+  handleClose,
+  onLockPosition
 }) => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const currentNetwork = useSelector(network)
 
   return (
     <Popover
@@ -83,9 +82,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           item
           onClick={e => {
             e.stopPropagation()
-            dispatch(
-              lockerActions.lockPosition({ index: position.positionIndex, network: currentNetwork })
-            )
+            onLockPosition()
             handleClose()
           }}>
           <Typography className={classes.name}>Lock position</Typography>
