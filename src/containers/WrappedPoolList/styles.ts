@@ -45,12 +45,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   rowContainer: {
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column',
-      alignItems: 'flex-start'
-    }
+    width: '100%'
   },
   container: {
+    display: 'flex',
+    flexDirection: 'column',
     width: '100%'
   },
 

@@ -3,23 +3,21 @@ import {
   Box,
   Divider,
   Fade,
-  Grid,
   InputAdornment,
   Paper,
   Popper,
   TextField,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 import SearchIcon from '@static/svg/lupaDark.svg'
-
 import { forwardRef, useMemo, useState } from 'react'
-
-import useStyles from './styles'
-import { shortenAddress } from '@utils/uiUtils'
-import icons from '@static/icons'
-import { printBN } from '@utils/utils'
 import { NetworkType } from '@store/consts/static'
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
+import useStyles from './styles'
+import { CommonTokenItem } from './Helpers/CommonTokenItem'
+import { TokenChip } from './Helpers/TokenChip'
+import { TokenOption } from './Helpers/TokenOption'
 
 interface ISearchToken {
   icon: string
@@ -44,10 +42,27 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   mappedTokens
 }) => {
   const [open, setOpen] = useState(false)
-
   const isTokensSelected = selectedFilters.length === 2
   const fullWidth = open || selectedFilters.length >= 1
-  const { classes } = useStyles({ fullWidth, isTokensSelected })
+  const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
+  const { classes } = useStyles({ fullWidth, isSmall })
+
+  const networkUrl = useMemo(() => {
+    switch (networkType) {
+      case NetworkType.Mainnet:
+        return ''
+      case NetworkType.Testnet:
+        return '?cluster=testnet'
+      case NetworkType.Devnet:
+        return '?cluster=devnet'
+      default:
+        return '?cluster=testnet'
+    }
+  }, [networkType])
+
+  const options: ISearchToken[] = mappedTokens.filter(
+    token => !selectedFilters.some(selected => selected.address === token.address)
+  )
 
   const PaperComponent = (paperProps, ref) => {
     return (
@@ -55,39 +70,19 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
         <Paper {...paperProps} ref={ref}>
           <Box onClick={e => e.stopPropagation()}>
             <Box className={classes.commonTokens}>
-              <Typography className={classes.headerText}>Commons Tokens</Typography>
+              <Typography className={classes.headerText}>Common Tokens</Typography>
               <Box display='flex' gap='8px' flexDirection='column' height='80px'>
-                <Box gap='8px' display='flex'>
-                  {mappedTokens.slice(0, 3).map(token => (
-                    <Box
-                      key={token.address}
-                      className={classes.commonTokenContainer}
-                      onMouseDown={e => handleSelectToken(e, token)}>
-                      <img
-                        className={classes.commonTokenIcon}
-                        src={token.icon}
-                        alt={token.symbol}
+                {[0, 3].map(sliceStart => (
+                  <Box key={sliceStart} gap='8px' display='flex'>
+                    {mappedTokens.slice(sliceStart, sliceStart + 3).map(token => (
+                      <CommonTokenItem
+                        key={token.address}
+                        token={token}
+                        onSelect={handleSelectToken}
                       />
-                      <Typography className={classes.commonTokenLabel}>{token.symbol}</Typography>
-                    </Box>
-                  ))}
-                </Box>
-
-                <Box gap='8px' display='flex'>
-                  {mappedTokens.slice(3, 6).map(token => (
-                    <Box
-                      key={token.address}
-                      className={classes.commonTokenContainer}
-                      onMouseDown={e => handleSelectToken(e, token)}>
-                      <img
-                        className={classes.commonTokenIcon}
-                        src={token.icon}
-                        alt={token.symbol}
-                      />
-                      <Typography className={classes.commonTokenLabel}>{token.symbol}</Typography>
-                    </Box>
-                  ))}
-                </Box>
+                    ))}
+                  </Box>
+                ))}
               </Box>
               <Divider className={classes.divider} orientation='horizontal' flexItem />
             </Box>
@@ -104,43 +99,19 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
 
   const PaperComponentForward = forwardRef(PaperComponent)
 
-  const networkUrl = useMemo(() => {
-    switch (networkType) {
-      case NetworkType.Mainnet:
-        return ''
-      case NetworkType.Testnet:
-        return '?cluster=testnet'
-      case NetworkType.Devnet:
-        return '?cluster=devnet'
-      default:
-        return '?cluster=testnet'
-    }
-  }, [networkType])
-
   const handleRemoveToken = (tokenToRemove: ISearchToken) => {
-    setSelectedFilters(prevFilters =>
-      prevFilters.filter(token => token.address !== tokenToRemove.address)
-    )
+    setSelectedFilters(prev => prev.filter(token => token.address !== tokenToRemove.address))
   }
 
   const handleSelectToken = (e: React.MouseEvent, token: ISearchToken) => {
     e.stopPropagation()
     e.preventDefault()
-    setSelectedFilters(prevFilters => {
-      if (
-        prevFilters.length >= 2 ||
-        prevFilters.some(selected => selected.address === token.address)
-      ) {
-        return prevFilters
-      }
-      return [...prevFilters, token]
+    setSelectedFilters(prev => {
+      if (prev.length >= 2 || prev.some(t => t.address === token.address)) return prev
+      return [...prev, token]
     })
     setOpen(true)
   }
-
-  const options: ISearchToken[] = mappedTokens.filter(
-    token => !selectedFilters.some(selected => selected.address === token.address)
-  )
 
   const filterOptions = (opts: ISearchToken[], state: { inputValue: string }) => {
     return opts.filter(token => {
@@ -158,14 +129,29 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
 
   return (
     <Autocomplete
+      multiple
+      disablePortal
+      disableClearable
+      id='token-selector'
       disableCloseOnSelect={!isTokensSelected}
+      value={selectedFilters}
+      popupIcon={null}
+      onChange={handleAutoCompleteChange}
+      PopperComponent={CustomPopper}
+      PaperComponent={PaperComponentForward}
+      options={options}
+      classes={{ paper: classes.paper }}
+      open={isTokensSelected ? false : open}
+      getOptionLabel={option => option.symbol}
+      onOpen={() => setOpen(true)}
+      onClose={() => setOpen(false)}
+      filterOptions={filterOptions}
       sx={{
         '& .MuiOutlinedInput-root': {
           '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' }
         }
       }}
-      multiple
       ListboxProps={{
         autoFocus: true,
         sx: {
@@ -179,81 +165,19 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
             background: colors.invariant.pink,
             borderRadius: '3px'
           }
-        }
+        },
+        style: { maxHeight: '460px' }
       }}
-      disablePortal
-      value={selectedFilters}
-      onChange={handleAutoCompleteChange}
-      classes={{ paper: classes.paper }}
-      PopperComponent={CustomPopper}
-      PaperComponent={PaperComponentForward}
-      id='token-selector'
-      options={options}
-      open={isTokensSelected ? false : open}
-      getOptionLabel={option => option.symbol}
-      onOpen={() => setOpen(true)}
-      onClose={() => setOpen(false)}
-      disableClearable
-      popupIcon={null}
-      filterOptions={filterOptions}
       renderTags={(value, getTagProps) =>
-        value.map((option, index) => {
-          return (
-            <Box
-              {...getTagProps({ index })}
-              margin={0}
-              className={`${getTagProps({ index }).className} ${classes.boxChip}`}>
-              <img src={option.icon} className={classes.avatarChip} alt={option.symbol} />
-              <Typography>{shortenAddress(option.symbol)}</Typography>
-              <img
-                src={icons.closeIcon}
-                className={classes.closeIcon}
-                alt='close'
-                onClick={e => {
-                  e.stopPropagation()
-                  handleRemoveToken(option)
-                }}
-              />
-            </Box>
-          )
-        })
+        value.map((option, index) => (
+          <TokenChip option={option} onRemove={handleRemoveToken} {...getTagProps({ index })} />
+        ))
       }
-      renderOption={(props, option) => {
-        return (
-          <Box component='li' {...props}>
-            <Box className={classes.tokenContainer}>
-              <Box display='flex' alignItems='center'>
-                <img src={option.icon} alt={option.symbol} className={classes.searchResultIcon} />
-                <Box display='flex' flexDirection='column'>
-                  <Box display='flex' flexDirection='row' alignItems='center' gap='6px'>
-                    <Typography className={classes.tokenLabel}>
-                      {shortenAddress(option.symbol)}
-                    </Typography>
-                    <Grid className={classes.tokenAddress} container direction='column'>
-                      <a
-                        href={`https://eclipsescan.xyz/token/${option.address.toString()}${networkUrl}`}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        onClick={event => {
-                          event.stopPropagation()
-                        }}>
-                        <Typography>{shortenAddress(option.address)}</Typography>
-                        <img width={8} height={8} src={icons.newTab} alt='Token address' />
-                      </a>
-                    </Grid>
-                  </Box>
-                  <Typography className={classes.tokenName}>
-                    {option.name === option.address ? shortenAddress(option.name) : option.name}
-                  </Typography>
-                </Box>
-              </Box>
-              <Typography className={classes.balaceLabel}>
-                {option.balance > 0 && `Balance: ${printBN(option.balance, option.decimals)}`}
-              </Typography>
-            </Box>
-          </Box>
-        )
-      }}
+      renderOption={(props, option) => (
+        <Box component='li' {...props}>
+          <TokenOption option={option} networkUrl={networkUrl} />
+        </Box>
+      )}
       renderInput={params => (
         <TextField
           {...params}
@@ -286,11 +210,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
               }
             } as any
           }
-          onClick={() => {
-            if (!isTokensSelected) {
-              setOpen(true)
-            }
-          }}
+          onClick={() => !isTokensSelected && setOpen(true)}
         />
       )}
     />

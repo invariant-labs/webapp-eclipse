@@ -1,4 +1,4 @@
-import { Grid, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -100,12 +100,7 @@ export const WrappedPoolList: React.FC = () => {
 
   return (
     <div className={classes.container}>
-      <Grid
-        display='flex'
-        direction='column'
-        alignItems='flex-start'
-        justifyContent='start'
-        className={classes.rowContainer}>
+      <Box display='flex' flexDirection='column' className={classes.rowContainer}>
         <Typography className={classes.subheader} mb={2}>
           All pools
         </Typography>
@@ -116,7 +111,7 @@ export const WrappedPoolList: React.FC = () => {
           setSelectedFilters={setSelectedFilters}
           mappedTokens={sortedTokens}
         />
-      </Grid>
+      </Box>
       <LiquidityPoolList
         data={filteredPoolsList.map(poolData => ({
           symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
