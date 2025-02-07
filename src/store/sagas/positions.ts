@@ -53,6 +53,7 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
+import nacl from 'tweetnacl'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -678,11 +679,17 @@ export function* handleSwapAndInitPositionWithETH(
       [createIx, transferIx, initIx],
       [unwrapIx]
     )
+
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
+    const serializedMessage = tx.message.serialize()
+    const signatureUint8 = nacl.sign.detached(serializedMessage, wrappedEthAccount.secretKey)
+
+    tx.addSignature(wrappedEthAccount.publicKey, signatureUint8)
     const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as VersionedTransaction
 
     closeSnackbar(loaderSigningTx)
+
     yield put(snackbarsActions.remove(loaderSigningTx))
 
     const txid = yield* call([connection, connection.sendTransaction], signedTx)

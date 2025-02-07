@@ -5,6 +5,7 @@ import { Box, Button, Grid, ToggleButton, ToggleButtonGroup, Typography } from '
 import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
+  MINIMUM_PRICE_IMPACT,
   NetworkType,
   WETH_POOL_INIT_LAMPORTS_MAIN,
   WETH_POOL_INIT_LAMPORTS_TEST,
@@ -515,11 +516,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       ticksLoading
     )
       return
+    const tokenADecimal = tokens[tokenAIndex].decimals
+    const tokenBDecimal = tokens[tokenBIndex].decimals
     let result: SimulateSwapAndCreatePositionSimulation | null = null
     if (isAutoSwapOnTheSamePool) {
       result = await simulateAutoSwapOnTheSamePool(
-        tokens[tokenAIndex].balance,
-        tokens[tokenBIndex].balance,
+        tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
+        tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0),
         autoSwapPoolData,
         autoSwapTicks,
         autoSwapTickmap,
@@ -530,8 +533,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     } else {
       result = await simulateAutoSwap(
-        tokens[tokenAIndex].balance,
-        tokens[tokenBIndex].balance,
+        tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
+        tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0),
         autoSwapPoolData,
         autoSwapTicks,
         autoSwapTickmap,
@@ -654,7 +657,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
         {simulation?.swapSimulation?.priceImpact &&
           isAutoSwapAvailable &&
-          tokenACheckbox !== tokenBCheckbox && (
+          tokenACheckbox !== tokenBCheckbox &&
+          new BN(simulation?.swapSimulation?.priceImpact).gt(new BN(MINIMUM_PRICE_IMPACT))(
             <TooltipHover text='PRICE IMPACT WARNING'>
               <Box
                 className={
@@ -678,10 +682,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                   }
                 />
                 Price impact:{' '}
-                {Number(
-                  printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
-                ).toFixed(3)}
-                %
+                {Number(printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2))}%
               </Box>
             </TooltipHover>
           )}

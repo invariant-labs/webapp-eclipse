@@ -1,4 +1,4 @@
-import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { FEE_TIERS, toDecimal } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
@@ -661,6 +661,8 @@ export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
 export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
 export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
+
+export const MINIMUM_PRICE_IMPACT = toDecimal(1, 4)
 
 export const getCreateTokenLamports = (network: NetworkType): BN => {
   switch (network) {
