@@ -2,20 +2,18 @@ import { Grid, Typography } from '@mui/material'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-
 import useStyles from './styles'
 import icons from '@static/icons'
-import { VariantType } from 'notistack'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { network } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/stats'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
-
 import { FilterSearch } from '@components/FilterSearch/FilterSearch'
 import { swapTokens } from '@store/selectors/solanaWallet'
 import { printBN } from '@utils/utils'
+import { VariantType } from 'notistack'
 
 interface ISearchToken {
   icon: string
