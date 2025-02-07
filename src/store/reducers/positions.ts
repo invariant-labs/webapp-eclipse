@@ -1,8 +1,10 @@
 import {
   CreatePosition,
+  PoolStructure,
   Position,
   PositionList,
-  Tick
+  Tick,
+  Tickmap
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
@@ -90,6 +92,9 @@ export interface SwapAndCreatePosition
   isSamePool: Boolean
   positionPoolLowerTick: number
   positionPoolUpperTick: number
+  positionPoolIndex: number
+  swapPoolTickmap: Tickmap
+  swapPool: PoolStructure
 }
 
 export interface GetCurrentTicksData {
