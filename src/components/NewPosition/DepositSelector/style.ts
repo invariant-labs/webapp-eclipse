@@ -15,6 +15,7 @@ export const useStyles = makeStyles()(theme => {
     },
     depositHeader: {
       width: '100%',
+      height: 30,
       flexDirection: 'row',
       justifyContent: 'space-between',
       marginBottom: 24,

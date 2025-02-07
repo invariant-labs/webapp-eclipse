@@ -658,8 +658,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         {simulation?.swapSimulation?.priceImpact &&
           isAutoSwapAvailable &&
           tokenACheckbox !== tokenBCheckbox &&
-          new BN(simulation?.swapSimulation?.priceImpact).gt(new BN(MINIMUM_PRICE_IMPACT))(
-            <TooltipHover text='PRICE IMPACT WARNING'>
+          simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT)) && (
+            <TooltipHover text='Impact on the price'>
               <Box
                 className={
                   new BN(simulation?.swapSimulation?.priceImpact).lt(
@@ -682,7 +682,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                   }
                 />
                 Price impact:{' '}
-                {Number(printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2))}%
+                {Number(
+                  printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
+                ).toFixed(2)}
+                %
               </Box>
             </TooltipHover>
           )}
