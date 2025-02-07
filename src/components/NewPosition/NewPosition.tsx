@@ -86,11 +86,13 @@ export interface INewPosition {
     yAmount: number,
     swapSlippage: BN,
     positionSlippage: BN,
-    maxLiquidtiyPercentage: BN,
     minUtilizationPercentage: BN,
     estimatedPriceAfterSwap: BN,
     swapAmount: BN,
-    ticks: number[]
+    ticks: number[],
+    liquidityDelta: BN,
+    xSwapAmount: BN,
+    ySwapAmount: BN
   ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
@@ -896,13 +898,15 @@ export const NewPosition: React.FC<INewPosition> = ({
             }
           }}
           onSwapAndAddLiquidity={(
-            maxLiquidityPercentage,
             minUtilizationPercentage,
             estimatedPriceAfterSwap,
             swapAmount,
             swapSlippage,
             positionSlippage,
-            ticks
+            ticks,
+            liquidityDelta,
+            xSwapAmount,
+            ySwapAmount
           ) => {
             if (tokenAIndex !== null && tokenBIndex !== null) {
               const tokenADecimals = tokens[tokenAIndex].decimals
@@ -919,11 +923,13 @@ export const NewPosition: React.FC<INewPosition> = ({
                   : convertBalanceToBN(tokenADeposit, tokenADecimals),
                 swapSlippage,
                 positionSlippage,
-                maxLiquidityPercentage,
                 minUtilizationPercentage,
                 estimatedPriceAfterSwap,
                 swapAmount,
-                ticks
+                ticks,
+                liquidityDelta,
+                xSwapAmount,
+                ySwapAmount
               )
             }
           }}
@@ -999,7 +1005,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             decimalsLimit: tokenBIndex !== null ? tokens[tokenBIndex].decimals : 0
           }}
           feeTiers={feeTiers.map(tier => tier.feeValue)}
-          progress={progress}
+          progress={progress as ProgressState}
           onReverseTokens={() => {
             if (tokenAIndex === null || tokenBIndex === null) {
               return

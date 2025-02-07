@@ -931,11 +931,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         yAmount,
         swapSlippage,
         positionSlippage,
-        maxLiquidtiyPercentage,
         minUtilizationPercentage,
         estimatedPriceAfterSwap,
         swapAmount,
-        ticks
+        ticks,
+        liquidityDelta,
+        xSwapAmount,
+        ySwapAmount
       ) => {
         if (
           tokenAIndex === null ||
@@ -966,7 +968,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
             swapSlippage,
             positionPoolLowerTick: lowerTickIndex,
-            maxLiquidtiyPercentage,
             minUtilizationPercentage,
             estimatedPriceAfterSwap,
             positionPoolUpperTick: upperTickIndex,
@@ -989,7 +990,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             },
             positionPoolIndex: poolIndex,
             swapPoolTickmap: autoSwapPoolTickmap,
-            swapPool: autoSwapPoolData
+            swapPool: autoSwapPoolData,
+            liquidityDelta,
+            xSwapAmount,
+            ySwapAmount
           })
         )
       }}

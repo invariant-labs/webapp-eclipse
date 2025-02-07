@@ -1215,8 +1215,7 @@ export const simulateAutoSwapOnTheSamePool = async (
   tickmap: Tickmap,
   swapSlippage: BN,
   lowerTick: number,
-  upperTick: number,
-  maxLiquidityPercentage: BN
+  upperTick: number
 ) => {
   const ticks: Map<number, Tick> = new Map<number, Tick>()
   for (const tick of poolTicks) {
@@ -1240,8 +1239,7 @@ export const simulateAutoSwapOnTheSamePool = async (
         maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
         maxCrosses
       },
-      { lowerTick, upperTick },
-      maxLiquidityPercentage
+      { lowerTick, upperTick }
     )
     return simulateResult
   } catch (e) {
@@ -1260,8 +1258,7 @@ export const simulateAutoSwap = async (
   swapSlippage: BN,
   lowerTick: number,
   upperTick: number,
-  knownPrice: BN,
-  maxLiquidityPercentage: BN
+  knownPrice: BN
 ) => {
   const ticks: Map<number, Tick> = new Map<number, Tick>()
   for (const tick of poolTicks) {
@@ -1285,8 +1282,7 @@ export const simulateAutoSwap = async (
         maxCrosses,
         slippage: swapSlippage
       },
-      { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
-      maxLiquidityPercentage
+      { lowerTick, knownPrice, slippage: positionSlippage, upperTick }
     )
     return simulateResult
   } catch (e) {

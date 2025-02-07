@@ -70,13 +70,15 @@ export interface IDepositSelector {
   ) => void
   onAddLiquidity: () => void
   onSwapAndAddLiquidity: (
-    maxLiquidityPercentage: BN,
     minUtilizationPercentage: BN,
     estimatedPriceAfterSwap: BN,
     swapAmount: BN,
     swapSlippage: BN,
     positionSlippage: BN,
-    ticks: number[]
+    ticks: number[],
+    liquidityDelta: BN,
+    xSwapAmount: BN,
+    ySwapAmount: BN
   ) => void
   tokenAInputState: InputState
   tokenBInputState: InputState
@@ -528,8 +530,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         autoSwapTickmap,
         fromFee(new BN(Number(+slippageToleranceSwap * 1000))),
         simulationParams.lowerTickIndex,
-        simulationParams.upperTickIndex,
-        fromFee(new BN(Number(100 * 1000)))
+        simulationParams.upperTickIndex
       )
     } else {
       result = await simulateAutoSwap(
@@ -542,8 +543,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         fromFee(new BN(Number(+slippageToleranceSwap * 1000))),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
-        actualPoolPrice,
-        fromFee(new BN(Number(100 * 1000)))
+        actualPoolPrice
       )
     }
 
@@ -873,23 +873,23 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           onClick={() => {
             if (progress === 'none' && tokenAIndex && tokenBIndex) {
               const userMinUtilization = fromFee(new BN(Number(+utilization * 1000)))
-
+              const tokenADecimal = tokens[tokenAIndex].decimals
+              const tokenBDecimal = tokens[tokenBIndex].decimals
               alignment === DepositOptions.Auto &&
               tokenACheckbox !== tokenBCheckbox &&
               simulation &&
               simulation.swapSimulation &&
-              simulation.swapInput &&
-              simulation.utilization
+              simulation.swapInput
                 ? onSwapAndAddLiquidity(
-                    fromFee(new BN(Number(100 * 1000))),
-                    userMinUtilization.lt(simulation.utilization)
-                      ? userMinUtilization
-                      : simulation.utilization,
+                    userMinUtilization,
                     simulation.swapSimulation.priceAfterSwap,
                     simulation.swapInput.swapAmount,
                     simulation.swapSimulation.priceImpact,
                     fromFee(new BN(Number(+slippageToleranceCreatePosition * 1000))),
-                    simulation.swapSimulation.crossedTicks
+                    simulation.swapSimulation.crossedTicks,
+                    simulation.position.liquidity,
+                    tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
+                    tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0)
                   )
                 : onAddLiquidity()
             }

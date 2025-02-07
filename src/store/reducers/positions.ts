@@ -80,7 +80,6 @@ export interface SwapAndCreatePosition
   swapPoolTickspacing: number
   xAmount: number
   yAmount: number
-  maxLiquidtiyPercentage: BN
   minUtilizationPercentage: BN
   estimatedPriceAfterSwap: BN
   swapAmount: BN
@@ -95,6 +94,9 @@ export interface SwapAndCreatePosition
   positionPoolIndex: number
   swapPoolTickmap: Tickmap
   swapPool: PoolStructure
+  liquidityDelta: BN
+  xSwapAmount: BN
+  ySwapAmount: BN
 }
 
 export interface GetCurrentTicksData {

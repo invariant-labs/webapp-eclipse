@@ -643,6 +643,8 @@ export function* handleSwapAndInitPositionWithETH(
     const tx = yield* call(
       [marketProgram, marketProgram.versionedSwapAndCreatePositionTx],
       {
+        amountX: action.payload.xSwapAmount,
+        amountY: action.payload.ySwapAmount,
         swapPair,
         userTokenX,
         userTokenY,
@@ -654,8 +656,8 @@ export function* handleSwapAndInitPositionWithETH(
         xToY,
         byAmountIn: true,
         estimatedPriceAfterSwap: action.payload.estimatedPriceAfterSwap,
-        maxLiquidityPercentage: action.payload.maxLiquidtiyPercentage,
         minUtilizationPercentage: action.payload.minUtilizationPercentage,
+        liquidityDelta: action.payload.liquidityDelta,
         swapAndCreateOnDifferentPools
       },
       { tickIndexes: action.payload.ticks },
@@ -846,6 +848,8 @@ export function* handleSwapAndInitPosition(
     const tx = yield* call(
       [marketProgram, marketProgram.versionedSwapAndCreatePositionTx],
       {
+        amountX: action.payload.xSwapAmount,
+        amountY: action.payload.ySwapAmount,
         swapPair,
         userTokenX,
         userTokenY,
@@ -857,9 +861,9 @@ export function* handleSwapAndInitPosition(
         xToY,
         byAmountIn: true,
         estimatedPriceAfterSwap: action.payload.estimatedPriceAfterSwap,
-        maxLiquidityPercentage: action.payload.maxLiquidtiyPercentage,
         minUtilizationPercentage: action.payload.minUtilizationPercentage,
-        swapAndCreateOnDifferentPools
+        swapAndCreateOnDifferentPools,
+        liquidityDelta: action.payload.liquidityDelta
       },
       { tickIndexes: action.payload.ticks },
       {
