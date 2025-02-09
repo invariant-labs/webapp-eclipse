@@ -190,7 +190,12 @@ const useStyles = makeStyles()((theme: Theme) => ({
   }
 }))
 
-export const PositionTableRow: React.FC<IPositionItem> = ({
+interface IPositionsTableRow extends IPositionItem {
+  isLockPositionModalOpen: boolean
+  setIsLockPositionModalOpen: (value: boolean) => void
+}
+
+export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenXName,
   tokenYName,
   tokenXIcon,

@@ -30,6 +30,8 @@ import { lockerState } from '@store/selectors/locker'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
+  isLockPositionModalOpen: boolean
+  setIsLockPositionModalOpen: (value: boolean) => void
 }
 
 export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
