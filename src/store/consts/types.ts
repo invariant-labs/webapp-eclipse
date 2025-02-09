@@ -267,3 +267,9 @@ export interface Reward {
   type: string
   addresses: string[]
 }
+
+export enum PotentialLiquidity {
+  Min = 'min',
+  Middle = 'middle',
+  Max = 'max'
+}
