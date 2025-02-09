@@ -231,8 +231,12 @@ const useStyles = makeStyles()(() => ({
     color: colors.invariant.green
   },
   desktopContainer: {
+    width: '70%',
     [theme.breakpoints.down('md')]: {
       display: 'none'
+    },
+    [theme.breakpoints.down('lg')]: {
+      width: 'auto'
     }
   }
 }))

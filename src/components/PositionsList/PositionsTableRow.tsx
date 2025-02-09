@@ -9,7 +9,7 @@ import {
   useMediaQuery,
   Box
 } from '@mui/material'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from './PositionItem/components/MinMaxChart/MinMaxChart'
 import { IPositionItem } from './types'
 import { makeStyles } from 'tss-react/mui'
@@ -17,31 +17,24 @@ import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import icons from '@static/icons'
-import { initialXtoY, tickerToAddress, formatNumber, printBN } from '@utils/utils'
+import { initialXtoY, tickerToAddress, formatNumber } from '@utils/utils'
 import classNames from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { usePromotedPool } from './PositionItem/hooks/usePromotedPool'
-import { calculatePercentageRatio } from './PositionItem/utils/calculations'
 import { useSharedStyles } from './PositionItem/variants/style/shared'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import SwapList from '@static/svg/swap-list.svg'
-import { network as currentNetwork, rpcAddress } from '@store/selectors/solanaConnection'
+import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import PositionStatusTooltip from './PositionItem/components/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import React from 'react'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { singlePositionData } from '@store/selectors/positions'
-import { IWallet } from '@invariant-labs/sdk-eclipse'
-import { getEclipseWallet } from '@utils/web3/wallet'
-import { usePositionTicks } from '@store/hooks/userOverview/usePositionTicks'
-import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
-import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { usePrices } from '@store/hooks/userOverview/usePrices'
-import { useLiquidity } from '@store/hooks/userOverview/useLiquidity'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { actions as lockerActions } from '@store/reducers/locker'
 import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
+import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 // import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -197,12 +190,6 @@ const useStyles = makeStyles()((theme: Theme) => ({
   }
 }))
 
-interface PositionTicks {
-  lowerTick: Tick | undefined
-  upperTick: Tick | undefined
-  loading: boolean
-}
-
 export const PositionTableRow: React.FC<IPositionItem> = ({
   tokenXName,
   tokenYName,
@@ -230,157 +217,30 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
-  const [isClaimLoading, _setIsClaimLoading] = useState(false)
-  const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number | null>(null)
   const positionSingleData = useSelector(singlePositionData(id ?? ''))
-  const wallet = getEclipseWallet()
   const networkType = useSelector(currentNetwork)
-  const rpc = useSelector(rpcAddress)
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
 
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
-  const [positionTicks, setPositionTicks] = useState<PositionTicks>({
-    lowerTick: undefined,
-    upperTick: undefined,
-    loading: false
-  })
 
-  const { tokenXPercentage, tokenYPercentage } = calculatePercentageRatio(
-    tokenXLiq,
-    tokenYLiq,
-    currentPrice,
-    xToY
-  )
-
-  const { tokenXLiquidity, tokenYLiquidity } = useLiquidity(positionSingleData)
+  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage, unclaimedFeesInUSD } =
+    useUnclaimedFee({
+      currentPrice,
+      id,
+      position,
+      tokenXLiq,
+      tokenYLiq,
+      positionSingleData,
+      xToY
+    })
 
   const { isPromoted, pointsPerSecond, estimated24hPoints } = usePromotedPool(
     poolAddress,
     position,
     poolData
   )
-  const { tokenXPriceData, tokenYPriceData } = usePrices({
-    tokenX: {
-      assetsAddress: positionSingleData?.tokenX.assetAddress.toString(),
-      name: positionSingleData?.tokenX.name
-    },
-    tokenY: {
-      assetsAddress: positionSingleData?.tokenY.assetAddress.toString(),
-      name: positionSingleData?.tokenY.name
-    }
-  })
-
-  // useEffect(() => {
-  //   console.log({ tokenXPriceData, tokenYPriceData })
-  // }, [tokenXPriceData, tokenYPriceData])
-
-  const {
-    lowerTick,
-    upperTick,
-    loading: ticksLoading
-  } = usePositionTicks({
-    positionId: id,
-    poolData: positionSingleData?.poolData,
-    lowerTickIndex: positionSingleData?.lowerTickIndex ?? 0,
-    upperTickIndex: positionSingleData?.upperTickIndex ?? 0,
-    networkType,
-    rpc,
-    wallet: wallet as IWallet
-  })
-
-  useEffect(() => {
-    setPositionTicks({
-      lowerTick,
-      upperTick,
-      loading: ticksLoading
-    })
-  }, [lowerTick, upperTick, ticksLoading])
-
-  const [_tokenXClaim, _tokenYClaim, unclaimedFeesInUSD] = useMemo(() => {
-    if (positionTicks.loading || !positionSingleData?.poolData) {
-      return [0, 0, previousUnclaimedFees ?? null]
-    }
-
-    if (tokenXPriceData.loading || tokenYPriceData.loading) {
-      return [0, 0, previousUnclaimedFees ?? null]
-    }
-
-    if (
-      typeof positionTicks.lowerTick === 'undefined' ||
-      typeof positionTicks.upperTick === 'undefined'
-    ) {
-      return [0, 0, previousUnclaimedFees ?? null]
-    }
-
-    const [bnX, bnY] = calculateClaimAmount({
-      position,
-      tickLower: positionTicks.lowerTick,
-      tickUpper: positionTicks.upperTick,
-      tickCurrent: positionSingleData.poolData.currentTickIndex,
-      feeGrowthGlobalX: positionSingleData.poolData.feeGrowthGlobalX,
-      feeGrowthGlobalY: positionSingleData.poolData.feeGrowthGlobalY
-    })
-
-    const xAmount = +printBN(bnX, positionSingleData.tokenX.decimals)
-    const yAmount = +printBN(bnY, positionSingleData.tokenY.decimals)
-
-    const xValueInUSD = xAmount * tokenXPriceData.price
-    const yValueInUSD = yAmount * tokenYPriceData.price
-    const totalValueInUSD = xValueInUSD + yValueInUSD
-
-    if (!isClaimLoading && totalValueInUSD > 0) {
-      setPreviousUnclaimedFees(totalValueInUSD)
-    }
-
-    return [xAmount, yAmount, totalValueInUSD]
-  }, [
-    positionSingleData,
-    position,
-    positionTicks,
-    tokenXPriceData,
-    tokenYPriceData,
-    isClaimLoading,
-    previousUnclaimedFees
-  ])
-
-  const tokenValueInUsd = useMemo(() => {
-    if (tokenXPriceData.loading || tokenYPriceData.loading) {
-      return null
-    }
-
-    if (!tokenXLiquidity && !tokenYLiquidity) {
-      return 0
-    }
-
-    const xValue = tokenXLiquidity * tokenXPriceData.price
-    const yValue = tokenYLiquidity * tokenYPriceData.price
-    const totalValue = xValue + yValue
-
-    return totalValue
-  }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData])
-
-  // const rawIsLoading =
-  //   ticksLoading || tokenXPriceData.loading || tokenYPriceData.loading || isClaimLoading
-  // const isLoading = useDebounceLoading(rawIsLoading)
-
-  // const handleClaimFee = async () => {
-  //   if (!positionSingleData) return
-
-  //   setIsClaimLoading(true)
-  //   try {
-  //     dispatch(
-  //       actions.claimFee({
-  //         index: positionSingleData.positionIndex,
-  //         isLocked: positionSingleData.isLocked
-  //       })
-  //     )
-  //   } finally {
-  //     setIsClaimLoading(false)
-  //     setPreviousUnclaimedFees(0)
-  //   }
-  // }
 
   const pairNameContent = (
     <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>

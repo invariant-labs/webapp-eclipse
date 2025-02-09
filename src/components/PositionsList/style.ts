@@ -132,10 +132,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   itemLink: {
     textDecoration: 'none',
     cursor: 'pointer',
-    borderTop: `1px solid ${colors.invariant.light}`,
-    '&:last-child': {
-      borderBottom: `1px solid ${colors.invariant.light}`
-    },
+
     '&:not(:last-child)': {
       display: 'block'
       // marginBottom: 20,

@@ -39,9 +39,9 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
       return segment
     })
   }, [positions, totalAssets, chartColors])
-
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
+      {/* Stacked Bar Chart */}
       <Box
         sx={{
           height: '24px',
@@ -91,7 +91,9 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
           spacing={1}
           sx={{
             marginTop: 1,
+            width: '100% !important',
             minHeight: '120px',
+            marginLeft: '0 !important',
             overflowY: 'auto',
             '&::-webkit-scrollbar': {
               width: '4px'
@@ -111,6 +113,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
               key={segment.token}
               sx={{
                 paddingLeft: '0 !important',
+                marginLet: '0 !important',
                 display: 'flex',
                 justifyContent: 'space-between',
                 alignItems: 'center',
@@ -118,7 +121,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
               }}>
               <Grid
                 item
-                xs={2}
+                xs={1}
                 sx={{
                   display: 'flex',
                   alignItems: 'center'
@@ -134,7 +137,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                 />
               </Grid>
 
-              <Grid item xs={2}>
+              <Grid item xs={1}>
                 <Typography
                   sx={{
                     ...typography.heading4,
@@ -144,7 +147,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                 </Typography>
               </Grid>
 
-              <Grid item xs={5}>
+              <Grid item xs={10}>
                 <Typography
                   sx={{
                     ...typography.heading4,

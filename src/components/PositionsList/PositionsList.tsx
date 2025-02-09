@@ -23,6 +23,7 @@ import { actions } from '@store/reducers/leaderboard'
 import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
 import PositionsTable from './PositionsTable'
+import { blurContent, unblurContent } from '@utils/uiUtils'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -107,6 +108,16 @@ export const PositionsList: React.FC<IProps> = ({
   useEffect(() => {
     dispatch(actions.getLeaderboardConfig())
   }, [dispatch])
+
+  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (isLockPositionModalOpen) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isLockPositionModalOpen])
 
   const [allowPropagation, setAllowPropagation] = useState(true)
 
@@ -196,7 +207,11 @@ export const PositionsList: React.FC<IProps> = ({
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
         {currentData.length > 0 && !loading && !showNoConnected ? (
           !isLg ? (
-            <PositionsTable positions={currentData} />
+            <PositionsTable
+              positions={currentData}
+              isLockPositionModalOpen={isLockPositionModalOpen}
+              setIsLockPositionModalOpen={setIsLockPositionModalOpen}
+            />
           ) : (
             currentData.map((element, index) => (
               <Grid
@@ -210,6 +225,8 @@ export const PositionsList: React.FC<IProps> = ({
                 <PositionItemMobile
                   key={index}
                   {...element}
+                  isLockPositionModalOpen={isLockPositionModalOpen}
+                  setIsLockPositionModalOpen={setIsLockPositionModalOpen}
                   setAllowPropagation={setAllowPropagation}
                 />
               </Grid>

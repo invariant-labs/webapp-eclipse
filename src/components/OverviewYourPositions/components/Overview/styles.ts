@@ -52,11 +52,14 @@ export const useStyles = makeStyles()(() => ({
   },
   unclaimedTitle: {
     ...typography.heading4,
-    color: colors.invariant.text
+    color: colors.invariant.textGrey
   },
   unclaimedAmount: {
     ...typography.heading3,
     color: colors.invariant.text,
+    [theme.breakpoints.down('lg')]: {
+      marginRight: '0px'
+    },
     marginRight: '16px'
   },
   claimAllButton: {
@@ -86,6 +89,10 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('sm')]: {
       width: '100%'
     },
+    [theme.breakpoints.down('lg')]: {
+      marginTop: '12px'
+    },
+
     '&:disabled': {
       background: colors.invariant.light,
       color: colors.invariant.dark

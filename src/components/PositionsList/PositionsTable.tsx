@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import {
   Table,
   TableBody,
@@ -17,7 +17,6 @@ import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { PositionTableRow } from './PositionsTableRow'
 import { IPositionItem } from './types'
 import { useNavigate } from 'react-router-dom'
-import { blurContent, unblurContent } from '@utils/uiUtils'
 
 const useStyles = makeStyles()((_theme: Theme) => ({
   tableContainer: {
@@ -174,22 +173,18 @@ const useStyles = makeStyles()((_theme: Theme) => ({
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>
+  isLockPositionModalOpen: boolean
+  setIsLockPositionModalOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
-export const PositionsTable: React.FC<IPositionsTableProps> = ({ positions }) => {
+export const PositionsTable: React.FC<IPositionsTableProps> = ({
+  positions,
+  isLockPositionModalOpen,
+  setIsLockPositionModalOpen
+}) => {
   const { classes } = useStyles()
   const networkSelector = useSelector(currentNetwork)
   const navigate = useNavigate()
-
-  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
-
-  useEffect(() => {
-    if (isLockPositionModalOpen) {
-      blurContent()
-    } else {
-      unblurContent()
-    }
-  }, [isLockPositionModalOpen])
 
   return (
     <TableContainer className={classes.tableContainer}>
