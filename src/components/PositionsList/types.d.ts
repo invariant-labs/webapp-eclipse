@@ -27,4 +27,6 @@ export interface IPositionItem {
   isLocked: boolean
   poolData: PoolWithAddressAndIndex
   liquidity: BN
+  isLockPositionModalOpen: boolean
+  setIsLockPositionModalOpen: (value: boolean) => void
 }

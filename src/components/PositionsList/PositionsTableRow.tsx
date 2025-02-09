@@ -38,7 +38,10 @@ import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { usePrices } from '@store/hooks/userOverview/usePrices'
 import { useLiquidity } from '@store/hooks/userOverview/useLiquidity'
-import { actions } from '@store/reducers/overview'
+import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
+import { actions as lockerActions } from '@store/reducers/locker'
+import { lockerState } from '@store/selectors/locker'
+import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 // import { useDebounceLoading } from '@store/hooks/userOverview/useDebounceLoading'
 
 const useStyles = makeStyles()((theme: Theme) => ({
@@ -218,7 +221,9 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   isActive = false,
   tokenXLiq,
   tokenYLiq,
-  network
+  network,
+  isLockPositionModalOpen,
+  setIsLockPositionModalOpen
 }) => {
   const { classes } = useStyles()
   const { classes: sharedClasses } = useSharedStyles()
@@ -234,7 +239,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
-  const dispatch = useDispatch()
 
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
   const [positionTicks, setPositionTicks] = useState<PositionTicks>({
@@ -328,12 +332,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
 
     if (!isClaimLoading && totalValueInUSD > 0) {
       setPreviousUnclaimedFees(totalValueInUSD)
-      dispatch(
-        actions.addTotalUnclaimedFee({
-          positionId: id,
-          value: totalValueInUSD
-        })
-      )
     }
 
     return [xAmount, yAmount, totalValueInUSD]
@@ -360,33 +358,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     const yValue = tokenYLiquidity * tokenYPriceData.price
     console.log({ tokenXLiquidity, tokenYLiquidity })
     const totalValue = xValue + yValue
-    dispatch(
-      actions.addTotalAssets({
-        positionId: id,
-        value: totalValue
-      })
-    )
-    if (tokenXLiquidity > 0) {
-      dispatch(
-        actions.addTokenPosition({
-          token: tokenXName,
-          value: xValue,
-          positionId: id,
-          logo: positionSingleData?.tokenX.logoURI
-        })
-      )
-    }
-
-    if (tokenYLiquidity > 0) {
-      dispatch(
-        actions.addTokenPosition({
-          token: tokenYName,
-          value: yValue,
-          positionId: id,
-          logo: positionSingleData?.tokenY.logoURI
-        })
-      )
-    }
 
     return totalValue
   }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData])
@@ -669,13 +640,55 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     setActionPopoverOpen(false)
   }
 
+  const dispatch = useDispatch()
+
+  const lockPosition = () => {
+    dispatch(lockerActions.lockPosition({ index: 0, network: networkType }))
+  }
+
+  console.log(min, max)
+
+  const { value, tokenXLabel, tokenYLabel } = useMemo<{
+    value: string
+    tokenXLabel: string
+    tokenYLabel: string
+  }>(() => {
+    const valueX = tokenXLiq + tokenYLiq / currentPrice
+    const valueY = tokenYLiq + tokenXLiq * currentPrice
+    return {
+      value: `${formatNumber(xToY ? valueX : valueY)} ${xToY ? tokenXName : tokenYName}`,
+      tokenXLabel: xToY ? tokenXName : tokenYName,
+      tokenYLabel: xToY ? tokenYName : tokenXName
+    }
+  }, [min, max, currentPrice, tokenXName, tokenYName, tokenXLiq, tokenYLiq, xToY])
+
+  const { success, inProgress } = useSelector(lockerState)
+
+  console.log(tokenXLiq, tokenYLiq)
+
   return (
     <TableRow>
+      <LockLiquidityModal
+        open={isLockPositionModalOpen}
+        onClose={() => setIsLockPositionModalOpen(false)}
+        xToY={xToY}
+        tokenX={{ name: tokenXName, icon: tokenXIcon, liqValue: tokenXLiq } as ILiquidityToken}
+        tokenY={{ name: tokenYName, icon: tokenYIcon, liqValue: tokenYLiq } as ILiquidityToken}
+        onLock={lockPosition}
+        fee={`${fee}% fee`}
+        minMax={`${formatNumber(xToY ? min : 1 / max)}-${formatNumber(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
+        value={value}
+        isActive={isActive}
+        swapHandler={() => setXToY(!xToY)}
+        success={success}
+        inProgress={inProgress}
+      />
       <PositionViewActionPopover
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}
         position={positionSingleData}
+        onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}

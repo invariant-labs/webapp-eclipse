@@ -85,6 +85,17 @@ export const useStyles = makeStyles()(() => ({
     },
     [theme.breakpoints.down('sm')]: {
       width: '100%'
+    },
+    '&:disabled': {
+      background: colors.invariant.light,
+      color: colors.invariant.dark
     }
+  },
+  tooltip: {
+    color: colors.invariant.textGrey,
+    ...typography.caption4,
+    lineHeight: '24px',
+    background: colors.black.full,
+    borderRadius: 12
   }
 }))

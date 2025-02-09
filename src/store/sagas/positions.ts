@@ -1262,15 +1262,6 @@ export function* handleClaimAllFees() {
   const loaderSigningTx = createLoaderKey()
 
   try {
-    yield put(
-      snackbarsActions.add({
-        message: 'Claiming all fees',
-        variant: 'pending',
-        persist: true,
-        key: loaderClaimAllFees
-      })
-    )
-
     const connection = yield* call(getConnection)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
@@ -1281,13 +1272,19 @@ export function* handleClaimAllFees() {
     const tokensAccounts = yield* select(accounts)
 
     if (allPositionsData.length === 0) {
-      closeSnackbar(loaderClaimAllFees)
-      yield put(snackbarsActions.remove(loaderClaimAllFees))
       return
     }
 
+    yield put(
+      snackbarsActions.add({
+        message: 'Claiming all fees',
+        variant: 'pending',
+        persist: true,
+        key: loaderClaimAllFees
+      })
+    )
+
     for (const position of allPositionsData) {
-      console.log(position)
       const pool = allPositionsData[position.positionIndex].poolData
 
       if (!tokensAccounts[pool.tokenX.toString()]) {

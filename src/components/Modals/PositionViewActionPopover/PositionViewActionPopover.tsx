@@ -4,22 +4,26 @@ import useStyles from './style'
 import { Grid, Popover, Typography } from '@mui/material'
 import { actions } from '@store/reducers/positions'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 
 export interface IPositionViewActionPopover {
   open: boolean
   anchorEl: HTMLButtonElement | null
   position?: any
   handleClose: () => void
+  onLockPosition: () => void
 }
 
 export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = ({
   anchorEl,
   open,
   position,
-  handleClose
+  handleClose,
+  onLockPosition
 }) => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
+  const navigate = useNavigate()
 
   return (
     <Popover
@@ -60,6 +64,14 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             item
             onClick={e => {
               e.stopPropagation()
+              dispatch(
+                actions.closePosition({
+                  positionIndex: position.positionIndex,
+                  onSuccess: () => {
+                    navigate('/portfolio')
+                  }
+                })
+              )
               handleClose()
             }}>
             <Typography className={classes.name}>Close position</Typography>
@@ -70,6 +82,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           item
           onClick={e => {
             e.stopPropagation()
+            onLockPosition()
             handleClose()
           }}>
           <Typography className={classes.name}>Lock position</Typography>

@@ -1,13 +1,20 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles'
-import { ProcessedPool } from '@store/types/userOverview'
+import { ProcessedPool, TokenPositionEntry } from '@store/types/userOverview'
 import { useSelector } from 'react-redux'
-import { overviewSelectors } from '@store/selectors/overview'
 import { colors, theme, typography } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
+import { positionsWithPoolsData } from '@store/selectors/positions'
+import { calculatePriceSqrt, getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
+import { getTokenPrice, printBN } from '@utils/utils'
+import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { getMarketProgram } from '@utils/web3/programs/amm'
+import { network, rpcAddress } from '@store/selectors/solanaConnection'
+import { getEclipseWallet } from '@utils/web3/wallet'
+import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -15,9 +22,13 @@ interface OverviewProps {
 }
 export const Overview: React.FC<OverviewProps> = () => {
   const { classes } = useStyles()
-  const totalAssets = useSelector(overviewSelectors.totalAssets)
-  const totalUnclaimedFee = useSelector(overviewSelectors.totalUnclaimedFee)
-  const positions = useSelector(overviewSelectors.positions)
+
+  const rpc = useSelector(rpcAddress)
+  const networkType = useSelector(network)
+  const positionList = useSelector(positionsWithPoolsData)
+
+  const [totalUnclaimedFee, setTotalUnclaimedFee] = useState(0)
+  const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
 
   interface ColorFrequency {
@@ -115,6 +126,192 @@ export const Overview: React.FC<OverviewProps> = () => {
     })
   }, [])
 
+  const positions = useMemo(() => {
+    const positions: TokenPositionEntry[] = []
+
+    positionList.map(position => {
+      let foundTokenX = false
+      let foundTokenY = false
+
+      for (let i = 0; i < positions.length; i++) {
+        if (positions[i].token === position.tokenX.symbol) {
+          positions[i].value +=
+            +printBN(
+              getX(
+                position.liquidity,
+                calculatePriceSqrt(position.upperTickIndex),
+                position.poolData.sqrtPrice,
+                calculatePriceSqrt(position.lowerTickIndex)
+              ),
+              position.tokenX.decimals
+            ) * prices[position.tokenX.assetAddress.toString()]
+          foundTokenX = true
+        }
+      }
+
+      if (!foundTokenX) {
+        positions.push({
+          token: position.tokenX.symbol,
+          value:
+            +printBN(
+              getX(
+                position.liquidity,
+                calculatePriceSqrt(position.upperTickIndex),
+                position.poolData.sqrtPrice,
+                calculatePriceSqrt(position.lowerTickIndex)
+              ),
+              position.tokenX.decimals
+            ) * prices[position.tokenX.assetAddress.toString()],
+          logo: position.tokenX.logoURI,
+          positionId: position.id
+        })
+      }
+
+      for (let i = 0; i < positions.length; i++) {
+        if (positions[i].token === position.tokenY.symbol) {
+          positions[i].value +=
+            +printBN(
+              getY(
+                position.liquidity,
+                calculatePriceSqrt(position.upperTickIndex),
+                position.poolData.sqrtPrice,
+                calculatePriceSqrt(position.lowerTickIndex)
+              ),
+              position.tokenY.decimals
+            ) * prices[position.tokenY.assetAddress.toString()]
+          foundTokenY = true
+        }
+      }
+
+      if (!foundTokenY) {
+        positions.push({
+          token: position.tokenY.symbol,
+          value:
+            +printBN(
+              getY(
+                position.liquidity,
+                calculatePriceSqrt(position.upperTickIndex),
+                position.poolData.sqrtPrice,
+                calculatePriceSqrt(position.lowerTickIndex)
+              ),
+              position.tokenY.decimals
+            ) * prices[position.tokenY.assetAddress.toString()],
+          logo: position.tokenY.logoURI,
+          positionId: position.id
+        })
+      }
+    })
+
+    return positions
+  }, [positionList, prices])
+
+  const data = useMemo(() => {
+    const tokens: { label: string; value: number }[] = []
+
+    positions.map(position => {
+      let foundToken = false
+
+      tokens.map(token => {
+        if (token.label === position.token) {
+          foundToken = true
+          token.value += position.value
+        }
+      })
+
+      if (!foundToken) {
+        tokens.push({
+          label: position.token,
+          value: position.value
+        })
+      }
+    })
+
+    return tokens
+  }, [positions])
+
+  const chartColors = useMemo(
+    () =>
+      positions.map(position =>
+        getTokenColor(position.token, logoColors[position.logo ?? 0], tokenColorOverrides)
+      ),
+    [positions, logoColors]
+  )
+
+  const totalAssets = useMemo(() => {
+    return positions.reduce((acc, position) => acc + position.value, 0)
+  }, [positions])
+
+  useEffect(() => {
+    const calculateUnclaimedFee = async () => {
+      const wallet = getEclipseWallet()
+      const marketProgram = await getMarketProgram(networkType, rpc, wallet as IWallet)
+      let totalUnclaimedFee = 0
+
+      const ticks = await Promise.all(
+        positionList.map(async position => {
+          const pair = new Pair(position.poolData.tokenX, position.poolData.tokenY, {
+            fee: position.poolData.fee,
+            tickSpacing: position.poolData.tickSpacing
+          })
+
+          return Promise.all([
+            marketProgram.getTick(pair, position.lowerTickIndex),
+            marketProgram.getTick(pair, position.upperTickIndex)
+          ])
+        })
+      )
+
+      for (let i = 0; i < positionList.length; i++) {
+        const [lowerTick, upperTick] = ticks[i]
+        const [bnX, bnY] = calculateClaimAmount({
+          position: positionList[i],
+          tickLower: lowerTick,
+          tickUpper: upperTick,
+          tickCurrent: positionList[i].poolData.currentTickIndex,
+          feeGrowthGlobalX: positionList[i].poolData.feeGrowthGlobalX,
+          feeGrowthGlobalY: positionList[i].poolData.feeGrowthGlobalY
+        })
+
+        totalUnclaimedFee +=
+          +printBN(bnX, positionList[i].tokenX.decimals) *
+            prices[positionList[i].tokenX.assetAddress.toString()] +
+          +printBN(bnY, positionList[i].tokenY.decimals) *
+            prices[positionList[i].tokenY.assetAddress.toString()]
+      }
+
+      setTotalUnclaimedFee(isFinite(totalUnclaimedFee) ? totalUnclaimedFee : 0)
+    }
+
+    calculateUnclaimedFee()
+  }, [positionList, prices])
+
+  useEffect(() => {
+    const loadPrices = async () => {
+      const tokens: string[] = []
+
+      positionList.map(position => {
+        if (!tokens.includes(position.tokenX.assetAddress.toString())) {
+          tokens.push(position.tokenX.assetAddress.toString())
+        }
+
+        if (!tokens.includes(position.tokenY.assetAddress.toString())) {
+          tokens.push(position.tokenY.assetAddress.toString())
+        }
+      })
+
+      const prices = await Promise.all(tokens.map(async token => await getTokenPrice(token)))
+
+      const record = {}
+      for (let i = 0; i < tokens.length; i++) {
+        record[tokens[i]] = prices[i] ?? 0
+      }
+
+      setPrices(record)
+    }
+
+    loadPrices()
+  }, [positionList])
+
   // Effect to load colors for logos
   useEffect(() => {
     positions.forEach(position => {
@@ -132,15 +329,6 @@ export const Overview: React.FC<OverviewProps> = () => {
       }
     })
   }, [positions, getDominantColor, logoColors])
-
-  const data = positions.map(position => ({
-    label: position.token,
-    value: position.value
-  }))
-
-  const chartColors = positions.map(position =>
-    getTokenColor(position.token, logoColors[position.logo ?? 0], tokenColorOverrides)
-  )
 
   return (
     <Box className={classes.container}>

@@ -51,7 +51,6 @@ export const WrappedPositionsList: React.FC = () => {
   }, [list])
 
   const handleRefresh = () => {
-    dispatch(overviewActions.clearTokenPositions())
     dispatch(actions.getPositionsList())
   }
 

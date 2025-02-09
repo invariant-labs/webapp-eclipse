@@ -1694,7 +1694,6 @@ export const getTokenPrice = async (addr: string): Promise<number | undefined> =
   if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
       const { data } = await axios.get<IPriceData>(`https://price.invariant.app/eclipse-mainnet`)
-      console.log(data)
       priceData = data.data
 
       localStorage.setItem('TOKEN_PRICE_DATA', JSON.stringify(priceData))

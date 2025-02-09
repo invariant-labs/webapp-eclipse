@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Table,
   TableBody,
@@ -17,6 +17,7 @@ import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { PositionTableRow } from './PositionsTableRow'
 import { IPositionItem } from './types'
 import { useNavigate } from 'react-router-dom'
+import { blurContent, unblurContent } from '@utils/uiUtils'
 
 const useStyles = makeStyles()((_theme: Theme) => ({
   tableContainer: {
@@ -179,6 +180,17 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({ positions }) =>
   const { classes } = useStyles()
   const networkSelector = useSelector(currentNetwork)
   const navigate = useNavigate()
+
+  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (isLockPositionModalOpen) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isLockPositionModalOpen])
+
   return (
     <TableContainer className={classes.tableContainer}>
       <Table className={classes.table}>
@@ -204,13 +216,20 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({ positions }) =>
           {positions.map((position, index) => (
             <TableRow
               onClick={e => {
-                if (!(e.target as HTMLElement).closest('.action-button')) {
+                if (
+                  !(e.target as HTMLElement).closest('.action-button') &&
+                  !isLockPositionModalOpen
+                ) {
                   navigate(`/position/${position.id}`)
                 }
               }}
               key={position.poolAddress.toString() + index}
               className={classes.tableBodyRow}>
-              <PositionTableRow {...position} />
+              <PositionTableRow
+                {...position}
+                isLockPositionModalOpen={isLockPositionModalOpen}
+                setIsLockPositionModalOpen={setIsLockPositionModalOpen}
+              />
             </TableRow>
           ))}
         </TableBody>
