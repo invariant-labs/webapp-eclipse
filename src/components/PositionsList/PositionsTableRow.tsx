@@ -356,7 +356,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
 
     const xValue = tokenXLiquidity * tokenXPriceData.price
     const yValue = tokenYLiquidity * tokenYPriceData.price
-    console.log({ tokenXLiquidity, tokenYLiquidity })
     const totalValue = xValue + yValue
 
     return totalValue
@@ -539,7 +538,7 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
       return (
         <>
           <div
-            ref={airdropIconRef} // Add ref here
+            ref={airdropIconRef}
             onClick={e => e.stopPropagation()}
             className={classes.actionButton}
             onMouseEnter={handleMouseEnter}
@@ -646,8 +645,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
     dispatch(lockerActions.lockPosition({ index: 0, network: networkType }))
   }
 
-  console.log(min, max)
-
   const { value, tokenXLabel, tokenYLabel } = useMemo<{
     value: string
     tokenXLabel: string
@@ -663,8 +660,6 @@ export const PositionTableRow: React.FC<IPositionItem> = ({
   }, [min, max, currentPrice, tokenXName, tokenYName, tokenXLiq, tokenYLiq, xToY])
 
   const { success, inProgress } = useSelector(lockerState)
-
-  console.log(tokenXLiq, tokenYLiq)
 
   return (
     <TableRow>

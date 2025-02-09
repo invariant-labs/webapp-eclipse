@@ -180,12 +180,119 @@ const useStyles = makeStyles()(() => ({
       display: 'flex',
       gap: '8px'
     }
+  },
+  mobileContainer: {
+    display: 'none',
+    [theme.breakpoints.down('md')]: {
+      display: 'flex',
+      flexDirection: 'column'
+    }
+  },
+  mobileCard: {
+    backgroundColor: colors.invariant.component,
+    borderRadius: '16px',
+    padding: '16px',
+    marginTop: '8px'
+  },
+  mobileCardHeader: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: '16px'
+  },
+  mobileTokenInfo: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
+  },
+  mobileActionsContainer: {
+    display: 'flex',
+    gap: '8px'
+  },
+  mobileStatsContainer: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    gap: '8px'
+  },
+  mobileStatItem: {
+    backgroundColor: colors.invariant.light,
+    borderRadius: '10px',
+    textAlign: 'center',
+    width: '100%',
+    minHeight: '24px'
+  },
+  mobileStatLabel: {
+    ...typography.caption1,
+    color: colors.invariant.textGrey,
+    marginRight: '8px'
+  },
+  mobileStatValue: {
+    ...typography.caption1,
+    color: colors.invariant.green
+  },
+  desktopContainer: {
+    [theme.breakpoints.down('md')]: {
+      display: 'none'
+    }
   }
 }))
 
 interface YourWalletProps {
   pools: TokenPool[]
   isLoading: boolean
+}
+
+const MobileCard: React.FC<{ pool: TokenPool; classes: any; renderActions: any }> = ({
+  pool,
+  classes,
+  renderActions
+}) => {
+  let strategy = STRATEGIES.find(
+    s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool.symbol
+  )
+
+  if (!strategy) {
+    const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
+      if (!lowest) return current
+      return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
+    })
+
+    strategy = {
+      tokenSymbolA: pool.symbol,
+      tokenSymbolB: '-',
+      feeTier: printBN(lowestFeeTierData.tier.fee, 10).replace('.', '_').substring(0, 4)
+    }
+  }
+
+  return (
+    <Box className={classes.mobileCard}>
+      <Box className={classes.mobileCardHeader}>
+        <Box className={classes.mobileTokenInfo}>
+          <img src={pool.icon} className={classes.tokenIcon} alt={pool.symbol} />
+          <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
+        </Box>
+        <Box className={classes.mobileActionsContainer}>{renderActions(pool, strategy)}</Box>
+      </Box>
+      <Box className={classes.mobileStatsContainer}>
+        <Box className={classes.mobileStatItem}>
+          <Typography component='span' className={classes.mobileStatLabel}>
+            Amount:
+          </Typography>
+          <Typography component='span' className={classes.mobileStatValue}>
+            {pool.amount.toFixed(3)}
+          </Typography>
+        </Box>
+        <Box className={classes.mobileStatItem}>
+          <Typography component='span' className={classes.mobileStatLabel}>
+            Value:
+          </Typography>
+          <Typography component='span' className={classes.mobileStatValue}>
+            ${pool.value.toLocaleString().replace(',', '.')}
+          </Typography>
+        </Box>
+      </Box>
+    </Box>
+  )
 }
 
 export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading }) => {
@@ -197,6 +304,31 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = icons.unknownToken
   }
+
+  const renderMobileLoading = () => (
+    <Box className={classes.mobileContainer}>
+      {Array(3)
+        .fill(0)
+        .map((_, index) => (
+          <Box key={`skeleton-${index}`} className={classes.mobileCard}>
+            <Box className={classes.mobileCardHeader}>
+              <Box className={classes.mobileTokenInfo}>
+                <Skeleton variant='circular' width={28} height={28} />
+                <Skeleton variant='text' width={60} />
+              </Box>
+              <Box className={classes.mobileActionsContainer}>
+                <Skeleton variant='circular' width={32} height={32} />
+                <Skeleton variant='circular' width={32} height={32} />
+              </Box>
+            </Box>
+            <Box className={classes.mobileStatsContainer}>
+              <Skeleton variant='rectangular' height={41} />
+              <Skeleton variant='rectangular' height={41} />
+            </Box>
+          </Box>
+        ))}
+    </Box>
+  )
 
   const renderActions = (pool: TokenPool, strategy: any) => (
     <>
@@ -223,135 +355,158 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
     </>
   )
   return (
-    <Box className={classes.container}>
-      <Box className={classes.header}>
-        <Typography className={classes.headerText}>Your Wallet</Typography>
-        {isLoading ? (
-          <Skeleton variant='text' width={120} height={32} />
-        ) : (
-          <Typography className={classes.headerText}>
-            ${totalValue.toLocaleString().replace(',', '.')}
-          </Typography>
-        )}
-      </Box>
-      <TableContainer className={classes.tableContainer}>
-        <Table stickyHeader sx={{ paddingRight: '5px' }}>
-          <TableHead>
-            <TableRow>
-              <TableCell className={classes.headerCell} align='left'>
-                Token Name
-              </TableCell>
-              <TableCell className={classes.headerCell} align='left'>
-                Value
-              </TableCell>
-              <TableCell className={classes.headerCell} align='left'>
-                Amount
-              </TableCell>
-              <TableCell
-                className={`${classes.headerCell} ${classes.desktopActionCell}`}
-                align='right'>
-                Action
-              </TableCell>
-            </TableRow>
-          </TableHead>
+    <>
+      <Box className={classes.desktopContainer}>
+        <Box className={classes.header}>
+          <Typography className={classes.headerText}>Your Wallet</Typography>
           {isLoading ? (
-            Array(3)
-              .fill(0)
-              .map((_, index) => (
-                <TableRow key={`skeleton-${index}`}>
-                  <TableCell className={classes.tableCell}>
-                    <Box className={classes.tokenContainer}>
-                      <Box className={classes.tokenInfo}>
-                        <Skeleton variant='circular' width={28} height={28} />
-                        <Skeleton variant='text' width={60} />
-                      </Box>
-                    </Box>
-                  </TableCell>
-                  <TableCell className={classes.tableCell} align='right'>
-                    <Box className={classes.statsContainer}>
-                      <Skeleton variant='text' width={80} />
-                    </Box>
-                  </TableCell>
-                  <TableCell className={classes.tableCell} align='right'>
-                    <Box className={classes.statsContainer}>
-                      <Skeleton variant='text' width={60} />
-                    </Box>
-                  </TableCell>
-                  <TableCell
-                    className={`${classes.tableCell} ${classes.desktopActionCell}`}
-                    align='right'
-                    sx={{ display: 'flex' }}>
-                    <Skeleton variant='circular' width={32} height={32} sx={{ marginRight: 1 }} />
-                    <Skeleton variant='circular' width={32} height={32} />
-                  </TableCell>
-                </TableRow>
-              ))
+            <Skeleton variant='text' width={120} height={32} />
           ) : (
-            <>
-              {pools.map(pool => {
-                let strategy = STRATEGIES.find(
-                  s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool.symbol
-                )
-
-                if (!strategy) {
-                  const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
-                    if (!lowest) return current
-                    return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
-                  })
-
-                  strategy = {
-                    tokenSymbolA: pool.symbol,
-                    tokenSymbolB: '-',
-                    feeTier: printBN(lowestFeeTierData.tier.fee, 10)
-                      .replace('.', '_')
-                      .substring(0, 4)
-                  }
-                }
-
-                return (
-                  <TableRow key={pool.id.toString()}>
+            <Typography className={classes.headerText}>
+              ${totalValue.toLocaleString().replace(',', '.')}
+            </Typography>
+          )}
+        </Box>
+        <TableContainer className={classes.tableContainer}>
+          <Table stickyHeader sx={{ paddingRight: '5px' }}>
+            <TableHead>
+              <TableRow>
+                <TableCell className={classes.headerCell} align='left'>
+                  Token Name
+                </TableCell>
+                <TableCell className={classes.headerCell} align='left'>
+                  Value
+                </TableCell>
+                <TableCell className={classes.headerCell} align='left'>
+                  Amount
+                </TableCell>
+                <TableCell
+                  className={`${classes.headerCell} ${classes.desktopActionCell}`}
+                  align='right'>
+                  Action
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            {isLoading ? (
+              Array(3)
+                .fill(0)
+                .map((_, index) => (
+                  <TableRow key={`skeleton-${index}`}>
                     <TableCell className={classes.tableCell}>
                       <Box className={classes.tokenContainer}>
                         <Box className={classes.tokenInfo}>
-                          <img
-                            src={pool.icon}
-                            className={classes.tokenIcon}
-                            onError={handleImageError}
-                            alt={pool.symbol}
-                          />
-                          <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
+                          <Skeleton variant='circular' width={28} height={28} />
+                          <Skeleton variant='text' width={60} />
                         </Box>
-                        <Box className={classes.mobileActions}>{renderActions(pool, strategy)}</Box>
                       </Box>
                     </TableCell>
                     <TableCell className={classes.tableCell} align='right'>
                       <Box className={classes.statsContainer}>
-                        <Typography className={classes.statsValue}>
-                          ${pool.value.toLocaleString().replace(',', '.')}
-                        </Typography>
+                        <Skeleton variant='text' width={80} />
                       </Box>
                     </TableCell>
                     <TableCell className={classes.tableCell} align='right'>
                       <Box className={classes.statsContainer}>
-                        <Typography className={classes.statsValue}>
-                          {pool.amount.toFixed(3)}
-                        </Typography>
+                        <Skeleton variant='text' width={60} />
                       </Box>
                     </TableCell>
                     <TableCell
                       className={`${classes.tableCell} ${classes.desktopActionCell}`}
                       align='right'
                       sx={{ display: 'flex' }}>
-                      {renderActions(pool, strategy)}
+                      <Skeleton variant='circular' width={32} height={32} sx={{ marginRight: 1 }} />
+                      <Skeleton variant='circular' width={32} height={32} />
                     </TableCell>
                   </TableRow>
-                )
-              })}
-            </>
-          )}
-          <TableBody className={classes.zebraRow}></TableBody>
-        </Table>
-      </TableContainer>
-    </Box>
+                ))
+            ) : (
+              <>
+                {pools.map(pool => {
+                  let strategy = STRATEGIES.find(
+                    s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool.symbol
+                  )
+
+                  if (!strategy) {
+                    const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
+                      if (!lowest) return current
+                      return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
+                    })
+
+                    strategy = {
+                      tokenSymbolA: pool.symbol,
+                      tokenSymbolB: '-',
+                      feeTier: printBN(lowestFeeTierData.tier.fee, 10)
+                        .replace('.', '_')
+                        .substring(0, 4)
+                    }
+                  }
+
+                  return (
+                    <TableRow key={pool.id.toString()}>
+                      <TableCell className={classes.tableCell}>
+                        <Box className={classes.tokenContainer}>
+                          <Box className={classes.tokenInfo}>
+                            <img
+                              src={pool.icon}
+                              className={classes.tokenIcon}
+                              onError={handleImageError}
+                              alt={pool.symbol}
+                            />
+                            <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
+                          </Box>
+                          <Box className={classes.mobileActions}>
+                            {renderActions(pool, strategy)}
+                          </Box>
+                        </Box>
+                      </TableCell>
+                      <TableCell className={classes.tableCell} align='right'>
+                        <Box className={classes.statsContainer}>
+                          <Typography className={classes.statsValue}>
+                            ${pool.value.toLocaleString().replace(',', '.')}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell className={classes.tableCell} align='right'>
+                        <Box className={classes.statsContainer}>
+                          <Typography className={classes.statsValue}>
+                            {pool.amount.toFixed(3)}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell
+                        className={`${classes.tableCell} ${classes.desktopActionCell}`}
+                        align='right'
+                        sx={{ display: 'flex' }}>
+                        {renderActions(pool, strategy)}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })}
+              </>
+            )}
+            <TableBody className={classes.zebraRow}></TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+      {isLoading ? (
+        renderMobileLoading()
+      ) : (
+        <Box className={classes.mobileContainer}>
+          <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
+            Your Wallet
+          </Typography>
+          <Box sx={{ height: '400px', overflowY: 'auto' }}>
+            {pools.map(pool => (
+              <MobileCard
+                key={pool.id.toString()}
+                pool={pool}
+                classes={classes}
+                renderActions={renderActions}
+              />
+            ))}
+          </Box>
+        </Box>
+      )}
+    </>
   )
 }

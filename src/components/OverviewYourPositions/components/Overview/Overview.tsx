@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles'
@@ -15,6 +15,7 @@ import { getMarketProgram } from '@utils/web3/programs/amm'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
+import MobileOverview from './MobileOverview'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -26,7 +27,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const rpc = useSelector(rpcAddress)
   const networkType = useSelector(network)
   const positionList = useSelector(positionsWithPoolsData)
-
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const [totalUnclaimedFee, setTotalUnclaimedFee] = useState(0)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
@@ -334,117 +335,121 @@ export const Overview: React.FC<OverviewProps> = () => {
     <Box className={classes.container}>
       <HeaderSection totalValue={totalAssets} />
       <UnclaimedSection unclaimedTotal={totalUnclaimedFee} />
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          flexDirection: 'row-reverse',
-          [theme.breakpoints.down('lg')]: {
-            justifyContent: 'center',
-            flexDirection: 'column'
-          }
-        }}>
-        <Box sx={{ marginTop: 2 }}>
-          <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
-            Tokens
-          </Typography>
-
-          <Grid
-            container
-            spacing={1}
-            sx={{
-              marginTop: 1,
-              minHeight: '120px',
-              overflowY: 'auto',
-
-              '&::-webkit-scrollbar': {
-                width: '4px'
-              },
-              '&::-webkit-scrollbar-track': {
-                background: 'transparent'
-              },
-              '&::-webkit-scrollbar-thumb': {
-                background: colors.invariant.pink,
-                borderRadius: '4px'
-              }
-            }}>
-            {positions.map(position => {
-              const textColor = getTokenColor(
-                position.token,
-                logoColors[position.logo ?? 0],
-                tokenColorOverrides
-              )
-              return (
-                <Grid
-                  item
-                  container
-                  key={position.token}
-                  sx={{
-                    paddingLeft: '0 !important',
-
-                    display: 'flex',
-                    [theme.breakpoints.down('lg')]: {
-                      justifyContent: 'space-between'
-                    },
-                    justifyContent: 'flex-start'
-                  }}>
-                  <Grid
-                    item
-                    xs={2}
-                    alignContent={'center'}
-                    sx={{
-                      display: 'flex',
-
-                      alignItems: 'center'
-                    }}>
-                    <img
-                      src={position.logo}
-                      alt={'Token logo'}
-                      style={{
-                        width: '24px',
-                        height: '24px',
-                        borderRadius: '100%'
-                      }}
-                    />
-                  </Grid>
-
-                  <Grid item xs={2} alignContent={'center'}>
-                    <Typography
-                      style={{
-                        ...typography.heading4,
-                        color: textColor
-                      }}>
-                      {position.token}:
-                    </Typography>
-                  </Grid>
-
-                  <Grid item xs={5} alignContent={'center'}>
-                    <Typography
-                      style={{
-                        ...typography.heading4,
-                        color: colors.invariant.text,
-                        textAlign: 'right',
-                        paddingLeft: '8px'
-                      }}>
-                      ${position.value.toFixed(9)}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              )
-            })}
-          </Grid>
-        </Box>
+      {isLg ? (
+        <MobileOverview positions={positions} totalAssets={totalAssets} chartColors={chartColors} />
+      ) : (
         <Box
           sx={{
-            flex: '1 1 100%',
-            minHeight: 'fit-content',
+            display: 'flex',
+            justifyContent: 'space-between',
+            flexDirection: 'row-reverse',
             [theme.breakpoints.down('lg')]: {
-              marginTop: '100px'
+              justifyContent: 'center',
+              flexDirection: 'column'
             }
           }}>
-          <ResponsivePieChart data={data} chartColors={chartColors} />
+          <Box sx={{ marginTop: 2 }}>
+            <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
+              Tokens
+            </Typography>
+
+            <Grid
+              container
+              spacing={1}
+              sx={{
+                marginTop: 1,
+                minHeight: '120px',
+                overflowY: 'auto',
+
+                '&::-webkit-scrollbar': {
+                  width: '4px'
+                },
+                '&::-webkit-scrollbar-track': {
+                  background: 'transparent'
+                },
+                '&::-webkit-scrollbar-thumb': {
+                  background: colors.invariant.pink,
+                  borderRadius: '4px'
+                }
+              }}>
+              {positions.map(position => {
+                const textColor = getTokenColor(
+                  position.token,
+                  logoColors[position.logo ?? 0],
+                  tokenColorOverrides
+                )
+                return (
+                  <Grid
+                    item
+                    container
+                    key={position.token}
+                    sx={{
+                      paddingLeft: '0 !important',
+
+                      display: 'flex',
+                      [theme.breakpoints.down('lg')]: {
+                        justifyContent: 'space-between'
+                      },
+                      justifyContent: 'flex-start'
+                    }}>
+                    <Grid
+                      item
+                      xs={2}
+                      alignContent={'center'}
+                      sx={{
+                        display: 'flex',
+
+                        alignItems: 'center'
+                      }}>
+                      <img
+                        src={position.logo}
+                        alt={'Token logo'}
+                        style={{
+                          width: '24px',
+                          height: '24px',
+                          borderRadius: '100%'
+                        }}
+                      />
+                    </Grid>
+
+                    <Grid item xs={2} alignContent={'center'}>
+                      <Typography
+                        style={{
+                          ...typography.heading4,
+                          color: textColor
+                        }}>
+                        {position.token}:
+                      </Typography>
+                    </Grid>
+
+                    <Grid item xs={5} alignContent={'center'}>
+                      <Typography
+                        style={{
+                          ...typography.heading4,
+                          color: colors.invariant.text,
+                          textAlign: 'right',
+                          paddingLeft: '8px'
+                        }}>
+                        ${position.value.toFixed(9)}
+                      </Typography>
+                    </Grid>
+                  </Grid>
+                )
+              })}
+            </Grid>
+          </Box>
+          <Box
+            sx={{
+              flex: '1 1 100%',
+              minHeight: 'fit-content',
+              [theme.breakpoints.down('lg')]: {
+                marginTop: '100px'
+              }
+            }}>
+            <ResponsivePieChart data={data} chartColors={chartColors} />
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   )
 }
