@@ -360,6 +360,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                 marginTop: 1,
                 minHeight: '120px',
                 overflowY: 'auto',
+                marginLeft: '0 !important',
 
                 '&::-webkit-scrollbar': {
                   width: '4px'
