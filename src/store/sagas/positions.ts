@@ -615,8 +615,6 @@ export function* handleSwapAndInitPositionWithETH(
       userTokenY = yield* call(createAccount, action.payload.tokenY)
     }
 
-    const xToY = swapPair.tokenX.equals(action.payload.tokenX)
-
     const swapAndCreateOnDifferentPools = action.payload.isSamePool
       ? undefined
       : {
@@ -653,8 +651,8 @@ export function* handleSwapAndInitPositionWithETH(
         owner: wallet.publicKey,
         slippage: action.payload.swapSlippage,
         amount: action.payload.swapAmount,
-        xToY,
-        byAmountIn: true,
+        xToY: action.payload.xToY,
+        byAmountIn: action.payload.byAmountIn,
         estimatedPriceAfterSwap: action.payload.estimatedPriceAfterSwap,
         minUtilizationPercentage: action.payload.minUtilizationPercentage,
         liquidityDelta: action.payload.liquidityDelta,
@@ -821,7 +819,6 @@ export function* handleSwapAndInitPosition(
       userTokenY = yield* call(createAccount, action.payload.tokenY)
     }
 
-    const xToY = swapPair.tokenX.equals(action.payload.tokenX)
     const swapAndCreateOnDifferentPools = action.payload.isSamePool
       ? undefined
       : {
@@ -858,8 +855,8 @@ export function* handleSwapAndInitPosition(
         owner: wallet.publicKey,
         slippage: action.payload.swapSlippage,
         amount: action.payload.swapAmount,
-        xToY,
-        byAmountIn: true,
+        xToY: action.payload.xToY,
+        byAmountIn: action.payload.byAmountIn,
         estimatedPriceAfterSwap: action.payload.estimatedPriceAfterSwap,
         minUtilizationPercentage: action.payload.minUtilizationPercentage,
         swapAndCreateOnDifferentPools,
@@ -893,6 +890,7 @@ export function* handleSwapAndInitPosition(
     yield put(snackbarsActions.remove(loaderSigningTx))
 
     const txid = yield* call([connection, connection.sendTransaction], signedTx)
+    console.log(txid)
 
     yield put(actions.setInitPositionSuccess(!!txid.length))
 

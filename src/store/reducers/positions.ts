@@ -97,6 +97,8 @@ export interface SwapAndCreatePosition
   liquidityDelta: BN
   xSwapAmount: BN
   ySwapAmount: BN
+  byAmountIn: boolean
+  xToY: boolean
 }
 
 export interface GetCurrentTicksData {

@@ -937,7 +937,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         ticks,
         liquidityDelta,
         xSwapAmount,
-        ySwapAmount
+        ySwapAmount,
+        byAmountIn,
+        xToY
       ) => {
         if (
           tokenAIndex === null ||
@@ -993,7 +995,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             swapPool: autoSwapPoolData,
             liquidityDelta,
             xSwapAmount,
-            ySwapAmount
+            ySwapAmount,
+            byAmountIn,
+            xToY
           })
         )
       }}

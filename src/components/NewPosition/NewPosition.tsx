@@ -92,7 +92,9 @@ export interface INewPosition {
     ticks: number[],
     liquidityDelta: BN,
     xSwapAmount: BN,
-    ySwapAmount: BN
+    ySwapAmount: BN,
+    byAmountIn: boolean,
+    xToY: boolean
   ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
@@ -906,7 +908,9 @@ export const NewPosition: React.FC<INewPosition> = ({
             ticks,
             liquidityDelta,
             xSwapAmount,
-            ySwapAmount
+            ySwapAmount,
+            byAmountIn,
+            xToY
           ) => {
             if (tokenAIndex !== null && tokenBIndex !== null) {
               const tokenADecimals = tokens[tokenAIndex].decimals
@@ -929,7 +933,9 @@ export const NewPosition: React.FC<INewPosition> = ({
                 ticks,
                 liquidityDelta,
                 xSwapAmount,
-                ySwapAmount
+                ySwapAmount,
+                byAmountIn,
+                xToY
               )
             }
           }}
