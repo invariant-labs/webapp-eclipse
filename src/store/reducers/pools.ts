@@ -219,10 +219,6 @@ const poolsSlice = createSlice({
     setTokensError(state, action: PayloadAction<boolean>) {
       state.isLoadingTokensError = action.payload
       return state
-    },
-    setLastCurrentTickIndex(state, action: PayloadAction<{ address: string; index: number }>) {
-      state.pools[action.payload.address].lastCurrentTickIndex = action.payload.index
-      return state
     }
   }
 })
