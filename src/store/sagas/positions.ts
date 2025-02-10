@@ -1660,7 +1660,7 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
       lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
       upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
     })
-
+    console.log('set ticks')
     yield put(
       actions.setCurrentPositionRangeTicks({
         lowerTick,

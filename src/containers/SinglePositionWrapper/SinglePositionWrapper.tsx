@@ -77,14 +77,11 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [isFinishedDelayRender, setIsFinishedDelayRender] = useState(false)
 
   const [isClosingPosition, setIsClosingPosition] = useState(false)
-  // const poolKey = position?.poolKey ? poolKeyToString(position?.poolKey) : ''
 
   useEffect(() => {
-    // if (position?.id && waitingForTicksData === null && allTickMaps[poolKey] !== undefined) {
     if (position?.id) {
       setWaitingForTicksData(true)
       dispatch(actions.getCurrentPositionRangeTicks(id))
-      console.log('trigger fetch', fetchTicks)
 
       if (waitingForTicksData === null) {
         dispatch(
@@ -95,15 +92,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         )
       }
     }
-
-    // if (position?.tokenX.assetAddress && position?.tokenY.assetAddress) {
-    //   dispatch(
-    //     swapActions.setPair({
-    //       tokenFrom: position?.tokenX.assetAddress,
-    //       tokenTo: position?.tokenY.assetAddress
-    //     })
-    //   )
-    // }
   }, [position?.id, fetchTicks])
 
   useEffect(() => {

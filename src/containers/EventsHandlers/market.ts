@@ -96,14 +96,15 @@ const MarketEvents = () => {
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
-            console.log('subscribing to pool', pool.address.toString())
+            if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
+              dispatch(positionsActions.triggerFetchTicks())
+            }
             dispatch(
               actions.updatePool({
                 address: pool.address,
                 poolStructure
               })
             )
-            dispatch(positionsActions.triggerFetchTicks())
           }
         )
       })
