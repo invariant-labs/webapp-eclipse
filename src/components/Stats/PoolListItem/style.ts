@@ -14,8 +14,13 @@ export const useStyles = makeStyles()(() => ({
       borderTopRightRadius: 24,
       background: colors.invariant.componentDark,
       borderBottom: `2px solid ${colors.invariant.light}`
+    },
+
+    '&:nth-last-child(2)': {
+      borderBottom: `2px solid ${colors.invariant.light}`
     }
   },
+
   container: {
     color: colors.white.main,
     display: 'grid',

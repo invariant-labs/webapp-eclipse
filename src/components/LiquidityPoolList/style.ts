@@ -12,8 +12,7 @@ export const useStyles = makeStyles()(() => ({
     maxWidth: '100%',
     backgroundColor: colors.invariant.component,
     borderBottomLeftRadius: '24px',
-    borderBottomRightRadius: '24px',
-    borderTop: `2px solid ${colors.invariant.light}`
+    borderBottomRightRadius: '24px'
   },
   noPoolFoundPlaceholder: {
     ...typography.body2,
