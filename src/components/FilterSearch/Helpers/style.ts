@@ -2,7 +2,7 @@ import { Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((theme: Theme) => ({
+export const useStyles = makeStyles()((_theme: Theme) => ({
   boxChip: {
     display: 'flex',
     padding: '2px 4px 2px 4px',
