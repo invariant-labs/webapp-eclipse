@@ -327,7 +327,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
     if (
       !tokenAInputState.blocked &&
-      tokenACheckbox &&
       convertBalanceToBN(tokenAInputState.value, tokens[tokenAIndex].decimals).gt(
         tokens[tokenAIndex].balance
       )
@@ -337,7 +336,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
     if (
       !tokenBInputState.blocked &&
-      tokenBCheckbox &&
       convertBalanceToBN(tokenBInputState.value, tokens[tokenBIndex].decimals).gt(
         tokens[tokenBIndex].balance
       )
@@ -523,8 +521,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     let result: SimulateSwapAndCreatePositionSimulation | null = null
     if (isAutoSwapOnTheSamePool) {
       result = await simulateAutoSwapOnTheSamePool(
-        tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
-        tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0),
+        new BN(Number(valueA) * 10 ** tokenADecimal),
+        new BN(Number(valueB) * 10 ** tokenBDecimal),
         autoSwapPoolData,
         autoSwapTicks,
         autoSwapTickmap,
@@ -534,8 +532,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     } else {
       result = await simulateAutoSwap(
-        tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
-        tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0),
+        new BN(Number(valueA) * 10 ** tokenADecimal),
+        new BN(Number(valueB) * 10 ** tokenBDecimal),
         autoSwapPoolData,
         autoSwapTicks,
         autoSwapTickmap,
@@ -884,12 +882,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                     userMinUtilization,
                     simulation.swapSimulation.priceAfterSwap,
                     simulation.swapInput.swapAmount,
-                    simulation.swapSimulation.priceImpact,
+                    fromFee(new BN(Number(+slippageToleranceSwap * 1000))),
                     fromFee(new BN(Number(+slippageToleranceCreatePosition * 1000))),
                     simulation.swapSimulation.crossedTicks,
                     simulation.position.liquidity,
-                    tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
-                    tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0)
+                    new BN(Number(valueA) * 10 ** tokenADecimal),
+                    new BN(Number(valueB) * 10 ** tokenBDecimal)
                   )
                 : onAddLiquidity()
             }
