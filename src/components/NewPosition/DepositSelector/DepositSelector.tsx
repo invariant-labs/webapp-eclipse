@@ -776,7 +776,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             tokenAInputState.setValue(trimDecimalZeros(tokenAInputState.value))
           }}
           {...tokenAInputState}
-          value={tokenACheckbox ? tokenAInputState.value : '0'}
+          value={tokenAInputState.value}
           priceLoading={priceALoading}
           isBalanceLoading={isBalanceLoading}
           walletUninitialized={walletStatus !== Status.Initialized}
@@ -824,7 +824,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             tokenBInputState.setValue(trimDecimalZeros(tokenBInputState.value))
           }}
           {...tokenBInputState}
-          value={tokenBCheckbox ? tokenBInputState.value : '0'}
+          value={tokenBInputState.value}
           priceLoading={priceBLoading}
           isBalanceLoading={isBalanceLoading}
           walletUninitialized={walletStatus !== Status.Initialized}
