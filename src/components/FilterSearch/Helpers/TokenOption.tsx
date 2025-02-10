@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import useStyles from './style'
