@@ -17,7 +17,7 @@ import { useNavigate } from 'react-router-dom'
 import { STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
 import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
-import { printBN } from '@utils/utils'
+import { formatNumber2, printBN } from '@utils/utils'
 
 const useStyles = makeStyles()(() => ({
   container: {
@@ -56,7 +56,7 @@ const useStyles = makeStyles()(() => ({
     },
     borderBottomLeftRadius: 0,
     backgroundColor: colors.invariant.component,
-    maxHeight: '265px',
+    height: '265px',
     overflowY: 'auto',
     overflowX: 'hidden',
 
@@ -283,7 +283,7 @@ const MobileCard: React.FC<{ pool: TokenPool; classes: any; renderActions: any }
             Amount:
           </Typography>
           <Typography component='span' className={classes.mobileStatValue}>
-            {pool.amount.toFixed(3)}
+            {formatNumber2(pool.amount)}
           </Typography>
         </Box>
         <Box className={classes.mobileStatItem}>
@@ -362,7 +362,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
     <>
       <Box className={classes.desktopContainer}>
         <Box className={classes.header}>
-          <Typography className={classes.headerText}>Your Wallet</Typography>
+          <Typography className={classes.headerText}>Available Balance</Typography>
           {isLoading ? (
             <Skeleton variant='text' width={120} height={32} />
           ) : (
@@ -473,7 +473,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       <TableCell className={classes.tableCell} align='right'>
                         <Box className={classes.statsContainer}>
                           <Typography className={classes.statsValue}>
-                            {pool.amount.toFixed(3)}
+                            {formatNumber2(pool.amount)}
                           </Typography>
                         </Box>
                       </TableCell>
