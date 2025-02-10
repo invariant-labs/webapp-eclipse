@@ -1,7 +1,7 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()(theme => ({
+export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSlider }) => ({
   title: {
     color: colors.invariant.text,
     ...typography.heading4,
@@ -11,7 +11,7 @@ export const useStyles = makeStyles()(theme => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    padding: '24px 48px',
+    padding: showSlider ? '24px 48px' : '24px 4px',
     flexWrap: 'nowrap',
     borderRadius: 32,
     background: colors.invariant.component,
