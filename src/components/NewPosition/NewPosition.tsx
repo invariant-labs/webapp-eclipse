@@ -550,6 +550,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (canNavigate) {
       const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
 
+      clearTimeout(urlUpdateTimeoutRef.current)
+
       if (index1 != null && index2 != null) {
         const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
         const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())
@@ -571,7 +573,6 @@ export const NewPosition: React.FC<INewPosition> = ({
               ? '&range=true'
               : '&range=false'
 
-        clearTimeout(urlUpdateTimeoutRef.current)
         urlUpdateTimeoutRef.current = setTimeout(
           () =>
             navigate(
