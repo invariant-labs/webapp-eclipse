@@ -1,7 +1,6 @@
 import {
   Autocomplete,
   Box,
-  Divider,
   Fade,
   InputAdornment,
   Paper,
@@ -11,11 +10,10 @@ import {
   useMediaQuery
 } from '@mui/material'
 import SearchIcon from '@static/svg/lupaDark.svg'
-import { forwardRef, useEffect, useMemo, useState } from 'react'
+import { forwardRef, useMemo, useState } from 'react'
 import { NetworkType } from '@store/consts/static'
 import { colors, theme, typography } from '@static/theme'
 import useStyles from './styles'
-import { CommonTokenItem } from './Helpers/CommonTokenItem'
 import { TokenChip } from './Helpers/TokenChip'
 import { TokenOption } from './Helpers/TokenOption'
 
@@ -41,26 +39,12 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   setSelectedFilters,
   mappedTokens
 }) => {
-  const [animationComplete, setAnimationComplete] = useState(false)
   const [open, setOpen] = useState(false)
-
+  //const open = true
   const isTokensSelected = selectedFilters.length === 2
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
-  const fullWidth = isSmall ? true : open || selectedFilters.length >= 1
-  const { classes } = useStyles({ fullWidth, isSmall })
-  const shouldOpenPopper = isSmall
-    ? !isTokensSelected && open
-    : !isTokensSelected && open && animationComplete
-
-  useEffect(() => {
-    isSmall ? setAnimationComplete(true) : setAnimationComplete(false)
-  }, [fullWidth])
-
-  const handleTransitionEnd = (event: React.TransitionEvent<HTMLDivElement>) => {
-    if (!isSmall && event.propertyName === 'width') {
-      setAnimationComplete(true)
-    }
-  }
+  const { classes } = useStyles({ isSmall })
+  const shouldOpenPopper = isSmall ? !isTokensSelected && open : !isTokensSelected && open
 
   const networkUrl = useMemo(() => {
     switch (networkType) {
@@ -83,25 +67,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
     return (
       <Fade in timeout={300}>
         <Paper {...paperProps} ref={ref}>
-          <Box onClick={e => e.stopPropagation()}>
-            <Box className={classes.commonTokens}>
-              <Typography className={classes.headerText}>Common Tokens</Typography>
-              <Box display='flex' gap='8px' flexDirection='column' height='80px'>
-                {[0, 3].map(sliceStart => (
-                  <Box key={sliceStart} gap='8px' display='flex'>
-                    {mappedTokens.slice(sliceStart, sliceStart + 3).map(token => (
-                      <CommonTokenItem
-                        key={token.address}
-                        token={token}
-                        onSelect={handleSelectToken}
-                      />
-                    ))}
-                  </Box>
-                ))}
-              </Box>
-              <Divider className={classes.divider} orientation='horizontal' flexItem />
-            </Box>
-          </Box>
           <Box>{paperProps.children}</Box>
         </Paper>
       </Fade>
@@ -116,16 +81,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
 
   const handleRemoveToken = (tokenToRemove: ISearchToken) => {
     setSelectedFilters(prev => prev.filter(token => token.address !== tokenToRemove.address))
-  }
-
-  const handleSelectToken = (e: React.MouseEvent, token: ISearchToken) => {
-    e.stopPropagation()
-    e.preventDefault()
-    setSelectedFilters(prev => {
-      if (prev.length >= 2 || prev.some(t => t.address === token.address)) return prev
-      return [...prev, token]
-    })
-    setOpen(true)
   }
 
   const filterOptions = (opts: ISearchToken[], state: { inputValue: string }) => {
@@ -201,8 +156,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
           variant='outlined'
           className={classes.searchBar}
           placeholder={selectedFilters.length === 0 ? 'Search token' : ''}
-          {...(!isSmall && { onTransitionEnd: handleTransitionEnd })}
-          onTransitionEnd={handleTransitionEnd}
           InputProps={
             {
               ...params.InputProps,

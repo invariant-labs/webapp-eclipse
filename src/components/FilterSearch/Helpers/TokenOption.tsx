@@ -2,7 +2,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import useStyles from './style'
-import { printBN } from '@utils/utils'
+import { formatNumber, printBN } from '@utils/utils'
 
 interface ISearchToken {
   icon: string
@@ -18,9 +18,10 @@ export const TokenOption: React.FC<{
   networkUrl: string
 }> = ({ option, networkUrl }) => {
   const { classes } = useStyles()
+  const tokenBalance = printBN(option.balance, option.decimals)
 
   return (
-    <Box className={classes.tokenContainer}>
+    <Box className={classes.tokenContainer} flexWrap='nowrap'>
       <Box display='flex' alignItems='center'>
         <img
           src={option?.icon ?? icons.unknownToken}
@@ -31,11 +32,10 @@ export const TokenOption: React.FC<{
           alt={option.symbol}
           className={classes.searchResultIcon}
         />
-        <Box display='flex' flexDirection='column'>
-          <Box display='flex' flexDirection='row' alignItems='center' gap='6px' flexWrap='wrap'>
-            {' '}
+        <Box display='flex' flexDirection='column' flexWrap='wrap'>
+          <Box display='flex' flexDirection='row' alignItems='center' gap='6px' flexWrap='nowrap'>
             <Typography className={classes.tokenLabel}>{shortenAddress(option.symbol)}</Typography>
-            <Grid className={classes.tokenAddress} container direction='column'>
+            <Box className={classes.tokenAddress}>
               <a
                 href={`https://eclipsescan.xyz/token/${option.address.toString()}${networkUrl}`}
                 target='_blank'
@@ -44,16 +44,21 @@ export const TokenOption: React.FC<{
                 <Typography>{shortenAddress(option.address)}</Typography>
                 <img width={8} height={8} src={icons.newTab} alt='Token address' />
               </a>
-            </Grid>
+            </Box>
           </Box>
           <Typography className={classes.tokenName}>
             {option.name === option.address ? shortenAddress(option.name) : option.name}
           </Typography>
         </Box>
       </Box>
-      <Typography className={classes.balaceLabel} sx={{ flexShrink: 1 }}>
-        {option.balance > 0 && `Balance: ${printBN(option.balance, option.decimals)}`}
-      </Typography>
+      <Box className={classes.tokenBalanceStatus}>
+        {Number(option.balance) > 0 ? (
+          <>
+            <Typography>Balance:</Typography>
+            <Typography>&nbsp; {formatNumber(tokenBalance)}</Typography>
+          </>
+        ) : null}
+      </Box>
     </Box>
   )
 }

@@ -3,31 +3,6 @@ import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
-  commonTokenIcon: {
-    width: 24,
-    borderRadius: '50%'
-  },
-  commonTokenContainer: {
-    justifyContent: 'center',
-    cursor: 'pointer',
-    borderRadius: 12,
-    height: 24,
-    alignItems: 'center',
-    display: 'flex',
-    padding: '6px 12px 6px 12px',
-    gap: 8,
-    background: colors.invariant.dark,
-    '&:hover': {
-      background: colors.invariant.light,
-      '@media (hover: none)': {
-        background: colors.invariant.newDark
-      }
-    }
-  },
-  commonTokenLabel: {
-    ...typography.body2,
-    color: colors.invariant.text
-  },
   boxChip: {
     display: 'flex',
     padding: '2px 4px 2px 4px',
@@ -67,13 +42,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'space-between',
     marginBottom: '8px',
     padding: '8px',
+    overflow: 'hidden',
+
     '&:hover': {
       background: colors.invariant.lightHover2
-    },
-
-    [theme.breakpoints.down('sm')]: {
-      height: 'auto',
-      alignItems: 'flex-start'
     }
   },
   searchResultIcon: {
@@ -87,6 +59,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading3
   },
   tokenAddress: {
+    display: 'flex',
     backgroundColor: colors.invariant.newDark,
     borderRadius: 4,
     padding: '2px 4px',
@@ -116,9 +89,27 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.caption2,
     color: colors.invariant.textGrey
   },
-  balaceLabel: {
-    ...typography.body2,
-    color: colors.invariant.textGrey
+  tokenDescrpiption: {
+    color: colors.invariant.textGrey,
+    ...typography.caption2,
+    lineHeight: '16px',
+    whiteSpace: 'nowrap'
+  },
+
+  tokenBalanceStatus: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+
+    color: colors.invariant.textGrey,
+    maxHeight: 40,
+    '& p': {
+      ...typography.body2
+    },
+
+    '& p:last-child': {
+      color: colors.invariant.text
+    }
   }
 }))
 
