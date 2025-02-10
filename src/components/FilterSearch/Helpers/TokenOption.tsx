@@ -1,8 +1,8 @@
 import { Box, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
-import useStyles from './style'
 import { formatNumber, printBN } from '@utils/utils'
+import { useStyles } from './style'
 
 interface ISearchToken {
   icon: string

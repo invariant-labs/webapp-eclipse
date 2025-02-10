@@ -33,6 +33,8 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     }
   },
 
+  // Token Option classes
+
   tokenContainer: {
     width: '100%',
     height: 54,
@@ -48,13 +50,7 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
       background: colors.invariant.lightHover2
     }
   },
-  searchResultIcon: {
-    width: 36,
-    maxWidth: '100%',
-    height: 'auto',
-    marginRight: 8,
-    borderRadius: '50%'
-  },
+
   tokenLabel: {
     ...typography.heading3
   },
@@ -85,6 +81,22 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
       }
     }
   },
+
+  tokenBalanceStatus: {
+    display: 'flex',
+    flexWrap: 'wrap',
+    justifyContent: 'flex-end',
+
+    color: colors.invariant.textGrey,
+
+    '& p': {
+      ...typography.body2
+    },
+
+    '& p:last-child': {
+      color: colors.invariant.text
+    }
+  },
   tokenName: {
     ...typography.caption2,
     color: colors.invariant.textGrey
@@ -95,21 +107,12 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     lineHeight: '16px',
     whiteSpace: 'nowrap'
   },
-
-  tokenBalanceStatus: {
-    display: 'flex',
-    flexWrap: 'wrap',
-    justifyContent: 'flex-end',
-
-    color: colors.invariant.textGrey,
-    maxHeight: 40,
-    '& p': {
-      ...typography.body2
-    },
-
-    '& p:last-child': {
-      color: colors.invariant.text
-    }
+  searchResultIcon: {
+    width: 36,
+    maxWidth: '100%',
+    height: 'auto',
+    marginRight: 8,
+    borderRadius: '50%'
   }
 }))
 

@@ -40,7 +40,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   mappedTokens
 }) => {
   const [open, setOpen] = useState(false)
-  //const open = true
+
   const isTokensSelected = selectedFilters.length === 2
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
   const { classes } = useStyles({ isSmall })

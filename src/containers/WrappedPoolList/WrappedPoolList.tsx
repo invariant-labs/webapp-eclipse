@@ -15,8 +15,8 @@ import { getPromotedPools } from '@store/selectors/leaderboard'
 
 import { FilterSearch } from '@components/FilterSearch/FilterSearch'
 import { swapTokens } from '@store/selectors/solanaWallet'
-import { printBN } from '@utils/utils'
 import { theme } from '@static/theme'
+import { commonTokensForNetworks } from '@store/consts/static'
 
 interface ISearchToken {
   icon: string
@@ -34,6 +34,7 @@ export const WrappedPoolList: React.FC = () => {
   //const tokensList = useSelector(tokensStatsWithTokensDetails)
   const tokensList = useSelector(swapTokens)
   const networkType = useSelector(network)
+  const commonTokens = commonTokensForNetworks[networkType]
   const promotedPools = useSelector(getPromotedPools)
   const currentNetwork = useSelector(network)
   const isLoadingStats = useSelector(isLoading)
@@ -73,9 +74,16 @@ export const WrappedPoolList: React.FC = () => {
     decimals: tokenData.decimals
   }))
   const sortedTokens = mappedTokens.sort((a, b) => {
-    const aBalance = +printBN(a.balance, a.decimals)
-    const bBalance = +printBN(b.balance, b.decimals)
-    return bBalance - aBalance
+    const aHasBalance = Number(a.balance) > 0
+    const bHasBalance = Number(b.balance) > 0
+    const aIsCommon = commonTokens.some(token => token.toString() === a.address)
+    const bIsCommon = commonTokens.some(token => token.toString() === b.address)
+
+    if (aHasBalance && !bHasBalance) return -1
+    if (!aHasBalance && bHasBalance) return 1
+    if (aIsCommon && !bIsCommon) return -1
+    if (!aIsCommon && bIsCommon) return 1
+    return 0
   })
 
   const showAPY = useMemo(() => {
