@@ -9,7 +9,7 @@ import { colors, theme, typography } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
 import { positionsWithPoolsData } from '@store/selectors/positions'
 import { calculatePriceSqrt, getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
-import { getTokenPrice, printBN } from '@utils/utils'
+import { formatNumber2, getTokenPrice, printBN } from '@utils/utils'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -313,7 +313,6 @@ export const Overview: React.FC<OverviewProps> = () => {
     loadPrices()
   }, [positionList])
 
-  // Effect to load colors for logos
   useEffect(() => {
     positions.forEach(position => {
       if (position.logo && !logoColors[position.logo]) {
@@ -431,7 +430,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                           textAlign: 'right',
                           paddingLeft: '8px'
                         }}>
-                        ${position.value.toFixed(9)}
+                        ${formatNumber2(position.value)}
                       </Typography>
                     </Grid>
                   </Grid>

@@ -363,7 +363,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   // Chart section
   const chartSection = useMemo(
     () => (
-      <Grid container justifyContent='center' sx={{ width: '50%', margin: '0 auto' }}>
+      <Grid container justifyContent='center' sx={{ width: '80%', margin: '0 auto' }}>
         <MinMaxChart
           min={Number(xToY ? min : 1 / max)}
           max={Number(xToY ? max : 1 / min)}

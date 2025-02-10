@@ -2,6 +2,7 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { MaxHandleNarrower, MinHandleNarrower } from '@components/PriceRangePlot/Brush/svgHandles'
 import { colors, typography } from '@static/theme'
+import { formatNumber2 } from '@utils/utils'
 
 const CONSTANTS = {
   MAX_HANDLE_OFFSET: 99,
@@ -17,29 +18,31 @@ interface MinMaxChartProps {
 
 interface GradientBoxProps {
   color: string
-  showGradient: boolean
+  width: string
+  gradientDirection: 'left' | 'right'
 }
 
-const GradientBox: React.FC<GradientBoxProps> = ({ color, showGradient }) => (
+const GradientBox: React.FC<GradientBoxProps> = ({ color, width }) => (
   <Box
     sx={{
-      width: '50%',
+      width,
       height: '25px',
       borderTop: `1px solid ${color}`,
-      background: showGradient ? `linear-gradient(180deg, ${color}B3 0%, ${color}00 100%)` : 'none',
+      background: `linear-gradient(180deg, ${color}B3 0%, ${color}00 100%)`,
       opacity: 0.7
     }}
   />
 )
 
-const CurrentValueIndicator: React.FC<{ position: number; value: number }> = ({
-  position,
-  value
-}) => (
+const CurrentValueIndicator: React.FC<{
+  position: number
+  value: number
+  isOutOfBounds: boolean
+}> = ({ position, value, isOutOfBounds }) => (
   <Typography
     sx={{
       ...typography.caption2,
-      color: colors.invariant.yellow,
+      color: isOutOfBounds ? colors.invariant.textGrey : colors.invariant.yellow,
       position: 'absolute',
       left: `${position}%`,
       transform: 'translateX(-50%)',
@@ -47,17 +50,20 @@ const CurrentValueIndicator: React.FC<{ position: number; value: number }> = ({
       whiteSpace: 'nowrap',
       zIndex: 101
     }}>
-    {value.toFixed(9)}
+    {formatNumber2(value)}
   </Typography>
 )
 
-const PriceIndicatorLine: React.FC<{ position: number }> = ({ position }) => (
+const PriceIndicatorLine: React.FC<{ position: number; isOutOfBounds: boolean }> = ({
+  position,
+  isOutOfBounds
+}) => (
   <Box
     sx={{
       position: 'absolute',
       width: '2px',
       height: '25px',
-      backgroundColor: colors.invariant.yellow,
+      backgroundColor: isOutOfBounds ? colors.invariant.textGrey : colors.invariant.yellow,
       top: '0%',
       left: `${position}%`,
       transform: 'translateX(-50%)',
@@ -74,11 +80,11 @@ const MinMaxLabels: React.FC<{ min: number; max: number }> = ({ min, max }) => (
       justifyContent: 'space-between',
       marginTop: '6px'
     }}>
-    <Typography sx={{ ...typography.caption2, color: colors.invariant.light }}>
-      {min.toFixed(9)}
+    <Typography sx={{ ...typography.caption2, color: colors.invariant.lightGrey }}>
+      {formatNumber2(min)}
     </Typography>
-    <Typography sx={{ ...typography.caption2, color: colors.invariant.light }}>
-      {max.toFixed(9)}
+    <Typography sx={{ ...typography.caption2, color: colors.invariant.lightGrey }}>
+      {formatNumber2(max)}
     </Typography>
   </Box>
 )
@@ -92,7 +98,6 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
 
   const currentPosition = calculateBoundedPosition()
   const isOutOfBounds = current < min || current > max
-  const showGradients = !isOutOfBounds
 
   return (
     <Box
@@ -106,7 +111,11 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         position: 'relative',
         flexDirection: 'column'
       }}>
-      <CurrentValueIndicator position={currentPosition} value={current} />
+      <CurrentValueIndicator
+        position={currentPosition}
+        value={current}
+        isOutOfBounds={isOutOfBounds}
+      />
 
       <Box
         sx={{
@@ -127,9 +136,17 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
           <MinHandleNarrower />
         </Box>
 
-        <GradientBox color={colors.invariant.green} showGradient={showGradients} />
-        <GradientBox color={colors.invariant.pink} showGradient={showGradients} />
-        <PriceIndicatorLine position={currentPosition} />
+        <GradientBox
+          color={colors.invariant.green}
+          width={`${currentPosition}%`}
+          gradientDirection='right'
+        />
+        <GradientBox
+          color={colors.invariant.pink}
+          width={`${100 - currentPosition}%`}
+          gradientDirection='left'
+        />
+        <PriceIndicatorLine position={currentPosition} isOutOfBounds={isOutOfBounds} />
 
         <Box
           sx={{

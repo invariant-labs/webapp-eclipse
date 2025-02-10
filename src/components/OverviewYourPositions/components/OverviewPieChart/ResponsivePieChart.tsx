@@ -16,10 +16,11 @@ const ResponsivePieChart = ({ data, chartColors }) => {
         series={[
           {
             data: data,
-            outerRadius: '90%',
+            outerRadius: '60%',
+            innerRadius: '90%',
             startAngle: -45,
             endAngle: 315,
-            cx: '75%',
+            cx: '80%',
             cy: '50%'
           }
         ]}
@@ -28,7 +29,7 @@ const ResponsivePieChart = ({ data, chartColors }) => {
           legend: { hidden: true }
         }}
         width={300}
-        height={180}
+        height={200}
       />
     </Box>
   )
