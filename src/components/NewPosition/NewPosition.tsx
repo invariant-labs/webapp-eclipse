@@ -26,7 +26,7 @@ import {
 import { PlotTickData } from '@store/reducers/positions'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ConcentrationTypeSwitch from './ConcentrationTypeSwitch/ConcentrationTypeSwitch'
 import DepositSelector from './DepositSelector/DepositSelector'
@@ -538,6 +538,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     onSlippageChange(slippage)
   }
 
+  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
+
   const updatePath = (
     index1: number | null,
     index2: number | null,
@@ -569,20 +571,34 @@ export const NewPosition: React.FC<INewPosition> = ({
               ? '&range=true'
               : '&range=false'
 
-        navigate(
-          `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
-          {
-            replace: true
-          }
+        clearTimeout(urlUpdateTimeoutRef.current)
+        urlUpdateTimeoutRef.current = setTimeout(
+          () =>
+            navigate(
+              `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
+              {
+                replace: true
+              }
+            ),
+          500
         )
       } else if (index1 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
-        navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          500
+        )
       } else if (index2 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-        navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          500
+        )
       } else if (fee != null) {
-        navigate(`/newPosition/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${parsedFee}`, { replace: true }),
+          500
+        )
       }
     }
   }
