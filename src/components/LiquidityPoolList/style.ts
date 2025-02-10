@@ -8,6 +8,7 @@ export const useStyles = makeStyles()(() => ({
     borderRadius: '24px'
   },
   pagination: {
+    height: 90,
     padding: '20px 24px 10px 0',
     maxWidth: '100%',
     backgroundColor: colors.invariant.component,
@@ -60,5 +61,9 @@ export const useStyles = makeStyles()(() => ({
       pointerEvents: 'none',
       borderRadius: '24px'
     }
+  },
+  emptyRow: {
+    height: 69,
+    background: colors.invariant.component
   }
 }))
