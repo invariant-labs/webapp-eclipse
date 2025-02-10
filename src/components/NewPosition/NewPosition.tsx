@@ -734,6 +734,30 @@ export const NewPosition: React.FC<INewPosition> = ({
     setTokenACheckbox(true)
     setTokenBCheckbox(true)
   }, [alignment])
+
+  useEffect(() => {
+    if (tokenACheckbox === tokenBCheckbox || !tokenAIndex || !tokenBIndex) return
+    if (!tokenACheckbox) {
+      setTokenADeposit(
+        getOtherTokenAmount(
+          convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals),
+          leftRange,
+          rightRange,
+          true
+        )
+      )
+    }
+    if (!tokenBCheckbox) {
+      setTokenBDeposit(
+        getOtherTokenAmount(
+          convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals),
+          leftRange,
+          rightRange,
+          true
+        )
+      )
+    }
+  }, [tokenACheckbox, tokenBCheckbox])
   return (
     <Grid container className={classes.wrapper} direction='column'>
       <Link to='/portfolio' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
