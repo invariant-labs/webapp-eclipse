@@ -33,60 +33,99 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     }
   },
 
-  // Token Option classes
-
   tokenContainer: {
     width: '100%',
-    height: 54,
     display: 'flex',
-    borderRadius: 24,
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: '8px',
-    padding: '8px',
-    overflow: 'hidden',
+    marginBottom: 8,
+    padding: 8,
+    borderRadius: 24,
 
     '&:hover': {
       background: colors.invariant.lightHover2
     }
   },
 
-  tokenLabel: {
-    ...typography.heading3
+  leftSide: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
   },
+
+  tokenData: {
+    display: 'flex',
+    flexDirection: 'column'
+  },
+
+  symbolAndAddress: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    minWidth: 0
+  },
+
+  tokenLabel: {
+    ...typography.heading3,
+    whiteSpace: 'nowrap',
+    flexShrink: 0
+  },
+
   tokenAddress: {
     display: 'flex',
+    alignItems: 'center',
     backgroundColor: colors.invariant.newDark,
     borderRadius: 4,
     padding: '2px 4px',
-    width: 'min-content',
-    height: 'min-content',
-    '& a': {
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: '12px',
-      textDecoration: 'none',
+    gap: 6,
+    flexShrink: 1,
+    minWidth: 0,
+    whiteSpace: 'nowrap'
+  },
 
-      '&:hover': {
-        filter: 'brightness(1.2)',
-        '@media (hover: none)': {
-          filter: 'none'
-        }
-      },
-      '& p': {
-        color: colors.invariant.lightGrey,
-        ...typography.caption4,
-        letterSpacing: '0.03em'
-      }
-    }
+  truncatedAddress: {
+    ...typography.caption4,
+    color: colors.invariant.lightGrey,
+
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    maxWidth: 80
+  },
+
+  addressLink: {
+    display: 'flex',
+    alignItems: 'center',
+    textDecoration: 'none',
+    gap: 6
+  },
+
+  newTabIcon: {
+    flexShrink: 0,
+    width: 8,
+    height: 8
+  },
+
+  tokenName: {
+    ...typography.caption2,
+    color: colors.invariant.textGrey,
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  },
+
+  searchResultIcon: {
+    flexShrink: 0,
+    width: 36,
+    height: 36,
+    marginRight: 8,
+    borderRadius: '50%'
   },
 
   tokenBalanceStatus: {
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'flex-end',
-
     color: colors.invariant.textGrey,
 
     '& p': {
@@ -96,24 +135,6 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     '& p:last-child': {
       color: colors.invariant.text
     }
-  },
-  tokenName: {
-    ...typography.caption2,
-    color: colors.invariant.textGrey
-  },
-  tokenDescrpiption: {
-    color: colors.invariant.textGrey,
-    ...typography.caption2,
-    lineHeight: '16px',
-    whiteSpace: 'nowrap'
-  },
-  searchResultIcon: {
-    width: 36,
-    maxWidth: '100%',
-    height: 'auto',
-    marginRight: 8,
-    borderRadius: '50%'
   }
 }))
-
 export default useStyles

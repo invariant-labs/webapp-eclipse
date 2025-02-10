@@ -21,8 +21,8 @@ export const TokenOption: React.FC<{
   const tokenBalance = printBN(option.balance, option.decimals)
 
   return (
-    <Box className={classes.tokenContainer} flexWrap='nowrap'>
-      <Box display='flex' alignItems='center'>
+    <Box className={classes.tokenContainer}>
+      <Box className={classes.leftSide}>
         <img
           src={option?.icon ?? icons.unknownToken}
           onError={e => {
@@ -32,17 +32,23 @@ export const TokenOption: React.FC<{
           alt={option.symbol}
           className={classes.searchResultIcon}
         />
-        <Box display='flex' flexDirection='column' flexWrap='wrap'>
-          <Box display='flex' flexDirection='row' alignItems='center' gap='6px' flexWrap='nowrap'>
+        <Box className={classes.tokenData}>
+          <Box className={classes.symbolAndAddress}>
             <Typography className={classes.tokenLabel}>{shortenAddress(option.symbol)}</Typography>
             <Box className={classes.tokenAddress}>
               <a
+                className={classes.addressLink}
                 href={`https://eclipsescan.xyz/token/${option.address.toString()}${networkUrl}`}
                 target='_blank'
                 rel='noopener noreferrer'
                 onClick={event => event.stopPropagation()}>
-                <Typography>{shortenAddress(option.address)}</Typography>
-                <img width={8} height={8} src={icons.newTab} alt='Token address' />
+                <Typography className={classes.truncatedAddress}>
+                  {+tokenBalance > 0 && option.symbol.length > 7
+                    ? option.address
+                    : shortenAddress(option.address)}
+                </Typography>
+
+                <img className={classes.newTabIcon} src={icons.newTab} alt='Token address' />
               </a>
             </Box>
           </Box>
@@ -51,13 +57,14 @@ export const TokenOption: React.FC<{
           </Typography>
         </Box>
       </Box>
+
       <Box className={classes.tokenBalanceStatus}>
-        {Number(option.balance) > 0 ? (
+        {Number(option.balance) > 0 && (
           <>
             <Typography>Balance:</Typography>
             <Typography>&nbsp; {formatNumber(tokenBalance)}</Typography>
           </>
-        ) : null}
+        )}
       </Box>
     </Box>
   )
