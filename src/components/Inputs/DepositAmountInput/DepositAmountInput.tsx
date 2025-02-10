@@ -141,15 +141,6 @@ export const DepositAmountInput: React.FC<IProps> = ({
           direction='row'
           wrap='nowrap'
           className={classes.inputContainer}>
-          {autoSwapEnabled && (
-            <Checkbox
-              checked={checkBoxValue}
-              onChange={e => {
-                setCheckBoxValue(e.target.checked)
-              }}
-              className={classes.checkbox}
-            />
-          )}
           <Grid
             className={classes.currency}
             container
@@ -177,6 +168,15 @@ export const DepositAmountInput: React.FC<IProps> = ({
               <Typography className={classes.noCurrencyText}>-</Typography>
             )}
           </Grid>
+          {autoSwapEnabled && (
+            <Checkbox
+              checked={checkBoxValue}
+              onChange={e => {
+                setCheckBoxValue(e.target.checked)
+              }}
+              className={classes.checkbox}
+            />
+          )}
           <Input
             className={classes.input}
             classes={{ input: classes.innerInput }}

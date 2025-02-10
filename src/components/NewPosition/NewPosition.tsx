@@ -298,9 +298,8 @@ export const NewPosition: React.FC<INewPosition> = ({
             item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
           (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
             item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
-      ) &&
-      walletStatus === Status.Initialized,
-    [tokenAIndex, tokenBIndex, walletStatus]
+      ),
+    [tokenAIndex, tokenBIndex]
   )
 
   useEffect(() => {

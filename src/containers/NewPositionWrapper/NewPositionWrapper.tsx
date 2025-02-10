@@ -710,7 +710,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }
 
   useEffect(() => {
-    // todo: optimazie this query
     if (tokenAIndex && tokenBIndex && allPools) {
       dispatch(
         poolsActions.getNearestTicksForPair({
@@ -727,7 +726,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         })
       )
     }
-  }, [allPools, tokenAIndex, tokenBIndex, feeIndex])
+  }, [tokenAIndex, tokenBIndex, allPools])
 
   useEffect(() => {
     if (isTimeoutError) {

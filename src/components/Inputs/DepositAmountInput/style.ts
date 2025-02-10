@@ -260,7 +260,7 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
   checkbox: {
     width: 16,
     height: 16,
-    marginRight: 8,
+    marginLeft: 8,
     color: colors.invariant.light,
     '&.Mui-checked': {
       color: colors.invariant.green
