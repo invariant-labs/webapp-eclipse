@@ -2,7 +2,7 @@ import { Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((theme: Theme) => ({
+export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }) => ({
   wrapper: {
     maxWidth: 1072,
     minHeight: '100%'
@@ -45,6 +45,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   rowContainer: {
+    display: 'flex',
+    flexDirection: isXs ? 'column' : 'row',
+    alignItems: isXs ? 'flex-start' : 'flex-end',
+    justifyContent: 'space-between',
     width: '100%'
   },
   container: {

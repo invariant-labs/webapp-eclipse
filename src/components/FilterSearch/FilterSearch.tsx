@@ -11,9 +11,9 @@ import {
   useMediaQuery
 } from '@mui/material'
 import SearchIcon from '@static/svg/lupaDark.svg'
-import { forwardRef, useMemo, useState } from 'react'
+import { forwardRef, useEffect, useMemo, useState } from 'react'
 import { NetworkType } from '@store/consts/static'
-import { colors, theme } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import useStyles from './styles'
 import { CommonTokenItem } from './Helpers/CommonTokenItem'
 import { TokenChip } from './Helpers/TokenChip'
@@ -41,11 +41,26 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   setSelectedFilters,
   mappedTokens
 }) => {
+  const [animationComplete, setAnimationComplete] = useState(false)
   const [open, setOpen] = useState(false)
+
   const isTokensSelected = selectedFilters.length === 2
-  const fullWidth = open || selectedFilters.length >= 1
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
+  const fullWidth = isSmall ? true : open || selectedFilters.length >= 1
   const { classes } = useStyles({ fullWidth, isSmall })
+  const shouldOpenPopper = isSmall
+    ? !isTokensSelected && open
+    : !isTokensSelected && open && animationComplete
+
+  useEffect(() => {
+    isSmall ? setAnimationComplete(true) : setAnimationComplete(false)
+  }, [fullWidth])
+
+  const handleTransitionEnd = (event: React.TransitionEvent<HTMLDivElement>) => {
+    if (!isSmall && event.propertyName === 'width') {
+      setAnimationComplete(true)
+    }
+  }
 
   const networkUrl = useMemo(() => {
     switch (networkType) {
@@ -66,7 +81,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
 
   const PaperComponent = (paperProps, ref) => {
     return (
-      <Fade in timeout={600}>
+      <Fade in timeout={300}>
         <Paper {...paperProps} ref={ref}>
           <Box onClick={e => e.stopPropagation()}>
             <Box className={classes.commonTokens}>
@@ -141,16 +156,18 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
       PaperComponent={PaperComponentForward}
       options={options}
       classes={{ paper: classes.paper }}
-      open={isTokensSelected ? false : open}
+      open={shouldOpenPopper}
       getOptionLabel={option => option.symbol}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
       filterOptions={filterOptions}
+      noOptionsText={<Typography className={classes.headerText}>No tokens found</Typography>}
       sx={{
         '& .MuiOutlinedInput-root': {
           '&:hover .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' }
-        }
+        },
+        width: isSmall ? '100%' : 'auto'
       }}
       ListboxProps={{
         autoFocus: true,
@@ -183,10 +200,20 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
           {...params}
           variant='outlined'
           className={classes.searchBar}
+          placeholder={selectedFilters.length === 0 ? 'Search token' : ''}
+          {...(!isSmall && { onTransitionEnd: handleTransitionEnd })}
+          onTransitionEnd={handleTransitionEnd}
           InputProps={
             {
               ...params.InputProps,
-              style: { padding: 0, height: '100%', display: 'flex', alignItems: 'center' },
+              style: {
+                padding: 0,
+                height: '100%',
+
+                display: 'flex',
+                alignItems: 'center',
+                ...typography.body2
+              },
               endAdornment: (
                 <InputAdornment position='end'>
                   <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
@@ -194,7 +221,8 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
               ),
               inputProps: {
                 ...params.inputProps,
-                readOnly: isTokensSelected
+                readOnly: isTokensSelected,
+                style: { paddingLeft: '12px' }
               },
               onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) => {
                 if (params.inputProps.onKeyDown) {

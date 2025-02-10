@@ -7,12 +7,11 @@ export const useStyles = makeStyles<{ fullWidth: boolean; isSmall: boolean }>()(
     searchBar: {
       mHeight: 32,
       borderRadius: 10,
-
       marginBottom: 8,
       background: colors.invariant.black,
       border: '1px solid #202946',
       color: colors.invariant.light,
-      transition: 'width 0.3s ease-in-out',
+      transition: isSmall ? 'none' : 'width 0.3s ease-in-out',
       width: isSmall ? '100%' : fullWidth ? 424 : 221,
       display: 'flex',
       alignItems: 'center'
@@ -21,17 +20,15 @@ export const useStyles = makeStyles<{ fullWidth: boolean; isSmall: boolean }>()(
       width: 17,
       paddingRight: '10px'
     },
-
     paper: {
-      width: isSmall ? '100%' : 392,
-      maxWidth: isSmall ? '100%' : 392,
+      width: isSmall ? 'calc(100% - 32px)' : 392,
+      maxWidth: isSmall ? 'calc(100% - 32px)' : 392,
+      margin: isSmall ? '0 auto' : undefined,
       boxShadow: 'none',
       padding: '16px 16px 10px 16px',
-
       marginTop: 8,
       background: colors.invariant.bodyBackground
     },
-
     header: {
       position: 'sticky',
       top: 0,
@@ -51,10 +48,9 @@ export const useStyles = makeStyles<{ fullWidth: boolean; isSmall: boolean }>()(
     divider: {
       background: colors.invariant.light,
       height: 1,
-      width: 'fullWidth',
+      width: '100%',
       marginBottom: 16
     },
-
     liqudityLabel: { ...typography.body2, color: colors.invariant.textGrey },
     tokenLabel: {
       ...typography.heading3
@@ -69,7 +65,6 @@ export const useStyles = makeStyles<{ fullWidth: boolean; isSmall: boolean }>()(
       ...typography.caption4,
       color: colors.invariant.textGrey
     },
-
     feeTierLabel: {
       display: 'flex',
       gap: 6,

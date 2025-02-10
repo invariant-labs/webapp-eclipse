@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/material'
+import { Box, Typography, useMediaQuery } from '@mui/material'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -16,6 +16,7 @@ import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch } from '@components/FilterSearch/FilterSearch'
 import { swapTokens } from '@store/selectors/solanaWallet'
 import { printBN } from '@utils/utils'
+import { theme } from '@static/theme'
 
 interface ISearchToken {
   icon: string
@@ -27,7 +28,6 @@ interface ISearchToken {
 }
 
 export const WrappedPoolList: React.FC = () => {
-  const { classes } = useStyles()
   const dispatch = useDispatch()
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
@@ -37,7 +37,9 @@ export const WrappedPoolList: React.FC = () => {
   const promotedPools = useSelector(getPromotedPools)
   const currentNetwork = useSelector(network)
   const isLoadingStats = useSelector(isLoading)
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'))
 
+  const { classes } = useStyles({ isXs })
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
 
   const filteredPoolsList = useMemo(() => {
@@ -60,9 +62,7 @@ export const WrappedPoolList: React.FC = () => {
       return true
     })
   }, [isLoadingStats, poolsList, selectedFilters])
-  useEffect(() => {
-    console.log(filteredPoolsList)
-  }, [filteredPoolsList])
+  useEffect(() => {}, [filteredPoolsList])
 
   const mappedTokens = tokensList.map(tokenData => ({
     icon: tokenData.logoURI ?? icons.unknownToken,
@@ -72,7 +72,6 @@ export const WrappedPoolList: React.FC = () => {
     balance: tokenData.balance,
     decimals: tokenData.decimals
   }))
-  console.log(mappedTokens)
   const sortedTokens = mappedTokens.sort((a, b) => {
     const aBalance = +printBN(a.balance, a.decimals)
     const bBalance = +printBN(b.balance, b.decimals)
@@ -100,7 +99,7 @@ export const WrappedPoolList: React.FC = () => {
 
   return (
     <div className={classes.container}>
-      <Box display='flex' flexDirection='column' className={classes.rowContainer}>
+      <Box className={classes.rowContainer}>
         <Typography className={classes.subheader} mb={2}>
           All pools
         </Typography>
