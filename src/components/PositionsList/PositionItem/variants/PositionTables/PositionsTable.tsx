@@ -15,7 +15,7 @@ import { NetworkType } from '@store/consts/static'
 import { useSelector } from 'react-redux'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { PositionTableRow } from './PositionsTableRow'
-import { IPositionItem } from './types'
+import { IPositionItem } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 
 const useStyles = makeStyles()((_theme: Theme) => ({

@@ -1,7 +1,36 @@
 import { Box } from '@mui/material'
 import { PieChart } from '@mui/x-charts'
+import { makeStyles } from 'tss-react/mui'
 
 const ResponsivePieChart = ({ data, chartColors }) => {
+  const total = data.reduce((sum, item) => sum + item.value, 0)
+
+  const useStyles = makeStyles()(() => ({
+    dark_background: {
+      backgroundColor: '#1E1E1E !important',
+      color: '#FFFFFF !important',
+      borderRadius: '8px !important'
+    },
+    dark_paper: {
+      backgroundColor: '#1E1E1E !important',
+      color: '#FFFFFF !important'
+    },
+    dark_table: {
+      color: '#FFFFFF !important'
+    },
+    dark_cell: {
+      color: '#FFFFFF !important'
+    },
+    dark_mark: {
+      color: '#FFFFFF !important'
+    },
+    dark_row: {
+      color: '#FFFFFF !important'
+    }
+  }))
+
+  const { classes } = useStyles()
+
   return (
     <Box
       sx={{
@@ -16,15 +45,36 @@ const ResponsivePieChart = ({ data, chartColors }) => {
         series={[
           {
             data: data,
-            outerRadius: '60%',
+            outerRadius: '50%',
             innerRadius: '90%',
             startAngle: -45,
             endAngle: 315,
             cx: '80%',
-            cy: '50%'
+            cy: '50%',
+            valueFormatter: item => {
+              const percentage = ((item.value / total) * 100).toFixed(1)
+              return `$${item.value.toLocaleString()} (${percentage}%)`
+            }
           }
         ]}
+        sx={{
+          path: {
+            stroke: 'transparent',
+            outline: 'none'
+          }
+        }}
         colors={chartColors}
+        tooltip={{
+          trigger: 'item',
+          classes: {
+            root: classes.dark_background,
+            paper: classes.dark_paper,
+            table: classes.dark_table,
+            cell: classes.dark_cell,
+            mark: classes.dark_mark,
+            row: classes.dark_row
+          }
+        }}
         slotProps={{
           legend: { hidden: true }
         }}

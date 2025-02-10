@@ -22,7 +22,7 @@ import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
-import PositionsTable from './PositionsTable'
+import PositionsTable from './PositionItem/variants/PositionTables/PositionsTable'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 
 export enum LiquidityPools {

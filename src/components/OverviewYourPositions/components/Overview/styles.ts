@@ -22,6 +22,14 @@ export const useStyles = makeStyles()(() => ({
     flexDirection: 'column',
     justifyContent: 'center'
   },
+  tooltip: {
+    color: colors.invariant.textGrey,
+    ...typography.caption4,
+    lineHeight: '24px',
+    background: colors.black.full,
+    boxShadow: `0 0 15px ${colors.invariant.light}`,
+    borderRadius: 12
+  },
   subtitle: {
     ...typography.body2,
     color: colors.invariant.textGrey,
@@ -34,34 +42,43 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'space-between'
   },
   headerText: {
+    [theme.breakpoints.down('lg')]: {
+      marginTop: '16px'
+    },
     ...typography.heading1,
-    color: colors.invariant.text,
-    marginTop: '12px'
+    color: colors.invariant.text
   },
+
   unclaimedSection: {
     marginTop: '20px',
     display: 'flex',
+    flexDirection: 'column',
+    gap: '16px',
+    minHeight: '32px',
 
-    justifyContent: 'space-between',
-    [theme.breakpoints.down('lg')]: {
-      flexWrap: 'wrap'
-    },
-    flexWrap: 'nowrap',
-    alignItems: 'center',
-    minHeight: '32px'
+    [theme.breakpoints.up('lg')]: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    }
   },
+
+  titleRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '16px'
+  },
+
   unclaimedTitle: {
     ...typography.heading4,
     color: colors.invariant.textGrey
   },
+
   unclaimedAmount: {
     ...typography.heading3,
-    color: colors.invariant.text,
-    [theme.breakpoints.down('lg')]: {
-      marginRight: '0px'
-    },
-    marginRight: '16px'
+    color: colors.invariant.text
   },
+
   claimAllButton: {
     ...typography.body1,
     display: 'flex',
@@ -77,20 +94,20 @@ export const useStyles = makeStyles()(() => ({
     textTransform: 'none',
     color: colors.invariant.dark,
     transition: 'all 0.3s ease',
+
     '&:hover': {
       background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
       transform: 'translateY(-2px)',
       boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
     },
+
     '&:active': {
       transform: 'translateY(1px)',
       boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
     },
-    [theme.breakpoints.down('sm')]: {
-      width: '100%'
-    },
+
     [theme.breakpoints.down('lg')]: {
-      marginTop: '12px'
+      width: '100%'
     },
 
     '&:disabled': {
