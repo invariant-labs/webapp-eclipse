@@ -16,7 +16,8 @@ import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import MobileOverview from './MobileOverview'
-
+import { status } from '@store/selectors/solanaWallet'
+import { Status } from '@store/reducers/solanaWallet'
 interface OverviewProps {
   poolAssets: ProcessedPool[]
   isLoading?: boolean
@@ -31,6 +32,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [totalUnclaimedFee, setTotalUnclaimedFee] = useState(0)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
+  const walletStatus = useSelector(status)
 
   interface ColorFrequency {
     [key: string]: number
@@ -313,6 +315,8 @@ export const Overview: React.FC<OverviewProps> = () => {
     loadPrices()
   }, [positionList])
 
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
   useEffect(() => {
     positions.forEach(position => {
       if (position.logo && !logoColors[position.logo]) {
@@ -347,97 +351,100 @@ export const Overview: React.FC<OverviewProps> = () => {
               flexDirection: 'column'
             }
           }}>
-          <Box sx={{ marginTop: 2 }}>
-            <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
-              Tokens
-            </Typography>
+          {isConnected ? (
+            <Box sx={{ marginTop: 2 }}>
+              <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
+                Tokens
+              </Typography>
 
-            <Grid
-              container
-              spacing={1}
-              sx={{
-                marginTop: 1,
-                minHeight: '120px',
-                overflowY: 'auto',
-                marginLeft: '0 !important',
+              <Grid
+                container
+                spacing={1}
+                sx={{
+                  marginTop: 1,
+                  minHeight: '120px',
+                  overflowY: 'auto',
+                  marginLeft: '0 !important',
 
-                '&::-webkit-scrollbar': {
-                  width: '4px'
-                },
-                '&::-webkit-scrollbar-track': {
-                  background: 'transparent'
-                },
-                '&::-webkit-scrollbar-thumb': {
-                  background: colors.invariant.pink,
-                  borderRadius: '4px'
-                }
-              }}>
-              {positions.map(position => {
-                const textColor = getTokenColor(
-                  position.token,
-                  logoColors[position.logo ?? 0],
-                  tokenColorOverrides
-                )
-                return (
-                  <Grid
-                    item
-                    container
-                    key={position.token}
-                    sx={{
-                      paddingLeft: '0 !important',
-
-                      display: 'flex',
-                      [theme.breakpoints.down('lg')]: {
-                        justifyContent: 'space-between'
-                      },
-                      justifyContent: 'flex-start'
-                    }}>
+                  '&::-webkit-scrollbar': {
+                    width: '4px'
+                  },
+                  '&::-webkit-scrollbar-track': {
+                    background: 'transparent'
+                  },
+                  '&::-webkit-scrollbar-thumb': {
+                    background: colors.invariant.pink,
+                    borderRadius: '4px'
+                  }
+                }}>
+                {positions.map(position => {
+                  const textColor = getTokenColor(
+                    position.token,
+                    logoColors[position.logo ?? 0],
+                    tokenColorOverrides
+                  )
+                  return (
                     <Grid
                       item
-                      xs={2}
-                      alignContent={'center'}
+                      container
+                      key={position.token}
                       sx={{
+                        paddingLeft: '0 !important',
+
                         display: 'flex',
-
-                        alignItems: 'center'
+                        [theme.breakpoints.down('lg')]: {
+                          justifyContent: 'space-between'
+                        },
+                        justifyContent: 'flex-start'
                       }}>
-                      <img
-                        src={position.logo}
-                        alt={'Token logo'}
-                        style={{
-                          width: '24px',
-                          height: '24px',
-                          borderRadius: '100%'
-                        }}
-                      />
-                    </Grid>
+                      <Grid
+                        item
+                        xs={2}
+                        alignContent={'center'}
+                        sx={{
+                          display: 'flex',
 
-                    <Grid item xs={2} alignContent={'center'}>
-                      <Typography
-                        style={{
-                          ...typography.heading4,
-                          color: textColor
+                          alignItems: 'center'
                         }}>
-                        {position.token}:
-                      </Typography>
-                    </Grid>
+                        <img
+                          src={position.logo}
+                          alt={'Token logo'}
+                          style={{
+                            width: '24px',
+                            height: '24px',
+                            borderRadius: '100%'
+                          }}
+                        />
+                      </Grid>
 
-                    <Grid item xs={5} alignContent={'center'}>
-                      <Typography
-                        style={{
-                          ...typography.heading4,
-                          color: colors.invariant.text,
-                          textAlign: 'right',
-                          paddingLeft: '8px'
-                        }}>
-                        ${formatNumber2(position.value)}
-                      </Typography>
+                      <Grid item xs={2} alignContent={'center'}>
+                        <Typography
+                          style={{
+                            ...typography.heading4,
+                            color: textColor
+                          }}>
+                          {position.token}:
+                        </Typography>
+                      </Grid>
+
+                      <Grid item xs={5} alignContent={'center'}>
+                        <Typography
+                          style={{
+                            ...typography.heading4,
+                            color: colors.invariant.text,
+                            textAlign: 'right',
+                            paddingLeft: '8px'
+                          }}>
+                          ${formatNumber2(position.value)}
+                        </Typography>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                )
-              })}
-            </Grid>
-          </Box>
+                  )
+                })}
+              </Grid>
+            </Box>
+          ) : null}
+
           <Box
             sx={{
               flex: '1 1 100%',
