@@ -3,6 +3,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { colors, typography } from '@static/theme'
 
 import { TokenPositionEntry } from '@store/types/userOverview'
+import { formatNumber2 } from '@utils/utils'
 
 interface ChartSegment {
   start: number
@@ -155,7 +156,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                     textAlign: 'right',
                     paddingLeft: '8px'
                   }}>
-                  ${segment.value.toFixed(9)}
+                  ${formatNumber2(segment.value)}
                 </Typography>
               </Grid>
             </Grid>
