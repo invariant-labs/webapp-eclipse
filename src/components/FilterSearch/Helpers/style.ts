@@ -2,7 +2,7 @@ import { Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((_theme: Theme) => ({
+export const useStyles = makeStyles()((theme: Theme) => ({
   commonTokenIcon: {
     width: 24,
     borderRadius: '50%'
@@ -69,11 +69,17 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     padding: '8px',
     '&:hover': {
       background: colors.invariant.lightHover2
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      height: 'auto',
+      alignItems: 'flex-start'
     }
   },
   searchResultIcon: {
     width: 36,
-    height: 36,
+    maxWidth: '100%',
+    height: 'auto',
     marginRight: 8,
     borderRadius: '50%'
   },

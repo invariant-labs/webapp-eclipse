@@ -32,7 +32,8 @@ export const TokenOption: React.FC<{
           className={classes.searchResultIcon}
         />
         <Box display='flex' flexDirection='column'>
-          <Box display='flex' flexDirection='row' alignItems='center' gap='6px'>
+          <Box display='flex' flexDirection='row' alignItems='center' gap='6px' flexWrap='wrap'>
+            {' '}
             <Typography className={classes.tokenLabel}>{shortenAddress(option.symbol)}</Typography>
             <Grid className={classes.tokenAddress} container direction='column'>
               <a
@@ -50,7 +51,7 @@ export const TokenOption: React.FC<{
           </Typography>
         </Box>
       </Box>
-      <Typography className={classes.balaceLabel}>
+      <Typography className={classes.balaceLabel} sx={{ flexShrink: 1 }}>
         {option.balance > 0 && `Balance: ${printBN(option.balance, option.decimals)}`}
       </Typography>
     </Box>
