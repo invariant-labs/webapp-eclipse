@@ -114,12 +114,5 @@ export const useStyles = makeStyles()(() => ({
       background: colors.invariant.light,
       color: colors.invariant.dark
     }
-  },
-  tooltip: {
-    color: colors.invariant.textGrey,
-    ...typography.caption4,
-    lineHeight: '24px',
-    background: colors.black.full,
-    borderRadius: 12
   }
 }))
