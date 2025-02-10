@@ -710,6 +710,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }
 
   useEffect(() => {
+    // todo: optimazie this query
     if (tokenAIndex && tokenBIndex && allPools) {
       dispatch(
         poolsActions.getNearestTicksForPair({

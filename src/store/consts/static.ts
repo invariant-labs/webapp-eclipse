@@ -18,6 +18,12 @@ export enum NetworkType {
   Devnet = 'Devnet',
   Mainnet = 'Mainnet'
 }
+
+export enum DepositOptions {
+  Basic = 'Basic',
+  Auto = 'Auto'
+}
+
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
 export const WETH_ADDRESS = {

@@ -7,6 +7,7 @@ import settingIcon from '@static/svg/settings.svg'
 import {
   ALL_FEE_TIERS_DATA,
   autoSwapPools,
+  DepositOptions,
   NetworkType,
   PositionTokenBlock,
   promotedTiers,
@@ -261,6 +262,11 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [tokenADeposit, setTokenADeposit] = useState<string>('')
   const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
 
+  const [tokenACheckbox, setTokenACheckbox] = useState<boolean>(true)
+  const [tokenBCheckbox, setTokenBCheckbox] = useState<boolean>(true)
+
+  const [alignment, setAlignment] = useState<DepositOptions>(DepositOptions.Basic)
+
   const [settings, setSettings] = React.useState<boolean>(false)
   const [isFAQModalOpen, setIsFAQModalOpen] = React.useState<boolean>(false)
 
@@ -296,6 +302,12 @@ export const NewPosition: React.FC<INewPosition> = ({
       walletStatus === Status.Initialized,
     [tokenAIndex, tokenBIndex, walletStatus]
   )
+
+  useEffect(() => {
+    if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
+      setAlignment(DepositOptions.Basic)
+    }
+  }, [isAutoSwapAvailable])
 
   const isAutoSwapOnTheSamePool = useMemo(
     () =>
@@ -441,12 +453,16 @@ export const NewPosition: React.FC<INewPosition> = ({
       (isXtoY ? rightRange > midPrice.index : rightRange < midPrice.index)
     ) {
       const deposit = tokenADeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
-        leftRange,
-        rightRange,
-        true
-      )
+      const isFullAutoSwapOn =
+        isAutoSwapAvailable && tokenACheckbox && tokenBCheckbox && alignment == DepositOptions.Auto
+      const amount = isFullAutoSwapOn
+        ? tokenBDeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+            leftRange,
+            rightRange,
+            true
+          )
 
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
@@ -708,6 +724,17 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }, [leftRange, rightRange])
 
+  useEffect(() => {
+    setTokenACheckbox(true)
+    setTokenBCheckbox(true)
+  }, [tokenAIndex, tokenBIndex])
+
+  useEffect(() => {
+    setTokenADeposit('0')
+    setTokenBDeposit('0')
+    setTokenACheckbox(true)
+    setTokenBCheckbox(true)
+  }, [alignment])
   return (
     <Grid container className={classes.wrapper} direction='column'>
       <Link to='/portfolio' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
@@ -951,16 +978,21 @@ export const NewPosition: React.FC<INewPosition> = ({
               if (tokenAIndex === null) {
                 return
               }
-
+              const isFullAutoSwapOn =
+                isAutoSwapAvailable &&
+                tokenACheckbox &&
+                tokenBCheckbox &&
+                alignment == DepositOptions.Auto
               setTokenADeposit(value)
-              setTokenBDeposit(
-                getOtherTokenAmount(
-                  convertBalanceToBN(value, tokens[tokenAIndex].decimals),
-                  leftRange,
-                  rightRange,
-                  true
+              !isFullAutoSwapOn &&
+                setTokenBDeposit(
+                  getOtherTokenAmount(
+                    convertBalanceToBN(value, tokens[tokenAIndex].decimals),
+                    leftRange,
+                    rightRange,
+                    true
+                  )
                 )
-              )
               getTokenAmountForPotentialPoints(
                 convertBalanceToBN(value, tokens[tokenAIndex].decimals),
                 true
@@ -988,15 +1020,22 @@ export const NewPosition: React.FC<INewPosition> = ({
               if (tokenBIndex === null) {
                 return
               }
+              const isFullAutoSwapOn =
+                isAutoSwapAvailable &&
+                tokenACheckbox &&
+                tokenBCheckbox &&
+                alignment == DepositOptions.Auto
+
               setTokenBDeposit(value)
-              setTokenADeposit(
-                getOtherTokenAmount(
-                  convertBalanceToBN(value, tokens[tokenBIndex].decimals),
-                  leftRange,
-                  rightRange,
-                  false
+              !isFullAutoSwapOn &&
+                setTokenADeposit(
+                  getOtherTokenAmount(
+                    convertBalanceToBN(value, tokens[tokenBIndex].decimals),
+                    leftRange,
+                    rightRange,
+                    false
+                  )
                 )
-              )
               getTokenAmountForPotentialPoints(
                 convertBalanceToBN(value, tokens[tokenBIndex].decimals),
                 false
@@ -1072,6 +1111,12 @@ export const NewPosition: React.FC<INewPosition> = ({
           initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
           onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
           initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
+          tokenACheckbox={tokenACheckbox}
+          setTokenACheckbox={setTokenACheckbox}
+          tokenBCheckbox={tokenBCheckbox}
+          setTokenBCheckbox={setTokenBCheckbox}
+          alignment={alignment}
+          setAlignment={setAlignment}
         />
         <Hidden mdUp>
           <Grid display='flex' justifyContent='space-between' alignItems='flex-start'>

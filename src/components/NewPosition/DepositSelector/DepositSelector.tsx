@@ -5,6 +5,7 @@ import { Box, Button, Grid, ToggleButton, ToggleButtonGroup, Typography } from '
 import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
+  DepositOptions,
   MINIMUM_PRICE_IMPACT,
   NetworkType,
   WETH_POOL_INIT_LAMPORTS_MAIN,
@@ -42,6 +43,7 @@ import {
   DECIMAL,
   fromFee,
   SimulateSwapAndCreatePositionSimulation,
+  SimulationStatus,
   toDecimal
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
@@ -52,11 +54,6 @@ export interface InputState {
   blocked: boolean
   blockerInfo?: string
   decimalsLimit: number
-}
-
-export enum DepositOptions {
-  Basic = 'Basic',
-  Auto = 'Auto'
 }
 
 export interface IDepositSelector {
@@ -137,6 +134,12 @@ export interface IDepositSelector {
   initialMaxSlippageToleranceSwap: string
   onMaxSlippageToleranceCreatePositionChange: (val: string) => void
   initialMaxSlippageToleranceCreatePosition: string
+  tokenACheckbox: boolean
+  setTokenACheckbox: (val: boolean) => void
+  tokenBCheckbox: boolean
+  setTokenBCheckbox: (val: boolean) => void
+  alignment: DepositOptions
+  setAlignment: (val: DepositOptions) => void
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -193,7 +196,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
   initialMaxSlippageToleranceCreatePosition,
-  actualPoolPrice
+  actualPoolPrice,
+  tokenACheckbox,
+  setTokenACheckbox,
+  tokenBCheckbox,
+  setTokenBCheckbox,
+  alignment,
+  setAlignment
 }) => {
   const { classes } = useStyles()
   const { value: valueA } = tokenAInputState
@@ -210,21 +219,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
 
-  const [tokenACheckbox, setTokenACheckbox] = useState<boolean>(true)
-  const [tokenBCheckbox, setTokenBCheckbox] = useState<boolean>(true)
-
   const [simulation, setSimulation] = useState<SimulateSwapAndCreatePositionSimulation | null>(null)
-
-  const [alignment, setAlignment] = useState<string>(DepositOptions.Basic)
 
   const [settings, setSettings] = useState<boolean>(false)
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
-
-  useEffect(() => {
-    if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
-      setAlignment(DepositOptions.Basic)
-    }
-  }, [isAutoSwapAvailable])
 
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -353,9 +351,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
     if (
       (tokens[tokenAIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
-        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_MIN_FEE_LAMPORTS))) ||
+        tokens[tokenAIndex].balance.lt(tokenABalance.add(WETH_MIN_FEE_LAMPORTS)) &&
+        tokenACheckbox) ||
       (tokens[tokenBIndex].assetAddress.toString() === WRAPPED_ETH_ADDRESS &&
-        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_MIN_FEE_LAMPORTS))) ||
+        tokens[tokenBIndex].balance.lt(tokenBBalance.add(WETH_MIN_FEE_LAMPORTS)) &&
+        tokenBCheckbox) ||
       ethBalance.lt(WETH_MIN_FEE_LAMPORTS)
     ) {
       return `Insufficient ETH`
@@ -505,11 +505,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     onAmountSet: tokenBInputState.setValue
   })
 
-  useEffect(() => {
-    setTokenACheckbox(true)
-    setTokenBCheckbox(true)
-  }, [tokenAIndex, tokenBIndex])
-
   const simulateAutoSwapResult = async () => {
     if (
       !autoSwapPoolData ||
@@ -550,7 +545,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     }
 
-    console.log(result)
+    console.log(result, result?.swapSimulation?.status === SimulationStatus.Ok)
 
     if (!!result) {
       setSimulation(result)
@@ -558,7 +553,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }
 
   useEffect(() => {
-    if (tokenACheckbox !== tokenBCheckbox) {
+    if (
+      (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
+      alignment === DepositOptions.Auto
+    ) {
       simulateAutoSwapResult()
     }
   }, [
@@ -659,8 +657,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       <Grid container className={classes.depositHeader}>
         <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
         {simulation?.swapSimulation?.priceImpact &&
+          alignment === DepositOptions.Auto &&
           isAutoSwapAvailable &&
-          tokenACheckbox !== tokenBCheckbox &&
+          (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
           simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT)) && (
             <TooltipHover text='Impact on the price'>
               <Box
@@ -879,7 +878,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               const tokenADecimal = tokens[tokenAIndex].decimals
               const tokenBDecimal = tokens[tokenBIndex].decimals
               alignment === DepositOptions.Auto &&
-              tokenACheckbox !== tokenBCheckbox &&
+              (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
               simulation &&
               simulation.swapSimulation &&
               simulation.swapInput

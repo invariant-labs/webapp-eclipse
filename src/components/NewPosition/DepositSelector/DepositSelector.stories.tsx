@@ -8,7 +8,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
-import { NetworkType } from '@store/consts/static'
+import { DepositOptions, NetworkType } from '@store/consts/static'
 import { Status } from '@store/reducers/solanaWallet'
 
 const tokens: SwapToken[] = [
@@ -76,6 +76,12 @@ const PrimaryComponent: React.FC<IDepositSelector> = args => {
 
 export const Primary: Story = {
   args: {
+    tokenACheckbox: false,
+    setTokenACheckbox: fn(),
+    tokenBCheckbox: false,
+    setTokenBCheckbox: fn(),
+    alignment: DepositOptions.Basic,
+    setAlignment: fn(),
     onMaxSlippageToleranceSwapChange: fn(),
     initialMaxSlippageToleranceSwap: '',
     onMaxSlippageToleranceCreatePositionChange: fn(),
