@@ -11,11 +11,14 @@ import {
 } from '@mui/material'
 import SearchIcon from '@static/svg/lupaDark.svg'
 import { forwardRef, useMemo, useState } from 'react'
-import { NetworkType } from '@store/consts/static'
+import { commonTokensForNetworks, NetworkType } from '@store/consts/static'
 import { colors, theme, typography } from '@static/theme'
 import useStyles from './styles'
 import { TokenChip } from './Helpers/TokenChip'
 import { TokenOption } from './Helpers/TokenOption'
+import { useSelector } from 'react-redux'
+import { swapTokens } from '@store/selectors/solanaWallet'
+import icons from '@static/icons'
 
 interface ISearchToken {
   icon: string
@@ -30,18 +33,43 @@ interface IFilterSearch {
   networkType: string
   selectedFilters: ISearchToken[]
   setSelectedFilters: React.Dispatch<React.SetStateAction<ISearchToken[]>>
-  mappedTokens: ISearchToken[]
+  filtersAmount: number
 }
 
 export const FilterSearch: React.FC<IFilterSearch> = ({
   networkType,
   selectedFilters,
   setSelectedFilters,
-  mappedTokens
+  filtersAmount
 }) => {
+  //const tokensListDetails = useSelector(tokensStatsWithTokensDetails)
+  const tokensList = useSelector(swapTokens)
+  const commonTokens = commonTokensForNetworks[networkType]
   const [open, setOpen] = useState(false)
 
-  const isTokensSelected = selectedFilters.length === 2
+  const mappedTokens = tokensList
+    .map(tokenData => ({
+      icon: tokenData.logoURI ?? icons.unknownToken,
+      name: tokenData.name ?? tokenData.address.toString(),
+      symbol: tokenData.symbol ?? tokenData.address.toString(),
+      address: tokenData.address.toString(),
+      balance: tokenData.balance,
+      decimals: tokenData.decimals
+    }))
+    .sort((a, b) => {
+      const aHasBalance = Number(a.balance) > 0
+      const bHasBalance = Number(b.balance) > 0
+      const aIsCommon = commonTokens.some(token => token.toString() === a.address)
+      const bIsCommon = commonTokens.some(token => token.toString() === b.address)
+
+      if (aHasBalance && !bHasBalance) return -1
+      if (!aHasBalance && bHasBalance) return 1
+      if (aIsCommon && !bIsCommon) return -1
+      if (!aIsCommon && bIsCommon) return 1
+      return 0
+    })
+
+  const isTokensSelected = selectedFilters.length === filtersAmount
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
   const { classes } = useStyles({ isSmall })
   const shouldOpenPopper = isSmall ? !isTokensSelected && open : !isTokensSelected && open

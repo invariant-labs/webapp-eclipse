@@ -14,9 +14,7 @@ import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 
 import { FilterSearch } from '@components/FilterSearch/FilterSearch'
-import { swapTokens } from '@store/selectors/solanaWallet'
 import { theme } from '@static/theme'
-import { commonTokensForNetworks } from '@store/consts/static'
 
 interface ISearchToken {
   icon: string
@@ -32,9 +30,7 @@ export const WrappedPoolList: React.FC = () => {
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   //const tokensList = useSelector(tokensStatsWithTokensDetails)
-  const tokensList = useSelector(swapTokens)
   const networkType = useSelector(network)
-  const commonTokens = commonTokensForNetworks[networkType]
   const promotedPools = useSelector(getPromotedPools)
   const currentNetwork = useSelector(network)
   const isLoadingStats = useSelector(isLoading)
@@ -63,28 +59,6 @@ export const WrappedPoolList: React.FC = () => {
       return true
     })
   }, [isLoadingStats, poolsList, selectedFilters])
-  useEffect(() => {}, [filteredPoolsList])
-
-  const mappedTokens = tokensList.map(tokenData => ({
-    icon: tokenData.logoURI ?? icons.unknownToken,
-    name: tokenData.name ?? tokenData.address.toString(),
-    symbol: tokenData.symbol ?? tokenData.address.toString(),
-    address: tokenData.address.toString(),
-    balance: tokenData.balance,
-    decimals: tokenData.decimals
-  }))
-  const sortedTokens = mappedTokens.sort((a, b) => {
-    const aHasBalance = Number(a.balance) > 0
-    const bHasBalance = Number(b.balance) > 0
-    const aIsCommon = commonTokens.some(token => token.toString() === a.address)
-    const bIsCommon = commonTokens.some(token => token.toString() === b.address)
-
-    if (aHasBalance && !bHasBalance) return -1
-    if (!aHasBalance && bHasBalance) return 1
-    if (aIsCommon && !bIsCommon) return -1
-    if (!aIsCommon && bIsCommon) return 1
-    return 0
-  })
 
   const showAPY = useMemo(() => {
     return filteredPoolsList.some(pool => pool.apy !== 0)
@@ -116,7 +90,7 @@ export const WrappedPoolList: React.FC = () => {
           networkType={networkType}
           selectedFilters={selectedFilters}
           setSelectedFilters={setSelectedFilters}
-          mappedTokens={sortedTokens}
+          filtersAmount={2}
         />
       </Box>
       <LiquidityPoolList
