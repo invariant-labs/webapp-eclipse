@@ -150,12 +150,15 @@ const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler, 
                 />
               )
             })}
-            {new Array(10 - paginator(page).data.length).fill('').map(() => (
-              <div className={classes.emptyRow}></div>
+            {new Array(10 - paginator(page).data.length).fill('').map((_, index) => (
+              <div
+                className={classNames(classes.emptyRow, {
+                  [classes.emptyRowBorder]: index === 10 - paginator(page).data.length - 1
+                })}></div>
             ))}
           </>
         ) : (
-          <NotFoundPlaceholder title='No tokens found...' />
+          <NotFoundPlaceholder title='No tokens found...' isStats />
         )}
         <Grid className={classes.pagination}>
           {pages > 1 && (

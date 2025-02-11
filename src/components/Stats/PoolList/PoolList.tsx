@@ -180,12 +180,15 @@ const PoolList: React.FC<PoolListInterface> = ({
               isPromoted={element.isPromoted}
             />
           ))}
-          {new Array(10 - paginator(page).length).fill('').map(() => (
-            <div className={classes.emptyRow}></div>
+          {new Array(10 - paginator(page).length).fill('').map((_, index) => (
+            <div
+              className={classNames(classes.emptyRow, {
+                [classes.emptyRowBorder]: index === 10 - paginator(page).length - 1
+              })}></div>
           ))}
         </>
       ) : (
-        <NotFoundPlaceholder title='No pools found...' />
+        <NotFoundPlaceholder title='No pools found...' isStats />
       )}
       <Grid className={classes.pagination}>
         {pages > 1 && (

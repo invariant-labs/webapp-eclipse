@@ -33,6 +33,10 @@ export const useStyles = makeStyles()(() => ({
   emptyRow: {
     height: 69,
     background: colors.invariant.component
+  },
+  emptyRowBorder: {
+    height: 68,
+    borderBottom: `1px solid ${colors.invariant.light}`
   }
 }))
 

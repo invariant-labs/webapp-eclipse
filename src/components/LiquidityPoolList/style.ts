@@ -41,10 +41,14 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   noPoolFoundContainer: {
+    height: 690,
+    background: colors.invariant.component,
     display: 'flex',
     flexDirection: 'column',
+    justifyContent: 'center',
     alignItems: 'center',
-    marginTop: 32
+    paddingTop: 32,
+    borderBottom: `1px solid ${colors.invariant.light}`
   },
   img: {
     paddingBottom: 25
@@ -65,5 +69,9 @@ export const useStyles = makeStyles()(() => ({
   emptyRow: {
     height: 69,
     background: colors.invariant.component
+  },
+  emptyRowBorder: {
+    height: 68,
+    borderBottom: `1px solid ${colors.invariant.light}`
   }
 }))
