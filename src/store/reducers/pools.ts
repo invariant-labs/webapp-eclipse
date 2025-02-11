@@ -21,9 +21,11 @@ export interface PoolWithAddress extends PoolStructure {
 export interface IPoolsStore {
   tokens: Record<string, Token>
   pools: { [key in string]: PoolWithAddress }
+  autoSwapPool: PoolWithAddress | null
   poolTicks: { [key in string]: Tick[] }
   nearestPoolTicksForPair: { [key in string]: Tick[] }
   isLoadingLatestPoolsForTransaction: boolean
+  isLoadingAutoSwapPool: boolean
   isLoadingTicksAndTickMaps: boolean
   isLoadingTokens: boolean
   isLoadingPathTokens: boolean
@@ -72,9 +74,11 @@ const network =
 export const defaultState: IPoolsStore = {
   tokens: { ...getNetworkTokensList(network) },
   pools: {},
+  autoSwapPool: null,
   poolTicks: {},
   nearestPoolTicksForPair: {},
   isLoadingLatestPoolsForTransaction: false,
+  isLoadingAutoSwapPool: false,
   isLoadingTicksAndTickMaps: false,
   isLoadingTokens: false,
   isLoadingPathTokens: false,
@@ -178,6 +182,18 @@ const poolsSlice = createSlice({
     getPoolData(state, _action: PayloadAction<Pair>) {
       state.isLoadingLatestPoolsForTransaction = true
 
+      return state
+    },
+    getAutoSwapPoolData(state, _action: PayloadAction<Pair>) {
+      state.isLoadingAutoSwapPool = true
+      return state
+    },
+    setIsLoadingAutoSwapPool(state, action: PayloadAction<boolean>) {
+      state.isLoadingAutoSwapPool = action.payload
+      return state
+    },
+    setAutoSwapPoolData(state, action: PayloadAction<PoolWithAddress | null>) {
+      state.autoSwapPool = action.payload
       return state
     },
     getAllPoolsForPairData(state, _action: PayloadAction<PairTokens>) {

@@ -31,7 +31,7 @@ import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
-import {
+import poolsSelectors, {
   isLoadingLatestPoolsForTransaction,
   isLoadingPathTokens,
   isLoadingTicksAndTickMaps,
@@ -79,6 +79,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const tokens = useSelector(poolTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
+  const autoSwapPoolData = useSelector(poolsSelectors.autoSwapPool)
+  const isLoadingAutoSwapPool = useSelector(poolsSelectors.isLoadingAutoSwapPool)
   const tickmap = useSelector(tickMaps)
   const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
   const loadingTicksAndTickMaps = useSelector(isLoadingTicksAndTickMaps)
@@ -91,6 +93,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const { allData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
   const ticksData = allData
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
+
+  const isLoadingTicksOrTickmap = useMemo(
+    () => ticksLoading || loadingTicksAndTickMaps || isLoadingAutoSwapPool,
+    [ticksLoading, loadingTicksAndTickMaps, isLoadingAutoSwapPool]
+  )
 
   const [potentialLiquidity, setPotentialLiquidity] = useState<{
     min: BN
@@ -706,27 +713,18 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           })
         )
       }
+      if (autoSwapPool) {
+        poolsActions.getAutoSwapPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
+            tickSpacing:
+              ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
+              feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
+          })
+        )
+      }
     }
   }
-
-  useEffect(() => {
-    if (tokenAIndex && tokenBIndex && allPools) {
-      dispatch(
-        poolsActions.getNearestTicksForPair({
-          tokenFrom: tokens[tokenAIndex].assetAddress,
-          tokenTo: tokens[tokenBIndex].assetAddress,
-          allPools: allPools
-        })
-      )
-      dispatch(
-        poolsActions.getTicksAndTickMaps({
-          tokenFrom: tokens[tokenAIndex].assetAddress,
-          tokenTo: tokens[tokenBIndex].assetAddress,
-          allPools: allPools
-        })
-      )
-    }
-  }, [tokenAIndex, tokenBIndex, allPools])
 
   useEffect(() => {
     if (isTimeoutError) {
@@ -812,13 +810,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         : undefined,
     [tokenAIndex, tokenBIndex]
   )
-  const autoSwapPoolData = useMemo(
-    () =>
-      autoSwapPool
-        ? allPools.find(pool => pool.address.equals(autoSwapPool.swapPool.address))
-        : undefined,
-    [allPools, autoSwapPool]
-  )
+
   const autoSwapPoolTickmap = useMemo(
     () =>
       !!autoSwapPoolData && tickmap[autoSwapPoolData.tickmap.toString()]
@@ -826,19 +818,40 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         : null,
     [autoSwapPoolData, tickmap]
   )
+
   useEffect(() => {
     if (!tokenAIndex || !tokenBIndex || !autoSwapPool) return
     dispatch(
-      poolsActions.getPoolData(
+      poolsActions.getAutoSwapPoolData(
         new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-          fee: ALL_FEE_TIERS_DATA[feeIndex].tier.fee,
+          fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
           tickSpacing:
-            ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing ??
-            feeToTickSpacing(ALL_FEE_TIERS_DATA[feeIndex].tier.fee)
+            ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
+            feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
         })
       )
     )
-  }, [tokenAIndex, tokenBIndex, autoSwapPool])
+  }, [autoSwapPool])
+
+  useEffect(() => {
+    if (autoSwapPoolData && tokenAIndex && tokenBIndex) {
+      dispatch(
+        poolsActions.getNearestTicksForPair({
+          tokenFrom: tokens[tokenAIndex].assetAddress,
+          tokenTo: tokens[tokenBIndex].assetAddress,
+          allPools: [autoSwapPoolData]
+        })
+      )
+      dispatch(
+        poolsActions.getTicksAndTickMaps({
+          tokenFrom: tokens[tokenAIndex].assetAddress,
+          tokenTo: tokens[tokenBIndex].assetAddress,
+          allPools: [autoSwapPoolData]
+        })
+      )
+    }
+  }, [autoSwapPoolData])
+
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
@@ -1042,7 +1055,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       }}
       calcAmount={calcAmount}
       ticksLoading={ticksLoading}
-      loadingTicksAndTickMaps={loadingTicksAndTickMaps}
       progress={progress}
       isXtoY={isXtoY}
       tickSpacing={tickSpacing}

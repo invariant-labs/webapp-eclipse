@@ -48,6 +48,31 @@ export function* fetchPoolData(action: PayloadAction<Pair>) {
     yield* call(handleRpcError, (error as Error).message)
   }
 }
+export function* fetchAutoSwapPoolData(action: PayloadAction<Pair>) {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const wallet = yield* call(getWallet)
+  const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+  try {
+    const poolData = yield* call([marketProgram, marketProgram.getPool], action.payload)
+    const address = yield* call(
+      [action.payload, action.payload.getAddress],
+      marketProgram.program.programId
+    )
+
+    yield* put(
+      actions.setAutoSwapPoolData({
+        ...poolData,
+        address
+      })
+    )
+    yield* put(actions.setIsLoadingAutoSwapPool(false))
+  } catch (error) {
+    yield* put(actions.setAutoSwapPoolData(null))
+    yield* put(actions.setIsLoadingAutoSwapPool(false))
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
 
 export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
   try {
@@ -248,6 +273,10 @@ export function* getPoolDataHandler(): Generator {
   yield* takeLatest(actions.getPoolData, fetchPoolData)
 }
 
+export function* getAutoSwapPoolDataHandler(): Generator {
+  yield* takeLatest(actions.getAutoSwapPoolData, fetchAutoSwapPoolData)
+}
+
 export function* getTicksAndTickMapsHandler(): Generator {
   yield* takeEvery(actions.getTicksAndTickMaps, fetchTicksAndTickMaps)
 }
@@ -268,7 +297,8 @@ export function* poolsSaga(): Generator {
       getPoolsDataForListHandler,
       getTicksAndTickMapsHandler,
       getNearestTicksForPairHandler,
-      getPathTokensHandler
+      getPathTokensHandler,
+      getAutoSwapPoolDataHandler
     ].map(spawn)
   )
 }

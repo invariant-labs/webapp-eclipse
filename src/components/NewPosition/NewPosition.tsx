@@ -112,7 +112,6 @@ export interface INewPosition {
     feeValue: number
   }>
   ticksLoading: boolean
-  loadingTicksAndTickMaps: boolean
   progress: ProgressState
   isXtoY: boolean
   xDecimal: number
