@@ -9,6 +9,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
+export type FetchTick = 'lower' | 'upper'
 export interface PositionWithAddress extends Position {
   address: PublicKey
 }
@@ -172,7 +173,10 @@ const positionsSlice = createSlice({
       state.positionsList.lockedList = action.payload
       return state
     },
-    updatePositionTicksRange(state, _action: PayloadAction<{ positionId: string }>) {
+    updatePositionTicksRange(
+      state,
+      _action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+    ) {
       return state
     },
     setPositionRangeTicks(
@@ -213,7 +217,10 @@ const positionsSlice = createSlice({
       }
       return state
     },
-    getCurrentPositionRangeTicks(state, _action: PayloadAction<string>) {
+    getCurrentPositionRangeTicks(
+      state,
+      _action: PayloadAction<{ id: string; fetchTick?: FetchTick }>
+    ) {
       state.currentPositionTicks.loading = true
       return state
     },
@@ -222,7 +229,12 @@ const positionsSlice = createSlice({
       action: PayloadAction<{ lowerTick?: Tick; upperTick?: Tick }>
     ) {
       state.currentPositionTicks = {
-        ...action.payload,
+        lowerTick: action.payload.lowerTick
+          ? action.payload.lowerTick
+          : state.currentPositionTicks.lowerTick,
+        upperTick: action.payload.upperTick
+          ? action.payload.upperTick
+          : state.currentPositionTicks.upperTick,
         loading: false
       }
       return state

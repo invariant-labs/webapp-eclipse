@@ -6,6 +6,7 @@ import { getConnection, handleRpcError } from './connection'
 import {
   actions,
   ClosePositionData,
+  FetchTick,
   GetCurrentTicksData,
   InitPositionData,
   PositionWithAddress
@@ -32,7 +33,8 @@ import {
   lockedPositionsWithPoolsData,
   positionsList,
   positionsWithPoolsData,
-  singlePositionData
+  singlePositionData,
+  currentPositionTicks
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -1618,7 +1620,7 @@ export function* handleGetSinglePosition(
 
     const [lockerAuth] = lockerProgram.getUserLocksAddress(wallet.publicKey)
 
-    yield put(actions.getCurrentPositionRangeTicks(action.payload.index.toString()))
+    yield put(actions.getCurrentPositionRangeTicks({ id: action.payload.index.toString() }))
 
     const position = yield* call(
       [marketProgram, marketProgram.getPosition],
@@ -1639,13 +1641,18 @@ export function* handleGetSinglePosition(
   }
 }
 
-export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string>) {
+export function* handleGetCurrentPositionRangeTicks(
+  action: PayloadAction<{ id: string; fetchTick?: FetchTick }>
+) {
   try {
+    const { id, fetchTick } = action.payload
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    const positionData = yield* select(singlePositionData(action.payload))
+    const positionData = yield* select(singlePositionData(id))
+    const { lowerTick: lowerTickState, upperTick: upperTickState } =
+      yield* select(currentPositionTicks)
 
     if (typeof positionData === 'undefined') {
       return
@@ -1656,17 +1663,45 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
       tickSpacing: positionData.poolData.tickSpacing
     })
 
-    const { lowerTick, upperTick } = yield* all({
-      lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
-      upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
-    })
+    if (fetchTick === 'lower') {
+      const lowerTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.lowerTickIndex
+      )
 
-    yield put(
-      actions.setCurrentPositionRangeTicks({
-        lowerTick,
-        upperTick
+      yield put(
+        actions.setCurrentPositionRangeTicks({
+          lowerTick,
+          upperTick: upperTickState
+        })
+      )
+    } else if (fetchTick === 'upper') {
+      const upperTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.upperTickIndex
+      )
+
+      yield put(
+        actions.setCurrentPositionRangeTicks({
+          lowerTick: lowerTickState,
+          upperTick
+        })
+      )
+    } else {
+      const { lowerTick, upperTick } = yield* all({
+        lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
+        upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
       })
-    )
+
+      yield put(
+        actions.setCurrentPositionRangeTicks({
+          lowerTick,
+          upperTick
+        })
+      )
+    }
   } catch (error) {
     console.log(error)
 
@@ -1674,14 +1709,16 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
   }
 }
 
-export function* handleUpdatePositionsRangeTicks(action: PayloadAction<{ positionId: string }>) {
+export function* handleUpdatePositionsRangeTicks(
+  action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+) {
   try {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
 
-    const { positionId } = action.payload
+    const { positionId, fetchTick } = action.payload
 
     const positionData = yield* select(singlePositionData(positionId))
 
@@ -1694,18 +1731,48 @@ export function* handleUpdatePositionsRangeTicks(action: PayloadAction<{ positio
       tickSpacing: positionData.poolData.tickSpacing
     })
 
-    const { lowerTick, upperTick } = yield* all({
-      lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
-      upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
-    })
+    if (fetchTick === 'lower') {
+      const lowerTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.lowerTickIndex
+      )
 
-    yield put(
-      actions.setPositionRangeTicks({
-        positionId: positionId,
-        lowerTick: lowerTick.index,
-        upperTick: upperTick.index
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: lowerTick.index,
+          upperTick: positionData.upperTickIndex
+        })
+      )
+    } else if (fetchTick === 'upper') {
+      const upperTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.upperTickIndex
+      )
+
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: positionData.lowerTickIndex,
+          upperTick: upperTick.index
+        })
+      )
+    } else {
+      const { lowerTick, upperTick } = yield* all({
+        lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
+        upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
       })
-    )
+
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: lowerTick.index,
+          upperTick: upperTick.index
+        })
+      )
+    }
   } catch (error) {
     console.log(error)
 

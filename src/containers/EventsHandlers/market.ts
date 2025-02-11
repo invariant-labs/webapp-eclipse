@@ -123,12 +123,8 @@ const MarketEvents = () => {
                 if (
                   (pool.currentTickIndex >= position?.lowerTickIndex &&
                     poolStructure.currentTickIndex < position?.lowerTickIndex) ||
-                  (pool.currentTickIndex < position?.upperTickIndex &&
-                    poolStructure.currentTickIndex >= position?.upperTickIndex) ||
                   (pool.currentTickIndex < position?.lowerTickIndex &&
-                    poolStructure.currentTickIndex >= position?.lowerTickIndex) ||
-                  (pool.currentTickIndex >= position?.upperTickIndex &&
-                    poolStructure.currentTickIndex < position?.upperTickIndex)
+                    poolStructure.currentTickIndex >= position?.lowerTickIndex)
                 ) {
                   console.log(
                     'position to update: ' + position.id.toString() + '_' + position.pool.toString()
@@ -136,7 +132,20 @@ const MarketEvents = () => {
 
                   dispatch(
                     positionsActions.updatePositionTicksRange({
-                      positionId: position.id.toString() + '_' + position.pool.toString()
+                      positionId: position.id.toString() + '_' + position.pool.toString(),
+                      fetchTick: 'lower'
+                    })
+                  )
+                } else if (
+                  (pool.currentTickIndex < position?.upperTickIndex &&
+                    poolStructure.currentTickIndex >= position?.upperTickIndex) ||
+                  (pool.currentTickIndex >= position?.upperTickIndex &&
+                    poolStructure.currentTickIndex < position?.upperTickIndex)
+                ) {
+                  dispatch(
+                    positionsActions.updatePositionTicksRange({
+                      positionId: position.id.toString() + '_' + position.pool.toString(),
+                      fetchTick: 'upper'
                     })
                   )
                 }
@@ -150,14 +159,27 @@ const MarketEvents = () => {
                   if (
                     (pool.currentTickIndex >= currentPosition?.lowerTickIndex &&
                       poolStructure.currentTickIndex < currentPosition?.lowerTickIndex) ||
+                    (pool.currentTickIndex < currentPosition?.lowerTickIndex &&
+                      poolStructure.currentTickIndex >= currentPosition?.lowerTickIndex)
+                  ) {
+                    dispatch(
+                      positionsActions.getCurrentPositionRangeTicks({
+                        id: currentPositionIndex,
+                        fetchTick: 'lower'
+                      })
+                    )
+                  } else if (
                     (pool.currentTickIndex < currentPosition?.upperTickIndex &&
                       poolStructure.currentTickIndex >= currentPosition?.upperTickIndex) ||
-                    (pool.currentTickIndex < currentPosition?.lowerTickIndex &&
-                      poolStructure.currentTickIndex >= currentPosition?.lowerTickIndex) ||
                     (pool.currentTickIndex >= currentPosition?.upperTickIndex &&
                       poolStructure.currentTickIndex < currentPosition?.upperTickIndex)
                   ) {
-                    dispatch(positionsActions.getCurrentPositionRangeTicks(currentPositionIndex))
+                    dispatch(
+                      positionsActions.getCurrentPositionRangeTicks({
+                        id: currentPositionIndex,
+                        fetchTick: 'upper'
+                      })
+                    )
                   }
                 }
               })

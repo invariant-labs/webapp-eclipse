@@ -81,7 +81,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       dispatch(actions.setCurrentPositionId(id))
 
       setWaitingForTicksData(true)
-      dispatch(actions.getCurrentPositionRangeTicks(id))
+      dispatch(actions.getCurrentPositionRangeTicks({ id }))
 
       if (waitingForTicksData === null) {
         dispatch(
