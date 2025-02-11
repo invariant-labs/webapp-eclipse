@@ -107,88 +107,89 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
           </Tooltip>
         ))}
       </Box>
+      {segments.length > 0 ? (
+        <Box sx={{ mt: 2 }}>
+          <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey, mb: 2 }}>
+            Tokens
+          </Typography>
 
-      <Box sx={{ mt: 2 }}>
-        <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey, mb: 2 }}>
-          Tokens
-        </Typography>
-
-        <Grid
-          container
-          spacing={1}
-          sx={{
-            marginTop: 1,
-            width: '100% !important',
-            minHeight: '120px',
-            marginLeft: '0 !important',
-            overflowY: 'auto',
-            '&::-webkit-scrollbar': {
-              width: '4px'
-            },
-            '&::-webkit-scrollbar-track': {
-              background: 'transparent'
-            },
-            '&::-webkit-scrollbar-thumb': {
-              background: colors.invariant.pink,
-              borderRadius: '4px'
-            }
-          }}>
-          {segments.map(segment => (
-            <Grid
-              item
-              container
-              key={segment.token}
-              sx={{
-                paddingLeft: '0 !important',
-                marginLet: '0 !important',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                mb: 1
-              }}>
+          <Grid
+            container
+            spacing={1}
+            sx={{
+              marginTop: 1,
+              width: '100% !important',
+              minHeight: '120px',
+              marginLeft: '0 !important',
+              overflowY: 'auto',
+              '&::-webkit-scrollbar': {
+                width: '4px'
+              },
+              '&::-webkit-scrollbar-track': {
+                background: 'transparent'
+              },
+              '&::-webkit-scrollbar-thumb': {
+                background: colors.invariant.pink,
+                borderRadius: '4px'
+              }
+            }}>
+            {segments.map(segment => (
               <Grid
                 item
-                xs={1}
+                container
+                key={segment.token}
                 sx={{
+                  paddingLeft: '0 !important',
+                  marginLet: '0 !important',
                   display: 'flex',
-                  alignItems: 'center'
+                  justifyContent: 'space-between',
+                  alignItems: 'center',
+                  mb: 1
                 }}>
-                <img
-                  src={segment.logo}
-                  alt={'Token logo'}
-                  style={{
-                    width: '24px',
-                    height: '24px',
-                    borderRadius: '100%'
-                  }}
-                />
-              </Grid>
-
-              <Grid item xs={1}>
-                <Typography
+                <Grid
+                  item
+                  xs={1}
                   sx={{
-                    ...typography.heading4,
-                    color: segment.color
+                    display: 'flex',
+                    alignItems: 'center'
                   }}>
-                  {segment.token}:
-                </Typography>
-              </Grid>
+                  <img
+                    src={segment.logo}
+                    alt={'Token logo'}
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '100%'
+                    }}
+                  />
+                </Grid>
 
-              <Grid item xs={10}>
-                <Typography
-                  sx={{
-                    ...typography.heading4,
-                    color: colors.invariant.text,
-                    textAlign: 'right',
-                    paddingLeft: '8px'
-                  }}>
-                  ${formatNumber2(segment.value)}
-                </Typography>
+                <Grid item xs={1}>
+                  <Typography
+                    sx={{
+                      ...typography.heading4,
+                      color: segment.color
+                    }}>
+                    {segment.token}:
+                  </Typography>
+                </Grid>
+
+                <Grid item xs={10}>
+                  <Typography
+                    sx={{
+                      ...typography.heading4,
+                      color: colors.invariant.text,
+                      textAlign: 'right',
+                      paddingLeft: '8px'
+                    }}>
+                    ${formatNumber2(segment.value)}
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
-          ))}
-        </Grid>
-      </Box>
+            ))}
+          </Grid>
+        </Box>
+      ) : null}
     </Box>
   )
 }

@@ -1,14 +1,13 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles'
-import { ProcessedPool, TokenPositionEntry } from '@store/types/userOverview'
+import { ProcessedPool } from '@store/types/userOverview'
 import { useSelector } from 'react-redux'
 import { colors, theme, typography } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
 import { positionsWithPoolsData } from '@store/selectors/positions'
-import { calculatePriceSqrt, getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { formatNumber2, getTokenPrice, printBN } from '@utils/utils'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
@@ -16,6 +15,8 @@ import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import MobileOverview from './MobileOverview'
+import { useDominantLogoColor } from '@store/hooks/userOverview/useDominantLogoColor'
+import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 interface OverviewProps {
   poolAssets: ProcessedPool[]
   isLoading?: boolean
@@ -31,179 +32,9 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
 
-  interface ColorFrequency {
-    [key: string]: number
-  }
+  const { getDominantColor, getTokenColor, tokenColorOverrides } = useDominantLogoColor()
 
-  interface RGBColor {
-    r: number
-    g: number
-    b: number
-  }
-
-  interface TokenColorOverride {
-    token: string
-    color: string
-  }
-
-  const tokenColorOverrides: TokenColorOverride[] = [{ token: 'SOL', color: '#9945FF' }]
-
-  const getTokenColor = (
-    token: string,
-    logoColor: string | undefined,
-    overrides: TokenColorOverride[]
-  ): string => {
-    const override = overrides.find(item => item.token === token)
-    return override?.color || logoColor || '#000000'
-  }
-
-  const rgbToHex = ({ r, g, b }: RGBColor): string => {
-    const componentToHex = (c: number): string => {
-      const hex = c.toString(16)
-      return hex.length === 1 ? '0' + hex : hex
-    }
-    return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b)
-  }
-
-  const findMostFrequentColor = (colorFrequency: ColorFrequency): string => {
-    return Object.entries(colorFrequency).reduce(
-      (dominant, [color, frequency]) =>
-        frequency > dominant.frequency ? { color, frequency } : dominant,
-      { color: '#000000', frequency: 0 }
-    ).color
-  }
-
-  const getDominantColor = useCallback((logoUrl: string): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const img: HTMLImageElement = new Image()
-      img.crossOrigin = 'Anonymous'
-
-      img.onload = (): void => {
-        const canvas: HTMLCanvasElement = document.createElement('canvas')
-        const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d')
-
-        if (!ctx) {
-          reject(new Error('Failed to get canvas context'))
-          return
-        }
-
-        canvas.width = img.width
-        canvas.height = img.height
-
-        ctx.drawImage(img, 0, 0)
-
-        const imageData: Uint8ClampedArray = ctx.getImageData(
-          0,
-          0,
-          canvas.width,
-          canvas.height
-        ).data
-        const colorFrequency: ColorFrequency = {}
-
-        for (let i = 0; i < imageData.length; i += 4) {
-          const color: RGBColor = {
-            r: imageData[i],
-            g: imageData[i + 1],
-            b: imageData[i + 2]
-          }
-          const alpha: number = imageData[i + 3]
-
-          if (alpha === 0) continue
-
-          const hex: string = rgbToHex(color)
-          colorFrequency[hex] = (colorFrequency[hex] || 0) + 1
-        }
-
-        const dominantColor = findMostFrequentColor(colorFrequency)
-        resolve(dominantColor)
-      }
-
-      img.onerror = (): void => {
-        reject(new Error('Failed to load image'))
-      }
-
-      img.src = logoUrl
-    })
-  }, [])
-
-  const positions = useMemo(() => {
-    const positions: TokenPositionEntry[] = []
-
-    positionList.map(position => {
-      let foundTokenX = false
-      let foundTokenY = false
-
-      for (let i = 0; i < positions.length; i++) {
-        if (positions[i].token === position.tokenX.symbol) {
-          positions[i].value +=
-            +printBN(
-              getX(
-                position.liquidity,
-                calculatePriceSqrt(position.upperTickIndex),
-                position.poolData.sqrtPrice,
-                calculatePriceSqrt(position.lowerTickIndex)
-              ),
-              position.tokenX.decimals
-            ) * prices[position.tokenX.assetAddress.toString()]
-          foundTokenX = true
-        }
-      }
-
-      if (!foundTokenX) {
-        positions.push({
-          token: position.tokenX.symbol,
-          value:
-            +printBN(
-              getX(
-                position.liquidity,
-                calculatePriceSqrt(position.upperTickIndex),
-                position.poolData.sqrtPrice,
-                calculatePriceSqrt(position.lowerTickIndex)
-              ),
-              position.tokenX.decimals
-            ) * prices[position.tokenX.assetAddress.toString()],
-          logo: position.tokenX.logoURI,
-          positionId: position.id
-        })
-      }
-
-      for (let i = 0; i < positions.length; i++) {
-        if (positions[i].token === position.tokenY.symbol) {
-          positions[i].value +=
-            +printBN(
-              getY(
-                position.liquidity,
-                calculatePriceSqrt(position.upperTickIndex),
-                position.poolData.sqrtPrice,
-                calculatePriceSqrt(position.lowerTickIndex)
-              ),
-              position.tokenY.decimals
-            ) * prices[position.tokenY.assetAddress.toString()]
-          foundTokenY = true
-        }
-      }
-
-      if (!foundTokenY) {
-        positions.push({
-          token: position.tokenY.symbol,
-          value:
-            +printBN(
-              getY(
-                position.liquidity,
-                calculatePriceSqrt(position.upperTickIndex),
-                position.poolData.sqrtPrice,
-                calculatePriceSqrt(position.lowerTickIndex)
-              ),
-              position.tokenY.decimals
-            ) * prices[position.tokenY.assetAddress.toString()],
-          logo: position.tokenY.logoURI,
-          positionId: position.id
-        })
-      }
-    })
-
-    return positions
-  }, [positionList, prices])
+  const { positions } = useAgregatedPositions(positionList, prices)
 
   const data = useMemo(() => {
     const tokens: { label: string; value: number }[] = []
