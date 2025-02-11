@@ -1,45 +1,57 @@
-import { BottomNavigation, BottomNavigationAction, Box, Paper, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import useStyles from './style'
-import icons from '@static/icons'
+import { Link, useLocation } from 'react-router-dom'
+import { useEffect, useState } from 'react'
+import { links } from './links'
+import { NetworkType } from '@store/consts/static'
+import { useSelector } from 'react-redux'
+import { network } from '@store/selectors/solanaConnection'
 
 export const FooterNavbar = () => {
-  const links = [
-    {
-      label: 'Swap',
-      icon: icons.swapArrows,
-      url: '/exchange'
-    },
-    {
-      label: 'Liquidity',
-      icon: icons.liquidityIcon,
-      url: '/liquidity'
-    },
-    {
-      label: 'Portfolio',
-      icon: icons.walletIcon,
-      url: '/portfolio'
-    },
-    {
-      label: 'Stats',
-      icon: icons.statsIcon,
-      url: '/statistics'
-    },
-    {
-      label: 'Points',
-      icon: icons.airdrop,
-      url: '/points'
-    }
-  ]
+  const typeOfNetwork = useSelector(network)
+  const location = useLocation()
+  const landing = location.pathname.substring(1)
+
   const { classes } = useStyles()
+  const [activePath, setActive] = useState('exchange')
+
+  useEffect(() => {
+    setActive(landing)
+  }, [landing])
+
+  const otherRoutesToHighlight: Record<string, RegExp[]> = {
+    liquidity: [/^liquidity\/*/],
+    exchange: [/^exchange\/*/],
+    portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
+
+    ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),
+    ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
+  }
 
   return (
     <Box component='footer' className={classes.navbar}>
       {links.map(link => {
+        const active =
+          link.url === activePath ||
+          (!!otherRoutesToHighlight[link.url] &&
+            otherRoutesToHighlight[link.url].some(pathRegex => pathRegex.test(activePath)))
+
         return (
-          <Box className={classes.navbox}>
-            <img alt={link.label} src={link.icon} className={classes.navImg} />
+          <Link
+            key={`path-${link.url}`}
+            to={`/${link.url}`}
+            className={classes.navbox}
+            onClick={e => {
+              if (link.url === 'exchange' && activePath.startsWith('exchange')) {
+                e.preventDefault()
+                return
+              }
+              setActive(link.url)
+            }}>
+            {active && <Box className={classes.activeBox} />}
+            <img src={link.icon} className={classes.navImg} alt={link.label} />
             <Typography>{link.label}</Typography>
-          </Box>
+          </Link>
         )
       })}
     </Box>

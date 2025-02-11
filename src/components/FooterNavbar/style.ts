@@ -13,6 +13,8 @@ const useStyles = makeStyles()(() => {
       zIndex: 1200
     },
     navbox: {
+      textDecoration: 'none',
+      position: 'relative',
       width: '20%',
       display: 'flex',
       flexDirection: 'column',
@@ -20,6 +22,7 @@ const useStyles = makeStyles()(() => {
       gap: '12px',
       alignItems: 'center',
       borderRight: `1px solid ${colors.invariant.light}`,
+      cursor: 'pointer',
 
       '& p': {
         ...typography.tiny1,
@@ -31,7 +34,15 @@ const useStyles = makeStyles()(() => {
     },
     navImg: {
       height: 21,
-      fill: colors.invariant.textGrey
+      fill: '#111931'
+    },
+    activeBox: {
+      position: 'absolute',
+      width: '100%',
+      height: 2,
+      top: 0,
+      left: 0,
+      background: colors.invariant.pinkGreenLinearGradient
     }
   }
 })
