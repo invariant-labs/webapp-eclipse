@@ -60,7 +60,9 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   feeTierCell: {
-    width: '12%',
+    width: '15%',
+    padding: '0 !important',
+    paddingLeft: '48px !important',
     '& > .MuiBox-root': {
       justifyContent: 'center',
       gap: '8px'
@@ -142,7 +144,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
-    borderRadius: '16px',
+    borderRadius: '12px',
     color: colors.invariant.dark,
     transition: 'all 0.3s ease',
     '&:hover': {
@@ -412,11 +414,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
               src={icons.airdropRainbow}
               alt={'Airdrop'}
               style={{
-                flexShrink: '0',
                 height: '32px',
-                width: '32px',
-                marginRight: '16px',
-                marginLeft: '16px'
+                width: '30px'
+                // marginRight: '16px',
               }}
             />
           </div>
@@ -467,8 +467,8 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
               flexShrink: '0',
               height: '32px',
               width: '32px',
-              marginRight: '16px',
-              marginLeft: '16px',
+              // marginRight: '16px',
+              // marginLeft: '16px',
               opacity: 0.3,
               filter: 'grayscale(1)'
             }}

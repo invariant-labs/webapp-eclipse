@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { MaxHandleNarrower, MinHandleNarrower } from '@components/PriceRangePlot/Brush/svgHandles'
 import { colors, typography } from '@static/theme'
-import { formatNumber2 } from '@utils/utils'
+import { formatNumber } from '@utils/utils'
 
 const CONSTANTS = {
   MAX_HANDLE_OFFSET: 99,
@@ -37,12 +37,11 @@ const GradientBox: React.FC<GradientBoxProps> = ({ color, width }) => (
 const CurrentValueIndicator: React.FC<{
   position: number
   value: number
-  isOutOfBounds: boolean
-}> = ({ position, value, isOutOfBounds }) => (
+}> = ({ position, value }) => (
   <Typography
     sx={{
       ...typography.caption2,
-      color: isOutOfBounds ? colors.invariant.textGrey : colors.invariant.yellow,
+      color: colors.invariant.yellow,
       position: 'absolute',
       left: `${position}%`,
       transform: 'translateX(-50%)',
@@ -50,20 +49,17 @@ const CurrentValueIndicator: React.FC<{
       whiteSpace: 'nowrap',
       zIndex: 101
     }}>
-    {formatNumber2(value)}
+    {formatNumber(value)}
   </Typography>
 )
 
-const PriceIndicatorLine: React.FC<{ position: number; isOutOfBounds: boolean }> = ({
-  position,
-  isOutOfBounds
-}) => (
+const PriceIndicatorLine: React.FC<{ position: number }> = ({ position }) => (
   <Box
     sx={{
       position: 'absolute',
       width: '2px',
       height: '25px',
-      backgroundColor: isOutOfBounds ? colors.invariant.textGrey : colors.invariant.yellow,
+      backgroundColor: colors.invariant.yellow,
       top: '0%',
       left: `${position}%`,
       transform: 'translateX(-50%)',
@@ -81,10 +77,10 @@ const MinMaxLabels: React.FC<{ min: number; max: number }> = ({ min, max }) => (
       marginTop: '6px'
     }}>
     <Typography sx={{ ...typography.caption2, color: colors.invariant.lightGrey }}>
-      {formatNumber2(min)}
+      {formatNumber(min)}
     </Typography>
     <Typography sx={{ ...typography.caption2, color: colors.invariant.lightGrey }}>
-      {formatNumber2(max)}
+      {formatNumber(max)}
     </Typography>
   </Box>
 )
@@ -97,7 +93,6 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
   }
 
   const currentPosition = calculateBoundedPosition()
-  const isOutOfBounds = current < min || current > max
 
   return (
     <Box
@@ -111,11 +106,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         position: 'relative',
         flexDirection: 'column'
       }}>
-      <CurrentValueIndicator
-        position={currentPosition}
-        value={current}
-        isOutOfBounds={isOutOfBounds}
-      />
+      <CurrentValueIndicator position={currentPosition} value={current} />
 
       <Box
         sx={{
@@ -146,7 +137,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
           width={`${100 - currentPosition}%`}
           gradientDirection='left'
         />
-        <PriceIndicatorLine position={currentPosition} isOutOfBounds={isOutOfBounds} />
+        <PriceIndicatorLine position={currentPosition} />
 
         <Box
           sx={{

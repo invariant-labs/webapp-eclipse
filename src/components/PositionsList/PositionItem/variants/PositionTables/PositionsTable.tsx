@@ -124,7 +124,7 @@ const useStyles = makeStyles()((_theme: Theme) => ({
   },
   tableBody: {
     display: 'block',
-    maxHeight: 'calc(4 * (20px + 50px))',
+    maxHeight: 'calc(4 * (20px + 85px))',
     overflowY: 'auto',
     '&::-webkit-scrollbar': {
       width: '4px'
