@@ -115,7 +115,8 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
               placement='bottom'
               classes={{
                 tooltip: classes.tooltip
-              }}>
+              }}
+              enterTouchDelay={0}>
               <img src={infoIcon} alt='i' width={14} />
             </Tooltip>
           ) : null}
