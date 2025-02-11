@@ -312,17 +312,20 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Select different tokens'
     }
 
-    if (isError(SimulationStatus.NoGainSwap)) {
+    if (alignment === DepositOptions.Auto && isError(SimulationStatus.NoGainSwap)) {
       return 'Insufficient Amount'
     }
     if (
-      isError(SimulationStatus.SwapStepLimitReached) ||
-      isError(SimulationStatus.PriceLimitReached)
+      alignment === DepositOptions.Auto &&
+      (isError(SimulationStatus.SwapStepLimitReached) ||
+        isError(SimulationStatus.PriceLimitReached) ||
+        isError(SimulationStatus.LimitReached))
     ) {
       return 'Insufficient Liquidity'
     }
 
     if (
+      alignment === DepositOptions.Auto &&
       simulation &&
       simulation.swapSimulation &&
       new BN(simulation.swapSimulation.priceImpact).gt(toDecimal(+priceImpact, 2))
