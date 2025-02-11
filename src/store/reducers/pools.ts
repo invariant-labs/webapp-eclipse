@@ -16,7 +16,6 @@ import { NetworkType } from '@store/consts/static'
 
 export interface PoolWithAddress extends PoolStructure {
   address: PublicKey
-  lastCurrentTickIndex?: number
 }
 
 export interface IPoolsStore {

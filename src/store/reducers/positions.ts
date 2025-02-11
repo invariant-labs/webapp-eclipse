@@ -49,10 +49,10 @@ export interface IPositionsStore {
   lastPage: number
   plotTicks: PlotTicks
   positionsList: PositionsListStore
+  currentPositionId: string
   currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
-  triggerFetchTicks: boolean
 }
 
 export interface InitPositionData
@@ -103,6 +103,7 @@ export const defaultState: IPositionsStore = {
     initialized: false,
     loading: true
   },
+  currentPositionId: '',
   currentPositionTicks: {
     lowerTick: undefined,
     upperTick: undefined,
@@ -112,8 +113,7 @@ export const defaultState: IPositionsStore = {
     inProgress: false,
     success: false
   },
-  shouldNotUpdateRange: false,
-  triggerFetchTicks: false
+  shouldNotUpdateRange: false
 }
 
 export const positionsSliceName = 'positions'
@@ -172,6 +172,33 @@ const positionsSlice = createSlice({
       state.positionsList.lockedList = action.payload
       return state
     },
+    updatePositionTicksRange(state, _action: PayloadAction<{ positionId: string }>) {
+      return state
+    },
+    setPositionRangeTicks(
+      state,
+      action: PayloadAction<{ positionId: string; lowerTick: number; upperTick: number }>
+    ) {
+      state.positionsList.list.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            lowerTickIndex: action.payload.lowerTick,
+            upperTickIndex: action.payload.upperTick
+          }
+        }
+      })
+
+      state.positionsList.lockedList.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            lowerTickIndex: action.payload.lowerTick,
+            upperTickIndex: action.payload.upperTick
+          }
+        }
+      })
+    },
     getPositionsList(state) {
       state.positionsList.loading = true
       return state
@@ -214,8 +241,9 @@ const positionsSlice = createSlice({
       state.shouldNotUpdateRange = action.payload
       return state
     },
-    triggerFetchTicks(state) {
-      state.triggerFetchTicks = !state.triggerFetchTicks
+    setCurrentPositionId(state, action: PayloadAction<string>) {
+      state.currentPositionId = action.payload
+      return state
     }
   }
 })

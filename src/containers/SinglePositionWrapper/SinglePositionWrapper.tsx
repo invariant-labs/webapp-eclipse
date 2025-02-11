@@ -21,8 +21,7 @@ import {
   currentPositionTicks,
   isLoadingPositionsList,
   plotTicks,
-  singlePositionData,
-  triggerFetchTicks
+  singlePositionData
 } from '@store/selectors/positions'
 import { balanceLoading, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
@@ -63,7 +62,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     upperTick,
     loading: currentPositionTicksLoading
   } = useSelector(currentPositionTicks)
-  const fetchTicks = useSelector(triggerFetchTicks)
 
   const walletStatus = useSelector(status)
   const isBalanceLoading = useSelector(balanceLoading)
@@ -80,6 +78,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   useEffect(() => {
     if (position?.id) {
+      dispatch(actions.setCurrentPositionId(id))
+
       setWaitingForTicksData(true)
       dispatch(actions.getCurrentPositionRangeTicks(id))
 
@@ -92,7 +92,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         )
       }
     }
-  }, [position?.id, fetchTicks])
+  }, [position?.id])
 
   useEffect(() => {
     if (waitingForTicksData === true && !currentPositionTicksLoading) {

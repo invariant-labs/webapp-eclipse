@@ -1674,6 +1674,45 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
   }
 }
 
+export function* handleUpdatePositionsRangeTicks(action: PayloadAction<{ positionId: string }>) {
+  try {
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const wallet = yield* call(getWallet)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    const { positionId } = action.payload
+
+    const positionData = yield* select(singlePositionData(positionId))
+
+    if (typeof positionData === 'undefined') {
+      return
+    }
+
+    const pair = new Pair(positionData.poolData.tokenX, positionData.poolData.tokenY, {
+      fee: positionData.poolData.fee,
+      tickSpacing: positionData.poolData.tickSpacing
+    })
+
+    const { lowerTick, upperTick } = yield* all({
+      lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
+      upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
+    })
+
+    yield put(
+      actions.setPositionRangeTicks({
+        positionId: positionId,
+        lowerTick: lowerTick.index,
+        upperTick: upperTick.index
+      })
+    )
+  } catch (error) {
+    console.log(error)
+
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
+
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)
 }
@@ -1696,6 +1735,10 @@ export function* getCurrentPositionRangeTicksHandler(): Generator {
   yield* takeEvery(actions.getCurrentPositionRangeTicks, handleGetCurrentPositionRangeTicks)
 }
 
+export function* updatePositionTicksRangeHandler(): Generator {
+  yield* takeEvery(actions.updatePositionTicksRange, handleUpdatePositionsRangeTicks)
+}
+
 export function* positionsSaga(): Generator {
   yield all(
     [
@@ -1705,7 +1748,8 @@ export function* positionsSaga(): Generator {
       claimFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,
-      getCurrentPositionRangeTicksHandler
+      getCurrentPositionRangeTicksHandler,
+      updatePositionTicksRangeHandler
     ].map(spawn)
   )
 }

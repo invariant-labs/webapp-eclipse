@@ -11,18 +11,18 @@ export const {
   lastPage,
   positionsList,
   plotTicks,
+  currentPositionId,
   currentPositionTicks,
   initPosition,
-  shouldNotUpdateRange,
-  triggerFetchTicks
+  shouldNotUpdateRange
 } = keySelectors(store, [
   'lastPage',
   'positionsList',
   'plotTicks',
+  'currentPositionId',
   'currentPositionTicks',
   'initPosition',
-  'shouldNotUpdateRange',
-  'triggerFetchTicks'
+  'shouldNotUpdateRange'
 ])
 
 export const lastPageSelector = createSelector(lastPage, s => s)
@@ -98,13 +98,26 @@ export const singlePositionData = (id: string) =>
     }
   )
 
+export const currentPositionData = createSelector(
+  currentPositionId,
+  positionsWithPoolsData,
+  lockedPositionsWithPoolsData,
+  (id, positions, lockedPositions) => {
+    if (!id) return undefined
+    const allPositions = [...positions, ...lockedPositions]
+    return allPositions.find(
+      position => id === position.id.toString() + '_' + position.pool.toString()
+    )
+  }
+)
+
 export const positionsSelectors = {
   positionsList,
   plotTicks,
+  currentPositionId,
   currentPositionTicks,
   initPosition,
-  shouldNotUpdateRange,
-  triggerFetchTicks
+  shouldNotUpdateRange
 }
 
 export default positionsSelectors

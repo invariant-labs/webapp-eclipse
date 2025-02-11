@@ -12,6 +12,12 @@ import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
 import { getEclipseWallet } from '@utils/web3/wallet'
+import {
+  currentPositionData,
+  currentPositionId,
+  lockedPositionsWithPoolsData,
+  positionsWithPoolsData
+} from '@store/selectors/positions'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -23,7 +29,10 @@ const MarketEvents = () => {
   const networkStatus = useSelector(status)
   const tickmaps = useSelector(tickMaps)
   const allPools = useSelector(poolsArraySortedByFees)
-
+  const positionsList = useSelector(positionsWithPoolsData)
+  const lockedPositionsList = useSelector(lockedPositionsWithPoolsData)
+  const currentPositionIndex = useSelector(currentPositionId)
+  const currentPosition = useSelector(currentPositionData)
   const poolTicksArray = useSelector(poolTicks)
   const [subscribedTick, _setSubscribeTick] = useState<Set<string>>(new Set())
   const [subscribedTickmap, _setSubscribedTickmap] = useState<Set<string>>(new Set())
@@ -91,14 +100,69 @@ const MarketEvents = () => {
 
     const connectEvents = () => {
       allPools.forEach(pool => {
+        const allPositions = [...positionsList, ...lockedPositionsList]
+
+        const positionsInPool = allPositions.filter(position => {
+          return position.poolData.address.toString() === pool.address.toString()
+        })
+
         marketProgram.onPoolChange(
           pool.tokenX,
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
+            console.log(
+              'pool update ' +
+                pool.address.toString() +
+                '  - current tick: ' +
+                poolStructure.currentTickIndex
+            )
+
             if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
-              dispatch(positionsActions.triggerFetchTicks())
+              positionsInPool.map(position => {
+                if (
+                  (pool.currentTickIndex >= position?.lowerTickIndex &&
+                    poolStructure.currentTickIndex < position?.lowerTickIndex) ||
+                  (pool.currentTickIndex < position?.upperTickIndex &&
+                    poolStructure.currentTickIndex >= position?.upperTickIndex) ||
+                  (pool.currentTickIndex < position?.lowerTickIndex &&
+                    poolStructure.currentTickIndex >= position?.lowerTickIndex) ||
+                  (pool.currentTickIndex >= position?.upperTickIndex &&
+                    poolStructure.currentTickIndex < position?.upperTickIndex)
+                ) {
+                  console.log(
+                    'position to update: ' + position.id.toString() + '_' + position.pool.toString()
+                  )
+
+                  dispatch(
+                    positionsActions.updatePositionTicksRange({
+                      positionId: position.id.toString() + '_' + position.pool.toString()
+                    })
+                  )
+                }
+
+                if (
+                  currentPositionIndex ===
+                    position.id.toString() + '_' + position.pool.toString() &&
+                  currentPosition
+                ) {
+                  console.log('currentPosition: ' + currentPosition)
+                  if (
+                    (pool.currentTickIndex >= currentPosition?.lowerTickIndex &&
+                      poolStructure.currentTickIndex < currentPosition?.lowerTickIndex) ||
+                    (pool.currentTickIndex < currentPosition?.upperTickIndex &&
+                      poolStructure.currentTickIndex >= currentPosition?.upperTickIndex) ||
+                    (pool.currentTickIndex < currentPosition?.lowerTickIndex &&
+                      poolStructure.currentTickIndex >= currentPosition?.lowerTickIndex) ||
+                    (pool.currentTickIndex >= currentPosition?.upperTickIndex &&
+                      poolStructure.currentTickIndex < currentPosition?.upperTickIndex)
+                  ) {
+                    dispatch(positionsActions.getCurrentPositionRangeTicks(currentPositionIndex))
+                  }
+                }
+              })
             }
+
             dispatch(
               actions.updatePool({
                 address: pool.address,
