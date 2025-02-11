@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Popover, Typography } from '@mui/material'
+import { Dialog, DialogContent, IconButton, Box, Typography } from '@mui/material'
 import useStyles from './style'
 import icons from '@static/icons'
 import { social } from '@static/links'
@@ -17,51 +17,40 @@ export interface ISelectSocialsModal {
   open: boolean
   handleClose: () => void
 }
+
 export const SelectSocials: React.FC<ISelectSocialsModal> = ({ open, handleClose }) => {
   const { classes } = useStyles()
   return (
-    <Popover
-      open={open}
-      classes={{ paper: classes.paper }}
-      onClose={handleClose}
-      anchorOrigin={{
-        vertical: 'center',
-        horizontal: 'center'
-      }}
-      transformOrigin={{
-        vertical: 'center',
-        horizontal: 'center'
-      }}>
-      <Box className={classes.root}>
-        <Box className={classes.header}>
-          <Typography>Socials</Typography>
-          <img src={icons.closeModal} alt='close icon' onClick={handleClose} />
-        </Box>
-        <Box className={classes.socialsContainer}>
-          {socials.map(social => {
-            return (
-              <Box className={classes.social}>
-                <Box className={classes.label}>
-                  <img src={social.icon} alt={social.label} />
-                  <Typography>{social.label}</Typography>
-                </Box>
-
-                <a
-                  href={social.url}
-                  target='_blank'
-                  rel='noopener noreferrer'
-                  onClick={event => {
-                    event.stopPropagation()
-                  }}
-                  className={classes.link}>
-                  <img src={icons.newTab} alt={'Token address'} />
-                </a>
-              </Box>
-            )
-          })}
-        </Box>
+    <Dialog open={open} onClose={handleClose} PaperProps={{ className: classes.paper }} fullWidth>
+      <Box className={classes.header}>
+        <Typography>Socials</Typography>
+        <IconButton onClick={handleClose}>
+          <img src={icons.closeModal} alt='close icon' />
+        </IconButton>
       </Box>
-    </Popover>
+
+      <DialogContent dividers sx={{ padding: 0 }}>
+        <Box className={classes.socialsContainer}>
+          {socials.map(social => (
+            <Box key={social.label} className={classes.social}>
+              <Box className={classes.label}>
+                <img src={social.icon} alt={social.label} />
+                <Typography>{social.label}</Typography>
+              </Box>
+              <a
+                href={social.url}
+                target='_blank'
+                rel='noopener noreferrer'
+                onClick={event => event.stopPropagation()}
+                className={classes.link}>
+                <img src={icons.newTab} alt='Token address' />
+              </a>
+            </Box>
+          ))}
+        </Box>
+      </DialogContent>
+    </Dialog>
   )
 }
+
 export default SelectSocials

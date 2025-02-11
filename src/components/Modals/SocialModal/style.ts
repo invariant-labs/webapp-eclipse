@@ -3,14 +3,6 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
   return {
-    root: {
-      background: colors.invariant.component,
-      width: 342,
-      height: 330,
-      borderRadius: 20,
-
-      padding: 24
-    },
     header: {
       display: 'flex',
       justifyContent: 'space-between',
@@ -32,8 +24,11 @@ const useStyles = makeStyles()(() => {
     },
 
     paper: {
-      background: 'transparent',
-      boxShadow: 'none'
+      background: colors.invariant.component,
+      borderRadius: '24px',
+      boxShadow: 'none',
+      maxWidth: '350px',
+      padding: '24px'
     },
 
     social: {

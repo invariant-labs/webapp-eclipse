@@ -23,7 +23,7 @@ import { PublicKey } from '@solana/web3.js'
 import FaucetButton from './HeaderButton/FaucetButton'
 import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
-import SelectSocials from '@components/Modals/SocialModal/SocialModal'
+import SocialModal from '@components/Modals/SocialModal/SocialModal'
 
 export interface IHeader {
   address: PublicKey
@@ -413,7 +413,7 @@ export const Header: React.FC<IHeader> = ({
             }}
             activeChain={activeChain}
           />
-          <SelectSocials
+          <SocialModal
             open={viewSocialsOpen}
             handleClose={() => {
               setViewSocialsOpen(false)
