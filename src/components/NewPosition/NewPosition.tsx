@@ -111,7 +111,7 @@ export interface INewPosition {
   feeTiers: Array<{
     feeValue: number
   }>
-  ticksLoading: boolean
+  isLoadingTicksOrTickmap: boolean
   progress: ProgressState
   isXtoY: boolean
   xDecimal: number
@@ -185,7 +185,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   isCurrentPoolExisting,
   calcAmount,
   feeTiers,
-  ticksLoading,
+  isLoadingTicksOrTickmap,
   isXtoY,
   xDecimal,
   yDecimal,
@@ -586,7 +586,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [poolIndex, positionOpeningMethod, midPrice.index])
 
   useEffect(() => {
-    if (!ticksLoading && positionOpeningMethod === 'range') {
+    if (!isLoadingTicksOrTickmap && positionOpeningMethod === 'range') {
       onChangeRange(leftRange, rightRange)
     }
   }, [midPrice.index, leftRange, rightRange])
@@ -1095,7 +1095,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           positionOpeningMethod={positionOpeningMethod}
           isBalanceLoading={isBalanceLoading}
           isGetLiquidityError={isGetLiquidityError}
-          ticksLoading={ticksLoading}
+          isLoadingTicksOrTickmap={isLoadingTicksOrTickmap}
           network={network}
           ethBalance={ethBalance}
           walletStatus={walletStatus}
@@ -1192,7 +1192,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                   tokenASymbol: tokens[tokenAIndex].symbol,
                   tokenBSymbol: tokens[tokenBIndex].symbol
                 })}
-            ticksLoading={ticksLoading}
+            isLoadingTicksOrTickmap={isLoadingTicksOrTickmap}
             isXtoY={isXtoY}
             tickSpacing={tickSpacing}
             xDecimal={xDecimal}

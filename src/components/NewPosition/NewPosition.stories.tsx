@@ -102,14 +102,13 @@ export const Primary: Story = {
     progress: 'progress',
     reloadHandler: fn(),
     setMidPrice: fn(),
-    ticksLoading: false,
+    isLoadingTicksOrTickmap: false,
     tickSpacing: 1,
     tokens: tokens,
     xDecimal: 9,
     yDecimal: 12,
     hasTicksError: false,
     calcAmount: fn(),
-    loadingTicksAndTickMaps: false,
     onRefresh: fn(),
     isBalanceLoading: false,
     shouldNotUpdatePriceRange: false,
@@ -153,7 +152,7 @@ export const Primary: Story = {
         copyPoolAddressHandler={fn()}
         reloadHandler={fn()}
         setMidPrice={fn()}
-        ticksLoading={false}
+        isLoadingTicksOrTickmap={false}
         hasTicksError={false}
         progress='progress'
         isCurrentPoolExisting={true}
@@ -180,7 +179,6 @@ export const Primary: Story = {
         ]}
         addLiquidityHandler={fn()}
         calcAmount={() => 1n}
-        loadingTicksAndTickMaps={false}
         onRefresh={fn()}
         isBalanceLoading={false}
         shouldNotUpdatePriceRange={false}

@@ -102,7 +102,7 @@ export interface IDepositSelector {
   positionOpeningMethod: PositionOpeningMethod
   isBalanceLoading: boolean
   isGetLiquidityError: boolean
-  ticksLoading: boolean
+  isLoadingTicksOrTickmap: boolean
   network: NetworkType
   ethBalance: BN
   walletStatus: Status
@@ -172,7 +172,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   positionOpeningMethod,
   isBalanceLoading,
   isGetLiquidityError,
-  ticksLoading,
+  isLoadingTicksOrTickmap,
   network,
   walletStatus,
   onConnectWallet,
@@ -470,7 +470,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [poolIndex])
 
   const reverseTokens = () => {
-    if (ticksLoading) {
+    if (isLoadingTicksOrTickmap) {
       return
     }
 
@@ -553,7 +553,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       !autoSwapTickmap ||
       !tokenAIndex ||
       !tokenBIndex ||
-      ticksLoading
+      isLoadingTicksOrTickmap
     )
       return
     const tokenADecimal = tokens[tokenAIndex].decimals

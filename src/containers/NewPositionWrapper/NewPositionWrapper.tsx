@@ -1054,7 +1054,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         dispatch(walletActions.disconnect())
       }}
       calcAmount={calcAmount}
-      ticksLoading={ticksLoading}
+      isLoadingTicksOrTickmap={isLoadingTicksOrTickmap}
       progress={progress}
       isXtoY={isXtoY}
       tickSpacing={tickSpacing}

@@ -144,7 +144,7 @@ export const Primary: Story = {
     priceB: 2222,
     isBalanceLoading: false,
     isGetLiquidityError: false,
-    ticksLoading: false,
+    isLoadingTicksOrTickmap: false,
     network: NetworkType.Testnet,
     ethBalance: 20000000000,
     walletStatus: Status.Initialized,
