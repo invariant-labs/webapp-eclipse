@@ -64,8 +64,16 @@ import okxLogo from './svg/okx-logo.svg'
 import infoIcon from './svg/info.svg'
 import infoIconPink from './svg/infoIconPink.svg'
 import slider from './svg/slider.svg'
+import swapArrows from './svg/swap-arrows.svg'
+import liquidityIcon from './svg/liquidity.svg'
+import walletIcon from './svg/wallet.svg'
+import statsIcon from './svg/stats.svg'
 
 const icons: { [key: string]: string } = {
+  statsIcon: statsIcon,
+  walletIcon: walletIcon,
+  liquidityIcon: liquidityIcon,
+  swapArrows: swapArrows,
   clear: clearIcon,
   LogoShort: logoShort,
   LogoTitle: logoTitle,
