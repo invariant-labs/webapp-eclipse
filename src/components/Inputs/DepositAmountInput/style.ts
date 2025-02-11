@@ -24,6 +24,9 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
       minWidth: 0
     }
   },
+  disabled: {
+    opacity: '60%'
+  },
   root: {
     width: '100%',
     backgroundColor: colors.invariant.componentBcg,

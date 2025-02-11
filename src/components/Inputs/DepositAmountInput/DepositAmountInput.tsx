@@ -6,6 +6,7 @@ import useStyles from './style'
 import icons from '@static/icons'
 import { getButtonClassName } from '@utils/uiUtils'
 import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
+import classNames from 'classnames'
 
 interface ActionButton {
   label: string
@@ -142,7 +143,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
           wrap='nowrap'
           className={classes.inputContainer}>
           <Grid
-            className={classes.currency}
+            className={classNames(classes.currency, !checkBoxValue && classes.disabled)}
             container
             justifyContent='center'
             alignItems='center'
@@ -178,7 +179,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
             />
           )}
           <Input
-            className={classes.input}
+            className={classNames(classes.input, !checkBoxValue && classes.disabled)}
             classes={{ input: classes.innerInput }}
             inputRef={inputRef}
             value={value}
