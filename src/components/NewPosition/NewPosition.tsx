@@ -303,7 +303,9 @@ export const NewPosition: React.FC<INewPosition> = ({
   )
 
   useEffect(() => {
-    if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
+    if (isAutoSwapAvailable) {
+      setAlignment(DepositOptions.Auto)
+    } else if (!isAutoSwapAvailable && alignment === DepositOptions.Auto) {
       setAlignment(DepositOptions.Basic)
     }
   }, [isAutoSwapAvailable])

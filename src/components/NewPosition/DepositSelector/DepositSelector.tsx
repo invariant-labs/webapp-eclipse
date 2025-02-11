@@ -899,15 +899,19 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           )}
           onClick={() => {
             if (progress === 'none' && tokenAIndex && tokenBIndex) {
-              const userMinUtilization = toDecimal(+utilization, 2)
-              const tokenADecimal = tokens[tokenAIndex].decimals
-              const tokenBDecimal = tokens[tokenBIndex].decimals
-              alignment === DepositOptions.Auto &&
-              (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
-              simulation &&
-              simulation.swapSimulation &&
-              simulation.swapInput
-                ? onSwapAndAddLiquidity(
+              if (alignment === DepositOptions.Basic) {
+                onAddLiquidity()
+              } else {
+                const userMinUtilization = toDecimal(+utilization, 2)
+                const tokenADecimal = tokens[tokenAIndex].decimals
+                const tokenBDecimal = tokens[tokenBIndex].decimals
+                if (
+                  (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
+                  simulation &&
+                  simulation.swapSimulation &&
+                  simulation.swapInput
+                ) {
+                  onSwapAndAddLiquidity(
                     userMinUtilization,
                     simulation.swapSimulation.priceAfterSwap,
                     simulation.swapInput.swapAmount,
@@ -920,7 +924,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                     simulation.swapInput.byAmountIn,
                     simulation.swapInput.xToY
                   )
-                : onAddLiquidity()
+                }
+              }
             }
           }}
           disabled={getButtonMessage() !== 'Add Position'}
