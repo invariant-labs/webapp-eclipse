@@ -74,31 +74,25 @@ export interface SwapAndCreatePosition
     CreatePosition,
     'pair' | 'liquidityDelta' | 'knownPrice' | 'userTokenX' | 'userTokenY' | 'slippage'
   > {
+  xAmount: BN
+  yAmount: BN
   tokenX: PublicKey
   tokenY: PublicKey
-  swapFee: BN
-  swapPoolTickspacing: number
-  xAmount: number
-  yAmount: number
-  minUtilizationPercentage: BN
-  estimatedPriceAfterSwap: BN
   swapAmount: BN
-  ticks: number[]
-  swapSlippage: BN
-  positionPoolPrice: BN
-  positionSlippage: BN
-  positionPair: { x: PublicKey; y: PublicKey; fee: BN; tickSpacing: number }
-  isSamePool: Boolean
-  positionPoolLowerTick: number
-  positionPoolUpperTick: number
-  positionPoolIndex: number
-  swapPoolTickmap: Tickmap
-  swapPool: PoolStructure
-  liquidityDelta: BN
-  xSwapAmount: BN
-  ySwapAmount: BN
   byAmountIn: boolean
   xToY: boolean
+  swapPool: PoolStructure
+  swapPoolTickmap: Tickmap
+  swapSlippage: BN
+  estimatedPriceAfterSwap: BN
+  crossedTicks: number[]
+  positionPair: { x: PublicKey; y: PublicKey; fee: BN; tickSpacing: number }
+  positionPoolIndex: number
+  positionPoolPrice: BN
+  positionSlippage: BN
+  liquidityDelta: BN
+  minUtilizationPercentage: BN
+  isSamePool: Boolean
 }
 
 export interface GetCurrentTicksData {

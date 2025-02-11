@@ -1254,8 +1254,8 @@ export const simulateAutoSwap = async (
   pool: PoolWithAddress,
   poolTicks: Tick[],
   tickmap: Tickmap,
-  positionSlippage: BN,
   swapSlippage: BN,
+  positionSlippage: BN,
   lowerTick: number,
   upperTick: number,
   knownPrice: BN

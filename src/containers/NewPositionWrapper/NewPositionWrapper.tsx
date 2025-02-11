@@ -925,21 +925,19 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       }))}
       isCurrentPoolExisting={poolIndex !== null && !!allPools[poolIndex]}
       swapAndAddLiquidityHandler={(
-        leftTickIndex,
-        rightTickIndex,
         xAmount,
         yAmount,
+        swapAmount,
+        xToY,
+        byAmountIn,
+        estimatedPriceAfterSwap,
+        crossedTicks,
         swapSlippage,
         positionSlippage,
         minUtilizationPercentage,
-        estimatedPriceAfterSwap,
-        swapAmount,
-        ticks,
         liquidityDelta,
-        xSwapAmount,
-        ySwapAmount,
-        byAmountIn,
-        xToY
+        leftTickIndex,
+        rightTickIndex
       ) => {
         if (
           tokenAIndex === null ||
@@ -947,7 +945,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           !autoSwapPoolData ||
           poolIndex === null ||
           !allPools[poolIndex] ||
-          !autoSwapPoolTickmap
+          !autoSwapPoolTickmap ||
+          !autoSwapPool
         ) {
           return
         }
@@ -962,42 +961,32 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
         dispatch(
           positionsActions.swapAndInitPosition({
-            lowerTick: lowerTickIndex,
-            upperTick: upperTickIndex,
-            xAmount: Math.floor(xAmount),
-            yAmount: Math.floor(yAmount),
+            xAmount,
+            yAmount,
             tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
             tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
-            swapSlippage,
-            positionPoolLowerTick: lowerTickIndex,
-            minUtilizationPercentage,
-            estimatedPriceAfterSwap,
-            positionPoolUpperTick: upperTickIndex,
             swapAmount,
-            ticks,
-            isSamePool:
-              poolIndex !== null &&
-              !!allPools[poolIndex] &&
-              !!autoSwapPool &&
-              allPools[poolIndex].address.equals(autoSwapPool.address),
-            swapFee: autoSwapPoolData.fee,
-            swapPoolTickspacing: autoSwapPoolData.tickSpacing,
-            positionPoolPrice: allPools[poolIndex].sqrtPrice,
-            positionSlippage,
+            byAmountIn,
+            xToY,
+            swapPool: autoSwapPoolData,
+            swapPoolTickmap: autoSwapPoolTickmap,
+            swapSlippage,
+            estimatedPriceAfterSwap,
+            crossedTicks,
             positionPair: {
-              x: tokens[tokenAIndex].assetAddress,
-              y: tokens[tokenBIndex].assetAddress,
-              fee: ALL_FEE_TIERS_DATA[feeIndex].tier.fee,
-              tickSpacing: ALL_FEE_TIERS_DATA[feeIndex].tier.tickSpacing
+              x: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
+              y: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
+              fee: allPools[poolIndex].fee,
+              tickSpacing: allPools[poolIndex].tickSpacing
             },
             positionPoolIndex: poolIndex,
-            swapPoolTickmap: autoSwapPoolTickmap,
-            swapPool: autoSwapPoolData,
+            positionPoolPrice: allPools[poolIndex].sqrtPrice,
+            positionSlippage,
+            lowerTick: lowerTickIndex,
+            upperTick: upperTickIndex,
             liquidityDelta,
-            xSwapAmount,
-            ySwapAmount,
-            byAmountIn,
-            xToY
+            minUtilizationPercentage,
+            isSamePool: allPools[poolIndex].address.equals(autoSwapPool.address)
           })
         )
       }}

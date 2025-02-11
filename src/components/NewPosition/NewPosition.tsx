@@ -81,21 +81,19 @@ export interface INewPosition {
     slippage: BN
   ) => void
   swapAndAddLiquidityHandler: (
-    leftTickIndex: number,
-    rightTickIndex: number,
-    xAmount: number,
-    yAmount: number,
+    xAmount: BN,
+    yAmount: BN,
+    swapAmount: BN,
+    xToY: boolean,
+    byAmountIn: boolean,
+    estimatedPriceAfterSwap: BN,
+    crossedTicks: number[],
     swapSlippage: BN,
     positionSlippage: BN,
     minUtilizationPercentage: BN,
-    estimatedPriceAfterSwap: BN,
-    swapAmount: BN,
-    ticks: number[],
     liquidityDelta: BN,
-    xSwapAmount: BN,
-    ySwapAmount: BN,
-    byAmountIn: boolean,
-    xToY: boolean
+    leftTickIndex: number,
+    rightTickIndex: number
   ) => void
   onChangePositionTokens: (
     tokenAIndex: number | null,
@@ -302,6 +300,12 @@ export const NewPosition: React.FC<INewPosition> = ({
     [tokenAIndex, tokenBIndex]
   )
 
+  const isFullAutoSwapOn = useMemo(
+    () =>
+      isAutoSwapAvailable && tokenACheckbox && tokenBCheckbox && alignment == DepositOptions.Auto,
+    [isAutoSwapAvailable, tokenACheckbox, tokenBCheckbox, alignment]
+  )
+
   useEffect(() => {
     if (isAutoSwapAvailable) {
       setAlignment(DepositOptions.Auto)
@@ -454,8 +458,6 @@ export const NewPosition: React.FC<INewPosition> = ({
       (isXtoY ? rightRange > midPrice.index : rightRange < midPrice.index)
     ) {
       const deposit = tokenADeposit
-      const isFullAutoSwapOn =
-        isAutoSwapAvailable && tokenACheckbox && tokenBCheckbox && alignment == DepositOptions.Auto
       const amount = isFullAutoSwapOn
         ? tokenBDeposit
         : getOtherTokenAmount(
@@ -720,6 +722,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const simulationParams = useMemo(() => {
     return {
+      actualPoolPrice,
       lowerTickIndex: Math.min(leftRange, rightRange),
       upperTickIndex: Math.max(leftRange, rightRange)
     }
@@ -952,44 +955,33 @@ export const NewPosition: React.FC<INewPosition> = ({
             }
           }}
           onSwapAndAddLiquidity={(
-            minUtilizationPercentage,
-            estimatedPriceAfterSwap,
+            xAmount,
+            yAmount,
             swapAmount,
+            xToY,
+            byAmountIn,
+            estimatedPriceAfterSwap,
+            crossedTicks,
             swapSlippage,
             positionSlippage,
-            ticks,
-            liquidityDelta,
-            xSwapAmount,
-            ySwapAmount,
-            byAmountIn,
-            xToY
+            minUtilizationPercentage,
+            liquidityDelta
           ) => {
-            if (tokenAIndex !== null && tokenBIndex !== null) {
-              const tokenADecimals = tokens[tokenAIndex].decimals
-              const tokenBDecimals = tokens[tokenBIndex].decimals
-
-              swapAndAddLiquidityHandler(
-                leftRange,
-                rightRange,
-                isXtoY
-                  ? convertBalanceToBN(tokenADeposit, tokenADecimals)
-                  : convertBalanceToBN(tokenBDeposit, tokenBDecimals),
-                isXtoY
-                  ? convertBalanceToBN(tokenBDeposit, tokenBDecimals)
-                  : convertBalanceToBN(tokenADeposit, tokenADecimals),
-                swapSlippage,
-                positionSlippage,
-                minUtilizationPercentage,
-                estimatedPriceAfterSwap,
-                swapAmount,
-                ticks,
-                liquidityDelta,
-                xSwapAmount,
-                ySwapAmount,
-                byAmountIn,
-                xToY
-              )
-            }
+            swapAndAddLiquidityHandler(
+              xAmount,
+              yAmount,
+              swapAmount,
+              xToY,
+              byAmountIn,
+              estimatedPriceAfterSwap,
+              crossedTicks,
+              swapSlippage,
+              positionSlippage,
+              minUtilizationPercentage,
+              liquidityDelta,
+              leftRange,
+              rightRange
+            )
           }}
           tokenAInputState={{
             value:
@@ -1003,11 +995,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               if (tokenAIndex === null) {
                 return
               }
-              const isFullAutoSwapOn =
-                isAutoSwapAvailable &&
-                tokenACheckbox &&
-                tokenBCheckbox &&
-                alignment == DepositOptions.Auto
+
               setTokenADeposit(value)
               !isFullAutoSwapOn &&
                 setTokenBDeposit(
@@ -1032,7 +1020,6 @@ export const NewPosition: React.FC<INewPosition> = ({
             blockerInfo: 'Range only for single-asset deposit.',
             decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
           }}
-          actualPoolPrice={actualPoolPrice}
           tokenBInputState={{
             value:
               tokenAIndex !== null &&
@@ -1045,11 +1032,6 @@ export const NewPosition: React.FC<INewPosition> = ({
               if (tokenBIndex === null) {
                 return
               }
-              const isFullAutoSwapOn =
-                isAutoSwapAvailable &&
-                tokenACheckbox &&
-                tokenBCheckbox &&
-                alignment == DepositOptions.Auto
 
               setTokenBDeposit(value)
               !isFullAutoSwapOn &&
