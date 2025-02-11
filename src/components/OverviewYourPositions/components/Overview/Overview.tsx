@@ -37,7 +37,6 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
-  const [isUnclaimedFeeLoading, setIsUnclaimedFeeLoading] = useState(false)
 
   const { getDominantColor, getTokenColor, tokenColorOverrides } = useDominantLogoColor()
   const { positions } = useAgregatedPositions(positionList, prices)
@@ -138,10 +137,8 @@ export const Overview: React.FC<OverviewProps> = () => {
     })
   }, [positions, getDominantColor, logoColors, pendingColorLoads])
 
-  // Calculate unclaimed fees
   useEffect(() => {
     const calculateUnclaimedFee = async () => {
-      setIsUnclaimedFeeLoading(true)
       try {
         const wallet = getEclipseWallet()
         const marketProgram = await getMarketProgram(networkType, rpc, wallet as IWallet)
@@ -185,8 +182,6 @@ export const Overview: React.FC<OverviewProps> = () => {
       } catch (error) {
         console.error('Error calculating unclaimed fees:', error)
         setTotalUnclaimedFee(0)
-      } finally {
-        setIsUnclaimedFeeLoading(false)
       }
     }
 
@@ -198,7 +193,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   return (
     <Box className={classes.container}>
       <HeaderSection totalValue={totalAssets} loading={isLoadingList} />
-      <UnclaimedSection unclaimedTotal={totalUnclaimedFee} loading={isUnclaimedFeeLoading} />
+      <UnclaimedSection unclaimedTotal={totalUnclaimedFee} loading={isLoadingList} />
 
       {isLg ? (
         <MobileOverview
