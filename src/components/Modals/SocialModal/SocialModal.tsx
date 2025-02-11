@@ -29,7 +29,7 @@ export const SelectSocials: React.FC<ISelectSocialsModal> = ({ open, handleClose
         </IconButton>
       </Box>
 
-      <DialogContent dividers sx={{ padding: 0 }}>
+      <DialogContent sx={{ padding: 0 }}>
         <Box className={classes.socialsContainer}>
           {socials.map(social => (
             <Box key={social.label} className={classes.social}>
