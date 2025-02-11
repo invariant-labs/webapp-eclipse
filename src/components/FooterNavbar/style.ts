@@ -6,6 +6,7 @@ const useStyles = makeStyles()(() => {
     navbar: {
       display: 'flex',
       width: '100%',
+      height: '65px',
       background: colors.invariant.component,
       marginTop: '12px',
       position: 'sticky',
@@ -15,26 +16,25 @@ const useStyles = makeStyles()(() => {
     navbox: {
       textDecoration: 'none',
       position: 'relative',
-      width: '20%',
+      flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      padding: '17px 9px',
+      justifyContent: 'center',
       gap: '12px',
       alignItems: 'center',
+      padding: '10px 0',
       borderRight: `1px solid ${colors.invariant.light}`,
       cursor: 'pointer',
 
       '& p': {
-        ...typography.tiny1,
-        color: colors.invariant.textGrey
+        ...typography.tiny1
       },
       ':last-child': {
         borderRight: 'none'
       }
     },
     navImg: {
-      height: 21,
-      fill: '#111931'
+      filter: 'brightness(0) saturate(100%) invert(45%)'
     },
     activeBox: {
       position: 'absolute',

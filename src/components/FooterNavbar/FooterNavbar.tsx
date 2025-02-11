@@ -6,6 +6,7 @@ import { links } from './links'
 import { NetworkType } from '@store/consts/static'
 import { useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
+import { colors } from '@static/theme'
 
 export const FooterNavbar = () => {
   const typeOfNetwork = useSelector(network)
@@ -49,8 +50,21 @@ export const FooterNavbar = () => {
               setActive(link.url)
             }}>
             {active && <Box className={classes.activeBox} />}
-            <img src={link.icon} className={classes.navImg} alt={link.label} />
-            <Typography>{link.label}</Typography>
+            <img
+              src={link.icon}
+              width={link.width}
+              style={
+                active
+                  ? { filter: 'brightness(0) saturate(100%) invert(100%)' }
+                  : { filter: 'brightness(0) saturate(100%) invert(45%)' }
+              }
+              className={classes.navImg}
+              alt={link.label}
+            />
+            <Typography
+              sx={active ? { color: colors.white.main } : { color: colors.invariant.textGrey }}>
+              {link.label}
+            </Typography>
           </Link>
         )
       })}

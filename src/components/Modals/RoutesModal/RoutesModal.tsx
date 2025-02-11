@@ -14,6 +14,7 @@ export interface IRoutesModal {
   current?: string
   onFaucet?: () => void
   onRPC?: () => void
+  onSocials?: () => void
   onChainSelect?: () => void
 }
 export const RoutesModal: React.FC<IRoutesModal> = ({
@@ -24,6 +25,7 @@ export const RoutesModal: React.FC<IRoutesModal> = ({
   onSelect,
   current,
   onFaucet,
+  onSocials,
   onRPC,
   onChainSelect
 }) => {
@@ -107,7 +109,7 @@ export const RoutesModal: React.FC<IRoutesModal> = ({
         {isSmDown && (
           <>
             <Typography className={classes.subtitle}>Website</Typography>
-            <Grid item className={classes.listItem} onClick={() => {}}>
+            <Grid item className={classes.listItem} onClick={onSocials}>
               <Typography className={classes.name}>View Socials</Typography>
             </Grid>
           </>

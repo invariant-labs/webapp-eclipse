@@ -68,12 +68,26 @@ import swapArrows from './svg/swap-arrows.svg'
 import liquidityIcon from './svg/liquidity.svg'
 import walletIcon from './svg/wallet.svg'
 import statsIcon from './svg/stats.svg'
+import closeModal from './svg/closeModal.svg'
+import discordFill from './svg/discordFill.svg'
+import xFill from './svg/xFill.svg'
+import telegramFill from './svg/telegramFill.svg'
+import githubFill from './svg/githubFill.svg'
+import mediumFill from './svg/MediumFill.svg'
+import docsFill from './svg/docsFill.svg'
 
 const icons: { [key: string]: string } = {
-  statsIcon: statsIcon,
-  walletIcon: walletIcon,
-  liquidityIcon: liquidityIcon,
-  swapArrows: swapArrows,
+  docsFill,
+  mediumFill,
+  githubFill,
+  telegramFill,
+  xFill,
+  discordFill,
+  closeModal,
+  statsIcon,
+  walletIcon,
+  liquidityIcon,
+  swapArrows,
   clear: clearIcon,
   LogoShort: logoShort,
   LogoTitle: logoTitle,
