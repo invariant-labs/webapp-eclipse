@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import { colors, typography, theme } from '@static/theme'
 

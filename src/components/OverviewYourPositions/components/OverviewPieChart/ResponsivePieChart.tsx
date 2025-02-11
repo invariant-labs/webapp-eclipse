@@ -1,4 +1,3 @@
-import React from 'react'
 import { Box } from '@mui/material'
 import { PieChart } from '@mui/x-charts'
 import { makeStyles } from 'tss-react/mui'
