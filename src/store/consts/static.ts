@@ -586,16 +586,10 @@ export const autoSwapPools = [
       tokenX: new PublicKey('So11111111111111111111111111111111111111112'),
       tokenY: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo')
     },
-    address: new PublicKey('F89YjPNUfP5Q6xxnk8ZSiV3tHzCYKH7TvgLE1Mc9s7H'),
-    feeIndex: 0
-  },
-  {
-    pair: {
-      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
-      tokenY: new PublicKey('So11111111111111111111111111111111111111112')
-    },
-    address: new PublicKey('HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce'),
-    feeIndex: 0
+    swapPool: {
+      address: new PublicKey('F89YjPNUfP5Q6xxnk8ZSiV3tHzCYKH7TvgLE1Mc9s7H'),
+      feeIndex: 0
+    }
   }
 ]
 export const promotedTiers = [

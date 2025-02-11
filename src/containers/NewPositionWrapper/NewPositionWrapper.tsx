@@ -814,7 +814,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   )
   const autoSwapPoolData = useMemo(
     () =>
-      autoSwapPool ? allPools.find(pool => pool.address.equals(autoSwapPool.address)) : undefined,
+      autoSwapPool
+        ? allPools.find(pool => pool.address.equals(autoSwapPool.swapPool.address))
+        : undefined,
     [allPools, autoSwapPool]
   )
   const autoSwapPoolTickmap = useMemo(
@@ -986,7 +988,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             upperTick: upperTickIndex,
             liquidityDelta,
             minUtilizationPercentage,
-            isSamePool: allPools[poolIndex].address.equals(autoSwapPool.address)
+            isSamePool: allPools[poolIndex].address.equals(autoSwapPool.swapPool.address)
           })
         )
       }}

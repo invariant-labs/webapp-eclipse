@@ -316,7 +316,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const isAutoSwapOnTheSamePool = useMemo(
     () =>
-      poolAddress.length > 0 && autoSwapPools.some(item => item.address.toString() === poolAddress),
+      poolAddress.length > 0 &&
+      autoSwapPools.some(item => item.swapPool.address.toString() === poolAddress),
     [poolAddress]
   )
 
