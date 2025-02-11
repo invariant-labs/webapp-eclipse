@@ -417,7 +417,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                         />
                       </Grid>
 
-                      <Grid item xs={4} alignContent={'center'}>
+                      <Grid item xs={3} alignContent={'center'}>
                         <Typography
                           style={{
                             ...typography.heading4,
