@@ -66,7 +66,13 @@ export const useStyles = makeStyles()(() => ({
   titleRow: {
     display: 'flex',
     alignItems: 'center',
-    gap: '16px'
+    gap: '16px',
+
+    [theme.breakpoints.up('lg')]: {
+      gap: 'auto',
+      flex: 1,
+      justifyContent: 'space-between'
+    }
   },
 
   unclaimedTitle: {

@@ -7,7 +7,6 @@ import { formatNumber2 } from '@utils/utils'
 interface UnclaimedSectionProps {
   unclaimedTotal: number
 }
-
 export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({ unclaimedTotal }) => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
