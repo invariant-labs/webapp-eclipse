@@ -7,9 +7,10 @@ export const useStyles = makeStyles()(() => ({
     maxWidth: 1072
   },
   pagination: {
+    borderTop: `2px solid ${colors.invariant.light}`,
     padding: '20px 24px 10px 0',
     maxWidth: '100%',
-    backgroundColor: colors.invariant.component,
+    backgroundColor: colors.invariant.componentDark,
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px'
   },

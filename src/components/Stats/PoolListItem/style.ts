@@ -12,11 +12,7 @@ export const useStyles = makeStyles()(() => ({
     '&:first-child': {
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
-      background: colors.invariant.componentDark,
-      borderBottom: `2px solid ${colors.invariant.light}`
-    },
-
-    '&:nth-last-child(2)': {
+      background: colors.invariant.component,
       borderBottom: `2px solid ${colors.invariant.light}`
     }
   },
