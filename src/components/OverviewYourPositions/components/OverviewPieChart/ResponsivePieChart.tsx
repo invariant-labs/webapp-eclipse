@@ -1,9 +1,11 @@
+import React from 'react'
 import { Box } from '@mui/material'
 import { PieChart } from '@mui/x-charts'
 import { makeStyles } from 'tss-react/mui'
+import { colors } from '@static/theme'
 
-const ResponsivePieChart = ({ data, chartColors }) => {
-  const total = data.reduce((sum, item) => sum + item.value, 0)
+const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
+  const total = data?.reduce((sum, item) => sum + item.value, 0) || 0
 
   const useStyles = makeStyles()(() => ({
     dark_background: {
@@ -31,6 +33,15 @@ const ResponsivePieChart = ({ data, chartColors }) => {
 
   const { classes } = useStyles()
 
+  const loadingData = [
+    {
+      value: 100,
+      label: 'Loading...'
+    }
+  ]
+
+  const loadingColors = [colors.invariant.light]
+
   return (
     <Box
       sx={{
@@ -44,7 +55,7 @@ const ResponsivePieChart = ({ data, chartColors }) => {
       <PieChart
         series={[
           {
-            data: data,
+            data: isLoading ? loadingData : data,
             outerRadius: '50%',
             innerRadius: '90%',
             startAngle: -45,
@@ -52,6 +63,7 @@ const ResponsivePieChart = ({ data, chartColors }) => {
             cx: '80%',
             cy: '50%',
             valueFormatter: item => {
+              if (isLoading) return 'Loading...'
               const percentage = ((item.value / total) * 100).toFixed(1)
               return `$${item.value.toLocaleString()} (${percentage}%)`
             }
@@ -63,7 +75,7 @@ const ResponsivePieChart = ({ data, chartColors }) => {
             outline: 'none'
           }
         }}
-        colors={chartColors}
+        colors={isLoading ? loadingColors : chartColors}
         tooltip={{
           trigger: 'item',
           classes: {
@@ -76,7 +88,9 @@ const ResponsivePieChart = ({ data, chartColors }) => {
           }
         }}
         slotProps={{
-          legend: { hidden: true }
+          legend: {
+            hidden: true
+          }
         }}
         width={300}
         height={200}

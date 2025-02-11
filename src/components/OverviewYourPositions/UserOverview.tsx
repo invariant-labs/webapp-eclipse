@@ -70,7 +70,7 @@ export const UserOverview = () => {
             gap: 4
           }
         }}>
-        <Overview poolAssets={data} isLoading={false} />
+        <Overview poolAssets={data} />
         <YourWallet pools={processedPools} isLoading={isLoading || processedPools.length <= 0} />
       </Box>
     </Box>

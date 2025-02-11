@@ -1,4 +1,4 @@
-import { Box, Typography, Button } from '@mui/material'
+import { Box, Typography, Button, Skeleton } from '@mui/material'
 import { useStyles } from '../Overview/styles'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/positions'
@@ -6,8 +6,13 @@ import { formatNumber2 } from '@utils/utils'
 
 interface UnclaimedSectionProps {
   unclaimedTotal: number
+  loading?: boolean // Add loading prop
 }
-export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({ unclaimedTotal }) => {
+
+export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
+  unclaimedTotal,
+  loading = false
+}) => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
 
@@ -19,14 +24,18 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({ unclaimedTot
     <Box className={classes.unclaimedSection}>
       <Box className={classes.titleRow}>
         <Typography className={classes.unclaimedTitle}>Unclaimed fees (total)</Typography>
-        <Typography className={classes.unclaimedAmount}>
-          ${formatNumber2(unclaimedTotal)}
-        </Typography>
+        {loading ? (
+          <Skeleton variant='text' width={100} height={30} className={classes.unclaimedAmount} />
+        ) : (
+          <Typography className={classes.unclaimedAmount}>
+            ${formatNumber2(unclaimedTotal)}
+          </Typography>
+        )}
       </Box>
       <Button
         className={classes.claimAllButton}
         onClick={handleClaimAll}
-        disabled={unclaimedTotal === 0}>
+        disabled={loading || unclaimedTotal === 0}>
         Claim all
       </Button>
     </Box>
