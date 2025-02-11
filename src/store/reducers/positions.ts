@@ -86,7 +86,7 @@ export interface SwapAndCreatePosition
   swapSlippage: BN
   estimatedPriceAfterSwap: BN
   crossedTicks: number[]
-  positionPair: { x: PublicKey; y: PublicKey; fee: BN; tickSpacing: number }
+  positionPair: { fee: BN; tickSpacing: number }
   positionPoolIndex: number
   positionPoolPrice: BN
   positionSlippage: BN

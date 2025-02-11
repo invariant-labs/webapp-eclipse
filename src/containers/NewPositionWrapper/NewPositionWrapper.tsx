@@ -976,8 +976,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             estimatedPriceAfterSwap,
             crossedTicks,
             positionPair: {
-              x: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
-              y: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
               fee: allPools[poolIndex].fee,
               tickSpacing: allPools[poolIndex].tickSpacing
             },

@@ -619,7 +619,7 @@ export function* handleSwapAndInitPositionWithETH(
     const swapAndCreateOnDifferentPools = action.payload.isSamePool
       ? undefined
       : {
-          positionPair: new Pair(action.payload.positionPair.x, action.payload.positionPair.y, {
+          positionPair: new Pair(action.payload.tokenX, action.payload.tokenY, {
             fee: action.payload.positionPair.fee,
             tickSpacing: action.payload.positionPair.tickSpacing
           }),
@@ -767,11 +767,9 @@ export function* handleSwapAndInitPosition(
     const allTokens = yield* select(tokens)
 
     if (
-      (allTokens[action.payload.positionPair.x.toString()].address.toString() ===
-        WRAPPED_ETH_ADDRESS &&
+      (allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
         !action.payload.xAmount.eq(new BN(0))) ||
-      (allTokens[action.payload.positionPair.y.toString()].address.toString() ===
-        WRAPPED_ETH_ADDRESS &&
+      (allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
         !action.payload.yAmount.eq(new BN(0)))
     ) {
       return yield* call(handleSwapAndInitPositionWithETH, action)
@@ -827,7 +825,7 @@ export function* handleSwapAndInitPosition(
     const swapAndCreateOnDifferentPools = action.payload.isSamePool
       ? undefined
       : {
-          positionPair: new Pair(action.payload.positionPair.x, action.payload.positionPair.y, {
+          positionPair: new Pair(action.payload.tokenX, action.payload.tokenY, {
             fee: action.payload.positionPair.fee,
             tickSpacing: action.payload.positionPair.tickSpacing
           }),
