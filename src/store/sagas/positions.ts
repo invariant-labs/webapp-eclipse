@@ -1712,6 +1712,7 @@ export function* handleGetCurrentPositionRangeTicks(
 export function* handleUpdatePositionsRangeTicks(
   action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
 ) {
+  //TODO finish after update position list item
   try {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)

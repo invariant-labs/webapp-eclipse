@@ -111,13 +111,7 @@ const MarketEvents = () => {
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
-            console.log(
-              'pool update ' +
-                pool.address.toString() +
-                '  - current tick: ' +
-                poolStructure.currentTickIndex
-            )
-
+            // update position list
             if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
               positionsInPool.map(position => {
                 if (
@@ -126,10 +120,6 @@ const MarketEvents = () => {
                   (pool.currentTickIndex < position?.lowerTickIndex &&
                     poolStructure.currentTickIndex >= position?.lowerTickIndex)
                 ) {
-                  console.log(
-                    'position to update: ' + position.id.toString() + '_' + position.pool.toString()
-                  )
-
                   dispatch(
                     positionsActions.updatePositionTicksRange({
                       positionId: position.id.toString() + '_' + position.pool.toString(),
@@ -150,12 +140,12 @@ const MarketEvents = () => {
                   )
                 }
 
+                //update current position details
                 if (
                   currentPositionIndex ===
                     position.id.toString() + '_' + position.pool.toString() &&
                   currentPosition
                 ) {
-                  console.log('currentPosition: ' + currentPosition)
                   if (
                     (pool.currentTickIndex >= currentPosition?.lowerTickIndex &&
                       poolStructure.currentTickIndex < currentPosition?.lowerTickIndex) ||
