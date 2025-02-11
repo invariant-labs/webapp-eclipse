@@ -67,17 +67,17 @@ export interface IDepositSelector {
   ) => void
   onAddLiquidity: () => void
   onSwapAndAddLiquidity: (
-    minUtilizationPercentage: BN,
-    estimatedPriceAfterSwap: BN,
+    xAmount: BN,
+    yAmount: BN,
     swapAmount: BN,
+    xToY: boolean,
+    byAmountIn: boolean,
+    estimatedPriceAfterSwap: BN,
+    crossedTicks: number[],
     swapSlippage: BN,
     positionSlippage: BN,
-    ticks: number[],
-    liquidityDelta: BN,
-    xSwapAmount: BN,
-    ySwapAmount: BN,
-    byAmountIn: boolean,
-    xToY: boolean
+    minUtilizationPercentage: BN,
+    liquidityDelta: BN
   ) => void
   tokenAInputState: InputState
   tokenBInputState: InputState
@@ -120,10 +120,10 @@ export interface IDepositSelector {
   autoSwapPoolData: PoolWithAddress | null
   autoSwapTickmap: Tickmap | null
   autoSwapTicks: Tick[] | null
-  actualPoolPrice: BN | null
   simulationParams: {
     lowerTickIndex: number
     upperTickIndex: number
+    actualPoolPrice: BN
   }
   initialMaxPriceImpact: string
   onMaxPriceImpactChange: (val: string) => void
@@ -195,7 +195,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
   initialMaxSlippageToleranceCreatePosition,
-  actualPoolPrice,
   tokenACheckbox,
   setTokenACheckbox,
   tokenBCheckbox,
@@ -337,7 +336,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       alignment === DepositOptions.Auto &&
       simulation &&
       simulation.swapSimulation &&
-      new BN(simulation.swapSimulation.priceImpact).gt(toDecimal(+priceImpact, 2))
+      new BN(simulation.swapSimulation.priceImpact).gt(
+        toDecimal(+Number(priceImpact).toFixed(4), 2)
+      )
     ) {
       return 'Price impact reached'
     }
@@ -391,8 +392,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
 
     if (
-      (!tokenAInputState.blocked && +tokenAInputState.value === 0) ||
-      (!tokenBInputState.blocked && +tokenBInputState.value === 0)
+      (!tokenAInputState.blocked && +tokenAInputState.value === 0 && tokenACheckbox) ||
+      (!tokenBInputState.blocked && +tokenBInputState.value === 0 && tokenBCheckbox)
     ) {
       return !tokenAInputState.blocked && !tokenBInputState.blocked
         ? 'Enter token amounts'
@@ -548,36 +549,43 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       !autoSwapTickmap ||
       !tokenAIndex ||
       !tokenBIndex ||
-      !actualPoolPrice ||
       ticksLoading
     )
       return
     const tokenADecimal = tokens[tokenAIndex].decimals
     const tokenBDecimal = tokens[tokenBIndex].decimals
+    const tokenAValue = tokenACheckbox ? convertBalanceToBN(valueA, tokenADecimal) : new BN(0)
+    const tokenBValue = tokenBCheckbox ? convertBalanceToBN(valueB, tokenBDecimal) : new BN(0)
+    const amountX = autoSwapPoolData.tokenX.equals(tokens[tokenAIndex].assetAddress)
+      ? tokenAValue
+      : tokenBValue
+    const amountY = autoSwapPoolData.tokenY.equals(tokens[tokenBIndex].assetAddress)
+      ? tokenBValue
+      : tokenAValue
     let result: SimulateSwapAndCreatePositionSimulation | null = null
     if (isAutoSwapOnTheSamePool) {
       result = await simulateAutoSwapOnTheSamePool(
-        tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
-        tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0),
+        amountX,
+        amountY,
         autoSwapPoolData,
         autoSwapTicks,
         autoSwapTickmap,
-        toDecimal(+slippageToleranceSwap, 2),
+        toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex
       )
     } else {
       result = await simulateAutoSwap(
-        tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
-        tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0),
+        amountX,
+        amountY,
         autoSwapPoolData,
         autoSwapTicks,
         autoSwapTickmap,
-        toDecimal(+slippageToleranceCreatePosition, 2),
-        toDecimal(+slippageToleranceSwap, 2),
+        toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
+        toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
-        actualPoolPrice
+        simulationParams.actualPoolPrice
       )
     }
 
@@ -599,7 +607,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     simulationParams,
     tokenACheckbox,
     tokenBCheckbox,
-    actualPoolPrice,
     autoSwapPoolData,
     autoSwapTickmap,
     autoSwapTicks,
@@ -700,7 +707,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             <TooltipHover text='Impact on the price'>
               <Box
                 className={
-                  new BN(simulation?.swapSimulation?.priceImpact).lt(toDecimal(+priceImpact, 2))
+                  new BN(simulation?.swapSimulation?.priceImpact).lt(
+                    toDecimal(+Number(priceImpact).toFixed(4), 2)
+                  )
                     ? classes.unknownWarning
                     : classes.errorWarning
                 }>
@@ -710,7 +719,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                   width='12px'
                   style={{ marginRight: '4px', marginBottom: '-1.5px' }}
                   className={
-                    new BN(simulation?.swapSimulation?.priceImpact).lt(toDecimal(+priceImpact, 2))
+                    new BN(simulation?.swapSimulation?.priceImpact).lt(
+                      toDecimal(+Number(priceImpact).toFixed(4), 2)
+                    )
                       ? classes.grayscaleIcon
                       : classes.errorIcon
                   }
@@ -911,27 +922,40 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               if (alignment === DepositOptions.Basic) {
                 onAddLiquidity()
               } else {
-                const userMinUtilization = toDecimal(+utilization, 2)
-                const tokenADecimal = tokens[tokenAIndex].decimals
-                const tokenBDecimal = tokens[tokenBIndex].decimals
                 if (
                   (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
                   simulation &&
                   simulation.swapSimulation &&
-                  simulation.swapInput
+                  simulation.swapInput &&
+                  !!autoSwapPoolData
                 ) {
+                  const userMinUtilization = toDecimal(+Number(utilization).toFixed(4), 2)
+                  const tokenADecimal = tokens[tokenAIndex].decimals
+                  const tokenBDecimal = tokens[tokenBIndex].decimals
+                  const tokenAValue = tokenACheckbox
+                    ? convertBalanceToBN(valueA, tokenADecimal)
+                    : new BN(0)
+                  const tokenBValue = tokenBCheckbox
+                    ? convertBalanceToBN(valueB, tokenBDecimal)
+                    : new BN(0)
+                  const amountX = autoSwapPoolData.tokenX.equals(tokens[tokenAIndex].assetAddress)
+                    ? tokenAValue
+                    : tokenBValue
+                  const amountY = autoSwapPoolData.tokenY.equals(tokens[tokenBIndex].assetAddress)
+                    ? tokenBValue
+                    : tokenAValue
                   onSwapAndAddLiquidity(
-                    userMinUtilization,
-                    simulation.swapSimulation.priceAfterSwap,
+                    amountX,
+                    amountY,
                     simulation.swapInput.swapAmount,
-                    toDecimal(+slippageToleranceSwap, 2),
-                    toDecimal(+slippageToleranceCreatePosition, 2),
-                    simulation.swapSimulation.crossedTicks,
-                    simulation.position.liquidity,
-                    tokenACheckbox ? new BN(Number(valueA) * 10 ** tokenADecimal) : new BN(0),
-                    tokenBCheckbox ? new BN(Number(valueB) * 10 ** tokenBDecimal) : new BN(0),
+                    simulation.swapInput.xToY,
                     simulation.swapInput.byAmountIn,
-                    simulation.swapInput.xToY
+                    simulation.swapSimulation.priceAfterSwap,
+                    simulation.swapSimulation.crossedTicks,
+                    toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
+                    toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
+                    userMinUtilization,
+                    simulation.position.liquidity
                   )
                 }
               }

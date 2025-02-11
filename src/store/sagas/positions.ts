@@ -54,6 +54,7 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import nacl from 'tweetnacl'
+import { BN } from '@coral-xyz/anchor'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -574,8 +575,8 @@ export function* handleSwapAndInitPositionWithETH(
     } as IWallet)
 
     const swapPair = new Pair(action.payload.tokenX, action.payload.tokenY, {
-      fee: action.payload.swapFee,
-      tickSpacing: action.payload.swapPoolTickspacing
+      fee: action.payload.swapPool.fee,
+      tickSpacing: action.payload.swapPool.tickSpacing
     })
 
     const tokensAccounts = yield* select(accounts)
@@ -629,25 +630,26 @@ export function* handleSwapAndInitPositionWithETH(
     const upperTickExists =
       !ticks.hasError &&
       !ticks.loading &&
-      ticks.rawTickIndexes.find(t => t === action.payload.positionPoolUpperTick) !== undefined
+      ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
         ? true
         : undefined
     const lowerTickExists =
       !ticks.hasError &&
       !ticks.loading &&
-      ticks.rawTickIndexes.find(t => t === action.payload.positionPoolLowerTick) !== undefined
+      ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
         ? true
         : undefined
+
     const tx = yield* call(
       [marketProgram, marketProgram.versionedSwapAndCreatePositionTx],
       {
-        amountX: action.payload.xSwapAmount,
-        amountY: action.payload.ySwapAmount,
+        amountX: action.payload.xAmount,
+        amountY: action.payload.yAmount,
         swapPair,
         userTokenX,
         userTokenY,
-        lowerTick: action.payload.positionPoolLowerTick,
-        upperTick: action.payload.positionPoolUpperTick,
+        lowerTick: action.payload.lowerTick,
+        upperTick: action.payload.upperTick,
         owner: wallet.publicKey,
         slippage: action.payload.swapSlippage,
         amount: action.payload.swapAmount,
@@ -658,7 +660,7 @@ export function* handleSwapAndInitPositionWithETH(
         liquidityDelta: action.payload.liquidityDelta,
         swapAndCreateOnDifferentPools
       },
-      { tickIndexes: action.payload.ticks },
+      { tickIndexes: action.payload.crossedTicks },
       {
         position: {
           lowerTickExists,
@@ -763,11 +765,14 @@ export function* handleSwapAndInitPosition(
 
   try {
     const allTokens = yield* select(tokens)
+
     if (
-      (allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
-        action.payload.xAmount !== 0) ||
-      (allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
-        action.payload.yAmount !== 0)
+      (allTokens[action.payload.positionPair.x.toString()].address.toString() ===
+        WRAPPED_ETH_ADDRESS &&
+        !action.payload.xAmount.eq(new BN(0))) ||
+      (allTokens[action.payload.positionPair.y.toString()].address.toString() ===
+        WRAPPED_ETH_ADDRESS &&
+        !action.payload.yAmount.eq(new BN(0)))
     ) {
       return yield* call(handleSwapAndInitPositionWithETH, action)
     }
@@ -797,8 +802,8 @@ export function* handleSwapAndInitPosition(
     } as IWallet)
 
     const swapPair = new Pair(action.payload.tokenX, action.payload.tokenY, {
-      fee: action.payload.swapFee,
-      tickSpacing: action.payload.swapPoolTickspacing
+      fee: action.payload.swapPool.fee,
+      tickSpacing: action.payload.swapPool.tickSpacing
     })
 
     const tokensAccounts = yield* select(accounts)
@@ -833,25 +838,25 @@ export function* handleSwapAndInitPosition(
     const upperTickExists =
       !ticks.hasError &&
       !ticks.loading &&
-      ticks.rawTickIndexes.find(t => t === action.payload.positionPoolUpperTick) !== undefined
+      ticks.rawTickIndexes.find(t => t === action.payload.upperTick) !== undefined
         ? true
         : undefined
     const lowerTickExists =
       !ticks.hasError &&
       !ticks.loading &&
-      ticks.rawTickIndexes.find(t => t === action.payload.positionPoolLowerTick) !== undefined
+      ticks.rawTickIndexes.find(t => t === action.payload.lowerTick) !== undefined
         ? true
         : undefined
     const tx = yield* call(
       [marketProgram, marketProgram.versionedSwapAndCreatePositionTx],
       {
-        amountX: action.payload.xSwapAmount,
-        amountY: action.payload.ySwapAmount,
+        amountX: action.payload.xAmount,
+        amountY: action.payload.yAmount,
         swapPair,
         userTokenX,
         userTokenY,
-        lowerTick: action.payload.positionPoolLowerTick,
-        upperTick: action.payload.positionPoolUpperTick,
+        lowerTick: action.payload.lowerTick,
+        upperTick: action.payload.upperTick,
         owner: wallet.publicKey,
         slippage: action.payload.swapSlippage,
         amount: action.payload.swapAmount,
@@ -862,7 +867,7 @@ export function* handleSwapAndInitPosition(
         swapAndCreateOnDifferentPools,
         liquidityDelta: action.payload.liquidityDelta
       },
-      { tickIndexes: action.payload.ticks },
+      { tickIndexes: action.payload.crossedTicks },
       {
         position: {
           lowerTickExists,
@@ -890,7 +895,6 @@ export function* handleSwapAndInitPosition(
     yield put(snackbarsActions.remove(loaderSigningTx))
 
     const txid = yield* call([connection, connection.sendTransaction], signedTx)
-    console.log(txid)
 
     yield put(actions.setInitPositionSuccess(!!txid.length))
 

@@ -93,10 +93,10 @@ export const Primary: Story = {
     initialMinUtilization: '',
     onMinUtilizationChange: fn(),
     simulationParams: {
+      actualPoolPrice: new BN(0),
       lowerTickIndex: 0,
       upperTickIndex: 0
     },
-    actualPoolPrice: null,
     autoSwapPoolData: null,
     autoSwapTickmap: null,
     autoSwapTicks: null,
