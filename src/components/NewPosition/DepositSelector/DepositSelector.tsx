@@ -400,6 +400,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         : 'Enter token amount'
     }
 
+    if (alignment === DepositOptions.Auto && !simulation) {
+      return 'RPC error'
+    }
+
     return 'Add Position'
   }, [
     isAutoSwapAvailable,
