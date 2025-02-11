@@ -16,8 +16,6 @@ import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import MobileOverview from './MobileOverview'
-import { status } from '@store/selectors/solanaWallet'
-import { Status } from '@store/reducers/solanaWallet'
 interface OverviewProps {
   poolAssets: ProcessedPool[]
   isLoading?: boolean
@@ -32,7 +30,6 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [totalUnclaimedFee, setTotalUnclaimedFee] = useState(0)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
-  const walletStatus = useSelector(status)
 
   interface ColorFrequency {
     [key: string]: number
@@ -315,8 +312,6 @@ export const Overview: React.FC<OverviewProps> = () => {
     loadPrices()
   }, [positionList])
 
-  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
-
   useEffect(() => {
     positions.forEach(position => {
       if (position.logo && !logoColors[position.logo]) {
@@ -351,7 +346,7 @@ export const Overview: React.FC<OverviewProps> = () => {
               flexDirection: 'column'
             }
           }}>
-          {isConnected ? (
+          {positions.length > 0 ? (
             <Box sx={{ marginTop: 2 }}>
               <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
                 Tokens
