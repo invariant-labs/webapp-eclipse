@@ -139,6 +139,9 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 11,
     height: 36,
     marginRight: 8,
+    [theme.breakpoints.down('lg')]: {
+      width: 'auto'
+    },
     width: '150px',
 
     [theme.breakpoints.down('md')]: {
