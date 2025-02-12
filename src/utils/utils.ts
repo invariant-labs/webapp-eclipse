@@ -1809,7 +1809,8 @@ export const trimDecimalZeros = (numStr: string): string => {
 
 const poolsToRecalculateAPY = [
   'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
-  '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM' //SOL_ETH 0.09%
+  '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%,
+  'FvVsbwsbGVo6PVfimkkPhpcRfBrRitiV946nMNNuz7f9' // tETH/ETH 0.01%
 ]
 
 //HOTFIX
