@@ -17,7 +17,7 @@ import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import MobileOverview from './MobileOverview'
 import { useDominantLogoColor } from '@store/hooks/userOverview/useDominantLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
-import LegendSkeleton from './LegendSkeleton'
+import LegendSkeleton from './skeletons/LegendSkeleton'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]

@@ -7,7 +7,7 @@ import { formatNumber2 } from '@utils/utils'
 import { useStyles } from './styles'
 import { isLoadingPositionsList } from '@store/selectors/positions'
 import { useSelector } from 'react-redux'
-import MobileOverviewSkeleton from './MobileOverviewSkeleton'
+import MobileOverviewSkeleton from './skeletons/MobileOverviewSkeleton'
 interface ChartSegment {
   start: number
   width: number

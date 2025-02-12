@@ -8,25 +8,43 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
 
   const useStyles = makeStyles()(() => ({
     dark_background: {
-      backgroundColor: '#1E1E1E !important',
+      backgroundColor: `${colors.invariant.componentDark} !important`,
       color: '#FFFFFF !important',
-      borderRadius: '8px !important'
+      borderRadius: '8px !important',
+      display: 'flex !important',
+      flexDirection: 'column',
+      padding: '8px !important',
+      minWidth: '150px !important',
+      boxShadow: '27px 39px 75px -30px #000'
     },
     dark_paper: {
-      backgroundColor: '#1E1E1E !important',
-      color: '#FFFFFF !important'
+      backgroundColor: `${colors.invariant.componentDark} !important`,
+      color: '#FFFFFF !important',
+      boxShadow: 'none !important'
     },
     dark_table: {
-      color: '#FFFFFF !important'
+      color: '#FFFFFF !important',
+      display: 'flex !important',
+      flexDirection: 'column',
+      gap: '4px'
     },
     dark_cell: {
-      color: '#FFFFFF !important'
+      color: '#FFFFFF !important',
+      padding: '2px 0 !important'
     },
     dark_mark: {
-      color: '#FFFFFF !important'
+      display: 'none !important'
     },
     dark_row: {
-      color: '#FFFFFF !important'
+      color: '#FFFFFF !important',
+      display: 'flex !important',
+      flexDirection: 'column',
+      '& > *': {
+        marginBottom: '4px !important'
+      },
+      '& > *:first-of-type': {
+        color: 'inherit !important'
+      }
     }
   }))
 
@@ -40,6 +58,12 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
   ]
 
   const loadingColors = [colors.invariant.light]
+
+  const getPathStyles = index => ({
+    stroke: 'transparent',
+    outline: 'none',
+    filter: `drop-shadow(0px 0px 2px ${isLoading ? loadingColors[0] : chartColors[index]})`
+  })
 
   return (
     <Box
@@ -65,13 +89,22 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
               if (isLoading) return 'Loading...'
               const percentage = ((item.value / total) * 100).toFixed(1)
               return `$${item.value.toLocaleString()} (${percentage}%)`
-            }
+            },
+            faded: { innerRadius: 90, additionalRadius: -10 }
           }
         ]}
         sx={{
-          path: {
-            stroke: 'transparent',
-            outline: 'none'
+          '& path': {
+            '&:nth-of-type(1)': getPathStyles(0),
+            '&:nth-of-type(2)': getPathStyles(1),
+            '&:nth-of-type(3)': getPathStyles(2),
+            '&:nth-of-type(4)': getPathStyles(3),
+            '&:nth-of-type(5)': getPathStyles(4),
+            '&:nth-of-type(6)': getPathStyles(5),
+            '&:nth-of-type(7)': getPathStyles(6),
+            '&:nth-of-type(8)': getPathStyles(7),
+            '&:nth-of-type(9)': getPathStyles(8),
+            '&:nth-of-type(10)': getPathStyles(9)
           }
         }}
         colors={isLoading ? loadingColors : chartColors}
