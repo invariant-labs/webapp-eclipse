@@ -10,7 +10,7 @@ const useStyles = makeStyles()(() => {
       left: 0,
       right: 0,
       bottom: 0,
-      zIndex: 99,
+      zIndex: 999,
       background: colors.invariant.black
     },
     container: {
@@ -20,7 +20,7 @@ const useStyles = makeStyles()(() => {
       top: '50%',
       transform: 'translate(-50%, -50%)',
       left: '50%',
-      zIndex: 100
+      zIndex: 1000
     },
     modal: {
       marginInline: 16,

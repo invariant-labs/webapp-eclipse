@@ -42,7 +42,13 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           cursor: 'pointer',
           ...typography.body1
         }}
-        onClick={() => navigate('/exchange/ETH/USDC')}>
+        onClick={() => {
+          navigate('/exchange/ETH/USDC')
+
+          if (isSmallDevice) {
+            onClose()
+          }
+        }}>
         here!
       </span>
       {!isSmallDevice && `...`} And see also distribution of points in the
@@ -54,7 +60,13 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           cursor: 'pointer',
           ...typography.body1
         }}
-        onClick={() => navigate('/points')}>
+        onClick={() => {
+          navigate('/points')
+
+          if (isSmallDevice) {
+            onClose()
+          }
+        }}>
         leaderboard!
       </span>
     </span>
