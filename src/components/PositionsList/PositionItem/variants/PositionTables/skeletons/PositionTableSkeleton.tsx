@@ -83,6 +83,7 @@ const useStyles = makeStyles()(() => ({
   bodyRow: {
     display: 'table',
     width: '100%',
+    height: '105px',
     tableLayout: 'fixed',
     '&:nth-of-type(odd)': {
       background: colors.invariant.component
