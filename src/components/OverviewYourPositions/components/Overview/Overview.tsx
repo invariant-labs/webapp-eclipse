@@ -227,7 +227,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                   spacing={1}
                   sx={{
                     height: '130px',
-                    overflowY: 'auto',
+                    overflowY: positions.length <= 3 ? 'hidden' : 'auto',
                     marginTop: '8px',
                     marginLeft: '0 !important',
                     '&::-webkit-scrollbar': {
