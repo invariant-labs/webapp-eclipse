@@ -11,7 +11,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       background: colors.invariant.componentDark
     },
     '&:first-child': {
-      borderBottom: `2px solid ${colors.invariant.light}`,
+      borderBottom: `1px solid ${colors.invariant.light}`,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
       background: colors.invariant.component

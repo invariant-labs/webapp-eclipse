@@ -13,7 +13,7 @@ export const useStyles = makeStyles()(() => ({
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
       background: colors.invariant.component,
-      borderBottom: `2px solid ${colors.invariant.light}`
+      borderBottom: `1px solid ${colors.invariant.light}`
     }
   },
 

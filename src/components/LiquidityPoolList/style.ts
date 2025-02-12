@@ -8,11 +8,11 @@ export const useStyles = makeStyles()(() => ({
     borderRadius: '24px'
   },
   pagination: {
-    borderTop: `2px solid ${colors.invariant.light}`,
+    borderTop: `1px solid ${colors.invariant.light}`,
 
     padding: '20px 24px 10px 0',
     maxWidth: '100%',
-    backgroundColor: colors.invariant.componentDark,
+    backgroundColor: colors.invariant.component,
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px'
   },
