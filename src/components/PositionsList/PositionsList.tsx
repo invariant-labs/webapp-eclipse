@@ -1,4 +1,3 @@
-import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
 import {
   Box,
@@ -11,7 +10,6 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import loader from '@static/gif/loader.gif'
 import SearchIcon from '@static/svg/lupaDark.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
@@ -24,6 +22,8 @@ import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
 import PositionsTable from './PositionItem/variants/PositionTables/PositionsTable'
 import { blurContent, unblurContent } from '@utils/uiUtils'
+import PositionsTableSkeleton from './PositionItem/variants/PositionTables/skeletons/PositionTableSkeleton'
+import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -234,32 +234,21 @@ export const PositionsList: React.FC<IProps> = ({
           )
         ) : showNoConnected ? (
           <NoConnected {...noConnectedBlockerProps} />
-        ) : loading ? (
-          <Grid container style={{ flex: 1 }}>
-            <img src={loader} className={classes.loading} alt='Loader' />
-          </Grid>
         ) : (
-          <EmptyPlaceholder
-            desc={
-              noInitialPositions
-                ? 'Add your first position by pressing the button and start earning!'
-                : 'Did not find any matching positions'
-            }
-            className={classes.placeholder}
-            onAction={onAddPositionClick}
-            withButton={noInitialPositions}
-          />
+          <>{!isLg ? <PositionsTableSkeleton /> : <PositionCardsSkeletonMobile />}</>
+
+          // <EmptyPlaceholder
+          //   desc={
+          //     noInitialPositions
+          //       ? 'Add your first position by pressing the button and start earning!'
+          //       : 'Did not find any matching positions'
+          //   }
+          //   className={classes.placeholder}
+          //   onAction={onAddPositionClick}
+          //   withButton={noInitialPositions}
+          // />
         )}
       </Grid>
-      {/* {paginator(page).totalPages > 1 ? (
-        <PaginationList
-          pages={paginator(page).totalPages}
-          defaultPage={defaultPage}
-          handleChangePage={handleChangePagination}
-          variant='end'
-          page={page}
-        />
-      ) : null} */}
     </Grid>
   )
 }
