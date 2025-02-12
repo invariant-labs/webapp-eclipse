@@ -311,14 +311,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Select different tokens'
     }
 
-    if (
-      alignment === DepositOptions.Auto &&
-      simulation &&
-      (!simulation.swapInput || !simulation.swapSimulation)
-    ) {
-      return 'Simulation error'
-    }
-
     if (alignment === DepositOptions.Auto && isError(SimulationStatus.NoGainSwap)) {
       return 'Insufficient Amount'
     }
@@ -392,16 +384,35 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
 
     if (
-      (!tokenAInputState.blocked && +tokenAInputState.value === 0 && tokenACheckbox) ||
-      (!tokenBInputState.blocked && +tokenBInputState.value === 0 && tokenBCheckbox)
+      ((!tokenAInputState.blocked && +tokenAInputState.value === 0 && tokenACheckbox) ||
+        (!tokenBInputState.blocked && +tokenBInputState.value === 0 && tokenBCheckbox)) &&
+      alignment !== DepositOptions.Auto
     ) {
-      return !tokenAInputState.blocked && !tokenBInputState.blocked
+      return !tokenAInputState.blocked &&
+        !tokenBInputState.blocked &&
+        +tokenAInputState.value === 0 &&
+        +tokenBInputState.value === 0
         ? 'Enter token amounts'
         : 'Enter token amount'
     }
 
-    if (alignment === DepositOptions.Auto && !simulation) {
-      return 'RPC error'
+    if (
+      alignment === DepositOptions.Auto &&
+      !tokenAInputState.blocked &&
+      !tokenBInputState.blocked &&
+      tokenBCheckbox &&
+      tokenACheckbox &&
+      +tokenAInputState.value === 0 &&
+      +tokenBInputState.value === 0
+    ) {
+      return 'Enter token amount'
+    }
+
+    if (
+      alignment === DepositOptions.Auto &&
+      ((simulation && (!simulation.swapInput || !simulation.swapSimulation)) || !simulation)
+    ) {
+      return 'Simulation error'
     }
 
     return 'Add Position'
