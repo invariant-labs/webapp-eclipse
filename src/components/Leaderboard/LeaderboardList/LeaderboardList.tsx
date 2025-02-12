@@ -14,6 +14,7 @@ import LeaderboardTotalItem from './LeaderboardItem/LeaderboardTotalItem'
 import { Keypair, PublicKey } from '@solana/web3.js'
 import { LeaderBoardType, NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
+import { EmptyRow } from './EmptyRow/EmptyRow'
 
 interface LeaderboardListProps {
   copyAddressHandler: (message: string, variant: VariantType) => void
@@ -108,20 +109,25 @@ const getContent = (
         )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
           {lpData.length > 0 ? (
-            lpData.map((element, index) => (
-              <MemoizedLpLeaderboardItem
-                key={index}
-                displayType='item'
-                rank={element.rank}
-                positions={element.positions}
-                last24hPoints={element.last24hPoints}
-                points={element.points ?? 0}
-                address={new PublicKey(element.address)}
-                domain={element.domain}
-                copyAddressHandler={copyAddressHandler}
-                currentNetwork={currentNetwork}
-              />
-            ))
+            <>
+              {lpData.map((element, index) => (
+                <MemoizedLpLeaderboardItem
+                  key={index}
+                  displayType='item'
+                  rank={element.rank}
+                  positions={element.positions}
+                  last24hPoints={element.last24hPoints}
+                  points={element.points ?? 0}
+                  address={new PublicKey(element.address)}
+                  domain={element.domain}
+                  copyAddressHandler={copyAddressHandler}
+                  currentNetwork={currentNetwork}
+                />
+              ))}
+              {new Array(itemsPerPage - lpData.length).fill('').map((_, index) => (
+                <EmptyRow key={index} />
+              ))}
+            </>
           ) : (
             <NotFoundPlaceholder title='Leaderboard is empty...' />
           )}
@@ -155,20 +161,25 @@ const getContent = (
         )}
         <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
           {swapData.length > 0 ? (
-            swapData.map((element, index) => (
-              <MemoizedSwapLeaderboardItem
-                key={index}
-                displayType='item'
-                rank={element.rank}
-                swaps={element.swaps}
-                last24hPoints={element.last24hPoints}
-                points={element.points ?? 0}
-                address={new PublicKey(element.address)}
-                domain={element.domain}
-                copyAddressHandler={copyAddressHandler}
-                currentNetwork={currentNetwork}
-              />
-            ))
+            <>
+              {swapData.map((element, index) => (
+                <MemoizedSwapLeaderboardItem
+                  key={index}
+                  displayType='item'
+                  rank={element.rank}
+                  swaps={element.swaps}
+                  last24hPoints={element.last24hPoints}
+                  points={element.points ?? 0}
+                  address={new PublicKey(element.address)}
+                  domain={element.domain}
+                  copyAddressHandler={copyAddressHandler}
+                  currentNetwork={currentNetwork}
+                />
+              ))}
+              {new Array(itemsPerPage - swapData.length).fill('').map((_, index) => (
+                <EmptyRow key={index} />
+              ))}
+            </>
           ) : (
             <NotFoundPlaceholder title='Leaderboard is empty...' />
           )}
@@ -201,21 +212,26 @@ const getContent = (
       )}
       <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
         {totalData.length > 0 ? (
-          totalData.map((element, index) => (
-            <MemoizedTotalLeaderboardItem
-              key={index}
-              displayType='item'
-              rank={element.rank}
-              swapPoints={element.swapPoints}
-              lpPoints={element.lpPoints}
-              last24hPoints={element.last24hPoints}
-              points={element.points}
-              address={new PublicKey(element.address)}
-              domain={element.domain}
-              copyAddressHandler={copyAddressHandler}
-              currentNetwork={currentNetwork}
-            />
-          ))
+          <>
+            {totalData.map((element, index) => (
+              <MemoizedTotalLeaderboardItem
+                key={index}
+                displayType='item'
+                rank={element.rank}
+                swapPoints={element.swapPoints}
+                lpPoints={element.lpPoints}
+                last24hPoints={element.last24hPoints}
+                points={element.points}
+                address={new PublicKey(element.address)}
+                domain={element.domain}
+                copyAddressHandler={copyAddressHandler}
+                currentNetwork={currentNetwork}
+              />
+            ))}
+            {new Array(itemsPerPage - totalData.length).fill('').map((_, index) => (
+              <EmptyRow key={index} />
+            ))}
+          </>
         ) : (
           <NotFoundPlaceholder title='Leaderboard is empty...' />
         )}
