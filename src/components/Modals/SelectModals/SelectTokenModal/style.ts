@@ -1,6 +1,7 @@
 import { Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
+import UnknownToken from '../../../../static/svg/unknownToken.svg'
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
@@ -221,7 +222,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       height: 30,
       marginRight: 16,
       borderRadius: '50%',
-      boxShadow: '0px 0px 10px rgba(216, 255, 181, 0.5)'
+      boxShadow: '0px 0px 10px rgba(216, 255, 181, 0.5)',
+      backgroundImage: `url(${UnknownToken})`
     },
     tokenBalance: {
       ...typography.body2,
