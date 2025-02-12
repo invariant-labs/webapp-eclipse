@@ -4,7 +4,7 @@ import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
 import { useSelector } from 'react-redux'
 import { swapTokens } from '@store/selectors/solanaWallet'
-import { positionsWithPoolsData } from '@store/selectors/positions'
+import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
@@ -12,6 +12,7 @@ import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 export const UserOverview = () => {
   const tokensList = useSelector(swapTokens)
   const { processedPools, isLoading } = useProcessedTokens(tokensList)
+  const isLoadingList = useSelector(isLoadingPositionsList)
 
   const list: any = useSelector(positionsWithPoolsData)
 
@@ -71,7 +72,10 @@ export const UserOverview = () => {
           }
         }}>
         <Overview poolAssets={data} />
-        <YourWallet pools={processedPools} isLoading={isLoading || processedPools.length <= 0} />
+        <YourWallet
+          pools={processedPools}
+          isLoading={isLoading || isLoadingList || processedPools.length <= 0}
+        />
       </Box>
     </Box>
   )
