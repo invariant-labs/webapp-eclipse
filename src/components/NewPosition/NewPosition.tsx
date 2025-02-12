@@ -305,6 +305,12 @@ export const NewPosition: React.FC<INewPosition> = ({
     [isAutoSwapAvailable, tokenACheckbox, tokenBCheckbox, alignment]
   )
 
+  const isAutoswapOn = useMemo(
+    () =>
+      isAutoSwapAvailable && (tokenACheckbox || tokenBCheckbox) && alignment == DepositOptions.Auto,
+    [isAutoSwapAvailable, tokenACheckbox, tokenBCheckbox, alignment]
+  )
+
   useEffect(() => {
     if (isAutoSwapAvailable) {
       setAlignment(DepositOptions.Auto)
@@ -458,7 +464,7 @@ export const NewPosition: React.FC<INewPosition> = ({
       (isXtoY ? rightRange > midPrice.index : rightRange < midPrice.index)
     ) {
       const deposit = tokenADeposit
-      const amount = isFullAutoSwapOn
+      const amount = isAutoswapOn
         ? tokenBDeposit
         : getOtherTokenAmount(
             convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
@@ -479,12 +485,14 @@ export const NewPosition: React.FC<INewPosition> = ({
       (isXtoY ? leftRange < midPrice.index : leftRange > midPrice.index)
     ) {
       const deposit = tokenBDeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-        leftRange,
-        rightRange,
-        false
-      )
+      const amount = isAutoswapOn
+        ? tokenADeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+            leftRange,
+            rightRange,
+            false
+          )
 
       if (tokenAIndex !== null && +deposit !== 0) {
         setTokenBDeposit(deposit)
@@ -502,12 +510,14 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     if (tokenAIndex !== null && (isXtoY ? rightRange > tickIndex : rightRange < tickIndex)) {
       const deposit = tokenADeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
-        leftRange,
-        rightRange,
-        true
-      )
+      const amount = isAutoswapOn
+        ? tokenBDeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+            leftRange,
+            rightRange,
+            true
+          )
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
         setTokenBDeposit(amount)
@@ -516,12 +526,14 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
     if (tokenBIndex !== null && (isXtoY ? leftRange < tickIndex : leftRange > tickIndex)) {
       const deposit = tokenBDeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-        leftRange,
-        rightRange,
-        false
-      )
+      const amount = isAutoswapOn
+        ? tokenADeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+            leftRange,
+            rightRange,
+            false
+          )
 
       if (tokenAIndex !== null && +deposit !== 0) {
         setTokenBDeposit(deposit)
