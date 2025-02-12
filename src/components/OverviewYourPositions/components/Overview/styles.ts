@@ -65,11 +65,11 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     gap: '16px',
+    justifyContent: 'space-between',
 
     [theme.breakpoints.up('lg')]: {
       gap: 'auto',
-      flex: 1,
-      justifyContent: 'space-between'
+      flex: 1
     }
   },
 
