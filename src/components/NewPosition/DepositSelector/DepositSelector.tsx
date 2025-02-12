@@ -123,7 +123,7 @@ export interface IDepositSelector {
   simulationParams: {
     lowerTickIndex: number
     upperTickIndex: number
-    actualPoolPrice: BN
+    actualPoolPrice: BN | null
   }
   initialMaxPriceImpact: string
   onMaxPriceImpactChange: (val: string) => void
@@ -553,9 +553,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       !autoSwapTickmap ||
       !tokenAIndex ||
       !tokenBIndex ||
-      isLoadingTicksOrTickmap
-    )
+      isLoadingTicksOrTickmap ||
+      !simulationParams.actualPoolPrice
+    ) {
+      setSimulation(null)
       return
+    }
     const tokenADecimal = tokens[tokenAIndex].decimals
     const tokenBDecimal = tokens[tokenBIndex].decimals
     const tokenAValue = tokenACheckbox ? convertBalanceToBN(valueA, tokenADecimal) : new BN(0)

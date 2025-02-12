@@ -147,7 +147,7 @@ export interface INewPosition {
   network: NetworkType
   isLoadingTokens: boolean
   ethBalance: BN
-  actualPoolPrice: BN
+  actualPoolPrice: BN | null
   walletStatus: Status
   onConnectWallet: () => void
   onDisconnectWallet: () => void
