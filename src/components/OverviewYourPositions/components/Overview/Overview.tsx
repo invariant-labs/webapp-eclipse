@@ -213,7 +213,7 @@ export const Overview: React.FC<OverviewProps> = () => {
               flexDirection: 'column'
             }
           }}>
-          <Box sx={{ marginTop: 2, minWidth: '263px' }}>
+          <Box sx={{ marginTop: 2, width: '450px' }}>
             {!isDataReady ? (
               <LegendSkeleton />
             ) : (
