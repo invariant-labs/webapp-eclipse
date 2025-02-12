@@ -97,6 +97,8 @@ const PoolListItem: React.FC<IProps> = ({
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
 
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
+
   const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
 
   const tokenAData = isXtoY
@@ -257,11 +259,20 @@ const PoolListItem: React.FC<IProps> = ({
                   <Box
                     className={classes.actionButton}
                     ref={airdropIconRef}
-                    onPointerLeave={() => {
-                      setIsPromotedPoolPopoverOpen(false)
-                    }}
                     onPointerEnter={() => {
-                      setIsPromotedPoolPopoverOpen(true)
+                      if (!isMobile) {
+                        setIsPromotedPoolPopoverOpen(true)
+                      }
+                    }}
+                    onPointerLeave={() => {
+                      if (!isMobile) {
+                        setIsPromotedPoolPopoverOpen(false)
+                      }
+                    }}
+                    onClick={() => {
+                      if (isMobile) {
+                        setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                      }
                     }}
                     mr={3}>
                     <img width={32} height={32} src={icons.airdropRainbow} alt={'Airdrop'} />

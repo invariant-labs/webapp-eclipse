@@ -214,6 +214,9 @@ const leaderboardSlice = createSlice({
     setLeaderBoardType(state, action: PayloadAction<LeaderBoardType>) {
       state.type = action.payload
       return state
+    },
+    resetCurrentUser(state) {
+      state.currentUser = { total: null, lp: null, swap: null }
     }
   }
 })

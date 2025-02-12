@@ -1,8 +1,8 @@
-import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
+import { Box, Button, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
 import icons from '@static/icons'
@@ -57,6 +57,8 @@ const Card: React.FC<ICard> = ({
 
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   const { isPromoted, pointsPerSecond } = useMemo(() => {
     if (!poolAddress) return { isPromoted: false, pointsPerSecond: '00' }
@@ -162,11 +164,20 @@ const Card: React.FC<ICard> = ({
                     <div
                       ref={airdropIconRef}
                       className={classes.actionButton}
-                      onPointerLeave={() => {
-                        setIsPromotedPoolPopoverOpen(false)
-                      }}
                       onPointerEnter={() => {
-                        setIsPromotedPoolPopoverOpen(true)
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(true)
+                        }
+                      }}
+                      onPointerLeave={() => {
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(false)
+                        }
+                      }}
+                      onClick={() => {
+                        if (isMobile) {
+                          setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                        }
                       }}>
                       <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '24px' }} />
                     </div>
