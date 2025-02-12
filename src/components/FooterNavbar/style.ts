@@ -3,6 +3,9 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
   return {
+    activeLink: {
+      background: colors.invariant.blue
+    },
     navbar: {
       display: 'flex',
       width: '100%',
@@ -27,7 +30,9 @@ const useStyles = makeStyles()(() => {
       cursor: 'pointer',
 
       '& p': {
-        ...typography.tiny1
+        ...typography.tiny1,
+        fontSize: 12,
+        fontWeight: 600
       },
       ':last-child': {
         borderRight: 'none'

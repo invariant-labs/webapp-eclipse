@@ -30,12 +30,6 @@ export const FooterNavbar = () => {
       url: 'portfolio',
       width: 24
     },
-    {
-      label: 'Stats',
-      icon: icons.statsIcon,
-      url: 'statistics',
-      width: 28
-    },
 
     typeOfNetwork === NetworkType.Testnet
       ? {
@@ -49,7 +43,13 @@ export const FooterNavbar = () => {
           icon: icons.airdrop,
           url: 'points',
           width: 24
-        }
+        },
+    {
+      label: 'Stats',
+      icon: icons.statsIcon,
+      url: 'statistics',
+      width: 28
+    }
   ]
 
   const location = useLocation()
@@ -84,6 +84,9 @@ export const FooterNavbar = () => {
             key={`path-${link.url}`}
             to={`/${link.url}`}
             className={classes.navbox}
+            style={{
+              background: active ? colors.invariant.light : ''
+            }}
             onClick={e => {
               if (link.url === 'exchange' && activePath.startsWith('exchange')) {
                 e.preventDefault()
