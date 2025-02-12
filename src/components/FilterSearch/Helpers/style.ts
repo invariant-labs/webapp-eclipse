@@ -9,7 +9,6 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     borderRadius: 8,
     gap: 8,
     margin: 4,
-
     height: 26,
     maxHeight: 26,
     justifyContent: 'center',
@@ -38,13 +37,9 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    marginBottom: 8,
-    padding: 8,
-    borderRadius: 24,
 
-    '&:hover': {
-      background: colors.invariant.lightHover2
-    }
+    padding: '8px 10px 8px 6px',
+    borderRadius: 24
   },
 
   leftSide: {
@@ -66,7 +61,6 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   },
 
   tokenLabel: {
-    ...typography.heading3,
     whiteSpace: 'nowrap',
     flexShrink: 0
   },
@@ -74,7 +68,6 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   tokenAddress: {
     display: 'flex',
     alignItems: 'center',
-    backgroundColor: colors.invariant.newDark,
     borderRadius: 4,
     padding: '2px 4px',
     gap: 6,
@@ -85,7 +78,7 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
 
   truncatedAddress: {
     ...typography.caption4,
-    color: colors.invariant.lightGrey,
+    color: colors.invariant.textGrey,
 
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -107,7 +100,6 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   },
 
   tokenName: {
-    ...typography.caption2,
     color: colors.invariant.textGrey,
     whiteSpace: 'nowrap',
     overflow: 'hidden',
@@ -116,25 +108,16 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
 
   searchResultIcon: {
     flexShrink: 0,
-    width: 36,
-    height: 36,
     marginRight: 8,
     borderRadius: '50%'
   },
 
   tokenBalanceStatus: {
+    ...typography.tiny2,
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'flex-end',
-    color: colors.invariant.textGrey,
-
-    '& p': {
-      ...typography.body2
-    },
-
-    '& p:last-child': {
-      color: colors.invariant.text
-    }
+    color: colors.invariant.textGrey
   }
 }))
 export default useStyles

@@ -10,7 +10,6 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
     background: colors.invariant.black,
     border: '1px solid #202946',
     color: colors.invariant.light,
-    transition: isSmall ? 'none' : 'width 0.3s ease-in-out',
     width: isSmall ? '100%' : 424,
     display: 'flex',
     alignItems: 'center'
@@ -26,7 +25,9 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
     boxShadow: 'none',
     padding: '16px 16px 10px 16px',
     marginTop: 8,
-    background: colors.invariant.bodyBackground
+    borderRadius: '10px',
+    background: colors.invariant.component,
+    border: `1px solid ${colors.invariant.dark}`
   },
   header: {
     position: 'sticky',

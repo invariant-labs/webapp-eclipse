@@ -29,7 +29,6 @@ export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
-  //const tokensList = useSelector(tokensStatsWithTokensDetails)
   const networkType = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
   const currentNetwork = useSelector(network)

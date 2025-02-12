@@ -19,6 +19,7 @@ import { TokenOption } from './Helpers/TokenOption'
 import { useSelector } from 'react-redux'
 import { swapTokens } from '@store/selectors/solanaWallet'
 import icons from '@static/icons'
+import { tokensStatsWithTokensDetails } from '@store/selectors/stats'
 
 interface ISearchToken {
   icon: string
@@ -42,20 +43,25 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   setSelectedFilters,
   filtersAmount
 }) => {
-  //const tokensListDetails = useSelector(tokensStatsWithTokensDetails)
-  const tokensList = useSelector(swapTokens)
+  const tokensListDetails = useSelector(tokensStatsWithTokensDetails)
   const commonTokens = commonTokensForNetworks[networkType]
   const [open, setOpen] = useState(false)
 
-  const mappedTokens = tokensList
-    .map(tokenData => ({
-      icon: tokenData.logoURI ?? icons.unknownToken,
-      name: tokenData.name ?? tokenData.address.toString(),
-      symbol: tokenData.symbol ?? tokenData.address.toString(),
-      address: tokenData.address.toString(),
-      balance: tokenData.balance,
-      decimals: tokenData.decimals
-    }))
+  const tokensList = useSelector(swapTokens)
+  const mappedTokens = tokensListDetails
+    .map(tokenData => {
+      const details = tokenData.tokenDetails
+      const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
+      const tokenFromList = tokensList.find(token => token.address.toString() === tokenAddress)
+      return {
+        icon: details?.logoURI ?? icons.unknownToken,
+        name: details?.name ?? tokenData.address.toString(),
+        symbol: details?.symbol ?? tokenData.address.toString(),
+        address: tokenAddress,
+        balance: tokenFromList ? tokenFromList.balance : 0,
+        decimals: tokenFromList ? tokenFromList.decimals : 0
+      }
+    })
     .sort((a, b) => {
       const aHasBalance = Number(a.balance) > 0
       const bHasBalance = Number(b.balance) > 0
@@ -166,7 +172,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
             borderRadius: '3px'
           }
         },
-        style: { maxHeight: '460px' }
+        style: { maxHeight: !isSmall ? '300px' : '540px' }
       }}
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
@@ -174,8 +180,8 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
         ))
       }
       renderOption={(props, option) => (
-        <Box component='li' {...props}>
-          <TokenOption option={option} networkUrl={networkUrl} />
+        <Box component='li' {...props} sx={{ padding: '0 !important' }}>
+          <TokenOption option={option} networkUrl={networkUrl} isSmall={isSmall} />
         </Box>
       )}
       renderInput={params => (
