@@ -154,7 +154,7 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
         </Typography>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            {formatNumber(xToY ? valueX : valueY)} {xToY ? tokenXName : tokenYName}
+            {formatNumber(xToY ? valueY : valueX)} {xToY ? tokenYName : tokenXName}
           </Typography>
         </Grid>
       </Grid>

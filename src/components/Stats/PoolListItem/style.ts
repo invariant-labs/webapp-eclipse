@@ -18,6 +18,7 @@ export const useStyles = makeStyles()(() => ({
   },
 
   container: {
+    height: 69,
     color: colors.white.main,
     display: 'grid',
     gridTemplateColumns: '30px auto 160px 80px 140px 100px 160px',
@@ -44,7 +45,7 @@ export const useStyles = makeStyles()(() => ({
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: 'auto 80px 80px 60px',
+      gridTemplateColumns: 'auto 60px 60px 60px',
 
       '& p': {
         justifyContent: 'flex-start',

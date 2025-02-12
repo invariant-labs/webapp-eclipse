@@ -60,7 +60,7 @@ const PoolList: React.FC<PoolListInterface> = ({
 
   const pages = Math.ceil(data.length / 10)
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  console.log(isMd)
+
   return (
     <div
       className={classNames({ [classes.loadingOverlay]: isLoading })}
@@ -134,6 +134,8 @@ const PoolList: React.FC<PoolListInterface> = ({
                   pointsPerSecond={element.pointsPerSecond}
                   copyAddressHandler={copyAddressHandler}
                   showAPY={showAPY}
+                  volume={element.volume}
+                  TVL={element.TVL}
                 />
               ))}
               <Box className={classes.tableFooter} />

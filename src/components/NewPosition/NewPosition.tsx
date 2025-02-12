@@ -26,7 +26,7 @@ import {
 import { PlotTickData } from '@store/reducers/positions'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ConcentrationTypeSwitch from './ConcentrationTypeSwitch/ConcentrationTypeSwitch'
 import DepositSelector from './DepositSelector/DepositSelector'
@@ -448,24 +448,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : bestTiers.find(
+      : (bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined
+        )?.bestTierIndex ?? undefined)
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : promotedTiers.find(
+      : (promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined
+        )?.index ?? undefined)
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -538,6 +538,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     onSlippageChange(slippage)
   }
 
+  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
+
   const updatePath = (
     index1: number | null,
     index2: number | null,
@@ -547,6 +549,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   ) => {
     if (canNavigate) {
       const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
+
+      clearTimeout(urlUpdateTimeoutRef.current)
 
       if (index1 != null && index2 != null) {
         const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
@@ -569,20 +573,33 @@ export const NewPosition: React.FC<INewPosition> = ({
               ? '&range=true'
               : '&range=false'
 
-        navigate(
-          `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
-          {
-            replace: true
-          }
+        urlUpdateTimeoutRef.current = setTimeout(
+          () =>
+            navigate(
+              `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
+              {
+                replace: true
+              }
+            ),
+          500
         )
       } else if (index1 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
-        navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          500
+        )
       } else if (index2 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-        navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          500
+        )
       } else if (fee != null) {
-        navigate(`/newPosition/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${parsedFee}`, { replace: true }),
+          500
+        )
       }
     }
   }
@@ -946,32 +963,22 @@ export const NewPosition: React.FC<INewPosition> = ({
           promotedPoolTierIndex={promotedPoolTierIndex}
         />
         <Hidden mdUp>
-          <Grid display='flex' justifyContent='space-between' alignItems='flex-start'>
-            {/* <Box mt={0.5}>
-              <MarketIdLabel
-                displayLength={3}
-                marketId={poolAddress}
-                copyPoolAddressHandler={copyPoolAddressHandler}
-                short
+          <Grid container alignSelf='flex-end' mb={2} width='200px'>
+            {tokenAIndex !== null && tokenBIndex !== null && (
+              <ConcentrationTypeSwitch
+                onSwitch={val => {
+                  if (val) {
+                    setPositionOpeningMethod('concentration')
+                    onPositionOpeningMethodChange('concentration')
+                  } else {
+                    setPositionOpeningMethod('range')
+                    onPositionOpeningMethodChange('range')
+                  }
+                }}
+                className={classes.switch}
+                currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
               />
-            </Box> */}
-            <Grid container justifyContent='end' mb={2} width='200px'>
-              {tokenAIndex !== null && tokenBIndex !== null && (
-                <ConcentrationTypeSwitch
-                  onSwitch={val => {
-                    if (val) {
-                      setPositionOpeningMethod('concentration')
-                      onPositionOpeningMethodChange('concentration')
-                    } else {
-                      setPositionOpeningMethod('range')
-                      onPositionOpeningMethodChange('range')
-                    }
-                  }}
-                  className={classes.switch}
-                  currentValue={positionOpeningMethod === 'concentration' ? 0 : 1}
-                />
-              )}
-            </Grid>
+            )}
           </Grid>
         </Hidden>
         {isCurrentPoolExisting ||
