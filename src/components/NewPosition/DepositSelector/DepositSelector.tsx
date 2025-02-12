@@ -1,7 +1,16 @@
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
-import { Box, Button, Grid, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Checkbox,
+  Grid,
+  ToggleButton,
+  ToggleButtonGroup,
+  Tooltip,
+  Typography
+} from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
@@ -505,6 +514,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   ) => {
     if (newAlignment !== null) {
       if (newAlignment === DepositOptions.Basic) {
+        setSimulation(null)
         setTokenACheckbox(true)
         setTokenBCheckbox(true)
       }
@@ -755,6 +765,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </TooltipHover>
           )}
         <Box className={classes.depositOptions}>
+          <Tooltip title={'Placeholder'} classes={{ tooltip: classes.tooltip }}>
+            <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
+          </Tooltip>
           <Box className={classes.switchDepositTypeContainer}>
             <Box
               className={classes.switchDepositTypeMarker}
@@ -801,104 +814,120 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         </Box>
       </Grid>
       <Grid container className={classes.sectionWrapper}>
-        <DepositAmountInput
-          tokenPrice={priceA}
-          currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
-          currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
-          placeholder='0.0'
-          actionButtons={[
-            {
-              label: 'Max',
-              onClick: () => {
-                actionsTokenA.max(tokenAIndex)
+        <Box className={classes.inputWrapper}>
+          {alignment === DepositOptions.Auto && (
+            <Checkbox
+              checked={tokenACheckbox}
+              onChange={e => {
+                setTokenACheckbox(e.target.checked)
+              }}
+              className={classes.checkbox}
+            />
+          )}
+          <DepositAmountInput
+            tokenPrice={priceA}
+            currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
+            currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
+            currencyIsUnknown={
+              tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false
+            }
+            placeholder='0.0'
+            actionButtons={[
+              {
+                label: 'Max',
+                onClick: () => {
+                  actionsTokenA.max(tokenAIndex)
+                },
+                variant: 'max'
               },
-              variant: 'max'
-            },
-            {
-              label: '50%',
-              variant: 'half',
-              onClick: () => {
-                actionsTokenA.half(tokenAIndex)
+              {
+                label: '50%',
+                variant: 'half',
+                onClick: () => {
+                  actionsTokenA.half(tokenAIndex)
+                }
               }
+            ]}
+            balanceValue={
+              tokenAIndex !== null
+                ? printBN(tokens[tokenAIndex].balance, tokens[tokenAIndex].decimals)
+                : ''
             }
-          ]}
-          balanceValue={
-            tokenAIndex !== null
-              ? printBN(tokens[tokenAIndex].balance, tokens[tokenAIndex].decimals)
-              : ''
-          }
-          style={{
-            marginBottom: 10
-          }}
-          onBlur={() => {
-            if (
-              tokenAIndex !== null &&
-              tokenBIndex !== null &&
-              tokenAInputState.value.length === 0
-            ) {
-              tokenAInputState.setValue('0.0')
-            }
-
-            tokenAInputState.setValue(trimDecimalZeros(tokenAInputState.value))
-          }}
-          {...tokenAInputState}
-          value={tokenACheckbox ? tokenAInputState.value : '0'}
-          priceLoading={priceALoading}
-          isBalanceLoading={isBalanceLoading}
-          walletUninitialized={walletStatus !== Status.Initialized}
-          autoSwapEnabled={alignment === DepositOptions.Auto}
-          checkBoxValue={tokenACheckbox}
-          setCheckBoxValue={setTokenACheckbox}
-        />
-
-        <DepositAmountInput
-          tokenPrice={priceB}
-          currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
-          currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
-          placeholder='0.0'
-          actionButtons={[
-            {
-              label: 'Max',
-              variant: 'max',
-              onClick: () => {
-                actionsTokenB.max(tokenBIndex)
+            onBlur={() => {
+              if (
+                tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                tokenAInputState.value.length === 0
+              ) {
+                tokenAInputState.setValue('0.0')
               }
-            },
-            {
-              label: '50%',
-              variant: 'half',
-              onClick: () => {
-                actionsTokenB.half(tokenBIndex)
-              }
-            }
-          ]}
-          balanceValue={
-            tokenBIndex !== null
-              ? printBN(tokens[tokenBIndex].balance, tokens[tokenBIndex].decimals)
-              : ''
-          }
-          onBlur={() => {
-            if (
-              tokenAIndex !== null &&
-              tokenBIndex !== null &&
-              tokenBInputState.value.length === 0
-            ) {
-              tokenBInputState.setValue('0.0')
-            }
 
-            tokenBInputState.setValue(trimDecimalZeros(tokenBInputState.value))
-          }}
-          {...tokenBInputState}
-          value={tokenBCheckbox ? tokenBInputState.value : '0'}
-          priceLoading={priceBLoading}
-          isBalanceLoading={isBalanceLoading}
-          walletUninitialized={walletStatus !== Status.Initialized}
-          autoSwapEnabled={alignment === DepositOptions.Auto}
-          checkBoxValue={tokenBCheckbox}
-          setCheckBoxValue={setTokenBCheckbox}
-        />
+              tokenAInputState.setValue(trimDecimalZeros(tokenAInputState.value))
+            }}
+            {...tokenAInputState}
+            value={tokenACheckbox ? tokenAInputState.value : '0'}
+            priceLoading={priceALoading}
+            isBalanceLoading={isBalanceLoading}
+            walletUninitialized={walletStatus !== Status.Initialized}
+          />
+        </Box>
+        <Box className={classes.inputWrapper}>
+          {alignment === DepositOptions.Auto && (
+            <Checkbox
+              checked={tokenBCheckbox}
+              onChange={e => {
+                setTokenBCheckbox(e.target.checked)
+              }}
+              className={classes.checkbox}
+            />
+          )}
+          <DepositAmountInput
+            tokenPrice={priceB}
+            currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
+            currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
+            currencyIsUnknown={
+              tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false
+            }
+            placeholder='0.0'
+            actionButtons={[
+              {
+                label: 'Max',
+                variant: 'max',
+                onClick: () => {
+                  actionsTokenB.max(tokenBIndex)
+                }
+              },
+              {
+                label: '50%',
+                variant: 'half',
+                onClick: () => {
+                  actionsTokenB.half(tokenBIndex)
+                }
+              }
+            ]}
+            balanceValue={
+              tokenBIndex !== null
+                ? printBN(tokens[tokenBIndex].balance, tokens[tokenBIndex].decimals)
+                : ''
+            }
+            onBlur={() => {
+              if (
+                tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                tokenBInputState.value.length === 0
+              ) {
+                tokenBInputState.setValue('0.0')
+              }
+
+              tokenBInputState.setValue(trimDecimalZeros(tokenBInputState.value))
+            }}
+            {...tokenBInputState}
+            value={tokenBCheckbox ? tokenBInputState.value : '0'}
+            priceLoading={priceBLoading}
+            isBalanceLoading={isBalanceLoading}
+            walletUninitialized={walletStatus !== Status.Initialized}
+          />
+        </Box>
       </Grid>
       {walletStatus !== Status.Initialized ? (
         <ChangeWalletButton

@@ -1024,12 +1024,15 @@ export const NewPosition: React.FC<INewPosition> = ({
               )
             },
             blocked:
-              tokenAIndex !== null &&
-              tokenBIndex !== null &&
-              !isWaitingForNewPool &&
-              blockedToken === PositionTokenBlock.A,
+              (tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                !isWaitingForNewPool &&
+                blockedToken === PositionTokenBlock.A) ||
+              !tokenACheckbox,
 
-            blockerInfo: 'Range only for single-asset deposit.',
+            blockerInfo: tokenACheckbox
+              ? 'Range only for single-asset deposit.'
+              : 'You chose not to spend this token.',
             decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
           }}
           tokenBInputState={{
@@ -1061,11 +1064,14 @@ export const NewPosition: React.FC<INewPosition> = ({
               )
             },
             blocked:
-              tokenAIndex !== null &&
-              tokenBIndex !== null &&
-              !isWaitingForNewPool &&
-              blockedToken === PositionTokenBlock.B,
-            blockerInfo: 'Range only for single-asset deposit.',
+              (tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                !isWaitingForNewPool &&
+                blockedToken === PositionTokenBlock.B) ||
+              !tokenBCheckbox,
+            blockerInfo: tokenBCheckbox
+              ? 'Range only for single-asset deposit.'
+              : 'You chose not to spend this token.',
             decimalsLimit: tokenBIndex !== null ? tokens[tokenBIndex].decimals : 0
           }}
           feeTiers={feeTiers.map(tier => tier.feeValue)}

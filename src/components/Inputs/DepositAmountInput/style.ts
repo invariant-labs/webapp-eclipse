@@ -18,14 +18,9 @@ const caption2styles = {
 export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { isSelected }) => ({
   wrapper: {
     position: 'relative',
-    marginBottom: 16,
-
     [theme.breakpoints.down('md')]: {
       minWidth: 0
     }
-  },
-  disabled: {
-    opacity: '60%'
   },
   root: {
     width: '100%',
@@ -259,18 +254,6 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
     padding: '0 10px 0 20px',
     width: 15,
     height: 15
-  },
-  checkbox: {
-    width: 16,
-    height: 16,
-    marginLeft: 8,
-    color: colors.invariant.light,
-    '&.Mui-checked': {
-      color: colors.invariant.green
-    },
-    '& .MuiSvgIcon-root': {
-      fontSize: 16
-    }
   }
 }))
 export default useStyles

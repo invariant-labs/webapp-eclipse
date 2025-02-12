@@ -1,4 +1,4 @@
-import { Box, Grid, Input, Tooltip, Typography, Checkbox } from '@mui/material'
+import { Box, Grid, Input, Tooltip, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumber, formatNumber2, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
@@ -6,7 +6,6 @@ import useStyles from './style'
 import icons from '@static/icons'
 import { getButtonClassName } from '@utils/uiUtils'
 import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
-import classNames from 'classnames'
 
 interface ActionButton {
   label: string
@@ -36,9 +35,6 @@ interface IProps {
   isBalanceLoading: boolean
   walletUninitialized: boolean
   actionButtons?: ActionButton[]
-  autoSwapEnabled: boolean
-  checkBoxValue: boolean
-  setCheckBoxValue: (val: boolean) => void
 }
 export const DepositAmountInput: React.FC<IProps> = ({
   currency,
@@ -58,10 +54,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
   priceLoading = false,
   isBalanceLoading,
   actionButtons = [],
-  walletUninitialized,
-  autoSwapEnabled,
-  checkBoxValue,
-  setCheckBoxValue
+  walletUninitialized
 }) => {
   const { classes } = useStyles({ isSelected: !!currency && !walletUninitialized })
 
@@ -143,7 +136,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
           wrap='nowrap'
           className={classes.inputContainer}>
           <Grid
-            className={classNames(classes.currency, !checkBoxValue && classes.disabled)}
+            className={classes.currency}
             container
             justifyContent='center'
             alignItems='center'
@@ -169,17 +162,9 @@ export const DepositAmountInput: React.FC<IProps> = ({
               <Typography className={classes.noCurrencyText}>-</Typography>
             )}
           </Grid>
-          {autoSwapEnabled && (
-            <Checkbox
-              checked={checkBoxValue}
-              onChange={e => {
-                setCheckBoxValue(e.target.checked)
-              }}
-              className={classes.checkbox}
-            />
-          )}
+
           <Input
-            className={classNames(classes.input, !checkBoxValue && classes.disabled)}
+            className={classes.input}
             classes={{ input: classes.innerInput }}
             inputRef={inputRef}
             value={value}
@@ -187,7 +172,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
             placeholder={placeholder}
             onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
             onBlur={onBlur}
-            disabled={disabled || !checkBoxValue}
+            disabled={disabled}
             inputProps={{
               inputMode: 'decimal'
             }}

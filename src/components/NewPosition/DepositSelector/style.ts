@@ -13,12 +13,23 @@ export const useStyles = makeStyles()(theme => {
         padding: '16px 8px  16px 8px '
       }
     },
+    tooltip: {
+      paddingTop: 4,
+      paddingBottom: 4,
+      paddingLeft: 8,
+      paddingRight: 8,
+      color: colors.invariant.text,
+      ...typography.caption4,
+      lineHeight: '24px',
+      background: colors.invariant.component,
+      borderRadius: 8
+    },
     depositHeader: {
       width: '100%',
       height: 30,
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 24,
+      marginBottom: 18,
       alignItems: 'center',
       [theme.breakpoints.down('sm')]: {
         flexDirection: 'column',
@@ -30,7 +41,7 @@ export const useStyles = makeStyles()(theme => {
       flexDirection: 'row',
       justifyContent: 'flex-end',
       alignItems: 'center',
-      gap: 2,
+      gap: 4,
       [theme.breakpoints.down('sm')]: {
         alignItems: 'center',
         justifyContent: 'center'
@@ -44,7 +55,10 @@ export const useStyles = makeStyles()(theme => {
       borderRadius: 8,
       backgroundColor: colors.invariant.component,
       paddingTop: 0,
-      width: '100%'
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: 10
     },
     inputLabel: {
       ...typography.body3,
@@ -185,7 +199,6 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     unknownWarning: {
-      width: 'fit-content',
       border: `1px solid ${colors.invariant.lightGrey}`,
       ...typography.caption2,
       color: colors.invariant.lightGrey,
@@ -194,7 +207,6 @@ export const useStyles = makeStyles()(theme => {
       borderRadius: 9
     },
     errorWarning: {
-      width: 'fit-content',
       border: `1px solid ${colors.invariant.Error}`,
       ...typography.caption2,
       color: colors.invariant.Error,
@@ -214,6 +226,29 @@ export const useStyles = makeStyles()(theme => {
       transition: 'filter 0.7s ease-in-out',
       minWidth: '12px',
       minHeight: '12px'
+    },
+    inputWrapper: {
+      display: 'flex',
+      width: '100%',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      background: colors.invariant.light,
+      borderRadius: 20
+    },
+    checkbox: {
+      width: 25,
+      height: 25,
+      marginLeft: 3,
+      marginRight: 3,
+      color: colors.invariant.newDark,
+      '&.Mui-checked': {
+        color: colors.invariant.green
+      },
+      '& .MuiSvgIcon-root': {
+        fontSize: 25
+      }
     }
   }
 })
