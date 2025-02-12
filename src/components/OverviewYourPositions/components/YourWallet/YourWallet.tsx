@@ -500,7 +500,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
           <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
             Your Wallet
           </Typography>
-          <Box sx={{ height: '350px', overflowY: 'auto' }}>
+          <Box sx={{ height: '345px', overflowY: 'auto' }}>
             {pools.map(pool => (
               <MobileCard
                 key={pool.id.toString()}
