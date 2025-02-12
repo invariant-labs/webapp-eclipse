@@ -226,7 +226,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                   container
                   spacing={1}
                   sx={{
-                    minHeight: '120px',
+                    height: '130px',
                     overflowY: 'auto',
                     marginTop: '8px',
                     marginLeft: '0 !important',
@@ -254,6 +254,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                         key={position.token}
                         sx={{
                           paddingLeft: '0 !important',
+                          paddingTop: '16px !important',
                           display: 'flex',
                           [theme.breakpoints.down('lg')]: {
                             justifyContent: 'space-between'

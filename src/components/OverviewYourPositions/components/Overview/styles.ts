@@ -3,17 +3,15 @@ import { colors, theme, typography } from '@static/theme'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    minWidth: '47%',
-
-    [theme.breakpoints.down('lg')]: {
-      maxHeight: 'fit-content'
-    },
+    width: '600px',
     backgroundColor: colors.invariant.component,
 
     borderTopLeftRadius: '24px',
     borderBottomLeftRadius: '24px',
     [theme.breakpoints.down('lg')]: {
       borderRadius: '24px',
+      maxHeight: 'fit-content',
+      width: 'auto',
       padding: '0px 16px 0px 16px'
     },
     borderRight: `1px solid  ${colors.invariant.light}`,

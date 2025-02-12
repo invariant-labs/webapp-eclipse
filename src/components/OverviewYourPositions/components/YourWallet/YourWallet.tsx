@@ -229,7 +229,7 @@ const useStyles = makeStyles()(() => ({
     color: colors.invariant.green
   },
   desktopContainer: {
-    width: '70%',
+    width: '600px',
     [theme.breakpoints.down('md')]: {
       display: 'none'
     },
