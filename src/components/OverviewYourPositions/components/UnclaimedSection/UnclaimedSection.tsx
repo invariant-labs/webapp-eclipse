@@ -23,7 +23,22 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
   return (
     <Box className={classes.unclaimedSection}>
       <Box className={classes.titleRow}>
-        <Typography className={classes.unclaimedTitle}>Unclaimed fees (total)</Typography>
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+          <Typography className={classes.unclaimedTitle}>Unclaimed fees (total)</Typography>
+
+          <Button
+            className={classes.claimAllButton}
+            onClick={handleClaimAll}
+            disabled={loading || unclaimedTotal === 0}>
+            Claim all
+          </Button>
+        </Box>
+
         {loading ? (
           <Skeleton variant='text' width={100} height={30} className={classes.unclaimedAmount} />
         ) : (
@@ -32,12 +47,6 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
           </Typography>
         )}
       </Box>
-      <Button
-        className={classes.claimAllButton}
-        onClick={handleClaimAll}
-        disabled={loading || unclaimedTotal === 0}>
-        Claim all
-      </Button>
     </Box>
   )
 }
