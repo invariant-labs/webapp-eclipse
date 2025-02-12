@@ -29,11 +29,13 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       overflow: 'hidden',
       display: 'inline-flex',
       height: 32,
-      [theme.breakpoints.down('sm')]: {
-        height: 48
-      },
+
       [theme.breakpoints.down('md')]: {
         width: '95%'
+      },
+      [theme.breakpoints.down('sm')]: {
+        height: 48,
+        width: '100%'
       }
     },
     switchPoolsMarker: {

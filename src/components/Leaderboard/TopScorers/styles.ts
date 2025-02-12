@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(() => {
   return {
     sectionContent: {
+      width: '100%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -34,6 +35,7 @@ const useStyles = makeStyles()(() => {
       marginTop: '24px'
     },
     topScorersItem: {
+      width: '100%',
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
@@ -51,7 +53,11 @@ const useStyles = makeStyles()(() => {
       paddingBottom: 12,
       paddingLeft: 24,
       paddingRight: 24,
-      background: colors.invariant.component
+      background: colors.invariant.component,
+      [theme.breakpoints.down('sm')]: {
+        boxSizing: 'border-box',
+        width: '100%'
+      }
     },
     skeleton: {
       borderRadius: 24,

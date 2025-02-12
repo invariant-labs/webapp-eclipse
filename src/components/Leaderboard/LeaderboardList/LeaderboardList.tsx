@@ -63,7 +63,12 @@ const getContent = (
           currentNetwork={currentNetwork}
         />
 
-        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+        <Box
+          sx={{
+            paddingLeft: '24px',
+            paddingRight: '24px',
+            [theme.breakpoints.down('sm')]: { paddingLeft: '12px', paddingRight: '12px' }
+          }}>
           {Array.from({ length: userDataExist ? itemsPerPage + 1 : itemsPerPage }, (_, index) => (
             <MemoizedLpLeaderboardItem
               key={index + 1}
@@ -106,7 +111,12 @@ const getContent = (
             currentNetwork={currentNetwork}
           />
         )}
-        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+        <Box
+          sx={{
+            paddingLeft: '24px',
+            paddingRight: '24px',
+            [theme.breakpoints.down('sm')]: { paddingLeft: '12px', paddingRight: '12px' }
+          }}>
           {lpData.length > 0 ? (
             lpData.map((element, index) => (
               <MemoizedLpLeaderboardItem
@@ -153,7 +163,12 @@ const getContent = (
             currentNetwork={currentNetwork}
           />
         )}
-        <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+        <Box
+          sx={{
+            paddingLeft: '24px',
+            paddingRight: '24px',
+            [theme.breakpoints.down('sm')]: { paddingLeft: '12px', paddingRight: '12px' }
+          }}>
           {swapData.length > 0 ? (
             swapData.map((element, index) => (
               <MemoizedSwapLeaderboardItem
@@ -199,7 +214,12 @@ const getContent = (
           currentNetwork={currentNetwork}
         />
       )}
-      <Box sx={{ paddingLeft: '24px', paddingRight: '24px' }}>
+      <Box
+        sx={{
+          paddingLeft: '24px',
+          paddingRight: '24px',
+          [theme.breakpoints.down('sm')]: { paddingLeft: '12px', paddingRight: '12px' }
+        }}>
         {totalData.length > 0 ? (
           totalData.map((element, index) => (
             <MemoizedTotalLeaderboardItem
@@ -314,6 +334,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
         <Box
           sx={{
             [theme.breakpoints.up('md')]: { paddingLeft: '24px', paddingRight: '24px' },
+            [theme.breakpoints.down('sm')]: { paddingLeft: '12px', paddingRight: '12px' },
             maxWidth: '100%',
             display: 'flex',
             justifyContent: 'center',
