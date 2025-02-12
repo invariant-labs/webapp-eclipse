@@ -6,6 +6,7 @@ import { BN } from '@coral-xyz/anchor'
 import { formatNumber, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import EstimatedPoints from './EstimatedPoints'
+import { PositionOpeningMethod } from '@store/consts/types'
 
 export interface IPointsLabel {
   handleClickFAQ: () => void
@@ -15,6 +16,8 @@ export interface IPointsLabel {
   estimatedScalePoints: { min: BN; middle: BN; max: BN }
   isConnected: boolean
   showWarning: boolean
+  singleDepositWarning: boolean
+  positionOpeningMethod: PositionOpeningMethod
 }
 
 export const PointsLabel: React.FC<IPointsLabel> = ({

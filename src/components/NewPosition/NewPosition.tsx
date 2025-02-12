@@ -18,6 +18,7 @@ import {
   convertBalanceToBN,
   determinePositionTokenBlock,
   getConcentrationIndex,
+  nearestTicksBySpacing,
   parseFeeToPathFee,
   printBN,
   trimLeadingZeros,
@@ -265,24 +266,14 @@ export const NewPosition: React.FC<INewPosition> = ({
     tokenBSymbol: 'XYZ'
   }
 
-  const getOtherTokenAmount = (amount: BN, left: number, right: number, byFirst: boolean) => {
-    const printIndex = byFirst ? tokenBIndex : tokenAIndex
-    const calcIndex = byFirst ? tokenAIndex : tokenBIndex
-    if (printIndex === null || calcIndex === null) {
-      return '0.0'
-    }
-
-    const result = calcAmount(amount, left, right, tokens[calcIndex].assetAddress)
-
-    return trimLeadingZeros(printBN(result, tokens[printIndex].decimals))
-  }
-
   const getTokenAmountForPotentialPoints = (amount: BN, byFirst: boolean) => {
     const printIndex = byFirst ? tokenBIndex : tokenAIndex
     const calcIndex = byFirst ? tokenAIndex : tokenBIndex
     if (printIndex === null || calcIndex === null) {
       return '0.0'
     }
+    const minTick = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
+    const maxTick = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
 
     const { leftRange: leftRangeMin, rightRange: rightRangeMin } = calculateConcentrationRange(
       tickSpacing,
@@ -311,8 +302,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     calcAmount(
       amount,
-      leftRangeMin,
-      rightRangeMin,
+      positionOpeningMethod === 'concentration' ? leftRangeMin : minTick,
+      positionOpeningMethod === 'concentration' ? rightRangeMin : maxTick,
       tokens[calcIndex].assetAddress,
       PotentialLiquidity.Min
     )
@@ -323,18 +314,39 @@ export const NewPosition: React.FC<INewPosition> = ({
       tokens[calcIndex].assetAddress,
       PotentialLiquidity.Middle
     )
+
+    const { lowerTick: nearestLowerTick, upperTick: nearestUpperTick } = nearestTicksBySpacing(
+      midPrice.index,
+      tickSpacing,
+      isXtoY
+    )
+
     calcAmount(
       amount,
-      leftRangeMax,
-      rightRangeMax,
+      positionOpeningMethod === 'concentration' ? leftRangeMax : nearestLowerTick,
+      positionOpeningMethod === 'concentration' ? rightRangeMax : nearestUpperTick,
       tokens[calcIndex].assetAddress,
+
       PotentialLiquidity.Max
     )
   }
 
+  const getOtherTokenAmount = (amount: BN, left: number, right: number, byFirst: boolean) => {
+    getTokenAmountForPotentialPoints(amount, byFirst)
+    const printIndex = byFirst ? tokenBIndex : tokenAIndex
+    const calcIndex = byFirst ? tokenAIndex : tokenBIndex
+    if (printIndex === null || calcIndex === null) {
+      return '0.0'
+    }
+
+    const result = calcAmount(amount, left, right, tokens[calcIndex].assetAddress)
+
+    return trimLeadingZeros(printBN(result, tokens[printIndex].decimals))
+  }
+
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale()
-  }, [poolAddress, tokenADeposit, tokenBDeposit])
+  }, [poolAddress, tokenADeposit, tokenBDeposit, positionOpeningMethod, isXtoY])
 
   const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
     const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
@@ -466,6 +478,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
         )?.index ?? undefined)
+
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -654,7 +667,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           <Typography className={classes.title}>Add new position</Typography>
 
           {isMd && (
-            <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+            <Fade in={isPromotedPool} timeout={250}>
               <div>
                 <PointsLabel
                   handleClickFAQ={handleClickFAQ}
@@ -669,6 +682,17 @@ export const NewPosition: React.FC<INewPosition> = ({
                     +tokenADeposit === 0 ||
                     +tokenBDeposit === 0
                   }
+                  singleDepositWarning={
+                    (tokenAIndex !== null &&
+                      tokenBIndex !== null &&
+                      !isWaitingForNewPool &&
+                      blockedToken === PositionTokenBlock.A) ||
+                    (tokenAIndex !== null &&
+                      tokenBIndex !== null &&
+                      !isWaitingForNewPool &&
+                      blockedToken === PositionTokenBlock.B)
+                  }
+                  positionOpeningMethod={positionOpeningMethod}
                 />
               </div>
             </Fade>
@@ -848,10 +872,6 @@ export const NewPosition: React.FC<INewPosition> = ({
                   true
                 )
               )
-              getTokenAmountForPotentialPoints(
-                convertBalanceToBN(value, tokens[tokenAIndex].decimals),
-                true
-              )
             },
             blocked:
               tokenAIndex !== null &&
@@ -882,10 +902,6 @@ export const NewPosition: React.FC<INewPosition> = ({
                   rightRange,
                   false
                 )
-              )
-              getTokenAmountForPotentialPoints(
-                convertBalanceToBN(value, tokens[tokenBIndex].decimals),
-                false
               )
             },
             blocked:
@@ -1055,7 +1071,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+      <Fade in={isPromotedPool} timeout={250}>
         <div>
           <EstimatedPoints
             handleClickFAQ={handleClickFAQ}
@@ -1070,6 +1086,17 @@ export const NewPosition: React.FC<INewPosition> = ({
               +tokenADeposit === 0 ||
               +tokenBDeposit === 0
             }
+            singleDepositWarning={
+              (tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                !isWaitingForNewPool &&
+                blockedToken === PositionTokenBlock.A) ||
+              (tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                !isWaitingForNewPool &&
+                blockedToken === PositionTokenBlock.B)
+            }
+            positionOpeningMethod={positionOpeningMethod}
           />
         </div>
       </Fade>

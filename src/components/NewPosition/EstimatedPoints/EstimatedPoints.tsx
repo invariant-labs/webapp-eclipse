@@ -8,6 +8,7 @@ import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumber, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { PositionOpeningMethod } from '@store/consts/types'
 
 export interface IEstimatedPoints {
   handleClickFAQ: () => void
@@ -17,6 +18,8 @@ export interface IEstimatedPoints {
   estimatedScalePoints: { min: BN; middle: BN; max: BN }
   isConnected: boolean
   showWarning: boolean
+  singleDepositWarning: boolean
+  positionOpeningMethod: PositionOpeningMethod
 }
 
 export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
@@ -26,18 +29,23 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   estimatedPointsPerDay,
   isConnected,
   estimatedScalePoints,
-  showWarning
+  showWarning,
+  singleDepositWarning,
+  positionOpeningMethod
 }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const { minConc, middleConc, maxConc } = useMemo(
     () => ({
-      minConc: concentrationArray[0].toFixed(0),
+      minConc: positionOpeningMethod === 'concentration' ? concentrationArray[0].toFixed(0) : 1,
       middleConc: concentrationArray[Math.floor(concentrationArray.length / 2)].toFixed(0),
-      maxConc: concentrationArray[concentrationArray.length - 1].toFixed(0)
+      maxConc:
+        positionOpeningMethod === 'concentration'
+          ? concentrationArray[concentrationArray.length - 1].toFixed(0)
+          : 2 * +concentrationArray[concentrationArray.length - 1].toFixed(0)
     }),
-    [concentrationArray]
+    [concentrationArray, positionOpeningMethod]
   )
 
   const percentage = useMemo(
@@ -83,6 +91,14 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
       max: maxPoints
     }
   }, [estimatedScalePoints, isConnected])
+
+  const warningText = useMemo(() => {
+    if (singleDepositWarning) {
+      return 'Points are not available for single-asset positions'
+    } else if (showWarning) {
+      return 'First, enter your deposit amounts to estimate your points per day'
+    } else return ''
+  }, [showWarning, singleDepositWarning])
 
   return (
     <Box mt={3} mb={4}>
@@ -138,7 +154,9 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
               <Typography
                 style={{ whiteSpace: 'nowrap', ...typography.heading4, fontSize: '18px' }}>
                 <span>Your Estimated Points: &nbsp;</span>
-                <span className={classes.pinkText}>{pointsPerDayFormat} Points/24h</span>
+                <span className={classes.pinkText}>
+                  {singleDepositWarning ? 0 : pointsPerDayFormat} Points/24h
+                </span>
               </Typography>
               <Grid display='flex' justifyContent='space-between' container mt={1}>
                 <Typography className={classes.sliderLabel}>{minConc}x</Typography>
@@ -149,7 +167,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                 <Box className={classes.gradientProgress} />
               </Box>
 
-              {!showWarning ? (
+              {!warningText ? (
                 <Grid container justifyContent='space-between' alignItems='center'>
                   <Typography
                     display='flex'
@@ -178,7 +196,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
               )}
             </Grid>
           </Grid>
-          {showWarning ? (
+          {warningText ? (
             <Typography
               display='flex'
               mt={isSm ? '24px' : '16px'}
@@ -190,9 +208,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                 alt='Warning icon'
                 style={{ minWidth: '20px' }}
               />
-              <span className={classes.warningText}>
-                First, enter your deposit amounts to estimate your points per day
-              </span>
+              <span className={classes.warningText}>{warningText}</span>
             </Typography>
           ) : (
             <Grid container height={isMd ? 0 : 40} />

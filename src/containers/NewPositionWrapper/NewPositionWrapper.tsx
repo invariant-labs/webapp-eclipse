@@ -89,6 +89,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     max: BN
   }>({ min: new BN(0), middle: new BN(0), max: new BN(0) })
 
+  const potentialLiquidityRef = useRef<{
+    min: BN
+    middle: BN
+    max: BN
+  }>({ min: new BN(0), middle: new BN(0), max: new BN(0) })
+
   const [liquidity, setLiquidity] = useState<BN>(new BN(0))
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
@@ -559,14 +565,17 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           switch (calcPotentialLiquidity) {
             case PotentialLiquidity.Min:
               setPotentialLiquidity(prev => ({ ...prev, min: result.liquidity }))
+              potentialLiquidityRef.current.min = result.liquidity
               break
 
             case PotentialLiquidity.Middle:
               setPotentialLiquidity(prev => ({ ...prev, middle: result.liquidity }))
+              potentialLiquidityRef.current.middle = result.liquidity
               break
 
             case PotentialLiquidity.Max:
               setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
+              potentialLiquidityRef.current.max = result.liquidity
               break
 
             default:
@@ -580,40 +589,44 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           setLiquidity(result.liquidity)
           return result.y
         }
-      }
-      const result = getLiquidityByY(
-        amount,
-        lowerTick,
-        upperTick,
-        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-        true
-      )
-
-      if (calcPotentialLiquidity) {
-        switch (calcPotentialLiquidity) {
-          case PotentialLiquidity.Min:
-            setPotentialLiquidity(prev => ({ ...prev, min: result.liquidity }))
-            break
-
-          case PotentialLiquidity.Middle:
-            setPotentialLiquidity(prev => ({ ...prev, middle: result.liquidity }))
-            break
-
-          case PotentialLiquidity.Max:
-            setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
-            break
-
-          default:
-            break
-        }
       } else {
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
+        const result = getLiquidityByY(
+          amount,
+          lowerTick,
+          upperTick,
+          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
+          true
+        )
+
+        if (calcPotentialLiquidity) {
+          switch (calcPotentialLiquidity) {
+            case PotentialLiquidity.Min:
+              setPotentialLiquidity(prev => ({ ...prev, min: result.liquidity }))
+              potentialLiquidityRef.current.min = result.liquidity
+              break
+
+            case PotentialLiquidity.Middle:
+              setPotentialLiquidity(prev => ({ ...prev, middle: result.liquidity }))
+              potentialLiquidityRef.current.middle = result.liquidity
+              break
+
+            case PotentialLiquidity.Max:
+              setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
+              potentialLiquidityRef.current.max = result.liquidity
+              break
+
+            default:
+              break
+          }
+        } else {
+          if (isMountedRef.current) {
+            liquidityRef.current = result.liquidity
+          }
+
+          setLiquidity(result.liquidity)
+
+          return result.x
         }
-
-        setLiquidity(result.liquidity)
-
-        return result.x
       }
     } catch (error) {
       const result = (byX ? getLiquidityByY : getLiquidityByX)(
@@ -693,6 +706,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       pool => pool.address === poolAddress.toString()
     )!.pointsPerSecond
 
+    console.log(liquidity.toString())
     const estimatedPoints = estimatePointsForLiquidity(
       liquidity,
       allPools[poolIndex] as PoolStructure,

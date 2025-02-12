@@ -975,6 +975,16 @@ export const nearestTickIndex = (
   const log = Math.round(logBase(primaryUnitsPrice, 1.0001))
   return nearestSpacingMultiplicity(log, spacing)
 }
+export const nearestTicksBySpacing = (midPriceTick: number, spacing: number, isXtoY: boolean) => {
+  const base =
+    midPriceTick % spacing === 0
+      ? midPriceTick
+      : isXtoY
+        ? midPriceTick - (midPriceTick % spacing)
+        : midPriceTick + (spacing - (midPriceTick % spacing))
+
+  return { lowerTick: isXtoY ? base : base + spacing, upperTick: isXtoY ? base + spacing : base }
+}
 
 export const calcTicksAmountInRange = (
   min: number,
