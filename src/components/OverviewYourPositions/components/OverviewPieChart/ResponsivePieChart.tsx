@@ -46,13 +46,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
       dark_row: {
         color: '#FFFFFF !important',
         display: 'flex !important',
-        flexDirection: 'column',
-        '& > *': {
-          marginBottom: '4px !important'
-        },
-        '& > *:first-of-type': {
-          color: 'inherit !important'
-        }
+        flexDirection: 'column'
       }
     })
   )
@@ -91,6 +85,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
         justifyContent: 'center'
       }}>
       <PieChart
+        skipAnimation
         series={[
           {
             data: isLoading ? loadingData : data,
@@ -104,8 +99,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
               if (isLoading) return 'Loading...'
               const percentage = ((item.value / total) * 100).toFixed(1)
               return `$${item.value.toLocaleString()} (${percentage}%)`
-            },
-            faded: { innerRadius: 90, additionalRadius: -10 }
+            }
           }
         ]}
         onHighlightChange={item => {
