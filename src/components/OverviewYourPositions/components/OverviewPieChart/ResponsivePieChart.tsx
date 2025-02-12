@@ -2,53 +2,65 @@ import { Box } from '@mui/material'
 import { PieChart } from '@mui/x-charts'
 import { makeStyles } from 'tss-react/mui'
 import { colors } from '@static/theme'
+import { useState } from 'react'
 
 const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const total = data?.reduce((sum, item) => sum + item.value, 0) || 0
 
-  const useStyles = makeStyles()(() => ({
-    dark_background: {
-      backgroundColor: `${colors.invariant.componentDark} !important`,
-      color: '#FFFFFF !important',
-      borderRadius: '8px !important',
-      display: 'flex !important',
-      flexDirection: 'column',
-      padding: '8px !important',
-      minWidth: '150px !important',
-      boxShadow: '27px 39px 75px -30px #000'
-    },
-    dark_paper: {
-      backgroundColor: `${colors.invariant.componentDark} !important`,
-      color: '#FFFFFF !important',
-      boxShadow: 'none !important'
-    },
-    dark_table: {
-      color: '#FFFFFF !important',
-      display: 'flex !important',
-      flexDirection: 'column',
-      gap: '4px'
-    },
-    dark_cell: {
-      color: '#FFFFFF !important',
-      padding: '2px 0 !important'
-    },
-    dark_mark: {
-      display: 'none !important'
-    },
-    dark_row: {
-      color: '#FFFFFF !important',
-      display: 'flex !important',
-      flexDirection: 'column',
-      '& > *': {
-        marginBottom: '4px !important'
+  const useStyles = makeStyles<{ chartColors: string[]; hoveredColor: string | null }>()(
+    (_theme, { chartColors, hoveredColor }) => ({
+      dark_background: {
+        backgroundColor: `${colors.invariant.componentDark} !important`,
+        borderRadius: '8px !important',
+        display: 'flex !important',
+        flexDirection: 'column',
+        padding: '8px !important',
+        minWidth: '150px !important',
+        boxShadow: '27px 39px 75px -30px #000'
       },
-      '& > *:first-of-type': {
-        color: 'inherit !important'
+      dark_paper: {
+        backgroundColor: `${colors.invariant.componentDark} !important`,
+        color: '#FFFFFF !important',
+        boxShadow: 'none !important'
+      },
+      value_cell: {
+        color: '#fff !important'
+      },
+      label_cell: {
+        color: `${hoveredColor || chartColors?.[0]} !important`,
+        fontWeight: 'bold'
+      },
+      dark_table: {
+        color: '#FFFFFF !important',
+        display: 'flex !important',
+        flexDirection: 'column',
+        gap: '4px'
+      },
+      dark_cell: {
+        padding: '2px 0 !important'
+      },
+      dark_mark: {
+        display: 'none !important'
+      },
+      dark_row: {
+        color: '#FFFFFF !important',
+        display: 'flex !important',
+        flexDirection: 'column',
+        '& > *': {
+          marginBottom: '4px !important'
+        },
+        '& > *:first-of-type': {
+          color: 'inherit !important'
+        }
       }
-    }
-  }))
+    })
+  )
 
-  const { classes } = useStyles()
+  const { classes } = useStyles({
+    chartColors,
+    hoveredColor: hoveredIndex !== null ? chartColors[hoveredIndex] : null
+  })
 
   const loadingData = [
     {
@@ -62,7 +74,10 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
   const getPathStyles = index => ({
     stroke: 'transparent',
     outline: 'none',
-    filter: `drop-shadow(0px 0px 2px ${isLoading ? loadingColors[0] : chartColors[index]})`
+    filter: `drop-shadow(0px 0px ${hoveredIndex === index ? '4px' : '2px'} ${
+      isLoading ? loadingColors[0] : chartColors[index]
+    })`,
+    transition: 'all 0.2s ease-in-out'
   })
 
   return (
@@ -93,6 +108,9 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
             faded: { innerRadius: 90, additionalRadius: -10 }
           }
         ]}
+        onHighlightChange={item => {
+          setHoveredIndex(item?.dataIndex ?? null)
+        }}
         sx={{
           '& path': {
             '&:nth-of-type(1)': getPathStyles(0),
@@ -112,6 +130,8 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
           trigger: 'item',
           classes: {
             root: classes.dark_background,
+            valueCell: classes.value_cell,
+            labelCell: classes.label_cell,
             paper: classes.dark_paper,
             table: classes.dark_table,
             cell: classes.dark_cell,
