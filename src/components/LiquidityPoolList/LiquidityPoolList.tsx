@@ -141,16 +141,16 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   return (
     <div className={classNames({ [classes.loadingOverlay]: isLoading })}>
       <Grid container direction='column' classes={{ root: classes.container }}>
-        <>
-          <PoolListItem
-            displayType='header'
-            onSort={setSortType}
-            sortType={sortType}
-            network={network}
-            showAPY={showAPY}
-          />
-          {data.length > 0 || isLoading ? (
-            paginator(page).map((element, index) => (
+        <PoolListItem
+          displayType='header'
+          onSort={setSortType}
+          sortType={sortType}
+          network={network}
+          showAPY={showAPY}
+        />
+        {data.length > 0 || isLoading ? (
+          <>
+            {paginator(page).map((element, index) => (
               <PoolListItem
                 displayType='token'
                 tokenIndex={index + 1 + (page - 1) * 10}
@@ -181,33 +181,39 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
                 points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
                 isPromoted={element.isPromoted}
               />
-            ))
-          ) : (
-            <Grid className={classes.noPoolFoundContainer}>
-              <img className={classes.img} src={icons.empty} alt='Not connected' />
-              <Typography className={classes.noPoolFoundPlaceholder}>No pool found...</Typography>
-              <Typography className={classes.noPoolFoundPlaceholder}>
-                Add pool by pressing the button!
-              </Typography>
-              <Button
-                className={classes.addPoolButton}
-                onClick={() => navigate('/newPosition')}
-                variant='contained'>
-                Add pool
-              </Button>
-            </Grid>
+            ))}
+            {new Array(10 - paginator(page).length).fill('').map((_, index) => (
+              <div
+                className={classNames(classes.emptyRow, {
+                  [classes.emptyRowBorder]: index === 10 - paginator(page).length - 1
+                })}></div>
+            ))}
+          </>
+        ) : (
+          <Grid className={classes.noPoolFoundContainer}>
+            <img className={classes.img} src={icons.empty} alt='Not connected' />
+            <Typography className={classes.noPoolFoundPlaceholder}>No pool found...</Typography>
+            <Typography className={classes.noPoolFoundPlaceholder}>
+              Add pool by pressing the button!
+            </Typography>
+            <Button
+              className={classes.addPoolButton}
+              onClick={() => navigate('/newPosition')}
+              variant='contained'>
+              Add pool
+            </Button>
+          </Grid>
+        )}
+        <Grid className={classes.pagination}>
+          {pages > 1 && (
+            <PaginationList
+              pages={pages}
+              defaultPage={1}
+              handleChangePage={handleChangePagination}
+              variant='flex-end'
+            />
           )}
-          {pages > 1 ? (
-            <Grid className={classes.pagination}>
-              <PaginationList
-                pages={pages}
-                defaultPage={1}
-                handleChangePage={handleChangePagination}
-                variant='flex-end'
-              />
-            </Grid>
-          ) : null}
-        </>
+        </Grid>
       </Grid>
     </div>
   )
