@@ -1,8 +1,9 @@
-import { Box, Typography, Button, Skeleton } from '@mui/material'
+import { Box, Typography, Button, Skeleton, useMediaQuery } from '@mui/material'
 import { useStyles } from '../Overview/styles'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/positions'
 import { formatNumber2 } from '@utils/utils'
+import { theme } from '@static/theme'
 
 interface UnclaimedSectionProps {
   unclaimedTotal: number
@@ -15,7 +16,7 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
 }) => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
-
+  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const handleClaimAll = () => {
     dispatch(actions.claimAllFee())
   }
@@ -30,13 +31,14 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
             alignItems: 'center'
           }}>
           <Typography className={classes.unclaimedTitle}>Unclaimed fees (total)</Typography>
-
-          <Button
-            className={classes.claimAllButton}
-            onClick={handleClaimAll}
-            disabled={loading || unclaimedTotal === 0}>
-            Claim all
-          </Button>
+          {!isLg && (
+            <Button
+              className={classes.claimAllButton}
+              onClick={handleClaimAll}
+              disabled={loading || unclaimedTotal === 0}>
+              Claim all
+            </Button>
+          )}
         </Box>
 
         {loading ? (
@@ -47,6 +49,14 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
           </Typography>
         )}
       </Box>
+      {isLg && (
+        <Button
+          className={classes.claimAllButton}
+          onClick={handleClaimAll}
+          disabled={loading || unclaimedTotal === 0}>
+          Claim all
+        </Button>
+      )}
     </Box>
   )
 }

@@ -112,7 +112,8 @@ export const useStyles = makeStyles()(() => ({
     },
 
     [theme.breakpoints.down('lg')]: {
-      width: '100%'
+      width: '100%',
+      marginLeft: 0
     },
 
     '&:disabled': {
