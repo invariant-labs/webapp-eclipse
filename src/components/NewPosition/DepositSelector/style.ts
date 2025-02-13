@@ -256,7 +256,27 @@ export const useStyles = makeStyles()(theme => {
       },
       '& .MuiSvgIcon-root': {
         fontSize: 25
+      },
+      padding: 0,
+      '& .MuiIconButton-label': {
+        width: 20,
+        height: 20,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        margin: 0
       }
+    },
+    customIcon: {
+      width: 20,
+      height: 20,
+      border: `1px solid ${colors.invariant.newDark}`,
+      borderRadius: 3,
+      boxSizing: 'border-box',
+      backgroundColor: colors.invariant.component,
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
     }
   }
 })

@@ -708,6 +708,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         open={settings}
       />
       <Typography className={classes.sectionTitle}>Tokens</Typography>
+
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
         <Grid container className={classes.selects} direction='row' justifyContent='space-between'>
           <Grid className={classes.selectWrapper}>
@@ -838,6 +839,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 setTokenACheckbox(e.target.checked)
               }}
               className={classes.checkbox}
+              icon={<span className={classes.customIcon} />}
             />
           )}
           <DepositAmountInput
@@ -895,6 +897,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 setTokenBCheckbox(e.target.checked)
               }}
               className={classes.checkbox}
+              icon={<span className={classes.customIcon} />}
             />
           )}
           <DepositAmountInput
