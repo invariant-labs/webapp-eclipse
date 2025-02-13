@@ -7,7 +7,7 @@ import { theme } from '@static/theme'
 
 interface UnclaimedSectionProps {
   unclaimedTotal: number
-  loading?: boolean // Add loading prop
+  loading?: boolean
 }
 
 export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
