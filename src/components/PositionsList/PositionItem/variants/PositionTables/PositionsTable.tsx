@@ -6,8 +6,7 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow,
-  Typography
+  TableRow
 } from '@mui/material'
 import { PositionTableRow } from './PositionsTableRow'
 import { IPositionItem } from '../../../types'

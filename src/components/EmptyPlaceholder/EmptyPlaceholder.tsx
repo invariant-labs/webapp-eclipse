@@ -10,7 +10,11 @@ export interface IEmptyPlaceholder {
   className?: string
   style?: React.CSSProperties
   withButton?: boolean
+  mainTitle?: string
+  roundedCorners?: boolean
+  blurWidth?: string
   buttonName?: string
+  height?: string
   newVersion?: boolean
 }
 
@@ -19,9 +23,13 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
   onAction,
   withButton = true,
   buttonName,
-  newVersion = false
+  mainTitle,
+  blurWidth,
+  height,
+  newVersion = false,
+  roundedCorners = false
 }) => {
-  const { classes } = useStyles({ newVersion })
+  const { classes } = useStyles({ newVersion, roundedCorners, height, blurWidth })
 
   return (
     <>
@@ -29,7 +37,9 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
       <Grid className={classNames(classes.container, 'blurLayer')}>
         <Grid className={classNames(classes.root, 'blurInfo')}>
           <img className={classes.img} src={icons.empty} alt='Not connected' />
-          <Typography className={classes.desc}>It's empty here...</Typography>
+          <Typography className={classes.desc}>
+            {mainTitle ? mainTitle : `It's empty here...`}{' '}
+          </Typography>
           {desc?.length && <Typography className={classes.desc}>{desc}</Typography>}
           {withButton && (
             <Button className={classes.button} onClick={onAction} variant='contained'>

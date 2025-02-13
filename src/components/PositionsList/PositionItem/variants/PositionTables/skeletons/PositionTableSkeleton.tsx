@@ -1,7 +1,5 @@
 import React from 'react'
 import { Box, Skeleton, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
-import { makeStyles } from 'tss-react/mui'
-import { colors } from '@static/theme'
 import { useDesktopSkeletonStyles } from './styles/desktopSkeleton'
 
 export const PositionTableSkeleton: React.FC = () => {
