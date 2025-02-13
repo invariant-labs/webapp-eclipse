@@ -572,44 +572,39 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const renderPriceImpactWarning = useCallback(
     () => (
-      <>
-        {simulation?.swapSimulation?.priceImpact &&
-          alignment === DepositOptions.Auto &&
-          isAutoSwapAvailable &&
-          (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) && (
-            <TooltipHover text='Impact on the price'>
-              <Box
-                className={
-                  new BN(simulation?.swapSimulation?.priceImpact).lt(
-                    toDecimal(+Number(priceImpact).toFixed(4), 2)
-                  )
-                    ? classes.unknownWarning
-                    : classes.errorWarning
-                }>
-                <img
-                  src={icons.infoCircle}
-                  alt=''
-                  width='12px'
-                  style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-                  className={
-                    new BN(simulation?.swapSimulation?.priceImpact).lt(
-                      toDecimal(+Number(priceImpact).toFixed(4), 2)
-                    )
-                      ? classes.grayscaleIcon
-                      : classes.errorIcon
-                  }
-                />
-                Price impact:{' '}
-                {simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
-                  ? Number(
-                      printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
-                    ).toFixed(2)
-                  : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
-                %
-              </Box>
-            </TooltipHover>
-          )}
-      </>
+      <TooltipHover text='Impact on the price'>
+        <Box
+          className={
+            new BN(simulation?.swapSimulation?.priceImpact ?? 0).lt(
+              toDecimal(+Number(priceImpact).toFixed(4), 2)
+            )
+              ? classes.unknownWarning
+              : classes.errorWarning
+          }>
+          <img
+            src={icons.infoCircle}
+            alt=''
+            width='12px'
+            style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+            className={
+              new BN(simulation?.swapSimulation?.priceImpact ?? 0).lt(
+                toDecimal(+Number(priceImpact).toFixed(4), 2)
+              )
+                ? classes.grayscaleIcon
+                : classes.errorIcon
+            }
+          />
+          Price impact:{' '}
+          {!simulation || !simulation.swapSimulation
+            ? '0'
+            : simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
+              ? Number(
+                  printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
+                ).toFixed(2)
+              : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
+          %
+        </Box>
+      </TooltipHover>
     ),
     [simulation, alignment, tokenACheckbox, tokenBCheckbox]
   )
@@ -662,7 +657,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         simulationParams.actualPoolPrice
       )
     }
-
+    console.log(result)
     if (!!result) {
       setSimulation(result)
     }
@@ -774,7 +769,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       <Grid container className={classes.depositHeader}>
         <Box className={classes.depositHeaderContainer}>
           <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
-          {!breakpoint && renderPriceImpactWarning()}
+          {!breakpoint &&
+            simulation?.swapSimulation?.priceImpact &&
+            alignment === DepositOptions.Auto &&
+            isAutoSwapAvailable &&
+            (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
+            renderPriceImpactWarning()}
           <Box className={classes.depositOptions}>
             <Tooltip title={'Placeholder'} classes={{ tooltip: classes.tooltip }}>
               <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
@@ -824,7 +824,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </Button>
           </Box>
         </Box>
-        {breakpoint && simulation && simulation.swapSimulation && (
+        {breakpoint && alignment === DepositOptions.Auto && isAutoSwapAvailable && (
           <Box className={classes.depositHeaderContainer}>{renderPriceImpactWarning()}</Box>
         )}
       </Grid>
