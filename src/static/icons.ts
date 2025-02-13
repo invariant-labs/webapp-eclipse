@@ -75,8 +75,10 @@ import telegramFill from './svg/telegramFill.svg'
 import githubFill from './svg/githubFill.svg'
 import mediumFill from './svg/MediumFill.svg'
 import docsFill from './svg/docsFill.svg'
+import tokenCreator from './svg/tokenCreator.svg'
 
 const icons: { [key: string]: string } = {
+  tokenCreator,
   docsFill,
   mediumFill,
   githubFill,

@@ -17,13 +17,14 @@ const useStyles = makeStyles()(() => {
       zIndex: 1200
     },
     navbox: {
+      maxHeight: 65,
       textDecoration: 'none',
       position: 'relative',
       flex: 1,
       display: 'flex',
       flexDirection: 'column',
-      justifyContent: 'center',
-      gap: '12px',
+
+      gap: '8px',
       alignItems: 'center',
       padding: '10px 0',
       borderRight: `1px solid ${colors.invariant.light}`,

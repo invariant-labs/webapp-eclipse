@@ -16,39 +16,39 @@ export const FooterNavbar = () => {
       label: 'Swap',
       icon: icons.swapArrows,
       url: 'exchange',
-      width: 31
+      width: 33
     },
     {
       label: 'Liquidity',
       icon: icons.liquidityIcon,
       url: 'liquidity',
-      width: 18
+      width: 20
     },
     {
       label: 'Portfolio',
       icon: icons.walletIcon,
       url: 'portfolio',
-      width: 24
+      width: 26
     },
 
     typeOfNetwork === NetworkType.Testnet
       ? {
           label: 'Creator',
-          icon: icons.airdrop,
+          icon: icons.tokenCreator,
           url: 'creator',
-          width: 22
+          width: 33
         }
       : {
           label: 'Points',
           icon: icons.airdrop,
           url: 'points',
-          width: 24
+          width: 26
         },
     {
       label: 'Stats',
       icon: icons.statsIcon,
       url: 'statistics',
-      width: 28
+      width: 30
     }
   ]
 
