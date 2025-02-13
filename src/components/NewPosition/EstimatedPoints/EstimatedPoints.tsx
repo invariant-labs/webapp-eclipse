@@ -48,9 +48,64 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
     [concentrationArray, positionOpeningMethod]
   )
 
+  const warningText = useMemo(() => {
+    if (singleDepositWarning) {
+      return 'Points are not available for single-asset positions'
+    } else if (showWarning) {
+      return 'First, enter your deposit amounts to estimate your points per day'
+    } else return ''
+  }, [showWarning, singleDepositWarning])
+
+  const rangeConcentrationArray = useMemo(() => {
+    const rangeConcentration = [...concentrationArray]
+    rangeConcentration.unshift(1)
+    rangeConcentration.push(2 * +concentrationArray[concentrationArray.length - 1].toFixed(0))
+
+    return rangeConcentration
+  }, [concentrationArray])
+
+  const closestMultiplierForRangeMode = useMemo(() => {
+    const minValue = +printBN(estimatedScalePoints.min, LEADERBOARD_DECIMAL)
+    const maxValue = +printBN(estimatedScalePoints.max, LEADERBOARD_DECIMAL)
+    const estimatedPoints = +printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL)
+
+    const lastMultiplier = rangeConcentrationArray[rangeConcentrationArray.length - 1]
+    const exponent = Math.log(maxValue / minValue) / Math.log(lastMultiplier)
+
+    const valuesArray = rangeConcentrationArray.map(m => minValue * Math.pow(m, exponent))
+
+    let closestIndex = 0
+    let smallestDiff = Math.abs(valuesArray[0] - estimatedPoints)
+
+    for (let i = 1; i < valuesArray.length; i++) {
+      const diff = Math.abs(valuesArray[i] - estimatedPoints)
+      if (diff < smallestDiff) {
+        smallestDiff = diff
+        closestIndex = i
+      }
+    }
+
+    return closestIndex
+  }, [rangeConcentrationArray, estimatedScalePoints])
+
   const percentage = useMemo(
-    () => +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0),
-    [concentrationIndex, concentrationArray]
+    () =>
+      showWarning || singleDepositWarning
+        ? 0
+        : positionOpeningMethod === 'concentration'
+          ? +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0)
+          : +((closestMultiplierForRangeMode * 100) / (rangeConcentrationArray.length - 1)).toFixed(
+              0
+            ),
+    [
+      closestMultiplierForRangeMode,
+      rangeConcentrationArray,
+      concentrationIndex,
+      concentrationArray,
+      warningText.length,
+      estimatedPointsPerDay.toString(),
+      estimatedScalePoints.max.toString()
+    ]
   )
 
   const { classes } = useStyles({ percentage })
@@ -91,14 +146,6 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
       max: maxPoints
     }
   }, [estimatedScalePoints, isConnected])
-
-  const warningText = useMemo(() => {
-    if (singleDepositWarning) {
-      return 'Points are not available for single-asset positions'
-    } else if (showWarning) {
-      return 'First, enter your deposit amounts to estimate your points per day'
-    } else return ''
-  }, [showWarning, singleDepositWarning])
 
   return (
     <Box mt={3} mb={4}>
