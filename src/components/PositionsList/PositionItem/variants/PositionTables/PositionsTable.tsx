@@ -120,7 +120,7 @@ const useStyles = makeStyles()((_theme: Theme) => ({
   },
   tableBody: {
     display: 'block',
-    maxHeight: 'calc(4 * (20px + 85px))',
+    maxHeight: 'calc(4 * (20px + 82px))',
     overflowY: 'auto',
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',

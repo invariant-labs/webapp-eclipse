@@ -40,6 +40,8 @@ import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 const useStyles = makeStyles()((theme: Theme) => ({
   cellBase: {
     padding: '20px',
+    paddingTop: '8px !important',
+    paddingBottom: '8px !important',
     background: 'inherit',
     border: 'none',
     whiteSpace: 'nowrap',
