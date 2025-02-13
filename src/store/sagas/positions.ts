@@ -1358,6 +1358,8 @@ export function* handleClaimAllFees() {
     yield put(snackbarsActions.remove(loaderSigningTx))
     closeSnackbar(loaderClaimAllFees)
     yield put(snackbarsActions.remove(loaderClaimAllFees))
+
+    yield put(actions.getPositionsList())
   } catch (error) {
     console.log(error)
 
