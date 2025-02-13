@@ -22,6 +22,7 @@ import {
   convertBalanceToBN,
   findPairs,
   handleSimulate,
+  handleSimulateWithHop,
   printBN,
   trimLeadingZeros
 } from '@utils/utils'
@@ -41,12 +42,13 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
-import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
+import { Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 
 export interface Pools {
   tokenX: PublicKey
@@ -124,6 +126,18 @@ export interface ISwap {
   >
   promotedSwapPairs: { tokenX: string; tokenY: string }[]
   swapMultiplier: string
+  market: Market
+  tokensDict: Record<string, SwapToken>
+}
+
+export type SimulationPath = {
+  tokenFrom: SwapToken | null
+  tokenBetween: SwapToken | null
+  tokenTo: SwapToken | null
+  firstFee: BN | null
+  secondFee: BN | null
+  firstAmount: BN | null
+  secondAmount: BN | null
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -164,7 +178,9 @@ export const Swap: React.FC<ISwap> = ({
   pointsPerUsdFee,
   feeds,
   promotedSwapPairs,
-  swapMultiplier
+  swapMultiplier,
+  market,
+  tokensDict
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -211,6 +227,20 @@ export const Swap: React.FC<ISwap> = ({
   })
   const [isPointsPopoverOpen, setIsPointsPopoverOpen] = useState(false)
   const pointsBoxRef = useRef<HTMLDivElement>(null)
+  const [simulateWithHopResult, setSimulateWithHopResult] = useState<{
+    simulation: SimulationTwoHopResult | null
+    route: [Pair, Pair] | null
+  }>({ simulation: null, route: null })
+  const [simulationPath, setSimulationPath] = useState<SimulationPath>({
+    tokenFrom: null,
+    tokenBetween: null,
+    tokenTo: null,
+    firstFee: null,
+    secondFee: null,
+    firstAmount: null,
+    secondAmount: null
+  })
+
   const handlePointerEnter = () => {
     setIsPointsPopoverOpen(true)
   }
@@ -447,6 +477,15 @@ export const Swap: React.FC<ISwap> = ({
           convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
           true
         ).then(value => setSimulateResult(value))
+
+        const result = await handleSimulateWithHop(
+          market,
+          tokens[tokenFromIndex].assetAddress,
+          tokens[tokenToIndex].assetAddress,
+          convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+          true
+        )
+        setSimulateWithHopResult(result)
       } else if (inputRef === inputTarget.TO) {
         await handleSimulate(
           pools,
@@ -458,9 +497,59 @@ export const Swap: React.FC<ISwap> = ({
           convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
           false
         ).then(value => setSimulateResult(value))
+
+        const result = await handleSimulateWithHop(
+          market,
+          tokens[tokenFromIndex].assetAddress,
+          tokens[tokenToIndex].assetAddress,
+          convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+          false
+        )
+        setSimulateWithHopResult(result)
       }
     }
   }
+
+  useEffect(() => {
+    if (
+      simulateWithHopResult.simulation &&
+      simulateWithHopResult.route &&
+      (inputRef === inputTarget.FROM
+        ? simulateWithHopResult?.simulation.totalAmountOut.gt(simulateResult.amountOut)
+        : simulateWithHopResult?.simulation.totalAmountIn.lt(
+            convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals)
+          ))
+    ) {
+      setSimulationPath({
+        tokenFrom: tokens[tokenFromIndex ?? 0],
+        tokenBetween:
+          tokensDict[
+            simulateWithHopResult.simulation.xToYHopOne
+              ? simulateWithHopResult.route[0].tokenY.toString()
+              : simulateWithHopResult.route[0].tokenX.toString()
+          ],
+        tokenTo: tokens[tokenToIndex ?? 0],
+        firstFee: simulateWithHopResult.route[0].feeTier.fee.toString(),
+        secondFee: simulateWithHopResult.route[1].feeTier.fee.toString(),
+        firstAmount: simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
+          simulateWithHopResult.simulation.swapHopOne.accumulatedFee
+        ),
+        secondAmount: simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountIn.add(
+          simulateWithHopResult.simulation.swapHopTwo.accumulatedFee
+        )
+      })
+    } else {
+      setSimulationPath({
+        tokenFrom: tokens[tokenFromIndex ?? 0],
+        tokenBetween: null,
+        tokenTo: tokens[tokenToIndex ?? 0],
+        firstFee: pools[simulateResult.poolIndex]?.fee ?? new BN(0),
+        secondFee: null,
+        firstAmount: convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals),
+        secondAmount: null
+      })
+    }
+  }, [simulateResult, simulateWithHopResult, tokenToIndex, tokenFromIndex])
 
   const getIsXToY = (fromToken: PublicKey, toToken: PublicKey) => {
     const swapPool = pools.find(
@@ -1099,8 +1188,7 @@ export const Swap: React.FC<ISwap> = ({
             priceImpact={simulateResult.priceImpact}
             slippage={+slippTolerance}
             isLoadingRate={getStateMessage() === 'Loading'}
-            tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
-            tokenTo={tokenToIndex !== null ? tokens[tokenToIndex] : null}
+            simulationPath={simulationPath}
           />
           <TokensInfo
             tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}

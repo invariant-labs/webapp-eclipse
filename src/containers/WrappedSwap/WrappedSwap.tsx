@@ -19,7 +19,7 @@ import {
   nearestPoolTicksForPair,
   isLoadingPathTokens
 } from '@store/selectors/pools'
-import { network, timeoutError } from '@store/selectors/solanaConnection'
+import { network, rpcAddress, timeoutError } from '@store/selectors/solanaConnection'
 import {
   status,
   swapTokens,
@@ -45,6 +45,9 @@ import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
 import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors/leaderboard'
+import { getMarketProgramSync } from '@utils/web3/programs/amm'
+import { getEclipseWallet } from '@utils/web3/wallet'
+import { IWallet } from '@invariant-labs/sdk-eclipse'
 
 type Props = {
   initialTokenFrom: string
@@ -79,6 +82,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
+  const rpc = useSelector(rpcAddress)
+  const wallet = getEclipseWallet()
+  const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
 
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
@@ -408,6 +414,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       feeds={priceFeeds}
       promotedSwapPairs={promotedSwapPairs}
       swapMultiplier={multiplyer}
+      market={market}
+      tokensDict={tokensDict}
     />
   )
 }

@@ -3,36 +3,33 @@ import { useStyles } from './styles'
 import { useMediaQuery } from '@mui/material'
 import routeArrow1 from '@static/svg/routeArrow1.svg'
 import routeArrow2 from '@static/svg/routeArrow2.svg'
-import tokenImg from '@static/svg/selectToken.svg'
 import { theme } from '@static/theme'
-import { SwapToken } from '@store/selectors/solanaWallet'
 import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { printBN } from '@utils/utils'
+import { SimulationPath } from '@components/Swap/Swap'
 
 interface IProps {
-  tokenFrom: SwapToken | null
-  tokenTo: SwapToken | null
-  tokenBetween: SwapToken | null
-  baseFee: BN
-  firstFee: BN | null
-  secondFee: BN | null
-  onePoolType: boolean
-  amountIn: BN | null
-  amountOut: BN | null
+  simulationPath: SimulationPath
 }
 
-const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee, onePoolType }) => {
-  const mockedData = {
-    mockedFee: 0.01,
-    mockedTicker: 'ETH',
-    mockedAmont: 3203
+const RouteBox: React.FC<IProps> = ({
+  simulationPath: {
+    tokenFrom,
+    tokenBetween,
+    tokenTo,
+    firstFee,
+    secondFee,
+    firstAmount,
+    secondAmount
   }
-
+}) => {
   const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
 
+  const onePoolType = tokenBetween !== null
   const { classes } = useStyles({ onePoolType })
-  const feePercent = Number(printBN(baseFee, DECIMAL - 2))
+  const firstFeePercent = Number(printBN(firstFee ?? new BN(0), DECIMAL - 2))
+  const secondFeePercent = Number(printBN(secondFee ?? new BN(0), DECIMAL - 2))
 
   return (
     <Grid
@@ -43,7 +40,7 @@ const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee, onePoolType }
       {isSmallDevice ? (
         <Typography className={classes.tokenLabel}>
           {tokenFrom?.symbol} {'-> '}
-          {onePoolType && `${mockedData.mockedTicker} -> `}
+          {onePoolType && `${tokenBetween?.symbol} -> `}
           {tokenTo?.symbol}
         </Typography>
       ) : (
@@ -53,9 +50,7 @@ const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee, onePoolType }
             <Typography className={classes.tokenLabel}>{tokenFrom?.symbol}</Typography>
           </Box>
           <Box className={classes.arrowContainer}>
-            <Typography className={classes.routeLabel}>
-              {onePoolType ? mockedData.mockedFee : feePercent}% fee
-            </Typography>
+            <Typography className={classes.routeLabel}>{firstFeePercent}% fee</Typography>
             <img
               className={classes.routeIcon}
               src={onePoolType ? routeArrow1 : routeArrow2}
@@ -63,20 +58,21 @@ const RouteBox: React.FC<IProps> = ({ tokenFrom, tokenTo, baseFee, onePoolType }
             />
 
             <Typography className={classes.routeLabel}>
-              {onePoolType ? `${mockedData.mockedAmont} ${mockedData.mockedTicker}` : '100%'}
+              {`${printBN(firstAmount ?? new BN(0), tokenFrom?.decimals ?? 0)} ${tokenFrom?.symbol}`}
             </Typography>
           </Box>
           {onePoolType && (
             <>
               <Box className={classes.tokenContainer}>
-                <img src={tokenImg} className={classes.tokenIcon} />
-                <Typography className={classes.tokenLabel}>{mockedData.mockedTicker}</Typography>
+                <img src={tokenBetween?.logoURI} className={classes.tokenIcon} />
+                <Typography className={classes.tokenLabel}>{tokenBetween?.symbol}</Typography>
               </Box>
               <Box className={classes.arrowContainer}>
-                <Typography className={classes.routeLabel}>{mockedData.mockedFee}% fee</Typography>
+                <Typography className={classes.routeLabel}>{secondFeePercent}% fee</Typography>
                 <img className={classes.routeIcon} src={routeArrow1} alt='route arrow' />
                 <Typography className={classes.routeLabel}>
-                  {mockedData.mockedAmont} {mockedData.mockedTicker}
+                  {printBN(secondAmount ?? new BN(0), tokenBetween?.decimals ?? 0)}{' '}
+                  {tokenBetween?.symbol}
                 </Typography>
               </Box>
             </>

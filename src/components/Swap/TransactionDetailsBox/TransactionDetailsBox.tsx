@@ -7,28 +7,26 @@ import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 import RouteBox from './RouteBox/RouteBox'
-import { SwapToken } from '@store/selectors/solanaWallet'
+import { SimulationPath } from '../Swap'
 
 interface IProps {
-  tokenFrom: SwapToken | null
-  tokenTo: SwapToken | null
   open: boolean
   fee: BN
   exchangeRate: { val: number; symbol: string; decimal: number }
   slippage: number
   priceImpact: BN
   isLoadingRate?: boolean
+  simulationPath: SimulationPath
 }
 
 const TransactionDetailsBox: React.FC<IProps> = ({
   open,
-  tokenFrom,
-  tokenTo,
   fee,
   exchangeRate,
   slippage,
   priceImpact,
-  isLoadingRate = false
+  isLoadingRate = false,
+  simulationPath
 }) => {
   const { classes } = useStyles({ open })
 
@@ -67,28 +65,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           <Typography className={classes.value}>{slippage}%</Typography>
         </Grid>
       </Grid>
-      <RouteBox
-        tokenFrom={tokenFrom}
-        tokenTo={tokenTo}
-        baseFee={fee}
-        onePoolType={true}
-        tokenBetween={null}
-        firstFee={null}
-        secondFee={null}
-        amountIn={null}
-        amountOut={null}
-      />
-      <RouteBox
-        tokenFrom={tokenFrom}
-        tokenTo={tokenTo}
-        baseFee={fee}
-        onePoolType={false}
-        tokenBetween={null}
-        firstFee={null}
-        secondFee={null}
-        amountIn={null}
-        amountOut={null}
-      />
+      <RouteBox simulationPath={simulationPath} />
     </Grid>
   )
 }

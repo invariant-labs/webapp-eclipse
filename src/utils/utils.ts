@@ -101,6 +101,8 @@ import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
 import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { whitelistEssentials } from '@invariant-labs/sdk-eclipse'
+import { SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse/src'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1171,6 +1173,50 @@ export const handleSimulate = async (
     ...successData,
     error: []
   }
+}
+
+export const handleSimulateWithHop = async (
+  market: Market,
+  tokenIn: PublicKey,
+  tokenOut: PublicKey,
+  amount: BN,
+  byAmountIn: boolean
+) => {
+  const { whitelistPools, whitelistTickmaps, whitelistPoolSet, whitelistRouteCandidates } =
+    whitelistEssentials(tokenIn, tokenOut, market.program.programId)
+
+  const accounts = await market.fetchAccounts({
+    pools: whitelistPools,
+    tickmaps: whitelistTickmaps
+  })
+
+  const accounts2 = await market.fetchAccounts({
+    ticks: market.gatherTwoHopTickAddresses(whitelistPoolSet, tokenIn, tokenOut, accounts)
+  })
+
+  accounts.ticks = { ...accounts.ticks, ...accounts2.ticks }
+
+  const simulations = await market.routeTwoHop(
+    tokenIn,
+    tokenOut,
+    amount,
+    byAmountIn,
+    whitelistRouteCandidates,
+    accounts
+  )
+
+  let maxTotalAmountOut = new BN(0)
+  let maxSimulation: SimulationTwoHopResult | null = null
+  let maxRoute: [Pair, Pair] | null = null
+  for (let i = 0; i < simulations.length; i++) {
+    if (simulations[i].totalAmountOut.gt(maxTotalAmountOut)) {
+      maxTotalAmountOut = simulations[i].totalAmountOut
+      maxSimulation = simulations[i]
+      maxRoute = whitelistRouteCandidates[i]
+    }
+  }
+
+  return { simulation: maxSimulation, route: maxRoute }
 }
 
 export const toMaxNumericPlaces = (num: number, places: number): string => {
