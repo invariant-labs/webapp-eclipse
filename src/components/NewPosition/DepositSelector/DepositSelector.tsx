@@ -832,16 +832,19 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       </Grid>
       <Grid container className={classes.sectionWrapper}>
         <Box className={classes.inputWrapper}>
-          {alignment === DepositOptions.Auto && (
+          <Box
+            className={classes.checkboxWrapper}
+            style={{
+              width: alignment === DepositOptions.Auto ? '31px' : '0px',
+              opacity: alignment === DepositOptions.Auto ? 1 : 0
+            }}>
             <Checkbox
               checked={tokenACheckbox}
-              onChange={e => {
-                setTokenACheckbox(e.target.checked)
-              }}
+              onChange={e => setTokenACheckbox(e.target.checked)}
               className={classes.checkbox}
               icon={<span className={classes.customIcon} />}
             />
-          )}
+          </Box>
           <DepositAmountInput
             tokenPrice={priceA}
             currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
@@ -879,7 +882,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               ) {
                 tokenAInputState.setValue('0.0')
               }
-
               tokenAInputState.setValue(trimDecimalZeros(tokenAInputState.value))
             }}
             {...tokenAInputState}
@@ -890,7 +892,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           />
         </Box>
         <Box className={classes.inputWrapper}>
-          {alignment === DepositOptions.Auto && (
+          <Box
+            className={classes.checkboxWrapper}
+            style={{
+              width: alignment === DepositOptions.Auto ? '31px' : '0px',
+              opacity: alignment === DepositOptions.Auto ? 1 : 0
+            }}>
             <Checkbox
               checked={tokenBCheckbox}
               onChange={e => {
@@ -899,7 +906,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               className={classes.checkbox}
               icon={<span className={classes.customIcon} />}
             />
-          )}
+          </Box>
           <DepositAmountInput
             tokenPrice={priceB}
             currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}

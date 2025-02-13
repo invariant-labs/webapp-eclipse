@@ -277,6 +277,12 @@ export const useStyles = makeStyles()(theme => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center'
+    },
+    checkboxWrapper: {
+      transition: 'width 0.3s ease, opacity 0.3s ease',
+      overflow: 'hidden',
+      display: 'flex',
+      alignItems: 'center'
     }
   }
 })
