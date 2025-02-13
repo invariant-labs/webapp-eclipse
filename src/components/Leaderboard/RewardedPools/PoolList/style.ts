@@ -30,6 +30,8 @@ export const useStyles = makeStyles()(() => ({
   tableFooter: {
     width: '100%',
     height: 24,
+    borderTop: `2px solid ${colors.invariant.light}`,
+
     background: colors.invariant.component,
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px'
