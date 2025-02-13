@@ -1,5 +1,5 @@
 import { Theme } from '@mui/material'
-import { typography, colors } from '@static/theme'
+import { typography, colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((_theme: Theme) => ({
@@ -33,13 +33,17 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   },
 
   tokenContainer: {
+    marginBottom: '10px',
     width: '100%',
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
 
     padding: '8px 10px 8px 6px',
-    borderRadius: 24
+    borderRadius: 24,
+    [theme.breakpoints.down('sm')]: {
+      marginBottom: '5px'
+    }
   },
 
   leftSide: {
@@ -62,7 +66,8 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
 
   tokenLabel: {
     whiteSpace: 'nowrap',
-    flexShrink: 0
+    flexShrink: 0,
+    ...typography.heading4
   },
 
   tokenAddress: {
@@ -113,11 +118,13 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
   },
 
   tokenBalanceStatus: {
-    ...typography.tiny2,
     display: 'flex',
     flexWrap: 'wrap',
     justifyContent: 'flex-end',
-    color: colors.invariant.textGrey
+    color: colors.invariant.textGrey,
+    '& p': {
+      ...typography.caption2
+    }
   }
 }))
 export default useStyles
