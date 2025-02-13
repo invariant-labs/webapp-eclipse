@@ -8,7 +8,7 @@ interface StyleProps {
 }
 
 export const useStyles = makeStyles<StyleProps>()(
-  (theme, { newVersion, roundedCorners, height }) => ({
+  (_theme, { newVersion, roundedCorners, height }) => ({
     container: {
       width: '100%',
       height: height ? height : '370px',
