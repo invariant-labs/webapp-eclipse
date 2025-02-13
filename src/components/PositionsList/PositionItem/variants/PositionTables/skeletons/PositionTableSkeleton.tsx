@@ -5,7 +5,6 @@ import {
   TableContainer,
   TableHead,
   TableRow,
-  TableFooter,
   Skeleton
 } from '@mui/material'
 import { makeStyles } from 'tss-react/mui'

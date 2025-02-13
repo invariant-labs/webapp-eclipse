@@ -4,16 +4,12 @@ import {
   TableBody,
   TableCell,
   TableContainer,
-  TableFooter,
   TableHead,
   TableRow,
   Theme
 } from '@mui/material'
 import { makeStyles } from 'tss-react/mui'
 import { colors } from '@static/theme'
-import { NetworkType } from '@store/consts/static'
-import { useSelector } from 'react-redux'
-import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { PositionTableRow } from './PositionsTableRow'
 import { IPositionItem } from '../../../types'
 import { useNavigate } from 'react-router-dom'
@@ -185,7 +181,6 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   setIsLockPositionModalOpen
 }) => {
   const { classes } = useStyles()
-  const networkSelector = useSelector(currentNetwork)
   const navigate = useNavigate()
 
   return (
@@ -230,20 +225,6 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
             </TableRow>
           ))}
         </TableBody>
-        {/* <TableFooter className={classes.tableFooter}>
-          <TableRow className={classes.footerRow}>
-            <TableCell className={`${classes.cellBase} ${classes.pairNameCell}`} />
-            {networkSelector === NetworkType.Mainnet && (
-              <TableCell className={`${classes.cellBase} ${classes.pointsCell}`} />
-            )}
-            <TableCell className={`${classes.cellBase} ${classes.feeTierCell}`} />
-            <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell}`} />
-            <TableCell className={`${classes.cellBase} ${classes.valueCell}`} />
-            <TableCell className={`${classes.cellBase} ${classes.feeCell}`} />
-            <TableCell className={`${classes.cellBase} ${classes.chartCell}`} />
-            <TableCell className={`${classes.cellBase} ${classes.actionCell}`} />
-          </TableRow>
-        </TableFooter> */}
       </Table>
     </TableContainer>
   )

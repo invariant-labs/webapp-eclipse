@@ -112,7 +112,7 @@ const useStyles = makeStyles()(() => ({
   statsContainer: {
     backgroundColor: colors.invariant.light,
     display: 'inline-flex',
-    width: '100%',
+    width: '90%',
     justifyContent: 'center',
     alignItems: 'center',
     [theme.breakpoints.down('lg')]: {
@@ -373,13 +373,13 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
           <Table stickyHeader>
             <TableHead>
               <TableRow>
-                <TableCell className={classes.headerCell} align='left'>
+                <TableCell className={classes.headerCell} sx={{ width: '25%' }} align='left'>
                   Token Name
                 </TableCell>
-                <TableCell className={classes.headerCell} align='left'>
+                <TableCell className={classes.headerCell} sx={{ width: '30%' }} align='left'>
                   Value
                 </TableCell>
-                <TableCell className={classes.headerCell} align='left'>
+                <TableCell className={classes.headerCell} sx={{ width: '30%' }} align='left'>
                   Amount
                 </TableCell>
                 <TableCell
@@ -405,26 +405,27 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                           </Box>
                         </TableCell>
                         <TableCell className={classes.tableCell} align='right'>
-                          <Box className={classes.statsContainer}>
-                            <Skeleton variant='text' width={80} />
-                          </Box>
+                          <Skeleton variant='text' width={80} />
                         </TableCell>
                         <TableCell className={classes.tableCell} align='right'>
-                          <Box className={classes.statsContainer}>
-                            <Skeleton variant='text' width={60} />
-                          </Box>
+                          <Skeleton variant='text' width={60} />
                         </TableCell>
                         <TableCell
                           className={`${classes.tableCell} ${classes.desktopActionCell}`}
                           align='right'
-                          sx={{ display: 'flex' }}>
+                          sx={{ display: 'flex', gap: 2 }}>
                           <Skeleton
                             variant='rectangular'
-                            width={24}
-                            height={24}
-                            sx={{ marginRight: 1 }}
+                            width={32}
+                            height={30}
+                            sx={{ marginRight: 1, borderRadius: '8px' }}
                           />
-                          <Skeleton variant='rectangular' width={24} height={24} />
+                          <Skeleton
+                            variant='rectangular'
+                            width={32}
+                            height={30}
+                            sx={{ borderRadius: '8px' }}
+                          />
                         </TableCell>
                       </TableRow>
                     ))
