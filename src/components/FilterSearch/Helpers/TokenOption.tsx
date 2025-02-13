@@ -4,15 +4,7 @@ import { shortenAddress } from '@utils/uiUtils'
 import { formatNumber, printBN } from '@utils/utils'
 import { useStyles } from './style'
 import { typography } from '@static/theme'
-
-interface ISearchToken {
-  icon: string
-  name: string
-  symbol: string
-  address: string
-  balance: any
-  decimals: number
-}
+import { ISearchToken } from '../FilterSearch'
 
 export const TokenOption: React.FC<{
   option: ISearchToken

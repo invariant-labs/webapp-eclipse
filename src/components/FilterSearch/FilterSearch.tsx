@@ -21,13 +21,14 @@ import { swapTokens } from '@store/selectors/solanaWallet'
 import icons from '@static/icons'
 import { tokensStatsWithTokensDetails } from '@store/selectors/stats'
 import ListboxComponent from './Helpers/ListBoxComponent'
+import { BN } from '@coral-xyz/anchor'
 
-interface ISearchToken {
+export interface ISearchToken {
   icon: string
   name: string
   symbol: string
   address: string
-  balance: string
+  balance: BN
   decimals: number
 }
 
@@ -48,6 +49,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   const commonTokens = commonTokensForNetworks[networkType]
   const tokensList = useSelector(swapTokens)
 
+  console.log(selectedFilters)
   const [open, setOpen] = useState(false)
 
   const tokenListMap = useMemo(() => {
@@ -87,6 +89,11 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
         if (!aHasBalance && bHasBalance) return 1
         if (aIsCommon && !bIsCommon) return -1
         if (!aIsCommon && bIsCommon) return 1
+        const aAddressEqualsName = a.address === a.symbol
+        const bAddressEqualsName = b.address === b.symbol
+        if (aAddressEqualsName && !bAddressEqualsName) return 1
+        if (!aAddressEqualsName && bAddressEqualsName) return -1
+
         return 0
       })
   }, [tokensListDetails, tokenListMap, commonTokensSet])

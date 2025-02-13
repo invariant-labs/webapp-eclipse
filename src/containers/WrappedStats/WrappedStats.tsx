@@ -25,16 +25,7 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
-import { FilterSearch } from '@components/FilterSearch/FilterSearch'
-
-interface ISearchToken {
-  icon: string
-  name: string
-  symbol: string
-  address: string
-  balance: any
-  decimals: number
-}
+import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()

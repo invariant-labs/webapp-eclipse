@@ -13,17 +13,8 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 
-import { FilterSearch } from '@components/FilterSearch/FilterSearch'
+import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
 import { theme } from '@static/theme'
-
-interface ISearchToken {
-  icon: string
-  name: string
-  symbol: string
-  address: string
-  balance: any
-  decimals: number
-}
 
 export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
