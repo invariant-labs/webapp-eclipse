@@ -72,6 +72,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   tokenRatioCell: {
+    paddingLeft: '15px',
+
     width: '18%',
     '& > .MuiTypography-root': {
       margin: '0 auto',
@@ -80,6 +82,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   valueCell: {
+    paddingLeft: 0,
     width: '10%',
     '& .MuiGrid-root': {
       margin: '0 auto',
@@ -88,6 +91,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   feeCell: {
+    paddingLeft: 0,
+
     width: '10%',
     '& .MuiGrid-root': {
       margin: '0 auto',
