@@ -1,27 +1,8 @@
 import { Box, Grid, Skeleton } from '@mui/material'
-import { makeStyles } from 'tss-react/mui'
-import { colors } from '@static/theme'
-
-const useStyles = makeStyles()(() => ({
-  card: {
-    padding: '16px',
-    background: colors.invariant.component,
-    borderRadius: '24px',
-    marginBottom: '16px'
-  },
-  tokenIcons: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px'
-  },
-  chartContainer: {
-    width: '80%',
-    margin: '0 auto'
-  }
-}))
+import { useMobileSkeletonStyles } from './styles/mobileSkeleton'
 
 const PositionCardsSkeletonMobile = () => {
-  const { classes } = useStyles()
+  const { classes } = useMobileSkeletonStyles()
   const cards = [1, 2, 3]
 
   return (
