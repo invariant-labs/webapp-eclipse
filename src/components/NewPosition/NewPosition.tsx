@@ -1,7 +1,7 @@
 import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@components/Refresher/Refresher'
-import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
+import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
 import {
@@ -17,6 +17,7 @@ import {
   calculateConcentrationRange,
   convertBalanceToBN,
   determinePositionTokenBlock,
+  getConcentrationIndex,
   parseFeeToPathFee,
   printBN,
   trimLeadingZeros,
@@ -25,7 +26,7 @@ import {
 import { PlotTickData } from '@store/reducers/positions'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ConcentrationTypeSwitch from './ConcentrationTypeSwitch/ConcentrationTypeSwitch'
 import DepositSelector from './DepositSelector/DepositSelector'
@@ -33,7 +34,12 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+import {
+  BestTier,
+  PositionOpeningMethod,
+  PotentialLiquidity,
+  TokenPriceData
+} from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -47,11 +53,16 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
+import FAQModal from '@components/Modals/FAQModal/FAQModal'
+import EstimatedPoints from './EstimatedPoints/EstimatedPoints'
+import { theme } from '@static/theme'
+import PointsLabel from './EstimatedPoints/PointsLabel'
 
 export interface INewPosition {
   initialTokenFrom: string
   initialTokenTo: string
   initialFee: string
+  initialConcentration: string
   poolAddress: string
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   tokens: SwapToken[]
@@ -75,7 +86,8 @@ export interface INewPosition {
     amount: BN,
     leftRangeTickIndex: number,
     rightRangeTickIndex: number,
-    tokenAddress: PublicKey
+    tokenAddress: PublicKey,
+    calcPotentialLiquidity?: PotentialLiquidity
   ) => BN
   feeTiers: Array<{
     feeValue: number
@@ -121,12 +133,16 @@ export interface INewPosition {
   onConnectWallet: () => void
   onDisconnectWallet: () => void
   canNavigate: boolean
+  estimatedPointsPerDay: BN
+  estimatedPointsForScale: () => { min: BN; middle: BN; max: BN }
+  isPromotedPool: boolean
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
   initialTokenFrom,
   initialTokenTo,
   initialFee,
+  initialConcentration,
   poolAddress,
   copyPoolAddressHandler,
   tokens,
@@ -177,10 +193,15 @@ export const NewPosition: React.FC<INewPosition> = ({
   walletStatus,
   onConnectWallet,
   onDisconnectWallet,
-  canNavigate
+  canNavigate,
+  estimatedPointsPerDay,
+  estimatedPointsForScale,
+  isPromotedPool
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
+
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const [positionOpeningMethod, setPositionOpeningMethod] = useState<PositionOpeningMethod>(
     initialOpeningPositionMethod
@@ -196,10 +217,10 @@ export const NewPosition: React.FC<INewPosition> = ({
   const [tokenBDeposit, setTokenBDeposit] = useState<string>('')
 
   const [settings, setSettings] = React.useState<boolean>(false)
+  const [isFAQModalOpen, setIsFAQModalOpen] = React.useState<boolean>(false)
+
   const [slippTolerance, setSlippTolerance] = React.useState<string>(initialSlippage)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
-
-  const [concentrationIndex, setConcentrationIndex] = useState(0)
 
   const [minimumSliderIndex, setMinimumSliderIndex] = useState<number>(0)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
@@ -211,6 +232,10 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
   }, [tickSpacing, midPrice.index])
+
+  const [concentrationIndex, setConcentrationIndex] = useState(
+    getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 34)
+  )
 
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
@@ -251,6 +276,65 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return trimLeadingZeros(printBN(result, tokens[printIndex].decimals))
   }
+
+  const getTokenAmountForPotentialPoints = (amount: BN, byFirst: boolean) => {
+    const printIndex = byFirst ? tokenBIndex : tokenAIndex
+    const calcIndex = byFirst ? tokenAIndex : tokenBIndex
+    if (printIndex === null || calcIndex === null) {
+      return '0.0'
+    }
+
+    const { leftRange: leftRangeMin, rightRange: rightRangeMin } = calculateConcentrationRange(
+      tickSpacing,
+      concentrationArray[0],
+      2,
+      midPrice.index,
+      isXtoY
+    )
+
+    const { leftRange: leftRangeMiddle, rightRange: rightRangeMiddle } =
+      calculateConcentrationRange(
+        tickSpacing,
+        +concentrationArray[Math.floor(concentrationArray.length / 2) - 1].toFixed(0),
+        2,
+        midPrice.index,
+        isXtoY
+      )
+
+    const { leftRange: leftRangeMax, rightRange: rightRangeMax } = calculateConcentrationRange(
+      tickSpacing,
+      +concentrationArray[concentrationArray.length - 1].toFixed(0),
+      2,
+      midPrice.index,
+      isXtoY
+    )
+
+    calcAmount(
+      amount,
+      leftRangeMin,
+      rightRangeMin,
+      tokens[calcIndex].assetAddress,
+      PotentialLiquidity.Min
+    )
+    calcAmount(
+      amount,
+      leftRangeMiddle,
+      rightRangeMiddle,
+      tokens[calcIndex].assetAddress,
+      PotentialLiquidity.Middle
+    )
+    calcAmount(
+      amount,
+      leftRangeMax,
+      rightRangeMax,
+      tokens[calcIndex].assetAddress,
+      PotentialLiquidity.Max
+    )
+  }
+
+  const estimatedScalePoints = useMemo(() => {
+    return estimatedPointsForScale()
+  }, [poolAddress, tokenADeposit, tokenBDeposit])
 
   const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
     const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
@@ -439,26 +523,83 @@ export const NewPosition: React.FC<INewPosition> = ({
     setSettings(false)
   }
 
+  const handleClickFAQ = () => {
+    blurContent()
+    setIsFAQModalOpen(true)
+  }
+
+  const handleCloseFAQ = () => {
+    unblurContent()
+    setIsFAQModalOpen(false)
+  }
+
   const setSlippage = (slippage: string): void => {
     setSlippTolerance(slippage)
     onSlippageChange(slippage)
   }
 
-  const updatePath = (index1: number | null, index2: number | null, fee: number) => {
+  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
+
+  const updatePath = (
+    index1: number | null,
+    index2: number | null,
+    fee: number,
+    concentration?: number,
+    isRange?: boolean
+  ) => {
     if (canNavigate) {
       const parsedFee = parseFeeToPathFee(+ALL_FEE_TIERS_DATA[fee].tier.fee)
+
+      clearTimeout(urlUpdateTimeoutRef.current)
+
       if (index1 != null && index2 != null) {
         const token1Symbol = addressToTicker(network, tokens[index1].assetAddress.toString())
         const token2Symbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-        navigate(`/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}`, { replace: true })
+
+        const mappedIndex = getConcentrationIndex(concentrationArray, concentration)
+
+        const validIndex = Math.max(
+          minimumSliderIndex,
+          Math.min(mappedIndex, concentrationArray.length - 1)
+        )
+
+        const concParam = concentration ? `?conc=${concentrationArray[validIndex].toFixed(0)}` : ''
+        const rangeParam =
+          isRange === undefined
+            ? initialOpeningPositionMethod === 'range'
+              ? '&range=true'
+              : '&range=false'
+            : isRange
+              ? '&range=true'
+              : '&range=false'
+
+        urlUpdateTimeoutRef.current = setTimeout(
+          () =>
+            navigate(
+              `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
+              {
+                replace: true
+              }
+            ),
+          500
+        )
       } else if (index1 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
-        navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          500
+        )
       } else if (index2 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
-        navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          500
+        )
       } else if (fee != null) {
-        navigate(`/newPosition/${parsedFee}`, { replace: true })
+        urlUpdateTimeoutRef.current = setTimeout(
+          () => navigate(`/newPosition/${parsedFee}`, { replace: true }),
+          500
+        )
       }
     }
   }
@@ -524,12 +665,34 @@ export const NewPosition: React.FC<INewPosition> = ({
         container
         justifyContent='space-between'
         alignItems='center'
-        className={classes.headerContainer}>
+        className={classes.headerContainer}
+        mb={1}>
         <Box className={classes.titleContainer}>
           <Typography className={classes.title}>Add new position</Typography>
-          {poolIndex !== null && tokenAIndex !== tokenBIndex && (
+
+          {isMd && (
+            <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+              <div>
+                <PointsLabel
+                  handleClickFAQ={handleClickFAQ}
+                  concentrationArray={concentrationArray}
+                  concentrationIndex={concentrationIndex}
+                  estimatedPointsPerDay={estimatedPointsPerDay}
+                  estimatedScalePoints={estimatedScalePoints}
+                  isConnected={walletStatus === Status.Init}
+                  showWarning={
+                    tokenADeposit === '' ||
+                    tokenBDeposit === '' ||
+                    +tokenADeposit === 0 ||
+                    +tokenBDeposit === 0
+                  }
+                />
+              </div>
+            </Fade>
+          )}
+          {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
             <TooltipHover text='Refresh'>
-              <Box>
+              <Box mr={2}>
                 <Refresher
                   currentIndex={refresherTime}
                   maxIndex={REFRESHER_INTERVAL}
@@ -544,29 +707,29 @@ export const NewPosition: React.FC<INewPosition> = ({
         </Box>
         {tokenAIndex !== null && tokenBIndex !== null && (
           <Grid container item alignItems='center' className={classes.options}>
-            {poolIndex !== null ? (
-              <MarketIdLabel
-                displayLength={4}
-                marketId={poolAddress}
-                copyPoolAddressHandler={copyPoolAddressHandler}
-              />
+            {poolIndex !== null && poolAddress ? (
+              <>
+                <MarketIdLabel
+                  displayLength={4}
+                  marketId={poolAddress}
+                  copyPoolAddressHandler={copyPoolAddressHandler}
+                />
+                <TooltipHover text='Open pool in explorer'>
+                  <Grid width={'12px'} height={'24px'}>
+                    <a
+                      href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
+                      target='_blank'
+                      rel='noopener noreferrer'
+                      onClick={event => {
+                        event.stopPropagation()
+                      }}
+                      className={classes.link}>
+                      <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
+                    </a>
+                  </Grid>
+                </TooltipHover>
+              </>
             ) : null}
-            {poolAddress && (
-              <TooltipHover text='Open pool in explorer'>
-                <Grid width={'12px'} height={'24px'}>
-                  <a
-                    href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
-                    target='_blank'
-                    rel='noopener noreferrer'
-                    onClick={event => {
-                      event.stopPropagation()
-                    }}
-                    className={classes.link}>
-                    <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
-                  </a>
-                </Grid>
-              </TooltipHover>
-            )}
             <Grid className={classes.optionsWrapper}>
               <Hidden mdDown>
                 {tokenAIndex !== null && tokenBIndex !== null && (
@@ -575,9 +738,24 @@ export const NewPosition: React.FC<INewPosition> = ({
                       if (val) {
                         setPositionOpeningMethod('concentration')
                         onPositionOpeningMethodChange('concentration')
+                        updatePath(
+                          tokenAIndex,
+                          tokenBIndex,
+                          currentFeeIndex,
+                          +concentrationArray[concentrationIndex].toFixed(0),
+                          false
+                        )
                       } else {
                         setPositionOpeningMethod('range')
                         onPositionOpeningMethodChange('range')
+
+                        updatePath(
+                          tokenAIndex,
+                          tokenBIndex,
+                          currentFeeIndex,
+                          +concentrationArray[concentrationIndex].toFixed(0),
+                          true
+                        )
                       }
                     }}
                     className={classes.switch}
@@ -585,6 +763,20 @@ export const NewPosition: React.FC<INewPosition> = ({
                   />
                 )}
               </Hidden>
+              {poolIndex !== null && tokenAIndex !== tokenBIndex && isMd && (
+                <TooltipHover text='Refresh'>
+                  <Box>
+                    <Refresher
+                      currentIndex={refresherTime}
+                      maxIndex={REFRESHER_INTERVAL}
+                      onClick={() => {
+                        onRefresh()
+                        setRefresherTime(REFRESHER_INTERVAL)
+                      }}
+                    />
+                  </Box>
+                </TooltipHover>
+              )}
               {poolIndex !== null && (
                 <TooltipHover text='Settings'>
                   <Button
@@ -600,15 +792,17 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Slippage
-        open={settings}
-        setSlippage={setSlippage}
-        handleClose={handleCloseSettings}
-        anchorEl={anchorEl}
-        initialSlippage={initialSlippage}
-        infoText='Slippage tolerance is a pricing difference between the price at the confirmation time and the actual price of the transaction users are willing to accept when initializing position.'
-        headerText='Position Settings'
-      />
+      {
+        <Slippage
+          open={settings}
+          setSlippage={setSlippage}
+          handleClose={handleCloseSettings}
+          anchorEl={anchorEl}
+          initialSlippage={initialSlippage}
+          infoText='Slippage tolerance is a pricing difference between the price at the confirmation time and the actual price of the transaction users are willing to accept when initializing position.'
+          headerText='Position Settings'
+        />
+      }
 
       <Grid container className={classes.row} alignItems='stretch'>
         <DepositSelector
@@ -627,7 +821,8 @@ export const NewPosition: React.FC<INewPosition> = ({
             onChangePositionTokens(index1, index2, fee)
 
             if (!isLoadingTokens) {
-              updatePath(index1, index2, fee)
+              updatePath(index1, index2, fee, +concentrationArray[concentrationIndex].toFixed(0)),
+                positionOpeningMethod === 'range'
             }
           }}
           onAddLiquidity={() => {
@@ -670,6 +865,10 @@ export const NewPosition: React.FC<INewPosition> = ({
                   true
                 )
               )
+              getTokenAmountForPotentialPoints(
+                convertBalanceToBN(value, tokens[tokenAIndex].decimals),
+                true
+              )
             },
             blocked:
               tokenAIndex !== null &&
@@ -701,6 +900,10 @@ export const NewPosition: React.FC<INewPosition> = ({
                   false
                 )
               )
+              getTokenAmountForPotentialPoints(
+                convertBalanceToBN(value, tokens[tokenBIndex].decimals),
+                false
+              )
             },
             blocked:
               tokenAIndex !== null &&
@@ -723,7 +926,13 @@ export const NewPosition: React.FC<INewPosition> = ({
             onChangePositionTokens(tokenBIndex, tokenAIndex, currentFeeIndex)
 
             if (!isLoadingTokens) {
-              updatePath(tokenBIndex, tokenAIndex, currentFeeIndex)
+              updatePath(
+                tokenBIndex,
+                tokenAIndex,
+                currentFeeIndex,
+                +concentrationArray[concentrationIndex].toFixed(0),
+                positionOpeningMethod === 'range'
+              )
             }
           }}
           poolIndex={poolIndex}
@@ -754,7 +963,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           promotedPoolTierIndex={promotedPoolTierIndex}
         />
         <Hidden mdUp>
-          <Grid container justifyContent='end' mb={2}>
+          <Grid container alignSelf='flex-end' mb={2} width='200px'>
             {tokenAIndex !== null && tokenBIndex !== null && (
               <ConcentrationTypeSwitch
                 onSwitch={val => {
@@ -778,6 +987,16 @@ export const NewPosition: React.FC<INewPosition> = ({
         tokenAIndex === tokenBIndex ||
         isWaitingForNewPool ? (
           <RangeSelector
+            updatePath={(concIndex: number) =>
+              updatePath(
+                tokenAIndex,
+                tokenBIndex,
+                currentFeeIndex,
+                +concentrationArray[concIndex].toFixed(0),
+                positionOpeningMethod === 'range'
+              )
+            }
+            initialConcentration={initialConcentration}
             poolIndex={poolIndex}
             onChangeRange={onChangeRange}
             blocked={
@@ -838,9 +1057,41 @@ export const NewPosition: React.FC<INewPosition> = ({
             concentrationIndex={concentrationIndex}
             setConcentrationIndex={setConcentrationIndex}
             minimumSliderIndex={minimumSliderIndex}
+            initialConcentration={initialConcentration}
+            updatePath={(concIndex: number) =>
+              updatePath(
+                tokenAIndex,
+                tokenBIndex,
+                currentFeeIndex,
+                +concentrationArray[concIndex].toFixed(0),
+                positionOpeningMethod === 'range'
+              )
+            }
+            currentFeeIndex={currentFeeIndex}
           />
         )}
       </Grid>
+
+      <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+        <div>
+          <EstimatedPoints
+            handleClickFAQ={handleClickFAQ}
+            concentrationArray={concentrationArray}
+            concentrationIndex={concentrationIndex}
+            estimatedPointsPerDay={estimatedPointsPerDay}
+            estimatedScalePoints={estimatedScalePoints}
+            isConnected={walletStatus === Status.Init}
+            showWarning={
+              tokenADeposit === '' ||
+              tokenBDeposit === '' ||
+              +tokenADeposit === 0 ||
+              +tokenBDeposit === 0
+            }
+          />
+        </div>
+      </Fade>
+
+      <FAQModal handleClose={handleCloseFAQ} open={isFAQModalOpen} />
     </Grid>
   )
 }

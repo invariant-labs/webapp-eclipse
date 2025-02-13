@@ -126,8 +126,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
       ? tickerToAddress(networkType, initialTokenFrom)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString()
+      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString())
 
   const lastTokenTo =
     tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
@@ -233,11 +233,11 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    const id = tokensDict[tokenFrom.toString()]?.coingeckoId ?? ''
+    const addr = tokensDict[tokenFrom.toString()]?.assetAddress.toString()
 
-    if (id.length) {
+    if (addr) {
       setPriceFromLoading(true)
-      getTokenPrice(id)
+      getTokenPrice(addr)
         .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
@@ -258,10 +258,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    const id = tokensDict[tokenTo.toString()]?.coingeckoId ?? ''
-    if (id.length) {
+    const addr = tokensDict[tokenTo.toString()]?.assetAddress.toString()
+    if (addr) {
       setPriceToLoading(true)
-      getTokenPrice(id)
+      getTokenPrice(addr)
         .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(

@@ -22,7 +22,6 @@ const useStyles = makeStyles<{ top?: number }>()((_theme, { top }) => ({
     color: colors.invariant.textGrey,
     padding: '16px 24px',
     top: top ? top : -30,
-    textDecoration: 'none',
 
     '&::before': {
       content: '""',

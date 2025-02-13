@@ -7,7 +7,6 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType, SortTypePoolList } from '@store/consts/static'
-
 import { addressToTicker, calculateAPYAndAPR, initialXtoY, parseFeeToPathFee } from '@utils/utils'
 import { formatNumber } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -98,15 +97,49 @@ const PoolListItem: React.FC<IProps> = ({
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
 
-  const handleOpenPosition = () => {
-    const revertRatio = initialXtoY(addressFrom ?? '', addressTo ?? '')
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
-    const tokenA = revertRatio
-      ? addressToTicker(network, addressTo ?? '')
-      : addressToTicker(network, addressFrom ?? '')
-    const tokenB = revertRatio
-      ? addressToTicker(network, addressFrom ?? '')
-      : addressToTicker(network, addressTo ?? '')
+  const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
+
+  const tokenAData = isXtoY
+    ? {
+        symbol: symbolFrom,
+        icon: iconFrom,
+        address: addressFrom,
+        locked: lockedX,
+        liquidity: liquidityX,
+        isUnknown: isUnknownFrom
+      }
+    : {
+        symbol: symbolTo,
+        icon: iconTo,
+        address: addressTo,
+        locked: lockedY,
+        liquidity: liquidityY,
+        isUnknown: isUnknownTo
+      }
+
+  const tokenBData = isXtoY
+    ? {
+        symbol: symbolTo,
+        icon: iconTo,
+        address: addressTo,
+        locked: lockedY,
+        liquidity: liquidityY,
+        isUnknown: isUnknownTo
+      }
+    : {
+        symbol: symbolFrom,
+        icon: iconFrom,
+        address: addressFrom,
+        locked: lockedX,
+        liquidity: liquidityX,
+        isUnknown: isUnknownFrom
+      }
+
+  const handleOpenPosition = () => {
+    const tokenA = addressToTicker(network, tokenAData.address ?? '')
+    const tokenB = addressToTicker(network, tokenBData.address ?? '')
 
     navigate(
       `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
@@ -116,7 +149,7 @@ const PoolListItem: React.FC<IProps> = ({
 
   const handleOpenSwap = () => {
     navigate(
-      `/exchange/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}`,
+      `/exchange/${addressToTicker(network, tokenAData.address ?? '')}/${addressToTicker(network, tokenBData.address ?? '')}`,
       { state: { referer: 'stats' } }
     )
   }
@@ -159,7 +192,7 @@ const PoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
-    <Grid maxWidth='100%'>
+    <Grid maxWidth='100%' className={classes.wrapper}>
       {displayType === 'token' ? (
         <Grid
           container
@@ -173,30 +206,35 @@ const PoolListItem: React.FC<IProps> = ({
               <Box className={classes.iconContainer}>
                 <img
                   className={classes.tokenIcon}
-                  src={iconFrom}
+                  src={tokenAData.icon}
                   alt='Token from'
                   onError={e => {
                     e.currentTarget.src = icons.unknownToken
                   }}
                 />
-                {isUnknownFrom && <img className={classes.warningIcon} src={icons.warningIcon} />}
+                {tokenAData.isUnknown && (
+                  <img className={classes.warningIcon} src={icons.warningIcon} />
+                )}
               </Box>
               <Box className={classes.iconContainer}>
                 <img
                   className={classes.tokenIcon}
-                  src={iconTo}
+                  src={tokenBData.icon}
                   alt='Token to'
                   onError={e => {
                     e.currentTarget.src = icons.unknownToken
                   }}
                 />
-                {isUnknownTo && <img className={classes.warningIcon} src={icons.warningIcon} />}
+                {tokenBData.isUnknown && (
+                  <img className={classes.warningIcon} src={icons.warningIcon} />
+                )}
               </Box>
             </Box>
             <Grid className={classes.symbolsContainer}>
               {!isSm && (
                 <Typography>
-                  {shortenAddress(symbolFrom ?? '')}/{shortenAddress(symbolTo ?? '')}
+                  {shortenAddress(tokenAData.symbol ?? '')}/
+                  {shortenAddress(tokenBData.symbol ?? '')}
                 </Typography>
               )}
               <TooltipHover text='Copy pool address'>
@@ -208,7 +246,7 @@ const PoolListItem: React.FC<IProps> = ({
             </Grid>
           </Grid>
           {!isSmd && showAPY ? (
-            <Box className={classes.row}>
+            <Grid className={classes.row} justifyContent='space-between'>
               <Typography>
                 {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                 <span
@@ -217,18 +255,28 @@ const PoolListItem: React.FC<IProps> = ({
                   }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
               </Typography>
               {isPromoted && (
-                <>
-                  <div
+                <Box mr={1}>
+                  <Box
                     className={classes.actionButton}
                     ref={airdropIconRef}
-                    onPointerLeave={() => {
-                      setIsPromotedPoolPopoverOpen(false)
-                    }}
                     onPointerEnter={() => {
-                      setIsPromotedPoolPopoverOpen(true)
-                    }}>
+                      if (!isMobile) {
+                        setIsPromotedPoolPopoverOpen(true)
+                      }
+                    }}
+                    onPointerLeave={() => {
+                      if (!isMobile) {
+                        setIsPromotedPoolPopoverOpen(false)
+                      }
+                    }}
+                    onClick={() => {
+                      if (isMobile) {
+                        setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                      }
+                    }}
+                    mr={3}>
                     <img width={32} height={32} src={icons.airdropRainbow} alt={'Airdrop'} />
-                  </div>
+                  </Box>
                   <PromotedPoolPopover
                     anchorEl={airdropIconRef.current}
                     open={isPromotedPoolPopoverOpen}
@@ -239,9 +287,9 @@ const PoolListItem: React.FC<IProps> = ({
                     apy={convertedApy}
                     points={points}
                   />
-                </>
+                </Box>
               )}
-            </Box>
+            </Grid>
           ) : null}
           <Typography>{fee}%</Typography>
           <Typography>{`$${formatNumber(volume)}`}</Typography>
@@ -260,12 +308,12 @@ const PoolListItem: React.FC<IProps> = ({
                   <LockStatsPopover
                     anchorEl={lockIconRef.current}
                     open={isLockPopoverOpen}
-                    lockedX={lockedX}
-                    lockedY={lockedY}
-                    symbolX={shortenAddress(symbolFrom ?? '')}
-                    symbolY={shortenAddress(symbolTo ?? '')}
-                    liquidityX={liquidityX}
-                    liquidityY={liquidityY}
+                    lockedX={tokenAData.locked}
+                    lockedY={tokenBData.locked}
+                    symbolX={shortenAddress(tokenAData.symbol ?? '')}
+                    symbolY={shortenAddress(tokenBData.symbol ?? '')}
+                    liquidityX={tokenAData.liquidity}
+                    liquidityY={tokenBData.liquidity}
                     onClose={() => {
                       setLockPopoverOpen(false)
                     }}
@@ -303,9 +351,9 @@ const PoolListItem: React.FC<IProps> = ({
         <Grid
           container
           classes={{
-            container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY }),
             root: classes.header
-          }}>
+          }}
+          className={classNames(classes.container, { [classes.containerNoAPY]: !showAPY })}>
           {!isMd && (
             <Typography style={{ lineHeight: '11px' }}>
               N<sup>o</sup>

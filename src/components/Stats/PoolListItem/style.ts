@@ -2,12 +2,25 @@ import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
+  wrapper: {
+    '&:nth-of-type(odd)': {
+      background: `${colors.invariant.componentDark}`
+    },
+    '&:nth-of-type(even)': {
+      background: colors.invariant.component
+    },
+    '&:first-child': {
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      background: colors.invariant.component
+    }
+  },
   container: {
+    height: 69,
     color: colors.white.main,
     display: 'grid',
     gridTemplateColumns: '30px auto 160px 80px 140px 100px 160px',
-    padding: '18px 0',
-    backgroundColor: colors.invariant.component,
+    padding: '18px 24px',
     borderBottom: `1px solid ${colors.invariant.light}`,
     whiteSpace: 'nowrap',
 
@@ -30,7 +43,7 @@ export const useStyles = makeStyles()(() => ({
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: 'auto 80px 80px 60px',
+      gridTemplateColumns: 'auto 60px 60px 60px',
 
       '& p': {
         justifyContent: 'flex-start',

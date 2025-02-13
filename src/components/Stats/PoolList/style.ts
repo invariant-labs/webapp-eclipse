@@ -1,17 +1,21 @@
 import { alpha } from '@mui/material'
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    maxWidth: 1072,
-    padding: '0 24px',
-    borderRadius: '24px',
-    backgroundColor: `${colors.invariant.component} !important`
+    maxWidth: 1072
   },
   pagination: {
-    padding: '20px 0 10px 0',
-    maxWidth: '100%'
+    height: 90,
+    padding: '20px 24px 10px 0',
+    maxWidth: '100%',
+    backgroundColor: colors.invariant.component,
+    borderBottomLeftRadius: '24px',
+    borderBottomRightRadius: '24px',
+    [theme.breakpoints.down('lg')]: {
+      padding: '20px 12px'
+    }
   },
   loadingOverlay: {
     position: 'relative',
@@ -25,5 +29,13 @@ export const useStyles = makeStyles()(() => ({
       pointerEvents: 'none',
       borderRadius: '24px'
     }
+  },
+  emptyRow: {
+    height: 69,
+    background: colors.invariant.component
+  },
+  emptyRowBorder: {
+    height: 68,
+    borderBottom: `1px solid ${colors.invariant.light}`
   }
 }))

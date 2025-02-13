@@ -301,7 +301,7 @@ export const Swap: React.FC<ISwap> = ({
     }, 500)
 
     return () => clearTimeout(urlUpdateTimeoutRef.current)
-  }, [tokenFromIndex, tokenToIndex, tokens, network, promotedSwapPairs])
+  }, [tokenFromIndex, tokenToIndex, tokens.length, network, promotedSwapPairs])
 
   useEffect(() => {
     if (simulateResult && isPairGivingPoints) {

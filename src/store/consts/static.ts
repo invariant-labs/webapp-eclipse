@@ -443,6 +443,27 @@ export const DOGO_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const EZSOL_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'ezSOL',
+  address: new PublicKey('Fu5P5ikrnQ8BKZECJ1XeeDAaTgWJUrcjw8JmFrNA8TJk'),
+  decimals: 9,
+  name: 'Renzo Restaked SOL',
+  logoURI:
+    'https://nhjibgkrkpvjc4pzb3bk3v2ocom53mu3ruaslsclskqbteianmea.arweave.net/adKAmVFT6pFx-Q7CrddOE5ndspuNASXIS5KgGZEAawg',
+  coingeckoId: ''
+}
+
+export const KYSOL_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'kySOL',
+  address: new PublicKey('8jN7xMDqJucigQphWHvqAPQPAmk7VJKKsqLmgCkE7XzP'),
+  decimals: 9,
+  name: 'Token Kyros Restaked SOL',
+  logoURI: 'https://bafybeif3jzrcvwktu5bi7wcuxzr36fygo4vqctatapy7zqxawojxrnexwi.ipfs.dweb.link/',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -620,6 +641,9 @@ export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
 export const WETH_CREATE_TOKEN_LAMPORTS_MAIN = new BN(2000000)
 export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
+export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
+export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
+
 export const getCreateTokenLamports = (network: NetworkType): BN => {
   switch (network) {
     case NetworkType.Testnet:
@@ -649,9 +673,12 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
 export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   USDT_MAIN.address.toString(),
   USDC_MAIN.address.toString(),
-  SOL_MAIN.address.toString(),
   WETH_MAIN.address.toString(),
-  TETH_MAIN.address.toString()
+  TETH_MAIN.address.toString(),
+  SOL_MAIN.address.toString(),
+  KYSOL_MAIN.address.toString(),
+  EZSOL_MAIN.address.toString(),
+  TIA_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
@@ -718,7 +745,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       PUNKSTAR: PUNKSTAR_MAIN.address.toString(),
       TURBO_AI: TURBO_AI_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
-      SOLAR: SOLAR_MAIN.address.toString()
+      SOLAR: SOLAR_MAIN.address.toString(),
+      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
+      EZSOL_MAIN: EZSOL_MAIN.address.toString()
     }
   }
 }
@@ -770,23 +799,14 @@ export const enum SortTypeTokenList {
 
 export const RECOMMENDED_RPC_ADDRESS = {
   [NetworkType.Testnet]: RPC.TEST,
-  [NetworkType.Mainnet]: RPC.MAIN_HELIUS,
+  [NetworkType.Mainnet]: RPC.MAIN_TRITON,
   [NetworkType.Devnet]: RPC.DEV_EU,
   [NetworkType.Local]: ''
 }
 
 export const DEFAULT_TOKEN_DECIMAL = 6
 
-export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
-
-export const DEFAULT_TOKENS = [
-  'solana',
-  'dogwifcoin',
-  'turbo-eth',
-  'laika-3',
-  'mooncoin-2',
-  'bridged-wrapped-ether-eclipse'
-]
+export const PRICE_QUERY_COOLDOWN = 60 * 1000
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
@@ -797,6 +817,7 @@ export const walletNames = {
   [WalletType.NIGHTLY_WALLET]: 'Nightly',
   [WalletType.BACKPACK]: 'Backpack',
   [WalletType.SALMON]: 'Salmon',
+  [WalletType.OKX]: 'OKX',
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
@@ -832,15 +853,20 @@ export const getPopularPools = (network: NetworkType) => {
   }
 }
 
-export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
-  {
-    coingeckoId: 'usd-coin',
-    solanaAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-  },
-  {
-    coingeckoId: 'tether',
-    solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
-  }
-]
-
 export const rewards = rewardsArray as Reward[]
+
+export const LEADERBOARD_DECIMAL = 8
+
+export const LAUNCH_DATE = '2024-12-10T17:20:00'
+
+export enum PointsPageContent {
+  Leaderboard = 'leaderboard',
+  FAQ = 'faq',
+  Claim = 'claim'
+}
+
+export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
+
+export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
+export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
+export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
