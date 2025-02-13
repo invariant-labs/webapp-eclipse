@@ -6,7 +6,7 @@ import routeArrow2 from '@static/svg/routeArrow2.svg'
 import { theme } from '@static/theme'
 import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { printBN } from '@utils/utils'
+import { formatNumber2, printBN } from '@utils/utils'
 import { SimulationPath } from '@components/Swap/Swap'
 
 interface IProps {
@@ -40,8 +40,8 @@ const RouteBox: React.FC<IProps> = ({
       {isSmallDevice ? (
         <Typography className={classes.tokenLabel}>
           {tokenFrom?.symbol} {'-> '}
-          {onePoolType && `${tokenBetween?.symbol} -> `}
-          {tokenTo?.symbol}
+          {onePoolType && `${tokenBetween?.symbol} (${firstFeePercent}%) -> `} {tokenTo?.symbol} (
+          {onePoolType ? secondFeePercent : firstFeePercent}%)
         </Typography>
       ) : (
         <>
@@ -58,7 +58,7 @@ const RouteBox: React.FC<IProps> = ({
             />
 
             <Typography className={classes.routeLabel}>
-              {`${printBN(firstAmount ?? new BN(0), tokenFrom?.decimals ?? 0)} ${tokenFrom?.symbol}`}
+              {`${formatNumber2(printBN(firstAmount ?? new BN(0), tokenFrom?.decimals ?? 0))} ${tokenFrom?.symbol}`}
             </Typography>
           </Box>
           {onePoolType && (
@@ -71,7 +71,7 @@ const RouteBox: React.FC<IProps> = ({
                 <Typography className={classes.routeLabel}>{secondFeePercent}% fee</Typography>
                 <img className={classes.routeIcon} src={routeArrow1} alt='route arrow' />
                 <Typography className={classes.routeLabel}>
-                  {printBN(secondAmount ?? new BN(0), tokenBetween?.decimals ?? 0)}{' '}
+                  {formatNumber2(printBN(secondAmount ?? new BN(0), tokenBetween?.decimals ?? 0))}{' '}
                   {tokenBetween?.symbol}
                 </Typography>
               </Box>
