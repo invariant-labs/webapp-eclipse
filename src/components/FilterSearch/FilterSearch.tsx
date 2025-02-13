@@ -12,7 +12,7 @@ import {
 import SearchIcon from '@static/svg/lupaDark.svg'
 import { forwardRef, useMemo, useState } from 'react'
 import { commonTokensForNetworks, NetworkType } from '@store/consts/static'
-import { colors, theme, typography } from '@static/theme'
+import { theme, typography } from '@static/theme'
 import useStyles from './styles'
 import { TokenChip } from './Helpers/TokenChip'
 import { TokenOption } from './Helpers/TokenOption'
@@ -20,13 +20,14 @@ import { useSelector } from 'react-redux'
 import { swapTokens } from '@store/selectors/solanaWallet'
 import icons from '@static/icons'
 import { tokensStatsWithTokensDetails } from '@store/selectors/stats'
+import ListboxComponent from './Helpers/ListBoxComponent'
 
 interface ISearchToken {
   icon: string
   name: string
   symbol: string
   address: string
-  balance: any
+  balance: string
   decimals: number
 }
 
@@ -45,40 +46,56 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
 }) => {
   const tokensListDetails = useSelector(tokensStatsWithTokensDetails)
   const commonTokens = commonTokensForNetworks[networkType]
+  const tokensList = useSelector(swapTokens)
+
   const [open, setOpen] = useState(false)
 
-  const tokensList = useSelector(swapTokens)
-  const mappedTokens = tokensListDetails
-    .map(tokenData => {
-      const details = tokenData.tokenDetails
-      const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
-      const tokenFromList = tokensList.find(token => token.address.toString() === tokenAddress)
-      return {
-        icon: details?.logoURI ?? icons.unknownToken,
-        name: details?.name ?? tokenData.address.toString(),
-        symbol: details?.symbol ?? tokenData.address.toString(),
-        address: tokenAddress,
-        balance: tokenFromList ? tokenFromList.balance : 0,
-        decimals: tokenFromList ? tokenFromList.decimals : 0
-      }
+  const tokenListMap = useMemo(() => {
+    const map = new Map<string, any>()
+    tokensList.forEach(token => {
+      map.set(token.address.toString(), token)
     })
-    .sort((a, b) => {
-      const aHasBalance = Number(a.balance) > 0
-      const bHasBalance = Number(b.balance) > 0
-      const aIsCommon = commonTokens.some(token => token.toString() === a.address)
-      const bIsCommon = commonTokens.some(token => token.toString() === b.address)
+    return map
+  }, [tokensList])
 
-      if (aHasBalance && !bHasBalance) return -1
-      if (!aHasBalance && bHasBalance) return 1
-      if (aIsCommon && !bIsCommon) return -1
-      if (!aIsCommon && bIsCommon) return 1
-      return 0
-    })
+  const commonTokensSet = useMemo(
+    () => new Set(commonTokens.map(token => token.toString())),
+    [commonTokens]
+  )
+
+  const mappedTokens = useMemo(() => {
+    return tokensListDetails
+      .map(tokenData => {
+        const details = tokenData.tokenDetails
+        const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
+        const tokenFromList = tokenListMap.get(tokenAddress)
+        return {
+          icon: details?.logoURI ?? icons.unknownToken,
+          name: details?.name ?? tokenData.address.toString(),
+          symbol: details?.symbol ?? tokenData.address.toString(),
+          address: tokenAddress,
+          balance: tokenFromList ? tokenFromList.balance : 0,
+          decimals: tokenFromList ? tokenFromList.decimals : 0
+        }
+      })
+      .sort((a, b) => {
+        const aHasBalance = Number(a.balance) > 0
+        const bHasBalance = Number(b.balance) > 0
+        const aIsCommon = commonTokensSet.has(a.address)
+        const bIsCommon = commonTokensSet.has(b.address)
+        if (aHasBalance && !bHasBalance) return -1
+        if (!aHasBalance && bHasBalance) return 1
+        if (aIsCommon && !bIsCommon) return -1
+        if (!aIsCommon && bIsCommon) return 1
+        return 0
+      })
+  }, [tokensListDetails, tokenListMap, commonTokensSet])
 
   const isTokensSelected = selectedFilters.length === filtersAmount
   const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
   const { classes } = useStyles({ isSmall })
-  const shouldOpenPopper = isSmall ? !isTokensSelected && open : !isTokensSelected && open
+
+  const shouldOpenPopper = !isTokensSelected && open
 
   const networkUrl = useMemo(() => {
     switch (networkType) {
@@ -97,7 +114,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
     token => !selectedFilters.some(selected => selected.address === token.address)
   )
 
-  const PaperComponent = (paperProps, ref) => {
+  const PaperComponent = (paperProps, ref: React.Ref<HTMLDivElement>) => {
     return (
       <Fade in timeout={300}>
         <Paper {...paperProps} ref={ref}>
@@ -108,7 +125,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   }
 
   const CustomPopper = props => {
-    return <Popper {...props} placement='bottom-start' modifiers={[]} />
+    return <Popper {...props} placement='bottom-start' />
   }
 
   const PaperComponentForward = forwardRef(PaperComponent)
@@ -117,30 +134,21 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
     setSelectedFilters(prev => prev.filter(token => token.address !== tokenToRemove.address))
   }
 
-  const filterOptions = (opts: ISearchToken[], state: { inputValue: string }) => {
-    return opts.filter(token => {
-      return (
-        token.symbol?.toLowerCase().includes(state.inputValue.toLowerCase()) ||
-        token.address?.toLowerCase().includes(state.inputValue.toLowerCase())
-      )
-    })
-  }
-
   const handleAutoCompleteChange = (_event: any, newValue: ISearchToken[]) => {
     setSelectedFilters(newValue)
     setOpen(true)
   }
 
   return (
-    <Autocomplete
+    <Autocomplete<ISearchToken, true, false, false, 'div'>
       multiple
       disablePortal
-      disableClearable
       id='token-selector'
       disableCloseOnSelect={!isTokensSelected}
       value={selectedFilters}
       popupIcon={null}
       onChange={handleAutoCompleteChange}
+      ListboxComponent={ListboxComponent}
       PopperComponent={CustomPopper}
       PaperComponent={PaperComponentForward}
       options={options}
@@ -149,7 +157,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
       getOptionLabel={option => option.symbol}
       onOpen={() => setOpen(true)}
       onClose={() => setOpen(false)}
-      filterOptions={filterOptions}
       noOptionsText={<Typography className={classes.headerText}>No tokens found</Typography>}
       sx={{
         '& .MuiOutlinedInput-root': {
@@ -157,22 +164,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': { borderColor: 'transparent' }
         },
         width: isSmall ? '100%' : 'auto'
-      }}
-      ListboxProps={{
-        autoFocus: true,
-        sx: {
-          '&::-webkit-scrollbar': {
-            width: '6px'
-          },
-          '&::-webkit-scrollbar-track': {
-            background: colors.invariant.newDark
-          },
-          '&::-webkit-scrollbar-thumb': {
-            background: colors.invariant.pink,
-            borderRadius: '3px'
-          }
-        },
-        style: { maxHeight: !isSmall ? '300px' : '540px' }
       }}
       renderTags={(value, getTagProps) =>
         value.map((option, index) => (
@@ -196,7 +187,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
               style: {
                 padding: 0,
                 height: '100%',
-
                 display: 'flex',
                 alignItems: 'center',
                 ...typography.body2
