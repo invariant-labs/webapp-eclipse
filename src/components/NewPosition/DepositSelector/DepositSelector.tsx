@@ -663,8 +663,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     }
 
-    console.log(result, result?.swapSimulation?.status === SimulationStatus.Ok)
-
     if (!!result) {
       setSimulation(result)
     }
