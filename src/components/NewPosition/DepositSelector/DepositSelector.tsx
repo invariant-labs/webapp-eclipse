@@ -9,7 +9,8 @@ import {
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
-  Typography
+  Typography,
+  useMediaQuery
 } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import {
@@ -55,6 +56,7 @@ import {
   toDecimal
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
+import { theme } from '@static/theme'
 
 export interface InputState {
   value: string
@@ -212,6 +214,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   setAlignment
 }) => {
   const { classes } = useStyles()
+  const breakpoint = useMediaQuery(theme.breakpoints.down(1000))
   const { value: valueA } = tokenAInputState
   const { value: valueB } = tokenBInputState
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
@@ -567,6 +570,49 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     [simulation]
   )
 
+  const renderPriceImpactWarning = useCallback(
+    () => (
+      <>
+        {simulation?.swapSimulation?.priceImpact &&
+          alignment === DepositOptions.Auto &&
+          isAutoSwapAvailable &&
+          (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) && (
+            <TooltipHover text='Impact on the price'>
+              <Box
+                className={
+                  new BN(simulation?.swapSimulation?.priceImpact).lt(
+                    toDecimal(+Number(priceImpact).toFixed(4), 2)
+                  )
+                    ? classes.unknownWarning
+                    : classes.errorWarning
+                }>
+                <img
+                  src={icons.infoCircle}
+                  alt=''
+                  width='12px'
+                  style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+                  className={
+                    new BN(simulation?.swapSimulation?.priceImpact).lt(
+                      toDecimal(+Number(priceImpact).toFixed(4), 2)
+                    )
+                      ? classes.grayscaleIcon
+                      : classes.errorIcon
+                  }
+                />
+                Price impact:{' '}
+                {simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
+                  ? Number(
+                      printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
+                    ).toFixed(2)
+                  : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
+                %
+              </Box>
+            </TooltipHover>
+          )}
+      </>
+    ),
+    [simulation, alignment, tokenACheckbox, tokenBCheckbox]
+  )
   const simulateAutoSwapResult = async () => {
     if (
       !autoSwapPoolData ||
@@ -727,91 +773,61 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         />
       </Grid>
       <Grid container className={classes.depositHeader}>
-        <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
-        {simulation?.swapSimulation?.priceImpact &&
-          alignment === DepositOptions.Auto &&
-          isAutoSwapAvailable &&
-          (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) && (
-            <TooltipHover text='Impact on the price'>
+        <Box className={classes.depositHeaderContainer}>
+          <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
+          {!breakpoint && renderPriceImpactWarning()}
+          <Box className={classes.depositOptions}>
+            <Tooltip title={'Placeholder'} classes={{ tooltip: classes.tooltip }}>
+              <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
+            </Tooltip>
+            <Box className={classes.switchDepositTypeContainer}>
               <Box
-                className={
-                  new BN(simulation?.swapSimulation?.priceImpact).lt(
-                    toDecimal(+Number(priceImpact).toFixed(4), 2)
-                  )
-                    ? classes.unknownWarning
-                    : classes.errorWarning
-                }>
-                <img
-                  src={icons.infoCircle}
-                  alt=''
-                  width='12px'
-                  style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-                  className={
-                    new BN(simulation?.swapSimulation?.priceImpact).lt(
-                      toDecimal(+Number(priceImpact).toFixed(4), 2)
-                    )
-                      ? classes.grayscaleIcon
-                      : classes.errorIcon
-                  }
-                />
-                Price impact:{' '}
-                {simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
-                  ? Number(
-                      printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
-                    ).toFixed(2)
-                  : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
-                %
-              </Box>
-            </TooltipHover>
-          )}
-        <Box className={classes.depositOptions}>
-          <Tooltip title={'Placeholder'} classes={{ tooltip: classes.tooltip }}>
-            <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
-          </Tooltip>
-          <Box className={classes.switchDepositTypeContainer}>
-            <Box
-              className={classes.switchDepositTypeMarker}
-              sx={{
-                left: alignment === DepositOptions.Basic ? 0 : '50%'
-              }}
-            />
-            <ToggleButtonGroup
-              value={alignment}
-              exclusive
-              onChange={handleSwitchDepositType}
-              className={classes.switchDepositTypeButtonsGroup}>
-              <ToggleButton
-                value={DepositOptions.Basic}
-                disableRipple
-                className={classNames(
-                  classes.switchDepositTypeButton,
-                  alignment === DepositOptions.Basic
-                    ? classes.switchSelected
-                    : classes.switchNotSelected
-                )}>
-                Basic
-              </ToggleButton>
-              <ToggleButton
-                disabled={!isAutoSwapAvailable}
-                value={DepositOptions.Auto}
-                disableRipple
-                className={classNames(
-                  classes.switchDepositTypeButton,
-                  alignment === DepositOptions.Auto
-                    ? classes.switchSelected
-                    : classes.switchNotSelected
-                )}>
-                Auto
-              </ToggleButton>
-            </ToggleButtonGroup>
+                className={classes.switchDepositTypeMarker}
+                sx={{
+                  left: alignment === DepositOptions.Basic ? 0 : '50%'
+                }}
+              />
+              <ToggleButtonGroup
+                value={alignment}
+                exclusive
+                onChange={handleSwitchDepositType}
+                className={classes.switchDepositTypeButtonsGroup}>
+                <ToggleButton
+                  value={DepositOptions.Basic}
+                  disableRipple
+                  className={classNames(
+                    classes.switchDepositTypeButton,
+                    alignment === DepositOptions.Basic
+                      ? classes.switchSelected
+                      : classes.switchNotSelected
+                  )}>
+                  Basic
+                </ToggleButton>
+                <ToggleButton
+                  disabled={!isAutoSwapAvailable}
+                  value={DepositOptions.Auto}
+                  disableRipple
+                  className={classNames(
+                    classes.switchDepositTypeButton,
+                    alignment === DepositOptions.Auto
+                      ? classes.switchSelected
+                      : classes.switchNotSelected
+                  )}>
+                  Auto
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+            <Button
+              onClick={handleClickDepositOptions}
+              className={classes.optionsIconBtn}
+              disabled={!isAutoSwapAvailable}>
+              <img src={icons.autoSwapOptions} alt='options' />
+            </Button>
           </Box>
-          <Button
-            onClick={handleClickDepositOptions}
-            className={classes.optionsIconBtn}
-            disabled={!isAutoSwapAvailable}>
-            <img src={icons.autoSwapOptions} alt='options' />
-          </Button>
         </Box>
+        {breakpoint && (
+          <Box className={classes.depositHeaderContainer}>{renderPriceImpactWarning()}</Box>
+        )}
       </Grid>
       <Grid container className={classes.sectionWrapper}>
         <Box className={classes.inputWrapper}>

@@ -26,15 +26,19 @@ export const useStyles = makeStyles()(theme => {
     },
     depositHeader: {
       width: '100%',
+      flexDirection: 'column',
+      marginBottom: 18,
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 8
+    },
+    depositHeaderContainer: {
       height: 30,
+      width: '100%',
+      display: 'flex',
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginBottom: 18,
-      alignItems: 'center',
-      [theme.breakpoints.down('sm')]: {
-        flexDirection: 'column',
-        justifyContent: 'center'
-      }
+      alignItems: 'center'
     },
     depositOptions: {
       display: 'flex',
@@ -199,16 +203,20 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     unknownWarning: {
+      width: 'fit-content',
+      maxWidth: 131,
       border: `1px solid ${colors.invariant.lightGrey}`,
-      ...typography.caption2,
+      ...typography.caption4,
       color: colors.invariant.lightGrey,
       padding: '5px 8px',
       paddingInline: 8,
       borderRadius: 9
     },
     errorWarning: {
+      width: 'fit-content',
+      maxWidth: 131,
       border: `1px solid ${colors.invariant.Error}`,
-      ...typography.caption2,
+      ...typography.caption4,
       color: colors.invariant.Error,
       padding: '5px 8px',
       paddingInline: 8,
