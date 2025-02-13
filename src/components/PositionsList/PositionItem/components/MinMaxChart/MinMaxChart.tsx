@@ -113,7 +113,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         width: '100%',
         height: '55px',
         display: 'flex',
-        marginTop: '10px',
+        marginTop: '18px',
         justifyContent: 'flex-end',
         alignItems: 'flex-end',
         position: 'relative',
