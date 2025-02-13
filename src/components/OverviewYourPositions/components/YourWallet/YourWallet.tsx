@@ -182,7 +182,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                               <Skeleton
                                 variant='rectangular'
                                 width={60}
-                                sx={{ borderRadius: '6px', padding: '4px 12px' }}
+                                sx={{ borderRadius: '6px' }}
                                 height={24} // Match typography.heading4 height
                               />
                             </Box>
@@ -194,7 +194,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                             variant='rectangular'
                             width='90%'
                             height={24} // Match statsValue height
-                            sx={{ borderRadius: '6px', padding: '4px 12px' }}
+                            sx={{ borderRadius: '6px', padding: '0px 6px' }}
                           />
                           {/* </Box> */}
                         </TableCell>
@@ -204,25 +204,29 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                             variant='rectangular'
                             width='90%'
                             height={24} // Match statsValue height
-                            sx={{ borderRadius: '6px', padding: '4px 12px' }}
+                            sx={{ borderRadius: '6px', padding: '0px 6px' }}
                           />
                           {/* </Box> */}
                         </TableCell>
                         <TableCell
                           className={`${classes.tableCell} ${classes.desktopActionCell}`}
                           align='right'
-                          sx={{ display: 'flex', gap: 2, justifyContent: 'flex-end' }}>
+                          sx={{
+                            display: 'flex',
+                            gap: 1,
+                            justifyContent: 'center'
+                          }}>
                           <Skeleton
                             variant='rectangular'
-                            width={32}
-                            height={32}
-                            sx={{ borderRadius: '8px' }}
+                            width={22}
+                            height={22}
+                            sx={{ borderRadius: '8px', margin: '5px 0px' }}
                           />
                           <Skeleton
                             variant='rectangular'
-                            width={32}
-                            height={32}
-                            sx={{ borderRadius: '8px' }}
+                            width={22}
+                            height={22}
+                            sx={{ borderRadius: '8px', margin: '5px 0px' }}
                           />
                         </TableCell>
                       </TableRow>
