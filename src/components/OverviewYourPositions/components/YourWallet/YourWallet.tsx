@@ -24,6 +24,13 @@ interface YourWalletProps {
   isLoading: boolean
 }
 
+const EmptyState = ({ classes }: { classes: any }) => (
+  <Box className={classes.emptyState}>
+    <img src={icons.empty} alt='Empty wallet' height={64} width={64} />
+    <Typography className={classes.emptyStateText}>Your wallet is empty.</Typography>
+  </Box>
+)
+
 const MobileCard: React.FC<{ pool: TokenPool; classes: any; renderActions: any }> = ({
   pool,
   classes,
@@ -169,130 +176,133 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
               </TableRow>
             </TableHead>
             <TableBody className={classes.zebraRow}>
-              {isLoading
-                ? // Loading skeleton rows
-                  Array(4)
-                    .fill(0)
-                    .map((_, index) => (
-                      <TableRow key={`skeleton-${index}`}>
-                        <TableCell className={classes.tableCell}>
-                          <Box className={classes.tokenContainer}>
-                            <Box className={classes.tokenInfo}>
-                              <Skeleton variant='circular' width={28} height={28} />
-                              <Skeleton
-                                variant='rectangular'
-                                width={60}
-                                sx={{ borderRadius: '6px' }}
-                                height={24} // Match typography.heading4 height
-                              />
-                            </Box>
+              {isLoading ? (
+                // Loading skeleton rows
+                Array(4)
+                  .fill(0)
+                  .map((_, index) => (
+                    <TableRow key={`skeleton-${index}`}>
+                      <TableCell className={classes.tableCell}>
+                        <Box className={classes.tokenContainer}>
+                          <Box className={classes.tokenInfo}>
+                            <Skeleton variant='circular' width={28} height={28} />
+                            <Skeleton
+                              variant='rectangular'
+                              width={60}
+                              sx={{ borderRadius: '6px' }}
+                              height={24}
+                            />
                           </Box>
-                        </TableCell>
-                        <TableCell className={classes.tableCell} align='right'>
-                          {/* <Box className={classes.statsContainer}> */}
-                          <Skeleton
-                            variant='rectangular'
-                            width='90%'
-                            height={24} // Match statsValue height
-                            sx={{ borderRadius: '6px', padding: '0px 6px' }}
-                          />
-                          {/* </Box> */}
-                        </TableCell>
-                        <TableCell className={classes.tableCell} align='right'>
-                          {/* <Box className={classes.statsContainer}> */}
-                          <Skeleton
-                            variant='rectangular'
-                            width='90%'
-                            height={24} // Match statsValue height
-                            sx={{ borderRadius: '6px', padding: '0px 6px' }}
-                          />
-                          {/* </Box> */}
-                        </TableCell>
-                        <TableCell
-                          className={`${classes.tableCell} ${classes.desktopActionCell}`}
-                          align='right'
-                          sx={{
-                            display: 'flex',
-                            gap: 1,
-                            justifyContent: 'center'
-                          }}>
-                          <Skeleton
-                            variant='rectangular'
-                            width={24}
-                            height={24}
-                            sx={{ borderRadius: '8px', margin: '4px 0px' }}
-                          />
-                          <Skeleton
-                            variant='rectangular'
-                            width={24}
-                            height={24}
-                            sx={{ borderRadius: '8px', margin: '4px 0px' }}
-                          />
-                        </TableCell>
-                      </TableRow>
-                    ))
-                : // Actual data rows
-                  pools.map(pool => {
-                    let strategy = STRATEGIES.find(
-                      s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool.symbol
-                    )
+                        </Box>
+                      </TableCell>
+                      <TableCell className={classes.tableCell} align='right'>
+                        <Skeleton
+                          variant='rectangular'
+                          width='90%'
+                          height={24}
+                          sx={{ borderRadius: '6px', padding: '0px 6px' }}
+                        />
+                      </TableCell>
+                      <TableCell className={classes.tableCell} align='right'>
+                        <Skeleton
+                          variant='rectangular'
+                          width='90%'
+                          height={24}
+                          sx={{ borderRadius: '6px', padding: '0px 6px' }}
+                        />
+                      </TableCell>
+                      <TableCell
+                        className={`${classes.tableCell} ${classes.desktopActionCell}`}
+                        align='right'
+                        sx={{
+                          display: 'flex',
+                          gap: 1,
+                          justifyContent: 'center'
+                        }}>
+                        <Skeleton
+                          variant='rectangular'
+                          width={24}
+                          height={24}
+                          sx={{ borderRadius: '8px', margin: '4px 0px' }}
+                        />
+                        <Skeleton
+                          variant='rectangular'
+                          width={24}
+                          height={24}
+                          sx={{ borderRadius: '8px', margin: '4px 0px' }}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))
+              ) : pools.length === 0 ? (
+                <TableRow sx={{ background: 'transparent !important ' }}>
+                  <TableCell colSpan={4} sx={{ border: 'none' }}>
+                    <EmptyState classes={classes} />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                pools.map(pool => {
+                  let strategy = STRATEGIES.find(
+                    s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool.symbol
+                  )
 
-                    if (!strategy) {
-                      const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
-                        if (!lowest) return current
-                        return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
-                      })
+                  if (!strategy) {
+                    const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
+                      if (!lowest) return current
+                      return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
+                    })
 
-                      strategy = {
-                        tokenSymbolA: pool.symbol,
-                        tokenSymbolB: '-',
-                        feeTier: printBN(lowestFeeTierData.tier.fee, 10)
-                          .replace('.', '_')
-                          .substring(0, 4)
-                      }
+                    strategy = {
+                      tokenSymbolA: pool.symbol,
+                      tokenSymbolB: '-',
+                      feeTier: printBN(lowestFeeTierData.tier.fee, 10)
+                        .replace('.', '_')
+                        .substring(0, 4)
                     }
+                  }
 
-                    return (
-                      <TableRow key={pool.id.toString()}>
-                        <TableCell className={classes.tableCell}>
-                          <Box className={classes.tokenContainer}>
-                            <Box className={classes.tokenInfo}>
-                              <img
-                                src={pool.icon}
-                                className={classes.tokenIcon}
-                                onError={handleImageError}
-                                alt={pool.symbol}
-                              />
-                              <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
-                            </Box>
-                            <Box className={classes.mobileActions}>
-                              {renderActions(pool, strategy)}
-                            </Box>
+                  return (
+                    <TableRow key={pool.id.toString()}>
+                      <TableCell className={classes.tableCell}>
+                        <Box className={classes.tokenContainer}>
+                          <Box className={classes.tokenInfo}>
+                            <img
+                              src={pool.icon}
+                              className={classes.tokenIcon}
+                              onError={handleImageError}
+                              alt={pool.symbol}
+                            />
+                            <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
                           </Box>
-                        </TableCell>
-                        <TableCell className={classes.tableCell} align='right'>
-                          <Box className={classes.statsContainer}>
-                            <Typography className={classes.statsValue}>
-                              ${pool.value.toLocaleString().replace(',', '.')}
-                            </Typography>
+                          <Box className={classes.mobileActions}>
+                            {renderActions(pool, strategy)}
                           </Box>
-                        </TableCell>
-                        <TableCell className={classes.tableCell} align='right'>
-                          <Box className={classes.statsContainer}>
-                            <Typography className={classes.statsValue}>
-                              {formatNumber2(pool.amount)}
-                            </Typography>
-                          </Box>
-                        </TableCell>
-                        <TableCell
-                          className={`${classes.tableCell} ${classes.desktopActionCell}`}
-                          align='right'
-                          sx={{ display: 'flex' }}>
-                          {renderActions(pool, strategy)}
-                        </TableCell>
-                      </TableRow>
-                    )
-                  })}
+                        </Box>
+                      </TableCell>
+                      <TableCell className={classes.tableCell} align='right'>
+                        <Box className={classes.statsContainer}>
+                          <Typography className={classes.statsValue}>
+                            ${pool.value.toLocaleString().replace(',', '.')}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell className={classes.tableCell} align='right'>
+                        <Box className={classes.statsContainer}>
+                          <Typography className={classes.statsValue}>
+                            {formatNumber2(pool.amount)}
+                          </Typography>
+                        </Box>
+                      </TableCell>
+                      <TableCell
+                        className={`${classes.tableCell} ${classes.desktopActionCell}`}
+                        align='right'
+                        sx={{ display: 'flex' }}>
+                        {renderActions(pool, strategy)}
+                      </TableCell>
+                    </TableRow>
+                  )
+                })
+              )}
             </TableBody>
           </Table>
         </TableContainer>
@@ -304,6 +314,8 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
         </Typography>
         {isLoading ? (
           renderMobileLoading()
+        ) : pools.length === 0 ? (
+          <EmptyState classes={classes} />
         ) : (
           <Box sx={{ height: '345px', overflowY: 'auto' }}>
             {pools.map(pool => (

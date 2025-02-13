@@ -1,20 +1,34 @@
 import React from 'react'
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow } from '@mui/material'
+import {
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Typography
+} from '@mui/material'
 import { PositionTableRow } from './PositionsTableRow'
 import { IPositionItem } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 import { usePositionTableStyle } from './styles/positionTable'
+import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>
   isLockPositionModalOpen: boolean
   setIsLockPositionModalOpen: React.Dispatch<React.SetStateAction<boolean>>
+  noInitialPositions?: boolean
+  onAddPositionClick?: () => void
 }
 
 export const PositionsTable: React.FC<IPositionsTableProps> = ({
   positions,
   isLockPositionModalOpen,
-  setIsLockPositionModalOpen
+  setIsLockPositionModalOpen,
+  noInitialPositions,
+  onAddPositionClick
 }) => {
   const { classes } = usePositionTableStyle()
   const navigate = useNavigate()
@@ -27,7 +41,6 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
             <TableCell className={`${classes.headerCell} ${classes.pairNameCell}`}>
               Pair name
             </TableCell>
-
             <TableCell className={`${classes.headerCell} ${classes.feeTierCell}`}>
               Fee tier
             </TableCell>
@@ -40,30 +53,62 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
             <TableCell className={`${classes.headerCell} ${classes.actionCell}`}>Action</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody className={classes.tableBody}>
-          {positions.map((position, index) => (
-            <TableRow
-              onClick={e => {
-                if (
-                  !(e.target as HTMLElement).closest('.action-button') &&
-                  !isLockPositionModalOpen
-                ) {
-                  navigate(`/position/${position.id}`)
-                }
-              }}
-              key={position.poolAddress.toString() + index}
-              className={classes.tableBodyRow}>
-              <PositionTableRow
-                {...position}
-                isLockPositionModalOpen={isLockPositionModalOpen}
-                setIsLockPositionModalOpen={setIsLockPositionModalOpen}
-              />
-            </TableRow>
-          ))}
-        </TableBody>
+        {positions.length > 0 ? (
+          <TableBody className={classes.tableBody}>
+            {positions.map((position, index) => (
+              <TableRow
+                onClick={e => {
+                  if (
+                    !(e.target as HTMLElement).closest('.action-button') &&
+                    !isLockPositionModalOpen
+                  ) {
+                    navigate(`/position/${position.id}`)
+                  }
+                }}
+                key={position.poolAddress.toString() + index}
+                className={classes.tableBodyRow}>
+                <PositionTableRow
+                  {...position}
+                  isLockPositionModalOpen={isLockPositionModalOpen}
+                  setIsLockPositionModalOpen={setIsLockPositionModalOpen}
+                />
+              </TableRow>
+            ))}
+          </TableBody>
+        ) : (
+          <Box className={classes.tableBody}>
+            <Box>
+              <Box
+                sx={{
+                  border: 'none',
+                  height: '410px',
+                  padding: 0,
+                  width: '100%'
+                }}>
+                <Box
+                  sx={{
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    height: '90%',
+                    width: '100%'
+                  }}>
+                  <EmptyPlaceholder
+                    newVersion
+                    desc={
+                      noInitialPositions
+                        ? 'Add your first position by pressing the button and start earning!'
+                        : 'Did not find any matching positions'
+                    }
+                    onAction={onAddPositionClick}
+                    withButton={noInitialPositions}
+                  />
+                </Box>
+              </Box>
+            </Box>
+          </Box>
+        )}
       </Table>
     </TableContainer>
   )
 }
-
-export default PositionsTable

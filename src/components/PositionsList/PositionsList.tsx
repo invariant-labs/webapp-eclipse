@@ -20,10 +20,11 @@ import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
-import PositionsTable from './PositionItem/variants/PositionTables/PositionsTable'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { PositionTableSkeleton } from './PositionItem/variants/PositionTables/skeletons/PositionTableSkeleton'
+import { PositionsTable } from './PositionItem/variants/PositionTables/PositionsTable'
+import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -205,48 +206,52 @@ export const PositionsList: React.FC<IProps> = ({
         </Grid>
       </Grid>
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
-        {currentData.length > 0 && !loading && !showNoConnected ? (
+        {loading ? (
           !isLg ? (
-            <PositionsTable
-              positions={currentData}
-              isLockPositionModalOpen={isLockPositionModalOpen}
-              setIsLockPositionModalOpen={setIsLockPositionModalOpen}
-            />
+            <PositionTableSkeleton />
           ) : (
-            currentData.map((element, index) => (
-              <Grid
-                onClick={() => {
-                  if (allowPropagation) {
-                    navigate(`/position/${element.id}`)
-                  }
-                }}
-                key={element.id}
-                className={classes.itemLink}>
-                <PositionItemMobile
-                  key={index}
-                  {...element}
-                  isLockPositionModalOpen={isLockPositionModalOpen}
-                  setIsLockPositionModalOpen={setIsLockPositionModalOpen}
-                  setAllowPropagation={setAllowPropagation}
-                />
-              </Grid>
-            ))
+            <PositionCardsSkeletonMobile />
           )
         ) : showNoConnected ? (
           <NoConnected {...noConnectedBlockerProps} />
+        ) : !isLg ? (
+          <PositionsTable
+            positions={currentData}
+            isLockPositionModalOpen={isLockPositionModalOpen}
+            setIsLockPositionModalOpen={setIsLockPositionModalOpen}
+            noInitialPositions={noInitialPositions}
+            onAddPositionClick={onAddPositionClick}
+          />
+        ) : currentData.length === 0 ? (
+          <EmptyPlaceholder
+            newVersion
+            desc={
+              noInitialPositions
+                ? 'Add your first position by pressing the button and start earning!'
+                : 'Did not find any matching positions'
+            }
+            onAction={onAddPositionClick}
+            withButton={noInitialPositions}
+          />
         ) : (
-          <>{!isLg ? <PositionTableSkeleton /> : <PositionCardsSkeletonMobile />}</>
-
-          // <EmptyPlaceholder
-          //   desc={
-          //     noInitialPositions
-          //       ? 'Add your first position by pressing the button and start earning!'
-          //       : 'Did not find any matching positions'
-          //   }
-          //   className={classes.placeholder}
-          //   onAction={onAddPositionClick}
-          //   withButton={noInitialPositions}
-          // />
+          currentData.map((element, index) => (
+            <Grid
+              onClick={() => {
+                if (allowPropagation) {
+                  navigate(`/position/${element.id}`)
+                }
+              }}
+              key={element.id}
+              className={classes.itemLink}>
+              <PositionItemMobile
+                key={index}
+                {...element}
+                isLockPositionModalOpen={isLockPositionModalOpen}
+                setIsLockPositionModalOpen={setIsLockPositionModalOpen}
+                setAllowPropagation={setAllowPropagation}
+              />
+            </Grid>
+          ))
         )}
       </Grid>
     </Grid>

@@ -221,5 +221,19 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('lg')]: {
       width: 'auto'
     }
+  },
+  emptyState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '32px',
+    gap: '16px',
+    border: 'none'
+  },
+  emptyStateText: {
+    ...typography.body1,
+    color: colors.invariant.text,
+    textAlign: 'center'
   }
 }))

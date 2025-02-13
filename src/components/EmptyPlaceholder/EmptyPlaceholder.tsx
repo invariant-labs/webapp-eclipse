@@ -11,15 +11,17 @@ export interface IEmptyPlaceholder {
   style?: React.CSSProperties
   withButton?: boolean
   buttonName?: string
+  newVersion?: boolean
 }
 
 export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
   desc,
   onAction,
   withButton = true,
-  buttonName
+  buttonName,
+  newVersion = false
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({ newVersion })
 
   return (
     <>

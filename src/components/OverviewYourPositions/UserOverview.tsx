@@ -72,10 +72,7 @@ export const UserOverview = () => {
           }
         }}>
         <Overview poolAssets={data} />
-        <YourWallet
-          pools={processedPools}
-          isLoading={isLoading || isLoadingList || processedPools.length <= 0}
-        />
+        <YourWallet pools={processedPools} isLoading={isLoading || isLoadingList} />
       </Box>
     </Box>
   )

@@ -108,7 +108,7 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
   },
   tableBody: {
     display: 'block',
-    maxHeight: 'calc(4 * (20px + 82px))',
+    maxHeight: 'calc(4 * (20px + 84px))',
     overflowY: 'auto',
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',
