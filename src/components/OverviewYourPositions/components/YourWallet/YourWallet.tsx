@@ -218,15 +218,15 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                           }}>
                           <Skeleton
                             variant='rectangular'
-                            width={22}
-                            height={22}
-                            sx={{ borderRadius: '8px', margin: '5px 0px' }}
+                            width={24}
+                            height={24}
+                            sx={{ borderRadius: '8px', margin: '4px 0px' }}
                           />
                           <Skeleton
                             variant='rectangular'
-                            width={22}
-                            height={22}
-                            sx={{ borderRadius: '8px', margin: '5px 0px' }}
+                            width={24}
+                            height={24}
+                            sx={{ borderRadius: '8px', margin: '4px 0px' }}
                           />
                         </TableCell>
                       </TableRow>
