@@ -381,10 +381,26 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     setLeftRange(leftRange)
     setRightRange(rightRange)
-
     if (
+      tokenBIndex !== null &&
+      (isXtoY ? rightRange < midPrice.index : rightRange > midPrice.index)
+    ) {
+      const deposit = tokenBDeposit
+      const amount = getOtherTokenAmount(
+        convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+        leftRange,
+        rightRange,
+        false
+      )
+
+      if (tokenAIndex !== null && +deposit !== 0) {
+        setTokenBDeposit(deposit)
+        setTokenADeposit(amount)
+      }
+    } else if (
       tokenAIndex !== null &&
-      (isXtoY ? rightRange > midPrice.index : rightRange < midPrice.index)
+      ((isXtoY ? leftRange > midPrice.index : leftRange < midPrice.index) ||
+        (isXtoY ? rightRange > midPrice.index : rightRange < midPrice.index))
     ) {
       const deposit = tokenADeposit
       const amount = getOtherTokenAmount(
@@ -398,24 +414,6 @@ export const NewPosition: React.FC<INewPosition> = ({
         setTokenADeposit(deposit)
         setTokenBDeposit(amount)
         return
-      }
-    }
-
-    if (
-      tokenBIndex !== null &&
-      (isXtoY ? leftRange < midPrice.index : leftRange > midPrice.index)
-    ) {
-      const deposit = tokenBDeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-        leftRange,
-        rightRange,
-        false
-      )
-
-      if (tokenAIndex !== null && +deposit !== 0) {
-        setTokenBDeposit(deposit)
-        setTokenADeposit(amount)
       }
     }
   }

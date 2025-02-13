@@ -550,7 +550,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     )
     const lowerTick = Math.min(left, right)
     const upperTick = Math.max(left, right)
-
+    console.log(byX)
     try {
       if (byX) {
         const result = getLiquidityByX(
@@ -574,6 +574,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               break
 
             case PotentialLiquidity.Max:
+              //max liquidity
+              console.log(amount.toString())
+              console.log(lowerTick)
+              console.log(upperTick)
+
+              console.log(result.liquidity.toString())
               setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
               potentialLiquidityRef.current.max = result.liquidity
               break
@@ -581,7 +587,14 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             default:
               break
           }
+          return
         } else {
+          // liquidity by 1 input
+          console.log(amount.toString())
+          console.log(lowerTick)
+          console.log(upperTick)
+
+          console.log(result.liquidity.toString())
           if (isMountedRef.current) {
             liquidityRef.current = result.liquidity
           }
@@ -611,6 +624,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               break
 
             case PotentialLiquidity.Max:
+              //max liquidity
+              console.log(amount.toString())
+              console.log(lowerTick)
+              console.log(upperTick)
+
+              console.log(result.liquidity.toString())
               setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
               potentialLiquidityRef.current.max = result.liquidity
               break
@@ -618,7 +637,15 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             default:
               break
           }
+          return
         } else {
+          // liquidity by 2 input
+          console.log(amount.toString())
+          console.log(lowerTick)
+          console.log(upperTick)
+
+          console.log(result.liquidity.toString())
+
           if (isMountedRef.current) {
             liquidityRef.current = result.liquidity
           }
@@ -694,7 +721,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
     return promotedPools.some(pool => pool.address === allPools[poolIndex].address.toString())
   }, [promotedPools, poolIndex, allPools])
-
+  console.log(liquidity.toString())
   const estimatedPointsPerDay: BN = useMemo(() => {
     const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
 
