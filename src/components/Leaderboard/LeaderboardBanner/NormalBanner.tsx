@@ -1,4 +1,4 @@
-import { Box, Grid, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
@@ -140,6 +140,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
             <Box className={classes.modal}>
               <Box className={classes.header}>
                 {airdrop}
+                <Typography>Announcement</Typography>
                 {close}
               </Box>
               {text}
