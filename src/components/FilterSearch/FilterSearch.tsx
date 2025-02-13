@@ -49,7 +49,6 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   const commonTokens = commonTokensForNetworks[networkType]
   const tokensList = useSelector(swapTokens)
 
-  console.log(selectedFilters)
   const [open, setOpen] = useState(false)
 
   const tokenListMap = useMemo(() => {
