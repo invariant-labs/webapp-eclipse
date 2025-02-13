@@ -10,7 +10,6 @@ export const useStyles = makeStyles()(() => ({
   pagination: {
     height: 90,
     padding: '20px 24px 10px 0',
-    width: '100%',
     maxWidth: '100%',
     backgroundColor: colors.invariant.component,
     borderBottomLeftRadius: '24px',

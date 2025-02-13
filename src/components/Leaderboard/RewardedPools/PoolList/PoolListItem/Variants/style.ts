@@ -76,7 +76,6 @@ export const useStyles = makeStyles()(() => ({
   },
 
   symbolsContainer: {
-    marginTop: 24,
     display: 'flex',
     alignItems: 'center',
     marginLeft: 10,

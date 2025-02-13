@@ -68,7 +68,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
     <Box
       sx={{
         width: isWideBlock ? '100%' : '233px',
-        height: blockHeight?.desktop ? blockHeight.desktop : '88px',
+        height: blockHeight?.desktop ? blockHeight?.desktop : '88px',
         backgroundSize: 'cover',
         backgroundImage: `url(${background.desktop})`,
         backgroundRepeat: 'no-repeat',
@@ -82,7 +82,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
         },
         [theme.breakpoints.down(500)]: {
           backgroundRepeat: 'no-repeat',
-          width: '97vw',
+          width: '98vw',
           border: '10px solid transparent',
           borderImage: `url(${background.mobile}) 20 fill round`,
           height: blockHeight?.mobile ? blockHeight.mobile : '88px'
