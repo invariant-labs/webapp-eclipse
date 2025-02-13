@@ -55,7 +55,7 @@ const useStyles = makeStyles()((_theme: Theme) => ({
     border: 'none',
     color: colors.invariant.textGrey,
     fontWeight: 400,
-    textAlign: 'center'
+    textAlign: 'left'
   },
   // Footer styles
   footerRow: {
@@ -71,7 +71,7 @@ const useStyles = makeStyles()((_theme: Theme) => ({
   pairNameCell: {
     width: '25%',
     textAlign: 'left',
-    padding: '14px 20px 14px 22px !important'
+    padding: '14px 41px 14px 22px !important'
   },
   pointsCell: {
     width: '8%',
@@ -126,6 +126,8 @@ const useStyles = makeStyles()((_theme: Theme) => ({
     display: 'block',
     maxHeight: 'calc(4 * (20px + 85px))',
     overflowY: 'auto',
+    borderBottomLeftRadius: '24px',
+    borderBottomRightRadius: '24px',
     '&::-webkit-scrollbar': {
       width: '4px'
     },
@@ -228,7 +230,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
             </TableRow>
           ))}
         </TableBody>
-        <TableFooter className={classes.tableFooter}>
+        {/* <TableFooter className={classes.tableFooter}>
           <TableRow className={classes.footerRow}>
             <TableCell className={`${classes.cellBase} ${classes.pairNameCell}`} />
             {networkSelector === NetworkType.Mainnet && (
@@ -241,7 +243,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
             <TableCell className={`${classes.cellBase} ${classes.chartCell}`} />
             <TableCell className={`${classes.cellBase} ${classes.actionCell}`} />
           </TableRow>
-        </TableFooter>
+        </TableFooter> */}
       </Table>
     </TableContainer>
   )

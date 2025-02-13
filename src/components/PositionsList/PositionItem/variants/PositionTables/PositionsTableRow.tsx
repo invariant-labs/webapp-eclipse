@@ -49,7 +49,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
   pairNameCell: {
     width: '25%',
     textAlign: 'left',
-    paddingLeft: '22px !important'
+    padding: '14px 41px 14px 22px !important'
   },
 
   pointsCell: {
@@ -62,7 +62,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
   feeTierCell: {
     width: '15%',
     padding: '0 !important',
-    paddingLeft: '48px !important',
+    // paddingLeft: '48px !important',
     '& > .MuiBox-root': {
       justifyContent: 'center',
       gap: '8px'
@@ -565,7 +565,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           style={{
             background: colors.invariant.light,
             padding: '8px 12px',
-            minWidth: '180px',
             borderRadius: '12px'
           }}>
           {tokenXPercentage === 100 && (

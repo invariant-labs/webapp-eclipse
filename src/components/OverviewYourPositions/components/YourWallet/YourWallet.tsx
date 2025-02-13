@@ -138,6 +138,9 @@ const useStyles = makeStyles()(() => ({
     padding: 0,
     margin: 0,
     border: 'none',
+    display: 'flex',
+    justifyContent: 'flex-end',
+    alignItems: 'center',
     color: colors.invariant.black,
     textTransform: 'none',
     transition: 'filter 0.2s linear',
@@ -389,7 +392,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
             <TableBody className={classes.zebraRow}>
               {isLoading
                 ? // Loading skeleton rows
-                  Array(3)
+                  Array(4)
                     .fill(0)
                     .map((_, index) => (
                       <TableRow key={`skeleton-${index}`}>
@@ -416,12 +419,12 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                           align='right'
                           sx={{ display: 'flex' }}>
                           <Skeleton
-                            variant='circular'
-                            width={32}
-                            height={32}
+                            variant='rectangular'
+                            width={24}
+                            height={24}
                             sx={{ marginRight: 1 }}
                           />
-                          <Skeleton variant='circular' width={32} height={32} />
+                          <Skeleton variant='rectangular' width={24} height={24} />
                         </TableCell>
                       </TableRow>
                     ))

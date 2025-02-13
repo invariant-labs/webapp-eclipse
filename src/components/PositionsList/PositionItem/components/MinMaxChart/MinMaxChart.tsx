@@ -68,7 +68,11 @@ const PriceIndicatorLine: React.FC<{ position: number }> = ({ position }) => (
   />
 )
 
-const MinMaxLabels: React.FC<{ min: number; max: number }> = ({ min, max }) => (
+const MinMaxLabels: React.FC<{ min: number; max: number; isOutOfBounds: boolean }> = ({
+  min,
+  max,
+  isOutOfBounds
+}) => (
   <Box
     sx={{
       width: '100%',
@@ -76,10 +80,18 @@ const MinMaxLabels: React.FC<{ min: number; max: number }> = ({ min, max }) => (
       justifyContent: 'space-between',
       marginTop: '6px'
     }}>
-    <Typography sx={{ ...typography.caption2, color: colors.invariant.lightGrey }}>
+    <Typography
+      sx={{
+        ...typography.caption2,
+        color: isOutOfBounds ? colors.invariant.light : colors.invariant.lightGrey
+      }}>
       {formatNumber(min)}
     </Typography>
-    <Typography sx={{ ...typography.caption2, color: colors.invariant.lightGrey }}>
+    <Typography
+      sx={{
+        ...typography.caption2,
+        color: isOutOfBounds ? colors.invariant.light : colors.invariant.lightGrey
+      }}>
       {formatNumber(max)}
     </Typography>
   </Box>
@@ -91,6 +103,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
     if (current > max) return 100 + CONSTANTS.OVERFLOW_LIMIT / 2
     return ((current - min) / (max - min)) * 100
   }
+  const isOutOfBounds = current < min || current > max
 
   const currentPosition = calculateBoundedPosition()
 
@@ -150,7 +163,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         </Box>
       </Box>
 
-      <MinMaxLabels min={min} max={max} />
+      <MinMaxLabels min={min} max={max} isOutOfBounds={isOutOfBounds} />
     </Box>
   )
 }

@@ -121,7 +121,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
         }}
         colors={isLoading ? loadingColors : chartColors}
         tooltip={{
-          trigger: 'item',
+          trigger: isLoading ? 'none' : 'item',
           classes: {
             root: classes.dark_background,
             valueCell: classes.value_cell,

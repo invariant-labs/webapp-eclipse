@@ -54,6 +54,7 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading2,
     color: colors.invariant.text,
     lineHeight: '40px',
+    textAlign: 'left',
     whiteSpace: 'nowrap',
     width: 180,
     [theme.breakpoints.down('xl')]: {

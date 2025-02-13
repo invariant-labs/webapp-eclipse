@@ -30,7 +30,7 @@ const useStyles = makeStyles()(() => ({
     background: 'inherit',
     border: 'none',
     whiteSpace: 'nowrap',
-    textAlign: 'center'
+    textAlign: 'left'
   },
   headerRow: {
     height: '50px',
@@ -48,7 +48,7 @@ const useStyles = makeStyles()(() => ({
     border: 'none',
     color: colors.invariant.textGrey,
     fontWeight: 400,
-    textAlign: 'center'
+    textAlign: 'left'
   },
   footerRow: {
     background: colors.invariant.component,
@@ -69,6 +69,8 @@ const useStyles = makeStyles()(() => ({
     display: 'block',
     maxHeight: 'calc(4 * (20px + 85px))',
     overflowY: 'auto',
+    borderBottomLeftRadius: '24px',
+    borderBottomRightRadius: '24px',
     '&::-webkit-scrollbar': {
       width: '4px'
     },
@@ -101,7 +103,7 @@ const useStyles = makeStyles()(() => ({
   pairNameCell: {
     width: '25%',
     textAlign: 'left',
-    padding: '14px 20px 14px 22px !important'
+    padding: '14px 41px 14px 22px !important'
   },
   feeTierCell: {
     width: '12%'
@@ -198,17 +200,6 @@ const PositionsTableSkeleton = () => {
             </TableRow>
           ))}
         </TableBody>
-        <TableFooter className={classes.tableFooter}>
-          <TableRow className={classes.footerRow}>
-            <TableCell className={cx(classes.baseCell, classes.pairNameCell)} />
-            <TableCell className={cx(classes.baseCell, classes.feeTierCell)} />
-            <TableCell className={cx(classes.baseCell, classes.tokenRatioCell)} />
-            <TableCell className={cx(classes.baseCell, classes.valueCell)} />
-            <TableCell className={cx(classes.baseCell, classes.feeCell)} />
-            <TableCell className={cx(classes.baseCell, classes.chartCell)} />
-            <TableCell className={cx(classes.baseCell, classes.actionCell)} />
-          </TableRow>
-        </TableFooter>
       </Table>
     </TableContainer>
   )
