@@ -8,6 +8,7 @@ import icons from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme, typography } from '@static/theme'
 import infoIcon from '@static/svg/info.svg'
+import { BorderBottom, Margin } from '@mui/icons-material'
 
 export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
   pointsPerSecond: string
@@ -74,9 +75,16 @@ export const RewardedPools: React.FC<IProps> = ({
       ) : (
         <Box className={classes.sectionContent} width={'100%'} style={mobileStyle}>
           {isMd && (
-            <Box style={{ width: '100%', marginLeft: '42px' }}>
+            <Box
+              style={{
+                width: '100%',
+
+                borderBottom: `2px solid ${colors.invariant.light}`
+              }}>
               <Typography
                 style={{
+                  paddingLeft: '42px',
+                  marginBottom: '16px',
                   ...typography.heading4,
                   color: colors.invariant.textGrey,
                   justifySelf: 'self-start'
