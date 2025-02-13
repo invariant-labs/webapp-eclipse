@@ -1,91 +1,104 @@
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Skeleton
-} from '@mui/material'
+import React from 'react'
+import { Box, Skeleton, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import { makeStyles } from 'tss-react/mui'
+import { colors } from '@static/theme'
 import { useDesktopSkeletonStyles } from './styles/desktopSkeleton'
 
-const PositionsTableSkeleton = () => {
-  const { classes, cx } = useDesktopSkeletonStyles()
-  const rows = [1, 2, 3, 4]
+export const PositionTableSkeleton: React.FC = () => {
+  const { classes } = useDesktopSkeletonStyles()
 
   return (
-    <TableContainer className={classes.tableContainer}>
+    <Box className={classes.tableContainer}>
       <Table className={classes.table}>
         <TableHead className={classes.tableHead}>
           <TableRow className={classes.headerRow}>
-            <TableCell className={cx(classes.headerCell, classes.pairNameCell)}>
-              Pair name
+            <TableCell className={classes.pairNameCell}>
+              <Skeleton variant='text' width={100} height={24} />
             </TableCell>
-            <TableCell className={cx(classes.headerCell, classes.feeTierCell)}>Fee tier</TableCell>
-            <TableCell className={cx(classes.headerCell, classes.tokenRatioCell)}>
-              Token ratio
+            <TableCell className={classes.feeTierCell}>
+              <Skeleton variant='text' width={60} height={24} />
             </TableCell>
-            <TableCell className={cx(classes.headerCell, classes.valueCell)}>Value</TableCell>
-            <TableCell className={cx(classes.headerCell, classes.feeCell)}>Fee</TableCell>
-            <TableCell className={cx(classes.headerCell, classes.chartCell)}>Chart</TableCell>
-            <TableCell className={cx(classes.headerCell, classes.actionCell)}>Action</TableCell>
+            <TableCell className={classes.tokenRatioCell}>
+              <Skeleton variant='text' width={80} height={24} />
+            </TableCell>
+            <TableCell className={classes.valueCell}>
+              <Skeleton variant='text' width={60} height={24} />
+            </TableCell>
+            <TableCell className={classes.feeCell}>
+              <Skeleton variant='text' width={60} height={24} />
+            </TableCell>
+            <TableCell className={classes.chartCell}>
+              <Skeleton variant='text' width={80} height={24} />
+            </TableCell>
+            <TableCell className={classes.actionCell}>
+              <Skeleton variant='text' width={36} height={24} />
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody className={classes.tableBody}>
-          {rows.map(row => (
-            <TableRow key={row} className={classes.bodyRow}>
-              <TableCell className={cx(classes.baseCell, classes.pairNameCell)}>
-                <Skeleton
-                  variant='rectangular'
-                  width='100%'
-                  height={30}
-                  sx={{ borderRadius: '8px' }}
-                />
-              </TableCell>
-              <TableCell className={cx(classes.baseCell, classes.feeTierCell)}>
-                <Skeleton variant='rounded' sx={{ borderRadius: '8px' }} width='100%' height={30} />
-              </TableCell>
-              <TableCell className={cx(classes.baseCell, classes.tokenRatioCell)}>
-                <Skeleton
-                  variant='rectangular'
-                  sx={{ borderRadius: '8px' }}
-                  width='100%'
-                  height={30}
-                />
-              </TableCell>
-              <TableCell className={cx(classes.baseCell, classes.valueCell)}>
-                <Skeleton
-                  variant='rectangular'
-                  sx={{ borderRadius: '8px' }}
-                  width='100%'
-                  height={30}
-                />
-              </TableCell>
-              <TableCell className={cx(classes.baseCell, classes.feeCell)}>
-                <Skeleton
-                  variant='rectangular'
-                  sx={{ borderRadius: '8px' }}
-                  width='100%'
-                  height={30}
-                />
-              </TableCell>
-              <TableCell className={cx(classes.baseCell, classes.chartCell)}>
-                <Skeleton
-                  variant='rectangular'
-                  width='100%'
-                  height={32}
-                  sx={{ borderRadius: '8px' }}
-                />
-              </TableCell>
-              <TableCell className={cx(classes.baseCell, classes.actionCell)}>
-                <Skeleton variant='rounded' width={36} height={36} sx={{ margin: '0 auto' }} />
-              </TableCell>
-            </TableRow>
-          ))}
+          {Array(5)
+            .fill(0)
+            .map((_, index) => (
+              <TableRow key={index} className={classes.bodyRow}>
+                <TableCell className={classes.pairNameCell}>
+                  <Box className={classes.skeletonContainer}>
+                    <Skeleton variant='circular' width={40} height={40} />
+                    <Skeleton variant='circular' width={40} height={40} />
+                    <Skeleton variant='text' width={80} height={24} />
+                  </Box>
+                </TableCell>
+                <TableCell className={classes.feeTierCell}>
+                  <Skeleton
+                    variant='rectangular'
+                    width='80%'
+                    height={36}
+                    sx={{ borderRadius: '10px', margin: '0 auto' }}
+                  />
+                </TableCell>
+                <TableCell className={classes.tokenRatioCell}>
+                  <Skeleton
+                    variant='rectangular'
+                    width='90%'
+                    height={36}
+                    sx={{ borderRadius: '10px', margin: '0 auto' }}
+                  />
+                </TableCell>
+                <TableCell className={classes.valueCell}>
+                  <Skeleton
+                    variant='rectangular'
+                    width='90%'
+                    height={36}
+                    sx={{ borderRadius: '10px', margin: '0 auto' }}
+                  />
+                </TableCell>
+                <TableCell className={classes.feeCell}>
+                  <Skeleton
+                    variant='rectangular'
+                    width='90%'
+                    height={36}
+                    sx={{ borderRadius: '10px', margin: '0 auto' }}
+                  />
+                </TableCell>
+                <TableCell className={classes.chartCell}>
+                  <Skeleton
+                    variant='rectangular'
+                    width='90%'
+                    height={36}
+                    sx={{ borderRadius: '10px', margin: '0 auto' }}
+                  />
+                </TableCell>
+                <TableCell className={classes.actionCell}>
+                  <Skeleton
+                    variant='rectangular'
+                    width={36}
+                    height={36}
+                    sx={{ borderRadius: '12px', margin: '0 auto' }}
+                  />
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
-    </TableContainer>
+    </Box>
   )
 }
-
-export default PositionsTableSkeleton

@@ -15,12 +15,17 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     flexDirection: 'column',
     overflow: 'hidden'
   },
-  baseCell: {
-    padding: '14px 20px',
-    background: 'inherit',
-    border: 'none',
-    whiteSpace: 'nowrap',
-    textAlign: 'left'
+  tableHead: {
+    display: 'table',
+    width: '100%',
+    tableLayout: 'fixed'
+  },
+  tableBody: {
+    display: 'block',
+    maxHeight: 'calc(5 * 80px)',
+    overflowY: 'auto',
+    borderBottomLeftRadius: '24px',
+    borderBottomRightRadius: '24px'
   },
   headerRow: {
     height: '50px',
@@ -32,50 +37,10 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
       borderTopRightRadius: '24px'
     }
   },
-  headerCell: {
-    fontSize: '16px',
-    lineHeight: '24px',
-    border: 'none',
-    color: colors.invariant.textGrey,
-    fontWeight: 400,
-    textAlign: 'left'
-  },
-  footerRow: {
-    background: colors.invariant.component,
-    height: '50px',
-    '& td:first-of-type': {
-      borderBottomLeftRadius: '24px'
-    },
-    '& td:last-child': {
-      borderBottomRightRadius: '24px'
-    }
-  },
-  tableHead: {
-    display: 'table',
-    width: '100%',
-    tableLayout: 'fixed'
-  },
-  tableBody: {
-    display: 'block',
-    maxHeight: 'calc(4 * (20px + 85px))',
-    overflowY: 'auto',
-    borderBottomLeftRadius: '24px',
-    borderBottomRightRadius: '24px',
-    '&::-webkit-scrollbar': {
-      width: '4px'
-    },
-    '&::-webkit-scrollbar-track': {
-      background: 'transparent'
-    },
-    '&::-webkit-scrollbar-thumb': {
-      background: colors.invariant.pink,
-      borderRadius: '4px'
-    }
-  },
   bodyRow: {
     display: 'table',
     width: '100%',
-    height: '105px',
+    height: '80px',
     tableLayout: 'fixed',
     '&:nth-of-type(odd)': {
       background: colors.invariant.component
@@ -84,34 +49,45 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
       background: `${colors.invariant.component}80`
     }
   },
-  tableFooter: {
-    display: 'table',
-    width: '100%',
-    tableLayout: 'fixed'
-  },
-  // Cell width styles
   pairNameCell: {
     width: '25%',
     textAlign: 'left',
-    padding: '14px 41px 14px 22px !important'
+    padding: '14px 41px 14px 22px !important',
+    border: 'none'
   },
   feeTierCell: {
-    width: '12%'
+    width: '12%',
+    padding: '14px 20px !important',
+    border: 'none'
   },
   tokenRatioCell: {
-    width: '15%'
+    width: '15%',
+    padding: '14px 20px !important',
+    border: 'none'
   },
   valueCell: {
-    width: '10%'
+    width: '10%',
+    padding: '14px 20px !important',
+    border: 'none'
   },
   feeCell: {
-    width: '10%'
+    width: '10%',
+    padding: '14px 20px !important',
+    border: 'none'
   },
   chartCell: {
-    width: '16%'
+    width: '16%',
+    padding: '14px 20px !important',
+    border: 'none'
   },
   actionCell: {
     width: '4%',
-    padding: '14px 8px'
+    padding: '14px 8px !important',
+    border: 'none'
+  },
+  skeletonContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '12px'
   }
 }))

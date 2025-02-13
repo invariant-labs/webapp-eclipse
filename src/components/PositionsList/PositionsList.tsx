@@ -22,8 +22,8 @@ import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
 import PositionsTable from './PositionItem/variants/PositionTables/PositionsTable'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import PositionsTableSkeleton from './PositionItem/variants/PositionTables/skeletons/PositionTableSkeleton'
 import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
+import { PositionTableSkeleton } from './PositionItem/variants/PositionTables/skeletons/PositionTableSkeleton'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -235,7 +235,7 @@ export const PositionsList: React.FC<IProps> = ({
         ) : showNoConnected ? (
           <NoConnected {...noConnectedBlockerProps} />
         ) : (
-          <>{!isLg ? <PositionsTableSkeleton /> : <PositionCardsSkeletonMobile />}</>
+          <>{!isLg ? <PositionTableSkeleton /> : <PositionCardsSkeletonMobile />}</>
 
           // <EmptyPlaceholder
           //   desc={
