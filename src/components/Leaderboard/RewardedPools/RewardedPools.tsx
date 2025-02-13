@@ -8,7 +8,6 @@ import icons from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme, typography } from '@static/theme'
 import infoIcon from '@static/svg/info.svg'
-import { BorderBottom, Margin } from '@mui/icons-material'
 
 export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
   pointsPerSecond: string
