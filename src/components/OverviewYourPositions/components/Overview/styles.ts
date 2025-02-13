@@ -15,10 +15,9 @@ export const useStyles = makeStyles()(() => ({
       padding: '0px 16px 0px 16px'
     },
     borderRight: `1px solid  ${colors.invariant.light}`,
-    padding: '0px 24px 0px 24px',
+    // padding: '0px 24px 0px 24px',
     display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center'
+    flexDirection: 'column'
   },
   tooltip: {
     color: colors.invariant.textGrey,
@@ -37,24 +36,35 @@ export const useStyles = makeStyles()(() => ({
   },
   headerRow: {
     display: 'flex',
+    alignItems: 'center',
+    [theme.breakpoints.up('lg')]: {
+      padding: '16px 24px'
+    },
+    padding: '16px 0px',
+
     justifyContent: 'space-between'
   },
   headerText: {
     [theme.breakpoints.down('lg')]: {
       marginTop: '16px'
     },
-    ...typography.heading1,
+    ...typography.heading2,
     color: colors.invariant.text
   },
 
   unclaimedSection: {
-    marginTop: '20px',
     display: 'flex',
+
     flexDirection: 'column',
     gap: '16px',
     minHeight: '32px',
 
     [theme.breakpoints.up('lg')]: {
+      height: '57.5px',
+      padding: '0px 24px 0px 24px',
+      borderTop: `1px solid  ${colors.invariant.light}`,
+      borderBottom: `1px solid  ${colors.invariant.light}`,
+
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between'

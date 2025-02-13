@@ -34,7 +34,7 @@ const useStyles = makeStyles()(() => ({
     background: colors.invariant.component,
     width: '100%',
     display: 'flex',
-    padding: '20px 0px',
+    padding: '16px 0px',
     [theme.breakpoints.down('lg')]: {
       borderTopLeftRadius: '24px'
     },
@@ -56,13 +56,10 @@ const useStyles = makeStyles()(() => ({
     },
     borderBottomLeftRadius: 0,
     backgroundColor: colors.invariant.component,
-    height: '260px',
+    height: '279px',
     overflowY: 'auto',
     overflowX: 'hidden',
 
-    '&::-webkit-scrollbar': {
-      width: '4px'
-    },
     '&::-webkit-scrollbar-track': {
       background: 'transparent'
     },
@@ -72,7 +69,8 @@ const useStyles = makeStyles()(() => ({
     }
   },
   tableCell: {
-    borderBottom: `1px solid ${colors.invariant.light}`
+    borderBottom: `1px solid ${colors.invariant.light}`,
+    padding: '12px !important'
   },
   headerCell: {
     fontSize: '20px',
@@ -121,8 +119,8 @@ const useStyles = makeStyles()(() => ({
       padding: '4px 6px'
     },
     padding: '4px 12px',
-    height: '25px',
-    borderRadius: '10px',
+    maxhHeight: '24px',
+    borderRadius: '6px',
     gap: '16px'
   },
   statsLabel: {
@@ -369,7 +367,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
         </Box>
 
         <TableContainer className={classes.tableContainer}>
-          <Table stickyHeader sx={{ paddingRight: '5px' }}>
+          <Table stickyHeader>
             <TableHead>
               <TableRow>
                 <TableCell className={classes.headerCell} align='left'>
@@ -493,13 +491,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
           </Table>
         </TableContainer>
       </Box>
-      {isLoading ? (
-        renderMobileLoading()
-      ) : (
-        <Box className={classes.mobileContainer}>
-          <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
-            Your Wallet
-          </Typography>
+
+      <Box className={classes.mobileContainer}>
+        <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
+          Your Wallet
+        </Typography>
+        {isLoading ? (
+          renderMobileLoading()
+        ) : (
           <Box sx={{ height: '345px', overflowY: 'auto' }}>
             {pools.map(pool => (
               <MobileCard
@@ -510,8 +509,8 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
               />
             ))}
           </Box>
-        </Box>
-      )}
+        )}
+      </Box>
     </>
   )
 }

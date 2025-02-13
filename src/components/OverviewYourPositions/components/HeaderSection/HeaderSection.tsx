@@ -14,7 +14,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
   return (
     <>
       <Box className={classes.headerRow}>
-        <Typography className={classes.headerText}>Assets in Pools</Typography>
+        <Typography className={classes.headerText}>Assets in tokens</Typography>
         {loading ? (
           <>
             <Skeleton

@@ -136,7 +136,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       }
     })
   }, [positions, getDominantColor, logoColors, pendingColorLoads])
-
+  //to hooks
   useEffect(() => {
     const calculateUnclaimedFee = async () => {
       try {
@@ -213,7 +213,7 @@ export const Overview: React.FC<OverviewProps> = () => {
               flexDirection: 'column'
             }
           }}>
-          <Box sx={{ marginTop: 2, width: '450px' }}>
+          <Box sx={{ width: '450px' }}>
             {!isDataReady ? (
               <LegendSkeleton />
             ) : (
@@ -254,7 +254,6 @@ export const Overview: React.FC<OverviewProps> = () => {
                         key={position.token}
                         sx={{
                           paddingLeft: '0 !important',
-                          paddingTop: '16px !important',
                           display: 'flex',
                           [theme.breakpoints.down('lg')]: {
                             justifyContent: 'space-between'
