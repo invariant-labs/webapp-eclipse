@@ -826,7 +826,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </Button>
           </Box>
         </Box>
-        {breakpoint && (
+        {breakpoint && simulation && simulation.swapSimulation && (
           <Box className={classes.depositHeaderContainer}>{renderPriceImpactWarning()}</Box>
         )}
       </Grid>
