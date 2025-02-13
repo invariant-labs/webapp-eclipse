@@ -27,14 +27,21 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    tokenFrom: null,
-    tokenTo: null,
     exchangeRate: { val: 123, symbol: 'ABC', decimal: 12 },
     slippage: 0.5,
     priceImpact: new BN(1000000000),
     fee: new BN(1000000000),
     open: true,
-    isLoadingRate: false
+    isLoadingRate: false,
+    simulationPath: {
+      tokenFrom: null,
+      tokenBetween: null,
+      tokenTo: null,
+      firstFee: null,
+      secondFee: null,
+      firstAmount: null,
+      secondAmount: null
+    }
   },
   render: args => {
     return <TransactionDetailsBox {...args} />
