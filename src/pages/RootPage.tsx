@@ -40,10 +40,27 @@ const RootPage: React.FC = memo(() => {
   const signerStatus = useSelector(connectionStatus)
   const walletStatus = useSelector(status)
   const navigate = useNavigate()
-  const location = useLocation()
   const currentNetwork = useSelector(network)
-
   const { classes } = useStyles()
+  const location = useLocation()
+
+  const metaData = new Map([
+    ['/exchange', 'Invariant | Exchange'],
+    ['/liquidity', 'Invariant | Liquidity'],
+    ['/portfolio', 'Invariant | Portfolio'],
+    ['/newPosition', 'Invariant | New Position'],
+    ['/position', 'Invariant | Position Details'],
+    ['/points', 'Invariant | Points'],
+    ['/statistics', 'Invariant | Statistics'],
+    ['/creator', 'Invariant | Creator']
+  ])
+
+  useEffect(() => {
+    const title =
+      metaData.get([...metaData.keys()].find(key => location.pathname.startsWith(key))!) ||
+      document.title
+    document.title = title
+  }, [location])
 
   const initConnection = useCallback(() => {
     dispatch(solanaConnectionActions.initSolanaConnection())
