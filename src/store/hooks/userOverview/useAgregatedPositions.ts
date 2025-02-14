@@ -8,11 +8,13 @@ export const useAgregatedPositions = (positionList: any, prices: Record<string, 
     tokenX: {
       symbol: string
       decimals: number
+      name: string
       assetAddress: string
       logoURI: string
     }
     tokenY: {
       symbol: string
+      name: string
       decimals: number
       assetAddress: string
       logoURI: string
@@ -29,6 +31,7 @@ export const useAgregatedPositions = (positionList: any, prices: Record<string, 
   interface TokenPositionEntry {
     token: string
     value: number
+    name: string
     logo: string
     positionId: string
   }
@@ -61,6 +64,7 @@ export const useAgregatedPositions = (positionList: any, prices: Record<string, 
     return {
       token: token.symbol,
       value,
+      name: token.name,
       logo: token.logoURI,
       positionId: position.id
     }

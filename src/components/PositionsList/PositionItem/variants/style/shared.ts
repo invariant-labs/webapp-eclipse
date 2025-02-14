@@ -142,7 +142,6 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.up(1361)]: {
       marginRight: 8
     },
-    //1360
     [theme.breakpoints.down(1361)]: {
       width: 'auto'
     },

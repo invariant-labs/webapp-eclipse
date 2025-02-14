@@ -39,6 +39,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
 
   const { getDominantColor, getTokenColor, tokenColorOverrides } = useDominantLogoColor()
+  console.log(positionList)
   const { positions } = useAgregatedPositions(positionList, prices)
 
   // Compute loading states
@@ -69,7 +70,7 @@ export const Overview: React.FC<OverviewProps> = () => {
         existingToken.value += position.value
       } else {
         tokens.push({
-          label: position.token,
+          label: position.name,
           value: position.value
         })
       }
