@@ -232,7 +232,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [simulation, setSimulation] = useState<SimulateSwapAndCreatePositionSimulation | null>(null)
 
   const [settings, setSettings] = useState<boolean>(false)
-  const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null)
 
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -443,8 +442,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     minimumSliderIndex
   ])
 
-  const handleClickDepositOptions = (event: React.MouseEvent<HTMLButtonElement>) => {
-    setAnchorEl(event.currentTarget)
+  const handleClickDepositOptions = () => {
     blurContent()
     setSettings(true)
   }
@@ -697,7 +695,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
         setMaxSlippageToleranceCreatePosition={setMaxSlippageToleranceCreatePosition}
         handleClose={handleCloseDepositOptions}
-        anchorEl={anchorEl}
         open={settings}
       />
       <Typography className={classes.sectionTitle}>Tokens</Typography>
@@ -819,8 +816,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             <Button
               onClick={handleClickDepositOptions}
               className={classes.optionsIconBtn}
+              disableRipple
               disabled={!isAutoSwapAvailable}>
-              <img src={icons.autoSwapOptions} alt='options' />
+              <img
+                src={icons.settingCirc}
+                className={!isAutoSwapAvailable ? classes.grayscaleIcon : classes.whiteIcon}
+                alt='options'
+              />
             </Button>
           </Box>
         </Box>
@@ -989,7 +991,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             progress === 'none' ? classes.hoverButton : undefined
           )}
           onClick={() => {
-            if (progress === 'none' && tokenAIndex && tokenBIndex) {
+            if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
               if (alignment === DepositOptions.Basic) {
                 onAddLiquidity()
               } else {

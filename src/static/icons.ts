@@ -62,7 +62,6 @@ import boostPoints from './svg/boostPoints.svg'
 import airdropGrey from './svg/airdropGrey.svg'
 import infoError from './svg/infoError.svg'
 import okxLogo from './svg/okx-logo.svg'
-import autoSwapOptions from './svg/autoSwapOptions.svg'
 import goldenInfoCircle from './svg/goldenInfoCircle.svg'
 import infoIcon from './svg/info.svg'
 import infoIconPink from './svg/infoIconPink.svg'
@@ -79,6 +78,7 @@ import githubFill from './svg/githubFill.svg'
 import mediumFill from './svg/MediumFill.svg'
 import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
+import settingCirc from './svg/settings_ic.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -160,8 +160,8 @@ const icons: { [key: string]: string } = {
   airdropGrey,
   infoError,
   okxLogo,
-  autoSwapOptions,
-  goldenInfoCircle
+  goldenInfoCircle,
+  settingCirc
 }
 
 export default icons

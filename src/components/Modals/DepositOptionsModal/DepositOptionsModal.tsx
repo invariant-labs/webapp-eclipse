@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react'
 import useStyles from './style'
-import { Box, Button, Divider, Grid, Popover, Typography } from '@mui/material'
+import { Box, Button, Divider, Grid, Popover, Typography, useMediaQuery } from '@mui/material'
 import DepositOption from './DepositOption'
+import { theme } from '@static/theme'
 
 const priceImpactTiers = [
   {
@@ -88,7 +89,6 @@ interface Props {
   initialMaxSlippageToleranceCreatePosition: string
   setMaxSlippageToleranceCreatePosition: (slippageToleranceCreatePosition: string) => void
   open: boolean
-  anchorEl: HTMLButtonElement | null
 }
 
 const DepoSitOptionsModal: React.FC<Props> = ({
@@ -101,11 +101,10 @@ const DepoSitOptionsModal: React.FC<Props> = ({
   setMaxSlippageToleranceCreatePosition,
   setMaxSlippageToleranceSwap,
   handleClose,
-  open,
-  anchorEl
+  open
 }) => {
   const { classes } = useStyles()
-
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
   const priceImpactTierIndex = useMemo(
     () => priceImpactTiers.findIndex(tier => Number(tier.value) === Number(priceImpact)),
@@ -146,13 +145,12 @@ const DepoSitOptionsModal: React.FC<Props> = ({
         open={open}
         onClose={handleClose}
         classes={{ paper: classes.paper }}
-        anchorEl={anchorEl}
         anchorOrigin={{
-          vertical: 'top',
+          vertical: isSm ? 'top' : 'center',
           horizontal: 'center'
         }}
         transformOrigin={{
-          vertical: 'top',
+          vertical: isSm ? 'top' : 'center',
           horizontal: 'center'
         }}>
         <Grid container className={classes.detailsWrapper}>

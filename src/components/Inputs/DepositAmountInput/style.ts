@@ -226,7 +226,8 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
     width: '100%',
     height: '100%',
     backgroundColor: 'rgba(11, 12, 13, 0.88)',
-    filter: 'blur(4px) brightness(0.4)'
+    filter: 'blur(4px) brightness(0.4)',
+    borderRadius: 20
   },
   blockedInfoWrapper: {
     position: 'absolute',

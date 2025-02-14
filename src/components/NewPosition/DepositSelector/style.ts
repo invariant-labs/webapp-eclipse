@@ -175,7 +175,8 @@ export const useStyles = makeStyles()(theme => {
         backgroundColor: 'transparent'
       },
       '&:disabled': {
-        color: colors.invariant.componentBcg,
+        color: colors.invariant.textGrey,
+        fontWeight: 200,
         pointerEvents: 'auto',
         transition: 'all 0.2s',
         '&:hover': {
@@ -189,10 +190,13 @@ export const useStyles = makeStyles()(theme => {
       },
       letterSpacing: '-0.03em',
       width: 46,
-      height: 26
+      height: 26,
+      [theme.breakpoints.down('sm')]: {
+        height: 32
+      }
     },
     switchSelected: { colort: colors.invariant.text, fontWeight: 700 },
-    switchNotSelected: { color: colors.invariant.component, fontWeight: 400 },
+    switchNotSelected: { color: colors.invariant.text, fontWeight: 400 },
     optionsIconBtn: {
       padding: 0,
       margin: 0,
@@ -200,6 +204,17 @@ export const useStyles = makeStyles()(theme => {
       background: 'none',
       '&:hover': {
         background: 'none'
+      },
+      '&:disabled': {
+        pointerEvents: 'auto',
+        '&:hover': {
+          boxShadow: 'none',
+          cursor: 'not-allowed',
+          filter: 'brightness(1.15)',
+          '@media (hover: none)': {
+            filter: 'none'
+          }
+        }
       }
     },
     unknownWarning: {
@@ -221,6 +236,12 @@ export const useStyles = makeStyles()(theme => {
       padding: '5px 8px',
       paddingInline: 8,
       borderRadius: 9
+    },
+    whiteIcon: {
+      filter: 'brightness(0) invert(100%)',
+      transition: 'filter 0.7s ease-in-out',
+      minWidth: '12px',
+      minHeight: '12px'
     },
     grayscaleIcon: {
       filter: 'grayscale(100%)',
