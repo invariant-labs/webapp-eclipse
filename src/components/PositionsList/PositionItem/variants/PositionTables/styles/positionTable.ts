@@ -121,7 +121,7 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
       }
     },
     '& > tr:nth-of-type(even)': {
-      background: `${colors.invariant.componentDark}`,
+      background: `${colors.invariant.componentDark}F0`,
       '&:hover': {
         background: `${colors.invariant.componentDark}90 !important`,
         cursor: 'pointer'
