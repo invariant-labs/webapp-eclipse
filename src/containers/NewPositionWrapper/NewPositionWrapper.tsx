@@ -14,7 +14,6 @@ import {
   calcPriceByTickIndex,
   calculateConcentration,
   createPlaceholderLiquidityPlot,
-  formatNumber,
   getMockedTokenPrice,
   getNewTokenOrThrow,
   getTokenPrice,
@@ -45,7 +44,7 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
-import { Pair } from '@invariant-labs/sdk-eclipse'
+import { Pair, PRICE_DENOMINATOR } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -749,6 +748,15 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     currentConcentration: number
   ): { min: BN; middle: BN; max: BN } => {
     const maxConcentrationForRange = calculateConcentration(0, tickSpacing)
+
+    console.log(maxConcentrationForRange)
+    console.log(currentConcentration)
+
+    // const maxLiquidityForRange = new BN(
+    //   Math.abs((maxConcentrationForRange * PRICE_DENOMINATOR) / currentConcentration)
+    // ).mul(liquidity)
+
+    // console.log(maxLiquidityForRange.div(PRICE_DENOMINATOR).toString())
 
     const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
 
