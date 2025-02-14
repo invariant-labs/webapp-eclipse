@@ -11,6 +11,10 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 2,
     backgroundColor: `${colors.invariant.component} !important`,
     padding: '24px 32px',
+    [theme.breakpoints.down('sm')]: {
+      padding: '24px 12px'
+    },
+
     '&::-webkit-scrollbar': {
       width: '4px'
     },
