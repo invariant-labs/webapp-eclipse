@@ -45,7 +45,8 @@ export const useUnclaimedFee = ({
     loading: false
   })
 
-  const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number | null>(null)
+  const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number>(0)
+  const [previousTokenValueInUsd, setPreviousTokenValueInUsd] = useState<number>(0)
 
   const { tokenXPercentage, tokenYPercentage } = calculatePercentageRatio(
     tokenXLiq,
@@ -91,18 +92,18 @@ export const useUnclaimedFee = ({
 
   const [_tokenXClaim, _tokenYClaim, unclaimedFeesInUSD] = useMemo(() => {
     if (positionTicks.loading || !positionSingleData?.poolData) {
-      return [0, 0, previousUnclaimedFees ?? null]
+      return [0, 0, previousUnclaimedFees]
     }
 
     if (tokenXPriceData.loading || tokenYPriceData.loading) {
-      return [0, 0, previousUnclaimedFees ?? null]
+      return [0, 0, previousUnclaimedFees]
     }
 
     if (
       typeof positionTicks.lowerTick === 'undefined' ||
       typeof positionTicks.upperTick === 'undefined'
     ) {
-      return [0, 0, previousUnclaimedFees ?? null]
+      return [0, 0, previousUnclaimedFees]
     }
 
     const [bnX, bnY] = calculateClaimAmount({
@@ -121,11 +122,12 @@ export const useUnclaimedFee = ({
     const yValueInUSD = yAmount * tokenYPriceData.price
     const totalValueInUSD = xValueInUSD + yValueInUSD
 
-    if (totalValueInUSD > 0) {
+    if (totalValueInUSD !== previousUnclaimedFees) {
       setPreviousUnclaimedFees(totalValueInUSD)
+      return [xAmount, yAmount, totalValueInUSD]
     }
 
-    return [xAmount, yAmount, totalValueInUSD]
+    return [xAmount, yAmount, previousUnclaimedFees]
   }, [
     positionSingleData,
     position,
@@ -137,7 +139,7 @@ export const useUnclaimedFee = ({
 
   const tokenValueInUsd = useMemo(() => {
     if (tokenXPriceData.loading || tokenYPriceData.loading) {
-      return null
+      return previousTokenValueInUsd
     }
 
     if (!tokenXLiquidity && !tokenYLiquidity) {
@@ -148,8 +150,13 @@ export const useUnclaimedFee = ({
     const yValue = tokenYLiquidity * tokenYPriceData.price
     const totalValue = xValue + yValue
 
-    return totalValue
-  }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData])
+    if (totalValue !== previousTokenValueInUsd) {
+      setPreviousTokenValueInUsd(totalValue)
+      return totalValue
+    }
+
+    return previousTokenValueInUsd
+  }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData, previousTokenValueInUsd])
 
   return { tokenValueInUsd, unclaimedFeesInUSD, tokenXPercentage, tokenYPercentage }
 }

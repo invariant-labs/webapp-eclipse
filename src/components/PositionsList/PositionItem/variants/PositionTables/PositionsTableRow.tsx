@@ -259,7 +259,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
               style={{
                 height: '32px',
                 width: '30px'
-                // marginRight: '16px',
               }}
             />
           </div>
@@ -310,8 +309,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
               flexShrink: '0',
               height: '32px',
               width: '32px',
-              // marginRight: '16px',
-              // marginLeft: '16px',
               opacity: 0.3,
               filter: 'grayscale(1)'
             }}
