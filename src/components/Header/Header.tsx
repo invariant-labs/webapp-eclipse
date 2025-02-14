@@ -23,6 +23,7 @@ import { PublicKey } from '@solana/web3.js'
 import FaucetButton from './HeaderButton/FaucetButton'
 import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
+import SocialModal from '@components/Modals/SocialModal/SocialModal'
 
 export interface IHeader {
   address: PublicKey
@@ -68,6 +69,7 @@ export const Header: React.FC<IHeader> = ({
   const navigate = useNavigate()
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
+  const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
   const showRPCBelowBreakpoint = useMediaQuery('@media (max-width:1050px)')
 
   const routes = [
@@ -93,6 +95,8 @@ export const Header: React.FC<IHeader> = ({
   const [routesModalOpen, setRoutesModalOpen] = useState(false)
   const [RpcsModalOpen, setRpcsModalOpen] = useState(false)
   const [chainSelectOpen, setChainSelectOpen] = useState(false)
+  const [viewSocialsOpen, setViewSocialsOpen] = useState(false)
+
   const [routesModalAnchor, setRoutesModalAnchor] = useState<HTMLButtonElement | null>(null)
 
   useEffect(() => {
@@ -362,6 +366,14 @@ export const Header: React.FC<IHeader> = ({
                   }
                 : undefined
             }
+            onSocials={
+              isSmDown
+                ? () => {
+                    setRoutesModalOpen(false)
+                    setViewSocialsOpen(true)
+                  }
+                : undefined
+            }
           />
           {typeOfNetwork === NetworkType.Testnet ? (
             <SelectTestnetRPC
@@ -400,6 +412,13 @@ export const Header: React.FC<IHeader> = ({
               unblurContent()
             }}
             activeChain={activeChain}
+          />
+          <SocialModal
+            open={viewSocialsOpen}
+            handleClose={() => {
+              setViewSocialsOpen(false)
+              unblurContent()
+            }}
           />
         </Grid>
       </Grid>
