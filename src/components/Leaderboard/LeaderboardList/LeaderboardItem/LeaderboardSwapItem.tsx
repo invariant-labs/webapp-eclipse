@@ -109,8 +109,8 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
         style={{
           border: hideBottomLine ? 'none' : undefined,
           background: isYou ? alpha(colors.invariant.light, 0.2) : 'transparent',
-          paddingLeft: isYou ? 24 : 0,
-          paddingRight: isYou ? 24 : 0
+          paddingLeft: isYou ? (isVerySmallScreen ? 12 : 24) : 0,
+          paddingRight: isYou ? (isVerySmallScreen ? 12 : 24) : 0
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 

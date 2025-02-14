@@ -36,6 +36,8 @@ export const TooltipGradient = ({ top, children, underline, ...props }: Props) =
       PopperProps={{
         disablePortal: true
       }}
+      onMouseEnter={() => setOpen(true)}
+      onMouseLeave={() => setOpen(false)}
       open={open}
       onClose={handleClose}
       {...props}>

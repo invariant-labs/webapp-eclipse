@@ -41,7 +41,11 @@ const RewardItem: React.FC<RewardItemInterface> = ({
         tooltip: 'The prize has already been distributed.'
       }
     } else if (isEligible) {
-      return { text: 'Claim', tooltip: `Prize will be distributed at ${reward.distributionDate}` }
+      if (reward.distributionDate === 'TBA') {
+        return { text: 'Claim', tooltip: `Distribution date will be announced` }
+      } else {
+        return { text: 'Claim', tooltip: `Prize will be distributed at ${reward.distributionDate}` }
+      }
     }
 
     return { text: 'Claim', tooltip: 'Prize not available.' }
