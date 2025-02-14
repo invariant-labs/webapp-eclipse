@@ -656,9 +656,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     }
     console.log(result)
-    if (!!result) {
-      setSimulation(result)
-    }
+    setSimulation(result)
   }
 
   useEffect(() => {

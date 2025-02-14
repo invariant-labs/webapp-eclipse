@@ -220,6 +220,7 @@ export const useStyles = makeStyles()(theme => {
     unknownWarning: {
       width: 'fit-content',
       maxWidth: 131,
+      textAlign: 'center',
       border: `1px solid ${colors.invariant.lightGrey}`,
       ...typography.caption4,
       color: colors.invariant.lightGrey,
@@ -230,6 +231,7 @@ export const useStyles = makeStyles()(theme => {
     errorWarning: {
       width: 'fit-content',
       maxWidth: 131,
+      textAlign: 'center',
       border: `1px solid ${colors.invariant.Error}`,
       ...typography.caption4,
       color: colors.invariant.Error,
