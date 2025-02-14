@@ -47,7 +47,7 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
     }
   }, [setSelectedSegment])
 
-  const getSegmentStyle = (segment: ChartSegment, index: number, isSelected: boolean) => ({
+  const getSegmentStyle = (segment: ChartSegment, isSelected: boolean) => ({
     backgroundColor: segment.color,
     opacity: isSelected ? 1 : 0.8,
     width: `${segment.width}%`,
@@ -90,7 +90,7 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
         <Box
           onClick={handleClick}
           className='chart-container'
-          sx={getSegmentStyle(segment, index, selectedSegment === index)}
+          sx={getSegmentStyle(segment, selectedSegment === index)}
         />
       </Tooltip>
     ),
