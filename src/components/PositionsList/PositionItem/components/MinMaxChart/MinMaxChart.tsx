@@ -3,12 +3,8 @@ import { Box, Typography } from '@mui/material'
 import { MaxHandleNarrower, MinHandleNarrower } from '@components/PriceRangePlot/Brush/svgHandles'
 import { colors, typography } from '@static/theme'
 import { formatNumber } from '@utils/utils'
-
-const CONSTANTS = {
-  MAX_HANDLE_OFFSET: 99,
-  OVERFLOW_LIMIT: 3,
-  CHART_PADDING: 21
-} as const
+import { useMinMaxChartStyles } from './style'
+import { CHART_CONSTANTS } from './consts'
 
 interface MinMaxChartProps {
   min: number
@@ -37,36 +33,31 @@ const GradientBox: React.FC<GradientBoxProps> = ({ color, width }) => (
 const CurrentValueIndicator: React.FC<{
   position: number
   value: number
-}> = ({ position, value }) => (
-  <Typography
-    sx={{
-      ...typography.caption2,
-      color: colors.invariant.yellow,
-      position: 'absolute',
-      left: `${position}%`,
-      transform: 'translateX(-50%)',
-      top: '-16px',
-      whiteSpace: 'nowrap',
-      zIndex: 101
-    }}>
-    {formatNumber(value)}
-  </Typography>
-)
+}> = ({ position, value }) => {
+  const { classes } = useMinMaxChartStyles()
+  return (
+    <Typography
+      className={classes.currentValueIndicator}
+      sx={{
+        left: `${position}%`
+      }}>
+      {formatNumber(value)}
+    </Typography>
+  )
+}
 
-const PriceIndicatorLine: React.FC<{ position: number }> = ({ position }) => (
-  <Box
-    sx={{
-      position: 'absolute',
-      width: '2px',
-      height: '25px',
-      backgroundColor: colors.invariant.yellow,
-      top: '0%',
-      left: `${position}%`,
-      transform: 'translateX(-50%)',
-      zIndex: 50
-    }}
-  />
-)
+const PriceIndicatorLine: React.FC<{ position: number }> = ({ position }) => {
+  const { classes } = useMinMaxChartStyles()
+
+  return (
+    <Box
+      className={classes.priceLineIndicator}
+      sx={{
+        left: `${position}%`
+      }}
+    />
+  )
+}
 
 const MinMaxLabels: React.FC<{ min: number; max: number; isOutOfBounds: boolean }> = ({
   min,
@@ -99,44 +90,21 @@ const MinMaxLabels: React.FC<{ min: number; max: number; isOutOfBounds: boolean 
 
 export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) => {
   const calculateBoundedPosition = () => {
-    if (current < min) return -CONSTANTS.OVERFLOW_LIMIT
-    if (current > max) return 100 + CONSTANTS.OVERFLOW_LIMIT / 2
+    if (current < min) return -CHART_CONSTANTS.OVERFLOW_LIMIT
+    if (current > max) return 100 + CHART_CONSTANTS.OVERFLOW_LIMIT / 2
     return ((current - min) / (max - min)) * 100
   }
+  const { classes } = useMinMaxChartStyles()
   const isOutOfBounds = current < min || current > max
 
   const currentPosition = calculateBoundedPosition()
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        height: '55px',
-        display: 'flex',
-        marginTop: '18px',
-        justifyContent: 'flex-end',
-        alignItems: 'flex-end',
-        position: 'relative',
-        flexDirection: 'column'
-      }}>
+    <Box className={classes.container}>
       <CurrentValueIndicator position={currentPosition} value={current} />
 
-      <Box
-        sx={{
-          width: '100%',
-          display: 'flex',
-          borderBottom: `2px solid ${colors.invariant.light}`,
-          position: 'relative',
-          overflow: 'visible'
-        }}>
-        <Box
-          sx={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            zIndex: 100,
-            transform: `translateX(-${CONSTANTS.CHART_PADDING}px)`
-          }}>
+      <Box className={classes.chart}>
+        <Box className={classes.handleLeft}>
           <MinHandleNarrower />
         </Box>
 
@@ -152,13 +120,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         />
         <PriceIndicatorLine position={currentPosition} />
 
-        <Box
-          sx={{
-            position: 'absolute',
-            left: `${CONSTANTS.MAX_HANDLE_OFFSET}%`,
-            top: 0,
-            zIndex: 100
-          }}>
+        <Box className={classes.handleRight}>
           <MaxHandleNarrower />
         </Box>
       </Box>

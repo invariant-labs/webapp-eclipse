@@ -1,0 +1,5 @@
+export const CHART_CONSTANTS = {
+  MAX_HANDLE_OFFSET: 99,
+  OVERFLOW_LIMIT: 3,
+  CHART_PADDING: 21
+} as const

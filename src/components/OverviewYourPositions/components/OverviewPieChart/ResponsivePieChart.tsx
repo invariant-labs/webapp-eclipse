@@ -1,55 +1,12 @@
 import { Box } from '@mui/material'
 import { PieChart } from '@mui/x-charts'
-import { makeStyles } from 'tss-react/mui'
 import { colors } from '@static/theme'
 import { useState } from 'react'
+import { useStyles } from './style'
 
 const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null)
   const total = data?.reduce((sum, item) => sum + item.value, 0) || 0
-
-  const useStyles = makeStyles<{ chartColors: string[]; hoveredColor: string | null }>()(
-    (_theme, { chartColors, hoveredColor }) => ({
-      dark_background: {
-        backgroundColor: `${colors.invariant.componentDark} !important`,
-        borderRadius: '8px !important',
-        display: 'flex !important',
-        flexDirection: 'column',
-        padding: '8px !important',
-        minWidth: '150px !important',
-        boxShadow: '27px 39px 75px -30px #000'
-      },
-      dark_paper: {
-        backgroundColor: `${colors.invariant.componentDark} !important`,
-        color: '#FFFFFF !important',
-        boxShadow: 'none !important'
-      },
-      value_cell: {
-        color: '#fff !important'
-      },
-      label_cell: {
-        color: `${hoveredColor || chartColors?.[0]} !important`,
-        fontWeight: 'bold'
-      },
-      dark_table: {
-        color: '#FFFFFF !important',
-        display: 'flex !important',
-        flexDirection: 'column',
-        gap: '4px'
-      },
-      dark_cell: {
-        padding: '2px 0 !important'
-      },
-      dark_mark: {
-        display: 'none !important'
-      },
-      dark_row: {
-        color: '#FFFFFF !important',
-        display: 'flex !important',
-        flexDirection: 'column'
-      }
-    })
-  )
 
   const { classes } = useStyles({
     chartColors,
@@ -75,15 +32,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = false }) => {
   })
 
   return (
-    <Box
-      sx={{
-        width: '100%',
-        height: '100%',
-        maxHeight: '200px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center'
-      }}>
+    <Box className={classes.pieChartContainer}>
       <PieChart
         skipAnimation
         series={[
