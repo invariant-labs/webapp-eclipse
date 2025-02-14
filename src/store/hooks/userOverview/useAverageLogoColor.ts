@@ -1,10 +1,6 @@
 import { useCallback } from 'react'
 
-export const useDominantLogoColor = () => {
-  interface ColorFrequency {
-    [key: string]: number
-  }
-
+export const useAverageLogoColor = () => {
   interface RGBColor {
     r: number
     g: number
@@ -29,21 +25,42 @@ export const useDominantLogoColor = () => {
 
   const rgbToHex = ({ r, g, b }: RGBColor): string => {
     const componentToHex = (c: number): string => {
-      const hex = c.toString(16)
+      const hex = Math.round(c).toString(16)
       return hex.length === 1 ? '0' + hex : hex
     }
     return '#' + componentToHex(r) + componentToHex(g) + componentToHex(b)
   }
 
-  const findMostFrequentColor = (colorFrequency: ColorFrequency): string => {
-    return Object.entries(colorFrequency).reduce(
-      (dominant, [color, frequency]) =>
-        frequency > dominant.frequency ? { color, frequency } : dominant,
-      { color: '#000000', frequency: 0 }
-    ).color
+  const calculateAverageColor = (imageData: Uint8ClampedArray): string => {
+    let totalR = 0
+    let totalG = 0
+    let totalB = 0
+    let totalPixels = 0
+
+    for (let i = 0; i < imageData.length; i += 4) {
+      const alpha = imageData[i + 3]
+
+      if (alpha === 0) continue
+
+      const alphaMultiplier = alpha / 255
+      totalR += imageData[i] * alphaMultiplier
+      totalG += imageData[i + 1] * alphaMultiplier
+      totalB += imageData[i + 2] * alphaMultiplier
+      totalPixels++
+    }
+
+    if (totalPixels === 0) return '#000000'
+
+    const averageColor: RGBColor = {
+      r: totalR / totalPixels,
+      g: totalG / totalPixels,
+      b: totalB / totalPixels
+    }
+
+    return rgbToHex(averageColor)
   }
 
-  const getDominantColor = useCallback((logoUrl: string): Promise<string> => {
+  const getAverageColor = useCallback((logoUrl: string): Promise<string> => {
     return new Promise((resolve, reject) => {
       const img: HTMLImageElement = new Image()
       img.crossOrigin = 'Anonymous'
@@ -68,24 +85,9 @@ export const useDominantLogoColor = () => {
           canvas.width,
           canvas.height
         ).data
-        const colorFrequency: ColorFrequency = {}
 
-        for (let i = 0; i < imageData.length; i += 4) {
-          const color: RGBColor = {
-            r: imageData[i],
-            g: imageData[i + 1],
-            b: imageData[i + 2]
-          }
-          const alpha: number = imageData[i + 3]
-
-          if (alpha === 0) continue
-
-          const hex: string = rgbToHex(color)
-          colorFrequency[hex] = (colorFrequency[hex] || 0) + 1
-        }
-
-        const dominantColor = findMostFrequentColor(colorFrequency)
-        resolve(dominantColor)
+        const averageColor = calculateAverageColor(imageData)
+        resolve(averageColor)
       }
 
       img.onerror = (): void => {
@@ -95,5 +97,6 @@ export const useDominantLogoColor = () => {
       img.src = logoUrl
     })
   }, [])
-  return { tokenColorOverrides, getDominantColor, getTokenColor }
+
+  return { tokenColorOverrides, getAverageColor, getTokenColor }
 }

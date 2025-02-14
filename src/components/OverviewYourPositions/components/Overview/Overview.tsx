@@ -15,9 +15,9 @@ import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import MobileOverview from './MobileOverview'
-import { useDominantLogoColor } from '@store/hooks/userOverview/useDominantLogoColor'
-import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 import LegendSkeleton from './skeletons/LegendSkeleton'
+import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
+import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -32,17 +32,14 @@ export const Overview: React.FC<OverviewProps> = () => {
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isLoadingList = useSelector(isLoadingPositionsList)
 
-  // State management
   const [totalUnclaimedFee, setTotalUnclaimedFee] = useState(0)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
 
-  const { getDominantColor, getTokenColor, tokenColorOverrides } = useDominantLogoColor()
-  console.log(positionList)
+  const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
   const { positions } = useAgregatedPositions(positionList, prices)
 
-  // Compute loading states
   const isColorsLoading = useMemo(() => pendingColorLoads.size > 0, [pendingColorLoads])
 
   const chartColors = useMemo(
@@ -114,7 +111,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       if (position.logo && !logoColors[position.logo] && !pendingColorLoads.has(position.logo)) {
         setPendingColorLoads(prev => new Set(prev).add(position.logo ?? ''))
 
-        getDominantColor(position.logo)
+        getAverageColor(position.logo)
           .then(color => {
             setLogoColors(prev => ({
               ...prev,
@@ -136,7 +133,7 @@ export const Overview: React.FC<OverviewProps> = () => {
           })
       }
     })
-  }, [positions, getDominantColor, logoColors, pendingColorLoads])
+  }, [positions, getAverageColor, logoColors, pendingColorLoads])
   //to hooks
   useEffect(() => {
     const calculateUnclaimedFee = async () => {
