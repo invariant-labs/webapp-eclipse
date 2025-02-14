@@ -190,17 +190,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       <Grid
         container
         item
-        sx={{
-          width: 100,
-          [theme.breakpoints.down(1029)]: {
-            marginRight: 0
-          },
-          [theme.breakpoints.down('sm')]: {
-            width: 144,
-            paddingInline: 6
-          }
-        }}
-        className={sharedClasses.value}
+        className={`${sharedClasses.value} ${classes.itemCellContainer}`}
         justifyContent='space-between'
         alignItems='center'
         wrap='nowrap'>
@@ -219,17 +209,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       <Grid
         container
         item
-        sx={{
-          width: 100,
-          [theme.breakpoints.down(1029)]: {
-            marginRight: 0
-          },
-          [theme.breakpoints.down('sm')]: {
-            width: 144,
-            paddingInline: 6
-          }
-        }}
-        className={sharedClasses.value}
+        className={`${sharedClasses.value} ${classes.itemCellContainer}`}
         justifyContent='space-between'
         alignItems='center'
         wrap='nowrap'>

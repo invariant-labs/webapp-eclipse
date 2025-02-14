@@ -154,5 +154,18 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
     display: 'table',
     width: '100%',
     tableLayout: 'fixed'
+  },
+  emptyContainer: {
+    border: 'none',
+    height: '410px',
+    padding: 0,
+    width: '100%'
+  },
+  emptyWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '90%',
+    width: '100%'
   }
 }))

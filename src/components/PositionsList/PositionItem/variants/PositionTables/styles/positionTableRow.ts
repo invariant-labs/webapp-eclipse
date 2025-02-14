@@ -17,7 +17,16 @@ export const usePositionTableRowStyle = makeStyles()((theme: Theme) => ({
     textAlign: 'left',
     padding: '14px 41px 14px 22px !important'
   },
-
+  itemCellContainer: {
+    width: 100,
+    [theme.breakpoints.down(1029)]: {
+      marginRight: 0
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: 144,
+      paddingInline: 6
+    }
+  },
   pointsCell: {
     width: '8%',
     '& > div': {

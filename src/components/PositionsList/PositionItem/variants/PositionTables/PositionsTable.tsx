@@ -77,21 +77,8 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
         ) : (
           <Box className={classes.tableBody}>
             <Box>
-              <Box
-                sx={{
-                  border: 'none',
-                  height: '410px',
-                  padding: 0,
-                  width: '100%'
-                }}>
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    height: '90%',
-                    width: '100%'
-                  }}>
+              <Box className={classes.emptyContainer}>
+                <Box className={classes.emptyWrapper}>
                   <EmptyPlaceholder
                     newVersion
                     desc={
