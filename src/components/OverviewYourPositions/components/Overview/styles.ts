@@ -22,8 +22,7 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.textGrey,
     ...typography.caption4,
     lineHeight: '24px',
-    background: colors.black.full,
-    boxShadow: `0 0 15px ${colors.invariant.light}`,
+    background: colors.invariant.componentDark,
     borderRadius: 12
   },
   subtitle: {

@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Box, Grid, Typography, Tooltip } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { colors, typography } from '@static/theme'
 
 import { TokenPositionEntry } from '@store/types/userOverview'
@@ -8,7 +8,8 @@ import { useStyles } from './styles'
 import { isLoadingPositionsList } from '@store/selectors/positions'
 import { useSelector } from 'react-redux'
 import MobileOverviewSkeleton from './skeletons/MobileOverviewSkeleton'
-interface ChartSegment {
+import SegmentFragmentTooltip from './SegmentFragmentTooltip'
+export interface ChartSegment {
   start: number
   width: number
   color: string
@@ -46,25 +47,6 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
     })
   }, [positions, totalAssets, chartColors])
 
-  const getSegmentStyle = (segment: ChartSegment, index: number, isSelected: boolean) => ({
-    width: `${segment.width}%`,
-    bgcolor: segment.color,
-    borderRadius:
-      index === 0 ? '12px 0 0 12px' : index === segments.length - 1 ? '0 12px 12px 0' : '0',
-    boxShadow: `inset 0px 0px 8px ${segment.color}`,
-    transform: isSelected ? 'scaleX(1.1)' : 'scaleY(1)',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      top: 0,
-      left: 0,
-      right: 0,
-      bottom: 0,
-      boxShadow: `40px 24px 76px 40px ${segment.color}`,
-      opacity: isSelected ? 1 : 0.4
-    }
-  })
-
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
       {isLoadingList ? (
@@ -80,32 +62,14 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
               mb: 3
             }}>
             {segments.map((segment, index) => (
-              <Tooltip
-                key={index}
-                open={selectedSegment === index}
-                onClose={() => setSelectedSegment(null)}
-                title={
-                  <Box sx={{ p: 1 }}>
-                    <Typography sx={{ color: segment.color, mb: 0.5 }}>{segment.token}</Typography>
-                    <Typography sx={{ color: colors.invariant.textGrey, mb: 0.5 }}>
-                      ${formatNumber2(segment.value)}
-                    </Typography>
-                    <Typography sx={{ color: colors.invariant.textGrey }}>
-                      {' '}
-                      {segment.percentage}%
-                    </Typography>
-                  </Box>
-                }
-                placement='top'
-                classes={{
-                  tooltip: classes.tooltip
-                }}>
-                <Box
-                  onClick={() => setSelectedSegment(selectedSegment === index ? null : index)}
-                  className={classes.segmentBox}
-                  sx={getSegmentStyle(segment, index, selectedSegment === index)}
-                />
-              </Tooltip>
+              <SegmentFragmentTooltip
+                tooltipClasses={{ tooltip: classes.tooltip }}
+                segment={segment}
+                selectedSegment={selectedSegment}
+                setSelectedSegment={setSelectedSegment}
+                colors={colors}
+                index={index}
+              />
             ))}
           </Box>
           {segments.length > 0 ? (
