@@ -4,6 +4,9 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   wrapper: {
     padding: '0 24px',
+    [theme.breakpoints.down('sm')]: {
+      padding: '0 12px'
+    },
     '&:nth-of-type(odd)': {
       background: `${colors.invariant.componentDark}`
     },
@@ -73,7 +76,6 @@ export const useStyles = makeStyles()(() => ({
   },
 
   symbolsContainer: {
-    marginTop: 24,
     display: 'flex',
     alignItems: 'center',
     marginLeft: 10,

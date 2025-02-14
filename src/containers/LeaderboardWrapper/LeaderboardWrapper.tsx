@@ -59,6 +59,16 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const [showWarningBanner, setShowWarningBanner] = React.useState(true)
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
 
+  useEffect(() => {
+    if (selectedOption === 'Liquidity') {
+      handlePageChange(Math.min(currentPage, Math.ceil(totalItemsObject.lp / itemsPerPage)))
+    } else if (selectedOption === 'Swap') {
+      handlePageChange(Math.min(currentPage, Math.ceil(totalItemsObject.swap / itemsPerPage)))
+    } else {
+      handlePageChange(currentPage)
+    }
+  }, [selectedOption])
+
   const isDelayWarning = useMemo(() => {
     if (!lastSnapTimestamp) return false
     const snapTime = hexToDate(lastSnapTimestamp)
