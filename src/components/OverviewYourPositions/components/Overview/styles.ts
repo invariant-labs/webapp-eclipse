@@ -15,7 +15,6 @@ export const useStyles = makeStyles()(() => ({
       padding: '0px 16px 0px 16px'
     },
     borderRight: `1px solid  ${colors.invariant.light}`,
-    // padding: '0px 24px 0px 24px',
     display: 'flex',
     flexDirection: 'column'
   },

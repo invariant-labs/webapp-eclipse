@@ -139,8 +139,11 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
-    marginRight: 8,
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.up(1361)]: {
+      marginRight: 8
+    },
+    //1360
+    [theme.breakpoints.down(1361)]: {
       width: 'auto'
     },
     width: '150px',

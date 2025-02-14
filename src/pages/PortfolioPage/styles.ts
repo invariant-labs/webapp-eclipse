@@ -30,8 +30,8 @@ const useStyles = makeStyles()(theme => {
       borderTopLeftRadius: '24px',
       display: 'flex',
       alignItems: 'center',
+      justifyContent: 'center',
       flexDirection: 'column',
-      paddingTop: '48px',
       borderTopRightRadius: '24px',
       background: 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)'
     },
