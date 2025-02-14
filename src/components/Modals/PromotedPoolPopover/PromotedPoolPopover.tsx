@@ -3,8 +3,6 @@ import useStyles from './style'
 import { Popover, Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import { useRef, useCallback, useEffect } from 'react'
-
 export interface IPromotedPoolPopover {
   open: boolean
   anchorEl: HTMLElement | null
@@ -33,46 +31,11 @@ export const PromotedPoolPopover = ({
   showEstPointsFirst = false
 }: IPromotedPoolPopover) => {
   const { classes } = useStyles()
-  const timeoutRef = useRef<NodeJS.Timeout>()
-  const ref = useRef<HTMLDivElement>(null)
-
-  const handleMouseEnter = useCallback(() => {
-    if (timeoutRef.current) {
-      clearTimeout(timeoutRef.current)
-    }
-  }, [])
 
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
     return value.lt(minimalValue)
   }
-
-  const handleMouseLeave = useCallback(() => {
-    timeoutRef.current = setTimeout(() => {
-      onClose()
-    }, 100)
-  }, [onClose])
-
-  useEffect(() => {
-    return () => {
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current)
-      }
-    }
-  }, [])
-
-  const handleClickOutside = event => {
-    if (ref.current && !ref.current.contains(event.target)) {
-      onClose()
-    }
-  }
-
-  useEffect(() => {
-    document.addEventListener('mousedown', handleClickOutside)
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside)
-    }
-  }, [])
 
   if (!anchorEl) return null
 
@@ -122,16 +85,14 @@ export const PromotedPoolPopover = ({
       disableRestoreFocus
       slotProps={{
         paper: {
-          onMouseEnter: handleMouseEnter,
-          onMouseLeave: handleMouseLeave
+          onMouseLeave: onClose
         }
       }}
       transformOrigin={{
         vertical: 'top',
         horizontal: 'center'
       }}
-      marginThreshold={16}
-      ref={ref}>
+      marginThreshold={16}>
       <div className={classes.root}>
         <div className={classes.container}>
           {/* Content remains the same */}
