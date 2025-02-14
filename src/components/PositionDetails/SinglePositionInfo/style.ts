@@ -11,6 +11,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   iconsGrid: {
     display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
+  tickerContainer: {
+    display: 'flex',
     alignItems: 'center'
   },
   icon: {
@@ -89,6 +94,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down('md')]: {
       minWidth: 84,
       marginInline: 12
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      marginInline: 0
     }
   },
   closedText: {
