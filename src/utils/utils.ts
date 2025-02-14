@@ -1349,6 +1349,33 @@ export const calculateConcentrationRange = (
   }
 }
 
+export const calculateConcentration = (lowerTick: number, upperTick: number) => {
+  const sqrtLowerPrice = Math.pow(Math.sqrt(1.0001), lowerTick)
+  const sqrtUpperPrice = Math.pow(Math.sqrt(1.0001), upperTick)
+
+  const concentration2 = (1 + sqrtUpperPrice * sqrtLowerPrice) / (sqrtUpperPrice - sqrtLowerPrice)
+
+  console.log(concentration2)
+  // return Math.abs(concentration)
+  console.log(lowerTick)
+  console.log(upperTick)
+  const lowerSqrtPrice = calculatePriceSqrt(lowerTick)
+  const upperSqrtPrice = calculatePriceSqrt(upperTick)
+
+  console.log(lowerSqrtPrice.toString())
+  console.log(upperSqrtPrice.toString())
+
+  const x = upperSqrtPrice.mul(lowerSqrtPrice).div(PRICE_DENOMINATOR)
+  const numerator = new BN(1).add(x)
+  const denominator = upperSqrtPrice.sub(lowerSqrtPrice)
+
+  const concentration = numerator.div(denominator)
+
+  console.log(concentration.toString())
+
+  return +concentration
+}
+
 export enum PositionTokenBlock {
   None,
   A,

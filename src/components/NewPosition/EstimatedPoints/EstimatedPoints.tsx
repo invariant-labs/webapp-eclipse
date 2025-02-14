@@ -6,7 +6,7 @@ import GradientBorder from '@components/GradientBorder/GradientBorder'
 import { theme, typography } from '@static/theme'
 import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
-import { formatNumber, printBN } from '@utils/utils'
+import { calculateConcentration, formatNumber, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { PositionOpeningMethod } from '@store/consts/types'
 
@@ -20,6 +20,7 @@ export interface IEstimatedPoints {
   showWarning: boolean
   singleDepositWarning: boolean
   positionOpeningMethod: PositionOpeningMethod
+  tickSpacing: number
 }
 
 export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
@@ -31,10 +32,13 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   estimatedScalePoints,
   showWarning,
   singleDepositWarning,
-  positionOpeningMethod
+  positionOpeningMethod,
+  tickSpacing
 }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+
+  const maxConcForRange = calculateConcentration(0, tickSpacing)
 
   const { minConc, middleConc, maxConc } = useMemo(
     () => ({
@@ -43,7 +47,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
       maxConc:
         positionOpeningMethod === 'concentration'
           ? concentrationArray[concentrationArray.length - 1].toFixed(0)
-          : 2 * +concentrationArray[concentrationArray.length - 1].toFixed(0)
+          : Math.ceil(maxConcForRange)
     }),
     [concentrationArray, positionOpeningMethod]
   )

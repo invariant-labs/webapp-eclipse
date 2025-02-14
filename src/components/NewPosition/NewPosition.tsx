@@ -14,6 +14,7 @@ import {
 import {
   addressToTicker,
   calcPriceByTickIndex,
+  calculateConcentration,
   calculateConcentrationRange,
   convertBalanceToBN,
   determinePositionTokenBlock,
@@ -135,7 +136,7 @@ export interface INewPosition {
   onDisconnectWallet: () => void
   canNavigate: boolean
   estimatedPointsPerDay: BN
-  estimatedPointsForScale: () => { min: BN; middle: BN; max: BN }
+  estimatedPointsForScale: (conc: number) => { min: BN; middle: BN; max: BN }
   isPromotedPool: boolean
 }
 
@@ -345,8 +346,12 @@ export const NewPosition: React.FC<INewPosition> = ({
   }
 
   const estimatedScalePoints = useMemo(() => {
-    return estimatedPointsForScale()
-  }, [poolAddress, tokenADeposit, tokenBDeposit, positionOpeningMethod, isXtoY])
+    return estimatedPointsForScale(
+      positionOpeningMethod === 'concentration'
+        ? concentrationArray[concentrationIndex]
+        : calculateConcentration(leftRange, rightRange)
+    )
+  }, [estimatedPointsPerDay, concentrationIndex])
 
   const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
     const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
@@ -691,6 +696,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                       blockedToken === PositionTokenBlock.B)
                   }
                   positionOpeningMethod={positionOpeningMethod}
+                  tickSpacing={tickSpacing}
                 />
               </div>
             </Fade>
@@ -1095,6 +1101,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 blockedToken === PositionTokenBlock.B)
             }
             positionOpeningMethod={positionOpeningMethod}
+            tickSpacing={tickSpacing}
           />
         </div>
       </Fade>
