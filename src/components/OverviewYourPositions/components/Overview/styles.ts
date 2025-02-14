@@ -92,6 +92,12 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.text
   },
 
+  segmentBox: {
+    height: '100%',
+    position: 'relative',
+    cursor: 'pointer',
+    transition: 'all 0.2s'
+  },
   claimAllButton: {
     ...typography.body1,
     display: 'flex',

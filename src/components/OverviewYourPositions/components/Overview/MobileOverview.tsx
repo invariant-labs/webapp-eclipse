@@ -46,6 +46,25 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
     })
   }, [positions, totalAssets, chartColors])
 
+  const getSegmentStyle = (segment: ChartSegment, index: number, isSelected: boolean) => ({
+    width: `${segment.width}%`,
+    bgcolor: segment.color,
+    borderRadius:
+      index === 0 ? '12px 0 0 12px' : index === segments.length - 1 ? '0 12px 12px 0' : '0',
+    boxShadow: `inset 0px 0px 8px ${segment.color}`,
+    transform: isSelected ? 'scaleX(1.1)' : 'scaleY(1)',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
+      boxShadow: `40px 24px 76px 40px ${segment.color}`,
+      opacity: isSelected ? 1 : 0.4
+    }
+  })
+
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
       {isLoadingList ? (
@@ -83,32 +102,8 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                 }}>
                 <Box
                   onClick={() => setSelectedSegment(selectedSegment === index ? null : index)}
-                  sx={{
-                    width: `${segment.width}%`,
-                    bgcolor: segment.color,
-                    height: '100%',
-                    borderRadius:
-                      index === 0
-                        ? '12px 0 0 12px'
-                        : index === segments.length - 1
-                          ? '0 12px 12px 0'
-                          : '0',
-                    boxShadow: `inset 0px 0px 8px ${segment.color}`,
-                    position: 'relative',
-                    cursor: 'pointer',
-                    transition: 'all 0.2s',
-                    transform: selectedSegment === index ? 'scaleX(1.1)' : 'scaleY(1)',
-                    '&::after': {
-                      content: '""',
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      boxShadow: ` 40px 24px 76px 40px ${segment.color}`,
-                      opacity: selectedSegment === index ? 1 : 0.4
-                    }
-                  }}
+                  className={classes.segmentBox}
+                  sx={getSegmentStyle(segment, index, selectedSegment === index)}
                 />
               </Tooltip>
             ))}

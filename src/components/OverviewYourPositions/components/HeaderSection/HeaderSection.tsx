@@ -19,7 +19,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
           <>
             <Skeleton
               variant='text'
-              width={120}
+              width={100}
               height={24}
               sx={{
                 bgcolor: colors.invariant.light,
