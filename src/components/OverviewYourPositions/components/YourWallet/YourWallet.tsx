@@ -15,9 +15,11 @@ import { useNavigate } from 'react-router-dom'
 import { STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
 import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
-import { formatNumber2, printBN } from '@utils/utils'
+import { addressToTicker, formatNumber2, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
+import { useSelector } from 'react-redux'
+import { network } from '@store/selectors/solanaConnection'
 
 interface YourWalletProps {
   pools: TokenPool[]
@@ -87,7 +89,7 @@ const MobileCard: React.FC<{ pool: TokenPool; classes: any; renderActions: any }
 export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
-
+  const currentNetwork = useSelector(network)
   const totalValue = useMemo(() => pools.reduce((sum, pool) => sum + pool.value, 0), [pools])
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
@@ -134,10 +136,12 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
       <Box
         className={classes.actionIcon}
         onClick={() => {
-          const targetToken = pool.symbol === 'ETH' ? 'USDC' : 'ETH'
-          navigate(`/exchange/${pool.symbol}/${targetToken}`, {
-            state: { referer: 'portfolio' }
-          })
+          console.log(addressToTicker(currentNetwork, pool.id.toString()))
+          // console.log(object);
+          // const targetToken = pool.symbol === 'ETH' ? 'USDC' : 'ETH'
+          // navigate(`/exchange/${pool.symbol}/${targetToken}`, {
+          //   state: { referer: 'portfolio' }
+          // })
         }}>
         <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
       </Box>

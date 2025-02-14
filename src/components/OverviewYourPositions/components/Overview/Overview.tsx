@@ -8,16 +8,12 @@ import { useSelector } from 'react-redux'
 import { colors, theme, typography } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
 import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
-import { formatNumber2, getTokenPrice, printBN } from '@utils/utils'
-import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { getMarketProgram } from '@utils/web3/programs/amm'
-import { network, rpcAddress } from '@store/selectors/solanaConnection'
-import { getEclipseWallet } from '@utils/web3/wallet'
-import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
+import { formatNumber2, getTokenPrice } from '@utils/utils'
 import MobileOverview from './MobileOverview'
 import LegendSkeleton from './skeletons/LegendSkeleton'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
+import { useCalculateUnclaimedFee } from '@store/hooks/userOverview/useCalculateUnclaimedFee'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -26,17 +22,14 @@ interface OverviewProps {
 
 export const Overview: React.FC<OverviewProps> = () => {
   const { classes } = useStyles()
-  const rpc = useSelector(rpcAddress)
-  const networkType = useSelector(network)
   const positionList = useSelector(positionsWithPoolsData)
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isLoadingList = useSelector(isLoadingPositionsList)
-
-  const [totalUnclaimedFee, setTotalUnclaimedFee] = useState(0)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
 
+  const totalUnclaimedFee = useCalculateUnclaimedFee(positionList, prices)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
   const { positions } = useAgregatedPositions(positionList, prices)
 
@@ -105,7 +98,6 @@ export const Overview: React.FC<OverviewProps> = () => {
     loadPrices()
   }, [positionList])
 
-  // Load logo colors
   useEffect(() => {
     positions.forEach(position => {
       if (position.logo && !logoColors[position.logo] && !pendingColorLoads.has(position.logo)) {
@@ -134,59 +126,6 @@ export const Overview: React.FC<OverviewProps> = () => {
       }
     })
   }, [positions, getAverageColor, logoColors, pendingColorLoads])
-  //to hooks
-  useEffect(() => {
-    const calculateUnclaimedFee = async () => {
-      try {
-        const wallet = getEclipseWallet()
-        const marketProgram = await getMarketProgram(networkType, rpc, wallet as IWallet)
-
-        const ticks = await Promise.all(
-          positionList.map(async position => {
-            const pair = new Pair(position.poolData.tokenX, position.poolData.tokenY, {
-              fee: position.poolData.fee,
-              tickSpacing: position.poolData.tickSpacing
-            })
-
-            return Promise.all([
-              marketProgram.getTick(pair, position.lowerTickIndex),
-              marketProgram.getTick(pair, position.upperTickIndex)
-            ])
-          })
-        )
-
-        const total = positionList.reduce((acc, position, i) => {
-          const [lowerTick, upperTick] = ticks[i]
-          const [bnX, bnY] = calculateClaimAmount({
-            position,
-            tickLower: lowerTick,
-            tickUpper: upperTick,
-            tickCurrent: position.poolData.currentTickIndex,
-            feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
-            feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
-          })
-
-          const xValue =
-            +printBN(bnX, position.tokenX.decimals) *
-            (prices[position.tokenX.assetAddress.toString()] ?? 0)
-          const yValue =
-            +printBN(bnY, position.tokenY.decimals) *
-            (prices[position.tokenY.assetAddress.toString()] ?? 0)
-
-          return acc + xValue + yValue
-        }, 0)
-
-        setTotalUnclaimedFee(isFinite(total) ? total : 0)
-      } catch (error) {
-        console.error('Error calculating unclaimed fees:', error)
-        setTotalUnclaimedFee(0)
-      }
-    }
-
-    if (Object.keys(prices).length > 0) {
-      calculateUnclaimedFee()
-    }
-  }, [positionList, prices, networkType, rpc])
 
   return (
     <Box className={classes.container}>
@@ -194,12 +133,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       <UnclaimedSection unclaimedTotal={totalUnclaimedFee} loading={isLoadingList} />
 
       {isLg ? (
-        <MobileOverview
-          positions={positions}
-          totalAssets={totalAssets}
-          chartColors={chartColors}
-          // loading={!isDataReady}
-        />
+        <MobileOverview positions={positions} totalAssets={totalAssets} chartColors={chartColors} />
       ) : (
         <Box
           sx={{
@@ -225,10 +159,12 @@ export const Overview: React.FC<OverviewProps> = () => {
                   spacing={1}
                   sx={{
                     height: '130px',
+                    width: '90%',
                     overflowY: positions.length <= 3 ? 'hidden' : 'auto',
                     marginTop: '8px',
                     marginLeft: '0 !important',
                     '&::-webkit-scrollbar': {
+                      padding: 0,
                       width: '4px'
                     },
                     '&::-webkit-scrollbar-track': {
@@ -287,13 +223,12 @@ export const Overview: React.FC<OverviewProps> = () => {
                           </Typography>
                         </Grid>
 
-                        <Grid item xs={5} alignContent={'center'}>
+                        <Grid item xs={6} alignContent={'center'}>
                           <Typography
                             style={{
                               ...typography.heading4,
                               color: colors.invariant.text,
-                              textAlign: 'right',
-                              paddingLeft: '8px'
+                              textAlign: 'right'
                             }}>
                             ${formatNumber2(position.value)}
                           </Typography>

@@ -48,7 +48,6 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
 
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
-      {/* Stacked Bar Chart */}
       {isLoadingList ? (
         <MobileOverviewSkeleton />
       ) : (

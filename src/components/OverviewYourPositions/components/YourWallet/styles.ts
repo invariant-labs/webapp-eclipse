@@ -39,9 +39,13 @@ export const useStyles = makeStyles()(() => ({
     borderBottomLeftRadius: 0,
     backgroundColor: colors.invariant.component,
     height: '279px',
-    overflowY: 'hidden',
+    overflowY: 'auto',
     overflowX: 'hidden',
 
+    '&::-webkit-scrollbar': {
+      padding: 0,
+      width: '4px'
+    },
     '&::-webkit-scrollbar-track': {
       background: 'transparent'
     },
