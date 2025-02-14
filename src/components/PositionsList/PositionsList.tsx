@@ -43,11 +43,8 @@ interface IProps {
   searchValue: string
   searchSetValue: (value: string) => void
   handleRefresh: () => void
-  // pageChanged: (page: number) => void
   length: number
   lockedLength: number
-  // loadedPages: Record<number, boolean>
-  // getRemainingPositions: () => void
   noInitialPositions: boolean
   lockedData: IPositionItem[]
 }
