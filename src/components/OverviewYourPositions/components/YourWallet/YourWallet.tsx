@@ -156,7 +156,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
         className={classes.actionIcon}
         onClick={() => {
           const sourceToken = addressToTicker(currentNetwork, pool.id.toString())
-          const targetToken = sourceToken === 'ETH' ? USDC_MAIN : WETH_MAIN
+          const targetToken = sourceToken === 'ETH' ? USDC_MAIN.address : WETH_MAIN.address
           navigate(
             `/exchange/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}`,
             {
