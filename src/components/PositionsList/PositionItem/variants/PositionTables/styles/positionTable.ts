@@ -41,17 +41,7 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
     fontWeight: 400,
     textAlign: 'left'
   },
-  // Footer styles
-  footerRow: {
-    background: colors.invariant.component,
-    height: '50px',
-    '& td:first-of-type': {
-      borderBottomLeftRadius: '24px'
-    },
-    '& td:last-child': {
-      borderBottomRightRadius: '24px'
-    }
-  },
+
   pairNameCell: {
     width: '25%',
     textAlign: 'left',
@@ -100,7 +90,6 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
       margin: '0 auto'
     }
   },
-  // Table layout styles
   tableHead: {
     display: 'table',
     width: '100%',
@@ -112,16 +101,18 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
     overflowY: 'auto',
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',
+
+    background: colors.invariant.component,
+
     '&::-webkit-scrollbar': {
       width: '4px'
     },
-    '&::-webkit-scrollbar-track': {
-      background: 'transparent'
-    },
+
     '&::-webkit-scrollbar-thumb': {
       background: colors.invariant.pink,
       borderRadius: '4px'
     },
+
     '& > tr:nth-of-type(odd)': {
       background: colors.invariant.component,
       '&:hover': {
@@ -130,13 +121,14 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
       }
     },
     '& > tr:nth-of-type(even)': {
-      background: `${colors.invariant.component}80`,
+      background: `${colors.invariant.componentDark}`,
       '&:hover': {
-        background: `${colors.invariant.component}90`,
+        background: `${colors.invariant.componentDark}90 !important`,
         cursor: 'pointer'
       }
     },
     '& > tr': {
+      background: 'transparent',
       '& td': {
         borderBottom: `1px solid ${colors.invariant.light}`
       }
