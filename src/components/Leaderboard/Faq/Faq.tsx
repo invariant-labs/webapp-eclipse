@@ -197,9 +197,17 @@ The algorithm takes into account factors such as the size of the position (TVL),
           <AccordionSummary
             expandIcon={<ExpandMoreIcon sx={{ color: colors.invariant.text }} />}
             sx={{
-              padding: '16px',
+              display: 'grid',
+              gridTemplateColumns: '1fr 40px',
+              alignItems: 'center',
+              padding: '16px 2px',
               '& .MuiAccordionSummary-content': {
                 margin: 0
+              },
+              '& .MuiAccordionSummary-expandIconWrapper': {
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center'
               }
             }}>
             <Typography
