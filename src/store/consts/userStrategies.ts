@@ -2,13 +2,13 @@ import { StrategyConfig } from '@store/types/userOverview'
 
 export const STRATEGIES: StrategyConfig[] = [
   {
-    tokenSymbolA: 'ETH',
-    tokenSymbolB: 'USDC',
+    tokenAddressA: 'So11111111111111111111111111111111111111112',
+    tokenAddressB: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
     feeTier: '0_09'
-  },
-  {
-    tokenSymbolA: 'tETH',
-    tokenSymbolB: 'ETH',
-    feeTier: '0_01'
   }
+  // {
+  //   tokenSymbolA: 'tETH',
+  //   tokenSymbolB: 'ETH',
+  //   feeTier: '0_01'
+  // }
 ]

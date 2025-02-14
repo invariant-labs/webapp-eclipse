@@ -3,8 +3,8 @@ import { PublicKey } from '@solana/web3.js'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 
 export interface StrategyConfig {
-  tokenSymbolA: string
-  tokenSymbolB?: string
+  tokenAddressA: string
+  tokenAddressB?: string
   feeTier: string
 }
 

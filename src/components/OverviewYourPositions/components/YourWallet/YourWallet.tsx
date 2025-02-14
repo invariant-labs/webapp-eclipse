@@ -10,11 +10,11 @@ import {
   TableHead,
   TableRow
 } from '@mui/material'
-import { TokenPool } from '@store/types/userOverview'
+import { StrategyConfig, TokenPool } from '@store/types/userOverview'
 import { useNavigate } from 'react-router-dom'
 import { STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
-import { ALL_FEE_TIERS_DATA } from '@store/consts/static'
+import { ALL_FEE_TIERS_DATA, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
 import { addressToTicker, formatNumber2, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
@@ -33,28 +33,13 @@ const EmptyState = ({ classes }: { classes: any }) => (
   </Box>
 )
 
-const MobileCard: React.FC<{ pool: TokenPool; classes: any; renderActions: any }> = ({
-  pool,
-  classes,
-  renderActions
-}) => {
-  let strategy = STRATEGIES.find(
-    s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool.symbol
-  )
-
-  if (!strategy) {
-    const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
-      if (!lowest) return current
-      return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
-    })
-
-    strategy = {
-      tokenSymbolA: pool.symbol,
-      tokenSymbolB: '-',
-      feeTier: printBN(lowestFeeTierData.tier.fee, 10).replace('.', '_').substring(0, 4)
-    }
-  }
-
+const MobileCard: React.FC<{
+  pool: TokenPool
+  classes: any
+  renderActions: any
+  getStrategy: () => StrategyConfig
+}> = ({ pool, classes, renderActions, getStrategy }) => {
+  const strategy = getStrategy()
   return (
     <Box className={classes.mobileCard}>
       <Box className={classes.mobileCardHeader}>
@@ -92,6 +77,35 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
   const currentNetwork = useSelector(network)
   const totalValue = useMemo(() => pools.reduce((sum, pool) => sum + pool.value, 0), [pools])
 
+  const findStrategy = (poolAddress: string) => {
+    const poolTicker = addressToTicker(currentNetwork, poolAddress)
+    let strategy = STRATEGIES.find(s => {
+      const tickerA = addressToTicker(currentNetwork, s.tokenAddressA)
+      const tickerB = s.tokenAddressB ? addressToTicker(currentNetwork, s.tokenAddressB) : undefined
+      return tickerA === poolTicker || tickerB === poolTicker
+    })
+
+    if (!strategy) {
+      const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
+        if (!lowest) return current
+        return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
+      })
+
+      strategy = {
+        tokenAddressA: poolAddress,
+        feeTier: printBN(lowestFeeTierData.tier.fee, 10).replace('.', '_').substring(0, 4)
+      }
+    }
+
+    return {
+      ...strategy,
+      tokenSymbolA: addressToTicker(currentNetwork, strategy.tokenAddressA),
+      tokenSymbolB: strategy.tokenAddressB
+        ? addressToTicker(currentNetwork, strategy.tokenAddressB)
+        : '-'
+    }
+  }
+
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
     e.currentTarget.src = icons.unknownToken
   }
@@ -121,27 +135,34 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
     </Box>
   )
 
-  const renderActions = (pool: TokenPool, strategy: any) => (
+  const renderActions = (pool: TokenPool, strategy: StrategyConfig) => (
     <>
       <Box
         className={classes.actionIcon}
         onClick={() => {
-          navigate(
-            `/newPosition/${strategy?.tokenSymbolA}/${strategy?.tokenSymbolB}/${strategy?.feeTier}`,
-            { state: { referer: 'portfolio' } }
-          )
+          console.log(strategy)
+          const sourceToken = addressToTicker(currentNetwork, strategy.tokenAddressA)
+          const targetToken = strategy.tokenAddressB
+            ? addressToTicker(currentNetwork, strategy.tokenAddressB)
+            : '-'
+
+          navigate(`/newPosition/${sourceToken}/${targetToken}/${strategy.feeTier}`, {
+            state: { referer: 'portfolio' }
+          })
         }}>
         <img src={icons.plusIcon} height={24} width={24} alt='Add' />
       </Box>
       <Box
         className={classes.actionIcon}
         onClick={() => {
-          console.log(addressToTicker(currentNetwork, pool.id.toString()))
-          // console.log(object);
-          // const targetToken = pool.symbol === 'ETH' ? 'USDC' : 'ETH'
-          // navigate(`/exchange/${pool.symbol}/${targetToken}`, {
-          //   state: { referer: 'portfolio' }
-          // })
+          const sourceToken = addressToTicker(currentNetwork, pool.id.toString())
+          const targetToken = sourceToken === 'ETH' ? USDC_MAIN : WETH_MAIN
+          navigate(
+            `/exchange/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}`,
+            {
+              state: { referer: 'portfolio' }
+            }
+          )
         }}>
         <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
       </Box>
@@ -246,24 +267,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                 </TableRow>
               ) : (
                 pools.map(pool => {
-                  let strategy = STRATEGIES.find(
-                    s => s.tokenSymbolA === pool.symbol || s.tokenSymbolB === pool.symbol
-                  )
-
-                  if (!strategy) {
-                    const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
-                      if (!lowest) return current
-                      return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
-                    })
-
-                    strategy = {
-                      tokenSymbolA: pool.symbol,
-                      tokenSymbolB: '-',
-                      feeTier: printBN(lowestFeeTierData.tier.fee, 10)
-                        .replace('.', '_')
-                        .substring(0, 4)
-                    }
-                  }
+                  const strategy = findStrategy(pool.id.toString())
 
                   return (
                     <TableRow key={pool.id.toString()}>
@@ -327,6 +331,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                 key={pool.id.toString()}
                 pool={pool}
                 classes={classes}
+                getStrategy={() => findStrategy(pool.id.toString())}
                 renderActions={renderActions}
               />
             ))}
