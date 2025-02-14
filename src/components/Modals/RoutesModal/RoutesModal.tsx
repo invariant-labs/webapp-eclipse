@@ -1,8 +1,9 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
 import useStyles from './style'
-import { Grid, Popover, Typography } from '@mui/material'
+import { Grid, Popover, Typography, useMediaQuery } from '@mui/material'
 import classNames from 'classnames'
+import { theme } from '@static/theme'
 
 export interface IRoutesModal {
   routes: string[]
@@ -13,6 +14,7 @@ export interface IRoutesModal {
   current?: string
   onFaucet?: () => void
   onRPC?: () => void
+  onSocials?: () => void
   onChainSelect?: () => void
 }
 export const RoutesModal: React.FC<IRoutesModal> = ({
@@ -23,11 +25,13 @@ export const RoutesModal: React.FC<IRoutesModal> = ({
   onSelect,
   current,
   onFaucet,
+  onSocials,
   onRPC,
   onChainSelect
 }) => {
   const { classes } = useStyles()
 
+  const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^newPosition\/*/, /^position\/*/],
     exchange: [/^exchange\/*/]
@@ -48,29 +52,34 @@ export const RoutesModal: React.FC<IRoutesModal> = ({
         horizontal: 'center'
       }}>
       <Grid className={classes.root} container alignContent='space-around' direction='column'>
-        <Typography className={classes.subtitle}>Navigation</Typography>
-        {routes.map(route => (
-          <Grid
-            item
-            key={`routes-${route}`}
-            className={classNames(
-              classes.listItem,
-              current === route ||
-                (typeof current !== 'undefined' &&
-                  !!otherRoutesToHighlight[route] &&
-                  otherRoutesToHighlight[route].some(pathRegex => pathRegex.test(current)))
-                ? classes.current
-                : null
-            )}
-            onClick={() => {
-              onSelect(route)
-              handleClose()
-            }}>
-            <Link to={`/${route}`} className={classes.link}>
-              <Typography className={classes.name}>{route}</Typography>
-            </Link>
-          </Grid>
-        ))}
+        {!isSmDown && (
+          <>
+            {' '}
+            <Typography className={classes.subtitle}>Navigation</Typography>
+            {routes.map(route => (
+              <Grid
+                item
+                key={`routes-${route}`}
+                className={classNames(
+                  classes.listItem,
+                  current === route ||
+                    (typeof current !== 'undefined' &&
+                      !!otherRoutesToHighlight[route] &&
+                      otherRoutesToHighlight[route].some(pathRegex => pathRegex.test(current)))
+                    ? classes.current
+                    : null
+                )}
+                onClick={() => {
+                  onSelect(route)
+                  handleClose()
+                }}>
+                <Link to={`/${route}`} className={classes.link}>
+                  <Typography className={classes.name}>{route}</Typography>
+                </Link>
+              </Grid>
+            ))}
+          </>
+        )}
         {(typeof onFaucet !== 'undefined' ||
           typeof onRPC !== 'undefined' ||
           typeof onChainSelect !== 'undefined') && (
@@ -97,6 +106,14 @@ export const RoutesModal: React.FC<IRoutesModal> = ({
             <Typography className={classes.name}>Change chain</Typography>
           </Grid>
         ) : null}
+        {isSmDown && (
+          <>
+            <Typography className={classes.subtitle}>Website</Typography>
+            <Grid item className={classes.listItem} onClick={onSocials}>
+              <Typography className={classes.name}>View Socials</Typography>
+            </Grid>
+          </>
+        )}
       </Grid>
     </Popover>
   )
