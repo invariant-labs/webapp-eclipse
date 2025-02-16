@@ -27,7 +27,7 @@ export const useStyles = makeStyles()(theme => {
     depositHeader: {
       width: '100%',
       flexDirection: 'column',
-      marginBottom: 18,
+      marginBottom: 24,
       justifyContent: 'center',
       alignItems: 'center',
       gap: 8
@@ -52,6 +52,11 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     sectionTitle: {
+      ...typography.heading4,
+      color: colors.white.main,
+      marginBottom: 24
+    },
+    subsectionTitle: {
       ...typography.heading4,
       color: colors.white.main
     },
@@ -257,6 +262,12 @@ export const useStyles = makeStyles()(theme => {
       transition: 'filter 0.7s ease-in-out',
       minWidth: '12px',
       minHeight: '12px'
+    },
+    inputFirst: {
+      marginBottom: 10
+    },
+    inputSecond: {
+      marginBottom: 16
     },
     inputWrapper: {
       display: 'flex',

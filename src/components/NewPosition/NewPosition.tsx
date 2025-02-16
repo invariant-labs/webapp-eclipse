@@ -545,24 +545,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -1017,7 +1017,8 @@ export const NewPosition: React.FC<INewPosition> = ({
               tokenAIndex !== null &&
               tokenBIndex !== null &&
               !isWaitingForNewPool &&
-              blockedToken === PositionTokenBlock.A
+              blockedToken === PositionTokenBlock.A &&
+              alignment === DepositOptions.Basic
                 ? '0'
                 : tokenADeposit,
             setValue: value => {
@@ -1044,12 +1045,14 @@ export const NewPosition: React.FC<INewPosition> = ({
               (tokenAIndex !== null &&
                 tokenBIndex !== null &&
                 !isWaitingForNewPool &&
-                blockedToken === PositionTokenBlock.A) ||
+                blockedToken === PositionTokenBlock.A &&
+                alignment === DepositOptions.Basic) ||
               !tokenACheckbox,
 
-            blockerInfo: tokenACheckbox
-              ? 'Range only for single-asset deposit.'
-              : 'You chose not to spend this token.',
+            blockerInfo:
+              alignment === DepositOptions.Basic
+                ? 'Range only for single-asset deposit.'
+                : 'You chose not to spend this token.',
             decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
           }}
           tokenBInputState={{
@@ -1057,7 +1060,8 @@ export const NewPosition: React.FC<INewPosition> = ({
               tokenAIndex !== null &&
               tokenBIndex !== null &&
               !isWaitingForNewPool &&
-              blockedToken === PositionTokenBlock.B
+              blockedToken === PositionTokenBlock.B &&
+              alignment === DepositOptions.Basic
                 ? '0'
                 : tokenBDeposit,
             setValue: value => {
@@ -1084,11 +1088,13 @@ export const NewPosition: React.FC<INewPosition> = ({
               (tokenAIndex !== null &&
                 tokenBIndex !== null &&
                 !isWaitingForNewPool &&
-                blockedToken === PositionTokenBlock.B) ||
+                blockedToken === PositionTokenBlock.B &&
+                alignment === DepositOptions.Basic) ||
               !tokenBCheckbox,
-            blockerInfo: tokenBCheckbox
-              ? 'Range only for single-asset deposit.'
-              : 'You chose not to spend this token.',
+            blockerInfo:
+              alignment === DepositOptions.Basic
+                ? 'Range only for single-asset deposit.'
+                : 'You chose not to spend this token.',
             decimalsLimit: tokenBIndex !== null ? tokens[tokenBIndex].decimals : 0
           }}
           feeTiers={feeTiers.map(tier => tier.feeValue)}

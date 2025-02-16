@@ -395,9 +395,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
 
     if (
-      ((!tokenAInputState.blocked && +tokenAInputState.value === 0 && tokenACheckbox) ||
-        (!tokenBInputState.blocked && +tokenBInputState.value === 0 && tokenBCheckbox)) &&
-      alignment !== DepositOptions.Auto
+      ((!tokenAInputState.blocked && +tokenAInputState.value === 0) ||
+        (!tokenBInputState.blocked && +tokenBInputState.value === 0)) &&
+      alignment === DepositOptions.Basic
     ) {
       return !tokenAInputState.blocked &&
         !tokenBInputState.blocked &&
@@ -408,21 +408,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
 
     if (
-      alignment === DepositOptions.Auto &&
       !tokenAInputState.blocked &&
-      !tokenBInputState.blocked &&
-      tokenBCheckbox &&
-      tokenACheckbox &&
       +tokenAInputState.value === 0 &&
-      +tokenBInputState.value === 0
+      !tokenBInputState.blocked &&
+      +tokenBInputState.value === 0 &&
+      alignment === DepositOptions.Auto
     ) {
       return 'Enter token amount'
     }
 
-    if (
-      alignment === DepositOptions.Auto &&
-      ((simulation && (!simulation.swapInput || !simulation.swapSimulation)) || !simulation)
-    ) {
+    if (alignment === DepositOptions.Auto && !simulation) {
       return 'Simulation error'
     }
 
@@ -660,10 +655,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }
 
   useEffect(() => {
-    if (
-      (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
-      alignment === DepositOptions.Auto
-    ) {
+    if ((tokenACheckbox || tokenBCheckbox) && alignment === DepositOptions.Auto) {
       simulateAutoSwapResult()
     }
   }, [
@@ -763,12 +755,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       </Grid>
       <Grid container className={classes.depositHeader}>
         <Box className={classes.depositHeaderContainer}>
-          <Typography className={classes.sectionTitle}>Deposit Amount</Typography>
+          <Typography className={classes.subsectionTitle}>Deposit Amount</Typography>
           {!breakpoint &&
             simulation?.swapSimulation?.priceImpact &&
             alignment === DepositOptions.Auto &&
             isAutoSwapAvailable &&
-            (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
+            (tokenACheckbox || tokenBCheckbox) &&
             renderPriceImpactWarning()}
           <Box className={classes.depositOptions}>
             <Tooltip title={'Placeholder'} classes={{ tooltip: classes.tooltip }}>
@@ -829,7 +821,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         )}
       </Grid>
       <Grid container className={classes.sectionWrapper}>
-        <Box className={classes.inputWrapper}>
+        <Box className={classNames(classes.inputWrapper, classes.inputFirst)}>
           <Box
             className={classes.checkboxWrapper}
             style={{
@@ -889,7 +881,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             walletUninitialized={walletStatus !== Status.Initialized}
           />
         </Box>
-        <Box className={classes.inputWrapper}>
+        <Box className={classNames(classes.inputWrapper, classes.inputSecond)}>
           <Box
             className={classes.checkboxWrapper}
             style={{
@@ -992,9 +984,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
               if (alignment === DepositOptions.Basic) {
                 onAddLiquidity()
+              } else if (
+                alignment === DepositOptions.Auto &&
+                simulation &&
+                !simulation.swapInput &&
+                !simulation.swapSimulation &&
+                simulation.position
+              ) {
+                onAddLiquidity()
               } else {
                 if (
-                  (tokenACheckbox !== tokenBCheckbox || (tokenACheckbox && tokenBCheckbox)) &&
+                  (tokenACheckbox || tokenBCheckbox) &&
                   simulation &&
                   simulation.swapSimulation &&
                   simulation.swapInput &&
