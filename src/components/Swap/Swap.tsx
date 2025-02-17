@@ -219,7 +219,7 @@ export const Swap: React.FC<ISwap> = ({
     poolIndex: number
     AmountOutWithFee: BN
     estimatedPriceAfterSwap: BN
-    // minimumReceived: BN
+    minimumReceived: BN
     priceImpact: BN
     error: string[]
   }>({
@@ -227,7 +227,7 @@ export const Swap: React.FC<ISwap> = ({
     poolIndex: 0,
     AmountOutWithFee: new BN(0),
     estimatedPriceAfterSwap: new BN(0),
-    // minimumReceived: new BN(0),
+    minimumReceived: new BN(0),
     priceImpact: new BN(0),
     error: []
   })
@@ -1214,6 +1214,18 @@ export const Swap: React.FC<ISwap> = ({
             slippage={+slippTolerance}
             isLoadingRate={getStateMessage() === 'Loading'}
             simulationPath={simulationPath}
+            minimumReceived={{
+              val:
+                swapType === SwapType.NORMAL
+                  ? simulateResult.minimumReceived
+                  : simulateWithHopResult.simulation?.swapHopTwo.minReceived,
+              symbol: canShowDetails
+                ? tokens[(rateReversed ? tokenFromIndex : tokenToIndex) ?? 0].symbol
+                : '',
+              decimal: canShowDetails
+                ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
+                : 0
+            }}
           />
           <TokensInfo
             tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
