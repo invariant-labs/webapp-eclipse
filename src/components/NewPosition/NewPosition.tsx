@@ -321,8 +321,7 @@ export const NewPosition: React.FC<INewPosition> = ({
       tickSpacing,
       isXtoY
     )
-    console.log(nearestLowerTick)
-    console.log(nearestUpperTick)
+
     calcAmount(
       amount,
       positionOpeningMethod === 'concentration' ? leftRangeMax : nearestLowerTick,
@@ -669,7 +668,11 @@ export const NewPosition: React.FC<INewPosition> = ({
                 <PointsLabel
                   handleClickFAQ={handleClickFAQ}
                   concentrationArray={concentrationArray}
-                  concentrationIndex={concentrationIndex}
+                  concentrationIndex={
+                    positionOpeningMethod === 'concentration'
+                      ? concentrationIndex
+                      : calculateConcentration(leftRange, rightRange)
+                  }
                   estimatedPointsPerDay={estimatedPointsPerDay}
                   estimatedScalePoints={estimatedScalePoints}
                   isConnected={walletStatus === Status.Init}

@@ -771,7 +771,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
     return promotedPools.some(pool => pool.address === allPools[poolIndex].address.toString())
   }, [promotedPools, poolIndex, allPools])
-  console.log(liquidity.toString())
+
   const estimatedPointsPerDay: BN = useMemo(() => {
     const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
 

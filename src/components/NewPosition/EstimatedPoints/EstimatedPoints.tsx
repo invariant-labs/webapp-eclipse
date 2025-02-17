@@ -72,9 +72,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
     const index = arr.findLastIndex(value => value <= num)
     return index !== -1 ? index : null
   }
-  const rangeIndex = findClosestIndex(rangeConcentrationArray, concentrationIndex)
-  console.log(concentrationIndex)
-  console.log(rangeConcentrationArray[rangeIndex])
+
   const percentage = useMemo(
     () =>
       showWarning || singleDepositWarning
