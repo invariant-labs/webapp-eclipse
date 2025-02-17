@@ -43,6 +43,12 @@ export interface LeaderboardUser {
   lp: ILpEntry[]
 }
 
+export interface CurrentContentPointsEntry {
+  startTimestamp: number
+  endTimestamp: number
+  points: number
+}
+
 export interface ILeaderboardStore {
   type: LeaderBoardType
   currentUser: CurrentUser
@@ -73,6 +79,7 @@ export interface ILeaderboardStore {
       price: string
     }
   >
+  contentPoints: CurrentContentPointsEntry[] | null
 }
 
 export const defaultState: ILeaderboardStore = {
@@ -93,7 +100,8 @@ export const defaultState: ILeaderboardStore = {
     pointsPerUsd: 0,
     swapMultiplier: '01'
   },
-  priceFeeds: {}
+  priceFeeds: {},
+  contentPoints: null
 }
 
 export const leaderboardSliceName = 'leaderboard'
@@ -217,6 +225,14 @@ const leaderboardSlice = createSlice({
     },
     resetCurrentUser(state) {
       state.currentUser = { total: null, lp: null, swap: null }
+    },
+    getContentPointsRequest(state) {
+      state.isLoading = true
+    },
+
+    setContentPoints(state, action: PayloadAction<CurrentContentPointsEntry[] | null>) {
+      state.contentPoints = action.payload
+      state.isLoading = false
     }
   }
 })

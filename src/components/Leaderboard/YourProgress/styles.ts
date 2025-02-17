@@ -13,15 +13,25 @@ const useStyles = makeStyles()(() => {
         flexDirection: 'column'
       }
     },
+    lowerSection: {
+      marginTop: '24px',
+      display: 'flex',
+      gap: '24px',
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column'
+      }
+    },
     headerBigText: { ...typography.heading1, color: colors.invariant.text },
     headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
+    tooltipContentPoints: { ...typography.body2, color: colors.invariant.textGrey },
     leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main },
     tooltip: {
       color: colors.invariant.textGrey,
       ...typography.caption4,
       lineHeight: '24px',
       borderRadius: 14,
-      width: 'fit-content',
+      width: 225,
+      height: 192,
       maxWidth: 225,
       fontSize: 16,
       padding: 16,
