@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
-import { formatNumber, formatNumber2, printBN } from '@utils/utils'
+import { formatNumber, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -13,9 +13,9 @@ interface IProps {
   open: boolean
   exchangeRate: { val: number; symbol: string; decimal: number }
   slippage: number
+  priceImpact: BN
   isLoadingRate?: boolean
   simulationPath: SimulationPath
-  minimumReceived: { val: number; symbol: string; decimal: number }
 }
 
 const TransactionDetailsBox: React.FC<IProps> = ({
@@ -23,8 +23,8 @@ const TransactionDetailsBox: React.FC<IProps> = ({
   exchangeRate,
   slippage,
   isLoadingRate = false,
-  simulationPath,
-  minimumReceived
+  priceImpact,
+  simulationPath
 }) => {
   const { classes } = useStyles({ open })
 
@@ -34,11 +34,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
       DECIMAL - 2
     )
   )
-  const impact = +printBN(
-    simulationPath.firstPriceImpact?.add(simulationPath.secondPriceImpact ?? new BN(0)) ??
-      new BN(0),
-    DECIMAL - 2
-  )
+  const impact = +printBN(priceImpact, DECIMAL - 2)
 
   return (
     <Grid container className={classes.wrapper}>
@@ -67,16 +63,6 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           <Typography className={classes.value}>
             {impact < 0.01 ? '<0.01%' : `${impact.toFixed(2)}%`}
           </Typography>
-        </Grid>
-        <Grid container justifyContent='space-between' className={classes.row}>
-          <Typography className={classes.label}>Minimum received:</Typography>
-          {isLoadingRate ? (
-            <img src={loadingAnimation} className={classes.loading} alt='Loading' />
-          ) : (
-            <Typography className={classes.value}>
-              {`${formatNumber2(printBN(minimumReceived.val ?? new BN(0), minimumReceived.decimal))} ${minimumReceived.symbol}`}{' '}
-            </Typography>
-          )}
         </Grid>
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Slippage tolerance:</Typography>
