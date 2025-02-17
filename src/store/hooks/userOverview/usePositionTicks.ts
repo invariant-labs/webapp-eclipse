@@ -20,6 +20,7 @@ interface UsePositionTicksProps {
   networkType: NetworkType
   rpc: string
   wallet: IWallet | null
+  shouldUpdate?: boolean
 }
 
 export const usePositionTicks = ({
@@ -29,7 +30,8 @@ export const usePositionTicks = ({
   upperTickIndex,
   networkType,
   rpc,
-  wallet
+  wallet,
+  shouldUpdate = true // Default to true for backward compatibility
 }: UsePositionTicksProps): PositionTicks => {
   const [positionTicks, setPositionTicks] = useState<PositionTicks>({
     lowerTick: undefined,
@@ -77,7 +79,7 @@ export const usePositionTicks = ({
     let mounted = true
 
     const fetch = async () => {
-      if (!mounted) return
+      if (!mounted || !shouldUpdate) return
       await fetchTicksForPosition()
     }
 
@@ -86,7 +88,7 @@ export const usePositionTicks = ({
     return () => {
       mounted = false
     }
-  }, [fetchTicksForPosition])
+  }, [fetchTicksForPosition, shouldUpdate])
 
   return positionTicks
 }

@@ -2,7 +2,7 @@ import { calculatePercentageRatio } from '@components/PositionsList/PositionItem
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { printBN } from '@utils/utils'
-import { useEffect, useMemo, useState, useCallback } from 'react'
+import { useEffect, useMemo, useState, useCallback, useRef } from 'react'
 import { useLiquidity } from '../userOverview/useLiquidity'
 import { usePositionTicks } from '../userOverview/usePositionTicks'
 import { usePrices } from '../userOverview/usePrices'
@@ -11,6 +11,8 @@ import { network as currentNetwork, rpcAddress } from '@store/selectors/solanaCo
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { useSelector } from 'react-redux'
 import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+
+const UPDATE_INTERVAL = 60000
 
 interface PositionTicks {
   lowerTick: Tick | undefined
@@ -39,15 +41,13 @@ export const useUnclaimedFee = ({
   const networkType = useSelector(currentNetwork)
   const rpc = useSelector(rpcAddress)
 
-  const [positionTicks, setPositionTicks] = useState<PositionTicks>({
-    lowerTick: undefined,
-    upperTick: undefined,
-    loading: false
-  })
+  const updateTimerRef = useRef<NodeJS.Timeout | null>(null)
+  const lastUpdateRef = useRef<number>(0)
+  const [shouldUpdate, setShouldUpdate] = useState(true)
 
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
   const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number>(0)
   const [previousTokenValueInUsd, setPreviousTokenValueInUsd] = useState<number>(0)
-  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   const { tokenXPercentage, tokenYPercentage } = calculatePercentageRatio(
     tokenXLiq,
@@ -79,15 +79,47 @@ export const useUnclaimedFee = ({
     upperTickIndex: positionSingleData?.upperTickIndex ?? 0,
     networkType,
     rpc,
-    wallet: wallet as IWallet
+    wallet: wallet as IWallet,
+    shouldUpdate
   })
 
+  const [positionTicks, setPositionTicks] = useState<PositionTicks>({
+    lowerTick: undefined,
+    upperTick: undefined,
+    loading: false
+  })
+
+  useEffect(() => {
+    const currentTime = Date.now()
+
+    if (currentTime - lastUpdateRef.current >= UPDATE_INTERVAL || isInitialLoad) {
+      setShouldUpdate(true)
+      lastUpdateRef.current = currentTime
+    }
+
+    updateTimerRef.current = setInterval(() => {
+      setShouldUpdate(true)
+      lastUpdateRef.current = Date.now()
+    }, UPDATE_INTERVAL)
+
+    return () => {
+      if (updateTimerRef.current) {
+        clearInterval(updateTimerRef.current)
+      }
+    }
+  }, [isInitialLoad])
+
+  // Update position ticks when new data arrives
   useEffect(() => {
     setPositionTicks({
       lowerTick,
       upperTick,
       loading: ticksLoading
     })
+
+    if (!ticksLoading) {
+      setShouldUpdate(false)
+    }
   }, [lowerTick, upperTick, ticksLoading])
 
   const calculateUnclaimedFees = useCallback(() => {
@@ -140,7 +172,7 @@ export const useUnclaimedFee = ({
     const yValueInUSD = fees.yAmount * tokenYPriceData.price
     const totalValueInUSD = xValueInUSD + yValueInUSD
 
-    if (totalValueInUSD !== previousUnclaimedFees || isInitialLoad) {
+    if (totalValueInUSD.toFixed(6) !== previousUnclaimedFees.toFixed(6) || isInitialLoad) {
       setPreviousUnclaimedFees(totalValueInUSD)
       setIsInitialLoad(false)
     }
@@ -176,7 +208,7 @@ export const useUnclaimedFee = ({
     const yValue = tokenYLiquidity * tokenYPriceData.price
     const totalValue = xValue + yValue
 
-    if (totalValue !== previousTokenValueInUsd || isInitialLoad) {
+    if (totalValue.toFixed(6) !== previousTokenValueInUsd.toFixed(6) || isInitialLoad) {
       setPreviousTokenValueInUsd(totalValue)
       setIsInitialLoad(false)
     }
