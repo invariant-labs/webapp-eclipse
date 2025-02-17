@@ -3,14 +3,11 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ onePoolType: boolean }>()((_theme, { onePoolType }) => ({
   swapFlowContainer: {
-    maxHeight: 70,
-    margin: '1px',
+    maxHeight: 76,
     gap: 16,
     padding: '12px 30px 12px 30px',
     paddingInline: '',
-    background: colors.invariant.component,
-    borderBottomLeftRadius: 10,
-    borderBottomRightRadius: 10
+    borderBottom: `1px solid ${colors.invariant.component}`
   },
   tokenContainer: {
     gap: 5,

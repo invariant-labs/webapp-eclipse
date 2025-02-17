@@ -11,30 +11,36 @@ import { SimulationPath } from '../Swap'
 
 interface IProps {
   open: boolean
-  fee: BN
   exchangeRate: { val: number; symbol: string; decimal: number }
   slippage: number
-  priceImpact: BN
   isLoadingRate?: boolean
   simulationPath: SimulationPath
 }
 
 const TransactionDetailsBox: React.FC<IProps> = ({
   open,
-  fee,
   exchangeRate,
   slippage,
-  priceImpact,
   isLoadingRate = false,
   simulationPath
 }) => {
   const { classes } = useStyles({ open })
 
-  const feePercent = Number(printBN(fee, DECIMAL - 2))
-  const impact = +printBN(priceImpact, DECIMAL - 2)
+  const feePercent = Number(
+    printBN(
+      simulationPath.firstFee?.add(simulationPath.secondFee ?? new BN(0)) ?? new BN(0),
+      DECIMAL - 2
+    )
+  )
+  const impact = +printBN(
+    simulationPath.firstPriceImpact?.add(simulationPath.secondPriceImpact ?? new BN(0)) ??
+      new BN(0),
+    DECIMAL - 2
+  )
 
   return (
     <Grid container className={classes.wrapper}>
+      <RouteBox simulationPath={simulationPath} />
       <Grid container direction='column' wrap='nowrap' className={classes.innerWrapper}>
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Exchange rate:</Typography>
@@ -65,7 +71,6 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           <Typography className={classes.value}>{slippage}%</Typography>
         </Grid>
       </Grid>
-      <RouteBox simulationPath={simulationPath} />
     </Grid>
   )
 }

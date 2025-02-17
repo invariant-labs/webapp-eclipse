@@ -138,6 +138,8 @@ export type SimulationPath = {
   secondFee: BN | null
   firstAmount: BN | null
   secondAmount: BN | null
+  firstPriceImpact: BN | null
+  secondPriceImpact: BN | null
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -238,8 +240,11 @@ export const Swap: React.FC<ISwap> = ({
     firstFee: null,
     secondFee: null,
     firstAmount: null,
-    secondAmount: null
+    secondAmount: null,
+    firstPriceImpact: null,
+    secondPriceImpact: null
   })
+  const [bestAmount, setBestAmount] = useState(new BN(0))
 
   const handlePointerEnter = () => {
     setIsPointsPopoverOpen(true)
@@ -409,7 +414,7 @@ export const Swap: React.FC<ISwap> = ({
         setAmountFrom('')
       }
     }
-  }, [simulateResult])
+  }, [bestAmount])
 
   useEffect(() => {
     updateEstimatedAmount()
@@ -441,7 +446,7 @@ export const Swap: React.FC<ISwap> = ({
   }, [tokenFromIndex, tokenToIndex])
 
   const getAmountOut = (assetFor: SwapToken) => {
-    const amountOut: number = Number(printBN(simulateResult.amountOut, assetFor.decimals))
+    const amountOut: number = Number(printBN(bestAmount, assetFor.decimals))
 
     return amountOut.toFixed(assetFor.decimals)
   }
@@ -515,10 +520,11 @@ export const Swap: React.FC<ISwap> = ({
       simulateWithHopResult.simulation &&
       simulateWithHopResult.route &&
       (inputRef === inputTarget.FROM
-        ? simulateWithHopResult?.simulation.totalAmountOut.gt(simulateResult.amountOut)
+        ? simulateWithHopResult?.simulation.totalAmountOut.gt(simulateResult.amountOut) ||
+          simulateResult.error.length > 0
         : simulateWithHopResult?.simulation.totalAmountIn.lt(
             convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals)
-          ))
+          ) || simulateResult.error.length > 0)
     ) {
       setSimulationPath({
         tokenFrom: tokens[tokenFromIndex ?? 0],
@@ -529,15 +535,26 @@ export const Swap: React.FC<ISwap> = ({
               : simulateWithHopResult.route[0].tokenX.toString()
           ],
         tokenTo: tokens[tokenToIndex ?? 0],
-        firstFee: simulateWithHopResult.route[0].feeTier.fee.toString(),
-        secondFee: simulateWithHopResult.route[1].feeTier.fee.toString(),
+        firstFee: simulateWithHopResult.route[0].feeTier.fee,
+        secondFee: simulateWithHopResult.route[1].feeTier.fee,
         firstAmount: simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
           simulateWithHopResult.simulation.swapHopOne.accumulatedFee
         ),
         secondAmount: simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountIn.add(
           simulateWithHopResult.simulation.swapHopTwo.accumulatedFee
-        )
+        ),
+        firstPriceImpact: simulateWithHopResult.simulation.swapHopOne.priceImpact,
+        secondPriceImpact: simulateWithHopResult.simulation.swapHopTwo.priceImpact
       })
+      setBestAmount(
+        inputRef === inputTarget.FROM
+          ? simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountIn.add(
+              simulateWithHopResult.simulation.swapHopTwo.accumulatedFee
+            )
+          : simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
+              simulateWithHopResult.simulation.swapHopOne.accumulatedFee
+            )
+      )
     } else {
       setSimulationPath({
         tokenFrom: tokens[tokenFromIndex ?? 0],
@@ -546,8 +563,11 @@ export const Swap: React.FC<ISwap> = ({
         firstFee: pools[simulateResult.poolIndex]?.fee ?? new BN(0),
         secondFee: null,
         firstAmount: convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals),
-        secondAmount: null
+        secondAmount: null,
+        firstPriceImpact: simulateResult.priceImpact,
+        secondPriceImpact: null
       })
+      setBestAmount(simulateResult.amountOut)
     }
   }, [simulateResult, simulateWithHopResult, tokenToIndex, tokenFromIndex])
 
@@ -1175,7 +1195,6 @@ export const Swap: React.FC<ISwap> = ({
           </Box>
           <TransactionDetailsBox
             open={getStateMessage() !== 'Loading' ? detailsOpen && canShowDetails : prevOpenState}
-            fee={canShowDetails ? pools[simulateResult.poolIndex].fee : new BN(0)}
             exchangeRate={{
               val: rateReversed ? 1 / swapRate : swapRate,
               symbol: canShowDetails
@@ -1185,7 +1204,6 @@ export const Swap: React.FC<ISwap> = ({
                 ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
                 : 0
             }}
-            priceImpact={simulateResult.priceImpact}
             slippage={+slippTolerance}
             isLoadingRate={getStateMessage() === 'Loading'}
             simulationPath={simulationPath}
