@@ -1,4 +1,4 @@
-import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Skeleton, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './styles'
 import React, { useMemo } from 'react'
 import PoolList from './PoolList/PoolList'
@@ -24,7 +24,6 @@ export const RewardedPools: React.FC<IProps> = ({
   rewardedPoolsData
 }: IProps) => {
   const { classes } = useStyles()
-
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const data = useMemo(
@@ -89,7 +88,26 @@ export const RewardedPools: React.FC<IProps> = ({
                   justifySelf: 'self-start'
                 }}>
                 Pools Distributing Points
-                <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
+                <Tooltip
+                  title={
+                    <div onClick={e => e.stopPropagation()}>
+                      List of pools currently distributing points. Updates on new pools will be
+                      announced on our{' '}
+                      <a
+                        href='https://x.com/invariant_labs'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        style={{ color: 'inherit', textDecoration: 'underline' }}>
+                        X
+                      </a>
+                      .
+                    </div>
+                  }
+                  placement='bottom'
+                  classes={{ tooltip: classes.tooltip }}
+                  enterTouchDelay={0}>
+                  <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
+                </Tooltip>
               </Typography>
             </Box>
           )}

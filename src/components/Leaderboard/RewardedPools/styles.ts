@@ -28,6 +28,21 @@ const useStyles = makeStyles()(() => {
       [theme.breakpoints.down('md')]: {
         height: 750
       }
+    },
+    tooltip: {
+      color: colors.invariant.textGrey,
+      ...typography.caption4,
+      lineHeight: '24px',
+      borderRadius: 14,
+      width: 'fit-content',
+      maxWidth: 225,
+      fontSize: 16,
+      padding: 16,
+      background: 'transparent',
+      backgroundImage: `linear-gradient(to bottom, ${colors.invariant.component}, ${colors.invariant.component}), linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+      backgroundClip: 'padding-box, border-box',
+      backgroundOrigin: 'border-box',
+      border: '1px solid transparent'
     }
   }
 })
