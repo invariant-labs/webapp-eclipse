@@ -56,7 +56,6 @@ export const useUnclaimedFee = ({
   )
 
   const { tokenXLiquidity, tokenYLiquidity } = useLiquidity(positionSingleData)
-
   const { tokenXPriceData, tokenYPriceData } = usePrices({
     tokenX: {
       assetsAddress: positionSingleData?.tokenX.assetAddress.toString(),
@@ -90,26 +89,23 @@ export const useUnclaimedFee = ({
     })
   }, [lowerTick, upperTick, ticksLoading])
 
-  const [_tokenXClaim, _tokenYClaim, unclaimedFeesInUSD] = useMemo(() => {
-    if (positionTicks.loading || !positionSingleData?.poolData) {
-      return [0, 0, previousUnclaimedFees]
-    }
-
-    if (tokenXPriceData.loading || tokenYPriceData.loading) {
-      return [0, 0, previousUnclaimedFees]
-    }
-
-    if (
+  const unclaimedFeesInUSD = useMemo(() => {
+    const loading =
+      positionTicks.loading ||
+      !positionSingleData?.poolData ||
+      tokenXPriceData.loading ||
+      tokenYPriceData.loading ||
       typeof positionTicks.lowerTick === 'undefined' ||
       typeof positionTicks.upperTick === 'undefined'
-    ) {
-      return [0, 0, previousUnclaimedFees]
+
+    if (loading) {
+      return { loading: true, value: previousUnclaimedFees }
     }
 
     const [bnX, bnY] = calculateClaimAmount({
       position,
-      tickLower: positionTicks.lowerTick,
-      tickUpper: positionTicks.upperTick,
+      tickLower: positionTicks.lowerTick!,
+      tickUpper: positionTicks.upperTick!,
       tickCurrent: positionSingleData.poolData.currentTickIndex,
       feeGrowthGlobalX: positionSingleData.poolData.feeGrowthGlobalX,
       feeGrowthGlobalY: positionSingleData.poolData.feeGrowthGlobalY
@@ -124,10 +120,9 @@ export const useUnclaimedFee = ({
 
     if (totalValueInUSD !== previousUnclaimedFees) {
       setPreviousUnclaimedFees(totalValueInUSD)
-      return [xAmount, yAmount, totalValueInUSD]
     }
 
-    return [xAmount, yAmount, previousUnclaimedFees]
+    return { loading: false, value: totalValueInUSD }
   }, [
     positionSingleData,
     position,
@@ -138,12 +133,14 @@ export const useUnclaimedFee = ({
   ])
 
   const tokenValueInUsd = useMemo(() => {
-    if (tokenXPriceData.loading || tokenYPriceData.loading) {
-      return previousTokenValueInUsd
+    const loading = tokenXPriceData.loading || tokenYPriceData.loading
+
+    if (loading) {
+      return { loading: true, value: previousTokenValueInUsd }
     }
 
     if (!tokenXLiquidity && !tokenYLiquidity) {
-      return 0
+      return { loading: false, value: 0 }
     }
 
     const xValue = tokenXLiquidity * tokenXPriceData.price
@@ -152,10 +149,9 @@ export const useUnclaimedFee = ({
 
     if (totalValue !== previousTokenValueInUsd) {
       setPreviousTokenValueInUsd(totalValue)
-      return totalValue
     }
 
-    return previousTokenValueInUsd
+    return { loading: false, value: totalValue }
   }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData, previousTokenValueInUsd])
 
   return { tokenValueInUsd, unclaimedFeesInUSD, tokenXPercentage, tokenYPercentage }

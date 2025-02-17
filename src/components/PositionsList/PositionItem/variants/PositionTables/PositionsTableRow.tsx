@@ -6,7 +6,8 @@ import {
   Tooltip,
   Typography,
   useMediaQuery,
-  Box
+  Box,
+  Skeleton
 } from '@mui/material'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
@@ -195,9 +196,19 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         alignItems='center'
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
-          <Typography className={sharedClasses.greenText}>
-            {tokenValueInUsd === null ? '...' : `$${formatNumber2(tokenValueInUsd)}`}
-          </Typography>
+          {tokenValueInUsd.loading ? (
+            <Skeleton
+              className={sharedClasses.infoCenter}
+              variant='text'
+              width='100%'
+              height={36}
+              sx={{ borderRadius: '10px', margin: '0 auto' }}
+            />
+          ) : (
+            <Typography className={sharedClasses.greenText}>
+              ${formatNumber2(tokenValueInUsd.value)}
+            </Typography>
+          )}
         </Grid>
       </Grid>
     ),
@@ -214,9 +225,18 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         alignItems='center'
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
-          <Typography className={sharedClasses.greenText}>
-            {unclaimedFeesInUSD === null ? '...' : `$${formatNumber2(unclaimedFeesInUSD)}`}
-          </Typography>
+          {unclaimedFeesInUSD.loading ? (
+            <Skeleton
+              variant='text'
+              width='100%'
+              height={36}
+              sx={{ borderRadius: '10px', margin: '0 auto' }}
+            />
+          ) : (
+            <Typography className={sharedClasses.greenText}>
+              ${formatNumber2(unclaimedFeesInUSD.value)}
+            </Typography>
+          )}
         </Grid>
       </Grid>
     ),
