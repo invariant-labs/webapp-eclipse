@@ -3,7 +3,7 @@ import { typography, colors, theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
 import { useSelector } from 'react-redux'
-import { swapTokens } from '@store/selectors/solanaWallet'
+import { balanceLoading, swapTokens } from '@store/selectors/solanaWallet'
 import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { ProcessedPool } from '@store/types/userOverview'
@@ -11,6 +11,7 @@ import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 
 export const UserOverview = () => {
   const tokensList = useSelector(swapTokens)
+  const isBalanceLoading = useSelector(balanceLoading)
   const { processedPools, isLoading } = useProcessedTokens(tokensList)
   const isLoadingList = useSelector(isLoadingPositionsList)
 
@@ -72,7 +73,10 @@ export const UserOverview = () => {
           }
         }}>
         <Overview poolAssets={data} />
-        <YourWallet pools={processedPools} isLoading={isLoading || isLoadingList} />
+        <YourWallet
+          pools={processedPools}
+          isLoading={isLoading || isLoadingList || isBalanceLoading}
+        />
       </Box>
     </Box>
   )
