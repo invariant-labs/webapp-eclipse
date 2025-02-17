@@ -12,16 +12,10 @@ export const useAverageLogoColor = () => {
     color: string
   }
 
-  const tokenColorOverrides: TokenColorOverride[] = [
-    { token: 'SOL', color: '#9945FF' },
-    { token: 'CELESTIA', color: '#FF8B34' },
-    { token: 'STTIA', color: '#FF4B4B' }
-  ]
+  const tokenColorOverrides: TokenColorOverride[] = [{ token: 'SOL', color: '#9945FF' }]
 
   const defaultTokenColors: Record<string, string> = {
     SOL: '#9945FF',
-    CELESTIA: '#FF8B34',
-    STTIA: '#FF4B4B',
     DEFAULT: '#7C7C7C'
   }
 
@@ -74,36 +68,64 @@ export const useAverageLogoColor = () => {
     return rgbToHex(averageColor)
   }
 
-  const getProxyUrl = (url: string): string => {
+  const getCorrectImageUrl = (url: string): string => {
     if (url.includes('github.com') && url.includes('/blob/master/')) {
       return url
         .replace('github.com', 'raw.githubusercontent.com')
         .replace('/blob/master/', '/master/')
     }
+
+    if (url.includes('statics.solscan.io')) {
+      const ref = new URL(url).searchParams.get('ref')
+      if (ref) {
+        try {
+          const decodedRef = Buffer.from(ref, 'hex').toString()
+          return decodedRef
+        } catch (e) {
+          console.warn('Failed to decode Solscan URL:', e)
+        }
+      }
+    }
+
     return url
   }
 
-  const getAverageColor = useCallback((logoUrl: string, token: string): Promise<string> => {
-    return new Promise(resolve => {
-      const img: HTMLImageElement = new Image()
-      img.crossOrigin = 'Anonymous'
+  const loadImageWithFallback = (url: string): Promise<HTMLImageElement> => {
+    return new Promise((resolve, reject) => {
+      const img = new Image()
+      img.crossOrigin = 'anonymous'
+      img.referrerPolicy = 'no-referrer'
 
-      const timeoutDuration = 5000
-      let timeoutId: NodeJS.Timeout | null = null
-
-      const cleanup = () => {
-        if (timeoutId != null) {
-          clearTimeout(timeoutId)
-          img.onload = null
-          img.onerror = null
-        }
+      img.onload = () => resolve(img)
+      img.onerror = () => {
+        const retryImg = new Image()
+        retryImg.onload = () => resolve(retryImg)
+        retryImg.onerror = () => reject(new Error('Failed to load image'))
+        retryImg.src = url
       }
 
-      img.onload = (): void => {
-        cleanup()
-        try {
-          const canvas: HTMLCanvasElement = document.createElement('canvas')
-          const ctx: CanvasRenderingContext2D | null = canvas.getContext('2d')
+      img.src = getCorrectImageUrl(url)
+    })
+  }
+
+  const getAverageColor = useCallback((logoUrl: string, token: string): Promise<string> => {
+    const override = tokenColorOverrides.find(item => item.token === token)
+    if (override) {
+      return Promise.resolve(override.color)
+    }
+
+    return new Promise(resolve => {
+      const timeoutDuration = 5000
+      const timeoutId = setTimeout(() => {
+        resolve(getTokenColor(token, undefined, tokenColorOverrides))
+      }, timeoutDuration)
+
+      loadImageWithFallback(logoUrl)
+        .then(img => {
+          clearTimeout(timeoutId)
+
+          const canvas = document.createElement('canvas')
+          const ctx = canvas.getContext('2d')
 
           if (!ctx) {
             resolve(getTokenColor(token, undefined, tokenColorOverrides))
@@ -113,36 +135,31 @@ export const useAverageLogoColor = () => {
           canvas.width = img.width
           canvas.height = img.height
 
-          ctx.drawImage(img, 0, 0)
+          try {
+            ctx.drawImage(img, 0, 0)
+            const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data
+            const averageColor = calculateAverageColor(imageData)
+            resolve(averageColor)
+          } catch (error) {
+            const tempDiv = document.createElement('div')
+            tempDiv.style.position = 'absolute'
+            tempDiv.style.visibility = 'hidden'
+            tempDiv.appendChild(img)
+            document.body.appendChild(tempDiv)
 
-          const imageData: Uint8ClampedArray = ctx.getImageData(
-            0,
-            0,
-            canvas.width,
-            canvas.height
-          ).data
+            const computedColor = window.getComputedStyle(img).backgroundColor
+            document.body.removeChild(tempDiv)
 
-          const averageColor = calculateAverageColor(imageData)
-          resolve(averageColor)
-        } catch (error) {
-          console.warn(`Error processing image for ${token}:`, error)
+            if (computedColor && computedColor !== 'rgba(0, 0, 0, 0)') {
+              resolve(computedColor)
+            } else {
+              resolve(getTokenColor(token, undefined, tokenColorOverrides))
+            }
+          }
+        })
+        .catch(() => {
           resolve(getTokenColor(token, undefined, tokenColorOverrides))
-        }
-      }
-
-      img.onerror = (): void => {
-        cleanup()
-        console.warn(`Failed to load image for ${token}`)
-        resolve(getTokenColor(token, undefined, tokenColorOverrides))
-      }
-
-      timeoutId = setTimeout(() => {
-        cleanup()
-        console.warn(`Timeout loading image for ${token}`)
-        resolve(getTokenColor(token, undefined, tokenColorOverrides))
-      }, timeoutDuration)
-
-      img.src = getProxyUrl(logoUrl)
+        })
     })
   }, [])
 
