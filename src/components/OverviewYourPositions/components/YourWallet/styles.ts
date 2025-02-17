@@ -115,7 +115,7 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.textGrey
   },
   statsValue: {
-    ...typography.caption1,
+    ...typography.body1,
     color: colors.invariant.green
   },
   actionIcon: {
