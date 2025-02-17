@@ -587,7 +587,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           }
 
           const potentialResult = getLiquidityByX(
-            tokenXAmount,
+            amount,
             lowerTick,
             upperTick,
             poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
@@ -614,6 +614,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             case PotentialLiquidity.Max:
               setPotentialLiquidity(prev => ({ ...prev, max: potentialResult.liquidity }))
 
+              console.log(tokenXAmount.toString())
+              console.log(potentialResult.liquidity.toString())
+              console.log(potentialResult.y.toString())
+
               if (isXtoY) {
                 setMaxLiquidityAmountB(prev => ({ ...prev, max: potentialResult.y }))
               }
@@ -622,6 +626,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             default:
               break
           }
+
           return
         } else {
           if (isMountedRef.current) {
@@ -641,28 +646,28 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         )
 
         if (calcPotentialLiquidity) {
-          let tokenXAmount: BN
+          let tokenYAmount: BN
 
           if (isXtoY) {
             switch (calcPotentialLiquidity) {
               case PotentialLiquidity.Min:
-                tokenXAmount = maxLiquidityAmountB.min
+                tokenYAmount = maxLiquidityAmountB.min
                 break
 
               case PotentialLiquidity.Middle:
-                tokenXAmount = maxLiquidityAmountB.middle
+                tokenYAmount = maxLiquidityAmountB.middle
                 break
 
               case PotentialLiquidity.Max:
-                tokenXAmount = maxLiquidityAmountB.max
+                tokenYAmount = maxLiquidityAmountB.max
                 break
             }
           } else {
-            tokenXAmount = amount
+            tokenYAmount = amount
           }
 
           const potentialResult = getLiquidityByY(
-            tokenXAmount,
+            amount,
             lowerTick,
             upperTick,
             poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
@@ -688,6 +693,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
             case PotentialLiquidity.Max:
               setPotentialLiquidity(prev => ({ ...prev, max: potentialResult.liquidity }))
+              console.log(tokenYAmount.toString())
+              console.log(potentialResult.liquidity.toString())
+              console.log(potentialResult.x.toString())
 
               if (!isXtoY) {
                 setMaxLiquidityAmountB(prev => ({ ...prev, max: potentialResult.x }))
