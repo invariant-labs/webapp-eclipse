@@ -276,7 +276,6 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
 }) => {
   const { classes } = useStyles()
 
-  const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const currentData = useMemo(() => {
@@ -347,65 +346,36 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
       </Grid>
 
       {totalPages >= 1 && (
-        <Box
-          sx={{
-            [theme.breakpoints.up('md')]: { paddingLeft: '24px', paddingRight: '24px' },
-            [theme.breakpoints.down('sm')]: { paddingLeft: '12px', paddingRight: '12px' },
-            maxWidth: '100%',
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
-          <Grid
-            container
+        <Box sx={isMobile ? { paddingLeft: '12px', paddingRight: '12px' } : {}}>
+          <Box
+            className={classes.box1}
             sx={{
-              padding: '20px 0 10px 0',
-              maxWidth: '100%',
+              width: '100%',
+              position: 'relative',
               display: 'flex',
               flexDirection: isMobile ? 'column' : 'row',
               alignItems: 'center',
-              position: 'relative'
+              justifyContent: 'center',
+              padding: '20px 0 10px 0'
             }}>
-            <Grid
-              item
-              sx={{
-                width: '100%',
-                display: 'flex',
-                justifyContent: 'center'
-              }}>
-              <Box sx={{ width: '80%', [theme.breakpoints.down('md')]: { width: '90%' } }}>
-                <PaginationList
-                  squeeze={isLg}
-                  pages={totalPages}
-                  defaultPage={currentPage}
-                  handleChangePage={handlePageChange}
-                  variant='center'
-                />
-              </Box>
-            </Grid>
+            <PaginationList
+              pages={totalPages}
+              defaultPage={currentPage}
+              handleChangePage={handlePageChange}
+              variant='center'
+            />
 
-            <Grid
-              item
+            <Typography
               sx={{
-                display: 'flex',
-                justifyContent: isMobile ? 'center' : 'flex-end',
-                width: '100%',
-                position: isMobile ? 'static' : 'absolute',
-                right: 0,
-                top: '55%',
-                pointerEvents: 'none',
-                transform: isMobile ? 'none' : 'translateY(-50%)'
+                ...(!isMobile && {
+                  right: '24px'
+                }),
+                position: !isMobile ? 'absolute' : 'relative',
+                color: colors.invariant.textGrey
               }}>
-              <Typography
-                sx={{
-                  color: colors.invariant.textGrey,
-                  textWrap: 'nowrap',
-                  textAlign: isMobile ? 'center' : 'right'
-                }}>
-                Showing {lowerBound}-{upperBound} of {totalItems}
-              </Typography>
-            </Grid>
-          </Grid>
+              Showing {lowerBound}-{upperBound} of {totalItems}
+            </Typography>
+          </Box>
         </Box>
       )}
 

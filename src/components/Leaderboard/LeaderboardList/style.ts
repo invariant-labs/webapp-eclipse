@@ -19,13 +19,7 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 2,
     backgroundColor: `${colors.invariant.newDark} !important`
   },
-  pagination: {
-    padding: '20px 0 10px 0',
-    maxWidth: '100%',
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center'
-  },
+
   waveImage: {
     pointerEvents: 'none',
     display: 'flex',
@@ -91,5 +85,8 @@ export const useStyles = makeStyles()(() => ({
     '100%': {
       opacity: 0.7
     }
+  },
+  box1: {
+    border: `1px solid #fffff`
   }
 }))
