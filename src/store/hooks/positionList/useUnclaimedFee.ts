@@ -12,7 +12,7 @@ import { getEclipseWallet } from '@utils/web3/wallet'
 import { useSelector } from 'react-redux'
 import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 
-const UPDATE_INTERVAL = 60000
+const UPDATE_INTERVAL = 60000 // 1 minuta
 
 interface PositionTicks {
   lowerTick: Tick | undefined
@@ -37,23 +37,26 @@ export const useUnclaimedFee = ({
   UnclaimedFeeHook,
   'currentPrice' | 'id' | 'position' | 'tokenXLiq' | 'tokenYLiq' | 'positionSingleData' | 'xToY'
 >) => {
-  const wallet = getEclipseWallet()
+  const wallet = useMemo(() => getEclipseWallet(), [])
   const networkType = useSelector(currentNetwork)
   const rpc = useSelector(rpcAddress)
 
-  const updateTimerRef = useRef<NodeJS.Timeout | null>(null)
-  const lastUpdateRef = useRef<number>(0)
-  const [shouldUpdate, setShouldUpdate] = useState(true)
-
+  const lastUpdateTimeRef = useRef<number>(0)
+  const [shouldUpdate, setShouldUpdate] = useState<boolean>(false)
   const [isInitialLoad, setIsInitialLoad] = useState(true)
   const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number>(0)
   const [previousTokenValueInUsd, setPreviousTokenValueInUsd] = useState<number>(0)
 
-  const { tokenXPercentage, tokenYPercentage } = calculatePercentageRatio(
-    tokenXLiq,
-    tokenYLiq,
-    currentPrice,
-    xToY
+  const [positionTicks, setPositionTicks] = useState<PositionTicks>({
+    lowerTick: undefined,
+    upperTick: undefined,
+    loading: false
+  })
+
+  // Memoizacja stałych wartości
+  const { tokenXPercentage, tokenYPercentage } = useMemo(
+    () => calculatePercentageRatio(tokenXLiq, tokenYLiq, currentPrice, xToY),
+    [tokenXLiq, tokenYLiq, currentPrice, xToY]
   )
 
   const { tokenXLiquidity, tokenYLiquidity } = useLiquidity(positionSingleData)
@@ -68,6 +71,32 @@ export const useUnclaimedFee = ({
     }
   })
 
+  // Kontrola aktualizacji
+  const checkShouldUpdate = useCallback(() => {
+    const currentTime = Date.now()
+    if (isInitialLoad || currentTime - lastUpdateTimeRef.current >= UPDATE_INTERVAL) {
+      lastUpdateTimeRef.current = currentTime
+      return true
+    }
+    return false
+  }, [isInitialLoad])
+
+  // Efekt inicjalizujący i kontrolujący aktualizacje
+  useEffect(() => {
+    if (checkShouldUpdate()) {
+      setShouldUpdate(true)
+    }
+
+    const interval = setInterval(() => {
+      if (checkShouldUpdate()) {
+        setShouldUpdate(true)
+      }
+    }, UPDATE_INTERVAL)
+
+    return () => clearInterval(interval)
+  }, [checkShouldUpdate])
+
+  // Hook pobierający dane o tickach
   const {
     lowerTick,
     upperTick,
@@ -83,42 +112,19 @@ export const useUnclaimedFee = ({
     shouldUpdate
   })
 
-  const [positionTicks, setPositionTicks] = useState<PositionTicks>({
-    lowerTick: undefined,
-    upperTick: undefined,
-    loading: false
-  })
-
+  // Aktualizacja ticków
   useEffect(() => {
-    const currentTime = Date.now()
+    if (lowerTick && upperTick) {
+      setPositionTicks({
+        lowerTick,
+        upperTick,
+        loading: ticksLoading
+      })
 
-    if (currentTime - lastUpdateRef.current >= UPDATE_INTERVAL || isInitialLoad) {
-      setShouldUpdate(true)
-      lastUpdateRef.current = currentTime
-    }
-
-    updateTimerRef.current = setInterval(() => {
-      setShouldUpdate(true)
-      lastUpdateRef.current = Date.now()
-    }, UPDATE_INTERVAL)
-
-    return () => {
-      if (updateTimerRef.current) {
-        clearInterval(updateTimerRef.current)
+      if (!ticksLoading) {
+        setShouldUpdate(false)
+        setIsInitialLoad(false)
       }
-    }
-  }, [isInitialLoad])
-
-  // Update position ticks when new data arrives
-  useEffect(() => {
-    setPositionTicks({
-      lowerTick,
-      upperTick,
-      loading: ticksLoading
-    })
-
-    if (!ticksLoading) {
-      setShouldUpdate(false)
     }
   }, [lowerTick, upperTick, ticksLoading])
 
@@ -133,17 +139,17 @@ export const useUnclaimedFee = ({
 
     const [bnX, bnY] = calculateClaimAmount({
       position,
-      tickLower: positionTicks.lowerTick!,
-      tickUpper: positionTicks.upperTick!,
+      tickLower: positionTicks.lowerTick,
+      tickUpper: positionTicks.upperTick,
       tickCurrent: positionSingleData.poolData.currentTickIndex,
       feeGrowthGlobalX: positionSingleData.poolData.feeGrowthGlobalX,
       feeGrowthGlobalY: positionSingleData.poolData.feeGrowthGlobalY
     })
 
-    const xAmount = +printBN(bnX, positionSingleData.tokenX.decimals)
-    const yAmount = +printBN(bnY, positionSingleData.tokenY.decimals)
-
-    return { xAmount, yAmount }
+    return {
+      xAmount: +printBN(bnX, positionSingleData.tokenX.decimals),
+      yAmount: +printBN(bnY, positionSingleData.tokenY.decimals)
+    }
   }, [position, positionTicks, positionSingleData])
 
   const unclaimedFeesInUSD = useMemo(() => {
@@ -168,20 +174,17 @@ export const useUnclaimedFee = ({
       return { loading: true, value: previousUnclaimedFees }
     }
 
-    const xValueInUSD = fees.xAmount * tokenXPriceData.price
-    const yValueInUSD = fees.yAmount * tokenYPriceData.price
-    const totalValueInUSD = xValueInUSD + yValueInUSD
+    const totalValueInUSD =
+      fees.xAmount * tokenXPriceData.price + fees.yAmount * tokenYPriceData.price
 
-    if (totalValueInUSD.toFixed(6) !== previousUnclaimedFees.toFixed(6) || isInitialLoad) {
+    if (Math.abs(totalValueInUSD - previousUnclaimedFees) > 0.000001) {
       setPreviousUnclaimedFees(totalValueInUSD)
-      setIsInitialLoad(false)
     }
 
     return { loading: false, value: totalValueInUSD }
   }, [
-    positionSingleData,
-    position,
     positionTicks,
+    positionSingleData,
     tokenXPriceData,
     tokenYPriceData,
     previousUnclaimedFees,
@@ -204,13 +207,11 @@ export const useUnclaimedFee = ({
       return { loading: false, value: 0 }
     }
 
-    const xValue = tokenXLiquidity * tokenXPriceData.price
-    const yValue = tokenYLiquidity * tokenYPriceData.price
-    const totalValue = xValue + yValue
+    const totalValue =
+      tokenXLiquidity * tokenXPriceData.price + tokenYLiquidity * tokenYPriceData.price
 
-    if (totalValue.toFixed(6) !== previousTokenValueInUsd.toFixed(6) || isInitialLoad) {
+    if (Math.abs(totalValue - previousTokenValueInUsd) > 0.000001) {
       setPreviousTokenValueInUsd(totalValue)
-      setIsInitialLoad(false)
     }
 
     return { loading: false, value: totalValue }
