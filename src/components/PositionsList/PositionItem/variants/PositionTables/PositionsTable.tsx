@@ -30,7 +30,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   noInitialPositions,
   onAddPositionClick
 }) => {
-  const { classes } = usePositionTableStyle()
+  const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 })
   const navigate = useNavigate()
 
   return (
