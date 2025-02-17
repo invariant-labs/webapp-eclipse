@@ -2,7 +2,7 @@ import { calculatePercentageRatio } from '@components/PositionsList/PositionItem
 import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { printBN } from '@utils/utils'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState, useCallback } from 'react'
 import { useLiquidity } from '../userOverview/useLiquidity'
 import { usePositionTicks } from '../userOverview/usePositionTicks'
 import { usePrices } from '../userOverview/usePrices'
@@ -47,6 +47,7 @@ export const useUnclaimedFee = ({
 
   const [previousUnclaimedFees, setPreviousUnclaimedFees] = useState<number>(0)
   const [previousTokenValueInUsd, setPreviousTokenValueInUsd] = useState<number>(0)
+  const [isInitialLoad, setIsInitialLoad] = useState(true)
 
   const { tokenXPercentage, tokenYPercentage } = calculatePercentageRatio(
     tokenXLiq,
@@ -89,17 +90,13 @@ export const useUnclaimedFee = ({
     })
   }, [lowerTick, upperTick, ticksLoading])
 
-  const unclaimedFeesInUSD = useMemo(() => {
-    const loading =
-      positionTicks.loading ||
+  const calculateUnclaimedFees = useCallback(() => {
+    if (
       !positionSingleData?.poolData ||
-      tokenXPriceData.loading ||
-      tokenYPriceData.loading ||
       typeof positionTicks.lowerTick === 'undefined' ||
       typeof positionTicks.upperTick === 'undefined'
-
-    if (loading) {
-      return { loading: true, value: previousUnclaimedFees }
+    ) {
+      return null
     }
 
     const [bnX, bnY] = calculateClaimAmount({
@@ -114,12 +111,38 @@ export const useUnclaimedFee = ({
     const xAmount = +printBN(bnX, positionSingleData.tokenX.decimals)
     const yAmount = +printBN(bnY, positionSingleData.tokenY.decimals)
 
-    const xValueInUSD = xAmount * tokenXPriceData.price
-    const yValueInUSD = yAmount * tokenYPriceData.price
+    return { xAmount, yAmount }
+  }, [position, positionTicks, positionSingleData])
+
+  const unclaimedFeesInUSD = useMemo(() => {
+    const loading =
+      positionTicks.loading ||
+      !positionSingleData?.poolData ||
+      tokenXPriceData.loading ||
+      tokenYPriceData.loading ||
+      typeof positionTicks.lowerTick === 'undefined' ||
+      typeof positionTicks.upperTick === 'undefined'
+
+    if (loading && !isInitialLoad && previousUnclaimedFees > 0) {
+      return { loading: false, value: previousUnclaimedFees }
+    }
+
+    if (loading) {
+      return { loading: true, value: previousUnclaimedFees }
+    }
+
+    const fees = calculateUnclaimedFees()
+    if (!fees) {
+      return { loading: true, value: previousUnclaimedFees }
+    }
+
+    const xValueInUSD = fees.xAmount * tokenXPriceData.price
+    const yValueInUSD = fees.yAmount * tokenYPriceData.price
     const totalValueInUSD = xValueInUSD + yValueInUSD
 
-    if (totalValueInUSD !== previousUnclaimedFees) {
+    if (totalValueInUSD !== previousUnclaimedFees || isInitialLoad) {
       setPreviousUnclaimedFees(totalValueInUSD)
+      setIsInitialLoad(false)
     }
 
     return { loading: false, value: totalValueInUSD }
@@ -129,11 +152,17 @@ export const useUnclaimedFee = ({
     positionTicks,
     tokenXPriceData,
     tokenYPriceData,
-    previousUnclaimedFees
+    previousUnclaimedFees,
+    isInitialLoad,
+    calculateUnclaimedFees
   ])
 
   const tokenValueInUsd = useMemo(() => {
     const loading = tokenXPriceData.loading || tokenYPriceData.loading
+
+    if (loading && !isInitialLoad && previousTokenValueInUsd > 0) {
+      return { loading: false, value: previousTokenValueInUsd }
+    }
 
     if (loading) {
       return { loading: true, value: previousTokenValueInUsd }
@@ -147,12 +176,20 @@ export const useUnclaimedFee = ({
     const yValue = tokenYLiquidity * tokenYPriceData.price
     const totalValue = xValue + yValue
 
-    if (totalValue !== previousTokenValueInUsd) {
+    if (totalValue !== previousTokenValueInUsd || isInitialLoad) {
       setPreviousTokenValueInUsd(totalValue)
+      setIsInitialLoad(false)
     }
 
     return { loading: false, value: totalValue }
-  }, [tokenXLiquidity, tokenYLiquidity, tokenXPriceData, tokenYPriceData, previousTokenValueInUsd])
+  }, [
+    tokenXLiquidity,
+    tokenYLiquidity,
+    tokenXPriceData,
+    tokenYPriceData,
+    previousTokenValueInUsd,
+    isInitialLoad
+  ])
 
   return { tokenValueInUsd, unclaimedFeesInUSD, tokenXPercentage, tokenYPercentage }
 }
