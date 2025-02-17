@@ -84,7 +84,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                 sx={{
                   marginTop: 1,
                   width: '100% !important',
-                  minHeight: '120px',
+                  maxHeight: '120px',
                   marginLeft: '0 !important',
                   overflowY: 'auto',
                   '&::-webkit-scrollbar': {

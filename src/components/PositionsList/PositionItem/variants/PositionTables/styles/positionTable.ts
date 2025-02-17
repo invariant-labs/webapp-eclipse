@@ -20,6 +20,8 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
     padding: '14px 20px',
     background: 'inherit',
     border: 'none',
+    borderTop: `2px solid ${colors.invariant.light}`,
+
     whiteSpace: 'nowrap',
     textAlign: 'center'
   },
@@ -36,7 +38,8 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
   headerCell: {
     fontSize: '16px',
     lineHeight: '24px',
-    border: 'none',
+    borderBottom: `1px solid ${colors.invariant.light}`,
+
     color: colors.invariant.textGrey,
     fontWeight: 400,
     textAlign: 'left'
@@ -97,10 +100,8 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
   },
   tableBody: {
     display: 'block',
-    height: 'calc(4 * (20px + 84px))',
+    height: 'calc(4 * (20px + 82px))',
     overflowY: 'auto',
-    // borderBottomLeftRadius: '24px',
-    // borderBottomRightRadius: '24px',
 
     background: colors.invariant.component,
 
@@ -113,14 +114,14 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
       borderRadius: '4px'
     },
 
-    '& > tr:nth-of-type(odd)': {
+    '& > tr:nth-of-type(even)': {
       background: colors.invariant.component,
       '&:hover': {
         background: `${colors.invariant.component}B0`,
         cursor: 'pointer'
       }
     },
-    '& > tr:nth-of-type(even)': {
+    '& > tr:nth-of-type(odd)': {
       background: `${colors.invariant.componentDark}F0`,
       '&:hover': {
         background: `${colors.invariant.componentDark}90 !important`,
@@ -148,7 +149,7 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
     tableLayout: 'fixed'
   },
   footerRow: {
-    background: colors.invariant.componentDark,
+    background: colors.invariant.component,
     height: '50px',
     '& td:first-of-type': {
       borderBottomLeftRadius: '24px'
