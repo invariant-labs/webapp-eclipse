@@ -74,9 +74,16 @@ export const RewardedPools: React.FC<IProps> = ({
       ) : (
         <Box className={classes.sectionContent} width={'100%'} style={mobileStyle}>
           {isMd && (
-            <Box style={{ width: '100%', marginLeft: '42px' }}>
+            <Box
+              style={{
+                width: '100%',
+
+                borderBottom: `2px solid ${colors.invariant.light}`
+              }}>
               <Typography
                 style={{
+                  paddingLeft: '42px',
+                  marginBottom: '16px',
                   ...typography.heading4,
                   color: colors.invariant.textGrey,
                   justifySelf: 'self-start'

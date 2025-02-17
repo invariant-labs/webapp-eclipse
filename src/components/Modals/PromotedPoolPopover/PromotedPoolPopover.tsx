@@ -34,6 +34,7 @@ export const PromotedPoolPopover = ({
 }: IPromotedPoolPopover) => {
   const { classes } = useStyles()
   const timeoutRef = useRef<NodeJS.Timeout>()
+  const ref = useRef<HTMLDivElement>(null)
 
   const handleMouseEnter = useCallback(() => {
     if (timeoutRef.current) {
@@ -57,6 +58,19 @@ export const PromotedPoolPopover = ({
       if (timeoutRef.current) {
         clearTimeout(timeoutRef.current)
       }
+    }
+  }, [])
+
+  const handleClickOutside = event => {
+    if (ref.current && !ref.current.contains(event.target)) {
+      onClose()
+    }
+  }
+
+  useEffect(() => {
+    document.addEventListener('mousedown', handleClickOutside)
+    return () => {
+      document.removeEventListener('mousedown', handleClickOutside)
     }
   }, [])
 
@@ -116,7 +130,8 @@ export const PromotedPoolPopover = ({
         vertical: 'top',
         horizontal: 'center'
       }}
-      marginThreshold={16}>
+      marginThreshold={16}
+      ref={ref}>
       <div className={classes.root}>
         <div className={classes.container}>
           {/* Content remains the same */}

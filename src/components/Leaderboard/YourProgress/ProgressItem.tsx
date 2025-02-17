@@ -1,4 +1,4 @@
-import { Box, Tooltip, Typography } from '@mui/material'
+import { Box, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
@@ -62,22 +62,31 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
     }
   }
 
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+
   return (
     <Box
       sx={{
         width: isWideBlock ? '100%' : '233px',
         height: blockHeight?.desktop ? blockHeight?.desktop : '88px',
         backgroundSize: 'cover',
-        [theme.breakpoints.down('md')]: {
-          width: '335px',
-          backgroundImage: `url(${background.mobile})`,
-          height: blockHeight?.mobile ? blockHeight?.mobile : '88px'
-        },
         backgroundImage: `url(${background.desktop})`,
         backgroundRepeat: 'no-repeat',
         boxSizing: 'border-box',
         backgroundPosition: 'center',
-        ...blurAnimation
+        ...blurAnimation,
+        [theme.breakpoints.down('md')]: {
+          width: '335px',
+          backgroundImage: `url(${background.mobile})`,
+          height: blockHeight?.mobile ? blockHeight.mobile : '88px'
+        },
+        [theme.breakpoints.down(500)]: {
+          backgroundRepeat: 'no-repeat',
+          width: '98vw',
+          border: '10px solid transparent',
+          borderImage: `url(${background.mobile}) 20 fill round`,
+          height: blockHeight?.mobile ? blockHeight.mobile : '88px'
+        }
       }}>
       <Box
         sx={{
@@ -86,8 +95,8 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           height: '100%',
           paddingTop: '12px',
           paddingBottom: '12px',
-          paddingLeft: desktopLabelAligment === 'left' ? '14px' : '24px',
-          paddingRight: desktopLabelAligment === 'right' ? '14px' : '24px',
+          paddingLeft: !isMobile ? (desktopLabelAligment === 'left' ? '14px' : '24px') : '24px',
+          paddingRight: !isMobile ? (desktopLabelAligment === 'right' ? '14px' : '24px') : '24px',
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
@@ -113,7 +122,8 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
               placement='bottom'
               classes={{
                 tooltip: classes.tooltip
-              }}>
+              }}
+              enterTouchDelay={0}>
               <img src={infoIcon} alt='i' width={14} />
             </Tooltip>
           ) : null}
