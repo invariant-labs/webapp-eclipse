@@ -190,6 +190,10 @@ export const Swap: React.FC<ISwap> = ({
     FROM = 'from',
     TO = 'to'
   }
+  enum SwapType {
+    NORMAL,
+    WITH_HOP
+  }
   const [tokenFromIndex, setTokenFromIndex] = React.useState<number | null>(null)
   const [tokenToIndex, setTokenToIndex] = React.useState<number | null>(null)
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -245,6 +249,7 @@ export const Swap: React.FC<ISwap> = ({
     secondPriceImpact: null
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
+  const [swapType, setSwapType] = useState(SwapType.NORMAL)
 
   const handlePointerEnter = () => {
     setIsPointsPopoverOpen(true)
@@ -555,6 +560,7 @@ export const Swap: React.FC<ISwap> = ({
               simulateWithHopResult.simulation.swapHopOne.accumulatedFee
             )
       )
+      setSwapType(SwapType.WITH_HOP)
     } else {
       setSimulationPath({
         tokenFrom: tokens[tokenFromIndex ?? 0],
@@ -568,6 +574,7 @@ export const Swap: React.FC<ISwap> = ({
         secondPriceImpact: null
       })
       setBestAmount(simulateResult.amountOut)
+      setSwapType(SwapType.NORMAL)
     }
   }, [simulateResult, simulateWithHopResult, tokenToIndex, tokenFromIndex])
 
@@ -588,7 +595,7 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const isError = (error: string) => {
-    return simulateResult.error.some(err => err === error)
+    return swapType === SwapType.NORMAL ? simulateResult.error.some(err => err === error) : false
   }
 
   const isEveryPoolEmpty = useMemo(() => {
@@ -692,7 +699,7 @@ export const Swap: React.FC<ISwap> = ({
     }
 
     // Fallback error message
-    if (simulateResult.error.length !== 0) {
+    if (swapType === SwapType.NORMAL && simulateResult.error.length !== 0) {
       console.warn('Errors not handled explictly', simulateResult.error)
       return 'Not enough liquidity'
     }
