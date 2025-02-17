@@ -196,19 +196,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         alignItems='center'
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
-          {tokenValueInUsd.loading ? (
-            <Skeleton
-              className={sharedClasses.infoCenter}
-              variant='text'
-              width='100%'
-              height={36}
-              sx={{ borderRadius: '10px', margin: '0 auto' }}
-            />
-          ) : (
-            <Typography className={sharedClasses.greenText}>
-              ${formatNumber2(tokenValueInUsd.value)}
-            </Typography>
-          )}
+          <Typography className={sharedClasses.greenText}>
+            {`$${formatNumber2(tokenValueInUsd.value)}`}
+          </Typography>
         </Grid>
       </Grid>
     ),
@@ -225,18 +215,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         alignItems='center'
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
-          {unclaimedFeesInUSD.loading ? (
-            <Skeleton
-              variant='text'
-              width='100%'
-              height={36}
-              sx={{ borderRadius: '10px', margin: '0 auto' }}
-            />
-          ) : (
-            <Typography className={sharedClasses.greenText}>
-              ${formatNumber2(unclaimedFeesInUSD.value)}
-            </Typography>
-          )}
+          <Typography className={sharedClasses.greenText}>
+            ${formatNumber2(unclaimedFeesInUSD.value)}
+          </Typography>
         </Grid>
       </Grid>
     ),
@@ -429,8 +410,36 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           )}
         </Typography>
       </TableCell>
-      <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>{valueFragment}</TableCell>
-      <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>{unclaimedFee}</TableCell>
+
+      {/*
+       */}
+
+      {tokenValueInUsd.loading ? (
+        <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>
+          <Skeleton
+            variant='rectangular'
+            width='100%'
+            height={36}
+            sx={{ borderRadius: '10px', margin: '0 auto' }}
+          />
+        </TableCell>
+      ) : (
+        <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>
+          {valueFragment}
+        </TableCell>
+      )}
+      {unclaimedFeesInUSD.loading ? (
+        <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>
+          <Skeleton
+            variant='rectangular'
+            width='100%'
+            height={36}
+            sx={{ borderRadius: '10px', margin: '0 auto' }}
+          />
+        </TableCell>
+      ) : (
+        <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>{unclaimedFee}</TableCell>
+      )}
       <TableCell className={`${classes.cellBase} ${classes.chartCell}`}>
         <MinMaxChart
           min={Number(xToY ? min : 1 / max)}
