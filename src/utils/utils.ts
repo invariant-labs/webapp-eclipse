@@ -1353,10 +1353,8 @@ export const calculateConcentrationRange = (
 }
 
 export const calculateConcentration = (lowerTick: number, upperTick: number) => {
-  const tickDelta = Math.abs(lowerTick - upperTick)
-
-  const lowerSqrtPrice = calculatePriceSqrt(0)
-  const upperSqrtPrice = calculatePriceSqrt(tickDelta)
+  const lowerSqrtPrice = calculatePriceSqrt(lowerTick)
+  const upperSqrtPrice = calculatePriceSqrt(upperTick)
 
   const x = upperSqrtPrice.mul(lowerSqrtPrice).div(PRICE_DENOMINATOR)
   const numerator = PRICE_DENOMINATOR.add(x)
@@ -1364,7 +1362,7 @@ export const calculateConcentration = (lowerTick: number, upperTick: number) => 
 
   const concentration = numerator.div(denominator)
 
-  return +concentration + 1
+  return Math.abs(+concentration) + 1
 }
 
 export enum PositionTokenBlock {

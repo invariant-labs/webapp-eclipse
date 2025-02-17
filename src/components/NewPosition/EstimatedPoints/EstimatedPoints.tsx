@@ -63,53 +63,29 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   const rangeConcentrationArray = useMemo(() => {
     const rangeConcentration = [...concentrationArray]
     rangeConcentration.unshift(1)
-    rangeConcentration.push(2 * +concentrationArray[concentrationArray.length - 1].toFixed(0))
+    rangeConcentration.push(maxConcForRange)
 
     return rangeConcentration
   }, [concentrationArray])
 
-  const closestMultiplierForRangeMode = useMemo(() => {
-    const minValue = +printBN(estimatedScalePoints.min, LEADERBOARD_DECIMAL)
-    const maxValue = +printBN(estimatedScalePoints.max, LEADERBOARD_DECIMAL)
-    const estimatedPoints = +printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL)
-
-    const lastMultiplier = rangeConcentrationArray[rangeConcentrationArray.length - 1]
-    const exponent = Math.log(maxValue / minValue) / Math.log(lastMultiplier)
-
-    const valuesArray = rangeConcentrationArray.map(m => minValue * Math.pow(m, exponent))
-
-    let closestIndex = 0
-    let smallestDiff = Math.abs(valuesArray[0] - estimatedPoints)
-
-    for (let i = 1; i < valuesArray.length; i++) {
-      const diff = Math.abs(valuesArray[i] - estimatedPoints)
-      if (diff < smallestDiff) {
-        smallestDiff = diff
-        closestIndex = i
-      }
-    }
-
-    return closestIndex
-  }, [rangeConcentrationArray, estimatedScalePoints])
-
+  function findClosestIndex(arr, num) {
+    const index = arr.findLastIndex(value => value <= num)
+    return index !== -1 ? index : null
+  }
+  const rangeIndex = findClosestIndex(rangeConcentrationArray, concentrationIndex)
+  console.log(concentrationIndex)
+  console.log(rangeConcentrationArray[rangeIndex])
   const percentage = useMemo(
     () =>
       showWarning || singleDepositWarning
         ? 0
         : positionOpeningMethod === 'concentration'
           ? +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0)
-          : +((closestMultiplierForRangeMode * 100) / (rangeConcentrationArray.length - 1)).toFixed(
-              0
-            ),
-    [
-      closestMultiplierForRangeMode,
-      rangeConcentrationArray,
-      concentrationIndex,
-      concentrationArray,
-      warningText.length,
-      estimatedPointsPerDay.toString(),
-      estimatedScalePoints.max.toString()
-    ]
+          : +(
+              (findClosestIndex(rangeConcentrationArray, concentrationIndex) * 100) /
+              (rangeConcentrationArray.length - 1)
+            ).toFixed(0),
+    [concentrationIndex, concentrationArray, warningText.length]
   )
 
   const { classes } = useStyles({ percentage })
