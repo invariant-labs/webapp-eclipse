@@ -4,7 +4,6 @@ import { Provider } from 'react-redux'
 import { store } from '@store/index'
 import { MemoryRouter } from 'react-router-dom'
 import { SnackbarProvider } from 'notistack'
-import { BN } from '@coral-xyz/anchor'
 
 const meta = {
   title: 'Components/TransactionDetailsBox',
@@ -29,8 +28,6 @@ export const Primary: Story = {
   args: {
     exchangeRate: { val: 123, symbol: 'ABC', decimal: 12 },
     slippage: 0.5,
-    priceImpact: new BN(1000000000),
-    fee: new BN(1000000000),
     open: true,
     isLoadingRate: false,
     simulationPath: {
@@ -40,7 +37,9 @@ export const Primary: Story = {
       firstFee: null,
       secondFee: null,
       firstAmount: null,
-      secondAmount: null
+      secondAmount: null,
+      firstPriceImpact: null,
+      secondPriceImpact: null
     }
   },
   render: args => {
