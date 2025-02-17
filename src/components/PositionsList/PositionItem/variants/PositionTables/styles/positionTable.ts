@@ -97,10 +97,10 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
   },
   tableBody: {
     display: 'block',
-    maxHeight: 'calc(4 * (20px + 84px))',
+    height: 'calc(4 * (20px + 84px))',
     overflowY: 'auto',
-    borderBottomLeftRadius: '24px',
-    borderBottomRightRadius: '24px',
+    // borderBottomLeftRadius: '24px',
+    // borderBottomRightRadius: '24px',
 
     background: colors.invariant.component,
 
@@ -147,6 +147,17 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
     width: '100%',
     tableLayout: 'fixed'
   },
+  footerRow: {
+    background: colors.invariant.componentDark,
+    height: '50px',
+    '& td:first-of-type': {
+      borderBottomLeftRadius: '24px'
+    },
+    '& td:last-child': {
+      borderBottomRightRadius: '24px'
+    }
+  },
+
   emptyContainer: {
     border: 'none',
     height: '410px',

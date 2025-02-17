@@ -5,6 +5,7 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
   TableRow
 } from '@mui/material'
@@ -94,6 +95,19 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
             </Box>
           </Box>
         )}
+
+        <TableFooter className={classes.tableFooter}>
+          <TableRow className={classes.footerRow}>
+            <TableCell className={`${classes.cellBase} ${classes.pairNameCell}`} />
+
+            <TableCell className={`${classes.cellBase} ${classes.feeTierCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.valueCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.feeCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.chartCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.actionCell}`} />
+          </TableRow>
+        </TableFooter>
       </Table>
     </TableContainer>
   )

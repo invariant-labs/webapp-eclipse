@@ -23,9 +23,7 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
   tableBody: {
     display: 'block',
     maxHeight: 'calc(5 * 80px)',
-    overflowY: 'auto',
-    borderBottomLeftRadius: '24px',
-    borderBottomRightRadius: '24px'
+    overflowY: 'auto'
   },
   headerRow: {
     height: '50px',
@@ -89,5 +87,27 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     gap: '12px'
+  },
+  cellBase: {
+    padding: '14px 20px',
+    background: 'inherit',
+    border: 'none',
+    whiteSpace: 'nowrap',
+    textAlign: 'center'
+  },
+  tableFooter: {
+    display: 'table',
+    width: '100%',
+    tableLayout: 'fixed'
+  },
+  footerRow: {
+    background: colors.invariant.componentDark,
+    height: '50px',
+    '& td:first-of-type': {
+      borderBottomLeftRadius: '24px'
+    },
+    '& td:last-child': {
+      borderBottomRightRadius: '24px'
+    }
   }
 }))

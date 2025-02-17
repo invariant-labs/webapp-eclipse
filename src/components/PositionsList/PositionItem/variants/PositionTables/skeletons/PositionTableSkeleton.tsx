@@ -1,5 +1,14 @@
 import React from 'react'
-import { Box, Skeleton, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import {
+  Box,
+  Skeleton,
+  Table,
+  TableBody,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableRow
+} from '@mui/material'
 import { useDesktopSkeletonStyles } from './styles/desktopSkeleton'
 
 export const PositionTableSkeleton: React.FC = () => {
@@ -96,6 +105,18 @@ export const PositionTableSkeleton: React.FC = () => {
               </TableRow>
             ))}
         </TableBody>
+        <TableFooter className={classes.tableFooter}>
+          <TableRow className={classes.footerRow}>
+            <TableCell className={`${classes.cellBase} ${classes.pairNameCell}`} />
+
+            <TableCell className={`${classes.cellBase} ${classes.feeTierCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.valueCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.feeCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.chartCell}`} />
+            <TableCell className={`${classes.cellBase} ${classes.actionCell}`} />
+          </TableRow>
+        </TableFooter>
       </Table>
     </Box>
   )
