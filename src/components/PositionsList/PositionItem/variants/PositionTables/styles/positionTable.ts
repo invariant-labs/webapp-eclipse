@@ -103,8 +103,6 @@ export const usePositionTableStyle = makeStyles()((_theme: Theme) => ({
     height: 'calc(4 * (20px + 82px))',
     overflowY: 'auto',
 
-    background: colors.invariant.component,
-
     '&::-webkit-scrollbar': {
       width: '4px'
     },
