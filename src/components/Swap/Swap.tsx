@@ -138,6 +138,8 @@ export type SimulationPath = {
   secondFee: BN | null
   firstAmount: BN | null
   secondAmount: BN | null
+  firstPriceImpact: BN | null
+  secondPriceImpact: BN | null
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -242,7 +244,9 @@ export const Swap: React.FC<ISwap> = ({
     firstFee: null,
     secondFee: null,
     firstAmount: null,
-    secondAmount: null
+    secondAmount: null,
+    firstPriceImpact: null,
+    secondPriceImpact: null
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
   const [swapType, setSwapType] = useState(SwapType.NORMAL)
@@ -549,7 +553,9 @@ export const Swap: React.FC<ISwap> = ({
         ),
         secondAmount: simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountIn.add(
           simulateWithHopResult.simulation.swapHopTwo.accumulatedFee
-        )
+        ),
+        firstPriceImpact: simulateWithHopResult.simulation.swapHopOne.priceImpact,
+        secondPriceImpact: simulateWithHopResult.simulation.swapHopTwo.priceImpact
       })
       setBestAmount(
         inputRef === inputTarget.FROM
@@ -569,7 +575,9 @@ export const Swap: React.FC<ISwap> = ({
         firstFee: pools[simulateResult.poolIndex]?.fee ?? new BN(0),
         secondFee: null,
         firstAmount: convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals),
-        secondAmount: null
+        secondAmount: null,
+        firstPriceImpact: simulateResult.priceImpact,
+        secondPriceImpact: null
       })
       setBestAmount(simulateResult.amountOut)
       setSwapType(SwapType.NORMAL)
@@ -1209,7 +1217,6 @@ export const Swap: React.FC<ISwap> = ({
                 ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
                 : 0
             }}
-            priceImpact={simulateResult.priceImpact}
             slippage={+slippTolerance}
             isLoadingRate={getStateMessage() === 'Loading'}
             simulationPath={simulationPath}

@@ -13,7 +13,6 @@ interface IProps {
   open: boolean
   exchangeRate: { val: number; symbol: string; decimal: number }
   slippage: number
-  priceImpact: BN
   isLoadingRate?: boolean
   simulationPath: SimulationPath
 }
@@ -23,7 +22,6 @@ const TransactionDetailsBox: React.FC<IProps> = ({
   exchangeRate,
   slippage,
   isLoadingRate = false,
-  priceImpact,
   simulationPath
 }) => {
   const { classes } = useStyles({ open })
@@ -34,7 +32,11 @@ const TransactionDetailsBox: React.FC<IProps> = ({
       DECIMAL - 2
     )
   )
-  const impact = +printBN(priceImpact, DECIMAL - 2)
+  const impact = +printBN(
+    simulationPath.firstPriceImpact?.add(simulationPath.secondPriceImpact ?? new BN(0)) ??
+      new BN(0),
+    DECIMAL - 2
+  )
 
   return (
     <Grid container className={classes.wrapper}>

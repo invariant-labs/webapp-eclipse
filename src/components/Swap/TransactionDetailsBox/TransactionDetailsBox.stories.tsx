@@ -40,8 +40,7 @@ export const Primary: Story = {
       secondAmount: null,
       firstPriceImpact: null,
       secondPriceImpact: null
-    },
-    minimumReceived: { val: 123, symbol: 'ABC', decimal: 12 }
+    }
   },
   render: args => {
     return <TransactionDetailsBox {...args} />
