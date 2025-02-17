@@ -85,8 +85,5 @@ export const useStyles = makeStyles()(() => ({
     '100%': {
       opacity: 0.7
     }
-  },
-  box1: {
-    border: `1px solid #fffff`
   }
 }))

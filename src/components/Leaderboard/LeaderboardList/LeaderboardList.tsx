@@ -348,7 +348,6 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
       {totalPages >= 1 && (
         <Box sx={isMobile ? { paddingLeft: '12px', paddingRight: '12px' } : {}}>
           <Box
-            className={classes.box1}
             sx={{
               width: '100%',
               position: 'relative',
