@@ -65,7 +65,10 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
     )
 
     const irysUploader = yield* call(
-      async () => await WebUploader(WebSolana).withProvider(wallet).withRpc(connection.rpcEndpoint)
+      async () =>
+        await WebUploader(WebSolana as any)
+          .withProvider(wallet)
+          .withRpc(connection.rpcEndpoint)
     )
 
     const mintKeypair = Keypair.generate()
