@@ -149,7 +149,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
     },
     footerRow: {
       background: colors.invariant.component,
-      height: '50px',
+      height: '56.8px',
       '& td:first-of-type': {
         borderBottomLeftRadius: '24px'
       },
