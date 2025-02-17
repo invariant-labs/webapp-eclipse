@@ -12,14 +12,12 @@ export const useAverageLogoColor = () => {
     color: string
   }
 
-  // Expanded default color overrides
   const tokenColorOverrides: TokenColorOverride[] = [
     { token: 'SOL', color: '#9945FF' },
     { token: 'CELESTIA', color: '#FF8B34' },
     { token: 'STTIA', color: '#FF4B4B' }
   ]
 
-  // Default colors for common tokens if image loading fails
   const defaultTokenColors: Record<string, string> = {
     SOL: '#9945FF',
     CELESTIA: '#FF8B34',
@@ -32,14 +30,11 @@ export const useAverageLogoColor = () => {
     logoColor: string | undefined,
     overrides: TokenColorOverride[]
   ): string => {
-    // Check for override first
     const override = overrides.find(item => item.token === token)
     if (override) return override.color
 
-    // If we have a valid logo color, use it
     if (logoColor) return logoColor
 
-    // Fall back to default token color or final fallback
     return defaultTokenColors[token] || defaultTokenColors.DEFAULT
   }
 
