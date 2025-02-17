@@ -18,11 +18,12 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
   tableHead: {
     display: 'table',
     width: '100%',
-    tableLayout: 'fixed'
+    tableLayout: 'fixed',
+    borderBottom: `1px solid ${colors.invariant.light}`
   },
   tableBody: {
     display: 'block',
-    maxHeight: 'calc(5 * 80px)',
+    maxHeight: 'calc(5 * 85px)',
     overflowY: 'auto'
   },
   headerRow: {
@@ -38,6 +39,8 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
   bodyRow: {
     display: 'table',
     width: '100%',
+    borderTop: `1px solid ${colors.invariant.light}`,
+
     height: '80px',
     tableLayout: 'fixed',
     '&:nth-of-type(odd)': {
@@ -91,11 +94,13 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
   cellBase: {
     padding: '14px 20px',
     background: 'inherit',
-    border: 'none',
     whiteSpace: 'nowrap',
-    textAlign: 'center'
+    textAlign: 'center',
+    borderTop: `1px solid ${colors.invariant.light}`
   },
   tableFooter: {
+    borderTop: `2px solid ${colors.invariant.light}`,
+
     display: 'table',
     width: '100%',
     tableLayout: 'fixed'
