@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Grid, Skeleton, Tooltip, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import { formatNumber } from '@utils/utils'
 import classNames from 'classnames'
@@ -297,14 +297,36 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         </Grid>
 
         <Grid item xs={8}>
-          <Grid container justifyContent='center' alignItems='center' className={sharedClasses.fee}>
-            <Typography className={sharedClasses.infoText} style={{ display: 'flex' }}>
-              Unclaimed Fee
-              <Typography className={sharedClasses.greenText} style={{ marginLeft: '10px' }}>
-                {unclaimedFeesInUSD === null ? '...' : `$${formatNumber(unclaimedFeesInUSD)}`}
+          {unclaimedFeesInUSD.loading ? (
+            <Skeleton
+              variant='rectangular'
+              width='100%'
+              height={36}
+              sx={{ borderRadius: '10px', margin: '0 auto' }}
+            />
+          ) : (
+            <Grid
+              container
+              justifyContent='center'
+              alignItems='center'
+              className={sharedClasses.fee}>
+              <Typography className={sharedClasses.infoText} style={{ display: 'flex' }}>
+                Unclaimed Fee
+                <Typography className={sharedClasses.greenText} style={{ marginLeft: '10px' }}>
+                  {unclaimedFeesInUSD.loading ? (
+                    <Skeleton
+                      variant='text'
+                      width='100%'
+                      height={36}
+                      sx={{ borderRadius: '10px', margin: '0 auto' }}
+                    />
+                  ) : (
+                    `$${formatNumber(unclaimedFeesInUSD.value)}`
+                  )}
+                </Typography>
               </Typography>
-            </Typography>
-          </Grid>
+            </Grid>
+          )}
         </Grid>
       </Grid>
     ),
@@ -315,18 +337,27 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     () => (
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid item xs={6}>
-          <Grid
-            container
-            className={sharedClasses.value}
-            alignItems='center'
-            justifyContent={'center'}>
-            <Typography className={classNames(sharedClasses.infoText, sharedClasses.label)}>
-              Value
-            </Typography>
-            <Typography className={sharedClasses.greenText}>
-              {tokenValueInUsd === null ? '...' : `$${formatNumber(tokenValueInUsd)}`}
-            </Typography>
-          </Grid>
+          {tokenValueInUsd.loading ? (
+            <Skeleton
+              variant='rectangular'
+              width='100%'
+              height={36}
+              sx={{ borderRadius: '10px', margin: '0 auto' }}
+            />
+          ) : (
+            <Grid
+              container
+              className={sharedClasses.value}
+              alignItems='center'
+              justifyContent={'center'}>
+              <Typography className={classNames(sharedClasses.infoText, sharedClasses.label)}>
+                Value
+              </Typography>
+              <Typography className={sharedClasses.greenText}>
+                {`$${formatNumber(tokenValueInUsd.value)}`}
+              </Typography>
+            </Grid>
+          )}
         </Grid>
 
         <Grid item xs={6}>
@@ -360,7 +391,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     [tokenValueInUsd, tokenXPercentage, tokenYPercentage, xToY]
   )
 
-  // Chart section
   const chartSection = useMemo(
     () => (
       <Grid container justifyContent='center' sx={{ width: '80%', margin: '0 auto' }}>
@@ -420,7 +450,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         position={positionSingleData}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
-      {/* Token icons and names */}
       <Grid container item className={classes.mdTop} direction='row' wrap='nowrap' sx={{ mb: 2 }}>
         <Grid
           container

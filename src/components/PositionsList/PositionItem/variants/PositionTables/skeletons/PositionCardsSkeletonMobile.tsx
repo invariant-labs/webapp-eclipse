@@ -30,23 +30,43 @@ const PositionCardsSkeletonMobile = () => {
             justifyContent='space-between'
             alignItems='center'
             sx={{ marginTop: '16px' }}>
-            <Grid item xs={3}>
-              <Skeleton variant='text' width={200} height={32} />
+            <Grid item xs={1}>
+              <Skeleton
+                variant='rectangular'
+                width={50}
+                height={36}
+                sx={{ borderRadius: '10px', margin: '0 auto' }}
+              />
             </Grid>
-            <Grid item xs={6}>
-              <Skeleton variant='text' width={200} height={32} />
+            <Grid item xs={9}>
+              <Skeleton
+                variant='rectangular'
+                width={250}
+                height={36}
+                sx={{ borderRadius: '10px', margin: '0 auto' }}
+              />
             </Grid>
           </Grid>
 
           <Grid container spacing={2} sx={{ marginTop: '16px', marginBottom: '16px' }}>
             <Grid item xs={6}>
               <Grid container justifyContent='center'>
-                <Skeleton variant='text' width={200} height={32} />
+                <Skeleton
+                  variant='rectangular'
+                  width={150}
+                  height={36}
+                  sx={{ borderRadius: '10px', margin: '0 auto' }}
+                />
               </Grid>
             </Grid>
-            <Grid item xs={5}>
+            <Grid item xs={6}>
               <Grid container justifyContent='center'>
-                <Skeleton variant='text' width={200} height={32} />
+                <Skeleton
+                  variant='rectangular'
+                  width={150}
+                  height={36}
+                  sx={{ borderRadius: '10px', margin: '0 auto' }}
+                />
               </Grid>
             </Grid>
           </Grid>
