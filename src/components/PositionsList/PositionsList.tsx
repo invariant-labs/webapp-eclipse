@@ -58,11 +58,8 @@ export const PositionsList: React.FC<IProps> = ({
   searchValue,
   searchSetValue,
   handleRefresh,
-  // pageChanged,
   length,
   lockedLength,
-  // loadedPages,
-  // getRemainingPositions,
   noInitialPositions,
   lockedData
 }) => {
