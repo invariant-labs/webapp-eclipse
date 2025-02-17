@@ -103,7 +103,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       if (position.logo && !logoColors[position.logo] && !pendingColorLoads.has(position.logo)) {
         setPendingColorLoads(prev => new Set(prev).add(position.logo ?? ''))
 
-        getAverageColor(position.logo)
+        getAverageColor(position.logo, position.name)
           .then(color => {
             setLogoColors(prev => ({
               ...prev,

@@ -38,7 +38,7 @@ export const useStyles = makeStyles()(() => ({
     },
     borderBottomLeftRadius: 0,
     backgroundColor: colors.invariant.component,
-    height: '279px',
+    height: '286px',
     overflowY: 'auto',
     overflowX: 'hidden',
 
