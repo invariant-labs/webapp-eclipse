@@ -1340,8 +1340,11 @@ export const calculateConcentrationRange = (
   isXToY: boolean
 ) => {
   const tickDelta = calculateTickDelta(tickSpacing, minimumRange, concentration)
-  const lowerTick = currentTick - (minimumRange / 2 + tickDelta) * tickSpacing
-  const upperTick = currentTick + (minimumRange / 2 + tickDelta) * tickSpacing
+
+  const parsedTickDelta = Math.abs(tickDelta) === 0 ? 0 : Math.abs(tickDelta) - 1
+
+  const lowerTick = currentTick - (minimumRange / 2 + parsedTickDelta) * tickSpacing
+  const upperTick = currentTick + (minimumRange / 2 + parsedTickDelta) * tickSpacing
 
   return {
     leftRange: isXToY ? lowerTick : upperTick,
@@ -1350,17 +1353,10 @@ export const calculateConcentrationRange = (
 }
 
 export const calculateConcentration = (lowerTick: number, upperTick: number) => {
-  // const sqrtLowerPrice = Math.pow(Math.sqrt(1.0001), lowerTick)
-  // const sqrtUpperPrice = Math.pow(Math.sqrt(1.0001), upperTick)
+  const tickDelta = Math.abs(lowerTick - upperTick)
 
-  // const concentration2 = (1 + sqrtUpperPrice * sqrtLowerPrice) / (sqrtUpperPrice - sqrtLowerPrice)
-
-  // console.log(concentration2)
-  // // return Math.abs(concentration)
-  // console.log(lowerTick)
-  // console.log(upperTick)
-  const lowerSqrtPrice = calculatePriceSqrt(lowerTick)
-  const upperSqrtPrice = calculatePriceSqrt(upperTick)
+  const lowerSqrtPrice = calculatePriceSqrt(0)
+  const upperSqrtPrice = calculatePriceSqrt(tickDelta)
 
   const x = upperSqrtPrice.mul(lowerSqrtPrice).div(PRICE_DENOMINATOR)
   const numerator = PRICE_DENOMINATOR.add(x)
@@ -1368,7 +1364,7 @@ export const calculateConcentration = (lowerTick: number, upperTick: number) => 
 
   const concentration = numerator.div(denominator)
 
-  return +concentration
+  return +concentration + 1
 }
 
 export enum PositionTokenBlock {

@@ -136,7 +136,10 @@ export interface INewPosition {
   onDisconnectWallet: () => void
   canNavigate: boolean
   estimatedPointsPerDay: BN
-  estimatedPointsForScale: (conc: number) => { min: BN; middle: BN; max: BN }
+  estimatedPointsForScale: (
+    conc: number,
+    positionOpeningMethod: PositionOpeningMethod
+  ) => { min: BN; middle: BN; max: BN }
   isPromotedPool: boolean
 }
 
@@ -349,7 +352,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
         ? concentrationArray[concentrationIndex]
-        : calculateConcentration(leftRange, rightRange)
+        : calculateConcentration(leftRange, rightRange),
+      positionOpeningMethod
     )
   }, [estimatedPointsPerDay, concentrationIndex])
 

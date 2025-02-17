@@ -44,7 +44,7 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
-import { Pair, PRICE_DENOMINATOR } from '@invariant-labs/sdk-eclipse'
+import { DENOMINATOR, Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -551,7 +551,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     )
     const lowerTick = Math.min(left, right)
     const upperTick = Math.max(left, right)
-    console.log(byX)
+
     try {
       if (byX) {
         const result = getLiquidityByX(
@@ -575,11 +575,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               break
 
             case PotentialLiquidity.Max:
-              //max liquidity
-              console.log(amount.toString())
-              console.log(lowerTick)
-              console.log(upperTick)
-
               console.log(result.liquidity.toString())
               setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
               potentialLiquidityRef.current.max = result.liquidity
@@ -590,12 +585,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           }
           return
         } else {
-          // liquidity by 1 input
-          console.log(amount.toString())
-          console.log(lowerTick)
-          console.log(upperTick)
-
-          console.log(result.liquidity.toString())
           if (isMountedRef.current) {
             liquidityRef.current = result.liquidity
           }
@@ -625,11 +614,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               break
 
             case PotentialLiquidity.Max:
-              //max liquidity
-              console.log(amount.toString())
-              console.log(lowerTick)
-              console.log(upperTick)
-
               console.log(result.liquidity.toString())
               setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
               potentialLiquidityRef.current.max = result.liquidity
@@ -640,13 +624,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           }
           return
         } else {
-          // liquidity by 2 input
-          console.log(amount.toString())
-          console.log(lowerTick)
-          console.log(upperTick)
-
-          console.log(result.liquidity.toString())
-
           if (isMountedRef.current) {
             liquidityRef.current = result.liquidity
           }
@@ -734,7 +711,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       pool => pool.address === poolAddress.toString()
     )!.pointsPerSecond
 
-    console.log(liquidity.toString())
     const estimatedPoints = estimatePointsForLiquidity(
       liquidity,
       allPools[poolIndex] as PoolStructure,
@@ -745,18 +721,25 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [liquidity, poolIndex, isPromotedPool])
 
   const estimatedPointsForScale = (
-    currentConcentration: number
+    currentConcentration: number,
+    positionOpeningMethod: PositionOpeningMethod
   ): { min: BN; middle: BN; max: BN } => {
     const maxConcentrationForRange = calculateConcentration(0, tickSpacing)
 
-    console.log(maxConcentrationForRange)
-    console.log(currentConcentration)
+    const liquidityMultiplier =
+      Number((maxConcentrationForRange / currentConcentration).toFixed(+DECIMAL)) *
+      Number(DENOMINATOR)
+    console.log(maxConcentrationForRange / currentConcentration)
+    console.log(liquidityMultiplier)
+    const maxLiquidityForRange = new BN(liquidityMultiplier)
+      .mul(liquidity)
+      .toString()
+      .slice(0, -DECIMAL)
+    console.log(new BN(liquidityMultiplier).mul(liquidity).toString())
+    console.log(maxLiquidityForRange)
+    console.log(potentialLiquidity.max.toString())
 
-    // const maxLiquidityForRange = new BN(
-    //   Math.abs((maxConcentrationForRange * PRICE_DENOMINATOR) / currentConcentration)
-    // ).mul(liquidity)
-
-    // console.log(maxLiquidityForRange.div(PRICE_DENOMINATOR).toString())
+    console.log(liquidity.toString())
 
     const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
 
