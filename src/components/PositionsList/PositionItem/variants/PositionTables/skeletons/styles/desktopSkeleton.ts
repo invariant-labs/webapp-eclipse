@@ -101,7 +101,7 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     tableLayout: 'fixed'
   },
   footerRow: {
-    background: colors.invariant.componentDark,
+    background: colors.invariant.component,
     height: '50px',
     '& td:first-of-type': {
       borderBottomLeftRadius: '24px'
