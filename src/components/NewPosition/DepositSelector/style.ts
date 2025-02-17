@@ -225,6 +225,7 @@ export const useStyles = makeStyles()(theme => {
     unknownWarning: {
       width: 'fit-content',
       maxWidth: 131,
+      alignSelf: 'flex-end',
       textAlign: 'center',
       border: `1px solid ${colors.invariant.lightGrey}`,
       ...typography.caption4,

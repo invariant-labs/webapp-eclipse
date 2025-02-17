@@ -214,7 +214,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   setAlignment
 }) => {
   const { classes } = useStyles()
-  const breakpoint = useMediaQuery(theme.breakpoints.down(1000))
+  const breakpoint630Down = useMediaQuery(theme.breakpoints.down(630))
+  const breakpointMdTo1000 = useMediaQuery(theme.breakpoints.between('md', 1000))
   const { value: valueA } = tokenAInputState
   const { value: valueB } = tokenBInputState
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
@@ -756,13 +757,15 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       <Grid container className={classes.depositHeader}>
         <Box className={classes.depositHeaderContainer}>
           <Typography className={classes.subsectionTitle}>Deposit Amount</Typography>
-          {!breakpoint &&
-            simulation?.swapSimulation?.priceImpact &&
-            alignment === DepositOptions.Auto &&
-            isAutoSwapAvailable &&
-            (tokenACheckbox || tokenBCheckbox) &&
-            renderPriceImpactWarning()}
+
           <Box className={classes.depositOptions}>
+            {!breakpoint630Down &&
+              !breakpointMdTo1000 &&
+              simulation?.swapSimulation?.priceImpact &&
+              alignment === DepositOptions.Auto &&
+              isAutoSwapAvailable &&
+              (tokenACheckbox || tokenBCheckbox) &&
+              renderPriceImpactWarning()}
             <Tooltip title={'Placeholder'} classes={{ tooltip: classes.tooltip }}>
               <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
             </Tooltip>
@@ -816,9 +819,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </Button>
           </Box>
         </Box>
-        {breakpoint && alignment === DepositOptions.Auto && isAutoSwapAvailable && (
-          <Box className={classes.depositHeaderContainer}>{renderPriceImpactWarning()}</Box>
-        )}
+        {(breakpoint630Down || breakpointMdTo1000) &&
+          alignment === DepositOptions.Auto &&
+          isAutoSwapAvailable && (
+            <Box className={classes.depositHeaderContainer}>{renderPriceImpactWarning()}</Box>
+          )}
       </Grid>
       <Grid container className={classes.sectionWrapper}>
         <Box className={classNames(classes.inputWrapper, classes.inputFirst)}>
