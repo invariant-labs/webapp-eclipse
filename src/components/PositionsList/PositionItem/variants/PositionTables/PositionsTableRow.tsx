@@ -76,16 +76,16 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
 
-  // const { tokenValueInUsd, tokenXPercentage, tokenYPercentage, unclaimedFeesInUSD } =
-  //   useUnclaimedFee({
-  //     currentPrice,
-  //     id,
-  //     position,
-  //     tokenXLiq,
-  //     tokenYLiq,
-  //     positionSingleData,
-  //     xToY
-  //   })
+  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage, unclaimedFeesInUSD } =
+    useUnclaimedFee({
+      currentPrice,
+      id,
+      position,
+      tokenXLiq,
+      tokenYLiq,
+      positionSingleData,
+      xToY
+    })
 
   const { isPromoted, pointsPerSecond, estimated24hPoints } = usePromotedPool(
     poolAddress,
@@ -196,11 +196,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         alignItems='center'
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
-          <Typography className={sharedClasses.greenText}>{`$${formatNumber2(0)}`}</Typography>
+          <Typography className={sharedClasses.greenText}>
+            {`$${formatNumber2(tokenValueInUsd.value)}`}
+          </Typography>
         </Grid>
       </Grid>
     ),
-    [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
+    [tokenValueInUsd, valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
 
   const unclaimedFee = useMemo(
@@ -213,11 +215,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         alignItems='center'
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
-          <Typography className={sharedClasses.greenText}>${formatNumber2(0)}</Typography>
+          <Typography className={sharedClasses.greenText}>
+            ${formatNumber2(unclaimedFeesInUSD.value)}
+          </Typography>
         </Grid>
       </Grid>
     ),
-    [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
+    [unclaimedFeesInUSD, valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
 
   const promotedIconContent = useMemo(() => {
@@ -384,7 +388,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             padding: '8px 12px',
             borderRadius: '12px'
           }}>
-          {/* {tokenXPercentage === 100 && (
+          {tokenXPercentage === 100 && (
             <span>
               {tokenXPercentage}
               {'%'} {xToY ? tokenXName : tokenYName}
@@ -403,11 +407,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
               {'%'} {xToY ? tokenXName : tokenYName} {' - '} {tokenYPercentage}
               {'%'} {xToY ? tokenYName : tokenXName}
             </span>
-          )} */}
+          )}
         </Typography>
       </TableCell>
 
-      {false ? (
+      {tokenValueInUsd.loading ? (
         <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>
           <Skeleton
             variant='rectangular'
@@ -421,7 +425,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           {valueFragment}
         </TableCell>
       )}
-      {false ? (
+      {unclaimedFeesInUSD.loading ? (
         <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>
           <Skeleton
             variant='rectangular'
