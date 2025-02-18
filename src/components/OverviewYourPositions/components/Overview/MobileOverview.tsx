@@ -29,14 +29,30 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null)
   const { classes } = useStyles()
   const isLoadingList = useSelector(isLoadingPositionsList)
+
+  // Sort positions by value in descending order
+  const sortedPositions = useMemo(() => {
+    return [...positions].sort((a, b) => b.value - a.value)
+  }, [positions])
+
+  // Sort chart colors to match the sorted positions
+  const sortedChartColors = useMemo(() => {
+    const colorMap = positions.reduce((map, position, index) => {
+      map.set(position.token, chartColors[index])
+      return map
+    }, new Map<string, string>())
+
+    return sortedPositions.map(position => colorMap.get(position.token) ?? '')
+  }, [positions, sortedPositions, chartColors])
+
   const segments: ChartSegment[] = useMemo(() => {
     let currentPosition = 0
-    return positions.map((position, index) => {
+    return sortedPositions.map((position, index) => {
       const percentage = (position.value / totalAssets) * 100
       const segment = {
         start: currentPosition,
         width: percentage,
-        color: chartColors[index],
+        color: sortedChartColors[index],
         token: position.token,
         value: position.value,
         logo: position.logo,
@@ -45,7 +61,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
       currentPosition += percentage
       return segment
     })
-  }, [positions, totalAssets, chartColors])
+  }, [sortedPositions, totalAssets, sortedChartColors])
 
   return (
     <Box sx={{ width: '100%', mt: 2 }}>
@@ -87,11 +103,13 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                   maxHeight: '120px',
                   marginLeft: '0 !important',
                   overflowY: 'auto',
+                  padding: '4px',
+                  marginRight: '-4px',
                   '&::-webkit-scrollbar': {
                     width: '4px'
                   },
                   '&::-webkit-scrollbar-track': {
-                    background: 'transparent'
+                    background: colors.invariant.componentDark
                   },
                   '&::-webkit-scrollbar-thumb': {
                     background: colors.invariant.pink,

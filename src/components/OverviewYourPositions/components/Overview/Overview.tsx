@@ -35,12 +35,16 @@ export const Overview: React.FC<OverviewProps> = () => {
 
   const isColorsLoading = useMemo(() => pendingColorLoads.size > 0, [pendingColorLoads])
 
+  const sortedPositions = useMemo(() => {
+    return [...positions].sort((a, b) => b.value - a.value)
+  }, [positions])
+
   const chartColors = useMemo(
     () =>
-      positions.map(position =>
+      sortedPositions.map(position =>
         getTokenColor(position.token, logoColors[position.logo ?? ''] ?? '', tokenColorOverrides)
       ),
-    [positions, logoColors, getTokenColor, tokenColorOverrides]
+    [sortedPositions, logoColors, getTokenColor, tokenColorOverrides]
   )
 
   const totalAssets = useMemo(
@@ -54,7 +58,7 @@ export const Overview: React.FC<OverviewProps> = () => {
     if (!isDataReady) return []
 
     const tokens: { label: string; value: number }[] = []
-    positions.forEach(position => {
+    sortedPositions.forEach(position => {
       const existingToken = tokens.find(token => token.label === position.token)
       if (existingToken) {
         existingToken.value += position.value
@@ -66,7 +70,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       }
     })
     return tokens
-  }, [positions, isDataReady])
+  }, [sortedPositions, isDataReady])
 
   useEffect(() => {
     const loadPrices = async () => {
@@ -99,7 +103,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   }, [positionList])
 
   useEffect(() => {
-    positions.forEach(position => {
+    sortedPositions.forEach(position => {
       if (position.logo && !logoColors[position.logo] && !pendingColorLoads.has(position.logo)) {
         setPendingColorLoads(prev => new Set(prev).add(position.logo ?? ''))
 
@@ -125,7 +129,7 @@ export const Overview: React.FC<OverviewProps> = () => {
           })
       }
     })
-  }, [positions, getAverageColor, logoColors, pendingColorLoads])
+  }, [sortedPositions, getAverageColor, logoColors, pendingColorLoads])
 
   return (
     <Box className={classes.container}>
@@ -133,7 +137,11 @@ export const Overview: React.FC<OverviewProps> = () => {
       <UnclaimedSection unclaimedTotal={totalUnclaimedFee} loading={isLoadingList} />
 
       {isLg ? (
-        <MobileOverview positions={positions} totalAssets={totalAssets} chartColors={chartColors} />
+        <MobileOverview
+          positions={sortedPositions}
+          totalAssets={totalAssets}
+          chartColors={chartColors}
+        />
       ) : (
         <Box
           sx={{
@@ -160,7 +168,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                   sx={{
                     height: '130px',
                     width: '90%',
-                    overflowY: positions.length <= 3 ? 'hidden' : 'auto',
+                    overflowY: sortedPositions.length <= 3 ? 'hidden' : 'auto',
                     marginTop: '8px',
                     marginLeft: '0 !important',
                     '&::-webkit-scrollbar': {
@@ -168,14 +176,14 @@ export const Overview: React.FC<OverviewProps> = () => {
                       width: '4px'
                     },
                     '&::-webkit-scrollbar-track': {
-                      background: 'transparent'
+                      background: colors.invariant.componentDark
                     },
                     '&::-webkit-scrollbar-thumb': {
                       background: colors.invariant.pink,
                       borderRadius: '4px'
                     }
                   }}>
-                  {positions.map(position => {
+                  {sortedPositions.map(position => {
                     const textColor = getTokenColor(
                       position.token,
                       logoColors[position.logo ?? ''] ?? '',
