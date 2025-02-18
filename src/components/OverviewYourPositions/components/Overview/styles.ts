@@ -105,7 +105,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     minWidth: '100px',
     height: '32px',
-    marginLeft: '12px',
+    marginLeft: '36px',
     background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
     borderRadius: '12px',
     fontFamily: 'Mukta',

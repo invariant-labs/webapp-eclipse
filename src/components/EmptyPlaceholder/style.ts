@@ -37,7 +37,7 @@ export const useStyles = makeStyles<StyleProps>()(
       zIndex: 13,
       borderRadius: newVersion || !roundedCorners ? 0 : 10,
       background: newVersion
-        ? 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)'
+        ? 'linear-gradient(360deg, rgba(32, 41, 70, 0.8) 0%, rgba(17, 25, 49, 0.8) 100%), linear-gradient(180deg, #010514 0%, rgba(1, 5, 20, 0) 100%)'
         : 'rgba(12, 11, 13, 0.8)'
     },
     desc: {

@@ -153,7 +153,7 @@ export const Overview: React.FC<OverviewProps> = () => {
               flexDirection: 'column'
             }
           }}>
-          <Box sx={{ width: '450px' }}>
+          <Box sx={{ width: '850px' }}>
             {!isDataReady ? (
               <LegendSkeleton />
             ) : (
@@ -166,7 +166,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                   container
                   spacing={1}
                   sx={{
-                    height: '130px',
+                    height: '160px',
                     width: '90%',
                     overflowY: sortedPositions.length <= 3 ? 'hidden' : 'auto',
                     marginTop: '8px',

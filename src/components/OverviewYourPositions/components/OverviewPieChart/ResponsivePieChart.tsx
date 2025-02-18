@@ -23,7 +23,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
 
   const loadingData = [{ value: 1, label: '' }]
 
-  const getPathStyles = (index, isLoadingChart) => ({
+  const getPathStyles = (index: number, isLoadingChart: boolean) => ({
     stroke: 'transparent',
     outline: 'none',
     opacity: isLoadingChart ? (showRealData ? 0 : 1) : showRealData ? 1 : 0,
@@ -38,8 +38,8 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
     innerRadius: '90%',
     startAngle: -45,
     endAngle: 315,
-    cx: '80%',
-    cy: '50%'
+    cx: '55%',
+    cy: '55%'
   }
   const { classes } = useStyles({
     chartColors,
