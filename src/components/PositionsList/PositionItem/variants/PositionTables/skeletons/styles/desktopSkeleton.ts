@@ -62,15 +62,16 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     border: 'none'
   },
   tokenRatioCell: {
-    width: '15%',
+    width: '18%',
     padding: '14px 20px !important',
     border: 'none'
   },
   valueCell: {
-    width: '10%',
+    width: '9%',
     padding: '14px 20px !important',
     border: 'none'
   },
+
   feeCell: {
     width: '10%',
     padding: '14px 20px !important',

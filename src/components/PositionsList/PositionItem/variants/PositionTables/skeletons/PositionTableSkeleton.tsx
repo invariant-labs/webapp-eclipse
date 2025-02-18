@@ -62,7 +62,7 @@ export const PositionTableSkeleton: React.FC = () => {
                 <TableCell className={classes.feeTierCell}>
                   <Skeleton
                     variant='rectangular'
-                    width='80%'
+                    width='100%'
                     height={36}
                     sx={{ borderRadius: '10px', margin: '0 auto' }}
                   />

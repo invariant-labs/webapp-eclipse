@@ -64,13 +64,13 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       }
     },
     tokenRatioCell: {
-      width: '15%',
+      width: '18%',
       '& > div': {
         margin: '0 auto'
       }
     },
     valueCell: {
-      width: '10%',
+      width: '9%',
       '& .MuiGrid-root': {
         justifyContent: 'center'
       }
