@@ -46,7 +46,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   position,
   id,
   setAllowPropagation,
-  // liquidity,
   poolData,
   isActive = false,
   currentPrice,

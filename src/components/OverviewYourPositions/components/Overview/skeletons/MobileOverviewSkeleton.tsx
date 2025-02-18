@@ -1,4 +1,3 @@
-// MobileOverviewSkeleton.tsx
 import React from 'react'
 import { Box, Grid, Skeleton } from '@mui/material'
 import { useMobileSkeletonStyle } from './styles/useMobileSkeleton'
