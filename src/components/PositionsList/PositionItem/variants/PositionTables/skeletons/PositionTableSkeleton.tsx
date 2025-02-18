@@ -51,7 +51,12 @@ export const PositionTableSkeleton: React.FC = () => {
                   <Box className={classes.skeletonContainer}>
                     <Skeleton variant='circular' width={40} height={40} />
                     <Skeleton variant='circular' width={40} height={40} />
-                    <Skeleton variant='text' width={80} height={24} />
+                    <Skeleton
+                      variant='rectangular'
+                      width={160}
+                      height={36}
+                      sx={{ borderRadius: '10px' }}
+                    />
                   </Box>
                 </TableCell>
                 <TableCell className={classes.feeTierCell}>
