@@ -33,10 +33,6 @@ const MobileOverviewSkeleton: React.FC = () => {
         <Grid container spacing={1} className={classes.gridContainer}>
           {segments.map((_, index) => (
             <Grid item container key={index} className={classes.gridItem}>
-              <Grid item xs={1} className={classes.logoContainer}>
-                <Skeleton variant='circular' className={classes.circularSkeleton} />
-              </Grid>
-
               <Grid item xs={1}>
                 <Skeleton variant='text' className={classes.tokenSymbolSkeleton} />
               </Grid>

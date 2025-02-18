@@ -1,15 +1,15 @@
 import { useCallback } from 'react'
 
+export interface TokenColorOverride {
+  token: string
+  color: string
+}
+
 export const useAverageLogoColor = () => {
   interface RGBColor {
     r: number
     g: number
     b: number
-  }
-
-  interface TokenColorOverride {
-    token: string
-    color: string
   }
 
   const tokenColorOverrides: TokenColorOverride[] = [{ token: 'SOL', color: '#9945FF' }]

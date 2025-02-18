@@ -174,7 +174,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
         <Box className={classes.header}>
           <Typography className={classes.headerText}>Available Balance</Typography>
           {isLoading ? (
-            <Skeleton variant='text' width={120} height={32} />
+            <Skeleton variant='text' width={100} height={32} sx={{ marginRight: '16px' }} />
           ) : (
             <Typography className={classes.headerText}>${formatNumber2(totalValue)}</Typography>
           )}

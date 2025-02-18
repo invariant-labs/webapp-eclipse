@@ -1,20 +1,21 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Typography, useMediaQuery } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles'
 import { ProcessedPool } from '@store/types/userOverview'
 import { useSelector } from 'react-redux'
-import { colors, theme, typography } from '@static/theme'
+import { theme } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
 import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
-import { formatNumber2, getTokenPrice } from '@utils/utils'
+import { getTokenPrice } from '@utils/utils'
 import MobileOverview from './MobileOverview'
 import LegendSkeleton from './skeletons/LegendSkeleton'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 import { useCalculateUnclaimedFee } from '@store/hooks/userOverview/useCalculateUnclaimedFee'
 import icons from '@static/icons'
+import { LegendOverview } from './LegendOverview'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -175,95 +176,11 @@ export const Overview: React.FC<OverviewProps> = () => {
             {!isDataReady ? (
               <LegendSkeleton />
             ) : (
-              <Box sx={{ marginTop: 2 }}>
-                <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>
-                  Tokens
-                </Typography>
-
-                <Grid
-                  container
-                  spacing={1}
-                  sx={{
-                    height: '160px',
-                    width: '90%',
-                    overflowY: sortedPositions.length <= 3 ? 'hidden' : 'auto',
-                    marginTop: '8px',
-                    marginLeft: '0 !important',
-                    '&::-webkit-scrollbar': {
-                      padding: 0,
-                      width: '4px'
-                    },
-                    '&::-webkit-scrollbar-track': {
-                      background: colors.invariant.componentDark
-                    },
-                    '&::-webkit-scrollbar-thumb': {
-                      background: colors.invariant.pink,
-                      borderRadius: '4px'
-                    }
-                  }}>
-                  {sortedPositions.map(position => {
-                    const textColor = getTokenColor(
-                      position.token,
-                      logoColors[position.logo ?? ''] ?? '',
-                      tokenColorOverrides
-                    )
-                    return (
-                      <Grid
-                        item
-                        container
-                        key={position.token}
-                        sx={{
-                          paddingLeft: '0 !important',
-                          display: 'flex',
-                          [theme.breakpoints.down('lg')]: {
-                            justifyContent: 'space-between'
-                          },
-                          justifyContent: 'flex-start'
-                        }}>
-                        <Grid
-                          item
-                          xs={2}
-                          alignContent={'center'}
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center'
-                          }}>
-                          <img
-                            src={position.logo}
-                            alt={'Token logo'}
-                            style={{
-                              width: '24px',
-                              height: '24px',
-                              borderRadius: '100%'
-                            }}
-                          />
-                        </Grid>
-
-                        <Grid item xs={3} alignContent={'center'}>
-                          <Typography
-                            style={{
-                              ...typography.heading4,
-                              color: textColor
-                            }}>
-                            {position.token}:
-                          </Typography>
-                        </Grid>
-
-                        <Grid item xs={6} alignContent={'center'}>
-                          <Typography
-                            style={{
-                              ...typography.heading4,
-                              color: colors.invariant.text,
-                              textAlign: 'right'
-                            }}>
-                            ${formatNumber2(position.value)}
-                          </Typography>
-                        </Grid>
-                      </Grid>
-                    )
-                  })}
-                </Grid>
-              </Box>
+              <LegendOverview
+                logoColors={logoColors}
+                sortedPositions={sortedPositions}
+                tokenColorOverrides={tokenColorOverrides}
+              />
             )}
           </Box>
 
