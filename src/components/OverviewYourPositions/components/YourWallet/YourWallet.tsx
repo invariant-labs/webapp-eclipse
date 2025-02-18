@@ -20,6 +20,7 @@ import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
 import { useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
+import { MobileCard } from './MobileCard'
 
 interface YourWalletProps {
   pools: TokenPool[]
@@ -32,44 +33,6 @@ const EmptyState = ({ classes }: { classes: any }) => (
     <Typography className={classes.emptyStateText}>Your wallet is empty.</Typography>
   </Box>
 )
-
-const MobileCard: React.FC<{
-  pool: TokenPool
-  classes: any
-  renderActions: any
-  getStrategy: () => StrategyConfig
-}> = ({ pool, classes, renderActions, getStrategy }) => {
-  const strategy = getStrategy()
-  return (
-    <Box className={classes.mobileCard}>
-      <Box className={classes.mobileCardHeader}>
-        <Box className={classes.mobileTokenInfo}>
-          <img src={pool.icon} className={classes.tokenIcon} alt={pool.symbol} />
-          <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
-        </Box>
-        <Box className={classes.mobileActionsContainer}>{renderActions(pool, strategy)}</Box>
-      </Box>
-      <Box className={classes.mobileStatsContainer}>
-        <Box className={classes.mobileStatItem}>
-          <Typography component='span' className={classes.mobileStatLabel}>
-            Amount:
-          </Typography>
-          <Typography component='span' className={classes.mobileStatValue}>
-            {formatNumber2(pool.amount)}
-          </Typography>
-        </Box>
-        <Box className={classes.mobileStatItem}>
-          <Typography component='span' className={classes.mobileStatLabel}>
-            Value:
-          </Typography>
-          <Typography component='span' className={classes.mobileStatValue}>
-            ${pool.value.toLocaleString().replace(',', '.')}
-          </Typography>
-        </Box>
-      </Box>
-    </Box>
-  )
-}
 
 export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading }) => {
   const { classes } = useStyles()
