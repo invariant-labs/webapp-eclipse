@@ -17,6 +17,7 @@ export interface PositionsListStore {
   lockedList: PositionWithAddress[]
   head: number
   bump: number
+  isAllClaimFeesLoading: boolean
   initialized: boolean
   loading: boolean
 }
@@ -99,6 +100,7 @@ export const defaultState: IPositionsStore = {
     lockedList: [],
     head: 0,
     bump: 0,
+    isAllClaimFeesLoading: false,
     initialized: false,
     loading: true
   },
@@ -153,6 +155,9 @@ const positionsSlice = createSlice({
       state.plotTicks.loading = false
       state.plotTicks.hasError = true
       return state
+    },
+    setAllClaimLoader(state, action: PayloadAction<boolean>) {
+      state.positionsList.isAllClaimFeesLoading = action.payload
     },
     getCurrentPlotTicks(state, action: PayloadAction<GetCurrentTicksData>) {
       state.plotTicks.loading = !action.payload.disableLoading

@@ -1274,7 +1274,7 @@ export function* handleClaimAllFees() {
     if (allPositionsData.length === 0) {
       return
     }
-
+    yield* put(actions.setAllClaimLoader(true))
     yield put(
       snackbarsActions.add({
         message: 'Claiming all fees',
@@ -1360,7 +1360,10 @@ export function* handleClaimAllFees() {
     yield put(snackbarsActions.remove(loaderClaimAllFees))
 
     yield put(actions.getPositionsList())
+    yield* put(actions.setAllClaimLoader(false))
   } catch (error) {
+    yield* put(actions.setAllClaimLoader(false))
+
     console.log(error)
 
     closeSnackbar(loaderClaimAllFees)

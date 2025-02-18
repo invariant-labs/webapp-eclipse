@@ -7,7 +7,11 @@ import { ProcessedPool } from '@store/types/userOverview'
 import { useSelector } from 'react-redux'
 import { theme } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
-import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
+import {
+  isLoadingPositionsList,
+  positionsWithPoolsData,
+  positionsList as list
+} from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
 import MobileOverview from './MobileOverview'
 import LegendSkeleton from './skeletons/LegendSkeleton'
@@ -26,6 +30,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const { classes } = useStyles()
   const positionList = useSelector(positionsWithPoolsData)
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
+  const { isAllClaimFeesLoading } = useSelector(list)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
@@ -152,8 +157,11 @@ export const Overview: React.FC<OverviewProps> = () => {
 
   return (
     <Box className={classes.container}>
-      <HeaderSection totalValue={totalAssets} loading={isLoadingList} />
-      <UnclaimedSection unclaimedTotal={totalUnclaimedFee} loading={isLoadingList} />
+      <HeaderSection totalValue={totalAssets} loading={isLoadingList || isAllClaimFeesLoading} />
+      <UnclaimedSection
+        unclaimedTotal={totalUnclaimedFee}
+        loading={isLoadingList || isAllClaimFeesLoading}
+      />
 
       {isLg ? (
         <MobileOverview
@@ -173,7 +181,7 @@ export const Overview: React.FC<OverviewProps> = () => {
             }
           }}>
           <Box sx={{ width: '850px' }}>
-            {!isDataReady ? (
+            {!isDataReady || isAllClaimFeesLoading ? (
               <LegendSkeleton />
             ) : (
               <LegendOverview
@@ -192,7 +200,11 @@ export const Overview: React.FC<OverviewProps> = () => {
                 marginTop: '100px'
               }
             }}>
-            <ResponsivePieChart data={data} chartColors={chartColors} isLoading={!isDataReady} />
+            <ResponsivePieChart
+              data={data}
+              chartColors={chartColors}
+              isLoading={!isDataReady || isAllClaimFeesLoading}
+            />
           </Box>
         </Box>
       )}
