@@ -154,31 +154,37 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
         ) : (
           <Box display='flex' alignItems='center' gap='8px'>
             <Typography className={classes.headerBigText}>{value}</Typography>
-            <a
-              href='https://docs.invariant.app/docs/invariant_points/content'
-              target='_blank'
-              rel='noopener noreferrer'
-              style={{ color: 'inherit', textDecoration: 'underline' }}>
-              <img
-                src={newTab}
-                alt='new'
-                width={14}
-                style={{
-                  filter:
-                    'brightness(0) saturate(100%) invert(72%) sepia(43%) saturate(737%) hue-rotate(99deg) brightness(98%) contrast(83%)'
-                }}
-              />
-            </a>
-            <IconButton
-              disabled={disabled}
-              sx={{ padding: 0 }}
-              onClick={() => setContentPointsOpen(true)}>
-              <img
-                width={14}
-                src={airDrop}
-                style={{ filter: disabled ? 'grayscale(100%)' : 'none' }}
-              />
-            </IconButton>
+            <Box
+              display='flex'
+              alignItems='center'
+              gap='8px'
+              sx={isMobile ? { position: 'absolute', left: '55%' } : {}}>
+              <a
+                href='https://docs.invariant.app/docs/invariant_points/content'
+                target='_blank'
+                rel='noopener noreferrer'
+                style={{ color: 'inherit', textDecoration: 'underline' }}>
+                <img
+                  src={newTab}
+                  alt='new'
+                  width={14}
+                  style={{
+                    filter:
+                      'brightness(0) saturate(100%) invert(72%) sepia(43%) saturate(737%) hue-rotate(99deg) brightness(98%) contrast(83%)'
+                  }}
+                />
+              </a>
+              <IconButton
+                disabled={disabled}
+                sx={{ padding: 0 }}
+                onClick={() => setContentPointsOpen(true)}>
+                <img
+                  width={14}
+                  src={airDrop}
+                  style={{ filter: disabled ? 'grayscale(100%)' : 'none' }}
+                />
+              </IconButton>
+            </Box>
           </Box>
         )}
       </Box>
