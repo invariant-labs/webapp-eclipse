@@ -230,7 +230,7 @@ export function* handleSwapWithETH(): Generator {
     // } else {
     yield put(
       snackbarsActions.add({
-        message: 'Tokens swapped successfully.',
+        message: 'Tokens swapped successfully',
         variant: 'success',
         persist: false,
         txid: initialTxid
@@ -424,7 +424,7 @@ export function* handleSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Tokens swapped successfully.',
+          message: 'Tokens swapped successfully',
           variant: 'success',
           persist: false,
           txid

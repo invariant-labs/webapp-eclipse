@@ -330,7 +330,7 @@ export function* transferAirdropSOL(): Generator {
   } else {
     yield put(
       snackbarsActions.add({
-        message: 'Testnet ETH airdrop successfully.',
+        message: 'Testnet ETH airdrop successfully',
         variant: 'success',
         persist: false,
         txid
@@ -525,7 +525,7 @@ export function* init(isEagerConnect: boolean): Generator {
     if (isEagerConnect) {
       yield* put(
         snackbarsActions.add({
-          message: 'Wallet reconnected.',
+          message: 'Wallet reconnected',
           variant: 'success',
           persist: false
         })
@@ -533,7 +533,7 @@ export function* init(isEagerConnect: boolean): Generator {
     } else {
       yield* put(
         snackbarsActions.add({
-          message: 'Wallet connected.',
+          message: 'Wallet connected',
           variant: 'success',
           persist: false
         })
@@ -571,7 +571,7 @@ export function* handleConnect(action: PayloadAction<boolean>): Generator {
     if (walletStatus === Status.Initialized && wallet.connected) {
       yield* put(
         snackbarsActions.add({
-          message: 'Wallet already connected.',
+          message: 'Wallet already connected',
           variant: 'info',
           persist: false
         })
@@ -676,7 +676,7 @@ export function* handleUnwrapWETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'ETH unwrapped successfully.',
+          message: 'ETH unwrapped successfully',
           variant: 'success',
           persist: false,
           txid: unwrapTxid

@@ -242,7 +242,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position added successfully.',
+          message: 'Position added successfully',
           variant: 'success',
           persist: false,
           txid: createPositionTxid
@@ -489,7 +489,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position added successfully.',
+          message: 'Position added successfully',
           variant: 'success',
           persist: false,
           txid: txId
@@ -711,7 +711,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position added successfully.',
+          message: 'Position added successfully',
           variant: 'success',
           persist: false,
           txid
@@ -1045,7 +1045,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Fee claimed successfully.',
+          message: 'Fee claimed successfully',
           variant: 'success',
           persist: false,
           txid
@@ -1210,7 +1210,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Fee claimed successfully.',
+          message: 'Fee claimed successfully',
           variant: 'success',
           persist: false,
           txid
@@ -1384,7 +1384,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position closed successfully.',
+          message: 'Position closed successfully',
           variant: 'success',
           persist: false,
           txid
@@ -1558,7 +1558,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position closed successfully.',
+          message: 'Position closed successfully',
           variant: 'success',
           persist: false,
           txid

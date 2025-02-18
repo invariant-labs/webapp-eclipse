@@ -120,8 +120,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
       ? tickerToAddress(networkType, initialTokenFrom)
-      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString())
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
     tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
@@ -180,7 +180,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
           addNewTokenToLocalStorage(address, networkType)
           dispatch(
             snackbarsActions.add({
-              message: 'Token added.',
+              message: 'Token added',
               variant: 'success',
               persist: false
             })
@@ -189,7 +189,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         .catch(() => {
           dispatch(
             snackbarsActions.add({
-              message: 'Token add failed.',
+              message: 'Token add failed',
               variant: 'error',
               persist: false
             })
@@ -198,7 +198,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     } else {
       dispatch(
         snackbarsActions.add({
-          message: 'Token already in list.',
+          message: 'Token already in list',
           variant: 'info',
           persist: false
         })
