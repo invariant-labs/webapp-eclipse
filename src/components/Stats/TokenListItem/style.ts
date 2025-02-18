@@ -3,11 +3,24 @@ import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
+  wrapper: {
+    '&:nth-of-type(odd)': {
+      background: `${colors.invariant.component}`
+    },
+    '&:nth-of-type(even)': {
+      background: colors.invariant.componentDark
+    },
+    '&:first-child': {
+      borderBottom: `1px solid ${colors.invariant.light}`,
+      borderTopLeftRadius: 24,
+      borderTopRightRadius: 24,
+      background: colors.invariant.component
+    }
+  },
   container: {
     display: 'grid',
     gridTemplateColumns: '5% 35% 17.5% auto 12.5% 60px',
-    padding: '18px 0 ',
-    backgroundColor: colors.invariant.component,
+    padding: '18px 24px',
     borderBottom: `1px solid ${colors.invariant.light}`,
     whiteSpace: 'nowrap',
 

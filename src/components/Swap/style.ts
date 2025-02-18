@@ -11,19 +11,51 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       padding: '0 8px'
     }
   },
+
+  leftSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+
+    [theme.breakpoints.down('sm')]: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+      gap: 8
+    }
+  },
+  rightSection: {
+    display: 'flex',
+    flexDirection: 'row',
+    gap: 8,
+    alignItems: 'center',
+
+    [theme.breakpoints.down('sm')]: {
+      marginTop: '5px',
+      flexDirection: 'column-reverse',
+      alignItems: 'flex-end',
+      gap: 8
+    }
+  },
   header: {
-    maxWidth: '100%',
+    maxWidth: 500,
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    width: 500,
     position: 'relative',
-    paddingBottom: 9,
+    paddingBottom: 16,
     rowGap: 8,
+    flexWrap: 'wrap',
 
     '& h1': {
       ...typography.heading4,
       color: colors.white.main
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      display: 'grid',
+      gridTemplateColumns: '1fr 1fr',
+      gap: '12px'
     }
   },
   refreshIcon: {
@@ -81,7 +113,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
   swapControls: {
     display: 'flex',
-    gap: 8
+    gap: 8,
+
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'flex-end'
+    }
   },
 
   refreshIconBtn: {
@@ -109,13 +145,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'absolute'
   },
   root: {
-    maxWidth: '100%',
+    position: 'relative',
+    maxWidth: 500,
     background: colors.invariant.component,
     borderRadius: 24,
     paddingInline: 24,
     paddingBottom: 22,
     paddingTop: 16,
-    width: 500,
+    width: '100%',
     [theme.breakpoints.down('sm')]: {
       padding: '16px 8px'
     }
@@ -154,7 +191,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: colors.invariant.component,
+    background: colors.invariant.component,
     width: 50,
     height: 50,
     borderRadius: '50%',
@@ -205,7 +242,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column-reverse',
       gap: 4
-    }
+    },
+    zIndex: 1
   },
   transactionDetailsInner: {
     display: 'flex',
@@ -242,6 +280,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
+    borderRadius: 10,
     [theme.breakpoints.down('sm')]: {
       width: '100%'
     },
@@ -361,6 +400,89 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     padding: 8,
     paddingInline: 8,
     borderRadius: 10
+  },
+  pointsBox: {
+    height: 27,
+    padding: '0px 8px',
+    borderRadius: 8,
+    backgroundColor: colors.invariant.component,
+    color: colors.invariant.textGrey,
+    fontSize: 16,
+    fontsWeigth: 500,
+    cursor: 'pointer',
+    userSelect: 'none',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    textTransform: 'none',
+    gap: 4,
+    transition: 'all 0.2s ease-in-out'
+  },
+  pointsAmount: { color: colors.invariant.pink },
+  darkGradientBackground: {
+    background: 'linear-gradient(360deg, #010514 0%, #111931 100%)'
+  },
+  darkGradientBackgroundReverse: {
+    background: 'linear-gradient(360deg, #111931 0%, #010514 100%)'
+  },
+  darkBackground: {
+    background: colors.invariant.newDark
+  },
+  componentBackground: {
+    background: colors.invariant.component
+  },
+  waveImage: {
+    pointerEvents: 'none',
+    display: 'flex',
+    justifyContent: 'center',
+    '& img': {
+      width: '100%',
+      position: 'absolute',
+      objectFit: 'cover',
+      zIndex: 0
+    }
+  },
+  topWave: {
+    width: '100%',
+    position: 'absolute',
+    top: 0,
+    opacity: 0,
+    left: 0,
+    '& img': {
+      borderTopLeftRadius: 24
+    }
+  },
+  bottomWave: {
+    width: '100%',
+    position: 'absolute',
+    bottom: 0,
+    left: 0,
+    '& img': {
+      borderBottomRightRadius: 24
+    }
+  },
+  gradientBorderForContainer: {
+    background: 'transparent',
+    boxShadow: 'none',
+    borderRadius: 24,
+    border: '1px solid transparent',
+    backgroundImage:
+      'linear-gradient(#2A365C, #2A365C), linear-gradient(360deg, #EF84F5 0%, #2EE09A 100%)',
+    backgroundOrigin: 'border-box',
+    backgroundClip: 'padding-box, border-box',
+    transition: 'all 0.5s ease-in-out'
+  },
+  borderContainer: {
+    maxWidth: 500,
+    width: '100%',
+    borderRadius: 24,
+    border: `1px solid ${colors.invariant.component}`
+  },
+  textShadowLabel: {
+    textShadow: '3px 3px 5px #3A466B'
+  },
+  relative: {
+    position: 'relative'
   }
 }))
 

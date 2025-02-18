@@ -1,9 +1,8 @@
-import { Grid, InputAdornment, InputBase, Typography } from '@mui/material'
+import { Box, Typography, useMediaQuery } from '@mui/material'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
-import { shortenAddress } from '@utils/uiUtils'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
-import SearchIcon from '@static/svg/lupaDark.svg'
+
 import useStyles from './styles'
 import icons from '@static/icons'
 import { VariantType } from 'notistack'
@@ -14,32 +13,42 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 
-export const WrappedPoolList: React.FC = () => {
-  const { classes } = useStyles()
+import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
+import { theme } from '@static/theme'
 
+export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
+
   const poolsList = useSelector(poolsStatsWithTokensDetails)
-  const currentNetwork = useSelector(network)
-  const [searchPoolsValue, setSearchPoolsValue] = useState<string>('')
-  const isLoadingStats = useSelector(isLoading)
+  const networkType = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
+  const currentNetwork = useSelector(network)
+  const isLoadingStats = useSelector(isLoading)
+  const isXs = useMediaQuery(theme.breakpoints.down('sm'))
+
+  const { classes } = useStyles({ isXs })
+  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
+
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
-      const symbolFrom = poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString()
-      const symbolTo = poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString()
-
-      const poolName = shortenAddress(symbolFrom ?? '') + '/' + shortenAddress(symbolTo ?? '')
-      const reversedPoolName =
-        shortenAddress(symbolTo ?? '') + '/' + shortenAddress(symbolFrom ?? '')
-      return (
-        poolName.toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
-        poolData.fee.toString().concat('%').includes(searchPoolsValue.toLowerCase()) ||
-        reversedPoolName.toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
-        poolData.tokenX.toString().toLowerCase().includes(searchPoolsValue.toLowerCase()) ||
-        poolData.tokenY.toString().toLowerCase().includes(searchPoolsValue.toLowerCase())
+      const isTokenXSelected = selectedFilters.some(
+        token => token.address.toString() === poolData.tokenX.toString()
       )
+      const isTokenYSelected = selectedFilters.some(
+        token => token.address.toString() === poolData.tokenY.toString()
+      )
+
+      if (selectedFilters.length === 1) {
+        return isTokenXSelected || isTokenYSelected
+      }
+
+      if (selectedFilters.length === 2) {
+        if (!(isTokenXSelected && isTokenYSelected)) return false
+      }
+
+      return true
     })
-  }, [isLoadingStats, poolsList, searchPoolsValue])
+  }, [isLoadingStats, poolsList, selectedFilters])
 
   const showAPY = useMemo(() => {
     return filteredPoolsList.some(pool => pool.apy !== 0)
@@ -62,28 +71,18 @@ export const WrappedPoolList: React.FC = () => {
 
   return (
     <div className={classes.container}>
-      <Grid
-        display='flex'
-        alignItems='end'
-        justifyContent='space-between'
-        className={classes.rowContainer}>
+      <Box className={classes.rowContainer}>
         <Typography className={classes.subheader} mb={2}>
           All pools
         </Typography>
-        <InputBase
-          type={'text'}
-          className={classes.searchBar}
-          placeholder='Search pool'
-          endAdornment={
-            <InputAdornment position='end'>
-              <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
-            </InputAdornment>
-          }
-          onChange={e => setSearchPoolsValue(e.target.value)}
-          value={searchPoolsValue}
-          disabled={poolsList.length === 0}
+
+        <FilterSearch
+          networkType={networkType}
+          selectedFilters={selectedFilters}
+          setSelectedFilters={setSelectedFilters}
+          filtersAmount={2}
         />
-      </Grid>
+      </Box>
       <LiquidityPoolList
         data={filteredPoolsList.map(poolData => ({
           symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
@@ -105,14 +104,6 @@ export const WrappedPoolList: React.FC = () => {
             accumulatedFarmsSingleTick: 0,
             accumulatedFarmsAvg: 0
           },
-          // apy:
-          //   poolData.apy + (accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0),
-          // apyData: {
-          //   fees: poolData.apy,
-          //   accumulatedFarmsSingleTick:
-          //     accumulatedSingleTickAPY?.[poolData.poolAddress.toString()] ?? 0,
-          //   accumulatedFarmsAvg: accumulatedAverageAPY?.[poolData.poolAddress.toString()] ?? 0
-          // }
           isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
           isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
           poolAddress: poolData.poolAddress.toString(),

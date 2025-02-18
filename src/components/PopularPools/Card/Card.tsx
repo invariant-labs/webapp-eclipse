@@ -1,13 +1,13 @@
-import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
+import { Box, Button, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
 import icons from '@static/icons'
 import RevertIcon from '@static/svg/revert.svg'
-import { apyToApr, shortenAddress } from '@utils/uiUtils'
+import { shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import backIcon from '@static/svg/back-arrow-2.svg'
 import {
@@ -22,7 +22,7 @@ import { NetworkType } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { useSelector } from 'react-redux'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 
@@ -57,7 +57,8 @@ const Card: React.FC<ICard> = ({
 
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
-  const apr = apyToApr(apy ?? 0)
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
   const { isPromoted, pointsPerSecond } = useMemo(() => {
     if (!poolAddress) return { isPromoted: false, pointsPerSecond: '00' }
@@ -69,14 +70,14 @@ const Card: React.FC<ICard> = ({
   const handleOpenPosition = () => {
     if (fee === undefined) return
 
-    const revertRatio = initialXtoY(addressFrom ?? '', addressTo ?? '')
+    const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
 
-    const tokenA = revertRatio
-      ? addressToTicker(network, addressTo ?? '')
-      : addressToTicker(network, addressFrom ?? '')
-    const tokenB = revertRatio
+    const tokenA = isXtoY
       ? addressToTicker(network, addressFrom ?? '')
       : addressToTicker(network, addressTo ?? '')
+    const tokenB = isXtoY
+      ? addressToTicker(network, addressTo ?? '')
+      : addressToTicker(network, addressFrom ?? '')
 
     navigate(
       `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
@@ -90,12 +91,15 @@ const Card: React.FC<ICard> = ({
       { state: { referer: 'liquidity' } }
     )
   }
-  useEffect(() => {
-    console.log(airdropIconRef)
-  }, [airdropIconRef.current])
 
   //HOTFIX
-  const { convertedApy } = calculateAPYAndAPR(apy ?? 0, poolAddress?.toString(), volume, fee, TVL)
+  const { convertedApy, convertedApr } = calculateAPYAndAPR(
+    apy ?? 0,
+    poolAddress?.toString(),
+    volume,
+    fee,
+    TVL
+  )
 
   return (
     <Grid className={classes.root}>
@@ -160,11 +164,20 @@ const Card: React.FC<ICard> = ({
                     <div
                       ref={airdropIconRef}
                       className={classes.actionButton}
-                      onPointerLeave={() => {
-                        setIsPromotedPoolPopoverOpen(false)
-                      }}
                       onPointerEnter={() => {
-                        setIsPromotedPoolPopoverOpen(true)
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(true)
+                        }
+                      }}
+                      onPointerLeave={() => {
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(false)
+                        }
+                      }}
+                      onClick={() => {
+                        if (isMobile) {
+                          setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                        }
                       }}>
                       <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '24px' }} />
                     </div>
@@ -174,7 +187,7 @@ const Card: React.FC<ICard> = ({
                       onClose={() => {
                         setIsPromotedPoolPopoverOpen(false)
                       }}
-                      apr={apr ?? 0}
+                      apr={convertedApr ?? 0}
                       apy={convertedApy ?? 0}
                       points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
                     />
@@ -185,7 +198,7 @@ const Card: React.FC<ICard> = ({
                 {apy !== undefined && showAPY && (
                   <StatsLabel
                     title='APY'
-                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : convertedApy.toFixed(2) + '%'}`}
+                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                   />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />

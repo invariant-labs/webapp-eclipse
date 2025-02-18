@@ -7,12 +7,12 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
 import { colors, typography } from '@static/theme'
-import { formatLargeNumber } from '@utils/formatLargeNumber'
-import { LEADERBOARD_DECIMAL } from '@pages/LeaderboardPage/config'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { printBN, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { network } from '@store/selectors/solanaConnection'
 import { NetworkType } from '@store/consts/static'
+import { formatLargeNumber } from '@utils/uiUtils'
 
 export interface ISelectNetworkModal {
   open: boolean
@@ -79,14 +79,14 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                       value:
                         trimZeros(
                           formatLargeNumber(
-                            +printBN(new BN(userStats?.points, 'hex'), LEADERBOARD_DECIMAL)
+                            +printBN(new BN(userStats.total?.points, 'hex'), LEADERBOARD_DECIMAL)
                           )
                         ) ?? 0,
                       label: 'Your Points',
                       styleVariant: classes.counterYourPoints
                     },
                     {
-                      value: `# ${userStats?.rank ?? totalItems + 1}`,
+                      value: `# ${userStats.total?.rank ?? totalItems.total + 1}`,
                       label: 'Your Ranking Position',
                       styleVariant: classes.counterYourRanking
                     }

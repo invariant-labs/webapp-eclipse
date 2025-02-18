@@ -1,11 +1,11 @@
 import {
   calculatePriceSqrt,
+  DENOMINATOR,
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
   Pair,
-  PRICE_DENOMINATOR,
-  sleep
+  PRICE_DENOMINATOR
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
@@ -37,9 +37,8 @@ import {
   BRICK_MAIN,
   BTC_DEV,
   BTC_TEST,
-  COINGECKO_QUERY_COOLDOWN,
+  PRICE_QUERY_COOLDOWN,
   DARKMOON_MAIN,
-  DEFAULT_TOKENS,
   DOGO_MAIN,
   DOGW_MAIN,
   DOGWIFHAT_MAIN,
@@ -81,15 +80,18 @@ import {
   TURBO_AI_MAIN,
   ORCA_MAIN,
   SOLAR_MAIN,
-  TOKENS_PRICES_FROM_JUP
+  WETH_MAIN,
+  KYSOL_MAIN,
+  EZSOL_MAIN,
+  LEADERBOARD_DECIMAL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
 import {
-  CoinGeckoAPIData,
   FormatNumberThreshold,
   FullSnap,
   IncentiveRewardData,
+  IPriceData,
   PoolSnapshot,
   PrefixConfig,
   Token,
@@ -804,6 +806,33 @@ export const formatNumber = (
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
+
+function trimEndingZeros(num) {
+  return num.toString().replace(/0+$/, '')
+}
+
+export const formatNumber2 = (number: number | bigint | string): string => {
+  const numberAsNumber = Number(number)
+  const isNegative = numberAsNumber < 0
+  const absNumberAsNumber = Math.abs(numberAsNumber)
+
+  const absNumberAsString = numberToString(absNumberAsNumber)
+
+  const [beforeDot, afterDot] = absNumberAsString.split('.')
+
+  const leadingZeros = afterDot ? countLeadingZeros(afterDot) : 0
+
+  const parsedBeforeDot = beforeDot.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  const parsedAfterDot =
+    leadingZeros >= 4 && absNumberAsNumber < 1
+      ? '0' + printSubNumber(leadingZeros) + trimEndingZeros(String(parseInt(afterDot)).slice(0, 3))
+      : trimEndingZeros(String(afterDot).slice(0, absNumberAsNumber >= 1 ? 2 : leadingZeros + 3))
+
+  const formattedNumber = parsedBeforeDot + (afterDot && parsedAfterDot ? '.' + parsedAfterDot : '')
+
+  return isNegative ? '-' + formattedNumber : formattedNumber
+}
+
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
@@ -860,7 +889,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       // })
       // return obj
       return {
-        [WETH_TEST.address.toString()]: WETH_TEST,
+        [WETH_MAIN.address.toString()]: WETH_MAIN,
         [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
         [TETH_MAIN.address.toString()]: TETH_MAIN,
         [USDC_MAIN.address.toString()]: USDC_MAIN,
@@ -888,7 +917,9 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [DOGW_MAIN.address.toString()]: DOGW_MAIN,
         [TURBO_AI_MAIN.address.toString()]: TURBO_AI_MAIN,
         [ORCA_MAIN.address.toString()]: ORCA_MAIN,
-        [SOLAR_MAIN.address.toString()]: SOLAR_MAIN
+        [SOLAR_MAIN.address.toString()]: SOLAR_MAIN,
+        [KYSOL_MAIN.address.toString()]: KYSOL_MAIN,
+        [EZSOL_MAIN.address.toString()]: EZSOL_MAIN
       }
     case NetworkType.Devnet:
       return {
@@ -1489,7 +1520,7 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
   const tokenXIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenXAddress)
   const tokenYIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenYAddress)
 
-  return tokenXIndex < tokenYIndex
+  return !(tokenXIndex < tokenYIndex)
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {
@@ -1650,73 +1681,34 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
   }
 }
 
-let isCoinGeckoQueryRunning = false
-
-export const getCoinGeckoTokenPrice = async (id: string): Promise<number | undefined> => {
-  while (isCoinGeckoQueryRunning) {
-    await sleep(100)
-  }
-  isCoinGeckoQueryRunning = true
-
-  const cachedLastQueryTimestamp = localStorage.getItem('COINGECKO_LAST_QUERY_TIMESTAMP')
+export const getTokenPrice = async (addr: string): Promise<number | undefined> => {
+  const cachedLastQueryTimestamp = localStorage.getItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
   let lastQueryTimestamp = 0
   if (cachedLastQueryTimestamp) {
     lastQueryTimestamp = Number(cachedLastQueryTimestamp)
   }
 
-  const cachedPriceData = localStorage.getItem('COINGECKO_PRICE_DATA')
-  let priceData: CoinGeckoAPIData = []
-  if (cachedPriceData && Number(lastQueryTimestamp) + COINGECKO_QUERY_COOLDOWN > Date.now()) {
-    priceData = JSON.parse(cachedPriceData)
-  } else {
+  const cachedPriceData = localStorage.getItem('TOKEN_PRICE_DATA')
+  let priceData: Record<string, { price: number }> | null = null
+
+  if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
-      const { data } = await axios.get<CoinGeckoAPIData>(
-        `https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&ids=${DEFAULT_TOKENS}`
-      )
-      priceData = data
-      localStorage.setItem('COINGECKO_PRICE_DATA', JSON.stringify(priceData))
-      localStorage.setItem('COINGECKO_LAST_QUERY_TIMESTAMP', String(Date.now()))
+      const { data } = await axios.get<IPriceData>(`https://price.invariant.app/eclipse-mainnet`)
+      priceData = data.data
+
+      localStorage.setItem('TOKEN_PRICE_DATA', JSON.stringify(priceData))
+      localStorage.setItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP', String(Date.now()))
     } catch (e) {
-      localStorage.removeItem('COINGECKO_LAST_QUERY_TIMESTAMP')
-      localStorage.removeItem('COINGECKO_PRICE_DATA')
+      localStorage.removeItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
+      localStorage.removeItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
+      priceData = null
       console.log(e)
     }
-  }
-
-  isCoinGeckoQueryRunning = false
-  return priceData.find(entry => entry.id === id)?.current_price
-}
-
-interface RawJupApiResponse {
-  data: Record<
-    string,
-    {
-      id: string
-      price: string
-    }
-  >
-  timeTaken: number
-}
-
-export const getJupTokenPrice = async (solanaAddress: string): Promise<number | undefined> => {
-  try {
-    const response = await axios.get<RawJupApiResponse>(
-      `https://api.jup.ag/price/v2?ids=${solanaAddress}`
-    )
-
-    return Number(response.data.data[solanaAddress].price)
-  } catch (error) {
-    return 0
-  }
-}
-
-export const getTokenPrice = async (id: string): Promise<number | undefined> => {
-  const token = TOKENS_PRICES_FROM_JUP.find(token => token.coingeckoId === id)
-  if (token && token.solanaAddress) {
-    return await getJupTokenPrice(token.solanaAddress)
   } else {
-    return await getCoinGeckoTokenPrice(id)
+    priceData = JSON.parse(cachedPriceData)
   }
+
+  return priceData && priceData[addr] ? priceData[addr].price : undefined
 }
 
 export const getTicksList = async (
@@ -1815,7 +1807,10 @@ export const trimDecimalZeros = (numStr: string): string => {
   return trimmedDecimal ? `${trimmedInteger || '0'}.${trimmedDecimal}` : trimmedInteger || '0'
 }
 
-const poolsToRecalculateAPY = ['HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce']
+const poolsToRecalculateAPY = [
+  'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
+  '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM' //SOL_ETH 0.09%
+]
 
 //HOTFIX
 export const calculateAPYAndAPR = (
@@ -1826,7 +1821,7 @@ export const calculateAPYAndAPR = (
   tvl?: number
 ) => {
   if (volume === undefined || fee === undefined || tvl === undefined) {
-    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+    return { convertedApy: Math.abs(apy), convertedApr: Math.abs(apyToApr(apy)) }
   }
 
   if (poolsToRecalculateAPY.includes(poolAddress ?? '')) {
@@ -1834,9 +1829,9 @@ export const calculateAPYAndAPR = (
 
     const parsedApy = (Math.pow((volume * fee * 0.01) / tvl + 1, 365) - 1) * 100
 
-    return { convertedApy: parsedApy, convertedApr: parsedApr }
+    return { convertedApy: Math.abs(parsedApy), convertedApr: Math.abs(parsedApr) }
   } else {
-    return { convertedApy: apy, convertedApr: apyToApr(apy) }
+    return { convertedApy: Math.abs(apy), convertedApr: Math.abs(apyToApr(apy)) }
   }
 }
 
@@ -1860,4 +1855,53 @@ export const checkDataDelay = (date: string | Date, timeInMinutes: number): bool
   const differenceInMinutes = (currentDate.getTime() - inputDate.getTime()) / (1000 * 60)
 
   return differenceInMinutes > timeInMinutes
+}
+
+export const generateHash = (str: string): string => {
+  let hash = 0
+
+  for (let i = 0; i < str.length; i++) {
+    const char = str.charCodeAt(i)
+    hash = (hash << 5) - hash + char
+    hash = hash & hash
+  }
+
+  return Math.abs(hash).toString(16).padStart(8, '0')
+}
+
+export const calculatePoints = (
+  amount: BN,
+  decimals: number,
+  feePercentage: BN,
+  priceFeed: string,
+  priceDecimals: number,
+  pointsPerUSD: BN
+) => {
+  const nominator = amount
+    .mul(feePercentage)
+    .mul(new BN(priceFeed))
+    .mul(pointsPerUSD)
+    .mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+  const denominator = new BN(10).pow(new BN(priceDecimals + decimals))
+
+  return nominator.div(denominator).div(new BN(DENOMINATOR))
+}
+
+export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
+  let concentrationIndex = 0
+
+  for (let index = 0; index < concentrationArray.length; index++) {
+    const value = +concentrationArray[index].toFixed(0)
+
+    if (value === neededValue) {
+      break
+    } else if (value > neededValue) {
+      concentrationIndex = index - 1
+      break
+    } else {
+      concentrationIndex = index + 1
+    }
+  }
+
+  return concentrationIndex
 }

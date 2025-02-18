@@ -12,11 +12,12 @@ import useStyles from './style'
 import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions } from '@store/reducers/positions'
-import { NormalBanner } from './LeaderboardPage/components/LeaderboardBanner/NormalBanner'
+
 import { NetworkType } from '@store/consts/static'
 import { network } from '@store/selectors/solanaConnection'
+import { NormalBanner } from '@components/Leaderboard/LeaderboardBanner/NormalBanner'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state-2'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-3'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
@@ -39,10 +40,27 @@ const RootPage: React.FC = memo(() => {
   const signerStatus = useSelector(connectionStatus)
   const walletStatus = useSelector(status)
   const navigate = useNavigate()
-  const location = useLocation()
   const currentNetwork = useSelector(network)
-
   const { classes } = useStyles()
+  const location = useLocation()
+
+  const metaData = new Map([
+    ['/exchange', 'Invariant | Exchange'],
+    ['/liquidity', 'Invariant | Liquidity'],
+    ['/portfolio', 'Invariant | Portfolio'],
+    ['/newPosition', 'Invariant | New Position'],
+    ['/position', 'Invariant | Position Details'],
+    ['/points', 'Invariant | Points'],
+    ['/statistics', 'Invariant | Statistics'],
+    ['/creator', 'Invariant | Creator']
+  ])
+
+  useEffect(() => {
+    const title =
+      metaData.get([...metaData.keys()].find(key => location.pathname.startsWith(key))!) ||
+      document.title
+    document.title = title
+  }, [location])
 
   const initConnection = useCallback(() => {
     dispatch(solanaConnectionActions.initSolanaConnection())

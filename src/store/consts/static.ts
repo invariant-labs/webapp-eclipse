@@ -2,7 +2,7 @@ import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
-import { BestTier, Chain, PrefixConfig, Token, TokenPriceData, WalletType } from './types'
+import { BestTier, Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -10,6 +10,7 @@ import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
 import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
 import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
 import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
+import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
   Local = 'Local',
@@ -40,7 +41,7 @@ export const USDC_ADDRESS = {
   [NetworkType.Local]: emptyPublicKey
 }
 
-export const REFRESHER_INTERVAL = 120
+export const REFRESHER_INTERVAL = 30
 
 export const PRICE_DECIMAL = 24
 export const USDC_DEV: Token = {
@@ -72,7 +73,7 @@ export const WETH_DEV: Token = {
   name: 'Ethereum',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const USDC_TEST: Token = {
@@ -105,7 +106,7 @@ export const WETH_TEST: Token = {
   name: 'Ether',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const MOON_TEST: Token = {
@@ -189,7 +190,7 @@ export const WETH_MAIN: Token = {
   name: 'Ethereum',
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-  coingeckoId: 'ethereum'
+  coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
 export const LAIKA_MAIN: Token = {
@@ -442,6 +443,27 @@ export const DOGO_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const EZSOL_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'ezSOL',
+  address: new PublicKey('Fu5P5ikrnQ8BKZECJ1XeeDAaTgWJUrcjw8JmFrNA8TJk'),
+  decimals: 9,
+  name: 'Renzo Restaked SOL',
+  logoURI:
+    'https://nhjibgkrkpvjc4pzb3bk3v2ocom53mu3ruaslsclskqbteianmea.arweave.net/adKAmVFT6pFx-Q7CrddOE5ndspuNASXIS5KgGZEAawg',
+  coingeckoId: ''
+}
+
+export const KYSOL_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'kySOL',
+  address: new PublicKey('8jN7xMDqJucigQphWHvqAPQPAmk7VJKKsqLmgCkE7XzP'),
+  decimals: 9,
+  name: 'Token Kyros Restaked SOL',
+  logoURI: 'https://bafybeif3jzrcvwktu5bi7wcuxzr36fygo4vqctatapy7zqxawojxrnexwi.ipfs.dweb.link/',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -559,6 +581,11 @@ export const promotedTiers = [
     index: 3
   },
   {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 3
+  },
+  {
     tokenX: TETH_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 0
@@ -614,6 +641,9 @@ export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
 export const WETH_CREATE_TOKEN_LAMPORTS_MAIN = new BN(2000000)
 export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
+export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
+export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
+
 export const getCreateTokenLamports = (network: NetworkType): BN => {
   switch (network) {
     case NetworkType.Testnet:
@@ -643,9 +673,12 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
 export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   USDT_MAIN.address.toString(),
   USDC_MAIN.address.toString(),
-  SOL_MAIN.address.toString(),
   WETH_MAIN.address.toString(),
-  TETH_MAIN.address.toString()
+  TETH_MAIN.address.toString(),
+  SOL_MAIN.address.toString(),
+  KYSOL_MAIN.address.toString(),
+  EZSOL_MAIN.address.toString(),
+  TIA_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
@@ -657,7 +690,6 @@ export const FormatConfig = {
   KDecimals: 3,
   DecimalsAfterDot: 2
 }
-
 export enum PositionTokenBlock {
   None,
   A,
@@ -695,6 +727,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
 
     return {
       ETH: WETH_ADDRESS[network].toString(),
+      tETH: TETH_MAIN.address.toString(),
       MCT: MOCKED_TOKEN_MAIN.address.toString(),
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
@@ -712,7 +745,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       PUNKSTAR: PUNKSTAR_MAIN.address.toString(),
       TURBO_AI: TURBO_AI_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
-      SOLAR: SOLAR_MAIN.address.toString()
+      SOLAR: SOLAR_MAIN.address.toString(),
+      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
+      EZSOL_MAIN: EZSOL_MAIN.address.toString()
     }
   }
 }
@@ -771,9 +806,7 @@ export const RECOMMENDED_RPC_ADDRESS = {
 
 export const DEFAULT_TOKEN_DECIMAL = 6
 
-export const COINGECKO_QUERY_COOLDOWN = 20 * 60 * 1000
-
-export const DEFAULT_TOKENS = ['solana', 'dogwifcoin', 'turbo-eth', 'laika-3', 'mooncoin-2']
+export const PRICE_QUERY_COOLDOWN = 60 * 1000
 
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success.'
@@ -784,6 +817,7 @@ export const walletNames = {
   [WalletType.NIGHTLY_WALLET]: 'Nightly',
   [WalletType.BACKPACK]: 'Backpack',
   [WalletType.SALMON]: 'Salmon',
+  [WalletType.OKX]: 'OKX',
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
@@ -799,19 +833,19 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
+          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '0.09'
+        },
+        {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
         },
         {
-          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '0.3'
-        },
-        {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '0.3'
+          tokenX: 'CEBP3CqAbW4zdZA57H2wfaSG1QNdzQ72GiQEbQXyW9Tm',
+          tokenY: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          fee: '0.01'
         }
       ]
     default:
@@ -819,17 +853,20 @@ export const getPopularPools = (network: NetworkType) => {
   }
 }
 
-export const TOKENS_PRICES_FROM_JUP: { coingeckoId: string; solanaAddress: string }[] = [
-  {
-    coingeckoId: 'ethereum',
-    solanaAddress: '7vfCXTUXx5WJV5JADk17DUJ4ksgau7utNKj4b963voxs'
-  },
-  {
-    coingeckoId: 'usd-coin',
-    solanaAddress: 'EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v'
-  },
-  {
-    coingeckoId: 'tether',
-    solanaAddress: 'Es9vMFrzaCERmJfrF4H2FYD4KCoNkY11McCe8BenwNYB'
-  }
-]
+export const rewards = rewardsArray as Reward[]
+
+export const LEADERBOARD_DECIMAL = 8
+
+export const LAUNCH_DATE = '2024-12-10T17:20:00'
+
+export enum PointsPageContent {
+  Leaderboard = 'leaderboard',
+  FAQ = 'faq',
+  Claim = 'claim'
+}
+
+export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
+
+export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
+export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
+export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)

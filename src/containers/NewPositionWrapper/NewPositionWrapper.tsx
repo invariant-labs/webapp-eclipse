@@ -3,10 +3,11 @@ import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_NEW_POSITION_SLIPPAGE,
+  LEADERBOARD_DECIMAL,
   bestTiers,
   commonTokensForNetworks
 } from '@store/consts/static'
-import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+import { PositionOpeningMethod, PotentialLiquidity, TokenPriceData } from '@store/consts/types'
 import {
   addNewTokenToLocalStorage,
   calcPriceBySqrtPrice,
@@ -45,17 +46,25 @@ import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
+import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { estimatePointsForLiquidity } from '@invariant-labs/points-sdk'
+import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 
 export interface IProps {
   initialTokenFrom: string
   initialTokenTo: string
   initialFee: string
+  initialConcentration: string
+  initialIsRange: boolean | null
 }
 
 export const NewPositionWrapper: React.FC<IProps> = ({
   initialTokenFrom,
   initialTokenTo,
-  initialFee
+  initialFee,
+  initialConcentration,
+  initialIsRange
 }) => {
   const dispatch = useDispatch()
   const connection = getCurrentSolanaConnection()
@@ -68,10 +77,19 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const shouldNotUpdatePriceRange = useSelector(shouldNotUpdateRange)
   const currentNetwork = useSelector(network)
   const { success, inProgress } = useSelector(initPosition)
+  const { promotedPools } = useSelector(leaderboardSelectors.config)
   // const [onlyUserPositions, setOnlyUserPositions] = useState(false)
   const { allData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
   const ticksData = allData
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
+
+  const [potentialLiquidity, setPotentialLiquidity] = useState<{
+    min: BN
+    middle: BN
+    max: BN
+  }>({ min: new BN(0), middle: new BN(0), max: new BN(0) })
+
+  const [liquidity, setLiquidity] = useState<BN>(new BN(0))
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
 
@@ -89,6 +107,21 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
+
+  const initialIsConcentrationOpening =
+    localStorage.getItem('OPENING_METHOD') === 'concentration' ||
+    localStorage.getItem('OPENING_METHOD') === null
+
+  const [initialOpeningPositionMethod, setInitialOpeningPositionMethod] =
+    useState<PositionOpeningMethod>(
+      initialIsRange !== null
+        ? initialIsRange
+          ? 'range'
+          : 'concentration'
+        : initialIsConcentrationOpening
+          ? 'concentration'
+          : 'range'
+    )
 
   useEffect(() => {
     const pathTokens: string[] = []
@@ -136,40 +169,65 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [canNavigate])
 
-  useEffect(() => {
-    if (canNavigate) {
-      const tokenFromAddress = tickerToAddress(currentNetwork, initialTokenFrom)
-      const tokenToAddress = tickerToAddress(currentNetwork, initialTokenTo)
+  const getTokenIndex = (ticker: string) => {
+    const address = tickerToAddress(currentNetwork, ticker)
+    if (!address) return { address: null, index: -1 }
 
-      const tokenFromIndex = tokens.findIndex(
-        token => token.assetAddress.toString() === tokenFromAddress
-      )
+    const index = tokens.findIndex(token => token.assetAddress.toString() === address)
+    return { address, index }
+  }
 
-      const tokenToIndex = tokens.findIndex(
-        token => token.assetAddress.toString() === tokenToAddress
-      )
+  const constructNavigationPath = () => {
+    if (!canNavigate) return null
 
-      if (
-        tokenFromAddress !== null &&
-        tokenFromIndex !== -1 &&
-        (tokenToAddress === null || tokenToIndex === -1)
-      ) {
-        navigate(`/newPosition/${initialTokenFrom}/${initialFee}`)
-      } else if (
-        tokenFromAddress !== null &&
-        tokenFromIndex !== -1 &&
-        tokenToAddress !== null &&
-        tokenToIndex !== -1
-      ) {
-        navigate(`/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}`)
-      } else {
-        navigate(`/newPosition/${initialFee}`)
-      }
+    const { address: fromAddress, index: fromIndex } = getTokenIndex(initialTokenFrom)
+    const { address: toAddress, index: toIndex } = getTokenIndex(initialTokenTo)
+
+    const concentrationParam = initialConcentration ? `?conc=${initialConcentration}` : ''
+
+    const rangeParam =
+      initialIsRange !== null
+        ? initialIsRange
+          ? `&range=true`
+          : '&range=false'
+        : initialIsConcentrationOpening
+          ? '&range=false'
+          : '&range=true'
+
+    if (rangeParam === '&range=true') {
+      setPositionOpeningMethod('range')
+      setInitialOpeningPositionMethod('range')
+    } else {
+      setPositionOpeningMethod('concentration')
+      setInitialOpeningPositionMethod('concentration')
     }
-  }, [tokens])
+
+    if (fromAddress && fromIndex !== -1 && toAddress && toIndex !== -1) {
+      return `/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}${concentrationParam}${rangeParam}`
+    }
+
+    if (fromAddress && fromIndex !== -1) {
+      return `/newPosition/${initialTokenFrom}/${initialFee}`
+    }
+
+    return `/newPosition/${initialFee}`
+  }
+
+  const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
+
+  clearTimeout(urlUpdateTimeoutRef.current)
+
+  useEffect(() => {
+    const path = constructNavigationPath()
+    if (path) {
+      urlUpdateTimeoutRef.current = setTimeout(() => navigate(path), 500)
+    }
+  }, [tokens, canNavigate])
 
   useEffect(() => {
     isMountedRef.current = true
+
+    dispatch(leaderboardActions.getLeaderboardConfig())
     return () => {
       isMountedRef.current = false
     }
@@ -418,10 +476,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     )
   }
 
-  const initialIsConcentrationOpening =
-    localStorage.getItem('OPENING_METHOD') === 'concentration' ||
-    localStorage.getItem('OPENING_METHOD') === null
-
   const setPositionOpeningMethod = (val: PositionOpeningMethod) => {
     localStorage.setItem('OPENING_METHOD', val)
   }
@@ -437,24 +491,21 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
 
   const [tokenAPriceData, setTokenAPriceData] = useState<TokenPriceData | undefined>(undefined)
+
   const [priceALoading, setPriceALoading] = useState(false)
   useEffect(() => {
     if (tokenAIndex === null || (tokenAIndex !== null && !tokens[tokenAIndex])) {
       return
     }
 
-    const id = tokens[tokenAIndex].coingeckoId ?? ''
-    if (id.length) {
-      setPriceALoading(true)
-      getTokenPrice(id)
-        .then(data => setTokenAPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
-        )
-        .finally(() => setPriceALoading(false))
-    } else {
-      setTokenAPriceData(undefined)
-    }
+    const addr = tokens[tokenAIndex].address.toString()
+    setPriceALoading(true)
+    getTokenPrice(addr)
+      .then(data => setTokenAPriceData({ price: data ?? 0 }))
+      .catch(() =>
+        setTokenAPriceData(getMockedTokenPrice(tokens[tokenAIndex].symbol, currentNetwork))
+      )
+      .finally(() => setPriceALoading(false))
   }, [tokenAIndex, tokens, triggerFetchPrice])
 
   const [tokenBPriceData, setTokenBPriceData] = useState<TokenPriceData | undefined>(undefined)
@@ -464,18 +515,14 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return
     }
 
-    const id = tokens[tokenBIndex].coingeckoId ?? ''
-    if (id.length) {
-      setPriceBLoading(true)
-      getTokenPrice(id)
-        .then(data => setTokenBPriceData({ price: data ?? 0 }))
-        .catch(() =>
-          setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
-        )
-        .finally(() => setPriceBLoading(false))
-    } else {
-      setTokenBPriceData(undefined)
-    }
+    const addr = tokens[tokenBIndex].address.toString()
+    setPriceBLoading(true)
+    getTokenPrice(addr)
+      .then(data => setTokenBPriceData({ price: data ?? 0 }))
+      .catch(() =>
+        setTokenBPriceData(getMockedTokenPrice(tokens[tokenBIndex].symbol, currentNetwork))
+      )
+      .finally(() => setPriceBLoading(false))
   }, [tokenBIndex, tokens, triggerFetchPrice])
 
   const initialSlippage =
@@ -485,7 +532,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_NEW_POSITION_SLIPPAGE', slippage)
   }
 
-  const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
+  const calcAmount = (
+    amount: BN,
+    left: number,
+    right: number,
+    tokenAddress: PublicKey,
+    calcPotentialLiquidity?: PotentialLiquidity
+  ) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
       return new BN(0)
     }
@@ -505,10 +558,32 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
           true
         )
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
+
+        if (calcPotentialLiquidity) {
+          switch (calcPotentialLiquidity) {
+            case PotentialLiquidity.Min:
+              setPotentialLiquidity(prev => ({ ...prev, min: result.liquidity }))
+              break
+
+            case PotentialLiquidity.Middle:
+              setPotentialLiquidity(prev => ({ ...prev, middle: result.liquidity }))
+              break
+
+            case PotentialLiquidity.Max:
+              setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
+              break
+
+            default:
+              break
+          }
+        } else {
+          if (isMountedRef.current) {
+            liquidityRef.current = result.liquidity
+          }
+
+          setLiquidity(result.liquidity)
+          return result.y
         }
-        return result.y
       }
       const result = getLiquidityByY(
         amount,
@@ -517,10 +592,33 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
         true
       )
-      if (isMountedRef.current) {
-        liquidityRef.current = result.liquidity
+
+      if (calcPotentialLiquidity) {
+        switch (calcPotentialLiquidity) {
+          case PotentialLiquidity.Min:
+            setPotentialLiquidity(prev => ({ ...prev, min: result.liquidity }))
+            break
+
+          case PotentialLiquidity.Middle:
+            setPotentialLiquidity(prev => ({ ...prev, middle: result.liquidity }))
+            break
+
+          case PotentialLiquidity.Max:
+            setPotentialLiquidity(prev => ({ ...prev, max: result.liquidity }))
+            break
+
+          default:
+            break
+        }
+      } else {
+        if (isMountedRef.current) {
+          liquidityRef.current = result.liquidity
+        }
+
+        setLiquidity(result.liquidity)
+
+        return result.x
       }
-      return result.x
     } catch (error) {
       const result = (byX ? getLiquidityByY : getLiquidityByX)(
         amount,
@@ -580,11 +678,76 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [isTimeoutError])
 
+  const isPromotedPool = useMemo(() => {
+    if (poolIndex === null) {
+      return false
+    }
+
+    return promotedPools.some(pool => pool.address === allPools[poolIndex].address.toString())
+  }, [promotedPools, poolIndex, allPools])
+
+  const estimatedPointsPerDay: BN = useMemo(() => {
+    const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
+
+    if (!isPromotedPool || poolIndex === null) {
+      return new BN(0)
+    }
+
+    const poolPointsPerSecond = promotedPools.find(
+      pool => pool.address === poolAddress.toString()
+    )!.pointsPerSecond
+
+    const estimatedPoints = estimatePointsForLiquidity(
+      liquidity,
+      allPools[poolIndex] as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
+    return estimatedPoints as BN
+  }, [liquidity, poolIndex, isPromotedPool])
+
+  const estimatedPointsForScale = (): { min: BN; middle: BN; max: BN } => {
+    const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
+
+    if (!isPromotedPool || poolIndex === null) {
+      return { min: new BN(0), middle: new BN(0), max: new BN(0) }
+    }
+
+    const poolPointsPerSecond = promotedPools.find(
+      pool => pool.address === poolAddress.toString()
+    )!.pointsPerSecond
+
+    const estimatedMinPoints = estimatePointsForLiquidity(
+      potentialLiquidity.min,
+      allPools[poolIndex] as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
+    const estimatedMiddlePoints = estimatePointsForLiquidity(
+      potentialLiquidity.middle,
+      allPools[poolIndex] as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
+    const estimatedMaxPoints = estimatePointsForLiquidity(
+      potentialLiquidity.max,
+      allPools[poolIndex] as PoolStructure,
+      new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+
+    return {
+      min: estimatedMinPoints as BN,
+      middle: estimatedMiddlePoints as BN,
+      max: estimatedMaxPoints as BN
+    }
+  }
+
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
       initialTokenTo={initialTokenTo}
       initialFee={initialFee}
+      initialConcentration={initialConcentration}
       copyPoolAddressHandler={copyPoolAddressHandler}
       poolAddress={poolIndex !== null ? allPools[poolIndex].address.toString() : ''}
       tokens={tokens}
@@ -735,7 +898,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       }
       handleAddToken={addTokenHandler}
       commonTokens={commonTokensForNetworks[currentNetwork]}
-      initialOpeningPositionMethod={initialIsConcentrationOpening ? 'concentration' : 'range'}
+      initialOpeningPositionMethod={initialOpeningPositionMethod}
       onPositionOpeningMethodChange={setPositionOpeningMethod}
       initialHideUnknownTokensValue={initialHideUnknownTokensValue}
       onHideUnknownTokensChange={setHideUnknownTokensValue}
@@ -760,6 +923,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onSlippageChange={onSlippageChange}
       initialSlippage={initialSlippage}
       canNavigate={canNavigate}
+      estimatedPointsPerDay={estimatedPointsPerDay}
+      estimatedPointsForScale={estimatedPointsForScale}
+      isPromotedPool={isPromotedPool}
     />
   )
 }

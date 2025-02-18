@@ -16,6 +16,7 @@ import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
 import { changeToNightlyAdapter, connectStaticWallet, getEclipseWallet } from '@utils/web3/wallet'
 import { sleep } from '@invariant-labs/sdk-eclipse'
 import { getLeaderboardQueryParams } from '@store/selectors/leaderboard'
+import { generateHash } from '@utils/utils'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -91,18 +92,6 @@ export const HeaderWrapper: React.FC = () => {
   }, [])
 
   const shouldResetRpc = useMemo(() => {
-    const generateHash = (str: string): string => {
-      let hash = 0
-
-      for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i)
-        hash = (hash << 5) - hash + char
-        hash = hash & hash
-      }
-
-      return Math.abs(hash).toString(16).padStart(8, '0')
-    }
-
     const STORAGE_KEY = 'INVARIANT_RPC_HASH'
 
     const currentAddresses =
@@ -135,9 +124,9 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Testnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Testnet]
       )
-      window.location.reload()
+      dispatch(actions.setRPCAddress(RECOMMENDED_RPC_ADDRESS[currentNetwork]))
+      dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))
     }
-
     return lastRPC === null || shouldResetRpc ? RPC.TEST : lastRPC
   }, [shouldResetRpc])
 
@@ -149,7 +138,8 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Devnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Devnet]
       )
-      window.location.reload()
+      dispatch(actions.setRPCAddress(RECOMMENDED_RPC_ADDRESS[currentNetwork]))
+      dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.DEV_EU : lastRPC
@@ -163,7 +153,8 @@ export const HeaderWrapper: React.FC = () => {
         `INVARIANT_RPC_Eclipse_${NetworkType.Mainnet}`,
         RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet]
       )
-      window.location.reload()
+      dispatch(actions.setRPCAddress(RECOMMENDED_RPC_ADDRESS[currentNetwork]))
+      dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))
     }
 
     return lastRPC === null || shouldResetRpc ? RPC.MAIN : lastRPC

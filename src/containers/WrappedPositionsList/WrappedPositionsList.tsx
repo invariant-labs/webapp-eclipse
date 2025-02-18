@@ -1,5 +1,5 @@
 import { PositionsList } from '@components/PositionsList/PositionsList'
-import { NetworkType, POSITIONS_PER_PAGE } from '@store/consts/static'
+import { POSITIONS_PER_PAGE } from '@store/consts/static'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { DECIMAL, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -16,7 +16,8 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
-import { IPositionItem } from '@components/PositionsList/PositionItem/PositionItem'
+import { IPositionItem } from '@components/PositionsList/types'
+import { network } from '@store/selectors/solanaConnection'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
@@ -25,6 +26,7 @@ export const WrappedPositionsList: React.FC = () => {
   const isLoading = useSelector(isLoadingPositionsList)
   const lastPage = useSelector(lastPageSelector)
   const walletStatus = useSelector(status)
+  const currentNetwork = useSelector(network)
   const navigate = useNavigate()
   const dispatch = useDispatch()
 
@@ -115,9 +117,13 @@ export const WrappedPositionsList: React.FC = () => {
         tokenYName: position.tokenY.symbol,
         tokenXIcon: position.tokenX.logoURI,
         tokenYIcon: position.tokenY.logoURI,
+        poolAddress: position.poolData.address,
+        liquidity: position.liquidity,
+        poolData: position.poolData,
         fee: +printBN(position.poolData.fee, DECIMAL - 2),
         min,
         max,
+        position,
         valueX,
         valueY,
         address: walletAddress.toString(),
@@ -126,7 +132,7 @@ export const WrappedPositionsList: React.FC = () => {
         currentPrice,
         tokenXLiq,
         tokenYLiq,
-        network: NetworkType.Testnet,
+        network: currentNetwork,
         isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
         isLocked: position.isLocked
       }
@@ -205,14 +211,18 @@ export const WrappedPositionsList: React.FC = () => {
         min,
         max,
         valueX,
+        position,
         valueY,
+        poolAddress: position.poolData.address,
+        liquidity: position.liquidity,
+        poolData: position.poolData,
         address: walletAddress.toString(),
         id: position.id.toString() + '_' + position.pool.toString(),
         isActive: currentPrice >= min && currentPrice <= max,
         currentPrice,
         tokenXLiq,
         tokenYLiq,
-        network: NetworkType.Testnet,
+        network: currentNetwork,
         isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
         isLocked: position.isLocked
       }

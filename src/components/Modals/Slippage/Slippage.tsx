@@ -126,7 +126,8 @@ const Slippage: React.FC<Props> = ({
                 className={classNames(classes.slippagePercentageButton, {
                   [classes.slippagePercentageButtonActive]: index === tierIndex
                 })}
-                onClick={() => {
+                onClick={e => {
+                  e.preventDefault()
                   setTieredSlippage(index)
                   handleClose()
                 }}>
@@ -140,9 +141,11 @@ const Slippage: React.FC<Props> = ({
               placeholder='0.00'
               className={classNames(
                 classes.detailsInfoForm,
-                tierIndex === -1 && classes.activeForm
+                tierIndex === -1 && classes.customSlippageActive
               )}
-              type={'text'}
+              inputProps={{
+                inputMode: 'decimal'
+              }}
               value={slippTolerance}
               onChange={e => {
                 allowOnlyDigitsAndTrimUnnecessaryZeros(e)

@@ -10,6 +10,7 @@ import { actions as poolsActions } from '@store/reducers/pools'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions } from '@store/reducers/swap'
 import {
   isLoadingLatestPoolsForTransaction,
@@ -43,6 +44,7 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
+import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors/leaderboard'
 
 type Props = {
   initialTokenFrom: string
@@ -61,9 +63,13 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const allPools = useSelector(poolsArraySortedByFees)
   const tokensList = useSelector(swapTokens)
   const tokensDict = useSelector(swapTokensDict)
+  const multiplyer = useSelector(swapMultiplier)
   const isBalanceLoading = useSelector(balanceLoading)
   const { success, inProgress } = useSelector(swapPool)
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
+  const pointsPerUsdFee = useSelector(pointsPerUsd)
+  const promotedSwapPairs = useSelector(swapPairs)
+  const priceFeeds = useSelector(feeds)
   const networkType = useSelector(network)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenFrom, setTokenFrom] = useState<PublicKey | null>(null)
@@ -73,6 +79,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
+
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -217,11 +227,11 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    const id = tokensDict[tokenFrom.toString()]?.coingeckoId ?? ''
+    const addr = tokensDict[tokenFrom.toString()]?.assetAddress.toString()
 
-    if (id.length) {
+    if (addr) {
       setPriceFromLoading(true)
-      getTokenPrice(id)
+      getTokenPrice(addr)
         .then(data => setTokenFromPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenFromPriceData(
@@ -242,10 +252,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       return
     }
 
-    const id = tokensDict[tokenTo.toString()]?.coingeckoId ?? ''
-    if (id.length) {
+    const addr = tokensDict[tokenTo.toString()]?.assetAddress.toString()
+    if (addr) {
       setPriceToLoading(true)
-      getTokenPrice(id)
+      getTokenPrice(addr)
         .then(data => setTokenToPriceData({ price: data ?? 0 }))
         .catch(() =>
           setTokenToPriceData(
@@ -394,6 +404,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         dispatch(connectionActions.setTimeoutError(false))
       }}
       canNavigate={canNavigate}
+      pointsPerUsdFee={pointsPerUsdFee}
+      feeds={priceFeeds}
+      promotedSwapPairs={promotedSwapPairs}
+      swapMultiplier={multiplyer}
     />
   )
 }

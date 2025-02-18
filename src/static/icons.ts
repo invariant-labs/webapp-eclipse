@@ -16,6 +16,7 @@ import inactiveIcon from './svg/inactive.svg'
 import allIcon from './svg/all.svg'
 import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
+import closeSmallGreenIcon from './svg/closeSmallGreen.svg'
 import successIcon from './svg/successIcon.svg'
 import xIcon from './svg/xCircle.svg'
 import unknownToken from './svg/unknownToken.svg'
@@ -52,8 +53,44 @@ import airdropRainbow from './svg/airdropRainbow.svg'
 import audit from './svg/audit.svg'
 import warning2 from './svg/warning2.svg'
 import closeWarning from './svg/closeWarning.svg'
+import dropdown from './svg/dropdown.svg'
+import dropdownReverse from './svg/dropdownReverse.svg'
+import arrowLeft from './svg/arrowLeft.svg'
+import arrowRight from './svg/arrowRight.svg'
+import infoCircle from './svg/infoCircle.svg'
+import boostPoints from './svg/boostPoints.svg'
+import airdropGrey from './svg/airdropGrey.svg'
+import infoError from './svg/infoError.svg'
+import okxLogo from './svg/okx-logo.svg'
+import infoIcon from './svg/info.svg'
+import infoIconPink from './svg/infoIconPink.svg'
+import slider from './svg/slider.svg'
+import swapArrows from './svg/swap-arrows.svg'
+import liquidityIcon from './svg/liquidity.svg'
+import walletIcon from './svg/wallet.svg'
+import statsIcon from './svg/stats.svg'
+import closeModal from './svg/closeModal.svg'
+import discordFill from './svg/discordFill.svg'
+import xFill from './svg/xFill.svg'
+import telegramFill from './svg/telegramFill.svg'
+import githubFill from './svg/githubFill.svg'
+import mediumFill from './svg/MediumFill.svg'
+import docsFill from './svg/docsFill.svg'
+import tokenCreator from './svg/tokenCreator.svg'
 
 const icons: { [key: string]: string } = {
+  tokenCreator,
+  docsFill,
+  mediumFill,
+  githubFill,
+  telegramFill,
+  xFill,
+  discordFill,
+  closeModal,
+  statsIcon,
+  walletIcon,
+  liquidityIcon,
+  swapArrows,
   clear: clearIcon,
   LogoShort: logoShort,
   LogoTitle: logoTitle,
@@ -71,6 +108,7 @@ const icons: { [key: string]: string } = {
   inactiveIcon: inactiveIcon,
   allIcon: allIcon,
   closeSmallIcon: closeSmallIcon,
+  closeSmallGreenIcon: closeSmallGreenIcon,
   docsIcon: docsIcon,
   successIcon: successIcon,
   XIcon: xIcon,
@@ -107,7 +145,19 @@ const icons: { [key: string]: string } = {
   airdropRainbow,
   audit,
   warning2,
-  closeWarning
+  closeWarning,
+  infoIcon,
+  infoIconPink,
+  arrowLeft,
+  arrowRight,
+  slider,
+  dropdown,
+  dropdownReverse,
+  infoCircle,
+  boostPoints,
+  airdropGrey,
+  infoError,
+  okxLogo
 }
 
 export default icons
