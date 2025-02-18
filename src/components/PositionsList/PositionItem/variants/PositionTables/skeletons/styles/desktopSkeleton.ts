@@ -41,7 +41,7 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     width: '100%',
     borderTop: `1px solid ${colors.invariant.light}`,
 
-    height: '80px',
+    height: '82.6px',
     tableLayout: 'fixed',
     '&:nth-of-type(odd)': {
       background: colors.invariant.component
