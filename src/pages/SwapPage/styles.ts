@@ -1,4 +1,3 @@
-import { theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
@@ -6,7 +5,6 @@ const useStyles = makeStyles()(() => {
     container: {
       display: 'flex',
       minHeight: '60vh',
-
       justifyContent: 'center',
       backgroundColor: 'transparent',
       maxWidth: '100%'
