@@ -39,6 +39,20 @@ const useStyles = makeStyles()(() => {
       },
       '&:last-child': {
         marginTop: '4px'
+      },
+      '&:disabled': {
+        background: colors.invariant.componentDark,
+        color: colors.invariant.newDark,
+        pointerEvents: 'auto',
+        transition: 'all 0.2s',
+        '&:hover': {
+          boxShadow: 'none',
+          cursor: 'not-allowed',
+          filter: 'brightness(1.15)',
+          '@media (hover: none)': {
+            filter: 'none'
+          }
+        }
       }
     },
     title: {

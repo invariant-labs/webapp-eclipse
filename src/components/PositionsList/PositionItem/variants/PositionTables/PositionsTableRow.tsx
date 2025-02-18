@@ -368,6 +368,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}
+        unclaimedFeesInUSD={unclaimedFeesInUSD.value}
         position={positionSingleData}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />

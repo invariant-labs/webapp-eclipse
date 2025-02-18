@@ -444,6 +444,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
       />
       <PositionViewActionPopover
         anchorEl={anchorEl}
+        unclaimedFeesInUSD={unclaimedFeesInUSD.value}
         handleClose={handleClose}
         open={isActionPopoverOpen}
         position={positionSingleData}

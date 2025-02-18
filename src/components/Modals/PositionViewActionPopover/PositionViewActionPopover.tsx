@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames'
 import useStyles from './style'
-import { Grid, Popover, Typography } from '@mui/material'
+import { Button, Grid, Popover, Typography } from '@mui/material'
 import { actions } from '@store/reducers/positions'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -10,6 +10,7 @@ export interface IPositionViewActionPopover {
   open: boolean
   anchorEl: HTMLButtonElement | null
   position?: any
+  unclaimedFeesInUSD: number
   handleClose: () => void
   onLockPosition: () => void
 }
@@ -19,6 +20,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   open,
   position,
   handleClose,
+  unclaimedFeesInUSD,
   onLockPosition
 }) => {
   const { classes } = useStyles()
@@ -47,9 +49,9 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
       }}>
       <Grid className={classes.root} onClick={e => e.stopPropagation()}>
         <Grid className={classes.list} container alignContent='space-around' direction='column'>
-          <Grid
+          <Button
+            disabled={unclaimedFeesInUSD <= 0}
             className={classNames(classes.listItem)}
-            item
             onClick={e => {
               e.stopPropagation()
               dispatch(
@@ -58,10 +60,9 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
               handleClose()
             }}>
             <Typography className={classes.name}>Claim fee</Typography>
-          </Grid>
-          <Grid
+          </Button>
+          <Button
             className={classNames(classes.listItem)}
-            item
             onClick={e => {
               e.stopPropagation()
               dispatch(
@@ -75,18 +76,17 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
               handleClose()
             }}>
             <Typography className={classes.name}>Close position</Typography>
-          </Grid>
+          </Button>
         </Grid>
-        <Grid
+        <Button
           className={classNames(classes.listItem)}
-          item
           onClick={e => {
             e.stopPropagation()
             onLockPosition()
             handleClose()
           }}>
           <Typography className={classes.name}>Lock position</Typography>
-        </Grid>
+        </Button>
       </Grid>
     </Popover>
   )
