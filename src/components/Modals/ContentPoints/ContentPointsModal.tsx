@@ -1,9 +1,9 @@
 import React from 'react'
-import { Dialog, DialogContent, IconButton, Box, Typography } from '@mui/material'
+import { Dialog, DialogContent, Box, Typography } from '@mui/material'
 import useStyles from './style'
 import { CurrentContentPointsEntry } from '@store/reducers/leaderboard'
 import { FixedSizeList } from 'react-window'
-import { formatDate } from '@utils/utils'
+import { formatDate, formatNumberWithSpaces } from '@utils/utils'
 
 export interface IContentPointsModal {
   open: boolean
@@ -38,12 +38,14 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
         style={style}
         display='flex'
         flexDirection='row'
+        alignItems='center'
         justifyContent='space-between'>
         <Typography className={classes.dateLabel}>
           {formatDate(entry.startTimestamp)}-{formatDate(entry.endTimestamp)}
         </Typography>
         <Typography className={classes.pointsLabel}>
-          + {entry.points} {entry.points === 1 ? 'Point' : 'Points'}
+          + {formatNumberWithSpaces(entry.points.toString())}
+          {entry.points === 1 ? ' Point' : ' Points'}
         </Typography>
       </Box>
     )

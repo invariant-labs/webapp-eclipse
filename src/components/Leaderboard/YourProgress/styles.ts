@@ -30,8 +30,7 @@ const useStyles = makeStyles()(() => {
       ...typography.caption4,
       lineHeight: '24px',
       borderRadius: 14,
-      width: 225,
-      height: 192,
+
       maxWidth: 225,
       fontSize: 16,
       padding: 16,

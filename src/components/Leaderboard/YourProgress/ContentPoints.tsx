@@ -124,7 +124,7 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
 
           <Tooltip
             title={
-              <>
+              <Box sx={{ width: '190px' }}>
                 <Typography className={classes.tooltipContentPoints}>
                   Earn point allocations for creating content about Invariant on social media!
                   Tweets, threads, YouTube videos, TikToks, and articles - all help you accumulate
@@ -139,7 +139,7 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
                     More details
                   </a>
                 </Box>
-              </>
+              </Box>
             }
             placement='bottom'
             classes={{

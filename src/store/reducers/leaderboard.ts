@@ -233,6 +233,9 @@ const leaderboardSlice = createSlice({
     setContentPoints(state, action: PayloadAction<CurrentContentPointsEntry[] | null>) {
       state.contentPoints = action.payload
       state.isLoading = false
+    },
+    resetContentPoints(state) {
+      state.contentPoints = null
     }
   }
 })
