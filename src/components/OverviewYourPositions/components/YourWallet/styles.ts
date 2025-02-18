@@ -1,6 +1,5 @@
 import { makeStyles } from 'tss-react/mui'
 import { colors, typography, theme } from '@static/theme'
-
 export const useStyles = makeStyles()(() => ({
   container: {
     minWidth: '50%',

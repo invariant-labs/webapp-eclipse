@@ -97,6 +97,22 @@ export const useStyles = makeStyles()(() => ({
     cursor: 'pointer',
     transition: 'all 0.2s'
   },
+  emptyState: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '32px',
+    gap: '16px',
+    backgroundColor: colors.invariant.component,
+    borderRadius: '24px',
+    marginTop: '15px'
+  },
+  emptyStateText: {
+    ...typography.body1,
+    color: colors.invariant.text,
+    textAlign: 'center'
+  },
   claimAllButton: {
     ...typography.body1,
     display: 'flex',

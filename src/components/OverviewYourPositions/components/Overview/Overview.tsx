@@ -14,6 +14,7 @@ import LegendSkeleton from './skeletons/LegendSkeleton'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 import { useCalculateUnclaimedFee } from '@store/hooks/userOverview/useCalculateUnclaimedFee'
+import icons from '@static/icons'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -130,6 +131,23 @@ export const Overview: React.FC<OverviewProps> = () => {
       }
     })
   }, [sortedPositions, getAverageColor, logoColors, pendingColorLoads])
+
+  const EmptyState = ({ classes }: { classes: any }) => (
+    <Box className={classes.emptyState}>
+      <img src={icons.empty} alt='Empty portfolio' height={64} width={64} />
+      <Typography className={classes.emptyStateText}>Your portfolio is empty.</Typography>
+    </Box>
+  )
+
+  if (!isLoadingList && positions.length === 0) {
+    return (
+      <Box className={classes.container}>
+        <HeaderSection totalValue={0} loading={false} />
+        <UnclaimedSection unclaimedTotal={0} loading={false} />
+        <EmptyState classes={classes} />
+      </Box>
+    )
+  }
 
   return (
     <Box className={classes.container}>
