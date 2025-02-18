@@ -16,18 +16,6 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   handleClose,
   userContentPoints
 }) => {
-  // const ContentPoints = [
-  //   { startTimestamp: 1640995200000, endTimestamp: 1641081599000, points: 5 },
-  //   { startTimestamp: 1641081600000, endTimestamp: 1641167999000, points: 8 },
-  //   { startTimestamp: 1641168000000, endTimestamp: 1641254399000, points: 12 },
-  //   { startTimestamp: 1641254400000, endTimestamp: 1641340799000, points: 3 },
-  //   { startTimestamp: 1641340800000, endTimestamp: 1641427199000, points: 7 },
-  //   { startTimestamp: 1641340800000, endTimestamp: 1641427199000, points: 7 },
-  //   { startTimestamp: 1641340800000, endTimestamp: 1641427199000, points: 7 },
-  //   { startTimestamp: 1641340800000, endTimestamp: 1641427199000, points: 7 },
-  //   { startTimestamp: 1641340800000, endTimestamp: 1641427199000, points: 7 },
-  //   { startTimestamp: 1641340800000, endTimestamp: 1641427199000, points: 7 }
-  // ]
   const { classes } = useStyles()
 
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {

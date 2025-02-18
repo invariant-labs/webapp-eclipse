@@ -70,7 +70,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       handlePageChange(currentPage)
     }
   }, [selectedOption])
-  console.log(userContentPoints)
   const isDelayWarning = useMemo(() => {
     if (!lastSnapTimestamp) return false
     const snapTime = hexToDate(lastSnapTimestamp)
