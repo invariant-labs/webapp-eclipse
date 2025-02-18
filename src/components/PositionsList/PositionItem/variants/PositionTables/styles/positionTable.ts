@@ -88,7 +88,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       }
     },
     actionCell: {
-      width: '4%',
+      width: '5%',
       padding: '14px 8px',
       '& > button': {
         margin: '0 auto'
