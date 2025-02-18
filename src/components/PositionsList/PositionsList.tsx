@@ -4,15 +4,12 @@ import {
   Box,
   Button,
   Grid,
-  InputAdornment,
-  InputBase,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
   useMediaQuery
 } from '@mui/material'
 import loader from '@static/gif/loader.gif'
-import SearchIcon from '@static/svg/lupaDark.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -24,6 +21,8 @@ import { actions } from '@store/reducers/leaderboard'
 import { PositionItemDesktop } from './PositionItem/variants/PositionItemDesktop'
 import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
+import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
+import { NetworkType } from '@store/consts/static'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -39,8 +38,6 @@ interface IProps {
   showNoConnected?: boolean
   noConnectedBlockerProps: INoConnected
   itemsPerPage: number
-  searchValue: string
-  searchSetValue: (value: string) => void
   handleRefresh: () => void
   // pageChanged: (page: number) => void
   length: number
@@ -49,6 +46,7 @@ interface IProps {
   // getRemainingPositions: () => void
   noInitialPositions: boolean
   lockedData: IPositionItem[]
+  currentNetwork: NetworkType
 }
 
 export const PositionsList: React.FC<IProps> = ({
@@ -60,16 +58,15 @@ export const PositionsList: React.FC<IProps> = ({
   showNoConnected = false,
   noConnectedBlockerProps,
   itemsPerPage,
-  searchValue,
-  searchSetValue,
   handleRefresh,
   // pageChanged,
-  length,
-  lockedLength,
+  // length,
+  // lockedLength,
   // loadedPages,
   // getRemainingPositions,
   noInitialPositions,
-  lockedData
+  lockedData,
+  currentNetwork
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -77,6 +74,7 @@ export const PositionsList: React.FC<IProps> = ({
   const dispatch = useDispatch()
   const [page, setPage] = useState(initialPage)
   const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
+  const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
 
   const currentData = useMemo(() => {
@@ -86,20 +84,30 @@ export const PositionsList: React.FC<IProps> = ({
     return lockedData
   }, [alignment, data, lockedData])
 
-  const currentLength = useMemo(() => {
-    if (alignment === LiquidityPools.Standard) {
-      return length
-    }
-    return lockedLength
-  }, [alignment, length, lockedLength])
+  const filteredData = useMemo(() => {
+    if (selectedFilters.length === 0) return currentData
 
-  const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // if (Object.keys(loadedPages).length * POSITIONS_PER_QUERY < Number(length)) {
-    //   getRemainingPositions()
-    // }
+    return currentData.filter(position => {
+      const tokenX = position.tokenXName.toLowerCase()
+      const tokenY = position.tokenYName.toLowerCase()
 
-    searchSetValue(e.target.value.toLowerCase())
-  }
+      if (selectedFilters.length === 1) {
+        const filterToken = selectedFilters[0].symbol.toLowerCase()
+        return tokenX === filterToken || tokenY === filterToken
+      }
+
+      if (selectedFilters.length === 2) {
+        const filterToken1 = selectedFilters[0].symbol.toLowerCase()
+        const filterToken2 = selectedFilters[1].symbol.toLowerCase()
+        return (
+          (tokenX === filterToken1 && tokenY === filterToken2) ||
+          (tokenX === filterToken2 && tokenY === filterToken1)
+        )
+      }
+
+      return true
+    })
+  }, [currentData, selectedFilters])
 
   const handleChangePagination = (page: number): void => {
     setLastPage(page)
@@ -120,8 +128,8 @@ export const PositionsList: React.FC<IProps> = ({
     const page = currentPage || 1
     const perPage = itemsPerPage || 10
     const offset = (page - 1) * perPage
-    const paginatedItems = currentData.slice(offset).slice(0, itemsPerPage)
-    const totalPages = Math.ceil(currentData.length / perPage)
+    const paginatedItems = filteredData.slice(offset).slice(0, itemsPerPage)
+    const totalPages = Math.ceil(filteredData.length / perPage)
 
     return {
       page: page,
@@ -132,7 +140,7 @@ export const PositionsList: React.FC<IProps> = ({
 
   useEffect(() => {
     setPage(1)
-  }, [searchValue])
+  }, [selectedFilters])
 
   useEffect(() => {
     setPage(initialPage)
@@ -160,23 +168,18 @@ export const PositionsList: React.FC<IProps> = ({
           <Grid className={classes.titleBar}>
             <Typography className={classes.title}>Your Positions</Typography>
             <TooltipHover text='Total number of your positions'>
-              <Typography className={classes.positionsNumber}>{String(currentLength)}</Typography>
+              <Typography className={classes.positionsNumber}>
+                {String(filteredData.length)}
+              </Typography>
             </TooltipHover>
           </Grid>
           <Grid className={classes.searchWrapper}>
             <Grid className={classes.filtersContainer}>
-              <InputBase
-                type={'text'}
-                className={classes.searchBar}
-                placeholder='Search position'
-                endAdornment={
-                  <InputAdornment position='end'>
-                    <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
-                  </InputAdornment>
-                }
-                onChange={handleChangeInput}
-                value={searchValue}
-                disabled={noInitialPositions}
+              <FilterSearch
+                networkType={currentNetwork}
+                filtersAmount={2}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
               />
               <Box className={classes.switchPoolsContainer}>
                 <Box
@@ -232,7 +235,7 @@ export const PositionsList: React.FC<IProps> = ({
         </Grid>
       </Grid>
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
-        {currentData.length > 0 && !loading && !showNoConnected ? (
+        {filteredData.length > 0 && !loading && !showNoConnected ? (
           paginator(page).data.map((element, index) => (
             <Grid
               onClick={() => {
