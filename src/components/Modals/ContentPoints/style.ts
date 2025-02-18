@@ -74,6 +74,7 @@ const useStyles = makeStyles()(() => {
     pointsLabel: {
       ...typography.heading4,
       color: colors.invariant.green,
+      textAlign: 'right',
       paddingRight: '10px'
     }
   }
