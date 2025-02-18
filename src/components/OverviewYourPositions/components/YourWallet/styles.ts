@@ -43,10 +43,12 @@ export const useStyles = makeStyles()(() => ({
 
     '&::-webkit-scrollbar': {
       padding: 0,
-      width: '4px'
+      width: '4px',
+      marginTop: '58.4px'
     },
     '&::-webkit-scrollbar-track': {
-      background: 'transparent'
+      background: 'transparent',
+      marginTop: '58.4px'
     },
     '&::-webkit-scrollbar-thumb': {
       background: colors.invariant.pink,
