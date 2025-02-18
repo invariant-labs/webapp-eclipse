@@ -137,14 +137,29 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     [valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
   )
 
-  const handleInteraction = (event: React.MouseEvent | React.TouchEvent) => {
+  const handlePromotedInteraction = (event: React.MouseEvent | React.TouchEvent) => {
     event.stopPropagation()
-
-    if (event.type === 'touchstart') {
-      setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+    if (isPromotedPoolPopoverOpen) {
+      setIsPromotedPoolPopoverOpen(false)
+      setAllowPropagation(true)
+    } else {
+      setIsPromotedPoolPopoverOpen(true)
       setAllowPropagation(false)
     }
   }
+
+  const handleInactiveInteraction = (event: React.MouseEvent | React.TouchEvent) => {
+    event.stopPropagation()
+
+    if (isPromotedPoolInactive) {
+      setIsPromotedPoolInactive(false)
+      setAllowPropagation(true)
+    } else {
+      setIsPromotedPoolInactive(true)
+      setAllowPropagation(false)
+    }
+  }
+
   useEffect(() => {
     const PROPAGATION_ALLOW_TIME = 500
 
@@ -172,7 +187,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
       document.removeEventListener('click', handleClickOutside)
       document.removeEventListener('touchstart', handleClickOutside)
     }
-  }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive])
+  }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive, setAllowPropagation])
 
   const promotedIconFragment = useMemo(() => {
     if (isPromoted && isActive) {
@@ -180,7 +195,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         <>
           <div
             className={classes.actionButton}
-            onClick={handleInteraction}
+            onClick={handlePromotedInteraction}
             onPointerEnter={() => {
               if (window.matchMedia('(hover: hover)').matches) {
                 setIsPromotedPoolPopoverOpen(true)
@@ -189,9 +204,9 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             onPointerLeave={() => {
               if (window.matchMedia('(hover: hover)').matches) {
                 setIsPromotedPoolPopoverOpen(false)
+                setAllowPropagation(true)
               }
-            }}
-            onTouchStart={handleInteraction}>
+            }}>
             <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
           </div>
           <PromotedPoolPopover
@@ -229,13 +244,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
         <div
           className={classes.actionButton}
-          onClick={event => {
-            event.stopPropagation()
-
-            if (event.type === 'touchstart') {
-              setIsPromotedPoolInactive(!isPromotedPoolInactive)
-            }
-          }}
+          onClick={handleInactiveInteraction}
           onPointerEnter={() => {
             if (window.matchMedia('(hover: hover)').matches) {
               setIsPromotedPoolInactive(true)
@@ -244,14 +253,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           onPointerLeave={() => {
             if (window.matchMedia('(hover: hover)').matches) {
               setIsPromotedPoolInactive(false)
-            }
-          }}
-          onTouchStart={event => {
-            event.stopPropagation()
-
-            if (event.type === 'touchstart') {
-              setIsPromotedPoolInactive(!isPromotedPoolInactive)
-              setAllowPropagation(false)
+              setAllowPropagation(true)
             }
           }}>
           <img
@@ -272,7 +274,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     isPromotedPoolPopoverOpen,
     isPromotedPoolInactive,
     classes.actionButton,
-    handleInteraction,
     airdropIconRef,
     estimated24hPoints,
     pointsPerSecond,
