@@ -26,7 +26,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
         container
         spacing={1}
         sx={{
-          height: '160px',
+          height: sortedPositions.length < 5 ? '100px' : '160px',
           width: '90%',
           overflowY: sortedPositions.length <= 3 ? 'hidden' : 'auto',
           marginTop: '8px',
@@ -57,6 +57,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
               sx={{
                 paddingLeft: '0 !important',
                 display: 'flex',
+                maxHeight: '32px',
                 [theme.breakpoints.down('lg')]: {
                   justifyContent: 'space-between'
                 },
