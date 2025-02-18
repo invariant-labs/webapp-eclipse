@@ -1,5 +1,5 @@
 import { CircularProgress, Typography } from '@mui/material'
-import { styled, width } from '@mui/system'
+import { styled } from '@mui/system'
 import { colors, typography } from '@static/theme'
 import { SnackbarContent } from 'notistack'
 
