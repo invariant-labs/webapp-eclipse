@@ -35,6 +35,8 @@ interface IConfigResponse {
   swapMultiplier: string
 }
 
+// const BASE_LEADERBOARD_URL = 'https://points.invariant.app'
+const BASE_LEADERBOARD_URL = 'http://95.216.206.31:3001'
 async function fetchLpLeaderboardData(
   network: string,
   userWallet?: string,
@@ -43,7 +45,7 @@ async function fetchLpLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${BASE_LEADERBOARD_URL}/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -58,7 +60,7 @@ async function fetchSwapLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/swaps/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${BASE_LEADERBOARD_URL}/api/eclipse-${network}/swaps/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -73,7 +75,7 @@ async function fetchTotalLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/total/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${BASE_LEADERBOARD_URL}/api/eclipse-${network}/total/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
