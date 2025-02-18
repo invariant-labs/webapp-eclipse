@@ -24,7 +24,7 @@ export const MobileCard: React.FC<{
             Amount:
           </Typography>
           <Typography component='span' className={classes.mobileStatValue}>
-            {formatNumber2(pool.amount)}
+            {formatNumber2(pool.amount, { twoDecimals: true })}
           </Typography>
         </Box>
         <Box className={classes.mobileStatItem}>

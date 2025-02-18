@@ -197,7 +197,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            {`$${formatNumber2(tokenValueInUsd.value)}`}
+            {`$${formatNumber2(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
         </Grid>
       </Grid>
@@ -216,7 +216,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            ${formatNumber2(unclaimedFeesInUSD.value)}
+            ${formatNumber2(unclaimedFeesInUSD.value, { twoDecimals: true })}
           </Typography>
         </Grid>
       </Grid>

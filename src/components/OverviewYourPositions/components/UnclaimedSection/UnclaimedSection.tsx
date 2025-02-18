@@ -45,7 +45,7 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
           <Skeleton variant='text' width={100} height={30} className={classes.unclaimedAmount} />
         ) : (
           <Typography className={classes.unclaimedAmount}>
-            ${formatNumber2(unclaimedTotal)}
+            ${formatNumber2(unclaimedTotal, { twoDecimals: true })}
           </Typography>
         )}
       </Box>

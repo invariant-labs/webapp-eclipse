@@ -78,7 +78,7 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
           <Box sx={{ p: 1 }}>
             <Typography sx={{ color: segment.color, mb: 0.5 }}>{segment.token}</Typography>
             <Typography sx={{ color: colors.invariant.textGrey, mb: 0.5 }}>
-              ${formatNumber2(segment.value)}
+              ${formatNumber2(segment.value, { twoDecimals: true })}
             </Typography>
             <Typography sx={{ color: colors.invariant.textGrey }}>{segment.percentage}%</Typography>
           </Box>

@@ -99,7 +99,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
                     color: colors.invariant.text,
                     textAlign: 'right'
                   }}>
-                  ${formatNumber2(position.value)}
+                  ${formatNumber2(position.value, { twoDecimals: true })}
                 </Typography>
               </Grid>
             </Grid>

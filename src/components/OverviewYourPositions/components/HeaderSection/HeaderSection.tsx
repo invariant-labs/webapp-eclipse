@@ -32,7 +32,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
           </>
         ) : (
           <Typography className={classes.headerText}>
-            ${Number.isNaN(totalValue) ? 0 : formatNumber2(totalValue)}
+            ${Number.isNaN(totalValue) ? 0 : formatNumber2(totalValue, { twoDecimals: true })}
           </Typography>
         )}
       </Box>

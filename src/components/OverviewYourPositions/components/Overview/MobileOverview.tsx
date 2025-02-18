@@ -163,7 +163,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                           textAlign: 'right',
                           paddingLeft: '8px'
                         }}>
-                        ${formatNumber2(segment.value)}
+                        ${formatNumber2(segment.value, { twoDecimals: true })}
                       </Typography>
                     </Grid>
                   </Grid>
