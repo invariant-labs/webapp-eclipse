@@ -87,7 +87,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
                     ...typography.heading4,
                     color: textColor
                   }}>
-                  {position.token}:
+                  {position.token}
                 </Typography>
               </Grid>
 
