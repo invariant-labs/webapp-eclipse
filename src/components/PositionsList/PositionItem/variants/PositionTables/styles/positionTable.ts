@@ -21,7 +21,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       padding: '14px 20px',
       background: 'inherit',
       border: 'none',
-      borderTop: `2px solid ${colors.invariant.light}`,
+      borderTop: `1px solid ${colors.invariant.light}`,
 
       whiteSpace: 'nowrap',
       textAlign: 'center'
@@ -39,7 +39,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
     headerCell: {
       fontSize: '16px',
       lineHeight: '24px',
-      borderBottom: `1px solid ${colors.invariant.light}`,
+      borderBottom: `2px solid ${colors.invariant.light}`,
 
       color: colors.invariant.textGrey,
       fontWeight: 400,
