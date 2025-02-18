@@ -30,12 +30,10 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
   const { classes } = useStyles()
   const isLoadingList = useSelector(isLoadingPositionsList)
 
-  // Sort positions by value in descending order
   const sortedPositions = useMemo(() => {
     return [...positions].sort((a, b) => b.value - a.value)
   }, [positions])
 
-  // Sort chart colors to match the sorted positions
   const sortedChartColors = useMemo(() => {
     const colorMap = positions.reduce((map, position, index) => {
       map.set(position.token, chartColors[index])
