@@ -1,7 +1,7 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles<{ onePoolType: boolean }>()((_theme, { onePoolType }) => ({
+export const useStyles = makeStyles<{ onePoolType: boolean }>()((theme, { onePoolType }) => ({
   swapFlowContainer: {
     maxHeight: 76,
     gap: 16,
@@ -10,7 +10,11 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((_theme, { onePo
     borderBottom: `1px solid ${colors.invariant.component}`,
     display: 'flex',
     justifyContent: 'space-between',
-    position: 'relative'
+    position: 'relative',
+
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'center'
+    }
   },
   tokenContainer: {
     justifyContent: 'space-between',
@@ -46,7 +50,6 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((_theme, { onePo
     width: 40
   },
   loader: {
-    height: 52,
     padding: '12px 30px 12px 30px',
     borderBottom: `1px solid ${colors.invariant.component}`,
     background: colors.invariant.componentBcg,
@@ -56,10 +59,14 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((_theme, { onePo
     justifyContent: 'space-between',
     alignItems: 'center',
     position: 'absolute',
-    top: 0,
+    top: 1,
     left: 0,
     right: 0,
-    bottom: 0
+    bottom: 0,
+
+    [theme.breakpoints.down('md')]: {
+      justifyContent: 'center'
+    }
   },
   isLoading: {
     opacity: 1

@@ -43,11 +43,19 @@ const RouteBox: React.FC<IProps> = ({
       alignItems='center'
       className={classes.swapFlowContainer}>
       {isSmallDevice ? (
-        <Typography className={classes.tokenLabel}>
-          {tokenFrom?.symbol} {'-> '}
-          {onePoolType && `${tokenBetween?.symbol} (${firstFeePercent}%) -> `} {tokenTo?.symbol} (
-          {onePoolType ? secondFeePercent : firstFeePercent}%)
-        </Typography>
+        <>
+          <Box className={classNames(classes.loader, { [classes.isLoading]: isLoadingRate })}>
+            <img
+              src={loadingAnimation}
+              style={{ height: 25, width: 25, zIndex: 10 }}
+              alt='loading'></img>
+          </Box>
+          <Typography className={classes.tokenLabel}>
+            {tokenFrom?.symbol} {'→ '}
+            {onePoolType && `${tokenBetween?.symbol} (${firstFeePercent}%) → `} {tokenTo?.symbol} (
+            {onePoolType ? secondFeePercent : firstFeePercent}%)
+          </Typography>
+        </>
       ) : (
         <>
           <Box className={classNames(classes.loader, { [classes.isLoading]: isLoadingRate })}>
