@@ -59,8 +59,9 @@ export const useStyles = makeStyles()(() => ({
   },
   headerCell: {
     fontSize: '20px',
+
     textWrap: 'nowrap',
-    fontWeight: 400,
+    fontWeight: 600,
     color: colors.invariant.textGrey,
     borderBottom: `1px solid ${colors.invariant.light}`,
     backgroundColor: colors.invariant.component,

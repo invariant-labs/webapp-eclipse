@@ -42,7 +42,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       borderBottom: `2px solid ${colors.invariant.light}`,
 
       color: colors.invariant.textGrey,
-      fontWeight: 400,
+      fontWeight: 600,
       textAlign: 'left'
     },
 
