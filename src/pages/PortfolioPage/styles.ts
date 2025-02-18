@@ -31,6 +31,12 @@ const useStyles = makeStyles()(theme => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
+
+      [theme.breakpoints.down('md')]: {
+        justifyContent: 'flex-start',
+        paddingTop: '90px'
+      },
+
       flexDirection: 'column',
       borderTopRightRadius: '24px',
       background: 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)'
