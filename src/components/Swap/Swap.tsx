@@ -250,6 +250,7 @@ export const Swap: React.FC<ISwap> = ({
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
   const [swapType, setSwapType] = useState(SwapType.NORMAL)
+  const [addBlur, setAddBlur] = useState(false)
 
   const handlePointerEnter = () => {
     setIsPointsPopoverOpen(true)
@@ -419,6 +420,8 @@ export const Swap: React.FC<ISwap> = ({
         setAmountFrom('')
       }
     }
+
+    setAddBlur(false)
   }, [bestAmount])
 
   useEffect(() => {
@@ -476,6 +479,8 @@ export const Swap: React.FC<ISwap> = ({
         return
       }
 
+      setAddBlur(true)
+
       if (inputRef === inputTarget.FROM) {
         const [simulateValue, simulateWithHopValue] = await Promise.all([
           handleSimulate(
@@ -497,6 +502,7 @@ export const Swap: React.FC<ISwap> = ({
           )
         ])
 
+        updateSimulation(simulateValue, simulateWithHopValue)
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       } else if (inputRef === inputTarget.TO) {
@@ -520,9 +526,82 @@ export const Swap: React.FC<ISwap> = ({
           )
         ])
 
+        updateSimulation(simulateValue, simulateWithHopValue)
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       }
+    }
+  }
+
+  const updateSimulation = (
+    simulateResult: {
+      amountOut: BN
+      poolIndex: number
+      AmountOutWithFee: BN
+      estimatedPriceAfterSwap: BN
+      minimumReceived: BN
+      priceImpact: BN
+      error: string[]
+    },
+    simulateWithHopResult: {
+      simulation: SimulationTwoHopResult | null
+      route: [Pair, Pair] | null
+    }
+  ) => {
+    if (
+      simulateWithHopResult.simulation &&
+      simulateWithHopResult.route &&
+      (inputRef === inputTarget.FROM
+        ? simulateWithHopResult?.simulation.totalAmountOut.gt(simulateResult.amountOut) ||
+          simulateResult.error.length > 0
+        : simulateWithHopResult?.simulation.totalAmountIn.lt(
+            convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals)
+          ) || simulateResult.error.length > 0)
+    ) {
+      setSimulationPath({
+        tokenFrom: tokens[tokenFromIndex ?? 0],
+        tokenBetween:
+          tokensDict[
+            simulateWithHopResult.simulation.xToYHopOne
+              ? simulateWithHopResult.route[0].tokenY.toString()
+              : simulateWithHopResult.route[0].tokenX.toString()
+          ],
+        tokenTo: tokens[tokenToIndex ?? 0],
+        firstFee: simulateWithHopResult.route[0].feeTier.fee,
+        secondFee: simulateWithHopResult.route[1].feeTier.fee,
+        firstAmount: simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
+          simulateWithHopResult.simulation.swapHopOne.accumulatedFee
+        ),
+        secondAmount: simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountIn.add(
+          simulateWithHopResult.simulation.swapHopTwo.accumulatedFee
+        ),
+        firstPriceImpact: simulateWithHopResult.simulation.swapHopOne.priceImpact,
+        secondPriceImpact: simulateWithHopResult.simulation.swapHopTwo.priceImpact
+      })
+      setBestAmount(
+        inputRef === inputTarget.FROM
+          ? simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountIn.add(
+              simulateWithHopResult.simulation.swapHopTwo.accumulatedFee
+            )
+          : simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
+              simulateWithHopResult.simulation.swapHopOne.accumulatedFee
+            )
+      )
+      setSwapType(SwapType.WITH_HOP)
+    } else {
+      setSimulationPath({
+        tokenFrom: tokens[tokenFromIndex ?? 0],
+        tokenBetween: null,
+        tokenTo: tokens[tokenToIndex ?? 0],
+        firstFee: pools[simulateResult.poolIndex]?.fee ?? new BN(0),
+        secondFee: null,
+        firstAmount: convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals),
+        secondAmount: null,
+        firstPriceImpact: simulateResult.priceImpact,
+        secondPriceImpact: null
+      })
+      setBestAmount(simulateResult.amountOut)
+      setSwapType(SwapType.NORMAL)
     }
   }
 
@@ -992,6 +1071,7 @@ export const Swap: React.FC<ISwap> = ({
               isBalanceLoading={isBalanceLoading}
               showMaxButton={true}
               showBlur={
+                (inputRef === inputTarget.TO && addBlur) ||
                 lockAnimation ||
                 (getStateMessage() === 'Loading' &&
                   (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
@@ -1104,6 +1184,7 @@ export const Swap: React.FC<ISwap> = ({
               isBalanceLoading={isBalanceLoading}
               showMaxButton={false}
               showBlur={
+                (inputRef === inputTarget.FROM && addBlur) ||
                 lockAnimation ||
                 (getStateMessage() === 'Loading' &&
                   (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))

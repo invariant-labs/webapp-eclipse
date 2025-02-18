@@ -8,6 +8,7 @@ import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 import RouteBox from './RouteBox/RouteBox'
 import { SimulationPath } from '../Swap'
+import { DENOMINATOR } from '@invariant-labs/sdk-eclipse/src'
 
 interface IProps {
   open: boolean
@@ -28,13 +29,18 @@ const TransactionDetailsBox: React.FC<IProps> = ({
 
   const feePercent = Number(
     printBN(
-      simulationPath.firstFee?.add(simulationPath.secondFee ?? new BN(0)) ?? new BN(0),
+      simulationPath.firstFee?.add(
+        DENOMINATOR.sub(simulationPath.firstFee)
+          .mul(simulationPath.secondFee ?? new BN(0))
+          .div(DENOMINATOR) ?? new BN(0)
+      ) ?? new BN(0),
       DECIMAL - 2
     )
   )
   const impact = +printBN(
-    simulationPath.firstPriceImpact?.add(simulationPath.secondPriceImpact ?? new BN(0)) ??
-      new BN(0),
+    simulationPath.firstPriceImpact
+      ?.add(simulationPath.secondPriceImpact ?? new BN(0))
+      .div(new BN(2)) ?? new BN(0),
     DECIMAL - 2
   )
 
