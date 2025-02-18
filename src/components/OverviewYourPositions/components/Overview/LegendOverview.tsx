@@ -26,9 +26,9 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
         container
         spacing={1}
         sx={{
-          height: sortedPositions.length < 5 ? '140px' : '160px',
+          height: sortedPositions.length <= 3 ? '100px' : '160px',
           width: '90%',
-          overflowY: sortedPositions.length < 5 ? 'hidden' : 'auto',
+          overflowY: sortedPositions.length <= 5 ? 'hidden' : 'auto',
           marginTop: '8px',
           marginLeft: '0 !important',
           '&::-webkit-scrollbar': {
