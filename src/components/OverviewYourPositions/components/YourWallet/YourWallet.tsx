@@ -253,7 +253,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       <TableCell className={classes.tableCell} align='right'>
                         <Box className={classes.statsContainer}>
                           <Typography className={classes.statsValue}>
-                            ${pool.value.toLocaleString().replace(',', '.')}
+                            ${formatNumber2(pool.value, { twoDecimals: true })}
                           </Typography>
                         </Box>
                       </TableCell>
