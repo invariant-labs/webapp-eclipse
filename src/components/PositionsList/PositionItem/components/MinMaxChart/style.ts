@@ -16,7 +16,7 @@ export const useMinMaxChartStyles = makeStyles()(() => ({
   chart: {
     width: '100%',
     display: 'flex',
-    borderBottom: `2px solid ${colors.invariant.light}`,
+    borderBottom: `1px solid ${colors.invariant.light}`,
     position: 'relative',
     overflow: 'visible'
   },
