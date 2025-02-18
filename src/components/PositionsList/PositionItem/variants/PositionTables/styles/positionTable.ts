@@ -37,7 +37,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       }
     },
     headerCell: {
-      fontSize: '16px',
+      fontSize: '20px',
       lineHeight: '24px',
       borderBottom: `2px solid ${colors.invariant.light}`,
 
