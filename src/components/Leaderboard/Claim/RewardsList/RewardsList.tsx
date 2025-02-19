@@ -1,11 +1,11 @@
 import React from 'react'
 import { useStylesList } from './style'
-import { Grid, Typography } from '@mui/material'
-import useIsMobile from '@store/hooks/isMobile'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { PublicKey } from '@solana/web3.js'
 import { rewards } from '@store/consts/static'
 import RewardItem from './RewardItem'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
+import Scrollbars from 'rc-scrollbars'
 
 export interface NFTsListInterface {
   userAddress: PublicKey
@@ -13,7 +13,7 @@ export interface NFTsListInterface {
 }
 
 const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => {
-  const isMobile = useIsMobile()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const { classes } = useStylesList()
 
   return (
@@ -21,18 +21,51 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
       <Typography mb={3} style={{ ...typography.heading4, color: colors.invariant.text }}>
         History of Prizes
       </Typography>
-
-      <Grid container justifyContent='center' alignItems='center' gap={3} mb={isMobile ? 0 : 2}>
-        {rewards.map((reward, index) => (
-          <RewardItem
-            key={index}
-            number={index + 1}
-            reward={reward}
-            userAddress={userAddress.toString()}
-            isConnected={isConnected}
-          />
-        ))}
-      </Grid>
+      {isMobile ? (
+        <Grid container justifyContent='center' alignItems='center' gap={3} mb={0}>
+          {rewards.map((reward, index) => (
+            <RewardItem
+              key={index}
+              number={index + 1}
+              reward={reward}
+              userAddress={userAddress.toString()}
+              isConnected={isConnected}
+            />
+          ))}
+        </Grid>
+      ) : (
+        <Scrollbars
+          style={{ maxWidth: 1072, overflowX: 'hidden' }}
+          className={classes.scrollbar}
+          autoHide
+          universal
+          classes={{
+            thumbVertical: classes.scrollbarThumb,
+            trackVertical: classes.scrollbarTrack,
+            view: classes.scrollbarView
+          }}
+          autoHeight
+          hideTracksWhenNotNeeded
+          autoHeightMax={1064}>
+          <Grid
+            container
+            justifyContent='center'
+            alignItems='center'
+            gap={3}
+            mb={isMobile ? 0 : 2}
+            className={classes.list}>
+            {rewards.map((reward, index) => (
+              <RewardItem
+                key={index}
+                number={index + 1}
+                reward={reward}
+                userAddress={userAddress.toString()}
+                isConnected={isConnected}
+              />
+            ))}
+          </Grid>
+        </Scrollbars>
+      )}
     </div>
   )
 }

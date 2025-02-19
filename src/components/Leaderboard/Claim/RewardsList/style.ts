@@ -38,7 +38,9 @@ export const useStylesList = makeStyles()(theme => ({
       borderRadius: 6
     }
   },
-
+  list: {
+    paddingRight: 48
+  },
   scrollbar: {}
 }))
 
