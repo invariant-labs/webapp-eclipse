@@ -7,7 +7,7 @@ import {
   bestTiers,
   commonTokensForNetworks
 } from '@store/consts/static'
-import { PositionOpeningMethod, PotentialLiquidity, TokenPriceData } from '@store/consts/types'
+import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
 import {
   addNewTokenToLocalStorage,
   calcPriceBySqrtPrice,
@@ -84,18 +84,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const ticksData = allData
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
 
-  const [maxLiquidityAmountB, setMaxLiquidityAmountB] = useState<{
-    min: BN
-    middle: BN
-    max: BN
-  }>({ min: new BN(0), middle: new BN(0), max: new BN(0) })
-
-  const [potentialLiquidity, setPotentialLiquidity] = useState<{
-    min: BN
-    middle: BN
-    max: BN
-  }>({ min: new BN(0), middle: new BN(0), max: new BN(0) })
-  console.log(potentialLiquidity.toString())
   const [liquidity, setLiquidity] = useState<BN>(new BN(0))
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
@@ -539,13 +527,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_NEW_POSITION_SLIPPAGE', slippage)
   }
 
-  const calcAmount = (
-    amount: BN,
-    left: number,
-    right: number,
-    tokenAddress: PublicKey,
-    calcPotentialLiquidity?: PotentialLiquidity
-  ) => {
+  const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
       return new BN(0)
     }
@@ -566,77 +548,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           true
         )
 
-        if (calcPotentialLiquidity) {
-          let tokenXAmount: BN
-
-          if (isXtoY || maxLiquidityAmountB.toString() === '0') {
-            tokenXAmount = amount
-          } else {
-            switch (calcPotentialLiquidity) {
-              case PotentialLiquidity.Min:
-                tokenXAmount = maxLiquidityAmountB.min
-                break
-
-              case PotentialLiquidity.Middle:
-                tokenXAmount = maxLiquidityAmountB.middle
-                break
-
-              case PotentialLiquidity.Max:
-                tokenXAmount = maxLiquidityAmountB.max
-                break
-            }
-          }
-
-          const potentialResult = getLiquidityByX(
-            amount,
-            lowerTick,
-            upperTick,
-            poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-            true
-          )
-
-          switch (calcPotentialLiquidity) {
-            case PotentialLiquidity.Min:
-              setPotentialLiquidity(prev => ({ ...prev, min: potentialResult.liquidity }))
-
-              if (isXtoY) {
-                setMaxLiquidityAmountB(prev => ({ ...prev, max: potentialResult.y }))
-              }
-              break
-
-            case PotentialLiquidity.Middle:
-              setPotentialLiquidity(prev => ({ ...prev, middle: potentialResult.liquidity }))
-
-              if (isXtoY) {
-                setMaxLiquidityAmountB(prev => ({ ...prev, max: potentialResult.y }))
-              }
-              break
-
-            case PotentialLiquidity.Max:
-              setPotentialLiquidity(prev => ({ ...prev, max: potentialResult.liquidity }))
-
-              console.log(tokenXAmount.toString())
-              console.log(potentialResult.liquidity.toString())
-              console.log(potentialResult.y.toString())
-
-              if (isXtoY) {
-                setMaxLiquidityAmountB(prev => ({ ...prev, max: potentialResult.y }))
-              }
-              break
-
-            default:
-              break
-          }
-
-          return
-        } else {
-          if (isMountedRef.current) {
-            liquidityRef.current = result.liquidity
-          }
-
-          setLiquidity(result.liquidity)
-          return result.y
+        if (isMountedRef.current) {
+          liquidityRef.current = result.liquidity
         }
+
+        setLiquidity(result.liquidity)
+        return result.y
       } else {
         const result = getLiquidityByY(
           amount,
@@ -646,77 +563,13 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           true
         )
 
-        if (calcPotentialLiquidity) {
-          let tokenYAmount: BN
-
-          if (isXtoY) {
-            switch (calcPotentialLiquidity) {
-              case PotentialLiquidity.Min:
-                tokenYAmount = maxLiquidityAmountB.min
-                break
-
-              case PotentialLiquidity.Middle:
-                tokenYAmount = maxLiquidityAmountB.middle
-                break
-
-              case PotentialLiquidity.Max:
-                tokenYAmount = maxLiquidityAmountB.max
-                break
-            }
-          } else {
-            tokenYAmount = amount
-          }
-
-          const potentialResult = getLiquidityByY(
-            amount,
-            lowerTick,
-            upperTick,
-            poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-            true
-          )
-
-          switch (calcPotentialLiquidity) {
-            case PotentialLiquidity.Min:
-              setPotentialLiquidity(prev => ({ ...prev, min: potentialResult.liquidity }))
-
-              if (!isXtoY) {
-                setMaxLiquidityAmountB(prev => ({ ...prev, min: potentialResult.x }))
-              }
-              break
-
-            case PotentialLiquidity.Middle:
-              setPotentialLiquidity(prev => ({ ...prev, middle: potentialResult.liquidity }))
-
-              if (!isXtoY) {
-                setMaxLiquidityAmountB(prev => ({ ...prev, middle: potentialResult.x }))
-              }
-              break
-
-            case PotentialLiquidity.Max:
-              setPotentialLiquidity(prev => ({ ...prev, max: potentialResult.liquidity }))
-              console.log(tokenYAmount.toString())
-              console.log(potentialResult.liquidity.toString())
-              console.log(potentialResult.x.toString())
-
-              if (!isXtoY) {
-                setMaxLiquidityAmountB(prev => ({ ...prev, max: potentialResult.x }))
-              }
-
-              break
-
-            default:
-              break
-          }
-          return
-        } else {
-          if (isMountedRef.current) {
-            liquidityRef.current = result.liquidity
-          }
-
-          setLiquidity(result.liquidity)
-
-          return result.x
+        if (isMountedRef.current) {
+          liquidityRef.current = result.liquidity
         }
+
+        setLiquidity(result.liquidity)
+
+        return result.x
       }
     } catch (error) {
       const result = (byX ? getLiquidityByY : getLiquidityByX)(

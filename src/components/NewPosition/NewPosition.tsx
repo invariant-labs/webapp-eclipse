@@ -19,7 +19,6 @@ import {
   convertBalanceToBN,
   determinePositionTokenBlock,
   getConcentrationIndex,
-  nearestTicksBySpacing,
   parseFeeToPathFee,
   printBN,
   trimLeadingZeros,
@@ -36,12 +35,7 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import {
-  BestTier,
-  PositionOpeningMethod,
-  PotentialLiquidity,
-  TokenPriceData
-} from '@store/consts/types'
+import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -88,8 +82,7 @@ export interface INewPosition {
     amount: BN,
     leftRangeTickIndex: number,
     rightRangeTickIndex: number,
-    tokenAddress: PublicKey,
-    calcPotentialLiquidity?: PotentialLiquidity
+    tokenAddress: PublicKey
   ) => BN
   feeTiers: Array<{
     feeValue: number
@@ -271,73 +264,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     tokenBSymbol: 'XYZ'
   }
 
-  const getTokenAmountForPotentialPoints = (amount: BN, byFirst: boolean) => {
-    const printIndex = byFirst ? tokenBIndex : tokenAIndex
-    const calcIndex = byFirst ? tokenAIndex : tokenBIndex
-    if (printIndex === null || calcIndex === null) {
-      return '0.0'
-    }
-    const minTick = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
-    const maxTick = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
-
-    const { leftRange: leftRangeMin, rightRange: rightRangeMin } = calculateConcentrationRange(
-      tickSpacing,
-      concentrationArray[0],
-      2,
-      midPrice.index,
-      isXtoY
-    )
-
-    const { leftRange: leftRangeMiddle, rightRange: rightRangeMiddle } =
-      calculateConcentrationRange(
-        tickSpacing,
-        +concentrationArray[Math.floor(concentrationArray.length / 2) - 1].toFixed(0),
-        2,
-        midPrice.index,
-        isXtoY
-      )
-
-    const { leftRange: leftRangeMax, rightRange: rightRangeMax } = calculateConcentrationRange(
-      tickSpacing,
-      +concentrationArray[concentrationArray.length - 1].toFixed(0),
-      2,
-      midPrice.index,
-      isXtoY
-    )
-
-    calcAmount(
-      amount,
-      positionOpeningMethod === 'concentration' ? leftRangeMin : minTick,
-      positionOpeningMethod === 'concentration' ? rightRangeMin : maxTick,
-      tokens[calcIndex].assetAddress,
-      PotentialLiquidity.Min
-    )
-    calcAmount(
-      amount,
-      leftRangeMiddle,
-      rightRangeMiddle,
-      tokens[calcIndex].assetAddress,
-      PotentialLiquidity.Middle
-    )
-
-    const { lowerTick: nearestLowerTick, upperTick: nearestUpperTick } = nearestTicksBySpacing(
-      midPrice.index,
-      tickSpacing,
-      isXtoY
-    )
-
-    calcAmount(
-      amount,
-      positionOpeningMethod === 'concentration' ? leftRangeMax : nearestLowerTick,
-      positionOpeningMethod === 'concentration' ? rightRangeMax : nearestUpperTick,
-      tokens[calcIndex].assetAddress,
-
-      PotentialLiquidity.Max
-    )
-  }
-
   const getOtherTokenAmount = (amount: BN, left: number, right: number, byFirst: boolean) => {
-    getTokenAmountForPotentialPoints(amount, byFirst)
     const printIndex = byFirst ? tokenBIndex : tokenAIndex
     const calcIndex = byFirst ? tokenAIndex : tokenBIndex
     if (printIndex === null || calcIndex === null) {
