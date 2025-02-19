@@ -22,7 +22,7 @@ import { NetworkType } from '@store/consts/static'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { useSelector } from 'react-redux'
-import { useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 
@@ -53,7 +53,9 @@ const Card: React.FC<ICard> = ({
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
-  const airdropIconRef = useRef<any>(null)
+
+  const airdropIconRef = useRef<HTMLDivElement>(null)
+  const popoverContainerRef = useRef<HTMLDivElement>(null)
 
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
@@ -100,6 +102,27 @@ const Card: React.FC<ICard> = ({
     fee,
     TVL
   )
+
+  useEffect(() => {
+    if (!isPromotedPoolPopoverOpen) return
+
+    const handleDocumentClickCapture = (event: MouseEvent) => {
+      if (
+        (airdropIconRef.current && airdropIconRef.current.contains(event.target as Node)) ||
+        (popoverContainerRef.current && popoverContainerRef.current.contains(event.target as Node))
+      ) {
+        return
+      }
+      event.preventDefault()
+      event.stopPropagation()
+      setIsPromotedPoolPopoverOpen(false)
+    }
+
+    document.addEventListener('click', handleDocumentClickCapture, true)
+    return () => {
+      document.removeEventListener('click', handleDocumentClickCapture, true)
+    }
+  }, [isPromotedPoolPopoverOpen])
 
   return (
     <Grid className={classes.root}>

@@ -38,7 +38,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   valueY,
   position,
   setAllowPropagation,
-  // liquidity,
   poolData,
   isActive = false,
   currentPrice,
@@ -74,11 +73,35 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     poolData
   )
 
+  const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
+  const feeRef = useRef<HTMLDivElement>(null)
+
+  const Overlay = () => (
+    <div
+      onClick={e => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsFeeTooltipOpen(false)
+      }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1300,
+        backgroundColor: 'transparent'
+      }}
+    />
+  )
   const feeFragment = useMemo(
     () => (
       <Tooltip
-        enterTouchDelay={0}
-        onClick={e => e.stopPropagation()}
+        open={isFeeTooltipOpen}
+        onClose={() => setIsFeeTooltipOpen(false)}
+        disableFocusListener
+        disableHoverListener
+        disableTouchListener
         title={
           isActive ? (
             <>
@@ -99,9 +122,15 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         <Grid
           container
           item
+          ref={feeRef}
           className={classNames(sharedClasses.fee, isActive ? sharedClasses.activeFee : undefined)}
           justifyContent='center'
-          alignItems='center'>
+          alignItems='center'
+          onClick={e => {
+            e.stopPropagation()
+            setIsFeeTooltipOpen(prev => !prev)
+          }}
+          style={{ cursor: 'pointer' }}>
           <Typography
             className={classNames(
               sharedClasses.infoText,
@@ -112,9 +141,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         </Grid>
       </Tooltip>
     ),
-    [fee, classes, isActive]
+    [fee, isActive, isFeeTooltipOpen, sharedClasses]
   )
-
   const valueFragment = useMemo(
     () => (
       <Grid
@@ -281,170 +309,170 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     setIsPromotedPoolInactive,
     setAllowPropagation
   ])
+
   return (
-    <Grid
-      className={classes.root}
-      container
-      direction='row'
-      alignItems='center'
-      justifyContent='space-between'>
-      <Grid container item className={classes.mdTop} direction='row' wrap='nowrap'>
-        <Grid
-          container
-          item
-          className={classes.iconsAndNames}
-          alignItems='center'
-          wrap='nowrap'
-          sx={{ display: 'flex', justifyContent: 'space-between' }}>
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-            <Grid
-              container
-              item
-              className={sharedClasses.icons}
-              alignItems='center'
-              wrap='nowrap'
-              sx={{ width: '100%' }}>
-              <img
-                className={sharedClasses.tokenIcon}
-                src={xToY ? tokenXIcon : tokenYIcon}
-                alt={xToY ? tokenXName : tokenYName}
-              />
-              <TooltipHover text='Reverse tokens'>
-                <img
-                  className={sharedClasses.arrows}
-                  src={SwapList}
-                  alt='Arrow'
-                  onClick={e => {
-                    e.stopPropagation()
-                    setXToY(!xToY)
-                  }}
-                />
-              </TooltipHover>
-              <img
-                className={sharedClasses.tokenIcon}
-                src={xToY ? tokenYIcon : tokenXIcon}
-                alt={xToY ? tokenYName : tokenXName}
-              />
-            </Grid>
-
-            <Typography className={sharedClasses.names}>
-              {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
-            </Typography>
-          </Box>
-
-          <Box>
-            {networkSelector === NetworkType.Mainnet && (
-              <Box
-                ref={airdropIconRef}
-                sx={{
-                  marginLeft: '16px',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}>
-                {promotedIconFragment}
-              </Box>
-            )}
-          </Box>
-        </Grid>
-      </Grid>
-      <Grid sx={{ width: '100%' }}>
-        <Grid
-          container
-          item
-          className={sharedClasses.liquidity}
-          sx={{ marginTop: '13px' }}
-          justifyContent='center'
-          alignItems='center'>
-          <Typography className={sharedClasses.infoText}>
-            {tokenXPercentage === 100 && (
-              <span>
-                {tokenXPercentage}
-                {'%'} {xToY ? tokenXName : tokenYName}
-              </span>
-            )}
-            {tokenYPercentage === 100 && (
-              <span>
-                {tokenYPercentage}
-                {'%'} {xToY ? tokenYName : tokenXName}
-              </span>
-            )}
-
-            {tokenYPercentage !== 100 && tokenXPercentage !== 100 && (
-              <span>
-                {tokenXPercentage}
-                {'%'} {xToY ? tokenXName : tokenYName} {' - '} {tokenYPercentage}
-                {'%'} {xToY ? tokenYName : tokenXName}
-              </span>
-            )}
-          </Typography>
-        </Grid>
-      </Grid>
-      <Grid container item className={classes.mdInfo} direction='row'>
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            gap: 1,
-            marginTop: '8px'
-          }}>
-          <Box sx={{ width: '50%' }}>
-            {feeFragment}
-
-            {/* <Hidden mdDown>{feeFragment}</Hidden> */}
-          </Box>
-          <Box sx={{ width: '50%' }}>{valueFragment}</Box>
-        </Box>
-
-        <Grid
-          container
-          item
-          className={classes.minMax}
-          justifyContent='space-between'
-          alignItems='center'
-          wrap='nowrap'>
-          <>
-            <Typography className={classNames(sharedClasses.greenText, sharedClasses.label)}>
-              MIN - MAX
-            </Typography>
-            <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
-              {isFullRange ? (
-                <Typography className={sharedClasses.infoText}>FULL RANGE</Typography>
-              ) : (
-                <Typography className={sharedClasses.infoText}>
-                  {formatNumber(xToY ? min : 1 / max)} - {formatNumber(xToY ? max : 1 / min)}{' '}
-                  {xToY ? tokenYName : tokenXName} per {xToY ? tokenXName : tokenYName}
-                </Typography>
-              )}
-            </Grid>
-          </>
-        </Grid>
-
-        {isLocked && (
+    <>
+      {isFeeTooltipOpen && <Overlay />}
+      <Grid
+        className={classes.root}
+        container
+        direction='row'
+        alignItems='center'
+        justifyContent='space-between'>
+        <Grid container item className={classes.mdTop} direction='row' wrap='nowrap'>
           <Grid
             container
             item
-            className={classNames(
-              sharedClasses.dropdown,
-              isLocked ? sharedClasses.dropdownLocked : undefined
-            )}
+            className={classes.iconsAndNames}
+            alignItems='center'
+            wrap='nowrap'
+            sx={{ display: 'flex', justifyContent: 'space-between' }}>
+            <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+              <Grid
+                container
+                item
+                className={sharedClasses.icons}
+                alignItems='center'
+                wrap='nowrap'
+                sx={{ width: '100%' }}>
+                <img
+                  className={sharedClasses.tokenIcon}
+                  src={xToY ? tokenXIcon : tokenYIcon}
+                  alt={xToY ? tokenXName : tokenYName}
+                />
+                <TooltipHover text='Reverse tokens'>
+                  <img
+                    className={sharedClasses.arrows}
+                    src={SwapList}
+                    alt='Arrow'
+                    onClick={e => {
+                      e.stopPropagation()
+                      setXToY(!xToY)
+                    }}
+                  />
+                </TooltipHover>
+                <img
+                  className={sharedClasses.tokenIcon}
+                  src={xToY ? tokenYIcon : tokenXIcon}
+                  alt={xToY ? tokenYName : tokenXName}
+                />
+              </Grid>
+
+              <Typography className={sharedClasses.names}>
+                {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+              </Typography>
+            </Box>
+
+            <Box>
+              {networkSelector === NetworkType.Mainnet && (
+                <Box
+                  ref={airdropIconRef}
+                  sx={{
+                    marginLeft: '16px',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center'
+                  }}>
+                  {promotedIconFragment}
+                </Box>
+              )}
+            </Box>
+          </Grid>
+        </Grid>
+        <Grid sx={{ width: '100%' }}>
+          <Grid
+            container
+            item
+            className={sharedClasses.liquidity}
+            sx={{ marginTop: '13px' }}
             justifyContent='center'
+            alignItems='center'>
+            <Typography className={sharedClasses.infoText}>
+              {tokenXPercentage === 100 && (
+                <span>
+                  {tokenXPercentage}
+                  {'%'} {xToY ? tokenXName : tokenYName}
+                </span>
+              )}
+              {tokenYPercentage === 100 && (
+                <span>
+                  {tokenYPercentage}
+                  {'%'} {xToY ? tokenYName : tokenXName}
+                </span>
+              )}
+
+              {tokenYPercentage !== 100 && tokenXPercentage !== 100 && (
+                <span>
+                  {tokenXPercentage}
+                  {'%'} {xToY ? tokenXName : tokenYName} {' - '} {tokenYPercentage}
+                  {'%'} {xToY ? tokenYName : tokenXName}
+                </span>
+              )}
+            </Typography>
+          </Grid>
+        </Grid>
+        <Grid container item className={classes.mdInfo} direction='row'>
+          <Box
+            sx={{
+              width: '100%',
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              gap: 1,
+              marginTop: '8px'
+            }}>
+            <Box sx={{ width: '50%' }}>{feeFragment}</Box>
+            <Box sx={{ width: '50%' }}>{valueFragment}</Box>
+          </Box>
+
+          <Grid
+            container
+            item
+            className={classes.minMax}
+            justifyContent='space-between'
             alignItems='center'
             wrap='nowrap'>
-            {isLocked ? (
-              <TooltipHover text={'Liquidity locked'}>
-                <img src={lockIcon} alt='Lock' />
-              </TooltipHover>
-            ) : (
-              <TooltipHover text={'Liquidity not locked'}>
-                <img src={unlockIcon} alt='Lock' />
-              </TooltipHover>
-            )}
+            <>
+              <Typography className={classNames(sharedClasses.greenText, sharedClasses.label)}>
+                MIN - MAX
+              </Typography>
+              <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
+                {isFullRange ? (
+                  <Typography className={sharedClasses.infoText}>FULL RANGE</Typography>
+                ) : (
+                  <Typography className={sharedClasses.infoText}>
+                    {formatNumber(xToY ? min : 1 / max)} - {formatNumber(xToY ? max : 1 / min)}{' '}
+                    {xToY ? tokenYName : tokenXName} per {xToY ? tokenXName : tokenYName}
+                  </Typography>
+                )}
+              </Grid>
+            </>
           </Grid>
-        )}
+
+          {isLocked && (
+            <Grid
+              container
+              item
+              className={classNames(
+                sharedClasses.dropdown,
+                isLocked ? sharedClasses.dropdownLocked : undefined
+              )}
+              justifyContent='center'
+              alignItems='center'
+              wrap='nowrap'>
+              {isLocked ? (
+                <TooltipHover text={'Liquidity locked'}>
+                  <img src={lockIcon} alt='Lock' />
+                </TooltipHover>
+              ) : (
+                <TooltipHover text={'Liquidity not locked'}>
+                  <img src={unlockIcon} alt='Lock' />
+                </TooltipHover>
+              )}
+            </Grid>
+          )}
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   )
 }
