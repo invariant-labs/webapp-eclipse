@@ -643,7 +643,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                   concentrationIndex={
                     positionOpeningMethod === 'concentration'
                       ? concentrationIndex
-                      : Math.ceil(calculateConcentration(leftRange, rightRange))
+                      : concentrationIndexForRange
                   }
                   estimatedPointsPerDay={estimatedPointsPerDay}
                   estimatedScalePoints={estimatedScalePoints}
