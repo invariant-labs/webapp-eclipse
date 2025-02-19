@@ -187,7 +187,7 @@ const MarketEvents = () => {
     }
 
     connectEvents()
-  }, [dispatch, allPools.length, networkStatus, marketProgram])
+  }, [dispatch, allPools.length, networkStatus, marketProgram, currentPositionIndex])
 
   useEffect(() => {
     if (networkStatus !== Status.Initialized || !marketProgram || allPools.length === 0) {
