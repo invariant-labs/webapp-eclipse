@@ -321,7 +321,7 @@ export function* transferAirdropSOL(): Generator {
   if (!txid.length) {
     yield put(
       snackbarsActions.add({
-        message: 'Failed to airdrop testnet ETH. Please try again.',
+        message: 'Failed to airdrop testnet ETH. Please try again',
         variant: 'error',
         persist: false,
         txid
@@ -667,7 +667,7 @@ export function* handleUnwrapWETH(): Generator {
     if (!unwrapTxid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
+          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet',
           variant: 'warning',
           persist: false,
           txid: unwrapTxid

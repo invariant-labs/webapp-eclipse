@@ -233,7 +233,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
         snackbarsActions.add({
           message:
             // 'Position adding failed. Please unwrap wrapped ETH in your wallet and try again.',
-            'Position adding failed. Please try again.',
+            'Position adding failed. Please try again',
           variant: 'error',
           persist: false,
           txid: createPositionTxid
@@ -309,7 +309,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -480,7 +480,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
       return yield put(
         snackbarsActions.add({
-          message: 'Position adding failed. Please try again.',
+          message: 'Position adding failed. Please try again',
           variant: 'error',
           persist: false,
           txid: txId
@@ -527,7 +527,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -702,7 +702,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Position adding failed. Please try again.',
+          message: 'Position adding failed. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -747,7 +747,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1036,7 +1036,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to claim fee. Please try again.',
+          message: 'Failed to claim fee. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -1079,7 +1079,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1201,7 +1201,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to claim fee. Please try again.',
+          message: 'Failed to claim fee. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -1245,7 +1245,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1375,7 +1375,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to close position. Please try again.',
+          message: 'Failed to close position. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -1421,7 +1421,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1549,7 +1549,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to close position. Please try again.',
+          message: 'Failed to close position. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -1595,7 +1595,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
