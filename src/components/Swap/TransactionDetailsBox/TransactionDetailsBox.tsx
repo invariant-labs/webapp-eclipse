@@ -1,6 +1,5 @@
 import React from 'react'
-import { Grid, Typography } from '@mui/material'
-import loadingAnimation from '@static/gif/loading.gif'
+import { Grid, Skeleton, Typography } from '@mui/material'
 import { formatNumber, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { BN } from '@coral-xyz/anchor'
@@ -47,7 +46,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Exchange rate:</Typography>
           {isLoadingRate ? (
-            <img src={loadingAnimation} className={classes.loading} alt='Loading' />
+            <Skeleton width={80} height={20} variant='rounded' animation='wave' />
           ) : (
             <Typography className={classes.value}>
               {exchangeRate.val === Infinity
@@ -59,14 +58,22 @@ const TransactionDetailsBox: React.FC<IProps> = ({
 
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Fee:</Typography>
-          <Typography className={classes.value}>{`${feePercent}%`}</Typography>
+          {isLoadingRate ? (
+            <Skeleton width={80} height={20} variant='rounded' animation='wave' />
+          ) : (
+            <Typography className={classes.value}>{`${feePercent.toFixed(2)}%`}</Typography>
+          )}
         </Grid>
 
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Price impact:</Typography>
-          <Typography className={classes.value}>
-            {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}
-          </Typography>
+          {isLoadingRate ? (
+            <Skeleton width={80} height={20} variant='rounded' animation='wave' />
+          ) : (
+            <Typography className={classes.value}>
+              {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}
+            </Typography>
+          )}
         </Grid>
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Slippage tolerance:</Typography>

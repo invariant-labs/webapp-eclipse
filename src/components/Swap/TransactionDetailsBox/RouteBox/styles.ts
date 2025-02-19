@@ -12,7 +12,7 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((theme, { onePoo
     justifyContent: 'space-between',
     position: 'relative',
 
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       justifyContent: 'center'
     }
   },
@@ -43,7 +43,7 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((theme, { onePoo
     borderRadius: '50%'
   },
   tokenLabel: {
-    ...typography.heading4,
+    fontSize: 14,
     color: colors.invariant.textGrey
   },
   tokenLabelSkeleton: {
@@ -64,7 +64,7 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((theme, { onePoo
     right: 0,
     bottom: 0,
 
-    [theme.breakpoints.down('md')]: {
+    [theme.breakpoints.down('sm')]: {
       justifyContent: 'center'
     }
   },
