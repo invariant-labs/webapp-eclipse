@@ -245,22 +245,14 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     return rangeConcentration
   }, [concentrationArray])
-  console.log(concentrationArray[concentrationArray.length - 1])
-  console.log(calculateConcentration(0, 2 * tickSpacing))
+
   const concentrationIndexForRange = useMemo(() => {
-    try {
-      const index = rangeConcentrationArray.findIndex(value => {
-        return Math.ceil(value) >= Math.ceil(calculateConcentration(leftRange, rightRange))
-      })
-      return index !== -1 ? index : 0
-      console.log(index)
-    } catch {
-      return 0
-    }
+    const index = rangeConcentrationArray.findIndex(value => {
+      return Math.ceil(value) >= Math.ceil(calculateConcentration(leftRange, rightRange))
+    })
+    return index !== -1 ? index : 0
   }, [rangeConcentrationArray, leftRange, rightRange])
 
-  console.log(concentrationIndexForRange)
-  console.log(concentrationIndex)
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
       return 'Select tokens to set price range.'
