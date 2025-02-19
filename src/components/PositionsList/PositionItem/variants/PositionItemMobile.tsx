@@ -72,59 +72,81 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     poolData
   )
 
+  const handlePopoverState = (isOpen: boolean) => {
+    if (isOpen) {
+      setAllowPropagation(false)
+    } else {
+      setTimeout(() => {
+        setAllowPropagation(true)
+      }, 500)
+    }
+  }
   const handleInteraction = (event: React.MouseEvent) => {
     event.stopPropagation()
     setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
     setAllowPropagation(false)
   }
-
-  useEffect(() => {
-    setAllowPropagation(!isLockPositionModalOpen)
-  }, [isLockPositionModalOpen])
-
   useEffect(() => {
     const PROPAGATION_ALLOW_TIME = 500
 
     const handleClickOutside = (event: MouseEvent) => {
-      if (
+      const isClickInAirdropIcon =
         airdropIconRef.current &&
-        !(airdropIconRef.current as HTMLElement).contains(event.target as Node) &&
-        !document.querySelector('.promoted-pool-popover')?.contains(event.target as Node) &&
-        !document.querySelector('.promoted-pool-inactive-popover')?.contains(event.target as Node)
-      ) {
-        setIsPromotedPoolPopoverOpen(false)
-        setIsPromotedPoolInactive(false)
+        (airdropIconRef.current as HTMLElement).contains(event.target as Node)
+      const isClickInPromotedPopover = document
+        .querySelector('.promoted-pool-popover')
+        ?.contains(event.target as Node)
+      const isClickInInactivePopover = document
+        .querySelector('.promoted-pool-inactive-popover')
+        ?.contains(event.target as Node)
+
+      console.log('Click targets:', {
+        isClickInAirdropIcon,
+        isClickInPromotedPopover,
+        isClickInInactivePopover
+      })
+
+      if (!isClickInAirdropIcon && !isClickInPromotedPopover && !isClickInInactivePopover) {
+        if (isPromotedPoolPopoverOpen) {
+          setIsPromotedPoolPopoverOpen(false)
+        }
+
+        if (isPromotedPoolInactive) {
+          setIsPromotedPoolInactive(false)
+        }
+
         setTimeout(() => {
           setAllowPropagation(true)
         }, PROPAGATION_ALLOW_TIME)
       }
     }
 
-    if (isPromotedPoolPopoverOpen || isLockPositionModalOpen || isPromotedPoolInactive) {
+    if (isPromotedPoolPopoverOpen || isPromotedPoolInactive || isLockPositionModalOpen) {
       document.addEventListener('click', handleClickOutside)
+    } else {
+      document.removeEventListener('click', handleClickOutside)
     }
 
     return () => {
       document.removeEventListener('click', handleClickOutside)
     }
-  }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive])
+  }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive, isLockPositionModalOpen])
 
+  useEffect(() => {
+    setAllowPropagation(!isLockPositionModalOpen)
+  }, [isLockPositionModalOpen])
   const promotedIconFragment = useMemo(() => {
     if (isPromoted && isActive) {
       return (
         <>
           <div
             className={classes.actionButton}
-            onClick={handleInteraction}
-            onPointerEnter={() => {
-              if (window.matchMedia('(hover: hover)').matches) {
-                setIsPromotedPoolPopoverOpen(true)
-              }
-            }}
-            onPointerLeave={() => {
-              if (window.matchMedia('(hover: hover)').matches) {
-                setIsPromotedPoolPopoverOpen(false)
-              }
+            onClick={event => {
+              console.log('Promoted pool icon clicked')
+              event.stopPropagation()
+              setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+              console.log('Setting allowPropagation to false')
+              setAllowPropagation(false)
             }}>
             <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
           </div>
@@ -134,7 +156,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             anchorEl={airdropIconRef.current}
             open={isPromotedPoolPopoverOpen}
             onClose={() => {
+              console.log('PromotedPoolPopover onClose triggered')
               setIsPromotedPoolPopoverOpen(false)
+              console.log('Setting allowPropagation to true in 500ms')
+              setTimeout(() => {
+                console.log('Actually setting allowPropagation to true from onClose')
+                setAllowPropagation(true)
+              }, 500)
             }}
             headerText={
               <>
@@ -156,26 +184,29 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           open={isPromotedPoolInactive}
           onClose={() => {
             setIsPromotedPoolInactive(false)
+            handlePopoverState(false)
           }}
           isActive={isActive}
           isPromoted={isPromoted}
         />
-
         <div
           className={classes.actionButton}
           onClick={event => {
             event.stopPropagation()
-            setIsPromotedPoolInactive(!isPromotedPoolInactive)
-            setAllowPropagation(false)
+            const newState = !isPromotedPoolInactive
+            setIsPromotedPoolInactive(newState)
+            handlePopoverState(newState)
           }}
           onPointerEnter={() => {
             if (window.matchMedia('(hover: hover)').matches) {
               setIsPromotedPoolInactive(true)
+              handlePopoverState(true)
             }
           }}
           onPointerLeave={() => {
             if (window.matchMedia('(hover: hover)').matches) {
               setIsPromotedPoolInactive(false)
+              handlePopoverState(false)
             }
           }}>
           <img
@@ -199,10 +230,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     handleInteraction,
     airdropIconRef,
     estimated24hPoints,
-    pointsPerSecond,
-    setIsPromotedPoolPopoverOpen,
-    setIsPromotedPoolInactive,
-    setAllowPropagation
+    pointsPerSecond
   ])
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
