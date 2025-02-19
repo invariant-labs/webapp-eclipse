@@ -12,6 +12,7 @@ import {
   addNewTokenToLocalStorage,
   calcPriceBySqrtPrice,
   calcPriceByTickIndex,
+  calculateConcentration,
   createPlaceholderLiquidityPlot,
   getMockedTokenPrice,
   getNewTokenOrThrow,
@@ -43,7 +44,7 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
-import { Pair } from '@invariant-labs/sdk-eclipse'
+import { DENOMINATOR, Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -94,7 +95,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     middle: BN
     max: BN
   }>({ min: new BN(0), middle: new BN(0), max: new BN(0) })
-
+  console.log(potentialLiquidity.toString())
   const [liquidity, setLiquidity] = useState<BN>(new BN(0))
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
@@ -804,31 +805,52 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     return estimatedPoints as BN
   }, [liquidity, poolIndex, isPromotedPool])
 
-  const estimatedPointsForScale = (): { min: BN; middle: BN; max: BN } => {
+  const estimatedPointsForScale = (
+    currentConcentration: number,
+    positionOpeningMethod: PositionOpeningMethod,
+    middleConcentration: number
+  ): { min: BN; middle: BN; max: BN } => {
     const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
 
     if (!isPromotedPool || poolIndex === null) {
       return { min: new BN(0), middle: new BN(0), max: new BN(0) }
     }
 
+    const maxConcentration =
+      positionOpeningMethod === 'concentration'
+        ? calculateConcentration(0, 2 * tickSpacing)
+        : calculateConcentration(0, tickSpacing)
+
+    const liquidityMultiplier =
+      Number((maxConcentration / currentConcentration).toFixed(+DECIMAL)) * Number(DENOMINATOR)
+
+    const maxLiquidity = new BN(
+      new BN(liquidityMultiplier).mul(liquidity).toString().slice(0, -DECIMAL)
+    )
+    const minLiquidity = maxLiquidity
+      .div(new BN(maxConcentration))
+      .mul(positionOpeningMethod === 'concentration' ? new BN(2) : new BN(1))
+
+    const midLiquidity = maxLiquidity.div(new BN(maxConcentration)).mul(new BN(middleConcentration))
+
     const poolPointsPerSecond = promotedPools.find(
       pool => pool.address === poolAddress.toString()
     )!.pointsPerSecond
 
     const estimatedMinPoints = estimatePointsForLiquidity(
-      potentialLiquidity.min,
+      minLiquidity,
       allPools[poolIndex] as PoolStructure,
       new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
     )
 
     const estimatedMiddlePoints = estimatePointsForLiquidity(
-      potentialLiquidity.middle,
+      midLiquidity,
       allPools[poolIndex] as PoolStructure,
       new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
     )
 
     const estimatedMaxPoints = estimatePointsForLiquidity(
-      potentialLiquidity.max,
+      maxLiquidity,
       allPools[poolIndex] as PoolStructure,
       new BN(poolPointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
     )

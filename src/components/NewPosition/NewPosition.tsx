@@ -136,7 +136,11 @@ export interface INewPosition {
   onDisconnectWallet: () => void
   canNavigate: boolean
   estimatedPointsPerDay: BN
-  estimatedPointsForScale: () => { min: BN; middle: BN; max: BN }
+  estimatedPointsForScale: (
+    currentConcentration: number,
+    positionOpeningMethod: PositionOpeningMethod,
+    middleConc: number
+  ) => { min: BN; middle: BN; max: BN }
   isPromotedPool: boolean
 }
 
@@ -346,8 +350,14 @@ export const NewPosition: React.FC<INewPosition> = ({
   }
 
   const estimatedScalePoints = useMemo(() => {
-    return estimatedPointsForScale()
-  }, [estimatedPointsPerDay, concentrationIndex, tokenADeposit, tokenBDeposit])
+    return estimatedPointsForScale(
+      positionOpeningMethod === 'concentration'
+        ? concentrationArray[concentrationIndex]
+        : calculateConcentration(leftRange, rightRange),
+      positionOpeningMethod,
+      +concentrationArray[Math.floor(concentrationArray.length / 2) - 1].toFixed(0)
+    )
+  }, [estimatedPointsPerDay, tokenADeposit, tokenBDeposit, positionOpeningMethod])
 
   const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
     const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
@@ -688,7 +698,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                   concentrationIndex={
                     positionOpeningMethod === 'concentration'
                       ? concentrationIndex
-                      : calculateConcentration(leftRange, rightRange)
+                      : Math.ceil(calculateConcentration(leftRange, rightRange))
                   }
                   estimatedPointsPerDay={estimatedPointsPerDay}
                   estimatedScalePoints={estimatedScalePoints}
@@ -1097,7 +1107,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             concentrationIndex={
               positionOpeningMethod === 'concentration'
                 ? concentrationIndex
-                : calculateConcentration(leftRange, rightRange)
+                : Math.ceil(calculateConcentration(leftRange, rightRange))
             }
             estimatedPointsPerDay={estimatedPointsPerDay}
             estimatedScalePoints={estimatedScalePoints}
