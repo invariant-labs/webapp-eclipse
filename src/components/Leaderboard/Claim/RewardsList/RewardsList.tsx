@@ -21,7 +21,7 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
 
   return (
     <div className={classes.container}>
-      <Typography mb={3} style={{ ...typography.heading2, color: colors.invariant.text }}>
+      <Typography mb={3} style={{ ...typography.heading3, color: colors.invariant.text }}>
         History of Prizes
       </Typography>
       <Scrollbars
