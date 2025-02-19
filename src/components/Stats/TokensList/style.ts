@@ -16,7 +16,7 @@ export const useStyles = makeStyles()(() => ({
     borderBottomRightRadius: '24px',
     width: '100%',
     display: 'flex',
-    justifyContent: 'center',
+    justifyContent: 'flex-end',
     [theme.breakpoints.down('lg')]: {
       padding: '20px 12px'
     }

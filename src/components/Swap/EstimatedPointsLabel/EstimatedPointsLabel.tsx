@@ -1,7 +1,7 @@
 import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
 import icons from '@static/icons'
-import { formatNumber, removeAdditionalDecimals } from '@utils/utils'
+import { formatNumberWithSuffix, removeAdditionalDecimals } from '@utils/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
@@ -77,7 +77,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
                     new BN('1000000000').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
                   )
                 ? '>1B'
-                : formatNumber(displayedValue)}
+                : formatNumberWithSuffix(displayedValue)}
           </p>
 
           <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />

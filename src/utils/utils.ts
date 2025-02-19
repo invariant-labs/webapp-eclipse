@@ -732,7 +732,7 @@ export const printSubNumber = (amount: number): string => {
     .join('')
 }
 
-export const formatNumber = (
+export const formatNumberWithSuffix = (
   number: number | bigint | string,
   noDecimals?: boolean,
   decimalsAfterDot: number = 3
@@ -817,7 +817,7 @@ function trimEndingZeros(num) {
   return num.toString().replace(/0+$/, '')
 }
 
-export const formatNumber2 = (number: number | bigint | string): string => {
+export const formatNumberWithoutSuffix = (number: number | bigint | string): string => {
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)

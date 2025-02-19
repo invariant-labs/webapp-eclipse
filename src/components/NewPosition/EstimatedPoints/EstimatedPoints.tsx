@@ -6,7 +6,7 @@ import GradientBorder from '@components/GradientBorder/GradientBorder'
 import { theme, typography } from '@static/theme'
 import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
-import { formatNumber, printBN } from '@utils/utils'
+import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { PositionOpeningMethod } from '@store/consts/types'
 
@@ -71,26 +71,26 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
     ? isConnected && !estimatedPointsPerDay.isZero()
       ? '<0.01'
       : 0
-    : formatNumber(printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL), false, 1)
+    : formatNumberWithSuffix(printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL), false, 1)
 
   const estimatedPointsForScaleFormat = useMemo(() => {
     const minPoints = isLessThanMinimal(estimatedScalePoints.min)
       ? isConnected && !estimatedScalePoints.min.isZero()
         ? '<0.01'
         : 0
-      : formatNumber(printBN(estimatedScalePoints.min, LEADERBOARD_DECIMAL))
+      : formatNumberWithSuffix(printBN(estimatedScalePoints.min, LEADERBOARD_DECIMAL))
 
     const middlePoints = isLessThanMinimal(estimatedScalePoints.middle)
       ? isConnected && !estimatedScalePoints.middle.isZero()
         ? '<0.01'
         : 0
-      : formatNumber(printBN(estimatedScalePoints.middle, LEADERBOARD_DECIMAL))
+      : formatNumberWithSuffix(printBN(estimatedScalePoints.middle, LEADERBOARD_DECIMAL))
 
     const maxPoints = isLessThanMinimal(estimatedScalePoints.max)
       ? isConnected && !estimatedScalePoints.max.isZero()
         ? '<0.01'
         : 0
-      : formatNumber(printBN(estimatedScalePoints.max, LEADERBOARD_DECIMAL))
+      : formatNumberWithSuffix(printBN(estimatedScalePoints.max, LEADERBOARD_DECIMAL))
 
     return {
       min: minPoints,
