@@ -44,7 +44,13 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
-import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors/leaderboard'
+import {
+  feeds,
+  pointsPerUsd,
+  swapPairs,
+  swapMultiplier,
+  leaderboardSelectors
+} from '@store/selectors/leaderboard'
 
 type Props = {
   initialTokenFrom: string
@@ -55,7 +61,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const dispatch = useDispatch()
 
   const connection = getCurrentSolanaConnection()
-
+  const { promotedPools } = useSelector(leaderboardSelectors.config)
   const walletStatus = useSelector(status)
   const swap = useSelector(swapPool)
   const tickmap = useSelector(tickMaps)
@@ -120,8 +126,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
       ? tickerToAddress(networkType, initialTokenFrom)
-      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString())
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
     tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
@@ -321,6 +327,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
   return (
     <Swap
+      promotedPools={promotedPools}
       isFetchingNewPool={isFetchingNewPool}
       onRefresh={onRefresh}
       onSwap={(

@@ -47,6 +47,7 @@ import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPo
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
+import { IPromotedPool } from '@store/sagas/leaderboard'
 
 export interface Pools {
   tokenX: PublicKey
@@ -123,6 +124,7 @@ export interface ISwap {
     }
   >
   promotedSwapPairs: { tokenX: string; tokenY: string }[]
+  promotedPools: IPromotedPool[]
   swapMultiplier: string
 }
 
@@ -164,6 +166,7 @@ export const Swap: React.FC<ISwap> = ({
   pointsPerUsdFee,
   feeds,
   promotedSwapPairs,
+  promotedPools,
   swapMultiplier
 }) => {
   const { classes } = useStyles()
@@ -438,6 +441,8 @@ export const Swap: React.FC<ISwap> = ({
 
       if (inputRef === inputTarget.FROM) {
         await handleSimulate(
+          isPairGivingPoints,
+          promotedPools,
           pools,
           poolTicks,
           tickmap,
@@ -449,6 +454,8 @@ export const Swap: React.FC<ISwap> = ({
         ).then(value => setSimulateResult(value))
       } else if (inputRef === inputTarget.TO) {
         await handleSimulate(
+          isPairGivingPoints,
+          promotedPools,
           pools,
           poolTicks,
           tickmap,
@@ -578,7 +585,7 @@ export const Swap: React.FC<ISwap> = ({
       return 'Amount out is zero'
     }
 
-    if (isEveryPoolEmpty) {
+    if (isEveryPoolEmpty || isError('RPC Error')) {
       return 'RPC connection error'
     }
 
