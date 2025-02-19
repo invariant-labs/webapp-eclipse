@@ -4,16 +4,18 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
-    width: '100%',
     display: 'flex',
-    maxWidth: '100%',
 
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down('sm')]: {
       width: '100%'
     },
     '& .MuiPagination-ul': {
       flexWrap: 'nowrap',
-      margin: '10px 0 10px'
+      margin: '10px 0 10px',
+      justifyContent: 'space-between',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
+      }
     },
 
     '& .MuiPaginationItem-icon': {
