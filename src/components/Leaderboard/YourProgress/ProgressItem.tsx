@@ -67,8 +67,8 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
   return (
     <Box
       sx={{
-        width: isWideBlock ? '100%' : '233px',
-        height: blockHeight?.desktop ? blockHeight?.desktop : '88px',
+        width: isWideBlock ? '100%' : '250px',
+        height: blockHeight?.desktop ? blockHeight?.desktop : '94px',
         backgroundSize: 'cover',
         backgroundImage: `url(${background.desktop})`,
         backgroundRepeat: 'no-repeat',
@@ -101,7 +101,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           flexDirection: 'column',
           gap: '8px',
           alignItems: getAlignmentValue(desktopLabelAligment),
-          justifyContent: getAlignmentValue(desktopLabelAligment),
+          justifyContent: 'flex-start',
           [theme.breakpoints.down('md')]: {
             alignItems: 'center',
             justifyContent: 'center'

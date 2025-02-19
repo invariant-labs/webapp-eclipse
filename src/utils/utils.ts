@@ -83,7 +83,9 @@ import {
   WETH_MAIN,
   KYSOL_MAIN,
   EZSOL_MAIN,
-  LEADERBOARD_DECIMAL
+  LEADERBOARD_DECIMAL,
+  TWO_WEEKS,
+  ONE_DAY
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -100,6 +102,7 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
+import { Interval } from '@components/Modals/ContentPoints/ContentPointsModal'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1917,4 +1920,21 @@ export const formatNumberWithSpaces = (number: string) => {
   const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
 
   return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+}
+
+export const generateTwoWeekRangesUpToToday = (start: number): Interval[] => {
+  const now = Math.floor(Date.now() / 1000)
+  const ranges: Interval[] = []
+  let currentStart = start
+
+  while (currentStart <= now) {
+    const currentEnd = currentStart + TWO_WEEKS
+    ranges.push({
+      startTimestamp: currentStart,
+      endTimestamp: currentEnd
+    })
+    currentStart = currentEnd + ONE_DAY
+  }
+
+  return ranges
 }

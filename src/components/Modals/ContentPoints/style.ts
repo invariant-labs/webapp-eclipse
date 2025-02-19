@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
@@ -33,7 +33,12 @@ const useStyles = makeStyles()(() => {
       boxShadow: 'none',
       maxWidth: '622px',
       padding: '24px',
-      margin: 0
+      margin: 0,
+      [theme.breakpoints.down('sm')]: {
+        padding: '24px 8px',
+        width: '100%',
+        margin: '0px 8px'
+      }
     },
     description: {
       display: 'flex',
@@ -55,15 +60,10 @@ const useStyles = makeStyles()(() => {
     allocationSection: {
       display: 'flex',
       flexDirection: 'column',
+      crollbarWidth: 'none',
+      msOverflowStyle: 'none',
       '&::-webkit-scrollbar': {
-        width: '6px'
-      },
-      '&::-webkit-scrollbar-track': {
-        background: colors.invariant.newDark
-      },
-      '&::-webkit-scrollbar-thumb': {
-        background: colors.invariant.pink,
-        borderRadius: '3px'
+        display: 'none'
       }
     },
     dateLabel: {
@@ -76,6 +76,53 @@ const useStyles = makeStyles()(() => {
       color: colors.invariant.green,
       textAlign: 'right',
       paddingRight: '10px'
+    },
+    link: {
+      textDecoration: 'none',
+      color: colors.invariant.green
+    },
+    row: {
+      '&:first-child': {
+        borderTop: `1px solid ${colors.invariant.light}`,
+        borderRadius: '11px 11px 0 0'
+      },
+      '&:last-child': {
+        borderBottom: `1px solid ${colors.invariant.light}`,
+        borderRadius: '0 0 11px 11px'
+      },
+      '&:nth-of-type(odd)': {
+        background: `#111931CC`
+      },
+      '&:nth-of-type(even)': {
+        background: `#11193180`
+      },
+      borderTop: `0.5px solid ${colors.invariant.light}`,
+      borderBottom: `0.5px solid ${colors.invariant.light}`
+    },
+    innerRow: {
+      height: '100%',
+      paddingLeft: '10px',
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between'
+    },
+    button: {
+      marginRight: '10px',
+      minWidth: '80px',
+      maxWidth: '80px',
+      height: '28px',
+      background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
+      borderRadius: '8px',
+      fontStyle: 'normal',
+      fontWeight: 700,
+      fontSize: '12px',
+      lineHeight: '15px',
+      textTransform: 'none',
+      color: colors.invariant.dark,
+      '&:hover': {
+        background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)'
+      }
     }
   }
 })

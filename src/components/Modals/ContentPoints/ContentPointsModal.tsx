@@ -1,14 +1,30 @@
-import React from 'react'
-import { Dialog, DialogContent, Box, Typography } from '@mui/material'
-import useStyles from './style'
-import { CurrentContentPointsEntry } from '@store/reducers/leaderboard'
+import React, { useMemo } from 'react'
+import { Dialog, DialogContent, Box, Typography, Button } from '@mui/material'
 import { FixedSizeList } from 'react-window'
-import { formatDate, formatNumberWithSpaces } from '@utils/utils'
+import useStyles from './style'
+import { formatDate, formatNumberWithSpaces, generateTwoWeekRangesUpToToday } from '@utils/utils'
+import { PROGRAM_START } from '@store/consts/static'
+
+export interface CurrentContentPointsEntry {
+  startTimestamp: number
+  endTimestamp: number
+  points: number
+}
 
 export interface IContentPointsModal {
   open: boolean
   userContentPoints: CurrentContentPointsEntry[] | null
   handleClose: () => void
+}
+
+export interface Interval {
+  startTimestamp: number
+  endTimestamp: number
+}
+
+interface IntervalWithPoints extends Interval {
+  points: number
+  isCurrent: boolean
 }
 
 export const ContentPointsModal: React.FC<IContentPointsModal> = ({
@@ -18,23 +34,59 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
 }) => {
   const { classes } = useStyles()
 
+  const nowInSeconds = Math.floor(Date.now() / 1000)
+
+  const safeUserContentPoints = userContentPoints ?? []
+
+  const twoWeekRanges: Interval[] = useMemo(() => generateTwoWeekRangesUpToToday(PROGRAM_START), [])
+
+  const intervalsWithPoints: IntervalWithPoints[] = useMemo(() => {
+    return twoWeekRanges.map(range => {
+      const matchingEntries = safeUserContentPoints.filter(
+        entry =>
+          entry.startTimestamp < range.endTimestamp && entry.endTimestamp > range.startTimestamp
+      )
+
+      const totalPoints = matchingEntries.reduce((sum, entry) => sum + entry.points, 0)
+
+      const isCurrent = nowInSeconds >= range.startTimestamp && nowInSeconds < range.endTimestamp
+
+      return {
+        ...range,
+        points: totalPoints,
+        isCurrent
+      }
+    })
+  }, [twoWeekRanges, safeUserContentPoints, nowInSeconds])
+
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
-    const entry = userContentPoints![index]
+    const entry = intervalsWithPoints[index]
+
     return (
-      <Box
-        key={index}
-        style={style}
-        display='flex'
-        flexDirection='row'
-        alignItems='center'
-        justifyContent='space-between'>
-        <Typography className={classes.dateLabel}>
-          {formatDate(entry.startTimestamp)}-{formatDate(entry.endTimestamp)}
-        </Typography>
-        <Typography className={classes.pointsLabel}>
-          + {formatNumberWithSpaces(entry.points.toString())}
-          {entry.points === 1 ? ' Point' : ' Points'}
-        </Typography>
+      <Box key={index} style={style} className={classes.row}>
+        <Box className={classes.innerRow}>
+          <Typography className={classes.dateLabel}>
+            {formatDate(entry.startTimestamp)} - {formatDate(entry.endTimestamp)}
+          </Typography>
+
+          {entry.isCurrent ? (
+            <Button
+              component='a'
+              href='https://docs.google.com/forms/d/e/1FAIpQLSe9fziOpaFeSj8fCEZWnKm5DHON2gqGeEM771s8tldihfBZUw/viewform'
+              target='_blank'
+              rel='noopener noreferrer'
+              className={classes.button}
+              onClick={() => {
+                console.log('Submit event for current interval')
+              }}>
+              Submit here
+            </Button>
+          ) : (
+            <Typography className={classes.pointsLabel}>
+              + {formatNumberWithSpaces(entry.points.toString())} Points
+            </Typography>
+          )}
+        </Box>
       </Box>
     )
   }
@@ -43,9 +95,6 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
     <Dialog open={open} onClose={handleClose} PaperProps={{ className: classes.paper }} fullWidth>
       <Box className={classes.header}>
         <Typography>Content Points Allocations</Typography>
-        {/* <IconButton onClick={handleClose}>
-          <img src={icons.closeSmallIcon} alt='close icon' />
-        </IconButton> */}
       </Box>
       <Box className={classes.description}>
         <Typography>
@@ -54,28 +103,23 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
             href='https://docs.invariant.app/docs/invariant_points/content'
             target='_blank'
             rel='noopener noreferrer'
-            style={{ color: 'inherit', textDecoration: 'underline' }}>
+            className={classes.link}>
             Content Program
-          </a>{' '}
-          below.
+          </a>
         </Typography>
       </Box>
 
       <DialogContent sx={{ padding: 0 }}>
         <Box>
           <Typography className={classes.allocationText}>Your allocations</Typography>
-          {userContentPoints && userContentPoints.length > 0 ? (
-            <FixedSizeList
-              height={200}
-              width='100%'
-              itemSize={40}
-              itemCount={userContentPoints.length}
-              className={classes.allocationSection}>
-              {Row}
-            </FixedSizeList>
-          ) : (
-            <Typography>No allocations available</Typography>
-          )}
+          <FixedSizeList
+            height={200}
+            width='100%'
+            itemSize={56}
+            itemCount={intervalsWithPoints.length}
+            className={classes.allocationSection}>
+            {Row}
+          </FixedSizeList>
         </Box>
       </DialogContent>
     </Dialog>

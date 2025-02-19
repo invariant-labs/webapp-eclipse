@@ -51,6 +51,21 @@ const useStyles = makeStyles()(() => {
       background: `linear-gradient(90deg, ${colors.invariant.component} 25%, ${colors.invariant.light} 50%, ${colors.invariant.component} 75%)`,
       backgroundSize: '200% 100%',
       animation: 'shimmer 2s infinite'
+    },
+    button: {
+      minWidth: '39px',
+      height: '24px',
+      background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
+      borderRadius: '8px',
+      fontStyle: 'normal',
+      fontWeight: 700,
+      fontSize: '12px',
+      lineHeight: '15px',
+      textTransform: 'none',
+      color: colors.invariant.dark,
+      '&:hover': {
+        background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)'
+      }
     }
   }
 })

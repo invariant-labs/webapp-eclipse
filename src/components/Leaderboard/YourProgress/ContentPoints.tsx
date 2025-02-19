@@ -1,10 +1,8 @@
-import { Box, IconButton, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
 import { theme } from '@static/theme'
-import newTab from '@static/svg/newTab.svg'
-import airDrop from '@static/svg/airdrop.svg'
 
 type Aligment = 'left' | 'center' | 'right'
 
@@ -23,13 +21,11 @@ interface IContentPointsProps {
   value: string | number
   tooltip?: string
   isLoading?: boolean
-  disabled: boolean
   setContentPointsOpen: (open: boolean) => void
 }
 
 export const ContentPoints: React.FC<IContentPointsProps> = ({
   background,
-  disabled,
   label,
   value,
   desktopLabelAligment,
@@ -72,8 +68,8 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
   return (
     <Box
       sx={{
-        width: isWideBlock ? '100%' : '233px',
-        height: blockHeight?.desktop ? blockHeight?.desktop : '88px',
+        width: isWideBlock ? '100%' : '250px',
+        height: blockHeight?.desktop ? blockHeight?.desktop : '94px',
         backgroundSize: 'cover',
         backgroundImage: `url(${background.desktop})`,
         backgroundRepeat: 'no-repeat',
@@ -106,7 +102,7 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
           flexDirection: 'column',
           gap: '8px',
           alignItems: getAlignmentValue(desktopLabelAligment),
-          justifyContent: getAlignmentValue(desktopLabelAligment),
+          justifyContent: 'flex-start',
           [theme.breakpoints.down('md')]: {
             alignItems: 'center',
             justifyContent: 'center'
@@ -151,40 +147,26 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
         </Box>
         {isLoading ? (
           <div className={classes.blur} />
+        ) : isMobile ? (
+          <Box display='grid' gridTemplateColumns='auto 1fr auto' gap='8px' alignItems='center'>
+            <Box sx={{ visibility: 'hidden' }}>
+              <Button className={classes.button}>More</Button>
+            </Box>
+
+            <Typography className={classes.headerBigText} textAlign='center'>
+              {value}
+            </Typography>
+
+            <Button className={classes.button} onClick={() => setContentPointsOpen(true)}>
+              More
+            </Button>
+          </Box>
         ) : (
           <Box display='flex' alignItems='center' gap='8px'>
             <Typography className={classes.headerBigText}>{value}</Typography>
-            <Box
-              display='flex'
-              alignItems='center'
-              gap='8px'
-              sx={isMobile ? { position: 'absolute', left: '55%' } : {}}>
-              <a
-                href='https://docs.invariant.app/docs/invariant_points/content'
-                target='_blank'
-                rel='noopener noreferrer'
-                style={{ color: 'inherit', textDecoration: 'underline' }}>
-                <img
-                  src={newTab}
-                  alt='new'
-                  width={14}
-                  style={{
-                    filter:
-                      'brightness(0) saturate(100%) invert(72%) sepia(43%) saturate(737%) hue-rotate(99deg) brightness(98%) contrast(83%)'
-                  }}
-                />
-              </a>
-              <IconButton
-                disabled={disabled}
-                sx={{ padding: 0 }}
-                onClick={() => setContentPointsOpen(true)}>
-                <img
-                  width={14}
-                  src={airDrop}
-                  style={{ filter: disabled ? 'grayscale(100%)' : 'none' }}
-                />
-              </IconButton>
-            </Box>
+            <Button className={classes.button} onClick={() => setContentPointsOpen(true)}>
+              More
+            </Button>
           </Box>
         )}
       </Box>
