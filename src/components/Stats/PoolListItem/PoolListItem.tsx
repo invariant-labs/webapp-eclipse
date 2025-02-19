@@ -247,7 +247,7 @@ const PoolListItem: React.FC<IProps> = ({
           </Grid>
           {!isSmd && showAPY ? (
             <Grid className={classes.row} justifyContent='space-between'>
-              <Typography>
+              <Typography gap='4px'>
                 {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
                 <span
                   className={
