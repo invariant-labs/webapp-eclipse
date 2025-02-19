@@ -124,6 +124,7 @@ export const PositionsList: React.FC<IProps> = ({
         direction='row'
         justifyContent='space-between'
         alignItems='center'>
+        <p>{JSON.stringify(allowPropagation)}</p>
         <Grid className={classes.searchRoot}>
           <Grid className={classes.titleBar}>
             <Typography className={classes.title}>Your Positions</Typography>

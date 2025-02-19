@@ -107,7 +107,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                     width: '4px'
                   },
                   '&::-webkit-scrollbar-track': {
-                    background: colors.invariant.componentDark
+                    background: colors.invariant.newDark
                   },
                   '&::-webkit-scrollbar-thumb': {
                     background: colors.invariant.pink,

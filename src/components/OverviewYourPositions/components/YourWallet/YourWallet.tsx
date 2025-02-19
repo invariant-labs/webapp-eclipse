@@ -35,10 +35,16 @@ const EmptyState = ({ classes }: { classes: any }) => (
 )
 
 export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({ isLoading })
   const navigate = useNavigate()
   const currentNetwork = useSelector(network)
-  const totalValue = useMemo(() => pools.reduce((sum, pool) => sum + pool.value, 0), [pools])
+
+  const sortedPools = useMemo(() => [...pools].sort((a, b) => b.value - a.value), [pools])
+
+  const totalValue = useMemo(
+    () => sortedPools.reduce((sum, pool) => sum + pool.value, 0),
+    [sortedPools]
+  )
 
   const findStrategy = (poolAddress: string) => {
     const poolTicker = addressToTicker(currentNetwork, poolAddress)
@@ -165,7 +171,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
             </TableHead>
             <TableBody className={classes.zebraRow}>
               {isLoading ? (
-                // Loading skeleton rows
                 Array(4)
                   .fill(0)
                   .map((_, index) => (
@@ -222,14 +227,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       </TableCell>
                     </TableRow>
                   ))
-              ) : pools.length === 0 ? (
+              ) : sortedPools.length === 0 ? (
                 <TableRow sx={{ background: 'transparent !important ' }}>
                   <TableCell colSpan={4} sx={{ border: 'none' }}>
                     <EmptyState classes={classes} />
                   </TableCell>
                 </TableRow>
               ) : (
-                pools.map(pool => {
+                sortedPools.map(pool => {
                   const strategy = findStrategy(pool.id.toString())
 
                   return (
@@ -285,11 +290,11 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
         </Typography>
         {isLoading ? (
           renderMobileLoading()
-        ) : pools.length === 0 ? (
+        ) : sortedPools.length === 0 ? (
           <EmptyState classes={classes} />
         ) : (
-          <Box sx={{ height: '345px', overflowY: 'auto' }}>
-            {pools.map(pool => (
+          <Box className={classes.mobileCardContainer}>
+            {sortedPools.map(pool => (
               <MobileCard
                 key={pool.id.toString()}
                 pool={pool}

@@ -107,7 +107,9 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       '&::-webkit-scrollbar': {
         width: '4px'
       },
-
+      '&::-webkit-scrollbar-track': {
+        background: colors.invariant.componentDark
+      },
       '&::-webkit-scrollbar-thumb': {
         background: colors.invariant.pink,
         borderRadius: '4px'

@@ -1,6 +1,7 @@
 import { makeStyles } from 'tss-react/mui'
 import { colors, typography, theme } from '@static/theme'
-export const useStyles = makeStyles()(() => ({
+import { Theme } from '@mui/material'
+export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { isLoading }) => ({
   container: {
     minWidth: '50%',
     overflowX: 'hidden'
@@ -38,16 +39,17 @@ export const useStyles = makeStyles()(() => ({
     borderBottomLeftRadius: 0,
     backgroundColor: colors.invariant.component,
     height: '286px',
-    overflowY: 'auto',
+    overflowY: isLoading ? 'hidden' : 'auto',
     overflowX: 'hidden',
 
     '&::-webkit-scrollbar': {
-      padding: 0,
       width: '4px',
       marginTop: '58.4px'
     },
     '&::-webkit-scrollbar-track': {
-      background: 'transparent',
+      background: colors.invariant.componentDark,
+      marginBottom: '20px',
+
       marginTop: '58.4px'
     },
     '&::-webkit-scrollbar-thumb': {
@@ -97,6 +99,22 @@ export const useStyles = makeStyles()(() => ({
   tokenSymbol: {
     ...typography.heading4,
     color: colors.invariant.text
+  },
+  mobileCardContainer: {
+    height: '345px',
+    overflowY: 'auto',
+    paddingRight: '4px',
+    '&::-webkit-scrollbar': {
+      width: '4px'
+    },
+    '&::-webkit-scrollbar-track': {
+      background: colors.invariant.componentDark,
+      marginLeft: '10px'
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: colors.invariant.pink,
+      borderRadius: '4px'
+    }
   },
   statsContainer: {
     backgroundColor: colors.invariant.light,
@@ -181,7 +199,9 @@ export const useStyles = makeStyles()(() => ({
     backgroundColor: colors.invariant.component,
     borderRadius: '16px',
     padding: '16px',
-    marginTop: '8px'
+    '&:not(:first-child)': {
+      marginTop: '8px'
+    }
   },
   mobileCardHeader: {
     display: 'flex',

@@ -11,12 +11,20 @@ interface LegendOverviewProps {
   logoColors: Record<string, string>
   tokenColorOverrides: TokenColorOverride[]
 }
+
 export const LegendOverview: React.FC<LegendOverviewProps> = ({
   sortedPositions,
   logoColors,
   tokenColorOverrides
 }) => {
   const { getTokenColor } = useAverageLogoColor()
+
+  const getContainerHeight = () => {
+    if (sortedPositions.length <= 2) return '70px'
+    if (sortedPositions.length <= 3) return '90px'
+    if (sortedPositions.length <= 4) return '130px'
+    return '160px'
+  }
 
   return (
     <Box sx={{ marginTop: 2 }}>
@@ -26,7 +34,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
         container
         spacing={1}
         sx={{
-          height: sortedPositions.length <= 3 ? '100px' : '160px',
+          height: getContainerHeight(),
           width: '90%',
           overflowY: sortedPositions.length <= 5 ? 'hidden' : 'auto',
           marginTop: '8px',
