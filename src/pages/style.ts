@@ -11,7 +11,7 @@ export const useStyles = makeStyles()(() => ({
     flex: 1,
     marginTop: '65px',
     [theme.breakpoints.down('sm')]: {
-      marginTop: '0px'
+      marginTop: '24px'
     }
   }
 }))
