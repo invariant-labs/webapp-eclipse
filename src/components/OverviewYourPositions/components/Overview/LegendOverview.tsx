@@ -21,7 +21,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
 
   const getContainerHeight = () => {
     if (sortedPositions.length <= 2) return '70px'
-    if (sortedPositions.length <= 3) return '90px'
+    if (sortedPositions.length <= 3) return '100px'
     if (sortedPositions.length <= 4) return '130px'
     return '160px'
   }
