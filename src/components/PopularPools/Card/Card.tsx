@@ -13,7 +13,7 @@ import backIcon from '@static/svg/back-arrow-2.svg'
 import {
   addressToTicker,
   calculateAPYAndAPR,
-  formatNumber,
+  formatNumberWithSuffix,
   initialXtoY,
   parseFeeToPathFee
 } from '@utils/utils'
@@ -202,9 +202,11 @@ const Card: React.FC<ICard> = ({
                   />
                 )}
                 <StatsLabel title='Fee' value={fee + '%'} />
-                {TVL !== undefined && <StatsLabel title='TVL' value={`$${formatNumber(TVL)}`} />}
+                {TVL !== undefined && (
+                  <StatsLabel title='TVL' value={`$${formatNumberWithSuffix(TVL)}`} />
+                )}
                 {volume !== undefined && (
-                  <StatsLabel title='Volume' value={`$${formatNumber(volume)}`} />
+                  <StatsLabel title='Volume' value={`$${formatNumberWithSuffix(volume)}`} />
                 )}
               </Grid>
               <Grid container justifyContent='space-between' alignItems='center' mt='auto'>

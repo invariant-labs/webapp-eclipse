@@ -1,7 +1,7 @@
 import { Box, Grid, Hidden, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import { theme } from '@static/theme'
-import { formatNumber } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useCallback, useMemo, useRef, useState } from 'react'
 import { useDesktopStyles } from './style/desktop'
@@ -154,7 +154,7 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
         </Typography>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            {formatNumber(xToY ? valueY : valueX)} {xToY ? tokenYName : tokenXName}
+            {formatNumberWithSuffix(xToY ? valueY : valueX)} {xToY ? tokenYName : tokenXName}
           </Typography>
         </Grid>
       </Grid>
@@ -353,8 +353,9 @@ export const PositionItemDesktop: React.FC<IPositionItem> = ({
                 <Typography className={sharedClasses.infoText}>FULL RANGE</Typography>
               ) : (
                 <Typography className={sharedClasses.infoText}>
-                  {formatNumber(xToY ? min : 1 / max)} - {formatNumber(xToY ? max : 1 / min)}{' '}
-                  {xToY ? tokenYName : tokenXName} per {xToY ? tokenXName : tokenYName}
+                  {formatNumberWithSuffix(xToY ? min : 1 / max)} -{' '}
+                  {formatNumberWithSuffix(xToY ? max : 1 / min)} {xToY ? tokenYName : tokenXName}{' '}
+                  per {xToY ? tokenXName : tokenYName}
                 </Typography>
               )}
             </Grid>
