@@ -12,7 +12,6 @@ import {
   addNewTokenToLocalStorage,
   calcPriceBySqrtPrice,
   calcPriceByTickIndex,
-  calculateConcentration,
   createPlaceholderLiquidityPlot,
   getMockedTokenPrice,
   getNewTokenOrThrow,
@@ -661,7 +660,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const estimatedPointsForScale = (
     currentConcentration: number,
     positionOpeningMethod: PositionOpeningMethod,
-    middleConcentration: number
+    middleConcentration: number,
+    concentrationArray: number[]
   ): { min: BN; middle: BN; max: BN } => {
     const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
 
@@ -669,10 +669,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return { min: new BN(0), middle: new BN(0), max: new BN(0) }
     }
 
-    const maxConcentration =
-      positionOpeningMethod === 'concentration'
-        ? calculateConcentration(0, 2 * tickSpacing)
-        : calculateConcentration(0, tickSpacing)
+    const maxConcentration = concentrationArray[concentrationArray.length - 1]
 
     const liquidityMultiplier =
       Number((maxConcentration / currentConcentration).toFixed(+DECIMAL)) * Number(DENOMINATOR)

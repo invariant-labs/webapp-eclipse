@@ -132,7 +132,8 @@ export interface INewPosition {
   estimatedPointsForScale: (
     currentConcentration: number,
     positionOpeningMethod: PositionOpeningMethod,
-    middleConc: number
+    middleConc: number,
+    concentrationArray: number[]
   ) => { min: BN; middle: BN; max: BN }
   isPromotedPool: boolean
 }
@@ -236,6 +237,30 @@ export const NewPosition: React.FC<INewPosition> = ({
     getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 34)
   )
 
+  const rangeConcentrationArray = useMemo(() => {
+    const maxConcForRange = calculateConcentration(0, tickSpacing)
+    const rangeConcentration = [...concentrationArray]
+    rangeConcentration.unshift(1)
+    rangeConcentration.push(maxConcForRange)
+
+    return rangeConcentration
+  }, [concentrationArray])
+  console.log(concentrationArray[concentrationArray.length - 1])
+  console.log(calculateConcentration(0, 2 * tickSpacing))
+  const concentrationIndexForRange = useMemo(() => {
+    try {
+      const index = rangeConcentrationArray.findIndex(value => {
+        return Math.ceil(value) >= Math.ceil(calculateConcentration(leftRange, rightRange))
+      })
+      return index !== -1 ? index : 0
+      console.log(index)
+    } catch {
+      return 0
+    }
+  }, [rangeConcentrationArray, leftRange, rightRange])
+
+  console.log(concentrationIndexForRange)
+  console.log(concentrationIndex)
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
       return 'Select tokens to set price range.'
@@ -280,9 +305,10 @@ export const NewPosition: React.FC<INewPosition> = ({
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
         ? concentrationArray[concentrationIndex]
-        : calculateConcentration(leftRange, rightRange),
+        : rangeConcentrationArray[concentrationIndexForRange],
       positionOpeningMethod,
-      +concentrationArray[Math.floor(concentrationArray.length / 2) - 1].toFixed(0)
+      +concentrationArray[Math.floor(concentrationArray.length / 2) - 1].toFixed(0),
+      positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
   }, [estimatedPointsPerDay, tokenADeposit, tokenBDeposit, positionOpeningMethod])
 
@@ -647,7 +673,6 @@ export const NewPosition: React.FC<INewPosition> = ({
                       blockedToken === PositionTokenBlock.B)
                   }
                   positionOpeningMethod={positionOpeningMethod}
-                  tickSpacing={tickSpacing}
                 />
               </div>
             </Fade>
@@ -1034,7 +1059,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             concentrationIndex={
               positionOpeningMethod === 'concentration'
                 ? concentrationIndex
-                : Math.ceil(calculateConcentration(leftRange, rightRange))
+                : concentrationIndexForRange
             }
             estimatedPointsPerDay={estimatedPointsPerDay}
             estimatedScalePoints={estimatedScalePoints}
@@ -1056,7 +1081,6 @@ export const NewPosition: React.FC<INewPosition> = ({
                 blockedToken === PositionTokenBlock.B)
             }
             positionOpeningMethod={positionOpeningMethod}
-            tickSpacing={tickSpacing}
           />
         </div>
       </Fade>

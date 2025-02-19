@@ -18,7 +18,6 @@ export interface IPointsLabel {
   showWarning: boolean
   singleDepositWarning: boolean
   positionOpeningMethod: PositionOpeningMethod
-  tickSpacing: number
 }
 
 export const PointsLabel: React.FC<IPointsLabel> = ({

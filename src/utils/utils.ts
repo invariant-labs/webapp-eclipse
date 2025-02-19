@@ -29,7 +29,13 @@ import {
   parseTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios from 'axios'
-import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  CONCENTRATION_FACTOR,
+  getMaxTick,
+  getMinTick,
+  PRICE_SCALE,
+  Range
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
@@ -1353,12 +1359,11 @@ export const calculateConcentrationRange = (
 }
 
 export const calculateConcentration = (lowerTick: number, upperTick: number) => {
-  const multiplier = 1.00001525916529
   const deltaPrice = Math.pow(1.0001, lowerTick - upperTick)
   const denominator = 1 - Math.pow(deltaPrice, 1 / 4)
   const result = 1 / denominator
-
-  return Math.abs(result / multiplier)
+  CONCENTRATION_FACTOR
+  return Math.abs(result / CONCENTRATION_FACTOR)
 }
 
 export enum PositionTokenBlock {

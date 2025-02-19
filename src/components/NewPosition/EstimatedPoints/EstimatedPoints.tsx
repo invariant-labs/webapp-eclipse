@@ -6,7 +6,7 @@ import GradientBorder from '@components/GradientBorder/GradientBorder'
 import { theme, typography } from '@static/theme'
 import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
-import { calculateConcentration, formatNumber, printBN } from '@utils/utils'
+import { formatNumber, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { PositionOpeningMethod } from '@store/consts/types'
 
@@ -20,7 +20,6 @@ export interface IEstimatedPoints {
   showWarning: boolean
   singleDepositWarning: boolean
   positionOpeningMethod: PositionOpeningMethod
-  tickSpacing: number
 }
 
 export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
@@ -32,22 +31,16 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   estimatedScalePoints,
   showWarning,
   singleDepositWarning,
-  positionOpeningMethod,
-  tickSpacing
+  positionOpeningMethod
 }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
-  const maxConcForRange = calculateConcentration(0, tickSpacing)
-
   const { minConc, middleConc, maxConc } = useMemo(
     () => ({
-      minConc: positionOpeningMethod === 'concentration' ? concentrationArray[0].toFixed(0) : 1,
+      minConc: concentrationArray[0].toFixed(0),
       middleConc: concentrationArray[Math.floor(concentrationArray.length / 2)].toFixed(0),
-      maxConc:
-        positionOpeningMethod === 'concentration'
-          ? concentrationArray[concentrationArray.length - 1].toFixed(0)
-          : Math.ceil(maxConcForRange)
+      maxConc: concentrationArray[concentrationArray.length - 1].toFixed(0)
     }),
     [concentrationArray, positionOpeningMethod]
   )
@@ -60,32 +53,13 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
     } else return ''
   }, [showWarning, singleDepositWarning])
 
-  const rangeConcentrationArray = useMemo(() => {
-    const rangeConcentration = [...concentrationArray]
-    rangeConcentration.unshift(1)
-    rangeConcentration.push(maxConcForRange)
-
-    return rangeConcentration
-  }, [concentrationArray])
-
-  function findClosestIndex(arr, num) {
-    const index = arr.findLastIndex(value => value <= num)
-    return index !== -1 ? index : null
-  }
-
   const percentage = useMemo(
     () =>
       showWarning || singleDepositWarning
         ? 0
-        : positionOpeningMethod === 'concentration'
-          ? +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0)
-          : +(
-              (findClosestIndex(rangeConcentrationArray, concentrationIndex) * 100) /
-              (rangeConcentrationArray.length - 1)
-            ).toFixed(0),
+        : +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0),
     [concentrationIndex, concentrationArray, warningText.length]
   )
-
   const { classes } = useStyles({ percentage })
 
   const isLessThanMinimal = (value: BN) => {
