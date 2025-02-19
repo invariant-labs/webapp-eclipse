@@ -24,6 +24,7 @@ import FaucetButton from './HeaderButton/FaucetButton'
 import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
 import SocialModal from '@components/Modals/SocialModal/SocialModal'
+import { Bar } from '@components/Bar/Bar'
 
 export interface IHeader {
   address: PublicKey
@@ -290,6 +291,8 @@ export const Header: React.FC<IHeader> = ({
               />
             </Box>
           </Grid>
+
+          <Bar />
 
           <Grid>
             <YourPointsButton />

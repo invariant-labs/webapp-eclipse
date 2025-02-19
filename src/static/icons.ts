@@ -77,6 +77,7 @@ import githubFill from './svg/githubFill.svg'
 import mediumFill from './svg/MediumFill.svg'
 import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
+import settings2 from './svg/settings2.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -157,7 +158,8 @@ const icons: { [key: string]: string } = {
   boostPoints,
   airdropGrey,
   infoError,
-  okxLogo
+  okxLogo,
+  settings2
 }
 
 export default icons
