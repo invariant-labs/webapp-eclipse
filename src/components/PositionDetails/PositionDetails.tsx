@@ -14,7 +14,12 @@ import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
 import { TokenPriceData } from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { addressToTicker, formatNumber, initialXtoY, parseFeeToPathFee } from '@utils/utils'
+import {
+  addressToTicker,
+  formatNumberWithSuffix,
+  initialXtoY,
+  parseFeeToPathFee
+} from '@utils/utils'
 import { printBN } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PublicKey } from '@solana/web3.js'
@@ -153,7 +158,7 @@ const PositionDetails: React.FC<IProps> = ({
     const valueX = tokenX.liqValue + tokenY.liqValue / currentPrice
     const valueY = tokenY.liqValue + tokenX.liqValue * currentPrice
     return {
-      value: `${formatNumber(xToY ? valueX : valueY)} ${xToY ? tokenX.name : tokenY.name}`,
+      value: `${formatNumberWithSuffix(xToY ? valueX : valueY)} ${xToY ? tokenX.name : tokenY.name}`,
       tokenXLabel: xToY ? tokenX.name : tokenY.name,
       tokenYLabel: xToY ? tokenY.name : tokenX.name
     }
@@ -169,7 +174,7 @@ const PositionDetails: React.FC<IProps> = ({
         tokenY={tokenY}
         onLock={lockPosition}
         fee={`${+printBN(fee, DECIMAL - 2).toString()}% fee`}
-        minMax={`${formatNumber(min)}-${formatNumber(max)} ${tokenYLabel} per ${tokenXLabel}`}
+        minMax={`${formatNumberWithSuffix(min)}-${formatNumberWithSuffix(max)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
         isActive={isActive}
         swapHandler={() => setXToY(!xToY)}

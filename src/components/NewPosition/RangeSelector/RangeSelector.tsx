@@ -7,7 +7,7 @@ import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
   calculateConcentrationRange,
-  formatNumber,
+  formatNumberWithoutSuffix,
   getConcentrationIndex,
   nearestTickIndex,
   toMaxNumericPlaces
@@ -424,7 +424,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             <Typography className={classes.header}>Price range</Typography>
             {poolIndex !== null && (
               <Typography className={classes.currentPrice}>
-                {formatNumber(midPrice.x, false, 4)} {tokenBSymbol} per {tokenASymbol}
+                {formatNumberWithoutSuffix(midPrice.x)} {tokenBSymbol} per {tokenASymbol}
               </Typography>
             )}
           </Grid>
