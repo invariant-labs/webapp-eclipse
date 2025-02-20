@@ -607,14 +607,15 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       !autoSwapPoolData ||
       !autoSwapTicks ||
       !autoSwapTickmap ||
-      !tokenAIndex ||
-      !tokenBIndex ||
+      tokenAIndex === null ||
+      tokenBIndex === null ||
       isLoadingTicksOrTickmap ||
       !simulationParams.actualPoolPrice
     ) {
       setSimulation(null)
       return
     }
+    console.log('asd')
     const tokenADecimal = tokens[tokenAIndex].decimals
     const tokenBDecimal = tokens[tokenBIndex].decimals
     const tokenAValue = tokenACheckbox ? convertBalanceToBN(valueA, tokenADecimal) : new BN(0)
