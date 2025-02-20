@@ -45,11 +45,8 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
     color: colors.invariant.text
   },
   tableContainer: {
-    borderBottomRightRadius: '24px',
-    [theme.breakpoints.down('lg')]: {
-      borderBottomLeftRadius: '24px'
-    },
     borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
     backgroundColor: colors.invariant.component,
     height: '286px',
     overflowY: isLoading ? 'hidden' : 'auto',
@@ -114,7 +111,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
     color: colors.invariant.text
   },
   mobileCardContainer: {
-    height: '345px',
+    maxHeight: '345px',
     overflowY: 'auto',
     paddingRight: '4px',
     [theme.breakpoints.down('lg')]: {
