@@ -22,7 +22,8 @@ export const {
   totalItems,
   top3Scorers,
   config,
-  priceFeeds
+  priceFeeds,
+  contentPoints
 } = keySelectors(store, [
   'type',
   'currentPage',
@@ -33,7 +34,8 @@ export const {
   'top3Scorers',
   'leaderboard',
   'config',
-  'priceFeeds'
+  'priceFeeds',
+  'contentPoints'
 ])
 
 export const leaderboardSelectors = {
@@ -45,7 +47,8 @@ export const leaderboardSelectors = {
   top3Scorers,
   currentUser,
   leaderboard,
-  config
+  config,
+  contentPoints
 }
 
 export const getPromotedPools = createSelector(

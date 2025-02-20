@@ -1,12 +1,13 @@
-import { Box, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
 import { theme } from '@static/theme'
+import { blurContent } from '@utils/uiUtils'
 
 type Aligment = 'left' | 'center' | 'right'
 
-interface IProgressItemProps {
+interface IContentPointsProps {
   background: {
     mobile: string
     desktop: string
@@ -21,17 +22,18 @@ interface IProgressItemProps {
   value: string | number
   tooltip?: string
   isLoading?: boolean
+  setContentPointsOpen: (open: boolean) => void
 }
 
-export const ProgressItem: React.FC<IProgressItemProps> = ({
+export const ContentPoints: React.FC<IContentPointsProps> = ({
   background,
   label,
   value,
   desktopLabelAligment,
   blockHeight,
   isWideBlock = false,
-  tooltip,
-  isLoading = false
+  isLoading = false,
+  setContentPointsOpen
 }) => {
   const { classes } = useStyles()
 
@@ -116,22 +118,65 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
             gap: '8px'
           }}>
           <Typography className={classes.headerSmallText}>{label}</Typography>
-          {tooltip ? (
-            <Tooltip
-              title={tooltip}
-              placement='bottom'
-              classes={{
-                tooltip: classes.tooltip
-              }}
-              enterTouchDelay={0}>
-              <img src={infoIcon} alt='i' width={14} />
-            </Tooltip>
-          ) : null}
+
+          <Tooltip
+            title={
+              <Box sx={{ width: '190px' }}>
+                <Typography className={classes.tooltipContentPoints}>
+                  Earn point allocations for creating content about Invariant on social media!
+                  Tweets, threads, YouTube videos, TikToks, and articles - all help you accumulate
+                  more points.{' '}
+                  <a
+                    href='https://docs.invariant.app/docs/invariant_points/content'
+                    target='_blank'
+                    rel='noopener noreferrer'
+                    className={classes.tooltipLink}>
+                    More details
+                  </a>
+                </Typography>
+              </Box>
+            }
+            placement='bottom'
+            classes={{
+              tooltip: classes.tooltip
+            }}
+            enterTouchDelay={0}>
+            <img src={infoIcon} alt='i' width={14} />
+          </Tooltip>
         </Box>
         {isLoading ? (
           <div className={classes.blur} />
+        ) : isMobile ? (
+          <Box display='grid' gridTemplateColumns='auto 1fr auto' gap='8px' alignItems='center'>
+            <Box sx={{ visibility: 'hidden' }}>
+              <Button className={classes.button}>More</Button>
+            </Box>
+
+            <Typography className={classes.headerBigText} textAlign='center'>
+              {value}
+            </Typography>
+
+            <Button
+              className={classes.button}
+              onClick={() => {
+                blurContent()
+                setContentPointsOpen(true)
+              }}>
+              More
+            </Button>
+          </Box>
         ) : (
-          <Typography className={classes.headerBigText}>{value}</Typography>
+          <Box display='flex' alignItems='center' gap='8px'>
+            <Typography className={classes.headerBigText}>{value}</Typography>
+            <Button
+              className={classes.button}
+              onClick={() => {
+                blurContent()
+                setContentPointsOpen(true)
+              }}>
+              More
+            </Button>
+          </Box>
         )}
       </Box>
     </Box>
