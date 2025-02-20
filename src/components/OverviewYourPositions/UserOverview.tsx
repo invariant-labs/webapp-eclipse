@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Checkbox, Grid, Typography, useMediaQuery } from '@mui/material'
 import { typography, colors, theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
@@ -8,14 +8,19 @@ import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
+import { useStyles } from './style'
+import { useMemo, useState } from 'react'
+import classNames from 'classnames'
 
 export const UserOverview = () => {
+  const { classes } = useStyles()
   const tokensList = useSelector(swapTokens)
   const isBalanceLoading = useSelector(balanceLoading)
   const { processedPools, isLoading } = useProcessedTokens(tokensList)
   const isLoadingList = useSelector(isLoadingPositionsList)
-
+  const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const list: any = useSelector(positionsWithPoolsData)
+  const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(true)
 
   const data: Pick<
     ProcessedPool,
@@ -46,6 +51,24 @@ export const UserOverview = () => {
     }
   })
 
+  const positionsDetails = useMemo(() => {
+    const positionsAmount = data.length
+    const inRageAmount = data.filter(
+      item =>
+        item.poolData.currentTickIndex >= Math.min(item.lowerTickIndex, item.upperTickIndex) &&
+        item.poolData.currentTickIndex < Math.max(item.lowerTickIndex, item.upperTickIndex)
+    ).length
+    const outOfRangeAmount = positionsAmount - inRageAmount
+    return { positionsAmount, inRageAmount, outOfRangeAmount }
+  }, [data])
+
+  const finalTokens = useMemo(() => {
+    if (hideUnknownTokens) {
+      return processedPools.filter(item => item.icon !== '/unknownToken.svg')
+    }
+    return processedPools
+  }, [processedPools, hideUnknownTokens])
+
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px', width: '100%' }}>
       <Box>
@@ -68,16 +91,85 @@ export const UserOverview = () => {
         sx={{
           display: 'flex',
           [theme.breakpoints.down('lg')]: {
-            flexDirection: 'column',
-            gap: 4
+            flexDirection: 'column'
           }
         }}>
         <Overview poolAssets={data} />
+        {isDownLg && (
+          <Box className={classes.footer}>
+            <Box className={classes.footerItem}>
+              <Box className={classes.footerCheckboxContainer}>
+                <Typography
+                  className={classNames(classes.whiteText, classes.footerPositionDetails)}>
+                  Opened positions: {positionsDetails.positionsAmount}
+                </Typography>
+                <Typography
+                  className={classNames(classes.greenText, classes.footerPositionDetails)}>
+                  In range: {positionsDetails.inRageAmount}
+                </Typography>
+                <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
+                  Out of range: {positionsDetails.outOfRangeAmount}
+                </Typography>
+              </Box>
+            </Box>
+          </Box>
+        )}
         <YourWallet
-          pools={processedPools}
+          pools={finalTokens}
           isLoading={isLoading || isLoadingList || isBalanceLoading}
         />
+        {isDownLg && (
+          <Box className={classes.footer}>
+            <Box className={classes.footerItem}>
+              <Box className={classes.footerCheckboxContainer}>
+                <Checkbox
+                  checked={hideUnknownTokens}
+                  className={classes.checkBox}
+                  onChange={e => setHideUnknownTokens(e.target.checked)}
+                />
+                <Typography className={classNames(classes.footerText, classes.whiteText)}>
+                  Hide unknown tokens
+                </Typography>
+              </Box>
+              <Typography className={classNames(classes.footerText, classes.greyText)}>
+                {finalTokens.length} tokens where found
+              </Typography>
+            </Box>
+          </Box>
+        )}
       </Box>
+      {!isDownLg && (
+        <Grid className={classes.footer}>
+          <Grid item xs={6} className={classes.footerItem}>
+            <Box className={classes.footerCheckboxContainer}>
+              <Typography className={classNames(classes.whiteText, classes.footerPositionDetails)}>
+                Opened positions: {positionsDetails.positionsAmount}
+              </Typography>
+              <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
+                In range: {positionsDetails.inRageAmount}
+              </Typography>
+              <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
+                Out of range: {positionsDetails.outOfRangeAmount}
+              </Typography>
+            </Box>
+          </Grid>
+          <Grid item xs={6} className={classes.footerItem}>
+            <Box className={classes.footerCheckboxContainer}>
+              <Checkbox
+                checked={hideUnknownTokens}
+                className={classes.checkBox}
+                onChange={e => setHideUnknownTokens(e.target.checked)}
+              />
+              <Typography className={classNames(classes.footerText, classes.whiteText)}>
+                Hide unknown tokens
+              </Typography>
+            </Box>
+            <Typography className={classNames(classes.footerText, classes.greyText)}>
+              {finalTokens.length} tokens where found
+            </Typography>
+          </Grid>
+        </Grid>
+      )}
     </Box>
   )
 }

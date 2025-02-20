@@ -7,14 +7,17 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()(
     container: {
       width: '600px',
       backgroundColor: colors.invariant.component,
-
       borderTopLeftRadius: '24px',
-      borderBottomLeftRadius: '24px',
       [theme.breakpoints.down('lg')]: {
-        borderRadius: '24px',
+        borderTopRightRadius: '24px',
+        borderRight: `none`,
         maxHeight: 'fit-content',
         width: 'auto',
         padding: '0px 16px 0px 16px'
+      },
+      [theme.breakpoints.down('md')]: {
+        borderRadius: 24,
+        marginBottom: 8
       },
       borderRight: `1px solid  ${colors.invariant.light}`,
       display: 'flex',
@@ -44,9 +47,6 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()(
       justifyContent: 'space-between'
     },
     headerText: {
-      [theme.breakpoints.down('lg')]: {
-        marginTop: '16px'
-      },
       ...typography.heading2,
       color: colors.invariant.text
     },
