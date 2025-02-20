@@ -14,13 +14,16 @@ import { StrategyConfig, TokenPool } from '@store/types/userOverview'
 import { useNavigate } from 'react-router-dom'
 import { STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
-import { ALL_FEE_TIERS_DATA, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
+import { ALL_FEE_TIERS_DATA, NetworkType, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
 import { addressToTicker, formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
 import { MobileCard } from './MobileCard'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
 
 interface YourWalletProps {
   pools: TokenPool[]
@@ -38,7 +41,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
   const { classes } = useStyles({ isLoading })
   const navigate = useNavigate()
   const currentNetwork = useSelector(network)
-
+  const dispatch = useDispatch()
   const sortedPools = useMemo(() => [...pools].sort((a, b) => b.value - a.value), [pools])
 
   const totalValue = useMemo(
@@ -79,6 +82,19 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
     e.currentTarget.src = icons.unknownToken
   }
 
+  const networkUrl = useMemo(() => {
+    switch (currentNetwork) {
+      case NetworkType.Mainnet:
+        return ''
+      case NetworkType.Testnet:
+        return '?cluster=testnet'
+      case NetworkType.Devnet:
+        return '?cluster=devnet'
+      default:
+        return ''
+    }
+  }, [network])
+
   const renderMobileLoading = () => (
     <Box className={classes.mobileContainer}>
       {Array(3)
@@ -91,6 +107,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                 <Skeleton variant='text' width={60} />
               </Box>
               <Box className={classes.mobileActionsContainer}>
+                <Skeleton variant='circular' width={32} height={32} />
                 <Skeleton variant='circular' width={32} height={32} />
                 <Skeleton variant='circular' width={32} height={32} />
               </Box>
@@ -106,35 +123,52 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
 
   const renderActions = (pool: TokenPool, strategy: StrategyConfig) => (
     <>
-      <Box
-        className={classes.actionIcon}
-        onClick={() => {
-          console.log(strategy)
-          const sourceToken = addressToTicker(currentNetwork, strategy.tokenAddressA)
-          const targetToken = strategy.tokenAddressB
-            ? addressToTicker(currentNetwork, strategy.tokenAddressB)
-            : '-'
+      <TooltipHover text='Add Position'>
+        <Box
+          className={classes.actionIcon}
+          onClick={() => {
+            console.log(strategy)
+            const sourceToken = addressToTicker(currentNetwork, strategy.tokenAddressA)
+            const targetToken = strategy.tokenAddressB
+              ? addressToTicker(currentNetwork, strategy.tokenAddressB)
+              : '-'
 
-          navigate(`/newPosition/${sourceToken}/${targetToken}/${strategy.feeTier}`, {
-            state: { referer: 'portfolio' }
-          })
-        }}>
-        <img src={icons.plusIcon} height={24} width={24} alt='Add' />
-      </Box>
-      <Box
-        className={classes.actionIcon}
-        onClick={() => {
-          const sourceToken = addressToTicker(currentNetwork, pool.id.toString())
-          const targetToken = sourceToken === 'ETH' ? USDC_MAIN.address : WETH_MAIN.address
-          navigate(
-            `/exchange/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}`,
-            {
+            navigate(`/newPosition/${sourceToken}/${targetToken}/${strategy.feeTier}`, {
               state: { referer: 'portfolio' }
-            }
-          )
-        }}>
-        <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
-      </Box>
+            })
+          }}>
+          <img src={icons.plusIcon} height={24} width={24} alt='Add' />
+        </Box>
+      </TooltipHover>
+      <TooltipHover text='Exchange'>
+        <Box
+          className={classes.actionIcon}
+          onClick={() => {
+            const sourceToken = addressToTicker(currentNetwork, pool.id.toString())
+            const targetToken = sourceToken === 'ETH' ? USDC_MAIN.address : WETH_MAIN.address
+            navigate(
+              `/exchange/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}`,
+              {
+                state: { referer: 'portfolio' }
+              }
+            )
+          }}>
+          <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
+        </Box>
+      </TooltipHover>
+      <TooltipHover text='Open in explorer'>
+        <Box
+          className={classes.actionIcon}
+          onClick={() => {
+            window.open(
+              `https://eclipsescan.xyz/token/${pool.id.toString()}/${networkUrl}`,
+              '_blank',
+              'noopener,noreferrer'
+            )
+          }}>
+          <img width={24} height={24} src={icons.newTabBtn} alt={'Exchange'} />
+        </Box>
+      </TooltipHover>
     </>
   )
   return (
@@ -226,6 +260,12 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                           height={24}
                           sx={{ borderRadius: '8px', margin: '4px 0px' }}
                         />
+                        <Skeleton
+                          variant='rectangular'
+                          width={24}
+                          height={24}
+                          sx={{ borderRadius: '8px', margin: '4px 0px' }}
+                        />
                       </TableCell>
                     </TableRow>
                   ))
@@ -237,7 +277,8 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                 </TableRow>
               ) : (
                 sortedPools.map(pool => {
-                  const strategy = findStrategy(pool.id.toString())
+                  const poolAddress = pool.id.toString()
+                  const strategy = findStrategy(poolAddress)
 
                   return (
                     <TableRow key={pool.id.toString()}>
@@ -251,6 +292,22 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                               alt={pool.symbol}
                             />
                             <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
+                            <TooltipHover text='Copy token address'>
+                              <FileCopyOutlinedIcon
+                                onClick={() => {
+                                  navigator.clipboard.writeText(poolAddress)
+
+                                  dispatch(
+                                    snackbarsActions.add({
+                                      message: 'Token address copied.',
+                                      variant: 'success',
+                                      persist: false
+                                    })
+                                  )
+                                }}
+                                classes={{ root: classes.clipboardIcon }}
+                              />
+                            </TooltipHover>
                           </Box>
                           <Box className={classes.mobileActions}>
                             {renderActions(pool, strategy)}
