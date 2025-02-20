@@ -2,7 +2,7 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import { BoxInfo } from './BoxInfo'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
@@ -61,7 +61,29 @@ const SinglePositionInfo: React.FC<IProp> = ({
 }) => {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
+  const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
+  const feeRef = useRef<HTMLDivElement>(null)
+
   const { classes } = useStyles()
+
+  const Overlay = () => (
+    <div
+      onClick={e => {
+        e.preventDefault()
+        e.stopPropagation()
+        setIsFeeTooltipOpen(false)
+      }}
+      style={{
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 1300,
+        backgroundColor: 'transparent'
+      }}
+    />
+  )
 
   const canClosePosition = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -70,208 +92,226 @@ const SinglePositionInfo: React.FC<IProp> = ({
       return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_MAIN)
     }
   }, [ethBalance, network])
-  return (
-    <Grid className={classes.root}>
-      <ClosePositionWarning
-        open={isModalOpen}
-        onCancel={() => {
-          setIsModalOpen(false)
-          unblurContent()
-        }}
-        onClose={() => {
-          closePosition()
-          setIsModalOpen(false)
-          unblurContent()
-        }}
-        onClaim={() => {
-          closePosition(true)
-          setIsModalOpen(false)
-          unblurContent()
-        }}
-      />
 
-      <Grid className={classes.header}>
-        <Grid className={classes.iconsGrid}>
-          <Grid className={classes.tickerContainer}>
-            <img
-              className={classes.icon}
-              src={xToY ? tokenX.icon : tokenY.icon}
-              alt={xToY ? tokenX.name : tokenY.name}
-            />
-            <TooltipHover text='Reverse tokens'>
+  return (
+    <>
+      {isFeeTooltipOpen && <Overlay />}
+      <Grid className={classes.root}>
+        <ClosePositionWarning
+          open={isModalOpen}
+          onCancel={() => {
+            setIsModalOpen(false)
+            unblurContent()
+          }}
+          onClose={() => {
+            closePosition()
+            setIsModalOpen(false)
+            unblurContent()
+          }}
+          onClaim={() => {
+            closePosition(true)
+            setIsModalOpen(false)
+            unblurContent()
+          }}
+        />
+
+        <Grid className={classes.header}>
+          <Grid className={classes.iconsGrid}>
+            <Grid className={classes.tickerContainer}>
               <img
-                className={classes.arrowIcon}
-                src={icons.swapListIcon}
-                alt='Reverse tokens'
-                onClick={swapHandler}
+                className={classes.icon}
+                src={xToY ? tokenX.icon : tokenY.icon}
+                alt={xToY ? tokenX.name : tokenY.name}
               />
-            </TooltipHover>
-            <img
-              className={classes.icon}
-              src={xToY ? tokenY.icon : tokenX.icon}
-              alt={xToY ? tokenY.name : tokenX.name}
-            />
-            <Grid className={classes.namesGrid}>
-              <Typography className={classes.name}>
-                {xToY ? tokenX.name : tokenY.name} - {xToY ? tokenY.name : tokenX.name}{' '}
-              </Typography>
+              <TooltipHover text='Reverse tokens'>
+                <img
+                  className={classes.arrowIcon}
+                  src={icons.swapListIcon}
+                  alt='Reverse tokens'
+                  onClick={swapHandler}
+                />
+              </TooltipHover>
+              <img
+                className={classes.icon}
+                src={xToY ? tokenY.icon : tokenX.icon}
+                alt={xToY ? tokenY.name : tokenX.name}
+              />
+              <Grid className={classes.namesGrid}>
+                <Typography className={classes.name}>
+                  {xToY ? tokenX.name : tokenY.name} - {xToY ? tokenY.name : tokenX.name}{' '}
+                </Typography>
+              </Grid>
+            </Grid>
+            <Grid className={classes.rangeGrid} sx={{ display: { xs: 'flex', md: 'none' } }}>
+              <Tooltip
+                open={isFeeTooltipOpen}
+                onClose={() => setIsFeeTooltipOpen(false)}
+                disableFocusListener
+                disableHoverListener
+                disableTouchListener
+                title={
+                  isActive ? (
+                    <>
+                      The position is <b>active</b> and currently <b>earning a fee</b> as long as
+                      the current price is <b>within</b> the position's price range.
+                    </>
+                  ) : (
+                    <>
+                      The position is <b>inactive</b> and <b>not earning a fee</b> as long as the
+                      current price is <b>outside</b> the position's price range.
+                    </>
+                  )
+                }
+                placement='top'
+                classes={{
+                  tooltip: classes.tooltip
+                }}>
+                <Typography
+                  ref={feeRef}
+                  onClick={e => {
+                    e.stopPropagation()
+                    setIsFeeTooltipOpen(prev => !prev)
+                  }}
+                  className={classNames(
+                    classes.text,
+                    classes.feeText,
+                    isActive ? classes.active : null
+                  )}>
+                  {fee.toString()}% fee
+                </Typography>
+              </Tooltip>
             </Grid>
           </Grid>
-          <Grid className={classes.rangeGrid} sx={{ display: { xs: 'flex', md: 'none' } }}>
-            <Tooltip
-              title={
-                isActive ? (
-                  <>
-                    The position is <b>active</b> and currently <b>earning a fee</b> as long as the
-                    current price is <b>within</b> the position's price range.
-                  </>
-                ) : (
-                  <>
-                    The position is <b>inactive</b> and <b>not earning a fee</b> as long as the
-                    current price is <b>outside</b> the position's price range.
-                  </>
-                )
-              }
-              placement='top'
-              classes={{
-                tooltip: classes.tooltip
-              }}>
-              <Typography
-                className={classNames(
-                  classes.text,
-                  classes.feeText,
-                  isActive ? classes.active : null
-                )}>
-                {fee.toString()}% fee
-              </Typography>
-            </Tooltip>
-          </Grid>
-        </Grid>
 
-        <Grid className={classes.headerButtons}>
-          <Grid className={classes.rangeGrid} sx={{ display: { xs: 'none', md: 'flex' } }}>
-            <Tooltip
-              title={
-                isActive ? (
-                  <>
-                    The position is <b>active</b> and currently <b>earning a fee</b> as long as the
-                    current price is <b>within</b> the position's price range.
-                  </>
-                ) : (
-                  <>
-                    The position is <b>inactive</b> and <b>not earning a fee</b> as long as the
-                    current price is <b>outside</b> the position's price range.
-                  </>
-                )
-              }
-              placement='top'
-              classes={{
-                tooltip: classes.tooltip
-              }}>
-              <Typography
-                className={classNames(
-                  classes.text,
-                  classes.feeText,
-                  isActive ? classes.active : null
-                )}>
-                {fee.toString()}% fee
-              </Typography>
-            </Tooltip>
-          </Grid>
-          <TooltipHover
-            text={
-              isLocked
-                ? 'Closing positions is disabled when position is locked'
-                : canClosePosition
-                  ? tokenX.claimValue > 0 || tokenY.claimValue > 0
-                    ? 'Unclaimed fees will be returned when closing the position'
-                    : ''
-                  : 'Insufficient ETH to close position'
-            }>
-            <Button
-              className={classes.closeButton}
-              disabled={isLocked || !canClosePosition}
-              variant='contained'
-              onClick={() => {
-                if (!userHasStakes) {
-                  closePosition()
-                } else {
-                  setIsModalOpen(true)
-                  blurContent()
+          <Grid className={classes.headerButtons}>
+            <Grid className={classes.rangeGrid} sx={{ display: { xs: 'none', md: 'flex' } }}>
+              <Tooltip
+                title={
+                  isActive ? (
+                    <>
+                      The position is <b>active</b> and currently <b>earning a fee</b> as long as
+                      the current price is <b>within</b> the position's price range.
+                    </>
+                  ) : (
+                    <>
+                      The position is <b>inactive</b> and <b>not earning a fee</b> as long as the
+                      current price is <b>outside</b> the position's price range.
+                    </>
+                  )
                 }
-              }}>
-              {canClosePosition ? 'Close position' : 'Lacking ETH'}
-            </Button>
-          </TooltipHover>
-          <Hidden mdUp>
-            {!isLocked ? (
-              <TooltipHover text={'Lock liquidity'}>
-                <Button
-                  className={classes.lockButton}
-                  disabled={isLocked}
-                  variant='contained'
-                  onClick={onModalOpen}>
-                  <img src={lockIcon} alt='Lock' />
-                </Button>
-              </TooltipHover>
-            ) : (
-              <TooltipHover text={'Unlocking liquidity is forbidden'}>
-                <Button
-                  disabled
-                  className={classes.unlockButton}
-                  variant='contained'
-                  onClick={() => {}}>
-                  <img src={unlockIcon} alt='Lock' />
-                </Button>
-              </TooltipHover>
-            )}
-          </Hidden>
-          <Hidden smUp>
-            <Button
-              className={classes.button}
-              variant='contained'
-              onClick={() => {
-                const address1 = addressToTicker(network, tokenX.name)
-                const address2 = addressToTicker(network, tokenY.name)
+                placement='top'
+                classes={{
+                  tooltip: classes.tooltip
+                }}>
+                <Typography
+                  className={classNames(
+                    classes.text,
+                    classes.feeText,
+                    isActive ? classes.active : null
+                  )}>
+                  {fee.toString()}% fee
+                </Typography>
+              </Tooltip>
+            </Grid>
+            <TooltipHover
+              text={
+                isLocked
+                  ? 'Closing positions is disabled when position is locked'
+                  : canClosePosition
+                    ? tokenX.claimValue > 0 || tokenY.claimValue > 0
+                      ? 'Unclaimed fees will be returned when closing the position'
+                      : ''
+                    : 'Insufficient ETH to close position'
+              }>
+              <Button
+                className={classes.closeButton}
+                disabled={isLocked || !canClosePosition}
+                variant='contained'
+                onClick={() => {
+                  if (!userHasStakes) {
+                    closePosition()
+                  } else {
+                    setIsModalOpen(true)
+                    blurContent()
+                  }
+                }}>
+                {canClosePosition ? 'Close position' : 'Lacking ETH'}
+              </Button>
+            </TooltipHover>
+            <Hidden mdUp>
+              {!isLocked ? (
+                <TooltipHover text={'Lock liquidity'}>
+                  <Button
+                    className={classes.lockButton}
+                    disabled={isLocked}
+                    variant='contained'
+                    onClick={onModalOpen}>
+                    <img src={lockIcon} alt='Lock' />
+                  </Button>
+                </TooltipHover>
+              ) : (
+                <TooltipHover text={'Unlocking liquidity is forbidden'}>
+                  <Button
+                    disabled
+                    className={classes.unlockButton}
+                    variant='contained'
+                    onClick={() => {}}>
+                    <img src={unlockIcon} alt='Lock' />
+                  </Button>
+                </TooltipHover>
+              )}
+            </Hidden>
+            <Hidden smUp>
+              <Button
+                className={classes.button}
+                variant='contained'
+                onClick={() => {
+                  const address1 = addressToTicker(network, tokenX.name)
+                  const address2 = addressToTicker(network, tokenY.name)
 
-                navigate(`/newPosition/${address1}/${address2}/${fee}`)
-              }}>
-              <span className={classes.buttonText}>+ Add Position</span>
-            </Button>
-          </Hidden>
+                  navigate(`/newPosition/${address1}/${address2}/${fee}`)
+                }}>
+                <span className={classes.buttonText}>+ Add Position</span>
+              </Button>
+            </Hidden>
+          </Grid>
+        </Grid>
+        <Grid className={classes.bottomGrid}>
+          <BoxInfo
+            title={'Liquidity'}
+            tokenA={
+              xToY
+                ? { ...tokenX, value: tokenX.liqValue, price: tokenXPriceData?.price }
+                : { ...tokenY, value: tokenY.liqValue, price: tokenYPriceData?.price }
+            }
+            tokenB={
+              xToY
+                ? { ...tokenY, value: tokenY.liqValue, price: tokenYPriceData?.price }
+                : { ...tokenX, value: tokenX.liqValue, price: tokenXPriceData?.price }
+            }
+            showBalance
+            swapHandler={swapHandler}
+            isBalanceLoading={isBalanceLoading}
+          />
+          <BoxInfo
+            title={'Unclaimed fees'}
+            tokenA={
+              xToY
+                ? { ...tokenX, value: tokenX.claimValue }
+                : { ...tokenY, value: tokenY.claimValue }
+            }
+            tokenB={
+              xToY
+                ? { ...tokenY, value: tokenY.claimValue }
+                : { ...tokenX, value: tokenX.claimValue }
+            }
+            onClickButton={onClickClaimFee}
+            showLoader={showFeesLoader}
+            isBalanceLoading={isBalanceLoading}
+          />
         </Grid>
       </Grid>
-      <Grid className={classes.bottomGrid}>
-        <BoxInfo
-          title={'Liquidity'}
-          tokenA={
-            xToY
-              ? { ...tokenX, value: tokenX.liqValue, price: tokenXPriceData?.price }
-              : { ...tokenY, value: tokenY.liqValue, price: tokenYPriceData?.price }
-          }
-          tokenB={
-            xToY
-              ? { ...tokenY, value: tokenY.liqValue, price: tokenYPriceData?.price }
-              : { ...tokenX, value: tokenX.liqValue, price: tokenXPriceData?.price }
-          }
-          showBalance
-          swapHandler={swapHandler}
-          isBalanceLoading={isBalanceLoading}
-        />
-        <BoxInfo
-          title={'Unclaimed fees'}
-          tokenA={
-            xToY ? { ...tokenX, value: tokenX.claimValue } : { ...tokenY, value: tokenY.claimValue }
-          }
-          tokenB={
-            xToY ? { ...tokenY, value: tokenY.claimValue } : { ...tokenX, value: tokenX.claimValue }
-          }
-          onClickButton={onClickClaimFee}
-          showLoader={showFeesLoader}
-          isBalanceLoading={isBalanceLoading}
-        />
-      </Grid>
-    </Grid>
+    </>
   )
 }
 

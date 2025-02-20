@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui'
 import fingerprintPink from '@static/png/fingerprintPink.png'
 import fingerprintGreen from '@static/png/fingerprintGreen.png'
 
-export const useStylesList = makeStyles<{ isMobile: boolean }>()((theme, { isMobile }) => ({
+export const useStylesList = makeStyles()(theme => ({
   container: {
     display: 'flex',
     justifyContent: 'center',
@@ -15,9 +15,7 @@ export const useStylesList = makeStyles<{ isMobile: boolean }>()((theme, { isMob
       marginInline: 8
     }
   },
-  list: {
-    paddingRight: isMobile ? 12 : 48
-  },
+
   scrollbarThumb: {
     backgroundColor: `${colors.invariant.pink} !important`,
     borderRadius: 5,
@@ -40,7 +38,9 @@ export const useStylesList = makeStyles<{ isMobile: boolean }>()((theme, { isMob
       borderRadius: 6
     }
   },
-
+  list: {
+    paddingRight: 48
+  },
   scrollbar: {}
 }))
 

@@ -9,6 +9,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
+export type FetchTick = 'lower' | 'upper'
 export interface PositionWithAddress extends Position {
   address: PublicKey
 }
@@ -50,6 +51,7 @@ export interface IPositionsStore {
   lastPage: number
   plotTicks: PlotTicks
   positionsList: PositionsListStore
+  currentPositionId: string
   currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
@@ -104,6 +106,7 @@ export const defaultState: IPositionsStore = {
     initialized: false,
     loading: true
   },
+  currentPositionId: '',
   currentPositionTicks: {
     lowerTick: undefined,
     upperTick: undefined,
@@ -175,6 +178,36 @@ const positionsSlice = createSlice({
       state.positionsList.lockedList = action.payload
       return state
     },
+    updatePositionTicksRange(
+      state,
+      _action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+    ) {
+      return state
+    },
+    setPositionRangeTicks(
+      state,
+      action: PayloadAction<{ positionId: string; lowerTick: number; upperTick: number }>
+    ) {
+      state.positionsList.list.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            lowerTickIndex: action.payload.lowerTick,
+            upperTickIndex: action.payload.upperTick
+          }
+        }
+      })
+
+      state.positionsList.lockedList.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            lowerTickIndex: action.payload.lowerTick,
+            upperTickIndex: action.payload.upperTick
+          }
+        }
+      })
+    },
     getPositionsList(state) {
       state.positionsList.loading = true
       return state
@@ -189,7 +222,10 @@ const positionsSlice = createSlice({
       }
       return state
     },
-    getCurrentPositionRangeTicks(state, _action: PayloadAction<string>) {
+    getCurrentPositionRangeTicks(
+      state,
+      _action: PayloadAction<{ id: string; fetchTick?: FetchTick }>
+    ) {
       state.currentPositionTicks.loading = true
       return state
     },
@@ -198,7 +234,12 @@ const positionsSlice = createSlice({
       action: PayloadAction<{ lowerTick?: Tick; upperTick?: Tick }>
     ) {
       state.currentPositionTicks = {
-        ...action.payload,
+        lowerTick: action.payload.lowerTick
+          ? action.payload.lowerTick
+          : state.currentPositionTicks.lowerTick,
+        upperTick: action.payload.upperTick
+          ? action.payload.upperTick
+          : state.currentPositionTicks.upperTick,
         loading: false
       }
       return state
@@ -219,6 +260,10 @@ const positionsSlice = createSlice({
     },
     setShouldNotUpdateRange(state, action: PayloadAction<boolean>) {
       state.shouldNotUpdateRange = action.payload
+      return state
+    },
+    setCurrentPositionId(state, action: PayloadAction<string>) {
+      state.currentPositionId = action.payload
       return state
     }
   }
