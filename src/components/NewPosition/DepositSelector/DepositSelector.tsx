@@ -615,7 +615,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       setSimulation(null)
       return
     }
-    console.log('asd')
     const tokenADecimal = tokens[tokenAIndex].decimals
     const tokenBDecimal = tokens[tokenBIndex].decimals
     const tokenAValue = tokenACheckbox ? convertBalanceToBN(valueA, tokenADecimal) : new BN(0)
