@@ -48,6 +48,5 @@ Primary.args = {
   onSelect: fn(),
   routes: ['exchange', 'liquidity', 'statistics'],
   current: 'exchange',
-  onRPC: fn(),
   onFaucet: fn()
 }
