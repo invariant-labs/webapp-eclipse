@@ -3,7 +3,7 @@ import { NetworkType } from '@store/consts/static'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
-import { PositionItemMobile } from './variants/PositionItemMobile'
+import { PositionItemMobile } from './variants/PositionMobileCard/PositionItemMobile'
 
 const meta = {
   title: 'Components/PositionItem',

@@ -1,5 +1,5 @@
 import { Box, Typography, Button, Skeleton, useMediaQuery } from '@mui/material'
-import { useStyles } from '../Overview/styles'
+import { useStyles } from '../Overview/styles/styles'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/positions'
 import { formatNumberWithoutSuffix } from '@utils/utils'

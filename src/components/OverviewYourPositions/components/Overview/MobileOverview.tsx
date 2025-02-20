@@ -4,7 +4,7 @@ import { colors, typography } from '@static/theme'
 
 import { TokenPositionEntry } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
-import { useStyles } from './styles'
+import { useStyles } from './styles/styles'
 import { isLoadingPositionsList } from '@store/selectors/positions'
 import { useSelector } from 'react-redux'
 import MobileOverviewSkeleton from './skeletons/MobileOverviewSkeleton'

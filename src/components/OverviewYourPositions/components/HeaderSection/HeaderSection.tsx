@@ -1,5 +1,5 @@
 import { Typography, Box, Skeleton } from '@mui/material'
-import { useStyles } from '../Overview/styles'
+import { useStyles } from '../Overview/styles/styles'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { typography, theme, colors } from '@static/theme'
 
