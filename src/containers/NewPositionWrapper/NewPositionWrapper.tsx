@@ -803,7 +803,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const autoSwapPool = useMemo(
     () =>
-      tokenAIndex && tokenBIndex
+      tokenAIndex !== null && tokenBIndex !== null
         ? autoSwapPools.find(
             item =>
               (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
@@ -838,7 +838,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [autoSwapPool])
 
   useEffect(() => {
-    if (autoSwapPoolData && tokenAIndex && tokenBIndex) {
+    if (autoSwapPoolData && tokenAIndex !== null && tokenBIndex !== null) {
       dispatch(
         poolsActions.getNearestTicksForPair({
           tokenFrom: tokens[tokenAIndex].assetAddress,
