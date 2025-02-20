@@ -1,21 +1,15 @@
-import SelectTestnetRPC from '@components/Modals/SelectTestnetRPC/SelectTestnetRPC'
 import NavbarButton from '@components/Navbar/NavbarButton'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
 import { Box, CardMedia, Grid, IconButton, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
 import Hamburger from '@static/svg/Hamburger.svg'
 import { theme } from '@static/theme'
-import { RPC, CHAINS, NetworkType } from '@store/consts/static'
+import { RPC, NetworkType } from '@store/consts/static'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ChangeWalletButton from './HeaderButton/ChangeWalletButton'
-import SelectNetworkButton from './HeaderButton/SelectNetworkButton'
-import SelectRPCButton from './HeaderButton/SelectRPCButton'
 import useStyles from './style'
-import SelectChainButton from './HeaderButton/SelectChainButton'
-import SelectChain from '@components/Modals/SelectChain/SelectChain'
-import SelectMainnetRPC from '@components/Modals/SelectMainnetRPC/SelectMainnetRPC'
 import { ISelectChain, ISelectNetwork } from '@store/consts/types'
 import { RpcStatus } from '@store/reducers/solanaConnection'
 import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
@@ -57,13 +51,9 @@ export const Header: React.FC<IHeader> = ({
   rpc,
   onFaucet,
   onDisconnectWallet,
-  defaultTestnetRPC,
   onCopyAddress,
-  activeChain,
   onChainSelect,
   network,
-  rpcStatus,
-  defaultMainnetRPC,
   walletBalance
 }) => {
   const { classes } = useStyles()
@@ -71,7 +61,6 @@ export const Header: React.FC<IHeader> = ({
 
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
-  const showRPCBelowBreakpoint = useMediaQuery('@media (max-width:1050px)')
 
   const routes = [
     'exchange',
@@ -94,8 +83,6 @@ export const Header: React.FC<IHeader> = ({
   const [activePath, setActive] = useState('exchange')
 
   const [routesModalOpen, setRoutesModalOpen] = useState(false)
-  const [RpcsModalOpen, setRpcsModalOpen] = useState(false)
-  const [chainSelectOpen, setChainSelectOpen] = useState(false)
   const [viewSocialsOpen, setViewSocialsOpen] = useState(false)
 
   const [routesModalAnchor, setRoutesModalAnchor] = useState<HTMLButtonElement | null>(null)
@@ -149,19 +136,6 @@ export const Header: React.FC<IHeader> = ({
   ]
 
   const rpcs = [...testnetRPCs, ...mainnetRPCs, ...devnetRPCs]
-
-  const networks = useMemo(() => {
-    switch (network) {
-      case NetworkType.Testnet:
-        return testnetRPCs
-      case NetworkType.Mainnet:
-        return mainnetRPCs
-      case NetworkType.Devnet:
-        return devnetRPCs
-      default:
-        return []
-    }
-  }, [network])
 
   return (
     <Grid container>
@@ -230,69 +204,15 @@ export const Header: React.FC<IHeader> = ({
         </Grid>
 
         <Grid container item className={classes.buttons} wrap='nowrap'>
-          <Grid container className={classes.leftButtons}>
-            {typeOfNetwork === NetworkType.Testnet && (
+          {typeOfNetwork === NetworkType.Testnet && (
+            <Grid container className={classes.leftButtons}>
               <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                 <FaucetButton onFaucet={onFaucet} network={network} walletBalance={walletBalance}>
                   Faucet
                 </FaucetButton>
               </Box>
-            )}
-            <Box
-              sx={{
-                display: { md: 'block' },
-                '@media (max-width: 1050px)': {
-                  display: 'none'
-                }
-              }}>
-              <SelectRPCButton
-                rpc={rpc}
-                networks={networks}
-                onSelect={onNetworkSelect}
-                network={network}
-                rpcStatus={rpcStatus}
-              />
-            </Box>
-            <SelectNetworkButton
-              name={typeOfNetwork}
-              networks={[
-                {
-                  networkType: NetworkType.Mainnet,
-                  rpc: defaultMainnetRPC,
-                  rpcName:
-                    mainnetRPCs.find(data => data.rpc === defaultMainnetRPC)?.rpcName ?? 'Custom'
-                },
-                {
-                  networkType: NetworkType.Testnet,
-                  rpc: defaultTestnetRPC,
-                  rpcName:
-                    testnetRPCs.find(data => data.rpc === defaultTestnetRPC)?.rpcName ?? 'Custom'
-                }
-                // {
-                //   networkType: NetworkType.Devnet,
-                //   rpc: defaultDevnetRPC,
-                //   rpcName:
-                //     mainnetRPCs.find(data => data.rpc === defaultDevnetRPC)?.rpcName ?? 'Custom'
-                // }
-              ]}
-              onSelect={onNetworkSelect}
-            />
-            <Box
-              sx={{
-                display: {
-                  md: 'block',
-                  '@media (max-width: 1050px)': {
-                    display: 'none'
-                  }
-                }
-              }}>
-              <SelectChainButton
-                activeChain={activeChain}
-                chains={CHAINS}
-                onSelect={onChainSelect}
-              />
-            </Box>
-          </Grid>
+            </Grid>
+          )}
 
           <Bar
             rpcs={rpcs}
@@ -361,22 +281,6 @@ export const Header: React.FC<IHeader> = ({
               unblurContent()
             }}
             onFaucet={isMdDown && typeOfNetwork === NetworkType.Testnet ? onFaucet : undefined}
-            onRPC={
-              showRPCBelowBreakpoint
-                ? () => {
-                    setRoutesModalOpen(false)
-                    setRpcsModalOpen(true)
-                  }
-                : undefined
-            }
-            onChainSelect={
-              isMdDown
-                ? () => {
-                    setRoutesModalOpen(false)
-                    setChainSelectOpen(true)
-                  }
-                : undefined
-            }
             onSocials={
               isSmDown
                 ? () => {
@@ -385,44 +289,6 @@ export const Header: React.FC<IHeader> = ({
                   }
                 : undefined
             }
-          />
-          {typeOfNetwork === NetworkType.Testnet ? (
-            <SelectTestnetRPC
-              networks={testnetRPCs}
-              open={RpcsModalOpen}
-              anchorEl={routesModalAnchor}
-              onSelect={onNetworkSelect}
-              handleClose={() => {
-                setRpcsModalOpen(false)
-                unblurContent()
-              }}
-              activeRPC={rpc}
-              rpcStatus={rpcStatus}
-            />
-          ) : (
-            <SelectMainnetRPC
-              networks={mainnetRPCs}
-              open={RpcsModalOpen}
-              anchorEl={routesModalAnchor}
-              onSelect={onNetworkSelect}
-              handleClose={() => {
-                setRpcsModalOpen(false)
-                unblurContent()
-              }}
-              activeRPC={rpc}
-              rpcStatus={rpcStatus}
-            />
-          )}
-          <SelectChain
-            chains={CHAINS}
-            open={chainSelectOpen}
-            anchorEl={routesModalAnchor}
-            onSelect={onChainSelect}
-            handleClose={() => {
-              setChainSelectOpen(false)
-              unblurContent()
-            }}
-            activeChain={activeChain}
           />
           <SocialModal
             open={viewSocialsOpen}

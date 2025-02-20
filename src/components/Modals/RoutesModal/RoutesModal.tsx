@@ -13,9 +13,7 @@ export interface IRoutesModal {
   onSelect: (selected: string) => void
   current?: string
   onFaucet?: () => void
-  onRPC?: () => void
   onSocials?: () => void
-  onChainSelect?: () => void
 }
 export const RoutesModal: React.FC<IRoutesModal> = ({
   routes,
@@ -25,9 +23,7 @@ export const RoutesModal: React.FC<IRoutesModal> = ({
   onSelect,
   current,
   onFaucet,
-  onSocials,
-  onRPC,
-  onChainSelect
+  onSocials
 }) => {
   const { classes } = useStyles()
 
@@ -80,11 +76,6 @@ export const RoutesModal: React.FC<IRoutesModal> = ({
             ))}
           </>
         )}
-        {(typeof onFaucet !== 'undefined' ||
-          typeof onRPC !== 'undefined' ||
-          typeof onChainSelect !== 'undefined') && (
-          <Typography className={classes.subtitle}>Wallet</Typography>
-        )}
         {typeof onFaucet !== 'undefined' ? (
           <Grid
             item
@@ -94,16 +85,6 @@ export const RoutesModal: React.FC<IRoutesModal> = ({
               handleClose()
             }}>
             <Typography className={classes.name}>Faucet</Typography>
-          </Grid>
-        ) : null}
-        {typeof onRPC !== 'undefined' ? (
-          <Grid item className={classes.listItem} onClick={onRPC}>
-            <Typography className={classes.name}>Set RPC</Typography>
-          </Grid>
-        ) : null}
-        {typeof onChainSelect !== 'undefined' ? (
-          <Grid item className={classes.listItem} onClick={onChainSelect}>
-            <Typography className={classes.name}>Change chain</Typography>
           </Grid>
         ) : null}
         {isSmDown && (
