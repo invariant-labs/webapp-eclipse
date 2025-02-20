@@ -1905,3 +1905,16 @@ export const getConcentrationIndex = (concentrationArray: number[], neededValue:
 
   return concentrationIndex
 }
+export const formatDate = timestamp => {
+  const date = new Date(timestamp * 1000)
+  const day = date.getDate().toString().padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}.${month}.${year}`
+}
+
+export const formatNumberWithSpaces = (number: string) => {
+  const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
+
+  return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+}

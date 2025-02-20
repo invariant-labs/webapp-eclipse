@@ -3,9 +3,8 @@ import { useEffect, useState } from 'react'
 import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/pools'
-
+import { actions as positionsActions } from '@store/reducers/positions'
 import { poolsArraySortedByFees, poolTicks, tickMaps } from '@store/selectors/pools'
-
 import { swap } from '@store/selectors/swap'
 import { findTickmapChanges, IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
@@ -13,6 +12,12 @@ import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
 import { getEclipseWallet } from '@utils/web3/wallet'
+import {
+  currentPositionData,
+  currentPositionId,
+  lockedPositionsWithPoolsData,
+  positionsWithPoolsData
+} from '@store/selectors/positions'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -24,7 +29,10 @@ const MarketEvents = () => {
   const networkStatus = useSelector(status)
   const tickmaps = useSelector(tickMaps)
   const allPools = useSelector(poolsArraySortedByFees)
-
+  const positionsList = useSelector(positionsWithPoolsData)
+  const lockedPositionsList = useSelector(lockedPositionsWithPoolsData)
+  const currentPositionIndex = useSelector(currentPositionId)
+  const currentPosition = useSelector(currentPositionData)
   const poolTicksArray = useSelector(poolTicks)
   const [subscribedTick, _setSubscribeTick] = useState<Set<string>>(new Set())
   const [subscribedTickmap, _setSubscribedTickmap] = useState<Set<string>>(new Set())
@@ -92,11 +100,81 @@ const MarketEvents = () => {
 
     const connectEvents = () => {
       allPools.forEach(pool => {
+        const allPositions = [...positionsList, ...lockedPositionsList]
+
+        const positionsInPool = allPositions.filter(position => {
+          return position.poolData.address.toString() === pool.address.toString()
+        })
+
         marketProgram.onPoolChange(
           pool.tokenX,
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
+            // update position list
+            if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
+              positionsInPool.map(position => {
+                if (
+                  (pool.currentTickIndex >= position?.lowerTickIndex &&
+                    poolStructure.currentTickIndex < position?.lowerTickIndex) ||
+                  (pool.currentTickIndex < position?.lowerTickIndex &&
+                    poolStructure.currentTickIndex >= position?.lowerTickIndex)
+                ) {
+                  dispatch(
+                    positionsActions.updatePositionTicksRange({
+                      positionId: position.id.toString() + '_' + position.pool.toString(),
+                      fetchTick: 'lower'
+                    })
+                  )
+                } else if (
+                  (pool.currentTickIndex < position?.upperTickIndex &&
+                    poolStructure.currentTickIndex >= position?.upperTickIndex) ||
+                  (pool.currentTickIndex >= position?.upperTickIndex &&
+                    poolStructure.currentTickIndex < position?.upperTickIndex)
+                ) {
+                  dispatch(
+                    positionsActions.updatePositionTicksRange({
+                      positionId: position.id.toString() + '_' + position.pool.toString(),
+                      fetchTick: 'upper'
+                    })
+                  )
+                }
+
+                //update current position details
+                if (
+                  currentPositionIndex ===
+                    position.id.toString() + '_' + position.pool.toString() &&
+                  currentPosition
+                ) {
+                  if (
+                    (pool.currentTickIndex >= currentPosition?.lowerTickIndex &&
+                      poolStructure.currentTickIndex < currentPosition?.lowerTickIndex) ||
+                    (pool.currentTickIndex < currentPosition?.lowerTickIndex &&
+                      poolStructure.currentTickIndex >= currentPosition?.lowerTickIndex)
+                  ) {
+                    dispatch(
+                      positionsActions.getCurrentPositionRangeTicks({
+                        id: currentPositionIndex,
+                        fetchTick: 'lower'
+                      })
+                    )
+                  } else if (
+                    (pool.currentTickIndex < currentPosition?.upperTickIndex &&
+                      poolStructure.currentTickIndex >= currentPosition?.upperTickIndex) ||
+                    (pool.currentTickIndex >= currentPosition?.upperTickIndex &&
+                      poolStructure.currentTickIndex < currentPosition?.upperTickIndex)
+                  ) {
+                    dispatch(
+                      positionsActions.getCurrentPositionRangeTicks({
+                        id: currentPositionIndex,
+                        fetchTick: 'upper'
+                      })
+                    )
+                  }
+                }
+              })
+            }
+
             dispatch(
               actions.updatePool({
                 address: pool.address,
@@ -109,7 +187,7 @@ const MarketEvents = () => {
     }
 
     connectEvents()
-  }, [dispatch, allPools.length, networkStatus, marketProgram])
+  }, [dispatch, allPools.length, networkStatus, marketProgram, currentPositionIndex])
 
   useEffect(() => {
     if (networkStatus !== Status.Initialized || !marketProgram || allPools.length === 0) {

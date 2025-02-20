@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useLayoutEffect, useMemo, useState } fro
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import {
+  contentPoints,
   getPromotedPools,
   lastTimestamp,
   leaderboardSelectors,
@@ -50,6 +51,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const walletStatus = useSelector(status)
   const userAddress = useSelector(address)
   const lpData = useSelector(topRankedLpUsers)
+  const userContentPoints = useSelector(contentPoints)
   const swapData = useSelector(topRankedSwapUsers)
   const totalData = useSelector(topRankedTotalUsers)
   const isLoadingLeaderboardList = useSelector(leaderboardSelectors.loading)
@@ -68,7 +70,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       handlePageChange(currentPage)
     }
   }, [selectedOption])
-
   const isDelayWarning = useMemo(() => {
     if (!lastSnapTimestamp) return false
     const snapTime = hexToDate(lastSnapTimestamp)
@@ -144,11 +145,16 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       })
     )
   }
-
+  useEffect(() => {
+    if (isConnected) {
+      dispatch(actions.getContentPointsRequest())
+    }
+  }, [dispatch, isConnected])
   useEffect(() => {
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.getLeaderboardConfig())
     dispatch(statsActions.getCurrentStats())
+
     dispatch(positionListActions.getPositionsList())
   }, [dispatch, itemsPerPage])
 
@@ -181,6 +187,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
 
   return (
     <Leaderboard
+      userContentPoints={userContentPoints}
       copyAddressHandler={copyAddressHandler}
       currentNetwork={currentNetwork}
       estimated24hPoints={estimated24hPoints}
