@@ -1,4 +1,4 @@
-import { Box, Skeleton, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Box, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './styles'
 import React, { useMemo } from 'react'
 import PoolList from './PoolList/PoolList'
@@ -8,6 +8,7 @@ import icons from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme, typography } from '@static/theme'
 import infoIcon from '@static/svg/info.svg'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
   pointsPerSecond: string
@@ -88,26 +89,29 @@ export const RewardedPools: React.FC<IProps> = ({
                   justifySelf: 'self-start'
                 }}>
                 Pools Distributing Points
-                <Tooltip
+                <TooltipGradient
                   title={
-                    <div onClick={e => e.stopPropagation()}>
+                    <div style={{ maxWidth: 250 }} onClick={e => e.stopPropagation()}>
                       List of pools currently distributing points. Updates on new pools will be
                       announced on our{' '}
                       <a
                         href='https://x.com/invariant_labs'
                         target='_blank'
                         rel='noopener noreferrer'
-                        style={{ color: 'inherit', textDecoration: 'underline' }}>
+                        style={{
+                          color: 'inherit',
+                          textDecoration: 'underline',
+                          pointerEvents: 'auto'
+                        }}>
                         X
                       </a>
                       .
                     </div>
                   }
                   placement='bottom'
-                  classes={{ tooltip: classes.tooltip }}
                   enterTouchDelay={0}>
                   <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
-                </Tooltip>
+                </TooltipGradient>
               </Typography>
             </Box>
           )}
