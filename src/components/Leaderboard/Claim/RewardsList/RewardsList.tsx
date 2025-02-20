@@ -13,7 +13,7 @@ export interface NFTsListInterface {
 }
 
 const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => {
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
   const { classes } = useStylesList()
 
   return (
