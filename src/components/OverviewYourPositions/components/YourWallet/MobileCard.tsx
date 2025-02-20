@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { TokenPool, StrategyConfig } from '@store/types/userOverview'
-import { formatNumber2 } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 
 export const MobileCard: React.FC<{
   pool: TokenPool
@@ -24,7 +24,7 @@ export const MobileCard: React.FC<{
             Amount:
           </Typography>
           <Typography component='span' className={classes.mobileStatValue}>
-            {formatNumber2(pool.amount)}
+            {formatNumberWithoutSuffix(pool.amount)}
           </Typography>
         </Box>
         <Box className={classes.mobileStatItem}>

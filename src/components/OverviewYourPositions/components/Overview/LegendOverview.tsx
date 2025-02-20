@@ -4,7 +4,7 @@ import {
   TokenColorOverride,
   useAverageLogoColor
 } from '@store/hooks/userOverview/useAverageLogoColor'
-import { formatNumber2 } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 import React from 'react'
 interface LegendOverviewProps {
   sortedPositions: any[]
@@ -108,7 +108,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
                     color: colors.invariant.text,
                     textAlign: 'right'
                   }}>
-                  ${formatNumber2(position.value, { twoDecimals: true })}
+                  ${formatNumberWithoutSuffix(position.value, { twoDecimals: true })}
                 </Typography>
               </Grid>
             </Grid>

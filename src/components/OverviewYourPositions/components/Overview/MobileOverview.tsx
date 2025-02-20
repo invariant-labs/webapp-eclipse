@@ -3,7 +3,7 @@ import { Box, Grid, Typography } from '@mui/material'
 import { colors, typography } from '@static/theme'
 
 import { TokenPositionEntry } from '@store/types/userOverview'
-import { formatNumber2 } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { isLoadingPositionsList } from '@store/selectors/positions'
 import { useSelector } from 'react-redux'
@@ -170,7 +170,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                           textAlign: 'right',
                           paddingLeft: '8px'
                         }}>
-                        ${formatNumber2(segment.value, { twoDecimals: true })}
+                        ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })}
                       </Typography>
                     </Grid>
                   </Grid>

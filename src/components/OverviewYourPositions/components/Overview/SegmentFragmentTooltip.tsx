@@ -1,5 +1,5 @@
 import { Tooltip, Box, Typography } from '@mui/material'
-import { formatNumber2 } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 import React, { useMemo, useEffect } from 'react'
 import { ChartSegment } from './MobileOverview'
 import { typography } from '@static/theme'
@@ -82,7 +82,8 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
               {segment.token}
             </Typography>
             <Typography sx={{ mb: 0.5, ...typography.body2 }}>
-              ${formatNumber2(segment.value, { twoDecimals: true })} ({segment.percentage}%)
+              ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })} (
+              {segment.percentage}%)
             </Typography>
           </Box>
         }

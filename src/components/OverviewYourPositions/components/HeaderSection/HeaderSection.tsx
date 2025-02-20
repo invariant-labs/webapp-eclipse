@@ -1,6 +1,6 @@
 import { Typography, Box, Skeleton } from '@mui/material'
 import { useStyles } from '../Overview/styles'
-import { formatNumber2 } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 import { typography, theme, colors } from '@static/theme'
 
 interface HeaderSectionProps {
@@ -32,7 +32,10 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
           </>
         ) : (
           <Typography className={classes.headerText}>
-            ${Number.isNaN(totalValue) ? 0 : formatNumber2(totalValue, { twoDecimals: true })}
+            $
+            {Number.isNaN(totalValue)
+              ? 0
+              : formatNumberWithoutSuffix(totalValue, { twoDecimals: true })}
           </Typography>
         )}
       </Box>

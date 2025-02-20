@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import { STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
 import { ALL_FEE_TIERS_DATA, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
-import { addressToTicker, formatNumber2, printBN } from '@utils/utils'
+import { addressToTicker, formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
 import { useSelector } from 'react-redux'
@@ -145,7 +145,9 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
           {isLoading ? (
             <Skeleton variant='text' width={100} height={32} sx={{ marginRight: '16px' }} />
           ) : (
-            <Typography className={classes.headerText}>${formatNumber2(totalValue)}</Typography>
+            <Typography className={classes.headerText}>
+              ${formatNumberWithoutSuffix(totalValue)}
+            </Typography>
           )}
         </Box>
 
@@ -258,14 +260,17 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       <TableCell className={classes.tableCell} align='right'>
                         <Box className={classes.statsContainer}>
                           <Typography className={classes.statsValue}>
-                            ${formatNumber2(pool.value.toFixed(2), { twoDecimals: true })}
+                            $
+                            {formatNumberWithoutSuffix(pool.value.toFixed(2), {
+                              twoDecimals: true
+                            })}
                           </Typography>
                         </Box>
                       </TableCell>
                       <TableCell className={classes.tableCell} align='right'>
                         <Box className={classes.statsContainer}>
                           <Typography className={classes.statsValue}>
-                            {formatNumber2(pool.amount)}
+                            {formatNumberWithoutSuffix(pool.amount)}
                           </Typography>
                         </Box>
                       </TableCell>

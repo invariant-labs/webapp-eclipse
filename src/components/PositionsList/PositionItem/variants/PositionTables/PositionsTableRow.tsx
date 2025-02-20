@@ -16,7 +16,7 @@ import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import icons from '@static/icons'
-import { initialXtoY, tickerToAddress, formatNumber2 } from '@utils/utils'
+import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useDispatch, useSelector } from 'react-redux'
 import { usePromotedPool } from '../../hooks/usePromotedPool'
@@ -197,7 +197,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            {`$${formatNumber2(tokenValueInUsd.value, { twoDecimals: true })}`}
+            {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
         </Grid>
       </Grid>
@@ -216,7 +216,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         wrap='nowrap'>
         <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
           <Typography className={sharedClasses.greenText}>
-            ${formatNumber2(unclaimedFeesInUSD.value, { twoDecimals: true })}
+            ${formatNumberWithoutSuffix(unclaimedFeesInUSD.value, { twoDecimals: true })}
           </Typography>
         </Grid>
       </Grid>
@@ -339,7 +339,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     const valueX = tokenXLiq + tokenYLiq / currentPrice
     const valueY = tokenYLiq + tokenXLiq * currentPrice
     return {
-      value: `${formatNumber2(xToY ? valueX : valueY)} ${xToY ? tokenXName : tokenYName}`,
+      value: `${formatNumberWithoutSuffix(xToY ? valueX : valueY)} ${xToY ? tokenXName : tokenYName}`,
       tokenXLabel: xToY ? tokenXName : tokenYName,
       tokenYLabel: xToY ? tokenYName : tokenXName
     }
@@ -357,7 +357,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         tokenY={{ name: tokenYName, icon: tokenYIcon, liqValue: tokenYLiq } as ILiquidityToken}
         onLock={lockPosition}
         fee={`${fee}% fee`}
-        minMax={`${formatNumber2(xToY ? min : 1 / max)}-${formatNumber2(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
+        minMax={`${formatNumberWithoutSuffix(xToY ? min : 1 / max)}-${formatNumberWithoutSuffix(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
         isActive={isActive}
         swapHandler={() => setXToY(!xToY)}
