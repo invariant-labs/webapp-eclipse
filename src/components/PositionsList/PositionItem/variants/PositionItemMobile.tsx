@@ -264,12 +264,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
   const topSection = useMemo(
     () => (
-      <Grid
-        container
-        justifyContent='space-between'
-        alignItems='center'
-        sx={{ width: '100%', mb: 2 }}>
-        <Grid item xs={3}>
+      <Grid container sx={{ width: '100%', mb: 2 }}>
+        <Grid item xs={5}>
           <Tooltip
             enterTouchDelay={0}
             leaveTouchDelay={Number.MAX_SAFE_INTEGER}
@@ -306,35 +302,34 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           </Tooltip>
         </Grid>
 
-        <Grid item xs={8}>
+        <Grid item xs={7} sx={{ paddingLeft: '16px' }}>
           {unclaimedFeesInUSD.loading ? (
             <Skeleton
               variant='rectangular'
               width='100%'
               height={36}
-              sx={{ borderRadius: '10px', margin: '0 auto' }}
+              sx={{ borderRadius: '10px' }}
             />
           ) : (
             <Grid
               container
               justifyContent='center'
               alignItems='center'
-              className={sharedClasses.fee}>
-              <Typography className={sharedClasses.infoText} style={{ display: 'flex' }}>
-                Unclaimed Fee
-                <Typography className={sharedClasses.greenText} style={{ marginLeft: '10px' }}>
-                  {unclaimedFeesInUSD.loading ? (
-                    <Skeleton
-                      variant='text'
-                      width='100%'
-                      height={36}
-                      sx={{ borderRadius: '10px', margin: '0 auto' }}
-                    />
-                  ) : (
-                    `$${formatNumber(unclaimedFeesInUSD.value)}`
-                  )}
+              className={sharedClasses.fee}
+              sx={{ width: '100%' }}>
+              <Box
+                sx={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                  width: '100%',
+                  justifyContent: 'center'
+                }}>
+                <Typography className={sharedClasses.infoText}>Unclaimed Fee</Typography>
+                <Typography className={sharedClasses.greenText}>
+                  ${formatNumber(unclaimedFeesInUSD.value)}
                 </Typography>
-              </Typography>
+              </Box>
             </Grid>
           )}
         </Grid>
@@ -352,20 +347,20 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               variant='rectangular'
               width='100%'
               height={36}
-              sx={{ borderRadius: '10px', margin: '0 auto' }}
+              sx={{ borderRadius: '10px' }}
             />
           ) : (
             <Grid
               container
               className={sharedClasses.value}
               alignItems='center'
-              justifyContent={'center'}>
-              <Typography className={classNames(sharedClasses.infoText, sharedClasses.label)}>
-                Value
-              </Typography>
-              <Typography className={sharedClasses.greenText}>
-                {`$${formatNumber(tokenValueInUsd.value)}`}
-              </Typography>
+              justifyContent='center'>
+              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                <Typography className={sharedClasses.infoText}>Value</Typography>
+                <Typography className={sharedClasses.greenText}>
+                  ${formatNumber(tokenValueInUsd.value)}
+                </Typography>
+              </Box>
             </Grid>
           )}
         </Grid>
@@ -375,7 +370,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             container
             alignItems='center'
             className={sharedClasses.value}
-            justifyContent={'center'}>
+            justifyContent='center'>
             <Typography className={sharedClasses.infoText}>
               {tokenXPercentage === 100 && (
                 <span>

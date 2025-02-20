@@ -104,6 +104,9 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
     height: '345px',
     overflowY: 'auto',
     paddingRight: '4px',
+    [theme.breakpoints.down('lg')]: {
+      marginTop: '20px'
+    },
     '&::-webkit-scrollbar': {
       width: '4px'
     },

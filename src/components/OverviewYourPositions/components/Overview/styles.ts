@@ -19,9 +19,8 @@ export const useStyles = makeStyles()(() => ({
     flexDirection: 'column'
   },
   tooltip: {
-    color: colors.invariant.textGrey,
-    ...typography.caption4,
-    lineHeight: '24px',
+    color: colors.invariant.text,
+    width: '150px',
     background: colors.invariant.componentDark,
     borderRadius: 12
   },

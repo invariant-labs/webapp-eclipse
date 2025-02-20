@@ -88,7 +88,13 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
           </Box>
           {segments.length > 0 ? (
             <Box sx={{ mt: 2 }}>
-              <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey, mb: 2 }}>
+              <Typography
+                sx={{
+                  ...typography.body2,
+                  fontWeight: 600,
+                  color: colors.invariant.textGrey,
+                  mb: 2
+                }}>
                 Tokens
               </Typography>
 
@@ -101,8 +107,9 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                   maxHeight: '120px',
                   marginLeft: '0 !important',
                   overflowY: 'auto',
-                  padding: '4px',
+                  paddingRight: '8px',
                   marginRight: '-4px',
+                  marginBottom: '5px',
                   '&::-webkit-scrollbar': {
                     width: '4px'
                   },

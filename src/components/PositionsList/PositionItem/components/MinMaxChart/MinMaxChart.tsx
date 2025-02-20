@@ -90,8 +90,8 @@ const MinMaxLabels: React.FC<{ min: number; max: number; isOutOfBounds: boolean 
 
 export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) => {
   const calculateBoundedPosition = () => {
-    if (current < min) return -CHART_CONSTANTS.OVERFLOW_LIMIT
-    if (current > max) return 100 + CHART_CONSTANTS.OVERFLOW_LIMIT / 2
+    if (current < min) return -CHART_CONSTANTS.OVERFLOW_LIMIT_LEFT
+    if (current > max) return 100 + CHART_CONSTANTS.OVERFLOW_LIMIT_RIGHT / 2
     return ((current - min) / (max - min)) * 100
   }
   const { classes } = useMinMaxChartStyles()

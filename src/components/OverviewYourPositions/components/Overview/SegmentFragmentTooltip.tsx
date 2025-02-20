@@ -2,6 +2,7 @@ import { Tooltip, Box, Typography } from '@mui/material'
 import { formatNumber2 } from '@utils/utils'
 import React, { useMemo, useEffect } from 'react'
 import { ChartSegment } from './MobileOverview'
+import { typography } from '@static/theme'
 
 interface Colors {
   invariant: {
@@ -76,11 +77,13 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
         onClose={() => setSelectedSegment(null)}
         title={
           <Box sx={{ p: 1 }}>
-            <Typography sx={{ color: segment.color, mb: 0.5 }}>{segment.token}</Typography>
-            <Typography sx={{ color: colors.invariant.textGrey, mb: 0.5 }}>
-              ${formatNumber2(segment.value, { twoDecimals: true })}
+            <Typography
+              sx={{ color: segment.color, ...typography.body2, fontWeight: '600', mb: 0.5 }}>
+              {segment.token}
             </Typography>
-            <Typography sx={{ color: colors.invariant.textGrey }}>{segment.percentage}%</Typography>
+            <Typography sx={{ mb: 0.5, ...typography.body2 }}>
+              ${formatNumber2(segment.value, { twoDecimals: true })} ({segment.percentage}%)
+            </Typography>
           </Box>
         }
         placement='top'

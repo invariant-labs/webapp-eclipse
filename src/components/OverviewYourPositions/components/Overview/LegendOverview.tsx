@@ -35,12 +35,12 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
         spacing={1}
         sx={{
           height: getContainerHeight(),
-          width: '90%',
+          width: '97%',
           overflowY: sortedPositions.length <= 5 ? 'hidden' : 'auto',
           marginTop: '8px',
           marginLeft: '0 !important',
           '&::-webkit-scrollbar': {
-            padding: 0,
+            padding: '4px',
             width: '4px'
           },
           '&::-webkit-scrollbar-track': {
@@ -65,6 +65,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
               sx={{
                 paddingLeft: '0 !important',
                 display: 'flex',
+                paddingRight: '10px',
                 maxHeight: '32px',
                 [theme.breakpoints.down('lg')]: {
                   justifyContent: 'space-between'
@@ -100,7 +101,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
                 </Typography>
               </Grid>
 
-              <Grid item xs={6} alignContent={'center'}>
+              <Grid item xs={7} alignContent={'center'}>
                 <Typography
                   style={{
                     ...typography.heading4,

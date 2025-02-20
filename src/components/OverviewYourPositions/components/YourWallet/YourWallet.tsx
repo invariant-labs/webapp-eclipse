@@ -258,14 +258,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                       <TableCell className={classes.tableCell} align='right'>
                         <Box className={classes.statsContainer}>
                           <Typography className={classes.statsValue}>
-                            ${formatNumber2(pool.value, { twoDecimals: true })}
+                            ${formatNumber2(pool.value.toFixed(2), { twoDecimals: true })}
                           </Typography>
                         </Box>
                       </TableCell>
                       <TableCell className={classes.tableCell} align='right'>
                         <Box className={classes.statsContainer}>
                           <Typography className={classes.statsValue}>
-                            {formatNumber2(pool.amount, { twoDecimals: true })}
+                            {formatNumber2(pool.amount)}
                           </Typography>
                         </Box>
                       </TableCell>
@@ -285,7 +285,11 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
       </Box>
 
       <Box className={classes.mobileContainer}>
-        <Typography style={{ ...typography.heading4, color: colors.invariant.text }}>
+        <Typography
+          style={{
+            ...typography.heading4,
+            color: colors.invariant.text
+          }}>
           Your Wallet
         </Typography>
         {isLoading ? (
