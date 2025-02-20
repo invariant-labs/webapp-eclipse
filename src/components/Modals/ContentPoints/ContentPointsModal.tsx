@@ -21,30 +21,13 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   handleClose,
   userContentPoints
 }) => {
-  const { classes } = useStyles()
-
+  const itemSize = 56
   const allocations = userContentPoints ?? []
+  const isEmpty = allocations.length === 0
+  const { classes } = useStyles({ isEmpty })
 
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
-    if (index === allocations.length) {
-      return (
-        <Box key={index} style={style} className={classes.row}>
-          <Box className={classes.innerRow}>
-            <Typography className={classes.dateLabel}>15.02.2025 - 28.02.2025</Typography>
-            <Button
-              component='a'
-              href='https://docs.google.com/forms/d/e/1FAIpQLSe9fziOpaFeSj8fCEZWnKm5DHON2gqGeEM771s8tldihfBZUw/viewform'
-              target='_blank'
-              rel='noopener noreferrer'
-              className={classes.button}>
-              Sumbit here
-            </Button>
-          </Box>
-        </Box>
-      )
-    }
     const entry = allocations[index]
-
     return (
       <Box key={index} style={style} className={classes.row}>
         <Box className={classes.innerRow}>
@@ -78,14 +61,46 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
       <DialogContent sx={{ padding: 0 }}>
         <Box>
           <Typography className={classes.allocationText}>Your allocations</Typography>
-          <FixedSizeList
-            height={allocations.length < 2 ? 120 : 200}
-            width='100%'
-            itemSize={56}
-            itemCount={allocations.length + 1}
-            className={classes.allocationSection}>
-            {Row}
-          </FixedSizeList>
+
+          {allocations.length >= 4 ? (
+            <FixedSizeList
+              height={itemSize * 3}
+              width='100%'
+              itemSize={itemSize}
+              itemCount={allocations.length}
+              className={classes.allocationSection}>
+              {Row}
+            </FixedSizeList>
+          ) : (
+            <Box className={classes.allocationSection}>
+              {allocations.map((entry, index) => (
+                <Box height={56} key={index} className={classes.staticRow}>
+                  <Box className={classes.innerRow}>
+                    <Typography className={classes.dateLabel}>
+                      {`${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
+                    </Typography>
+                    <Typography className={classes.pointsLabel}>
+                      + {formatNumberWithSpaces(entry.points.toString())} Points
+                    </Typography>
+                  </Box>
+                </Box>
+              ))}
+            </Box>
+          )}
+
+          <Box className={classes.buttonRow}>
+            <Box className={classes.innerRow}>
+              <Typography className={classes.dateLabel}>15.02.2025 - 28.02.2025</Typography>
+              <Button
+                component='a'
+                href='https://docs.google.com/forms/d/e/1FAIpQLSe9fziOpaFeSj8fCEZWnKm5DHON2gqGeEM771s8tldihfBZUw/viewform'
+                target='_blank'
+                rel='noopener noreferrer'
+                className={classes.button}>
+                Submit here
+              </Button>
+            </Box>
+          </Box>
         </Box>
       </DialogContent>
     </Dialog>

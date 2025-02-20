@@ -1,7 +1,8 @@
+import { Theme } from '@mui/material'
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles()(() => {
+const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }) => {
   return {
     header: {
       width: '100%',
@@ -86,8 +87,7 @@ const useStyles = makeStyles()(() => {
         borderRadius: '11px 11px 0 0'
       },
       '&:last-child': {
-        borderBottom: `1px solid ${colors.invariant.light}`,
-        borderRadius: '0 0 11px 11px'
+        borderBottom: `0px solid ${colors.invariant.light}`
       },
       '&:nth-of-type(odd)': {
         background: `#111931CC`
@@ -151,6 +151,35 @@ const useStyles = makeStyles()(() => {
           marginTop: 30
         }
       }
+    },
+    buttonRow: {
+      height: 56,
+      '&:nth-of-type(odd)': {
+        background: `#111931CC`
+      },
+      '&:nth-of-type(even)': {
+        background: `#11193180`
+      },
+      borderBottom: `1px solid ${colors.invariant.light}`,
+      borderTop: `1px solid ${colors.invariant.light}`,
+      borderRadius: `${isEmpty ? '11px' : '0 0 11px 11px'}`,
+      background: `#111931CC`
+    },
+    staticRow: {
+      '&:first-child': {
+        borderTop: `1px solid ${colors.invariant.light}`,
+        borderRadius: '11px 11px 0 0'
+      },
+      '&:last-child': {
+        borderBottom: `0px solid ${colors.invariant.light}`
+      },
+      '&:nth-of-type(odd)': {
+        background: `#111931CC`
+      },
+      '&:nth-of-type(even)': {
+        background: `#11193180`
+      },
+      borderTop: `1px solid ${colors.invariant.light}`
     }
   }
 })
