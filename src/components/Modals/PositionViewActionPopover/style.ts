@@ -41,8 +41,8 @@ const useStyles = makeStyles()(() => {
         marginTop: '4px'
       },
       '&:disabled': {
-        background: colors.invariant.componentDark,
-        color: colors.invariant.newDark,
+        background: colors.invariant.light,
+        color: colors.invariant.black,
         pointerEvents: 'auto',
         transition: 'all 0.2s',
         '&:hover': {
