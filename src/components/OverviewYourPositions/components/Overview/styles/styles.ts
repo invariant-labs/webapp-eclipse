@@ -16,8 +16,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()(
         padding: '0px 16px 0px 16px'
       },
       [theme.breakpoints.down('md')]: {
-        borderRadius: 24,
-        marginBottom: 8
+        borderRadius: 24
       },
       borderRight: `1px solid  ${colors.invariant.light}`,
       display: 'flex',

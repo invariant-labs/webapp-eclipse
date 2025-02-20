@@ -17,7 +17,8 @@ export const useStyles = makeStyles()(() => ({
     },
     [theme.breakpoints.down('md')]: {
       borderRadius: 16,
-      border: 'none'
+      border: 'none',
+      marginTop: 8
     }
   },
   footerItem: {
