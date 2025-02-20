@@ -111,7 +111,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
     color: colors.invariant.text
   },
   mobileCardContainer: {
-    height: '345px',
+    maxHeight: '345px',
     overflowY: 'auto',
     paddingRight: '4px',
     [theme.breakpoints.down('lg')]: {

@@ -25,8 +25,11 @@ export const useStyles = makeStyles()(() => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-around',
-    alignItems: 'center'
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    padding: 10,
+    paddingLeft: 16,
+    paddingRight: 16
   },
   footerCheckboxContainer: {
     display: 'flex',
