@@ -23,15 +23,15 @@ import { LegendOverview } from './LegendOverview'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
-  isLoading?: boolean
 }
 
 export const Overview: React.FC<OverviewProps> = () => {
-  const { classes } = useStyles()
   const positionList = useSelector(positionsWithPoolsData)
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const { isAllClaimFeesLoading } = useSelector(list)
   const isLoadingList = useSelector(isLoadingPositionsList)
+  const { classes } = useStyles({ isLoading: isLoadingList })
+
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())

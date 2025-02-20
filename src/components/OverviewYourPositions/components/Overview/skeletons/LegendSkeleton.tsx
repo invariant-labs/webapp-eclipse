@@ -22,7 +22,7 @@ const LegendSkeleton: React.FC = () => {
               />
             </Grid>
 
-            <Grid item xs={5} alignContent={'center'} className={classes.valueContainer}>
+            <Grid item xs={6} alignContent={'center'} className={classes.valueContainer}>
               <Skeleton
                 variant='text'
                 sx={{ borderRadius: '6px' }}

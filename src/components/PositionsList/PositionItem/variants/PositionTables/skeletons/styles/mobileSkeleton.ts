@@ -5,7 +5,7 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
     padding: '16px',
     background: colors.invariant.component,
     borderRadius: '24px',
-    marginBottom: '16px'
+    marginBottom: '32px'
   },
   tokenIcons: {
     display: 'flex',

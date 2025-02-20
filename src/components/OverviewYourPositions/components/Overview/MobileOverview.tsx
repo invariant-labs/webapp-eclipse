@@ -27,8 +27,8 @@ interface MobileOverviewProps {
 
 const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets, chartColors }) => {
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null)
-  const { classes } = useStyles()
   const isLoadingList = useSelector(isLoadingPositionsList)
+  const { classes } = useStyles({ isLoading: isLoadingList })
 
   const sortedPositions = useMemo(() => {
     return [...positions].sort((a, b) => b.value - a.value)

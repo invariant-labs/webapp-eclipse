@@ -9,7 +9,7 @@ interface HeaderSectionProps {
 }
 
 export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loading }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({ isLoading: loading ?? false })
 
   return (
     <>
