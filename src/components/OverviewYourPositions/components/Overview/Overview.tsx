@@ -157,7 +157,7 @@ export const Overview: React.FC<OverviewProps> = () => {
 
   return (
     <Box className={classes.container}>
-      <HeaderSection totalValue={totalAssets} loading={isLoadingList || isAllClaimFeesLoading} />
+      <HeaderSection totalValue={totalAssets} loading={isLoadingList} />
       <UnclaimedSection
         unclaimedTotal={totalUnclaimedFee}
         loading={isLoadingList || isAllClaimFeesLoading}
@@ -181,7 +181,7 @@ export const Overview: React.FC<OverviewProps> = () => {
             }
           }}>
           <Box sx={{ width: '850px' }}>
-            {!isDataReady || isAllClaimFeesLoading ? (
+            {!isDataReady ? (
               <LegendSkeleton />
             ) : (
               <LegendOverview
@@ -200,11 +200,7 @@ export const Overview: React.FC<OverviewProps> = () => {
                 marginTop: '100px'
               }
             }}>
-            <ResponsivePieChart
-              data={data}
-              chartColors={chartColors}
-              isLoading={!isDataReady || isAllClaimFeesLoading}
-            />
+            <ResponsivePieChart data={data} chartColors={chartColors} isLoading={!isDataReady} />
           </Box>
         </Box>
       )}

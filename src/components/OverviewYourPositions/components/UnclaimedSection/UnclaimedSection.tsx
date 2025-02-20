@@ -4,6 +4,7 @@ import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/positions'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { theme } from '@static/theme'
+import loadingAnimation from '@static/gif/loading.gif'
 
 interface UnclaimedSectionProps {
   unclaimedTotal: number
@@ -36,7 +37,17 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
               className={classes.claimAllButton}
               onClick={handleClaimAll}
               disabled={loading || unclaimedTotal === 0}>
-              Claim all
+              {loading ? (
+                <>
+                  <img
+                    src={loadingAnimation}
+                    style={{ height: 25, width: 25, zIndex: 10 }}
+                    alt='loading'
+                  />
+                </>
+              ) : (
+                'Claim All'
+              )}
             </Button>
           )}
         </Box>
@@ -54,7 +65,17 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
           className={classes.claimAllButton}
           onClick={handleClaimAll}
           disabled={loading || unclaimedTotal === 0}>
-          Claim all
+          {loading ? (
+            <>
+              <img
+                src={loadingAnimation}
+                style={{ height: 25, width: 25, zIndex: 10 }}
+                alt='loading'
+              />
+            </>
+          ) : (
+            'Claim All'
+          )}
         </Button>
       )}
     </Box>
