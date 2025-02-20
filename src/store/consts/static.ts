@@ -870,7 +870,3 @@ export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
 export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
 export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
-
-export const PROGRAM_START = 1738623600
-export const TWO_WEEKS = 14 * 24 * 3600
-export const ONE_DAY = 86400

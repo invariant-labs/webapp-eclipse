@@ -78,7 +78,6 @@ const useStyles = makeStyles()(() => {
       paddingRight: '16px'
     },
     link: {
-      textDecoration: 'none',
       color: colors.invariant.green
     },
     row: {
