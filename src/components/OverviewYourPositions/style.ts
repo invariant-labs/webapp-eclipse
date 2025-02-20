@@ -16,16 +16,16 @@ export const useStyles = makeStyles()(() => ({
       marginBottom: 32
     },
     [theme.breakpoints.down('md')]: {
-      borderRadius: 24,
+      borderRadius: 16,
       border: 'none'
     }
   },
   footerItem: {
-    padding: 16,
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    justifyContent: 'space-between'
+    justifyContent: 'space-around',
+    alignItems: 'center'
   },
   footerCheckboxContainer: {
     display: 'flex',
@@ -33,9 +33,13 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     gap: 8
   },
-  footerText: {
-    ...typography.body2
+  checkBoxLabel: {
+    '.MuiFormControlLabel-label': {
+      ...typography.body2,
+      color: colors.invariant.text
+    }
   },
+  footerText: { ...typography.body2 },
   footerPositionDetails: {
     ...typography.body1
   },

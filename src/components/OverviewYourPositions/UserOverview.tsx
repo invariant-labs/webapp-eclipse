@@ -1,4 +1,12 @@
-import { Box, Checkbox, Grid, Typography, useMediaQuery } from '@mui/material'
+import {
+  Box,
+  Checkbox,
+  FormControlLabel,
+  FormGroup,
+  Grid,
+  Typography,
+  useMediaQuery
+} from '@mui/material'
 import { typography, colors, theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
@@ -122,17 +130,22 @@ export const UserOverview = () => {
           <Box className={classes.footer}>
             <Box className={classes.footerItem}>
               <Box className={classes.footerCheckboxContainer}>
-                <Checkbox
-                  checked={hideUnknownTokens}
-                  className={classes.checkBox}
-                  onChange={e => setHideUnknownTokens(e.target.checked)}
-                />
-                <Typography className={classNames(classes.footerText, classes.whiteText)}>
-                  Hide unknown tokens
-                </Typography>
+                <FormGroup>
+                  <FormControlLabel
+                    className={classes.checkBoxLabel}
+                    control={
+                      <Checkbox
+                        checked={hideUnknownTokens}
+                        className={classes.checkBox}
+                        onChange={e => setHideUnknownTokens(e.target.checked)}
+                      />
+                    }
+                    label='Hide unknown tokens'
+                  />
+                </FormGroup>
               </Box>
               <Typography className={classNames(classes.footerText, classes.greyText)}>
-                {finalTokens.length} tokens where found
+                {finalTokens.length} tokens were found
               </Typography>
             </Box>
           </Box>
@@ -155,17 +168,22 @@ export const UserOverview = () => {
           </Grid>
           <Grid item xs={6} className={classes.footerItem}>
             <Box className={classes.footerCheckboxContainer}>
-              <Checkbox
-                checked={hideUnknownTokens}
-                className={classes.checkBox}
-                onChange={e => setHideUnknownTokens(e.target.checked)}
-              />
-              <Typography className={classNames(classes.footerText, classes.whiteText)}>
-                Hide unknown tokens
-              </Typography>
+              <FormGroup>
+                <FormControlLabel
+                  className={classes.checkBoxLabel}
+                  control={
+                    <Checkbox
+                      checked={hideUnknownTokens}
+                      className={classes.checkBox}
+                      onChange={e => setHideUnknownTokens(e.target.checked)}
+                    />
+                  }
+                  label='Hide unknown tokens'
+                />
+              </FormGroup>
             </Box>
             <Typography className={classNames(classes.footerText, classes.greyText)}>
-              {finalTokens.length} tokens where found
+              {finalTokens.length} tokens were found
             </Typography>
           </Grid>
         </Grid>
