@@ -100,7 +100,6 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
-import { IPromotedPool } from '@store/sagas/leaderboard'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1043,8 +1042,6 @@ export const calcCurrentPriceOfPool = (
 }
 
 export const handleSimulate = async (
-  isPairGivingPoints: boolean,
-  promotedPools: IPromotedPool[],
   pools: PoolWithAddress[],
   poolTicks: { [key in string]: Tick[] },
   tickmaps: { [key in string]: Tickmap },
@@ -1052,7 +1049,8 @@ export const handleSimulate = async (
   fromToken: PublicKey,
   toToken: PublicKey,
   amount: BN,
-  byAmountIn: boolean
+  byAmountIn: boolean,
+  requiredPool?: PublicKey
 ): Promise<{
   amountOut: BN
   poolIndex: number
@@ -1088,16 +1086,15 @@ export const handleSimulate = async (
     priceImpact: new BN(0)
   }
 
-  // If swap is on pair that gives the points, promoted pool of this pair should be available
-  if (
-    isPairGivingPoints &&
-    !filteredPools.some(filteredPool =>
-      promotedPools.some(promotedPool => promotedPool.address === filteredPool.address.toString())
-    )
-  ) {
+  if (requiredPool && !filteredPools.find(pool => pool.address.equals(requiredPool))) {
     errorMessage.push('RPC Error')
     return {
-      ...allFailedData,
+      amountOut: new BN(0),
+      poolIndex: 0,
+      AmountOutWithFee: new BN(0),
+      estimatedPriceAfterSwap: new BN(0),
+      minimumReceived: new BN(0),
+      priceImpact: new BN(0),
       error: errorMessage
     }
   }

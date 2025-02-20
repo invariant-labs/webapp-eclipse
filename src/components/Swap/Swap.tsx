@@ -12,6 +12,7 @@ import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
   REFRESHER_INTERVAL,
+  requiredPoolsForSimulation,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
   WRAPPED_ETH_ADDRESS
@@ -47,7 +48,6 @@ import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPo
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
-import { IPromotedPool } from '@store/sagas/leaderboard'
 
 export interface Pools {
   tokenX: PublicKey
@@ -124,7 +124,6 @@ export interface ISwap {
     }
   >
   promotedSwapPairs: { tokenX: string; tokenY: string }[]
-  promotedPools: IPromotedPool[]
   swapMultiplier: string
 }
 
@@ -166,7 +165,6 @@ export const Swap: React.FC<ISwap> = ({
   pointsPerUsdFee,
   feeds,
   promotedSwapPairs,
-  promotedPools,
   swapMultiplier
 }) => {
   const { classes } = useStyles()
@@ -220,6 +218,20 @@ export const Swap: React.FC<ISwap> = ({
   const handlePointerLeave = () => {
     setIsPointsPopoverOpen(false)
   }
+
+  const requiredPoolForSimulation = useMemo(() => {
+    if (!tokens.length) return
+    if (tokenFromIndex === null || tokenToIndex === null) return
+    if (!tokens[tokenFromIndex] || !tokens[tokenToIndex]) return
+    const item = requiredPoolsForSimulation.find(
+      item =>
+        (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+        (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+    )
+    return item?.pool
+  }, [requiredPoolsForSimulation, tokenFromIndex, tokenToIndex])
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -441,8 +453,6 @@ export const Swap: React.FC<ISwap> = ({
 
       if (inputRef === inputTarget.FROM) {
         await handleSimulate(
-          isPairGivingPoints,
-          promotedPools,
           pools,
           poolTicks,
           tickmap,
@@ -450,12 +460,11 @@ export const Swap: React.FC<ISwap> = ({
           tokens[tokenFromIndex].assetAddress,
           tokens[tokenToIndex].assetAddress,
           convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-          true
+          true,
+          requiredPoolForSimulation
         ).then(value => setSimulateResult(value))
       } else if (inputRef === inputTarget.TO) {
         await handleSimulate(
-          isPairGivingPoints,
-          promotedPools,
           pools,
           poolTicks,
           tickmap,
@@ -463,7 +472,8 @@ export const Swap: React.FC<ISwap> = ({
           tokens[tokenFromIndex].assetAddress,
           tokens[tokenToIndex].assetAddress,
           convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-          false
+          false,
+          requiredPoolForSimulation
         ).then(value => setSimulateResult(value))
       }
     }

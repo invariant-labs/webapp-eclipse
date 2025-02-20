@@ -61,7 +61,6 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
-    promotedPools: [],
     swapMultiplier: '01',
     promotedSwapPairs: [],
     commonTokens: [

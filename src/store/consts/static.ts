@@ -574,6 +574,23 @@ export const bestTiers: Record<NetworkType, BestTier[]> = {
   [NetworkType.Local]: []
 }
 
+export const requiredPoolsForSimulation = [
+  {
+    tokenX: USDC_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    pool: new PublicKey('HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce')
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    pool: new PublicKey('86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM')
+  },
+  {
+    tokenX: TETH_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    pool: new PublicKey('FvVsbwsbGVo6PVfimkkPhpcRfBrRitiV946nMNNuz7f9')
+  }
+]
 export const promotedTiers = [
   {
     tokenX: USDC_MAIN.address,
