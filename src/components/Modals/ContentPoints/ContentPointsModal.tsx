@@ -54,7 +54,14 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
           <br />
           <br />
           Here, you can track your allocation history for the{' '}
-          <span className={classes.link}>Content Program</span>.
+          <a
+            href='https://docs.invariant.app/docs/invariant_points/content'
+            target='_blank'
+            rel='noopener noreferrer'
+            className={classes.link}>
+            Content Program
+          </a>
+          .
         </Typography>
       </Box>
 

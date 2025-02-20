@@ -79,7 +79,8 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
       paddingRight: '16px'
     },
     link: {
-      color: colors.invariant.green
+      color: colors.invariant.green,
+      textDecoration: 'none'
     },
     row: {
       '&:first-child': {
