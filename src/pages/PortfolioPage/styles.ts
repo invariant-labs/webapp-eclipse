@@ -25,7 +25,7 @@ const useStyles = makeStyles()(theme => {
       }
     },
     notConnectedPlaceholder: {
-      height: '895px',
+      height: '400px',
       width: '100%',
       borderTopLeftRadius: '24px',
       display: 'flex',
