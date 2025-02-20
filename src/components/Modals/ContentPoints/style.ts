@@ -79,7 +79,10 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
       ...typography.heading4,
       color: colors.invariant.green,
       textAlign: 'right',
-      paddingRight: '16px'
+      paddingRight: '16px',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '18px'
+      }
     },
     link: {
       color: colors.invariant.green,
@@ -124,6 +127,12 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
       ...typography.heading4,
       '&:hover': {
         background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)'
+      },
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '18px',
+        minWidth: '120px',
+        maxWidth: '120px',
+        height: '32px'
       }
     },
     lockPositionClose: {
