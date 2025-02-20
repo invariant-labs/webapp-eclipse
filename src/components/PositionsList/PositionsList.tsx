@@ -23,6 +23,7 @@ import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
 import { IPositionItem } from './types'
 import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
 import { NetworkType } from '@store/consts/static'
+import { theme } from '@static/theme'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -76,6 +77,7 @@ export const PositionsList: React.FC<IProps> = ({
   const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
+  const isMb = useMediaQuery(theme.breakpoints.down('sm'))
 
   const currentData = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
@@ -173,6 +175,40 @@ export const PositionsList: React.FC<IProps> = ({
               </Typography>
             </TooltipHover>
           </Grid>
+          {isMb && (
+            <Box className={classes.switchPoolsContainer}>
+              <Box
+                className={classes.switchPoolsMarker}
+                sx={{
+                  left: alignment === LiquidityPools.Standard ? 0 : '50%'
+                }}
+              />
+              <ToggleButtonGroup
+                value={alignment}
+                exclusive
+                onChange={handleSwitchPools}
+                className={classes.switchPoolsButtonsGroup}>
+                <ToggleButton
+                  sx={{ padding: 0 }}
+                  value={LiquidityPools.Standard}
+                  disableRipple
+                  className={classes.switchPoolsButton}
+                  style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
+                  Standard
+                </ToggleButton>
+                <ToggleButton
+                  sx={{ padding: 0 }}
+                  disabled={lockedData.length === 0}
+                  value={LiquidityPools.Locked}
+                  disableRipple
+                  className={classes.switchPoolsButton}
+                  classes={{ disabled: classes.disabledSwitchButton }}
+                  style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
+                  Locked
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+          )}
           <Grid className={classes.searchWrapper}>
             <Grid className={classes.filtersContainer}>
               <FilterSearch
@@ -181,37 +217,42 @@ export const PositionsList: React.FC<IProps> = ({
                 selectedFilters={selectedFilters}
                 setSelectedFilters={setSelectedFilters}
               />
-              <Box className={classes.switchPoolsContainer}>
-                <Box
-                  className={classes.switchPoolsMarker}
-                  sx={{
-                    left: alignment === LiquidityPools.Standard ? 0 : '50%'
-                  }}
-                />
-                <ToggleButtonGroup
-                  value={alignment}
-                  exclusive
-                  onChange={handleSwitchPools}
-                  className={classes.switchPoolsButtonsGroup}>
-                  <ToggleButton
-                    value={LiquidityPools.Standard}
-                    disableRipple
-                    className={classes.switchPoolsButton}
-                    style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
-                    Standard
-                  </ToggleButton>
-                  <ToggleButton
-                    disabled={lockedData.length === 0}
-                    value={LiquidityPools.Locked}
-                    disableRipple
-                    className={classes.switchPoolsButton}
-                    classes={{ disabled: classes.disabledSwitchButton }}
-                    style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
-                    Locked
-                  </ToggleButton>
-                </ToggleButtonGroup>
-              </Box>
+              {!isMb && (
+                <Box className={classes.switchPoolsContainer}>
+                  <Box
+                    className={classes.switchPoolsMarker}
+                    sx={{
+                      left: alignment === LiquidityPools.Standard ? 0 : '50%'
+                    }}
+                  />
+                  <ToggleButtonGroup
+                    value={alignment}
+                    exclusive
+                    onChange={handleSwitchPools}
+                    className={classes.switchPoolsButtonsGroup}>
+                    <ToggleButton
+                      sx={{ padding: 0 }}
+                      value={LiquidityPools.Standard}
+                      disableRipple
+                      className={classes.switchPoolsButton}
+                      style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
+                      Standard
+                    </ToggleButton>
+                    <ToggleButton
+                      sx={{ padding: 0 }}
+                      disabled={lockedData.length === 0}
+                      value={LiquidityPools.Locked}
+                      disableRipple
+                      className={classes.switchPoolsButton}
+                      classes={{ disabled: classes.disabledSwitchButton }}
+                      style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
+                      Locked
+                    </ToggleButton>
+                  </ToggleButtonGroup>
+                </Box>
+              )}
             </Grid>
+
             <Grid
               display='flex'
               columnGap={2}

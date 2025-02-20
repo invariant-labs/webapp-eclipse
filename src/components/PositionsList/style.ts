@@ -13,7 +13,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   header: {
     paddingBottom: 16,
     display: 'flex',
-    alignItems: 'flex-end'
+    alignItems: 'flex-end',
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'center'
+    }
   },
   titleBar: {
     display: 'flex',
@@ -91,9 +94,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   fullWidthWrapper: {
+    marginBottom: 8,
     [theme.breakpoints.down('sm')]: {
       width: '100%',
-      marginBottom: 8,
       flexDirection: 'row-reverse'
     }
   },
@@ -190,9 +193,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 10,
     overflow: 'hidden',
     display: 'inline-flex',
-    height: 32,
+    height: 38,
     [theme.breakpoints.down('sm')]: {
-      height: 48
+      marginBottom: 8
     }
   },
   switchPoolsMarker: {

@@ -18,6 +18,7 @@ import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
 import { IPositionItem } from '@components/PositionsList/types'
 import { network } from '@store/selectors/solanaConnection'
+import { actions as actionsStats } from '@store/reducers/stats'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
@@ -47,6 +48,10 @@ export const WrappedPositionsList: React.FC = () => {
   const handleRefresh = () => {
     dispatch(actions.getPositionsList())
   }
+
+  useEffect(() => {
+    dispatch(actionsStats.getCurrentStats())
+  }, [])
 
   const data: IPositionItem[] = list.map(position => {
     const lowerPrice = calcYPerXPriceBySqrtPrice(
