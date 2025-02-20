@@ -75,7 +75,7 @@ const useStyles = makeStyles()(() => {
       ...typography.heading4,
       color: colors.invariant.green,
       textAlign: 'right',
-      paddingRight: '10px'
+      paddingRight: '16px'
     },
     link: {
       textDecoration: 'none',
@@ -101,27 +101,56 @@ const useStyles = makeStyles()(() => {
     },
     innerRow: {
       height: '100%',
-      paddingLeft: '10px',
+      paddingLeft: '16px',
       display: 'flex',
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between'
     },
     button: {
-      marginRight: '10px',
-      minWidth: '80px',
-      maxWidth: '80px',
-      height: '28px',
+      marginRight: '16px',
+      minWidth: '134px',
+      maxWidth: '134px',
+      height: '36px',
       background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
       borderRadius: '8px',
       fontStyle: 'normal',
-      fontWeight: 700,
-      fontSize: '12px',
-      lineHeight: '15px',
+
       textTransform: 'none',
       color: colors.invariant.dark,
+      ...typography.heading4,
       '&:hover': {
         background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)'
+      }
+    },
+    lockPositionClose: {
+      position: 'absolute',
+      right: 0,
+      minWidth: 0,
+      height: 20,
+      '&:after': {
+        content: '"\u2715"',
+        fontSize: 22,
+        position: 'absolute',
+        color: 'white',
+        top: '50%',
+        right: '0%',
+        transform: 'translateY(-50%)'
+      }
+    },
+    lockPositionHeader: {
+      width: '100%',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      position: 'relative',
+      '& h1': {
+        ...typography.heading2,
+        flex: 1,
+        textAlign: 'center',
+        [theme.breakpoints.down('sm')]: {
+          marginTop: 30
+        }
       }
     }
   }

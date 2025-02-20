@@ -66,6 +66,10 @@ const useStyles = makeStyles()(() => {
       '&:hover': {
         background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)'
       }
+    },
+    tooltipLink: {
+      color: colors.invariant.green,
+      textDecoration: 'underline'
     }
   }
 })

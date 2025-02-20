@@ -75,10 +75,7 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
               href='https://docs.google.com/forms/d/e/1FAIpQLSe9fziOpaFeSj8fCEZWnKm5DHON2gqGeEM771s8tldihfBZUw/viewform'
               target='_blank'
               rel='noopener noreferrer'
-              className={classes.button}
-              onClick={() => {
-                console.log('Submit event for current interval')
-              }}>
+              className={classes.button}>
               Submit here
             </Button>
           ) : (
@@ -93,8 +90,9 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
 
   return (
     <Dialog open={open} onClose={handleClose} PaperProps={{ className: classes.paper }} fullWidth>
-      <Box className={classes.header}>
-        <Typography>Content Points Allocations</Typography>
+      <Box className={classes.lockPositionHeader}>
+        <Typography component='h1'>Content Points Allocations</Typography>
+        <Button className={classes.lockPositionClose} onClick={handleClose} aria-label='Close' />
       </Box>
       <Box className={classes.description}>
         <Typography>

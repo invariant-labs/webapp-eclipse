@@ -3,6 +3,7 @@ import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
 import { theme } from '@static/theme'
+import { blurContent } from '@utils/uiUtils'
 
 type Aligment = 'left' | 'center' | 'right'
 
@@ -124,17 +125,15 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
                 <Typography className={classes.tooltipContentPoints}>
                   Earn point allocations for creating content about Invariant on social media!
                   Tweets, threads, YouTube videos, TikToks, and articles - all help you accumulate
-                  more points.
-                </Typography>
-                <Box>
+                  more points.{' '}
                   <a
                     href='https://docs.invariant.app/docs/invariant_points/content'
                     target='_blank'
                     rel='noopener noreferrer'
-                    style={{ color: 'inherit', textDecoration: 'underline' }}>
+                    className={classes.tooltipLink}>
                     More details
                   </a>
-                </Box>
+                </Typography>
               </Box>
             }
             placement='bottom'
@@ -157,14 +156,24 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
               {value}
             </Typography>
 
-            <Button className={classes.button} onClick={() => setContentPointsOpen(true)}>
+            <Button
+              className={classes.button}
+              onClick={() => {
+                blurContent()
+                setContentPointsOpen(true)
+              }}>
               More
             </Button>
           </Box>
         ) : (
           <Box display='flex' alignItems='center' gap='8px'>
             <Typography className={classes.headerBigText}>{value}</Typography>
-            <Button className={classes.button} onClick={() => setContentPointsOpen(true)}>
+            <Button
+              className={classes.button}
+              onClick={() => {
+                blurContent()
+                setContentPointsOpen(true)
+              }}>
               More
             </Button>
           </Box>
