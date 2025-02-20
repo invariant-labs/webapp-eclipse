@@ -10,7 +10,7 @@ import {
   Typography
 } from '@mui/material'
 import icons from '@static/icons'
-import { formatNumber } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import classNames from 'classnames'
@@ -163,8 +163,8 @@ export const LockLiquidityModal = ({
                 <Grid item className={classes.pairRange}>
                   <Typography className={classes.normalText}>
                     {xToY
-                      ? `${formatNumber(tokenX.liqValue)} ${tokenX.name} - ${formatNumber(tokenY.liqValue)} ${tokenY.name}`
-                      : `${formatNumber(tokenY.liqValue)} ${tokenY.name} - ${formatNumber(tokenX.liqValue)} ${tokenX.name}`}
+                      ? `${formatNumberWithSuffix(tokenX.liqValue)} ${tokenX.name} - ${formatNumberWithSuffix(tokenY.liqValue)} ${tokenY.name}`
+                      : `${formatNumberWithSuffix(tokenY.liqValue)} ${tokenY.name} - ${formatNumberWithSuffix(tokenX.liqValue)} ${tokenX.name}`}
                   </Typography>
                 </Grid>
                 <Grid item className={classes.pairValue}>

@@ -2,7 +2,7 @@ import useStyles from './style'
 import { Popover, Typography, LinearProgress, Box } from '@mui/material'
 import { PieChart } from '@mui/x-charts'
 import { colors } from '@static/theme'
-import { formatNumber } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import { useState, useEffect, useMemo } from 'react'
 
 export interface ILockStatsPopover {
@@ -216,12 +216,12 @@ export const LockStatsPopover = ({
                 <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
                   {symbolX}:{' '}
                   <span style={{ color: colors.invariant.pink }}>
-                    ${formatNumber(percentagesAndValues.xStandardVal)}{' '}
+                    ${formatNumberWithSuffix(percentagesAndValues.xStandardVal)}{' '}
                   </span>
                   of
                   <span style={{ color: colors.invariant.pink }}>
                     {' '}
-                    ${formatNumber(liquidityX)}
+                    ${formatNumberWithSuffix(liquidityX)}
                   </span>{' '}
                   <span style={{ color: colors.invariant.textGrey }}>
                     (
@@ -269,10 +269,12 @@ export const LockStatsPopover = ({
                 <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
                   {symbolY}:{' '}
                   <span style={{ color: colors.invariant.green }}>
-                    ${formatNumber(percentagesAndValues.yStandardVal)}{' '}
+                    ${formatNumberWithSuffix(percentagesAndValues.yStandardVal)}{' '}
                   </span>
                   of{' '}
-                  <span style={{ color: colors.invariant.green }}>${formatNumber(liquidityY)}</span>{' '}
+                  <span style={{ color: colors.invariant.green }}>
+                    ${formatNumberWithSuffix(liquidityY)}
+                  </span>{' '}
                   <span style={{ color: colors.invariant.textGrey }}>
                     (
                     {percentagesAndValues.yStandard >= '0.01' ||

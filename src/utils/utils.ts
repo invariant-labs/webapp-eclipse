@@ -733,7 +733,7 @@ export const printSubNumber = (amount: number): string => {
     .join('')
 }
 
-export const formatNumber = (
+export const formatNumberWithSuffix = (
   number: number | bigint | string,
   noDecimals?: boolean,
   decimalsAfterDot: number = 3
@@ -818,7 +818,7 @@ function trimEndingZeros(num) {
   return num.toString().replace(/0+$/, '')
 }
 
-export const formatNumber2 = (number: number | bigint | string): string => {
+export const formatNumberWithoutSuffix = (number: number | bigint | string): string => {
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)
@@ -1995,4 +1995,17 @@ export const getConcentrationIndex = (concentrationArray: number[], neededValue:
   }
 
   return concentrationIndex
+}
+export const formatDate = timestamp => {
+  const date = new Date(timestamp * 1000)
+  const day = date.getDate().toString().padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}.${month}.${year}`
+}
+
+export const formatNumberWithSpaces = (number: string) => {
+  const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
+
+  return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }
