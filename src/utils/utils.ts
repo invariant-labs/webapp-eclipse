@@ -811,8 +811,7 @@ function trimEndingZeros(num) {
   return num.toString().replace(/0+$/, '')
 }
 
-export const formatNumberWithoutSuffix = (number: number | bigint | string): string => {
-export const formatNumber2 = (
+export const formatNumberWithoutSuffix = (
   number: number | bigint | string,
   options?: { twoDecimals?: boolean }
 ): string => {

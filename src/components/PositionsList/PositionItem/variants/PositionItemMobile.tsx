@@ -1,6 +1,6 @@
 import { Box, Button, Grid, Skeleton, Tooltip, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
-import { formatNumber } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style/mobile'
@@ -327,7 +327,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 }}>
                 <Typography className={sharedClasses.infoText}>Unclaimed Fee</Typography>
                 <Typography className={sharedClasses.greenText}>
-                  ${formatNumber(unclaimedFeesInUSD.value)}
+                  ${formatNumberWithSuffix(unclaimedFeesInUSD.value)}
                 </Typography>
               </Box>
             </Grid>
@@ -358,7 +358,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 <Typography className={sharedClasses.infoText}>Value</Typography>
                 <Typography className={sharedClasses.greenText}>
-                  ${formatNumber(tokenValueInUsd.value)}
+                  ${formatNumberWithSuffix(tokenValueInUsd.value)}
                 </Typography>
               </Box>
             </Grid>
@@ -423,7 +423,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     const valueX = tokenXLiq + tokenYLiq / currentPrice
     const valueY = tokenYLiq + tokenXLiq * currentPrice
     return {
-      value: `${formatNumber(xToY ? valueX : valueY)} ${xToY ? tokenXName : tokenYName}`,
+      value: `${formatNumberWithSuffix(xToY ? valueX : valueY)} ${xToY ? tokenXName : tokenYName}`,
       tokenXLabel: xToY ? tokenXName : tokenYName,
       tokenYLabel: xToY ? tokenYName : tokenXName
     }
@@ -441,7 +441,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         tokenY={{ name: tokenYName, icon: tokenYIcon, liqValue: tokenYLiq } as ILiquidityToken}
         onLock={lockPosition}
         fee={`${fee}% fee`}
-        minMax={`${formatNumber(xToY ? min : 1 / max)}-${formatNumber(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
+        minMax={`${formatNumberWithSuffix(xToY ? min : 1 / max)}-${formatNumberWithSuffix(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
         isActive={isActive}
         swapHandler={() => setXToY(!xToY)}
