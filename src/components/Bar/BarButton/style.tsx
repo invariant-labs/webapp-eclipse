@@ -4,9 +4,9 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => {
   return {
     headerButton: {
-      height: 40,
+      height: 32,
       paddingInline: 12,
-      borderRadius: 14,
+      borderRadius: 12,
       color: colors.white.main,
       ...typography.body1,
 

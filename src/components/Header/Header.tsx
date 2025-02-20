@@ -148,6 +148,8 @@ export const Header: React.FC<IHeader> = ({
     }
   ]
 
+  const rpcs = [...testnetRPCs, ...mainnetRPCs, ...devnetRPCs]
+
   const networks = useMemo(() => {
     switch (network) {
       case NetworkType.Testnet:
@@ -292,7 +294,13 @@ export const Header: React.FC<IHeader> = ({
             </Box>
           </Grid>
 
-          <Bar />
+          <Bar
+            rpcs={rpcs}
+            activeNetwork={typeOfNetwork}
+            activeRPC={rpc}
+            onNetworkChange={onNetworkSelect}
+            onChainChange={onChainSelect}
+          />
 
           <Grid>
             <YourPointsButton />

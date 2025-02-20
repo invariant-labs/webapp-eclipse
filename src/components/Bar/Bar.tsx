@@ -1,15 +1,30 @@
-import { Settings } from './Settings/Settings'
+import { SettingsModal } from './SettingsModal/SettingsModal'
 import Box from '@mui/material/Box'
 import { useStyles } from './style'
-import { Chain } from './Chain/Chain'
+import { ChainModal } from './ChainModal/ChainModal'
+import { NetworkType } from '@store/consts/static'
+import { ISelectChain, ISelectNetwork } from '@store/consts/types'
 
-export const Bar = () => {
+type Props = {
+  rpcs: ISelectNetwork[]
+  activeNetwork: NetworkType
+  activeRPC: string
+  onNetworkChange: (network: NetworkType, rpc: string) => void
+  onChainChange: (chain: ISelectChain) => void
+}
+
+export const Bar = ({ rpcs, activeNetwork, activeRPC, onNetworkChange, onChainChange }: Props) => {
   const { classes } = useStyles()
 
   return (
     <Box className={classes.buttonContainer}>
-      <Settings />
-      <Chain />
+      <SettingsModal
+        rpcs={rpcs}
+        activeNetwork={activeNetwork}
+        activeRPC={activeRPC}
+        onNetworkChange={onNetworkChange}
+      />
+      <ChainModal onChainChange={onChainChange} />
     </Box>
   )
 }

@@ -6,7 +6,8 @@ export const useStyles = makeStyles()(() => {
     buttonContainer: {
       display: 'flex',
       backgroundColor: colors.invariant.component,
-      borderRadius: 14
+      borderRadius: 14,
+      padding: 4
     }
   }
 })

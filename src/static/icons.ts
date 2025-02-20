@@ -78,6 +78,9 @@ import mediumFill from './svg/MediumFill.svg'
 import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
 import settings2 from './svg/settings2.svg'
+import mainnet2 from './svg/mainnet2.svg'
+import testnet2 from './svg/testnet2.svg'
+import active2 from './svg/active2.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -159,7 +162,10 @@ const icons: { [key: string]: string } = {
   airdropGrey,
   infoError,
   okxLogo,
-  settings2
+  settings2,
+  mainnet2,
+  testnet2,
+  active2
 }
 
 export default icons

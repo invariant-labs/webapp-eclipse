@@ -1,12 +1,17 @@
-import { useStyles } from './style'
-import icons from '@static/icons'
-import { BarButton } from '../BarButton/BarButton'
-import { Box, Popover, Typography } from '@mui/material'
-import { useRef, useState } from 'react'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import { Switch } from '@components/Switch/Switch'
+import { useRef, useState } from 'react'
+import { BarButton } from '../BarButton/BarButton'
+import { useStyles } from './style'
+import { Box, Popover, Typography } from '@mui/material'
+import icons from '@static/icons'
 
-export const Settings = () => {
+type Props = {
+  icon: React.ReactNode
+  title: string
+  children?: React.ReactNode
+}
+
+export const Modal = ({ icon, title, children }: Props) => {
   const { classes } = useStyles()
 
   const [open, setOpen] = useState(false)
@@ -25,7 +30,7 @@ export const Settings = () => {
   return (
     <>
       <BarButton ref={ref} onClick={() => handleOpen()}>
-        <img className={classes.barButtonIcon} src={icons.settings2} alt='Settings icon' />
+        {icon}
       </BarButton>
       <Popover
         classes={{ paper: classes.popover }}
@@ -42,7 +47,7 @@ export const Settings = () => {
         }}>
         <Box className={classes.popoverContainer}>
           <Box className={classes.popoverHeader}>
-            <Typography className={classes.title}>Settings</Typography>
+            <Typography className={classes.title}>{title}</Typography>
             <img
               className={classes.closeIcon}
               src={icons.closeSmallIcon}
@@ -50,7 +55,7 @@ export const Settings = () => {
               onClick={() => handleClose()}
             />
           </Box>
-          <Switch items={['RPC', 'Priority Fee']} />
+          {children}
         </Box>
       </Popover>
     </>
