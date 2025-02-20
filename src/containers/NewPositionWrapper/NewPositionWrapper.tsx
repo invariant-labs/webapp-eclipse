@@ -824,7 +824,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   )
 
   useEffect(() => {
-    if (!tokenAIndex || !tokenBIndex || !autoSwapPool) return
+    if (tokenAIndex === null || tokenBIndex === null || !autoSwapPool) return
     dispatch(
       poolsActions.getAutoSwapPoolData(
         new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {

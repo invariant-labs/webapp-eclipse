@@ -770,7 +770,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [alignment])
 
   useEffect(() => {
-    if (tokenACheckbox === tokenBCheckbox || !tokenAIndex || !tokenBIndex) return
+    if (tokenACheckbox === tokenBCheckbox || tokenAIndex === null || tokenBIndex === null) return
     if (!tokenACheckbox) {
       setTokenADeposit(
         getOtherTokenAmount(
