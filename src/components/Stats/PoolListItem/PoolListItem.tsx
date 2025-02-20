@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType, SortTypePoolList } from '@store/consts/static'
 import { addressToTicker, calculateAPYAndAPR, initialXtoY, parseFeeToPathFee } from '@utils/utils'
-import { formatNumber } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
@@ -292,8 +292,8 @@ const PoolListItem: React.FC<IProps> = ({
             </Grid>
           ) : null}
           <Typography>{fee}%</Typography>
-          <Typography>{`$${formatNumber(volume)}`}</Typography>
-          <Typography>{`$${formatNumber(TVL)}`}</Typography>
+          <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
+          <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
           {!isMd && (
             <Box className={classes.action}>
               {isLocked && (

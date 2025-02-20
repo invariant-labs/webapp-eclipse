@@ -16,7 +16,7 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import { formatNumber, printBN } from '@utils/utils'
+import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import Scrollbars from 'rc-scrollbars'
 import icons from '@static/icons'
@@ -353,7 +353,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                         {!hideBalances && Number(tokenBalance) > 0 ? (
                           <>
                             <Typography>Balance:</Typography>
-                            <Typography>&nbsp; {formatNumber(tokenBalance)}</Typography>
+                            <Typography>&nbsp; {formatNumberWithSuffix(tokenBalance)}</Typography>
                           </>
                         ) : null}
                       </Grid>
