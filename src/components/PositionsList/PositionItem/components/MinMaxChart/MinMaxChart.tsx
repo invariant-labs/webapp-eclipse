@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { MaxHandleNarrower, MinHandleNarrower } from '@components/PriceRangePlot/Brush/svgHandles'
 import { colors, typography } from '@static/theme'
-import { formatNumber } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import { useMinMaxChartStyles } from './style'
 import { CHART_CONSTANTS } from './consts'
 
@@ -41,7 +41,7 @@ const CurrentValueIndicator: React.FC<{
       sx={{
         left: `${position}%`
       }}>
-      {formatNumber(value)}
+      {formatNumberWithSuffix(value)}
     </Typography>
   )
 }
@@ -76,14 +76,14 @@ const MinMaxLabels: React.FC<{ min: number; max: number; isOutOfBounds: boolean 
         ...typography.caption2,
         color: isOutOfBounds ? colors.invariant.light : colors.invariant.lightGrey
       }}>
-      {formatNumber(min)}
+      {formatNumberWithSuffix(min)}
     </Typography>
     <Typography
       sx={{
         ...typography.caption2,
         color: isOutOfBounds ? colors.invariant.light : colors.invariant.lightGrey
       }}>
-      {formatNumber(max)}
+      {formatNumberWithSuffix(max)}
     </Typography>
   </Box>
 )
