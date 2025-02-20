@@ -70,7 +70,10 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
     dateLabel: {
       color: colors.invariant.textGrey,
       fontWeight: 400,
-      fontSize: '20px'
+      fontSize: '20px',
+      [theme.breakpoints.down('sm')]: {
+        fontSize: '18px'
+      }
     },
     pointsLabel: {
       ...typography.heading4,
