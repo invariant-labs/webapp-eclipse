@@ -244,7 +244,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     rangeConcentration.push(maxConcForRange)
 
     return rangeConcentration
-  }, [concentrationArray])
+  }, [concentrationArray, tickSpacing])
 
   const concentrationIndexForRange = useMemo(() => {
     const index = rangeConcentrationArray.findIndex(value => {
@@ -639,7 +639,11 @@ export const NewPosition: React.FC<INewPosition> = ({
               <div>
                 <PointsLabel
                   handleClickFAQ={handleClickFAQ}
-                  concentrationArray={concentrationArray}
+                  concentrationArray={
+                    positionOpeningMethod === 'concentration'
+                      ? concentrationArray
+                      : rangeConcentrationArray
+                  }
                   concentrationIndex={
                     positionOpeningMethod === 'concentration'
                       ? concentrationIndex
@@ -1047,7 +1051,11 @@ export const NewPosition: React.FC<INewPosition> = ({
         <div>
           <EstimatedPoints
             handleClickFAQ={handleClickFAQ}
-            concentrationArray={concentrationArray}
+            concentrationArray={
+              positionOpeningMethod === 'concentration'
+                ? concentrationArray
+                : rangeConcentrationArray
+            }
             concentrationIndex={
               positionOpeningMethod === 'concentration'
                 ? concentrationIndex
