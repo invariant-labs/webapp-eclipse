@@ -207,6 +207,7 @@ const positionsSlice = createSlice({
       return state
     },
     claimAllFee(state) {
+      console.log('3. Action reached reducer')
       return state
     },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {

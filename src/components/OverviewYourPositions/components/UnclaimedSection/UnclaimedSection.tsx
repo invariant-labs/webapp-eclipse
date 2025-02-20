@@ -19,7 +19,9 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
   const dispatch = useDispatch()
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const handleClaimAll = () => {
+    console.log('1. Button clicked')
     dispatch(actions.claimAllFee())
+    console.log('2. After dispatch')
   }
 
   return (

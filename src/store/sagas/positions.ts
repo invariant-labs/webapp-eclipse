@@ -1258,8 +1258,10 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
 }
 
 export function* handleClaimAllFees() {
+  console.log('dziala1')
   const loaderClaimAllFees = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
+  console.log('dziala2')
 
   try {
     const connection = yield* call(getConnection)
@@ -1271,6 +1273,7 @@ export function* handleClaimAllFees() {
     const allPositionsData = yield* select(positionsWithPoolsData)
     const tokensAccounts = yield* select(accounts)
 
+    console.log('dziala3')
     if (allPositionsData.length === 0) {
       return
     }
@@ -1392,7 +1395,13 @@ export function* handleClaimAllFees() {
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    try {
+      if (error instanceof Error) {
+        yield* call(handleRpcError, error.message)
+      }
+    } catch (rpcError) {
+      console.error('RPC error handling failed:', rpcError)
+    }
   }
 }
 
