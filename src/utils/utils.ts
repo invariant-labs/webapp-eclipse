@@ -1276,15 +1276,24 @@ export const handleSimulateWithHop = async (
     crossLimit
   )
 
-  let best = 0
+  let best = simulations.findIndex(
+    simulation =>
+      simulation[1].swapHopOne.status === SimulationStatus.Ok &&
+      simulation[1].swapHopTwo.status === SimulationStatus.Ok
+  )
+
+  if (best === -1) {
+    return { simulation: null, route: null }
+  }
+
   for (let n = 0; n < simulations.length; ++n) {
     const [, simulation] = simulations[n]
     const [, simulationBest] = simulations[best]
 
     if (byAmountIn) {
       if (
-        (simulation.totalAmountOut.gt(simulationBest.totalAmountOut) &&
-          simulationBest.swapHopOne.status === SimulationStatus.Ok) ||
+        simulation.totalAmountOut.gt(simulationBest.totalAmountOut) &&
+        simulationBest.swapHopOne.status === SimulationStatus.Ok &&
         simulationBest.swapHopTwo.status === SimulationStatus.Ok
       ) {
         best = n
@@ -1304,7 +1313,11 @@ export const handleSimulateWithHop = async (
     }
   }
 
-  return { simulation: simulations[best][1], route: routeCandidates[simulations[best][0]] }
+  if (best !== null) {
+    return { simulation: simulations[best][1], route: routeCandidates[simulations[best][0]] }
+  } else {
+    return { simulation: null, route: null }
+  }
 }
 
 export const toMaxNumericPlaces = (num: number, places: number): string => {
