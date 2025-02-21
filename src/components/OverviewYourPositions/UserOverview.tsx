@@ -5,7 +5,8 @@ import {
   FormGroup,
   Grid,
   Typography,
-  useMediaQuery
+  useMediaQuery,
+  Skeleton
 } from '@mui/material'
 import { typography, colors, theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
@@ -74,8 +75,42 @@ export const UserOverview = () => {
     if (hideUnknownTokens) {
       return processedPools.filter(item => item.icon !== '/unknownToken.svg')
     }
-    return processedPools
+    return processedPools.filter(item => item.decimal > 0)
   }, [processedPools, hideUnknownTokens])
+
+  const renderPositionDetails = () => (
+    <Box className={classes.footerCheckboxContainer}>
+      {isLoadingList ? (
+        <>
+          <Skeleton width={120} height={24} />
+          <Skeleton width={100} height={24} />
+          <Skeleton width={100} height={24} />
+        </>
+      ) : (
+        <>
+          <Typography className={classNames(classes.whiteText, classes.footerPositionDetails)}>
+            Opened positions: {positionsDetails.positionsAmount}
+          </Typography>
+          <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
+            In range: {positionsDetails.inRageAmount}
+          </Typography>
+          <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
+            Out of range: {positionsDetails.outOfRangeAmount}
+          </Typography>
+        </>
+      )}
+    </Box>
+  )
+
+  const renderTokensFound = () => (
+    <Typography className={classNames(classes.footerText, classes.greyText)}>
+      {isLoadingList ? (
+        <Skeleton width={150} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
+      ) : (
+        `${finalTokens.length} tokens were found`
+      )}
+    </Typography>
+  )
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px', width: '100%' }}>
@@ -105,21 +140,7 @@ export const UserOverview = () => {
         <Overview poolAssets={data} />
         {isDownLg && (
           <Box className={classes.footer}>
-            <Box className={classes.footerItem}>
-              <Box className={classes.footerCheckboxContainer}>
-                <Typography
-                  className={classNames(classes.whiteText, classes.footerPositionDetails)}>
-                  Opened positions: {positionsDetails.positionsAmount}
-                </Typography>
-                <Typography
-                  className={classNames(classes.greenText, classes.footerPositionDetails)}>
-                  In range: {positionsDetails.inRageAmount}
-                </Typography>
-                <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
-                  Out of range: {positionsDetails.outOfRangeAmount}
-                </Typography>
-              </Box>
-            </Box>
+            <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
           </Box>
         )}
         <YourWallet
@@ -144,9 +165,7 @@ export const UserOverview = () => {
                   />
                 </FormGroup>
               </Box>
-              <Typography className={classNames(classes.footerText, classes.greyText)}>
-                {finalTokens.length} tokens were found
-              </Typography>
+              {renderTokensFound()}
             </Box>
           </Box>
         )}
@@ -154,17 +173,7 @@ export const UserOverview = () => {
       {!isDownLg && (
         <Grid className={classes.footer}>
           <Grid item xs={6} className={classes.footerItem}>
-            <Box className={classes.footerCheckboxContainer}>
-              <Typography className={classNames(classes.whiteText, classes.footerPositionDetails)}>
-                Opened positions: {positionsDetails.positionsAmount}
-              </Typography>
-              <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
-                In range: {positionsDetails.inRageAmount}
-              </Typography>
-              <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
-                Out of range: {positionsDetails.outOfRangeAmount}
-              </Typography>
-            </Box>
+            {renderPositionDetails()}
           </Grid>
           <Grid item xs={6} className={classes.footerItem}>
             <Box className={classes.footerCheckboxContainer}>
@@ -182,9 +191,7 @@ export const UserOverview = () => {
                 />
               </FormGroup>
             </Box>
-            <Typography className={classNames(classes.footerText, classes.greyText)}>
-              {finalTokens.length} tokens were found
-            </Typography>
+            {renderTokensFound()}
           </Grid>
         </Grid>
       )}

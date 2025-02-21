@@ -14,8 +14,8 @@ import { StrategyConfig, TokenPool } from '@store/types/userOverview'
 import { useNavigate } from 'react-router-dom'
 import { STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
-import { ALL_FEE_TIERS_DATA, NetworkType, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
-import { addressToTicker, formatNumberWithoutSuffix, printBN } from '@utils/utils'
+import { NetworkType, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
+import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
 import { useDispatch, useSelector } from 'react-redux'
@@ -24,6 +24,7 @@ import { MobileCard } from './MobileCard'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { shortenAddress } from '@utils/uiUtils'
 
 interface YourWalletProps {
   pools: TokenPool[]
@@ -58,14 +59,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
     })
 
     if (!strategy) {
-      const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
-        if (!lowest) return current
-        return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
-      })
+      // const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
+      //   if (!lowest) return current
+      //   return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
+      // })
 
       strategy = {
         tokenAddressA: poolAddress,
-        feeTier: printBN(lowestFeeTierData.tier.fee, 10).replace('.', '_').substring(0, 4)
+        feeTier: '0_10'
       }
     }
 
@@ -291,7 +292,11 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                               onError={handleImageError}
                               alt={pool.symbol}
                             />
-                            <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
+                            <Typography className={classes.tokenSymbol}>
+                              {pool.symbol.length <= 6
+                                ? pool.symbol
+                                : shortenAddress(pool.symbol, 2)}
+                            </Typography>
                             <TooltipHover text='Copy token address'>
                               <FileCopyOutlinedIcon
                                 onClick={() => {

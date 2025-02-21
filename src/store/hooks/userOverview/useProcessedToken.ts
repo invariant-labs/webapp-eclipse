@@ -20,6 +20,7 @@ interface ProcessedPool {
   symbol: string
   icon: string
   value: number
+  decimal: number
   amount: number
 }
 
@@ -47,11 +48,11 @@ export const useProcessedTokens = (tokensList: Token[]) => {
           } catch (error) {
             console.error(`Failed to fetch price for ${token.symbol}:`, error)
           }
-
           return {
             id: token.address,
             symbol: token.symbol,
             icon: token.logoURI,
+            decimal: token.decimals,
             amount: balance,
             value: balance * price
           }

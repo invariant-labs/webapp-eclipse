@@ -15,17 +15,18 @@ interface MinMaxChartProps {
 interface GradientBoxProps {
   color: string
   width: string
+  isOutOfBound: boolean
   gradientDirection: 'left' | 'right'
 }
 
-const GradientBox: React.FC<GradientBoxProps> = ({ color, width }) => (
+const GradientBox: React.FC<GradientBoxProps> = ({ color, width, isOutOfBound }) => (
   <Box
     sx={{
       width,
       height: '25px',
       borderTop: `1px solid ${color}`,
       background: `linear-gradient(180deg, ${color}B3 0%, ${color}00 100%)`,
-      opacity: 0.7
+      opacity: isOutOfBound ? 0.3 : 0.7
     }}
   />
 )
@@ -109,12 +110,14 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         </Box>
 
         <GradientBox
+          isOutOfBound={isOutOfBounds}
           color={colors.invariant.green}
           width={`${currentPosition}%`}
           gradientDirection='right'
         />
         <GradientBox
           color={colors.invariant.pink}
+          isOutOfBound={isOutOfBounds}
           width={`${100 - currentPosition}%`}
           gradientDirection='left'
         />
