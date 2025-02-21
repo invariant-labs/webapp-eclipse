@@ -4,22 +4,23 @@ import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles/styles'
 import { ProcessedPool } from '@store/types/userOverview'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { theme } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
 import {
   isLoadingPositionsList,
   positionsWithPoolsData,
-  positionsList as list
+  positionsList as list,
+  unclaimedFees
 } from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
 import MobileOverview from './MobileOverview'
 import LegendSkeleton from './skeletons/LegendSkeleton'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
-import { useCalculateUnclaimedFee } from '@store/hooks/userOverview/useCalculateUnclaimedFee'
 import icons from '@static/icons'
 import { LegendOverview } from './LegendOverview'
+import { actions } from '@store/reducers/positions'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -31,12 +32,12 @@ export const Overview: React.FC<OverviewProps> = () => {
   const { isAllClaimFeesLoading } = useSelector(list)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const { classes } = useStyles({ isLoading: isLoadingList })
+  const dispatch = useDispatch()
 
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
-
-  const totalUnclaimedFee = useCalculateUnclaimedFee(positionList, prices)
+  const { loading: unclaimedFeesLoading, total: totalUnclaimedFee } = useSelector(unclaimedFees)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
   const { positions } = useAgregatedPositions(positionList, prices)
 
@@ -59,6 +60,8 @@ export const Overview: React.FC<OverviewProps> = () => {
     [positions]
   )
 
+  useEffect(() => {}, [prices])
+
   const isDataReady = !isLoadingList && !isColorsLoading && Object.keys(prices).length > 0
 
   const data = useMemo(() => {
@@ -78,6 +81,12 @@ export const Overview: React.FC<OverviewProps> = () => {
     })
     return tokens
   }, [sortedPositions, isDataReady])
+
+  useEffect(() => {
+    if (Object.keys(prices).length > 0) {
+      dispatch(actions.setPrices(prices))
+    }
+  }, [prices])
 
   useEffect(() => {
     const loadPrices = async () => {
@@ -138,6 +147,18 @@ export const Overview: React.FC<OverviewProps> = () => {
     })
   }, [sortedPositions, getAverageColor, logoColors, pendingColorLoads])
 
+  useEffect(() => {
+    if (Object.keys(prices).length > 0) {
+      dispatch(actions.calculateUnclaimedFees())
+
+      const interval = setInterval(() => {
+        dispatch(actions.calculateUnclaimedFees())
+      }, 60000) // 1 minute
+
+      return () => clearInterval(interval)
+    }
+  }, [dispatch, prices])
+
   const EmptyState = ({ classes }: { classes: any }) => (
     <Box className={classes.emptyState}>
       <img src={icons.empty} alt='Empty portfolio' height={64} width={64} />
@@ -160,7 +181,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       <HeaderSection totalValue={totalAssets} loading={isLoadingList} />
       <UnclaimedSection
         unclaimedTotal={totalUnclaimedFee}
-        loading={isLoadingList || isAllClaimFeesLoading}
+        loading={isLoadingList || isAllClaimFeesLoading || unclaimedFeesLoading}
       />
 
       {isLg ? (

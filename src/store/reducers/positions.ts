@@ -55,6 +55,14 @@ export interface IPositionsStore {
   currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
+  unclaimedFees: {
+    total: number
+    loading: boolean
+    lastUpdate: number
+  }
+  prices: {
+    data: Record<string, number>
+  }
 }
 
 export interface InitPositionData
@@ -116,6 +124,15 @@ export const defaultState: IPositionsStore = {
     inProgress: false,
     success: false
   },
+  unclaimedFees: {
+    total: 0,
+    loading: false,
+    lastUpdate: 0
+  },
+  prices: {
+    data: {}
+  },
+
   shouldNotUpdateRange: false
 }
 
@@ -162,6 +179,32 @@ const positionsSlice = createSlice({
     setAllClaimLoader(state, action: PayloadAction<boolean>) {
       state.positionsList.isAllClaimFeesLoading = action.payload
     },
+    calculateUnclaimedFees(state) {
+      state.unclaimedFees.loading = true
+      return state
+    },
+    setUnclaimedFees(state, action: PayloadAction<number>) {
+      state.unclaimedFees = {
+        total: action.payload,
+        loading: false,
+        lastUpdate: Date.now()
+      }
+      return state
+    },
+    setUnclaimedFeesError(state) {
+      state.unclaimedFees = {
+        ...state.unclaimedFees,
+        loading: false
+      }
+      return state
+    },
+    setPrices(state, action: PayloadAction<Record<string, number>>) {
+      state.prices = {
+        data: action.payload
+      }
+      return state
+    },
+
     getCurrentPlotTicks(state, action: PayloadAction<GetCurrentTicksData>) {
       state.plotTicks.loading = !action.payload.disableLoading
       return state
@@ -248,7 +291,6 @@ const positionsSlice = createSlice({
       return state
     },
     claimAllFee(state) {
-      console.log('3. Action reached reducer')
       return state
     },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {

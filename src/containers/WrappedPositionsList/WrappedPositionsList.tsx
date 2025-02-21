@@ -52,6 +52,7 @@ export const WrappedPositionsList: React.FC = () => {
 
   const handleRefresh = () => {
     dispatch(actions.getPositionsList())
+    dispatch(actions.calculateUnclaimedFees())
   }
 
   const data: IPositionItem[] = list

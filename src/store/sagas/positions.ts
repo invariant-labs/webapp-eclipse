@@ -34,7 +34,8 @@ import {
   positionsList,
   positionsWithPoolsData,
   singlePositionData,
-  currentPositionTicks
+  currentPositionTicks,
+  prices
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -45,15 +46,18 @@ import {
   createLoaderKey,
   createPlaceholderLiquidityPlot,
   getLiquidityTicksByPositionsList,
-  getPositionsAddressesFromRange
+  getPositionsAddressesFromRange,
+  printBN
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
+  calculateClaimAmount,
   createNativeAtaInstructions,
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { ClaimAllFee } from '@invariant-labs/sdk-eclipse/lib/market'
+import { getEclipseWallet } from '@utils/web3/wallet'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -1260,10 +1264,8 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
 }
 
 export function* handleClaimAllFees() {
-  console.log('dziala1')
   const loaderClaimAllFees = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
-  console.log('dziala2')
 
   try {
     const connection = yield* call(getConnection)
@@ -1275,7 +1277,6 @@ export function* handleClaimAllFees() {
     const allPositionsData = yield* select(positionsWithPoolsData)
     const tokensAccounts = yield* select(accounts)
 
-    console.log('dziala3')
     if (allPositionsData.length === 0) {
       return
     }
@@ -1365,6 +1366,8 @@ export function* handleClaimAllFees() {
     yield put(snackbarsActions.remove(loaderClaimAllFees))
 
     yield put(actions.getPositionsList())
+    yield put(actions.calculateUnclaimedFees())
+
     yield* put(actions.setAllClaimLoader(false))
   } catch (error) {
     yield* put(actions.setAllClaimLoader(false))
@@ -1930,6 +1933,88 @@ export function* handleUpdatePositionsRangeTicks(
   }
 }
 
+function* getTickWithCache(
+  pair: Pair,
+  tickIndex: number,
+  ticksCache: Map<string, any>,
+  marketProgram: any
+) {
+  const cacheKey = `${pair.tokenX.toString()}-${pair.tokenY.toString()}-${tickIndex}`
+
+  if (ticksCache.has(cacheKey)) {
+    return ticksCache.get(cacheKey)
+  }
+
+  const tick = yield* call([marketProgram, 'getTick'], pair, tickIndex)
+  ticksCache.set(cacheKey, tick)
+  return tick
+}
+
+export function* handleCalculateUnclaimedFees() {
+  // const UPDATE_INTERVAL = 60000
+
+  try {
+    // const { lastUpdate } = yield* select(unclaimedFees)
+    // const currentTime = Date.now()
+
+    // if (currentTime - lastUpdate < UPDATE_INTERVAL) {
+    //   return
+    // }
+
+    const positionList = yield* select(positionsWithPoolsData)
+    const pricesData = yield* select(prices)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+
+    const wallet = getEclipseWallet() as IWallet
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet)
+
+    const ticksCache = new Map()
+
+    const ticks = yield* all(
+      positionList.map(function* (position) {
+        const pair = new Pair(position.poolData.tokenX, position.poolData.tokenY, {
+          fee: position.poolData.fee,
+          tickSpacing: position.poolData.tickSpacing
+        })
+
+        const [lowerTick, upperTick] = yield* all([
+          call(getTickWithCache, pair, position.lowerTickIndex, ticksCache, marketProgram),
+          call(getTickWithCache, pair, position.upperTickIndex, ticksCache, marketProgram)
+        ])
+
+        return [lowerTick, upperTick]
+      })
+    )
+
+    const total = positionList.reduce((acc: number, position: any, i: number) => {
+      const [lowerTick, upperTick] = ticks[i]
+      const [bnX, bnY] = calculateClaimAmount({
+        position,
+        tickLower: lowerTick,
+        tickUpper: upperTick,
+        tickCurrent: position.poolData.currentTickIndex,
+        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+      })
+
+      const xValue =
+        +printBN(bnX, position.tokenX.decimals) *
+        (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
+      const yValue =
+        +printBN(bnY, position.tokenY.decimals) *
+        (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
+
+      return acc + xValue + yValue
+    }, 0)
+
+    yield* put(actions.setUnclaimedFees(isFinite(total) ? total : 0))
+  } catch (error) {
+    console.error('Error calculating unclaimed fees:', error)
+    yield* put(actions.setUnclaimedFeesError())
+  }
+}
+
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)
 }
@@ -1945,6 +2030,10 @@ export function* claimFeeHandler(): Generator {
 
 export function* claimAllFeeHandler(): Generator {
   yield* takeEvery(actions.claimAllFee, handleClaimAllFees)
+}
+
+export function* unclaimedFeesHandler(): Generator {
+  yield* takeEvery(actions.calculateUnclaimedFees, handleCalculateUnclaimedFees)
 }
 
 export function* closePositionHandler(): Generator {
@@ -1968,6 +2057,7 @@ export function* positionsSaga(): Generator {
       getCurrentPlotTicksHandler,
       getPositionsListHandler,
       claimFeeHandler,
+      unclaimedFeesHandler,
       claimAllFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,
