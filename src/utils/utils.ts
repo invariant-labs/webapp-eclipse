@@ -5,7 +5,8 @@ import {
   MAX_TICK,
   MIN_TICK,
   Pair,
-  PRICE_DENOMINATOR
+  PRICE_DENOMINATOR,
+  routingEssentials
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
@@ -100,8 +101,6 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
-import { whitelistEssentials } from '@invariant-labs/sdk-eclipse'
-import { SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse/src'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1209,41 +1208,103 @@ export const handleSimulateWithHop = async (
   amount: BN,
   byAmountIn: boolean
 ) => {
-  const { whitelistPools, whitelistTickmaps, whitelistPoolSet, whitelistRouteCandidates } =
-    whitelistEssentials(tokenIn, tokenOut, market.program.programId)
+  const { whitelistTickmaps, poolSet, routeCandidates } = routingEssentials(
+    tokenIn,
+    tokenOut,
+    market.program.programId
+  )
 
   const accounts = await market.fetchAccounts({
-    pools: whitelistPools,
+    pools: Array.from(poolSet).map(pool => new PublicKey(pool)),
     tickmaps: whitelistTickmaps
   })
 
-  const accounts2 = await market.fetchAccounts({
-    ticks: market.gatherTwoHopTickAddresses(whitelistPoolSet, tokenIn, tokenOut, accounts)
-  })
+  for (const pool of poolSet) {
+    if (!accounts.pools[pool]) {
+      poolSet.delete(pool)
+    }
+  }
 
-  accounts.ticks = { ...accounts.ticks, ...accounts2.ticks }
+  for (let i = routeCandidates.length - 1; i >= 0; i--) {
+    const [pairIn, pairOut] = routeCandidates[i]
+
+    if (
+      !accounts.pools[pairIn.getAddress(market.program.programId).toBase58()] ||
+      !accounts.pools[pairOut.getAddress(market.program.programId).toBase58()]
+    ) {
+      const lastCandidate = routeCandidates.pop()!
+      if (i !== routeCandidates.length) {
+        routeCandidates[i] = lastCandidate
+      }
+    }
+  }
+
+  const accountsTickmaps = await market.fetchAccounts({
+    tickmaps: Array.from(poolSet)
+      .filter(pool => !accounts.tickmaps[pool])
+      .map(pool => accounts.pools[pool].tickmap)
+  })
+  accounts.tickmaps = { ...accounts.tickmaps, ...accountsTickmaps.tickmaps }
+
+  for (const pool of poolSet) {
+    if (!accounts.tickmaps[accounts.pools[pool].tickmap.toBase58()]) {
+      throw new Error('Missing tickmap')
+    }
+  }
+
+  for (const [pairIn, pairOut] of routeCandidates) {
+    if (!accounts.pools[pairIn.getAddress(market.program.programId).toBase58()]) {
+      throw new Error('Missing poolIn')
+    } else if (!accounts.pools[pairOut.getAddress(market.program.programId).toBase58()]) {
+      throw new Error('Missing poolOut')
+    }
+  }
+
+  const crossLimit = 16
+  const accountsTicks = await market.fetchAccounts({
+    ticks: market.gatherTwoHopTickAddresses(poolSet, tokenIn, tokenOut, accounts, crossLimit)
+  })
+  accounts.ticks = { ...accounts.ticks, ...accountsTicks.ticks }
 
   const simulations = await market.routeTwoHop(
     tokenIn,
     tokenOut,
     amount,
     byAmountIn,
-    whitelistRouteCandidates,
-    accounts
+    routeCandidates,
+    accounts,
+    crossLimit
   )
 
-  let maxTotalAmountOut = new BN(0)
-  let maxSimulation: SimulationTwoHopResult | null = null
-  let maxRoute: [Pair, Pair] | null = null
-  for (let i = 0; i < simulations.length; i++) {
-    if (simulations[i].totalAmountOut.gt(maxTotalAmountOut)) {
-      maxTotalAmountOut = simulations[i].totalAmountOut
-      maxSimulation = simulations[i]
-      maxRoute = whitelistRouteCandidates[i]
+  let best = 0
+  for (let n = 0; n < simulations.length; ++n) {
+    const [, simulation] = simulations[n]
+    const [, simulationBest] = simulations[best]
+
+    if (byAmountIn) {
+      if (
+        (simulation.totalAmountOut.gt(simulationBest.totalAmountOut) &&
+          simulationBest.swapHopOne.status === SimulationStatus.Ok) ||
+        simulationBest.swapHopTwo.status === SimulationStatus.Ok
+      ) {
+        best = n
+      }
+    } else {
+      if (simulationBest.totalAmountOut.lte(simulation.totalAmountOut)) {
+        if (
+          simulation.totalAmountIn
+            .add(simulation.swapHopOne.accumulatedFee)
+            .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) &&
+          simulationBest.swapHopOne.status === SimulationStatus.Ok &&
+          simulationBest.swapHopTwo.status === SimulationStatus.Ok
+        ) {
+          best = n
+        }
+      }
     }
   }
 
-  return { simulation: maxSimulation, route: maxRoute }
+  return { simulation: simulations[best][1], route: routeCandidates[simulations[best][0]] }
 }
 
 export const toMaxNumericPlaces = (num: number, places: number): string => {

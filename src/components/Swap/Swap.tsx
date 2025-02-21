@@ -813,7 +813,9 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   useEffect(() => {
-    void setSimulateAmount()
+    if (isFetchingNewPool) {
+      void setSimulateAmount()
+    }
   }, [isFetchingNewPool])
 
   useEffect(() => {
