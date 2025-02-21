@@ -49,9 +49,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     flexWrap: 'wrap',
     rowGap: '8px',
     [theme.breakpoints.down('md')]: {
-      alignItems: 'flex-end'
-    },
-    [theme.breakpoints.down('sm')]: {
+      alignItems: 'flex-start',
       flexDirection: 'column-reverse'
     }
   },
@@ -89,15 +87,20 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         boxShadow: 'none'
       }
     },
+    [theme.breakpoints.down('md')]: {
+      width: '386px'
+    },
     [theme.breakpoints.down('sm')]: {
       width: '100%'
     }
   },
   fullWidthWrapper: {
     marginBottom: 8,
-    [theme.breakpoints.down('sm')]: {
-      width: '100%',
+    [theme.breakpoints.down('md')]: {
       flexDirection: 'row-reverse'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
     }
   },
   buttonSelectDisabled: {
@@ -116,7 +119,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         filter: 'none'
       }
     },
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       flexGrow: 1
     }
   },
@@ -168,7 +171,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '&:disabled': {
       opacity: 0.5
     },
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       marginRight: 16
     }
   },
@@ -194,7 +197,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     overflow: 'hidden',
     display: 'inline-flex',
     height: 38,
-    [theme.breakpoints.down('sm')]: {
+    [theme.breakpoints.down('md')]: {
       marginBottom: 8
     }
   },
@@ -254,10 +257,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'flex-start',
     flexDirection: 'row',
     gap: 12,
-    [theme.breakpoints.down('md')]: {
-      flexDirection: 'column-reverse',
-      justifyContent: 'flex-start'
-    },
+
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'row',
       width: '100%',

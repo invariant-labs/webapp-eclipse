@@ -77,7 +77,7 @@ export const PositionsList: React.FC<IProps> = ({
   const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
-  const isMb = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMb = useMediaQuery(theme.breakpoints.down('md'))
 
   const currentData = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
