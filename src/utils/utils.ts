@@ -1246,21 +1246,10 @@ export const handleSimulateWithHop = async (
   })
   accounts.tickmaps = { ...accounts.tickmaps, ...accountsTickmaps.tickmaps }
 
-  for (const pool of poolSet) {
-    if (!accounts.tickmaps[accounts.pools[pool].tickmap.toBase58()]) {
-      throw new Error('Missing tickmap')
-    }
-  }
-
-  for (const [pairIn, pairOut] of routeCandidates) {
-    if (!accounts.pools[pairIn.getAddress(market.program.programId).toBase58()]) {
-      throw new Error('Missing poolIn')
-    } else if (!accounts.pools[pairOut.getAddress(market.program.programId).toBase58()]) {
-      throw new Error('Missing poolOut')
-    }
-  }
-
-  const crossLimit = 16
+  const crossLimit =
+    tokenIn.toString() === WRAPPED_ETH_ADDRESS || tokenOut.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
   const accountsTicks = await market.fetchAccounts({
     ticks: market.gatherTwoHopTickAddresses(poolSet, tokenIn, tokenOut, accounts, crossLimit)
   })
