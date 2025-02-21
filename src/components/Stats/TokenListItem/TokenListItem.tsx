@@ -4,7 +4,7 @@ import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import { formatNumber } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import { NetworkType, SortTypeTokenList } from '@store/consts/static'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
@@ -117,15 +117,15 @@ const TokenListItem: React.FC<IProps> = ({
               />
             </TooltipHover>
           </Grid>
-          <Typography>{`~$${formatNumber(price)}`}</Typography>
+          <Typography>{`~$${formatNumberWithSuffix(price)}`}</Typography>
 
           {/* {!hideName && (
             <Typography style={{ color: isNegative ? colors.invariant.Error : colors.green.main }}>
               {isNegative ? `${priceChange.toFixed(2)}%` : `+${priceChange.toFixed(2)}%`}
             </Typography>
           )} */}
-          <Typography>{`$${formatNumber(volume)}`}</Typography>
-          <Typography>{`$${formatNumber(TVL)}`}</Typography>
+          <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
+          <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
           {!isSm && (
             <Box className={classes.action}>
               <TooltipHover text='Open in explorer'>

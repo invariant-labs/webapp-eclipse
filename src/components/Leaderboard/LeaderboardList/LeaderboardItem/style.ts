@@ -100,14 +100,10 @@ export const useStyles = makeStyles()(() => ({
     borderTopRightRadius: '24px',
     background: colors.invariant.component,
     position: 'relative',
-    '& p': {
+    '& p.MuiTypography-root': {
       color: colors.invariant.textGrey,
       ...typography.body1,
-      fontWeight: 400
-
-      // [theme.breakpoints.down('sm')]: {
-      //   ...typography.caption2
-      // }
+      fontWeight: 600
     }
   }
 }))

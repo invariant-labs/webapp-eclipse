@@ -11,6 +11,7 @@ export const {
   lastPage,
   positionsList,
   plotTicks,
+  currentPositionId,
   currentPositionTicks,
   initPosition,
   shouldNotUpdateRange
@@ -18,6 +19,7 @@ export const {
   'lastPage',
   'positionsList',
   'plotTicks',
+  'currentPositionId',
   'currentPositionTicks',
   'initPosition',
   'shouldNotUpdateRange'
@@ -96,9 +98,23 @@ export const singlePositionData = (id: string) =>
     }
   )
 
+export const currentPositionData = createSelector(
+  currentPositionId,
+  positionsWithPoolsData,
+  lockedPositionsWithPoolsData,
+  (id, positions, lockedPositions) => {
+    if (!id) return undefined
+    const allPositions = [...positions, ...lockedPositions]
+    return allPositions.find(
+      position => id === position.id.toString() + '_' + position.pool.toString()
+    )
+  }
+)
+
 export const positionsSelectors = {
   positionsList,
   plotTicks,
+  currentPositionId,
   currentPositionTicks,
   initPosition,
   shouldNotUpdateRange

@@ -1,7 +1,12 @@
 import { Button, Grid, Tooltip, Typography } from '@mui/material'
 import loader from '@static/gif/loading2.gif'
 import SwapPosition from '@static/svg/swap-position.svg'
-import { formatNumber, formatNumber2, formatNumbers, showPrefix } from '@utils/utils'
+import {
+  formatNumberWithSuffix,
+  formatNumberWithoutSuffix,
+  formatNumbers,
+  showPrefix
+} from '@utils/utils'
 import React from 'react'
 import loadingAnimation from '@static/gif/loading.gif'
 import { ILiquidityToken } from './consts'
@@ -118,7 +123,7 @@ export const BoxInfo: React.FC<{
                 {isBalanceLoading ? (
                   <img src={loadingAnimation} className={classes.loadingBalance} alt='Loading' />
                 ) : (
-                  formatNumber(tokenA.balance)
+                  formatNumberWithSuffix(tokenA.balance)
                 )}{' '}
                 {tokenA.name}
               </Typography>
@@ -132,7 +137,7 @@ export const BoxInfo: React.FC<{
                     tooltip: classes.tooltip
                   }}>
                   <Typography className={classes.tokenUSDValue}>
-                    ~${formatNumber((tokenA.value * tokenA.price).toFixed(2))}
+                    ~${formatNumberWithSuffix((tokenA.value * tokenA.price).toFixed(2))}
                   </Typography>
                 </Tooltip>
               ) : (
@@ -184,7 +189,7 @@ export const BoxInfo: React.FC<{
                 {isBalanceLoading ? (
                   <img src={loadingAnimation} className={classes.loadingBalance} alt='Loading' />
                 ) : (
-                  formatNumber(tokenB.balance)
+                  formatNumberWithSuffix(tokenB.balance)
                 )}{' '}
                 {tokenB.name}
               </Typography>
@@ -198,7 +203,7 @@ export const BoxInfo: React.FC<{
                     tooltip: classes.tooltip
                   }}>
                   <Typography className={classes.tokenUSDValue}>
-                    ~${formatNumber2(tokenB.value * tokenB.price)}
+                    ~${formatNumberWithoutSuffix(tokenB.value * tokenB.price)}
                   </Typography>
                 </Tooltip>
               ) : (

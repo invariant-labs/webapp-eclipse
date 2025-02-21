@@ -1,6 +1,6 @@
 import React from 'react'
 import { Grid, Skeleton, Typography } from '@mui/material'
-import { formatNumber, printBN } from '@utils/utils'
+import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -51,7 +51,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
             <Typography className={classes.value}>
               {exchangeRate.val === Infinity
                 ? '-'
-                : `${formatNumber(exchangeRate.val.toFixed(exchangeRate.decimal)) === '0' ? '~0' : formatNumber(exchangeRate.val.toFixed(exchangeRate.decimal))} ${exchangeRate.symbol}`}
+                : `${formatNumberWithSuffix(exchangeRate.val.toFixed(exchangeRate.decimal)) === '0' ? '~0' : formatNumberWithSuffix(exchangeRate.val.toFixed(exchangeRate.decimal))} ${exchangeRate.symbol}`}
             </Typography>
           )}
         </Grid>

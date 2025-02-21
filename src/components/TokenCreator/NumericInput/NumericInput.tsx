@@ -98,6 +98,9 @@ export const NumericInput: React.FC<INumericInput> = ({
             value={inputValue}
             onChange={allowOnlyDigitsAndTrimUnnecessaryZeros}
             error={error}
+            inputProps={{
+              inputMode: 'decimal'
+            }}
           />
         </Box>
         <Box className={classes.errorMessageContainer}>
