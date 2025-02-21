@@ -37,7 +37,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
-  const { loading: unclaimedFeesLoading, total: totalUnclaimedFee } = useSelector(unclaimedFees)
+  const { total: totalUnclaimedFee } = useSelector(unclaimedFees)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
   const { positions } = useAgregatedPositions(positionList, prices)
 
@@ -59,8 +59,6 @@ export const Overview: React.FC<OverviewProps> = () => {
     () => positions.reduce((acc, position) => acc + position.value, 0),
     [positions]
   )
-
-  useEffect(() => {}, [prices])
 
   const isDataReady = !isLoadingList && !isColorsLoading && Object.keys(prices).length > 0
 
@@ -181,7 +179,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       <HeaderSection totalValue={totalAssets} loading={isLoadingList} />
       <UnclaimedSection
         unclaimedTotal={totalUnclaimedFee}
-        loading={isLoadingList || isAllClaimFeesLoading || unclaimedFeesLoading}
+        loading={isLoadingList || isAllClaimFeesLoading}
       />
 
       {isLg ? (
