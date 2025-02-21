@@ -16,8 +16,15 @@ import {
 } from '@store/reducers/pools'
 import { tokens } from '@store/selectors/pools'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
-import { findPairs, getFullNewTokensData, getPools, getPoolsFromAddresses } from '@utils/utils'
-import { Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  findPairs,
+  getFullNewTokensData,
+  getPools,
+  getPoolsFromAddresses,
+  getTickmapsFromPools,
+  getTicksFromAddresses
+} from '@utils/utils'
+import { parseTick } from '@invariant-labs/sdk-eclipse/lib/market'
 
 export interface iTick {
   index: Tick[]
@@ -175,10 +182,6 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
 }
 export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTickMaps>) {
   const { tokenFrom, tokenTo, allPools } = action.payload
-  enum IsXtoY {
-    Up = 'up',
-    Down = 'down'
-  }
 
   if (tokenFrom.equals(PublicKey.default) || tokenTo.equals(PublicKey.default)) {
     return
@@ -191,46 +194,48 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const pools = findPairs(tokenFrom, tokenTo, allPools)
 
-    type TickResult = { tickmap: Tickmap; ticks: Tick[]; tickmapAddress: PublicKey }
+    const tickmaps = yield* call(getTickmapsFromPools, pools, marketProgram)
 
-    const results: TickResult[] = yield* all([
-      ...pools.map(pool => {
-        const isXtoY = tokenFrom.equals(pool.tokenX)
-        const pair = new Pair(tokenFrom, tokenTo, {
-          fee: pool.fee,
-          tickSpacing: pool.tickSpacing
-        })
-
-        return call(function* (): Generator<any, TickResult, any> {
-          const tickmap = yield call([marketProgram, marketProgram.getTickmap], pair)
-
-          const ticks = yield call(
-            [marketProgram, marketProgram.getClosestTicks],
-            pair,
-            TICK_CROSSES_PER_IX + 3,
-            undefined,
-            isXtoY ? IsXtoY.Down : IsXtoY.Up,
-            pool,
-            tickmap
-          )
-
-          return { tickmapAddress: pool.tickmap, tickmap, ticks }
-        })
+    const batchSize = TICK_CROSSES_PER_IX + 3
+    const tickAddresses: PublicKey[][] = pools.map(pool => {
+      const isXtoY = tokenFrom.equals(pool.tokenX)
+      const pair = new Pair(tokenFrom, tokenTo, {
+        fee: pool.fee,
+        tickSpacing: pool.tickSpacing
       })
-    ])
 
-    if (results.length > 0) {
-      for (let i = 0; i < pools.length; i++) {
-        yield* put(
-          actions.setNearestTicksForPair({
-            index: pools[i].address.toString(),
-            tickStructure: results[i].ticks
-          })
-        )
+      return marketProgram.findTickAddressesForSwap(
+        pair,
+        pool,
+        tickmaps[pool.tickmap.toBase58()],
+        isXtoY,
+        batchSize
+      )
+    })
+
+    const ticks = yield* call(getTicksFromAddresses, marketProgram, tickAddresses.flat())
+
+    const ticksPerPool = batchSize + 1
+    let offset = 0
+
+    for (let i = 0; i < tickAddresses.length; i++) {
+      yield* put(
+        actions.setNearestTicksForPair({
+          index: pools[i].address.toString(),
+          tickStructure: ticks
+            .slice(offset, offset + ticksPerPool)
+            .filter(t => !!t)
+            .map(t => parseTick(t))
+        })
+      )
+      offset += ticksPerPool
+
+      const tickmapKey = pools[i].tickmap.toBase58()
+      if (tickmaps[tickmapKey]) {
         yield* put(
           actions.updateTickmap({
-            address: results[i].tickmapAddress.toBase58(),
-            bitmap: results[i].tickmap.bitmap
+            address: tickmapKey,
+            bitmap: tickmaps[tickmapKey].bitmap
           })
         )
       }
