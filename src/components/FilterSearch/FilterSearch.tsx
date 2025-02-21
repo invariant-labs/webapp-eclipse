@@ -23,6 +23,8 @@ import { tokensStatsWithTokensDetails } from '@store/selectors/stats'
 import ListboxComponent from './Helpers/ListBoxComponent'
 import { BN } from '@coral-xyz/anchor'
 
+type Breakpoint = 'md' | 'sm'
+
 export interface ISearchToken {
   icon: string
   name: string
@@ -37,13 +39,15 @@ interface IFilterSearch {
   selectedFilters: ISearchToken[]
   setSelectedFilters: React.Dispatch<React.SetStateAction<ISearchToken[]>>
   filtersAmount: number
+  bp?: Breakpoint
 }
 
 export const FilterSearch: React.FC<IFilterSearch> = ({
   networkType,
   selectedFilters,
   setSelectedFilters,
-  filtersAmount
+  filtersAmount,
+  bp = 'sm'
 }) => {
   const tokensListDetails = useSelector(tokensStatsWithTokensDetails)
   const commonTokens = commonTokensForNetworks[networkType]
@@ -98,7 +102,7 @@ export const FilterSearch: React.FC<IFilterSearch> = ({
   }, [tokensListDetails, tokenListMap, commonTokensSet])
 
   const isTokensSelected = selectedFilters.length === filtersAmount
-  const isSmall = useMediaQuery(theme.breakpoints.down('sm'))
+  const isSmall = useMediaQuery(theme.breakpoints.down(bp))
   const { classes } = useStyles({ isSmall })
 
   const shouldOpenPopper = !isTokensSelected && open

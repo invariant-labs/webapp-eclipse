@@ -77,7 +77,8 @@ export const PositionsList: React.FC<IProps> = ({
   const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
-  const isMb = useMediaQuery(theme.breakpoints.down('md'))
+  const isMb = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const currentData = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
@@ -160,64 +161,142 @@ export const PositionsList: React.FC<IProps> = ({
 
   return (
     <Grid container direction='column' className={classes.root}>
-      <Grid
-        className={classes.header}
-        container
-        direction='row'
-        justifyContent='space-between'
-        alignItems='center'>
-        <Grid className={classes.searchRoot}>
-          <Grid className={classes.titleBar}>
-            <Typography className={classes.title}>Your Positions</Typography>
-            <TooltipHover text='Total number of your positions'>
-              <Typography className={classes.positionsNumber}>
-                {String(filteredData.length)}
-              </Typography>
-            </TooltipHover>
+      {!isMd ? (
+        <Grid
+          className={classes.header}
+          container
+          direction='row'
+          justifyContent='space-between'
+          alignItems='center'>
+          <Grid className={classes.searchRoot}>
+            <Grid className={classes.titleBar}>
+              <Typography className={classes.title}>Your Positions</Typography>
+              <TooltipHover text='Total number of your positions'>
+                <Typography className={classes.positionsNumber}>
+                  {String(filteredData.length)}
+                </Typography>
+              </TooltipHover>
+            </Grid>
+            {isMb && (
+              <Box className={classes.switchPoolsContainer}>
+                <Box
+                  className={classes.switchPoolsMarker}
+                  sx={{
+                    left: alignment === LiquidityPools.Standard ? 0 : '50%'
+                  }}
+                />
+                <ToggleButtonGroup
+                  value={alignment}
+                  exclusive
+                  onChange={handleSwitchPools}
+                  className={classes.switchPoolsButtonsGroup}>
+                  <ToggleButton
+                    sx={{ padding: 0 }}
+                    value={LiquidityPools.Standard}
+                    disableRipple
+                    className={classes.switchPoolsButton}
+                    style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
+                    Standard
+                  </ToggleButton>
+                  <ToggleButton
+                    sx={{ padding: 0 }}
+                    disabled={lockedData.length === 0}
+                    value={LiquidityPools.Locked}
+                    disableRipple
+                    className={classes.switchPoolsButton}
+                    classes={{ disabled: classes.disabledSwitchButton }}
+                    style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
+                    Locked
+                  </ToggleButton>
+                </ToggleButtonGroup>
+              </Box>
+            )}
+            <Grid className={classes.searchWrapper}>
+              <Grid className={classes.filtersContainer}>
+                <FilterSearch
+                  bp='md'
+                  networkType={currentNetwork}
+                  filtersAmount={2}
+                  selectedFilters={selectedFilters}
+                  setSelectedFilters={setSelectedFilters}
+                />
+                {!isMb && (
+                  <Box className={classes.switchPoolsContainer}>
+                    <Box
+                      className={classes.switchPoolsMarker}
+                      sx={{
+                        left: alignment === LiquidityPools.Standard ? 0 : '50%'
+                      }}
+                    />
+                    <ToggleButtonGroup
+                      value={alignment}
+                      exclusive
+                      onChange={handleSwitchPools}
+                      className={classes.switchPoolsButtonsGroup}>
+                      <ToggleButton
+                        sx={{ padding: 0 }}
+                        value={LiquidityPools.Standard}
+                        disableRipple
+                        className={classes.switchPoolsButton}
+                        style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
+                        Standard
+                      </ToggleButton>
+                      <ToggleButton
+                        sx={{ padding: 0 }}
+                        disabled={lockedData.length === 0}
+                        value={LiquidityPools.Locked}
+                        disableRipple
+                        className={classes.switchPoolsButton}
+                        classes={{ disabled: classes.disabledSwitchButton }}
+                        style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
+                        Locked
+                      </ToggleButton>
+                    </ToggleButtonGroup>
+                  </Box>
+                )}
+              </Grid>
+
+              <Grid
+                display='flex'
+                columnGap={2}
+                justifyContent='space-between'
+                className={classes.fullWidthWrapper}>
+                <TooltipHover text='Refresh'>
+                  <Grid display='flex' alignItems='center'>
+                    <Button
+                      disabled={showNoConnected}
+                      onClick={showNoConnected ? () => {} : handleRefresh}
+                      className={classes.refreshIconBtn}>
+                      <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                    </Button>
+                  </Grid>
+                </TooltipHover>
+                <Button className={classes.button} variant='contained' onClick={onAddPositionClick}>
+                  <span className={classes.buttonText}>+ Add Position</span>
+                </Button>
+              </Grid>
+            </Grid>
           </Grid>
-          {isMb && (
-            <Box className={classes.switchPoolsContainer}>
-              <Box
-                className={classes.switchPoolsMarker}
-                sx={{
-                  left: alignment === LiquidityPools.Standard ? 0 : '50%'
-                }}
-              />
-              <ToggleButtonGroup
-                value={alignment}
-                exclusive
-                onChange={handleSwitchPools}
-                className={classes.switchPoolsButtonsGroup}>
-                <ToggleButton
-                  sx={{ padding: 0 }}
-                  value={LiquidityPools.Standard}
-                  disableRipple
-                  className={classes.switchPoolsButton}
-                  style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
-                  Standard
-                </ToggleButton>
-                <ToggleButton
-                  sx={{ padding: 0 }}
-                  disabled={lockedData.length === 0}
-                  value={LiquidityPools.Locked}
-                  disableRipple
-                  className={classes.switchPoolsButton}
-                  classes={{ disabled: classes.disabledSwitchButton }}
-                  style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
-                  Locked
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
-          )}
-          <Grid className={classes.searchWrapper}>
-            <Grid className={classes.filtersContainer}>
-              <FilterSearch
-                networkType={currentNetwork}
-                filtersAmount={2}
-                selectedFilters={selectedFilters}
-                setSelectedFilters={setSelectedFilters}
-              />
-              {!isMb && (
+        </Grid>
+      ) : (
+        <Grid
+          className={classes.header}
+          container
+          direction='row'
+          justifyContent='space-between'
+          alignItems='center'>
+          <Grid className={classes.searchRoot}>
+            <Grid className={classes.titleBar}>
+              <Typography className={classes.title}>Your Positions</Typography>
+              <TooltipHover text='Total number of your positions'>
+                <Typography className={classes.positionsNumber}>
+                  {String(filteredData.length)}
+                </Typography>
+              </TooltipHover>
+            </Grid>
+
+            <Grid className={classes.searchWrapper}>
+              <Grid className={classes.filtersContainer}>
                 <Box className={classes.switchPoolsContainer}>
                   <Box
                     className={classes.switchPoolsMarker}
@@ -250,31 +329,42 @@ export const PositionsList: React.FC<IProps> = ({
                     </ToggleButton>
                   </ToggleButtonGroup>
                 </Box>
-              )}
-            </Grid>
 
-            <Grid
-              display='flex'
-              columnGap={2}
-              justifyContent='space-between'
-              className={classes.fullWidthWrapper}>
-              <TooltipHover text='Refresh'>
-                <Grid display='flex' alignItems='center'>
+                <Grid
+                  display='flex'
+                  columnGap={2}
+                  justifyContent='space-between'
+                  className={classes.fullWidthWrapper}>
+                  <TooltipHover text='Refresh'>
+                    <Grid display='flex' alignItems='center'>
+                      <Button
+                        disabled={showNoConnected}
+                        onClick={showNoConnected ? () => {} : handleRefresh}
+                        className={classes.refreshIconBtn}>
+                        <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                      </Button>
+                    </Grid>
+                  </TooltipHover>
                   <Button
-                    disabled={showNoConnected}
-                    onClick={showNoConnected ? () => {} : handleRefresh}
-                    className={classes.refreshIconBtn}>
-                    <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                    className={classes.button}
+                    variant='contained'
+                    onClick={onAddPositionClick}>
+                    <span className={classes.buttonText}>+ Add Position</span>
                   </Button>
                 </Grid>
-              </TooltipHover>
-              <Button className={classes.button} variant='contained' onClick={onAddPositionClick}>
-                <span className={classes.buttonText}>+ Add Position</span>
-              </Button>
+              </Grid>
+
+              <FilterSearch
+                bp='md'
+                networkType={currentNetwork}
+                filtersAmount={2}
+                selectedFilters={selectedFilters}
+                setSelectedFilters={setSelectedFilters}
+              />
             </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      )}
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
         {filteredData.length > 0 && !loading && !showNoConnected ? (
           paginator(page).data.map((element, index) => (
