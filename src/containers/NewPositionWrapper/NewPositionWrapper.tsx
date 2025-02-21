@@ -32,13 +32,11 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import poolsSelectors, {
+  autoSwapTicksAndTickMap,
   isLoadingLatestPoolsForTransaction,
   isLoadingPathTokens,
-  isLoadingTicksAndTickMaps,
   isLoadingTokens,
-  nearestPoolTicksForPair,
-  poolsArraySortedByFees,
-  tickMaps
+  poolsArraySortedByFees
 } from '@store/selectors/pools'
 import { initPosition, plotTicks, shouldNotUpdateRange } from '@store/selectors/positions'
 import { balanceLoading, status, balance, poolTokens } from '@store/selectors/solanaWallet'
@@ -80,10 +78,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
   const autoSwapPoolData = useSelector(poolsSelectors.autoSwapPool)
+  const { ticks: autoSwapTicks, tickmap: autoSwapTickMap } = useSelector(autoSwapTicksAndTickMap)
   const isLoadingAutoSwapPool = useSelector(poolsSelectors.isLoadingAutoSwapPool)
-  const tickmap = useSelector(tickMaps)
-  const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
-  const loadingTicksAndTickMaps = useSelector(isLoadingTicksAndTickMaps)
+  const isLoadingAutoSwapPoolTicksOrTickMap = useSelector(
+    poolsSelectors.isLoadingAutoSwapPoolTicksOrTickMap
+  )
   const isBalanceLoading = useSelector(balanceLoading)
   const shouldNotUpdatePriceRange = useSelector(shouldNotUpdateRange)
   const currentNetwork = useSelector(network)
@@ -95,8 +94,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
 
   const isLoadingTicksOrTickmap = useMemo(
-    () => ticksLoading || loadingTicksAndTickMaps || isLoadingAutoSwapPool,
-    [ticksLoading, loadingTicksAndTickMaps, isLoadingAutoSwapPool]
+    () => ticksLoading || isLoadingAutoSwapPoolTicksOrTickMap || isLoadingAutoSwapPool,
+    [ticksLoading, isLoadingAutoSwapPoolTicksOrTickMap, isLoadingAutoSwapPool]
   )
 
   const [potentialLiquidity, setPotentialLiquidity] = useState<{
@@ -815,14 +814,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     [tokenAIndex, tokenBIndex]
   )
 
-  const autoSwapPoolTickmap = useMemo(
-    () =>
-      !!autoSwapPoolData && tickmap[autoSwapPoolData.tickmap.toString()]
-        ? tickmap[autoSwapPoolData.tickmap.toString()]
-        : null,
-    [autoSwapPoolData, tickmap]
-  )
-
   useEffect(() => {
     if (tokenAIndex === null || tokenBIndex === null || !autoSwapPool) return
     dispatch(
@@ -840,17 +831,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   useEffect(() => {
     if (autoSwapPoolData && tokenAIndex !== null && tokenBIndex !== null) {
       dispatch(
-        poolsActions.getNearestTicksForPair({
+        poolsActions.getTicksAndTickMapForAutoSwap({
           tokenFrom: tokens[tokenAIndex].assetAddress,
           tokenTo: tokens[tokenBIndex].assetAddress,
-          allPools: [autoSwapPoolData]
-        })
-      )
-      dispatch(
-        poolsActions.getTicksAndTickMaps({
-          tokenFrom: tokens[tokenAIndex].assetAddress,
-          tokenTo: tokens[tokenBIndex].assetAddress,
-          allPools: [autoSwapPoolData]
+          autoSwapPool: autoSwapPoolData
         })
       )
     }
@@ -964,7 +948,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           !autoSwapPoolData ||
           poolIndex === null ||
           !allPools[poolIndex] ||
-          !autoSwapPoolTickmap ||
+          !autoSwapTickMap ||
           !autoSwapPool
         ) {
           return
@@ -988,7 +972,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             byAmountIn,
             xToY,
             swapPool: autoSwapPoolData,
-            swapPoolTickmap: autoSwapPoolTickmap,
+            swapPoolTickmap: autoSwapTickMap,
             swapSlippage,
             estimatedPriceAfterSwap,
             crossedTicks,
@@ -1105,12 +1089,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isPromotedPool={isPromotedPool}
       actualPoolPrice={poolIndex !== null ? allPools[poolIndex].sqrtPrice : null}
       autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
-      autoSwapTickmap={autoSwapPoolTickmap}
-      autoSwapTicks={
-        !!autoSwapPoolData && poolTicksForSimulation[autoSwapPoolData.address.toString()]
-          ? poolTicksForSimulation[autoSwapPoolData.address.toString()]
-          : null
-      }
+      autoSwapTickmap={autoSwapTickMap}
+      autoSwapTicks={autoSwapTicks}
       initialMaxPriceImpact={initialMaxPriceImpact}
       onMaxPriceImpactChange={onMaxPriceImpactChange}
       initialMinUtilization={initialMinUtilization}
