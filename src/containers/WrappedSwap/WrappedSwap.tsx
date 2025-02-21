@@ -289,6 +289,13 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         second: tokensList[tokenToIndex].address
       })
     )
+    dispatch(
+      poolsActions.getNearestTicksForPair({
+        tokenFrom: tokensList[tokenFromIndex].address,
+        tokenTo: tokensList[tokenToIndex].address,
+        allPools
+      })
+    )
   }
 
   const copyTokenAddressHandler = (message: string, variant: VariantType) => {
