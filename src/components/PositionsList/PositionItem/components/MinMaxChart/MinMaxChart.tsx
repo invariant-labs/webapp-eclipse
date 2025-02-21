@@ -60,11 +60,7 @@ const PriceIndicatorLine: React.FC<{ position: number }> = ({ position }) => {
   )
 }
 
-const MinMaxLabels: React.FC<{ min: number; max: number; isOutOfBounds: boolean }> = ({
-  min,
-  max,
-  isOutOfBounds
-}) => (
+const MinMaxLabels: React.FC<{ min: number; max: number }> = ({ min, max }) => (
   <Box
     sx={{
       width: '100%',
@@ -75,14 +71,14 @@ const MinMaxLabels: React.FC<{ min: number; max: number; isOutOfBounds: boolean 
     <Typography
       sx={{
         ...typography.caption2,
-        color: isOutOfBounds ? colors.invariant.light : colors.invariant.lightGrey
+        color: colors.invariant.lightGrey
       }}>
       {formatNumberWithSuffix(min)}
     </Typography>
     <Typography
       sx={{
         ...typography.caption2,
-        color: isOutOfBounds ? colors.invariant.light : colors.invariant.lightGrey
+        color: colors.invariant.lightGrey
       }}>
       {formatNumberWithSuffix(max)}
     </Typography>
@@ -128,7 +124,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         </Box>
       </Box>
 
-      <MinMaxLabels min={min} max={max} isOutOfBounds={isOutOfBounds} />
+      <MinMaxLabels min={min} max={max} />
     </Box>
   )
 }
