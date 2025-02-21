@@ -31,6 +31,80 @@ export const useStyles = makeStyles()(() => ({
     paddingLeft: 16,
     paddingRight: 16
   },
+  switchPoolsContainer: {
+    position: 'relative',
+    width: 'fit-content',
+    backgroundColor: colors.invariant.component,
+    borderRadius: 10,
+    overflow: 'hidden',
+    display: 'inline-flex',
+    height: 32,
+    marginBottom: '16px'
+  },
+  switchPoolsMarker: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: '50%',
+    backgroundColor: colors.invariant.light,
+    borderRadius: 10,
+    transition: 'all 0.3s ease',
+    zIndex: 1
+  },
+  switchPoolsButtonsGroup: { position: 'relative', zIndex: 2, display: 'flex' },
+  switchPoolsButton: {
+    ...typography.body2,
+    display: 'flex',
+    textWrap: 'nowrap',
+    justifyContent: 'center',
+    alignItems: 'center',
+    color: 'white',
+    flex: 1,
+    textTransform: 'none',
+    border: 'none',
+    borderRadius: 10,
+    zIndex: 2,
+    '&.Mui-selected': {
+      backgroundColor: 'transparent'
+    },
+    '&:hover': {
+      backgroundColor: 'transparent'
+    },
+    '&.Mui-selected:hover': {
+      backgroundColor: 'transparent'
+    },
+    '&:disabled': {
+      color: colors.invariant.componentBcg,
+      pointerEvents: 'auto',
+      transition: 'all 0.2s',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed',
+        filter: 'brightness(1.15)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
+      }
+    },
+    letterSpacing: '-0.03em',
+    paddingTop: 6,
+    paddingBottom: 6,
+    paddingLeft: 32,
+    paddingRight: 32
+  },
+  filtersContainer: {
+    display: 'none',
+    justifyContent: 'center',
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    gap: 12,
+    [theme.breakpoints.down('lg')]: {
+      display: 'flex'
+    }
+  },
+  disabledSwitchButton: {
+    color: `${colors.invariant.textGrey} !important`
+  },
   footerCheckboxContainer: {
     display: 'flex',
     flexDirection: 'row',

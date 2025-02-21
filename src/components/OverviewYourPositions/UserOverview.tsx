@@ -6,7 +6,9 @@ import {
   Grid,
   Typography,
   useMediaQuery,
-  Skeleton
+  Skeleton,
+  ToggleButton,
+  ToggleButtonGroup
 } from '@mui/material'
 import { typography, colors, theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
@@ -21,6 +23,11 @@ import { useStyles } from './style'
 import { useMemo, useState } from 'react'
 import classNames from 'classnames'
 
+export enum CardSwitcher {
+  Overview = 'Overview',
+  Wallet = 'Wallet'
+}
+
 export const UserOverview = () => {
   const { classes } = useStyles()
   const tokensList = useSelector(swapTokens)
@@ -30,6 +37,16 @@ export const UserOverview = () => {
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const list: any = useSelector(positionsWithPoolsData)
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(true)
+  const [activePanel, setActivePanel] = useState<CardSwitcher>(CardSwitcher.Overview)
+
+  const handleSwitchPools = (
+    _: React.MouseEvent<HTMLElement>,
+    newAlignment: CardSwitcher | null
+  ) => {
+    if (newAlignment !== null) {
+      setActivePanel(newAlignment)
+    }
+  }
 
   const data: Pick<
     ProcessedPool,
@@ -114,22 +131,59 @@ export const UserOverview = () => {
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px', width: '100%' }}>
-      <Box>
-        <Grid
-          style={{
-            display: 'flex',
-            marginBottom: 20
-          }}>
-          <Typography
-            style={{
-              color: colors.invariant.text,
-              ...typography.heading4,
-              fontWeight: 500
-            }}>
-            Overview
-          </Typography>
+      {isDownLg && (
+        <Grid className={classes.filtersContainer}>
+          <Box className={classes.switchPoolsContainer}>
+            <Box
+              className={classes.switchPoolsMarker}
+              sx={{
+                left: activePanel === CardSwitcher.Overview ? 0 : '50%'
+              }}
+            />
+            <ToggleButtonGroup
+              value={activePanel}
+              exclusive
+              onChange={handleSwitchPools}
+              className={classes.switchPoolsButtonsGroup}>
+              <ToggleButton
+                value={CardSwitcher.Overview}
+                disableRipple
+                className={classes.switchPoolsButton}
+                style={{ fontWeight: activePanel === CardSwitcher.Overview ? 700 : 400 }}>
+                Liquidity overview
+              </ToggleButton>
+              <ToggleButton
+                value={CardSwitcher.Wallet}
+                disableRipple
+                className={classes.switchPoolsButton}
+                classes={{ disabled: classes.disabledSwitchButton }}
+                style={{ fontWeight: activePanel === CardSwitcher.Wallet ? 700 : 400 }}>
+                Your Wallet
+              </ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
         </Grid>
-      </Box>
+      )}
+
+      {(!isDownLg || activePanel === CardSwitcher.Overview) && (
+        <Box>
+          <Grid
+            style={{
+              display: 'flex',
+              marginBottom: 20
+            }}>
+            <Typography
+              style={{
+                color: colors.invariant.text,
+                ...typography.heading4,
+                fontWeight: 500
+              }}>
+              Overview
+            </Typography>
+          </Grid>
+        </Box>
+      )}
+
       <Box
         sx={{
           display: 'flex',
@@ -137,37 +191,45 @@ export const UserOverview = () => {
             flexDirection: 'column'
           }
         }}>
-        <Overview poolAssets={data} />
-        {isDownLg && (
-          <Box className={classes.footer}>
-            <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
-          </Box>
-        )}
-        <YourWallet
-          pools={finalTokens}
-          isLoading={isLoading || isLoadingList || isBalanceLoading}
-        />
-        {isDownLg && (
-          <Box className={classes.footer}>
-            <Box className={classes.footerItem}>
-              <Box className={classes.footerCheckboxContainer}>
-                <FormGroup>
-                  <FormControlLabel
-                    className={classes.checkBoxLabel}
-                    control={
-                      <Checkbox
-                        checked={hideUnknownTokens}
-                        className={classes.checkBox}
-                        onChange={e => setHideUnknownTokens(e.target.checked)}
-                      />
-                    }
-                    label='Hide unknown tokens'
-                  />
-                </FormGroup>
+        {(!isDownLg || activePanel === CardSwitcher.Overview) && (
+          <>
+            <Overview poolAssets={data} />
+            {isDownLg && (
+              <Box className={classes.footer}>
+                <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
               </Box>
-              {renderTokensFound()}
-            </Box>
-          </Box>
+            )}
+          </>
+        )}
+        {(!isDownLg || activePanel === CardSwitcher.Wallet) && (
+          <>
+            <YourWallet
+              pools={finalTokens}
+              isLoading={isLoading || isLoadingList || isBalanceLoading}
+            />
+            {isDownLg && (
+              <Box className={classes.footer}>
+                <Box className={classes.footerItem}>
+                  <Box className={classes.footerCheckboxContainer}>
+                    <FormGroup>
+                      <FormControlLabel
+                        className={classes.checkBoxLabel}
+                        control={
+                          <Checkbox
+                            checked={hideUnknownTokens}
+                            className={classes.checkBox}
+                            onChange={e => setHideUnknownTokens(e.target.checked)}
+                          />
+                        }
+                        label='Hide unknown tokens'
+                      />
+                    </FormGroup>
+                  </Box>
+                  {renderTokensFound()}
+                </Box>
+              </Box>
+            )}
+          </>
         )}
       </Box>
       {!isDownLg && (
