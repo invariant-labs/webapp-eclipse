@@ -6,7 +6,7 @@ import routeArrow2 from '@static/svg/routeArrow2.svg'
 import { theme } from '@static/theme'
 import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { formatNumber2, printBN } from '@utils/utils'
+import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { SimulationPath } from '@components/Swap/Swap'
 import icons from '@static/icons'
 import loadingAnimation from '@static/gif/loading.gif'
@@ -86,7 +86,7 @@ const RouteBox: React.FC<IProps> = ({
               />
 
               <Typography className={classes.routeLabel}>
-                {`${formatNumber2(printBN(firstAmount ?? new BN(0), tokenFrom?.decimals ?? 0))} ${tokenFrom?.symbol}`}
+                {`${formatNumberWithoutSuffix(printBN(firstAmount ?? new BN(0), tokenFrom?.decimals ?? 0))} ${tokenFrom?.symbol}`}
               </Typography>
             </Box>
             {onePoolType && (
@@ -99,7 +99,9 @@ const RouteBox: React.FC<IProps> = ({
                   <Typography className={classes.routeLabel}>{secondFeePercent}% fee</Typography>
                   <img className={classes.routeIcon} src={routeArrow1} alt='route arrow' />
                   <Typography className={classes.routeLabel}>
-                    {formatNumber2(printBN(secondAmount ?? new BN(0), tokenBetween?.decimals ?? 0))}{' '}
+                    {formatNumberWithoutSuffix(
+                      printBN(secondAmount ?? new BN(0), tokenBetween?.decimals ?? 0)
+                    )}{' '}
                     {tokenBetween?.symbol}
                   </Typography>
                 </Box>
