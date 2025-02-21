@@ -1366,7 +1366,7 @@ export function* handleClaimAllFees() {
     yield put(snackbarsActions.remove(loaderClaimAllFees))
 
     yield put(actions.getPositionsList())
-    yield put(actions.calculateUnclaimedFees())
+    yield put(actions.calculateTotalUnclaimedFees())
 
     yield* put(actions.setAllClaimLoader(false))
   } catch (error) {
@@ -1950,7 +1950,7 @@ function* getTickWithCache(
   return tick
 }
 
-export function* handleCalculateUnclaimedFees() {
+export function* handleCalculateTotalUnclaimedFees() {
   // const UPDATE_INTERVAL = 60000
 
   try {
@@ -2033,7 +2033,7 @@ export function* claimAllFeeHandler(): Generator {
 }
 
 export function* unclaimedFeesHandler(): Generator {
-  yield* takeEvery(actions.calculateUnclaimedFees, handleCalculateUnclaimedFees)
+  yield* takeEvery(actions.calculateTotalUnclaimedFees, handleCalculateTotalUnclaimedFees)
 }
 
 export function* closePositionHandler(): Generator {

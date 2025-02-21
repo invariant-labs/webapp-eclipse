@@ -12,7 +12,7 @@ import { getEclipseWallet } from '@utils/web3/wallet'
 import { useSelector } from 'react-redux'
 import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 
-const UPDATE_INTERVAL = 60000 // 1 minuta
+const UPDATE_INTERVAL = 60000
 
 interface PositionTicks {
   lowerTick: Tick | undefined
@@ -53,7 +53,6 @@ export const useUnclaimedFee = ({
     loading: false
   })
 
-  // Memoizacja stałych wartości
   const { tokenXPercentage, tokenYPercentage } = useMemo(
     () => calculatePercentageRatio(tokenXLiq, tokenYLiq, currentPrice, xToY),
     [tokenXLiq, tokenYLiq, currentPrice, xToY]
@@ -71,7 +70,6 @@ export const useUnclaimedFee = ({
     }
   })
 
-  // Kontrola aktualizacji
   const checkShouldUpdate = useCallback(() => {
     const currentTime = Date.now()
     if (isInitialLoad || currentTime - lastUpdateTimeRef.current >= UPDATE_INTERVAL) {
@@ -81,7 +79,6 @@ export const useUnclaimedFee = ({
     return false
   }, [isInitialLoad])
 
-  // Efekt inicjalizujący i kontrolujący aktualizacje
   useEffect(() => {
     if (checkShouldUpdate()) {
       setShouldUpdate(true)
@@ -95,7 +92,6 @@ export const useUnclaimedFee = ({
 
     return () => clearInterval(interval)
   }, [checkShouldUpdate])
-
   // Hook pobierający dane o tickach
   const {
     lowerTick,
@@ -112,7 +108,6 @@ export const useUnclaimedFee = ({
     shouldUpdate
   })
 
-  // Aktualizacja ticków
   useEffect(() => {
     if (lowerTick && upperTick) {
       setPositionTicks({

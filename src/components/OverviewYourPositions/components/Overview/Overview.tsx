@@ -149,10 +149,10 @@ export const Overview: React.FC<OverviewProps> = () => {
 
   useEffect(() => {
     if (Object.keys(prices).length > 0) {
-      dispatch(actions.calculateUnclaimedFees())
+      dispatch(actions.calculateTotalUnclaimedFees())
 
       const interval = setInterval(() => {
-        dispatch(actions.calculateUnclaimedFees())
+        dispatch(actions.calculateTotalUnclaimedFees())
       }, 60000) // 1 minute
 
       return () => clearInterval(interval)

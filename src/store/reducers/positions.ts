@@ -179,7 +179,7 @@ const positionsSlice = createSlice({
     setAllClaimLoader(state, action: PayloadAction<boolean>) {
       state.positionsList.isAllClaimFeesLoading = action.payload
     },
-    calculateUnclaimedFees(state) {
+    calculateTotalUnclaimedFees(state) {
       state.unclaimedFees.loading = true
       return state
     },
