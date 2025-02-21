@@ -58,7 +58,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       }
     },
     feeTierCell: {
-      width: '12%',
+      width: '8%',
       '& > div': {
         justifyContent: 'center'
       }
@@ -88,7 +88,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       }
     },
     actionCell: {
-      width: '5%',
+      width: '8%',
       padding: '14px 8px',
       '& > button': {
         margin: '0 auto'

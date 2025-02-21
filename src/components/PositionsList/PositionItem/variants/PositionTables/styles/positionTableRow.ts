@@ -35,7 +35,7 @@ export const usePositionTableRowStyle = makeStyles()((theme: Theme) => ({
   },
 
   feeTierCell: {
-    width: '15%',
+    width: '10%',
     padding: '0 !important',
     '& > .MuiBox-root': {
       justifyContent: 'center',
@@ -77,7 +77,7 @@ export const usePositionTableRowStyle = makeStyles()((theme: Theme) => ({
   },
 
   actionCell: {
-    width: '4%',
+    width: '8%',
     padding: '14px 8px',
     '& > .MuiButton-root': {
       margin: '0 auto'
