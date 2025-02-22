@@ -22,7 +22,7 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
   },
   tableBody: {
     display: 'block',
-    height: 'calc(4 * (20px + 82px))', // Adjusted to match the original table's height calculation
+    height: 'calc(4 * (20px + 82px))',
     overflowY: 'auto',
     background: colors.invariant.component,
     '&::-webkit-scrollbar': {
