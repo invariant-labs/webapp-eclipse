@@ -94,7 +94,7 @@ export const PositionTableSkeleton: React.FC = () => {
                 <TableCell className={classes.chartCell}>
                   <Skeleton
                     variant='rectangular'
-                    width='90%'
+                    width='100%'
                     height={36}
                     sx={{ borderRadius: '10px', margin: '0 auto' }}
                   />
