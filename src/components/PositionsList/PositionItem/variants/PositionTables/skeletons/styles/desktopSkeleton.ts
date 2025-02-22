@@ -23,7 +23,7 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
   tableBody: {
     display: 'block',
     height: 'calc(4 * (20px + 82px))',
-    overflowY: 'auto',
+    overflowY: 'hidden',
     background: colors.invariant.component,
     '&::-webkit-scrollbar': {
       width: '4px'
