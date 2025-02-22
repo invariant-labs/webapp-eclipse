@@ -111,14 +111,14 @@ export const UserOverview = () => {
       ) : (
         <>
           <Typography className={classNames(classes.greyText, classes.footerPositionDetails)}>
-            All positions: {positionsDetails.positionsAmount}
+            All Positions: {positionsDetails.positionsAmount}
           </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
-              Within range: {positionsDetails.inRageAmount}
+              Within Range: {positionsDetails.inRageAmount}
             </Typography>
             <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
-              Outside range: {positionsDetails.outOfRangeAmount}
+              Outside Range: {positionsDetails.outOfRangeAmount}
             </Typography>
           </Box>
         </>
@@ -131,7 +131,7 @@ export const UserOverview = () => {
       {isBalanceLoading || isLoadingList ? (
         <Skeleton width={150} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
       ) : (
-        `${finalTokens.length} tokens were found`
+        `${finalTokens.length} Tokens Found`
       )}
     </Typography>
   )

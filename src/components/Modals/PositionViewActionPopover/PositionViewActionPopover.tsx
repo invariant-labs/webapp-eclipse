@@ -63,6 +63,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           </Button>
           <Button
             className={classNames(classes.listItem)}
+            disabled={position.isLocked}
             onClick={e => {
               e.stopPropagation()
               dispatch(
@@ -80,6 +81,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
         </Grid>
         <Button
           className={classNames(classes.listItem)}
+          disabled={position.isLocked}
           onClick={e => {
             e.stopPropagation()
             onLockPosition()

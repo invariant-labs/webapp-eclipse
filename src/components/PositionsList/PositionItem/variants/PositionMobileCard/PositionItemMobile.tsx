@@ -6,8 +6,6 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style/mobile'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
-import lockIcon from '@static/svg/lock.svg'
-import unlockIcon from '@static/svg/unlock.svg'
 import icons from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
@@ -52,7 +50,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXLiq,
   tokenYLiq,
   network,
-  isLocked,
   isLockPositionModalOpen,
   setIsLockPositionModalOpen
 }) => {
@@ -517,29 +514,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
       {topSection}
       {middleSection}
       {chartSection}
-
-      {isLocked && (
-        <Grid
-          container
-          item
-          className={classNames(
-            sharedClasses.dropdown,
-            isLocked ? sharedClasses.dropdownLocked : undefined
-          )}
-          justifyContent='center'
-          alignItems='center'
-          wrap='nowrap'>
-          {isLocked ? (
-            <TooltipHover text={'Liquidity locked'}>
-              <img src={lockIcon} alt='Lock' />
-            </TooltipHover>
-          ) : (
-            <TooltipHover text={'Liquidity not locked'}>
-              <img src={unlockIcon} alt='Lock' />
-            </TooltipHover>
-          )}
-        </Grid>
-      )}
     </Grid>
   )
 }

@@ -117,7 +117,7 @@ export const useStyles = makeStyles()(() => ({
   checkBoxLabel: {
     '.MuiFormControlLabel-label': {
       ...typography.body2,
-      color: colors.invariant.text
+      color: `${colors.invariant.text}b6`
     }
   },
   footerText: { ...typography.body2 },
