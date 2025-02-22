@@ -18,13 +18,23 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
   tableHead: {
     display: 'table',
     width: '100%',
-    tableLayout: 'fixed',
-    borderBottom: `1px solid ${colors.invariant.light}`
+    tableLayout: 'fixed'
   },
   tableBody: {
     display: 'block',
-    maxHeight: 'calc(5 * 85px)',
-    overflowY: 'auto'
+    height: 'calc(4 * (20px + 82px))', // Adjusted to match the original table's height calculation
+    overflowY: 'auto',
+    background: colors.invariant.component,
+    '&::-webkit-scrollbar': {
+      width: '4px'
+    },
+    '&::-webkit-scrollbar-track': {
+      background: colors.invariant.componentDark
+    },
+    '&::-webkit-scrollbar-thumb': {
+      background: colors.invariant.pink,
+      borderRadius: '4px'
+    }
   },
   headerRow: {
     height: '50px',
@@ -39,15 +49,13 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
   bodyRow: {
     display: 'table',
     width: '100%',
-    borderTop: `1px solid ${colors.invariant.light}`,
-
     height: '82.6px',
     tableLayout: 'fixed',
-    '&:nth-of-type(odd)': {
+    '&:nth-of-type(even)': {
       background: colors.invariant.component
     },
-    '&:nth-of-type(even)': {
-      background: `${colors.invariant.component}80`
+    '&:nth-of-type(odd)': {
+      background: `${colors.invariant.componentDark}F0`
     }
   },
   pairNameCell: {
@@ -57,7 +65,7 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     border: 'none'
   },
   feeTierCell: {
-    width: '12%',
+    width: '8%',
     padding: '14px 20px !important',
     border: 'none'
   },
@@ -71,7 +79,6 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     padding: '14px 20px !important',
     border: 'none'
   },
-
   feeCell: {
     width: '10%',
     padding: '14px 20px !important',
@@ -83,7 +90,7 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     border: 'none'
   },
   actionCell: {
-    width: '4%',
+    width: '8%',
     padding: '14px 8px !important',
     border: 'none'
   },
@@ -100,15 +107,13 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     borderTop: `1px solid ${colors.invariant.light}`
   },
   tableFooter: {
-    borderTop: `2px solid ${colors.invariant.light}`,
-
     display: 'table',
     width: '100%',
     tableLayout: 'fixed'
   },
   footerRow: {
     background: colors.invariant.component,
-    height: '50px',
+    height: '56.8px',
     '& td:first-of-type': {
       borderBottomLeftRadius: '24px'
     },

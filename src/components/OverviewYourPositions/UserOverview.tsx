@@ -131,7 +131,7 @@ export const UserOverview = () => {
       {isBalanceLoading || isLoadingList ? (
         <Skeleton width={150} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
       ) : (
-        `${finalTokens.length} Tokens Found`
+        `Tokens Found: ${finalTokens.length}`
       )}
     </Typography>
   )
@@ -212,7 +212,7 @@ export const UserOverview = () => {
                   disableRipple
                   className={classes.switchPoolsButton}
                   style={{ fontWeight: activePanel === CardSwitcher.Overview ? 700 : 400 }}>
-                  Liquidity overview
+                  Liquidity
                 </ToggleButton>
                 <ToggleButton
                   value={CardSwitcher.Wallet}
