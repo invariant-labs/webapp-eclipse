@@ -85,7 +85,7 @@ export const useDesktopSkeletonStyles = makeStyles()(() => ({
     border: 'none'
   },
   chartCell: {
-    width: '16%',
+    width: '18%',
     padding: '14px 20px !important',
     border: 'none'
   },
