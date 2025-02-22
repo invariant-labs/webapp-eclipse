@@ -128,7 +128,7 @@ export const UserOverview = () => {
 
   const renderTokensFound = () => (
     <Typography className={classNames(classes.footerText, classes.greyText)}>
-      {isBalanceLoading ? (
+      {isBalanceLoading || isLoadingList ? (
         <Skeleton width={150} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
       ) : (
         `${finalTokens.length} tokens were found`
