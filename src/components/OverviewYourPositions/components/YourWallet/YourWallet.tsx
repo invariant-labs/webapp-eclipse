@@ -12,7 +12,7 @@ import {
 } from '@mui/material'
 import { StrategyConfig, TokenPool } from '@store/types/userOverview'
 import { useNavigate } from 'react-router-dom'
-import { STRATEGIES } from '@store/consts/userStrategies'
+import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
 import { NetworkType, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
 import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
@@ -33,8 +33,8 @@ interface YourWalletProps {
 
 const EmptyState = ({ classes }: { classes: any }) => (
   <Box className={classes.emptyState}>
-    <img src={icons.empty} alt='Empty wallet' height={64} width={64} />
-    <Typography className={classes.emptyStateText}>Your wallet is empty.</Typography>
+    <img src={icons.assetsEmpty} alt='Empty portfolio' height={80} width={80} />
+    <Typography className={classes.emptyStateText}>No assets found</Typography>
   </Box>
 )
 
@@ -66,7 +66,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
 
       strategy = {
         tokenAddressA: poolAddress,
-        feeTier: '0_10'
+        feeTier: DEFAULT_FEE_TIER
       }
     }
 
@@ -271,8 +271,8 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                     </TableRow>
                   ))
               ) : sortedPools.length === 0 ? (
-                <TableRow sx={{ background: 'transparent !important ' }}>
-                  <TableCell colSpan={4} sx={{ border: 'none' }}>
+                <TableRow sx={{ background: 'transparent !important' }}>
+                  <TableCell colSpan={4} sx={{ border: 'none', padding: 0 }}>
                     <EmptyState classes={classes} />
                   </TableCell>
                 </TableRow>

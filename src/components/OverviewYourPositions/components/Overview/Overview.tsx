@@ -151,7 +151,7 @@ export const Overview: React.FC<OverviewProps> = () => {
 
       const interval = setInterval(() => {
         dispatch(actions.calculateTotalUnclaimedFees())
-      }, 60000) // 1 minute
+      }, 60000)
 
       return () => clearInterval(interval)
     }
@@ -159,8 +159,8 @@ export const Overview: React.FC<OverviewProps> = () => {
 
   const EmptyState = ({ classes }: { classes: any }) => (
     <Box className={classes.emptyState}>
-      <img src={icons.empty} alt='Empty portfolio' height={64} width={64} />
-      <Typography className={classes.emptyStateText}>Your portfolio is empty.</Typography>
+      <img src={icons.liquidityEmpty} alt='Empty portfolio' height={80} width={80} />
+      <Typography className={classes.emptyStateText}>No liquidity found</Typography>
     </Box>
   )
 
