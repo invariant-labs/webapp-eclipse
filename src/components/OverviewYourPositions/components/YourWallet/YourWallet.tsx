@@ -130,13 +130,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
           onClick={() => {
             console.log(strategy)
             const sourceToken = addressToTicker(currentNetwork, strategy.tokenAddressA)
-            const targetToken = strategy.tokenAddressB
-              ? addressToTicker(currentNetwork, strategy.tokenAddressB)
-              : '-'
+            const targetToken = sourceToken === 'ETH' ? USDC_MAIN.address : WETH_MAIN.address
 
-            navigate(`/newPosition/${sourceToken}/${targetToken}/${strategy.feeTier}`, {
-              state: { referer: 'portfolio' }
-            })
+            navigate(
+              `/newPosition/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}/${strategy.feeTier}`,
+              {
+                state: { referer: 'portfolio' }
+              }
+            )
           }}>
           <img src={icons.plusIcon} height={24} width={24} alt='Add' />
         </Box>

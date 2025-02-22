@@ -33,11 +33,11 @@ export const useStyles = makeStyles()(() => ({
   },
   switchPoolsContainer: {
     position: 'relative',
-    width: 'fit-content',
+    width: '100%',
     backgroundColor: colors.invariant.component,
     borderRadius: 10,
     overflow: 'hidden',
-    display: 'inline-flex',
+    display: 'flex',
     height: 32,
     marginBottom: '16px'
   },
@@ -51,7 +51,12 @@ export const useStyles = makeStyles()(() => ({
     transition: 'all 0.3s ease',
     zIndex: 1
   },
-  switchPoolsButtonsGroup: { position: 'relative', zIndex: 2, display: 'flex' },
+  switchPoolsButtonsGroup: {
+    position: 'relative',
+    zIndex: 2,
+    display: 'flex',
+    width: '100%'
+  },
   switchPoolsButton: {
     ...typography.body2,
     display: 'flex',
@@ -64,6 +69,7 @@ export const useStyles = makeStyles()(() => ({
     border: 'none',
     borderRadius: 10,
     zIndex: 2,
+    width: '50%',
     '&.Mui-selected': {
       backgroundColor: 'transparent'
     },
@@ -94,11 +100,8 @@ export const useStyles = makeStyles()(() => ({
   },
   filtersContainer: {
     display: 'none',
-    justifyContent: 'center',
-    alignItems: 'flex-start',
-    flexDirection: 'row',
-    gap: 12,
-    [theme.breakpoints.down('lg')]: {
+    width: '100%',
+    [theme.breakpoints.down('md')]: {
       display: 'flex'
     }
   },
@@ -119,16 +122,16 @@ export const useStyles = makeStyles()(() => ({
   },
   footerText: { ...typography.body2 },
   footerPositionDetails: {
-    ...typography.body1
+    ...typography.body2
   },
   whiteText: {
     color: colors.invariant.text
   },
   greenText: {
-    color: colors.invariant.green
+    color: `${colors.invariant.green}b2`
   },
   pinkText: {
-    color: colors.invariant.pink
+    color: `${colors.invariant.pink}b2`
   },
   greyText: {
     color: colors.invariant.textGrey

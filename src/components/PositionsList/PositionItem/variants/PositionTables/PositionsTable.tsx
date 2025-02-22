@@ -77,20 +77,19 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
           </TableBody>
         ) : (
           <Box className={classes.tableBody}>
-            <Box>
-              <Box className={classes.emptyContainer}>
-                <Box className={classes.emptyWrapper}>
-                  <EmptyPlaceholder
-                    newVersion
-                    desc={
-                      noInitialPositions
-                        ? 'Add your first position by pressing the button and start earning!'
-                        : 'Did not find any matching positions'
-                    }
-                    onAction={onAddPositionClick}
-                    withButton={noInitialPositions}
-                  />
-                </Box>
+            <Box className={classes.emptyContainer}>
+              <Box className={classes.emptyWrapper}>
+                <EmptyPlaceholder
+                  newVersion
+                  height='408px'
+                  desc={
+                    noInitialPositions
+                      ? 'Add your first position by pressing the button and start earning!'
+                      : 'Did not find any matching positions'
+                  }
+                  onAction={onAddPositionClick}
+                  withButton={noInitialPositions}
+                />
               </Box>
             </Box>
           </Box>

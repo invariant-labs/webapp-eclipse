@@ -26,7 +26,7 @@ const GradientBox: React.FC<GradientBoxProps> = ({ color, width, isOutOfBound })
       height: '25px',
       borderTop: `1px solid ${color}`,
       background: `linear-gradient(180deg, ${color}B3 0%, ${color}00 100%)`,
-      opacity: isOutOfBound ? 0.3 : 0.7
+      opacity: isOutOfBound ? 0.18 : 0.7
     }}
   />
 )

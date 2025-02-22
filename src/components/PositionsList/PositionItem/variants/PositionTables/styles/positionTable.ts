@@ -162,8 +162,10 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
 
     emptyContainer: {
       border: 'none',
-      height: '410px',
       padding: 0,
+      height: '100%',
+      display: 'flex',
+      alignItems: 'center',
       width: '100%'
     },
     emptyWrapper: {

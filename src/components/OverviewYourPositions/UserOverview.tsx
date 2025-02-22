@@ -35,6 +35,7 @@ export const UserOverview = () => {
   const { processedPools, isLoading } = useProcessedTokens(tokensList)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
+  const isDownMd = useMediaQuery(theme.breakpoints.down('md'))
   const list: any = useSelector(positionsWithPoolsData)
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(true)
   const [activePanel, setActivePanel] = useState<CardSwitcher>(CardSwitcher.Overview)
@@ -96,24 +97,30 @@ export const UserOverview = () => {
   }, [processedPools, hideUnknownTokens])
 
   const renderPositionDetails = () => (
-    <Box className={classes.footerCheckboxContainer}>
+    <Box
+      className={classes.footerCheckboxContainer}
+      sx={{ width: '100%', justifyContent: 'space-between' }}>
       {isLoadingList ? (
         <>
           <Skeleton width={120} height={24} />
-          <Skeleton width={100} height={24} />
-          <Skeleton width={100} height={24} />
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Skeleton width={100} height={24} />
+            <Skeleton width={100} height={24} />
+          </Box>
         </>
       ) : (
         <>
-          <Typography className={classNames(classes.whiteText, classes.footerPositionDetails)}>
-            Opened positions: {positionsDetails.positionsAmount}
+          <Typography className={classNames(classes.greyText, classes.footerPositionDetails)}>
+            All positions: {positionsDetails.positionsAmount}
           </Typography>
-          <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
-            In range: {positionsDetails.inRageAmount}
-          </Typography>
-          <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
-            Out of range: {positionsDetails.outOfRangeAmount}
-          </Typography>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
+              Within range: {positionsDetails.inRageAmount}
+            </Typography>
+            <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
+              Outside range: {positionsDetails.outOfRangeAmount}
+            </Typography>
+          </Box>
         </>
       )}
     </Box>
@@ -121,7 +128,7 @@ export const UserOverview = () => {
 
   const renderTokensFound = () => (
     <Typography className={classNames(classes.footerText, classes.greyText)}>
-      {isLoadingList ? (
+      {isBalanceLoading ? (
         <Skeleton width={150} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
       ) : (
         `${finalTokens.length} tokens were found`
@@ -131,45 +138,11 @@ export const UserOverview = () => {
 
   return (
     <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px', width: '100%' }}>
-      {isDownLg && (
-        <Grid className={classes.filtersContainer}>
-          <Box className={classes.switchPoolsContainer}>
-            <Box
-              className={classes.switchPoolsMarker}
-              sx={{
-                left: activePanel === CardSwitcher.Overview ? 0 : '50%'
-              }}
-            />
-            <ToggleButtonGroup
-              value={activePanel}
-              exclusive
-              onChange={handleSwitchPools}
-              className={classes.switchPoolsButtonsGroup}>
-              <ToggleButton
-                value={CardSwitcher.Overview}
-                disableRipple
-                className={classes.switchPoolsButton}
-                style={{ fontWeight: activePanel === CardSwitcher.Overview ? 700 : 400 }}>
-                Liquidity overview
-              </ToggleButton>
-              <ToggleButton
-                value={CardSwitcher.Wallet}
-                disableRipple
-                className={classes.switchPoolsButton}
-                classes={{ disabled: classes.disabledSwitchButton }}
-                style={{ fontWeight: activePanel === CardSwitcher.Wallet ? 700 : 400 }}>
-                Your Wallet
-              </ToggleButton>
-            </ToggleButtonGroup>
-          </Box>
-        </Grid>
-      )}
-
       <Box>
         <Grid
           style={{
             display: 'flex',
-            marginBottom: 20
+            marginBottom: isDownLg ? 12 : 20
           }}>
           <Typography
             style={{
@@ -182,78 +155,154 @@ export const UserOverview = () => {
         </Grid>
       </Box>
 
-      <Box
-        sx={{
-          display: 'flex',
-          [theme.breakpoints.down('lg')]: {
-            flexDirection: 'column'
-          }
-        }}>
-        {(!isDownLg || activePanel === CardSwitcher.Overview) && (
-          <>
+      {isDownLg && !isDownMd && (
+        <Grid container spacing={2}>
+          <Grid item xs={12}>
             <Overview poolAssets={data} />
-            {isDownLg && (
-              <Box className={classes.footer}>
-                <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
-              </Box>
-            )}
-          </>
-        )}
-        {(!isDownLg || activePanel === CardSwitcher.Wallet) && (
-          <>
+            <Box className={classes.footer}>
+              <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
+            </Box>
+          </Grid>
+          <Grid item xs={12}>
             <YourWallet
               pools={finalTokens}
               isLoading={isLoading || isLoadingList || isBalanceLoading}
             />
-            {isDownLg && (
-              <Box className={classes.footer}>
-                <Box className={classes.footerItem}>
-                  <Box className={classes.footerCheckboxContainer}>
-                    <FormGroup>
-                      <FormControlLabel
-                        className={classes.checkBoxLabel}
-                        control={
-                          <Checkbox
-                            checked={hideUnknownTokens}
-                            className={classes.checkBox}
-                            onChange={e => setHideUnknownTokens(e.target.checked)}
-                          />
-                        }
-                        label='Hide unknown tokens'
-                      />
-                    </FormGroup>
-                  </Box>
-                  {renderTokensFound()}
-                </Box>
-              </Box>
-            )}
-          </>
-        )}
-      </Box>
-      {!isDownLg && (
-        <Grid className={classes.footer}>
-          <Grid item xs={6} className={classes.footerItem}>
-            {renderPositionDetails()}
-          </Grid>
-          <Grid item xs={6} className={classes.footerItem}>
-            <Box className={classes.footerCheckboxContainer}>
-              <FormGroup>
-                <FormControlLabel
-                  className={classes.checkBoxLabel}
-                  control={
-                    <Checkbox
-                      checked={hideUnknownTokens}
-                      className={classes.checkBox}
-                      onChange={e => setHideUnknownTokens(e.target.checked)}
+            <Box className={classes.footer}>
+              <Box className={classes.footerItem}>
+                <Box className={classes.footerCheckboxContainer}>
+                  <FormGroup>
+                    <FormControlLabel
+                      className={classes.checkBoxLabel}
+                      control={
+                        <Checkbox
+                          checked={hideUnknownTokens}
+                          className={classes.checkBox}
+                          onChange={e => setHideUnknownTokens(e.target.checked)}
+                        />
+                      }
+                      label='Hide unknown tokens'
                     />
-                  }
-                  label='Hide unknown tokens'
-                />
-              </FormGroup>
+                  </FormGroup>
+                </Box>
+                {renderTokensFound()}
+              </Box>
             </Box>
-            {renderTokensFound()}
           </Grid>
         </Grid>
+      )}
+
+      {isDownMd && (
+        <>
+          <Grid className={classes.filtersContainer}>
+            <Box className={classes.switchPoolsContainer}>
+              <Box
+                className={classes.switchPoolsMarker}
+                sx={{
+                  left: activePanel === CardSwitcher.Overview ? 0 : '50%'
+                }}
+              />
+              <ToggleButtonGroup
+                value={activePanel}
+                exclusive
+                onChange={handleSwitchPools}
+                className={classes.switchPoolsButtonsGroup}>
+                <ToggleButton
+                  value={CardSwitcher.Overview}
+                  disableRipple
+                  className={classes.switchPoolsButton}
+                  style={{ fontWeight: activePanel === CardSwitcher.Overview ? 700 : 400 }}>
+                  Liquidity overview
+                </ToggleButton>
+                <ToggleButton
+                  value={CardSwitcher.Wallet}
+                  disableRipple
+                  className={classes.switchPoolsButton}
+                  classes={{ disabled: classes.disabledSwitchButton }}
+                  style={{ fontWeight: activePanel === CardSwitcher.Wallet ? 700 : 400 }}>
+                  Your Wallet
+                </ToggleButton>
+              </ToggleButtonGroup>
+            </Box>
+          </Grid>
+
+          <Box>
+            {activePanel === CardSwitcher.Overview && (
+              <>
+                <Overview poolAssets={data} />
+                <Box className={classes.footer}>
+                  <Box className={classes.footerItem}>{renderPositionDetails()}</Box>
+                </Box>
+              </>
+            )}
+            {activePanel === CardSwitcher.Wallet && (
+              <>
+                <YourWallet
+                  pools={finalTokens}
+                  isLoading={isLoading || isLoadingList || isBalanceLoading}
+                />
+                <Box className={classes.footer}>
+                  <Box className={classes.footerItem}>
+                    <Box className={classes.footerCheckboxContainer}>
+                      <FormGroup>
+                        <FormControlLabel
+                          className={classes.checkBoxLabel}
+                          control={
+                            <Checkbox
+                              checked={hideUnknownTokens}
+                              className={classes.checkBox}
+                              onChange={e => setHideUnknownTokens(e.target.checked)}
+                            />
+                          }
+                          label='Hide unknown tokens'
+                        />
+                      </FormGroup>
+                    </Box>
+                    {renderTokensFound()}
+                  </Box>
+                </Box>
+              </>
+            )}
+          </Box>
+        </>
+      )}
+
+      {!isDownLg && (
+        <>
+          <Box
+            sx={{
+              display: 'flex'
+            }}>
+            <Overview poolAssets={data} />
+            <YourWallet
+              pools={finalTokens}
+              isLoading={isLoading || isLoadingList || isBalanceLoading}
+            />
+          </Box>
+          <Grid className={classes.footer}>
+            <Grid item xs={6} className={classes.footerItem}>
+              {renderPositionDetails()}
+            </Grid>
+            <Grid item xs={6} className={classes.footerItem}>
+              <Box className={classes.footerCheckboxContainer}>
+                <FormGroup>
+                  <FormControlLabel
+                    className={classes.checkBoxLabel}
+                    control={
+                      <Checkbox
+                        checked={hideUnknownTokens}
+                        className={classes.checkBox}
+                        onChange={e => setHideUnknownTokens(e.target.checked)}
+                      />
+                    }
+                    label='Hide unknown tokens'
+                  />
+                </FormGroup>
+              </Box>
+              {renderTokensFound()}
+            </Grid>
+          </Grid>
+        </>
       )}
     </Box>
   )
