@@ -165,24 +165,22 @@ export const UserOverview = () => {
         </Grid>
       )}
 
-      {(!isDownLg || activePanel === CardSwitcher.Overview) && (
-        <Box>
-          <Grid
+      <Box>
+        <Grid
+          style={{
+            display: 'flex',
+            marginBottom: 20
+          }}>
+          <Typography
             style={{
-              display: 'flex',
-              marginBottom: 20
+              color: colors.invariant.text,
+              ...typography.heading4,
+              fontWeight: 500
             }}>
-            <Typography
-              style={{
-                color: colors.invariant.text,
-                ...typography.heading4,
-                fontWeight: 500
-              }}>
-              Overview
-            </Typography>
-          </Grid>
-        </Box>
-      )}
+            Overview
+          </Typography>
+        </Grid>
+      </Box>
 
       <Box
         sx={{
