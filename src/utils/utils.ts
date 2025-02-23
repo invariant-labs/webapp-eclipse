@@ -1049,7 +1049,8 @@ export const handleSimulate = async (
   fromToken: PublicKey,
   toToken: PublicKey,
   amount: BN,
-  byAmountIn: boolean
+  byAmountIn: boolean,
+  requiredPool?: PublicKey
 ): Promise<{
   amountOut: BN
   poolIndex: number
@@ -1083,6 +1084,19 @@ export const handleSimulate = async (
     estimatedPriceAfterSwap: new BN(0),
     minimumReceived: new BN(0),
     priceImpact: new BN(0)
+  }
+
+  if (requiredPool && !filteredPools.find(pool => pool.address.equals(requiredPool))) {
+    errorMessage.push('RPC Error')
+    return {
+      amountOut: new BN(0),
+      poolIndex: 0,
+      AmountOutWithFee: new BN(0),
+      estimatedPriceAfterSwap: new BN(0),
+      minimumReceived: new BN(0),
+      priceImpact: new BN(0),
+      error: errorMessage
+    }
   }
 
   if (amount.eq(new BN(0))) {

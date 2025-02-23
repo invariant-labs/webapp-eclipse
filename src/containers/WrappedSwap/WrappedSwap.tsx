@@ -55,7 +55,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const dispatch = useDispatch()
 
   const connection = getCurrentSolanaConnection()
-
   const walletStatus = useSelector(status)
   const swap = useSelector(swapPool)
   const tickmap = useSelector(tickMaps)

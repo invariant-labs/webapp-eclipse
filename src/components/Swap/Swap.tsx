@@ -12,6 +12,7 @@ import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
   REFRESHER_INTERVAL,
+  requiredPoolsForSimulation,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
   WRAPPED_ETH_ADDRESS
@@ -217,6 +218,20 @@ export const Swap: React.FC<ISwap> = ({
   const handlePointerLeave = () => {
     setIsPointsPopoverOpen(false)
   }
+
+  const requiredPoolForSimulation = useMemo(() => {
+    if (!tokens.length) return
+    if (tokenFromIndex === null || tokenToIndex === null) return
+    if (!tokens[tokenFromIndex] || !tokens[tokenToIndex]) return
+    const item = requiredPoolsForSimulation.find(
+      item =>
+        (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+        (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+    )
+    return item?.pool
+  }, [requiredPoolsForSimulation, tokenFromIndex, tokenToIndex])
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -445,7 +460,8 @@ export const Swap: React.FC<ISwap> = ({
           tokens[tokenFromIndex].assetAddress,
           tokens[tokenToIndex].assetAddress,
           convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-          true
+          true,
+          requiredPoolForSimulation
         ).then(value => setSimulateResult(value))
       } else if (inputRef === inputTarget.TO) {
         await handleSimulate(
@@ -456,7 +472,8 @@ export const Swap: React.FC<ISwap> = ({
           tokens[tokenFromIndex].assetAddress,
           tokens[tokenToIndex].assetAddress,
           convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-          false
+          false,
+          requiredPoolForSimulation
         ).then(value => setSimulateResult(value))
       }
     }
@@ -578,7 +595,7 @@ export const Swap: React.FC<ISwap> = ({
       return 'Amount out is zero'
     }
 
-    if (isEveryPoolEmpty) {
+    if (isEveryPoolEmpty || isError('RPC Error')) {
       return 'RPC connection error'
     }
 
