@@ -9,15 +9,16 @@ const LegendSkeleton: React.FC = () => {
     <Box className={classes.container}>
       <Typography className={classes.tokenText}>Tokens</Typography>
 
-      <Grid container spacing={1} className={classes.gridContainer}>
-        {[1, 2, 3, 4].map(item => (
+      <Grid container className={classes.gridContainer}>
+        {[1, 2, 3, 4, 5].map(item => (
           <Grid item container key={item} className={classes.gridItem}>
-            <Grid item xs={5} alignContent={'center'}>
+            <Grid item xs={5} alignContent={'center'} display={'flex'} alignItems={'center'}>
+              <Skeleton variant='circular' width={24} height={24} />
               <Skeleton
                 variant='text'
-                width={80}
+                width={50}
                 height={32}
-                sx={{ borderRadius: '6px' }}
+                sx={{ borderRadius: '6px', marginLeft: '30px' }}
                 className={classes.textSkeleton}
               />
             </Grid>
