@@ -21,6 +21,39 @@ interface IPositionsTableProps {
   setIsLockPositionModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   noInitialPositions?: boolean
   onAddPositionClick?: () => void
+  isLoading?: boolean
+}
+
+const generateLoadingData = () => {
+  const getRandomNumber = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min + 1)) + min
+
+  return Array(5)
+    .fill(null)
+    .map((_, index) => {
+      const currentPrice = Math.random() * 10000
+
+      return {
+        id: `loading-${index}`,
+        poolAddress: `pool-${index}`,
+        tokenXName: 'FOO',
+        tokenYName: 'BAR',
+        tokenXIcon: undefined,
+        tokenYIcon: undefined,
+        currentPrice,
+        fee: getRandomNumber(1, 10) / 10,
+        min: currentPrice * 0.8,
+        max: currentPrice * 1.2,
+        position: getRandomNumber(1000, 10000),
+        valueX: getRandomNumber(1000, 10000),
+        valueY: getRandomNumber(1000, 10000),
+        poolData: {},
+        isActive: Math.random() > 0.5,
+        tokenXLiq: getRandomNumber(100, 1000),
+        tokenYLiq: getRandomNumber(10000, 100000),
+        network: 'mainnet'
+      }
+    })
 }
 
 export const PositionsTable: React.FC<IPositionsTableProps> = ({
@@ -28,10 +61,13 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   isLockPositionModalOpen,
   setIsLockPositionModalOpen,
   noInitialPositions,
-  onAddPositionClick
+  onAddPositionClick,
+  isLoading = false
 }) => {
   const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 })
   const navigate = useNavigate()
+
+  const displayData = isLoading ? generateLoadingData() : positions
 
   return (
     <TableContainer className={classes.tableContainer}>
@@ -53,29 +89,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
             <TableCell className={`${classes.headerCell} ${classes.actionCell}`}>Action</TableCell>
           </TableRow>
         </TableHead>
-        {positions.length > 0 ? (
-          <TableBody className={classes.tableBody}>
-            {positions.map((position, index) => (
-              <TableRow
-                onClick={e => {
-                  if (
-                    !(e.target as HTMLElement).closest('.action-button') &&
-                    !isLockPositionModalOpen
-                  ) {
-                    navigate(`/position/${position.id}`)
-                  }
-                }}
-                key={position.poolAddress.toString() + index}
-                className={classes.tableBodyRow}>
-                <PositionTableRow
-                  {...position}
-                  isLockPositionModalOpen={isLockPositionModalOpen}
-                  setIsLockPositionModalOpen={setIsLockPositionModalOpen}
-                />
-              </TableRow>
-            ))}
-          </TableBody>
-        ) : (
+        {!isLoading && positions.length === 0 ? (
           <Box className={classes.tableBody}>
             <Box className={classes.emptyContainer}>
               <Box className={classes.emptyWrapper}>
@@ -93,12 +107,34 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
               </Box>
             </Box>
           </Box>
+        ) : (
+          <TableBody className={classes.tableBody}>
+            {displayData.map((position, index) => (
+              <TableRow
+                onClick={e => {
+                  if (
+                    !isLoading &&
+                    !(e.target as HTMLElement).closest('.action-button') &&
+                    !isLockPositionModalOpen
+                  ) {
+                    navigate(`/position/${position.id}`)
+                  }
+                }}
+                key={position.poolAddress.toString() + index}
+                className={classes.tableBodyRow}>
+                <PositionTableRow
+                  {...position}
+                  isLockPositionModalOpen={isLockPositionModalOpen}
+                  setIsLockPositionModalOpen={setIsLockPositionModalOpen}
+                  loading={isLoading}
+                />
+              </TableRow>
+            ))}
+          </TableBody>
         )}
-
         <TableFooter className={classes.tableFooter}>
           <TableRow className={classes.footerRow}>
             <TableCell className={`${classes.cellBase} ${classes.pairNameCell}`} />
-
             <TableCell className={`${classes.cellBase} ${classes.feeTierCell}`} />
             <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell}`} />
             <TableCell className={`${classes.cellBase} ${classes.valueCell}`} />

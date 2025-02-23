@@ -27,6 +27,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  if (!position) return
   return (
     <Popover
       open={open}

@@ -76,7 +76,7 @@ const PositionCardsSkeletonMobile = () => {
               variant='rectangular'
               width='100%'
               height={40}
-              sx={{ borderRadius: '12px', marginTop: '32px' }}
+              sx={{ borderRadius: '12px', marginTop: '16px' }}
             />
           </Grid>
         </Grid>

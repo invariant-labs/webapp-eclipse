@@ -62,7 +62,14 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
   }, [sortedPositions, totalAssets, sortedChartColors])
 
   return (
-    <Box sx={{ width: '100%', mt: 2 }}>
+    <Box
+      sx={{
+        width: '100%',
+        mt: 2,
+        display: 'flex',
+        flexDirection: 'column',
+        justifyItems: 'center'
+      }}>
       {isLoadingList ? (
         <MobileOverviewSkeleton />
       ) : (

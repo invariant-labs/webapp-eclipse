@@ -21,10 +21,9 @@ import { actions } from '@store/reducers/leaderboard'
 import { PositionItemMobile } from './PositionItem/variants/PositionMobileCard/PositionItemMobile'
 import { IPositionItem } from './types'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
-import { PositionTableSkeleton } from './PositionItem/variants/PositionTables/skeletons/PositionTableSkeleton'
 import { PositionsTable } from './PositionItem/variants/PositionTables/PositionsTable'
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
+import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -84,10 +83,6 @@ export const PositionsList: React.FC<IProps> = ({
   }, [alignment, length, lockedLength])
 
   const handleChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // if (Object.keys(loadedPages).length * POSITIONS_PER_QUERY < Number(length)) {
-    //   getRemainingPositions()
-    // }
-
     searchSetValue(e.target.value.toLowerCase())
   }
 
@@ -115,6 +110,61 @@ export const PositionsList: React.FC<IProps> = ({
   }, [isLockPositionModalOpen])
 
   const [allowPropagation, setAllowPropagation] = useState(true)
+
+  const renderContent = () => {
+    if (showNoConnected) {
+      return <NoConnected {...noConnectedBlockerProps} />
+    }
+
+    if (!isLg) {
+      return (
+        <PositionsTable
+          positions={currentData}
+          isLoading={loading}
+          isLockPositionModalOpen={isLockPositionModalOpen}
+          setIsLockPositionModalOpen={setIsLockPositionModalOpen}
+          noInitialPositions={noInitialPositions}
+          onAddPositionClick={onAddPositionClick}
+        />
+      )
+    } else if (isLg && loading) {
+      return <PositionCardsSkeletonMobile />
+    }
+
+    if (currentData.length === 0 && !loading) {
+      return (
+        <EmptyPlaceholder
+          newVersion
+          desc={
+            noInitialPositions
+              ? 'Add your first position by pressing the button and start earning!'
+              : 'Did not find any matching positions'
+          }
+          onAction={onAddPositionClick}
+          withButton={noInitialPositions}
+        />
+      )
+    }
+
+    return currentData.map((element, index) => (
+      <Grid
+        onClick={() => {
+          if (allowPropagation) {
+            navigate(`/position/${element.id}`)
+          }
+        }}
+        key={element.id}
+        className={classes.itemLink}>
+        <PositionItemMobile
+          key={index}
+          {...element}
+          isLockPositionModalOpen={isLockPositionModalOpen}
+          setIsLockPositionModalOpen={setIsLockPositionModalOpen}
+          setAllowPropagation={setAllowPropagation}
+        />
+      </Grid>
+    ))
+  }
 
   return (
     <Grid container direction='column' className={classes.root}>
@@ -200,53 +250,7 @@ export const PositionsList: React.FC<IProps> = ({
         </Grid>
       </Grid>
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
-        {loading ? (
-          !isLg ? (
-            <PositionTableSkeleton />
-          ) : (
-            <PositionCardsSkeletonMobile />
-          )
-        ) : showNoConnected ? (
-          <NoConnected {...noConnectedBlockerProps} />
-        ) : !isLg ? (
-          <PositionsTable
-            positions={currentData}
-            isLockPositionModalOpen={isLockPositionModalOpen}
-            setIsLockPositionModalOpen={setIsLockPositionModalOpen}
-            noInitialPositions={noInitialPositions}
-            onAddPositionClick={onAddPositionClick}
-          />
-        ) : currentData.length === 0 ? (
-          <EmptyPlaceholder
-            newVersion
-            desc={
-              noInitialPositions
-                ? 'Add your first position by pressing the button and start earning!'
-                : 'Did not find any matching positions'
-            }
-            onAction={onAddPositionClick}
-            withButton={noInitialPositions}
-          />
-        ) : (
-          currentData.map((element, index) => (
-            <Grid
-              onClick={() => {
-                if (allowPropagation) {
-                  navigate(`/position/${element.id}`)
-                }
-              }}
-              key={element.id}
-              className={classes.itemLink}>
-              <PositionItemMobile
-                key={index}
-                {...element}
-                isLockPositionModalOpen={isLockPositionModalOpen}
-                setIsLockPositionModalOpen={setIsLockPositionModalOpen}
-                setAllowPropagation={setAllowPropagation}
-              />
-            </Grid>
-          ))
-        )}
+        {renderContent()}
       </Grid>
     </Grid>
   )

@@ -36,9 +36,20 @@ import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
 
+interface ILoadingStates {
+  pairName?: boolean
+  feeTier?: boolean
+  tokenRatio?: boolean
+  value?: boolean
+  unclaimedFee?: boolean
+  chart?: boolean
+  actions?: boolean
+}
+
 interface IPositionsTableRow extends IPositionItem {
   isLockPositionModalOpen: boolean
   setIsLockPositionModalOpen: (value: boolean) => void
+  loading?: boolean | ILoadingStates
 }
 
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
@@ -60,6 +71,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenXLiq,
   tokenYLiq,
   network,
+  loading,
   isLockPositionModalOpen,
   setIsLockPositionModalOpen
 }) => {
@@ -75,6 +87,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
 
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
+
+  const isItemLoading = (item: keyof ILoadingStates): boolean => {
+    if (typeof loading === 'boolean') return loading
+    return loading?.[item] ?? false
+  }
 
   const { tokenValueInUsd, tokenXPercentage, tokenYPercentage, unclaimedFeesInUSD } =
     useUnclaimedFee({
@@ -93,37 +110,60 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     poolData
   )
 
-  const pairNameContent = (
-    <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
-      <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
-        <img
-          className={sharedClasses.tokenIcon}
-          src={xToY ? tokenXIcon : tokenYIcon}
-          alt={xToY ? tokenXName : tokenYName}
-        />
-        <TooltipHover text='Reverse tokens'>
-          <img
-            className={sharedClasses.arrows}
-            src={SwapList}
-            alt='Arrow'
-            onClick={e => {
-              e.stopPropagation()
-              setXToY(!xToY)
-            }}
+  const pairNameContent = useMemo(() => {
+    if (isItemLoading('pairName')) {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '4px'
+          }}>
+          <Skeleton variant='circular' width={40} height={40} />
+          <Skeleton variant='circular' width={36} height={36} />
+          <Skeleton variant='circular' width={40} height={40} />
+          <Skeleton
+            variant='rectangular'
+            width={100}
+            height={36}
+            sx={{ ml: 1.5, borderRadius: '10px' }}
           />
-        </TooltipHover>
-        <img
-          className={sharedClasses.tokenIcon}
-          src={xToY ? tokenYIcon : tokenXIcon}
-          alt={xToY ? tokenYName : tokenXName}
-        />
-      </Grid>
+        </Box>
+      )
+    }
 
-      <Typography className={sharedClasses.names}>
-        {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
-      </Typography>
-    </Grid>
-  )
+    return (
+      <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
+        <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
+          <img
+            className={sharedClasses.tokenIcon}
+            src={xToY ? tokenXIcon : tokenYIcon}
+            alt={xToY ? tokenXName : tokenYName}
+          />
+          <TooltipHover text='Reverse tokens'>
+            <img
+              className={sharedClasses.arrows}
+              src={SwapList}
+              alt='Arrow'
+              onClick={e => {
+                e.stopPropagation()
+                setXToY(!xToY)
+              }}
+            />
+          </TooltipHover>
+          <img
+            className={sharedClasses.tokenIcon}
+            src={xToY ? tokenYIcon : tokenXIcon}
+            alt={xToY ? tokenYName : tokenXName}
+          />
+        </Grid>
+
+        <Typography className={sharedClasses.names}>
+          {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
+        </Typography>
+      </Grid>
+    )
+  }, [loading, xToY, tokenXIcon, tokenYIcon, tokenXName, tokenYName])
 
   const handleMouseEnter = useCallback(() => {
     setIsPromotedPoolPopoverOpen(true)
@@ -143,8 +183,18 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     setIsTooltipOpen(false)
   }, [])
 
-  const feeFragment = useMemo(
-    () => (
+  const feeFragment = useMemo(() => {
+    if (isItemLoading('feeTier')) {
+      return (
+        <Skeleton
+          variant='rectangular'
+          width='60px'
+          height={36}
+          sx={{ borderRadius: '10px', margin: '0 auto', marginRight: '8px' }}
+        />
+      )
+    }
+    return (
       <Tooltip
         enterTouchDelay={0}
         leaveTouchDelay={Number.MAX_SAFE_INTEGER}
@@ -182,12 +232,66 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           </Typography>
         </Grid>
       </Tooltip>
-    ),
-    [fee, classes, isActive]
-  )
+    )
+  }, [fee, classes, isActive])
 
-  const valueFragment = useMemo(
-    () => (
+  const tokenRatioContent = useMemo(() => {
+    if (isItemLoading('tokenRatio')) {
+      return (
+        <Skeleton
+          variant='rectangular'
+          width='100%'
+          height={36}
+          sx={{ borderRadius: '10px', margin: '0 auto' }}
+        />
+      )
+    }
+
+    return (
+      <Typography
+        className={`${sharedClasses.infoText}`}
+        style={{
+          background: colors.invariant.light,
+          padding: '8px 12px',
+          borderRadius: '12px'
+        }}>
+        {tokenXPercentage === 100 && (
+          <span>
+            {tokenXPercentage}
+            {'%'} {xToY ? tokenXName : tokenYName}
+          </span>
+        )}
+        {tokenYPercentage === 100 && (
+          <span>
+            {tokenYPercentage}
+            {'%'} {xToY ? tokenYName : tokenXName}
+          </span>
+        )}
+
+        {tokenYPercentage !== 100 && tokenXPercentage !== 100 && (
+          <span>
+            {tokenXPercentage}
+            {'%'} {xToY ? tokenXName : tokenYName} {' - '} {tokenYPercentage}
+            {'%'} {xToY ? tokenYName : tokenXName}
+          </span>
+        )}
+      </Typography>
+    )
+  }, [tokenXPercentage, tokenYPercentage, xToY, tokenXName, tokenYName, loading])
+
+  const valueFragment = useMemo(() => {
+    if (isItemLoading('value') || tokenValueInUsd.loading) {
+      return (
+        <Skeleton
+          variant='rectangular'
+          width='100%'
+          height={36}
+          sx={{ borderRadius: '10px', margin: '0 auto' }}
+        />
+      )
+    }
+
+    return (
       <Grid
         container
         item
@@ -201,12 +305,32 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           </Typography>
         </Grid>
       </Grid>
-    ),
-    [tokenValueInUsd, valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
-  )
+    )
+  }, [
+    tokenValueInUsd,
+    valueX,
+    valueY,
+    tokenXName,
+    classes,
+    isXs,
+    isDesktop,
+    tokenYName,
+    xToY,
+    loading
+  ])
 
-  const unclaimedFee = useMemo(
-    () => (
+  const unclaimedFee = useMemo(() => {
+    if (isItemLoading('unclaimedFee') || unclaimedFeesInUSD.loading) {
+      return (
+        <Skeleton
+          variant='rectangular'
+          width='100%'
+          height={36}
+          sx={{ borderRadius: '10px', margin: '0 auto' }}
+        />
+      )
+    }
+    return (
       <Grid
         container
         item
@@ -220,9 +344,55 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           </Typography>
         </Grid>
       </Grid>
-    ),
-    [unclaimedFeesInUSD, valueX, valueY, tokenXName, classes, isXs, isDesktop, tokenYName, xToY]
-  )
+    )
+  }, [unclaimedFeesInUSD, classes, loading])
+
+  const chartFragment = useMemo(() => {
+    if (isItemLoading('chart')) {
+      return (
+        <Skeleton
+          variant='rectangular'
+          width='100%'
+          height={36}
+          sx={{ borderRadius: '10px', margin: '0 auto' }}
+        />
+      )
+    }
+
+    return (
+      <MinMaxChart
+        min={Number(xToY ? min : 1 / max)}
+        max={Number(xToY ? max : 1 / min)}
+        current={
+          xToY ? currentPrice : currentPrice !== 0 ? 1 / currentPrice : Number.MAX_SAFE_INTEGER
+        }
+      />
+    )
+  }, [min, max, currentPrice, xToY, loading])
+
+  const actionsFragment = useMemo(() => {
+    if (isItemLoading('actions')) {
+      return (
+        <Skeleton
+          variant='rectangular'
+          width={32}
+          height={32}
+          sx={{ borderRadius: '10px', margin: '0 auto' }}
+        />
+      )
+    }
+
+    return (
+      <Button
+        className={classes.button}
+        onClick={e => {
+          e.stopPropagation()
+          handleClick(e)
+        }}>
+        ...
+      </Button>
+    )
+  }, [loading])
 
   const promotedIconContent = useMemo(() => {
     if (isPromoted && isActive) {
@@ -375,87 +545,26 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>
         {pairNameContent}
       </TableCell>
+
       <TableCell className={`${classes.cellBase} ${classes.feeTierCell}`}>
         <Box sx={{ display: 'flex' }}>
           {promotedIconContent}
           {feeFragment}
         </Box>
       </TableCell>
-      <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell} ${classes}`}>
-        <Typography
-          className={`${sharedClasses.infoText} `}
-          style={{
-            background: colors.invariant.light,
-            padding: '8px 12px',
-            borderRadius: '12px'
-          }}>
-          {tokenXPercentage === 100 && (
-            <span>
-              {tokenXPercentage}
-              {'%'} {xToY ? tokenXName : tokenYName}
-            </span>
-          )}
-          {tokenYPercentage === 100 && (
-            <span>
-              {tokenYPercentage}
-              {'%'} {xToY ? tokenYName : tokenXName}
-            </span>
-          )}
 
-          {tokenYPercentage !== 100 && tokenXPercentage !== 100 && (
-            <span>
-              {tokenXPercentage}
-              {'%'} {xToY ? tokenXName : tokenYName} {' - '} {tokenYPercentage}
-              {'%'} {xToY ? tokenYName : tokenXName}
-            </span>
-          )}
-        </Typography>
+      <TableCell className={`${classes.cellBase} ${classes.tokenRatioCell}`}>
+        {tokenRatioContent}
       </TableCell>
 
-      {tokenValueInUsd.loading ? (
-        <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>
-          <Skeleton
-            variant='rectangular'
-            width='100%'
-            height={36}
-            sx={{ borderRadius: '10px', margin: '0 auto' }}
-          />
-        </TableCell>
-      ) : (
-        <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>
-          {valueFragment}
-        </TableCell>
-      )}
-      {unclaimedFeesInUSD.loading ? (
-        <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>
-          <Skeleton
-            variant='rectangular'
-            width='100%'
-            height={36}
-            sx={{ borderRadius: '10px', margin: '0 auto' }}
-          />
-        </TableCell>
-      ) : (
-        <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>{unclaimedFee}</TableCell>
-      )}
-      <TableCell className={`${classes.cellBase} ${classes.chartCell}`}>
-        <MinMaxChart
-          min={Number(xToY ? min : 1 / max)}
-          max={Number(xToY ? max : 1 / min)}
-          current={
-            xToY ? currentPrice : currentPrice !== 0 ? 1 / currentPrice : Number.MAX_SAFE_INTEGER
-          }
-        />
-      </TableCell>
+      <TableCell className={`${classes.cellBase} ${classes.valueCell}`}>{valueFragment}</TableCell>
+
+      <TableCell className={`${classes.cellBase} ${classes.feeCell}`}>{unclaimedFee}</TableCell>
+
+      <TableCell className={`${classes.cellBase} ${classes.chartCell}`}>{chartFragment}</TableCell>
+
       <TableCell className={`${classes.cellBase} ${classes.actionCell} action-button`}>
-        <Button
-          className={classes.button}
-          onClick={e => {
-            e.stopPropagation()
-            handleClick(e)
-          }}>
-          ...
-        </Button>
+        {actionsFragment}
       </TableCell>
     </TableRow>
   )

@@ -146,6 +146,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
     tableBodyRow: {
       display: 'table',
       width: '100%',
+      height: '82.6px',
       tableLayout: 'fixed'
     },
     tableFooter: {
