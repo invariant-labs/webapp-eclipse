@@ -58,7 +58,6 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
     },
     '&::-webkit-scrollbar-track': {
       background: colors.invariant.componentDark,
-      marginBottom: '20px',
 
       marginTop: '58.4px'
     },
