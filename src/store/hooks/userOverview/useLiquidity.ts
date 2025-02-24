@@ -1,9 +1,10 @@
+import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { printBN } from '@utils/utils'
 import { useMemo } from 'react'
 
-export const useLiquidity = (position: any) => {
+export const useLiquidity = (position: ISinglePositionData | undefined) => {
   const tokenXLiquidity = useMemo(() => {
     if (position) {
       try {

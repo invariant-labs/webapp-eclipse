@@ -1,22 +1,27 @@
+import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
+import { PublicKey } from '@solana/web3.js'
 import { printBN } from '@utils/utils'
 import { useMemo } from 'react'
 
-export const useAgregatedPositions = (positionList: any, prices: Record<string, number>) => {
+export const useAgregatedPositions = (
+  positionList: ISinglePositionData[],
+  prices: Record<string, number>
+) => {
   interface TokenPosition {
     tokenX: {
       symbol: string
       decimals: number
       name: string
-      assetAddress: string
+      assetAddress: PublicKey
       logoURI: string
     }
     tokenY: {
       symbol: string
       name: string
       decimals: number
-      assetAddress: string
+      assetAddress: PublicKey
       logoURI: string
     }
     liquidity: number

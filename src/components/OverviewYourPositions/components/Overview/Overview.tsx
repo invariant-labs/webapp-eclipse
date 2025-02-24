@@ -11,7 +11,8 @@ import {
   isLoadingPositionsList,
   positionsWithPoolsData,
   positionsList as list,
-  unclaimedFees
+  unclaimedFees,
+  PoolWithAddressAndIndex
 } from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
 import MobileOverview from '../MobileOverview/MobileOverview'
@@ -19,11 +20,20 @@ import LegendSkeleton from './skeletons/LegendSkeleton'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 import icons from '@static/icons'
-import { actions } from '@store/reducers/positions'
+import { actions, PositionWithAddress } from '@store/reducers/positions'
 import { LegendOverview } from '../LegendOverview/LegendOverview'
+import { SwapToken } from '@store/selectors/solanaWallet'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
+}
+
+export interface ISinglePositionData extends PositionWithAddress {
+  poolData: PoolWithAddressAndIndex
+  tokenX: SwapToken
+  tokenY: SwapToken
+  positionIndex: number
+  isLocked: boolean
 }
 
 export type EmptyStateClasses = Record<'emptyState' | 'emptyStateText', string>

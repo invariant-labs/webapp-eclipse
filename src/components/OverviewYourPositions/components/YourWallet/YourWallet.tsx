@@ -33,6 +33,20 @@ interface YourWalletProps {
   currentNetwork: NetworkType
 }
 
+type SkeletonRowClasses = Record<
+  'tableCell' | 'tokenContainer' | 'tokenInfo' | 'desktopActionCell',
+  string
+>
+
+type MobileSkeletonCardClasses = Record<
+  | 'mobileCard'
+  | 'mobileCardHeader'
+  | 'mobileCardHeader'
+  | 'mobileActionsContainer'
+  | 'mobileStatsContainer',
+  string
+>
+
 const EmptyState = ({ classes }: { classes: EmptyStateClasses }) => (
   <Box className={classes.emptyState}>
     <img src={icons.assetsEmpty} alt='Empty portfolio' height={80} width={80} />
@@ -40,8 +54,7 @@ const EmptyState = ({ classes }: { classes: EmptyStateClasses }) => (
   </Box>
 )
 
-// Komponent dla pojedynczego wiersza skeleton loadera
-const SkeletonRow = ({ classes }: { classes: any }) => (
+const SkeletonRow = ({ classes }: { classes: SkeletonRowClasses }) => (
   <TableRow>
     <TableCell className={classes.tableCell}>
       <Box className={classes.tokenContainer}>
@@ -87,11 +100,10 @@ const SkeletonRow = ({ classes }: { classes: any }) => (
   </TableRow>
 )
 
-// Komponent dla mobile skeleton card
-const MobileSkeletonCard = ({ classes }: { classes: any }) => (
+const MobileSkeletonCard = ({ classes }: { classes: MobileSkeletonCardClasses }) => (
   <Box className={classes.mobileCard}>
     <Box className={classes.mobileCardHeader}>
-      <Box className={classes.mobileTokenInfo}>
+      <Box>
         <Skeleton variant='circular' width={28} height={28} />
         <Skeleton variant='text' width={60} />
       </Box>
