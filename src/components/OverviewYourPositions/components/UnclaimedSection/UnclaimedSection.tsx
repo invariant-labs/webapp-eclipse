@@ -15,7 +15,7 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
   unclaimedTotal,
   loading = false
 }) => {
-  const { classes } = useStyles({ isLoading: loading })
+  const { classes } = useStyles({ isLoading: loading || unclaimedTotal === 0 })
   const dispatch = useDispatch()
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const handleClaimAll = () => {
