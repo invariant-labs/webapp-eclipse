@@ -1265,26 +1265,17 @@ export const handleSimulateWithHop = async (
     crossLimit
   )
 
-  let best = simulations.findIndex(
-    simulation =>
-      simulation[1].swapHopOne.status === SimulationStatus.Ok &&
-      simulation[1].swapHopTwo.status === SimulationStatus.Ok
-  )
-
-  if (best === -1) {
+  if (simulations.length === 0) {
     return { simulation: null, route: null }
   }
 
+  let best = 0
   for (let n = 0; n < simulations.length; ++n) {
     const [, simulation] = simulations[n]
     const [, simulationBest] = simulations[best]
 
     if (byAmountIn) {
-      if (
-        simulation.totalAmountOut.gt(simulationBest.totalAmountOut) &&
-        simulationBest.swapHopOne.status === SimulationStatus.Ok &&
-        simulationBest.swapHopTwo.status === SimulationStatus.Ok
-      ) {
+      if (simulation.totalAmountOut.gt(simulationBest.totalAmountOut)) {
         best = n
       }
     } else {
@@ -1292,9 +1283,9 @@ export const handleSimulateWithHop = async (
         if (
           simulation.totalAmountIn
             .add(simulation.swapHopOne.accumulatedFee)
-            .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) &&
-          simulationBest.swapHopOne.status === SimulationStatus.Ok &&
-          simulationBest.swapHopTwo.status === SimulationStatus.Ok
+            .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) ||
+          simulationBest.swapHopOne.status !== SimulationStatus.Ok ||
+          simulationBest.swapHopTwo.status !== SimulationStatus.Ok
         ) {
           best = n
         }
