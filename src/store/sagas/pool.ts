@@ -215,20 +215,19 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
 
     const ticks = yield* call(getTicksFromAddresses, marketProgram, tickAddresses.flat())
 
-    const ticksPerPool = batchSize + 1
     let offset = 0
-
     for (let i = 0; i < tickAddresses.length; i++) {
+      const ticksInPool = tickAddresses[i].length
       yield* put(
         actions.setNearestTicksForPair({
           index: pools[i].address.toString(),
           tickStructure: ticks
-            .slice(offset, offset + ticksPerPool)
+            .slice(offset, offset + ticksInPool)
             .filter(t => !!t)
             .map(t => parseTick(t))
         })
       )
-      offset += ticksPerPool
+      offset += ticksInPool
 
       const tickmapKey = pools[i].tickmap.toBase58()
       if (tickmaps[tickmapKey]) {

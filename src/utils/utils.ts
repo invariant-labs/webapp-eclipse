@@ -26,7 +26,8 @@ import {
   parsePool,
   RawPoolStructure,
   parsePosition,
-  parseTick
+  parseTick,
+  RawTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios from 'axios'
 import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -1271,7 +1272,7 @@ export const getTickmapsFromPools = async (
 
 export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
   try {
-    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<Tick | null>
+    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
   } catch (e) {
     console.log(e)
     return []
