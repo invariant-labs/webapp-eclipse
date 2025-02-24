@@ -31,7 +31,8 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     width: `${percentage}%`,
     height: 24,
     background: colors.invariant.pinkGreenLinearGradient,
-    borderRadius: 8
+    borderRadius: 8,
+    transition: 'width 0.5s'
   },
   pointsLabel: {
     backgroundColor: colors.invariant.light,
@@ -103,7 +104,7 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
 
 export const useStylesPointsLabel = makeStyles()(() => ({
   rootBackground: {
-    zIndex: 10,
+    zIndex: 13,
     width: '100vw',
     height: '100vh',
     position: 'absolute',
@@ -137,7 +138,7 @@ export const useStylesPointsLabel = makeStyles()(() => ({
   },
   modal: {
     position: 'absolute',
-    zIndex: 11,
+    zIndex: 14,
     width: 'calc(100vw - 32px)',
     left: '50%',
     transform: 'translateX(-50%)'
