@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => {
   return {
     headerButton: {
       height: 32,
-      paddingInline: 12,
+      paddingInline: 6,
       borderRadius: 12,
       color: colors.white.main,
       ...typography.body1,

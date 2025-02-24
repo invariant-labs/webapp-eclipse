@@ -1,23 +1,18 @@
 import NavbarButton from '@components/Navbar/NavbarButton'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
-import { Box, CardMedia, Grid, IconButton, useMediaQuery } from '@mui/material'
+import { Box, CardMedia, Grid, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
-import Hamburger from '@static/svg/Hamburger.svg'
 import { theme } from '@static/theme'
 import { RPC, NetworkType } from '@store/consts/static'
-import { blurContent, unblurContent } from '@utils/uiUtils'
 import { useEffect, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import ChangeWalletButton from './HeaderButton/ChangeWalletButton'
 import useStyles from './style'
 import { ISelectChain, ISelectNetwork } from '@store/consts/types'
 import { RpcStatus } from '@store/reducers/solanaConnection'
-import RoutesModal from '@components/Modals/RoutesModal/RoutesModal'
 import { PublicKey } from '@solana/web3.js'
-import FaucetButton from './HeaderButton/FaucetButton'
 import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
-import SocialModal from '@components/Modals/SocialModal/SocialModal'
 import { Bar } from '@components/Bar/Bar'
 
 export interface IHeader {
@@ -52,9 +47,7 @@ export const Header: React.FC<IHeader> = ({
   onFaucet,
   onDisconnectWallet,
   onCopyAddress,
-  onChainSelect,
-  network,
-  walletBalance
+  onChainSelect
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -81,11 +74,6 @@ export const Header: React.FC<IHeader> = ({
   }
 
   const [activePath, setActive] = useState('exchange')
-
-  const [routesModalOpen, setRoutesModalOpen] = useState(false)
-  const [viewSocialsOpen, setViewSocialsOpen] = useState(false)
-
-  const [routesModalAnchor, setRoutesModalAnchor] = useState<HTMLButtonElement | null>(null)
 
   useEffect(() => {
     setActive(landing)
@@ -178,7 +166,7 @@ export const Header: React.FC<IHeader> = ({
           wrap='nowrap'
           sx={{
             display: { lg: 'block' },
-            '@media (max-width: 1450px)': {
+            '@media (max-width: 1200px)': {
               display: 'none'
             }
           }}>
@@ -204,22 +192,13 @@ export const Header: React.FC<IHeader> = ({
         </Grid>
 
         <Grid container item className={classes.buttons} wrap='nowrap'>
-          {typeOfNetwork === NetworkType.Testnet && (
-            <Grid container className={classes.leftButtons}>
-              <Box sx={{ display: { xs: 'none', md: 'block' } }}>
-                <FaucetButton onFaucet={onFaucet} network={network} walletBalance={walletBalance}>
-                  Faucet
-                </FaucetButton>
-              </Box>
-            </Grid>
-          )}
-
           <Bar
             rpcs={rpcs}
             activeNetwork={typeOfNetwork}
             activeRPC={rpc}
             onNetworkChange={onNetworkSelect}
             onChainChange={onChainSelect}
+            onFaucet={onFaucet}
           />
 
           <Grid>
@@ -236,66 +215,19 @@ export const Header: React.FC<IHeader> = ({
                           .slice(address.toString().length - 4, address.toString().length)
                       : ''
                   }`
-                : 'Connect wallet'
+                : isSmDown
+                  ? 'Connect'
+                  : 'Connect wallet'
             }
             onConnect={onConnectWallet}
             connected={walletConnected}
             onDisconnect={onDisconnectWallet}
             startIcon={
-              walletConnected ? <DotIcon className={classes.connectedWalletIcon} /> : undefined
+              walletConnected && !isSmDown ? (
+                <DotIcon className={classes.connectedWalletIcon} />
+              ) : undefined
             }
             onCopyAddress={onCopyAddress}
-          />
-        </Grid>
-
-        <Grid
-          sx={{
-            display: {
-              md: 'block',
-              '@media (min-width: 1450px)': {
-                display: 'none'
-              }
-            }
-          }}>
-          <IconButton
-            className={classes.menuButton}
-            onClick={(event: React.MouseEvent<HTMLButtonElement>) => {
-              setRoutesModalAnchor(event.currentTarget)
-              setRoutesModalOpen(true)
-              blurContent()
-            }}>
-            <CardMedia className={classes.menu} image={Hamburger} />
-          </IconButton>
-          <RoutesModal
-            routes={routes}
-            anchorEl={routesModalAnchor}
-            open={routesModalOpen}
-            current={activePath}
-            onSelect={(selected: string) => {
-              setActive(selected)
-              setRoutesModalOpen(false)
-              unblurContent()
-            }}
-            handleClose={() => {
-              setRoutesModalOpen(false)
-              unblurContent()
-            }}
-            onFaucet={isMdDown && typeOfNetwork === NetworkType.Testnet ? onFaucet : undefined}
-            onSocials={
-              isSmDown
-                ? () => {
-                    setRoutesModalOpen(false)
-                    setViewSocialsOpen(true)
-                  }
-                : undefined
-            }
-          />
-          <SocialModal
-            open={viewSocialsOpen}
-            handleClose={() => {
-              setViewSocialsOpen(false)
-              unblurContent()
-            }}
           />
         </Grid>
       </Grid>

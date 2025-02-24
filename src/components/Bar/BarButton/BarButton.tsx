@@ -5,17 +5,18 @@ import { forwardRef, Ref } from 'react'
 
 type Props = {
   children?: React.ReactNode
+  showArrowDown?: boolean
   onClick?: () => void
 }
 
 export const BarButton = forwardRef(
-  ({ children, onClick = () => {} }: Props, ref: Ref<HTMLButtonElement>) => {
+  ({ children, showArrowDown, onClick = () => {} }: Props, ref: Ref<HTMLButtonElement>) => {
     const { classes } = useStyles()
 
     return (
       <Button className={classes.headerButton} ref={ref} onClick={() => onClick()}>
         {children}
-        <KeyboardArrowDownIcon />
+        {showArrowDown && <KeyboardArrowDownIcon />}
       </Button>
     )
   }

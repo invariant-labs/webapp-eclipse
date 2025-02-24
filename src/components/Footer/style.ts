@@ -14,7 +14,7 @@ const useStyles = makeStyles()(() => {
     },
     footerItem: {
       margin: '0 10px',
-      opacity: '.5',
+      opacity: '.25',
       transition: '.2s all',
       '&:hover': {
         opacity: 1,

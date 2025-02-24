@@ -11,9 +11,17 @@ type Props = {
   activeRPC: string
   onNetworkChange: (network: NetworkType, rpc: string) => void
   onChainChange: (chain: ISelectChain) => void
+  onFaucet: () => void
 }
 
-export const Bar = ({ rpcs, activeNetwork, activeRPC, onNetworkChange, onChainChange }: Props) => {
+export const Bar = ({
+  rpcs,
+  activeNetwork,
+  activeRPC,
+  onNetworkChange,
+  onChainChange,
+  onFaucet
+}: Props) => {
   const { classes } = useStyles()
 
   return (
@@ -23,6 +31,7 @@ export const Bar = ({ rpcs, activeNetwork, activeRPC, onNetworkChange, onChainCh
         activeNetwork={activeNetwork}
         activeRPC={activeRPC}
         onNetworkChange={onNetworkChange}
+        onFaucet={onFaucet}
       />
       <ChainModal onChainChange={onChainChange} />
     </Box>

@@ -14,9 +14,7 @@ export const ChainModal = ({ onChainChange }: Props) => {
   const { classes } = useStyles()
 
   return (
-    <Modal
-      icon={<img className={classes.barButtonIcon} src={icons.Eclipse} alt='Chain icon' />}
-      title='Chain'>
+    <Modal icon={<img className={classes.barButtonIcon} src={icons.Eclipse} alt='Chain icon' />}>
       <Box className={classes.container}>
         <Typography className={classes.title}>Select a chain</Typography>
         <Box className={classes.chainContainer}>

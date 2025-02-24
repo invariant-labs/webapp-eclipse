@@ -7,11 +7,12 @@ import icons from '@static/icons'
 
 type Props = {
   icon: React.ReactNode
-  title: string
+  title?: string
+  showTitle?: boolean
   children?: React.ReactNode
 }
 
-export const Modal = ({ icon, title, children }: Props) => {
+export const Modal = ({ icon, title, showTitle, children }: Props) => {
   const { classes } = useStyles()
 
   const [open, setOpen] = useState(false)
@@ -29,7 +30,7 @@ export const Modal = ({ icon, title, children }: Props) => {
 
   return (
     <>
-      <BarButton ref={ref} onClick={() => handleOpen()}>
+      <BarButton ref={ref} onClick={() => handleOpen()} showArrowDown={true}>
         {icon}
       </BarButton>
       <Popover
@@ -46,15 +47,17 @@ export const Modal = ({ icon, title, children }: Props) => {
           horizontal: 'center'
         }}>
         <Box className={classes.popoverContainer}>
-          <Box className={classes.popoverHeader}>
-            <Typography className={classes.title}>{title}</Typography>
-            <img
-              className={classes.closeIcon}
-              src={icons.closeSmallIcon}
-              alt='Close icon'
-              onClick={() => handleClose()}
-            />
-          </Box>
+          {showTitle && (
+            <Box className={classes.popoverHeader}>
+              <Typography className={classes.title}>{title}</Typography>
+              <img
+                className={classes.closeIcon}
+                src={icons.closeSmallIcon}
+                alt='Close icon'
+                onClick={() => handleClose()}
+              />
+            </Box>
+          )}
           {children}
         </Box>
       </Popover>
