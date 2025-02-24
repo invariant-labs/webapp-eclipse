@@ -34,7 +34,7 @@ interface YourWalletProps {
 }
 
 type SkeletonRowClasses = Record<
-  'tableCell' | 'tokenContainer' | 'tokenInfo' | 'desktopActionCell',
+  'tableCell' | 'tokenContainer' | 'tokenInfo' | 'desktopActionCell' | 'valueSkeleton',
   string
 >
 
@@ -65,10 +65,10 @@ const SkeletonRow = ({ classes }: { classes: SkeletonRowClasses }) => (
       </Box>
     </TableCell>
     <TableCell className={classes.tableCell} align='right'>
-      <Skeleton variant='rectangular' width='114%' height={28} sx={{ borderRadius: '6px' }} />
+      <Skeleton variant='rectangular' height={28} className={classes.valueSkeleton} />
     </TableCell>
     <TableCell className={classes.tableCell} align='right'>
-      <Skeleton variant='rectangular' width='99%' height={28} sx={{ borderRadius: '6px' }} />
+      <Skeleton variant='rectangular' width='100%' height={28} sx={{ borderRadius: '6px' }} />
     </TableCell>
     <TableCell
       className={`${classes.tableCell} ${classes.desktopActionCell}`}

@@ -2,7 +2,7 @@ import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 export const useMobileSkeletonStyles = makeStyles()(() => ({
   card: {
-    height: '250px',
+    height: '270px',
     padding: '8px',
     background: colors.invariant.component,
     borderRadius: '24px',

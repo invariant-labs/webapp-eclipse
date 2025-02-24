@@ -129,6 +129,13 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
       borderRadius: '4px'
     }
   },
+  valueSkeleton: {
+    borderRadius: '6px',
+    [theme.breakpoints.down('lg')]: {
+      width: '98%'
+    },
+    width: '114%'
+  },
   statsContainer: {
     backgroundColor: colors.invariant.light,
     display: 'inline-flex',

@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useMobileStyles = makeStyles()((theme: Theme) => ({
   root: {
     padding: 16,
-    height: '250px',
+    height: '270px',
     marginTop: '16px',
     flexWrap: 'wrap',
     [theme.breakpoints.down('sm')]: {
