@@ -26,7 +26,8 @@ import {
   parsePool,
   RawPoolStructure,
   parsePosition,
-  parseTick
+  parseTick,
+  RawTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios from 'axios'
 import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -1245,6 +1246,39 @@ export const getPoolsFromAddresses = async (
   }
 }
 
+export const getTickmapsFromPools = async (
+  pools: PoolWithAddress[],
+  marketProgram: Market
+): Promise<Record<string, Tickmap>> => {
+  {
+    try {
+      const addresses = pools.map(pool => pool.tickmap)
+      const tickmaps = (await marketProgram.program.account.tickmap.fetchMultiple(
+        addresses
+      )) as Array<Tickmap | null>
+
+      return tickmaps.reduce((acc, cur, idx) => {
+        if (cur) {
+          acc[addresses[idx].toBase58()] = cur
+        }
+        return acc
+      }, {})
+    } catch (error) {
+      console.log(error)
+      return {}
+    }
+  }
+}
+
+export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
+  try {
+    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
+  } catch (e) {
+    console.log(e)
+    return []
+  }
+}
+
 export const getPools = async (
   pairs: Pair[],
   marketProgram: Market
@@ -1904,4 +1938,17 @@ export const getConcentrationIndex = (concentrationArray: number[], neededValue:
   }
 
   return concentrationIndex
+}
+export const formatDate = timestamp => {
+  const date = new Date(timestamp * 1000)
+  const day = date.getDate().toString().padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}.${month}.${year}`
+}
+
+export const formatNumberWithSpaces = (number: string) => {
+  const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
+
+  return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }

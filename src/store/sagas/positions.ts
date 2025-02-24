@@ -6,6 +6,7 @@ import { getConnection, handleRpcError } from './connection'
 import {
   actions,
   ClosePositionData,
+  FetchTick,
   GetCurrentTicksData,
   InitPositionData,
   PositionWithAddress
@@ -32,7 +33,8 @@ import {
   lockedPositionsWithPoolsData,
   positionsList,
   positionsWithPoolsData,
-  singlePositionData
+  singlePositionData,
+  currentPositionTicks
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -233,7 +235,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
         snackbarsActions.add({
           message:
             // 'Position adding failed. Please unwrap wrapped ETH in your wallet and try again.',
-            'Position adding failed. Please try again.',
+            'Position adding failed. Please try again',
           variant: 'error',
           persist: false,
           txid: createPositionTxid
@@ -242,7 +244,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position added successfully.',
+          message: 'Position added successfully',
           variant: 'success',
           persist: false,
           txid: createPositionTxid
@@ -309,7 +311,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -480,7 +482,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
       return yield put(
         snackbarsActions.add({
-          message: 'Position adding failed. Please try again.',
+          message: 'Position adding failed. Please try again',
           variant: 'error',
           persist: false,
           txid: txId
@@ -489,7 +491,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position added successfully.',
+          message: 'Position added successfully',
           variant: 'success',
           persist: false,
           txid: txId
@@ -527,7 +529,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -702,7 +704,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Position adding failed. Please try again.',
+          message: 'Position adding failed. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -711,7 +713,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position added successfully.',
+          message: 'Position added successfully',
           variant: 'success',
           persist: false,
           txid
@@ -747,7 +749,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1036,7 +1038,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to claim fee. Please try again.',
+          message: 'Failed to claim fee. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -1045,7 +1047,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Fee claimed successfully.',
+          message: 'Fee claimed successfully',
           variant: 'success',
           persist: false,
           txid
@@ -1079,7 +1081,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1201,7 +1203,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to claim fee. Please try again.',
+          message: 'Failed to claim fee. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -1210,7 +1212,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Fee claimed successfully.',
+          message: 'Fee claimed successfully',
           variant: 'success',
           persist: false,
           txid
@@ -1245,7 +1247,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1375,7 +1377,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to close position. Please try again.',
+          message: 'Failed to close position. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -1384,7 +1386,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position closed successfully.',
+          message: 'Position closed successfully',
           variant: 'success',
           persist: false,
           txid
@@ -1421,7 +1423,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1549,7 +1551,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to close position. Please try again.',
+          message: 'Failed to close position. Please try again',
           variant: 'error',
           persist: false,
           txid
@@ -1558,7 +1560,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Position closed successfully.',
+          message: 'Position closed successfully',
           variant: 'success',
           persist: false,
           txid
@@ -1595,7 +1597,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again.',
+          message: 'Failed to send. Please try again',
           variant: 'error',
           persist: false
         })
@@ -1618,7 +1620,7 @@ export function* handleGetSinglePosition(
 
     const [lockerAuth] = lockerProgram.getUserLocksAddress(wallet.publicKey)
 
-    yield put(actions.getCurrentPositionRangeTicks(action.payload.index.toString()))
+    yield put(actions.getCurrentPositionRangeTicks({ id: action.payload.index.toString() }))
 
     const position = yield* call(
       [marketProgram, marketProgram.getPosition],
@@ -1639,13 +1641,18 @@ export function* handleGetSinglePosition(
   }
 }
 
-export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string>) {
+export function* handleGetCurrentPositionRangeTicks(
+  action: PayloadAction<{ id: string; fetchTick?: FetchTick }>
+) {
   try {
+    const { id, fetchTick } = action.payload
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    const positionData = yield* select(singlePositionData(action.payload))
+    const positionData = yield* select(singlePositionData(id))
+    const { lowerTick: lowerTickState, upperTick: upperTickState } =
+      yield* select(currentPositionTicks)
 
     if (typeof positionData === 'undefined') {
       return
@@ -1656,17 +1663,117 @@ export function* handleGetCurrentPositionRangeTicks(action: PayloadAction<string
       tickSpacing: positionData.poolData.tickSpacing
     })
 
-    const { lowerTick, upperTick } = yield* all({
-      lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
-      upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
+    if (fetchTick === 'lower') {
+      const lowerTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.lowerTickIndex
+      )
+
+      yield put(
+        actions.setCurrentPositionRangeTicks({
+          lowerTick,
+          upperTick: upperTickState
+        })
+      )
+    } else if (fetchTick === 'upper') {
+      const upperTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.upperTickIndex
+      )
+
+      yield put(
+        actions.setCurrentPositionRangeTicks({
+          lowerTick: lowerTickState,
+          upperTick
+        })
+      )
+    } else {
+      const { lowerTick, upperTick } = yield* all({
+        lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
+        upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
+      })
+
+      yield put(
+        actions.setCurrentPositionRangeTicks({
+          lowerTick,
+          upperTick
+        })
+      )
+    }
+  } catch (error) {
+    console.log(error)
+
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
+
+export function* handleUpdatePositionsRangeTicks(
+  action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+) {
+  //TODO finish after update position list item
+  try {
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const wallet = yield* call(getWallet)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    const { positionId, fetchTick } = action.payload
+
+    const positionData = yield* select(singlePositionData(positionId))
+
+    if (typeof positionData === 'undefined') {
+      return
+    }
+
+    const pair = new Pair(positionData.poolData.tokenX, positionData.poolData.tokenY, {
+      fee: positionData.poolData.fee,
+      tickSpacing: positionData.poolData.tickSpacing
     })
 
-    yield put(
-      actions.setCurrentPositionRangeTicks({
-        lowerTick,
-        upperTick
+    if (fetchTick === 'lower') {
+      const lowerTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.lowerTickIndex
+      )
+
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: lowerTick.index,
+          upperTick: positionData.upperTickIndex
+        })
+      )
+    } else if (fetchTick === 'upper') {
+      const upperTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.upperTickIndex
+      )
+
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: positionData.lowerTickIndex,
+          upperTick: upperTick.index
+        })
+      )
+    } else {
+      const { lowerTick, upperTick } = yield* all({
+        lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
+        upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
       })
-    )
+
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: lowerTick.index,
+          upperTick: upperTick.index
+        })
+      )
+    }
   } catch (error) {
     console.log(error)
 
@@ -1696,6 +1803,10 @@ export function* getCurrentPositionRangeTicksHandler(): Generator {
   yield* takeEvery(actions.getCurrentPositionRangeTicks, handleGetCurrentPositionRangeTicks)
 }
 
+export function* updatePositionTicksRangeHandler(): Generator {
+  yield* takeEvery(actions.updatePositionTicksRange, handleUpdatePositionsRangeTicks)
+}
+
 export function* positionsSaga(): Generator {
   yield all(
     [
@@ -1705,7 +1816,8 @@ export function* positionsSaga(): Generator {
       claimFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,
-      getCurrentPositionRangeTicksHandler
+      getCurrentPositionRangeTicksHandler,
+      updatePositionTicksRangeHandler
     ].map(spawn)
   )
 }

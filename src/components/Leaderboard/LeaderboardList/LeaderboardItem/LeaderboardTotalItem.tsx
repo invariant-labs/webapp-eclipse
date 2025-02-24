@@ -100,10 +100,10 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
     navigator.clipboard
       .writeText(address.toString())
       .then(() => {
-        copyAddressHandler('Address copied!', 'success')
+        copyAddressHandler('Address copied', 'success')
       })
       .catch(() => {
-        copyAddressHandler('Failed to copy address!', 'error')
+        copyAddressHandler('Failed to copy address', 'error')
       })
   }
 
