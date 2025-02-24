@@ -31,6 +31,12 @@ export const useStyles = makeStyles()(() => ({
     paddingLeft: 16,
     paddingRight: 16
   },
+  overviewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginBottom: '24px',
+    width: '100%'
+  },
   switchPoolsContainer: {
     position: 'relative',
     width: '100%',

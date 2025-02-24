@@ -127,7 +127,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({
         <Box
           className={classes.actionIcon}
           onClick={() => {
-            console.log(strategy)
             const sourceToken = addressToTicker(currentNetwork, strategy.tokenAddressA)
             const targetToken =
               sourceToken === 'ETH'

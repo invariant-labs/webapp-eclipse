@@ -4,12 +4,6 @@ import React, { useMemo, useEffect } from 'react'
 import { ChartSegment } from '../MobileOverview/MobileOverview'
 import { typography } from '@static/theme'
 
-interface Colors {
-  invariant: {
-    textGrey: string
-  }
-}
-
 interface TooltipClasses {
   tooltip: string
 }
@@ -20,7 +14,6 @@ interface SegmentFragmentTooltipProps {
   selectedSegment: number | null
   setSelectedSegment: (index: number | null) => void
   tooltipClasses: TooltipClasses
-  colors: Colors
 }
 
 const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
@@ -28,8 +21,7 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
   index,
   selectedSegment,
   setSelectedSegment,
-  tooltipClasses,
-  colors
+  tooltipClasses
 }) => {
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
@@ -98,7 +90,7 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
         />
       </Tooltip>
     ),
-    [segment, index, selectedSegment, setSelectedSegment, colors, tooltipClasses]
+    [segment, index, selectedSegment, setSelectedSegment, tooltipClasses]
   )
 
   return segmentFragmentTooltip

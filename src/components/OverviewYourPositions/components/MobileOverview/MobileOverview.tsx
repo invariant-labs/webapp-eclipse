@@ -1,6 +1,5 @@
 import React, { useMemo, useState } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
-import { colors } from '@static/theme'
 
 import { TokenPositionEntry } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
@@ -75,7 +74,6 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
                 segment={segment}
                 selectedSegment={selectedSegment}
                 setSelectedSegment={setSelectedSegment}
-                colors={colors}
                 index={index}
               />
             ))}

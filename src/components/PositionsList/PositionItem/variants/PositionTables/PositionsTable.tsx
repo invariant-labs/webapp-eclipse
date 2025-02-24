@@ -14,6 +14,7 @@ import { IPositionItem } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 import { usePositionTableStyle } from './styles/positionTable'
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
+import { generatePositionTableLoadingData } from '@utils/utils'
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>
@@ -22,38 +23,6 @@ interface IPositionsTableProps {
   noInitialPositions?: boolean
   onAddPositionClick?: () => void
   isLoading?: boolean
-}
-
-const generateLoadingData = () => {
-  const getRandomNumber = (min: number, max: number) =>
-    Math.floor(Math.random() * (max - min + 1)) + min
-
-  return Array(5)
-    .fill(null)
-    .map((_, index) => {
-      const currentPrice = Math.random() * 10000
-
-      return {
-        id: `loading-${index}`,
-        poolAddress: `pool-${index}`,
-        tokenXName: 'FOO',
-        tokenYName: 'BAR',
-        tokenXIcon: undefined,
-        tokenYIcon: undefined,
-        currentPrice,
-        fee: getRandomNumber(1, 10) / 10,
-        min: currentPrice * 0.8,
-        max: currentPrice * 1.2,
-        position: getRandomNumber(1000, 10000),
-        valueX: getRandomNumber(1000, 10000),
-        valueY: getRandomNumber(1000, 10000),
-        poolData: {},
-        isActive: Math.random() > 0.5,
-        tokenXLiq: getRandomNumber(100, 1000),
-        tokenYLiq: getRandomNumber(10000, 100000),
-        network: 'mainnet'
-      }
-    })
 }
 
 export const PositionsTable: React.FC<IPositionsTableProps> = ({
@@ -67,7 +36,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 || isLoading })
   const navigate = useNavigate()
 
-  const displayData = isLoading ? generateLoadingData() : positions
+  const displayData = isLoading ? generatePositionTableLoadingData() : positions
 
   return (
     <TableContainer className={classes.tableContainer}>

@@ -113,7 +113,8 @@ export const UserOverview = () => {
   const renderPositionDetails = () => (
     <Box
       className={classes.footerCheckboxContainer}
-      sx={{ width: '100%', justifyContent: 'space-between' }}>
+      width={'100%'}
+      justifyContent={'space-between'}>
       {isLoadingList ? (
         <>
           <Skeleton width={120} height={24} />
@@ -127,7 +128,7 @@ export const UserOverview = () => {
           <Typography className={classNames(classes.greyText, classes.footerPositionDetails)}>
             All Positions: {positionsDetails.positionsAmount}
           </Typography>
-          <Box sx={{ display: 'flex', gap: 1 }}>
+          <Box gap={1} display={'flex'}>
             <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
               Within Range: {positionsDetails.inRageAmount}
             </Typography>
@@ -151,13 +152,9 @@ export const UserOverview = () => {
   )
 
   return (
-    <Box style={{ display: 'flex', flexDirection: 'column', marginBottom: '24px', width: '100%' }}>
+    <Box className={classes.overviewContainer}>
       <Box>
-        <Grid
-          style={{
-            display: 'flex',
-            marginBottom: isDownLg ? 12 : 20
-          }}>
+        <Grid display={'flex'} marginBottom={isDownLg ? 12 : 20}>
           <Typography
             style={{
               color: colors.invariant.text,
@@ -287,10 +284,7 @@ export const UserOverview = () => {
 
       {!isDownLg && (
         <>
-          <Box
-            sx={{
-              display: 'flex'
-            }}>
+          <Box display={'flex'}>
             <Overview poolAssets={data} />
             <YourWallet
               currentNetwork={currentNetwork}

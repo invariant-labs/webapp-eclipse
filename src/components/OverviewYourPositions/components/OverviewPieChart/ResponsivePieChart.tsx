@@ -33,6 +33,17 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
     transition: 'all 0.3s ease-in-out'
   })
 
+  const generateDynamicStyles = () => {
+    const styles: Record<string, any> = {}
+    const itemCount = data.length
+
+    for (let i = 0; i < itemCount; i++) {
+      styles[`&:nth-of-type(${i + 1})`] = getPathStyles(i, false)
+    }
+
+    return styles
+  }
+
   const commonChartProps = {
     outerRadius: '50%',
     innerRadius: '90%',
@@ -59,7 +70,8 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
           ]}
           sx={{
             '& path': {
-              '&:nth-of-type(1)': getPathStyles(0, true)
+              stroke: 'transparent',
+              outline: 'none'
             }
           }}
           colors={[colors.invariant.light]}
@@ -69,13 +81,12 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
           height={200}
         />
       </Box>
-
       <Box sx={{ position: 'absolute', top: 0, left: 0 }}>
         <PieChart
           skipAnimation
           series={[
             {
-              data: data.length > 0 ? data : loadingData,
+              data: data.length > 0 ? data : [{}],
               ...commonChartProps,
               valueFormatter: item => {
                 if (!data) return ''
@@ -90,20 +101,9 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
             }
           }}
           sx={{
-            '& path': {
-              '&:nth-of-type(1)': getPathStyles(0, false),
-              '&:nth-of-type(2)': getPathStyles(1, false),
-              '&:nth-of-type(3)': getPathStyles(2, false),
-              '&:nth-of-type(4)': getPathStyles(3, false),
-              '&:nth-of-type(5)': getPathStyles(4, false),
-              '&:nth-of-type(6)': getPathStyles(5, false),
-              '&:nth-of-type(7)': getPathStyles(6, false),
-              '&:nth-of-type(8)': getPathStyles(7, false),
-              '&:nth-of-type(9)': getPathStyles(8, false),
-              '&:nth-of-type(10)': getPathStyles(9, false)
-            }
+            '& path': generateDynamicStyles()
           }}
-          colors={chartColors}
+          colors={isLoading ? [colors.invariant.light] : chartColors}
           tooltip={{
             trigger: showRealData ? 'item' : 'none',
             classes: {
