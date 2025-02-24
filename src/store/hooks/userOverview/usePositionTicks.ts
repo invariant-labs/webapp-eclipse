@@ -31,7 +31,7 @@ export const usePositionTicks = ({
   networkType,
   rpc,
   wallet,
-  shouldUpdate = true // Default to true for backward compatibility
+  shouldUpdate = true
 }: UsePositionTicksProps): PositionTicks => {
   const [positionTicks, setPositionTicks] = useState<PositionTicks>({
     lowerTick: undefined,

@@ -92,7 +92,6 @@ export const useUnclaimedFee = ({
 
     return () => clearInterval(interval)
   }, [checkShouldUpdate])
-  // Hook pobierający dane o tickach
   const {
     lowerTick,
     upperTick,

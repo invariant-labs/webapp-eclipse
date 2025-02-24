@@ -111,8 +111,6 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'center',
     justifySelf: 'center',
-    // padding: '13px',
-    // gap: '8px',
     maxWidth: '36px',
     maxHeight: '36px',
     background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',

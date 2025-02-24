@@ -1,4 +1,3 @@
-// styles.ts
 import { makeStyles } from 'tss-react/mui'
 import { colors, theme } from '@static/theme'
 

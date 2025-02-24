@@ -1951,16 +1951,7 @@ function* getTickWithCache(
 }
 
 export function* handleCalculateTotalUnclaimedFees() {
-  // const UPDATE_INTERVAL = 60000
-
   try {
-    // const { lastUpdate } = yield* select(unclaimedFees)
-    // const currentTime = Date.now()
-
-    // if (currentTime - lastUpdate < UPDATE_INTERVAL) {
-    //   return
-    // }
-
     const positionList = yield* select(positionsWithPoolsData)
     const pricesData = yield* select(prices)
     const networkType = yield* select(network)
