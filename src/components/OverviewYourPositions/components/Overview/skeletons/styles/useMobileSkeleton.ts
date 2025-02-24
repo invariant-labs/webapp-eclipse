@@ -22,8 +22,7 @@ export const useMobileSkeletonStyle = makeStyles()(() => ({
   tokenTextSkeleton: {
     marginBottom: theme.spacing(2),
     width: '60px',
-    height: '24px',
-    backgroundColor: 'rgba(255, 255, 255, 0.1)'
+    height: '24px'
   },
   gridContainer: {
     marginTop: theme.spacing(1),
