@@ -64,17 +64,17 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: 8,
       flexWrap: 'nowrap',
       alignItems: 'center',
-      [theme.breakpoints.up(1600)]: {
-        // flex: '1 1 0%'
+      [theme.breakpoints.up(1450)]: {
+        flex: '1 1 0%'
       },
 
-      [theme.breakpoints.up('lg')]: {
-        minWidth: 500
-      },
+      // [theme.breakpoints.up('lg')]: {
+      //   minWidth: 500
+      // },
 
-      [theme.breakpoints.only('md')]: {
-        minWidth: 300
-      },
+      // [theme.breakpoints.only('md')]: {
+      //   minWidth: 300
+      // },
 
       [theme.breakpoints.down('md')]: {
         marginLeft: 0
@@ -130,11 +130,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     leftSide: {
-      width: 'auto'
+      width: 'auto',
 
-      // [theme.breakpoints.up(1600)]: {
-      //   flex: '1 1 0%'
-      // }
+      [theme.breakpoints.up(1450)]: {
+        flex: '1 1 0%'
+      }
     }
   }
 })
