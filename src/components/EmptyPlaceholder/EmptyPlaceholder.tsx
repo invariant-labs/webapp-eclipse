@@ -37,7 +37,7 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
         <Grid className={classNames(classes.root, 'blurInfo')}>
           <img className={classes.img} src={icons.empty} alt='Not connected' />
           <Typography className={classes.desc}>
-            {mainTitle ? mainTitle : `It's empty here...`}{' '}
+            {mainTitle ? mainTitle : `It's empty here...`}
           </Typography>
           {desc?.length && <Typography className={classes.desc}>{desc}</Typography>}
           {withButton && (
