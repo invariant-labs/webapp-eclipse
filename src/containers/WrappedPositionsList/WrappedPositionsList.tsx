@@ -52,6 +52,7 @@ export const WrappedPositionsList: React.FC = () => {
 
   const handleRefresh = () => {
     dispatch(actions.getPositionsList())
+    dispatch(actions.calculateTotalUnclaimedFees())
   }
 
   const data: IPositionItem[] = list
@@ -134,7 +135,23 @@ export const WrappedPositionsList: React.FC = () => {
         tokenYLiq,
         network: currentNetwork,
         isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
-        isLocked: position.isLocked
+        isLocked: position.isLocked,
+        tokenX: {
+          decimal: position.tokenX.decimals,
+          coingeckoId: position.tokenX.coingeckoId,
+          assetsAddress: position.tokenX.assetAddress,
+          balance: position.tokenX.balance,
+          icon: position.tokenX.logoURI,
+          name: position.tokenX.symbol
+        },
+        tokenY: {
+          decimal: position.tokenY.decimals,
+          balance: position.tokenY.balance,
+          assetsAddress: position.tokenY.assetAddress,
+          coingeckoId: position.tokenY.coingeckoId,
+          icon: position.tokenY.logoURI,
+          name: position.tokenY.symbol
+        }
       }
     })
     .filter(item => {

@@ -1,6 +1,6 @@
 import useStyles from './style'
 import { Popover } from '@mui/material'
-import PositionStatusTooltip from '../PositionStatusTooltip'
+import PositionStatusTooltip from '../PositionStatusTooltip/PositionStatusTooltip'
 
 export interface IPromotedPoolPopover {
   open: boolean

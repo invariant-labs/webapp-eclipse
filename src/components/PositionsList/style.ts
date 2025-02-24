@@ -134,12 +134,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     cursor: 'pointer',
 
     '&:not(:last-child)': {
-      display: 'block',
-      marginBottom: 20,
-
-      [theme.breakpoints.down('md')]: {
-        marginBottom: 16
-      }
+      display: 'block'
     }
   },
   searchIcon: {
