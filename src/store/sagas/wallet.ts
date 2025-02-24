@@ -74,7 +74,9 @@ export function* handleBalance(): Generator {
   const balance = yield* call(getBalance, wallet.publicKey)
   yield* put(actions.setBalance(balance))
   yield* call(fetchTokensAccounts)
-  yield* put(actions.setIsBalanceLoading(false))
+  setTimeout(function* () {
+    yield* put(actions.setIsBalanceLoading(false))
+  }, 100)
 }
 
 interface IparsedTokenInfo {
