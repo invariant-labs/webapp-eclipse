@@ -8,6 +8,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()(
       width: '600px',
       backgroundColor: colors.invariant.component,
       borderTopLeftRadius: '24px',
+
       [theme.breakpoints.down('lg')]: {
         borderTopRightRadius: '24px',
         borderRight: `none`,
@@ -49,7 +50,22 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()(
       ...typography.heading2,
       color: colors.invariant.text
     },
-
+    pieChartSection: {
+      flex: '1 1 100%',
+      minHeight: 'fit-content',
+      [theme.breakpoints.down('lg')]: {
+        marginTop: '100px'
+      }
+    },
+    legendSection: {
+      display: 'flex',
+      justifyContent: 'space-between',
+      flexDirection: 'row-reverse',
+      [theme.breakpoints.down('lg')]: {
+        justifyContent: 'center',
+        flexDirection: 'column'
+      }
+    },
     unclaimedSection: {
       display: 'flex',
 

@@ -194,16 +194,7 @@ export const Overview: React.FC<OverviewProps> = () => {
           chartColors={chartColors}
         />
       ) : (
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            flexDirection: 'row-reverse',
-            [theme.breakpoints.down('lg')]: {
-              justifyContent: 'center',
-              flexDirection: 'column'
-            }
-          }}>
+        <Box className={classes.legendSection}>
           <Box sx={{ width: '850px' }}>
             {!isDataReady ? (
               <LegendSkeleton />
@@ -216,14 +207,7 @@ export const Overview: React.FC<OverviewProps> = () => {
             )}
           </Box>
 
-          <Box
-            sx={{
-              flex: '1 1 100%',
-              minHeight: 'fit-content',
-              [theme.breakpoints.down('lg')]: {
-                marginTop: '100px'
-              }
-            }}>
+          <Box className={classes.pieChartSection}>
             <ResponsivePieChart data={data} chartColors={chartColors} isLoading={!isDataReady} />
           </Box>
         </Box>

@@ -4,7 +4,7 @@ import { Theme } from '@mui/material'
 
 export const useStyles = makeStyles()((_theme: Theme) => ({
   container: {
-    marginTop: 2
+    marginTop: '16px'
   },
   scrollContainer: {
     width: '97%',
