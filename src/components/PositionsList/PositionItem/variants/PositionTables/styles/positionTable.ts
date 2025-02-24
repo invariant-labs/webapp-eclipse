@@ -102,7 +102,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
     tableBody: {
       display: 'block',
       height: 'calc(4 * (20px + 82px))',
-      overflowY: isScrollHide ? 'hidden' : 'auto',
+      overflowY: 'auto',
       background: colors.invariant.component,
       '&::-webkit-scrollbar': {
         width: '4px'
@@ -111,7 +111,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
         background: colors.invariant.componentDark
       },
       '&::-webkit-scrollbar-thumb': {
-        background: colors.invariant.pink,
+        background: isScrollHide ? 'transparent' : colors.invariant.pink,
         borderRadius: '4px'
       },
 

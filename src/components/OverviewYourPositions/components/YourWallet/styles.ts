@@ -49,7 +49,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
     borderBottomRightRadius: 0,
     backgroundColor: colors.invariant.component,
     height: '286px',
-    overflowY: isLoading ? 'hidden' : 'auto',
+    overflowY: 'scroll',
     overflowX: 'hidden',
 
     '&::-webkit-scrollbar': {
@@ -62,7 +62,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
       marginTop: '58.4px'
     },
     '&::-webkit-scrollbar-thumb': {
-      background: colors.invariant.pink,
+      background: isLoading ? 'transparent' : colors.invariant.pink,
       borderRadius: '4px'
     }
   },

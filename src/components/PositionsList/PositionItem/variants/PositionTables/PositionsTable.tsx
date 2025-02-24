@@ -64,7 +64,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   onAddPositionClick,
   isLoading = false
 }) => {
-  const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 })
+  const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 || isLoading })
   const navigate = useNavigate()
 
   const displayData = isLoading ? generateLoadingData() : positions
