@@ -44,8 +44,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
     }),
     [concentrationArray, positionOpeningMethod]
   )
-  console.log(concentrationArray)
-  console.log(concentrationIndex)
+
   const warningText = useMemo(() => {
     if (singleDepositWarning) {
       return 'Points are not available for single-asset positions'

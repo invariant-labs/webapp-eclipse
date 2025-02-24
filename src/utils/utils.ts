@@ -1359,10 +1359,11 @@ export const calculateConcentrationRange = (
 }
 
 export const calculateConcentration = (lowerTick: number, upperTick: number) => {
-  const deltaPrice = Math.pow(1.0001, lowerTick - upperTick)
+  const deltaPrice = Math.pow(1.0001, -Math.abs(lowerTick - upperTick))
+
   const denominator = 1 - Math.pow(deltaPrice, 1 / 4)
   const result = 1 / denominator
-  CONCENTRATION_FACTOR
+
   return Math.abs(result / CONCENTRATION_FACTOR)
 }
 

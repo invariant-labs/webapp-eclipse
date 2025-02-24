@@ -638,7 +638,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }, [promotedPools, poolIndex, allPools])
 
   const estimatedPointsPerDay: BN = useMemo(() => {
-    const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
+    const poolAddress = poolIndex !== null ? allPools[poolIndex]?.address.toString() : ''
 
     if (!isPromotedPool || poolIndex === null) {
       return new BN(0)
@@ -659,8 +659,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const estimatedPointsForScale = (
     currentConcentration: number,
-    positionOpeningMethod: PositionOpeningMethod,
-    middleConcentration: number,
+
     concentrationArray: number[]
   ): { min: BN; middle: BN; max: BN } => {
     const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
@@ -669,19 +668,18 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return { min: new BN(0), middle: new BN(0), max: new BN(0) }
     }
 
+    const minLiquidity = liquidity
+      .div(new BN(currentConcentration))
+      .mul(new BN(concentrationArray[0]))
+
+    const middleConcentration =
+      +concentrationArray[Math.floor(concentrationArray.length / 2)].toFixed(0)
+    const midLiquidity = liquidity
+      .div(new BN(currentConcentration))
+      .mul(new BN(middleConcentration))
+
     const maxConcentration = concentrationArray[concentrationArray.length - 1]
-
-    const liquidityMultiplier =
-      Number((maxConcentration / currentConcentration).toFixed(+DECIMAL)) * Number(DENOMINATOR)
-
-    const maxLiquidity = new BN(
-      new BN(liquidityMultiplier).mul(liquidity).toString().slice(0, -DECIMAL)
-    )
-    const minLiquidity = maxLiquidity
-      .div(new BN(maxConcentration))
-      .mul(positionOpeningMethod === 'concentration' ? new BN(2) : new BN(1))
-
-    const midLiquidity = maxLiquidity.div(new BN(maxConcentration)).mul(new BN(middleConcentration))
+    const maxLiquidity = liquidity.div(new BN(currentConcentration)).mul(new BN(maxConcentration))
 
     const poolPointsPerSecond = promotedPools.find(
       pool => pool.address === poolAddress.toString()

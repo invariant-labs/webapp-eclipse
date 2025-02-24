@@ -131,8 +131,6 @@ export interface INewPosition {
   estimatedPointsPerDay: BN
   estimatedPointsForScale: (
     currentConcentration: number,
-    positionOpeningMethod: PositionOpeningMethod,
-    middleConc: number,
     concentrationArray: number[]
   ) => { min: BN; middle: BN; max: BN }
   isPromotedPool: boolean
@@ -248,10 +246,12 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const concentrationIndexForRange = useMemo(() => {
     const index = rangeConcentrationArray.findIndex(value => {
-      return Math.ceil(value) >= Math.ceil(calculateConcentration(leftRange, rightRange))
+      return (
+        Math.floor(value) >= Math.floor(+calculateConcentration(leftRange, rightRange).toFixed(2))
+      )
     })
     return index !== -1 ? index : 0
-  }, [rangeConcentrationArray, leftRange, rightRange])
+  }, [rangeConcentrationArray, leftRange, rightRange, positionOpeningMethod])
 
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
@@ -298,8 +298,6 @@ export const NewPosition: React.FC<INewPosition> = ({
       positionOpeningMethod === 'concentration'
         ? concentrationArray[concentrationIndex]
         : rangeConcentrationArray[concentrationIndexForRange],
-      positionOpeningMethod,
-      +concentrationArray[Math.floor(concentrationArray.length / 2) - 1].toFixed(0),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
   }, [estimatedPointsPerDay, tokenADeposit, tokenBDeposit, positionOpeningMethod])
@@ -308,8 +306,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
     const rightMax = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
 
-    let leftInRange
-    let rightInRange
+    let leftInRange: number
+    let rightInRange: number
 
     if (isXtoY) {
       leftInRange = left < leftMax ? leftMax : left
@@ -411,24 +409,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
