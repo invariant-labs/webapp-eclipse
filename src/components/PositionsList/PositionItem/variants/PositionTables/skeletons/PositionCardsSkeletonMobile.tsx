@@ -12,8 +12,9 @@ const PositionCardsSkeletonMobile = () => {
           <Grid container item direction='row' alignItems='center' justifyContent='space-between'>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <Box className={classes.tokenIcons}>
-                <Skeleton variant='circular' width={40} height={40} />
-                <Skeleton variant='circular' width={40} height={40} />
+                <Skeleton variant='circular' width={28} height={28} />
+                <Skeleton variant='circular' width={24} height={24} />
+                <Skeleton variant='circular' width={28} height={28} />
               </Box>
               <Skeleton variant='text' width={120} height={24} sx={{ marginLeft: '8px' }} />
             </Box>
