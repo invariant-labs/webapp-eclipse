@@ -41,7 +41,7 @@ const PositionCardsSkeletonMobile = () => {
                 variant='rectangular'
                 width={'100%'}
                 height={36}
-                sx={{ borderRadius: '10px', margin: '0 auto' }}
+                className={classes.basicSkeleton}
               />
             </Grid>
             <Grid item xs={7} sx={{ paddingLeft: '16px', paddingTop: '0 !important' }}>
@@ -49,7 +49,7 @@ const PositionCardsSkeletonMobile = () => {
                 variant='rectangular'
                 width={'100%'}
                 height={36}
-                sx={{ borderRadius: '10px', margin: '0 auto' }}
+                className={classes.basicSkeleton}
               />
             </Grid>
           </Grid>
@@ -61,7 +61,7 @@ const PositionCardsSkeletonMobile = () => {
                   variant='rectangular'
                   width={'100%'}
                   height={36}
-                  sx={{ borderRadius: '10px', margin: '0 auto' }}
+                  className={classes.basicSkeleton}
                 />
               </Grid>
             </Grid>
@@ -71,7 +71,7 @@ const PositionCardsSkeletonMobile = () => {
                   variant='rectangular'
                   width={'100%'}
                   height={36}
-                  sx={{ borderRadius: '10px', margin: '0 auto' }}
+                  className={classes.basicSkeleton}
                 />
               </Grid>
             </Grid>

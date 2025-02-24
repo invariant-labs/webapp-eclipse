@@ -15,6 +15,10 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
     },
     marginBottom: '16px'
   },
+  basicSkeleton: {
+    borderRadius: '10px',
+    margin: '0 auto'
+  },
   circularSkeleton: {
     width: '28px',
     height: '28px',
