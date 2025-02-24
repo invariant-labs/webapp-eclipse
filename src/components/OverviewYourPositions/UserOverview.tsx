@@ -179,7 +179,7 @@ export const UserOverview = () => {
               currentNetwork={currentNetwork}
               handleSnackbar={handleSnackbar}
               pools={finalTokens}
-              isLoading={isLoading || isLoadingList || isBalanceLoading}
+              isLoading={isBalanceLoading}
             />
             <Box className={classes.footer}>
               <Box className={classes.footerItem}>
