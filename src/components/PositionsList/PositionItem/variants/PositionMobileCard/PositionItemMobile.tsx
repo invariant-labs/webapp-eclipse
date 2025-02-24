@@ -27,6 +27,8 @@ import { actions as lockerActions } from '@store/reducers/locker'
 import { lockerState } from '@store/selectors/locker'
 import { PositionWithAddress } from '@store/reducers/positions'
 import { SwapToken } from '@store/selectors/solanaWallet'
+import { actions as positionActions } from '@store/reducers/positions'
+import { useNavigate } from 'react-router-dom'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
@@ -67,6 +69,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   const { classes: sharedClasses } = useSharedStyles()
   const airdropIconRef = useRef<any>(null)
   const dispatch = useDispatch()
+  const navigate = useNavigate()
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
   const positionSingleData: ISinglePositionData | undefined = useSelector(
@@ -459,10 +462,28 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
       />
       <PositionViewActionPopover
         anchorEl={anchorEl}
-        unclaimedFeesInUSD={unclaimedFeesInUSD.value}
         handleClose={handleClose}
         open={isActionPopoverOpen}
-        position={positionSingleData}
+        isLocked={positionSingleData?.isLocked ?? false}
+        unclaimedFeesInUSD={unclaimedFeesInUSD.value}
+        claimFee={() => {
+          dispatch(
+            positionActions.claimFee({
+              index: positionSingleData?.positionIndex ?? 0,
+              isLocked: positionSingleData?.isLocked ?? false
+            })
+          )
+        }}
+        closePosition={() => {
+          dispatch(
+            positionActions.closePosition({
+              positionIndex: positionSingleData?.positionIndex ?? 0,
+              onSuccess: () => {
+                navigate('/portfolio')
+              }
+            })
+          )
+        }}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
       <Grid container item className={classes.mdTop} direction='row' wrap='nowrap' sx={{ mb: 2 }}>

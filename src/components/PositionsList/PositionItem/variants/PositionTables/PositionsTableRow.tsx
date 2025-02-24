@@ -35,6 +35,8 @@ import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
+import { actions as positionActions } from '@store/reducers/positions'
+import { useNavigate } from 'react-router-dom'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -85,7 +87,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
-
+  const navigate = useNavigate()
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
 
   const isItemLoading = (item: keyof ILoadingStates): boolean => {
@@ -538,8 +540,26 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}
+        isLocked={positionSingleData?.isLocked ?? false}
         unclaimedFeesInUSD={unclaimedFeesInUSD.value}
-        position={positionSingleData}
+        claimFee={() => {
+          dispatch(
+            positionActions.claimFee({
+              index: positionSingleData?.positionIndex ?? 0,
+              isLocked: positionSingleData?.isLocked ?? false
+            })
+          )
+        }}
+        closePosition={() => {
+          dispatch(
+            positionActions.closePosition({
+              positionIndex: positionSingleData?.positionIndex ?? 0,
+              onSuccess: () => {
+                navigate('/portfolio')
+              }
+            })
+          )
+        }}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>

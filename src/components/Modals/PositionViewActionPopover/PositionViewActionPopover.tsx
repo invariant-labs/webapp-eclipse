@@ -2,32 +2,30 @@ import React from 'react'
 import classNames from 'classnames'
 import useStyles from './style'
 import { Button, Grid, Popover, Typography } from '@mui/material'
-import { actions } from '@store/reducers/positions'
-import { useDispatch } from 'react-redux'
-import { useNavigate } from 'react-router-dom'
 
 export interface IPositionViewActionPopover {
   open: boolean
   anchorEl: HTMLButtonElement | null
-  position?: any
   unclaimedFeesInUSD: number
+  closePosition: () => void
+  claimFee: () => void
   handleClose: () => void
   onLockPosition: () => void
+  isLocked: boolean
 }
 
 export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = ({
   anchorEl,
   open,
-  position,
   handleClose,
-  unclaimedFeesInUSD,
-  onLockPosition
+  isLocked,
+  claimFee,
+  closePosition,
+  onLockPosition,
+  unclaimedFeesInUSD
 }) => {
   const { classes } = useStyles()
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
 
-  if (!position) return
   return (
     <Popover
       open={open}
@@ -53,25 +51,16 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             disabled={unclaimedFeesInUSD <= 0}
             className={classNames(classes.listItem)}
             onClick={() => {
-              dispatch(
-                actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked })
-              )
+              claimFee()
               handleClose()
             }}>
             <Typography className={classes.name}>Claim fee</Typography>
           </Button>
           <Button
             className={classNames(classes.listItem)}
-            disabled={position.isLocked}
+            disabled={isLocked}
             onClick={() => {
-              dispatch(
-                actions.closePosition({
-                  positionIndex: position.positionIndex,
-                  onSuccess: () => {
-                    navigate('/portfolio')
-                  }
-                })
-              )
+              closePosition()
               handleClose()
             }}>
             <Typography className={classes.name}>Close position</Typography>
@@ -79,7 +68,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
         </Grid>
         <Button
           className={classNames(classes.listItem)}
-          disabled={position.isLocked}
+          disabled={isLocked}
           onClick={() => {
             onLockPosition()
             handleClose()

@@ -40,6 +40,89 @@ const EmptyState = ({ classes }: { classes: EmptyStateClasses }) => (
   </Box>
 )
 
+// Komponent dla pojedynczego wiersza skeleton loadera
+const SkeletonRow = ({ classes }: { classes: any }) => (
+  <TableRow>
+    <TableCell className={classes.tableCell}>
+      <Box className={classes.tokenContainer}>
+        <Box className={classes.tokenInfo}>
+          <Skeleton variant='circular' width={28} height={28} />
+          <Skeleton variant='rectangular' width={60} sx={{ borderRadius: '6px' }} height={24} />
+        </Box>
+      </Box>
+    </TableCell>
+    <TableCell className={classes.tableCell} align='right'>
+      <Skeleton variant='rectangular' width='90%' height={24} sx={{ borderRadius: '6px' }} />
+    </TableCell>
+    <TableCell className={classes.tableCell} align='right'>
+      <Skeleton variant='rectangular' width='90%' height={24} sx={{ borderRadius: '6px' }} />
+    </TableCell>
+    <TableCell
+      className={`${classes.tableCell} ${classes.desktopActionCell}`}
+      align='right'
+      sx={{
+        display: 'flex',
+        gap: 1,
+        justifyContent: 'center'
+      }}>
+      <Skeleton
+        variant='rectangular'
+        width={24}
+        height={24}
+        sx={{ borderRadius: '8px', margin: '4px 0px' }}
+      />
+      <Skeleton
+        variant='rectangular'
+        width={24}
+        height={24}
+        sx={{ borderRadius: '8px', margin: '4px 0px' }}
+      />
+      <Skeleton
+        variant='rectangular'
+        width={24}
+        height={24}
+        sx={{ borderRadius: '8px', margin: '4px 0px' }}
+      />
+    </TableCell>
+  </TableRow>
+)
+
+// Komponent dla mobile skeleton card
+const MobileSkeletonCard = ({ classes }: { classes: any }) => (
+  <Box className={classes.mobileCard}>
+    <Box className={classes.mobileCardHeader}>
+      <Box className={classes.mobileTokenInfo}>
+        <Skeleton variant='circular' width={28} height={28} />
+        <Skeleton variant='text' width={60} />
+      </Box>
+      <Box className={classes.mobileActionsContainer}>
+        <Skeleton
+          variant='rectangular'
+          width={24}
+          height={24}
+          sx={{ margin: '4px', borderRadius: '8px' }}
+        />
+        <Skeleton
+          variant='rectangular'
+          width={24}
+          height={24}
+          sx={{ margin: '4px', borderRadius: '8px' }}
+        />
+        <Skeleton
+          variant='rectangular'
+          width={24}
+          height={24}
+          sx={{ margin: '4px', borderRadius: '8px' }}
+        />
+      </Box>
+    </Box>
+    <Box className={classes.mobileStatsContainer}>
+      <Skeleton variant='rectangular' height={27} width={'50%'} sx={{ borderRadius: '8px' }} />
+      <Skeleton variant='rectangular' height={27} width={'50%'} sx={{ borderRadius: '8px' }} />
+    </Box>
+  </Box>
+)
+
 export const YourWallet: React.FC<YourWalletProps> = ({
   pools = [],
   isLoading,
@@ -101,48 +184,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
       {Array(3)
         .fill(0)
         .map((_, index) => (
-          <Box key={`skeleton-${index}`} className={classes.mobileCard}>
-            <Box className={classes.mobileCardHeader}>
-              <Box className={classes.mobileTokenInfo}>
-                <Skeleton variant='circular' width={28} height={28} />
-                <Skeleton variant='text' width={60} />
-              </Box>
-              <Box className={classes.mobileActionsContainer}>
-                <Skeleton
-                  variant='rectangular'
-                  width={24}
-                  height={24}
-                  sx={{ margin: '4px', borderRadius: '8px' }}
-                />
-                <Skeleton
-                  variant='rectangular'
-                  width={24}
-                  height={24}
-                  sx={{ margin: '4px', borderRadius: '8px' }}
-                />
-                <Skeleton
-                  variant='rectangular'
-                  width={24}
-                  height={24}
-                  sx={{ margin: '4px', borderRadius: '8px' }}
-                />
-              </Box>
-            </Box>
-            <Box className={classes.mobileStatsContainer}>
-              <Skeleton
-                variant='rectangular'
-                height={27}
-                width={'50%'}
-                sx={{ borderRadius: '8px' }}
-              />
-              <Skeleton
-                variant='rectangular'
-                height={27}
-                width={'50%'}
-                sx={{ borderRadius: '8px' }}
-              />
-            </Box>
-          </Box>
+          <MobileSkeletonCard key={`skeleton-${index}`} classes={classes} />
         ))}
     </Box>
   )
@@ -249,66 +291,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
               {isLoading ? (
                 Array(4)
                   .fill(0)
-                  .map((_, index) => (
-                    <TableRow key={`skeleton-${index}`}>
-                      <TableCell className={classes.tableCell}>
-                        <Box className={classes.tokenContainer}>
-                          <Box className={classes.tokenInfo}>
-                            <Skeleton variant='circular' width={28} height={28} />
-                            <Skeleton
-                              variant='rectangular'
-                              width={60}
-                              sx={{ borderRadius: '6px' }}
-                              height={24}
-                            />
-                          </Box>
-                        </Box>
-                      </TableCell>
-                      <TableCell className={classes.tableCell} align='right'>
-                        <Skeleton
-                          variant='rectangular'
-                          width='90%'
-                          height={24}
-                          sx={{ borderRadius: '6px', padding: '0px 6px' }}
-                        />
-                      </TableCell>
-                      <TableCell className={classes.tableCell} align='right'>
-                        <Skeleton
-                          variant='rectangular'
-                          width='90%'
-                          height={24}
-                          sx={{ borderRadius: '6px', padding: '0px 6px' }}
-                        />
-                      </TableCell>
-                      <TableCell
-                        className={`${classes.tableCell} ${classes.desktopActionCell}`}
-                        align='right'
-                        sx={{
-                          display: 'flex',
-                          gap: 1,
-                          justifyContent: 'center'
-                        }}>
-                        <Skeleton
-                          variant='rectangular'
-                          width={24}
-                          height={24}
-                          sx={{ borderRadius: '8px', margin: '4px 0px' }}
-                        />
-                        <Skeleton
-                          variant='rectangular'
-                          width={24}
-                          height={24}
-                          sx={{ borderRadius: '8px', margin: '4px 0px' }}
-                        />
-                        <Skeleton
-                          variant='rectangular'
-                          width={24}
-                          height={24}
-                          sx={{ borderRadius: '8px', margin: '4px 0px' }}
-                        />
-                      </TableCell>
-                    </TableRow>
-                  ))
+                  .map((_, index) => <SkeletonRow key={`skeleton-${index}`} classes={classes} />)
               ) : sortedPools.length === 0 ? (
                 <TableRow sx={{ background: 'transparent !important' }}>
                   <TableCell colSpan={4} sx={{ border: 'none', padding: 0 }}>
