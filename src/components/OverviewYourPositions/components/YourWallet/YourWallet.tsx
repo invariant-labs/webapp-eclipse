@@ -65,10 +65,10 @@ const SkeletonRow = ({ classes }: { classes: SkeletonRowClasses }) => (
       </Box>
     </TableCell>
     <TableCell className={classes.tableCell} align='right'>
-      <Skeleton variant='rectangular' width='90%' height={24} sx={{ borderRadius: '6px' }} />
+      <Skeleton variant='rectangular' width='100%' height={28} sx={{ borderRadius: '6px' }} />
     </TableCell>
     <TableCell className={classes.tableCell} align='right'>
-      <Skeleton variant='rectangular' width='90%' height={24} sx={{ borderRadius: '6px' }} />
+      <Skeleton variant='rectangular' width='100%' height={28} sx={{ borderRadius: '6px' }} />
     </TableCell>
     <TableCell
       className={`${classes.tableCell} ${classes.desktopActionCell}`}
@@ -103,7 +103,7 @@ const SkeletonRow = ({ classes }: { classes: SkeletonRowClasses }) => (
 const MobileSkeletonCard = ({ classes }: { classes: MobileSkeletonCardClasses }) => (
   <Box className={classes.mobileCard}>
     <Box className={classes.mobileCardHeader}>
-      <Box>
+      <Box sx={{ display: 'flex', gap: '4px' }}>
         <Skeleton variant='circular' width={28} height={28} />
         <Skeleton variant='text' width={60} />
       </Box>
@@ -286,10 +286,10 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                 <TableCell className={classes.headerCell} sx={{ width: '25%' }} align='left'>
                   Token Name
                 </TableCell>
-                <TableCell className={classes.headerCell} sx={{ width: '30%' }} align='left'>
+                <TableCell className={classes.headerCell} sx={{ width: '22%' }} align='left'>
                   Value
                 </TableCell>
-                <TableCell className={classes.headerCell} sx={{ width: '30%' }} align='left'>
+                <TableCell className={classes.headerCell} sx={{ width: '37%' }} align='left'>
                   Amount
                 </TableCell>
                 <TableCell
