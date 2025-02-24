@@ -82,7 +82,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
             <Box className={classes.tokenSection}>
               <Typography className={classes.tokenTitle}>Tokens</Typography>
 
-              <Grid container spacing={1} className={classes.tokenGrid}>
+              <Grid container className={classes.tokenGrid}>
                 {segments.map(segment => (
                   <Grid item container key={segment.token} className={classes.tokenGridItem}>
                     <Grid item xs={1} className={classes.tokenLogoContainer}>

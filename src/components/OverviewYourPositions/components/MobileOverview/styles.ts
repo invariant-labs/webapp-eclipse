@@ -52,8 +52,8 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   tokenGridItem: {
-    paddingLeft: '0 !important',
-    marginLeft: '0 !important',
+    paddingLeft: '0',
+    marginLeft: '0',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
