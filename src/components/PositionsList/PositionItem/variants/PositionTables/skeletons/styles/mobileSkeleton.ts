@@ -1,15 +1,32 @@
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 export const useMobileSkeletonStyles = makeStyles()(() => ({
   card: {
     height: '270px',
-    padding: '8px',
+    padding: '16px',
+    paddingTop: '16px',
     background: colors.invariant.component,
     borderRadius: '24px',
     '&:first-child': {
       marginTop: '16px'
     },
     marginBottom: '16px'
+  },
+  circularSkeleton: {
+    width: '28px',
+    height: '28px',
+    [theme.breakpoints.between('md', 'lg')]: {
+      width: '40px',
+      height: '40px'
+    }
+  },
+  circularSkeletonSmall: {
+    width: '24px',
+    height: '24px',
+    [theme.breakpoints.between('md', 'lg')]: {
+      width: '30px',
+      height: '30px'
+    }
   },
   tokenIcons: {
     display: 'flex',
