@@ -97,7 +97,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
   }, [network])
 
   const renderMobileLoading = () => (
-    <Box className={classes.mobileContainer}>
+    <Box className={classes.mobileContainer} sx={{ marginTop: '16px' }}>
       {Array(3)
         .fill(0)
         .map((_, index) => (
@@ -108,14 +108,39 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                 <Skeleton variant='text' width={60} />
               </Box>
               <Box className={classes.mobileActionsContainer}>
-                <Skeleton variant='circular' width={32} height={32} />
-                <Skeleton variant='circular' width={32} height={32} />
-                <Skeleton variant='circular' width={32} height={32} />
+                <Skeleton
+                  variant='rectangular'
+                  width={24}
+                  height={24}
+                  sx={{ margin: '4px', borderRadius: '8px' }}
+                />
+                <Skeleton
+                  variant='rectangular'
+                  width={24}
+                  height={24}
+                  sx={{ margin: '4px', borderRadius: '8px' }}
+                />
+                <Skeleton
+                  variant='rectangular'
+                  width={24}
+                  height={24}
+                  sx={{ margin: '4px', borderRadius: '8px' }}
+                />
               </Box>
             </Box>
             <Box className={classes.mobileStatsContainer}>
-              <Skeleton variant='rectangular' height={41} />
-              <Skeleton variant='rectangular' height={41} />
+              <Skeleton
+                variant='rectangular'
+                height={27}
+                width={'50%'}
+                sx={{ borderRadius: '8px' }}
+              />
+              <Skeleton
+                variant='rectangular'
+                height={27}
+                width={'50%'}
+                sx={{ borderRadius: '8px' }}
+              />
             </Box>
           </Box>
         ))}

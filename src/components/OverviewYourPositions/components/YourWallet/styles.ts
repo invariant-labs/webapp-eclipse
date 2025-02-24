@@ -210,6 +210,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
   mobileCard: {
     backgroundColor: colors.invariant.component,
     borderRadius: '16px',
+    maxHeight: '107px',
     padding: '16px',
     '&:not(:first-child)': {
       marginTop: '8px'
