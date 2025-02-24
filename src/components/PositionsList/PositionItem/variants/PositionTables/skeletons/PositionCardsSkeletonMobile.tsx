@@ -54,7 +54,7 @@ const PositionCardsSkeletonMobile = () => {
             </Grid>
           </Grid>
 
-          <Grid container spacing={2} sx={{ marginTop: '16px', marginBottom: '16px' }}>
+          <Grid container spacing={2} sx={{ margin: '16px 0px' }}>
             <Grid item xs={6} sx={{ paddingTop: '0 !important' }}>
               <Grid container justifyContent='center'>
                 <Skeleton
