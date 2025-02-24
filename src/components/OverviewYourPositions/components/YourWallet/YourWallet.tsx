@@ -14,7 +14,7 @@ import { StrategyConfig, TokenPool } from '@store/types/userOverview'
 import { useNavigate } from 'react-router-dom'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
-import { NetworkType, USDC_MAIN, WETH_MAIN } from '@store/consts/static'
+import { NetworkType, USDC_MAIN, USDC_TEST, WETH_MAIN, WETH_TEST } from '@store/consts/static'
 import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
@@ -130,7 +130,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
           onClick={() => {
             console.log(strategy)
             const sourceToken = addressToTicker(currentNetwork, strategy.tokenAddressA)
-            const targetToken = sourceToken === 'ETH' ? USDC_MAIN.address : WETH_MAIN.address
+            const targetToken =
+              sourceToken === 'ETH'
+                ? currentNetwork === NetworkType.Mainnet
+                  ? USDC_MAIN.address
+                  : USDC_TEST.address
+                : currentNetwork === NetworkType.Mainnet
+                  ? WETH_MAIN.address
+                  : WETH_TEST.address
 
             navigate(
               `/newPosition/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}/${strategy.feeTier}`,
@@ -147,7 +154,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
           className={classes.actionIcon}
           onClick={() => {
             const sourceToken = addressToTicker(currentNetwork, pool.id.toString())
-            const targetToken = sourceToken === 'ETH' ? USDC_MAIN.address : WETH_MAIN.address
+            const targetToken =
+              sourceToken === 'ETH'
+                ? currentNetwork === NetworkType.Mainnet
+                  ? USDC_MAIN.address
+                  : USDC_TEST.address
+                : currentNetwork === NetworkType.Mainnet
+                  ? WETH_MAIN.address
+                  : WETH_TEST.address
             navigate(
               `/exchange/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}`,
               {
