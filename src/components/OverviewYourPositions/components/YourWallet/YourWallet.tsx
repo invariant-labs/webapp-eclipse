@@ -300,13 +300,17 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                     <TableRow key={pool.id.toString()}>
                       <TableCell className={classes.tableCell}>
                         <Box className={classes.tokenContainer}>
-                          <Box className={classes.tokenInfo}>
+                          <Box className={classes.tokenInfo} sx={{ position: 'relative' }}>
                             <img
                               src={pool.icon}
                               className={classes.tokenIcon}
                               onError={handleImageError}
                               alt={pool.symbol}
                             />
+                            {pool.isUnknown && (
+                              <img className={classes.warningIcon} src={icons.warningIcon} />
+                            )}
+
                             <Typography className={classes.tokenSymbol}>
                               {pool.symbol.length <= 6
                                 ? pool.symbol

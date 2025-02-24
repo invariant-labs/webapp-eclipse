@@ -275,5 +275,15 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
     ...typography.heading2,
     color: colors.invariant.text,
     textAlign: 'center'
+  },
+  warningIcon: {
+    position: 'absolute',
+    width: 12,
+    height: 12,
+    bottom: -4,
+    right: '67%',
+    [theme.breakpoints.down('lg')]: {
+      right: '53%'
+    }
   }
 }))

@@ -38,6 +38,7 @@ export interface TokenPool {
   id: PublicKey
   symbol: string
   icon: string
+  isUnknown?: boolean
   value: number
   amount: number
 }
