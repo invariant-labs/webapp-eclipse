@@ -101,6 +101,7 @@ const RootPage: React.FC = memo(() => {
         walletAddressRef.current = addr
         dispatch(walletActions.changeWalletInExtension())
         dispatch(leaderboardActions.getLeaderboardData({ page: 1, itemsPerPage }))
+        dispatch(actions.getPositionsList())
       }
 
       if (
