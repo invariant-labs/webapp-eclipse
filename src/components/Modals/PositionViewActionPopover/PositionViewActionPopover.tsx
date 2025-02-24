@@ -34,7 +34,6 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
       anchorEl={anchorEl}
       classes={{ paper: classes.paper }}
       onClose={handleClose}
-      onClick={e => e.stopPropagation()}
       slotProps={{
         paper: {
           onClick: e => e.stopPropagation()
@@ -48,13 +47,12 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
         vertical: 'top',
         horizontal: 'center'
       }}>
-      <Grid className={classes.root} onClick={e => e.stopPropagation()}>
+      <Grid className={classes.root}>
         <Grid className={classes.list} container alignContent='space-around' direction='column'>
           <Button
             disabled={unclaimedFeesInUSD <= 0}
             className={classNames(classes.listItem)}
-            onClick={e => {
-              e.stopPropagation()
+            onClick={() => {
               dispatch(
                 actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked })
               )
@@ -65,8 +63,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           <Button
             className={classNames(classes.listItem)}
             disabled={position.isLocked}
-            onClick={e => {
-              e.stopPropagation()
+            onClick={() => {
               dispatch(
                 actions.closePosition({
                   positionIndex: position.positionIndex,
@@ -83,8 +80,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
         <Button
           className={classNames(classes.listItem)}
           disabled={position.isLocked}
-          onClick={e => {
-            e.stopPropagation()
+          onClick={() => {
             onLockPosition()
             handleClose()
           }}>
