@@ -56,7 +56,7 @@ export const WrappedPositionsList: React.FC = () => {
   const data: IPositionItem[] = useMemo(
     () =>
       list.map(position => {
-        console.log('Rerender Locked Data')
+        console.log('Rerender Data')
         const lowerPrice = calcYPerXPriceBySqrtPrice(
           calculatePriceSqrt(position.lowerTickIndex),
           position.tokenX.decimals,
