@@ -34,7 +34,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
   })
 
   const generateDynamicStyles = () => {
-    const styles: Record<string, any> = {}
+    const styles: Record<string, ReturnType<typeof getPathStyles>> = {}
     const itemCount = data.length
 
     for (let i = 0; i < itemCount; i++) {

@@ -36,20 +36,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()(
         marginTop: '16px'
       }
     },
-    headerRow: {
-      display: 'flex',
-      alignItems: 'center',
-      [theme.breakpoints.up('lg')]: {
-        padding: '16px 24px'
-      },
-      padding: '16px 0px',
 
-      justifyContent: 'space-between'
-    },
-    headerText: {
-      ...typography.heading2,
-      color: colors.invariant.text
-    },
     pieChartSection: {
       flex: '1 1 100%',
       minHeight: 'fit-content',

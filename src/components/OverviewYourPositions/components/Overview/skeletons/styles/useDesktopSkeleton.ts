@@ -45,6 +45,7 @@ export const useDesktopSkeleton = makeStyles()(() => ({
     ...typography.heading4
   },
   valueContainer: {
+    marginLeft: '8px',
     display: 'flex',
     justifyContent: 'flex-end'
   }

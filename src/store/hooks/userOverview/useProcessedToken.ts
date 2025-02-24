@@ -1,10 +1,11 @@
+import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBN, getTokenPrice } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
 interface Token {
   assetAddress: PublicKey
-  balance: any
+  balance: BN
   tokenProgram?: PublicKey
   symbol: string
   address: PublicKey

@@ -71,9 +71,12 @@ export function* handleBalance(): Generator {
   const wallet = yield* call(getWallet)
   yield* put(actions.setAddress(wallet.publicKey))
   yield* put(actions.setIsBalanceLoading(true))
+
   const balance = yield* call(getBalance, wallet.publicKey)
   yield* put(actions.setBalance(balance))
+
   yield* call(fetchTokensAccounts)
+
   yield* put(actions.setIsBalanceLoading(false))
 }
 

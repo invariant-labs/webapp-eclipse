@@ -114,6 +114,10 @@ export const UserOverview = () => {
     return processedPools.filter(item => item.decimal > 0)
   }, [processedPools, hideUnknownTokens])
 
+  useEffect(() => {
+    console.log({ isBalanceLoading, isLoadingList, isLoading, processedPools })
+  }, [isBalanceLoading, isLoadingList, isLoading])
+
   const renderPositionDetails = () => (
     <Box
       className={classes.footerCheckboxContainer}
@@ -183,7 +187,7 @@ export const UserOverview = () => {
               currentNetwork={currentNetwork}
               handleSnackbar={handleSnackbar}
               pools={finalTokens}
-              isLoading={isBalanceLoading}
+              isLoading={true}
             />
             <Box className={classes.footer}>
               <Box className={classes.footerItem}>

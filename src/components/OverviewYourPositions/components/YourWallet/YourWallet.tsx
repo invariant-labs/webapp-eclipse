@@ -24,6 +24,7 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
+import { EmptyStateClasses } from '../Overview/Overview'
 
 interface YourWalletProps {
   pools: TokenPool[]
@@ -32,7 +33,7 @@ interface YourWalletProps {
   currentNetwork: NetworkType
 }
 
-const EmptyState = ({ classes }: { classes: any }) => (
+const EmptyState = ({ classes }: { classes: EmptyStateClasses }) => (
   <Box className={classes.emptyState}>
     <img src={icons.assetsEmpty} alt='Empty portfolio' height={80} width={80} />
     <Typography className={classes.emptyStateText}>No assets found</Typography>

@@ -26,6 +26,8 @@ interface OverviewProps {
   poolAssets: ProcessedPool[]
 }
 
+export type EmptyStateClasses = Record<'emptyState' | 'emptyStateText', string>
+
 export const Overview: React.FC<OverviewProps> = () => {
   const positionList = useSelector(positionsWithPoolsData)
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
@@ -161,7 +163,7 @@ export const Overview: React.FC<OverviewProps> = () => {
     }
   }, [dispatch, prices])
 
-  const EmptyState = ({ classes }: { classes: any }) => (
+  const EmptyState = ({ classes }: { classes: EmptyStateClasses }) => (
     <Box className={classes.emptyState}>
       <img src={icons.liquidityEmpty} alt='Empty portfolio' height={80} width={80} />
       <Typography className={classes.emptyStateText}>No liquidity found</Typography>

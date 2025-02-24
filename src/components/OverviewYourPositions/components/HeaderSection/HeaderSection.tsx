@@ -1,7 +1,6 @@
 import { Typography, Box, Skeleton } from '@mui/material'
-import { useStyles } from '../Overview/styles/styles'
 import { formatNumberWithoutSuffix } from '@utils/utils'
-import { typography, theme, colors } from '@static/theme'
+import { useStyles } from './style'
 
 interface HeaderSectionProps {
   totalValue: number
@@ -9,7 +8,7 @@ interface HeaderSectionProps {
 }
 
 export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loading }) => {
-  const { classes } = useStyles({ isLoading: loading ?? false })
+  const { classes } = useStyles()
 
   return (
     <>
@@ -17,18 +16,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
         <Typography className={classes.headerText}>Liquidity Assets</Typography>
         {loading ? (
           <>
-            <Skeleton
-              variant='text'
-              width={100}
-              height={24}
-              sx={{
-                bgcolor: colors.invariant.light,
-                ...typography.heading1,
-                [theme.breakpoints.down('lg')]: {
-                  marginTop: '16px'
-                }
-              }}
-            />
+            <Skeleton variant='text' width={100} height={24} />
           </>
         ) : (
           <Typography className={classes.headerText}>

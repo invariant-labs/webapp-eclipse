@@ -11,6 +11,7 @@ import { network as currentNetwork, rpcAddress } from '@store/selectors/solanaCo
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { useSelector } from 'react-redux'
 import { Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { ISinglePositionData } from '@components/PositionsList/PositionItem/variants/PositionMobileCard/PositionItemMobile'
 
 const UPDATE_INTERVAL = 60000
 
@@ -21,7 +22,7 @@ interface PositionTicks {
 }
 
 interface UnclaimedFeeHook extends IPositionItem {
-  positionSingleData: any
+  positionSingleData?: ISinglePositionData
   xToY: boolean
 }
 

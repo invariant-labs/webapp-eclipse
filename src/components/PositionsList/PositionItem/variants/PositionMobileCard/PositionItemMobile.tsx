@@ -9,7 +9,7 @@ import { initialXtoY, tickerToAddress } from '@utils/utils'
 import icons from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { usePromotedPool } from '../../../../../store/hooks/positionList/usePromotedPool'
+import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { IPositionItem } from '@components/PositionsList/types'
 import { useSharedStyles } from './style/shared'
 import { InactivePoolsPopover } from '../../components/InactivePoolsPopover/InactivePoolsPopover'
@@ -17,7 +17,7 @@ import { NetworkType } from '@store/consts/static'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { useDispatch, useSelector } from 'react-redux'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
-import { singlePositionData } from '@store/selectors/positions'
+import { PoolWithAddressAndIndex, singlePositionData } from '@store/selectors/positions'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
@@ -25,11 +25,21 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { actions as lockerActions } from '@store/reducers/locker'
 import { lockerState } from '@store/selectors/locker'
+import { PositionWithAddress } from '@store/reducers/positions'
+import { SwapToken } from '@store/selectors/solanaWallet'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
   isLockPositionModalOpen: boolean
   setIsLockPositionModalOpen: (value: boolean) => void
+}
+
+export interface ISinglePositionData extends PositionWithAddress {
+  poolData: PoolWithAddressAndIndex
+  tokenX: SwapToken
+  tokenY: SwapToken
+  positionIndex: number
+  isLocked: boolean
 }
 
 export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
@@ -59,7 +69,9 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   const dispatch = useDispatch()
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
-  const positionSingleData = useSelector(singlePositionData(id ?? ''))
+  const positionSingleData: ISinglePositionData | undefined = useSelector(
+    singlePositionData(id ?? '')
+  )
 
   const networkSelector = useSelector(currentNetwork)
 
