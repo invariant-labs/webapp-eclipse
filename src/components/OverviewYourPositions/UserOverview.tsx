@@ -13,21 +13,24 @@ import {
 import { typography, colors, theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { balanceLoading, swapTokens } from '@store/selectors/solanaWallet'
 import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 import { useStyles } from './style'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
+
 import { useMemo, useState } from 'react'
 import classNames from 'classnames'
+import { VariantType } from 'notistack'
+import { network } from '@store/selectors/solanaConnection'
 
 export enum CardSwitcher {
   Overview = 'Overview',
   Wallet = 'Wallet'
 }
-
 export const UserOverview = () => {
   const { classes } = useStyles()
   const tokensList = useSelector(swapTokens)
@@ -36,10 +39,11 @@ export const UserOverview = () => {
   const isLoadingList = useSelector(isLoadingPositionsList)
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isDownMd = useMediaQuery(theme.breakpoints.down('md'))
-  const list: any = useSelector(positionsWithPoolsData)
+  const list = useSelector(positionsWithPoolsData)
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(true)
   const [activePanel, setActivePanel] = useState<CardSwitcher>(CardSwitcher.Overview)
-
+  const dispatch = useDispatch()
+  const currentNetwork = useSelector(network)
   const handleSwitchPools = (
     _: React.MouseEvent<HTMLElement>,
     newAlignment: CardSwitcher | null
@@ -47,6 +51,16 @@ export const UserOverview = () => {
     if (newAlignment !== null) {
       setActivePanel(newAlignment)
     }
+  }
+
+  const handleSnackbar = (message: string, variant: VariantType) => {
+    dispatch(
+      snackbarsActions.add({
+        message: message,
+        variant: variant,
+        persist: false
+      })
+    )
   }
 
   const data: Pick<
@@ -62,7 +76,7 @@ export const UserOverview = () => {
       tokenX: {
         decimal: position.tokenX.decimals,
         coingeckoId: position.tokenX.coingeckoId,
-        assetsAddress: position.tokenX.address,
+        assetsAddress: position.tokenX.assetAddress.toString(),
         balance: position.tokenX.balance,
         icon: position.tokenX.logoURI,
         name: position.tokenX.symbol
@@ -70,7 +84,7 @@ export const UserOverview = () => {
       tokenY: {
         decimal: position.tokenY.decimals,
         balance: position.tokenY.balance,
-        assetsAddress: position.tokenY.address,
+        assetsAddress: position.tokenY.assetAddress.toString(),
         coingeckoId: position.tokenY.coingeckoId,
         icon: position.tokenY.logoURI,
         name: position.tokenY.symbol
@@ -165,6 +179,8 @@ export const UserOverview = () => {
           </Grid>
           <Grid item xs={12}>
             <YourWallet
+              currentNetwork={currentNetwork}
+              handleSnackbar={handleSnackbar}
               pools={finalTokens}
               isLoading={isLoading || isLoadingList || isBalanceLoading}
             />
@@ -238,6 +254,8 @@ export const UserOverview = () => {
             {activePanel === CardSwitcher.Wallet && (
               <>
                 <YourWallet
+                  handleSnackbar={handleSnackbar}
+                  currentNetwork={currentNetwork}
                   pools={finalTokens}
                   isLoading={isLoading || isLoadingList || isBalanceLoading}
                 />
@@ -275,6 +293,8 @@ export const UserOverview = () => {
             }}>
             <Overview poolAssets={data} />
             <YourWallet
+              currentNetwork={currentNetwork}
+              handleSnackbar={handleSnackbar}
               pools={finalTokens}
               isLoading={isLoading || isLoadingList || isBalanceLoading}
             />

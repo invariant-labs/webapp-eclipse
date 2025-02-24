@@ -14,13 +14,13 @@ import {
   unclaimedFees
 } from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
-import MobileOverview from './MobileOverview'
+import MobileOverview from '../MobileOverview/MobileOverview'
 import LegendSkeleton from './skeletons/LegendSkeleton'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 import icons from '@static/icons'
-import { LegendOverview } from './LegendOverview'
 import { actions } from '@store/reducers/positions'
+import { LegendOverview } from '../LegendOverview/LegendOverview'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -59,6 +59,10 @@ export const Overview: React.FC<OverviewProps> = () => {
     () => positions.reduce((acc, position) => acc + position.value, 0),
     [positions]
   )
+
+  const handleClaimAll = () => {
+    dispatch(actions.claimAllFee())
+  }
 
   const isDataReady = !isLoadingList && !isColorsLoading && Object.keys(prices).length > 0
 
@@ -168,7 +172,7 @@ export const Overview: React.FC<OverviewProps> = () => {
     return (
       <Box className={classes.container}>
         <HeaderSection totalValue={0} loading={false} />
-        <UnclaimedSection unclaimedTotal={0} loading={false} />
+        <UnclaimedSection unclaimedTotal={0} loading={false} handleClaimAll={undefined} />
         <EmptyState classes={classes} />
       </Box>
     )
@@ -179,6 +183,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       <HeaderSection totalValue={totalAssets} loading={isLoadingList} />
       <UnclaimedSection
         unclaimedTotal={totalUnclaimedFee}
+        handleClaimAll={handleClaimAll}
         loading={isLoadingList || isAllClaimFeesLoading}
       />
 

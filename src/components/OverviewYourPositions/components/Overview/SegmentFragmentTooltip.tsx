@@ -1,7 +1,7 @@
 import { Tooltip, Box, Typography } from '@mui/material'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import React, { useMemo, useEffect } from 'react'
-import { ChartSegment } from './MobileOverview'
+import { ChartSegment } from '../MobileOverview/MobileOverview'
 import { typography } from '@static/theme'
 
 interface Colors {

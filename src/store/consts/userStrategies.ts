@@ -6,9 +6,4 @@ export const STRATEGIES: StrategyConfig[] = [
     tokenAddressB: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
     feeTier: '0_09'
   }
-  // {
-  //   tokenSymbolA: 'tETH',
-  //   tokenSymbolB: 'ETH',
-  //   feeTier: '0_01'
-  // }
 ]

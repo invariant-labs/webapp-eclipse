@@ -1,28 +1,22 @@
 import { Box, Typography, Button, Skeleton, useMediaQuery } from '@mui/material'
 import { useStyles } from '../Overview/styles/styles'
-import { useDispatch } from 'react-redux'
-import { actions } from '@store/reducers/positions'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { theme } from '@static/theme'
 import loadingAnimation from '@static/gif/loading.gif'
 
 interface UnclaimedSectionProps {
   unclaimedTotal: number
+  handleClaimAll?: () => void
   loading?: boolean
 }
 
 export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
   unclaimedTotal,
+  handleClaimAll,
   loading = false
 }) => {
   const { classes } = useStyles({ isLoading: loading || unclaimedTotal === 0 })
-  const dispatch = useDispatch()
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
-  const handleClaimAll = () => {
-    console.log('1. Button clicked')
-    dispatch(actions.claimAllFee())
-    console.log('2. After dispatch')
-  }
 
   return (
     <Box className={classes.unclaimedSection}>

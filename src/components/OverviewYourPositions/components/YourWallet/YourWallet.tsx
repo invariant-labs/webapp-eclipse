@@ -18,17 +18,18 @@ import { NetworkType, USDC_MAIN, USDC_TEST, WETH_MAIN, WETH_TEST } from '@store/
 import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { colors, typography } from '@static/theme'
-import { useDispatch, useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
 import { MobileCard } from './MobileCard'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
-import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { shortenAddress } from '@utils/uiUtils'
+import { VariantType } from 'notistack'
 
 interface YourWalletProps {
   pools: TokenPool[]
+  handleSnackbar: (message: string, variant: VariantType) => void
   isLoading: boolean
+  currentNetwork: NetworkType
 }
 
 const EmptyState = ({ classes }: { classes: any }) => (
@@ -38,11 +39,14 @@ const EmptyState = ({ classes }: { classes: any }) => (
   </Box>
 )
 
-export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading }) => {
+export const YourWallet: React.FC<YourWalletProps> = ({
+  pools = [],
+  isLoading,
+  handleSnackbar,
+  currentNetwork
+}) => {
   const { classes } = useStyles({ isLoading })
   const navigate = useNavigate()
-  const currentNetwork = useSelector(network)
-  const dispatch = useDispatch()
   const sortedPools = useMemo(() => [...pools].sort((a, b) => b.value - a.value), [pools])
 
   const totalValue = useMemo(
@@ -59,11 +63,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
     })
 
     if (!strategy) {
-      // const lowestFeeTierData = ALL_FEE_TIERS_DATA.reduce((lowest, current) => {
-      //   if (!lowest) return current
-      //   return current.tier.fee.lt(lowest.tier.fee) ? current : lowest
-      // })
-
       strategy = {
         tokenAddressA: poolAddress,
         feeTier: DEFAULT_FEE_TIER
@@ -321,13 +320,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({ pools = [], isLoading })
                                 onClick={() => {
                                   navigator.clipboard.writeText(poolAddress)
 
-                                  dispatch(
-                                    snackbarsActions.add({
-                                      message: 'Token address copied.',
-                                      variant: 'success',
-                                      persist: false
-                                    })
-                                  )
+                                  handleSnackbar('Token address copied.', 'success')
                                 }}
                                 classes={{ root: classes.clipboardIcon }}
                               />
