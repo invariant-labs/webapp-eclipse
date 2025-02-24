@@ -3,8 +3,11 @@ import { makeStyles } from 'tss-react/mui'
 export const useMobileSkeletonStyles = makeStyles()(() => ({
   card: {
     height: '270px',
-    padding: '16px',
-    paddingTop: '16px',
+    [theme.breakpoints.between('sm', 'lg')]: {
+      padding: '16px',
+      paddingTop: '16px'
+    },
+    padding: '8px',
     background: colors.invariant.component,
     borderRadius: '24px',
     '&:first-child': {
@@ -15,7 +18,7 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
   circularSkeleton: {
     width: '28px',
     height: '28px',
-    [theme.breakpoints.between('md', 'lg')]: {
+    [theme.breakpoints.between('sm', 'lg')]: {
       width: '40px',
       height: '40px'
     }
@@ -23,7 +26,7 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
   circularSkeletonSmall: {
     width: '24px',
     height: '24px',
-    [theme.breakpoints.between('md', 'lg')]: {
+    [theme.breakpoints.between('sm', 'lg')]: {
       width: '30px',
       height: '30px'
     }
