@@ -83,7 +83,8 @@ import {
   WETH_MAIN,
   KYSOL_MAIN,
   EZSOL_MAIN,
-  LEADERBOARD_DECIMAL
+  LEADERBOARD_DECIMAL,
+  POSITIONS_PER_PAGE
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -1936,7 +1937,7 @@ export const generatePositionTableLoadingData = () => {
   const getRandomNumber = (min: number, max: number) =>
     Math.floor(Math.random() * (max - min + 1)) + min
 
-  return Array(5)
+  return Array(POSITIONS_PER_PAGE)
     .fill(null)
     .map((_, index) => {
       const currentPrice = Math.random() * 10000
