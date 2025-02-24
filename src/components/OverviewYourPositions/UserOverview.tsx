@@ -154,7 +154,7 @@ export const UserOverview = () => {
   return (
     <Box className={classes.overviewContainer}>
       <Box>
-        <Grid display={'flex'} marginBottom={isDownLg ? 12 : 20}>
+        <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '20px'}>
           <Typography
             style={{
               color: colors.invariant.text,
