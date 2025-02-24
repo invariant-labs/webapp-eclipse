@@ -388,7 +388,9 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                           {!hideBalances && Number(tokenBalance) > 0 ? (
                             <>
                               <Typography>~$</Typography>
-                              <Typography>{formatNumberWithSuffix(usdBalance)}</Typography>
+                              <Typography>
+                                {formatNumberWithSuffix(usdBalance.toFixed(2))}
+                              </Typography>
                             </>
                           ) : null}
                         </Grid>
