@@ -262,7 +262,7 @@ export const UserOverview = () => {
                   handleSnackbar={handleSnackbar}
                   currentNetwork={currentNetwork}
                   pools={finalTokens}
-                  isLoading={isLoading || isLoadingList || isBalanceLoading}
+                  isLoading={true}
                 />
                 <Box className={classes.footer}>
                   <Box className={classes.footerItem}>

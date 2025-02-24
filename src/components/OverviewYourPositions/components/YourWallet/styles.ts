@@ -68,7 +68,8 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
   },
   tableCell: {
     borderBottom: `1px solid ${colors.invariant.light}`,
-    padding: '12px !important'
+    padding: '12px !important',
+    textAlign: 'center'
   },
   headerCell: {
     fontSize: '20px',

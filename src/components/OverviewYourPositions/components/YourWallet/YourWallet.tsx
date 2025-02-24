@@ -65,10 +65,10 @@ const SkeletonRow = ({ classes }: { classes: SkeletonRowClasses }) => (
       </Box>
     </TableCell>
     <TableCell className={classes.tableCell} align='right'>
-      <Skeleton variant='rectangular' width='100%' height={28} sx={{ borderRadius: '6px' }} />
+      <Skeleton variant='rectangular' width='114%' height={28} sx={{ borderRadius: '6px' }} />
     </TableCell>
     <TableCell className={classes.tableCell} align='right'>
-      <Skeleton variant='rectangular' width='100%' height={28} sx={{ borderRadius: '6px' }} />
+      <Skeleton variant='rectangular' width='99%' height={28} sx={{ borderRadius: '6px' }} />
     </TableCell>
     <TableCell
       className={`${classes.tableCell} ${classes.desktopActionCell}`}
@@ -351,7 +351,10 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                           </Box>
                         </Box>
                       </TableCell>
-                      <TableCell className={classes.tableCell} align='right'>
+                      <TableCell
+                        className={classes.tableCell}
+                        align='right'
+                        sx={{ width: '102px' }}>
                         <Box className={classes.statsContainer}>
                           <Typography className={classes.statsValue}>
                             $
