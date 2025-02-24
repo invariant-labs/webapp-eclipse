@@ -91,7 +91,7 @@ export const UserOverview = () => {
 
   const finalTokens = useMemo(() => {
     if (hideUnknownTokens) {
-      return processedPools.filter(item => item.icon !== '/unknownToken.svg')
+      return processedPools.filter(item => item.isUnknown !== true)
     }
     return processedPools.filter(item => item.decimal > 0)
   }, [processedPools, hideUnknownTokens])

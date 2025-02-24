@@ -20,6 +20,7 @@ interface ProcessedPool {
   symbol: string
   icon: string
   value: number
+  isUnknown?: boolean
   decimal: number
   amount: number
 }
@@ -52,6 +53,7 @@ export const useProcessedTokens = (tokensList: Token[]) => {
             id: token.address,
             symbol: token.symbol,
             icon: token.logoURI,
+            isUnknown: token.isUnknown,
             decimal: token.decimals,
             amount: balance,
             value: balance * price
