@@ -297,8 +297,7 @@ export const Primary: Story = {
     noConnectedBlockerProps: {
       onConnect: () => {}
     },
-    searchValue: '',
-    searchSetValue: () => {},
+    currentNetwork: NetworkType.Mainnet,
     handleRefresh: () => {},
     initialPage: 1,
     setLastPage: () => {},
