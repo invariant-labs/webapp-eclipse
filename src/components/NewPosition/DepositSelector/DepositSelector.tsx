@@ -660,7 +660,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         simulationParams.actualPoolPrice
       )
     }
-    console.log(result)
     setSimulation(result)
   }
 
