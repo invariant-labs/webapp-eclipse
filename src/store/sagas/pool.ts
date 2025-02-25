@@ -273,15 +273,6 @@ export function* fetchTicksAndTickMapForAutoSwap(
 ) {
   const { tokenFrom, tokenTo, autoSwapPool } = action.payload
 
-  enum IsXtoY {
-    Up = 'up',
-    Down = 'down'
-  }
-
-  if (tokenFrom.equals(PublicKey.default) || tokenTo.equals(PublicKey.default)) {
-    return
-  }
-
   try {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
@@ -295,28 +286,18 @@ export function* fetchTicksAndTickMapForAutoSwap(
 
     const tickmap = yield call([marketProgram, marketProgram.getTickmap], pair)
 
-    const [ticksDown, ticksUp] = yield* all([
-      call(
-        [marketProgram, marketProgram.getClosestTicks],
-        pair,
-        TICK_CROSSES_PER_IX + 3,
-        undefined,
-        IsXtoY.Down,
-        autoSwapPool,
-        tickmap
-      ),
-      call(
-        [marketProgram, marketProgram.getClosestTicks],
-        pair,
-        TICK_CROSSES_PER_IX + 3,
-        undefined,
-        IsXtoY.Up,
-        autoSwapPool,
-        tickmap
-      )
-    ])
+    const batchSize = TICK_CROSSES_PER_IX + 3
 
-    yield* put(actions.setAutoSwapTicksAndTickMap({ ticks: [...ticksDown, ...ticksUp], tickmap }))
+    const tickAddresses: PublicKey[] = [
+      ...marketProgram.findTickAddressesForSwap(pair, autoSwapPool, tickmap, true, batchSize),
+      ...marketProgram.findTickAddressesForSwap(pair, autoSwapPool, tickmap, false, batchSize)
+    ]
+
+    const ticks = yield* call(getTicksFromAddresses, marketProgram, tickAddresses)
+
+    const parsedTicks = ticks.filter(t => !!t).map(t => parseTick(t))
+
+    yield* put(actions.setAutoSwapTicksAndTickMap({ ticks: parsedTicks, tickmap }))
     yield* put(actions.setIsLoadingAutoSwapPoolTicksOrTickMap(false))
   } catch (error) {
     yield* put(actions.setIsLoadingAutoSwapPoolTicksOrTickMap(false))
