@@ -10,7 +10,7 @@ const PositionCardsSkeletonMobile = () => {
       {cards.map(index => (
         <Grid key={index} container direction='column' className={classes.card}>
           <Grid container item direction='row' alignItems='center' justifyContent='space-between'>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+            <Box sx={{ display: 'flex', alignItems: 'center', height: '36px' }}>
               <Box className={classes.tokenIcons}>
                 <Skeleton variant='circular' className={classes.circularSkeleton} />
                 <Skeleton variant='circular' className={classes.circularSkeletonSmall} />
@@ -73,7 +73,7 @@ const PositionCardsSkeletonMobile = () => {
               variant='rectangular'
               width='100%'
               height={40}
-              sx={{ borderRadius: '12px', marginTop: '16px' }}
+              sx={{ borderRadius: '12px', marginTop: '18px' }}
             />
           </Grid>
         </Grid>

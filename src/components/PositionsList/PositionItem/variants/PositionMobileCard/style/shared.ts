@@ -122,11 +122,9 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     transition: 'all 0.3s ease',
     '&:hover': {
       background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
-      transform: 'translateY(-2px)',
       boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
     },
     '&:active': {
-      transform: 'translateY(1px)',
       boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
     },
     [theme.breakpoints.down('sm')]: {

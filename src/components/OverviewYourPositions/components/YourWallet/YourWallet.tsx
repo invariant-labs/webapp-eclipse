@@ -17,7 +17,6 @@ import icons from '@static/icons'
 import { NetworkType, USDC_MAIN, USDC_TEST, WETH_MAIN, WETH_TEST } from '@store/consts/static'
 import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
-import { colors, typography } from '@static/theme'
 import { network } from '@store/selectors/solanaConnection'
 import { MobileCard } from './MobileCard'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
@@ -387,13 +386,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({
       </Box>
 
       <Box className={classes.mobileContainer}>
-        <Typography
-          style={{
-            ...typography.heading4,
-            color: colors.invariant.text
-          }}>
-          Your Wallet
-        </Typography>
         {isLoading ? (
           renderMobileLoading()
         ) : sortedPools.length === 0 ? (

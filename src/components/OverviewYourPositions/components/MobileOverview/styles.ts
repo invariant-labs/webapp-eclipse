@@ -69,6 +69,7 @@ export const useStyles = makeStyles()(() => ({
     borderRadius: '100%'
   },
   tokenSymbol: {
+    marginLeft: '8px',
     ...typography.heading4
   },
   tokenValue: {

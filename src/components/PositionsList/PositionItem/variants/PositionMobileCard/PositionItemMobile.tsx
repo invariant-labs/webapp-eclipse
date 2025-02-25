@@ -312,7 +312,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               <Box className={sharedClasses.unclaimedFeeContainer}>
                 <Typography className={sharedClasses.infoText}>Unclaimed Fee</Typography>
                 <Typography className={sharedClasses.greenText}>
-                  ${formatNumberWithSuffix(unclaimedFeesInUSD.value)}
+                  ${formatNumberWithSuffix(unclaimedFeesInUSD.value.toFixed(2))}
                 </Typography>
               </Box>
             </Grid>

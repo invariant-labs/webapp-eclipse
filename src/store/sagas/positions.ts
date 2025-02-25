@@ -56,7 +56,7 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import { ClaimAllFee } from '@invariant-labs/sdk-eclipse/lib/market'
+import { ClaimAllFee, Market, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { getEclipseWallet } from '@utils/web3/wallet'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
@@ -1864,7 +1864,6 @@ export function* handleGetCurrentPositionRangeTicks(
 export function* handleUpdatePositionsRangeTicks(
   action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
 ) {
-  //TODO finish after update position list item
   try {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
@@ -1936,13 +1935,13 @@ export function* handleUpdatePositionsRangeTicks(
 function* getTickWithCache(
   pair: Pair,
   tickIndex: number,
-  ticksCache: Map<string, any>,
-  marketProgram: any
-) {
+  ticksCache: Map<string, Tick>,
+  marketProgram: Market
+): Generator<any, Tick, any> {
   const cacheKey = `${pair.tokenX.toString()}-${pair.tokenY.toString()}-${tickIndex}`
 
   if (ticksCache.has(cacheKey)) {
-    return ticksCache.get(cacheKey)
+    return ticksCache.get(cacheKey)!
   }
 
   const tick = yield* call([marketProgram, 'getTick'], pair, tickIndex)
@@ -1958,18 +1957,18 @@ export function* handleCalculateTotalUnclaimedFees() {
     const rpc = yield* select(rpcAddress)
 
     const wallet = getEclipseWallet() as IWallet
-    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet)
+    const marketProgram: Market = yield* call(getMarketProgram, networkType, rpc, wallet)
 
-    const ticksCache = new Map()
+    const ticksCache: Map<string, Tick> = new Map()
 
-    const ticks = yield* all(
+    const ticks: Tick[][] = yield* all(
       positionList.map(function* (position) {
         const pair = new Pair(position.poolData.tokenX, position.poolData.tokenY, {
           fee: position.poolData.fee,
           tickSpacing: position.poolData.tickSpacing
         })
 
-        const [lowerTick, upperTick] = yield* all([
+        const [lowerTick, upperTick]: Tick[] = yield* all([
           call(getTickWithCache, pair, position.lowerTickIndex, ticksCache, marketProgram),
           call(getTickWithCache, pair, position.upperTickIndex, ticksCache, marketProgram)
         ])
@@ -1978,7 +1977,7 @@ export function* handleCalculateTotalUnclaimedFees() {
       })
     )
 
-    const total = positionList.reduce((acc: number, position: any, i: number) => {
+    const total = positionList.reduce((acc: number, position, i: number) => {
       const [lowerTick, upperTick] = ticks[i]
       const [bnX, bnY] = calculateClaimAmount({
         position,
