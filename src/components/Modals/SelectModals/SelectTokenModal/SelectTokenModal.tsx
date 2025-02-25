@@ -107,9 +107,9 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
                   event.stopPropagation()
                 }}>
                 <Typography>
-                  {token.assetAddress.toString().slice(0, 4) +
+                  {token.assetAddress.toString().slice(0, isXs ? 3 : 4) +
                     '...' +
-                    token.assetAddress.toString().slice(-5, -1)}
+                    token.assetAddress.toString().slice(isXs ? -4 : -5, -1)}
                 </Typography>
                 <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
               </a>
@@ -121,30 +121,17 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
             {token.name.length > (isXs ? 20 : 30) ? '...' : ''}
           </Typography>
         </Grid>
-        <Grid container flexDirection='column'>
-          <Grid
-            container
-            justifyContent='flex-end'
-            wrap='wrap'
-            className={classes.tokenBalanceStatus}>
-            {!hideBalances && Number(tokenBalance) > 0 ? (
-              <>
-                <Typography>&nbsp; {formatNumberWithSuffix(tokenBalance)}</Typography>
-              </>
-            ) : null}
-          </Grid>
-          <Grid
-            container
-            justifyContent='flex-end'
-            wrap='wrap'
-            className={classes.tokenBalanceUSDStatus}>
-            {!hideBalances && Number(tokenBalance) > 0 ? (
-              <>
-                <Typography>$</Typography>
-                <Typography>{usdBalance.toFixed(2)}</Typography>
-              </>
-            ) : null}
-          </Grid>
+        <Grid container alignItems='flex-end' flexDirection='column' wrap='nowrap'>
+          {!hideBalances && Number(tokenBalance) > 0 ? (
+            <>
+              <Typography className={classes.tokenBalanceStatus} noWrap>
+                {formatNumberWithSuffix(tokenBalance)}
+              </Typography>
+              <Typography className={classes.tokenBalanceUSDStatus}>
+                ${usdBalance.toFixed(2)}
+              </Typography>
+            </>
+          ) : null}
         </Grid>
       </Grid>
     )

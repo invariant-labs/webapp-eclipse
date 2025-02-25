@@ -21,7 +21,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       width: 500,
       [theme.breakpoints.down('sm')]: {
         maxWidth: '100vw',
-        padding: '20px 16px'
+        padding: '20px 12px'
       },
       '.MuiFormControlLabel-label': {
         color: colors.invariant.lightGrey,
@@ -144,7 +144,9 @@ const useStyles = makeStyles()((theme: Theme) => {
     tokenContainer: {
       display: 'flex',
       flexDirection: 'column',
-      minWidth: 'min-content'
+      minWidth: 'min-content',
+      flexGrow: 1,
+      overflow: 'hidden'
     },
 
     tokenItem: {
@@ -153,7 +155,12 @@ const useStyles = makeStyles()((theme: Theme) => {
       marginBottom: 4,
       borderRadius: 24,
       cursor: 'pointer',
-      padding: '0 16px ',
+      padding: '0 12px',
+      position: 'relative',
+      overflow: 'hidden',
+      [theme.breakpoints.down('sm')]: {
+        padding: 0
+      },
 
       '& > p': {
         whiteSpace: 'nowrap'
@@ -166,7 +173,10 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     tokenName: {
       color: colors.white.main,
-      ...typography.heading3
+      ...typography.heading3,
+      [theme.breakpoints.down('sm')]: {
+        ...typography.heading4
+      }
     },
     tokenAddress: {
       backgroundColor: colors.invariant.newDark,
@@ -174,11 +184,15 @@ const useStyles = makeStyles()((theme: Theme) => {
       padding: '2px 4px',
       width: 'min-content',
       height: 'min-content',
+      whiteSpace: 'nowrap',
       '& a': {
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         gap: '12px',
+        [theme.breakpoints.down('sm')]: {
+          gap: '6px'
+        },
         textDecoration: 'none',
 
         '&:hover': {
@@ -194,6 +208,7 @@ const useStyles = makeStyles()((theme: Theme) => {
         }
       }
     },
+
     tokenDescrpiption: {
       color: colors.invariant.textGrey,
       opacity: 0.5,
@@ -205,17 +220,16 @@ const useStyles = makeStyles()((theme: Theme) => {
       color: colors.invariant.text,
       maxHeight: 40,
       opacity: 0.85,
-      '& p': {
-        ...typography.heading4
-      }
+      ...typography.heading4,
+      whiteSpace: 'nowrap'
     },
+
     tokenBalanceUSDStatus: {
       color: colors.invariant.textGrey,
       opacity: 0.85,
       maxHeight: 40,
-      '& p': {
-        ...typography.body2
-      }
+      whiteSpace: 'nowrap',
+      ...typography.body2
     },
 
     imageContainer: {
@@ -224,6 +238,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       height: 36,
       width: 36,
       marginRight: 16,
+      [theme.breakpoints.down('sm')]: {
+        marginRight: 12
+      },
       position: 'relative'
     },
     tokenIcon: {
@@ -245,7 +262,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     tokenBalance: {
       ...typography.body2,
       color: colors.invariant.textGrey,
-      whiteSpace: 'nowrap'
+      overflow: 'visible'
     },
     searchIcon: {
       color: colors.invariant.light
