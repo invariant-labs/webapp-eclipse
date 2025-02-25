@@ -17,6 +17,7 @@ import {
   getNewTokenOrThrow,
   getTokenPrice,
   printBN,
+  sciToString,
   tickerToAddress
 } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
@@ -668,18 +669,20 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     const minLiquidity = new BN(
-      +((+liquidity.toString() / currentConcentration) * concentrationArray[0]).toFixed(0)
+      sciToString(
+        ((+liquidity.toString() / currentConcentration) * concentrationArray[0]).toFixed(0)
+      )
     )
 
     const middleConcentration =
       +concentrationArray[Math.floor(concentrationArray.length / 2)].toFixed(0)
     const midLiquidity = new BN(
-      +((+liquidity.toString() / currentConcentration) * middleConcentration).toFixed(0)
+      sciToString(((+liquidity.toString() / currentConcentration) * middleConcentration).toFixed(0))
     )
 
     const maxConcentration = concentrationArray[concentrationArray.length - 1]
     const maxLiquidity = new BN(
-      +((+liquidity.toString() / currentConcentration) * maxConcentration).toFixed(0)
+      sciToString(((+liquidity.toString() / currentConcentration) * maxConcentration).toFixed(0))
     )
 
     const poolPointsPerSecond = promotedPools.find(

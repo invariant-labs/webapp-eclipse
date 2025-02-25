@@ -349,7 +349,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
           <Typography className={classes.subheader}>Set price range</Typography>
           {positionOpeningMethod === 'range' && (
             <Grid className={classes.rangeConcentration}>
-              <img src={icons.boostPoints} alt='' width='14px' />
+              <img src={icons.boostPoints} alt='Concentration' width='14px' />
               <Typography>Concentration </Typography>
               <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
             </Grid>

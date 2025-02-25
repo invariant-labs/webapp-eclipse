@@ -1933,3 +1933,11 @@ export const getConcentrationIndex = (concentrationArray: number[], neededValue:
 
   return concentrationIndex
 }
+
+export const sciToString = (sciStr: string | number) => {
+  const number = Number(sciStr)
+  if (!Number.isFinite(number)) throw new Error('Invalid number')
+
+  const fullStr = number.toLocaleString('fullwide', { useGrouping: false })
+  return BigInt(fullStr).toString()
+}
