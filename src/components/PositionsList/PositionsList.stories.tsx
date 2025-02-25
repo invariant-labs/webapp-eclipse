@@ -298,9 +298,6 @@ export const Primary: Story = {
       onConnect: () => {}
     },
     searchValue: '',
-    onClaimFee: () => {},
-    onClosePosition: () => {},
-    onLockPosition: () => {},
     searchSetValue: () => {},
     handleRefresh: () => {},
     initialPage: 1,

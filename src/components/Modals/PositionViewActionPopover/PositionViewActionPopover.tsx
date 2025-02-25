@@ -12,7 +12,6 @@ export interface IPositionViewActionPopover {
   handleClose: () => void
   onLockPosition: () => void
   isLocked: boolean
-  isPromoted: boolean
 }
 
 export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = ({
