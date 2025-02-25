@@ -15,7 +15,7 @@ import { useSharedStyles } from './style/shared'
 import { InactivePoolsPopover } from '../../components/InactivePoolsPopover/InactivePoolsPopover'
 import { NetworkType } from '@store/consts/static'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { singlePositionData } from '@store/selectors/positions'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
@@ -23,9 +23,7 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
-import { actions as lockerActions } from '@store/reducers/locker'
 import { lockerState } from '@store/selectors/locker'
-import { actions as positionActions } from '@store/reducers/positions'
 import { useNavigate } from 'react-router-dom'
 import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
 
@@ -33,6 +31,9 @@ interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
   isLockPositionModalOpen: boolean
   setIsLockPositionModalOpen: (value: boolean) => void
+  onLockPosition: (index: number, network: NetworkType) => void
+  onClaimFee: (index: number, isLocked: boolean) => void
+  onClosePosition: (positionIndex: number, onSuccess: () => void) => void
 }
 
 export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
@@ -52,6 +53,9 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   currentPrice,
   tokenXLiq,
   tokenYLiq,
+  onClaimFee,
+  onLockPosition,
+  onClosePosition,
   network,
   isLockPositionModalOpen,
   setIsLockPositionModalOpen
@@ -59,7 +63,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   const { classes } = useMobileStyles()
   const { classes: sharedClasses } = useSharedStyles()
   const airdropIconRef = useRef<any>(null)
-  const dispatch = useDispatch()
   const navigate = useNavigate()
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
@@ -130,6 +133,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   }, [isPromotedPoolPopoverOpen, isPromotedPoolInactive, isLockPositionModalOpen])
 
   useEffect(() => {
+    console.log()
     setAllowPropagation(!isLockPositionModalOpen)
   }, [isLockPositionModalOpen])
   const promotedIconFragment = useMemo(() => {
@@ -312,7 +316,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               <Box className={sharedClasses.unclaimedFeeContainer}>
                 <Typography className={sharedClasses.infoText}>Unclaimed Fee</Typography>
                 <Typography className={sharedClasses.greenText}>
-                  ${formatNumberWithSuffix(unclaimedFeesInUSD.value.toFixed(2))}
+                  ${formatNumberWithSuffix(unclaimedFeesInUSD.value)}
                 </Typography>
               </Box>
             </Grid>
@@ -396,10 +400,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     [min, max, currentPrice, xToY]
   )
 
-  const lockPosition = () => {
-    dispatch(lockerActions.lockPosition({ index: 0, network }))
-  }
-
   const { value, tokenXLabel, tokenYLabel } = useMemo<{
     value: string
     tokenXLabel: string
@@ -416,6 +416,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
   const { success, inProgress } = useSelector(lockerState)
 
+  useEffect(() => {
+    if (success && !inProgress && isLockPositionModalOpen) {
+      unblurContent()
+      setIsLockPositionModalOpen(false)
+    }
+  }, [success, inProgress, isLockPositionModalOpen, setIsLockPositionModalOpen])
+
   return (
     <Grid className={classes.root} container direction='column'>
       <LockLiquidityModal
@@ -424,7 +431,9 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         xToY={xToY}
         tokenX={{ name: tokenXName, icon: tokenXIcon, liqValue: tokenXLiq } as ILiquidityToken}
         tokenY={{ name: tokenYName, icon: tokenYIcon, liqValue: tokenYLiq } as ILiquidityToken}
-        onLock={lockPosition}
+        onLock={() => {
+          onLockPosition(positionSingleData?.positionIndex ?? 0, network)
+        }}
         fee={`${fee}% fee`}
         minMax={`${formatNumberWithSuffix(xToY ? min : 1 / max)}-${formatNumberWithSuffix(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
@@ -435,27 +444,18 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
       />
       <PositionViewActionPopover
         anchorEl={anchorEl}
+        isPromoted={isPromoted}
         handleClose={handleClose}
         open={isActionPopoverOpen}
         isLocked={positionSingleData?.isLocked ?? false}
         unclaimedFeesInUSD={unclaimedFeesInUSD.value}
         claimFee={() => {
-          dispatch(
-            positionActions.claimFee({
-              index: positionSingleData?.positionIndex ?? 0,
-              isLocked: positionSingleData?.isLocked ?? false
-            })
-          )
+          onClaimFee(positionSingleData?.positionIndex ?? 0, positionSingleData?.isLocked ?? false)
         }}
         closePosition={() => {
-          dispatch(
-            positionActions.closePosition({
-              positionIndex: positionSingleData?.positionIndex ?? 0,
-              onSuccess: () => {
-                navigate('/portfolio')
-              }
-            })
-          )
+          onClosePosition(positionSingleData?.positionIndex ?? 0, () => {
+            navigate('/portfolio')
+          })
         }}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />

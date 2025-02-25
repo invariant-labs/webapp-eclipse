@@ -79,6 +79,11 @@ export const LockLiquidityModal = ({
       onClose={onClose}
       className={classes.popover}
       anchorReference='none'
+      slotProps={{
+        root: {
+          onClick: e => e.stopPropagation()
+        }
+      }}
       anchorOrigin={{
         vertical: 'top',
         horizontal: 'left'
