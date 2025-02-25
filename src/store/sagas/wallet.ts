@@ -65,7 +65,7 @@ export function* getBalance(pubKey: PublicKey): SagaGenerator<BN> {
   yield* put(actions.setIsEthBalanceLoading(true))
   const connection = yield* call(getConnection)
   const balance = yield* call([connection, connection.getBalance], pubKey)
-  yield* put(actions.setBalance(balance))
+  yield* put(actions.setBalance(new BN(balance)))
   yield* put(actions.setIsEthBalanceLoading(false))
 }
 
