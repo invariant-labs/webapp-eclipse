@@ -14,7 +14,7 @@ import { typography, colors, theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
 import { useDispatch, useSelector } from 'react-redux'
-import { accounts, balanceLoading, swapTokens } from '@store/selectors/solanaWallet'
+import { balanceLoading, swapTokens } from '@store/selectors/solanaWallet'
 import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { ProcessedPool } from '@store/types/userOverview'
@@ -22,7 +22,7 @@ import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 import { useStyles } from './style'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 
-import { useEffect, useMemo, useState } from 'react'
+import { useMemo, useState } from 'react'
 import classNames from 'classnames'
 import { VariantType } from 'notistack'
 import { network } from '@store/selectors/solanaConnection'
@@ -34,14 +34,12 @@ export enum CardSwitcher {
 export const UserOverview = () => {
   const { classes } = useStyles()
   const tokensList = useSelector(swapTokens)
-  const accountsSelector = useSelector(accounts)
   const isBalanceLoading = useSelector(balanceLoading)
   const { processedPools, isLoading } = useProcessedTokens(tokensList)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isDownMd = useMediaQuery(theme.breakpoints.down('md'))
   const list = useSelector(positionsWithPoolsData)
-  const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(true)
   const [activePanel, setActivePanel] = useState<CardSwitcher>(CardSwitcher.Overview)
   const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
@@ -54,6 +52,20 @@ export const UserOverview = () => {
     }
   }
 
+  const initialHideUnknownTokensValue =
+    localStorage.getItem('HIDE_UNKNOWN_TOKENS') === 'true' ||
+    localStorage.getItem('HIDE_UNKNOWN_TOKENS') === null
+  const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(initialHideUnknownTokensValue)
+
+  const setHideUnknownTokensValue = (val: boolean) => {
+    localStorage.setItem('HIDE_UNKNOWN_TOKENS', val ? 'true' : 'false')
+  }
+
+  const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setHideUnknownTokens(e.target.checked)
+    setHideUnknownTokensValue(e.target.checked)
+  }
+
   const handleSnackbar = (message: string, variant: VariantType) => {
     dispatch(
       snackbarsActions.add({
@@ -63,9 +75,6 @@ export const UserOverview = () => {
       })
     )
   }
-  useEffect(() => {
-    console.log({ accountsSelector, len: Object.keys(accountsSelector).length, isBalanceLoading })
-  }, [accountsSelector, isBalanceLoading])
 
   const data: Pick<
     ProcessedPool,
@@ -113,10 +122,6 @@ export const UserOverview = () => {
     }
     return processedPools.filter(item => item.decimal > 0)
   }, [processedPools, hideUnknownTokens])
-
-  useEffect(() => {
-    console.log({ isBalanceLoading, isLoadingList, isLoading, processedPools })
-  }, [isBalanceLoading, isLoadingList, isLoading])
 
   const renderPositionDetails = () => (
     <Box
@@ -199,7 +204,7 @@ export const UserOverview = () => {
                         <Checkbox
                           checked={hideUnknownTokens}
                           className={classes.checkBox}
-                          onChange={e => setHideUnknownTokens(e.target.checked)}
+                          onChange={e => handleCheckbox(e)}
                         />
                       }
                       label='Hide unknown tokens'
@@ -274,7 +279,7 @@ export const UserOverview = () => {
                             <Checkbox
                               checked={hideUnknownTokens}
                               className={classes.checkBox}
-                              onChange={e => setHideUnknownTokens(e.target.checked)}
+                              onChange={e => handleCheckbox(e)}
                             />
                           }
                           label='Hide unknown tokens'
@@ -314,7 +319,7 @@ export const UserOverview = () => {
                       <Checkbox
                         checked={hideUnknownTokens}
                         className={classes.checkBox}
-                        onChange={e => setHideUnknownTokens(e.target.checked)}
+                        onChange={e => handleCheckbox(e)}
                       />
                     }
                     label='Hide unknown tokens'
