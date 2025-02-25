@@ -57,7 +57,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
     () =>
       showWarning || singleDepositWarning
         ? 0
-        : +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(0),
+        : +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(2),
     [concentrationIndex, concentrationArray, warningText.length]
   )
   const { classes } = useStyles({ percentage })
