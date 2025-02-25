@@ -214,6 +214,7 @@ export const PositionsList: React.FC<IProps> = ({
             <Grid className={classes.searchWrapper}>
               <Grid className={classes.filtersContainer}>
                 <FilterSearch
+                  loading={loading}
                   bp='md'
                   networkType={currentNetwork}
                   filtersAmount={2}
@@ -356,6 +357,7 @@ export const PositionsList: React.FC<IProps> = ({
 
               <FilterSearch
                 bp='md'
+                loading={loading}
                 networkType={currentNetwork}
                 filtersAmount={2}
                 selectedFilters={selectedFilters}
