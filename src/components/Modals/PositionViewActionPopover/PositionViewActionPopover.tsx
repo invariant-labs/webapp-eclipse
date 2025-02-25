@@ -20,7 +20,6 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   open,
   handleClose,
   isLocked,
-  isPromoted,
   claimFee,
   closePosition,
   onLockPosition,
@@ -70,7 +69,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
         </Grid>
         <Button
           className={classNames(classes.listItem)}
-          disabled={isLocked || isPromoted}
+          disabled={isLocked}
           onClick={() => {
             onLockPosition()
             handleClose()
