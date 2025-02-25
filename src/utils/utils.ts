@@ -1299,6 +1299,10 @@ export const handleSimulateWithHop = async (
   }
 
   if (best !== null) {
+    console.log(
+      simulations[best][1].swapHopOne.priceImpact.toString(),
+      simulations[best][1].swapHopTwo.priceImpact.toString()
+    )
     return { simulation: simulations[best][1], route: routeCandidates[simulations[best][0]] }
   } else {
     return { simulation: null, route: null }

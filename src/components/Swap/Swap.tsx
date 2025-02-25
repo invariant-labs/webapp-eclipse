@@ -267,13 +267,9 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
-  const priceImpact = +printBN(
-    simulationPath.secondPriceImpact
-      ? simulationPath.firstPriceImpact
-          ?.add(simulationPath.secondPriceImpact ?? new BN(0))
-          .div(new BN(2)) ?? new BN(0)
-      : simulationPath.firstPriceImpact ?? new BN(0),
-    DECIMAL - 2
+  const priceImpact = Math.max(
+    +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
+    +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
   )
 
   const IS_ERROR_LABEL_SHOW =
