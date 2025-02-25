@@ -68,8 +68,8 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         width: '100%'
       }}>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
-      <BlurOverlay isConnected={isConnected} />
       <Grid className={classes.section}>
+        <BlurOverlay isConnected={isConnected} />
         <ProgressItem
           background={{
             desktop: trapezeLeft,
