@@ -1,4 +1,4 @@
-import { Box, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import useStyles from './styles'
 import { Status } from '@store/reducers/solanaWallet'
@@ -18,7 +18,6 @@ import { CurrentContentPointsEntry, ITotalEntry } from '@store/reducers/leaderbo
 import { unblurContent } from '@utils/uiUtils'
 import { ContentPoints } from './ContentPoints'
 import ContentPointsModal from '@components/Modals/ContentPoints/ContentPointsModal'
-import { theme } from '@static/theme'
 
 interface YourProgressProps {
   userContentPoints: CurrentContentPointsEntry[] | null
@@ -42,7 +41,6 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   walletStatus
 }) => {
   const { classes } = useStyles()
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const [contentPointsOpen, setContentPointsOpen] = useState(false)
   const isLessThanMinimal = (value: BN) => {
@@ -70,99 +68,62 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         width: '100%'
       }}>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
-      <Box style={{ position: 'relative' }}>
-        <BlurOverlay isConnected={isConnected} />
-        <Box className={classes.sectionContent}>
-          <ProgressItem
-            background={{
-              desktop: trapezeLeft,
-              mobile: trapezeMobileTop
-            }}
-            desktopLabelAligment='right'
-            label='Points Per Day'
-            isLoading={isLoadingList}
-            value={pointsPerDayFormat}
-          />
+      <BlurOverlay isConnected={isConnected} />
+      <Grid className={classes.section}>
+        <ProgressItem
+          background={{
+            desktop: trapezeLeft,
+            mobile: trapezeMobileTop
+          }}
+          desktopLabelAligment='right'
+          label='Points Per Day'
+          isLoading={isLoadingList}
+          value={pointsPerDayFormat}
+        />
 
-          {isMobile ? (
-            <ProgressItem
-              background={{
-                desktop: trapezeBottomLeft,
-                mobile: boxModalMiddle
-              }}
-              tooltip='Points amount refreshes roughly every 30 minutes.'
-              desktopLabelAligment='right'
-              label='Total points'
-              value={
-                userStats
-                  ? formatNumberWithCommas(
-                      Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(
-                        2
-                      )
-                    )
-                  : 0
-              }
-            />
-          ) : (
-            <ContentPoints
-              background={{
-                desktop: trapezeRight,
-                mobile: boxModalMiddle
-              }}
-              setContentPointsOpen={setContentPointsOpen}
-              desktopLabelAligment='left'
-              label='Content Points'
-              value={formatNumberWithCommas(
-                (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
-              )}
-            />
+        <ContentPoints
+          isLoading={isLoadingList}
+          background={{
+            desktop: trapezeRight,
+            mobile: boxModalMiddle
+          }}
+          setContentPointsOpen={setContentPointsOpen}
+          desktopLabelAligment='left'
+          label='Content Points'
+          value={formatNumberWithCommas(
+            (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
           )}
-        </Box>
-        <Box className={classes.lowerSection}>
-          {!isMobile ? (
-            <ProgressItem
-              background={{
-                desktop: trapezeBottomLeft,
-                mobile: boxModalMiddle
-              }}
-              tooltip='Points amount refreshes roughly every 30 minutes.'
-              desktopLabelAligment='right'
-              label='Total points'
-              value={
-                userStats
-                  ? formatNumberWithCommas(
-                      Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(
-                        2
-                      )
-                    )
-                  : 0
-              }
-            />
-          ) : (
-            <ContentPoints
-              background={{
-                desktop: trapezeRight,
-                mobile: boxModalMiddle
-              }}
-              setContentPointsOpen={setContentPointsOpen}
-              desktopLabelAligment='left'
-              label='Content Points'
-              value={formatNumberWithCommas(
-                (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
-              )}
-            />
-          )}
-          <ProgressItem
-            background={{
-              desktop: trapezeBottomRight,
-              mobile: trapezeMobileBottom
-            }}
-            desktopLabelAligment='left'
-            label='Global rank'
-            value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
-          />
-        </Box>
-      </Box>
+        />
+        <ProgressItem
+          isLoading={isLoadingList}
+          background={{
+            desktop: trapezeBottomLeft,
+            mobile: boxModalMiddle
+          }}
+          isWideBlock={true}
+          tooltip='Points amount refreshes roughly every 30 minutes.'
+          desktopLabelAligment='right'
+          label='Total points'
+          value={
+            userStats
+              ? formatNumberWithCommas(
+                  Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
+                )
+              : 0
+          }
+        />
+
+        <ProgressItem
+          isLoading={isLoadingList}
+          background={{
+            desktop: trapezeBottomRight,
+            mobile: trapezeMobileBottom
+          }}
+          desktopLabelAligment='left'
+          label='Global rank'
+          value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
+        />
+      </Grid>
       <ContentPointsModal
         userContentPoints={userContentPoints}
         open={contentPointsOpen}

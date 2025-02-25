@@ -3,24 +3,21 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
   return {
-    sectionContent: {
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      flexDirection: 'row',
+    section: {
+      display: 'grid',
+      position: 'relative',
+      gridTemplateColumns: 'repeat(2, 1fr)',
       gap: 24,
       [theme.breakpoints.down('md')]: {
-        flexDirection: 'column'
+        display: 'flex',
+        flexDirection: 'column',
+        '& > :nth-child(1)': { order: 0 },
+        '& > :nth-child(3)': { order: 1 },
+        '& > :nth-child(2)': { order: 2 },
+        '& > :nth-child(4)': { order: 3 }
       }
     },
-    lowerSection: {
-      marginTop: '24px',
-      display: 'flex',
-      gap: '24px',
-      [theme.breakpoints.down('md')]: {
-        flexDirection: 'column'
-      }
-    },
+
     headerBigText: { ...typography.heading1, color: colors.invariant.text },
     headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
     tooltipContentPoints: { ...typography.body2, color: colors.invariant.textGrey },
