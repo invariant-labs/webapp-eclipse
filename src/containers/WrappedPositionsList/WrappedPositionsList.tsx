@@ -57,32 +57,32 @@ export const WrappedPositionsList: React.FC = () => {
     dispatch(actions.calculateTotalUnclaimedFees())
   }
 
-  const handleLockPosition = (index: number, network: NetworkType) => {
-    dispatch(
-      lockerActions.lockPosition({
-        index,
-        network
-      })
-    )
-  }
+  // const handleLockPosition = (index: number, network: NetworkType) => {
+  //   dispatch(
+  //     lockerActions.lockPosition({
+  //       index,
+  //       network
+  //     })
+  //   )
+  // }
 
-  const handleClaimFee = (index: number, isLocked: boolean) => {
-    dispatch(
-      positionActions.claimFee({
-        index,
-        isLocked
-      })
-    )
-  }
+  // const handleClaimFee = (index: number, isLocked: boolean) => {
+  //   dispatch(
+  //     positionActions.claimFee({
+  //       index,
+  //       isLocked
+  //     })
+  //   )
+  // }
 
-  const handleClosePosition = (positionIndex: number, onSuccess: () => void) => {
-    dispatch(
-      positionActions.closePosition({
-        positionIndex,
-        onSuccess
-      })
-    )
-  }
+  // const handleClosePosition = (positionIndex: number, onSuccess: () => void) => {
+  //   dispatch(
+  //     positionActions.closePosition({
+  //       positionIndex,
+  //       onSuccess
+  //     })
+  //   )
+  // }
 
   const data: IPositionItem[] = list
     .map(position => {
@@ -287,9 +287,6 @@ export const WrappedPositionsList: React.FC = () => {
       searchValue={value}
       searchSetValue={handleSearchValue}
       handleRefresh={handleRefresh}
-      onClaimFee={handleClaimFee}
-      onClosePosition={handleClosePosition}
-      onLockPosition={handleLockPosition}
       onAddPositionClick={() => {
         navigate('/newPosition')
       }}
