@@ -22,6 +22,8 @@ import {
   WETH_POOL_INIT_LAMPORTS_TEST,
   WETH_POSITION_INIT_LAMPORTS_MAIN,
   WETH_POSITION_INIT_LAMPORTS_TEST,
+  WETH_SWAP_AND_POSITION_INIT_LAMPORTS_MAIN,
+  WETH_SWAP_AND_POSITION_INIT_LAMPORTS_TEST,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import classNames from 'classnames'
@@ -237,11 +239,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
+      if (alignment === DepositOptions.Auto) {
+        return WETH_SWAP_AND_POSITION_INIT_LAMPORTS_TEST
+      }
       return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
     } else {
+      if (alignment === DepositOptions.Auto) {
+        return WETH_SWAP_AND_POSITION_INIT_LAMPORTS_MAIN
+      }
       return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_MAIN : WETH_POOL_INIT_LAMPORTS_MAIN
     }
-  }, [network, isCurrentPoolExisting])
+  }, [network, isCurrentPoolExisting, alignment])
 
   const [hideUnknownTokens, setHideUnknownTokens] = useState<boolean>(initialHideUnknownTokensValue)
 

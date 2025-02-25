@@ -56,10 +56,7 @@ export function* fetchAutoSwapPoolData(action: PayloadAction<Pair>) {
   const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
   try {
     const poolData = yield* call([marketProgram, marketProgram.getPool], action.payload)
-    const address = yield* call(
-      [action.payload, action.payload.getAddress],
-      marketProgram.program.programId
-    )
+    const address = action.payload.getAddress(marketProgram.program.programId)
 
     yield* put(
       actions.setAutoSwapPoolData({
