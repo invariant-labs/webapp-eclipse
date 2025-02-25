@@ -128,15 +128,10 @@ export const Header: React.FC<IHeader> = ({
   return (
     <Grid container>
       <Grid container className={classes.root} direction='row' alignItems='center' wrap='nowrap'>
-        <Grid
-          container
-          item
-          className={classes.leftSide}
-          justifyContent='flex-start'
-          sx={{ display: { xs: 'none', md: 'block' } }}>
+        <Grid container item className={classes.leftSide} justifyContent='flex-start'>
           <CardMedia
-            className={classes.logo}
-            image={icons.LogoTitle}
+            className={isSmDown ? classes.logoShort : classes.logo}
+            image={isSmDown ? icons.LogoShort : icons.LogoTitle}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
                 navigate('/exchange')
@@ -144,21 +139,7 @@ export const Header: React.FC<IHeader> = ({
             }}
           />
         </Grid>
-        <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-          <Grid container item className={classes.leftSide} justifyContent='flex-start'>
-            <Grid container>
-              <CardMedia
-                className={classes.logoShort}
-                image={icons.LogoShort}
-                onClick={() => {
-                  if (!activePath.startsWith('exchange')) {
-                    navigate('/exchange')
-                  }
-                }}
-              />
-            </Grid>
-          </Grid>
-        </Box>
+
         <Grid
           container
           item

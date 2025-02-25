@@ -47,8 +47,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      marginLeft: '6px',
-      marginRight: '6px',
       border: '2px solid transparent',
       backgroundImage: 'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
       backgroundOrigin: 'border-box',
@@ -57,6 +55,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       color: colors.invariant.text,
 
       [theme.breakpoints.down('sm')]: {
+        marginLeft: '6px',
+        marginRight: '6px',
         padding: '0px 2px'
       },
       [theme.breakpoints.between('sm', 'lg')]: {
