@@ -47,6 +47,11 @@ export const useStyles = makeStyles()(() => ({
     height: 32,
     marginBottom: '16px'
   },
+  overviewHeaderTitle: {
+    color: colors.invariant.text,
+    ...typography.heading4,
+    fontWeight: 500
+  },
   switchPoolsMarker: {
     position: 'absolute',
     top: 0,

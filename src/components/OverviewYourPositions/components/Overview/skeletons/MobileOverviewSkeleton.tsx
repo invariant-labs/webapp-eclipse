@@ -1,7 +1,6 @@
 import React from 'react'
 import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import { useMobileSkeletonStyle } from './styles/useMobileSkeleton'
-import { colors, typography } from '@static/theme'
 const MobileOverviewSkeleton: React.FC = () => {
   const { classes } = useMobileSkeletonStyle()
   const segments = Array(3).fill(null)
@@ -30,20 +29,14 @@ const MobileOverviewSkeleton: React.FC = () => {
       </Box>
 
       <Box className={classes.tokenLabelContainer}>
-        <Typography
-          className={classes.tokenTextSkeleton}
-          sx={{
-            ...typography.body2,
-            fontWeight: 600,
-            color: colors.invariant.textGrey
-          }}>
+        <Typography className={`${classes.tokenTextSkeleton} ${classes.tokensHeaderLabel}`}>
           Tokens
         </Typography>
 
         <Grid container spacing={1} className={classes.gridContainer}>
           {segments.map((_, index) => (
             <Grid item container key={index} className={classes.gridItem}>
-              <Grid item xs={1} sx={{ display: 'flex', alignItems: 'center' }}>
+              <Grid item xs={1} display='flex' alignItems='center'>
                 <Skeleton variant='circular' className={classes.logoSkeleton} />
               </Grid>
 

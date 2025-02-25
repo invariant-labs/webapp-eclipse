@@ -57,8 +57,8 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
     hoveredColor: hoveredIndex !== null ? chartColors[hoveredIndex] : null
   })
   return (
-    <Box sx={{ position: 'relative' }}>
-      <Box sx={{ position: 'absolute', top: 0, left: 0 }}>
+    <Box position='relative'>
+      <Box position={'absolute'} top={0} left={0}>
         <PieChart
           skipAnimation
           series={[
@@ -81,7 +81,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
           height={200}
         />
       </Box>
-      <Box sx={{ position: 'absolute', top: 0, left: 0 }}>
+      <Box position={'absolute'} top={0} left={0}>
         <PieChart
           skipAnimation
           series={[

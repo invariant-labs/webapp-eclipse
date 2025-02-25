@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Typography, Grid } from '@mui/material'
-import { typography, colors } from '@static/theme'
+import { typography } from '@static/theme'
 import {
   TokenColorOverride,
   useAverageLogoColor
@@ -40,7 +40,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
 
   return (
     <Box className={classes.container}>
-      <Typography sx={{ ...typography.body2, color: colors.invariant.textGrey }}>Tokens</Typography>
+      <Typography className={classes.tokenHeaderLabel}>Tokens</Typography>
 
       <Grid
         container

@@ -22,6 +22,10 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
       borderRadius: '4px'
     }
   },
+  tokenHeaderLabel: {
+    ...typography.body2,
+    color: colors.invariant.textGrey
+  },
   tokenRow: {
     paddingLeft: '0 !important',
     display: 'flex',

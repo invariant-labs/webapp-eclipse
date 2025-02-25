@@ -103,12 +103,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         .querySelector('.promoted-pool-inactive-popover')
         ?.contains(event.target as Node)
 
-      console.log('Click targets:', {
-        isClickInAirdropIcon,
-        isClickInPromotedPopover,
-        isClickInInactivePopover
-      })
-
       if (!isClickInAirdropIcon && !isClickInPromotedPopover && !isClickInInactivePopover) {
         if (isPromotedPoolPopoverOpen) {
           setIsPromotedPoolPopoverOpen(false)
@@ -145,10 +139,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           <div
             className={classes.actionButton}
             onClick={event => {
-              console.log('Promoted pool icon clicked')
               event.stopPropagation()
               setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-              console.log('Setting allowPropagation to false')
               setAllowPropagation(false)
             }}>
             <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
@@ -159,11 +151,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             anchorEl={airdropIconRef.current}
             open={isPromotedPoolPopoverOpen}
             onClose={() => {
-              console.log('PromotedPoolPopover onClose triggered')
               setIsPromotedPoolPopoverOpen(false)
-              console.log('Setting allowPropagation to true in 500ms')
               setTimeout(() => {
-                console.log('Actually setting allowPropagation to true from onClose')
                 setAllowPropagation(true)
               }, 500)
             }}
@@ -305,7 +294,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           </Tooltip>
         </Grid>
 
-        <Grid item xs={7} sx={{ paddingLeft: '16px' }}>
+        <Grid item xs={7} paddingLeft={'16px'}>
           {unclaimedFeesInUSD.loading ? (
             <Skeleton
               variant='rectangular'
@@ -320,14 +309,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               alignItems='center'
               className={sharedClasses.fee}
               sx={{ width: '100%' }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  alignItems: 'center',
-                  gap: '8px',
-                  width: '100%',
-                  justifyContent: 'center'
-                }}>
+              <Box className={sharedClasses.unclaimedFeeContainer}>
                 <Typography className={sharedClasses.infoText}>Unclaimed Fee</Typography>
                 <Typography className={sharedClasses.greenText}>
                   ${formatNumberWithSuffix(unclaimedFeesInUSD.value)}
@@ -358,7 +340,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               className={sharedClasses.value}
               alignItems='center'
               justifyContent='center'>
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <Box gap={'8px'} display={'flex'} alignItems={'center'}>
                 <Typography className={sharedClasses.infoText}>Value</Typography>
                 <Typography className={sharedClasses.greenText}>
                   ${formatNumberWithSuffix(tokenValueInUsd.value)}
@@ -401,7 +383,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
   const chartSection = useMemo(
     () => (
-      <Grid container justifyContent='center' sx={{ width: '80%', margin: '0 auto' }}>
+      <Grid container justifyContent='center' margin={'0 auto'} width={'80%'}>
         <MinMaxChart
           min={Number(xToY ? min : 1 / max)}
           max={Number(xToY ? max : 1 / min)}
@@ -485,7 +467,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           alignItems='center'
           justifyContent={'space-between'}
           wrap='nowrap'>
-          <Box sx={{ display: 'flex', alignItems: 'center' }}>
+          <Box display='flex' alignItems={'center'}>
             <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
               <img
                 className={sharedClasses.tokenIcon}
@@ -514,14 +496,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             </Typography>
           </Box>
 
-          <Box
-            ref={airdropIconRef}
-            sx={{
-              marginLeft: '16px',
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center'
-            }}>
+          <Box ref={airdropIconRef} className={sharedClasses.actionButtonContainer}>
             {networkSelector === NetworkType.Mainnet && <>{promotedIconFragment}</>}
             <Button
               className={classes.button}

@@ -1,8 +1,8 @@
 import { Box, Typography, Button, Skeleton, useMediaQuery } from '@mui/material'
-import { useStyles } from '../Overview/styles/styles'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { theme } from '@static/theme'
 import loadingAnimation from '@static/gif/loading.gif'
+import { useStyles } from './styles'
 
 interface UnclaimedSectionProps {
   unclaimedTotal: number
@@ -21,12 +21,7 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
   return (
     <Box className={classes.unclaimedSection}>
       <Box className={classes.titleRow}>
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center'
-          }}>
+        <Box className={classes.container}>
           <Typography className={classes.unclaimedTitle}>Unclaimed fees (total)</Typography>
           {!isLg && (
             <Button

@@ -43,7 +43,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const { isAllClaimFeesLoading } = useSelector(list)
   const isLoadingList = useSelector(isLoadingPositionsList)
-  const { classes } = useStyles({ isLoading: isLoadingList })
+  const { classes } = useStyles()
   const dispatch = useDispatch()
 
   const [prices, setPrices] = useState<Record<string, number>>({})

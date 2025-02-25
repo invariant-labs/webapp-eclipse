@@ -60,14 +60,12 @@ const PriceIndicatorLine: React.FC<{ position: number }> = ({ position }) => {
   )
 }
 
-const MinMaxLabels: React.FC<{ min: number; max: number }> = ({ min, max }) => (
-  <Box
-    sx={{
-      width: '100%',
-      display: 'flex',
-      justifyContent: 'space-between',
-      marginTop: '6px'
-    }}>
+const MinMaxLabels: React.FC<{
+  min: number
+  max: number
+  classes: Record<'minMaxLabels', string>
+}> = ({ min, max, classes }) => (
+  <Box className={classes.minMaxLabels}>
     <Typography
       sx={{
         ...typography.caption2,
@@ -124,7 +122,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         </Box>
       </Box>
 
-      <MinMaxLabels min={min} max={max} />
+      <MinMaxLabels min={min} max={max} classes={classes} />
     </Box>
   )
 }

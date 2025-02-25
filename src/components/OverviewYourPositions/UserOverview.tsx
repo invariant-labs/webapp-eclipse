@@ -10,7 +10,7 @@ import {
   ToggleButton,
   ToggleButtonGroup
 } from '@mui/material'
-import { typography, colors, theme } from '@static/theme'
+import { theme } from '@static/theme'
 import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
 import { useDispatch, useSelector } from 'react-redux'
@@ -168,14 +168,7 @@ export const UserOverview = () => {
     <Box className={classes.overviewContainer}>
       <Box>
         <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '20px'}>
-          <Typography
-            style={{
-              color: colors.invariant.text,
-              ...typography.heading4,
-              fontWeight: 500
-            }}>
-            Overview
-          </Typography>
+          <Typography className={classes.overviewHeaderTitle}>Overview</Typography>
         </Grid>
       </Box>
 

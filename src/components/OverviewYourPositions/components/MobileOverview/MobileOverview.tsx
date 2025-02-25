@@ -6,7 +6,7 @@ import { formatNumberWithoutSuffix } from '@utils/utils'
 import { isLoadingPositionsList } from '@store/selectors/positions'
 import { useSelector } from 'react-redux'
 import MobileOverviewSkeleton from '../Overview/skeletons/MobileOverviewSkeleton'
-import SegmentFragmentTooltip from '../Overview/SegmentFragmentTooltip'
+import SegmentFragmentTooltip from '../SegmentFragmentTooltip/SegmentFragmentTooltip'
 import { useStyles } from './styles'
 export interface ChartSegment {
   start: number

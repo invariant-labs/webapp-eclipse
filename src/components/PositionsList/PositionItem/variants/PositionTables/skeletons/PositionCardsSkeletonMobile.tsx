@@ -26,11 +26,7 @@ const PositionCardsSkeletonMobile = () => {
             />
           </Grid>
 
-          <Grid
-            container
-            justifyContent='space-between'
-            alignItems='center'
-            sx={{ marginTop: '16px' }}>
+          <Grid container justifyContent='space-between' alignItems='center' marginTop='16px'>
             <Grid item xs={5}>
               <Skeleton
                 variant='rectangular'

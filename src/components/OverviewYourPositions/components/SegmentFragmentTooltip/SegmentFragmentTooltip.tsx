@@ -2,7 +2,7 @@ import { Tooltip, Box, Typography } from '@mui/material'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import React, { useMemo, useEffect } from 'react'
 import { ChartSegment } from '../MobileOverview/MobileOverview'
-import { typography } from '@static/theme'
+import { useStyles } from './styles'
 
 interface TooltipClasses {
   tooltip: string
@@ -23,6 +23,7 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
   setSelectedSegment,
   tooltipClasses
 }) => {
+  const { classes } = useStyles({ color: segment.color })
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent | TouchEvent) => {
       const target = event.target as HTMLElement
@@ -68,12 +69,9 @@ const SegmentFragmentTooltip: React.FC<SegmentFragmentTooltipProps> = ({
         onClick={(e: React.MouseEvent) => e.stopPropagation()}
         onClose={() => setSelectedSegment(null)}
         title={
-          <Box sx={{ p: 1 }}>
-            <Typography
-              sx={{ color: segment.color, ...typography.body2, fontWeight: '600', mb: 0.5 }}>
-              {segment.token}
-            </Typography>
-            <Typography sx={{ mb: 0.5, ...typography.body2 }}>
+          <Box sx={{ padding: 1 }}>
+            <Typography className={classes.segmentTokenLabel}>{segment.token}</Typography>
+            <Typography className={classes.segmentTokenValue}>
               ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })} (
               {segment.percentage}%)
             </Typography>

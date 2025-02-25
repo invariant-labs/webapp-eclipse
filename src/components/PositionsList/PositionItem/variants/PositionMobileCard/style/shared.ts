@@ -148,6 +148,19 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
       marginRight: 0
     }
   },
+  actionButtonContainer: {
+    marginLeft: '16px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  unclaimedFeeContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    width: '100%',
+    justifyContent: 'center'
+  },
   activeFee: {
     background: colors.invariant.greenLinearGradient
   },

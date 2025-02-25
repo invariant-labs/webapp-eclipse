@@ -3,10 +3,25 @@ import icons from '@static/icons'
 import { TokenPool, StrategyConfig } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 
+type MobileCardClasses = Record<
+  | 'mobileCard'
+  | 'mobileCardHeader'
+  | 'mobileTokenInfo'
+  | 'tokenIcon'
+  | 'tokenSymbol'
+  | 'mobileStatsContainer'
+  | 'mobileStatItem'
+  | 'mobileStatLabel'
+  | 'mobileStatValue'
+  | 'warningIcon'
+  | 'mobileActionsContainer',
+  string
+>
+
 export const MobileCard: React.FC<{
   pool: TokenPool
-  classes: any
-  renderActions: any
+  classes: MobileCardClasses
+  renderActions: (pool: TokenPool, strategy: StrategyConfig) => JSX.Element
   getStrategy: () => StrategyConfig
 }> = ({ pool, classes, renderActions, getStrategy }) => {
   const strategy = getStrategy()

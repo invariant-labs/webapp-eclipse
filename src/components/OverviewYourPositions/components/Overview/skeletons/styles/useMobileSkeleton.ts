@@ -1,5 +1,5 @@
 import { makeStyles } from 'tss-react/mui'
-import { colors, theme } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 
 export const useMobileSkeletonStyle = makeStyles()(() => ({
   container: {
@@ -23,6 +23,11 @@ export const useMobileSkeletonStyle = makeStyles()(() => ({
     marginBottom: theme.spacing(2),
     width: '60px',
     height: '24px'
+  },
+  tokensHeaderLabel: {
+    ...typography.body2,
+    fontWeight: 600,
+    color: colors.invariant.textGrey
   },
   gridContainer: {
     marginTop: theme.spacing(1),

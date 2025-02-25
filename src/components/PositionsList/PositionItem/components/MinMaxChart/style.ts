@@ -27,7 +27,12 @@ export const useMinMaxChartStyles = makeStyles()(() => ({
     zIndex: 10,
     transform: `translateX(-${CHART_CONSTANTS.CHART_PADDING}px)`
   },
-
+  minMaxLabels: {
+    width: '100%',
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: '6px'
+  },
   handleRight: {
     position: 'absolute',
     left: `${CHART_CONSTANTS.MAX_HANDLE_OFFSET}%`,
