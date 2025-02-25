@@ -90,6 +90,8 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
     if (confirmedTx.value.err === null) {
       yield* put(actions.setLockSuccess(true))
       yield* put(positionsActions.getPositionsList())
+      yield put(actions.setLockSuccess(false))
+
       yield put(
         snackbarsActions.add({
           message: 'Position locked successfully.',
@@ -100,7 +102,6 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
       )
       return
     }
-    yield put(actions.setLockSuccess(false))
   } catch (e) {
     yield put(actions.setLockSuccess(false))
     closeSnackbar(loaderLockPosition)

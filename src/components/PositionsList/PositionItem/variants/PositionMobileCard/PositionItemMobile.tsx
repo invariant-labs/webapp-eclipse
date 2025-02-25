@@ -416,6 +416,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
   const { success, inProgress } = useSelector(lockerState)
 
+  useEffect(() => {
+    if (success && !inProgress && isLockPositionModalOpen) {
+      unblurContent()
+      setIsLockPositionModalOpen(false)
+    }
+  }, [success, inProgress, isLockPositionModalOpen, setIsLockPositionModalOpen])
+
   return (
     <Grid className={classes.root} container direction='column'>
       <LockLiquidityModal
@@ -425,7 +432,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         tokenX={{ name: tokenXName, icon: tokenXIcon, liqValue: tokenXLiq } as ILiquidityToken}
         tokenY={{ name: tokenYName, icon: tokenYIcon, liqValue: tokenYLiq } as ILiquidityToken}
         onLock={() => {
-          onLockPosition(0, network)
+          onLockPosition(positionSingleData?.positionIndex ?? 0, network)
         }}
         fee={`${fee}% fee`}
         minMax={`${formatNumberWithSuffix(xToY ? min : 1 / max)}-${formatNumberWithSuffix(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}

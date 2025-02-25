@@ -9,7 +9,7 @@ import {
   Box,
   Skeleton
 } from '@mui/material'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { IPositionItem } from '../../../types'
 import { colors, theme } from '@static/theme'
@@ -517,6 +517,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   }, [min, max, currentPrice, tokenXName, tokenYName, tokenXLiq, tokenYLiq, xToY])
 
   const { success, inProgress } = useSelector(lockerState)
+
+  useEffect(() => {
+    if (success && !inProgress && isLockPositionModalOpen) {
+      unblurContent()
+      setIsLockPositionModalOpen(false)
+    }
+  }, [success, inProgress, isLockPositionModalOpen, setIsLockPositionModalOpen])
 
   return (
     <TableRow>

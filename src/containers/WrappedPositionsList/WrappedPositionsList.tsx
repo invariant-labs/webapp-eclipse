@@ -73,7 +73,6 @@ export const WrappedPositionsList: React.FC = () => {
         isLocked
       })
     )
-    dispatch(positionActions.getPositionsList())
   }
 
   const handleClosePosition = (positionIndex: number, onSuccess: () => void) => {

@@ -1050,6 +1050,8 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
         })
       )
     } else {
+      yield put(actions.getPositionsList())
+
       yield put(
         snackbarsActions.add({
           message: 'Fee claimed successfully.',
@@ -1215,6 +1217,8 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
         })
       )
     } else {
+      yield put(actions.getPositionsList())
+
       yield put(
         snackbarsActions.add({
           message: 'Fee claimed successfully.',
