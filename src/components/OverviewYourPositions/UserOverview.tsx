@@ -35,7 +35,7 @@ export const UserOverview = () => {
   const { classes } = useStyles()
   const tokensList = useSelector(swapTokens)
   const isBalanceLoading = useSelector(balanceLoading)
-  const { processedPools, isLoading } = useProcessedTokens(tokensList)
+  const processedPools = useProcessedTokens(tokensList, isBalanceLoading)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isDownMd = useMediaQuery(theme.breakpoints.down('md'))
@@ -192,7 +192,7 @@ export const UserOverview = () => {
               currentNetwork={currentNetwork}
               handleSnackbar={handleSnackbar}
               pools={finalTokens}
-              isLoading={isLoading || isLoadingList || isBalanceLoading}
+              isLoading={isLoadingList || isBalanceLoading}
             />
             <Box className={classes.footer}>
               <Box className={classes.footerItem}>
@@ -267,7 +267,7 @@ export const UserOverview = () => {
                   handleSnackbar={handleSnackbar}
                   currentNetwork={currentNetwork}
                   pools={finalTokens}
-                  isLoading={isLoading || isLoadingList || isBalanceLoading}
+                  isLoading={isLoadingList || isBalanceLoading}
                 />
                 <Box className={classes.footer}>
                   <Box className={classes.footerItem}>
@@ -303,7 +303,7 @@ export const UserOverview = () => {
               currentNetwork={currentNetwork}
               handleSnackbar={handleSnackbar}
               pools={finalTokens}
-              isLoading={isLoading || isLoadingList || isBalanceLoading}
+              isLoading={isLoadingList || isBalanceLoading}
             />
           </Box>
           <Grid className={classes.footer}>
