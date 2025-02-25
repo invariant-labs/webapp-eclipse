@@ -47,7 +47,6 @@ interface IFilterSearch {
 const CustomPopper = memo((props: PopperProps) => {
   return <Popper {...props} placement='bottom-start' />
 })
-CustomPopper.displayName = 'CustomPopper'
 
 const PaperComponent = forwardRef((paperProps: any, ref: React.Ref<HTMLDivElement>) => {
   return (
@@ -58,8 +57,6 @@ const PaperComponent = forwardRef((paperProps: any, ref: React.Ref<HTMLDivElemen
     </Fade>
   )
 })
-PaperComponent.displayName = 'PaperComponent'
-
 export const FilterSearch: React.FC<IFilterSearch> = memo(
   ({
     networkType,
@@ -138,14 +135,6 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
           return '?cluster=testnet'
       }
     }, [networkType])
-
-    const options = useMemo(
-      () =>
-        mappedTokens.filter(
-          token => !selectedFilters.some(selected => selected.address === token.address)
-        ),
-      [mappedTokens, selectedFilters]
-    )
 
     const handleRemoveToken = useCallback(
       (tokenToRemove: ISearchToken) => {
@@ -263,6 +252,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
         multiple
         disablePortal
         id='token-selector'
+        isOptionEqualToValue={(option, value) => option.address === value.address}
         disableCloseOnSelect={!isTokensSelected || !loading}
         value={selectedFilters}
         popupIcon={null}
@@ -270,7 +260,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
         ListboxComponent={ListboxComponent}
         PopperComponent={CustomPopper}
         PaperComponent={PaperComponent}
-        options={options}
+        options={mappedTokens}
         classes={{ paper: classes.paper }}
         open={shouldOpenPopper}
         getOptionLabel={option => option.symbol}
@@ -303,7 +293,5 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     )
   }
 )
-
-FilterSearch.displayName = 'FilterSearch'
 
 export const MemoizedTokenOption = memo(TokenOption)
