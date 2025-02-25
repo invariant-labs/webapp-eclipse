@@ -13,7 +13,7 @@ import {
 } from '@store/selectors/positions'
 import { address, status } from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
-import { shallowEqual, useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
 import { IPositionItem } from '@components/PositionsList/types'
@@ -22,8 +22,8 @@ import { actions as actionsStats } from '@store/reducers/stats'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
-  const list = useSelector(positionsWithPoolsData, shallowEqual)
-  const lockedList = useSelector(lockedPositionsWithPoolsData, shallowEqual)
+  const list = useSelector(positionsWithPoolsData)
+  const lockedList = useSelector(lockedPositionsWithPoolsData)
   const isLoading = useSelector(isLoadingPositionsList)
   const lastPage = useSelector(lastPageSelector)
   const walletStatus = useSelector(status)
