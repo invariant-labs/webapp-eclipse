@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import useStyles from './styles'
 import { Status } from '@store/reducers/solanaWallet'
@@ -18,6 +18,7 @@ import { CurrentContentPointsEntry, ITotalEntry } from '@store/reducers/leaderbo
 import { unblurContent } from '@utils/uiUtils'
 import { ContentPoints } from './ContentPoints'
 import ContentPointsModal from '@components/Modals/ContentPoints/ContentPointsModal'
+import { theme } from '@static/theme'
 
 interface YourProgressProps {
   userContentPoints: CurrentContentPointsEntry[] | null
@@ -40,6 +41,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   totalItems,
   walletStatus
 }) => {
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const { classes } = useStyles()
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const [contentPointsOpen, setContentPointsOpen] = useState(false)
@@ -68,7 +70,19 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         width: '100%'
       }}>
       <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
-      <Grid className={classes.section}>
+      <Grid
+        className={classes.section}
+        sx={
+          isMd
+            ? {
+                '& > :nth-child(1)': { order: isConnected ? 0 : 0 },
+                '& > :nth-child(2)': { order: isConnected ? 2 : 1 },
+                '& > :nth-child(3)': { order: isConnected ? 1 : 3 },
+                '& > :nth-child(4)': { order: isConnected ? 2 : 2 },
+                '& > :nth-child(5)': { order: isConnected ? 4 : 4 }
+              }
+            : {}
+        }>
         <BlurOverlay isConnected={isConnected} />
         <ProgressItem
           background={{

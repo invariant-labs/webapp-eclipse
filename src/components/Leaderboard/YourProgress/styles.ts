@@ -10,11 +10,7 @@ const useStyles = makeStyles()(() => {
       gap: 24,
       [theme.breakpoints.down('md')]: {
         display: 'flex',
-        flexDirection: 'column',
-        '& > :nth-child(1)': { order: 0 },
-        '& > :nth-child(3)': { order: 1 },
-        '& > :nth-child(2)': { order: 2 },
-        '& > :nth-child(4)': { order: 3 }
+        flexDirection: 'column'
       }
     },
 
