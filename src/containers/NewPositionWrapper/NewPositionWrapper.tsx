@@ -659,7 +659,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const estimatedPointsForScale = (
     currentConcentration: number,
-
     concentrationArray: number[]
   ): { min: BN; middle: BN; max: BN } => {
     const poolAddress = poolIndex !== null ? allPools[poolIndex].address.toString() : ''
@@ -668,18 +667,20 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       return { min: new BN(0), middle: new BN(0), max: new BN(0) }
     }
 
-    const minLiquidity = liquidity
-      .div(new BN(currentConcentration))
-      .mul(new BN(concentrationArray[0]))
+    const minLiquidity = new BN(
+      +((+liquidity.toString() / currentConcentration) * concentrationArray[0]).toFixed(0)
+    )
 
     const middleConcentration =
       +concentrationArray[Math.floor(concentrationArray.length / 2)].toFixed(0)
-    const midLiquidity = liquidity
-      .div(new BN(currentConcentration))
-      .mul(new BN(middleConcentration))
+    const midLiquidity = new BN(
+      +((+liquidity.toString() / currentConcentration) * middleConcentration).toFixed(0)
+    )
 
     const maxConcentration = concentrationArray[concentrationArray.length - 1]
-    const maxLiquidity = liquidity.div(new BN(currentConcentration)).mul(new BN(maxConcentration))
+    const maxLiquidity = new BN(
+      +((+liquidity.toString() / currentConcentration) * maxConcentration).toFixed(0)
+    )
 
     const poolPointsPerSecond = promotedPools.find(
       pool => pool.address === poolAddress.toString()

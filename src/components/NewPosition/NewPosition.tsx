@@ -236,9 +236,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   )
 
   const rangeConcentrationArray = useMemo(() => {
+    const leftMinTick = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
+    const rightMaxTick = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
+
     const maxConcForRange = calculateConcentration(0, tickSpacing)
+    const minConcForRange = calculateConcentration(leftMinTick, rightMaxTick)
     const rangeConcentration = [...concentrationArray]
-    rangeConcentration.unshift(1)
+    rangeConcentration.unshift(minConcForRange)
     rangeConcentration.push(maxConcForRange)
 
     return rangeConcentration
@@ -297,7 +301,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
         ? concentrationArray[concentrationIndex]
-        : rangeConcentrationArray[concentrationIndexForRange],
+        : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
   }, [estimatedPointsPerDay, tokenADeposit, tokenBDeposit, positionOpeningMethod])
