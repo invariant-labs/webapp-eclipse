@@ -245,7 +245,7 @@ const useStyles = makeStyles()(theme => {
       '& p:last-of-type': {
         color: colors.invariant.text,
         ...typography.body3,
-        minWidth: 74,
+        minWidth: 82,
         textAlign: 'center'
       }
     }

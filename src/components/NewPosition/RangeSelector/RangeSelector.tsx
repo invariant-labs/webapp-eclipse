@@ -515,13 +515,15 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         /> */}
       </Grid>
       <Grid container className={classes.innerWrapper}>
-        <Grid container justifyContent='space-between' alignItems='center'>
+        <Grid container justifyContent='space-between' alignItems='center' minHeight={36}>
           <Typography className={classes.subheader}>Set price range</Typography>
-          <Grid className={classes.rangeConcentration}>
-            <img src={icons.boostPoints} alt='' width='14px' />
-            <Typography>Concentration </Typography>
-            <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
-          </Grid>
+          {positionOpeningMethod === 'range' && (
+            <Grid className={classes.rangeConcentration}>
+              <img src={icons.boostPoints} alt='' width='14px' />
+              <Typography>Concentration </Typography>
+              <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
+            </Grid>
+          )}
         </Grid>
         <Grid container className={classes.inputs}>
           <RangeInput
