@@ -16,12 +16,7 @@ const PositionCardsSkeletonMobile = () => {
                 <Skeleton variant='circular' className={classes.circularSkeletonSmall} />
                 <Skeleton variant='circular' className={classes.circularSkeleton} />
               </Box>
-              <Skeleton
-                variant='rectangular'
-                width={120}
-                height={32}
-                sx={{ marginLeft: '8px', borderRadius: '8px' }}
-              />
+              <Skeleton variant='text' width={120} height={24} sx={{ marginLeft: '8px' }} />
             </Box>
             <Skeleton
               variant='rectangular'
@@ -41,7 +36,7 @@ const PositionCardsSkeletonMobile = () => {
                 variant='rectangular'
                 width={'100%'}
                 height={36}
-                className={classes.basicSkeleton}
+                sx={{ borderRadius: '10px', margin: '0 auto' }}
               />
             </Grid>
             <Grid item xs={7} sx={{ paddingLeft: '16px', paddingTop: '0 !important' }}>
@@ -49,19 +44,19 @@ const PositionCardsSkeletonMobile = () => {
                 variant='rectangular'
                 width={'100%'}
                 height={36}
-                className={classes.basicSkeleton}
+                sx={{ borderRadius: '10px', margin: '0 auto' }}
               />
             </Grid>
           </Grid>
 
-          <Grid container spacing={2} sx={{ margin: '16px 0px' }}>
+          <Grid container spacing={2} sx={{ marginTop: '16px', marginBottom: '16px' }}>
             <Grid item xs={6} sx={{ paddingTop: '0 !important' }}>
               <Grid container justifyContent='center'>
                 <Skeleton
                   variant='rectangular'
                   width={'100%'}
                   height={36}
-                  className={classes.basicSkeleton}
+                  sx={{ borderRadius: '10px', margin: '0 auto' }}
                 />
               </Grid>
             </Grid>
@@ -71,7 +66,7 @@ const PositionCardsSkeletonMobile = () => {
                   variant='rectangular'
                   width={'100%'}
                   height={36}
-                  className={classes.basicSkeleton}
+                  sx={{ borderRadius: '10px', margin: '0 auto' }}
                 />
               </Grid>
             </Grid>

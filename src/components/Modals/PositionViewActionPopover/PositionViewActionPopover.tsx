@@ -50,7 +50,8 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           <Button
             disabled={unclaimedFeesInUSD <= 0}
             className={classNames(classes.listItem)}
-            onClick={() => {
+            onClick={e => {
+              e.stopPropagation()
               claimFee()
               handleClose()
             }}>
@@ -59,7 +60,8 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           <Button
             className={classNames(classes.listItem)}
             disabled={isLocked}
-            onClick={() => {
+            onClick={e => {
+              e.stopPropagation()
               closePosition()
               handleClose()
             }}>
@@ -69,7 +71,8 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
         <Button
           className={classNames(classes.listItem)}
           disabled={isLocked}
-          onClick={() => {
+          onClick={e => {
+            e.stopPropagation()
             onLockPosition()
             handleClose()
           }}>

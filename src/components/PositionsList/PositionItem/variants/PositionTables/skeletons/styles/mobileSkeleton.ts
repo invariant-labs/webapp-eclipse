@@ -35,6 +35,7 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
       height: '30px'
     }
   },
+
   tokenIcons: {
     display: 'flex',
     alignItems: 'center',
