@@ -256,7 +256,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
   const topSection = useMemo(
     () => (
-      <Grid container sx={{ width: '100%', mb: 2 }}>
+      <Grid container sx={{ width: '100%', marginBottom: 2 }}>
         <Grid item xs={5}>
           <Tooltip
             enterTouchDelay={0}
@@ -325,7 +325,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
 
   const middleSection = useMemo(
     () => (
-      <Grid container spacing={2} sx={{ mb: 2 }}>
+      <Grid container spacing={2} sx={{ marginBottom: 2 }}>
         <Grid item xs={6}>
           {tokenValueInUsd.loading ? (
             <Skeleton
@@ -459,7 +459,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         }}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
-      <Grid container item className={classes.mdTop} direction='row' wrap='nowrap' sx={{ mb: 2 }}>
+      <Grid
+        container
+        item
+        className={classes.mdTop}
+        direction='row'
+        wrap='nowrap'
+        sx={{ marginBottom: 2 }}>
         <Grid
           container
           item
