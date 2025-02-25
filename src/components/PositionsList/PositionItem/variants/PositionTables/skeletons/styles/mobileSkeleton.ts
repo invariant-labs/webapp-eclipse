@@ -15,6 +15,12 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
     },
     marginBottom: '16px'
   },
+
+  mobileCardSkeletonHeader: {
+    display: 'flex',
+    alignItems: 'center',
+    height: '36px'
+  },
   basicSkeleton: {
     borderRadius: '10px',
     margin: '0 auto'
