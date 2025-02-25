@@ -1280,6 +1280,11 @@ export function* handleClaimAllFees() {
     if (allPositionsData.length === 0) {
       return
     }
+    if (allPositionsData.length === 1) {
+      const claimFeeAction = actions.claimFee({ index: 0, isLocked: false })
+      return yield* call(handleClaimFee, claimFeeAction)
+    }
+
     yield* put(actions.setAllClaimLoader(true))
     yield put(
       snackbarsActions.add({
