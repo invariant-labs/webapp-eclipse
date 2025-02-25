@@ -191,7 +191,7 @@ export function* handleAirdrop(): Generator {
       yield* put(actions.showThankYouModal(true))
       yield put(
         snackbarsActions.add({
-          message: 'Airdrop in progress',
+          message: 'Airdrop in progress...',
           variant: 'pending',
           persist: true,
           key: loaderKey
@@ -227,7 +227,7 @@ export function* handleAirdrop(): Generator {
       }
       yield put(
         snackbarsActions.add({
-          message: 'Airdrop in progress',
+          message: 'Airdrop in progress...',
           variant: 'pending',
           persist: true,
           key: loaderKey
