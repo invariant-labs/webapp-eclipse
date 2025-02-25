@@ -1211,8 +1211,13 @@ export const handleSimulateWithHop = async (
   const { whitelistTickmaps, poolSet, routeCandidates } = routingEssentials(
     tokenIn,
     tokenOut,
-    market.program.programId
+    market.program.programId,
+    market.network
   )
+
+  if (routeCandidates.length === 0) {
+    return { simulation: null, route: null }
+  }
 
   const accounts = await market.fetchAccounts({
     pools: Array.from(poolSet).map(pool => new PublicKey(pool)),
