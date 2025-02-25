@@ -166,7 +166,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     tokenName: {
       color: colors.white.main,
-      ...typography.heading4
+      ...typography.heading3
     },
     tokenAddress: {
       backgroundColor: colors.invariant.newDark,
@@ -196,33 +196,41 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     tokenDescrpiption: {
       color: colors.invariant.textGrey,
+      opacity: 0.5,
       ...typography.caption2,
       lineHeight: '16px',
       whiteSpace: 'nowrap'
     },
     tokenBalanceStatus: {
+      color: colors.invariant.text,
+      maxHeight: 40,
+      opacity: 0.85,
+      '& p': {
+        ...typography.heading4
+      }
+    },
+    tokenBalanceUSDStatus: {
       color: colors.invariant.textGrey,
+      opacity: 0.85,
       maxHeight: 40,
       '& p': {
         ...typography.body2
-      },
-
-      '& p:last-child': {
-        color: colors.invariant.text
       }
     },
 
     imageContainer: {
-      minWidth: 30,
-      maxWidth: 30,
-      height: 30,
+      minWidth: 36,
+      maxWidth: 36,
+      height: 36,
+      width: 36,
       marginRight: 16,
       position: 'relative'
     },
     tokenIcon: {
-      minWidth: 30,
-      maxWidth: 30,
-      height: 30,
+      minWidth: 36,
+      maxWidth: 36,
+      height: 36,
+      width: 36,
       marginRight: 16,
       borderRadius: '50%',
       boxShadow: '0px 0px 10px rgba(216, 255, 181, 0.5)'

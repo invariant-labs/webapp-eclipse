@@ -129,7 +129,6 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
             className={classes.tokenBalanceStatus}>
             {!hideBalances && Number(tokenBalance) > 0 ? (
               <>
-                <Typography>Balance:</Typography>
                 <Typography>&nbsp; {formatNumberWithSuffix(tokenBalance)}</Typography>
               </>
             ) : null}
@@ -138,10 +137,10 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
             container
             justifyContent='flex-end'
             wrap='wrap'
-            className={classes.tokenBalanceStatus}>
+            className={classes.tokenBalanceUSDStatus}>
             {!hideBalances && Number(tokenBalance) > 0 ? (
               <>
-                <Typography>~$</Typography>
+                <Typography>$</Typography>
                 <Typography>{usdBalance.toFixed(2)}</Typography>
               </>
             ) : null}

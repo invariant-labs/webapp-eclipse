@@ -216,9 +216,9 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
 
     tokenIcon: {
-      minWidth: 30,
-      maxWidth: 30,
-      height: 30,
+      minWidth: 36,
+      maxWidth: 36,
+      height: 36,
       marginRight: 16,
       borderRadius: '50%',
       boxShadow: '0px 0px 10px rgba(216, 255, 181, 0.5)'
