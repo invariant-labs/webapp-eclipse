@@ -1,11 +1,11 @@
 import React from 'react'
 import { Box, Typography } from '@mui/material'
-import { MaxHandleNarrower, MinHandleNarrower } from '@components/PriceRangePlot/Brush/svgHandles'
 import { colors, typography } from '@static/theme'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { useMinMaxChartStyles } from './style'
 import { CHART_CONSTANTS } from './consts'
-
+import handleMax from '@static/svg/narrowChartMaxHandle.svg'
+import handleMin from '@static/svg/narrowChartMinHandle.svg'
 interface MinMaxChartProps {
   min: number
   max: number
@@ -102,7 +102,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
 
       <Box className={classes.chart}>
         <Box className={classes.handleLeft}>
-          <MinHandleNarrower />
+          <img src={handleMin} alt='MIN' />
         </Box>
 
         <GradientBox
@@ -120,7 +120,7 @@ export const MinMaxChart: React.FC<MinMaxChartProps> = ({ min, max, current }) =
         <PriceIndicatorLine position={currentPosition} />
 
         <Box className={classes.handleRight}>
-          <MaxHandleNarrower />
+          <img src={handleMax} alt='MAX' />
         </Box>
       </Box>
 

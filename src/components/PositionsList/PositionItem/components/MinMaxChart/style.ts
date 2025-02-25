@@ -23,7 +23,7 @@ export const useMinMaxChartStyles = makeStyles()(() => ({
   handleLeft: {
     position: 'absolute',
     left: 0,
-    top: 0,
+    top: -2,
     zIndex: 10,
     transform: `translateX(-${CHART_CONSTANTS.CHART_PADDING}px)`
   },
@@ -31,7 +31,7 @@ export const useMinMaxChartStyles = makeStyles()(() => ({
   handleRight: {
     position: 'absolute',
     left: `${CHART_CONSTANTS.MAX_HANDLE_OFFSET}%`,
-    top: 0,
+    top: -2,
     zIndex: 10
   },
   currentValueIndicator: {
