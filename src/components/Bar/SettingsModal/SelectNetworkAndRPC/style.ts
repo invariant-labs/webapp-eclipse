@@ -6,7 +6,7 @@ export const useStyles = makeStyles()(() => {
     container: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 16
+      gap: 8
     },
     networkContainer: {
       display: 'flex',
@@ -36,6 +36,7 @@ export const useStyles = makeStyles()(() => {
       ...typography.body2
     },
     title: {
+      marginLeft: 8,
       ...typography.body1
     },
     activeIconContainer: {

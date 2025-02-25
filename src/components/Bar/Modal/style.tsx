@@ -9,7 +9,7 @@ export const useStyles = makeStyles()(() => {
     },
     popover: {
       width: 240,
-      padding: 24,
+      padding: '16px 8px',
       borderRadius: 24,
       background: colors.invariant.component,
       boxShadow: 'none'
@@ -29,10 +29,17 @@ export const useStyles = makeStyles()(() => {
       ...typography.body2,
       color: colors.invariant.textGrey
     },
+    closeIconContainer: {
+      height: 24,
+      width: 24,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      cursor: 'pointer'
+    },
     closeIcon: {
       height: 12,
-      width: 12,
-      cursor: 'pointer'
+      width: 12
     },
     container: {
       display: 'flex',

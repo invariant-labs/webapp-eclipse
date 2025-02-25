@@ -68,17 +68,8 @@ const useStyles = makeStyles()((theme: Theme) => {
         flex: '1 1 0%'
       },
 
-      // [theme.breakpoints.up('lg')]: {
-      //   minWidth: 500
-      // },
-
-      // [theme.breakpoints.only('md')]: {
-      //   minWidth: 300
-      // },
-
       [theme.breakpoints.down('md')]: {
         marginLeft: 0
-        // justifyContent: 'center'
       },
 
       [theme.breakpoints.down('sm')]: {

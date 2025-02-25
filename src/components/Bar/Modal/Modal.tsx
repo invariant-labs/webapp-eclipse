@@ -50,12 +50,9 @@ export const Modal = ({ icon, title, showTitle, children }: Props) => {
           {showTitle && (
             <Box className={classes.popoverHeader}>
               <Typography className={classes.title}>{title}</Typography>
-              <img
-                className={classes.closeIcon}
-                src={icons.closeSmallIcon}
-                alt='Close icon'
-                onClick={() => handleClose()}
-              />
+              <Box className={classes.closeIconContainer} onClick={() => handleClose()}>
+                <img className={classes.closeIcon} src={icons.closeSmallIcon} alt='Close icon' />
+              </Box>
             </Box>
           )}
           {children}

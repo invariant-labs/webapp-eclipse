@@ -8,6 +8,7 @@ export const useStyles = makeStyles()(() => {
       height: 24
     },
     title: {
+      marginLeft: 8,
       ...typography.body1
     },
     closeIcon: {
@@ -18,7 +19,7 @@ export const useStyles = makeStyles()(() => {
     container: {
       display: 'flex',
       flexDirection: 'column',
-      gap: 16
+      gap: 8
     },
     chainContainer: {
       display: 'flex',
