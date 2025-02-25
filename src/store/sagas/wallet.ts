@@ -62,22 +62,18 @@ export function* getWallet(): SagaGenerator<WalletAdapter> {
   return wallet
 }
 export function* getBalance(pubKey: PublicKey): SagaGenerator<BN> {
+  yield* put(actions.setIsEthBalanceLoading(true))
   const connection = yield* call(getConnection)
   const balance = yield* call([connection, connection.getBalance], pubKey)
-  return new BN(balance)
+  yield* put(actions.setBalance(balance))
+  yield* put(actions.setIsEthBalanceLoading(false))
 }
 
 export function* handleBalance(): Generator {
   const wallet = yield* call(getWallet)
   yield* put(actions.setAddress(wallet.publicKey))
-  yield* put(actions.setIsBalanceLoading(true))
-
-  const balance = yield* call(getBalance, wallet.publicKey)
-  yield* put(actions.setBalance(balance))
-
+  yield* call(getBalance, wallet.publicKey)
   yield* call(fetchTokensAccounts)
-
-  yield* put(actions.setIsBalanceLoading(false))
 }
 
 interface IparsedTokenInfo {
@@ -97,6 +93,7 @@ interface TokenAccountInfo {
 export function* fetchTokensAccounts(): Generator {
   const connection = yield* call(getConnection)
   const wallet = yield* call(getWallet)
+  yield* put(actions.setIsTokenBalanceLoading(true))
 
   const { splTokensAccounts, token2022TokensAccounts } = yield* all({
     splTokensAccounts: call(
@@ -148,6 +145,7 @@ export function* fetchTokensAccounts(): Generator {
 
   yield* put(actions.setTokenAccounts(newAccounts))
   yield* put(poolsActions.addTokens(unknownTokens))
+  yield* put(actions.setIsTokenBalanceLoading(false))
 }
 
 // export function* getToken(tokenAddress: PublicKey): SagaGenerator<Mint> {

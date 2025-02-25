@@ -8,15 +8,29 @@ import { WRAPPED_ETH_ADDRESS } from '@store/consts/static'
 
 const store = (s: AnyProps) => s[solanaWalletSliceName] as ISolanaWallet
 
-export const { address, balance, accounts, status, balanceLoading, thankYouModalShown } =
-  keySelectors(store, [
-    'address',
-    'balance',
-    'accounts',
-    'status',
-    'balanceLoading',
-    'thankYouModalShown'
-  ])
+export const {
+  address,
+  balance,
+  accounts,
+  status,
+  ethBalanceLoading,
+  tokenBalanceLoading,
+  thankYouModalShown
+} = keySelectors(store, [
+  'address',
+  'balance',
+  'accounts',
+  'status',
+  'ethBalanceLoading',
+  'tokenBalanceLoading',
+  'thankYouModalShown'
+])
+
+export const balanceLoading = createSelector(
+  ethBalanceLoading,
+  tokenBalanceLoading,
+  (a, b) => a || b
+)
 
 export const tokenBalance = (tokenAddress: PublicKey) =>
   createSelector(accounts, tokensAccounts => {
@@ -64,7 +78,7 @@ export const swapTokens = createSelector(
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
           ? ethBalance
-          : (allAccounts[token.address.toString()]?.balance ?? new BN(0))
+          : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
   }
 )
@@ -80,7 +94,7 @@ export const poolTokens = createSelector(
       balance:
         token.address.toString() === WRAPPED_ETH_ADDRESS
           ? ethBalance
-          : (allAccounts[token.address.toString()]?.balance ?? new BN(0))
+          : allAccounts[token.address.toString()]?.balance ?? new BN(0)
     }))
   }
 )
@@ -99,7 +113,7 @@ export const swapTokensDict = createSelector(
         balance:
           val.address.toString() === WRAPPED_ETH_ADDRESS
             ? ethBalance
-            : (allAccounts[val.address.toString()]?.balance ?? new BN(0))
+            : allAccounts[val.address.toString()]?.balance ?? new BN(0)
       }
     })
 
@@ -146,7 +160,8 @@ export const solanaWalletSelectors = {
   accounts,
   status,
   tokenAccount,
-  balanceLoading,
+  ethBalanceLoading,
+  tokenBalanceLoading,
   thankYouModalShown
 }
 export default solanaWalletSelectors

@@ -26,14 +26,11 @@ interface ProcessedPool {
   amount: number
 }
 
-export const useProcessedTokens = (tokensList: Token[]) => {
+export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolean) => {
   const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([])
-  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     const processTokens = async () => {
-      setIsLoading(true)
-
       const nonZeroTokens = tokensList.filter(token => {
         const balance = printBN(token.balance, token.decimals)
         return parseFloat(balance) > 0
@@ -63,13 +60,12 @@ export const useProcessedTokens = (tokensList: Token[]) => {
       )
 
       setProcessedPools(processed)
-      setIsLoading(false)
     }
-
+    if (isBalanceLoading) return
     if (tokensList?.length) {
       processTokens()
     }
-  }, [tokensList])
+  }, [tokensList, isBalanceLoading])
 
-  return { processedPools, isLoading }
+  return processedPools
 }
