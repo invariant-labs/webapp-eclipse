@@ -198,7 +198,7 @@ export function* handleSwapWithETH(): Generator {
 
       return yield put(
         snackbarsActions.add({
-          message: 'ETH wrapping failed. Please try again',
+          message: 'ETH wrapping failed. Please try again.',
           variant: 'error',
           persist: false,
           txid: initialTxid
@@ -230,7 +230,7 @@ export function* handleSwapWithETH(): Generator {
     // } else {
     yield put(
       snackbarsActions.add({
-        message: 'Tokens swapped successfully',
+        message: 'Tokens swapped successfully.',
         variant: 'success',
         persist: false,
         txid: initialTxid
@@ -295,7 +295,7 @@ export function* handleSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: 'Failed to send. Please try again.',
           variant: 'error',
           persist: false
         })
@@ -415,7 +415,7 @@ export function* handleSwap(): Generator {
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Tokens swapping failed. Please try again',
+          message: 'Tokens swapping failed. Please try again.',
           variant: 'error',
           persist: false,
           txid
@@ -424,7 +424,7 @@ export function* handleSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Tokens swapped successfully',
+          message: 'Tokens swapped successfully.',
           variant: 'success',
           persist: false,
           txid
@@ -458,7 +458,7 @@ export function* handleSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: 'Failed to send. Please try again.',
           variant: 'error',
           persist: false
         })

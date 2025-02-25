@@ -49,7 +49,7 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
     } else {
       dispatch(
         snackbarsActions.add({
-          message: 'Captcha failed. Please try again',
+          message: 'Captcha failed. Please try again.',
           variant: 'error',
           persist: false
         })

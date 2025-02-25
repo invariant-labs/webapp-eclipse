@@ -61,8 +61,6 @@ const useStyles = makeStyles()(() => {
       boxShadow: 'none'
     },
     icon: {
-      width: 22,
-      height: 22,
       float: 'left',
       marginRight: 8,
       opacity: 1

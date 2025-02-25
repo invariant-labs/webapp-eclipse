@@ -1,5 +1,5 @@
 import { alpha } from '@mui/material'
-import { typography, colors, theme } from '@static/theme'
+import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -7,10 +7,7 @@ export const useStyles = makeStyles()(() => ({
     backgroundColor: colors.invariant.component,
     borderRadius: 24,
     padding: 24,
-    boxSizing: 'border-box',
-    [theme.breakpoints.down('sm')]: {
-      padding: '24px 12px'
-    }
+    boxSizing: 'border-box'
   },
   volumeContainer: {
     display: 'flex',

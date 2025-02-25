@@ -30,7 +30,7 @@
     "@mui/icons-material": "^5.15.15",
     "@mui/material": "^5.15.15",
     "@mui/x-charts": "^7.22.3",
-    "@nightlylabs/wallet-selector-solana": "^0.3.14",
+    "@nightlylabs/wallet-selector-solana": "^0.3.13",
     "@nivo/bar": "^0.87.0",
     "@nivo/line": "^0.86.0",
     "@project-serum/sol-wallet-adapter": "^0.2.5",

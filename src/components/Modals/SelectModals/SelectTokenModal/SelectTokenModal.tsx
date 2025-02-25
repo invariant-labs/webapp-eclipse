@@ -2,7 +2,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import searchIcon from '@static/svg/lupa.svg'
 import { theme } from '@static/theme'
 import React, { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
-import { areEqual, FixedSizeList as List, ListChildComponentProps } from 'react-window'
+import { FixedSizeList as List } from 'react-window'
 import useStyles from '../style'
 import AddTokenModal from '@components/Modals/AddTokenModal/AddTokenModal'
 import {
@@ -41,14 +41,6 @@ export interface ISelectTokenModal {
   hiddenUnknownTokens: boolean
   network: NetworkType
 }
-interface RowItemData {
-  tokens: (SwapToken & { index: number; strAddress: string })[]
-  onSelect: (index: number) => void
-  hideBalances: boolean
-  isXs: boolean
-  networkUrl: string
-  classes: ReturnType<typeof useStyles>['classes']
-}
 
 export interface IScroll {
   onScroll: (e: React.UIEvent<HTMLElement>) => void
@@ -65,73 +57,6 @@ const Scroll = forwardRef<React.LegacyRef<Scrollbars>, IScroll>(({ onScroll, chi
 
 const CustomScrollbarsVirtualList = React.forwardRef<React.LegacyRef<Scrollbars>, IScroll>(
   (props, ref) => <Scroll {...props} ref={ref} />
-)
-
-const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
-  ({ index, style, data }) => {
-    const { tokens, onSelect, hideBalances, isXs, networkUrl, classes } = data
-    const token = tokens[index]
-    const tokenBalance = printBN(token.balance, token.decimals)
-
-    return (
-      <Grid
-        className={classes.tokenItem}
-        container
-        style={{
-          ...style,
-          width: 'calc(100% - 50px)'
-        }}
-        alignItems='center'
-        wrap='nowrap'
-        onClick={() => {
-          onSelect(token.index)
-        }}>
-        <Box className={classes.imageContainer}>
-          <TokenIcon icon={token.logoURI} name={token.name} />
-        </Box>
-        <Grid container className={classes.tokenContainer}>
-          <Grid container direction='row' columnGap='6px' alignItems='center' wrap='nowrap'>
-            <Typography className={classes.tokenName}>
-              {token.symbol ? token.symbol : 'Unknown'}
-            </Typography>
-            <Grid className={classes.tokenAddress} container direction='column'>
-              <a
-                href={`https://eclipsescan.xyz/token/${token.assetAddress.toString()}${networkUrl}`}
-                target='_blank'
-                rel='noopener noreferrer'
-                onClick={event => {
-                  event.stopPropagation()
-                }}>
-                <Typography>
-                  {token.assetAddress.toString().slice(0, 4) +
-                    '...' +
-                    token.assetAddress.toString().slice(-5, -1)}
-                </Typography>
-                <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
-              </a>
-            </Grid>
-          </Grid>
-          <Typography className={classes.tokenDescrpiption}>
-            {token.name ? token.name.slice(0, isXs ? 20 : 30) : 'Unknown'}
-            {token.name.length > (isXs ? 20 : 30) ? '...' : ''}
-          </Typography>
-        </Grid>
-        <Grid
-          container
-          justifyContent='flex-end'
-          wrap='wrap'
-          className={classes.tokenBalanceStatus}>
-          {!hideBalances && Number(tokenBalance) > 0 ? (
-            <>
-              <Typography>Balance:</Typography>
-              <Typography>&nbsp; {formatNumberWithSuffix(tokenBalance)}</Typography>
-            </>
-          ) : null}
-        </Grid>
-      </Grid>
-    )
-  },
-  areEqual
 )
 
 export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
@@ -164,20 +89,15 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
       setHideUnknown(hiddenUnknownTokens)
     }, [hiddenUnknownTokens])
 
-    type IndexedSwapToken = SwapToken & {
-      index: number
-      strAddress: string
-    }
-
-    const tokensWithIndexes = useMemo<IndexedSwapToken[]>(() => {
-      return tokens.map(
-        (token, index): IndexedSwapToken => ({
+    const tokensWithIndexes = useMemo(
+      () =>
+        tokens.map((token, index) => ({
           ...token,
           index,
           strAddress: token.assetAddress.toString()
-        })
-      )
-    }, [tokens])
+        })),
+      [tokens]
+    )
 
     const commonTokensList = useMemo(
       () =>
@@ -366,20 +286,80 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                 itemSize={66}
                 itemCount={filteredTokens.length}
                 outerElementType={CustomScrollbarsVirtualList}
-                outerRef={outerRef}
-                itemData={{
-                  tokens: filteredTokens,
-                  onSelect: (idx: number) => {
-                    onSelect(idx)
-                    setValue('')
-                    handleClose()
-                  },
-                  hideBalances,
-                  isXs,
-                  networkUrl,
-                  classes
-                }}>
-                {RowItem}
+                outerRef={outerRef}>
+                {({ index, style }: { index: number; style: React.CSSProperties }) => {
+                  const token = filteredTokens[index]
+                  const tokenBalance = printBN(token.balance, token.decimals)
+
+                  return (
+                    <Grid
+                      className={classes.tokenItem}
+                      container
+                      style={{
+                        ...style,
+                        width: 'calc(100% - 50px)'
+                      }}
+                      alignItems='center'
+                      wrap='nowrap'
+                      onClick={() => {
+                        onSelect(token.index)
+                        setValue('')
+                        handleClose()
+                      }}>
+                      <Box className={classes.imageContainer}>
+                        <TokenIcon icon={token.logoURI} name={token.name} />
+                        {token.isUnknown && (
+                          <img className={classes.warningIcon} src={icons.warningIcon} />
+                        )}
+                      </Box>
+                      <Grid container className={classes.tokenContainer}>
+                        <Grid
+                          container
+                          direction='row'
+                          columnGap='6px'
+                          alignItems='center'
+                          wrap='nowrap'>
+                          <Typography className={classes.tokenName}>
+                            {token.symbol ? token.symbol : 'Unknown'}{' '}
+                          </Typography>
+                          <Grid className={classes.tokenAddress} container direction='column'>
+                            <a
+                              href={`https://eclipsescan.xyz/token/${token.assetAddress.toString()}${networkUrl}`}
+                              target='_blank'
+                              rel='noopener noreferrer'
+                              onClick={event => {
+                                event.stopPropagation()
+                              }}>
+                              <Typography>
+                                {token.assetAddress.toString().slice(0, 4) +
+                                  '...' +
+                                  token.assetAddress.toString().slice(-5, -1)}
+                              </Typography>
+                              <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
+                            </a>
+                          </Grid>
+                        </Grid>
+
+                        <Typography className={classes.tokenDescrpiption}>
+                          {token.name ? token.name.slice(0, isXs ? 20 : 30) : 'Unknown'}
+                          {token.name.length > (isXs ? 20 : 30) ? '...' : ''}
+                        </Typography>
+                      </Grid>
+                      <Grid
+                        container
+                        justifyContent='flex-end'
+                        wrap='wrap'
+                        className={classes.tokenBalanceStatus}>
+                        {!hideBalances && Number(tokenBalance) > 0 ? (
+                          <>
+                            <Typography>Balance:</Typography>
+                            <Typography>&nbsp; {formatNumberWithSuffix(tokenBalance)}</Typography>
+                          </>
+                        ) : null}
+                      </Grid>
+                    </Grid>
+                  )
+                }}
               </List>
             </Box>
           </Grid>
