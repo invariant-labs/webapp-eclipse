@@ -1,6 +1,6 @@
 import NavbarButton from '@components/Navbar/NavbarButton'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
-import { Box, CardMedia, Grid, useMediaQuery } from '@mui/material'
+import { CardMedia, Grid, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
 import { theme } from '@static/theme'
 import { RPC, NetworkType } from '@store/consts/static'
