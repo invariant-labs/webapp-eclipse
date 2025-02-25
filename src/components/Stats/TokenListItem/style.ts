@@ -26,6 +26,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '30% 22.5% 32.5% 15%',
+      padding: '18px 12px',
+
       '& p': {
         ...typography.caption1
       }
@@ -33,6 +35,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   tokenList: {
+    alignItems: 'center',
     color: colors.white.main,
     '& p': {
       ...typography.heading4
@@ -46,16 +49,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   header: {
-    '& p': {
+    '& p.MuiTypography-root': {
       ...typography.heading4,
-      fontWeight: 400,
+      fontWeight: 600,
       display: 'flex',
       justifyContent: 'start',
-      alignItems: 'center'
-    },
-    [theme.breakpoints.down('sm')]: {
-      '& p': {
-        ...typography.caption2
+      alignItems: 'center',
+
+      [theme.breakpoints.down('sm')]: {
+        ...typography.caption2,
+        fontWeight: 600
       }
     }
   },

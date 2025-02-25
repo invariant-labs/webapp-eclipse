@@ -19,6 +19,7 @@ import { InfoComponent } from './InfoComponent/InfoComponent'
 import { Faq } from './Faq/Faq'
 import { Claim } from './Claim/Claim'
 import {
+  CurrentContentPointsEntry,
   CurrentUser,
   ILpEntry,
   ISwapEntry,
@@ -31,6 +32,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 
 interface LeaderboardProps {
+  userContentPoints: CurrentContentPointsEntry[] | null
   isDelayWarning: boolean
   lastSnapTimestamp: string
   userStats: CurrentUser
@@ -68,6 +70,7 @@ interface LeaderboardProps {
 }
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({
+  userContentPoints,
   isDelayWarning,
   lastSnapTimestamp,
   userStats,
@@ -148,6 +151,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
       <Box className={classes.leaderBoardWrapper}>
         <Grid display='flex' flexDirection='column' alignItems='center' gap={3} width='100%'>
           <YourProgress
+            userContentPoints={userContentPoints}
             userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
             isLoadingList={isLoadingList}

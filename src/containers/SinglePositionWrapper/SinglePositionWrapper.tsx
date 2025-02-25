@@ -76,19 +76,22 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [isFinishedDelayRender, setIsFinishedDelayRender] = useState(false)
 
   const [isClosingPosition, setIsClosingPosition] = useState(false)
-  // const poolKey = position?.poolKey ? poolKeyToString(position?.poolKey) : ''
 
   useEffect(() => {
-    // if (position?.id && waitingForTicksData === null && allTickMaps[poolKey] !== undefined) {
-    if (position?.id && waitingForTicksData === null) {
+    if (position?.id) {
+      dispatch(actions.setCurrentPositionId(id))
+
       setWaitingForTicksData(true)
-      dispatch(actions.getCurrentPositionRangeTicks(id))
-      dispatch(
-        actions.getCurrentPlotTicks({
-          poolIndex: position.poolData.poolIndex,
-          isXtoY: true
-        })
-      )
+      dispatch(actions.getCurrentPositionRangeTicks({ id }))
+
+      if (waitingForTicksData === null) {
+        dispatch(
+          actions.getCurrentPlotTicks({
+            poolIndex: position.poolData.poolIndex,
+            isXtoY: true
+          })
+        )
+      }
     }
   }, [position?.id])
 

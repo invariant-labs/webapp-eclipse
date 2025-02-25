@@ -8,6 +8,7 @@ import icons from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme, typography } from '@static/theme'
 import infoIcon from '@static/svg/info.svg'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
   pointsPerSecond: string
@@ -24,7 +25,6 @@ export const RewardedPools: React.FC<IProps> = ({
   rewardedPoolsData
 }: IProps) => {
   const { classes } = useStyles()
-
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const data = useMemo(
@@ -89,7 +89,29 @@ export const RewardedPools: React.FC<IProps> = ({
                   justifySelf: 'self-start'
                 }}>
                 Pools Distributing Points
-                <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
+                <TooltipGradient
+                  title={
+                    <div style={{ maxWidth: 250 }} onClick={e => e.stopPropagation()}>
+                      List of pools currently distributing points. Updates on new pools will be
+                      announced on our{' '}
+                      <a
+                        href='https://x.com/invariant_labs'
+                        target='_blank'
+                        rel='noopener noreferrer'
+                        style={{
+                          color: 'inherit',
+                          textDecoration: 'underline',
+                          pointerEvents: 'auto'
+                        }}>
+                        X
+                      </a>
+                      .
+                    </div>
+                  }
+                  placement='bottom'
+                  enterTouchDelay={0}>
+                  <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
+                </TooltipGradient>
               </Typography>
             </Box>
           )}
