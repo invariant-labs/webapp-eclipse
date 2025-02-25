@@ -215,6 +215,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 }) => {
   const { classes } = useStyles()
   const breakpoint630Down = useMediaQuery(theme.breakpoints.down(630))
+  const brekpoint1270to1350 = useMediaQuery(theme.breakpoints.between(1270, 1350))
   const breakpointMdTo1000 = useMediaQuery(theme.breakpoints.between('md', 1000))
   const { value: valueA } = tokenAInputState
   const { value: valueB } = tokenBInputState
@@ -761,6 +762,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           <Box className={classes.depositOptions}>
             {!breakpoint630Down &&
               !breakpointMdTo1000 &&
+              !brekpoint1270to1350 &&
               simulation?.swapSimulation?.priceImpact &&
               alignment === DepositOptions.Auto &&
               isAutoSwapAvailable &&
@@ -819,7 +821,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </Button>
           </Box>
         </Box>
-        {(breakpoint630Down || breakpointMdTo1000) &&
+        {(breakpoint630Down || breakpointMdTo1000 || brekpoint1270to1350) &&
           alignment === DepositOptions.Auto &&
           isAutoSwapAvailable && (
             <Box className={classes.depositHeaderContainer}>{renderPriceImpactWarning()}</Box>

@@ -94,7 +94,7 @@ export interface SwapAndCreatePosition
   positionSlippage: BN
   liquidityDelta: BN
   minUtilizationPercentage: BN
-  isSamePool: Boolean
+  isSamePool: boolean
 }
 
 export interface GetCurrentTicksData {

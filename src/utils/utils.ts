@@ -35,7 +35,8 @@ import {
   PRICE_SCALE,
   Range,
   simulateSwapAndCreatePosition,
-  simulateSwapAndCreatePositionOnTheSamePool
+  simulateSwapAndCreatePositionOnTheSamePool,
+  toDecimal
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
@@ -1282,7 +1283,8 @@ export const simulateAutoSwap = async (
         maxCrosses,
         slippage: swapSlippage
       },
-      { lowerTick, knownPrice, slippage: positionSlippage, upperTick }
+      { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
+      toDecimal(1, 3)
     )
     return simulateResult
   } catch (e) {
