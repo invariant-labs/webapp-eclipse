@@ -25,6 +25,8 @@ import { PositionsTable } from './PositionItem/variants/PositionTables/Positions
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
 
+import { NetworkType } from '@store/consts/static'
+
 export enum LiquidityPools {
   Standard = 'Standard',
   Locked = 'Locked'
@@ -46,6 +48,9 @@ interface IProps {
   lockedLength: number
   noInitialPositions: boolean
   lockedData: IPositionItem[]
+  onLockPosition: (index: number, network: NetworkType) => void
+  onClaimFee: (index: number, isLocked: boolean) => void
+  onClosePosition: (positionIndex: number, onSuccess: () => void) => void
 }
 
 export const PositionsList: React.FC<IProps> = ({
@@ -56,6 +61,9 @@ export const PositionsList: React.FC<IProps> = ({
   noConnectedBlockerProps,
   searchValue,
   searchSetValue,
+  onClaimFee,
+  onClosePosition,
+  onLockPosition,
   handleRefresh,
   length,
   lockedLength,
@@ -125,6 +133,9 @@ export const PositionsList: React.FC<IProps> = ({
           setIsLockPositionModalOpen={setIsLockPositionModalOpen}
           noInitialPositions={noInitialPositions}
           onAddPositionClick={onAddPositionClick}
+          onClaimFee={onClaimFee}
+          onClosePosition={onClosePosition}
+          onLockPosition={onLockPosition}
         />
       )
     } else if (isLg && loading) {
@@ -161,6 +172,9 @@ export const PositionsList: React.FC<IProps> = ({
           isLockPositionModalOpen={isLockPositionModalOpen}
           setIsLockPositionModalOpen={setIsLockPositionModalOpen}
           setAllowPropagation={setAllowPropagation}
+          onClaimFee={onClaimFee}
+          onClosePosition={onClosePosition}
+          onLockPosition={onLockPosition}
         />
       </Grid>
     ))

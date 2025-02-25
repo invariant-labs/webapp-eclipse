@@ -18,7 +18,7 @@ import { BN } from '@coral-xyz/anchor'
 import icons from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import classNames from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { useSharedStyles } from '../PositionMobileCard/style/shared'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
@@ -30,12 +30,11 @@ import React from 'react'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { singlePositionData } from '@store/selectors/positions'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
-import { actions as lockerActions } from '@store/reducers/locker'
 import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
-import { actions as positionActions } from '@store/reducers/positions'
+import { NetworkType } from '@store/consts/static'
 import { useNavigate } from 'react-router-dom'
 
 interface ILoadingStates {
@@ -52,6 +51,9 @@ interface IPositionsTableRow extends IPositionItem {
   isLockPositionModalOpen: boolean
   setIsLockPositionModalOpen: (value: boolean) => void
   loading?: boolean | ILoadingStates
+  onLockPosition: (index: number, network: NetworkType) => void
+  onClaimFee: (index: number, isLocked: boolean) => void
+  onClosePosition: (positionIndex: number, onSuccess: () => void) => void
 }
 
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
@@ -73,6 +75,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenXLiq,
   tokenYLiq,
   network,
+  onClaimFee,
+  onClosePosition,
+  onLockPosition,
   loading,
   isLockPositionModalOpen,
   setIsLockPositionModalOpen
@@ -497,12 +502,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     setActionPopoverOpen(false)
   }
 
-  const dispatch = useDispatch()
-
-  const lockPosition = () => {
-    dispatch(lockerActions.lockPosition({ index: 0, network: networkType }))
-  }
-
   const { value, tokenXLabel, tokenYLabel } = useMemo<{
     value: string
     tokenXLabel: string
@@ -527,7 +526,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         xToY={xToY}
         tokenX={{ name: tokenXName, icon: tokenXIcon, liqValue: tokenXLiq } as ILiquidityToken}
         tokenY={{ name: tokenYName, icon: tokenYIcon, liqValue: tokenYLiq } as ILiquidityToken}
-        onLock={lockPosition}
+        onLock={() => {
+          onLockPosition(positionSingleData?.positionIndex ?? 0, networkType)
+        }}
         fee={`${fee}% fee`}
         minMax={`${formatNumberWithoutSuffix(xToY ? min : 1 / max)}-${formatNumberWithoutSuffix(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
@@ -539,26 +540,17 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       <PositionViewActionPopover
         anchorEl={anchorEl}
         handleClose={handleClose}
+        isPromoted={isPromoted}
         open={isActionPopoverOpen}
         isLocked={positionSingleData?.isLocked ?? false}
         unclaimedFeesInUSD={unclaimedFeesInUSD.value}
         claimFee={() => {
-          dispatch(
-            positionActions.claimFee({
-              index: positionSingleData?.positionIndex ?? 0,
-              isLocked: positionSingleData?.isLocked ?? false
-            })
-          )
+          onClaimFee(positionSingleData?.positionIndex ?? 0, positionSingleData?.isLocked ?? false)
         }}
         closePosition={() => {
-          dispatch(
-            positionActions.closePosition({
-              positionIndex: positionSingleData?.positionIndex ?? 0,
-              onSuccess: () => {
-                navigate('/portfolio')
-              }
-            })
-          )
+          onClosePosition(positionSingleData?.positionIndex ?? 0, () => {
+            navigate('/portfolio')
+          })
         }}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />

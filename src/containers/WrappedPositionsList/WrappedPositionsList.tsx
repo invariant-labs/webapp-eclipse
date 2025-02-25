@@ -1,5 +1,5 @@
 import { PositionsList } from '@components/PositionsList/PositionsList'
-import { POSITIONS_PER_PAGE } from '@store/consts/static'
+import { NetworkType, POSITIONS_PER_PAGE } from '@store/consts/static'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { DECIMAL, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -16,6 +16,8 @@ import { useEffect, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
+import { actions as lockerActions } from '@store/reducers/locker'
+import { actions as positionActions } from '@store/reducers/positions'
 import { IPositionItem } from '@components/PositionsList/types'
 import { network } from '@store/selectors/solanaConnection'
 
@@ -53,6 +55,34 @@ export const WrappedPositionsList: React.FC = () => {
   const handleRefresh = () => {
     dispatch(actions.getPositionsList())
     dispatch(actions.calculateTotalUnclaimedFees())
+  }
+
+  const handleLockPosition = (index: number, network: NetworkType) => {
+    dispatch(
+      lockerActions.lockPosition({
+        index,
+        network
+      })
+    )
+  }
+
+  const handleClaimFee = (index: number, isLocked: boolean) => {
+    dispatch(
+      positionActions.claimFee({
+        index,
+        isLocked
+      })
+    )
+    dispatch(positionActions.getPositionsList())
+  }
+
+  const handleClosePosition = (positionIndex: number, onSuccess: () => void) => {
+    dispatch(
+      positionActions.closePosition({
+        positionIndex,
+        onSuccess
+      })
+    )
   }
 
   const data: IPositionItem[] = list
@@ -250,11 +280,6 @@ export const WrappedPositionsList: React.FC = () => {
         item.tokenYName.toLowerCase().includes(value.toLowerCase())
       )
     })
-  // useEffect(() => {
-  //   if (walletStatus === Status.Initialized && walletAddress && !loadedPages[0] && !length) {
-  //     dispatch(actions.getPositionsListPage({ index: 0, refresh: false }))
-  //   }
-  // }, [walletStatus, loadedPages])
 
   return (
     <PositionsList
@@ -263,6 +288,9 @@ export const WrappedPositionsList: React.FC = () => {
       searchValue={value}
       searchSetValue={handleSearchValue}
       handleRefresh={handleRefresh}
+      onClaimFee={handleClaimFee}
+      onClosePosition={handleClosePosition}
+      onLockPosition={handleLockPosition}
       onAddPositionClick={() => {
         navigate('/newPosition')
       }}
@@ -278,22 +306,6 @@ export const WrappedPositionsList: React.FC = () => {
         title: 'Start exploring liquidity pools right now!',
         descCustomText: 'Or, connect your wallet to see existing positions, and create a new one!'
       }}
-      // pageChanged={page => {
-      //   const index = positionListPageToQueryPage(page)
-
-      //   if (walletStatus === Status.Initialized && walletAddress && !loadedPages[index] && length) {
-      //     dispatch(
-      //       actions.getPositionsListPage({
-      //         index,
-      //         refresh: false
-      //       })
-      //     )
-      //   }
-      // }}
-      // loadedPages={loadedPages}
-      // getRemainingPositions={() => {
-      //   dispatch(actions.getRemainingPositions({ setLoaded: true }))
-      // }}
       length={list.length}
       lockedLength={lockedList.length}
       noInitialPositions={list.length === 0 && lockedList.length === 0}

@@ -15,6 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import { usePositionTableStyle } from './styles/positionTable'
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import { generatePositionTableLoadingData } from '@utils/utils'
+import { NetworkType } from '@store/consts/static'
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>
@@ -23,6 +24,9 @@ interface IPositionsTableProps {
   noInitialPositions?: boolean
   onAddPositionClick?: () => void
   isLoading?: boolean
+  onLockPosition: (index: number, network: NetworkType) => void
+  onClaimFee: (index: number, isLocked: boolean) => void
+  onClosePosition: (positionIndex: number, onSuccess: () => void) => void
 }
 
 export const PositionsTable: React.FC<IPositionsTableProps> = ({
@@ -30,6 +34,9 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   isLockPositionModalOpen,
   setIsLockPositionModalOpen,
   noInitialPositions,
+  onClaimFee,
+  onClosePosition,
+  onLockPosition,
   onAddPositionClick,
   isLoading = false
 }) => {
@@ -96,6 +103,9 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
                   isLockPositionModalOpen={isLockPositionModalOpen}
                   setIsLockPositionModalOpen={setIsLockPositionModalOpen}
                   loading={isLoading}
+                  onLockPosition={onLockPosition}
+                  onClaimFee={onClaimFee}
+                  onClosePosition={onClosePosition}
                 />
               </TableRow>
             ))}
