@@ -94,7 +94,7 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
 
       yield put(
         snackbarsActions.add({
-          message: 'Position locked successfully.',
+          message: 'Position locked successfully',
           variant: 'success',
           persist: false,
           txid: signatureTx
