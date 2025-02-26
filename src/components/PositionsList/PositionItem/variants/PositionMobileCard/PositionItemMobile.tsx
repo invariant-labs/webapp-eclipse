@@ -15,7 +15,7 @@ import { useSharedStyles } from './style/shared'
 import { InactivePoolsPopover } from '../../components/InactivePoolsPopover/InactivePoolsPopover'
 import { NetworkType } from '@store/consts/static'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { singlePositionData } from '@store/selectors/positions'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
@@ -23,16 +23,14 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
-import { actions as lockerActions } from '@store/reducers/locker'
 import { lockerState } from '@store/selectors/locker'
-import { actions as positionActions } from '@store/reducers/positions'
-import { useNavigate } from 'react-router-dom'
 import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
-  isLockPositionModalOpen: boolean
-  setIsLockPositionModalOpen: (value: boolean) => void
+  handleLockPosition: (index: number) => void
+  handleClosePosition: (index: number) => void
+  handleClaimFee: (index: number, isLocked: boolean) => void
 }
 
 export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
@@ -53,19 +51,28 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXLiq,
   tokenYLiq,
   network,
-  isLockPositionModalOpen,
-  setIsLockPositionModalOpen
+  handleLockPosition,
+  handleClosePosition,
+  handleClaimFee
 }) => {
   const { classes } = useMobileStyles()
   const { classes: sharedClasses } = useSharedStyles()
   const airdropIconRef = useRef<any>(null)
-  const dispatch = useDispatch()
-  const navigate = useNavigate()
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
   const positionSingleData: ISinglePositionData | undefined = useSelector(
     singlePositionData(id ?? '')
   )
+
+  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (isLockPositionModalOpen) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isLockPositionModalOpen])
 
   const networkSelector = useSelector(currentNetwork)
 
@@ -396,10 +403,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     [min, max, currentPrice, xToY]
   )
 
-  const lockPosition = () => {
-    dispatch(lockerActions.lockPosition({ index: 0, network }))
-  }
-
   const { value, tokenXLabel, tokenYLabel } = useMemo<{
     value: string
     tokenXLabel: string
@@ -424,7 +427,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         xToY={xToY}
         tokenX={{ name: tokenXName, icon: tokenXIcon, liqValue: tokenXLiq } as ILiquidityToken}
         tokenY={{ name: tokenYName, icon: tokenYIcon, liqValue: tokenYLiq } as ILiquidityToken}
-        onLock={lockPosition}
+        onLock={() => handleLockPosition(positionSingleData?.positionIndex ?? 0)}
         fee={`${fee}% fee`}
         minMax={`${formatNumberWithSuffix(xToY ? min : 1 / max)}-${formatNumberWithSuffix(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
@@ -439,24 +442,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         open={isActionPopoverOpen}
         isLocked={positionSingleData?.isLocked ?? false}
         unclaimedFeesInUSD={unclaimedFeesInUSD.value}
-        claimFee={() => {
-          dispatch(
-            positionActions.claimFee({
-              index: positionSingleData?.positionIndex ?? 0,
-              isLocked: positionSingleData?.isLocked ?? false
-            })
+        claimFee={() =>
+          handleClaimFee(
+            positionSingleData?.positionIndex ?? 0,
+            positionSingleData?.isLocked ?? false
           )
-        }}
-        closePosition={() => {
-          dispatch(
-            positionActions.closePosition({
-              positionIndex: positionSingleData?.positionIndex ?? 0,
-              onSuccess: () => {
-                navigate('/portfolio')
-              }
-            })
-          )
-        }}
+        }
+        closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
       <Grid
