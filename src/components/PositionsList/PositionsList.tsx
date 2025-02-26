@@ -17,7 +17,6 @@ import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { PositionItemMobile } from './PositionItem/variants/PositionMobileCard/PositionItemMobile'
 import { IPositionItem } from './types'
-import { blurContent, unblurContent } from '@utils/uiUtils'
 import { PositionsTable } from './PositionItem/variants/PositionTables/PositionsTable'
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
@@ -45,6 +44,9 @@ interface IProps {
   noInitialPositions: boolean
   lockedData: IPositionItem[]
   currentNetwork: NetworkType
+  handleLockPosition: (index: number) => void
+  handleClosePosition: (index: number) => void
+  handleClaimFee: (index: number, isLocked: boolean) => void
 }
 
 export const PositionsList: React.FC<IProps> = ({
@@ -61,7 +63,10 @@ export const PositionsList: React.FC<IProps> = ({
   // getRemainingPositions,
   noInitialPositions,
   lockedData,
-  currentNetwork
+  currentNetwork,
+  handleLockPosition,
+  handleClosePosition,
+  handleClaimFee
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -117,16 +122,6 @@ export const PositionsList: React.FC<IProps> = ({
     dispatch(actions.getLeaderboardConfig())
   }, [dispatch])
 
-  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
-
-  useEffect(() => {
-    if (isLockPositionModalOpen) {
-      blurContent()
-    } else {
-      unblurContent()
-    }
-  }, [isLockPositionModalOpen])
-
   const [allowPropagation, setAllowPropagation] = useState(true)
 
   const renderContent = () => {
@@ -139,10 +134,11 @@ export const PositionsList: React.FC<IProps> = ({
         <PositionsTable
           positions={filteredData}
           isLoading={loading}
-          isLockPositionModalOpen={isLockPositionModalOpen}
-          setIsLockPositionModalOpen={setIsLockPositionModalOpen}
           noInitialPositions={noInitialPositions}
           onAddPositionClick={onAddPositionClick}
+          handleLockPosition={handleLockPosition}
+          handleClosePosition={handleClosePosition}
+          handleClaimFee={handleClaimFee}
         />
       )
     } else if (isLg && loading) {
@@ -176,9 +172,10 @@ export const PositionsList: React.FC<IProps> = ({
         <PositionItemMobile
           key={index}
           {...element}
-          isLockPositionModalOpen={isLockPositionModalOpen}
-          setIsLockPositionModalOpen={setIsLockPositionModalOpen}
           setAllowPropagation={setAllowPropagation}
+          handleLockPosition={handleLockPosition}
+          handleClosePosition={handleClosePosition}
+          handleClaimFee={handleClaimFee}
         />
       </Grid>
     ))

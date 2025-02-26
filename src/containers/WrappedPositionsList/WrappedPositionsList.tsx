@@ -19,6 +19,7 @@ import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
 import { IPositionItem } from '@components/PositionsList/types'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as actionsStats } from '@store/reducers/stats'
+import { actions as lockerActions } from '@store/reducers/locker'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
@@ -52,6 +53,25 @@ export const WrappedPositionsList: React.FC = () => {
   useEffect(() => {
     dispatch(actionsStats.getCurrentStats())
   }, [])
+
+  const handleLockPosition = (index: number) => {
+    dispatch(lockerActions.lockPosition({ index, network: currentNetwork }))
+  }
+
+  const handleClosePosition = (index: number) => {
+    dispatch(
+      actions.closePosition({
+        positionIndex: index,
+        onSuccess: () => {
+          navigate('/portfolio')
+        }
+      })
+    )
+  }
+
+  const handleClaimFee = (index: number, isLocked: boolean) => {
+    dispatch(actions.claimFee({ index, isLocked }))
+  }
 
   const data: IPositionItem[] = useMemo(
     () =>
@@ -257,6 +277,9 @@ export const WrappedPositionsList: React.FC = () => {
       length={list.length}
       lockedLength={lockedList.length}
       noInitialPositions={list.length === 0 && lockedList.length === 0}
+      handleLockPosition={handleLockPosition}
+      handleClosePosition={handleClosePosition}
+      handleClaimFee={handleClaimFee}
     />
   )
 }

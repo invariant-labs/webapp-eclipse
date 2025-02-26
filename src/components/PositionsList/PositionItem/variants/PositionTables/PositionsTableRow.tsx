@@ -9,7 +9,7 @@ import {
   Box,
   Skeleton
 } from '@mui/material'
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { IPositionItem } from '../../../types'
 import { colors, theme } from '@static/theme'
@@ -18,26 +18,21 @@ import { BN } from '@coral-xyz/anchor'
 import icons from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import classNames from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
+import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { useSharedStyles } from '../PositionMobileCard/style/shared'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import SwapList from '@static/svg/swap-list.svg'
-import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import PositionStatusTooltip from '../../components/PositionStatusTooltip/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import React from 'react'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { singlePositionData } from '@store/selectors/positions'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
-import { actions as lockerActions } from '@store/reducers/locker'
 import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
-import { actions as positionActions } from '@store/reducers/positions'
-import { useNavigate } from 'react-router-dom'
-import { NetworkType } from '@store/consts/static'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -53,9 +48,9 @@ interface IPositionsTableRow extends IPositionItem {
   isLockPositionModalOpen: boolean
   setIsLockPositionModalOpen: (value: boolean) => void
   loading?: boolean | ILoadingStates
-  onLockPosition: (index: number, networkType: NetworkType) => void
-  onClaimFee: (index: number, isLocked: boolean) => void
-  onClosePosition: (positionIndex: number, onSuccess: () => void) => void
+  handleLockPosition: (index: number) => void
+  handleClosePosition: (index: number) => void
+  handleClaimFee: (index: number, isLocked: boolean) => void
 }
 
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
@@ -78,8 +73,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenYLiq,
   network,
   loading,
-  isLockPositionModalOpen,
-  setIsLockPositionModalOpen
+  handleClaimFee,
+  handleLockPosition,
+  handleClosePosition
 }) => {
   const { classes } = usePositionTableRowStyle()
   const { classes: sharedClasses } = useSharedStyles()
@@ -87,12 +83,20 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
   const positionSingleData = useSelector(singlePositionData(id ?? ''))
-  const networkType = useSelector(currentNetwork)
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
-  const navigate = useNavigate()
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
+
+  const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
+
+  useEffect(() => {
+    if (isLockPositionModalOpen) {
+      blurContent()
+    } else {
+      unblurContent()
+    }
+  }, [isLockPositionModalOpen])
 
   const isItemLoading = (item: keyof ILoadingStates): boolean => {
     if (typeof loading === 'boolean') return loading
@@ -501,12 +505,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     setActionPopoverOpen(false)
   }
 
-  const dispatch = useDispatch()
-
-  const lockPosition = () => {
-    dispatch(lockerActions.lockPosition({ index: 0, network: networkType }))
-  }
-
   const { value, tokenXLabel, tokenYLabel } = useMemo<{
     value: string
     tokenXLabel: string
@@ -531,7 +529,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         xToY={xToY}
         tokenX={{ name: tokenXName, icon: tokenXIcon, liqValue: tokenXLiq } as ILiquidityToken}
         tokenY={{ name: tokenYName, icon: tokenYIcon, liqValue: tokenYLiq } as ILiquidityToken}
-        onLock={lockPosition}
+        onLock={() => handleLockPosition(positionSingleData?.positionIndex ?? 0)}
         fee={`${fee}% fee`}
         minMax={`${formatNumberWithoutSuffix(xToY ? min : 1 / max)}-${formatNumberWithoutSuffix(xToY ? max : 1 / min)} ${tokenYLabel} per ${tokenXLabel}`}
         value={value}
@@ -546,24 +544,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         open={isActionPopoverOpen}
         isLocked={positionSingleData?.isLocked ?? false}
         unclaimedFeesInUSD={unclaimedFeesInUSD.value}
-        claimFee={() => {
-          dispatch(
-            positionActions.claimFee({
-              index: positionSingleData?.positionIndex ?? 0,
-              isLocked: positionSingleData?.isLocked ?? false
-            })
+        claimFee={() =>
+          handleClaimFee(
+            positionSingleData?.positionIndex ?? 0,
+            positionSingleData?.isLocked ?? false
           )
-        }}
-        closePosition={() => {
-          dispatch(
-            positionActions.closePosition({
-              positionIndex: positionSingleData?.positionIndex ?? 0,
-              onSuccess: () => {
-                navigate('/portfolio')
-              }
-            })
-          )
-        }}
+        }
+        closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
       <TableCell className={`${classes.pairNameCell} ${classes.cellBase}`}>

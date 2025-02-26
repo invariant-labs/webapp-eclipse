@@ -18,20 +18,22 @@ import { generatePositionTableLoadingData } from '@utils/utils'
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>
-  isLockPositionModalOpen: boolean
-  setIsLockPositionModalOpen: React.Dispatch<React.SetStateAction<boolean>>
   noInitialPositions?: boolean
   onAddPositionClick?: () => void
   isLoading?: boolean
+  handleLockPosition: (index: number) => void
+  handleClosePosition: (index: number) => void
+  handleClaimFee: (index: number, isLocked: boolean) => void
 }
 
 export const PositionsTable: React.FC<IPositionsTableProps> = ({
   positions,
-  isLockPositionModalOpen,
-  setIsLockPositionModalOpen,
   noInitialPositions,
   onAddPositionClick,
-  isLoading = false
+  isLoading = false,
+  handleLockPosition,
+  handleClosePosition,
+  handleClaimFee
 }) => {
   const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 || isLoading })
   const navigate = useNavigate()
@@ -81,11 +83,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
             {displayData.map((position, index) => (
               <TableRow
                 onClick={e => {
-                  if (
-                    !isLoading &&
-                    !(e.target as HTMLElement).closest('.action-button') &&
-                    !isLockPositionModalOpen
-                  ) {
+                  if (!isLoading && !(e.target as HTMLElement).closest('.action-button')) {
                     navigate(`/position/${position.id}`)
                   }
                 }}
@@ -93,9 +91,10 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
                 className={classes.tableBodyRow}>
                 <PositionTableRow
                   {...position}
-                  isLockPositionModalOpen={isLockPositionModalOpen}
-                  setIsLockPositionModalOpen={setIsLockPositionModalOpen}
                   loading={isLoading}
+                  handleLockPosition={handleLockPosition}
+                  handleClosePosition={handleClosePosition}
+                  handleClaimFee={handleClaimFee}
                 />
               </TableRow>
             ))}
