@@ -149,7 +149,7 @@ export const PositionsList: React.FC<IProps> = ({
       return <PositionCardsSkeletonMobile />
     }
 
-    if (currentData.length === 0 && !loading) {
+    if (filteredData.length === 0 && !loading) {
       return (
         <EmptyPlaceholder
           newVersion
@@ -164,7 +164,7 @@ export const PositionsList: React.FC<IProps> = ({
       )
     }
 
-    return currentData.map((element, index) => (
+    return filteredData.map((element, index) => (
       <Grid
         onClick={() => {
           if (allowPropagation) {
