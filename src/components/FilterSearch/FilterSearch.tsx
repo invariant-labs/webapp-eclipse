@@ -11,7 +11,7 @@ import {
   useMediaQuery
 } from '@mui/material'
 import SearchIcon from '@static/svg/lupaDark.svg'
-import { forwardRef, useMemo, useState, useCallback, memo } from 'react'
+import { forwardRef, useMemo, useState, useCallback, memo, useEffect } from 'react'
 import { commonTokensForNetworks, NetworkType } from '@store/consts/static'
 import { theme, typography } from '@static/theme'
 import useStyles from './styles'
@@ -23,6 +23,7 @@ import icons from '@static/icons'
 import { tokensStatsWithTokensDetails } from '@store/selectors/stats'
 import ListboxComponent from './Helpers/ListBoxComponent'
 import { BN } from '@coral-xyz/anchor'
+import { getTokenPrice, printBN } from '@utils/utils'
 
 type Breakpoint = 'md' | 'sm'
 
@@ -33,6 +34,7 @@ export interface ISearchToken {
   address: string
   balance: BN
   decimals: number
+  balanceUSD
 }
 
 interface IFilterSearch {
@@ -70,6 +72,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     const commonTokens = commonTokensForNetworks[networkType]
     const tokensList = useSelector(swapTokens)
     const [open, setOpen] = useState(false)
+    const [prices, setPrices] = useState<Record<string, number>>({})
 
     const tokenListMap = useMemo(() => {
       const map = new Map<string, any>()
@@ -84,17 +87,43 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
       [commonTokens]
     )
 
+    useEffect(() => {
+      const fetchPrices = async () => {
+        const pricePromises = tokensListDetails.map(async tokenData => {
+          const details = tokenData.tokenDetails
+          const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
+          const price = await getTokenPrice(tokenAddress)
+          return { tokenAddress, price }
+        })
+        const results = await Promise.all(pricePromises)
+        const newPrices: Record<string, number> = {}
+        results.forEach(({ tokenAddress, price }) => {
+          if (price !== undefined) {
+            newPrices[tokenAddress] = price
+          }
+        })
+        setPrices(newPrices)
+      }
+      fetchPrices()
+    }, [tokensListDetails])
+
     const mappedTokens = useMemo(() => {
       return tokensListDetails
         .map(tokenData => {
           const details = tokenData.tokenDetails
           const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
           const tokenFromList = tokenListMap.get(tokenAddress)
+          const tokenPrice = prices[tokenAddress]
+          const balanceUSD = tokenPrice
+            ? +printBN(tokenFromList?.balance, tokenData.tokenDetails.decimals) * tokenPrice
+            : 0
+
           return {
             icon: details?.logoURI ?? icons.unknownToken,
             name: details?.name ?? tokenData.address.toString(),
             symbol: details?.symbol ?? tokenData.address.toString(),
             address: tokenAddress,
+            balanceUSD: balanceUSD,
             balance: tokenFromList ? tokenFromList.balance : 0,
             decimals: tokenFromList ? tokenFromList.decimals : 0
           }
@@ -104,6 +133,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
           const bHasBalance = Number(b.balance) > 0
           const aIsCommon = commonTokensSet.has(a.address)
           const bIsCommon = commonTokensSet.has(b.address)
+          if (a.balanceUSD !== b.balanceUSD) return b.balanceUSD - a.balanceUSD
           if (aHasBalance && !bHasBalance) return -1
           if (!aHasBalance && bHasBalance) return 1
           if (aIsCommon && !bIsCommon) return -1
