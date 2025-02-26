@@ -74,7 +74,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
   try {
     yield put(
       snackbarsActions.add({
-        message: 'Creating pool',
+        message: 'Creating pool...',
         variant: 'pending',
         persist: true,
         key: loaderCreatePool
@@ -347,7 +347,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
   try {
     yield put(
       snackbarsActions.add({
-        message: 'Creating position',
+        message: 'Creating position...',
         variant: 'pending',
         persist: true,
         key: loaderCreatePosition
@@ -563,7 +563,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
 
     yield put(
       snackbarsActions.add({
-        message: 'Creating position',
+        message: 'Creating position...',
         variant: 'pending',
         persist: true,
         key: loaderCreatePosition
@@ -929,7 +929,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
   try {
     yield put(
       snackbarsActions.add({
-        message: 'Claiming fee',
+        message: 'Claiming fee...',
         variant: 'pending',
         persist: true,
         key: loaderClaimFee
@@ -1119,7 +1119,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
 
     yield put(
       snackbarsActions.add({
-        message: 'Claiming fee',
+        message: 'Claiming fee...',
         variant: 'pending',
         persist: true,
         key: loaderClaimFee
@@ -1426,7 +1426,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
   try {
     yield put(
       snackbarsActions.add({
-        message: 'Closing position',
+        message: 'Closing position...',
         variant: 'pending',
         persist: true,
         key: loaderClosePosition
@@ -1622,7 +1622,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
 
     yield put(
       snackbarsActions.add({
-        message: 'Closing position',
+        message: 'Closing position...',
         variant: 'pending',
         persist: true,
         key: loaderClosePosition
