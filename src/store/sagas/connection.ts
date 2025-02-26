@@ -43,7 +43,7 @@ export function* initConnection(): Generator {
 
     yield* put(
       snackbarsActions.add({
-        message: 'Eclipse network connected',
+        message: 'Eclipse network connected.',
         variant: 'success',
         persist: false
       })

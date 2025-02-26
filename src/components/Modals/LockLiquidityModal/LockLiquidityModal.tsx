@@ -78,15 +78,21 @@ export const LockLiquidityModal = ({
       open={open}
       onClose={onClose}
       className={classes.popover}
-      anchorReference='none'
+      slotProps={{
+        root: {
+          onClick: e => e.stopPropagation()
+        }
+      }}
+      anchorEl={document.body}
       anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'left'
+        vertical: 'center',
+        horizontal: 'center'
       }}
       transformOrigin={{
-        vertical: 'top',
+        vertical: 'center',
         horizontal: 'center'
-      }}>
+      }}
+      marginThreshold={0}>
       <Grid container className={classes.backgroundContainer}>
         <Grid container className={classes.container}>
           <Grid item className={classes.lockPositionHeader}>
