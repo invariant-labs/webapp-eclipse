@@ -8,7 +8,6 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import SearchIcon from '@static/svg/lupaDark.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -138,7 +137,7 @@ export const PositionsList: React.FC<IProps> = ({
     if (!isLg) {
       return (
         <PositionsTable
-          positions={currentData}
+          positions={filteredData}
           isLoading={loading}
           isLockPositionModalOpen={isLockPositionModalOpen}
           setIsLockPositionModalOpen={setIsLockPositionModalOpen}

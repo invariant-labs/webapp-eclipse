@@ -1,7 +1,6 @@
 import { Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
-import UnknownToken from '../../../../static/svg/unknownToken.svg'
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
