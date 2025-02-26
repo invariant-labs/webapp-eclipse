@@ -30,6 +30,7 @@ import { BN } from '@coral-xyz/anchor'
 import { VariantType } from 'notistack'
 import { Status } from '@store/reducers/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
+import { EcosystemExposure } from './EcosystemExposure/EcosystemExposure'
 
 interface LeaderboardProps {
   userContentPoints: CurrentContentPointsEntry[] | null
@@ -157,7 +158,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             isLoadingList={isLoadingList}
             totalItems={totalItems}
             walletStatus={walletStatus}
-          />
+          />{' '}
+          <EcosystemExposure />
           <RewardedPools
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}
