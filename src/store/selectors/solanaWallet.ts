@@ -8,15 +8,29 @@ import { WRAPPED_ETH_ADDRESS } from '@store/consts/static'
 
 const store = (s: AnyProps) => s[solanaWalletSliceName] as ISolanaWallet
 
-export const { address, balance, accounts, status, balanceLoading, thankYouModalShown } =
-  keySelectors(store, [
-    'address',
-    'balance',
-    'accounts',
-    'status',
-    'balanceLoading',
-    'thankYouModalShown'
-  ])
+export const {
+  address,
+  balance,
+  accounts,
+  status,
+  ethBalanceLoading,
+  tokenBalanceLoading,
+  thankYouModalShown
+} = keySelectors(store, [
+  'address',
+  'balance',
+  'accounts',
+  'status',
+  'ethBalanceLoading',
+  'tokenBalanceLoading',
+  'thankYouModalShown'
+])
+
+export const balanceLoading = createSelector(
+  ethBalanceLoading,
+  tokenBalanceLoading,
+  (a, b) => a || b
+)
 
 export const tokenBalance = (tokenAddress: PublicKey) =>
   createSelector(accounts, tokensAccounts => {
@@ -146,7 +160,8 @@ export const solanaWalletSelectors = {
   accounts,
   status,
   tokenAccount,
-  balanceLoading,
+  ethBalanceLoading,
+  tokenBalanceLoading,
   thankYouModalShown
 }
 export default solanaWalletSelectors

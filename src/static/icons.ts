@@ -77,6 +77,8 @@ import githubFill from './svg/githubFill.svg'
 import mediumFill from './svg/MediumFill.svg'
 import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
+import liquidityEmpty from './svg/liqudity_empty.svg'
+import assetsEmpty from './svg/assets_empty.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -157,7 +159,9 @@ const icons: { [key: string]: string } = {
   boostPoints,
   airdropGrey,
   infoError,
-  okxLogo
+  okxLogo,
+  liquidityEmpty,
+  assetsEmpty
 }
 
 export default icons
