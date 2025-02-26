@@ -27,7 +27,7 @@ import {
   balanceLoading,
   balance
 } from '@store/selectors/solanaWallet'
-import { swap as swapPool, accounts, routeCandidates, isLoading } from '@store/selectors/swap'
+import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -352,7 +352,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   }, [tokenFrom, tokenTo])
 
   const swapAccounts = useSelector(accounts)
-  const swapRouteCandidates = useSelector(routeCandidates)
   const swapIsLoading = useSelector(isLoading)
 
   return (
@@ -447,7 +446,6 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       market={market}
       tokensDict={tokensDict}
       swapAccounts={swapAccounts}
-      swapRouteCandidates={swapRouteCandidates}
       swapIsLoading={swapIsLoading}
     />
   )

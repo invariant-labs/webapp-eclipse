@@ -6,7 +6,8 @@ import {
   MAX_TICK,
   MIN_TICK,
   Pair,
-  PRICE_DENOMINATOR
+  PRICE_DENOMINATOR,
+  routingEssentials
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
@@ -1224,9 +1225,29 @@ export const handleSimulateWithHop = async (
   tokenOut: PublicKey,
   amount: BN,
   byAmountIn: boolean,
-  accounts: FetcherRecords,
-  routeCandidates: [Pair, Pair][]
+  accounts: FetcherRecords
 ) => {
+  const { routeCandidates } = routingEssentials(
+    tokenIn,
+    tokenOut,
+    market.program.programId,
+    market.network
+  )
+
+  for (let i = routeCandidates.length - 1; i >= 0; i--) {
+    const [pairIn, pairOut] = routeCandidates[i]
+
+    if (
+      !accounts.pools[pairIn.getAddress(market.program.programId).toBase58()] ||
+      !accounts.pools[pairOut.getAddress(market.program.programId).toBase58()]
+    ) {
+      const lastCandidate = routeCandidates.pop()!
+      if (i !== routeCandidates.length) {
+        routeCandidates[i] = lastCandidate
+      }
+    }
+  }
+
   if (routeCandidates.length === 0) {
     return { simulation: null, route: null, error: true }
   }

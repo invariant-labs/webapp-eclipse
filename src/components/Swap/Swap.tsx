@@ -129,7 +129,6 @@ export interface ISwap {
   market: Market
   tokensDict: Record<string, SwapToken>
   swapAccounts: FetcherRecords
-  swapRouteCandidates: [Pair, Pair][]
   swapIsLoading: boolean
 }
 
@@ -187,7 +186,6 @@ export const Swap: React.FC<ISwap> = ({
   market,
   tokensDict,
   swapAccounts,
-  swapRouteCandidates,
   swapIsLoading
 }) => {
   const { classes } = useStyles()
@@ -511,8 +509,7 @@ export const Swap: React.FC<ISwap> = ({
             tokens[tokenToIndex].assetAddress,
             convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
             true,
-            swapAccounts,
-            swapRouteCandidates
+            swapAccounts
           )
         ])
 
@@ -537,8 +534,7 @@ export const Swap: React.FC<ISwap> = ({
             tokens[tokenToIndex].assetAddress,
             convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
             false,
-            swapAccounts,
-            swapRouteCandidates
+            swapAccounts
           )
         ])
 
@@ -821,11 +817,30 @@ export const Swap: React.FC<ISwap> = ({
     setRefresherTime(REFRESHER_INTERVAL)
   }
 
+  const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
+  const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
+
   useEffect(() => {
-    if (isFetchingNewPool || swapIsLoading) {
-      void setSimulateAmount()
+    if (isFetchingNewPool) {
+      setAddBlur(true)
+      setWasIsFetchingNewPoolRun(true)
     }
-  }, [isFetchingNewPool, swapIsLoading])
+  }, [isFetchingNewPool])
+
+  useEffect(() => {
+    if (swapIsLoading) {
+      setAddBlur(true)
+      setWasSwapIsLoadingRun(true)
+    }
+  }, [swapIsLoading])
+
+  useEffect(() => {
+    if (wasIsFetchingNewPoolRun && wasSwapIsLoadingRun && !isFetchingNewPool && !swapIsLoading) {
+      void setSimulateAmount()
+      setWasIsFetchingNewPoolRun(false)
+      setWasSwapIsLoadingRun(false)
+    }
+  }, [wasIsFetchingNewPoolRun, wasSwapIsLoadingRun, isFetchingNewPool, swapIsLoading])
 
   useEffect(() => {
     setRefresherTime(REFRESHER_INTERVAL)

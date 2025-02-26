@@ -530,7 +530,7 @@ export function* handleGetTwoHopSwapData(
   })
   accounts.ticks = { ...accounts.ticks, ...accountsTicks.ticks }
 
-  yield put(swapActions.setTwoHopSwapData({ accounts, routeCandidates }))
+  yield put(swapActions.setTwoHopSwapData({ accounts }))
 }
 
 export function* swapHandler(): Generator {

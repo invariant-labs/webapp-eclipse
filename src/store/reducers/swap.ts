@@ -5,7 +5,6 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 import { FetcherRecords } from '@invariant-labs/sdk-eclipse'
-import { Pair } from '@invariant-labs/sdk-eclipse/src'
 
 export interface Swap {
   slippage: BN
@@ -34,7 +33,6 @@ export interface Simulate {
 export interface ISwapStore {
   swap: Swap
   accounts: FetcherRecords
-  routeCandidates: [Pair, Pair][]
   isLoading: boolean
 }
 
@@ -54,7 +52,6 @@ export const defaultState: ISwapStore = {
     tickmaps: {},
     ticks: {}
   },
-  routeCandidates: [],
   isLoading: false
 }
 
@@ -92,11 +89,9 @@ const swapSlice = createSlice({
       state,
       action: PayloadAction<{
         accounts: FetcherRecords
-        routeCandidates: [Pair, Pair][]
       }>
     ) {
       state.accounts = action.payload.accounts
-      state.routeCandidates = action.payload.routeCandidates
       state.isLoading = false
       return state
     }
