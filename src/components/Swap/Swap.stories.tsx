@@ -112,7 +112,14 @@ export const Primary: Story = {
     feeds: {},
     pointsPerUsdFee: new BN(0),
     market: {} as any,
-    tokensDict: {}
+    tokensDict: {},
+    swapAccounts: {
+      pools: {},
+      tickmaps: {},
+      ticks: {}
+    },
+    swapRouteCandidates: [],
+    swapIsLoading: false
   },
   render: args => {
     return <Swap {...args} />
