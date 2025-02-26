@@ -25,10 +25,9 @@ import {
   swapTokens,
   swapTokensDict,
   balanceLoading,
-  balance,
-  accounts
+  balance
 } from '@store/selectors/solanaWallet'
-import { swap as swapPool } from '@store/selectors/swap'
+import { swap as swapPool, accounts, routeCandidates, isLoading } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -48,6 +47,7 @@ import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors
 import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { IWallet } from '@invariant-labs/sdk-eclipse'
+import { actions as swapActions } from '@store/reducers/swap'
 
 type Props = {
   initialTokenFrom: string
@@ -295,6 +295,13 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         second: tokensList[tokenToIndex].address
       })
     )
+
+    dispatch(
+      swapActions.getTwoHopSwapData({
+        tokenFrom: tokensList[tokenFromIndex].address,
+        tokenTo: tokensList[tokenToIndex].address
+      })
+    )
   }
 
   const copyTokenAddressHandler = (message: string, variant: VariantType) => {
@@ -324,6 +331,21 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const unwrapWETH = () => {
     dispatch(walletActions.unwrapWETH())
   }
+
+  useEffect(() => {
+    if (tokenFrom && tokenTo) {
+      dispatch(
+        swapActions.getTwoHopSwapData({
+          tokenFrom,
+          tokenTo
+        })
+      )
+    }
+  }, [tokenFrom, tokenTo])
+
+  const swapAccounts = useSelector(accounts)
+  const swapRouteCandidates = useSelector(routeCandidates)
+  const swapIsLoading = useSelector(isLoading)
 
   return (
     <Swap
@@ -416,6 +438,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       swapMultiplier={multiplyer}
       market={market}
       tokensDict={tokensDict}
+      swapAccounts={swapAccounts}
+      swapRouteCandidates={swapRouteCandidates}
+      swapIsLoading={swapIsLoading}
     />
   )
 }

@@ -4,6 +4,8 @@ import { BN } from '@coral-xyz/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
+import { FetcherRecords } from '@invariant-labs/sdk-eclipse'
+import { Pair } from '@invariant-labs/sdk-eclipse/src'
 
 export interface Swap {
   slippage: BN
@@ -31,6 +33,9 @@ export interface Simulate {
 
 export interface ISwapStore {
   swap: Swap
+  accounts: FetcherRecords
+  routeCandidates: [Pair, Pair][]
+  isLoading: boolean
 }
 
 export const defaultState: ISwapStore = {
@@ -43,7 +48,14 @@ export const defaultState: ISwapStore = {
     amountIn: new BN(0),
     byAmountIn: false,
     amountOut: new BN(0)
-  }
+  },
+  accounts: {
+    pools: {},
+    tickmaps: {},
+    ticks: {}
+  },
+  routeCandidates: [],
+  isLoading: false
 }
 
 export const swapSliceName = 'swap'
@@ -70,6 +82,22 @@ const swapSlice = createSlice({
     setPair(state, action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>) {
       state.swap.tokenFrom = action.payload.tokenFrom
       state.swap.tokenTo = action.payload.tokenTo
+      return state
+    },
+    getTwoHopSwapData(state, _action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>) {
+      state.isLoading = true
+      return state
+    },
+    setTwoHopSwapData(
+      state,
+      action: PayloadAction<{
+        accounts: FetcherRecords
+        routeCandidates: [Pair, Pair][]
+      }>
+    ) {
+      state.accounts = action.payload.accounts
+      state.routeCandidates = action.payload.routeCandidates
+      state.isLoading = false
       return state
     }
   }

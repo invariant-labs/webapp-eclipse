@@ -1,12 +1,12 @@
 import {
   calculatePriceSqrt,
   DENOMINATOR,
+  FetcherRecords,
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
   Pair,
-  PRICE_DENOMINATOR,
-  routingEssentials
+  PRICE_DENOMINATOR
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
@@ -1206,59 +1206,18 @@ export const handleSimulateWithHop = async (
   tokenIn: PublicKey,
   tokenOut: PublicKey,
   amount: BN,
-  byAmountIn: boolean
+  byAmountIn: boolean,
+  accounts: FetcherRecords,
+  routeCandidates: [Pair, Pair][]
 ) => {
-  const { whitelistTickmaps, poolSet, routeCandidates } = routingEssentials(
-    tokenIn,
-    tokenOut,
-    market.program.programId,
-    market.network
-  )
-
   if (routeCandidates.length === 0) {
-    return { simulation: null, route: null }
+    return { simulation: null, route: null, error: true }
   }
-
-  const accounts = await market.fetchAccounts({
-    pools: Array.from(poolSet).map(pool => new PublicKey(pool)),
-    tickmaps: whitelistTickmaps
-  })
-
-  for (const pool of poolSet) {
-    if (!accounts.pools[pool]) {
-      poolSet.delete(pool)
-    }
-  }
-
-  for (let i = routeCandidates.length - 1; i >= 0; i--) {
-    const [pairIn, pairOut] = routeCandidates[i]
-
-    if (
-      !accounts.pools[pairIn.getAddress(market.program.programId).toBase58()] ||
-      !accounts.pools[pairOut.getAddress(market.program.programId).toBase58()]
-    ) {
-      const lastCandidate = routeCandidates.pop()!
-      if (i !== routeCandidates.length) {
-        routeCandidates[i] = lastCandidate
-      }
-    }
-  }
-
-  const accountsTickmaps = await market.fetchAccounts({
-    tickmaps: Array.from(poolSet)
-      .filter(pool => !accounts.tickmaps[pool])
-      .map(pool => accounts.pools[pool].tickmap)
-  })
-  accounts.tickmaps = { ...accounts.tickmaps, ...accountsTickmaps.tickmaps }
 
   const crossLimit =
     tokenIn.toString() === WRAPPED_ETH_ADDRESS || tokenOut.toString() === WRAPPED_ETH_ADDRESS
       ? MAX_CROSSES_IN_SINGLE_TX
       : TICK_CROSSES_PER_IX
-  const accountsTicks = await market.fetchAccounts({
-    ticks: market.gatherTwoHopTickAddresses(poolSet, tokenIn, tokenOut, accounts, crossLimit)
-  })
-  accounts.ticks = { ...accounts.ticks, ...accountsTicks.ticks }
 
   const simulations = await market.routeTwoHop(
     tokenIn,
@@ -1271,41 +1230,64 @@ export const handleSimulateWithHop = async (
   )
 
   if (simulations.length === 0) {
-    return { simulation: null, route: null }
+    return { simulation: null, route: null, error: true }
   }
 
   let best = 0
+  let bestFailed = 0
   for (let n = 0; n < simulations.length; ++n) {
     const [, simulation] = simulations[n]
     const [, simulationBest] = simulations[best]
+    const [, simulationBestFailed] = simulations[bestFailed]
 
     if (byAmountIn) {
-      if (simulation.totalAmountOut.gt(simulationBest.totalAmountOut)) {
+      if (
+        simulation.totalAmountOut.gt(simulationBest.totalAmountOut) &&
+        simulationBest.swapHopOne.status === SimulationStatus.Ok &&
+        simulationBest.swapHopTwo.status === SimulationStatus.Ok
+      ) {
         best = n
       }
+
+      if (simulation.totalAmountOut.gt(simulationBestFailed.totalAmountOut)) {
+        bestFailed = n
+      }
     } else {
-      if (simulationBest.totalAmountOut.lte(simulation.totalAmountOut)) {
-        if (
-          simulation.totalAmountIn
-            .add(simulation.swapHopOne.accumulatedFee)
-            .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) ||
-          simulationBest.swapHopOne.status !== SimulationStatus.Ok ||
-          simulationBest.swapHopTwo.status !== SimulationStatus.Ok
-        ) {
-          best = n
-        }
+      if (
+        simulation.totalAmountIn
+          .add(simulation.swapHopOne.accumulatedFee)
+          .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) &&
+        simulationBest.swapHopOne.status === SimulationStatus.Ok &&
+        simulationBest.swapHopTwo.status === SimulationStatus.Ok
+      ) {
+        best = n
+      }
+
+      if (
+        simulation.totalAmountIn
+          .add(simulation.swapHopOne.accumulatedFee)
+          .lt(simulationBestFailed.totalAmountIn)
+      ) {
+        bestFailed = n
       }
     }
   }
 
-  if (best !== null) {
-    console.log(
-      simulations[best][1].swapHopOne.priceImpact.toString(),
-      simulations[best][1].swapHopTwo.priceImpact.toString()
-    )
-    return { simulation: simulations[best][1], route: routeCandidates[simulations[best][0]] }
+  if (
+    simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
+    simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
+  ) {
+    return {
+      simulation: simulations[best][1],
+      route: routeCandidates[simulations[best][0]],
+      error: false
+    }
   } else {
-    return { simulation: null, route: null }
+    return {
+      simulation: simulations[bestFailed][1],
+      route: routeCandidates[simulations[bestFailed][0]],
+      error: true
+    }
   }
 }
 

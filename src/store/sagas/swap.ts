@@ -1,14 +1,15 @@
-import { call, put, select, takeEvery } from 'typed-redux-saga'
+import { all, call, put, select, spawn, takeEvery, takeLatest } from 'typed-redux-saga'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as swapActions } from '@store/reducers/swap'
 import { swap } from '@store/selectors/swap'
 import { poolsArraySortedByFees, tickMaps, tokens } from '@store/selectors/pools'
 import { accounts } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
-import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
+import { IWallet, Pair, routingEssentials } from '@invariant-labs/sdk-eclipse'
 import { getConnection, handleRpcError } from './connection'
 import {
   Keypair,
+  PublicKey,
   sendAndConfirmRawTransaction,
   Transaction,
   TransactionExpiredTimeoutError,
@@ -31,6 +32,8 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
+import { PayloadAction } from '@reduxjs/toolkit'
+import { TICK_CROSSES_PER_IX } from '@invariant-labs/sdk-eclipse/lib/market'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -469,6 +472,75 @@ export function* handleSwap(): Generator {
   }
 }
 
+export function* handleGetTwoHopSwapData(
+  action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>
+): Generator {
+  const { tokenFrom, tokenTo } = action.payload
+
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const wallet = yield* call(getWallet)
+  const market = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+  const { whitelistTickmaps, poolSet, routeCandidates } = routingEssentials(
+    tokenFrom,
+    tokenTo,
+    market.program.programId,
+    market.network
+  )
+
+  const accounts = yield* call([market, market.fetchAccounts], {
+    pools: Array.from(poolSet).map(pool => new PublicKey(pool)),
+    tickmaps: whitelistTickmaps
+  })
+
+  for (const pool of poolSet) {
+    if (!accounts.pools[pool]) {
+      poolSet.delete(pool)
+    }
+  }
+
+  for (let i = routeCandidates.length - 1; i >= 0; i--) {
+    const [pairIn, pairOut] = routeCandidates[i]
+
+    if (
+      !accounts.pools[pairIn.getAddress(market.program.programId).toBase58()] ||
+      !accounts.pools[pairOut.getAddress(market.program.programId).toBase58()]
+    ) {
+      const lastCandidate = routeCandidates.pop()!
+      if (i !== routeCandidates.length) {
+        routeCandidates[i] = lastCandidate
+      }
+    }
+  }
+
+  const accountsTickmaps = yield* call([market, market.fetchAccounts], {
+    tickmaps: Array.from(poolSet)
+      .filter(pool => !accounts.tickmaps[pool])
+      .map(pool => accounts.pools[pool].tickmap)
+  })
+  accounts.tickmaps = { ...accounts.tickmaps, ...accountsTickmaps.tickmaps }
+
+  const crossLimit =
+    tokenFrom.toString() === WRAPPED_ETH_ADDRESS || tokenTo.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+  const accountsTicks = yield* call([market, market.fetchAccounts], {
+    ticks: market.gatherTwoHopTickAddresses(poolSet, tokenFrom, tokenTo, accounts, crossLimit)
+  })
+  accounts.ticks = { ...accounts.ticks, ...accountsTicks.ticks }
+
+  yield put(swapActions.setTwoHopSwapData({ accounts, routeCandidates }))
+}
+
 export function* swapHandler(): Generator {
   yield* takeEvery(swapActions.swap, handleSwap)
+}
+
+export function* getTwoHopSwapDataHandler(): Generator {
+  yield* takeLatest(swapActions.getTwoHopSwapData, handleGetTwoHopSwapData)
+}
+
+export function* swapSaga(): Generator {
+  yield* all([swapHandler, getTwoHopSwapDataHandler].map(spawn))
 }

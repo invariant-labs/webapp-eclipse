@@ -48,7 +48,7 @@ import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPo
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
-import { Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
+import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 
 export interface Pools {
   tokenX: PublicKey
@@ -128,6 +128,9 @@ export interface ISwap {
   swapMultiplier: string
   market: Market
   tokensDict: Record<string, SwapToken>
+  swapAccounts: FetcherRecords
+  swapRouteCandidates: [Pair, Pair][]
+  swapIsLoading: boolean
 }
 
 export type SimulationPath = {
@@ -182,7 +185,10 @@ export const Swap: React.FC<ISwap> = ({
   promotedSwapPairs,
   swapMultiplier,
   market,
-  tokensDict
+  tokensDict,
+  swapAccounts,
+  swapRouteCandidates,
+  swapIsLoading
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -236,7 +242,8 @@ export const Swap: React.FC<ISwap> = ({
   const [simulateWithHopResult, setSimulateWithHopResult] = useState<{
     simulation: SimulationTwoHopResult | null
     route: [Pair, Pair] | null
-  }>({ simulation: null, route: null })
+    error: boolean
+  }>({ simulation: null, route: null, error: false })
   const [simulationPath, setSimulationPath] = useState<SimulationPath>({
     tokenFrom: null,
     tokenBetween: null,
@@ -503,7 +510,9 @@ export const Swap: React.FC<ISwap> = ({
             tokens[tokenFromIndex].assetAddress,
             tokens[tokenToIndex].assetAddress,
             convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-            true
+            true,
+            swapAccounts,
+            swapRouteCandidates
           )
         ])
 
@@ -527,7 +536,9 @@ export const Swap: React.FC<ISwap> = ({
             tokens[tokenFromIndex].assetAddress,
             tokens[tokenToIndex].assetAddress,
             convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-            false
+            false,
+            swapAccounts,
+            swapRouteCandidates
           )
         ])
 
@@ -551,6 +562,7 @@ export const Swap: React.FC<ISwap> = ({
     simulateWithHopResult: {
       simulation: SimulationTwoHopResult | null
       route: [Pair, Pair] | null
+      error: boolean
     }
   ) => {
     if (
@@ -558,10 +570,11 @@ export const Swap: React.FC<ISwap> = ({
       simulateWithHopResult.route &&
       (inputRef === inputTarget.FROM
         ? simulateWithHopResult?.simulation.totalAmountOut.gt(simulateResult.amountOut) ||
-          simulateResult.error.length > 0
+          (simulateResult.error.length > 0 && !simulateWithHopResult.error)
         : simulateWithHopResult?.simulation.totalAmountIn.lt(
             convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals)
-          ) || simulateResult.error.length > 0)
+          ) ||
+          (simulateResult.error.length > 0 && !simulateWithHopResult.error))
     ) {
       setSimulationPath({
         tokenFrom: tokens[tokenFromIndex ?? 0],
@@ -809,10 +822,10 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   useEffect(() => {
-    if (isFetchingNewPool) {
+    if (isFetchingNewPool || swapIsLoading) {
       void setSimulateAmount()
     }
-  }, [isFetchingNewPool])
+  }, [isFetchingNewPool, swapIsLoading])
 
   useEffect(() => {
     setRefresherTime(REFRESHER_INTERVAL)
