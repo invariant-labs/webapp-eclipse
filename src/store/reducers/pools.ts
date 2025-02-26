@@ -190,13 +190,7 @@ const poolsSlice = createSlice({
       state.poolTicks[action.payload.address].splice(action.payload.index, 1)
     },
     updateTickmap(state, action: PayloadAction<UpdateTickmap>) {
-      if (state.tickMaps[action.payload.address]) {
-        state.tickMaps[action.payload.address].bitmap = action.payload.bitmap
-      } else {
-        state.tickMaps[action.payload.address] = {
-          bitmap: action.payload.bitmap
-        }
-      }
+      state.tickMaps[action.payload.address].bitmap = action.payload.bitmap
     },
     getTicksAndTickMaps(_state, _action: PayloadAction<FetchTicksAndTickMaps>) {
       return _state

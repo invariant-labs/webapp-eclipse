@@ -62,19 +62,18 @@ export function* getWallet(): SagaGenerator<WalletAdapter> {
   return wallet
 }
 export function* getBalance(pubKey: PublicKey): SagaGenerator<BN> {
+  yield* put(actions.setIsEthBalanceLoading(true))
   const connection = yield* call(getConnection)
   const balance = yield* call([connection, connection.getBalance], pubKey)
-  return new BN(balance)
+  yield* put(actions.setBalance(new BN(balance)))
+  yield* put(actions.setIsEthBalanceLoading(false))
 }
 
 export function* handleBalance(): Generator {
   const wallet = yield* call(getWallet)
   yield* put(actions.setAddress(wallet.publicKey))
-  yield* put(actions.setIsBalanceLoading(true))
-  const balance = yield* call(getBalance, wallet.publicKey)
-  yield* put(actions.setBalance(balance))
+  yield* call(getBalance, wallet.publicKey)
   yield* call(fetchTokensAccounts)
-  yield* put(actions.setIsBalanceLoading(false))
 }
 
 interface IparsedTokenInfo {
@@ -94,6 +93,7 @@ interface TokenAccountInfo {
 export function* fetchTokensAccounts(): Generator {
   const connection = yield* call(getConnection)
   const wallet = yield* call(getWallet)
+  yield* put(actions.setIsTokenBalanceLoading(true))
 
   const { splTokensAccounts, token2022TokensAccounts } = yield* all({
     splTokensAccounts: call(
@@ -145,6 +145,7 @@ export function* fetchTokensAccounts(): Generator {
 
   yield* put(actions.setTokenAccounts(newAccounts))
   yield* put(poolsActions.addTokens(unknownTokens))
+  yield* put(actions.setIsTokenBalanceLoading(false))
 }
 
 // export function* getToken(tokenAddress: PublicKey): SagaGenerator<Mint> {
@@ -321,7 +322,7 @@ export function* transferAirdropSOL(): Generator {
   if (!txid.length) {
     yield put(
       snackbarsActions.add({
-        message: 'Failed to airdrop testnet ETH. Please try again',
+        message: 'Failed to airdrop testnet ETH. Please try again.',
         variant: 'error',
         persist: false,
         txid
@@ -330,7 +331,7 @@ export function* transferAirdropSOL(): Generator {
   } else {
     yield put(
       snackbarsActions.add({
-        message: 'Testnet ETH airdrop successfully',
+        message: 'Testnet ETH airdrop successfully.',
         variant: 'success',
         persist: false,
         txid
@@ -525,7 +526,7 @@ export function* init(isEagerConnect: boolean): Generator {
     if (isEagerConnect) {
       yield* put(
         snackbarsActions.add({
-          message: 'Wallet reconnected',
+          message: 'Wallet reconnected.',
           variant: 'success',
           persist: false
         })
@@ -533,7 +534,7 @@ export function* init(isEagerConnect: boolean): Generator {
     } else {
       yield* put(
         snackbarsActions.add({
-          message: 'Wallet connected',
+          message: 'Wallet connected.',
           variant: 'success',
           persist: false
         })
@@ -571,7 +572,7 @@ export function* handleConnect(action: PayloadAction<boolean>): Generator {
     if (walletStatus === Status.Initialized && wallet.connected) {
       yield* put(
         snackbarsActions.add({
-          message: 'Wallet already connected',
+          message: 'Wallet already connected.',
           variant: 'info',
           persist: false
         })
@@ -579,14 +580,6 @@ export function* handleConnect(action: PayloadAction<boolean>): Generator {
       return
     }
     yield* call(init, action.payload)
-  } catch (error) {
-    yield* call(handleRpcError, (error as Error).message)
-  }
-}
-
-export function* handleChangeWalletInExtenstion(): Generator {
-  try {
-    yield* call(init, false)
   } catch (error) {
     yield* call(handleRpcError, (error as Error).message)
   }
@@ -675,7 +668,7 @@ export function* handleUnwrapWETH(): Generator {
     if (!unwrapTxid.length) {
       yield put(
         snackbarsActions.add({
-          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet',
+          message: 'Wrapped ETH unwrap failed. Try to unwrap it in your wallet.',
           variant: 'warning',
           persist: false,
           txid: unwrapTxid
@@ -684,7 +677,7 @@ export function* handleUnwrapWETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'ETH unwrapped successfully',
+          message: 'ETH unwrapped successfully.',
           variant: 'success',
           persist: false,
           txid: unwrapTxid
@@ -703,9 +696,6 @@ export function* handleUnwrapWETH(): Generator {
   yield put(snackbarsActions.remove(loaderUnwrapWETH))
 }
 
-export function* changeWalletInExtenstionHandler(): Generator {
-  yield takeLatest(actions.changeWalletInExtension, handleChangeWalletInExtenstion)
-}
 export function* connectHandler(): Generator {
   yield takeLatest(actions.connect, handleConnect)
 }
@@ -728,13 +718,8 @@ export function* unwrapWETHHandler(): Generator {
 
 export function* walletSaga(): Generator {
   yield all(
-    [
-      airdropSaga,
-      connectHandler,
-      disconnectHandler,
-      handleBalanceSaga,
-      unwrapWETHHandler,
-      changeWalletInExtenstionHandler
-    ].map(spawn)
+    [airdropSaga, connectHandler, disconnectHandler, handleBalanceSaga, unwrapWETHHandler].map(
+      spawn
+    )
   )
 }

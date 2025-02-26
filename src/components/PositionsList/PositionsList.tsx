@@ -1,4 +1,3 @@
-import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
 import {
   Box,
@@ -9,18 +8,18 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import loader from '@static/gif/loader.gif'
 import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { PaginationList } from '@components/Pagination/Pagination'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
-import { PositionItemDesktop } from './PositionItem/variants/PositionItemDesktop'
-import { PositionItemMobile } from './PositionItem/variants/PositionItemMobile'
+import { PositionItemMobile } from './PositionItem/variants/PositionMobileCard/PositionItemMobile'
 import { IPositionItem } from './types'
+import { PositionsTable } from './PositionItem/variants/PositionTables/PositionsTable'
+import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
+import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
 import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
@@ -40,25 +39,22 @@ interface IProps {
   noConnectedBlockerProps: INoConnected
   itemsPerPage: number
   handleRefresh: () => void
-  // pageChanged: (page: number) => void
   length: number
   lockedLength: number
-  // loadedPages: Record<number, boolean>
-  // getRemainingPositions: () => void
   noInitialPositions: boolean
   lockedData: IPositionItem[]
   currentNetwork: NetworkType
+  handleLockPosition: (index: number) => void
+  handleClosePosition: (index: number) => void
+  handleClaimFee: (index: number, isLocked: boolean) => void
 }
 
 export const PositionsList: React.FC<IProps> = ({
-  initialPage,
-  setLastPage,
   data,
   onAddPositionClick,
   loading = false,
   showNoConnected = false,
   noConnectedBlockerProps,
-  itemsPerPage,
   handleRefresh,
   // pageChanged,
   // length,
@@ -67,13 +63,14 @@ export const PositionsList: React.FC<IProps> = ({
   // getRemainingPositions,
   noInitialPositions,
   lockedData,
-  currentNetwork
+  currentNetwork,
+  handleLockPosition,
+  handleClosePosition,
+  handleClaimFee
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
-  const [defaultPage] = useState(initialPage)
   const dispatch = useDispatch()
-  const [page, setPage] = useState(initialPage)
   const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
@@ -112,52 +109,77 @@ export const PositionsList: React.FC<IProps> = ({
     })
   }, [currentData, selectedFilters])
 
-  const handleChangePagination = (page: number): void => {
-    setLastPage(page)
-    setPage(page)
-  }
-
   const handleSwitchPools = (
     _: React.MouseEvent<HTMLElement>,
     newAlignment: LiquidityPools | null
   ) => {
     if (newAlignment !== null) {
       setAlignment(newAlignment)
-      setPage(1)
     }
   }
-
-  const paginator = (currentPage: number) => {
-    const page = currentPage || 1
-    const perPage = itemsPerPage || 10
-    const offset = (page - 1) * perPage
-    const paginatedItems = filteredData.slice(offset).slice(0, itemsPerPage)
-    const totalPages = Math.ceil(filteredData.length / perPage)
-
-    return {
-      page: page,
-      totalPages: totalPages,
-      data: paginatedItems
-    }
-  }
-
-  useEffect(() => {
-    setPage(1)
-  }, [selectedFilters])
-
-  useEffect(() => {
-    setPage(initialPage)
-  }, [])
-
-  useEffect(() => {
-    handleChangePagination(initialPage)
-  }, [initialPage])
 
   useEffect(() => {
     dispatch(actions.getLeaderboardConfig())
   }, [dispatch])
 
   const [allowPropagation, setAllowPropagation] = useState(true)
+
+  const renderContent = () => {
+    if (showNoConnected) {
+      return <NoConnected {...noConnectedBlockerProps} />
+    }
+
+    if (!isLg) {
+      return (
+        <PositionsTable
+          positions={filteredData}
+          isLoading={loading}
+          noInitialPositions={noInitialPositions}
+          onAddPositionClick={onAddPositionClick}
+          handleLockPosition={handleLockPosition}
+          handleClosePosition={handleClosePosition}
+          handleClaimFee={handleClaimFee}
+        />
+      )
+    } else if (isLg && loading) {
+      return <PositionCardsSkeletonMobile />
+    }
+
+    if (filteredData.length === 0 && !loading) {
+      return (
+        <EmptyPlaceholder
+          newVersion
+          desc={
+            noInitialPositions
+              ? 'Add your first position by pressing the button and start earning!'
+              : 'Did not find any matching positions'
+          }
+          onAction={onAddPositionClick}
+          withButton={noInitialPositions}
+        />
+      )
+    }
+
+    return filteredData.map((element, index) => (
+      <Grid
+        onClick={() => {
+          if (allowPropagation) {
+            navigate(`/position/${element.id}`)
+          }
+        }}
+        key={element.id}
+        className={classes.itemLink}>
+        <PositionItemMobile
+          key={index}
+          {...element}
+          setAllowPropagation={setAllowPropagation}
+          handleLockPosition={handleLockPosition}
+          handleClosePosition={handleClosePosition}
+          handleClaimFee={handleClaimFee}
+        />
+      </Grid>
+    ))
+  }
 
   return (
     <Grid container direction='column' className={classes.root}>
@@ -368,55 +390,8 @@ export const PositionsList: React.FC<IProps> = ({
         </Grid>
       )}
       <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
-        {filteredData.length > 0 && !loading && !showNoConnected ? (
-          paginator(page).data.map((element, index) => (
-            <Grid
-              onClick={() => {
-                if (allowPropagation) {
-                  navigate(`/position/${element.id}`)
-                }
-              }}
-              key={element.id}
-              className={classes.itemLink}>
-              {isLg ? (
-                <PositionItemMobile
-                  key={index}
-                  {...element}
-                  setAllowPropagation={setAllowPropagation}
-                />
-              ) : (
-                <PositionItemDesktop key={index} {...element} />
-              )}
-            </Grid>
-          ))
-        ) : showNoConnected ? (
-          <NoConnected {...noConnectedBlockerProps} />
-        ) : loading ? (
-          <Grid container style={{ flex: 1 }}>
-            <img src={loader} className={classes.loading} alt='Loader' />
-          </Grid>
-        ) : (
-          <EmptyPlaceholder
-            desc={
-              noInitialPositions
-                ? 'Add your first position by pressing the button and start earning!'
-                : 'Did not find any matching positions'
-            }
-            className={classes.placeholder}
-            onAction={onAddPositionClick}
-            withButton={noInitialPositions}
-          />
-        )}
+        {renderContent()}
       </Grid>
-      {paginator(page).totalPages > 1 ? (
-        <PaginationList
-          pages={paginator(page).totalPages}
-          defaultPage={defaultPage}
-          handleChangePage={handleChangePagination}
-          variant='end'
-          page={page}
-        />
-      ) : null}
     </Grid>
   )
 }

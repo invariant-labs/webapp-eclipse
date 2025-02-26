@@ -120,10 +120,7 @@ export const StyledIcon = styled('div')({
 })
 
 export const StyledDetails = styled('button')({
-  display: 'flex',
-  alignItems: 'center',
   backgroundColor: 'transparent',
-  gap: 4,
   textTransform: 'uppercase',
   borderRadius: 6,
   border: 'none',
@@ -142,7 +139,8 @@ export const StyledDetails = styled('button')({
       transform: 'none'
     }
   },
-  '& img': {
-    width: 10
+
+  '& *': {
+    width: 'auto !important'
   }
 })

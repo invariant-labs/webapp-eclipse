@@ -2,7 +2,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import searchIcon from '@static/svg/lupa.svg'
 import { theme } from '@static/theme'
 import React, { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
-import { areEqual, FixedSizeList as List, ListChildComponentProps } from 'react-window'
+import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
 import useStyles from '../style'
 import AddTokenModal from '@components/Modals/AddTokenModal/AddTokenModal'
 import {
@@ -135,8 +135,7 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
         </Grid>
       </Grid>
     )
-  },
-  areEqual
+  }
 )
 
 export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
@@ -169,20 +168,15 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
       setHideUnknown(hiddenUnknownTokens)
     }, [hiddenUnknownTokens])
 
-    type IndexedSwapToken = SwapToken & {
-      index: number
-      strAddress: string
-    }
-
-    const tokensWithIndexes = useMemo<IndexedSwapToken[]>(() => {
-      return tokens.map(
-        (token, index): IndexedSwapToken => ({
+    const tokensWithIndexes = useMemo(
+      () =>
+        tokens.map((token, index) => ({
           ...token,
           index,
           strAddress: token.assetAddress.toString()
-        })
-      )
-    }, [tokens])
+        })),
+      [tokens]
+    )
 
     useEffect(() => {
       tokensWithIndexes.forEach(token => {

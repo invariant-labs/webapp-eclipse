@@ -9,7 +9,6 @@ import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { formatLargeNumber } from '@utils/uiUtils'
-import useIsMobile from '@store/hooks/isMobile'
 
 interface StatsInterface {
   percentVolume: number | null
@@ -44,7 +43,6 @@ const Volume: React.FC<StatsInterface> = ({
   volume = volume ?? 0
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
-  const isMobile = useIsMobile()
 
   const Theme = {
     axis: {
@@ -118,7 +116,7 @@ const Volume: React.FC<StatsInterface> = ({
             tickRotation: 0,
             tickValues: 5,
             renderTick: ({ x, y, value }) => (
-              <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
+              <g transform={`translate(${x - 30},${y + 4})`}>
                 {' '}
                 <text
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
