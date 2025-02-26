@@ -191,7 +191,7 @@ export function* handleAirdrop(): Generator {
       yield* put(actions.showThankYouModal(true))
       yield put(
         snackbarsActions.add({
-          message: 'Airdrop in progress',
+          message: 'Airdrop in progress...',
           variant: 'pending',
           persist: true,
           key: loaderKey
@@ -227,7 +227,7 @@ export function* handleAirdrop(): Generator {
       }
       yield put(
         snackbarsActions.add({
-          message: 'Airdrop in progress',
+          message: 'Airdrop in progress...',
           variant: 'pending',
           persist: true,
           key: loaderKey
@@ -584,6 +584,14 @@ export function* handleConnect(action: PayloadAction<boolean>): Generator {
   }
 }
 
+export function* handleChangeWalletInExtenstion(): Generator {
+  try {
+    yield* call(init, false)
+  } catch (error) {
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
+
 export function* handleDisconnect(): Generator {
   try {
     yield* call(disconnectWallet)
@@ -695,6 +703,9 @@ export function* handleUnwrapWETH(): Generator {
   yield put(snackbarsActions.remove(loaderUnwrapWETH))
 }
 
+export function* changeWalletInExtenstionHandler(): Generator {
+  yield takeLatest(actions.changeWalletInExtension, handleChangeWalletInExtenstion)
+}
 export function* connectHandler(): Generator {
   yield takeLatest(actions.connect, handleConnect)
 }
@@ -717,8 +728,13 @@ export function* unwrapWETHHandler(): Generator {
 
 export function* walletSaga(): Generator {
   yield all(
-    [airdropSaga, connectHandler, disconnectHandler, handleBalanceSaga, unwrapWETHHandler].map(
-      spawn
-    )
+    [
+      airdropSaga,
+      connectHandler,
+      disconnectHandler,
+      handleBalanceSaga,
+      unwrapWETHHandler,
+      changeWalletInExtenstionHandler
+    ].map(spawn)
   )
 }
