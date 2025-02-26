@@ -698,7 +698,7 @@ export { DEFAULT_PUBLICKEY, MAX_U64 }
 export const POSITIONS_PER_PAGE = 5
 
 export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
-  message: 'Signing transactions',
+  message: 'Signing transactions...',
   variant: 'pending',
   persist: true
 }

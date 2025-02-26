@@ -38,7 +38,7 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
     }
     yield put(
       snackbarsActions.add({
-        message: 'Locking position',
+        message: 'Locking position...',
         variant: 'pending',
         persist: true,
         key: loaderLockPosition
