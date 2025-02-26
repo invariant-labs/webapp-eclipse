@@ -723,11 +723,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [leftRange, rightRange])
 
   useEffect(() => {
-    setTokenACheckbox(true)
-    setTokenBCheckbox(true)
-  }, [tokenAIndex, tokenBIndex])
-
-  useEffect(() => {
     setTokenADeposit('0')
     setTokenBDeposit('0')
     setTokenACheckbox(true)
@@ -1031,8 +1026,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 
             blockerInfo:
               alignment === DepositOptions.Basic
-                ? 'Range only for single-asset deposit.'
-                : 'You chose not to spend this token.',
+                ? 'Range only for single-asset deposit'
+                : 'You chose not to spend this token',
             decimalsLimit: tokenAIndex !== null ? tokens[tokenAIndex].decimals : 0
           }}
           tokenBInputState={{
@@ -1069,8 +1064,8 @@ export const NewPosition: React.FC<INewPosition> = ({
               !tokenBCheckbox,
             blockerInfo:
               alignment === DepositOptions.Basic
-                ? 'Range only for single-asset deposit.'
-                : 'You chose not to spend this token.',
+                ? 'Range only for single-asset deposit'
+                : 'You chose not to spend this token',
             decimalsLimit: tokenBIndex !== null ? tokens[tokenBIndex].decimals : 0
           }}
           feeTiers={feeTiers.map(tier => tier.feeValue)}

@@ -500,17 +500,24 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return
     }
 
-    if (!tokenBInputState.blocked) {
+    if (alignment === DepositOptions.Auto && tokenACheckbox && tokenBCheckbox) {
+      const pom = tokenAInputState.value
       tokenAInputState.setValue(tokenBInputState.value)
+      tokenBInputState.setValue(pom)
     } else {
-      tokenBInputState.setValue(tokenAInputState.value)
+      if (!tokenBInputState.blocked) {
+        tokenAInputState.setValue(tokenBInputState.value)
+      } else {
+        tokenBInputState.setValue(tokenAInputState.value)
+      }
     }
-    const pom = tokenAIndex
+
+    const pom2 = tokenAIndex
     setTokenAIndex(tokenBIndex)
-    setTokenBIndex(pom)
-    const pom2 = tokenACheckbox
+    setTokenBIndex(pom2)
+    const pom3 = tokenACheckbox
     setTokenACheckbox(tokenBCheckbox)
-    setTokenBCheckbox(pom2)
+    setTokenBCheckbox(pom3)
     onReverseTokens()
   }
 
