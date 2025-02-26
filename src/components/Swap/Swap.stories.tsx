@@ -118,7 +118,6 @@ export const Primary: Story = {
       tickmaps: {},
       ticks: {}
     },
-    swapRouteCandidates: [],
     swapIsLoading: false
   },
   render: args => {
