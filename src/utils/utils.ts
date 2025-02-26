@@ -27,10 +27,17 @@ import {
   parsePool,
   RawPoolStructure,
   parsePosition,
-  parseTick
+  parseTick,
+  RawTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios from 'axios'
-import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  CONCENTRATION_FACTOR,
+  getMaxTick,
+  getMinTick,
+  PRICE_SCALE,
+  Range
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
@@ -976,6 +983,16 @@ export const nearestTickIndex = (
   const log = Math.round(logBase(primaryUnitsPrice, 1.0001))
   return nearestSpacingMultiplicity(log, spacing)
 }
+export const nearestTicksBySpacing = (midPriceTick: number, spacing: number, isXtoY: boolean) => {
+  const base =
+    midPriceTick % spacing === 0
+      ? midPriceTick
+      : isXtoY
+        ? midPriceTick - (midPriceTick % spacing)
+        : midPriceTick + (spacing - (midPriceTick % spacing))
+
+  return { lowerTick: isXtoY ? base : base + spacing, upperTick: isXtoY ? base + spacing : base }
+}
 
 export const calcTicksAmountInRange = (
   min: number,
@@ -1336,6 +1353,39 @@ export const getPoolsFromAddresses = async (
   }
 }
 
+export const getTickmapsFromPools = async (
+  pools: PoolWithAddress[],
+  marketProgram: Market
+): Promise<Record<string, Tickmap>> => {
+  {
+    try {
+      const addresses = pools.map(pool => pool.tickmap)
+      const tickmaps = (await marketProgram.program.account.tickmap.fetchMultiple(
+        addresses
+      )) as Array<Tickmap | null>
+
+      return tickmaps.reduce((acc, cur, idx) => {
+        if (cur) {
+          acc[addresses[idx].toBase58()] = cur
+        }
+        return acc
+      }, {})
+    } catch (error) {
+      console.log(error)
+      return {}
+    }
+  }
+}
+
+export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
+  try {
+    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
+  } catch (e) {
+    console.log(e)
+    return []
+  }
+}
+
 export const getPools = async (
   pairs: Pair[],
   marketProgram: Market
@@ -1421,13 +1471,25 @@ export const calculateConcentrationRange = (
   isXToY: boolean
 ) => {
   const tickDelta = calculateTickDelta(tickSpacing, minimumRange, concentration)
-  const lowerTick = currentTick - (minimumRange / 2 + tickDelta) * tickSpacing
-  const upperTick = currentTick + (minimumRange / 2 + tickDelta) * tickSpacing
+
+  const parsedTickDelta = Math.abs(tickDelta) === 0 ? 0 : Math.abs(tickDelta) - 1
+
+  const lowerTick = currentTick - (minimumRange / 2 + parsedTickDelta) * tickSpacing
+  const upperTick = currentTick + (minimumRange / 2 + parsedTickDelta) * tickSpacing
 
   return {
     leftRange: isXToY ? lowerTick : upperTick,
     rightRange: isXToY ? upperTick : lowerTick
   }
+}
+
+export const calculateConcentration = (lowerTick: number, upperTick: number) => {
+  const deltaPrice = Math.pow(1.0001, -Math.abs(lowerTick - upperTick))
+
+  const denominator = 1 - Math.pow(deltaPrice, 1 / 4)
+  const result = 1 / denominator
+
+  return Math.abs(result / CONCENTRATION_FACTOR)
 }
 
 export enum PositionTokenBlock {
@@ -2008,4 +2070,12 @@ export const formatNumberWithSpaces = (number: string) => {
   const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
 
   return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+}
+
+export const sciToString = (sciStr: string | number) => {
+  const number = Number(sciStr)
+  if (!Number.isFinite(number)) throw new Error('Invalid number')
+
+  const fullStr = number.toLocaleString('fullwide', { useGrouping: false })
+  return BigInt(fullStr).toString()
 }

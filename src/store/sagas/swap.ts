@@ -72,7 +72,7 @@ export function* handleSwapWithETH(): Generator {
 
     yield put(
       snackbarsActions.add({
-        message: 'Swapping tokens',
+        message: 'Swapping tokens...',
         variant: 'pending',
         persist: true,
         key: loaderSwappingTokens
@@ -352,7 +352,7 @@ export function* handleSwap(): Generator {
 
     yield put(
       snackbarsActions.add({
-        message: 'Swapping tokens',
+        message: 'Swapping tokens...',
         variant: 'pending',
         persist: true,
         key: loaderSwappingTokens

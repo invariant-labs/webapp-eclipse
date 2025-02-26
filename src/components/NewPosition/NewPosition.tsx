@@ -14,6 +14,7 @@ import {
 import {
   addressToTicker,
   calcPriceByTickIndex,
+  calculateConcentration,
   calculateConcentrationRange,
   convertBalanceToBN,
   determinePositionTokenBlock,
@@ -34,12 +35,7 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import {
-  BestTier,
-  PositionOpeningMethod,
-  PotentialLiquidity,
-  TokenPriceData
-} from '@store/consts/types'
+import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -86,8 +82,7 @@ export interface INewPosition {
     amount: BN,
     leftRangeTickIndex: number,
     rightRangeTickIndex: number,
-    tokenAddress: PublicKey,
-    calcPotentialLiquidity?: PotentialLiquidity
+    tokenAddress: PublicKey
   ) => BN
   feeTiers: Array<{
     feeValue: number
@@ -134,7 +129,10 @@ export interface INewPosition {
   onDisconnectWallet: () => void
   canNavigate: boolean
   estimatedPointsPerDay: BN
-  estimatedPointsForScale: () => { min: BN; middle: BN; max: BN }
+  estimatedPointsForScale: (
+    currentConcentration: number,
+    concentrationArray: number[]
+  ) => { min: BN; middle: BN; max: BN }
   isPromotedPool: boolean
 }
 
@@ -237,6 +235,28 @@ export const NewPosition: React.FC<INewPosition> = ({
     getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 34)
   )
 
+  const rangeConcentrationArray = useMemo(() => {
+    const leftMinTick = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
+    const rightMaxTick = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
+
+    const maxConcForRange = calculateConcentration(0, tickSpacing)
+    const minConcForRange = calculateConcentration(leftMinTick, rightMaxTick)
+    const rangeConcentration = [...concentrationArray]
+    rangeConcentration.unshift(minConcForRange)
+    rangeConcentration.push(maxConcForRange)
+
+    return rangeConcentration
+  }, [concentrationArray, tickSpacing])
+
+  const concentrationIndexForRange = useMemo(() => {
+    const index = rangeConcentrationArray.findIndex(value => {
+      return (
+        Math.floor(value) >= Math.floor(+calculateConcentration(leftRange, rightRange).toFixed(2))
+      )
+    })
+    return index !== -1 ? index : 0
+  }, [rangeConcentrationArray, leftRange, rightRange, positionOpeningMethod])
+
   const setRangeBlockerInfo = () => {
     if (tokenAIndex === null || tokenBIndex === null) {
       return 'Select tokens to set price range.'
@@ -277,71 +297,21 @@ export const NewPosition: React.FC<INewPosition> = ({
     return trimLeadingZeros(printBN(result, tokens[printIndex].decimals))
   }
 
-  const getTokenAmountForPotentialPoints = (amount: BN, byFirst: boolean) => {
-    const printIndex = byFirst ? tokenBIndex : tokenAIndex
-    const calcIndex = byFirst ? tokenAIndex : tokenBIndex
-    if (printIndex === null || calcIndex === null) {
-      return '0.0'
-    }
-
-    const { leftRange: leftRangeMin, rightRange: rightRangeMin } = calculateConcentrationRange(
-      tickSpacing,
-      concentrationArray[0],
-      2,
-      midPrice.index,
-      isXtoY
-    )
-
-    const { leftRange: leftRangeMiddle, rightRange: rightRangeMiddle } =
-      calculateConcentrationRange(
-        tickSpacing,
-        +concentrationArray[Math.floor(concentrationArray.length / 2) - 1].toFixed(0),
-        2,
-        midPrice.index,
-        isXtoY
-      )
-
-    const { leftRange: leftRangeMax, rightRange: rightRangeMax } = calculateConcentrationRange(
-      tickSpacing,
-      +concentrationArray[concentrationArray.length - 1].toFixed(0),
-      2,
-      midPrice.index,
-      isXtoY
-    )
-
-    calcAmount(
-      amount,
-      leftRangeMin,
-      rightRangeMin,
-      tokens[calcIndex].assetAddress,
-      PotentialLiquidity.Min
-    )
-    calcAmount(
-      amount,
-      leftRangeMiddle,
-      rightRangeMiddle,
-      tokens[calcIndex].assetAddress,
-      PotentialLiquidity.Middle
-    )
-    calcAmount(
-      amount,
-      leftRangeMax,
-      rightRangeMax,
-      tokens[calcIndex].assetAddress,
-      PotentialLiquidity.Max
-    )
-  }
-
   const estimatedScalePoints = useMemo(() => {
-    return estimatedPointsForScale()
-  }, [poolAddress, tokenADeposit, tokenBDeposit])
+    return estimatedPointsForScale(
+      positionOpeningMethod === 'concentration'
+        ? concentrationArray[concentrationIndex]
+        : calculateConcentration(leftRange, rightRange),
+      positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
+    )
+  }, [estimatedPointsPerDay, tokenADeposit, tokenBDeposit, positionOpeningMethod])
 
   const getTicksInsideRange = (left: number, right: number, isXtoY: boolean) => {
     const leftMax = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
     const rightMax = isXtoY ? getMaxTick(tickSpacing) : getMinTick(tickSpacing)
 
-    let leftInRange
-    let rightInRange
+    let leftInRange: number
+    let rightInRange: number
 
     if (isXtoY) {
       leftInRange = left < leftMax ? leftMax : left
@@ -369,9 +339,9 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     setLeftRange(leftRange)
     setRightRange(rightRange)
-
     if (
       tokenAIndex !== null &&
+      tokenADeposit !== '0' &&
       (isXtoY ? rightRange > midPrice.index : rightRange < midPrice.index)
     ) {
       const deposit = tokenADeposit
@@ -387,12 +357,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         setTokenBDeposit(amount)
         return
       }
-    }
-
-    if (
-      tokenBIndex !== null &&
-      (isXtoY ? leftRange < midPrice.index : leftRange > midPrice.index)
-    ) {
+    } else if (tokenBIndex !== null) {
       const deposit = tokenBDeposit
       const amount = getOtherTokenAmount(
         convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
@@ -466,6 +431,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
         )?.index ?? undefined)
+
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 
@@ -671,12 +637,20 @@ export const NewPosition: React.FC<INewPosition> = ({
           <Typography className={classes.title}>Add new position</Typography>
 
           {isMd && (
-            <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+            <Fade in={isPromotedPool} timeout={250}>
               <div>
                 <PointsLabel
                   handleClickFAQ={handleClickFAQ}
-                  concentrationArray={concentrationArray}
-                  concentrationIndex={concentrationIndex}
+                  concentrationArray={
+                    positionOpeningMethod === 'concentration'
+                      ? concentrationArray
+                      : rangeConcentrationArray
+                  }
+                  concentrationIndex={
+                    positionOpeningMethod === 'concentration'
+                      ? concentrationIndex
+                      : concentrationIndexForRange
+                  }
                   estimatedPointsPerDay={estimatedPointsPerDay}
                   estimatedScalePoints={estimatedScalePoints}
                   isConnected={walletStatus === Status.Init}
@@ -686,6 +660,17 @@ export const NewPosition: React.FC<INewPosition> = ({
                     +tokenADeposit === 0 ||
                     +tokenBDeposit === 0
                   }
+                  singleDepositWarning={
+                    (tokenAIndex !== null &&
+                      tokenBIndex !== null &&
+                      !isWaitingForNewPool &&
+                      blockedToken === PositionTokenBlock.A) ||
+                    (tokenAIndex !== null &&
+                      tokenBIndex !== null &&
+                      !isWaitingForNewPool &&
+                      blockedToken === PositionTokenBlock.B)
+                  }
+                  positionOpeningMethod={positionOpeningMethod}
                 />
               </div>
             </Fade>
@@ -865,10 +850,6 @@ export const NewPosition: React.FC<INewPosition> = ({
                   true
                 )
               )
-              getTokenAmountForPotentialPoints(
-                convertBalanceToBN(value, tokens[tokenAIndex].decimals),
-                true
-              )
             },
             blocked:
               tokenAIndex !== null &&
@@ -899,10 +880,6 @@ export const NewPosition: React.FC<INewPosition> = ({
                   rightRange,
                   false
                 )
-              )
-              getTokenAmountForPotentialPoints(
-                convertBalanceToBN(value, tokens[tokenBIndex].decimals),
-                false
               )
             },
             blocked:
@@ -1072,12 +1049,20 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Fade in={isPromotedPool && positionOpeningMethod === 'concentration'} timeout={250}>
+      <Fade in={isPromotedPool} timeout={250}>
         <div>
           <EstimatedPoints
             handleClickFAQ={handleClickFAQ}
-            concentrationArray={concentrationArray}
-            concentrationIndex={concentrationIndex}
+            concentrationArray={
+              positionOpeningMethod === 'concentration'
+                ? concentrationArray
+                : rangeConcentrationArray
+            }
+            concentrationIndex={
+              positionOpeningMethod === 'concentration'
+                ? concentrationIndex
+                : concentrationIndexForRange
+            }
             estimatedPointsPerDay={estimatedPointsPerDay}
             estimatedScalePoints={estimatedScalePoints}
             isConnected={walletStatus === Status.Init}
@@ -1087,6 +1072,17 @@ export const NewPosition: React.FC<INewPosition> = ({
               +tokenADeposit === 0 ||
               +tokenBDeposit === 0
             }
+            singleDepositWarning={
+              (tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                !isWaitingForNewPool &&
+                blockedToken === PositionTokenBlock.A) ||
+              (tokenAIndex !== null &&
+                tokenBIndex !== null &&
+                !isWaitingForNewPool &&
+                blockedToken === PositionTokenBlock.B)
+            }
+            positionOpeningMethod={positionOpeningMethod}
           />
         </div>
       </Fade>
