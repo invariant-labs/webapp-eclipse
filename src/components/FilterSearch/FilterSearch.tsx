@@ -1,9 +1,15 @@
 import {
   Autocomplete,
+  AutocompleteOwnerState,
+  AutocompleteRenderGetTagProps,
+  AutocompleteRenderInputParams,
+  AutocompleteRenderOptionState,
   Box,
   Fade,
   InputAdornment,
+  InputProps,
   Paper,
+  PaperProps,
   Popper,
   PopperProps,
   TextField,
@@ -24,6 +30,7 @@ import { tokensStatsWithTokensDetails } from '@store/selectors/stats'
 import ListboxComponent from './Helpers/ListBoxComponent'
 import { BN } from '@coral-xyz/anchor'
 import { getTokenPrice, printBN } from '@utils/utils'
+import { PublicKey } from '@solana/web3.js'
 
 type Breakpoint = 'md' | 'sm'
 
@@ -34,9 +41,13 @@ export interface ISearchToken {
   address: string
   balance: BN
   decimals: number
-  balanceUSD
+  balanceUSD?: number
 }
-
+interface ITokenBalance {
+  address: PublicKey
+  balance: BN
+  decimals: number
+}
 interface IFilterSearch {
   networkType: string
   selectedFilters: ISearchToken[]
@@ -50,7 +61,7 @@ const CustomPopper = memo((props: PopperProps) => {
   return <Popper {...props} placement='bottom-start' />
 })
 
-const PaperComponent = forwardRef((paperProps: any, ref: React.Ref<HTMLDivElement>) => {
+const PaperComponent = forwardRef<HTMLDivElement, PaperProps>((paperProps, ref) => {
   return (
     <Fade in timeout={300}>
       <Paper {...paperProps} ref={ref}>
@@ -75,7 +86,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     const [prices, setPrices] = useState<Record<string, number>>({})
 
     const tokenListMap = useMemo(() => {
-      const map = new Map<string, any>()
+      const map = new Map<string, ITokenBalance>()
       tokensList.forEach(token => {
         map.set(token.address.toString(), token)
       })
@@ -174,7 +185,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     )
 
     const handleAutoCompleteChange = useCallback(
-      (_event: any, newValue: ISearchToken[]) => {
+      (_event: React.SyntheticEvent, newValue: ISearchToken[]) => {
         setSelectedFilters(newValue)
         setOpen(true)
       },
@@ -192,10 +203,14 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     }, [])
 
     const renderOption = useCallback(
-      (autocompleteProps: any, option: ISearchToken) => {
-        const { key, ...rest } = autocompleteProps
+      (
+        optionProps: React.HTMLAttributes<HTMLLIElement> & { key: number },
+        option: ISearchToken,
+        _state: AutocompleteRenderOptionState,
+        _ownerState: AutocompleteOwnerState<ISearchToken, true, false, false, 'div'>
+      ): React.ReactNode => {
         return (
-          <Box key={key} component='li' {...rest} sx={{ padding: '0 !important' }}>
+          <Box component='li' {...optionProps} sx={{ padding: '0 !important' }}>
             <TokenOption option={option} networkUrl={networkUrl} isSmall={isSmall} />
           </Box>
         )
@@ -204,20 +219,18 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     )
 
     const renderTags = useCallback(
-      (value: ISearchToken[], getTagProps: any) =>
+      (value: ISearchToken[], getTagProps: AutocompleteRenderGetTagProps) =>
         value.map((option, index) => (
-          <TokenChip
-            key={option.address}
-            option={option}
-            onRemove={handleRemoveToken}
-            {...getTagProps({ index })}
-          />
+          <TokenChip option={option} onRemove={handleRemoveToken} {...getTagProps({ index })} />
         )),
       [handleRemoveToken]
     )
 
     const handleKeyDown = useCallback(
-      (event: React.KeyboardEvent<HTMLInputElement>, inputProps: any) => {
+      (
+        event: React.KeyboardEvent<HTMLInputElement>,
+        inputProps: React.InputHTMLAttributes<HTMLInputElement>
+      ) => {
         if (inputProps.onKeyDown) {
           inputProps.onKeyDown(event)
         }
@@ -232,37 +245,36 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
     )
 
     const renderInput = useCallback(
-      (params: any) => {
+      (params: AutocompleteRenderInputParams) => {
+        const newInputProps: Partial<InputProps> = {
+          ...params.InputProps,
+          style: {
+            padding: 0,
+            height: '100%',
+            display: 'flex',
+            alignItems: 'center',
+            ...typography.body2
+          },
+          endAdornment: (
+            <InputAdornment position='end'>
+              <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
+            </InputAdornment>
+          ),
+          inputProps: {
+            ...params.inputProps,
+            readOnly: isTokensSelected,
+            style: { paddingLeft: '12px' }
+          },
+          onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) =>
+            handleKeyDown(event, params.inputProps)
+        }
         return (
           <TextField
             {...params}
             variant='outlined'
             className={classes.searchBar}
             placeholder={selectedFilters.length === 0 ? 'Search token' : ''}
-            InputProps={
-              {
-                ...params.InputProps,
-                style: {
-                  padding: 0,
-                  height: '100%',
-                  display: 'flex',
-                  alignItems: 'center',
-                  ...typography.body2
-                },
-                endAdornment: (
-                  <InputAdornment position='end'>
-                    <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
-                  </InputAdornment>
-                ),
-                inputProps: {
-                  ...params.inputProps,
-                  readOnly: isTokensSelected,
-                  style: { paddingLeft: '12px' }
-                },
-                onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) =>
-                  handleKeyDown(event, params.inputProps)
-              } as any
-            }
+            InputProps={newInputProps}
             onClick={handleOpenPopper}
           />
         )
