@@ -27,7 +27,8 @@ import {
   BANNER_STORAGE_KEY,
   LEADERBOARD_DECIMAL,
   LeaderBoardType,
-  SNAP_TIME_DELAY
+  SNAP_TIME_DELAY,
+  TETH_MAIN
 } from '@store/consts/static'
 import { Leaderboard } from '@components/Leaderboard/Leaderboard'
 import { address, status } from '@store/selectors/solanaWallet'
@@ -85,6 +86,18 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
     },
     [dispatch, itemsPerPage, isConnected]
   )
+
+  const hasTETHPosition = useMemo(() => {
+    return list.some(
+      position =>
+        (position.tokenX.assetAddress === TETH_MAIN.address ||
+          position.tokenY.assetAddress === TETH_MAIN.address) &&
+        position.poolData.currentTickIndex >=
+          Math.min(position.lowerTickIndex, position.upperTickIndex) &&
+        position.poolData.currentTickIndex <
+          Math.max(position.lowerTickIndex, position.upperTickIndex)
+    )
+  }, [list])
 
   const onConnectWallet = () => {
     dispatch(walletActions.connect(false))
@@ -187,6 +200,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
 
   return (
     <Leaderboard
+      hasTETHPosition={hasTETHPosition}
       userContentPoints={userContentPoints}
       copyAddressHandler={copyAddressHandler}
       currentNetwork={currentNetwork}

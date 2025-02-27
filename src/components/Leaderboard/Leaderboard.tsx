@@ -68,6 +68,7 @@ interface LeaderboardProps {
   onConnectWallet: () => void
   userAddress: PublicKey
   isLoadingLeaderboardList: boolean
+  hasTETHPosition: boolean
 }
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({
@@ -97,7 +98,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   totalItemsObject,
   onConnectWallet,
   userAddress,
-  isLoadingLeaderboardList
+  isLoadingLeaderboardList,
+  hasTETHPosition
 }) => {
   const { classes } = useStyles()
 
@@ -159,7 +161,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             totalItems={totalItems}
             walletStatus={walletStatus}
           />{' '}
-          <EcosystemExposure />
+          <EcosystemExposure userStats={userStats.total} hasTETHPosition={hasTETHPosition} />
           <RewardedPools
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}

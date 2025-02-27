@@ -71,7 +71,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       '& .slick-prev': {
         left: -20,
         [theme.breakpoints.down('sm')]: {
-          left: -35
+          left: -21
         }
       },
       '& .slick-next': {
@@ -122,7 +122,8 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       height: '2px',
       width: '100%',
       background: colors.invariant.light
-    }
+    },
+    tooltipTitle: { '& p': { ...typography.body2, color: colors.invariant.textGrey } }
   }
 })
 
