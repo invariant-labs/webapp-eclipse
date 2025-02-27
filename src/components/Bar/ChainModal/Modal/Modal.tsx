@@ -1,9 +1,9 @@
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { useRef, useState } from 'react'
-import { BarButton } from '../BarButton/BarButton'
 import { useStyles } from './style'
 import { Box, Popover, Typography } from '@mui/material'
 import icons from '@static/icons'
+import { BarButton } from '@components/Bar/BarButton/BarButton'
 
 type Props = {
   icon: React.ReactNode
