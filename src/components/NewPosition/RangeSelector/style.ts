@@ -6,18 +6,14 @@ const useStyles = makeStyles()(theme => {
     wrapper: {
       borderRadius: 24,
       backgroundColor: colors.invariant.component,
-      padding: '16px 24px 16px 24px',
+      padding: '16px 24px 6px 24px',
       flex: '1 1 0%',
       position: 'relative',
-      minHeight: 630,
-      [theme.breakpoints.down('sm')]: {
-        padding: '16px 8px  24px 8px '
-      },
+      minHeight: 615,
+
       [theme.breakpoints.down('md')]: {
-        minHeight: 640
-      },
-      [theme.breakpoints.down('md')]: {
-        minHeight: 645
+        padding: '16px 8px  12px 8px ',
+        minHeight: 625
       }
     },
     headerContainer: {
@@ -122,9 +118,13 @@ const useStyles = makeStyles()(theme => {
       alignItems: 'center'
     },
     sliderWrapper: {
-      paddingTop: 30,
+      paddingTop: 22,
       paddingInline: 8,
-      position: 'relative'
+      position: 'relative',
+      [theme.breakpoints.down('sm')]: {
+        paddingTop: 12,
+        paddingInline: 20
+      }
     },
     warningWrapper: {
       position: 'absolute',
