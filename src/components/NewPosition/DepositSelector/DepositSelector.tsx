@@ -582,15 +582,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const renderPriceImpactWarning = useCallback(
     () => (
-      <TooltipHover text='Impact on the price'>
-        <Box
-          className={
-            new BN(simulation?.swapSimulation?.priceImpact ?? 0).lt(
-              toDecimal(+Number(priceImpact).toFixed(4), 2)
-            )
-              ? classes.unknownWarning
-              : classes.errorWarning
-          }>
+      <Box
+        className={
+          new BN(simulation?.swapSimulation?.priceImpact ?? 0).lt(
+            toDecimal(+Number(priceImpact).toFixed(4), 2)
+          )
+            ? classes.unknownWarning
+            : classes.errorWarning
+        }>
+        <Tooltip
+          title={'Impact on the price for token exchange'}
+          classes={{ tooltip: classes.tooltip }}>
           <img
             src={icons.infoCircle}
             alt=''
@@ -604,17 +606,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 : classes.errorIcon
             }
           />
-          Price impact:{' '}
-          {!simulation || !simulation.swapSimulation
-            ? '0'
-            : simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
-              ? Number(
-                  printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
-                ).toFixed(2)
-              : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
-          %
-        </Box>
-      </TooltipHover>
+        </Tooltip>
+        Price impact:{' '}
+        {!simulation || !simulation.swapSimulation
+          ? '0'
+          : simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
+            ? Number(printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)).toFixed(
+                2
+              )
+            : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
+        %
+      </Box>
     ),
     [simulation, alignment, tokenACheckbox, tokenBCheckbox]
   )
@@ -631,7 +633,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       setSimulation(null)
       return
     }
-    console.log('asd')
     const tokenADecimal = tokens[tokenAIndex].decimals
     const tokenBDecimal = tokens[tokenBIndex].decimals
     const tokenAValue = tokenACheckbox ? convertBalanceToBN(valueA, tokenADecimal) : new BN(0)
@@ -783,7 +784,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               isAutoSwapAvailable &&
               (tokenACheckbox || tokenBCheckbox) &&
               renderPriceImpactWarning()}
-            <Tooltip title={'Placeholder'} classes={{ tooltip: classes.tooltip }}>
+            <Tooltip
+              title={
+                'AutoSwap automatically adjusts tokens balances to match your chosen ratio, saving time and optimizing transactions. By default, it executes the most optimal swap, while the manual mode allows you to set parameters such as max price impact or minimum utilization.'
+              }
+              classes={{ tooltip: classes.tooltip }}>
               <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
             </Tooltip>
             <Box className={classes.switchDepositTypeContainer}>

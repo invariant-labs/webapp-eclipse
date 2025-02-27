@@ -14,15 +14,16 @@ export const useStyles = makeStyles()(theme => {
       }
     },
     tooltip: {
-      paddingTop: 4,
-      paddingBottom: 4,
-      paddingLeft: 8,
-      paddingRight: 8,
+      paddingTop: 8,
+      paddingBottom: 8,
+      paddingLeft: 12,
+      paddingRight: 12,
       color: colors.invariant.text,
-      ...typography.caption4,
+      ...typography.caption2,
       lineHeight: '24px',
-      background: colors.invariant.component,
-      borderRadius: 8
+      background: colors.invariant.light,
+      borderRadius: 14,
+      maxWidth: 255
     },
     depositHeader: {
       width: '100%',
