@@ -161,7 +161,12 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             totalItems={totalItems}
             walletStatus={walletStatus}
           />{' '}
-          <EcosystemExposure userStats={userStats.total} hasTETHPosition={hasTETHPosition} />
+          <EcosystemExposure
+            walletStatus={walletStatus}
+            userStats={userStats.total}
+            hasTETHPosition={hasTETHPosition}
+            totalItems={totalItems.total}
+          />
           <RewardedPools
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}
