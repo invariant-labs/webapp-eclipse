@@ -853,7 +853,6 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (wasIsFetchingNewPoolRun && wasSwapIsLoadingRun && !isFetchingNewPool && !swapIsLoading) {
-      console.log(1)
       void setSimulateAmount()
       setWasIsFetchingNewPoolRun(false)
       setWasSwapIsLoadingRun(false)
