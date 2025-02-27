@@ -5,7 +5,8 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   container: {
     maxWidth: 1072,
-    borderRadius: '24px'
+    borderRadius: '24px',
+    display: 'flex'
   },
   pagination: {
     height: 90,
@@ -45,14 +46,26 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
-  noPoolFoundContainer: {
-    height: 690,
-    background: colors.invariant.component,
+  tableBody: {
+    display: 'block'
+  },
+  emptyContainer: {
+    border: 'none',
+    padding: 0,
+    height: '100%',
     display: 'flex',
-    flexDirection: 'column',
+    alignItems: 'center',
+    width: '100%'
+  },
+  emptyWrapper: {
+    display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    paddingTop: 32,
+    height: '90%',
+    width: '100%'
+  },
+  noPoolFoundContainer: {
+    display: 'flex',
     borderBottom: `1px solid ${colors.invariant.light}`
   },
   img: {
