@@ -471,25 +471,25 @@ export const Swap: React.FC<ISwap> = ({
 
   const setSimulateAmount = async () => {
     if (tokenFromIndex !== null && tokenToIndex !== null) {
-      const pair = findPairs(
-        tokens[tokenFromIndex].assetAddress,
-        tokens[tokenToIndex].assetAddress,
-        pools
-      )[0]
-      if (typeof pair === 'undefined') {
-        setAmountTo('')
-        return
-      }
-      const indexPool = Object.keys(poolTicks).filter(key => {
-        return key === pair.address.toString()
-      })
+      // const pair = findPairs(
+      //   tokens[tokenFromIndex].assetAddress,
+      //   tokens[tokenToIndex].assetAddress,
+      //   pools
+      // )[0]
+      // if (typeof pair === 'undefined') {
+      //   setAmountTo('')
+      //   setAddBlur(false)
+      //   return
+      // }
+      // const indexPool = Object.keys(poolTicks).filter(key => {
+      //   return key === pair.address.toString()
+      // })
 
-      if (indexPool.length === 0) {
-        setAmountTo('')
-        return
-      }
-
-      setAddBlur(true)
+      // if (indexPool.length === 0) {
+      //   setAmountTo('')
+      //   setAddBlur(false)
+      //   return
+      // }
 
       if (inputRef === inputTarget.FROM) {
         const [simulateValue, simulateWithHopValue] = await Promise.all([
@@ -542,6 +542,8 @@ export const Swap: React.FC<ISwap> = ({
         setSimulateResult(simulateValue)
         setSimulateWithHopResult(simulateWithHopValue)
       }
+    } else {
+      setAddBlur(false)
     }
   }
 
@@ -561,17 +563,25 @@ export const Swap: React.FC<ISwap> = ({
       error: boolean
     }
   ) => {
+    let useTwoHop = false
+
     if (
-      simulateWithHopResult.simulation &&
-      simulateWithHopResult.route &&
-      (inputRef === inputTarget.FROM
-        ? simulateWithHopResult?.simulation.totalAmountOut.gt(simulateResult.amountOut) ||
-          (simulateResult.error.length > 0 && !simulateWithHopResult.error)
-        : simulateWithHopResult?.simulation.totalAmountIn.lt(
-            convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals)
-          ) ||
-          (simulateResult.error.length > 0 && !simulateWithHopResult.error))
+      (simulateResult.error.length > 0 || simulateResult.amountOut.eq(new BN(0))) &&
+      !simulateWithHopResult.error
     ) {
+      useTwoHop = true
+    }
+
+    if (
+      (simulateResult.error.length > 0 || simulateResult.amountOut.eq(new BN(0))) &&
+      simulateWithHopResult.error
+    ) {
+      if (simulateWithHopResult?.simulation?.totalAmountOut.gte(simulateResult.amountOut)) {
+        useTwoHop = true
+      }
+    }
+
+    if (useTwoHop && simulateWithHopResult.simulation && simulateWithHopResult.route) {
       setSimulationPath({
         tokenFrom: tokens[tokenFromIndex ?? 0],
         tokenBetween:
@@ -688,13 +698,20 @@ export const Swap: React.FC<ISwap> = ({
       return 'Select different tokens'
     }
 
-    if (!getIsXToY(tokens[tokenFromIndex].assetAddress, tokens[tokenToIndex].assetAddress)) {
-      return "Pool doesn't exist."
+    if (
+      !getIsXToY(tokens[tokenFromIndex].assetAddress, tokens[tokenToIndex].assetAddress) &&
+      simulateWithHopResult.simulation === null &&
+      simulateWithHopResult.route === null
+    ) {
+      return "Route doesn't exist."
     }
 
     if (
       isError(SimulationStatus.SwapStepLimitReached) ||
-      isError(SimulationStatus.PriceLimitReached)
+      (isError(SimulationStatus.PriceLimitReached) &&
+        simulateWithHopResult.simulation === null &&
+        simulateWithHopResult.route === null) ||
+      simulateWithHopResult.error
     ) {
       return 'Insufficient liquidity'
     }
@@ -836,6 +853,7 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (wasIsFetchingNewPoolRun && wasSwapIsLoadingRun && !isFetchingNewPool && !swapIsLoading) {
+      console.log(1)
       void setSimulateAmount()
       setWasIsFetchingNewPoolRun(false)
       setWasSwapIsLoadingRun(false)

@@ -1302,6 +1302,7 @@ export const handleSimulateWithHop = async (
       }
 
       if (
+        simulation.totalAmountIn.add(simulation.swapHopOne.accumulatedFee).eq(amount) &&
         simulation.totalAmountIn
           .add(simulation.swapHopOne.accumulatedFee)
           .lt(simulationBestFailed.totalAmountIn)
