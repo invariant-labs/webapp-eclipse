@@ -319,12 +319,6 @@ export const NewPosition: React.FC<INewPosition> = ({
     [tokenAIndex, tokenBIndex]
   )
 
-  const isFullAutoSwapOn = useMemo(
-    () =>
-      isAutoSwapAvailable && tokenACheckbox && tokenBCheckbox && alignment == DepositOptions.Auto,
-    [isAutoSwapAvailable, tokenACheckbox, tokenBCheckbox, alignment]
-  )
-
   const isAutoswapOn = useMemo(
     () =>
       isAutoSwapAvailable && (tokenACheckbox || tokenBCheckbox) && alignment == DepositOptions.Auto,
@@ -729,29 +723,6 @@ export const NewPosition: React.FC<INewPosition> = ({
     setTokenBCheckbox(true)
   }, [alignment])
 
-  useEffect(() => {
-    if (tokenACheckbox === tokenBCheckbox || tokenAIndex === null || tokenBIndex === null) return
-    if (!tokenACheckbox) {
-      setTokenADeposit(
-        getOtherTokenAmount(
-          convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals),
-          leftRange,
-          rightRange,
-          true
-        )
-      )
-    }
-    if (!tokenBCheckbox) {
-      setTokenBDeposit(
-        getOtherTokenAmount(
-          convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals),
-          leftRange,
-          rightRange,
-          true
-        )
-      )
-    }
-  }, [tokenACheckbox, tokenBCheckbox])
   return (
     <Grid container className={classes.wrapper} direction='column'>
       <Link to='/portfolio' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
@@ -1006,7 +977,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               }
 
               setTokenADeposit(value)
-              !isFullAutoSwapOn &&
+              !isAutoswapOn &&
                 setTokenBDeposit(
                   getOtherTokenAmount(
                     convertBalanceToBN(value, tokens[tokenAIndex].decimals),
@@ -1045,7 +1016,7 @@ export const NewPosition: React.FC<INewPosition> = ({
               }
 
               setTokenBDeposit(value)
-              !isFullAutoSwapOn &&
+              !isAutoswapOn &&
                 setTokenADeposit(
                   getOtherTokenAmount(
                     convertBalanceToBN(value, tokens[tokenBIndex].decimals),

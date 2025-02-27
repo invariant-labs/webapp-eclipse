@@ -500,7 +500,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return
     }
 
-    if (alignment === DepositOptions.Auto && tokenACheckbox && tokenBCheckbox) {
+    if (alignment === DepositOptions.Auto) {
       const pom = tokenAInputState.value
       tokenAInputState.setValue(tokenBInputState.value)
       tokenBInputState.setValue(pom)

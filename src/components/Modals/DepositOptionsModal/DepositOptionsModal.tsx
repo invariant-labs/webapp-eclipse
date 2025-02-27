@@ -225,7 +225,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                     )
                   )
                 }}>
-                Set as Default
+                Restore Default
               </Button>
             </Box>
           </Grid>
