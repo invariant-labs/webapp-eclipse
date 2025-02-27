@@ -77,6 +77,9 @@ const solanaWalletSlice = createSlice({
     getBalance(state) {
       return state
     },
+    changeWalletInExtension(state) {
+      return state
+    },
     setIsEthBalanceLoading(state, action: PayloadAction<boolean>) {
       action.payload ? (state.ethBalanceLoading = true) : (state.ethBalanceLoading = false)
       return state
