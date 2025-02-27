@@ -4,6 +4,7 @@ import { useStyles } from './style'
 import { ChainModal } from './ChainModal/ChainModal'
 import { NetworkType } from '@store/consts/static'
 import { ISelectChain, ISelectNetwork } from '@store/consts/types'
+import { Separator } from '@components/Separator/Separator'
 
 type Props = {
   rpcs: ISelectNetwork[]
@@ -33,6 +34,7 @@ export const Bar = ({
         onNetworkChange={onNetworkChange}
         onFaucet={onFaucet}
       />
+      <Separator size={32} />
       <ChainModal onChainChange={onChainChange} />
     </Box>
   )

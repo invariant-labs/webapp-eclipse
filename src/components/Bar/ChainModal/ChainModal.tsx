@@ -5,6 +5,7 @@ import { CHAINS } from '@store/consts/static'
 import classNames from 'classnames'
 import { Chain, ISelectChain } from '@store/consts/types'
 import { Modal } from '../Modal/Modal'
+import { useModal } from '../Modal/useModal'
 
 type Props = {
   onChainChange: (chain: ISelectChain) => void
@@ -13,8 +14,15 @@ type Props = {
 export const ChainModal = ({ onChainChange }: Props) => {
   const { classes } = useStyles()
 
+  const { open, handleOpen, handleClose } = useModal()
+
   return (
-    <Modal icon={<img className={classes.barButtonIcon} src={icons.Eclipse} alt='Chain icon' />}>
+    <Modal
+      icon={<img className={classes.barButtonIcon} src={icons.eclipse2} alt='Chain icon' />}
+      open={open}
+      onOpen={handleOpen}
+      onClose={handleClose}
+      width={160}>
       <Box className={classes.container}>
         <Typography className={classes.title}>Select a chain</Typography>
         <Box className={classes.chainContainer}>

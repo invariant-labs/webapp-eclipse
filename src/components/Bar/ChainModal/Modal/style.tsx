@@ -1,18 +1,14 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-type Props = {
-  width: number
-}
-
-export const useStyles = makeStyles<Props>()((_theme, { width }) => {
+export const useStyles = makeStyles()(() => {
   return {
     barButtonIcon: {
       width: 24,
       height: 24
     },
     popover: {
-      width,
+      width: 240,
       padding: '16px 8px',
       borderRadius: 24,
       background: colors.invariant.component,

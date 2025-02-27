@@ -6,6 +6,8 @@ import { NetworkType } from '@store/consts/static'
 import { ISelectNetwork } from '@store/consts/types'
 import { Modal } from '../Modal/Modal'
 import { FaucetButton } from './FaucetButton/FaucetButton'
+import { Separator } from '@components/Separator/Separator'
+import { useModal } from '../Modal/useModal'
 
 type Props = {
   rpcs: ISelectNetwork[]
@@ -24,19 +26,32 @@ export const SettingsModal = ({
 }: Props) => {
   const { classes } = useStyles()
 
+  const { open, handleOpen, handleClose } = useModal()
+
   return (
     <Modal
       icon={<img className={classes.barButtonIcon} src={icons.settings2} alt='Settings icon' />}
       title='Settings'
-      showTitle>
+      showTitle
+      open={open}
+      onOpen={handleOpen}
+      onClose={handleClose}>
       {/* <Switch items={['RPC', 'Priority Fee']} /> */}
       <SelectNetworkAndRPC
         rpcs={rpcs}
         activeNetwork={activeNetwork}
         activeRPC={activeRPC}
-        onNetworkChange={onNetworkChange}
+        onNetworkChange={(network, activeRPC) => {
+          onNetworkChange(network, activeRPC)
+          handleClose()
+        }}
       />
-      {activeNetwork === NetworkType.Testnet && <FaucetButton onFaucet={onFaucet} />}
+      {activeNetwork === NetworkType.Testnet && (
+        <>
+          <Separator isHorizontal />
+          <FaucetButton onFaucet={onFaucet} />
+        </>
+      )}
     </Modal>
   )
 }

@@ -6,10 +6,11 @@ export const useStyles = makeStyles()(() => {
     claimFaucetButton: {
       height: 28,
       width: '100%',
-      background: colors.invariant.green,
+      background: colors.invariant.greenLinearGradient,
       borderRadius: 10,
       color: colors.invariant.dark,
       ...typography.body2,
+      fontWeight: 700,
       textTransform: 'none',
 
       '&:hover': {

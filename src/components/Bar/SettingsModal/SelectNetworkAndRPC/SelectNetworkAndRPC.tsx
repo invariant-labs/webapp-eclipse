@@ -5,6 +5,7 @@ import { useStyles } from './style'
 import classNames from 'classnames'
 import { useRef, useState } from 'react'
 import { ISelectNetwork } from '@store/consts/types'
+import { Separator } from '@components/Separator/Separator'
 
 type Props = {
   rpcs: ISelectNetwork[]
@@ -25,21 +26,14 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
     customAddress
   )
 
-  const networks = [
-    {
-      network: NetworkType.Mainnet
-    },
-    {
-      network: NetworkType.Testnet
-    }
-  ]
+  const networks = [NetworkType.Mainnet, NetworkType.Testnet]
 
   return (
     <>
       <Box className={classes.container}>
         <Typography className={classes.title}>Select a network</Typography>
         <Box className={classes.networkContainer}>
-          {networks.map(({ network }) => (
+          {networks.map(network => (
             <Box
               className={classNames(classes.network, {
                 [classes.networkActive]: network === activeNetwork
@@ -55,6 +49,7 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
           ))}
         </Box>
       </Box>
+      <Separator isHorizontal />
       <Box className={classes.container}>
         <Typography className={classes.title}>
           Select a {activeNetwork.toLowerCase()} RPC to use
