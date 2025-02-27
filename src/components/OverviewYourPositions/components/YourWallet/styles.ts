@@ -49,7 +49,7 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
       borderBottomLeftRadius: 0,
       borderBottomRightRadius: 0,
       backgroundColor: colors.invariant.component,
-      height: '286px',
+      height: '287px',
       overflowY: 'scroll',
       overflowX: 'hidden',
 

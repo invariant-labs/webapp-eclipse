@@ -142,7 +142,10 @@ export const YourWallet: React.FC<YourWalletProps> = ({
 }) => {
   const navigate = useNavigate()
   const sortedPools = useMemo(() => [...pools].sort((a, b) => b.value - a.value), [pools])
-  const { classes } = useStyles({ isLoading, isScrollHide: sortedPools.length < 5 })
+  const { classes } = useStyles({
+    isLoading,
+    isScrollHide: sortedPools.length < 5
+  })
 
   const totalValue = useMemo(
     () => sortedPools.reduce((sum, pool) => sum + pool.value, 0),
