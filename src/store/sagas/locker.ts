@@ -90,9 +90,10 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
     if (confirmedTx.value.err === null) {
       yield* put(actions.setLockSuccess(true))
       yield* put(positionsActions.getPositionsList())
+
       yield put(
         snackbarsActions.add({
-          message: 'Position locked successfully',
+          message: 'Position locked successfully.',
           variant: 'success',
           persist: false,
           txid: signatureTx

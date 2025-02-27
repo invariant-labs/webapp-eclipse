@@ -20,6 +20,7 @@ export interface PositionsListStore {
   lockedList: PositionWithAddress[]
   head: number
   bump: number
+  isAllClaimFeesLoading: boolean
   initialized: boolean
   loading: boolean
 }
@@ -56,6 +57,14 @@ export interface IPositionsStore {
   currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
+  unclaimedFees: {
+    total: number
+    loading: boolean
+    lastUpdate: number
+  }
+  prices: {
+    data: Record<string, number>
+  }
 }
 
 export interface InitPositionData
@@ -129,6 +138,7 @@ export const defaultState: IPositionsStore = {
     lockedList: [],
     head: 0,
     bump: 0,
+    isAllClaimFeesLoading: false,
     initialized: false,
     loading: true
   },
@@ -142,6 +152,15 @@ export const defaultState: IPositionsStore = {
     inProgress: false,
     success: false
   },
+  unclaimedFees: {
+    total: 0,
+    loading: false,
+    lastUpdate: 0
+  },
+  prices: {
+    data: {}
+  },
+
   shouldNotUpdateRange: false
 }
 
@@ -189,6 +208,35 @@ const positionsSlice = createSlice({
       state.plotTicks.hasError = true
       return state
     },
+    setAllClaimLoader(state, action: PayloadAction<boolean>) {
+      state.positionsList.isAllClaimFeesLoading = action.payload
+    },
+    calculateTotalUnclaimedFees(state) {
+      state.unclaimedFees.loading = true
+      return state
+    },
+    setUnclaimedFees(state, action: PayloadAction<number>) {
+      state.unclaimedFees = {
+        total: action.payload,
+        loading: false,
+        lastUpdate: Date.now()
+      }
+      return state
+    },
+    setUnclaimedFeesError(state) {
+      state.unclaimedFees = {
+        ...state.unclaimedFees,
+        loading: false
+      }
+      return state
+    },
+    setPrices(state, action: PayloadAction<Record<string, number>>) {
+      state.prices = {
+        data: action.payload
+      }
+      return state
+    },
+
     getCurrentPlotTicks(state, action: PayloadAction<GetCurrentTicksData>) {
       state.plotTicks.loading = !action.payload.disableLoading
       return state
@@ -272,6 +320,9 @@ const positionsSlice = createSlice({
       return state
     },
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
+      return state
+    },
+    claimAllFee(state) {
       return state
     },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {

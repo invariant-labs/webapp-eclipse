@@ -93,7 +93,8 @@ import {
   WETH_MAIN,
   KYSOL_MAIN,
   EZSOL_MAIN,
-  LEADERBOARD_DECIMAL
+  LEADERBOARD_DECIMAL,
+  POSITIONS_PER_PAGE
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -821,13 +822,27 @@ function trimEndingZeros(num) {
   return num.toString().replace(/0+$/, '')
 }
 
-export const formatNumberWithoutSuffix = (number: number | bigint | string): string => {
+export const formatNumberWithoutSuffix = (
+  number: number | bigint | string,
+  options?: { twoDecimals?: boolean }
+): string => {
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)
 
-  const absNumberAsString = numberToString(absNumberAsNumber)
+  if (options?.twoDecimals) {
+    if (absNumberAsNumber === 0) {
+      return '0'
+    }
+    if (absNumberAsNumber > 0 && absNumberAsNumber < 0.01) {
+      return isNegative ? '-<0.01' : '<0.01'
+    }
+    return isNegative
+      ? '-' + absNumberAsNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      : absNumberAsNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
 
+  const absNumberAsString = numberToString(absNumberAsNumber)
   const [beforeDot, afterDot] = absNumberAsString.split('.')
 
   const leadingZeros = afterDot ? countLeadingZeros(afterDot) : 0
@@ -842,7 +857,6 @@ export const formatNumberWithoutSuffix = (number: number | bigint | string): str
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
-
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
@@ -1305,6 +1319,15 @@ export const simulateAutoSwap = async (
   }
 }
 
+export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
+  try {
+    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
+  } catch (e) {
+    console.log(e)
+    return []
+  }
+}
+
 export const toMaxNumericPlaces = (num: number, places: number): string => {
   const log = Math.floor(Math.log10(num))
 
@@ -1346,39 +1369,6 @@ export const getPoolsFromAddresses = async (
       }) as PoolWithAddress[]
   } catch (error) {
     console.log(error)
-    return []
-  }
-}
-
-export const getTickmapsFromPools = async (
-  pools: PoolWithAddress[],
-  marketProgram: Market
-): Promise<Record<string, Tickmap>> => {
-  {
-    try {
-      const addresses = pools.map(pool => pool.tickmap)
-      const tickmaps = (await marketProgram.program.account.tickmap.fetchMultiple(
-        addresses
-      )) as Array<Tickmap | null>
-
-      return tickmaps.reduce((acc, cur, idx) => {
-        if (cur) {
-          acc[addresses[idx].toBase58()] = cur
-        }
-        return acc
-      }, {})
-    } catch (error) {
-      console.log(error)
-      return {}
-    }
-  }
-}
-
-export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
-  try {
-    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
-  } catch (e) {
-    console.log(e)
     return []
   }
 }
@@ -2069,6 +2059,37 @@ export const formatNumberWithSpaces = (number: string) => {
   return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
 }
 
+export const generatePositionTableLoadingData = () => {
+  const getRandomNumber = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min + 1)) + min
+
+  return Array(POSITIONS_PER_PAGE)
+    .fill(null)
+    .map((_, index) => {
+      const currentPrice = Math.random() * 10000
+
+      return {
+        id: `loading-${index}`,
+        poolAddress: `pool-${index}`,
+        tokenXName: 'FOO',
+        tokenYName: 'BAR',
+        tokenXIcon: undefined,
+        tokenYIcon: undefined,
+        currentPrice,
+        fee: getRandomNumber(1, 10) / 10,
+        min: currentPrice * 0.8,
+        max: currentPrice * 1.2,
+        position: getRandomNumber(1000, 10000),
+        valueX: getRandomNumber(1000, 10000),
+        valueY: getRandomNumber(1000, 10000),
+        poolData: {},
+        isActive: Math.random() > 0.5,
+        tokenXLiq: getRandomNumber(100, 1000),
+        tokenYLiq: getRandomNumber(10000, 100000),
+        network: 'mainnet'
+      }
+    })
+}
 export const sciToString = (sciStr: string | number) => {
   const number = Number(sciStr)
   if (!Number.isFinite(number)) throw new Error('Invalid number')

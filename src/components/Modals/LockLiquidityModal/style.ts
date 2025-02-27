@@ -5,8 +5,6 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()((theme: Theme) => {
   return {
     popover: {
-      marginTop: '100px',
-      marginLeft: 'calc(50vw - 336px)',
       [theme.breakpoints.down(671)]: {
         display: 'flex',
         marginLeft: 'auto',

@@ -10,7 +10,9 @@ const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore
 export const {
   lastPage,
   positionsList,
+  unclaimedFees,
   plotTicks,
+  prices,
   currentPositionId,
   currentPositionTicks,
   initPosition,
@@ -18,7 +20,9 @@ export const {
 } = keySelectors(store, [
   'lastPage',
   'positionsList',
+  'unclaimedFees',
   'plotTicks',
+  'prices',
   'currentPositionId',
   'currentPositionTicks',
   'initPosition',

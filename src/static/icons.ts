@@ -78,6 +78,8 @@ import githubFill from './svg/githubFill.svg'
 import mediumFill from './svg/MediumFill.svg'
 import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
+import liquidityEmpty from './svg/liqudity_empty.svg'
+import assetsEmpty from './svg/assets_empty.svg'
 import settingCirc from './svg/settings_ic.svg'
 
 const icons: { [key: string]: string } = {
@@ -160,6 +162,8 @@ const icons: { [key: string]: string } = {
   airdropGrey,
   infoError,
   okxLogo,
+  liquidityEmpty,
+  assetsEmpty,
   goldenInfoCircle,
   settingCirc
 }
