@@ -34,6 +34,7 @@ export const ChainModal = ({ onChainChange }: Props) => {
               key={chain.name}
               onClick={() => {
                 onChainChange(chain)
+                handleClose()
               }}>
               <img
                 className={classes.icon}
