@@ -123,7 +123,6 @@ const useStyles = makeStyles()(theme => {
     },
     sliderWrapper: {
       paddingTop: 30,
-      paddingBottom: -24,
       paddingInline: 8,
       position: 'relative'
     },
