@@ -30,7 +30,7 @@ export const Modal = ({ icon, title, showTitle, children }: Props) => {
 
   return (
     <>
-      <BarButton ref={ref} onClick={() => handleOpen()} showArrowDown={true}>
+      <BarButton ref={ref} onClick={() => handleOpen()}>
         {icon}
       </BarButton>
       <Popover

@@ -29,7 +29,7 @@ export const ChainModal = ({ onChainChange }: Props) => {
               }}>
               <img
                 className={classes.icon}
-                src={icons[chain.name.replace(/\s/g, '')]}
+                src={icons[chain.iconGlow]}
                 alt={`${chain.name} icon`}
               />
               <Typography className={classes.name}>{chain.name}</Typography>

@@ -81,6 +81,9 @@ import settings2 from './svg/settings2.svg'
 import mainnet2 from './svg/mainnet2.svg'
 import testnet2 from './svg/testnet2.svg'
 import active2 from './svg/active2.svg'
+import solanaGlow from './svg/solanaGlow.svg'
+import eclipseGlow from './svg/eclipseGlow.svg'
+import alephiumGlow from './svg/alephiumGlow.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -165,7 +168,10 @@ const icons: { [key: string]: string } = {
   settings2,
   mainnet2,
   testnet2,
-  active2
+  active2,
+  solanaGlow,
+  eclipseGlow,
+  alephiumGlow
 }
 
 export default icons
