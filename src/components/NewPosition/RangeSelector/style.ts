@@ -9,9 +9,15 @@ const useStyles = makeStyles()(theme => {
       padding: '16px 24px 16px 24px',
       flex: '1 1 0%',
       position: 'relative',
-
+      minHeight: 630,
       [theme.breakpoints.down('sm')]: {
         padding: '16px 8px  24px 8px '
+      },
+      [theme.breakpoints.down('md')]: {
+        minHeight: 640
+      },
+      [theme.breakpoints.down('md')]: {
+        minHeight: 645
       }
     },
     headerContainer: {
@@ -116,13 +122,10 @@ const useStyles = makeStyles()(theme => {
       alignItems: 'center'
     },
     sliderWrapper: {
-      paddingTop: 24,
+      paddingTop: 30,
+      paddingBottom: -24,
       paddingInline: 8,
-      position: 'relative',
-
-      [theme.breakpoints.down('sm')]: {
-        paddingBottom: 24
-      }
+      position: 'relative'
     },
     warningWrapper: {
       position: 'absolute',
