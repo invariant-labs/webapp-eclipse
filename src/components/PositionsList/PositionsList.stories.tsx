@@ -5,6 +5,7 @@ import { NetworkType } from '@store/consts/static'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import { IPositionItem } from './types'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Components/PositionsList',
@@ -297,13 +298,15 @@ export const Primary: Story = {
     noConnectedBlockerProps: {
       onConnect: () => {}
     },
-    searchValue: '',
-    searchSetValue: () => {},
+    currentNetwork: NetworkType.Mainnet,
     handleRefresh: () => {},
     initialPage: 1,
     setLastPage: () => {},
     length: 0,
     lockedLength: 0,
-    noInitialPositions: false
+    noInitialPositions: false,
+    handleClaimFee: fn(),
+    handleClosePosition: fn(),
+    handleLockPosition: fn()
   }
 }

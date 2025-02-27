@@ -2,7 +2,7 @@ import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
 import searchIcon from '@static/svg/lupa.svg'
 import { theme } from '@static/theme'
 import React, { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
-import { FixedSizeList as List } from 'react-window'
+import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
 import useStyles from '../style'
 import AddTokenModal from '@components/Modals/AddTokenModal/AddTokenModal'
 import {
@@ -16,7 +16,7 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import { formatNumberWithSuffix, printBN } from '@utils/utils'
+import { formatNumberWithSuffix, getTokenPrice, printBN } from '@utils/utils'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import Scrollbars from 'rc-scrollbars'
 import icons from '@static/icons'
@@ -41,6 +41,15 @@ export interface ISelectTokenModal {
   hiddenUnknownTokens: boolean
   network: NetworkType
 }
+interface RowItemData {
+  tokens: (SwapToken & { index: number; strAddress: string })[]
+  onSelect: (index: number) => void
+  hideBalances: boolean
+  isXs: boolean
+  networkUrl: string
+  classes: ReturnType<typeof useStyles>['classes']
+  prices: Record<string, number>
+}
 
 export interface IScroll {
   onScroll: (e: React.UIEvent<HTMLElement>) => void
@@ -57,6 +66,76 @@ const Scroll = forwardRef<React.LegacyRef<Scrollbars>, IScroll>(({ onScroll, chi
 
 const CustomScrollbarsVirtualList = React.forwardRef<React.LegacyRef<Scrollbars>, IScroll>(
   (props, ref) => <Scroll {...props} ref={ref} />
+)
+
+const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
+  ({ index, style, data }) => {
+    const { tokens, onSelect, hideBalances, isXs, networkUrl, classes, prices } = data
+    const token = tokens[index]
+    const tokenBalance = printBN(token.balance, token.decimals)
+    const price = prices[token.assetAddress.toString()]
+    const usdBalance = price ? Number(tokenBalance) * price : 0
+
+    return (
+      <Grid
+        className={classes.tokenItem}
+        container
+        style={{
+          ...style,
+          width: 'calc(100% - 50px)'
+        }}
+        alignItems='center'
+        wrap='nowrap'
+        onClick={() => {
+          onSelect(token.index)
+        }}>
+        <Box className={classes.imageContainer}>
+          <TokenIcon icon={token.logoURI} name={token.name} />
+          {token.isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
+        </Box>
+        <Grid container className={classes.tokenContainer}>
+          <Grid container direction='row' columnGap='6px' alignItems='center' wrap='nowrap'>
+            <Typography className={classes.tokenName}>
+              {token.symbol ? token.symbol : 'Unknown'}{' '}
+            </Typography>
+            <Grid className={classes.tokenAddress} container direction='column'>
+              <a
+                href={`https://eclipsescan.xyz/token/${token.assetAddress.toString()}${networkUrl}`}
+                target='_blank'
+                rel='noopener noreferrer'
+                onClick={event => {
+                  event.stopPropagation()
+                }}>
+                <Typography>
+                  {token.assetAddress.toString().slice(0, isXs ? 3 : 4) +
+                    '...' +
+                    token.assetAddress.toString().slice(isXs ? -4 : -5, -1)}
+                </Typography>
+                <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
+              </a>
+            </Grid>
+          </Grid>
+
+          <Typography className={classes.tokenDescrpiption}>
+            {token.name ? token.name.slice(0, isXs ? 20 : 30) : 'Unknown'}
+            {token.name.length > (isXs ? 20 : 30) ? '...' : ''}
+          </Typography>
+        </Grid>
+        <Grid container alignItems='flex-end' flexDirection='column' wrap='nowrap'>
+          {!hideBalances && Number(tokenBalance) > 0 ? (
+            <>
+              <Typography className={classes.tokenBalanceStatus} noWrap>
+                {formatNumberWithSuffix(tokenBalance)}
+              </Typography>
+              <Typography className={classes.tokenBalanceUSDStatus}>
+                ${usdBalance.toFixed(2)}
+              </Typography>
+            </>
+          ) : null}
+        </Grid>
+      </Grid>
+    )
+  }
 )
 
 export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
@@ -77,10 +156,10 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
   }) => {
     const { classes } = useStyles()
     const isXs = useMediaQuery(theme.breakpoints.down('sm'))
-
     const [value, setValue] = useState<string>('')
     const [isAddOpen, setIsAddOpen] = useState(false)
     const [hideUnknown, setHideUnknown] = useState(initialHideUnknownTokensValue)
+    const [prices, setPrices] = useState<Record<string, number>>({})
 
     const outerRef = useRef<HTMLElement>(null)
     const inputRef = useRef<HTMLInputElement>(null)
@@ -99,6 +178,21 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
       [tokens]
     )
 
+    useEffect(() => {
+      tokensWithIndexes.forEach(token => {
+        const balanceStr = printBN(token.balance, token.decimals)
+        const balance = Number(balanceStr)
+        if (balance > 0) {
+          const addr = token.assetAddress.toString()
+          if (prices[addr] === undefined) {
+            getTokenPrice(addr).then(price => {
+              setPrices(prev => ({ ...prev, [addr]: price || 0 }))
+            })
+          }
+        }
+      })
+    }, [tokensWithIndexes])
+
     const commonTokensList = useMemo(
       () =>
         tokensWithIndexes.filter(
@@ -108,42 +202,47 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
     )
 
     const filteredTokens = useMemo(() => {
-      const list = tokensWithIndexes.filter(token => {
-        return (
+      const list = tokensWithIndexes.filter(
+        token =>
           token.symbol.toLowerCase().includes(value.toLowerCase()) ||
           token.name.toLowerCase().includes(value.toLowerCase()) ||
           token.strAddress.includes(value)
-        )
+      )
+
+      const tokensWithPrice = list.filter(token => {
+        const price = prices[token.assetAddress.toString()]
+        return price !== undefined && price > 0
       })
 
-      const sorted = list.sort((a, b) => {
-        const aBalance = +printBN(a.balance, a.decimals)
-        const bBalance = +printBN(b.balance, b.decimals)
-        if ((aBalance === 0 && bBalance === 0) || (aBalance > 0 && bBalance > 0)) {
-          if (value.length) {
-            if (
-              a.symbol.toLowerCase().startsWith(value.toLowerCase()) &&
-              !b.symbol.toLowerCase().startsWith(value.toLowerCase())
-            ) {
-              return -1
-            }
-
-            if (
-              b.symbol.toLowerCase().startsWith(value.toLowerCase()) &&
-              !a.symbol.toLowerCase().startsWith(value.toLowerCase())
-            ) {
-              return 1
-            }
-          }
-
-          return a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase())
-        }
-
-        return aBalance === 0 ? 1 : -1
+      const tokensNoPrice = list.filter(token => {
+        const price = prices[token.assetAddress.toString()]
+        return price === undefined || price === 0
       })
+
+      tokensWithPrice.sort((a, b) => {
+        const aNative = +printBN(a.balance, a.decimals)
+        const bNative = +printBN(b.balance, b.decimals)
+        const aPrice = prices[a.assetAddress.toString()]!
+        const bPrice = prices[b.assetAddress.toString()]!
+        const aUSD = aNative * aPrice
+        const bUSD = bNative * bPrice
+
+        if (aUSD !== bUSD) return bUSD - aUSD
+        if (aNative !== bNative) return bNative - aNative
+        return a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase())
+      })
+
+      tokensNoPrice.sort((a, b) => {
+        const aNative = +printBN(a.balance, a.decimals)
+        const bNative = +printBN(b.balance, b.decimals)
+        if (aNative !== bNative) return bNative - aNative
+        return a.symbol.toLowerCase().localeCompare(b.symbol.toLowerCase())
+      })
+
+      const sorted = [...tokensWithPrice, ...tokensNoPrice]
 
       return hideUnknown ? sorted.filter(token => !token.isUnknown) : sorted
-    }, [value, tokens, hideUnknown, open])
+    }, [value, tokensWithIndexes, hideUnknown, prices])
 
     const searchToken = (e: React.ChangeEvent<HTMLInputElement>) => {
       setValue(e.target.value)
@@ -286,80 +385,21 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                 itemSize={66}
                 itemCount={filteredTokens.length}
                 outerElementType={CustomScrollbarsVirtualList}
-                outerRef={outerRef}>
-                {({ index, style }: { index: number; style: React.CSSProperties }) => {
-                  const token = filteredTokens[index]
-                  const tokenBalance = printBN(token.balance, token.decimals)
-
-                  return (
-                    <Grid
-                      className={classes.tokenItem}
-                      container
-                      style={{
-                        ...style,
-                        width: 'calc(100% - 50px)'
-                      }}
-                      alignItems='center'
-                      wrap='nowrap'
-                      onClick={() => {
-                        onSelect(token.index)
-                        setValue('')
-                        handleClose()
-                      }}>
-                      <Box className={classes.imageContainer}>
-                        <TokenIcon icon={token.logoURI} name={token.name} />
-                        {token.isUnknown && (
-                          <img className={classes.warningIcon} src={icons.warningIcon} />
-                        )}
-                      </Box>
-                      <Grid container className={classes.tokenContainer}>
-                        <Grid
-                          container
-                          direction='row'
-                          columnGap='6px'
-                          alignItems='center'
-                          wrap='nowrap'>
-                          <Typography className={classes.tokenName}>
-                            {token.symbol ? token.symbol : 'Unknown'}{' '}
-                          </Typography>
-                          <Grid className={classes.tokenAddress} container direction='column'>
-                            <a
-                              href={`https://eclipsescan.xyz/token/${token.assetAddress.toString()}${networkUrl}`}
-                              target='_blank'
-                              rel='noopener noreferrer'
-                              onClick={event => {
-                                event.stopPropagation()
-                              }}>
-                              <Typography>
-                                {token.assetAddress.toString().slice(0, 4) +
-                                  '...' +
-                                  token.assetAddress.toString().slice(-5, -1)}
-                              </Typography>
-                              <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
-                            </a>
-                          </Grid>
-                        </Grid>
-
-                        <Typography className={classes.tokenDescrpiption}>
-                          {token.name ? token.name.slice(0, isXs ? 20 : 30) : 'Unknown'}
-                          {token.name.length > (isXs ? 20 : 30) ? '...' : ''}
-                        </Typography>
-                      </Grid>
-                      <Grid
-                        container
-                        justifyContent='flex-end'
-                        wrap='wrap'
-                        className={classes.tokenBalanceStatus}>
-                        {!hideBalances && Number(tokenBalance) > 0 ? (
-                          <>
-                            <Typography>Balance:</Typography>
-                            <Typography>&nbsp; {formatNumberWithSuffix(tokenBalance)}</Typography>
-                          </>
-                        ) : null}
-                      </Grid>
-                    </Grid>
-                  )
-                }}
+                outerRef={outerRef}
+                itemData={{
+                  tokens: filteredTokens,
+                  onSelect: (idx: number) => {
+                    onSelect(idx)
+                    setValue('')
+                    handleClose()
+                  },
+                  hideBalances,
+                  isXs,
+                  networkUrl,
+                  classes,
+                  prices
+                }}>
+                {RowItem}
               </List>
             </Box>
           </Grid>

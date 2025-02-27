@@ -57,7 +57,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
     }
     yield put(
       snackbarsActions.add({
-        message: 'Creating token',
+        message: 'Creating token...',
         variant: 'pending',
         persist: true,
         key: loaderCreateToken
@@ -262,7 +262,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
 
       yield put(
         snackbarsActions.add({
-          message: 'Token created successfully',
+          message: 'Token created successfully.',
           variant: 'success',
           persist: false,
           txid: signatureTx
