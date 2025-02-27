@@ -18,7 +18,7 @@ export const ChainModal = ({ onChainChange }: Props) => {
 
   return (
     <Modal
-      icon={<img className={classes.barButtonIcon} src={icons.eclipse2} alt='Chain icon' />}
+      icon={<img className={classes.barButtonIcon} src={icons.eclipse} alt='Chain icon' />}
       open={open}
       onOpen={handleOpen}
       onClose={handleClose}

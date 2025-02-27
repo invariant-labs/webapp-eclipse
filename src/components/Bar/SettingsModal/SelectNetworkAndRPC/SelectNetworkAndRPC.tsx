@@ -43,7 +43,7 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
                 setCustomAddress('')
                 onNetworkChange(network, '')
               }}>
-              <img src={icons[`${network.toLowerCase()}2`]} alt={`${network} icon`} />
+              <img src={icons[`${network.toLowerCase()}Glow`]} alt={`${network} icon`} />
               <Typography className={classes.name}>{network}</Typography>
             </Box>
           ))}

@@ -14,7 +14,7 @@ export const useStyles = makeStyles()(() => {
       textTransform: 'none',
 
       '&:hover': {
-        background: colors.invariant.green
+        boxShadow: `0 0 15px ${colors.invariant.light}`
       }
     },
     buttonIcon: {

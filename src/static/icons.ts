@@ -78,15 +78,14 @@ import mediumFill from './svg/MediumFill.svg'
 import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
 import settings2 from './svg/settings2.svg'
-import mainnet2 from './svg/mainnet2.svg'
-import testnet2 from './svg/testnet2.svg'
+import mainnetGlow from './svg/mainnetGlow.svg'
+import testnetGlow from './svg/testnetGlow.svg'
 import active2 from './svg/active2.svg'
 import solanaGlow from './svg/solanaGlow.svg'
 import eclipseGlow from './svg/eclipseGlow.svg'
 import alephiumGlow from './svg/alephiumGlow.svg'
 import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
-import eclipse2 from './svg/eclipse2.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -169,15 +168,14 @@ const icons: { [key: string]: string } = {
   infoError,
   okxLogo,
   settings2,
-  mainnet2,
-  testnet2,
+  mainnetGlow,
+  testnetGlow,
   active2,
   solanaGlow,
   eclipseGlow,
   alephiumGlow,
   liquidityEmpty,
-  assetsEmpty,
-  eclipse2
+  assetsEmpty
 }
 
 export default icons

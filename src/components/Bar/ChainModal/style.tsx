@@ -49,8 +49,8 @@ export const useStyles = makeStyles()(() => {
       ...typography.body2
     },
     icon: {
-      width: 20,
-      height: 20
+      width: 16,
+      height: 16
     }
   }
 })

@@ -772,7 +772,11 @@ export const CHAINS = [
     iconGlow: 'eclipseGlow'
   },
   // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
-  { name: Chain.Alephium, address: 'https://alph.invariant.app/exchange', iconGlow: 'alephiumGlow' }
+  {
+    name: Chain.Alephium,
+    address: 'https://alph.invariant.app/exchange',
+    iconGlow: 'alephiumGlow'
+  }
 ]
 
 export const enum SortTypePoolList {
