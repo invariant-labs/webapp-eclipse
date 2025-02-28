@@ -16,7 +16,7 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
   },
   searchIcon: {
     width: 17,
-    paddingRight: '10px'
+    padding: 11
   },
   paper: {
     width: isSmall ? 'calc(100% - 32px)' : 392,
@@ -78,6 +78,11 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
     padding: '2px 4px 2px 4px',
     ...typography.caption4,
     color: colors.invariant.textGrey
+  },
+  searchIconContainer: {
+    flexGrow: 1,
+    display: 'flex',
+    justifyContent: 'flex-end'
   }
 }))
 

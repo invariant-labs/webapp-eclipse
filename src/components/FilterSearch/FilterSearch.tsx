@@ -6,7 +6,6 @@ import {
   AutocompleteRenderOptionState,
   Box,
   Fade,
-  InputAdornment,
   InputProps,
   Paper,
   PaperProps,
@@ -249,21 +248,21 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
         const newInputProps: Partial<InputProps> = {
           ...params.InputProps,
           style: {
+            display: 'flex',
+            flexWrap: 'wrap',
             padding: 0,
             height: '100%',
-            display: 'flex',
             alignItems: 'center',
             ...typography.body2
           },
           endAdornment: (
-            <InputAdornment position='end'>
+            <div className={classes.searchIconContainer}>
               <img src={SearchIcon} className={classes.searchIcon} alt='Search' />
-            </InputAdornment>
+            </div>
           ),
           inputProps: {
             ...params.inputProps,
-            readOnly: isTokensSelected,
-            style: { paddingLeft: '12px' }
+            readOnly: isTokensSelected
           },
           onKeyDown: (event: React.KeyboardEvent<HTMLInputElement>) =>
             handleKeyDown(event, params.inputProps)
