@@ -168,13 +168,18 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
       setHideUnknown(hiddenUnknownTokens)
     }, [hiddenUnknownTokens])
 
-    const tokensWithIndexes = useMemo(
-      () =>
-        tokens.map((token, index) => ({
+    type IndexedSwapToken = SwapToken & {
+      index: number
+      strAddress: string
+    }
+
+    const tokensWithIndexes = useMemo<IndexedSwapToken[]>(() => {
+      return tokens.map(
+        (token, index): IndexedSwapToken => ({
           ...token,
           index,
           strAddress: token.assetAddress.toString()
-        })),
+        }))},
       [tokens]
     )
 
