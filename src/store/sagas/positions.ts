@@ -34,7 +34,8 @@ import {
   positionsList,
   positionsWithPoolsData,
   singlePositionData,
-  currentPositionTicks
+  currentPositionTicks,
+  prices
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -45,14 +46,18 @@ import {
   createLoaderKey,
   createPlaceholderLiquidityPlot,
   getLiquidityTicksByPositionsList,
-  getPositionsAddressesFromRange
+  getPositionsAddressesFromRange,
+  printBN
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
+  calculateClaimAmount,
   createNativeAtaInstructions,
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
+import { ClaimAllFee, Market, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { getEclipseWallet } from '@utils/web3/wallet'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -1045,6 +1050,8 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
         })
       )
     } else {
+      yield put(actions.getPositionsList())
+
       yield put(
         snackbarsActions.add({
           message: 'Fee claimed successfully',
@@ -1210,6 +1217,8 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
         })
       )
     } else {
+      yield put(actions.getPositionsList())
+
       yield put(
         snackbarsActions.add({
           message: 'Fee claimed successfully',
@@ -1255,6 +1264,158 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
     }
 
     yield* call(handleRpcError, (error as Error).message)
+  }
+}
+
+export function* handleClaimAllFees() {
+  const loaderClaimAllFees = createLoaderKey()
+  const loaderSigningTx = createLoaderKey()
+
+  try {
+    const connection = yield* call(getConnection)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const wallet = yield* call(getWallet)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    const allPositionsData = yield* select(positionsWithPoolsData)
+    const tokensAccounts = yield* select(accounts)
+
+    if (allPositionsData.length === 0) {
+      return
+    }
+    if (allPositionsData.length === 1) {
+      const claimFeeAction = actions.claimFee({ index: 0, isLocked: false })
+      return yield* call(handleClaimFee, claimFeeAction)
+    }
+
+    yield* put(actions.setAllClaimLoader(true))
+    yield put(
+      snackbarsActions.add({
+        message: 'Claiming all fees',
+        variant: 'pending',
+        persist: true,
+        key: loaderClaimAllFees
+      })
+    )
+
+    for (const position of allPositionsData) {
+      const pool = allPositionsData[position.positionIndex].poolData
+
+      if (!tokensAccounts[pool.tokenX.toString()]) {
+        yield* call(createAccount, pool.tokenX)
+      }
+      if (!tokensAccounts[pool.tokenY.toString()]) {
+        yield* call(createAccount, pool.tokenY)
+      }
+    }
+
+    const formattedPositions = allPositionsData.map(position => ({
+      pair: new Pair(position.poolData.tokenX, position.poolData.tokenY, {
+        fee: position.poolData.fee,
+        tickSpacing: position.poolData.tickSpacing
+      }),
+      index: position.positionIndex,
+      lowerTickIndex: position.lowerTickIndex,
+      upperTickIndex: position.upperTickIndex
+    }))
+
+    const txs = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
+      owner: wallet.publicKey,
+      positions: formattedPositions
+    } as ClaimAllFee)
+
+    yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+    for (const { tx, additionalSigner } of txs) {
+      const blockhash = yield* call([connection, connection.getLatestBlockhash])
+      tx.recentBlockhash = blockhash.blockhash
+      tx.feePayer = wallet.publicKey
+
+      let signedTx: Transaction
+      if (additionalSigner) {
+        const partiallySignedTx = yield* call([wallet, wallet.signTransaction], tx)
+        partiallySignedTx.partialSign(additionalSigner)
+        signedTx = partiallySignedTx
+      } else {
+        signedTx = yield* call([wallet, wallet.signTransaction], tx)
+      }
+
+      const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+        skipPreflight: false
+      })
+
+      if (!txid.length) {
+        yield put(
+          snackbarsActions.add({
+            message: 'Failed to claim some fees. Please try again.',
+            variant: 'error',
+            persist: false,
+            txid
+          })
+        )
+      }
+    }
+
+    yield put(
+      snackbarsActions.add({
+        message: 'All fees claimed successfully.',
+        variant: 'success',
+        persist: false
+      })
+    )
+
+    for (const position of formattedPositions) {
+      yield put(actions.getSinglePosition({ index: position.index, isLocked: false }))
+    }
+
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+    closeSnackbar(loaderClaimAllFees)
+    yield put(snackbarsActions.remove(loaderClaimAllFees))
+
+    yield put(actions.getPositionsList())
+    yield put(actions.calculateTotalUnclaimedFees())
+
+    yield* put(actions.setAllClaimLoader(false))
+  } catch (error) {
+    yield* put(actions.setAllClaimLoader(false))
+
+    console.log(error)
+
+    closeSnackbar(loaderClaimAllFees)
+    yield put(snackbarsActions.remove(loaderClaimAllFees))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to claim fees. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+
+    try {
+      if (error instanceof Error) {
+        yield* call(handleRpcError, error.message)
+      }
+    } catch (rpcError) {
+      console.error('RPC error handling failed:', rpcError)
+    }
   }
 }
 
@@ -1712,7 +1873,6 @@ export function* handleGetCurrentPositionRangeTicks(
 export function* handleUpdatePositionsRangeTicks(
   action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
 ) {
-  //TODO finish after update position list item
   try {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
@@ -1781,6 +1941,79 @@ export function* handleUpdatePositionsRangeTicks(
   }
 }
 
+function* getTickWithCache(
+  pair: Pair,
+  tickIndex: number,
+  ticksCache: Map<string, Tick>,
+  marketProgram: Market
+): Generator<any, Tick, any> {
+  const cacheKey = `${pair.tokenX.toString()}-${pair.tokenY.toString()}-${tickIndex}`
+
+  if (ticksCache.has(cacheKey)) {
+    return ticksCache.get(cacheKey)!
+  }
+
+  const tick = yield* call([marketProgram, 'getTick'], pair, tickIndex)
+  ticksCache.set(cacheKey, tick)
+  return tick
+}
+
+export function* handleCalculateTotalUnclaimedFees() {
+  try {
+    const positionList = yield* select(positionsWithPoolsData)
+    const pricesData = yield* select(prices)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+
+    const wallet = getEclipseWallet() as IWallet
+    const marketProgram: Market = yield* call(getMarketProgram, networkType, rpc, wallet)
+
+    const ticksCache: Map<string, Tick> = new Map()
+
+    const ticks: Tick[][] = yield* all(
+      positionList.map(function* (position) {
+        const pair = new Pair(position.poolData.tokenX, position.poolData.tokenY, {
+          fee: position.poolData.fee,
+          tickSpacing: position.poolData.tickSpacing
+        })
+
+        const [lowerTick, upperTick]: Tick[] = yield* all([
+          call(getTickWithCache, pair, position.lowerTickIndex, ticksCache, marketProgram),
+          call(getTickWithCache, pair, position.upperTickIndex, ticksCache, marketProgram)
+        ])
+
+        return [lowerTick, upperTick]
+      })
+    )
+
+    const total = positionList.reduce((acc: number, position, i: number) => {
+      const [lowerTick, upperTick] = ticks[i]
+      const [bnX, bnY] = calculateClaimAmount({
+        position,
+        tickLower: lowerTick,
+        tickUpper: upperTick,
+        tickCurrent: position.poolData.currentTickIndex,
+        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+      })
+
+      const xValue =
+        +printBN(bnX, position.tokenX.decimals) *
+        (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
+      const yValue =
+        +printBN(bnY, position.tokenY.decimals) *
+        (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
+
+      return acc + xValue + yValue
+    }, 0)
+
+    yield* put(actions.setUnclaimedFees(isFinite(total) ? total : 0))
+  } catch (error) {
+    console.error('Error calculating unclaimed fees:', error)
+    yield* put(actions.setUnclaimedFeesError())
+  }
+}
+
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)
 }
@@ -1793,6 +2026,15 @@ export function* getPositionsListHandler(): Generator {
 export function* claimFeeHandler(): Generator {
   yield* takeEvery(actions.claimFee, handleClaimFee)
 }
+
+export function* claimAllFeeHandler(): Generator {
+  yield* takeEvery(actions.claimAllFee, handleClaimAllFees)
+}
+
+export function* unclaimedFeesHandler(): Generator {
+  yield* takeEvery(actions.calculateTotalUnclaimedFees, handleCalculateTotalUnclaimedFees)
+}
+
 export function* closePositionHandler(): Generator {
   yield* takeEvery(actions.closePosition, handleClosePosition)
 }
@@ -1814,6 +2056,8 @@ export function* positionsSaga(): Generator {
       getCurrentPlotTicksHandler,
       getPositionsListHandler,
       claimFeeHandler,
+      unclaimedFeesHandler,
+      claimAllFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,
       getCurrentPositionRangeTicksHandler,
