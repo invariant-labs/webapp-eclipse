@@ -12,9 +12,9 @@ export interface IEmptyPlaceholder {
   withButton?: boolean
   mainTitle?: string
   roundedCorners?: boolean
-  blurWidth?: string
+  blurWidth?: number
   buttonName?: string
-  height?: string
+  height?: number
   newVersion?: boolean
 }
 
@@ -26,9 +26,10 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
   mainTitle,
   height,
   newVersion = false,
-  roundedCorners = false
+  roundedCorners = false,
+  blurWidth
 }) => {
-  const { classes } = useStyles({ newVersion, roundedCorners, height })
+  const { classes } = useStyles({ newVersion, roundedCorners, height, blurWidth })
 
   return (
     <>

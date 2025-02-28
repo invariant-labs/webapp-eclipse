@@ -1,11 +1,10 @@
 import React, { useMemo, useEffect } from 'react'
 import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
 import { useStyles } from './style'
-import { Button, Grid, Typography } from '@mui/material'
+import { Grid } from '@mui/material'
 import { BTC_TEST, NetworkType, SortTypePoolList, USDC_TEST, WETH_TEST } from '@store/consts/static'
 import { PaginationList } from '@components/Pagination/Pagination'
 import { VariantType } from 'notistack'
-import icons from '@static/icons'
 import { useNavigate } from 'react-router-dom'
 
 export interface PoolListInterface {
@@ -42,6 +41,7 @@ export interface PoolListInterface {
 import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
+import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 
 const ITEMS_PER_PAGE = 10
 
@@ -190,18 +190,17 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             ))}
           </>
         ) : (
-          <Grid className={classes.noPoolFoundContainer}>
-            <img className={classes.img} src={icons.empty} alt='Not connected' />
-            <Typography className={classes.noPoolFoundPlaceholder}>No pool found...</Typography>
-            <Typography className={classes.noPoolFoundPlaceholder}>
-              Add pool by pressing the button!
-            </Typography>
-            <Button
-              className={classes.addPoolButton}
-              onClick={() => navigate('/newPosition')}
-              variant='contained'>
-              Add pool
-            </Button>
+          <Grid container>
+            <EmptyPlaceholder
+              blurWidth={1072}
+              height={690}
+              newVersion
+              mainTitle='No pool found...'
+              buttonName='Add pool'
+              desc={'Add pool by pressing the button!'}
+              onAction={() => navigate('/newPosition')}
+              withButton={true}
+            />
           </Grid>
         )}
         <Grid className={classes.pagination}>

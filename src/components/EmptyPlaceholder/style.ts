@@ -3,12 +3,13 @@ import { makeStyles } from 'tss-react/mui'
 
 interface StyleProps {
   newVersion?: boolean
-  height?: string
+  height?: number
   roundedCorners?: boolean
+  blurWidth?: number
 }
 
 export const useStyles = makeStyles<StyleProps>()(
-  (_theme, { newVersion, roundedCorners, height }) => ({
+  (_theme, { newVersion, roundedCorners, height, blurWidth }) => ({
     container: {
       width: '100%',
       height: height ? height : '370px',
@@ -31,6 +32,7 @@ export const useStyles = makeStyles<StyleProps>()(
       paddingBottom: 25
     },
     blur: {
+      maxWidth: blurWidth ?? '100%',
       width: '100%',
       height: height ? height : '370px',
       position: 'absolute',
