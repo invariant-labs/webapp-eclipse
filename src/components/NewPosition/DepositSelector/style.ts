@@ -23,7 +23,8 @@ export const useStyles = makeStyles()(theme => {
       lineHeight: '24px',
       background: colors.invariant.light,
       borderRadius: 14,
-      maxWidth: 255
+      maxWidth: 255,
+      border: `1px solid ${colors.invariant.newDark}`
     },
     depositHeader: {
       width: '100%',
