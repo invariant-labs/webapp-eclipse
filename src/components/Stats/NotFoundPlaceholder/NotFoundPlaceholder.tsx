@@ -5,7 +5,7 @@ import icons from '@static/icons'
 import classNames from 'classnames'
 
 export interface INotFoundPlaceholder {
-  title?: string
+  title: string
   subtitle?: string
   isStats?: boolean
 }
