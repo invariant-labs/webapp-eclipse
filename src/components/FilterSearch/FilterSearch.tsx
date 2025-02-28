@@ -49,7 +49,7 @@ interface ITokenBalance {
   decimals: number
 }
 interface IFilterSearch {
-  networkType: string
+  networkType: NetworkType
   selectedFilters: ISearchToken[]
   setSelectedFilters: React.Dispatch<React.SetStateAction<ISearchToken[]>>
   filtersAmount: number
@@ -103,7 +103,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
         const pricePromises = tokensListDetails.map(async tokenData => {
           const details = tokenData.tokenDetails
           const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
-          const price = await getTokenPrice(tokenAddress)
+          const price = await getTokenPrice(tokenAddress, networkType)
           return { tokenAddress, price }
         })
         const results = await Promise.all(pricePromises)

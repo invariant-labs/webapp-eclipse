@@ -1757,26 +1757,49 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
   }
 }
 
-export const getTokenPrice = async (addr: string): Promise<number | undefined> => {
+export const getTokenPrice = async (
+  addr: string,
+  network: NetworkType
+): Promise<number | undefined> => {
   const cachedLastQueryTimestamp = localStorage.getItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
   let lastQueryTimestamp = 0
   if (cachedLastQueryTimestamp) {
     lastQueryTimestamp = Number(cachedLastQueryTimestamp)
   }
 
-  const cachedPriceData = localStorage.getItem('TOKEN_PRICE_DATA')
+  const cachedPriceData =
+    network === NetworkType.Mainnet
+      ? localStorage.getItem('TOKEN_PRICE_DATA')
+      : localStorage.getItem('TOKEN_PRICE_DATA_TESTNET')
+
   let priceData: Record<string, { price: number }> | null = null
 
   if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
-      const { data } = await axios.get<IPriceData>(`https://price.invariant.app/eclipse-mainnet`)
+      const { data } = await axios.get<IPriceData>(
+        `https://price.invariant.app/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
+      )
       priceData = data.data
 
-      localStorage.setItem('TOKEN_PRICE_DATA', JSON.stringify(priceData))
-      localStorage.setItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP', String(Date.now()))
+      localStorage.setItem(
+        network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET',
+        JSON.stringify(priceData)
+      )
+      localStorage.setItem(
+        network === NetworkType.Mainnet
+          ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
+          : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET',
+        String(Date.now())
+      )
     } catch (e) {
-      localStorage.removeItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
-      localStorage.removeItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
+      localStorage.removeItem(
+        network === NetworkType.Mainnet
+          ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
+          : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET'
+      )
+      localStorage.removeItem(
+        network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET'
+      )
       priceData = null
       console.log(e)
     }

@@ -282,12 +282,12 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     const xAddr = position.tokenX.assetAddress.toString()
-    getTokenPrice(xAddr)
+    getTokenPrice(xAddr, currentNetwork)
       .then(data => setTokenXPriceData({ price: data ?? 0 }))
       .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
 
     const yAddr = position.tokenY.assetAddress.toString()
-    getTokenPrice(yAddr)
+    getTokenPrice(yAddr, currentNetwork)
       .then(data => setTokenYPriceData({ price: data ?? 0 }))
       .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
   }, [position?.id, triggerFetchPrice])
