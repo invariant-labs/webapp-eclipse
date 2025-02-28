@@ -13,7 +13,8 @@ export const useStyles = makeStyles<StyleProps>()(
     container: {
       width: '100%',
       height: height ? height : '370px',
-      zIndex: 14
+      zIndex: 14,
+      borderBottom: `1px solid ${colors.invariant.light}`
     },
     root: {
       zIndex: 10,

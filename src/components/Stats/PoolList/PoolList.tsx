@@ -9,6 +9,7 @@ import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
+import { colors } from '@static/theme'
 
 export interface PoolListInterface {
   data: Array<{
@@ -188,7 +189,9 @@ const PoolList: React.FC<PoolListInterface> = ({
           ))}
         </>
       ) : (
-        <NotFoundPlaceholder title='No pools found...' isStats />
+        <Grid container sx={{ background: colors.invariant.component }}>
+          <NotFoundPlaceholder title='No pools found...' isStats />
+        </Grid>
       )}
       <Grid className={classes.pagination}>
         {pages > 1 && (
