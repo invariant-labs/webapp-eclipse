@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react'
 import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/pools'
-import { actions as positionsActions } from '@store/reducers/positions'
 import { poolsArraySortedByFees, poolTicks, tickMaps } from '@store/selectors/pools'
 import { swap } from '@store/selectors/swap'
 import { findTickmapChanges, IWallet, Pair } from '@invariant-labs/sdk-eclipse'
@@ -13,10 +12,10 @@ import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import {
-  currentPositionData,
-  currentPositionId,
-  lockedPositionsWithPoolsData,
-  positionsWithPoolsData
+  // currentPositionData,
+  currentPositionId
+  // lockedPositionsWithPoolsData,
+  // positionsWithPoolsData
 } from '@store/selectors/positions'
 
 const MarketEvents = () => {
@@ -29,10 +28,10 @@ const MarketEvents = () => {
   const networkStatus = useSelector(status)
   const tickmaps = useSelector(tickMaps)
   const allPools = useSelector(poolsArraySortedByFees)
-  const positionsList = useSelector(positionsWithPoolsData)
-  const lockedPositionsList = useSelector(lockedPositionsWithPoolsData)
+  // const positionsList = useSelector(positionsWithPoolsData)
+  // const lockedPositionsList = useSelector(lockedPositionsWithPoolsData)
   const currentPositionIndex = useSelector(currentPositionId)
-  const currentPosition = useSelector(currentPositionData)
+  // const currentPosition = useSelector(currentPositionData)
   const poolTicksArray = useSelector(poolTicks)
   const [subscribedTick, _setSubscribeTick] = useState<Set<string>>(new Set())
   const [subscribedTickmap, _setSubscribedTickmap] = useState<Set<string>>(new Set())
@@ -100,11 +99,11 @@ const MarketEvents = () => {
 
     const connectEvents = () => {
       allPools.forEach(pool => {
-        const allPositions = [...positionsList, ...lockedPositionsList]
+        // const allPositions = [...positionsList, ...lockedPositionsList]
 
-        const positionsInPool = allPositions.filter(position => {
-          return position.poolData.address.toString() === pool.address.toString()
-        })
+        // const positionsInPool = allPositions.filter(position => {
+        //   return position.poolData.address.toString() === pool.address.toString()
+        // })
 
         marketProgram.onPoolChange(
           pool.tokenX,
@@ -207,6 +206,8 @@ const MarketEvents = () => {
           if (typeof pool === 'undefined') {
             return
           }
+          console.log('ticks subscribe ')
+
           poolTicksArray[address].forEach(singleTick => {
             marketProgram.onTickChange(
               new Pair(pool.tokenX, pool.tokenY, {
@@ -254,8 +255,10 @@ const MarketEvents = () => {
           if (typeof pool === 'undefined') {
             return
           }
+          console.log('tickmap subscribe')
           // trunk-ignore(eslint/@typescript-eslint/no-floating-promises)
           marketProgram.onTickmapChange(new PublicKey(address), tickmap => {
+            console.log('tickmap change')
             const changes = findTickmapChanges(
               tickmaps[address].bitmap,
               tickmap.bitmap,
