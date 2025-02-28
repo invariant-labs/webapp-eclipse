@@ -20,9 +20,9 @@ export const useStyles = makeStyles()(theme => {
       paddingRight: 12,
       color: colors.invariant.text,
       ...typography.caption2,
-      lineHeight: '24px',
       background: colors.invariant.light,
       borderRadius: 14,
+      lineHeight: '24px',
       maxWidth: 255,
       border: `1px solid ${colors.invariant.newDark}`
     },
