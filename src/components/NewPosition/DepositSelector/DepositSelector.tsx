@@ -579,7 +579,68 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     },
     [simulation]
   )
-
+  const renderSwitcher = useCallback(
+    () => (
+      <>
+        <Tooltip
+          title={
+            'AutoSwap automatically adjusts tokens balances to match your chosen ratio, saving time and optimizing transactions. By default, it executes the most optimal swap, while the manual mode allows you to set parameters such as max price impact or minimum utilization.'
+          }
+          classes={{ tooltip: classes.tooltip }}>
+          <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
+        </Tooltip>
+        <Box className={classes.switchDepositTypeContainer}>
+          <Box
+            className={classes.switchDepositTypeMarker}
+            sx={{
+              left: alignment === DepositOptions.Basic ? 0 : '50%'
+            }}
+          />
+          <ToggleButtonGroup
+            value={alignment}
+            exclusive
+            onChange={handleSwitchDepositType}
+            className={classes.switchDepositTypeButtonsGroup}>
+            <ToggleButton
+              value={DepositOptions.Basic}
+              disableRipple
+              className={classNames(
+                classes.switchDepositTypeButton,
+                alignment === DepositOptions.Basic
+                  ? classes.switchSelected
+                  : classes.switchNotSelected
+              )}>
+              Basic
+            </ToggleButton>
+            <ToggleButton
+              disabled={!isAutoSwapAvailable}
+              value={DepositOptions.Auto}
+              disableRipple
+              className={classNames(
+                classes.switchDepositTypeButton,
+                alignment === DepositOptions.Auto
+                  ? classes.switchSelected
+                  : classes.switchNotSelected
+              )}>
+              Auto
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </Box>
+        <Button
+          onClick={handleClickDepositOptions}
+          className={classes.optionsIconBtn}
+          disableRipple
+          disabled={!isAutoSwapAvailable}>
+          <img
+            src={icons.settingCirc}
+            className={!isAutoSwapAvailable ? classes.grayscaleIcon : classes.whiteIcon}
+            alt='options'
+          />
+        </Button>
+      </>
+    ),
+    [isAutoSwapAvailable, alignment]
+  )
   const renderPriceImpactWarning = useCallback(
     () => (
       <Box
@@ -784,61 +845,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               isAutoSwapAvailable &&
               (tokenACheckbox || tokenBCheckbox) &&
               renderPriceImpactWarning()}
-            <Tooltip
-              title={
-                'AutoSwap automatically adjusts tokens balances to match your chosen ratio, saving time and optimizing transactions. By default, it executes the most optimal swap, while the manual mode allows you to set parameters such as max price impact or minimum utilization.'
-              }
-              classes={{ tooltip: classes.tooltip }}>
-              <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
-            </Tooltip>
-            <Box className={classes.switchDepositTypeContainer}>
-              <Box
-                className={classes.switchDepositTypeMarker}
-                sx={{
-                  left: alignment === DepositOptions.Basic ? 0 : '50%'
-                }}
-              />
-              <ToggleButtonGroup
-                value={alignment}
-                exclusive
-                onChange={handleSwitchDepositType}
-                className={classes.switchDepositTypeButtonsGroup}>
-                <ToggleButton
-                  value={DepositOptions.Basic}
-                  disableRipple
-                  className={classNames(
-                    classes.switchDepositTypeButton,
-                    alignment === DepositOptions.Basic
-                      ? classes.switchSelected
-                      : classes.switchNotSelected
-                  )}>
-                  Basic
-                </ToggleButton>
-                <ToggleButton
-                  disabled={!isAutoSwapAvailable}
-                  value={DepositOptions.Auto}
-                  disableRipple
-                  className={classNames(
-                    classes.switchDepositTypeButton,
-                    alignment === DepositOptions.Auto
-                      ? classes.switchSelected
-                      : classes.switchNotSelected
-                  )}>
-                  Auto
-                </ToggleButton>
-              </ToggleButtonGroup>
-            </Box>
-            <Button
-              onClick={handleClickDepositOptions}
-              className={classes.optionsIconBtn}
-              disableRipple
-              disabled={!isAutoSwapAvailable}>
-              <img
-                src={icons.settingCirc}
-                className={!isAutoSwapAvailable ? classes.grayscaleIcon : classes.whiteIcon}
-                alt='options'
-              />
-            </Button>
+            {renderSwitcher()}
           </Box>
         </Box>
         {(breakpoint630Down || breakpointMdTo1000 || brekpoint1270to1350) &&
