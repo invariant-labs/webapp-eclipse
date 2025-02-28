@@ -9,7 +9,12 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
   },
   subheader: {
     ...typography.heading4,
-    color: colors.white.main
+    color: colors.white.main,
+    marginBottom: 24,
+
+    [theme.breakpoints.up('md')]: {
+      marginBottom: 0
+    }
   },
   plotsRow: {
     marginBottom: 24,
@@ -47,7 +52,7 @@ export const useStyles = makeStyles<{ isXs: boolean }>()((theme: Theme, { isXs }
   rowContainer: {
     display: 'flex',
     flexDirection: isXs ? 'column' : 'row',
-    alignItems: isXs ? 'flex-start' : 'flex-end',
+    alignItems: isXs ? 'flex-start' : 'center',
     justifyContent: 'space-between',
     width: '100%'
   },

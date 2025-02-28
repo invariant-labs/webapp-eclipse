@@ -24,7 +24,7 @@ export const WrappedPoolList: React.FC = () => {
   const promotedPools = useSelector(getPromotedPools)
   const currentNetwork = useSelector(network)
   const isLoadingStats = useSelector(isLoading)
-  const isXs = useMediaQuery(theme.breakpoints.down('sm'))
+  const isXs = useMediaQuery(theme.breakpoints.down('md'))
 
   const { classes } = useStyles({ isXs })
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
@@ -72,15 +72,14 @@ export const WrappedPoolList: React.FC = () => {
   return (
     <div className={classes.container}>
       <Box className={classes.rowContainer}>
-        <Typography className={classes.subheader} mb={2}>
-          All pools
-        </Typography>
+        <Typography className={classes.subheader}>All pools</Typography>
 
         <FilterSearch
           networkType={networkType}
           selectedFilters={selectedFilters}
           setSelectedFilters={setSelectedFilters}
           filtersAmount={2}
+          bp='md'
         />
       </Box>
       <LiquidityPoolList

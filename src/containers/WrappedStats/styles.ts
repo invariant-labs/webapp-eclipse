@@ -10,7 +10,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   subheader: {
     ...typography.heading4,
     color: colors.white.main,
-    marginBottom: 24
+    marginBottom: 24,
+
+    [theme.breakpoints.up('md')]: {
+      marginBottom: 0
+    }
   },
   plotsRow: {
     marginBottom: 24,
@@ -63,7 +67,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 17
   },
   rowContainer: {
-    [theme.breakpoints.down('sm')]: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
+    [theme.breakpoints.down('md')]: {
       flexDirection: 'column',
       alignItems: 'flex-start'
     }

@@ -144,7 +144,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     margin: 0,
     minWidth: 'auto',
     background: 'none',
-    marginRight: 7,
     '&:hover': {
       background: 'none'
     },
@@ -236,7 +235,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'center',
     alignItems: 'flex-start',
     flexDirection: 'row',
-    gap: 12,
+    gap: 8,
     [theme.breakpoints.down('md')]: {
       justifyContent: 'space-between',
       width: '100%'

@@ -281,7 +281,7 @@ export const PositionsList: React.FC<IProps> = ({
 
               <Grid
                 display='flex'
-                columnGap={2}
+                columnGap={1}
                 justifyContent='space-between'
                 className={classes.fullWidthWrapper}>
                 <TooltipHover text='Refresh'>

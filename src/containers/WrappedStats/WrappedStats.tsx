@@ -144,19 +144,14 @@ export const WrappedStats: React.FC = () => {
               isLoading={isLoadingStats}
             />
           </Grid>
-          <Grid
-            display='flex'
-            alignItems='end'
-            justifyContent='space-between'
-            className={classes.rowContainer}>
-            <Typography className={classes.subheader} mb={2}>
-              Top tokens
-            </Typography>
+          <Grid className={classes.rowContainer}>
+            <Typography className={classes.subheader}>Top tokens</Typography>
             <FilterSearch
               networkType={currentNetwork}
               selectedFilters={searchTokensValue}
               setSelectedFilters={setSearchTokensValue}
               filtersAmount={3}
+              bp='md'
             />
           </Grid>
           <Grid container className={classes.row}>
@@ -177,20 +172,15 @@ export const WrappedStats: React.FC = () => {
               isLoading={isLoadingStats}
             />
           </Grid>
-          <Grid
-            display='flex'
-            alignItems='end'
-            justifyContent='space-between'
-            className={classes.rowContainer}>
-            <Typography className={classes.subheader} mb={2}>
-              Top pools
-            </Typography>
+          <Grid className={classes.rowContainer}>
+            <Typography className={classes.subheader}>Top pools</Typography>
 
             <FilterSearch
               networkType={currentNetwork}
               setSelectedFilters={setSearchPoolsValue}
               selectedFilters={searchPoolsValue}
               filtersAmount={2}
+              bp='md'
             />
           </Grid>
           <PoolList
