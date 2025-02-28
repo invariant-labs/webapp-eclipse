@@ -17,6 +17,7 @@ import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { Status } from '@store/reducers/solanaWallet'
 import check from '@static/svg/checkRainbow.svg'
+import { BlurOverlay } from '../YourProgress/BlurOverlay'
 
 interface EcosystemExposureI {
   userStats: ITotalEntry | null
@@ -88,7 +89,9 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
   return (
     <Grid className={classes.mainWrapper}>
       <Typography component='h1'>Ecosystem Exposure</Typography>
-      <Grid className={classes.boxWrapper}>
+      <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
+        <BlurOverlay isConnected={isConnected} />
+
         <Grid className={classes.header}>
           <Typography>Eclipse Ecosystem Exposure</Typography>
           <TooltipGradient
