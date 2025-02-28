@@ -17,7 +17,7 @@ const useStyles = makeStyles()(() => {
     },
 
     img: {
-      paddingBottom: 37
+      paddingBottom: 25
     },
     container: {
       background:
