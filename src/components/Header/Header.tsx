@@ -204,9 +204,7 @@ export const Header: React.FC<IHeader> = ({
             connected={walletConnected}
             onDisconnect={onDisconnectWallet}
             startIcon={
-              walletConnected && !isSmDown ? (
-                <DotIcon className={classes.connectedWalletIcon} />
-              ) : undefined
+              walletConnected ? <DotIcon className={classes.connectedWalletIcon} /> : undefined
             }
             onCopyAddress={onCopyAddress}
           />

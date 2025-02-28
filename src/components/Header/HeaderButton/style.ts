@@ -55,8 +55,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       color: colors.invariant.text,
 
       [theme.breakpoints.down('sm')]: {
-        marginLeft: '6px',
-        marginRight: '6px',
         padding: '0px 2px'
       },
       [theme.breakpoints.between('sm', 'lg')]: {

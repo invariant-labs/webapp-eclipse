@@ -61,7 +61,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       width: 'auto',
       justifyContent: 'flex-end',
-      gap: 8,
+      gap: 16,
       flexWrap: 'nowrap',
       alignItems: 'center',
       [theme.breakpoints.up(1450)]: {
@@ -73,7 +73,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       },
 
       [theme.breakpoints.down('sm')]: {
-        gap: 4
+        gap: 8
       }
     },
     leftButtons: {

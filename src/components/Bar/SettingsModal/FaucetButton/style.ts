@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => {
   return {
     claimFaucetButton: {
-      height: 28,
+      height: 36,
       width: '100%',
       background: colors.invariant.greenLinearGradient,
       borderRadius: 10,
