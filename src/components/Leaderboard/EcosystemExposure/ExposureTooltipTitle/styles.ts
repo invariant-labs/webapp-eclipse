@@ -17,8 +17,21 @@ const useStyles = makeStyles<{ isFinished: boolean }>()((_theme, { isFinished })
         borderRadius: '6px'
       }
     },
+    newTabIcon: {
+      width: 14,
+      height: 14,
+      marginLeft: -10,
+      marginBottom: 2
+    },
+    link: {
+      display: 'flex',
+      pointerEvents: 'auto',
+      ...typography.body2,
+      color: colors.invariant.text,
+      alignItems: 'center'
+    },
     title: {
-      width: 232,
+      width: 237,
       display: 'flex',
       flexDirection: 'column',
       gap: 2,

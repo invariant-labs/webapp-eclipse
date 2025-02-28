@@ -16,6 +16,7 @@ import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { Status } from '@store/reducers/solanaWallet'
+import check from '@static/svg/checkRainbow.svg'
 
 interface EcosystemExposureI {
   userStats: ITotalEntry | null
@@ -39,8 +40,10 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
   const tasks = [
     {
-      id: 'alldomains',
+      id: 'AllDomains',
+      link: 'https://eclipse.alldomains.id/',
       title: 'Reach TOP2000',
+      a: 'AllDomains',
       img: allDomains,
       max: 2000,
       current: currentRanking,
@@ -49,8 +52,10 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       footerDescription: '210 AllDomains Points every 2 weeks',
       completed: userStats ? currentRanking <= 2000 : false
     },
+
     {
-      id: 'turboTap',
+      id: 'Turbo Tap',
+      link: 'https://tap.eclipse.xyz/',
       title: 'Earn 25,000 points on Invariant',
       img: turboTap,
       max: 25000,
@@ -61,7 +66,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       completed: +currentPoints >= 25000
     },
     {
-      id: 'nucleus',
+      id: 'Nucleus',
+      link: 'https://app.nucleusearn.io/dashboard',
       title: 'Keep an active tETH position',
       img: nucleus,
       max: 1,
@@ -81,7 +87,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
   return (
     <Grid className={classes.mainWrapper}>
-      <Typography>Ecosystem Exposure</Typography>
+      <Typography component='h1'>Ecosystem Exposure</Typography>
       <Grid className={classes.boxWrapper}>
         <Grid className={classes.header}>
           <Typography>Eclipse Ecosystem Exposure</Typography>
@@ -120,18 +126,34 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                       description={task.description}
                       footerDescription={task.footerDescription}
                       completed={task.completed}
+                      id={task.id}
+                      link={task.link}
                     />
                   </Grid>
                 }>
-                <img className={classes.sliderItem} src={task.img} alt={task.title} />
+                <Grid sx={{ position: 'relative', width: 64, height: 64 }}>
+                  <img
+                    style={{
+                      opacity: !task.completed ? 0.4 : 1
+                    }}
+                    src={task.img}
+                    alt={task.title}
+                  />
+                  {task.completed && (
+                    <img src={check} alt='check icon' className={classes.checkIcon} />
+                  )}
+                </Grid>
               </TooltipGradient>
             ))}
           </Slider>
         </Grid>
         <Grid className={classes.expWrapper}>
+          <Typography component='h5'>
+            Your Exposure: <Typography component='span'>{exposure}%</Typography>
+          </Typography>
           <Grid className={classes.expLabel}>
-            <Typography>Your Exposure</Typography>
-            <Typography>{exposure}%</Typography>
+            <Typography>0%</Typography>
+            <Typography>100%</Typography>
           </Grid>
           <Grid className={classes.darkBackground}>
             <Grid className={classes.gradientProgress} style={{ width: `${exposure}%` }} />

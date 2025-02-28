@@ -11,21 +11,22 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       width: '98%',
       marginTop: 24,
       gap: 24,
-      '& p': {
+      '& h1': {
         color: colors.invariant.text,
         ...typography.heading3
       }
     },
     boxWrapper: {
+      gap: '8px',
       alignItems: 'center',
       padding: '16px 24px',
       display: 'flex',
       flexDirection: 'column',
-      gap: 18,
       borderRadius: '14px',
       width: '100%',
-      height: '194px',
+      height: '222px',
       border: '1px solid #EF84F540',
+      justifyContent: 'space-between',
       background: colors.invariant.component
     },
     header: {
@@ -53,9 +54,11 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       minWidth: '100%',
 
       '& .slick-slide': {
+        paddingTop: '10px',
         display: 'flex',
         justifyContent: 'center'
       },
+
       '& .slick-arrow': {
         height: '20px',
         [theme.breakpoints.down('sm')]: {
@@ -92,7 +95,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
     },
     darkBackground: {
       width: '100%',
-      height: 31,
+      height: 24,
       backgroundColor: colors.invariant.dark,
       borderRadius: 8
     },
@@ -114,15 +117,31 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
     },
     expWrapper: {
       display: 'flex',
+      alignItems: 'center',
       flexDirection: 'column',
-      gap: 8,
-      width: '100%'
+      gap: '6px',
+      width: '100%',
+      '& h5': {
+        ...typography.body1,
+        color: colors.invariant.text
+      },
+      '& span': {
+        color: colors.invariant.pink
+      }
     },
     separator: {
       height: '2px',
       width: '100%',
       background: colors.invariant.light
     },
+    checkIcon: {
+      position: 'absolute',
+      top: -6,
+      right: -3,
+      width: 24,
+      height: 24
+    },
+
     tooltipTitle: { '& p': { ...typography.body2, color: colors.invariant.textGrey } }
   }
 })
