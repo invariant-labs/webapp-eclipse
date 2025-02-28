@@ -28,7 +28,6 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
   label,
   value,
   desktopLabelAligment,
-  blockHeight,
   isWideBlock = false,
   tooltip,
   isLoading = false
@@ -67,25 +66,23 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
   return (
     <Box
       sx={{
-        width: isWideBlock ? '100%' : '233px',
-        height: blockHeight?.desktop ? blockHeight?.desktop : '88px',
+        width: '250px',
+        height: '94px',
         backgroundSize: 'cover',
         backgroundImage: `url(${background.desktop})`,
-        backgroundRepeat: 'no-repeat',
         boxSizing: 'border-box',
         backgroundPosition: 'center',
         ...blurAnimation,
         [theme.breakpoints.down('md')]: {
           width: '335px',
           backgroundImage: `url(${background.mobile})`,
-          height: blockHeight?.mobile ? blockHeight.mobile : '88px'
+          height: isWideBlock ? '90px' : '88px'
         },
         [theme.breakpoints.down(500)]: {
           backgroundRepeat: 'no-repeat',
           width: '98vw',
           border: '10px solid transparent',
-          borderImage: `url(${background.mobile}) 20 fill round`,
-          height: blockHeight?.mobile ? blockHeight.mobile : '88px'
+          borderImage: `url(${background.mobile}) 20 fill round`
         }
       }}>
       <Box
@@ -101,7 +98,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           flexDirection: 'column',
           gap: '8px',
           alignItems: getAlignmentValue(desktopLabelAligment),
-          justifyContent: getAlignmentValue(desktopLabelAligment),
+          justifyContent: 'flex-start',
           [theme.breakpoints.down('md')]: {
             alignItems: 'center',
             justifyContent: 'center'

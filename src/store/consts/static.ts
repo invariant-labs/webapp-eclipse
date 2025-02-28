@@ -665,7 +665,7 @@ export { DEFAULT_PUBLICKEY, MAX_U64 }
 export const POSITIONS_PER_PAGE = 5
 
 export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
-  message: 'Signing transactions',
+  message: 'Signing transactions...',
   variant: 'pending',
   persist: true
 }
@@ -809,7 +809,7 @@ export const DEFAULT_TOKEN_DECIMAL = 6
 export const PRICE_QUERY_COOLDOWN = 60 * 1000
 
 export const TIMEOUT_ERROR_MESSAGE =
-  'Transaction has timed out. Check the details to confirm success.'
+  'Transaction has timed out. Check the details to confirm success'
 
 export const MAX_CROSSES_IN_SINGLE_TX = 11
 

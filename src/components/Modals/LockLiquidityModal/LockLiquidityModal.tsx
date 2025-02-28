@@ -10,7 +10,7 @@ import {
   Typography
 } from '@mui/material'
 import icons from '@static/icons'
-import { formatNumber } from '@utils/utils'
+import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import classNames from 'classnames'
@@ -78,15 +78,21 @@ export const LockLiquidityModal = ({
       open={open}
       onClose={onClose}
       className={classes.popover}
-      anchorReference='none'
+      slotProps={{
+        root: {
+          onClick: e => e.stopPropagation()
+        }
+      }}
+      anchorEl={document.body}
       anchorOrigin={{
-        vertical: 'top',
-        horizontal: 'left'
+        vertical: 'center',
+        horizontal: 'center'
       }}
       transformOrigin={{
-        vertical: 'top',
+        vertical: 'center',
         horizontal: 'center'
-      }}>
+      }}
+      marginThreshold={0}>
       <Grid container className={classes.backgroundContainer}>
         <Grid container className={classes.container}>
           <Grid item className={classes.lockPositionHeader}>
@@ -163,8 +169,8 @@ export const LockLiquidityModal = ({
                 <Grid item className={classes.pairRange}>
                   <Typography className={classes.normalText}>
                     {xToY
-                      ? `${formatNumber(tokenX.liqValue)} ${tokenX.name} - ${formatNumber(tokenY.liqValue)} ${tokenY.name}`
-                      : `${formatNumber(tokenY.liqValue)} ${tokenY.name} - ${formatNumber(tokenX.liqValue)} ${tokenX.name}`}
+                      ? `${formatNumberWithSuffix(tokenX.liqValue)} ${tokenX.name} - ${formatNumberWithSuffix(tokenY.liqValue)} ${tokenY.name}`
+                      : `${formatNumberWithSuffix(tokenY.liqValue)} ${tokenY.name} - ${formatNumberWithSuffix(tokenX.liqValue)} ${tokenX.name}`}
                   </Typography>
                 </Grid>
                 <Grid item className={classes.pairValue}>

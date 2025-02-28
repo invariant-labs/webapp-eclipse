@@ -6,8 +6,9 @@ import activeLiquidity from '@static/svg/activeLiquidity.svg'
 import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
+  calculateConcentration,
   calculateConcentrationRange,
-  formatNumber,
+  formatNumberWithoutSuffix,
   getConcentrationIndex,
   nearestTickIndex,
   toMaxNumericPlaces
@@ -18,6 +19,7 @@ import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import icons from '@static/icons'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -424,14 +426,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             <Typography className={classes.header}>Price range</Typography>
             {poolIndex !== null && (
               <Typography className={classes.currentPrice}>
-                {formatNumber(midPrice.x, false, 4)} {tokenBSymbol} per {tokenASymbol}
+                {formatNumberWithoutSuffix(midPrice.x)} {tokenBSymbol} per {tokenASymbol}
               </Typography>
             )}
           </Grid>
           <Grid className={classes.activeLiquidityContainer} container direction='column'>
             <Tooltip
               enterTouchDelay={0}
-              leaveTouchDelay={Number.MAX_SAFE_INTEGER}
               title={
                 <>
                   <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
@@ -513,7 +514,16 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         /> */}
       </Grid>
       <Grid container className={classes.innerWrapper}>
-        <Typography className={classes.subheader}>Set price range</Typography>
+        <Grid container justifyContent='space-between' alignItems='center' minHeight={36}>
+          <Typography className={classes.subheader}>Set price range</Typography>
+          {positionOpeningMethod === 'range' && (
+            <Grid className={classes.rangeConcentration}>
+              <img src={icons.boostPoints} alt='Concentration' width='14px' />
+              <Typography>Concentration </Typography>
+              <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
+            </Grid>
+          )}
+        </Grid>
         <Grid container className={classes.inputs}>
           <RangeInput
             disabled={positionOpeningMethod === 'concentration'}

@@ -3,12 +3,13 @@ import { NetworkType } from '@store/consts/static'
 import type { Meta, StoryObj } from '@storybook/react'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
-import { PositionItemDesktop } from './variants/PositionItemDesktop'
+import { PositionItemMobile } from './variants/PositionMobileCard/PositionItemMobile'
+import { fn } from '@storybook/test'
 
 const meta = {
   title: 'Components/PositionItem',
-  component: PositionItemDesktop
-} satisfies Meta<typeof PositionItemDesktop>
+  component: PositionItemMobile
+} satisfies Meta<typeof PositionItemMobile>
 
 export default meta
 type Story = StoryObj<typeof meta>
@@ -17,6 +18,8 @@ export const Primary: Story = {
   args: {
     tokenXName: 'BTC',
     tokenYName: 'AZERO',
+    setAllowPropagation: () => {},
+    isActive: false,
     tokenXIcon:
       'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
     tokenYIcon:
@@ -79,6 +82,9 @@ export const Primary: Story = {
     currentPrice: 10000,
     network: NetworkType.Testnet,
     isFullRange: false,
-    isLocked: false
+    isLocked: false,
+    handleClaimFee: fn(),
+    handleClosePosition: fn(),
+    handleLockPosition: fn()
   }
 }

@@ -34,6 +34,11 @@ interface IConfigResponse {
   swapPairs: { tokenX: string; tokenY: string }[]
   swapMultiplier: string
 }
+interface IFetchContentPointsResponse {
+  startTimestamp: number
+  endTimestamp: number
+  points: number
+}
 
 // const BASE_LEADERBOARD_URL = 'https://points.invariant.app'
 const BASE_LEADERBOARD_URL = 'http://95.216.206.31:3001'
@@ -52,6 +57,14 @@ async function fetchLpLeaderboardData(
   }
   return response.json() as Promise<ILpLeaderboardResponse>
 }
+async function fetchContentPoints(userWallet?: string) {
+  const response = await fetch(`https://points.invariant.app/api/content-program/${userWallet}`)
+  if (!response.ok) {
+    throw new Error('Failed to fetch content points')
+  }
+  return response.json() as Promise<IFetchContentPointsResponse[] | null>
+}
+
 async function fetchSwapLeaderboardData(
   network: string,
   userWallet?: string,
@@ -96,6 +109,22 @@ async function fetchLeaderboardPriceFeed() {
   }
   return response.json()
 }
+
+export function* getContentPoints(): Generator {
+  try {
+    const wallet = yield* call(getWallet)
+    const contentPoints: IFetchContentPointsResponse[] | null = yield* call(
+      fetchContentPoints,
+      wallet?.publicKey?.toString()
+    )
+    yield* put(actions.setContentPoints(contentPoints))
+  } catch (error) {
+    console.error(error)
+    yield* call(handleRpcError, (error as Error).message)
+    yield* put(actions.setContentPoints(null))
+  }
+}
+
 export function* getLeaderboard(
   action: PayloadAction<{ page: number; itemsPerPage: number }>
 ): Generator {
@@ -174,10 +203,13 @@ export function* leaderboardHandler(): Generator {
   yield* takeEvery(actions.getLeaderboardData, getLeaderboard)
 }
 
+export function* leaderboardContentPoints(): Generator {
+  yield* takeEvery(actions.getContentPointsRequest.type, getContentPoints)
+}
 export function* leaderboardConfig(): Generator {
   yield* takeEvery(actions.getLeaderboardConfig, getLeaderboardConfig)
 }
 
 export function* leaderboardSaga(): Generator {
-  yield all([leaderboardHandler, leaderboardConfig].map(spawn))
+  yield all([leaderboardHandler, leaderboardConfig, leaderboardContentPoints].map(spawn))
 }

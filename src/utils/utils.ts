@@ -26,10 +26,17 @@ import {
   parsePool,
   RawPoolStructure,
   parsePosition,
-  parseTick
+  parseTick,
+  RawTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios from 'axios'
-import { getMaxTick, getMinTick, PRICE_SCALE, Range } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  CONCENTRATION_FACTOR,
+  getMaxTick,
+  getMinTick,
+  PRICE_SCALE,
+  Range
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
@@ -83,7 +90,8 @@ import {
   WETH_MAIN,
   KYSOL_MAIN,
   EZSOL_MAIN,
-  LEADERBOARD_DECIMAL
+  LEADERBOARD_DECIMAL,
+  POSITIONS_PER_PAGE
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -726,7 +734,7 @@ export const printSubNumber = (amount: number): string => {
     .join('')
 }
 
-export const formatNumber = (
+export const formatNumberWithSuffix = (
   number: number | bigint | string,
   noDecimals?: boolean,
   decimalsAfterDot: number = 3
@@ -811,13 +819,27 @@ function trimEndingZeros(num) {
   return num.toString().replace(/0+$/, '')
 }
 
-export const formatNumber2 = (number: number | bigint | string): string => {
+export const formatNumberWithoutSuffix = (
+  number: number | bigint | string,
+  options?: { twoDecimals?: boolean }
+): string => {
   const numberAsNumber = Number(number)
   const isNegative = numberAsNumber < 0
   const absNumberAsNumber = Math.abs(numberAsNumber)
 
-  const absNumberAsString = numberToString(absNumberAsNumber)
+  if (options?.twoDecimals) {
+    if (absNumberAsNumber === 0) {
+      return '0'
+    }
+    if (absNumberAsNumber > 0 && absNumberAsNumber < 0.01) {
+      return isNegative ? '-<0.01' : '<0.01'
+    }
+    return isNegative
+      ? '-' + absNumberAsNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+      : absNumberAsNumber.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+  }
 
+  const absNumberAsString = numberToString(absNumberAsNumber)
   const [beforeDot, afterDot] = absNumberAsString.split('.')
 
   const leadingZeros = afterDot ? countLeadingZeros(afterDot) : 0
@@ -832,7 +854,6 @@ export const formatNumber2 = (number: number | bigint | string): string => {
 
   return isNegative ? '-' + formattedNumber : formattedNumber
 }
-
 export const formatBalance = (number: number | bigint | string): string => {
   const numberAsString = numberToString(number)
 
@@ -974,6 +995,16 @@ export const nearestTickIndex = (
   const primaryUnitsPrice = getPrimaryUnitsPrice(base, isXtoY, xDecimal, yDecimal)
   const log = Math.round(logBase(primaryUnitsPrice, 1.0001))
   return nearestSpacingMultiplicity(log, spacing)
+}
+export const nearestTicksBySpacing = (midPriceTick: number, spacing: number, isXtoY: boolean) => {
+  const base =
+    midPriceTick % spacing === 0
+      ? midPriceTick
+      : isXtoY
+        ? midPriceTick - (midPriceTick % spacing)
+        : midPriceTick + (spacing - (midPriceTick % spacing))
+
+  return { lowerTick: isXtoY ? base : base + spacing, upperTick: isXtoY ? base + spacing : base }
 }
 
 export const calcTicksAmountInRange = (
@@ -1245,6 +1276,39 @@ export const getPoolsFromAddresses = async (
   }
 }
 
+export const getTickmapsFromPools = async (
+  pools: PoolWithAddress[],
+  marketProgram: Market
+): Promise<Record<string, Tickmap>> => {
+  {
+    try {
+      const addresses = pools.map(pool => pool.tickmap)
+      const tickmaps = (await marketProgram.program.account.tickmap.fetchMultiple(
+        addresses
+      )) as Array<Tickmap | null>
+
+      return tickmaps.reduce((acc, cur, idx) => {
+        if (cur) {
+          acc[addresses[idx].toBase58()] = cur
+        }
+        return acc
+      }, {})
+    } catch (error) {
+      console.log(error)
+      return {}
+    }
+  }
+}
+
+export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
+  try {
+    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
+  } catch (e) {
+    console.log(e)
+    return []
+  }
+}
+
 export const getPools = async (
   pairs: Pair[],
   marketProgram: Market
@@ -1330,13 +1394,25 @@ export const calculateConcentrationRange = (
   isXToY: boolean
 ) => {
   const tickDelta = calculateTickDelta(tickSpacing, minimumRange, concentration)
-  const lowerTick = currentTick - (minimumRange / 2 + tickDelta) * tickSpacing
-  const upperTick = currentTick + (minimumRange / 2 + tickDelta) * tickSpacing
+
+  const parsedTickDelta = Math.abs(tickDelta) === 0 ? 0 : Math.abs(tickDelta) - 1
+
+  const lowerTick = currentTick - (minimumRange / 2 + parsedTickDelta) * tickSpacing
+  const upperTick = currentTick + (minimumRange / 2 + parsedTickDelta) * tickSpacing
 
   return {
     leftRange: isXToY ? lowerTick : upperTick,
     rightRange: isXToY ? upperTick : lowerTick
   }
+}
+
+export const calculateConcentration = (lowerTick: number, upperTick: number) => {
+  const deltaPrice = Math.pow(1.0001, -Math.abs(lowerTick - upperTick))
+
+  const denominator = 1 - Math.pow(deltaPrice, 1 / 4)
+  const result = 1 / denominator
+
+  return Math.abs(result / CONCENTRATION_FACTOR)
 }
 
 export enum PositionTokenBlock {
@@ -1904,4 +1980,56 @@ export const getConcentrationIndex = (concentrationArray: number[], neededValue:
   }
 
   return concentrationIndex
+}
+export const formatDate = timestamp => {
+  const date = new Date(timestamp * 1000)
+  const day = date.getDate().toString().padStart(2, '0')
+  const month = (date.getMonth() + 1).toString().padStart(2, '0')
+  const year = date.getFullYear()
+  return `${day}.${month}.${year}`
+}
+
+export const formatNumberWithSpaces = (number: string) => {
+  const trimmedNumber = number.replace(/(\.\d*?[1-9])0+$/, '$1').replace(/\.0+$/, '')
+
+  return trimmedNumber.replace(/\B(?=(\d{3})+(?!\d))/g, ' ')
+}
+
+export const generatePositionTableLoadingData = () => {
+  const getRandomNumber = (min: number, max: number) =>
+    Math.floor(Math.random() * (max - min + 1)) + min
+
+  return Array(POSITIONS_PER_PAGE)
+    .fill(null)
+    .map((_, index) => {
+      const currentPrice = Math.random() * 10000
+
+      return {
+        id: `loading-${index}`,
+        poolAddress: `pool-${index}`,
+        tokenXName: 'FOO',
+        tokenYName: 'BAR',
+        tokenXIcon: undefined,
+        tokenYIcon: undefined,
+        currentPrice,
+        fee: getRandomNumber(1, 10) / 10,
+        min: currentPrice * 0.8,
+        max: currentPrice * 1.2,
+        position: getRandomNumber(1000, 10000),
+        valueX: getRandomNumber(1000, 10000),
+        valueY: getRandomNumber(1000, 10000),
+        poolData: {},
+        isActive: Math.random() > 0.5,
+        tokenXLiq: getRandomNumber(100, 1000),
+        tokenYLiq: getRandomNumber(10000, 100000),
+        network: 'mainnet'
+      }
+    })
+}
+export const sciToString = (sciStr: string | number) => {
+  const number = Number(sciStr)
+  if (!Number.isFinite(number)) throw new Error('Invalid number')
+
+  const fullStr = number.toLocaleString('fullwide', { useGrouping: false })
+  return BigInt(fullStr).toString()
 }

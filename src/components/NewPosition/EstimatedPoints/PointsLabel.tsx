@@ -3,9 +3,10 @@ import React, { useState } from 'react'
 import { useStylesPointsLabel } from './style'
 import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
-import { formatNumber, printBN } from '@utils/utils'
+import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import EstimatedPoints from './EstimatedPoints'
+import { PositionOpeningMethod } from '@store/consts/types'
 
 export interface IPointsLabel {
   handleClickFAQ: () => void
@@ -15,6 +16,8 @@ export interface IPointsLabel {
   estimatedScalePoints: { min: BN; middle: BN; max: BN }
   isConnected: boolean
   showWarning: boolean
+  singleDepositWarning: boolean
+  positionOpeningMethod: PositionOpeningMethod
 }
 
 export const PointsLabel: React.FC<IPointsLabel> = ({
@@ -33,7 +36,7 @@ export const PointsLabel: React.FC<IPointsLabel> = ({
     ? isConnected && !estimatedPointsPerDay.isZero()
       ? '<0.01'
       : 0
-    : formatNumber(printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL), false, 1)
+    : formatNumberWithSuffix(printBN(estimatedPointsPerDay, LEADERBOARD_DECIMAL), false, 1)
 
   const { classes } = useStylesPointsLabel()
 

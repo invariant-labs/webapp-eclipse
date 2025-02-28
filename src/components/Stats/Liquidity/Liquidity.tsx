@@ -6,8 +6,9 @@ import { colors, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
-import { formatNumber, trimZeros } from '@utils/utils'
+import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { formatLargeNumber } from '@utils/uiUtils'
+import useIsMobile from '@store/hooks/isMobile'
 
 interface LiquidityInterface {
   liquidityPercent: number | null
@@ -42,6 +43,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   liquidityVolume = liquidityVolume ?? 0
 
   const isLower = liquidityPercent < 0
+  const isMobile = useIsMobile()
   const percentage = isLoading ? Math.random() * 200 - 100 : liquidityPercent
 
   return (
@@ -51,7 +53,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
         <Typography className={classes.liquidityHeader}>Liquidity</Typography>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
-            ${formatNumber(isLoading ? Math.random() * 10000 : liquidityVolume)}
+            ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : liquidityVolume)}
           </Typography>
           <Grid className={classes.volumeStatusContainer}>
             <Grid
@@ -82,7 +84,11 @@ const Liquidity: React.FC<LiquidityInterface> = ({
               }))
             }
           ]}
-          margin={{ top: 24, bottom: 24, left: 30, right: 24 }}
+          margin={
+            isMobile
+              ? { top: 24, bottom: 24, left: 30, right: 12 }
+              : { top: 24, bottom: 24, left: 30, right: 24 }
+          }
           xScale={{
             type: 'time',
             format: '%d/%m/%Y',
@@ -103,8 +109,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickRotation: 0,
             tickValues: 5,
             renderTick: ({ x, y, value }) => (
-              <g transform={`translate(${x - 30},${y + 4})`}>
-                {' '}
+              <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
                 <text
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'
@@ -165,7 +170,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
                   month < 10 ? '0' : ''
                 }${month}`}</Typography>
                 <Typography className={classes.tooltipValue}>
-                  ${formatNumber(point.data.y as number)}
+                  ${formatNumberWithSuffix(point.data.y as number)}
                 </Typography>
               </Grid>
             )

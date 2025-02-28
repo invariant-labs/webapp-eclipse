@@ -9,6 +9,7 @@ import { PayloadAction, createSlice } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
+export type FetchTick = 'lower' | 'upper'
 export interface PositionWithAddress extends Position {
   address: PublicKey
 }
@@ -17,6 +18,7 @@ export interface PositionsListStore {
   lockedList: PositionWithAddress[]
   head: number
   bump: number
+  isAllClaimFeesLoading: boolean
   initialized: boolean
   loading: boolean
 }
@@ -49,9 +51,18 @@ export interface IPositionsStore {
   lastPage: number
   plotTicks: PlotTicks
   positionsList: PositionsListStore
+  currentPositionId: string
   currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
+  unclaimedFees: {
+    total: number
+    loading: boolean
+    lastUpdate: number
+  }
+  prices: {
+    data: Record<string, number>
+  }
 }
 
 export interface InitPositionData
@@ -99,9 +110,11 @@ export const defaultState: IPositionsStore = {
     lockedList: [],
     head: 0,
     bump: 0,
+    isAllClaimFeesLoading: false,
     initialized: false,
     loading: true
   },
+  currentPositionId: '',
   currentPositionTicks: {
     lowerTick: undefined,
     upperTick: undefined,
@@ -111,6 +124,15 @@ export const defaultState: IPositionsStore = {
     inProgress: false,
     success: false
   },
+  unclaimedFees: {
+    total: 0,
+    loading: false,
+    lastUpdate: 0
+  },
+  prices: {
+    data: {}
+  },
+
   shouldNotUpdateRange: false
 }
 
@@ -154,6 +176,35 @@ const positionsSlice = createSlice({
       state.plotTicks.hasError = true
       return state
     },
+    setAllClaimLoader(state, action: PayloadAction<boolean>) {
+      state.positionsList.isAllClaimFeesLoading = action.payload
+    },
+    calculateTotalUnclaimedFees(state) {
+      state.unclaimedFees.loading = true
+      return state
+    },
+    setUnclaimedFees(state, action: PayloadAction<number>) {
+      state.unclaimedFees = {
+        total: action.payload,
+        loading: false,
+        lastUpdate: Date.now()
+      }
+      return state
+    },
+    setUnclaimedFeesError(state) {
+      state.unclaimedFees = {
+        ...state.unclaimedFees,
+        loading: false
+      }
+      return state
+    },
+    setPrices(state, action: PayloadAction<Record<string, number>>) {
+      state.prices = {
+        data: action.payload
+      }
+      return state
+    },
+
     getCurrentPlotTicks(state, action: PayloadAction<GetCurrentTicksData>) {
       state.plotTicks.loading = !action.payload.disableLoading
       return state
@@ -170,6 +221,36 @@ const positionsSlice = createSlice({
       state.positionsList.lockedList = action.payload
       return state
     },
+    updatePositionTicksRange(
+      state,
+      _action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+    ) {
+      return state
+    },
+    setPositionRangeTicks(
+      state,
+      action: PayloadAction<{ positionId: string; lowerTick: number; upperTick: number }>
+    ) {
+      state.positionsList.list.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            lowerTickIndex: action.payload.lowerTick,
+            upperTickIndex: action.payload.upperTick
+          }
+        }
+      })
+
+      state.positionsList.lockedList.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            lowerTickIndex: action.payload.lowerTick,
+            upperTickIndex: action.payload.upperTick
+          }
+        }
+      })
+    },
     getPositionsList(state) {
       state.positionsList.loading = true
       return state
@@ -184,7 +265,10 @@ const positionsSlice = createSlice({
       }
       return state
     },
-    getCurrentPositionRangeTicks(state, _action: PayloadAction<string>) {
+    getCurrentPositionRangeTicks(
+      state,
+      _action: PayloadAction<{ id: string; fetchTick?: FetchTick }>
+    ) {
       state.currentPositionTicks.loading = true
       return state
     },
@@ -193,12 +277,20 @@ const positionsSlice = createSlice({
       action: PayloadAction<{ lowerTick?: Tick; upperTick?: Tick }>
     ) {
       state.currentPositionTicks = {
-        ...action.payload,
+        lowerTick: action.payload.lowerTick
+          ? action.payload.lowerTick
+          : state.currentPositionTicks.lowerTick,
+        upperTick: action.payload.upperTick
+          ? action.payload.upperTick
+          : state.currentPositionTicks.upperTick,
         loading: false
       }
       return state
     },
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
+      return state
+    },
+    claimAllFee(state) {
       return state
     },
     closePosition(state, _action: PayloadAction<ClosePositionData>) {
@@ -210,6 +302,10 @@ const positionsSlice = createSlice({
     },
     setShouldNotUpdateRange(state, action: PayloadAction<boolean>) {
       state.shouldNotUpdateRange = action.payload
+      return state
+    },
+    setCurrentPositionId(state, action: PayloadAction<string>) {
+      state.currentPositionId = action.payload
       return state
     }
   }

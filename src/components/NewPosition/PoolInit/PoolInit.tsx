@@ -3,10 +3,11 @@ import SimpleInput from '@components/Inputs/SimpleInput/SimpleInput'
 import { Button, Grid, Typography } from '@mui/material'
 import {
   calcPriceByTickIndex,
+  calculateConcentration,
   calculateConcentrationRange,
   calculateSqrtPriceFromBalance,
   calculateTickFromBalance,
-  formatNumber,
+  formatNumberWithSuffix,
   getConcentrationIndex,
   nearestTickIndex,
   toMaxNumericPlaces,
@@ -22,6 +23,7 @@ import AnimatedNumber from '@components/AnimatedNumber/AnimatedNumber'
 import { calculateTickDelta, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { priceToTickInRange } from '@invariant-labs/sdk-eclipse/src/tick'
+import icons from '@static/icons'
 
 export interface IPoolInit {
   updatePath: (concIndex: number) => void
@@ -301,7 +303,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   const [animatedStartingPrice, setAnimatedStartingPrice] = useState(price)
 
   useEffect(() => {
-    if (formatNumber(price) !== formatNumber(animatedStartingPrice)) {
+    if (formatNumberWithSuffix(price) !== formatNumberWithSuffix(animatedStartingPrice)) {
       setAnimatedStartingPrice(price)
     }
   }, [price])
@@ -343,7 +345,16 @@ export const PoolInit: React.FC<IPoolInit> = ({
         </Grid>
       </Grid>
       <Grid className={classes.bottomInnerWrapper}>
-        <Typography className={classes.subheader}>Set price range</Typography>
+        <Grid container justifyContent='space-between' alignItems='center' minHeight={36}>
+          <Typography className={classes.subheader}>Set price range</Typography>
+          {positionOpeningMethod === 'range' && (
+            <Grid className={classes.rangeConcentration}>
+              <img src={icons.boostPoints} alt='Concentration' width='14px' />
+              <Typography>Concentration </Typography>
+              <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
+            </Grid>
+          )}
+        </Grid>
         <Grid container className={classes.inputs}>
           <RangeInput
             disabled={positionOpeningMethod === 'concentration'}
