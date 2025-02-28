@@ -29,9 +29,7 @@ export const useStyles = makeStyles<StyleProps>()(
         textAlign: 'center'
       }
     },
-    img: {
-      paddingBottom: 25
-    },
+
     blur: {
       maxWidth: blurWidth ?? '100%',
       width: '100%',
@@ -43,16 +41,19 @@ export const useStyles = makeStyles<StyleProps>()(
         ? 'linear-gradient(360deg, rgba(32, 41, 70, 0.8) 0%, rgba(17, 25, 49, 0.8) 100%), linear-gradient(180deg, #010514 0%, rgba(1, 5, 20, 0) 100%)'
         : 'rgba(12, 11, 13, 0.8)'
     },
+    title: {
+      ...typography.heading2,
+      color: colors.invariant.text
+    },
+
     desc: {
       ...typography.body2,
-      fontWeight: 500,
       lineHeight: '20px',
       color: colors.invariant.lightHover
     },
     button: {
       height: 40,
       width: 200,
-      marginTop: 20,
       color: colors.invariant.componentBcg,
       ...typography.body1,
       textTransform: 'none',

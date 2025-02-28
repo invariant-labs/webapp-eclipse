@@ -5,11 +5,12 @@ import { Grid } from '@mui/material'
 import { BTC_TEST, NetworkType, SortTypePoolList, USDC_TEST, WETH_TEST } from '@store/consts/static'
 import { PaginationList } from '@components/Pagination/Pagination'
 import { VariantType } from 'notistack'
-import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 import { colors } from '@static/theme'
+import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
+import { useNavigate } from 'react-router-dom'
 
 export interface PoolListInterface {
   data: Array<{
@@ -43,7 +44,6 @@ export interface PoolListInterface {
 }
 
 const ITEMS_PER_PAGE = 10
-
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
 const fees = [0.01, 0.02, 0.1, 0.3, 0.9, 1]
 
@@ -81,6 +81,8 @@ const PoolList: React.FC<PoolListInterface> = ({
   isLoading,
   showAPY
 }) => {
+  const navigate = useNavigate()
+
   const { classes } = useStyles()
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
@@ -123,7 +125,6 @@ const PoolList: React.FC<PoolListInterface> = ({
   }, [data])
 
   const handleChangePagination = (currentPage: number) => setPage(currentPage)
-
   const paginator = (currentPage: number) => {
     const page = currentPage || 1
     const perPage = 10
@@ -190,7 +191,17 @@ const PoolList: React.FC<PoolListInterface> = ({
         </>
       ) : (
         <Grid container sx={{ background: colors.invariant.component }}>
-          <NotFoundPlaceholder title='No pools found...' isStats />
+          <EmptyPlaceholder
+            newVersion
+            height={690}
+            mainTitle='Pool not found...'
+            desc='You can create it yourself!'
+            desc2='Or try adjusting your search criteria!'
+            blurWidth={1072}
+            onAction={() => navigate('/newPosition')}
+            buttonName='Create Pool'
+            withButton={true}
+          />
         </Grid>
       )}
       <Grid className={classes.pagination}>

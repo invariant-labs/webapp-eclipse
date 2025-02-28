@@ -196,9 +196,10 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
               blurWidth={1072}
               height={690}
               newVersion
-              mainTitle='No pool found...'
-              buttonName='Add pool'
-              desc={'Add pool by pressing the button!'}
+              mainTitle='Pool not found...'
+              desc={'You can create it yourself!'}
+              desc2={'Or try adjusting your search criteria!'}
+              buttonName='Create Pool'
               onAction={() => navigate('/newPosition')}
               withButton={true}
             />
