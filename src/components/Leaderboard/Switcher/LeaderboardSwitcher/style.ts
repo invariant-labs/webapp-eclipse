@@ -15,7 +15,7 @@ export const useStyles = makeStyles()((theme: Theme) => {
     },
     leaderboardTypeButton: {
       position: 'relative',
-      zIndex: 1301,
+      zIndex: 10,
       width: 140,
       height: 32,
       borderRadius: 10,

@@ -1319,15 +1319,6 @@ export const simulateAutoSwap = async (
   }
 }
 
-export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
-  try {
-    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
-  } catch (e) {
-    console.log(e)
-    return []
-  }
-}
-
 export const toMaxNumericPlaces = (num: number, places: number): string => {
   const log = Math.floor(Math.log10(num))
 
@@ -1369,6 +1360,39 @@ export const getPoolsFromAddresses = async (
       }) as PoolWithAddress[]
   } catch (error) {
     console.log(error)
+    return []
+  }
+}
+
+export const getTickmapsFromPools = async (
+  pools: PoolWithAddress[],
+  marketProgram: Market
+): Promise<Record<string, Tickmap>> => {
+  {
+    try {
+      const addresses = pools.map(pool => pool.tickmap)
+      const tickmaps = (await marketProgram.program.account.tickmap.fetchMultiple(
+        addresses
+      )) as Array<Tickmap | null>
+
+      return tickmaps.reduce((acc, cur, idx) => {
+        if (cur) {
+          acc[addresses[idx].toBase58()] = cur
+        }
+        return acc
+      }, {})
+    } catch (error) {
+      console.log(error)
+      return {}
+    }
+  }
+}
+
+export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
+  try {
+    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
+  } catch (e) {
+    console.log(e)
     return []
   }
 }
