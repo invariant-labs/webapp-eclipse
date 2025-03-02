@@ -589,6 +589,11 @@ export const promotedTiers = [
     tokenX: TETH_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 0
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: USDC_MAIN.address,
+    index: 3
   }
 ]
 
@@ -846,6 +851,11 @@ export const getPopularPools = (network: NetworkType) => {
           tokenX: 'CEBP3CqAbW4zdZA57H2wfaSG1QNdzQ72GiQEbQXyW9Tm',
           tokenY: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
           fee: '0.01'
+        },
+        {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          fee: '0.09'
         }
       ]
     default:
