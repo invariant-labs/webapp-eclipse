@@ -838,6 +838,11 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          fee: '0.09'
+        },
+        {
           tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.09'
@@ -846,11 +851,6 @@ export const getPopularPools = (network: NetworkType) => {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
-        },
-        {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
-          fee: '0.09'
         }
       ]
     default:
