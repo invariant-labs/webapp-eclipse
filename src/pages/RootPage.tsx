@@ -83,7 +83,7 @@ const RootPage: React.FC = memo(() => {
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const addr = getEclipseWallet().publicKey.toString()
+      const addr = getEclipseWallet()?.publicKey.toString()
       if (
         !walletAddressRef.current ||
         (walletAddressRef.current === DEFAULT_PUBLICKEY.toString() &&
