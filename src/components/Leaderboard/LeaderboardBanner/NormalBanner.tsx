@@ -32,8 +32,8 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
 
   const text = (
     <span>
-      {!isSmallDevice && `Invariant Points new feature just started!`} Collect more points by
-      exchanging tokens. Check it out
+      {!isSmallDevice && `Invariant Points are live!`} SOL/USDC is now the next pool distributing
+      points! Check it out
       <span
         style={{
           color: colors.invariant.pink,
@@ -43,7 +43,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           ...typography.body1
         }}
         onClick={() => {
-          navigate('/exchange/ETH/USDC')
+          navigate('/points')
 
           if (isSmallDevice) {
             onClose()
@@ -51,7 +51,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
         }}>
         here!
       </span>
-      {!isSmallDevice && `...`} And see also distribution of points in the
+      {/* {!isSmallDevice && `...`} And see also distribution of points in the
       <span
         style={{
           color: colors.invariant.pink,
@@ -68,7 +68,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           }
         }}>
         leaderboard!
-      </span>
+      </span> */}
     </span>
   )
 
