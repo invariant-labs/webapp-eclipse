@@ -28,6 +28,7 @@ interface ProcessedPool {
 
 export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolean) => {
   const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([])
+  const [isProcesing, setIsProcesing] = useState<boolean>(true)
 
   useEffect(() => {
     const processTokens = async () => {
@@ -60,6 +61,7 @@ export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolea
       )
 
       setProcessedPools(processed)
+      setIsProcesing(false)
     }
     if (isBalanceLoading) return
     if (tokensList?.length) {
@@ -67,5 +69,5 @@ export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolea
     }
   }, [tokensList, isBalanceLoading])
 
-  return processedPools
+  return { processedPools, isProcesing }
 }
