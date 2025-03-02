@@ -20,7 +20,7 @@ import { NormalBanner } from '@components/Leaderboard/LeaderboardBanner/NormalBa
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state-3'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-4'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
