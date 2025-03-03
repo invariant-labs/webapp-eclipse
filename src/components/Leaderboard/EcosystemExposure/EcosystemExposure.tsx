@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, List, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import Slider from 'react-slick'
 import allDomains from '@static/svg/allDomains.svg'
 import turboTap from '@static/svg/turboTap.svg'
