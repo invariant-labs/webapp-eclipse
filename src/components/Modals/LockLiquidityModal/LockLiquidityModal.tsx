@@ -1,21 +1,14 @@
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import useStyles from './style'
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  Popover,
-  Tooltip,
-  Typography
-} from '@mui/material'
+import { Button, Grid, Input, Popover, Tooltip, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import classNames from 'classnames'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
+const confirmText = 'I confirm my liquidity will be locked forever'
 export interface ILockLiquidityModal {
   open: boolean
   xToY: boolean
@@ -48,7 +41,7 @@ export const LockLiquidityModal = ({
 }: ILockLiquidityModal) => {
   const { classes } = useStyles()
   const [progress, setProgress] = useState<ProgressState>('none')
-  const [isChecked, setIsChecked] = useState(false)
+  const [inputValue, setInputValue] = useState('')
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
@@ -71,6 +64,11 @@ export const LockLiquidityModal = ({
       clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
+
+  const isCorrectValue = useMemo(
+    () => confirmText.toLowerCase() === inputValue.toLowerCase(),
+    [inputValue]
+  )
 
   return (
     <Popover
@@ -186,32 +184,36 @@ export const LockLiquidityModal = ({
           </Grid>
           <Grid>
             <Grid className={classes.lockWarning}>
-              <Grid display='flex'>
-                <img src={icons.infoError} alt='info' style={{ minWidth: 20, marginRight: 12 }} />
-                <Typography className={classes.lockWarningText}>
-                  Once locked, the position cannot be closed, and the tokens cannot be withdrawn.
-                  Please ensure you fully understand the consequences before proceeding.
-                </Typography>
-              </Grid>
-              <div>
-                <FormControlLabel
-                  className={classes.checkboxText}
-                  control={
-                    <Checkbox
-                      checked={isChecked}
-                      onChange={e => {
-                        setIsChecked(e.target.checked)
-                      }}
-                      name='hideUnknown'
-                    />
-                  }
-                  label='I understand the irreversible nature of liquidity locking and agree to all terms.
-                  The team will not refund an unwise decision.'></FormControlLabel>
-              </div>
+              <img src={icons.infoError} alt='info' style={{ minWidth: 20, marginRight: 12 }} />
+              <Typography className={classes.lockWarningText}>
+                Once locked, the position cannot be closed, and the tokens cannot be withdrawn.
+                Please ensure you fully understand the consequences before proceeding.
+              </Typography>
             </Grid>
           </Grid>
+          <Grid className={classes.confirmInputContainer}>
+            <Typography>To confirm, type the folowing:</Typography>
+            <Typography>I confirm my liquidity will be locked forever</Typography>
+            <Input
+              className={classes.input}
+              classes={{
+                input: classes.innerInput
+              }}
+              placeholder='Rewritten text in white.'
+              onChange={e => {
+                setInputValue(e.target.value)
+              }}
+              disableUnderline
+              onPaste={e => e.preventDefault()}
+              onPasteCapture={e => e.preventDefault()}
+            />
+          </Grid>
           <TooltipHover
-            text={isChecked ? '' : 'Check the box to confirm you understand the terms.'}
+            text={
+              isCorrectValue
+                ? ''
+                : 'Confirm that you understand the consequences by typing the text above.'
+            }
             top={-40}>
             <div>
               <AnimatedButton
@@ -222,7 +224,7 @@ export const LockLiquidityModal = ({
                   setProgress('progress')
                 }}
                 progress={progress}
-                disabled={!isChecked}
+                disabled={!isCorrectValue}
               />
             </div>
           </TooltipHover>
