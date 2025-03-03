@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import {
@@ -103,6 +103,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
 }) => {
   const { classes } = useStyles()
 
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
+
   const [alignment, setAlignment] = useState<PointsPageContent>(PointsPageContent.Leaderboard)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
@@ -161,11 +163,11 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             estimated24hPoints={estimated24hPoints}
             isLoadingList={isLoadingList}
             totalItems={totalItems}
-            walletStatus={walletStatus}
+            isConnected={isConnected}
           />
           <EcosystemExposure
             isLoading={isLoadingLeaderboardList || isLoadingList}
-            walletStatus={walletStatus}
+            isConnected={isConnected}
             userStats={userStats.total}
             hasTETHPosition={hasTETHPosition}
             totalItems={totalItems.total}

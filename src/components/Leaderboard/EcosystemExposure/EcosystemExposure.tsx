@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import Slider from 'react-slick'
 import allDomains from '@static/svg/allDomains.svg'
@@ -15,7 +15,6 @@ import { ITotalEntry } from '@store/reducers/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import { Status } from '@store/reducers/solanaWallet'
 import check from '@static/svg/checkFill.svg'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
 
@@ -24,18 +23,16 @@ interface EcosystemExposureI {
   userStats: ITotalEntry | null
   hasTETHPosition: boolean
   totalItems: number
-  walletStatus: Status
+  isConnected: boolean
 }
 
 export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
   userStats,
   hasTETHPosition,
   totalItems,
-  walletStatus,
+  isConnected,
   isLoading
 }) => {
-  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
-
   const currentRanking = userStats?.rank ?? (isConnected ? totalItems + 1 : 0)
   const currentPoints = userStats?.points
     ? Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
@@ -104,7 +101,6 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     <Grid className={classes.mainWrapper}>
       <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
         <BlurOverlay isConnected={isConnected} />
-
         <Grid className={classes.header}>
           <Typography>Eclipse Ecosystem Exposure</Typography>
           <TooltipGradient

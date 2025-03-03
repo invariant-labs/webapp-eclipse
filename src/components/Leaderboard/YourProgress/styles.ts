@@ -24,20 +24,46 @@ const useStyles = makeStyles()(() => {
       }
     },
     tooltipTitle: { '& p': { ...typography.body2, color: colors.invariant.textGrey } },
-    pointsWrapper: {
-      display: 'flex',
-      flexDirection: 'column',
-      maxWidth: 214,
+    pointsContainer: {
+      display: 'grid',
+      gridTemplateColumns: '1fr auto 1fr',
       width: '100%',
+      gap: '24px',
 
       [theme.breakpoints.down('sm')]: {
-        maxWidth: '100%'
+        gridTemplateColumns: '1fr',
+        gridTemplateRows: 'auto',
+        gap: '0'
+      }
+    },
+    pointsColumn: {
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      [theme.breakpoints.up('sm')]: {
+        '& > *:nth-of-type(odd)': {
+          borderBottom: `1px solid ${colors.invariant.light}`
+        },
+        '& > *:nth-of-type(even)': {
+          borderBottom: 'none'
+        }
       },
-      '& > *': {
-        borderBottom: `1px solid ${colors.invariant.light}`
-      },
-      '& > *:last-of-type': {
-        borderBottom: `0px solid ${colors.invariant.light}`
+      [theme.breakpoints.down('sm')]: {
+        '& > *': {
+          borderBottom: `1px solid ${colors.invariant.light}`
+        },
+        '&:last-child > *:last-child': {
+          borderBottom: 'none'
+        }
+      }
+    },
+    divider: {
+      background: colors.invariant.light,
+      width: '1px',
+      height: '165px',
+
+      [theme.breakpoints.down('sm')]: {
+        display: 'none'
       }
     },
     boxWrapper: {

@@ -1,8 +1,6 @@
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import React, { useMemo, useState } from 'react'
+import { Box, Grid, Typography } from '@mui/material'
+import React, { useState } from 'react'
 import useStyles from './styles'
-import { Status } from '@store/reducers/solanaWallet'
-import { BlurOverlay } from './BlurOverlay'
 import { ProgressItem } from './ProgressItem'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
@@ -10,14 +8,14 @@ import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@util
 import { CurrentContentPointsEntry, ITotalEntry } from '@store/reducers/leaderboard'
 import { unblurContent } from '@utils/uiUtils'
 import ContentPointsModal from '@components/Modals/ContentPoints/ContentPointsModal'
-import { colors, theme } from '@static/theme'
+import { BlurOverlay } from './BlurOverlay'
 
 interface YourProgressProps {
   userContentPoints: CurrentContentPointsEntry[] | null
   userStats: ITotalEntry | null
   estimated24hPoints: BN
   isLoadingList: boolean
-  walletStatus: Status
+  isConnected: boolean
   totalItems: {
     total: number
     swap: number
@@ -31,11 +29,9 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   estimated24hPoints,
   isLoadingList,
   totalItems,
-  walletStatus
+  isConnected
 }) => {
   const { classes } = useStyles()
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const [contentPointsOpen, setContentPointsOpen] = useState(false)
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
@@ -68,76 +64,57 @@ export const YourProgress: React.FC<YourProgressProps> = ({
 
   return (
     <Grid className={classes.mainWrapper}>
-      <Grid className={classes.boxWrapper}>
+      <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
+        <BlurOverlay isConnected={isConnected} />
+
         <Grid className={classes.header}>
           <Typography>Statistics</Typography>
         </Grid>
 
         <Grid className={classes.section}>
-          <BlurOverlay isConnected={isConnected} />
-          <Grid className={classes.pointsWrapper}>
-            <ProgressItem
-              label='Points Per Day'
-              isLoading={isLoadingList}
-              value={pointsPerDayFormat}
-            />
-            <ProgressItem
-              isLoading={isLoadingList}
-              tooltip='Points amount refreshes roughly every 30 minutes.'
-              label='Total points'
-              value={
-                userStats
-                  ? formatNumberWithCommas(
-                      Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(
-                        2
+          <Grid className={classes.pointsContainer}>
+            <Grid className={classes.pointsColumn}>
+              <ProgressItem
+                label='Points Per Day'
+                isLoading={isLoadingList}
+                value={pointsPerDayFormat}
+              />
+              <ProgressItem
+                isLoading={isLoadingList}
+                tooltip='Points amount refreshes roughly every 30 minutes.'
+                label='Total points'
+                value={
+                  userStats
+                    ? formatNumberWithCommas(
+                        Number(
+                          printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)
+                        ).toFixed(2)
                       )
-                    )
-                  : 0
-              }
-            />
-            {isMobile && (
-              <>
-                <ProgressItem
-                  withButton={true}
-                  tooltip={tooltipContentPoints}
-                  label='Content Points'
-                  isLoading={isLoadingList}
-                  onModalOpen={setContentPointsOpen}
-                  value={formatNumberWithCommas(
-                    (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
-                  )}
-                />
-                <ProgressItem
-                  isLoading={isLoadingList}
-                  label='Global rank'
-                  value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
-                />
-              </>
-            )}
+                    : 0
+                }
+              />
+            </Grid>
+
+            <Grid className={classes.divider} />
+
+            <Grid className={classes.pointsColumn}>
+              <ProgressItem
+                withButton={true}
+                tooltip={tooltipContentPoints}
+                label='Content Points'
+                isLoading={isLoadingList}
+                onModalOpen={setContentPointsOpen}
+                value={formatNumberWithCommas(
+                  (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
+                )}
+              />
+              <ProgressItem
+                isLoading={isLoadingList}
+                label='Global rank'
+                value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
+              />
+            </Grid>
           </Grid>
-          {!isMobile && (
-            <>
-              <Grid sx={{ background: colors.invariant.light }} height={165} width='1px' />
-              <Grid className={classes.pointsWrapper}>
-                {' '}
-                <ProgressItem
-                  withButton={true}
-                  tooltip={tooltipContentPoints}
-                  label='Content Points'
-                  isLoading={isLoadingList}
-                  onModalOpen={setContentPointsOpen}
-                  value={formatNumberWithCommas(
-                    (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
-                  )}
-                />
-                <ProgressItem
-                  isLoading={isLoadingList}
-                  label='Global rank'
-                  value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
-                />
-              </Grid>
-            </>
-          )}
         </Grid>
         <ContentPointsModal
           userContentPoints={userContentPoints}
