@@ -54,6 +54,7 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading2,
     color: colors.invariant.text,
     lineHeight: '40px',
+    textAlign: 'left',
     whiteSpace: 'nowrap',
     width: 180,
     [theme.breakpoints.down('xl')]: {
@@ -103,14 +104,60 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
       flex: '1 1 0%'
     }
   },
+  button: {
+    ...typography.body1,
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    justifySelf: 'center',
+    maxWidth: '36px',
+    maxHeight: '36px',
+    background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
+    borderRadius: '16px',
+    fontFamily: 'Mukta',
+    fontStyle: 'normal',
+    textTransform: 'none',
+    color: colors.invariant.dark,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
+      boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
+    },
+    '&:active': {
+      boxShadow: '0 2px 8px rgba(46, 224, 154, 0.35)'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
+  },
   fee: {
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
-    marginRight: 8,
+    // [theme.breakpoints.up(1361)]: {
+    //   marginRight: 8
+    // },
+    // [theme.breakpoints.down(1361)]: {
+    //   width: 'auto'
+    // },
+
     [theme.breakpoints.down('md')]: {
       marginRight: 0
     }
+  },
+  actionButtonContainer: {
+    marginLeft: '16px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  unclaimedFeeContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px',
+    width: '100%',
+    justifyContent: 'center'
   },
   activeFee: {
     background: colors.invariant.greenLinearGradient
