@@ -19,6 +19,12 @@ const useStyles = makeStyles()(() => {
       width: 1122,
       display: 'flex',
       maxWidth: '100%'
+    },
+    emptyContainer: {
+      marginTop: 104,
+      width: 1122,
+      display: 'flex',
+      maxWidth: '100%'
     }
   }
 })

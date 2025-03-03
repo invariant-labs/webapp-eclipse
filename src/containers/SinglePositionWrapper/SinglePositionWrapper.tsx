@@ -30,11 +30,11 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
-import { NoConnected } from '@components/NoConnected/NoConnected'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
+import icons from '@static/icons'
 
 export interface IProps {
   id: string
@@ -477,13 +477,18 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         display='flex'
         position='relative'
         justifyContent='center'
-        className={classes.fullHeightContainer}>
-        <NoConnected
-          onConnect={() => {
-            dispatch(walletActions.connect(false))
+        className={classes.emptyContainer}>
+        <EmptyPlaceholder
+          newVersion
+          onAction={() => {
+            navigate('/newPosition/0_01')
           }}
-          title='Connect a wallet to view your position,'
-          descCustomText='or start exploring liquidity pools now!'
+          mainTitle='Connect a wallet to view your position'
+          desc='or start exploring liquidity pools now!'
+          buttonName='Explore pools'
+          connectButton={true}
+          onAction2={() => dispatch(walletActions.connect(false))}
+          img={icons.NoConnected}
         />
       </Grid>
     )
@@ -494,7 +499,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       display='flex'
       position='relative'
       justifyContent='center'
-      className={classes.fullHeightContainer}>
+      className={classes.emptyContainer}>
       <EmptyPlaceholder
         newVersion
         desc='The position does not exist in your list! '

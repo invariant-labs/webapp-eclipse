@@ -3,10 +3,12 @@ import classNames from 'classnames'
 import React from 'react'
 import { useStyles } from './style'
 import icons from '@static/icons'
+import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 
 export interface IEmptyPlaceholder {
   desc: string
   onAction?: () => void
+  onAction2?: () => void
   className?: string
   style?: React.CSSProperties
   withButton?: boolean
@@ -17,11 +19,13 @@ export interface IEmptyPlaceholder {
   newVersion?: boolean
   img?: string
   desc2?: string
+  connectButton?: boolean
 }
 
 export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
   desc,
   onAction,
+  onAction2,
   withButton = true,
   buttonName,
   mainTitle = `It's empty here...`,
@@ -29,7 +33,8 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
   newVersion = false,
   roundedCorners = false,
   img = icons.empty,
-  desc2
+  desc2,
+  connectButton
 }) => {
   const { classes } = useStyles({ newVersion, roundedCorners, height })
 
@@ -43,11 +48,24 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
             <Typography className={classes.title}>{mainTitle}</Typography>
             {desc?.length > 0 && <Typography className={classes.desc}>{desc}</Typography>}
           </Grid>
-          {withButton && (
-            <Button className={classes.button} onClick={onAction} variant='contained'>
-              {buttonName ? buttonName : 'Add a position'}
-            </Button>
-          )}
+          <Grid container flexDirection='column' alignContent='center' gap='10px'>
+            {withButton && (
+              <Button className={classes.button} onClick={onAction} variant='contained'>
+                {buttonName ? buttonName : 'Add a position'}
+              </Button>
+            )}
+            {onAction2 && connectButton && (
+              <ChangeWalletButton
+                name='Connect wallet'
+                onConnect={onAction2}
+                connected={false}
+                onDisconnect={() => {}}
+                className={classes.buttonSecondary}
+                textClassName={classes.buttonText}
+              />
+            )}
+          </Grid>
+
           {desc2 && <Typography className={classes.desc}>{desc2}</Typography>}
         </Grid>
       </Grid>
