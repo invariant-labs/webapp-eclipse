@@ -162,6 +162,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             walletStatus={walletStatus}
           />{' '}
           <EcosystemExposure
+            isLoading={isLoadingLeaderboardList || isLoadingList}
             walletStatus={walletStatus}
             userStats={userStats.total}
             hasTETHPosition={hasTETHPosition}

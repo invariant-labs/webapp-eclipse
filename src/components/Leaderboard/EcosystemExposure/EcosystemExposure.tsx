@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Grid, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import Slider from 'react-slick'
 import allDomains from '@static/svg/allDomains.svg'
 import turboTap from '@static/svg/turboTap.svg'
@@ -16,10 +16,11 @@ import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { Status } from '@store/reducers/solanaWallet'
-import check from '@static/svg/checkRainbow.svg'
+import check from '@static/svg/checkFill.svg'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
 
 interface EcosystemExposureI {
+  isLoading: boolean
   userStats: ITotalEntry | null
   hasTETHPosition: boolean
   totalItems: number
@@ -30,7 +31,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
   userStats,
   hasTETHPosition,
   totalItems,
-  walletStatus
+  walletStatus,
+  isLoading
 }) => {
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
@@ -86,9 +88,20 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
   const { classes } = useStyles({ exposure })
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
+  if (isLoading) {
+    return (
+      <Grid className={classes.mainWrapper}>
+        <Skeleton
+          variant='rounded'
+          animation='pulse'
+          sx={{ height: 239, width: '100%', borderRadius: '14px' }}
+        />
+      </Grid>
+    )
+  }
+
   return (
     <Grid className={classes.mainWrapper}>
-      <Typography component='h1'>Ecosystem Exposure</Typography>
       <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
         <BlurOverlay isConnected={isConnected} />
 

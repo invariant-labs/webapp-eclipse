@@ -24,10 +24,10 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       flexDirection: 'column',
       borderRadius: '14px',
       width: '100%',
-      height: '222px',
+      height: '239px',
       border: '1px solid #EF84F540',
       justifyContent: 'space-between',
-      background: colors.invariant.component
+      background: '#111931'
     },
     header: {
       alignItems: 'center',
@@ -95,14 +95,17 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
     },
     darkBackground: {
       width: '100%',
-      height: 24,
+      height: 28,
       backgroundColor: colors.invariant.dark,
+      border: `2px solid ${colors.invariant.component}`,
+
       borderRadius: 8
     },
     gradientProgress: {
       height: '100%',
       width: `${exposure}%`,
       background: colors.invariant.pinkGreenLinearGradient,
+      border: `2px solid ${colors.invariant.component}`,
       borderRadius: 8,
       transition: 'width 0.5s'
     },
@@ -137,7 +140,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
     checkIcon: {
       position: 'absolute',
       top: -6,
-      right: -3,
+      right: -6,
       width: 24,
       height: 24
     },

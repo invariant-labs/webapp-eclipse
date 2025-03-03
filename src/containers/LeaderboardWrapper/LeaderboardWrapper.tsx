@@ -58,7 +58,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const isLoadingLeaderboardList = useSelector(leaderboardSelectors.loading)
   const currentPage = useSelector(leaderboardSelectors.currentPage)
   const totalItemsObject = useSelector(leaderboardSelectors.totalItems)
-
   const [showWarningBanner, setShowWarningBanner] = React.useState(true)
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
 
