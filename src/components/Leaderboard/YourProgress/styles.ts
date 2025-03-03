@@ -98,7 +98,6 @@ const useStyles = makeStyles()(() => {
       ...typography.caption4,
       lineHeight: '24px',
       borderRadius: 14,
-
       maxWidth: 225,
       fontSize: 16,
       padding: 16,
@@ -135,9 +134,34 @@ const useStyles = makeStyles()(() => {
         background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)'
       }
     },
+    itemWrapper: {
+      boxSizing: 'border-box',
+      width: '100%',
+      height: '100%',
+      padding: '12px 8px',
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '8px',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-start'
+    },
     tooltipLink: {
       color: colors.invariant.green,
       textDecoration: 'underline'
+    },
+    '@keyframes pulseBlur': {
+      '0%': {
+        filter: 'blur(4px)',
+        opacity: 0.7
+      },
+      '50%': {
+        filter: 'blur(6px)',
+        opacity: 0.5
+      },
+      '100%': {
+        filter: 'blur(4px)',
+        opacity: 0.7
+      }
     }
   }
 })
