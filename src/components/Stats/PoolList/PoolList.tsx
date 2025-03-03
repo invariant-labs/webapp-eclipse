@@ -190,14 +190,18 @@ const PoolList: React.FC<PoolListInterface> = ({
           ))}
         </>
       ) : (
-        <Grid container sx={{ background: colors.invariant.component }}>
+        <Grid
+          container
+          sx={{
+            background: colors.invariant.component,
+            borderBottom: `1px solid ${colors.invariant.light}`
+          }}>
           <EmptyPlaceholder
             newVersion
             height={690}
             mainTitle='Pool not found...'
             desc='You can create it yourself!'
             desc2='Or try adjusting your search criteria!'
-            blurWidth={1072}
             onAction={() => navigate('/newPosition')}
             buttonName='Create Pool'
             withButton={true}

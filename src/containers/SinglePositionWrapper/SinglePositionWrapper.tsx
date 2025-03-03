@@ -496,6 +496,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       justifyContent='center'
       className={classes.fullHeightContainer}>
       <EmptyPlaceholder
+        newVersion
         desc='The position does not exist in your list! '
         onAction={() => navigate('/portfolio')}
         buttonName='Back to positions'

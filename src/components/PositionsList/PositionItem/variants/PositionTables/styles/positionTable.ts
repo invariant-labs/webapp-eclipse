@@ -155,7 +155,8 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
     tableFooter: {
       display: 'table',
       width: '100%',
-      tableLayout: 'fixed'
+      tableLayout: 'fixed',
+      borderTop: `1px solid ${colors.invariant.light}`
     },
     footerRow: {
       background: colors.invariant.component,

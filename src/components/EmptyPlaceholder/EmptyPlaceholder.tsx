@@ -12,7 +12,6 @@ export interface IEmptyPlaceholder {
   withButton?: boolean
   mainTitle?: string
   roundedCorners?: boolean
-  blurWidth?: number
   buttonName?: string
   height?: number
   newVersion?: boolean
@@ -29,30 +28,29 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
   height,
   newVersion = false,
   roundedCorners = false,
-  blurWidth,
   img = icons.empty,
   desc2
 }) => {
-  const { classes } = useStyles({ newVersion, roundedCorners, height, blurWidth })
+  const { classes } = useStyles({ newVersion, roundedCorners, height })
 
   return (
-    <>
+    <Grid container className={classes.wrapperContainer}>
       <Grid className={classNames(classes.blur, 'blurLayer')} />
       <Grid className={classNames(classes.container, 'blurLayer')}>
         <Grid className={classNames(classes.root, 'blurInfo')} gap='24px'>
           <img src={img} alt='Not connected' />
           <Grid container flexDirection='column' gap='12px'>
             <Typography className={classes.title}>{mainTitle}</Typography>
-            {desc?.length && <Typography className={classes.desc}>{desc}</Typography>}
+            {desc?.length > 0 && <Typography className={classes.desc}>{desc}</Typography>}
           </Grid>
           {withButton && (
             <Button className={classes.button} onClick={onAction} variant='contained'>
               {buttonName ? buttonName : 'Add a position'}
             </Button>
           )}
-          <Typography className={classes.desc}>{desc2}</Typography>
+          {desc2 && <Typography className={classes.desc}>{desc2}</Typography>}
         </Grid>
       </Grid>
-    </>
+    </Grid>
   )
 }

@@ -191,9 +191,13 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             ))}
           </>
         ) : (
-          <Grid container sx={{ background: colors.invariant.component }}>
+          <Grid
+            container
+            sx={{
+              background: colors.invariant.component,
+              borderBottom: `1px solid ${colors.invariant.light}`
+            }}>
             <EmptyPlaceholder
-              blurWidth={1072}
               height={690}
               newVersion
               mainTitle='Pool not found...'

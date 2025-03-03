@@ -5,16 +5,20 @@ interface StyleProps {
   newVersion?: boolean
   height?: number
   roundedCorners?: boolean
-  blurWidth?: number
 }
 
 export const useStyles = makeStyles<StyleProps>()(
-  (_theme, { newVersion, roundedCorners, height, blurWidth }) => ({
+  (_theme, { newVersion, roundedCorners, height }) => ({
+    wrapperContainer: {
+      position: 'relative',
+      width: '100%',
+      height: height ? height : '370px'
+    },
     container: {
       width: '100%',
-      height: height ? height : '370px',
+      height: '100%',
       zIndex: 14,
-      borderBottom: `1px solid ${colors.invariant.light}`
+      position: 'relative'
     },
     root: {
       zIndex: 10,
@@ -29,11 +33,9 @@ export const useStyles = makeStyles<StyleProps>()(
         textAlign: 'center'
       }
     },
-
     blur: {
-      maxWidth: blurWidth ?? '100%',
       width: '100%',
-      height: height ? height : '370px',
+      height: '100%',
       position: 'absolute',
       zIndex: 13,
       borderRadius: newVersion || !roundedCorners ? 0 : 10,
@@ -45,7 +47,6 @@ export const useStyles = makeStyles<StyleProps>()(
       ...typography.heading2,
       color: colors.invariant.text
     },
-
     desc: {
       ...typography.body2,
       lineHeight: '20px',
