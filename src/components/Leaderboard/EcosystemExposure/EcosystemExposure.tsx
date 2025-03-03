@@ -110,7 +110,6 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     return (
       <Grid className={classes.mainWrapper}>
         <Grid className={classes.boxWrapper}>
-          <BlurOverlay isConnected={isConnected} />
           <Grid className={classes.header}>
             <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
               <Typography>
