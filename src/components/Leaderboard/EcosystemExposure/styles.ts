@@ -4,16 +4,10 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
   return {
     mainWrapper: {
-      display: 'flex',
-      alignItems: 'center',
-      flexDirection: 'column',
       maxWidth: '524px',
-      width: '98%',
-      marginTop: 24,
-      gap: 24,
-      '& h1': {
-        color: colors.invariant.text,
-        ...typography.heading3
+      width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: '100%'
       }
     },
     boxWrapper: {
@@ -105,7 +99,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       height: '100%',
       width: `${exposure}%`,
       background: colors.invariant.pinkGreenLinearGradient,
-      border: `2px solid ${colors.invariant.component}`,
+      border: `${exposure > 0 ? 2 : 0}px solid ${colors.invariant.component}`,
       borderRadius: 8,
       transition: 'width 0.5s'
     },

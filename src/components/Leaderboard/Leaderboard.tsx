@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Box, Grid } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import {
   BANNER_STORAGE_KEY,
@@ -152,7 +152,9 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
         />
       )}
       <Box className={classes.leaderBoardWrapper}>
-        <Grid display='flex' flexDirection='column' alignItems='center' gap={3} width='100%'>
+        <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
+
+        <Grid className={classes.progressWrapper}>
           <YourProgress
             userContentPoints={userContentPoints}
             userStats={userStats.total}
@@ -160,7 +162,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             isLoadingList={isLoadingList}
             totalItems={totalItems}
             walletStatus={walletStatus}
-          />{' '}
+          />
           <EcosystemExposure
             isLoading={isLoadingLeaderboardList || isLoadingList}
             walletStatus={walletStatus}
@@ -168,6 +170,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             hasTETHPosition={hasTETHPosition}
             totalItems={totalItems.total}
           />
+        </Grid>
+        <Grid display='flex' flexDirection='column' alignItems='center' gap={3} width='100%'>
           <RewardedPools
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}

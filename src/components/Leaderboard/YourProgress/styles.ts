@@ -3,15 +3,64 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
   return {
-    section: {
-      display: 'grid',
-      position: 'relative',
-      gridTemplateColumns: 'repeat(2, 1fr)',
-      gap: 24,
-      [theme.breakpoints.down('md')]: {
-        display: 'flex',
-        flexDirection: 'column'
+    mainWrapper: {
+      maxWidth: '524px',
+      width: '100%',
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: '100%'
       }
+    },
+    header: {
+      alignItems: 'center',
+      display: 'flex',
+      gap: 8,
+
+      '& p': {
+        color: colors.invariant.textGrey,
+        ...typography.heading4
+      },
+      '& img': {
+        width: 14
+      }
+    },
+    tooltipTitle: { '& p': { ...typography.body2, color: colors.invariant.textGrey } },
+    pointsWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      maxWidth: 214,
+      width: '100%',
+
+      [theme.breakpoints.down('sm')]: {
+        maxWidth: '100%'
+      },
+      '& > *': {
+        borderBottom: `1px solid ${colors.invariant.light}`
+      },
+      '& > *:last-of-type': {
+        borderBottom: `0px solid ${colors.invariant.light}`
+      }
+    },
+    boxWrapper: {
+      gap: '8px',
+      alignItems: 'center',
+      padding: '16px 24px',
+      display: 'flex',
+      flexDirection: 'column',
+      borderRadius: '14px',
+      width: '100%',
+      height: '239px',
+      border: '1px solid #EF84F540',
+      justifyContent: 'space-between',
+      background: '#111931',
+      [theme.breakpoints.down('sm')]: {
+        height: 'auto'
+      }
+    },
+    section: {
+      display: 'flex',
+      width: '100%',
+      justifyContent: 'space-between',
+      gap: '24px'
     },
 
     headerBigText: { ...typography.heading1, color: colors.invariant.text },

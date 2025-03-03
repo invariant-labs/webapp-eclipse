@@ -2,13 +2,6 @@ import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import React, { useMemo, useState } from 'react'
 import useStyles from './styles'
 import { Status } from '@store/reducers/solanaWallet'
-import trapezeLeft from '@static/png/trapezeLeft.png'
-import trapezeRight from '@static/png/trapezeRight.png'
-import trapezeMobileTop from '@static/png/trapezeMobileTop.png'
-import trapezeMobileBottom from '@static/png/trapezeMobileBottom.png'
-import trapezeBottomRight from '@static/png/trapezeBottomRight.png'
-import trapezeBottomLeft from '@static/png/trapezeBottomLeft.png'
-import boxModalMiddle from '@static/png/boxMobileMiddle.png'
 import { BlurOverlay } from './BlurOverlay'
 import { ProgressItem } from './ProgressItem'
 import { BN } from '@coral-xyz/anchor'
@@ -16,9 +9,8 @@ import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { CurrentContentPointsEntry, ITotalEntry } from '@store/reducers/leaderboard'
 import { unblurContent } from '@utils/uiUtils'
-import { ContentPoints } from './ContentPoints'
 import ContentPointsModal from '@components/Modals/ContentPoints/ContentPointsModal'
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 
 interface YourProgressProps {
   userContentPoints: CurrentContentPointsEntry[] | null
@@ -41,14 +33,29 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   totalItems,
   walletStatus
 }) => {
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const { classes } = useStyles()
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
   const [contentPointsOpen, setContentPointsOpen] = useState(false)
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
     return value.lt(minimalValue)
   }
+  const tooltipContentPoints = (
+    <Box sx={{ width: '190px' }}>
+      <Typography className={classes.tooltipContentPoints}>
+        Earn point allocations for creating content about Invariant on social media! Tweets,
+        threads, YouTube videos, TikToks, and articles - all help you accumulate more points.{' '}
+        <a
+          href='https://docs.invariant.app/docs/invariant_points/content'
+          target='_blank'
+          rel='noopener noreferrer'
+          className={classes.tooltipLink}>
+          More details
+        </a>
+      </Typography>
+    </Box>
+  )
 
   const pointsPerDayFormat: string | number = isLessThanMinimal(estimated24hPoints)
     ? isConnected && !estimated24hPoints.isZero()
@@ -60,92 +67,87 @@ export const YourProgress: React.FC<YourProgressProps> = ({
       )
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'flex-start',
-        gap: '24px',
-        width: '100%'
-      }}>
-      <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
-      <Grid
-        className={classes.section}
-        sx={
-          isMd
-            ? {
-                '& > :nth-child(1)': { order: isConnected ? 0 : 0 },
-                '& > :nth-child(2)': { order: isConnected ? 2 : 1 },
-                '& > :nth-child(3)': { order: isConnected ? 1 : 3 },
-                '& > :nth-child(4)': { order: isConnected ? 2 : 2 },
-                '& > :nth-child(5)': { order: isConnected ? 4 : 4 }
+    <Grid className={classes.mainWrapper}>
+      <Grid className={classes.boxWrapper}>
+        <Grid className={classes.header}>
+          <Typography>Statistics</Typography>
+        </Grid>
+
+        <Grid className={classes.section}>
+          <BlurOverlay isConnected={isConnected} />
+          <Grid className={classes.pointsWrapper}>
+            <ProgressItem
+              label='Points Per Day'
+              isLoading={isLoadingList}
+              value={pointsPerDayFormat}
+            />
+            <ProgressItem
+              isLoading={isLoadingList}
+              tooltip='Points amount refreshes roughly every 30 minutes.'
+              label='Total points'
+              value={
+                userStats
+                  ? formatNumberWithCommas(
+                      Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(
+                        2
+                      )
+                    )
+                  : 0
               }
-            : {}
-        }>
-        <BlurOverlay isConnected={isConnected} />
-        <ProgressItem
-          background={{
-            desktop: trapezeLeft,
-            mobile: trapezeMobileTop
-          }}
-          desktopLabelAligment='right'
-          label='Points Per Day'
-          isLoading={isLoadingList}
-          value={pointsPerDayFormat}
-        />
-
-        <ContentPoints
-          isLoading={isLoadingList}
-          background={{
-            desktop: trapezeRight,
-            mobile: boxModalMiddle
-          }}
-          setContentPointsOpen={setContentPointsOpen}
-          desktopLabelAligment='left'
-          label='Content Points'
-          value={formatNumberWithCommas(
-            (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
+            />
+            {isMobile && (
+              <>
+                <ProgressItem
+                  withButton={true}
+                  tooltip={tooltipContentPoints}
+                  label='Content Points'
+                  isLoading={isLoadingList}
+                  onModalOpen={setContentPointsOpen}
+                  value={formatNumberWithCommas(
+                    (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
+                  )}
+                />
+                <ProgressItem
+                  isLoading={isLoadingList}
+                  label='Global rank'
+                  value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
+                />
+              </>
+            )}
+          </Grid>
+          {!isMobile && (
+            <>
+              <Grid sx={{ background: colors.invariant.light }} height={165} width='1px' />
+              <Grid className={classes.pointsWrapper}>
+                {' '}
+                <ProgressItem
+                  withButton={true}
+                  tooltip={tooltipContentPoints}
+                  label='Content Points'
+                  isLoading={isLoadingList}
+                  onModalOpen={setContentPointsOpen}
+                  value={formatNumberWithCommas(
+                    (userContentPoints?.reduce((acc, a) => acc + a.points, 0) ?? 0).toString()
+                  )}
+                />
+                <ProgressItem
+                  isLoading={isLoadingList}
+                  label='Global rank'
+                  value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
+                />
+              </Grid>
+            </>
           )}
-        />
-        <ProgressItem
-          isLoading={isLoadingList}
-          background={{
-            desktop: trapezeBottomLeft,
-            mobile: boxModalMiddle
+        </Grid>
+        <ContentPointsModal
+          userContentPoints={userContentPoints}
+          open={contentPointsOpen}
+          handleClose={() => {
+            setContentPointsOpen(false)
+            unblurContent()
           }}
-          isWideBlock={true}
-          tooltip='Points amount refreshes roughly every 30 minutes.'
-          desktopLabelAligment='right'
-          label='Total points'
-          value={
-            userStats
-              ? formatNumberWithCommas(
-                  Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
-                )
-              : 0
-          }
-        />
-
-        <ProgressItem
-          isLoading={isLoadingList}
-          background={{
-            desktop: trapezeBottomRight,
-            mobile: trapezeMobileBottom
-          }}
-          desktopLabelAligment='left'
-          label='Global rank'
-          value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
         />
       </Grid>
-      <ContentPointsModal
-        userContentPoints={userContentPoints}
-        open={contentPointsOpen}
-        handleClose={() => {
-          setContentPointsOpen(false)
-          unblurContent()
-        }}
-      />
-    </Box>
+    </Grid>
   )
 }

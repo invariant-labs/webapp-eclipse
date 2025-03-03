@@ -1,4 +1,5 @@
 import { Theme } from '@mui/material'
+import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()((theme: Theme) => {
@@ -10,6 +11,19 @@ const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       width: '100%',
       gap: 24
+    },
+    progressWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      width: '100%',
+      gap: '24px',
+      [theme.breakpoints.down('lg')]: {
+        flexDirection: 'column'
+      }
+    },
+    leaderboardHeaderSectionTitle: {
+      ...typography.heading3,
+      color: colors.white.main
     },
     leaderBoardWrapper: {
       display: 'flex',
