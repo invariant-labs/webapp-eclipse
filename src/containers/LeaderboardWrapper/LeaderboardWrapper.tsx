@@ -33,6 +33,7 @@ import {
 import { Leaderboard } from '@components/Leaderboard/Leaderboard'
 import { address, status } from '@store/selectors/solanaWallet'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import { PublicKey } from '@solana/web3.js'
 
 interface LeaderboardWrapperProps {}
 
@@ -85,18 +86,21 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
     },
     [dispatch, itemsPerPage, isConnected]
   )
+  const POOLS = [
+    new PublicKey('FvVsbwsbGVo6PVfimkkPhpcRfBrRitiV946nMNNuz7f9'),
+    new PublicKey('D323jpT4XmBFPshHvMRsf5nHmAMLa78q8ZBX7XXonYQq')
+  ]
 
-  const hasTETHPosition = useMemo(() => {
-    return list.some(
-      position =>
-        (position.tokenX.assetAddress === TETH_MAIN.address ||
-          position.tokenY.assetAddress === TETH_MAIN.address) &&
-        position.poolData.currentTickIndex >=
-          Math.min(position.lowerTickIndex, position.upperTickIndex) &&
-        position.poolData.currentTickIndex <
-          Math.max(position.lowerTickIndex, position.upperTickIndex)
-    )
-  }, [list])
+  const hasTETHPosition = useMemo(
+    () =>
+      list.some(
+        ({ poolData, lowerTickIndex, upperTickIndex }) =>
+          POOLS.some(pool => pool.equals(poolData.address)) &&
+          poolData.currentTickIndex >= Math.min(lowerTickIndex, upperTickIndex) &&
+          poolData.currentTickIndex < Math.max(lowerTickIndex, upperTickIndex)
+      ),
+    [list]
+  )
 
   const onConnectWallet = () => {
     dispatch(walletActions.connect(false))
