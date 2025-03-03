@@ -27,8 +27,7 @@ import {
   BANNER_STORAGE_KEY,
   LEADERBOARD_DECIMAL,
   LeaderBoardType,
-  SNAP_TIME_DELAY,
-  TETH_MAIN
+  SNAP_TIME_DELAY
 } from '@store/consts/static'
 import { Leaderboard } from '@components/Leaderboard/Leaderboard'
 import { address, status } from '@store/selectors/solanaWallet'
