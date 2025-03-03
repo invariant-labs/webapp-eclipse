@@ -37,9 +37,15 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-
-    padding: '8px 10px 8px 6px',
-    borderRadius: 24
+    padding: '8px 16px 8px 12px',
+    borderRadius: 24,
+    marginRight: 4,
+    '&:hover': {
+      background: colors.invariant.light,
+      '@media (hover: none)': {
+        background: colors.invariant.component
+      }
+    }
   },
 
   leftSide: {
@@ -123,11 +129,22 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     }
   },
   fixedList: {
+    '& .MuiAutocomplete-option[aria-selected="true"]': {
+      background: 'none !important',
+      '&:hover': {
+        background: colors.invariant.component
+      },
+      '& > div': {
+        borderRadius: '24px',
+        border: `1px solid ${colors.invariant.light}`
+      }
+    },
     '&::-webkit-scrollbar': {
       width: '6px'
     },
     '&::-webkit-scrollbar-track': {
-      background: colors.invariant.newDark
+      background: colors.invariant.newDark,
+      borderRadius: '3px'
     },
     '&::-webkit-scrollbar-thumb': {
       background: colors.invariant.pink,
