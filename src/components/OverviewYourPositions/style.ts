@@ -29,7 +29,11 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     padding: 10,
     paddingLeft: 16,
-    paddingRight: 16
+    paddingRight: 16,
+
+    [theme.breakpoints.down('sm')]: {
+      padding: '0px 8px'
+    }
   },
   overviewContainer: {
     display: 'flex',

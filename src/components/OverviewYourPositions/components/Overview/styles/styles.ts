@@ -18,6 +18,9 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     [theme.breakpoints.down('md')]: {
       borderRadius: 24
     },
+    [theme.breakpoints.down('sm')]: {
+      padding: '0px 8px'
+    },
     borderRight: `1px solid  ${colors.invariant.light}`,
     display: 'flex',
     flexDirection: 'column'
