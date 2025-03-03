@@ -64,7 +64,7 @@ const CustomPopper = memo((props: PopperProps) => {
 const PaperComponent = forwardRef<HTMLDivElement, PaperProps>((paperProps, ref) => {
   return (
     <Fade in timeout={300}>
-      <Paper {...paperProps} ref={ref}>
+      <Paper {...paperProps} ref={ref} style={{ padding: 0 }}>
         <Box>{paperProps.children}</Box>
       </Paper>
     </Fade>

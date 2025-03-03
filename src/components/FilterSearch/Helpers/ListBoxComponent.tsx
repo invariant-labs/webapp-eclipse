@@ -31,11 +31,11 @@ const ListboxComponent = React.forwardRef<HTMLDivElement, ListboxComponentProps>
         {...other}
         style={{
           maxHeight: 'none',
-          width: '100%'
+          padding: '16px 16px 10px'
         }}>
         <FixedSizeList
           className={classes.fixedList}
-          height={isSmall ? 486 : 306}
+          height={isSmall ? 486 : 290}
           width='100%'
           itemCount={itemCount}
           itemSize={isSmall ? 60 : 51}
