@@ -82,7 +82,11 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
   searchIconContainer: {
     flexGrow: 1,
     display: 'flex',
-    justifyContent: 'flex-end'
+    justifyContent: 'flex-end',
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    right: 0
   }
 }))
 

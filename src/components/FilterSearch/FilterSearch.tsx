@@ -253,7 +253,9 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
             padding: 0,
             height: '100%',
             alignItems: 'center',
-            ...typography.body2
+            ...typography.body2,
+            position: 'relative',
+            paddingRight: 40
           },
           endAdornment: (
             <div className={classes.searchIconContainer}>
