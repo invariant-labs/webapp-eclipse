@@ -6,7 +6,7 @@ import GradientBorder from '@components/GradientBorder/GradientBorder'
 import newTab from '@static/svg/newTab.svg'
 interface ExposureTooltipTitleProps {
   footerDescription?: string
-  description?: string
+  description?: React.ReactNode
   completed?: boolean
   current?: number
   title: string

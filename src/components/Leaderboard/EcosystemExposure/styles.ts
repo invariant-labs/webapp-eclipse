@@ -82,6 +82,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
         opacity: 0.2
       }
     },
+
     sliderItem: {
       width: 64,
       height: 64,

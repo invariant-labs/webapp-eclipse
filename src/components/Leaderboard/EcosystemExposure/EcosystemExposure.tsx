@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Grid, List, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import Slider from 'react-slick'
 import allDomains from '@static/svg/allDomains.svg'
 import turboTap from '@static/svg/turboTap.svg'
@@ -10,7 +10,7 @@ import navLeft from '@static/svg/navLeft.svg'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 import { ExposureTooltipTitle } from './ExposureTooltipTitle/ExposureTooltipTitle'
 import useStyles from './styles'
-import { theme } from '@static/theme'
+import { theme, typography } from '@static/theme'
 import { ITotalEntry } from '@store/reducers/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
@@ -60,8 +60,12 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       img: turboTap,
       max: 25000,
       current: +currentPoints >= 25000 ? 25000 : +currentPoints,
-      description:
-        'Earn 25,000 points on Invariant to get a permanent +10% passive grass boost on Turbo Tap!',
+      description: (
+        <>
+          Earn 25,000 points on Invariant to get a permanent +10% passive grass boost on <br />{' '}
+          Turbo Tap!
+        </>
+      ),
       footerDescription: '+10% Passive Grass permanent',
       completed: +currentPoints >= 25000
     },
@@ -72,8 +76,25 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       img: nucleus,
       max: 1,
       current: hasTETHPosition ? 1 : 0,
-      description:
-        'Every tETH provider earns Nucleus Points! Open your tETH position to start earning!',
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>Every tETH provider earns Nucleus Points!</Typography>
+          <Typography>Open your tETH position to start earning!</Typography>
+          <Typography>Rewarded pools:</Typography>
+          <ul style={{ margin: 0, paddingLeft: '20px' }}>
+            <li>tETH/ETH 0.01%</li>
+            <li>tETH/USDC 0.09%</li>
+          </ul>
+        </Grid>
+      ),
+
       footerDescription: 'Nucleus Points',
       completed: hasTETHPosition
     }
@@ -88,11 +109,44 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
   if (isLoading) {
     return (
       <Grid className={classes.mainWrapper}>
-        <Skeleton
-          variant='rounded'
-          animation='pulse'
-          sx={{ height: 239, width: '100%', borderRadius: '14px' }}
-        />
+        <Grid className={classes.boxWrapper}>
+          <BlurOverlay isConnected={isConnected} />
+          <Grid className={classes.header}>
+            <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
+              <Typography>
+                Eclipse Ecosystem Exposure <img src={infoIcon} alt='info' />
+              </Typography>
+            </Skeleton>
+          </Grid>
+
+          <Grid className={classes.sliderWrapper} gap='20px' justifyContent='center'>
+            {Array.from({ length: 3 }).map(_ => (
+              <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
+                <Grid sx={{ width: 64, height: 64 }} />
+              </Skeleton>
+            ))}
+          </Grid>
+          <Grid className={classes.expWrapper}>
+            <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
+              <Typography component='h5'>
+                Your Exposure: <Typography component='span'>99.99%</Typography>
+              </Typography>
+            </Skeleton>
+            <Grid className={classes.expLabel}>
+              <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
+                <Typography>100%</Typography>
+              </Skeleton>
+              <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
+                <Typography>100%</Typography>
+              </Skeleton>
+            </Grid>
+            <Skeleton
+              variant='rounded'
+              animation='wave'
+              sx={{ borderRadius: '8px', width: '100%', height: '28px' }}
+            />
+          </Grid>
+        </Grid>
       </Grid>
     )
   }

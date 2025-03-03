@@ -114,10 +114,7 @@ const useStyles = makeStyles()(() => {
     blur: {
       width: 120,
       height: 36,
-      borderRadius: 16,
-      background: `linear-gradient(90deg, ${colors.invariant.component} 25%, ${colors.invariant.light} 50%, ${colors.invariant.component} 75%)`,
-      backgroundSize: '200% 100%',
-      animation: 'shimmer 2s infinite'
+      borderRadius: 16
     },
     button: {
       minWidth: '39px',
@@ -148,20 +145,6 @@ const useStyles = makeStyles()(() => {
     tooltipLink: {
       color: colors.invariant.green,
       textDecoration: 'underline'
-    },
-    '@keyframes pulseBlur': {
-      '0%': {
-        filter: 'blur(4px)',
-        opacity: 0.7
-      },
-      '50%': {
-        filter: 'blur(6px)',
-        opacity: 0.5
-      },
-      '100%': {
-        filter: 'blur(4px)',
-        opacity: 0.7
-      }
     }
   }
 })

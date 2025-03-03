@@ -1,4 +1,4 @@
-import { Button, Grid, Tooltip, Typography } from '@mui/material'
+import { Button, Grid, Skeleton, Tooltip, Typography } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
@@ -44,7 +44,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
         )}
       </Grid>
       {isLoading ? (
-        <div className={classes.blur} />
+        <Skeleton variant='rounded' animation='wave' className={classes.blur} />
       ) : (
         <Grid container alignItems='center' gap='8px'>
           <Typography className={classes.headerBigText}>{value}</Typography>
