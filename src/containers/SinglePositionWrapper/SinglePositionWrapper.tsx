@@ -480,10 +480,11 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         className={classes.emptyContainer}>
         <EmptyPlaceholder
           newVersion
+          themeDark
           onAction={() => {
             navigate('/newPosition/0_01')
           }}
-          mainTitle='Connect a wallet to view your position'
+          roundedCorners={true}
           desc='or start exploring liquidity pools now!'
           buttonName='Explore pools'
           connectButton={true}
@@ -502,6 +503,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       className={classes.emptyContainer}>
       <EmptyPlaceholder
         newVersion
+        themeDark
+        roundedCorners
         desc='The position does not exist in your list! '
         onAction={() => navigate('/portfolio')}
         buttonName='Back to positions'
