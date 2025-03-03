@@ -24,6 +24,7 @@ const useStyles = makeStyles()(theme => {
       }
     },
     notConnectedPlaceholder: {
+      marginTop: 65,
       height: '400px',
       width: '100%',
       borderTopLeftRadius: '24px',
