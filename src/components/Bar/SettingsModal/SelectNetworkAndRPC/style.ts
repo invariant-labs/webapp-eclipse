@@ -33,7 +33,8 @@ export const useStyles = makeStyles()(() => {
       color: colors.white.main
     },
     name: {
-      ...typography.body2
+      ...typography.body2,
+      marginTop: 2
     },
     title: {
       marginLeft: 8,

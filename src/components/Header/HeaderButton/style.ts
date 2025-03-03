@@ -51,13 +51,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       backgroundImage: 'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
       backgroundOrigin: 'border-box',
       backgroundClip: 'padding-box, border-box',
-
       color: colors.invariant.text,
 
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(450)]: {
         padding: '0px 2px'
       },
-      [theme.breakpoints.between('sm', 'lg')]: {
+
+      [theme.breakpoints.up(450)]: {
         padding: '0px 20px'
       }
     },

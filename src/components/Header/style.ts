@@ -7,18 +7,10 @@ const useStyles = makeStyles()((theme: Theme) => {
     root: {
       margin: 'auto',
       maxWidth: 1920,
-      paddingInline: 150,
       height: 70,
       display: 'flex',
       justifyContent: 'space-between',
-
-      [theme.breakpoints.down('xl')]: {
-        paddingInline: 32
-      },
-
-      [theme.breakpoints.down('lg')]: {
-        paddingInline: 24
-      },
+      paddingInline: 24,
 
       [theme.breakpoints.down('sm')]: {
         paddingInline: 8

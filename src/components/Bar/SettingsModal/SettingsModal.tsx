@@ -30,7 +30,7 @@ export const SettingsModal = ({
 
   return (
     <Modal
-      icon={<img className={classes.barButtonIcon} src={icons.settings2} alt='Settings icon' />}
+      icon={<img className={classes.barButtonIcon} src={icons.settings3} alt='Settings icon' />}
       title='Settings'
       showTitle
       open={open}

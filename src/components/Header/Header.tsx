@@ -52,7 +52,7 @@ export const Header: React.FC<IHeader> = ({
   const { classes } = useStyles()
   const navigate = useNavigate()
 
-  const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
+  const is650Down = useMediaQuery(theme.breakpoints.down(650))
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
 
   const routes = [
@@ -130,8 +130,8 @@ export const Header: React.FC<IHeader> = ({
       <Grid container className={classes.root} direction='row' alignItems='center' wrap='nowrap'>
         <Grid container item className={classes.leftSide} justifyContent='flex-start'>
           <CardMedia
-            className={isSmDown ? classes.logoShort : classes.logo}
-            image={isSmDown ? icons.LogoShort : icons.LogoTitle}
+            className={is650Down ? classes.logoShort : classes.logo}
+            image={is650Down ? icons.LogoShort : icons.LogoTitle}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
                 navigate('/exchange')
@@ -190,7 +190,7 @@ export const Header: React.FC<IHeader> = ({
             name={
               walletConnected
                 ? `${address.toString().slice(0, 4)}...${
-                    !isMdDown
+                    !isSmDown
                       ? address
                           .toString()
                           .slice(address.toString().length - 4, address.toString().length)

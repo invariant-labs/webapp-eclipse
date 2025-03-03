@@ -5,7 +5,8 @@ export const useStyles = makeStyles()(() => {
   return {
     barButtonIcon: {
       width: 24,
-      height: 24
+      height: 24,
+      padding: 8
     },
     popover: {
       width: 240,

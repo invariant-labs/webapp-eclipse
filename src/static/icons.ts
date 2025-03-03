@@ -86,6 +86,7 @@ import eclipseGlow from './svg/eclipseGlow.svg'
 import alephiumGlow from './svg/alephiumGlow.svg'
 import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
+import settings3 from './svg/settings3.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -175,7 +176,8 @@ const icons: { [key: string]: string } = {
   eclipseGlow,
   alephiumGlow,
   liquidityEmpty,
-  assetsEmpty
+  assetsEmpty,
+  settings3
 }
 
 export default icons

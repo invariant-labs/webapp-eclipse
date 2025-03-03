@@ -7,7 +7,7 @@ export const useStyles = makeStyles()(() => {
       display: 'flex',
       backgroundColor: colors.invariant.component,
       borderRadius: 14,
-      padding: 4
+      alignItems: 'center'
     }
   }
 })
