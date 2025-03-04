@@ -76,7 +76,6 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     unblurContent()
     setOpen(false)
     localStorage.setItem('WALLET_TYPE', '')
-    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.resetCurrentUser())
     dispatch(actions.resetContentPoints())
   }
