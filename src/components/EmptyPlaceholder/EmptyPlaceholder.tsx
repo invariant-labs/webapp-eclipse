@@ -35,7 +35,9 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
       <Grid className={classNames(classes.blur, 'blurLayer')} />
       <Grid className={classNames(classes.container, 'blurLayer')}>
         <Grid className={classNames(classes.root, 'blurInfo')}>
-          <img className={classes.img} src={icons.empty} alt='Not connected' />
+          <Grid height={104}>
+            <img className={classes.img} src={icons.empty} alt='Not connected' />
+          </Grid>
           <Typography className={classes.desc}>
             {mainTitle ? mainTitle : `It's empty here...`}
           </Typography>
