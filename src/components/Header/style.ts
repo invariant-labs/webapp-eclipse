@@ -19,6 +19,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     logo: {
       width: 150,
       height: 40,
+      flexShrink: 0,
 
       '&:hover': {
         cursor: 'pointer'
