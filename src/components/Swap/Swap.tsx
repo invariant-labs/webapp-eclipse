@@ -505,13 +505,6 @@ export const Swap: React.FC<ISwap> = ({
     return true
   }, [tokenFromIndex, tokenToIndex, poolTicks])
 
-  // const isInsufficientLiquidityError = useMemo(
-  //   () =>
-  //     simulateResult.poolKey === null &&
-  //     (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxSwapStepsReached)),
-  //   [simulateResult]
-  // )
-
   const getStateMessage = () => {
     if (
       (tokenFromIndex !== null && tokenToIndex !== null && throttle) ||

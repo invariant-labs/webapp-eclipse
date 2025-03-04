@@ -135,12 +135,6 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
-    // [theme.breakpoints.up(1361)]: {
-    //   marginRight: 8
-    // },
-    // [theme.breakpoints.down(1361)]: {
-    //   width: 'auto'
-    // },
 
     [theme.breakpoints.down('md')]: {
       marginRight: 0

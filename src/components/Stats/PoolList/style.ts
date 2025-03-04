@@ -15,7 +15,7 @@ export const useStyles = makeStyles()(() => ({
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',
     [theme.breakpoints.down('lg')]: {
-      padding: '20px 12px'
+      padding: '20px 8px'
     }
   },
   loadingOverlay: {

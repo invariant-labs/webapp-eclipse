@@ -225,6 +225,10 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
       padding: '16px',
       '&:not(:first-child)': {
         marginTop: '8px'
+      },
+
+      [theme.breakpoints.down('sm')]: {
+        padding: '16px 8px'
       }
     },
     mobileCardHeader: {
