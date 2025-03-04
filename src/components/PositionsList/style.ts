@@ -13,7 +13,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   header: {
     paddingBottom: 16,
     display: 'flex',
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     [theme.breakpoints.down('sm')]: {
       justifyContent: 'center'
     }
@@ -83,6 +85,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   fullWidthWrapper: {
     marginBottom: 8,
+    display: 'flex',
+    columnGap: '2px',
+    justifyContent: 'space-between',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       flexDirection: 'row-reverse'
@@ -117,6 +122,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.text
   },
   list: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'flex-start',
     position: 'relative',
     flex: 1
   },

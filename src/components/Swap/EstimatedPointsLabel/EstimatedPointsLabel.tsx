@@ -66,9 +66,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
       <div className={classes.contentWrapper} ref={contentRef}>
         <img src={icons.airdropRainbow} alt='' />
         Points:{' '}
-        <span
-          className={classes.pointsAmount}
-          style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
+        <span className={classes.pointsAmount}>
           <p className={classes.pointsValue}>
             {' '}
             {pointsForSwap.isZero()
@@ -82,14 +80,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
 
           <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
         </span>{' '}
-        <span
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 4,
-            marginLeft: '8px'
-          }}>
+        <span className={classes.swapMultiplier}>
           {new BN(swapMultiplier, 'hex').gte(new BN(1)) &&
             `${new BN(swapMultiplier, 'hex').toNumber()}x`}
           <img src={icons.boostPoints} alt='' style={{ height: '14px', width: '12px' }} />
@@ -97,20 +88,9 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
       </div>
 
       <div className={classes.alternativeContent} ref={alternativeRef}>
-        <img
-          src={icons.airdropRainbow}
-          alt=''
-          className={classes.grayscaleIcon}
-          style={{ marginLeft: '2px', marginRight: '4px' }}
-        />
+        <img src={icons.airdropRainbow} alt='' className={classes.grayscaleIcon} />
         How to earn points?
-        <img
-          src={icons.infoCircle}
-          alt=''
-          width='14px'
-          style={{ marginTop: '-2px', marginLeft: '4px' }}
-          className={classes.grayscaleIcon}
-        />
+        <img src={icons.infoCircle} alt='' width='14px' className={classes.grayscaleIcon} />
       </div>
     </Box>
   )

@@ -23,12 +23,20 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
       position: 'relative',
       overflow: 'hidden'
     },
-
+    swapMultiplier: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 4,
+      marginLeft: '8px'
+    },
     pointsAmount: {
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
-      color: colors.invariant.pink
+      color: colors.invariant.pink,
+      borderRight: '1px solid #3A466B',
+      paddingRight: '10px'
     },
     pointsValue: {
       width: '50px',
@@ -74,7 +82,9 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
       filter: 'grayscale(100%)',
       transition: 'filter 0.7s ease-in-out',
       minWidth: '12px',
-      minHeight: '12px'
+      minHeight: '12px',
+      marginLeft: '2px',
+      marginRight: '4px'
     }
   })
 )

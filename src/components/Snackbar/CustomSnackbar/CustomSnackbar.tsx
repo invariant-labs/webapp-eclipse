@@ -10,7 +10,8 @@ import {
   StyledHideContainer,
   StyledIcon,
   StyledSnackbarContent,
-  StyledTitle
+  StyledTitle,
+  useStyles
 } from './style'
 import { Grid } from '@mui/material'
 import { useDispatch } from 'react-redux'
@@ -55,14 +56,10 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
     }, [network])
 
     const Content = () => {
+      const { classes } = useStyles()
       return (
         <>
-          <Grid
-            display='flex'
-            alignItems='center'
-            ml={2}
-            flexDirection='row'
-            style={{ width: 'fix-content', flexWrap: 'nowrap' }}>
+          <Grid className={classes.snackbarWrapper}>
             <Grid ml={1}>
               {variant === 'pending' ? (
                 <StyledCircularProgress size={13} />
@@ -73,7 +70,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
             <StyledTitle>{message}</StyledTitle>
           </Grid>
           {txid && (
-            <Grid display='flex' mx={1} minWidth='fit-content'>
+            <Grid className={classes.linkWrapper}>
               <StyledDetails
                 onClick={() => {
                   window.open(
@@ -90,7 +87,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
             </Grid>
           )}
           {link && (
-            <Grid display='flex' mx={1} minWidth='fit-content'>
+            <Grid className={classes.linkWrapper}>
               <StyledDetails
                 onClick={() => {
                   window.open(link.href, '_blank')
@@ -104,7 +101,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
             </Grid>
           )}
           {!link && !txid && (
-            <Grid display='flex' mx={1} minWidth='fit-content'>
+            <Grid className={classes.linkWrapper}>
               <StyledCloseButton onClick={handleDismiss}>
                 <img width={16} src={icons.closeIcon} alt='Close'></img>
               </StyledCloseButton>

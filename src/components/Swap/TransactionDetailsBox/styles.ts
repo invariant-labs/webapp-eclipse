@@ -3,6 +3,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ open: boolean }>()((_theme, { open }) => ({
   wrapper: {
+    display: 'flex',
     borderRadius: 10,
     padding: 0,
     background: colors.invariant.newDark,
@@ -14,9 +15,14 @@ export const useStyles = makeStyles<{ open: boolean }>()((_theme, { open }) => (
   },
   innerWrapper: {
     padding: 16,
-    minHeight: 132
+    minHeight: 132,
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'nowrap'
   },
   row: {
+    display: 'flex',
+    justifyContent: 'space-between',
     '&:not(:last-child)': {
       marginBottom: 8
     }

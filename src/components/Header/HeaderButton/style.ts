@@ -29,6 +29,12 @@ const useStyles = makeStyles()((theme: Theme) => {
         paddingInline: 6
       }
     },
+    buttonContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      height: '100%'
+    },
 
     pointsHeaderButton: {
       textTransform: 'none',

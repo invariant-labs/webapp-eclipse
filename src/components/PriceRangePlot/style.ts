@@ -67,7 +67,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading4
   },
   errorWrapper: {
-    margin: 'auto'
+    margin: 'auto',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center'
   },
   errorText: {
     color: colors.white.main,

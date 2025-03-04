@@ -57,13 +57,7 @@ export const SelectRPCButton: React.FC<IProps> = ({
           <img className={classes.warningIcon} src={icons.warningIcon} alt='Warning icon' />
         )}
 
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            height: '100%'
-          }}>
+        <Box className={classes.buttonContainer}>
           <Box style={{ color: colors.invariant.text, lineHeight: '12px' }}>
             {rpc && rpcName.length > 0 ? rpcName[0].rpcName : 'Custom'}
           </Box>

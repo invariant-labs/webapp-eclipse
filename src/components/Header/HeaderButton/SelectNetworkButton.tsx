@@ -44,13 +44,7 @@ export const SelectNetworkButton: React.FC<IProps> = ({
         disabled={disabled}
         endIcon={!hideArrow ? <KeyboardArrowDownIcon id='downIcon' /> : null}
         onClick={handleClick}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            height: '100%'
-          }}>
+        <Box className={classes.buttonContainer}>
           <Box style={{ color: colors.invariant.text, lineHeight: '12px' }}> {name}</Box>
           <Typography
             style={{

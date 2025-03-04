@@ -135,8 +135,6 @@ const PoolList: React.FC<PoolListInterface> = ({
 
   return (
     <Grid
-      container
-      direction='column'
       classes={{ root: classes.container }}
       className={classNames({ [classes.loadingOverlay]: isLoading })}>
       <PoolListItem

@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   wrapper: {
+    maxWidth: '100%',
     '&:nth-of-type(odd)': {
       background: `${colors.invariant.component}`
     },

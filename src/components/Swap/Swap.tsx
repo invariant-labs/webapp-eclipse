@@ -762,7 +762,7 @@ export const Swap: React.FC<ISwap> = ({
 
           <Box className={classes.swapControls}>
             <TooltipHover text='Refresh'>
-              <Grid display='flex' alignItems='center'>
+              <Grid container alignItems='center'>
                 <Button
                   onClick={handleRefresh}
                   className={classes.refreshIconBtn}

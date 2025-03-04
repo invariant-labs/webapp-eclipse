@@ -4,6 +4,8 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
+    display: 'flex',
+    flexDirection: 'column',
     maxWidth: 1072
   },
   pagination: {

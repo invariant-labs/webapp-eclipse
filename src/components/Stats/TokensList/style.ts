@@ -4,7 +4,10 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    maxWidth: 1072
+    maxWidth: 1072,
+    display: 'flex',
+    flexDirection: 'column',
+    flexWrap: 'nowrap'
   },
   pagination: {
     height: 90,

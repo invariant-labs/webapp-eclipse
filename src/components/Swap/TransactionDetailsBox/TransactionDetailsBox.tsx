@@ -29,9 +29,9 @@ const TransactionDetailsBox: React.FC<IProps> = ({
   const impact = +printBN(priceImpact, DECIMAL - 2)
 
   return (
-    <Grid container className={classes.wrapper}>
-      <Grid container direction='column' wrap='nowrap' className={classes.innerWrapper}>
-        <Grid container justifyContent='space-between' className={classes.row}>
+    <Grid className={classes.wrapper}>
+      <Grid className={classes.innerWrapper}>
+        <Grid className={classes.row}>
           <Typography className={classes.label}>Exchange rate:</Typography>
           {isLoadingRate ? (
             <img src={loadingAnimation} className={classes.loading} alt='Loading' />
@@ -44,18 +44,18 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           )}
         </Grid>
 
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid className={classes.row}>
           <Typography className={classes.label}>Fee:</Typography>
           <Typography className={classes.value}>{`${feePercent}%`}</Typography>
         </Grid>
 
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid className={classes.row}>
           <Typography className={classes.label}>Price impact:</Typography>
           <Typography className={classes.value}>
             {impact < 0.01 ? '<0.01%' : `${impact.toFixed(2)}%`}
           </Typography>
         </Grid>
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid className={classes.row}>
           <Typography className={classes.label}>Slippage tolerance:</Typography>
           <Typography className={classes.value}>{slippage}%</Typography>
         </Grid>

@@ -43,13 +43,7 @@ export const SelectChainButton: React.FC<IProps> = ({
         disabled={disabled}
         endIcon={<KeyboardArrowDownIcon id='downIcon' />}
         onClick={handleClick}>
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            height: '100%'
-          }}>
+        <Box className={classes.buttonContainer}>
           <Box style={{ color: colors.invariant.text, lineHeight: '12px' }}>{activeChain.name}</Box>
           <Typography
             style={{
