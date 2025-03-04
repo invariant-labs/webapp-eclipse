@@ -10,6 +10,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       width: '100%'
     },
+    progressWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: 3,
+      width: '100%'
+    },
     leaderBoardWrapper: {
       display: 'flex',
       flexDirection: 'column',

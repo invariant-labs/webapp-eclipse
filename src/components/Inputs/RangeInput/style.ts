@@ -4,6 +4,10 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   data: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 36,
     paddingInline: 8,
     flexWrap: 'nowrap',
@@ -46,6 +50,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   controls: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     backgroundColor: colors.invariant.componentBcg,
     borderRadius: 10,
     '& input.Mui-disabled': {
@@ -103,7 +111,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   diffWrapper: {
     borderRadius: 11,
     height: 36,
-    backgroundColor: colors.invariant.black
+    backgroundColor: colors.invariant.black,
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'nowrap'
   },
   diffLabelWrapper: {
     borderRadius: 11,

@@ -1,8 +1,8 @@
 import { Theme } from '@mui/material'
-import { typography, colors } from '@static/theme'
+import { typography, colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { isSmall }) => ({
+export const useStyles = makeStyles()((_theme: Theme) => ({
   searchBar: {
     mHeight: 32,
     borderRadius: 10,
@@ -10,7 +10,10 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
     background: colors.invariant.black,
     border: '1px solid #202946',
     color: colors.invariant.light,
-    width: isSmall ? '100%' : 424,
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    },
+    width: 424,
     display: 'flex',
     alignItems: 'center'
   },
@@ -19,9 +22,13 @@ export const useStyles = makeStyles<{ isSmall: boolean }>()((_theme: Theme, { is
     paddingRight: '10px'
   },
   paper: {
-    width: isSmall ? 'calc(100% - 32px)' : 392,
-    maxWidth: isSmall ? 'calc(100% - 32px)' : 392,
-    margin: isSmall ? '0 auto' : undefined,
+    width: 392,
+    maxWidth: 392,
+    [theme.breakpoints.down('sm')]: {
+      width: 'calc(100% - 32px)',
+      maxWidth: 'calc(100% - 32px)',
+      margin: '0 auto'
+    },
     boxShadow: 'none',
     padding: '16px 16px 10px 16px',
     marginTop: 8,

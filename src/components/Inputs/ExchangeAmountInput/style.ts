@@ -111,10 +111,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   exchangeContainer: {
     height: 65,
-    padding: `10px 15px 0 15px `,
     display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+    padding: `10px 15px 0 15px `,
+    justifyContent: 'space-between'
   },
   noData: {
     color: colors.invariant.warning,
@@ -155,6 +156,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 12
   },
   percentages: {
+    display: 'flex',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     flexShrink: 0,
     width: 'fit-content',
     justifyContent: 'end',
@@ -187,7 +191,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     textOverflow: 'ellipsis'
   },
   bottom: {
-    paddingInline: 15
+    paddingInline: 15,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
   },
   blur: {
     width: 120,

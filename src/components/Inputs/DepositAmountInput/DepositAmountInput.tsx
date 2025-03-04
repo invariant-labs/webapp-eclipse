@@ -128,19 +128,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
   return (
     <Grid container className={classes.wrapper} style={style}>
       <div className={classes.root}>
-        <Grid
-          container
-          justifyContent='space-between'
-          alignItems='center'
-          direction='row'
-          wrap='nowrap'
-          className={classes.inputContainer}>
-          <Grid
-            className={classes.currency}
-            container
-            justifyContent='center'
-            alignItems='center'
-            wrap='nowrap'>
+        <Grid className={classes.inputContainer}>
+          <Grid className={classes.currency}>
             {currency !== null ? (
               <>
                 <Box className={classes.imageContainer}>
@@ -178,13 +167,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
           />
         </Grid>
 
-        <Grid
-          container
-          justifyContent='space-between'
-          alignItems='center'
-          direction='row'
-          wrap='nowrap'>
-          <Grid className={classes.balance} container alignItems='center' wrap='nowrap'>
+        <Grid className={classes.priceWrapper}>
+          <Grid className={classes.balance}>
             <Typography className={classes.caption2} onClick={() => actionButtons[0].onClick()}>
               Balance:{' '}
               {walletUninitialized ? (
@@ -206,7 +190,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
               Max
             </Button> */}
           </Grid>
-          <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
+          <Grid className={classes.percentages}>
             {currency ? (
               priceLoading ? (
                 <img src={loadingAnimation} className={classes.loading} alt='loading' />
@@ -244,11 +228,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
       {blocked && (
         <>
           <Grid container className={classes.blocker} />
-          <Grid
-            container
-            className={classes.blockedInfoWrapper}
-            justifyContent='center'
-            alignItems='center'>
+          <Grid className={classes.blockedInfoWrapper}>
             <Typography className={classes.blockedInfo}>{blockerInfo}</Typography>
           </Grid>
         </>

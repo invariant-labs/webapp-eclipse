@@ -74,13 +74,7 @@ export const FaucetButton: React.FC<IProps> = ({
             className={classNames(classes.headerButton, { [classes.disabled]: isDisabled })}
             variant='contained'
             onClick={isDisabled ? () => {} : handleClick}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                height: '100%'
-              }}>
+            <Box className={classes.buttonContainer}>
               <Box style={{ color: colors.invariant.text, lineHeight: '12px', textAlign: 'left' }}>
                 {children}
               </Box>

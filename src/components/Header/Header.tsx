@@ -162,13 +162,8 @@ export const Header: React.FC<IHeader> = ({
 
   return (
     <Grid container>
-      <Grid container className={classes.root} direction='row' alignItems='center' wrap='nowrap'>
-        <Grid
-          container
-          item
-          className={classes.leftSide}
-          justifyContent='flex-start'
-          sx={{ display: { xs: 'none', md: 'block' } }}>
+      <Grid className={classes.root}>
+        <Grid item className={classes.leftSide} sx={{ display: { xs: 'none', md: 'block' } }}>
           <CardMedia
             className={classes.logo}
             image={icons.LogoTitle}
@@ -180,7 +175,7 @@ export const Header: React.FC<IHeader> = ({
           />
         </Grid>
         <Box sx={{ display: { xs: 'block', md: 'none' } }}>
-          <Grid container item className={classes.leftSide} justifyContent='flex-start'>
+          <Grid item className={classes.leftSide}>
             <Grid container>
               <CardMedia
                 className={classes.logoShort}
@@ -195,10 +190,8 @@ export const Header: React.FC<IHeader> = ({
           </Grid>
         </Box>
         <Grid
-          container
           item
           className={classes.routers}
-          wrap='nowrap'
           sx={{
             display: { lg: 'block' },
             '@media (max-width: 1450px)': {
@@ -226,8 +219,8 @@ export const Header: React.FC<IHeader> = ({
           ))}
         </Grid>
 
-        <Grid container item className={classes.buttons} wrap='nowrap'>
-          <Grid container className={classes.leftButtons}>
+        <Grid item className={classes.buttons}>
+          <Grid className={classes.leftButtons}>
             {typeOfNetwork === NetworkType.Testnet && (
               <Box sx={{ display: { xs: 'none', md: 'block' } }}>
                 <FaucetButton onFaucet={onFaucet} network={network} walletBalance={walletBalance}>

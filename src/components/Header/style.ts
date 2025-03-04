@@ -5,6 +5,9 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()((theme: Theme) => {
   return {
     root: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      fleWrap: 'nowrap',
       margin: 'auto',
       maxWidth: 1920,
       paddingInline: 150,
@@ -42,6 +45,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     routers: {
+      display: 'flex',
+      flexWrap: 'nowrap',
       backgroundColor: colors.invariant.black,
       borderRadius: '10px',
       transition: 'left 300ms',
@@ -130,6 +135,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     leftSide: {
+      display: 'flex',
+      justifyContent: 'flex-start',
       width: 'auto'
 
       // [theme.breakpoints.up(1600)]: {

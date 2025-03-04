@@ -160,7 +160,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
 
     const isTokensSelected = selectedFilters.length === filtersAmount
     const isSmall = useMediaQuery(theme.breakpoints.down(bp))
-    const { classes } = useStyles({ isSmall })
+    const { classes } = useStyles()
 
     const shouldOpenPopper = useMemo(() => !isTokensSelected && open, [isTokensSelected, open])
 
