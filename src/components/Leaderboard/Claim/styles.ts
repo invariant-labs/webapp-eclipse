@@ -15,6 +15,25 @@ export const useStyles = makeStyles()(() => ({
     boxSizing: 'border-box',
     overflowX: 'hidden'
   },
+  pointsWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: '32px'
+  },
+  airdropLabel: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    '& p': {
+      color: colors.invariant.textGrey,
+      fontSize: '20px',
+      fontWeight: 400,
+      lineHeight: '24px',
+      letterSpacing: '-3%'
+    }
+  },
   astronaut: {
     width: '100%',
     maxWidth: '400px',
@@ -26,6 +45,11 @@ export const useStyles = makeStyles()(() => ({
   },
   description: {
     color: colors.invariant.textGrey,
+    display: 'flex',
+    justifyItems: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    marginTop: '32px',
     [theme.breakpoints.down('md')]: {
       fontSize: '20px'
     },
@@ -33,7 +57,6 @@ export const useStyles = makeStyles()(() => ({
     fontWeight: '400',
     lineHeight: '20px',
     letterSpacing: '-0.03em',
-    marginTop: '32px',
     maxWidth: '1032px'
   },
   header: {

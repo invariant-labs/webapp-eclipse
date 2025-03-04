@@ -125,7 +125,7 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
               (You)
             </Typography>
           ) : null}
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline' }}>
+          <Box className={classes.tooltipHover}>
             <TooltipHover text='Copy address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}

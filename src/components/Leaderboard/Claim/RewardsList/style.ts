@@ -39,7 +39,10 @@ export const useStylesList = makeStyles()(theme => ({
     }
   },
   list: {
-    paddingRight: 48
+    paddingRight: 48,
+    gap: '3px',
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   scrollbar: {}
 }))
@@ -54,7 +57,24 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     background: isEven ? colors.invariant.darkGreenGradient : colors.invariant.darkPinkGradient,
     zIndex: 2
   },
+  containerCenter: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  claimWrapper: {
+    display: 'flex',
+    gap: 3,
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: 6
+  },
   innerContainer: {
+    display: 'flex',
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'space-between',
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column'
     }
@@ -157,6 +177,9 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     borderRadius: 16,
     maxWidth: 282,
     width: 282,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
 
     [theme.breakpoints.down('md')]: {
       width: '100%'

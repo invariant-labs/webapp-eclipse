@@ -35,6 +35,13 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
+  address: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    color: colors.invariant.text
+  },
+  tooltipHover: { display: 'flex', justifyContent: 'center', alignItems: 'baseline' },
   totalContainer: {
     color: colors.white.main,
     display: 'grid',

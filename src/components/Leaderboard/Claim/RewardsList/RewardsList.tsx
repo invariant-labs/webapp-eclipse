@@ -47,13 +47,7 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
           autoHeight
           hideTracksWhenNotNeeded
           autoHeightMax={1064}>
-          <Grid
-            container
-            justifyContent='center'
-            alignItems='center'
-            gap={3}
-            mb={isMobile ? 0 : 2}
-            className={classes.list}>
+          <Grid container mb={isMobile ? 0 : 2} className={classes.list}>
             {rewards.map((reward, index) => (
               <RewardItem
                 key={index}
