@@ -1,9 +1,10 @@
-import { Box, Button, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Box, Button, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
 import { theme } from '@static/theme'
 import { blurContent } from '@utils/uiUtils'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 type Aligment = 'left' | 'center' | 'right'
 
@@ -115,7 +116,7 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
           }}>
           <Typography className={classes.headerSmallText}>{label}</Typography>
 
-          <Tooltip
+          <TooltipGradient
             title={
               <Box sx={{ width: '190px' }}>
                 <Typography className={classes.tooltipContentPoints}>
@@ -133,12 +134,9 @@ export const ContentPoints: React.FC<IContentPointsProps> = ({
               </Box>
             }
             placement='bottom'
-            classes={{
-              tooltip: classes.tooltip
-            }}
-            enterTouchDelay={0}>
+            top={1}>
             <img src={infoIcon} alt='i' width={14} />
-          </Tooltip>
+          </TooltipGradient>
         </Box>
         {isLoading ? (
           <div className={classes.blur} />

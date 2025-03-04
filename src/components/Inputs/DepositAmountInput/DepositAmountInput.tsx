@@ -1,4 +1,4 @@
-import { Box, Grid, Input, Tooltip, Typography } from '@mui/material'
+import { Box, Grid, Input, Typography } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumberWithSuffix, formatNumberWithoutSuffix, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
@@ -6,6 +6,7 @@ import useStyles from './style'
 import icons from '@static/icons'
 import { getButtonClassName } from '@utils/uiUtils'
 import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
+import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 
 interface ActionButton {
   label: string
@@ -211,31 +212,20 @@ export const DepositAmountInput: React.FC<IProps> = ({
               priceLoading ? (
                 <img src={loadingAnimation} className={classes.loading} alt='loading' />
               ) : tokenPrice ? (
-                <Tooltip
-                  enterTouchDelay={0}
-                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+                <TooltipHover
                   title='Estimated USD Value of the Entered Tokens'
                   placement='bottom'
-                  classes={{
-                    tooltip: classes.tooltip
-                  }}>
+                  top={1}>
                   <Typography className={classes.estimatedBalance}>
                     ~${formatNumberWithoutSuffix(usdBalance)}
                   </Typography>
-                </Tooltip>
+                </TooltipHover>
               ) : (
-                <Tooltip
-                  enterTouchDelay={0}
-                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-                  title='Cannot fetch price of token'
-                  placement='bottom'
-                  classes={{
-                    tooltip: classes.tooltip
-                  }}>
+                <TooltipHover title='Cannot fetch price of token' placement='bottom' top={1}>
                   <Typography className={classes.noData}>
                     <span className={classes.noDataIcon}>?</span>No data
                   </Typography>
-                </Tooltip>
+                </TooltipHover>
               )
             ) : null}
           </Grid>

@@ -193,7 +193,7 @@ export const PositionsList: React.FC<IProps> = ({
           <Grid className={classes.searchRoot}>
             <Grid className={classes.titleBar}>
               <Typography className={classes.title}>Your Positions</Typography>
-              <TooltipHover text='Total number of your positions'>
+              <TooltipHover title='Total number of your positions'>
                 <Typography className={classes.positionsNumber}>
                   {String(filteredData.length)}
                 </Typography>
@@ -284,7 +284,7 @@ export const PositionsList: React.FC<IProps> = ({
                 columnGap={2}
                 justifyContent='space-between'
                 className={classes.fullWidthWrapper}>
-                <TooltipHover text='Refresh'>
+                <TooltipHover title='Refresh'>
                   <Grid display='flex' alignItems='center'>
                     <Button
                       disabled={showNoConnected}
@@ -311,7 +311,7 @@ export const PositionsList: React.FC<IProps> = ({
           <Grid className={classes.searchRoot}>
             <Grid className={classes.titleBar}>
               <Typography className={classes.title}>Your Positions</Typography>
-              <TooltipHover text='Total number of your positions'>
+              <TooltipHover title='Total number of your positions'>
                 <Typography className={classes.positionsNumber}>
                   {String(filteredData.length)}
                 </Typography>
@@ -358,7 +358,7 @@ export const PositionsList: React.FC<IProps> = ({
                   columnGap={2}
                   justifyContent='space-between'
                   className={classes.fullWidthWrapper}>
-                  <TooltipHover text='Refresh'>
+                  <TooltipHover title='Refresh'>
                     <Grid display='flex' alignItems='center'>
                       <Button
                         disabled={showNoConnected}

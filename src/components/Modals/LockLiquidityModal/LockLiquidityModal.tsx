@@ -1,20 +1,13 @@
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import useStyles from './style'
-import {
-  Button,
-  Checkbox,
-  FormControlLabel,
-  Grid,
-  Popover,
-  Tooltip,
-  Typography
-} from '@mui/material'
+import { Button, Checkbox, FormControlLabel, Grid, Popover, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 export interface ILockLiquidityModal {
   open: boolean
@@ -124,7 +117,7 @@ export const LockLiquidityModal = ({
                   src={xToY ? tokenX.icon : tokenY.icon}
                   alt={xToY ? tokenX.name : tokenY.name}
                 />
-                <TooltipHover text='Reverse tokens'>
+                <TooltipHover title='Reverse tokens'>
                   <img
                     className={classes.arrowIcon}
                     src={icons.swapListIcon}
@@ -145,7 +138,7 @@ export const LockLiquidityModal = ({
             <Grid item className={classes.pairDetails}>
               <Grid item container className={classes.pairValues}>
                 <Grid item className={classes.pairFee}>
-                  <Tooltip
+                  <TooltipGradient
                     title={
                       isActive ? (
                         <>
@@ -160,11 +153,10 @@ export const LockLiquidityModal = ({
                       )
                     }
                     placement='top'
-                    classes={{
-                      tooltip: classes.tooltip
-                    }}>
+                    top={1}
+                    noGradient>
                     <Typography>{fee}</Typography>
-                  </Tooltip>
+                  </TooltipGradient>
                 </Grid>
                 <Grid item className={classes.pairRange}>
                   <Typography className={classes.normalText}>
@@ -211,7 +203,7 @@ export const LockLiquidityModal = ({
             </Grid>
           </Grid>
           <TooltipHover
-            text={isChecked ? '' : 'Check the box to confirm you understand the terms.'}
+            title={isChecked ? '' : 'Check the box to confirm you understand the terms.'}
             top={-40}>
             <div>
               <AnimatedButton

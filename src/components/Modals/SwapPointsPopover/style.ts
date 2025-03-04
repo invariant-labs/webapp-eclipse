@@ -30,10 +30,6 @@ const useStyles = makeStyles()((theme: Theme) => {
     backgroundContainer: {
       background: colors.invariant.component,
       maxWidth: 519,
-      paddingTop: 16,
-      paddingBottom: 16,
-      paddingLeft: 20,
-      paddingRight: 20,
       display: 'flex',
       flexDirection: 'row',
       gap: 16,

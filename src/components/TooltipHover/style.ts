@@ -6,15 +6,17 @@ const useStyles = makeStyles<{ top?: number }>()((_theme, { top }) => ({
     color: colors.invariant.textGrey,
     ...typography.caption4,
     lineHeight: '24px',
-    background: colors.black.full,
+    background: colors.invariant.component,
     borderRadius: 12,
     width: 'max-content',
     textAlign: 'center',
     position: 'absolute',
     transform: 'translate(-50%, -50%)',
-    top: top ? top : -30
+    top: top ? top : -30,
+    boxShadow: `0px 2px 8px ${colors.invariant.black}`
   },
   tooltipGradient: {
+    minWidth: 'fit-content',
     position: 'relative',
     borderRadius: 14,
     background: colors.invariant.component,
@@ -35,6 +37,17 @@ const useStyles = makeStyles<{ top?: number }>()((_theme, { top }) => ({
       background: colors.invariant.pinkGreenLinearGradient,
       boxSizing: 'border-box'
     }
+  },
+  tooltipNoGradient: {
+    minWidth: 'fit-content',
+    position: 'relative',
+    borderRadius: 14,
+    background: colors.invariant.component,
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    padding: '16px 24px',
+    top: top ? top : -30,
+    boxShadow: `0px 0px 4px ${colors.invariant.black}`
   }
 }))
 

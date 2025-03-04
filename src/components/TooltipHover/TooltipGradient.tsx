@@ -5,25 +5,20 @@ import { TooltipTransition } from './TooltipTransition/TooltipTransition'
 interface Props extends TooltipProps {
   top?: number
   children: React.ReactElement<any, any>
-  underline?: boolean
+  noGradient?: boolean
 }
 
-export const TooltipGradient = ({ top, children, underline, ...props }: Props) => {
+export const TooltipGradient = ({ top, children, noGradient, ...props }: Props) => {
   const { classes } = useStyles({ top })
 
   return (
     <Tooltip
-      classes={{ tooltip: classes.tooltipGradient }}
+      classes={{ tooltip: noGradient ? classes.tooltipNoGradient : classes.tooltipGradient }}
       placement='bottom'
       TransitionComponent={TooltipTransition}
       enterTouchDelay={0}
-      PopperProps={{
-        disablePortal: true
-      }}
       {...props}>
-      <span style={{ cursor: 'pointer', textDecoration: underline ? 'underline' : '' }}>
-        {children}
-      </span>
+      {children}
     </Tooltip>
   )
 }

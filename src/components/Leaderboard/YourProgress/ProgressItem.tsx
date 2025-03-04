@@ -1,8 +1,9 @@
-import { Box, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Box, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
 import { theme } from '@static/theme'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 type Aligment = 'left' | 'center' | 'right'
 
@@ -114,15 +115,9 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           }}>
           <Typography className={classes.headerSmallText}>{label}</Typography>
           {tooltip ? (
-            <Tooltip
-              title={tooltip}
-              placement='bottom'
-              classes={{
-                tooltip: classes.tooltip
-              }}
-              enterTouchDelay={0}>
+            <TooltipGradient title={tooltip} placement='bottom' top={1}>
               <img src={infoIcon} alt='i' width={14} />
-            </Tooltip>
+            </TooltipGradient>
           ) : null}
         </Box>
         {isLoading ? (
