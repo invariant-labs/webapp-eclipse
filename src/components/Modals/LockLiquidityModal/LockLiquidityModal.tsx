@@ -192,14 +192,14 @@ export const LockLiquidityModal = ({
             </Grid>
           </Grid>
           <Grid className={classes.confirmInputContainer}>
-            <Typography>To confirm, type the folowing:</Typography>
-            <Typography>I confirm my liquidity will be locked forever</Typography>
+            <Typography>To confirm, type the following:</Typography>
+            <Typography>I confirm my liquidity will be locked permanently</Typography>
             <Input
               className={classes.input}
               classes={{
                 input: classes.innerInput
               }}
-              placeholder='Rewritten text in white.'
+              placeholder="Type to confirm: 'I confirm my liquidity will be locked permanently'"
               onChange={e => {
                 setInputValue(e.target.value)
               }}
@@ -212,7 +212,7 @@ export const LockLiquidityModal = ({
             text={
               isCorrectValue
                 ? ''
-                : 'Confirm that you understand the consequences by typing the text above.'
+                : 'Confirm that you understand the consequences by typing the text above'
             }
             top={-40}>
             <div>
