@@ -1,7 +1,7 @@
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles()(() => {
+const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
   return {
     mainWrapper: {
       maxWidth: '524px',
@@ -11,6 +11,9 @@ const useStyles = makeStyles()(() => {
       }
     },
     header: {
+      [theme.breakpoints.down(500)]: {
+        display: 'none'
+      },
       alignItems: 'center',
       display: 'flex',
       gap: 8,
@@ -30,17 +33,20 @@ const useStyles = makeStyles()(() => {
       width: '100%',
       gap: '24px',
 
-      [theme.breakpoints.down('sm')]: {
-        gridTemplateColumns: '1fr',
-        gridTemplateRows: 'auto',
-        gap: '0'
+      [theme.breakpoints.down(500)]: {
+        display: 'flex',
+        flexDirection: 'column'
       }
+    },
+    mobileWrapper: {
+      display: 'flex',
+      gap: '8px'
     },
     pointsColumn: {
       display: 'flex',
       flexDirection: 'column',
       width: '100%',
-      [theme.breakpoints.up('sm')]: {
+      [theme.breakpoints.up(500)]: {
         '& > *:nth-of-type(odd)': {
           borderBottom: `1px solid ${colors.invariant.light}`
         },
@@ -48,13 +54,9 @@ const useStyles = makeStyles()(() => {
           borderBottom: 'none'
         }
       },
-      [theme.breakpoints.down('sm')]: {
-        '& > *': {
-          borderBottom: `1px solid ${colors.invariant.light}`
-        },
-        '&:last-child > *:last-child': {
-          borderBottom: 'none'
-        }
+      [theme.breakpoints.down(500)]: {
+        gap: '24px',
+        borderBottom: 'none'
       }
     },
     divider: {
@@ -62,7 +64,7 @@ const useStyles = makeStyles()(() => {
       width: '1px',
       height: '165px',
 
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(500)]: {
         display: 'none'
       }
     },
@@ -78,9 +80,11 @@ const useStyles = makeStyles()(() => {
       border: '1px solid #EF84F540',
       justifyContent: 'space-between',
       background: '#111931',
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(500)]: {
         height: 'auto',
-        padding: '16px 8px'
+        padding: '16px 0px',
+        background: 'transparent',
+        border: 'none'
       }
     },
     section: {
@@ -141,7 +145,19 @@ const useStyles = makeStyles()(() => {
       flexDirection: 'column',
       gap: '8px',
       alignItems: 'flex-start',
-      justifyContent: 'flex-start'
+      justifyContent: 'flex-start',
+      [theme.breakpoints.down(500)]: {
+        alignItems: 'center',
+
+        border: '10px solid transparent',
+        borderImage: `url(${bgImage}) 20 fill round`,
+
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        height: 100,
+        backgroundImage: `url(${bgImage})`
+      }
     },
     tooltipLink: {
       color: colors.invariant.green,

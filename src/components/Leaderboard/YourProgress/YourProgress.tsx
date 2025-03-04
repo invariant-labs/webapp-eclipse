@@ -9,6 +9,9 @@ import { CurrentContentPointsEntry, ITotalEntry } from '@store/reducers/leaderbo
 import { unblurContent } from '@utils/uiUtils'
 import ContentPointsModal from '@components/Modals/ContentPoints/ContentPointsModal'
 import { BlurOverlay } from './BlurOverlay'
+import top from '@static/png/trapezeMobileTop.png'
+import bot from '@static/png/trapezeMobileBottom.png'
+import mid from '@static/png/boxMobileMiddle.png'
 
 interface YourProgressProps {
   userContentPoints: CurrentContentPointsEntry[] | null
@@ -31,7 +34,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   totalItems,
   isConnected
 }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({})
   const [contentPointsOpen, setContentPointsOpen] = useState(false)
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
@@ -68,18 +71,20 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         {!isLoadingList && <BlurOverlay isConnected={isConnected} />}
 
         <Grid className={classes.header}>
-          <Typography>Statistics</Typography>
+          <Typography>Invariant's Points</Typography>
         </Grid>
 
         <Grid className={classes.section}>
           <Grid className={classes.pointsContainer}>
             <Grid className={classes.pointsColumn}>
               <ProgressItem
+                bgImage={top}
                 label='Points Per Day'
                 isLoading={isLoadingList}
                 value={pointsPerDayFormat}
               />
               <ProgressItem
+                bgImage={mid}
                 isLoading={isLoadingList}
                 tooltip='Points amount refreshes roughly every 30 minutes.'
                 label='Total points'
@@ -99,6 +104,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
 
             <Grid className={classes.pointsColumn}>
               <ProgressItem
+                bgImage={mid}
                 withButton={true}
                 tooltip={tooltipContentPoints}
                 label='Content Points'
@@ -109,6 +115,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
                 )}
               />
               <ProgressItem
+                bgImage={bot}
                 isLoading={isLoadingList}
                 label='Global rank'
                 value={userStats?.rank ?? (isConnected ? totalItems.total + 1 : 0)}
