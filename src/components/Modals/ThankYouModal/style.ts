@@ -13,6 +13,12 @@ const useStyles = makeStyles()(() => {
       zIndex: 51,
       opacity: 0.7
     },
+    titleWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '2px'
+    },
     container: {
       width: 544,
       borderRadius: 24,

@@ -73,12 +73,7 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
         horizontal: 'center'
       }}>
       <Grid className={classes.root}>
-        <Grid
-          className={classes.lowerRow}
-          container
-          direction='row'
-          justifyContent='space-between'
-          wrap='nowrap'>
+        <Grid className={classes.lowerRow}>
           <Typography className={classes.title}>
             Please input the result of adding these two values:
           </Typography>

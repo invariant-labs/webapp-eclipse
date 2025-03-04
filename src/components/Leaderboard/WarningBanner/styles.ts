@@ -5,7 +5,7 @@ interface StyleProps {
   isHiding: boolean
 }
 
-const useStyles = makeStyles<StyleProps>()(theme => {
+const useStyles = makeStyles<StyleProps>()((theme, { isHiding }) => {
   return {
     container: {
       padding: '20px 12px 20px 24px',
@@ -19,6 +19,14 @@ const useStyles = makeStyles<StyleProps>()(theme => {
       [theme.breakpoints.down('sm')]: {
         padding: '20px 4px 20px 8px'
       }
+    },
+    wrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      opacity: isHiding ? 0 : 1,
+      overflow: 'hidden',
+      transition: 'height 0.3s ease-in-out, opacity 0.3s ease-in-out'
     },
     text: {
       color: colors.invariant.warning,

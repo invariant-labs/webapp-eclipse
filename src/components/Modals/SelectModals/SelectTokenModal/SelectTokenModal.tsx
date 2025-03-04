@@ -179,9 +179,9 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
           ...token,
           index,
           strAddress: token.assetAddress.toString()
-        }))},
-      [tokens]
-    )
+        })
+      )
+    }, [tokens])
 
     useEffect(() => {
       tokensWithIndexes.forEach(token => {

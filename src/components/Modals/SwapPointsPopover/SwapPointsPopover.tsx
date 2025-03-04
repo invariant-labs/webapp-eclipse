@@ -108,7 +108,7 @@ export const SwapPointsPopover = ({
           <Typography className={classes.standardText}>
             Pairs currently distributing swap points:
           </Typography>
-          <Box display={'flex'} gap={'4px'} flexDirection={'column'} padding={'4px'}>
+          <Box className={classes.ticker}>
             {promotedSwapPairs.map(item => (
               <Typography className={classes.listText}>
                 • {addressToTicker(network, item.tokenX.toString())}/

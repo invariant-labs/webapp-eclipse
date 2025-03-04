@@ -13,6 +13,13 @@ const useStyles = makeStyles()(() => {
         flexDirection: 'column'
       }
     },
+    poolsLabel: {
+      paddingLeft: '42px',
+      marginBottom: '16px',
+      ...typography.heading4,
+      color: colors.invariant.textGrey,
+      justifySelf: 'self-start'
+    },
     headerBigText: { ...typography.heading1, color: colors.invariant.text },
     headerSmallText: { ...typography.body1, color: colors.invariant.textGrey },
     leaderboardHeaderSectionTitle: {

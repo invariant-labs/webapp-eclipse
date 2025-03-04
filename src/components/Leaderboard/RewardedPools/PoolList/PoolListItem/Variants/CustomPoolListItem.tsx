@@ -167,13 +167,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
               </TooltipHover>
             </Box>
           </Grid>
-          <Grid
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              paddingTop: '24px',
-              paddingBottom: '24px'
-            }}>
+          <Grid className={classes.fee}>
             <Box>
               <Typography style={{ ...typography.body2, color: colors.invariant.textGrey }}>
                 Fee
@@ -183,46 +177,19 @@ export const CustomPoolListItem: React.FC<IProps> = ({
               </Typography>
             </Box>
             <Box>
-              <Box style={{ display: 'flex' }}>
-                <span
-                  style={{
-                    ...typography.body2,
-                    color: colors.invariant.textGrey,
-                    alignSelf: 'flex-end'
-                  }}>
-                  APY
-                </span>
-                <span
-                  style={{
-                    ...typography.tiny2,
-                    color: colors.invariant.textGrey,
-                    alignSelf: 'flex-end',
-                    marginLeft: '8px'
-                  }}>
-                  APR
-                </span>
+              <Box display='flex'>
+                <span className={classes.APY}>APY</span>
+                <span className={classes.APR}>APR</span>
               </Box>
-              <Box style={{ display: 'flex' }}>
-                <span
-                  style={{
-                    ...typography.heading4,
-                    color: colors.invariant.text,
-                    alignSelf: 'flex-end'
-                  }}>
+              <Box display='flex'>
+                <span className={classes.convertedAPY}>
                   {convertedApy > 1000
                     ? '>1000%'
                     : convertedApy === 0
                       ? ''
                       : Math.abs(convertedApy).toFixed(2) + '%'}
                 </span>
-                <span
-                  style={{
-                    ...typography.tiny2,
-                    color: colors.invariant.text,
-                    alignSelf: 'flex-end',
-                    marginLeft: '8px',
-                    marginBottom: '2px'
-                  }}>
+                <span className={classes.convertedAPR}>
                   {convertedApr > 1000
                     ? '>1000%'
                     : convertedApr === 0

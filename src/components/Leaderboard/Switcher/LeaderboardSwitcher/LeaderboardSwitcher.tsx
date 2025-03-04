@@ -40,22 +40,9 @@ const LeaderboardSwitcher: React.FC<LeaderboardListProps> = ({
           )}
         </Button>
       ) : (
-        <Box
-          sx={{
-            width: '100%',
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            flexDirection: 'row'
-          }}>
+        <Box className={classes.optionWrapper}>
           <Box
-            sx={{
-              width: '30%',
-              display: 'flex',
-              justifyContent: 'flex-start',
-              alignItems: 'flex-start',
-              gap: '8px'
-            }}
+            className={classes.option}
             onClick={() =>
               setSelectedOption((prev: LeaderBoardType) => {
                 const idx = availableOptions.findIndex(item => item === prev)!
@@ -76,13 +63,7 @@ const LeaderboardSwitcher: React.FC<LeaderboardListProps> = ({
           </Box>
           <Typography className={classes.mobileTypeSwitcherTitle}>{selectedOption}</Typography>
           <Box
-            sx={{
-              width: '30%',
-              display: 'flex',
-              justifyContent: 'flex-end',
-              alignItems: 'flex-start',
-              gap: '8px'
-            }}
+            className={classes.optionEnd}
             onClick={() =>
               setSelectedOption(prev => {
                 const idx = availableOptions.findIndex(item => item === prev)!

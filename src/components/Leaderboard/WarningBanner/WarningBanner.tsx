@@ -46,14 +46,9 @@ export const WarningBanner = ({ onClose, isHiding, lastTimestamp }: INormalBanne
 
   return (
     <Grid
-      container
-      alignItems='center'
-      justifyContent='center'
+      className={classes.wrapper}
       style={{
-        height: isHiding ? 0 : `${contentRef.current ? height + 'px' : 'auto'}`,
-        opacity: isHiding ? 0 : 1,
-        overflow: 'hidden',
-        transition: 'height 0.3s ease-in-out, opacity 0.3s ease-in-out'
+        height: isHiding ? 0 : `${contentRef.current ? height + 'px' : 'auto'}`
       }}>
       <div ref={contentRef}>
         <Grid container alignItems='center' justifyContent='center' mb={9}>

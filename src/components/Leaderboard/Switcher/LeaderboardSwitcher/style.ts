@@ -13,6 +13,27 @@ export const useStyles = makeStyles()((theme: Theme) => {
         position: 'relative'
       }
     },
+    optionWrapper: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      flexDirection: 'row'
+    },
+    option: {
+      width: '30%',
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+      gap: '8px'
+    },
+    optionEnd: {
+      width: '30%',
+      display: 'flex',
+      justifyContent: 'flex-end',
+      alignItems: 'flex-start',
+      gap: '8px'
+    },
     leaderboardTypeButton: {
       position: 'relative',
       zIndex: 10,

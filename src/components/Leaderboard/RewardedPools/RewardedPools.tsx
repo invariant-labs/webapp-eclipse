@@ -6,7 +6,7 @@ import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import icons from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
-import { colors, theme, typography } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import infoIcon from '@static/svg/info.svg'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
@@ -80,14 +80,7 @@ export const RewardedPools: React.FC<IProps> = ({
 
                 borderBottom: `2px solid ${colors.invariant.light}`
               }}>
-              <Typography
-                style={{
-                  paddingLeft: '42px',
-                  marginBottom: '16px',
-                  ...typography.heading4,
-                  color: colors.invariant.textGrey,
-                  justifySelf: 'self-start'
-                }}>
+              <Typography className={classes.poolsLabel}>
                 Pools Distributing Points
                 <TooltipGradient
                   title={

@@ -4,10 +4,13 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
+    display: 'flex',
     background: colors.invariant.component,
     width: 480,
     borderRadius: 24,
-    padding: '20px 24px'
+    padding: '20px 24px',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   popover: {
     marginTop: 'calc(50vh - 143px)',
@@ -23,6 +26,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     boxShadow: 'none'
   },
   upperRow: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
     height: 20,
     marginBottom: 16
   },

@@ -133,12 +133,7 @@ export const SelectTestnetRPC: React.FC<ISelectTestnetRPC> = ({
             <DotIcon className={classes.dotIcon} />
           </Grid>
         </Grid>
-        <Grid
-          className={classes.lowerRow}
-          container
-          direction='row'
-          justifyContent='space-between'
-          wrap='nowrap'>
+        <Grid className={classes.lowerRow}>
           <Input
             className={classNames(classes.input, activeCustom ? classes.activePlaceholder : null)}
             classes={{

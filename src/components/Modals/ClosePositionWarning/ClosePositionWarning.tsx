@@ -26,8 +26,8 @@ export const ClosePositionWarning: React.FC<IProps> = ({ open, onCancel, onClose
         vertical: 'top',
         horizontal: 'center'
       }}>
-      <Grid container className={classes.root} direction='column' justifyContent='space-between'>
-        <Grid className={classes.upperRow} container direction='row' justifyContent='space-between'>
+      <Grid className={classes.root}>
+        <Grid className={classes.upperRow}>
           <Typography className={classes.title}>Warning!</Typography>
           <Button className={classes.close} onClick={onCancel}>
             {'\u2715'}

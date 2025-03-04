@@ -78,7 +78,9 @@ const useStyles = makeStyles()(() => {
     lowerRow: {
       marginTop: 8,
       display: 'flex',
+      flexDirection: 'row',
       justifyContent: 'space-between',
+      flexWrap: 'nowrap',
       alignItems: 'center',
       height: 40,
       marginBottom: 10,

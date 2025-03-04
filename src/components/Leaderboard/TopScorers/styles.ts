@@ -14,6 +14,14 @@ const useStyles = makeStyles()(() => {
         flexDirection: 'column'
       }
     },
+    headerWrapper: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'column',
+      width: '100%',
+      textWrap: 'nowrap'
+    },
     headerBigText: {
       ...typography.heading1,
       color: colors.invariant.text,

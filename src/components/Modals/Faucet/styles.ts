@@ -24,7 +24,11 @@ const useStyles = makeStyles()(() => {
       boxShadow: 'none'
     },
     lowerRow: {
-      marginBlock: 10
+      marginBlock: 10,
+      display: 'flex',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      flexWrap: 'nowrap'
     },
     input: {
       backgroundColor: colors.invariant.newDark,

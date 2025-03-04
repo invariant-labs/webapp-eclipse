@@ -11,8 +11,11 @@ const useStyles = makeStyles()(() => {
       padding: 8
     },
     list: {
+      display: 'flex',
       borderRadius: 5,
-      marginTop: 7
+      marginTop: 7,
+      alignContent: 'space-around',
+      flexDirection: 'column'
     },
     listItem: {
       color: colors.invariant.textGrey,

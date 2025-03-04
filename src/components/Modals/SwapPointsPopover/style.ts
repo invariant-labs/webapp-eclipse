@@ -11,6 +11,12 @@ const useStyles = makeStyles()((theme: Theme) => {
         width: '100%'
       }
     },
+    ticker: {
+      display: 'flex',
+      gap: '4px',
+      flexDirection: 'column',
+      padding: '4px'
+    },
     paper: {
       marginRight: '6px',
       marginLeft: '8px',

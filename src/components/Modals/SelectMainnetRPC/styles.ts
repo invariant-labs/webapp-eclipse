@@ -14,6 +14,13 @@ const useStyles = makeStyles()(() => {
       borderRadius: 5,
       marginTop: 7
     },
+    rpcLabel: {
+      width: '100%',
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center'
+    },
+
     listItem: {
       color: colors.invariant.textGrey,
       background: colors.invariant.component,
@@ -77,6 +84,8 @@ const useStyles = makeStyles()(() => {
     },
     lowerRow: {
       marginTop: 8,
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',

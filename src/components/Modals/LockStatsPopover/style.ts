@@ -11,9 +11,36 @@ const useStyles = makeStyles()((theme: Theme) => {
         padding: '16px'
       }
     },
+    animatedBar: {
+      position: 'absolute',
+      top: 0,
+      left: 0,
+      height: '3px',
+      borderRadius: 4,
+      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
+      boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
+    },
+    statsInnerContainer: {
+      display: 'flex',
+      width: '38%',
+      gap: '16px'
+    },
+    chartWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px',
+      width: '50%'
+    },
+    innerChartWrapper: { display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' },
     chart: {
       height: '100px',
       width: '160px'
+    },
+    textWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '12px'
     },
     backgroundContainer: {
       background: colors.invariant.component,

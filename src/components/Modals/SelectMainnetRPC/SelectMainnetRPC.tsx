@@ -106,7 +106,7 @@ export const SelectMainnetRPC: React.FC<ISelectMainnetRPC> = ({
                 setButtonApplied(false)
                 handleClose()
               }}>
-              <Box width='100%' display='flex' justifyContent='space-between' alignItems='center'>
+              <Box className={classes.rpcLabel}>
                 <Typography className={classes.name}>{rpcName} </Typography>
                 <Typography className={classes.recommendedText}>
                   {RECOMMENDED_RPC_ADDRESS[NetworkType.Mainnet] === rpc && 'RECOMMENDED'}
@@ -127,18 +127,13 @@ export const SelectMainnetRPC: React.FC<ISelectMainnetRPC> = ({
               setActiveCustom(true)
               inputRef.current?.focus()
             }}>
-            <Box width='100%' display='flex' justifyContent='space-between' alignItems='center'>
+            <Box className={classes.rpcLabel}>
               <Typography className={classes.name}>Custom RPC</Typography>
             </Box>
             <DotIcon className={classes.dotIcon} />
           </Grid>
         </Grid>
-        <Grid
-          className={classes.lowerRow}
-          container
-          direction='row'
-          justifyContent='space-between'
-          wrap='nowrap'>
+        <Grid className={classes.lowerRow}>
           <Input
             className={classNames(classes.input, activeCustom ? classes.activePlaceholder : null)}
             classes={{

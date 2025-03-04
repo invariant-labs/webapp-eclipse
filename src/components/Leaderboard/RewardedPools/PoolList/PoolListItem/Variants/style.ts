@@ -18,6 +18,35 @@ export const useStyles = makeStyles()(() => ({
     },
     borderBottom: `1px solid ${colors.invariant.light}`
   },
+  APY: {
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    alignSelf: 'flex-end'
+  },
+  APR: {
+    ...typography.tiny2,
+    color: colors.invariant.textGrey,
+    alignSelf: 'flex-end',
+    marginLeft: '8px'
+  },
+  convertedAPY: {
+    ...typography.heading4,
+    color: colors.invariant.text,
+    alignSelf: 'flex-end'
+  },
+  convertedAPR: {
+    ...typography.tiny2,
+    color: colors.invariant.text,
+    alignSelf: 'flex-end',
+    marginLeft: '8px',
+    marginBottom: '2px'
+  },
+  fee: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingTop: '24px',
+    paddingBottom: '24px'
+  },
   container: {
     color: colors.white.main,
     display: 'grid',

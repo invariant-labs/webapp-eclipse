@@ -143,14 +143,8 @@ export const LockStatsPopover = ({
       marginThreshold={16}>
       <div className={classes.backgroundContainer}>
         <div className={classes.statsContainer} style={{ gap: '16px' }}>
-          <div style={{ display: 'flex', width: '38%', gap: '16px' }}>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
+          <div className={classes.statsInnerContainer}>
+            <div className={classes.textWrapper}>
               <Typography className={classes.chartTitle} style={{ textAlign: 'center' }}>
                 Lock Liquidity Distribution
               </Typography>
@@ -196,13 +190,7 @@ export const LockStatsPopover = ({
             }}
           />
 
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              width: '50%'
-            }}>
+          <div className={classes.chartWrapper}>
             <Typography
               className={classes.chartTitle}
               style={{ textAlign: 'center', width: 'fit-content', alignSelf: 'center' }}>
@@ -211,7 +199,7 @@ export const LockStatsPopover = ({
             <Typography className={classes.description}>
               Represents the ratio of locked liquidity to the total TVL in the pool.
             </Typography>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
+            <div className={classes.innerChartWrapper}>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
                   {symbolX}:{' '}
@@ -251,15 +239,9 @@ export const LockStatsPopover = ({
                     }}
                   />
                   <Box
+                    className={classes.animatedBar}
                     sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
-                      width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%',
-                      height: '3px',
-                      borderRadius: 4,
-                      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
-                      boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
+                      width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%'
                     }}
                   />
                 </Box>
@@ -304,14 +286,9 @@ export const LockStatsPopover = ({
                     }}
                   />
                   <Box
+                    className={classes.animatedBar}
                     sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
                       width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
-                      height: '3px',
-                      borderRadius: 4,
-                      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
                       boxShadow: `0 0 6px 1px ${colors.invariant.green}`
                     }}
                   />
