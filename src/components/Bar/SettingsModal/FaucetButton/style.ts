@@ -12,14 +12,16 @@ export const useStyles = makeStyles()(() => {
       ...typography.body2,
       fontWeight: 700,
       textTransform: 'none',
+      display: 'flex',
+      gap: 8,
 
       '&:hover': {
         boxShadow: `0 0 15px ${colors.invariant.light}`
       }
     },
     buttonIcon: {
-      width: 24,
-      height: 24
+      width: 18,
+      height: 18
     }
   }
 })

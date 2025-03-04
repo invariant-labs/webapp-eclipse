@@ -49,7 +49,12 @@ export const SettingsModal = ({
       {activeNetwork === NetworkType.Testnet && (
         <>
           <Separator isHorizontal />
-          <FaucetButton onFaucet={onFaucet} />
+          <FaucetButton
+            onFaucet={() => {
+              onFaucet()
+              handleClose()
+            }}
+          />
         </>
       )}
     </Modal>

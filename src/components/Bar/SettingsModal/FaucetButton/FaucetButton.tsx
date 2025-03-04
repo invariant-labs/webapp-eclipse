@@ -1,3 +1,4 @@
+import icons from '@static/icons'
 import { useStyles } from './style'
 import { Button } from '@mui/material'
 
@@ -10,7 +11,7 @@ export const FaucetButton = ({ onFaucet }: Props) => {
 
   return (
     <Button className={classes.claimFaucetButton} onClick={() => onFaucet()}>
-      Claim faucet
+      <img className={classes.buttonIcon} src={icons.faucet} alt='Faucet icon' /> Claim faucet
     </Button>
   )
 }
