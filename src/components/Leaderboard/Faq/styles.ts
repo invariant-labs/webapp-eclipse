@@ -1,5 +1,6 @@
 // style.ts
-import { colors, theme } from '@static/theme'
+import { alpha } from '@mui/material'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -27,6 +28,8 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   item: {
+    padding: '16px',
+
     '& a': {
       color: '#2EE09A',
       textDecoration: 'none',
@@ -47,6 +50,60 @@ export const useStyles = makeStyles()(() => ({
       height: 'auto',
       marginTop: theme.spacing(2),
       marginBottom: theme.spacing(2)
+    },
+    '& span': {
+      color: colors.invariant.textGrey,
+      ...typography.body2,
+      fontWeight: 400,
+      lineHeight: '20px',
+      fontSize: '16px',
+      opacity: 0.8
+    }
+  },
+  accordion: {
+    backgroundColor: 'transparent',
+    boxShadow: 'none',
+    position: 'relative',
+    '&:before': {
+      display: 'none'
+    },
+    '&.Mui-expanded': {
+      margin: '0px !important',
+      '&::after': {
+        content: '""',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        pointerEvents: 'none',
+        height: '100%',
+        padding: '0px 10px',
+        transiton: 'all 1s ease-in-out',
+        width: '100%',
+        background: `linear-gradient(to right, ${alpha(colors.invariant.light, 0.2)} , transparent)`,
+        opacity: 1
+      }
+    },
+    '&:not(:last-child)': {
+      borderBottom: `1px solid ${colors.invariant.light}`
+    }
+  },
+  accordionSummary: {
+    display: 'grid',
+    gridTemplateColumns: '1fr 40px',
+    alignItems: 'center',
+    padding: '16px 2px',
+    '& .MuiAccordionSummary-content': {
+      margin: 0
+    },
+    '& .MuiAccordionSummary-expandIconWrapper': {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center'
+    },
+    '& p': {
+      color: colors.invariant.text,
+      fontSize: '16px',
+      fontWeight: 500
     }
   }
 }))

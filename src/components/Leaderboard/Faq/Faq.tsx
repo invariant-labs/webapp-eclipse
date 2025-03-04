@@ -1,7 +1,7 @@
-import { Accordion, AccordionSummary, AccordionDetails, Typography, alpha } from '@mui/material'
+import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
 import { useStyles } from './styles'
-import { colors, typography } from '@static/theme'
+import { colors } from '@static/theme'
 import FAQ1 from '@static/png/faq-1.png'
 import FAQ2 from '@static/png/faq-2.png'
 import FAQ3 from '@static/png/faq-3.png'
@@ -164,77 +164,14 @@ The algorithm takes into account factors such as the size of the position (TVL),
   return (
     <div className={classes.container}>
       {faqData.map((item, index) => (
-        <Accordion
-          disableGutters
-          key={index}
-          sx={{
-            backgroundColor: 'transparent',
-            boxShadow: 'none',
-            position: 'relative',
-            '&:before': {
-              display: 'none'
-            },
-            '&.Mui-expanded': {
-              margin: '0px !important',
-              '&::after': {
-                content: '""',
-                position: 'absolute',
-                left: 0,
-                top: 0,
-                pointerEvents: 'none',
-                height: '100%',
-                padding: '0px 10px',
-                transiton: 'all 1s ease-in-out',
-                width: '100%',
-                background: `linear-gradient(to right, ${alpha(colors.invariant.light, 0.2)} , transparent)`,
-                opacity: 1
-              }
-            },
-            '&:not(:last-child)': {
-              borderBottom: `1px solid ${colors.invariant.light}`
-            }
-          }}>
+        <Accordion className={classes.accordion} disableGutters key={index}>
           <AccordionSummary
             expandIcon={<ExpandMoreIcon sx={{ color: colors.invariant.text }} />}
-            sx={{
-              display: 'grid',
-              gridTemplateColumns: '1fr 40px',
-              alignItems: 'center',
-              padding: '16px 2px',
-              '& .MuiAccordionSummary-content': {
-                margin: 0
-              },
-              '& .MuiAccordionSummary-expandIconWrapper': {
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center'
-              }
-            }}>
-            <Typography
-              sx={{
-                color: colors.invariant.text,
-                fontSize: '16px',
-                fontWeight: 500
-              }}>
-              {item.question}
-            </Typography>
+            className={classes.accordionSummary}>
+            <Typography>{item.question}</Typography>
           </AccordionSummary>
-          <AccordionDetails
-            sx={{
-              padding: '16px'
-            }}
-            className={classes.item}>
-            <Typography
-              dangerouslySetInnerHTML={{ __html: item.answer }}
-              sx={{
-                color: colors.invariant.textGrey,
-                ...typography.body2,
-                fontWeight: 400,
-                lineHeight: '20px',
-                fontSize: '16px',
-                opacity: 0.8
-              }}
-            />
+          <AccordionDetails className={classes.item}>
+            <Typography component='span' dangerouslySetInnerHTML={{ __html: item.answer }} />
           </AccordionDetails>
         </Accordion>
       ))}
