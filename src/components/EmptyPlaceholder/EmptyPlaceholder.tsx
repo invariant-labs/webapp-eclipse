@@ -47,11 +47,11 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
       <Grid sx={style} className={classNames(classes.container, 'blurLayer')}>
         <Grid className={classNames(classes.root, 'blurInfo')} gap='24px'>
           <img src={img} alt='Not connected' />
-          <Grid container flexDirection='column' gap='12px'>
+          <Grid container flexDirection='column' gap='10px'>
             <Typography className={classes.title}>{mainTitle}</Typography>
             {desc?.length > 0 && <Typography className={classes.desc}>{desc}</Typography>}
           </Grid>
-          <Grid container flexDirection='column' alignContent='center' gap='10px'>
+          <Grid container flexDirection='column' alignContent='center'>
             {withButton && (
               <Button className={classes.button} onClick={onAction} variant='contained'>
                 {buttonName ? buttonName : 'Add a position'}

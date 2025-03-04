@@ -1,6 +1,6 @@
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import PositionDetails from '@components/PositionDetails/PositionDetails'
-import { Grid } from '@mui/material'
+import { Grid, useMediaQuery } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import {
   calcPriceBySqrtPrice,
@@ -35,6 +35,7 @@ import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
 import icons from '@static/icons'
+import { theme } from '@static/theme'
 
 export interface IProps {
   id: string
@@ -100,7 +101,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       setWaitingForTicksData(false)
     }
   }, [currentPositionTicksLoading])
-
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const midPrice = useMemo(() => {
     if (position?.poolData) {
       return {
@@ -481,6 +482,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         <EmptyPlaceholder
           newVersion
           themeDark
+          style={isMobile ? { paddingTop: 8 } : {}}
           onAction={() => {
             navigate('/newPosition/0_01')
           }}
@@ -503,6 +505,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       className={classes.emptyContainer}>
       <EmptyPlaceholder
         newVersion
+        style={isMobile ? { paddingTop: 5 } : {}}
         themeDark
         roundedCorners
         desc='The position does not exist in your list! '
