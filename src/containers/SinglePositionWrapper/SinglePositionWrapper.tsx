@@ -483,11 +483,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     )
   } else if (walletStatus !== Status.Initialized) {
     return (
-      <Grid
-        display='flex'
-        position='relative'
-        justifyContent='center'
-        className={classes.emptyContainer}>
+      <Grid className={classes.emptyContainer}>
         <EmptyPlaceholder
           newVersion
           themeDark
