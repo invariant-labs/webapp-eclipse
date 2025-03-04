@@ -199,7 +199,7 @@ export const LockLiquidityModal = ({
               classes={{
                 input: classes.innerInput
               }}
-              placeholder="Type to confirm: 'I confirm my liquidity will be locked permanently'"
+              placeholder='I confirm my liquidity will be locked permanently'
               onChange={e => {
                 setInputValue(e.target.value)
               }}
