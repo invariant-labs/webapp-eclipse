@@ -74,6 +74,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [showFeesLoader, setShowFeesLoader] = useState(true)
 
   const [isFinishedDelayRender, setIsFinishedDelayRender] = useState(false)
+  const [isLoadingListDelay, setIsLoadListDelay] = useState(isLoadingList)
 
   const [isClosingPosition, setIsClosingPosition] = useState(false)
 
@@ -304,9 +305,15 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   useEffect(() => {
     // dispatch(actions.getRemainingPositions({ setLoaded: false }))
+    if (isFinishedDelayRender) {
+      return
+    }
+    if (walletStatus === Status.Initialized) {
+      setIsFinishedDelayRender(true)
+    }
     const timer = setTimeout(() => {
       setIsFinishedDelayRender(true)
-    }, 1000)
+    }, 1500)
 
     return () => {
       clearTimeout(timer)
@@ -314,13 +321,16 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [walletStatus])
 
   useEffect(() => {
-    // if (!position && walletStatus === Status.Initialized) {
-    //   dispatch(actions.getSinglePosition(id))
-    // }
-    if (isFinishedDelayRender) {
-      setIsFinishedDelayRender(false)
+    if (!isLoadingList) {
+      setTimeout(() => {
+        setIsLoadListDelay(false)
+      }, 300)
+
+      return () => {
+        setIsLoadListDelay(true)
+      }
     }
-  }, [walletStatus])
+  }, [isLoadingList])
 
   // useEffect(() => {
   //   if (position && poolsArray.length !== 0) {
@@ -460,7 +470,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       />
     )
   }
-  if ((isLoadingList && walletStatus === Status.Initialized) || !isFinishedDelayRender) {
+  if ((isLoadingListDelay && walletStatus === Status.Initialized) || !isFinishedDelayRender) {
     return (
       <Grid
         container
@@ -470,8 +480,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         <img src={loader} className={classes.loading} alt='Loading' />
       </Grid>
     )
-  }
-  if (walletStatus !== Status.Initialized) {
+  } else if (walletStatus !== Status.Initialized) {
     return (
       <Grid
         display='flex'
@@ -487,19 +496,19 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         />
       </Grid>
     )
+  } else {
+    return (
+      <Grid
+        display='flex'
+        position='relative'
+        justifyContent='center'
+        className={classes.fullHeightContainer}>
+        <EmptyPlaceholder
+          desc='The position does not exist in your list! '
+          onAction={() => navigate('/portfolio')}
+          buttonName='Back to positions'
+        />
+      </Grid>
+    )
   }
-
-  return (
-    <Grid
-      display='flex'
-      position='relative'
-      justifyContent='center'
-      className={classes.fullHeightContainer}>
-      <EmptyPlaceholder
-        desc='The position does not exist in your list! '
-        onAction={() => navigate('/portfolio')}
-        buttonName='Back to positions'
-      />
-    </Grid>
-  )
 }
