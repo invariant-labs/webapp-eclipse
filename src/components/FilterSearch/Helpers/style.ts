@@ -40,6 +40,7 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     padding: '8px 16px 8px 12px',
     borderRadius: 24,
     marginRight: 4,
+    border: `1px solid ${colors.invariant.component}`,
     '&:hover': {
       background: colors.invariant.light,
       '@media (hover: none)': {
@@ -132,7 +133,11 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     '& .MuiAutocomplete-option[aria-selected="true"]': {
       background: 'none !important',
       '&:hover': {
-        background: colors.invariant.component
+        background: colors.invariant.component,
+
+        '@media (hover: none)': {
+          background: colors.invariant.component
+        }
       },
       '& > div': {
         borderRadius: '24px',
@@ -140,7 +145,10 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
         backgroundColor: colors.invariant.componentBcg,
 
         '&:hover': {
-          backgroundColor: colors.invariant.component
+          backgroundColor: colors.invariant.component,
+          '@media (hover: none)': {
+            backgroundColor: colors.invariant.componentBcg
+          }
         }
       }
     },
