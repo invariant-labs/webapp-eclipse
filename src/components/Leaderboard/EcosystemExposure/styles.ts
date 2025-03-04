@@ -31,7 +31,10 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       height: '239px',
       border: '1px solid #EF84F540',
       justifyContent: 'space-between',
-      background: '#111931'
+      background: '#111931',
+      [theme.breakpoints.down('sm')]: {
+        padding: '16px 8px'
+      }
     },
     header: {
       alignItems: 'center',

@@ -79,7 +79,8 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'space-between',
       background: '#111931',
       [theme.breakpoints.down('sm')]: {
-        height: 'auto'
+        height: 'auto',
+        padding: '16px 8px'
       }
     },
     section: {
