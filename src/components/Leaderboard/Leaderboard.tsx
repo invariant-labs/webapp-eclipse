@@ -161,7 +161,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             userContentPoints={userContentPoints}
             userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
-            isLoadingList={isLoadingList}
+            isLoadingList={isLoadingList || isLoadingLeaderboardList}
             totalItems={totalItems}
             isConnected={isConnected}
           />

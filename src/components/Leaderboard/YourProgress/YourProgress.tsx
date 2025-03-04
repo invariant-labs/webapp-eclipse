@@ -9,6 +9,7 @@ import { CurrentContentPointsEntry, ITotalEntry } from '@store/reducers/leaderbo
 import { unblurContent } from '@utils/uiUtils'
 import ContentPointsModal from '@components/Modals/ContentPoints/ContentPointsModal'
 import { BlurOverlay } from './BlurOverlay'
+import { isLoading } from '@store/selectors/leaderboard'
 
 interface YourProgressProps {
   userContentPoints: CurrentContentPointsEntry[] | null
@@ -65,7 +66,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   return (
     <Grid className={classes.mainWrapper}>
       <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
-        <BlurOverlay isConnected={isConnected} />
+        {!isLoadingList && <BlurOverlay isConnected={isConnected} />}
 
         <Grid className={classes.header}>
           <Typography>Statistics</Typography>
