@@ -127,7 +127,8 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8
+    gap: 8,
+    marginLeft: 6
   },
   checkBoxLabel: {
     '.MuiFormControlLabel-label': {
