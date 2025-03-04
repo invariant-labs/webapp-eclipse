@@ -3,6 +3,15 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
   return {
+    skeletonExp: {
+      display: 'flex',
+      justifyContent: 'center',
+      gap: '6px',
+      alignItems: 'center',
+      flexDirection: 'row',
+      width: '100%'
+    },
+
     mainWrapper: {
       maxWidth: '524px',
       width: '100%',
@@ -10,6 +19,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
         maxWidth: '100%'
       }
     },
+
     boxWrapper: {
       gap: '8px',
       alignItems: 'center',

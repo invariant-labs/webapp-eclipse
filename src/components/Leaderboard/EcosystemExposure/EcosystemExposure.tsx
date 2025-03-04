@@ -111,11 +111,9 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       <Grid className={classes.mainWrapper}>
         <Grid className={classes.boxWrapper}>
           <Grid className={classes.header}>
-            <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
-              <Typography>
-                Eclipse Ecosystem Exposure <img src={infoIcon} alt='info' />
-              </Typography>
-            </Skeleton>
+            <Typography>
+              Eclipse Ecosystem Exposure <img src={infoIcon} alt='info' />
+            </Typography>
           </Grid>
 
           <Grid className={classes.sliderWrapper} gap='20px' justifyContent='center'>
@@ -126,18 +124,16 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             ))}
           </Grid>
           <Grid className={classes.expWrapper}>
-            <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
-              <Typography component='h5'>
-                Your Exposure: <Typography component='span'>99.99%</Typography>
-              </Typography>
-            </Skeleton>
+            <Grid className={classes.skeletonExp}>
+              <Typography component='h5'>Your Exposure:</Typography>
+              <Skeleton variant='rounded' height={20} animation='wave' sx={{ borderRadius: '8px' }}>
+                <Typography component='span'>99.99%</Typography>
+              </Skeleton>
+            </Grid>
+
             <Grid className={classes.expLabel}>
-              <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
-                <Typography>100%</Typography>
-              </Skeleton>
-              <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
-                <Typography>100%</Typography>
-              </Skeleton>
+              <Typography>0%</Typography>
+              <Typography>100%</Typography>
             </Grid>
             <Skeleton
               variant='rounded'
