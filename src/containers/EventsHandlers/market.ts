@@ -10,7 +10,7 @@ import { findTickmapChanges, IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
-import { getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
+import { ensureError, getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import {
   currentPositionData,
@@ -280,8 +280,9 @@ const MarketEvents = () => {
                       )
                     }
                   )
-                } catch (err) {
-                  console.log(err)
+                } catch (e: unknown) {
+                  const error = ensureError(e)
+                  console.log(error)
                 }
               }
             }

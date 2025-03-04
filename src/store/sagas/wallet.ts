@@ -51,7 +51,7 @@ import { TOKEN_2022_PROGRAM_ID } from '@solana/spl-token'
 import { disconnectWallet, getEclipseWallet } from '@utils/web3/wallet'
 import { WalletAdapter } from '@utils/web3/adapters/types'
 import airdropAdmin from '@store/consts/airdropAdmin'
-import { createLoaderKey, getTokenMetadata, getTokenProgramId } from '@utils/utils'
+import { createLoaderKey, ensureError, getTokenMetadata, getTokenProgramId } from '@utils/utils'
 
 import { PayloadAction } from '@reduxjs/toolkit'
 // import { actions as farmsActions } from '@reducers/farms'
@@ -268,8 +268,10 @@ export function* handleAirdrop(): Generator {
 
     closeSnackbar(loaderKey)
     yield put(snackbarsActions.remove(loaderKey))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
+
     closeSnackbar(loaderKey)
     yield put(snackbarsActions.remove(loaderKey))
 
@@ -542,7 +544,8 @@ export function* init(isEagerConnect: boolean): Generator {
     }
     yield* put(actions.setStatus(Status.Initialized))
     yield* call(handleBalance)
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
   }
 }
@@ -580,16 +583,22 @@ export function* handleConnect(action: PayloadAction<boolean>): Generator {
       return
     }
     yield* call(init, action.payload)
-  } catch (error) {
-    yield* call(handleRpcError, (error as Error).message)
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* call(handleRpcError, error.message)
   }
 }
 
 export function* handleChangeWalletInExtenstion(): Generator {
   try {
     yield* call(init, false)
-  } catch (error) {
-    yield* call(handleRpcError, (error as Error).message)
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -606,10 +615,11 @@ export function* handleDisconnect(): Generator {
       })
     )
     // yield* put(bondsActions.setUserVested({}))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -694,10 +704,11 @@ export function* handleUnwrapWETH(): Generator {
     }
 
     yield* put(actions.getBalance())
-  } catch (e) {
-    console.log(e)
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
 
-    yield* call(handleRpcError, (e as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 
   closeSnackbar(loaderUnwrapWETH)

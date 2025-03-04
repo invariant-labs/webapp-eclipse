@@ -105,7 +105,7 @@ export const WrappedPositionsList: React.FC = () => {
             ),
             position.tokenX.decimals
           )
-        } catch (error) {
+        } catch {
           tokenXLiq = 0
         }
 
@@ -119,7 +119,7 @@ export const WrappedPositionsList: React.FC = () => {
             ),
             position.tokenY.decimals
           )
-        } catch (error) {
+        } catch {
           tokenYLiq = 0
         }
 
@@ -192,7 +192,7 @@ export const WrappedPositionsList: React.FC = () => {
             ),
             position.tokenX.decimals
           )
-        } catch (error) {
+        } catch {
           tokenXLiq = 0
         }
 
@@ -206,7 +206,7 @@ export const WrappedPositionsList: React.FC = () => {
             ),
             position.tokenY.decimals
           )
-        } catch (error) {
+        } catch {
           tokenYLiq = 0
         }
 

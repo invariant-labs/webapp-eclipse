@@ -206,7 +206,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           ),
           position.tokenX.decimals
         )
-      } catch (error) {
+      } catch {
         return 0
       }
     }
@@ -226,7 +226,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           ),
           position.tokenY.decimals
         )
-      } catch (error) {
+      } catch {
         return 0
       }
     }
