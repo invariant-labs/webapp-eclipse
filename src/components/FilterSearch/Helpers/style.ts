@@ -136,7 +136,12 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
       },
       '& > div': {
         borderRadius: '24px',
-        border: `1px solid ${colors.invariant.light}`
+        border: `1px solid ${colors.invariant.light}`,
+        backgroundColor: colors.invariant.componentBcg,
+
+        '&:hover': {
+          backgroundColor: colors.invariant.component
+        }
       }
     },
     '&::-webkit-scrollbar': {
