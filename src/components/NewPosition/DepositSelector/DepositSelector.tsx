@@ -321,31 +321,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     onReverseTokens()
   }
 
-  // const ACTIONS_BUTTON_METHODS = {
-  //   max: (tokenIndex: number | null) => {
-  //     if (tokenIndex === null) {
-  //       return
-  //     }
-
-  //     if (tokens[tokenIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-  //       tokenAInputState.setValue(
-  //         trimDecimalZeros(
-  //           printBN(
-  //             tokens[tokenIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
-  //               ? tokens[tokenIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
-  //               : new BN(0),
-  //             tokens[tokenIndex].decimals
-  //           )
-  //         )
-  //       )
-
-  //       return
-  //     }
-
-  //     tokenAInputState.setValue(printBN(tokens[tokenIndex].balance, tokens[tokenIndex].decimals))
-  //   }
-  // }
-
   const actionsTokenA = createButtonActions({
     tokens,
     wrappedTokenAddress: WRAPPED_ETH_ADDRESS,

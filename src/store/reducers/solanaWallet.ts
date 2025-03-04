@@ -113,7 +113,6 @@ const solanaWalletSlice = createSlice({
       state.tokenBalanceLoading = action.payload
       return state
     },
-    // Triggers rescan for tokens that we control
     rescanTokens() {},
     airdrop() {},
     connect(state, _action: PayloadAction<boolean>) {
