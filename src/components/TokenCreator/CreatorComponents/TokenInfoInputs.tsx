@@ -168,13 +168,6 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
           />
         )
       ) : (
-        // <Button
-        //   className={classes.connectWalletButton}
-        //   variant='contained'
-        //   type='button'
-        //   onClick={openWalletSelectorModal}>
-        //   <span className={classes.buttonText}>{buttonText}</span>
-        // </Button>
         <ChangeWalletButton
           name='Connect wallet'
           onConnect={onConnectWallet}

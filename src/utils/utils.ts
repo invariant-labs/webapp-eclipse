@@ -898,17 +898,8 @@ export const createPlaceholderLiquidityPlot = (
 }
 
 export const getNetworkTokensList = (networkType: NetworkType): Record<string, Token> => {
-  // const obj: Record<string, Token> = {}
   switch (networkType) {
     case NetworkType.Mainnet:
-      // ;(mainnetList as any[]).forEach(token => {
-      //   obj[token.address] = {
-      //     ...token,
-      //     address: new PublicKey(token.address),
-      //     coingeckoId: token?.extensions?.coingeckoId
-      //   }
-      // })
-      // return obj
       return {
         [WETH_MAIN.address.toString()]: WETH_MAIN,
         [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
@@ -1139,7 +1130,7 @@ export const handleSimulate = async (
       }
     } else {
       errorMessage.push(`Ticks not available for pool ${pool.address.toString()}`)
-      continue // Move to the next pool
+      continue
     }
     const maxCrosses =
       pool.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
@@ -1612,39 +1603,6 @@ export const randomNumberFromRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
-// TODO: commented until eclipse staker sdk will be available
-// export const getUserStakesForFarm = async (
-//   stakerProgram: Staker,
-//   incentive: PublicKey,
-//   pool: PublicKey,
-//   ids: BN[],
-//   positionsAdresses: PublicKey[]
-// ) => {
-//   const promises = ids.map(async id => {
-//     const [userStakeAddress] = await stakerProgram.getUserStakeAddressAndBump(incentive, pool, id)
-
-//     return userStakeAddress
-//   })
-
-//   const addresses = await Promise.all(promises)
-
-//   const stakes = await stakerProgram.program.account.userStake.fetchMultiple(addresses)
-
-//   const fullStakes: ExtendedStake[] = []
-
-//   stakes.forEach((stake, index) => {
-//     if (stake !== null) {
-//       fullStakes.push({
-//         ...(stake as Stake),
-//         address: addresses[index],
-//         position: positionsAdresses[index]
-//       })
-//     }
-//   })
-
-//   return fullStakes
-// }
-
 export const getPositionsForPool = async (marketProgram: Market, pool: PublicKey) => {
   return (
     await marketProgram.program.account.position.all([
@@ -1677,36 +1635,6 @@ export const getPositionsAddressesFromRange = async (
     data.map(({ positionAddress }) => positionAddress)
   )
 }
-
-// TODO: commented until eclipse bonds sdk will be available
-// export const calculateEstBondPriceForQuoteAmount = (bondSale: BondSaleStruct, amount: BN) => {
-//   let lowerBondAmount = new BN(0)
-//   let upperBondAmount = MAX_U64
-//   let price = calculateSellPrice(bondSale, upperBondAmount)
-
-//   while (upperBondAmount.sub(lowerBondAmount).abs().gt(new BN(1))) {
-//     const middleBondAmount = upperBondAmount.add(lowerBondAmount).div(new BN(2))
-//     price = calculateSellPrice(bondSale, middleBondAmount)
-//     const middleQuoteAmount = middleBondAmount.mul(price).div(new BN(10 ** DECIMAL))
-
-//     if (middleQuoteAmount.sub(amount).abs().lte(new BN(1))) {
-//       break
-//     }
-
-//     if (middleQuoteAmount.lt(amount)) {
-//       lowerBondAmount = middleBondAmount
-//     } else {
-//       upperBondAmount = middleBondAmount
-//     }
-//   }
-
-//   return price
-// }
-
-// export const calculateBondPrice = (bondSale: BondSaleStruct, amount: BN, byAmountBond: boolean) =>
-//   byAmountBond
-//     ? calculateSellPrice(bondSale, amount)
-//     : calculateEstBondPriceForQuoteAmount(bondSale, amount)
 
 export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
   {
@@ -1888,7 +1816,6 @@ const poolsToRecalculateAPY = [
   '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM' //SOL_ETH 0.09%
 ]
 
-//HOTFIX
 export const calculateAPYAndAPR = (
   apy: number,
   poolAddress?: string,

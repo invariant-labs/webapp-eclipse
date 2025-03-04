@@ -45,7 +45,6 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   const dispatch = useDispatch()
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
 
-  // if (isDisabled) return
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!connected) {
       setIsOpenSelectWallet(true)

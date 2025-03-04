@@ -304,7 +304,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }
 
   useEffect(() => {
-    // dispatch(actions.getRemainingPositions({ setLoaded: false }))
     if (isFinishedDelayRender) {
       return
     }
@@ -331,18 +330,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       }
     }
   }, [isLoadingList])
-
-  // useEffect(() => {
-  //   if (position && poolsArray.length !== 0) {
-  //     dispatch(
-  //       actions.getCurrentPlotTicks({
-  //         poolIndex: position.poolData.poolIndex,
-  //         isXtoY: true
-  //         // fetchTicksAndTickmap: true
-  //       })
-  //     )
-  //   }
-  // }, [poolsArray])
 
   const onRefresh = () => {
     if (position?.positionIndex === undefined) {

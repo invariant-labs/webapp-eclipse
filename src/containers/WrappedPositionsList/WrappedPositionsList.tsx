@@ -247,12 +247,6 @@ export const WrappedPositionsList: React.FC = () => {
     [lockedList]
   )
 
-  // useEffect(() => {
-  //   if (walletStatus === Status.Initialized && walletAddress && !loadedPages[0] && !length) {
-  //     dispatch(actions.getPositionsListPage({ index: 0, refresh: false }))
-  //   }
-  // }, [walletStatus, loadedPages])
-
   return (
     <PositionsList
       initialPage={lastPage}
