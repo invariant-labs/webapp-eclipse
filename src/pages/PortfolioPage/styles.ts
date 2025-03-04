@@ -36,6 +36,9 @@ const useStyles = makeStyles()(theme => {
         justifyContent: 'flex-start',
         paddingTop: '90px'
       },
+      [theme.breakpoints.down('sm')]: {
+        marginTop: 30
+      },
 
       flexDirection: 'column',
       borderTopRightRadius: '24px',
