@@ -46,9 +46,8 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
       <Grid className={classNames(classes.blur, 'blurLayer')} />
       <Grid sx={style} className={classNames(classes.container, 'blurLayer')}>
         <Grid className={classNames(classes.root, 'blurInfo')} gap='24px'>
-          <Grid height={104}>
-            <img src={img} alt='Not connected' />
-            <Grid container flexDirection='column' gap='10px'></Grid>
+          <img src={img} alt='Not connected' />
+          <Grid container flexDirection='column' gap='10px'>
             <Typography className={classes.title}>{mainTitle}</Typography>
             {desc?.length > 0 && <Typography className={classes.desc}>{desc}</Typography>}
           </Grid>
