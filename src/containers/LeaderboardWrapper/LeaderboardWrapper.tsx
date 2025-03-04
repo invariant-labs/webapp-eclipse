@@ -17,7 +17,10 @@ import { VariantType } from 'notistack'
 import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { actions as statsActions } from '@store/reducers/stats'
 import { positionsWithPoolsData } from '@store/selectors/positions'
-import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
+import {
+  estimatePointsForUserPositions,
+  NUCLEUS_WHITELISTED_POOLS
+} from '@invariant-labs/points-sdk'
 import { BN } from '@coral-xyz/anchor'
 import { PoolStructure, Position } from '@invariant-labs/sdk-eclipse/src/market'
 import { isLoadingPositionsList } from '@store/selectors/positions'
@@ -27,11 +30,13 @@ import {
   BANNER_STORAGE_KEY,
   LEADERBOARD_DECIMAL,
   LeaderBoardType,
-  SNAP_TIME_DELAY
+  SNAP_TIME_DELAY,
+  TETH_MAIN
 } from '@store/consts/static'
 import { Leaderboard } from '@components/Leaderboard/Leaderboard'
 import { address, status } from '@store/selectors/solanaWallet'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
+import { isActive } from '@invariant-labs/sdk-eclipse/lib/utils'
 
 interface LeaderboardWrapperProps {}
 
@@ -57,7 +62,6 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const isLoadingLeaderboardList = useSelector(leaderboardSelectors.loading)
   const currentPage = useSelector(leaderboardSelectors.currentPage)
   const totalItemsObject = useSelector(leaderboardSelectors.totalItems)
-
   const [showWarningBanner, setShowWarningBanner] = React.useState(true)
   const [selectedOption, setSelectedOption] = useState<LeaderBoardType>('Total')
 
@@ -86,6 +90,16 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
     [dispatch, itemsPerPage, isConnected]
   )
 
+  const hasTETHPosition = useMemo(
+    () =>
+      list.some(
+        ({ tokenX, tokenY, lowerTickIndex, upperTickIndex, poolData }) =>
+          [tokenX.assetAddress, tokenY.assetAddress].includes(TETH_MAIN.address) &&
+          isActive(lowerTickIndex, upperTickIndex, poolData.currentTickIndex) &&
+          NUCLEUS_WHITELISTED_POOLS.some(pool => pool.toString() === poolData.address.toString())
+      ),
+    [list]
+  )
   const onConnectWallet = () => {
     dispatch(walletActions.connect(false))
   }
@@ -187,6 +201,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
 
   return (
     <Leaderboard
+      hasTETHPosition={hasTETHPosition}
       userContentPoints={userContentPoints}
       copyAddressHandler={copyAddressHandler}
       currentNetwork={currentNetwork}

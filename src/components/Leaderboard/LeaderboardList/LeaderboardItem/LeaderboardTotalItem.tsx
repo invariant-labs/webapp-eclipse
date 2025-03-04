@@ -117,8 +117,8 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         style={{
           border: hideBottomLine ? 'none' : undefined,
           background: isYou ? alpha(colors.invariant.light, 0.2) : 'transparent',
-          paddingLeft: isYou ? (isVerySmallScreen ? 12 : 24) : 0,
-          paddingRight: isYou ? (isVerySmallScreen ? 12 : 24) : 0
+          paddingLeft: isYou ? (isVerySmallScreen ? 8 : 24) : 0,
+          paddingRight: isYou ? (isVerySmallScreen ? 8 : 24) : 0
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 

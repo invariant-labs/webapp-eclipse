@@ -81,13 +81,6 @@ const MarketEvents = () => {
         .finally(() => {
           dispatch(actions.addTokens(tokens))
         })
-      // getPoolsVolumeRanges(networkType.toLowerCase())
-      //   .then(ranges => {
-      //     dispatch(actions.setVolumeRanges(ranges))
-      //   })
-      //   .catch(error => {
-      //     console.log(error)
-      //   })
     }
 
     connectEvents()

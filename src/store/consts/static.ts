@@ -635,11 +635,9 @@ export const WETH_MIN_FAUCET_FEE_MAIN = new BN(25000)
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST = new BN(50000)
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN = new BN(25000)
 
-// export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(150000)
 export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(700000)
 export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(700000)
 
-// export const WETH_POOL_INIT_LAMPORTS_MAIN = new BN(1000000)
 export const WETH_POOL_INIT_LAMPORTS_MAIN = new BN(1750000)
 export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
 
@@ -708,7 +706,6 @@ export const defaultPrefixConfig: PrefixConfig = {
   M: 1000000,
   K: 10000
 }
-// const mainnetList = {}
 
 export const getAddressTickerMap = (network: NetworkType): { [k: string]: string } => {
   if (network !== NetworkType.Mainnet) {
@@ -722,14 +719,6 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
     }
   } else {
-    // const parsedMainnetList = mainnetList as unknown as Record<string, Token>
-    // const result: { [k: string]: PublicKey } = {}
-
-    // Object.keys(parsedMainnetList).forEach((key: string) => {
-    //   const token = parsedMainnetList[key]
-    //   result[token.symbol] = token.address
-    // })
-
     return {
       ETH: WETH_ADDRESS[network].toString(),
       tETH: TETH_MAIN.address.toString(),

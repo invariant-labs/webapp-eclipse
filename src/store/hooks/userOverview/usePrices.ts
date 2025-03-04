@@ -29,7 +29,7 @@ export const usePrices = ({
     if (!tokenX || !tokenY) return
 
     const fetchPrices = async () => {
-      getTokenPrice(tokenX.assetsAddress ?? '')
+      getTokenPrice(tokenX.assetsAddress ?? '', networkType)
         .then(price => {
           setTokenXPriceData({ price: price ?? 0, loading: false })
         })
@@ -40,7 +40,7 @@ export const usePrices = ({
           })
         })
 
-      getTokenPrice(tokenY.assetsAddress ?? '')
+      getTokenPrice(tokenY.assetsAddress ?? '', networkType)
         .then(price => setTokenYPriceData({ price: price ?? 0, loading: false }))
         .catch(() => {
           setTokenYPriceData({

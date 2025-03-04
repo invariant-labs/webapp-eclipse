@@ -283,12 +283,12 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     const xAddr = position.tokenX.assetAddress.toString()
-    getTokenPrice(xAddr)
+    getTokenPrice(xAddr, currentNetwork)
       .then(data => setTokenXPriceData({ price: data ?? 0 }))
       .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
 
     const yAddr = position.tokenY.assetAddress.toString()
-    getTokenPrice(yAddr)
+    getTokenPrice(yAddr, currentNetwork)
       .then(data => setTokenYPriceData({ price: data ?? 0 }))
       .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
   }, [position?.id, triggerFetchPrice])
@@ -304,7 +304,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }
 
   useEffect(() => {
-    // dispatch(actions.getRemainingPositions({ setLoaded: false }))
     if (isFinishedDelayRender) {
       return
     }
@@ -331,18 +330,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       }
     }
   }, [isLoadingList])
-
-  // useEffect(() => {
-  //   if (position && poolsArray.length !== 0) {
-  //     dispatch(
-  //       actions.getCurrentPlotTicks({
-  //         poolIndex: position.poolData.poolIndex,
-  //         isXtoY: true
-  //         // fetchTicksAndTickmap: true
-  //       })
-  //     )
-  //   }
-  // }, [poolsArray])
 
   const onRefresh = () => {
     if (position?.positionIndex === undefined) {

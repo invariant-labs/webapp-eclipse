@@ -44,7 +44,8 @@ export const useStyles = makeStyles<StyleProps>()(
       ...typography.body2,
       fontWeight: 500,
       lineHeight: '20px',
-      color: colors.invariant.lightHover
+      color: colors.invariant.lightHover,
+      margin: 8
     },
     button: {
       height: 40,
