@@ -9,7 +9,6 @@ import { CurrentContentPointsEntry, ITotalEntry } from '@store/reducers/leaderbo
 import { unblurContent } from '@utils/uiUtils'
 import ContentPointsModal from '@components/Modals/ContentPoints/ContentPointsModal'
 import { BlurOverlay } from './BlurOverlay'
-import { isLoading } from '@store/selectors/leaderboard'
 
 interface YourProgressProps {
   userContentPoints: CurrentContentPointsEntry[] | null
