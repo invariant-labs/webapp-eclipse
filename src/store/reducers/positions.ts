@@ -224,36 +224,6 @@ const positionsSlice = createSlice({
       state.positionsList.lockedList = action.payload
       return state
     },
-    updatePositionTicksRange(
-      state,
-      _action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
-    ) {
-      return state
-    },
-    setPositionRangeTicks(
-      state,
-      action: PayloadAction<{ positionId: string; lowerTick: number; upperTick: number }>
-    ) {
-      state.positionsList.list.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
-          position = {
-            ...position,
-            lowerTickIndex: action.payload.lowerTick,
-            upperTickIndex: action.payload.upperTick
-          }
-        }
-      })
-
-      state.positionsList.lockedList.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
-          position = {
-            ...position,
-            lowerTickIndex: action.payload.lowerTick,
-            upperTickIndex: action.payload.upperTick
-          }
-        }
-      })
-    },
     getPositionsList(state) {
       state.positionsList.loading = true
       return state

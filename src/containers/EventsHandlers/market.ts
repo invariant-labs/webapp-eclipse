@@ -153,32 +153,6 @@ const MarketEvents = () => {
 
             if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
               positionsInPool.map(position => {
-                if (
-                  (pool.currentTickIndex >= position?.lowerTickIndex &&
-                    poolStructure.currentTickIndex < position?.lowerTickIndex) ||
-                  (pool.currentTickIndex < position?.lowerTickIndex &&
-                    poolStructure.currentTickIndex >= position?.lowerTickIndex)
-                ) {
-                  dispatch(
-                    positionsActions.updatePositionTicksRange({
-                      positionId: position.id.toString() + '_' + position.pool.toString(),
-                      fetchTick: 'lower'
-                    })
-                  )
-                } else if (
-                  (pool.currentTickIndex < position?.upperTickIndex &&
-                    poolStructure.currentTickIndex >= position?.upperTickIndex) ||
-                  (pool.currentTickIndex >= position?.upperTickIndex &&
-                    poolStructure.currentTickIndex < position?.upperTickIndex)
-                ) {
-                  dispatch(
-                    positionsActions.updatePositionTicksRange({
-                      positionId: position.id.toString() + '_' + position.pool.toString(),
-                      fetchTick: 'upper'
-                    })
-                  )
-                }
-
                 //update current position details
                 if (
                   currentPositionIndex ===
