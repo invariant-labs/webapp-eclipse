@@ -565,16 +565,17 @@ export const Swap: React.FC<ISwap> = ({
   ) => {
     let useTwoHop = false
 
-    if (
-      (simulateResult.error.length > 0 || simulateResult.amountOut.eq(new BN(0))) &&
-      !simulateWithHopResult.error
-    ) {
+    const isSimulateError =
+      simulateResult.error.length > 0 || simulateResult.amountOut.eq(new BN(0))
+    const isSimulateWithHopError = simulateWithHopResult.error
+
+    if (isSimulateError && !isSimulateWithHopError) {
       useTwoHop = true
     }
 
     if (
-      (simulateResult.error.length > 0 || simulateResult.amountOut.eq(new BN(0))) &&
-      simulateWithHopResult.error
+      (isSimulateError && isSimulateWithHopError) ||
+      (!isSimulateError && !isSimulateWithHopError)
     ) {
       if (simulateWithHopResult?.simulation?.totalAmountOut.gte(simulateResult.amountOut)) {
         useTwoHop = true
