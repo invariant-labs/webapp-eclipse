@@ -9,7 +9,7 @@ import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '@static/theme'
 
-const confirmText = 'I confirm my liquidity will be locked permanently'
+const confirmText = 'Lock my liquidity permanently'
 export interface ILockLiquidityModal {
   open: boolean
   xToY: boolean
@@ -43,6 +43,10 @@ export const LockLiquidityModal = ({
   const { classes } = useStyles()
   const [progress, setProgress] = useState<ProgressState>('none')
   const [inputValue, setInputValue] = useState('')
+
+  useEffect(() => {
+    if (open) setInputValue('')
+  }, [open])
 
   useEffect(() => {
     let timeoutId1: NodeJS.Timeout
