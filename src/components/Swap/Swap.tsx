@@ -642,16 +642,6 @@ export const Swap: React.FC<ISwap> = ({
     amountFrom !== '' &&
     amountTo !== ''
 
-  console.log(
-    tokenFromIndex !== null &&
-      tokenToIndex !== null &&
-      hasShowRateMessage() &&
-      (getStateMessage() === 'Loading' ||
-        (swapRate !== 0 && swapRate !== Infinity && !isNaN(swapRate))) &&
-      amountFrom !== '' &&
-      amountTo !== ''
-  )
-
   const handleRefresh = async () => {
     onRefresh(tokenFromIndex, tokenToIndex)
     setRefresherTime(REFRESHER_INTERVAL)
