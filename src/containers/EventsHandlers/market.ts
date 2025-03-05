@@ -28,7 +28,6 @@ const MarketEvents = () => {
   const marketProgram = getMarketProgramSync(networkType, rpc, wallet as IWallet)
   const { tokenFrom, tokenTo } = useSelector(swap)
   const networkStatus = useSelector(status)
-  // const tickmaps = useSelector(tickMaps)
   const allPools = useSelector(poolsArraySortedByFees)
   const positionsList = useSelector(positionsWithPoolsData)
   const lockedPositionsList = useSelector(lockedPositionsWithPoolsData)
@@ -36,6 +35,7 @@ const MarketEvents = () => {
   const currentPosition = useSelector(currentPositionData)
   const newPositionPoolIndex = useSelector(currentPoolIndex)
   const [subscribedSwapPools, _setSubscribedSwapPools] = useState<Set<string>>(new Set())
+  const [subscribedPositionsPools, _setSubscribedPositionsPools] = useState<Set<string>>(new Set())
   const [newPositionSubscribedPool, setNewPositionSubscribedPool] = useState<PublicKey>(
     PublicKey.default
   )
@@ -125,7 +125,23 @@ const MarketEvents = () => {
 
       const pools = allPositions.map(position => position.poolData)
 
+      const poolsAddresses = pools.map(pool => pool.address.toBase58())
+      const unsubscribedPools = Array.from(subscribedPositionsPools).filter(
+        pool => !poolsAddresses.includes(pool)
+      )
+
+      for (const pool of unsubscribedPools) {
+        marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
+        subscribedPositionsPools.delete(pool)
+      }
+
       for (const pool of pools) {
+        if (subscribedPositionsPools.has(pool.address.toBase58())) {
+          continue
+        }
+
+        subscribedPositionsPools.add(pool.address.toBase58())
+
         marketProgram.onPoolChange(
           pool.tokenX,
           pool.tokenY,
