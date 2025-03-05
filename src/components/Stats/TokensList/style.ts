@@ -18,7 +18,7 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'flex-end',
     [theme.breakpoints.down('lg')]: {
-      padding: '20px 12px'
+      padding: '20px 8px'
     }
   },
   loadingOverlay: {

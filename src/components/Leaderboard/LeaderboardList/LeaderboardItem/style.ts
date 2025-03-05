@@ -65,7 +65,9 @@ export const useStyles = makeStyles()(() => ({
       '& p': {
         justifyContent: 'flex-start',
         ...typography.caption1
-      }
+      },
+
+      padding: '18px 8px'
     }
   },
   iconContainer: {

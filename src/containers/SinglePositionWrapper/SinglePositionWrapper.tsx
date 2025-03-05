@@ -74,6 +74,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [showFeesLoader, setShowFeesLoader] = useState(true)
 
   const [isFinishedDelayRender, setIsFinishedDelayRender] = useState(false)
+  const [isLoadingListDelay, setIsLoadListDelay] = useState(isLoadingList)
 
   const [isClosingPosition, setIsClosingPosition] = useState(false)
 
@@ -282,12 +283,12 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     const xAddr = position.tokenX.assetAddress.toString()
-    getTokenPrice(xAddr)
+    getTokenPrice(xAddr, currentNetwork)
       .then(data => setTokenXPriceData({ price: data ?? 0 }))
       .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
 
     const yAddr = position.tokenY.assetAddress.toString()
-    getTokenPrice(yAddr)
+    getTokenPrice(yAddr, currentNetwork)
       .then(data => setTokenYPriceData({ price: data ?? 0 }))
       .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
   }, [position?.id, triggerFetchPrice])
@@ -303,10 +304,15 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }
 
   useEffect(() => {
-    // dispatch(actions.getRemainingPositions({ setLoaded: false }))
+    if (isFinishedDelayRender) {
+      return
+    }
+    if (walletStatus === Status.Initialized) {
+      setIsFinishedDelayRender(true)
+    }
     const timer = setTimeout(() => {
       setIsFinishedDelayRender(true)
-    }, 1000)
+    }, 1500)
 
     return () => {
       clearTimeout(timer)
@@ -314,25 +320,16 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [walletStatus])
 
   useEffect(() => {
-    // if (!position && walletStatus === Status.Initialized) {
-    //   dispatch(actions.getSinglePosition(id))
-    // }
-    if (isFinishedDelayRender) {
-      setIsFinishedDelayRender(false)
-    }
-  }, [walletStatus])
+    if (!isLoadingList) {
+      setTimeout(() => {
+        setIsLoadListDelay(false)
+      }, 300)
 
-  // useEffect(() => {
-  //   if (position && poolsArray.length !== 0) {
-  //     dispatch(
-  //       actions.getCurrentPlotTicks({
-  //         poolIndex: position.poolData.poolIndex,
-  //         isXtoY: true
-  //         // fetchTicksAndTickmap: true
-  //       })
-  //     )
-  //   }
-  // }, [poolsArray])
+      return () => {
+        setIsLoadListDelay(true)
+      }
+    }
+  }, [isLoadingList])
 
   const onRefresh = () => {
     if (position?.positionIndex === undefined) {
@@ -460,7 +457,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       />
     )
   }
-  if ((isLoadingList && walletStatus === Status.Initialized) || !isFinishedDelayRender) {
+  if ((isLoadingListDelay && walletStatus === Status.Initialized) || !isFinishedDelayRender) {
     return (
       <Grid
         container
@@ -470,8 +467,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         <img src={loader} className={classes.loading} alt='Loading' />
       </Grid>
     )
-  }
-  if (walletStatus !== Status.Initialized) {
+  } else if (walletStatus !== Status.Initialized) {
     return (
       <Grid
         display='flex'
@@ -487,19 +483,19 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         />
       </Grid>
     )
+  } else {
+    return (
+      <Grid
+        display='flex'
+        position='relative'
+        justifyContent='center'
+        className={classes.fullHeightContainer}>
+        <EmptyPlaceholder
+          desc='The position does not exist in your list! '
+          onAction={() => navigate('/portfolio')}
+          buttonName='Back to positions'
+        />
+      </Grid>
+    )
   }
-
-  return (
-    <Grid
-      display='flex'
-      position='relative'
-      justifyContent='center'
-      className={classes.fullHeightContainer}>
-      <EmptyPlaceholder
-        desc='The position does not exist in your list! '
-        onAction={() => navigate('/portfolio')}
-        buttonName='Back to positions'
-      />
-    </Grid>
-  )
 }

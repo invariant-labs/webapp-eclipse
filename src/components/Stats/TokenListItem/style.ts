@@ -26,7 +26,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '30% 22.5% 32.5% 15%',
-      padding: '18px 12px',
+      padding: '18px 8px',
 
       '& p': {
         ...typography.caption1

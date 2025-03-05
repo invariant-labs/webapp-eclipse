@@ -8,8 +8,6 @@ import { statsHandler } from './stats'
 import { creatorSaga } from './creator'
 import { lockerSaga } from './locker'
 import { leaderboardSaga } from './leaderboard'
-// import { farmsSaga } from './farms'
-// import { bondsSaga } from './bonds'
 
 export function* rootSaga(): Generator {
   yield all(
@@ -23,8 +21,6 @@ export function* rootSaga(): Generator {
       creatorSaga,
       leaderboardSaga,
       lockerSaga
-      // bondsSaga,
-      // farmsSaga
     ].map(spawn)
   )
 }
