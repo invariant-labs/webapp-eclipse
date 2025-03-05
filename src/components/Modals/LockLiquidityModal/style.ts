@@ -320,15 +320,52 @@ const useStyles = makeStyles()((theme: Theme) => {
       color: colors.invariant.green,
       ...typography.body1
     },
-    input: {
-      width: '100%',
+    inputWrapper: {
+      position: 'relative',
+      display: 'inline-block',
       height: 44,
-      padding: 12,
       marginTop: 12,
+      width: '100%'
+    },
+    placeholder: {
+      position: 'absolute',
+      height: '100%',
+      top: 0,
+      display: 'flex',
+      alignItems: 'center',
+      pointerEvents: 'none',
+      whiteSpace: 'pre',
+      ...typography.body2
+    },
+    visibleInput: {
+      width: '100%',
+      position: 'absolute',
+      height: '100%',
+      top: 0,
+      paddingLeft: 10,
+      display: 'flex',
+      alignItems: 'center',
+      pointerEvents: 'none',
+      whiteSpace: 'pre',
       borderRadius: 6,
       border: `1px solid ${colors.invariant.light}`,
       backgroundColor: colors.invariant.newDark,
       color: colors.white.main,
+      ...typography.body2,
+
+      '&:focus': {
+        outline: 'none'
+      }
+    },
+    hiddenInput: {
+      width: '100%',
+      height: 44,
+      padding: 12,
+      borderRadius: 6,
+      border: `1px solid 'transparent'`,
+      backgroundColor: 'transparent',
+      caretColor: colors.white.main,
+      color: 'transparent',
       ...typography.body2,
 
       '&::disabled': {
@@ -355,6 +392,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       '&:focus': {
         outline: 'none'
       }
+    },
+    inputChar: {
+      display: 'inline-block',
+      whiteSpace: 'pre'
     }
   }
 })

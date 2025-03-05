@@ -1,12 +1,13 @@
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import useStyles from './style'
-import { Button, Grid, Input, Popover, Tooltip, Typography } from '@mui/material'
+import { Button, Grid, InputBase, Popover, Tooltip, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
+import { colors } from '@static/theme'
 
 const confirmText = 'I confirm my liquidity will be locked permanently'
 export interface ILockLiquidityModal {
@@ -193,21 +194,44 @@ export const LockLiquidityModal = ({
           </Grid>
           <Grid className={classes.confirmInputContainer}>
             <Typography>To confirm, type the following:</Typography>
-            <Typography>I confirm my liquidity will be locked permanently</Typography>
-            <Input
-              className={classes.input}
-              classes={{
-                input: classes.innerInput
-              }}
-              placeholder={confirmText}
-              onChange={e => {
-                setInputValue(e.target.value)
-              }}
-              disableUnderline
-              onPaste={e => e.preventDefault()}
-              onPasteCapture={e => e.preventDefault()}
-            />
+            <Typography>{confirmText}</Typography>
+            <Grid className={classes.inputWrapper}>
+              <Grid className={classes.visibleInput}>
+                {inputValue.length === 0 ? (
+                  <Typography className={classes.placeholder}>{confirmText}</Typography>
+                ) : (
+                  confirmText.split('').map((char, index) => {
+                    const isCorrect = inputValue[index]?.toLowerCase() === char?.toLowerCase()
+                    const displayChar = inputValue[index] || ' '
+
+                    return (
+                      <span
+                        key={index}
+                        className={classes.inputChar}
+                        style={{
+                          color: isCorrect ? colors.invariant.text : colors.invariant.Error
+                        }}>
+                        {displayChar}
+                      </span>
+                    )
+                  })
+                )}
+              </Grid>
+
+              <InputBase
+                value={inputValue}
+                onChange={e => {
+                  const sanitizedValue = e.target.value.replace(/\s{2,}/g, ' ')
+                  setInputValue(sanitizedValue)
+                }}
+                placeholder={confirmText}
+                inputProps={{ maxLength: confirmText.length }}
+                onPaste={e => e.preventDefault()}
+                className={classes.hiddenInput}
+              />
+            </Grid>
           </Grid>
+
           <TooltipHover
             text={
               isCorrectValue
