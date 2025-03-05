@@ -642,13 +642,15 @@ export const Swap: React.FC<ISwap> = ({
     amountFrom !== '' &&
     amountTo !== ''
 
-  const [prevOpenState, setPrevOpenState] = useState(detailsOpen && canShowDetails)
-
-  useEffect(() => {
-    if (getStateMessage() !== 'Loading') {
-      setPrevOpenState(detailsOpen && canShowDetails)
-    }
-  }, [detailsOpen, canShowDetails])
+  console.log(
+    tokenFromIndex !== null &&
+      tokenToIndex !== null &&
+      hasShowRateMessage() &&
+      (getStateMessage() === 'Loading' ||
+        (swapRate !== 0 && swapRate !== Infinity && !isNaN(swapRate))) &&
+      amountFrom !== '' &&
+      amountTo !== ''
+  )
 
   const handleRefresh = async () => {
     onRefresh(tokenFromIndex, tokenToIndex)
@@ -1078,11 +1080,7 @@ export const Swap: React.FC<ISwap> = ({
             ) : null}
           </Box>
           <TransactionDetailsBox
-            open={
-              getStateMessage() !== 'Loading'
-                ? detailsOpen && canShowDetails
-                : detailsOpen && prevOpenState
-            }
+            open={detailsOpen && canShowDetails}
             fee={canShowDetails ? pools[simulateResult.poolIndex].fee : new BN(0)}
             exchangeRate={{
               val: rateReversed ? 1 / swapRate : swapRate,
