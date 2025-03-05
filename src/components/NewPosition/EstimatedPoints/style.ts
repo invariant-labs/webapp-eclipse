@@ -6,7 +6,11 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     backgroundColor: colors.invariant.component,
     borderRadius: 24,
     padding: 24,
-    color: colors.invariant.text
+    color: colors.invariant.text,
+
+    [theme.breakpoints.down('sm')]: {
+      padding: '16px 8px'
+    }
   },
   innerWrapper: {
     [theme.breakpoints.down('md')]: {

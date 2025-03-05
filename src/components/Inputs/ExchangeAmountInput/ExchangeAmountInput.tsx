@@ -204,9 +204,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
         <Grid
           className={classNames(classes.balanceContainer, {
             [classes.showMaxButton]: showMaxButton
-          })}
-          // onClick={showMaxButton && !hideBalance ? onMaxClick : () => {}}>
-        >
+          })}>
           <Typography
             className={classes.BalanceTypography}
             onClick={() => actionButtons[0].onClick()}>

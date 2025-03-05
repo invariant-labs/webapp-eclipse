@@ -20,7 +20,7 @@ import { NormalBanner } from '@components/Leaderboard/LeaderboardBanner/NormalBa
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 
-const BANNER_STORAGE_KEY = 'invariant-banner-state-3'
+const BANNER_STORAGE_KEY = 'invariant-banner-state-4'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
 
 const RootPage: React.FC = memo(() => {
@@ -83,7 +83,7 @@ const RootPage: React.FC = memo(() => {
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
   useEffect(() => {
     const intervalId = setInterval(() => {
-      const addr = getEclipseWallet().publicKey.toString()
+      const addr = getEclipseWallet()?.publicKey.toString()
       if (
         !walletAddressRef.current ||
         (walletAddressRef.current === DEFAULT_PUBLICKEY.toString() &&

@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => ({
   wrapper: {
     padding: '0 24px',
     [theme.breakpoints.down('sm')]: {
-      padding: '0 12px'
+      padding: '0 8px'
     },
     '&:nth-of-type(odd)': {
       background: `${colors.invariant.componentDark}`
@@ -43,7 +43,9 @@ export const useStyles = makeStyles()(() => ({
       '& p': {
         ...typography.caption1
       }
-    }
+    },
+
+    padding: 0
   },
   containerNoAPY: {
     gridTemplateColumns: '5% auto 12% 15% 12%'
