@@ -59,7 +59,7 @@ const useStyles = makeStyles<StyleProps>()(
       }
     },
     buttonDisabled: {
-      color: colors.invariant.newDark,
+      color: colors.invariant.textGrey,
       background: colors.invariant.light,
       cursor: 'not-allowed',
 

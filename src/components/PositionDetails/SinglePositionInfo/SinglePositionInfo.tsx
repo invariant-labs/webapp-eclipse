@@ -1,5 +1,5 @@
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
-import { Grid, Hidden, Tooltip, Typography } from '@mui/material'
+import { Box, Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
 import { useMemo, useRef, useState } from 'react'
@@ -224,32 +224,38 @@ const SinglePositionInfo: React.FC<IProp> = ({
                       : ''
                     : 'Insufficient ETH to close position'
               }>
-              <Button
-                scheme='green'
-                disabled={isLocked || !canClosePosition}
-                onClick={() => {
-                  if (!userHasStakes) {
-                    closePosition()
-                  } else {
-                    setIsModalOpen(true)
-                    blurContent()
-                  }
-                }}>
-                {canClosePosition ? 'Close position' : 'Lacking ETH'}
-              </Button>
+              <Box>
+                <Button
+                  scheme='green'
+                  disabled={isLocked || !canClosePosition}
+                  onClick={() => {
+                    if (!userHasStakes) {
+                      closePosition()
+                    } else {
+                      setIsModalOpen(true)
+                      blurContent()
+                    }
+                  }}>
+                  {canClosePosition ? 'Close position' : 'Lacking ETH'}
+                </Button>
+              </Box>
             </TooltipHover>
             <Hidden mdUp>
               {!isLocked ? (
                 <TooltipHover text={'Lock liquidity'}>
-                  <Button scheme='pink' disabled={isLocked} onClick={onModalOpen}>
-                    <img src={lockIcon} alt='Lock' />
-                  </Button>
+                  <Box>
+                    <Button scheme='pink' disabled={isLocked} onClick={onModalOpen}>
+                      <img src={lockIcon} alt='Lock' />
+                    </Button>
+                  </Box>
                 </TooltipHover>
               ) : (
                 <TooltipHover text={'Unlocking liquidity is forbidden'}>
-                  <Button scheme='green' disabled onClick={() => {}}>
-                    <img src={unlockIcon} alt='Lock' />
-                  </Button>
+                  <Box>
+                    <Button scheme='green' disabled onClick={() => {}}>
+                      <img src={unlockIcon} alt='Lock' />
+                    </Button>
+                  </Box>
                 </TooltipHover>
               )}
             </Hidden>
