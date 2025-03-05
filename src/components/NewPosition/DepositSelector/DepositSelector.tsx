@@ -324,6 +324,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [wasRunTokenA, wasRunTokenB, canNavigate, tokens.length])
 
   const getButtonMessage = useCallback(() => {
+    if (isLoadingTicksOrTickmap) {
+      return 'Loading data...'
+    }
     if (tokenAIndex === null || tokenBIndex === null) {
       return 'Select tokens'
     }
@@ -444,7 +447,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     positionOpeningMethod,
     concentrationIndex,
     feeTierIndex,
-    minimumSliderIndex
+    minimumSliderIndex,
+    isLoadingTicksOrTickmap
   ])
 
   const handleClickDepositOptions = () => {
@@ -719,6 +723,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     autoSwapPoolData,
     autoSwapTickmap,
     autoSwapTicks,
+    isLoadingTicksOrTickmap,
     priceImpact,
     slippageToleranceCreatePosition,
     slippageToleranceSwap,
