@@ -8,7 +8,7 @@ import AnimatedButton, { ProgressState } from '@components/AnimatedButton/Animat
 import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 
-const confirmText = 'I confirm my liquidity will be locked forever'
+const confirmText = 'I confirm my liquidity will be locked permanently'
 export interface ILockLiquidityModal {
   open: boolean
   xToY: boolean
@@ -199,7 +199,7 @@ export const LockLiquidityModal = ({
               classes={{
                 input: classes.innerInput
               }}
-              placeholder='I confirm my liquidity will be locked permanently'
+              placeholder={confirmText}
               onChange={e => {
                 setInputValue(e.target.value)
               }}
@@ -220,6 +220,7 @@ export const LockLiquidityModal = ({
                 content={'Lock Position'}
                 className={classNames(classes.lockButton)}
                 onClick={() => {
+                  if (!isCorrectValue) return
                   onLock()
                   setProgress('progress')
                 }}
