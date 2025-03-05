@@ -589,6 +589,11 @@ export const promotedTiers = [
     tokenX: TETH_MAIN.address,
     tokenY: WETH_MAIN.address,
     index: 0
+  },
+  {
+    tokenX: SOL_MAIN.address,
+    tokenY: USDC_MAIN.address,
+    index: 3
   }
 ]
 
@@ -630,11 +635,9 @@ export const WETH_MIN_FAUCET_FEE_MAIN = new BN(25000)
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST = new BN(50000)
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN = new BN(25000)
 
-// export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(150000)
 export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(700000)
 export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(700000)
 
-// export const WETH_POOL_INIT_LAMPORTS_MAIN = new BN(1000000)
 export const WETH_POOL_INIT_LAMPORTS_MAIN = new BN(1750000)
 export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
 
@@ -703,7 +706,6 @@ export const defaultPrefixConfig: PrefixConfig = {
   M: 1000000,
   K: 10000
 }
-// const mainnetList = {}
 
 export const getAddressTickerMap = (network: NetworkType): { [k: string]: string } => {
   if (network !== NetworkType.Mainnet) {
@@ -717,14 +719,6 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ECEGG: 'ECEGG4YDbBevPsq5KfL8Vyk6kptY1jhsoeaiG8RMXZ7C'
     }
   } else {
-    // const parsedMainnetList = mainnetList as unknown as Record<string, Token>
-    // const result: { [k: string]: PublicKey } = {}
-
-    // Object.keys(parsedMainnetList).forEach((key: string) => {
-    //   const token = parsedMainnetList[key]
-    //   result[token.symbol] = token.address
-    // })
-
     return {
       ETH: WETH_ADDRESS[network].toString(),
       tETH: TETH_MAIN.address.toString(),
@@ -833,6 +827,11 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.09'
         },
         {
+          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          fee: '0.09'
+        },
+        {
           tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.09'
@@ -840,11 +839,6 @@ export const getPopularPools = (network: NetworkType) => {
         {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
-          fee: '0.01'
-        },
-        {
-          tokenX: 'CEBP3CqAbW4zdZA57H2wfaSG1QNdzQ72GiQEbQXyW9Tm',
-          tokenY: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
           fee: '0.01'
         }
       ]

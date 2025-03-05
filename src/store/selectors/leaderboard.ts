@@ -11,7 +11,6 @@ import { IPromotedPool } from '@store/sagas/leaderboard'
 
 const store = (s: AnyProps) => s[leaderboardSliceName] as ILeaderboardStore
 
-// Basic selectors
 export const {
   type,
   isLoading,

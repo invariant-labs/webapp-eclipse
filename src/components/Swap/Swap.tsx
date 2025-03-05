@@ -505,13 +505,6 @@ export const Swap: React.FC<ISwap> = ({
     return true
   }, [tokenFromIndex, tokenToIndex, poolTicks])
 
-  // const isInsufficientLiquidityError = useMemo(
-  //   () =>
-  //     simulateResult.poolKey === null &&
-  //     (isError(SwapError.InsufficientLiquidity) || isError(SwapError.MaxSwapStepsReached)),
-  //   [simulateResult]
-  // )
-
   const getStateMessage = () => {
     if (
       (tokenFromIndex !== null && tokenToIndex !== null && throttle) ||
@@ -1085,7 +1078,11 @@ export const Swap: React.FC<ISwap> = ({
             ) : null}
           </Box>
           <TransactionDetailsBox
-            open={getStateMessage() !== 'Loading' ? detailsOpen && canShowDetails : prevOpenState}
+            open={
+              getStateMessage() !== 'Loading'
+                ? detailsOpen && canShowDetails
+                : detailsOpen && prevOpenState
+            }
             fee={canShowDetails ? pools[simulateResult.poolIndex].fee : new BN(0)}
             exchangeRate={{
               val: rateReversed ? 1 / swapRate : swapRate,

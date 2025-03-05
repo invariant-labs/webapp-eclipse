@@ -11,7 +11,7 @@ export const useStyles = makeStyles()(() => ({
     paddingLeft: 24,
     boxSizing: 'border-box',
     [theme.breakpoints.down('sm')]: {
-      paddingLeft: 6
+      paddingLeft: 8
     }
   },
   liquidityContainer: {

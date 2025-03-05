@@ -1049,7 +1049,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Fade in={isPromotedPool} timeout={250}>
+      <Fade in={isPromotedPool} timeout={250} style={{ width: '100%' }}>
         <div>
           <EstimatedPoints
             handleClickFAQ={handleClickFAQ}
