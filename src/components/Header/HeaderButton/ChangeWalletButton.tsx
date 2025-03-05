@@ -45,7 +45,6 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   const dispatch = useDispatch()
   const itemsPerPage = useSelector(leaderboardSelectors.itemsPerPage)
 
-  // if (isDisabled) return
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
     if (!connected) {
       setIsOpenSelectWallet(true)
@@ -77,7 +76,6 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     unblurContent()
     setOpen(false)
     localStorage.setItem('WALLET_TYPE', '')
-    dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.resetCurrentUser())
     dispatch(actions.resetContentPoints())
   }

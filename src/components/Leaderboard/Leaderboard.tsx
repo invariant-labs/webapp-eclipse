@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { Box, Grid } from '@mui/material'
+import React, { useMemo, useState } from 'react'
+import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
 import {
   BANNER_STORAGE_KEY,
@@ -30,6 +30,7 @@ import { BN } from '@coral-xyz/anchor'
 import { VariantType } from 'notistack'
 import { Status } from '@store/reducers/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
+import { EcosystemExposure } from './EcosystemExposure/EcosystemExposure'
 
 interface LeaderboardProps {
   userContentPoints: CurrentContentPointsEntry[] | null
@@ -67,6 +68,7 @@ interface LeaderboardProps {
   onConnectWallet: () => void
   userAddress: PublicKey
   isLoadingLeaderboardList: boolean
+  hasTETHPosition: boolean
 }
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({
@@ -96,9 +98,12 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   totalItemsObject,
   onConnectWallet,
   userAddress,
-  isLoadingLeaderboardList
+  isLoadingLeaderboardList,
+  hasTETHPosition
 }) => {
   const { classes } = useStyles()
+
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   const [alignment, setAlignment] = useState<PointsPageContent>(PointsPageContent.Leaderboard)
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -149,15 +154,26 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
         />
       )}
       <Box className={classes.leaderBoardWrapper}>
-        <Grid display='flex' flexDirection='column' alignItems='center' gap={3} width='100%'>
+        <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
+
+        <Grid className={classes.progressWrapper}>
           <YourProgress
             userContentPoints={userContentPoints}
             userStats={userStats.total}
             estimated24hPoints={estimated24hPoints}
-            isLoadingList={isLoadingList}
+            isLoadingList={isLoadingList || isLoadingLeaderboardList}
             totalItems={totalItems}
-            walletStatus={walletStatus}
+            isConnected={isConnected}
           />
+          <EcosystemExposure
+            isLoading={isLoadingLeaderboardList || isLoadingList}
+            isConnected={isConnected}
+            userStats={userStats.total}
+            hasTETHPosition={hasTETHPosition}
+            totalItems={totalItems.total}
+          />
+        </Grid>
+        <Grid display='flex' flexDirection='column' alignItems='center' gap={3} width='100%'>
           <RewardedPools
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}

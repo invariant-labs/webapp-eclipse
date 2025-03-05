@@ -18,6 +18,9 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     [theme.breakpoints.down('md')]: {
       borderRadius: 24
     },
+    [theme.breakpoints.down('sm')]: {
+      padding: '0px 8px'
+    },
     borderRight: `1px solid  ${colors.invariant.light}`,
     display: 'flex',
     flexDirection: 'column'
@@ -68,7 +71,8 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     gap: '16px',
     backgroundColor: colors.invariant.component,
     background:
-      'linear-gradient(360deg, rgba(32, 41, 70, 0.8) 0%, rgba(17, 25, 49, 0.8) 100%), linear-gradient(180deg, #010514 0%, rgba(1, 5, 20, 0) 100%)'
+      'linear-gradient(360deg, rgba(32, 41, 70, 0.8) 0%, rgba(17, 25, 49, 0.8) 100%), linear-gradient(180deg, #010514 0%, rgba(1, 5, 20, 0) 100%)',
+    marginBottom: 8
   },
   emptyStateText: {
     ...typography.heading2,

@@ -46,7 +46,7 @@ export const useStyles = makeStyles()(() => ({
 
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: 'auto 60px 60px 60px',
-      padding: '18px 12px',
+      padding: '24px 8px',
 
       '& p': {
         justifyContent: 'flex-start',

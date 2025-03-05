@@ -17,11 +17,14 @@ export const TooltipGradient = ({ top, children, underline, ...props }: Props) =
       placement='bottom'
       TransitionComponent={TooltipTransition}
       enterTouchDelay={0}
-      PopperProps={{
-        disablePortal: true
-      }}
       {...props}>
-      <span style={{ cursor: 'pointer', textDecoration: underline ? 'underline' : '' }}>
+      <span
+        style={{
+          cursor: 'pointer',
+          textDecoration: underline ? 'underline' : '',
+          display: 'inline-flex',
+          alignItems: 'center'
+        }}>
         {children}
       </span>
     </Tooltip>
