@@ -1,7 +1,6 @@
 import React from 'react'
-import useStyles from './style'
 import { blurContent, formatLargeNumber, unblurContent } from '@utils/uiUtils'
-import { Button, useMediaQuery } from '@mui/material'
+import { useMediaQuery } from '@mui/material'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import YourPointsModal from '@components/Modals/YourPointsModal/YourPointsModals'
 import { theme } from '@static/theme'
@@ -11,13 +10,13 @@ import { printBN, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { network } from '@store/selectors/solanaConnection'
 import { LEADERBOARD_DECIMAL, NetworkType } from '@store/consts/static'
+import { Button } from '../../../common/Button/Button'
 
 export interface IProps {
   disabled?: boolean
 }
 export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
   const isXs = useMediaQuery(theme.breakpoints.down(450))
-  const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openNetworks, setOpenNetworks] = React.useState<boolean>(false)
   const currentUser = useSelector(leaderboardSelectors.currentUser)
@@ -36,10 +35,9 @@ export const YourPointsButton: React.FC<IProps> = ({ disabled = false }) => {
   return (
     <>
       <Button
-        className={classes.pointsHeaderButton}
-        variant='contained'
-        classes={{ disabled: classes.disabled }}
+        scheme='rainbow'
         disabled={disabled}
+        padding={isXs ? `0 2px` : undefined}
         onClick={handleClick}>
         <>
           {isXs ? (

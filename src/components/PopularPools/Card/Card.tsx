@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
 import GradientBorder from '@components/GradientBorder/GradientBorder'
@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
+import { Button } from '../../../common/Button/Button'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean
@@ -242,7 +243,12 @@ const Card: React.FC<ICard> = ({
                   <img className={classes.backIcon} src={backIcon} alt='Back' />
                   <Typography className={classes.backText}>Swap</Typography>
                 </Grid>
-                <Button className={classes.button} variant='contained' onClick={handleOpenPosition}>
+                <Button
+                  scheme='pink'
+                  height={32}
+                  borderRadius={8}
+                  padding='0 25px'
+                  onClick={handleOpenPosition}>
                   Deposit
                 </Button>
               </Grid>

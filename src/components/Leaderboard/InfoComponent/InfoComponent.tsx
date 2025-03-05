@@ -1,10 +1,11 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import Jupi from '@static/png/jupi.png'
 import './animation.css'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { Button } from '../../../common/Button/Button'
 
 export const InfoComponent = () => {
   const { classes } = useStyles()
@@ -28,8 +29,10 @@ export const InfoComponent = () => {
             style={{
               textDecoration: 'none'
             }}>
-            <Button className={classes.button} style={{ marginTop: '32px' }}>
-              Learn more <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+            <Button scheme='green' padding='0 42px'>
+              <Box className={classes.learnMoreButton}>
+                Learn more <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+              </Box>
             </Button>
           </Link>
         </Box>

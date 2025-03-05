@@ -1,8 +1,9 @@
-import { Button, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import classNames from 'classnames'
 import React from 'react'
 import { useStyles } from './style'
 import icons from '@static/icons'
+import { Button } from '../../common/Button/Button'
 
 export interface IEmptyPlaceholder {
   desc: string
@@ -43,9 +44,11 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
           </Typography>
           {desc?.length && <Typography className={classes.desc}>{desc}</Typography>}
           {withButton && (
-            <Button className={classes.button} onClick={onAction} variant='contained'>
-              {buttonName ? buttonName : 'Add a position'}
-            </Button>
+            <Box mt={2}>
+              <Button scheme='pink' padding='0 48px' onClick={onAction}>
+                {buttonName ? buttonName : 'Add a position'}
+              </Button>
+            </Box>
           )}
         </Grid>
       </Grid>

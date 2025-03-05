@@ -1,9 +1,10 @@
-import { Box, Button, Grid, Skeleton, Tooltip, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Tooltip, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
 import { blurContent } from '@utils/uiUtils'
 import { theme } from '@static/theme'
+import { Button } from '../../../common/Button/Button'
 
 interface IProgressItemProps {
   onModalOpen?: (open: boolean) => void
@@ -48,7 +49,9 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
       ) : isMobile && withButton ? (
         <Box display='grid' gridTemplateColumns='auto 1fr auto' gap='8px' alignItems='center'>
           <Box sx={{ visibility: 'hidden' }}>
-            <Button className={classes.button}>More</Button>
+            <Button scheme='green' height={24} borderRadius={8}>
+              More
+            </Button>
           </Box>
 
           <Typography className={classes.headerBigText} textAlign='center'>
@@ -56,7 +59,9 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           </Typography>
 
           <Button
-            className={classes.button}
+            scheme='green'
+            height={24}
+            borderRadius={8}
             onClick={() => {
               blurContent()
               onModalOpen && onModalOpen(true)
@@ -69,7 +74,9 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           <Typography className={classes.headerBigText}>{value}</Typography>
           {withButton && (
             <Button
-              className={classes.button}
+              scheme='green'
+              height={24}
+              borderRadius={8}
               onClick={() => {
                 blurContent()
                 onModalOpen && onModalOpen(true)

@@ -1,5 +1,5 @@
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
-import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
+import { Grid, Hidden, Tooltip, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
 import { useMemo, useRef, useState } from 'react'
@@ -19,6 +19,7 @@ import {
   WETH_CLOSE_POSITION_LAMPORTS_TEST
 } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
+import { Button } from '../../../common/Button/Button'
 
 interface IProp {
   fee: number
@@ -224,9 +225,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     : 'Insufficient ETH to close position'
               }>
               <Button
-                className={classes.closeButton}
+                scheme='green'
                 disabled={isLocked || !canClosePosition}
-                variant='contained'
                 onClick={() => {
                   if (!userHasStakes) {
                     closePosition()
@@ -241,21 +241,13 @@ const SinglePositionInfo: React.FC<IProp> = ({
             <Hidden mdUp>
               {!isLocked ? (
                 <TooltipHover text={'Lock liquidity'}>
-                  <Button
-                    className={classes.lockButton}
-                    disabled={isLocked}
-                    variant='contained'
-                    onClick={onModalOpen}>
+                  <Button scheme='pink' disabled={isLocked} onClick={onModalOpen}>
                     <img src={lockIcon} alt='Lock' />
                   </Button>
                 </TooltipHover>
               ) : (
                 <TooltipHover text={'Unlocking liquidity is forbidden'}>
-                  <Button
-                    disabled
-                    className={classes.unlockButton}
-                    variant='contained'
-                    onClick={() => {}}>
+                  <Button scheme='green' disabled onClick={() => {}}>
                     <img src={unlockIcon} alt='Lock' />
                   </Button>
                 </TooltipHover>
@@ -263,8 +255,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             </Hidden>
             <Hidden smUp>
               <Button
-                className={classes.button}
-                variant='contained'
+                scheme='pink'
                 onClick={() => {
                   const address1 = addressToTicker(network, tokenX.name)
                   const address2 = addressToTicker(network, tokenY.name)
