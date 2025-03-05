@@ -64,7 +64,7 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
     transaction.recentBlockhash = blockhash
     transaction.lastValidBlockHeight = lastValidBlockHeight
 
-    const signedTx = yield* call([wallet, wallet.signTransaction], transaction)
+    const signedTx = (yield* call([wallet, wallet.signTransaction], transaction)) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
