@@ -563,6 +563,17 @@ export const Swap: React.FC<ISwap> = ({
       error: boolean
     }
   ) => {
+    console.log(
+      1,
+      simulateResult.amountOut.toString(),
+      simulateResult.error,
+      '|',
+      simulateWithHopResult.simulation?.totalAmountIn.toString(),
+      simulateWithHopResult.simulation?.totalAmountOut.toString(),
+      simulateWithHopResult.simulation?.swapHopOne.status,
+      simulateWithHopResult.simulation?.swapHopOne.status,
+      simulateWithHopResult.error
+    )
     let useTwoHop = false
 
     const isSimulateError =

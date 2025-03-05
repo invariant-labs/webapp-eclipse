@@ -1282,40 +1282,66 @@ export const handleSimulateWithHop = async (
     const [, simulation] = simulations[n]
     const [, simulationBest] = simulations[best]
     const [, simulationBestFailed] = simulations[bestFailed]
+    console.log(
+      2,
+      simulation.totalAmountIn.toString(),
+      simulation.totalAmountOut.toString(),
+      simulation.swapHopOne.status,
+      simulation.swapHopOne.status
+    )
+
+    const isSwapSuccess =
+      simulation.swapHopOne.status === SimulationStatus.Ok &&
+      simulation.swapHopTwo.status === SimulationStatus.Ok
+
+    const isBestSwapFailed =
+      simulationBest.swapHopOne.status !== SimulationStatus.Ok ||
+      simulationBest.swapHopTwo.status !== SimulationStatus.Ok
 
     if (byAmountIn) {
       if (
-        simulation.totalAmountOut.gt(simulationBest.totalAmountOut) &&
-        simulationBest.swapHopOne.status === SimulationStatus.Ok &&
-        simulationBest.swapHopTwo.status === SimulationStatus.Ok
+        (simulation.totalAmountOut.gt(simulationBest.totalAmountOut) && isSwapSuccess) ||
+        (isSwapSuccess && isBestSwapFailed)
       ) {
         best = n
       }
 
-      if (simulation.totalAmountOut.gt(simulationBestFailed.totalAmountOut)) {
+      if (
+        !simulation.totalAmountOut.eq(new BN(0)) &&
+        simulation.totalAmountOut.gt(simulationBestFailed.totalAmountOut)
+      ) {
         bestFailed = n
       }
     } else {
       if (
-        simulation.totalAmountIn
-          .add(simulation.swapHopOne.accumulatedFee)
-          .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) &&
-        simulationBest.swapHopOne.status === SimulationStatus.Ok &&
-        simulationBest.swapHopTwo.status === SimulationStatus.Ok
+        (simulation.totalAmountOut.eq(amount) &&
+          simulation.totalAmountIn
+            .add(simulation.swapHopOne.accumulatedFee)
+            .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) &&
+          isSwapSuccess) ||
+        (isSwapSuccess && isBestSwapFailed)
       ) {
         best = n
       }
 
       if (
-        simulation.totalAmountIn.add(simulation.swapHopOne.accumulatedFee).eq(amount) &&
+        !simulation.totalAmountOut.eq(new BN(0)) &&
         simulation.totalAmountIn
           .add(simulation.swapHopOne.accumulatedFee)
-          .lt(simulationBestFailed.totalAmountIn)
+          .lt(
+            simulationBestFailed.totalAmountIn.add(simulationBestFailed.swapHopOne.accumulatedFee)
+          )
       ) {
         bestFailed = n
       }
     }
   }
+
+  console.log(
+    3,
+    simulations[best][1].totalAmountIn.toString(),
+    simulations[best][1].totalAmountOut.toString()
+  )
 
   if (
     simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
