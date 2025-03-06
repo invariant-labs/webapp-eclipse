@@ -229,7 +229,7 @@ const getContent = (
         sx={{
           paddingLeft: '24px',
           paddingRight: '24px',
-          [theme.breakpoints.down('sm')]: { paddingLeft: '12px', paddingRight: '12px' }
+          [theme.breakpoints.down('sm')]: { paddingLeft: '8px', paddingRight: '8px' }
         }}>
         {totalData.length > 0 ? (
           <>
@@ -346,7 +346,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
       </Grid>
 
       {totalPages >= 1 && (
-        <Box sx={isMobile ? { paddingLeft: '12px', paddingRight: '12px' } : {}}>
+        <Box sx={isMobile ? { paddingLeft: '8px', paddingRight: '8px' } : {}}>
           <Box
             sx={{
               width: '100%',

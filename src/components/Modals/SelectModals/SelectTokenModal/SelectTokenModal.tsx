@@ -190,7 +190,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
         if (balance > 0) {
           const addr = token.assetAddress.toString()
           if (prices[addr] === undefined) {
-            getTokenPrice(addr).then(price => {
+            getTokenPrice(addr, network).then(price => {
               setPrices(prev => ({ ...prev, [addr]: price || 0 }))
             })
           }

@@ -7,7 +7,6 @@ import { actions } from '@store/reducers/solanaWallet'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
 
 import { Status } from '@store/reducers/solanaConnection'
-
 import { BN } from '@coral-xyz/anchor'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { parseTokenAccountData } from '@utils/web3/data'
@@ -16,7 +15,7 @@ const SolanaWalletEvents = () => {
   const dispatch = useDispatch()
   const publicKey = useSelector(address)
   const networkStatus = useSelector(status)
-  // Solana Main Wallet
+
   React.useEffect(() => {
     const connection = getCurrentSolanaConnection()
     if (!publicKey || !connection || networkStatus !== Status.Initialized) {

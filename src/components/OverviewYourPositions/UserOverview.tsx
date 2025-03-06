@@ -35,14 +35,18 @@ export const UserOverview = () => {
   const { classes } = useStyles()
   const tokensList = useSelector(swapTokens)
   const isBalanceLoading = useSelector(balanceLoading)
-  const { processedPools, isProcesing } = useProcessedTokens(tokensList, isBalanceLoading)
+  const currentNetwork = useSelector(network)
+  const { processedPools, isProcesing } = useProcessedTokens(
+    tokensList,
+    isBalanceLoading,
+    currentNetwork
+  )
   const isLoadingList = useSelector(isLoadingPositionsList)
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isDownMd = useMediaQuery(theme.breakpoints.down('md'))
   const list = useSelector(positionsWithPoolsData)
   const [activePanel, setActivePanel] = useState<CardSwitcher>(CardSwitcher.Overview)
   const dispatch = useDispatch()
-  const currentNetwork = useSelector(network)
   const handleSwitchPools = (
     _: React.MouseEvent<HTMLElement>,
     newAlignment: CardSwitcher | null

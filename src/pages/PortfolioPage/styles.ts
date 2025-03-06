@@ -24,6 +24,7 @@ const useStyles = makeStyles()(theme => {
       }
     },
     notConnectedPlaceholder: {
+      marginTop: 65,
       height: '400px',
       width: '100%',
       borderTopLeftRadius: '24px',
@@ -34,6 +35,9 @@ const useStyles = makeStyles()(theme => {
       [theme.breakpoints.down('md')]: {
         justifyContent: 'flex-start',
         paddingTop: '90px'
+      },
+      [theme.breakpoints.down('sm')]: {
+        marginTop: 30
       },
 
       flexDirection: 'column',
