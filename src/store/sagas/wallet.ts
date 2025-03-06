@@ -54,8 +54,6 @@ import airdropAdmin from '@store/consts/airdropAdmin'
 import { createLoaderKey, ensureError, getTokenMetadata, getTokenProgramId } from '@utils/utils'
 
 import { PayloadAction } from '@reduxjs/toolkit'
-// import { actions as farmsActions } from '@reducers/farms'
-// import { actions as bondsActions } from '@reducers/bonds'
 
 export function* getWallet(): SagaGenerator<WalletAdapter> {
   const wallet = yield* call(getEclipseWallet)
@@ -147,14 +145,6 @@ export function* fetchTokensAccounts(): Generator {
   yield* put(poolsActions.addTokens(unknownTokens))
   yield* put(actions.setIsTokenBalanceLoading(false))
 }
-
-// export function* getToken(tokenAddress: PublicKey): SagaGenerator<Mint> {
-//   const connection = yield* call(getConnection)
-//   const programId = yield* call(getTokenProgramId, connection, new PublicKey(tokenAddress))
-
-//   const token = yield* call(getTokenMetadata, connection, tokenAddress, undefined, programId)
-//   return token
-// }
 
 export function* handleAirdrop(): Generator {
   const walletStatus = yield* select(status)
@@ -375,11 +365,6 @@ export function* getCollateralTokenAirdrop(
     skipPreflight: true
   })
 }
-// export function* getTokenProgram(pubKey: PublicKey): SagaGenerator<number> {
-//   const connection = yield* call(getConnection)
-//   const balance = yield* call(, pubKey)
-//   return balance
-// }
 
 export function* signAndSend(wallet: WalletAdapter, tx: Transaction): SagaGenerator<string> {
   const connection = yield* call(getConnection)
@@ -607,7 +592,6 @@ export function* handleDisconnect(): Generator {
     yield* call(disconnectWallet)
     yield* put(actions.resetState())
     yield* put(positionsActions.setPositionsList([[], { head: 0, bump: 0 }, false]))
-    // yield* put(farmsActions.setUserStakes({}))
     yield* put(
       positionsActions.setCurrentPositionRangeTicks({
         lowerTick: undefined,

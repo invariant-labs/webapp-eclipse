@@ -1,5 +1,6 @@
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
+import { NetworkType } from '@store/consts/static'
 import { printBN, getTokenPrice, ensureError } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
@@ -26,7 +27,11 @@ interface ProcessedPool {
   amount: number
 }
 
-export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolean) => {
+export const useProcessedTokens = (
+  tokensList: Token[],
+  isBalanceLoading: boolean,
+  network: NetworkType
+) => {
   const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([])
   const [isProcesing, setIsProcesing] = useState<boolean>(true)
 
@@ -43,7 +48,7 @@ export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolea
 
           let price = 0
           try {
-            const priceData = await getTokenPrice(token.assetAddress.toString() ?? '')
+            const priceData = await getTokenPrice(token.assetAddress.toString() ?? '', network)
             price = priceData ?? 0
           } catch (e: unknown) {
             const error = ensureError(e)

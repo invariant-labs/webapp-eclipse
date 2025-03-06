@@ -199,7 +199,7 @@ export const HeaderWrapper: React.FC = () => {
       <Header
         address={walletAddress}
         onNetworkSelect={(network, rpcAddress) => {
-          if (rpcAddress !== currentRpc) {
+          if (rpcAddress && rpcAddress !== currentRpc) {
             localStorage.setItem(`INVARIANT_RPC_Eclipse_${network}`, rpcAddress)
             dispatch(actions.setRPCAddress(rpcAddress))
             dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))

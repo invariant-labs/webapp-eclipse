@@ -62,8 +62,8 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       alignItems: 'center',
       color: 'white',
       flex: 1,
-      width: 'calc(100% / 3)', // Ustawienie dokładnej szerokości dla każdego przycisku
-      minWidth: 'unset', // Usuwa domyślny minWidth z MUI
+      width: 'calc(100% / 3)',
+      minWidth: 'unset',
       textTransform: 'none',
       textWrap: 'nowrap',
       border: 'none',

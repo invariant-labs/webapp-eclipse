@@ -1487,14 +1487,6 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
       userTokenY = yield* call(createAccount, poolForIndex.tokenY)
     }
 
-    // const positionStakes = yield* select(
-    //   stakesForPosition(allPositionsData[data.positionIndex].address)
-    // )
-    // const stakerProgram = yield* call(getStakerProgram, networkType, rpc)
-    // for (const stake of positionStakes) {
-    //   yield* call(unsub, stakerProgram, stake.address)
-    // }
-
     const ix = yield* call(
       [marketProgram, marketProgram.removePositionIx],
       {
@@ -1516,15 +1508,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
       }
     )
 
-    // let tx: Transaction
-
-    // if (data.claimFarmRewards) {
-    //   const claimTx = yield* call(createClaimAllPositionRewardsTx, data.positionIndex)
-
-    //   tx = claimTx.add(createIx).add(initIx).add(ix).add(unwrapIx)
-    // } else {
     const tx: Transaction = new Transaction().add(createIx).add(initIx).add(ix).add(unwrapIx)
-    // }
 
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
     tx.recentBlockhash = blockhash.blockhash
@@ -1565,7 +1549,6 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     }
 
     yield put(actions.getPositionsList())
-    // yield* put(farmsActions.getUserStakes())
 
     data.onSuccess()
 
@@ -1604,14 +1587,6 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     yield* call(handleRpcError, error.message)
   }
 }
-
-// const unsub = async (stakerProgram: Staker, key: PublicKey) => {
-//   try {
-//     await stakerProgram.program.account.userStake.unsubscribe(key)
-//   } catch (error) {
-//     console.log(error)
-//   }
-// }
 
 export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
   const loaderClosePosition = createLoaderKey()
@@ -1663,15 +1638,6 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       userTokenY = yield* call(createAccount, poolForIndex.tokenY)
     }
 
-    // const positionStakes = yield* select(
-    //   stakesForPosition(allPositionsData[action.payload.positionIndex].address)
-    // )
-    // const stakerProgram = yield* call(getStakerProgram, networkType, rpc)
-
-    // for (const stake of positionStakes) {
-    //   yield* call(unsub, stakerProgram, stake.address)
-    // }
-
     const ix = yield* call(
       [marketProgram, marketProgram.removePositionIx],
       {
@@ -1692,15 +1658,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       }
     )
 
-    // let tx: Transaction
-
-    // if (action.payload.claimFarmRewards) {
-    //   const claimTx = yield* call(createClaimAllPositionRewardsTx, action.payload.positionIndex)
-
-    //   tx = claimTx.add(ix)
-    // } else {
     const tx: Transaction = new Transaction().add(ix)
-    // }
 
     const blockhash = yield* call([connection, connection.getLatestBlockhash])
     tx.recentBlockhash = blockhash.blockhash
@@ -1740,7 +1698,6 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     }
 
     yield* put(actions.getPositionsList())
-    // yield* put(farmsActions.getUserStakes())
 
     action.payload.onSuccess()
 

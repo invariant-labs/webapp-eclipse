@@ -68,8 +68,6 @@ export function* initConnection(): Generator {
 }
 
 export function* handleNetworkChange(action: PayloadAction<NetworkType>): Generator {
-  // yield* delay(1000)
-  // window.location.reload()
   yield* put(
     snackbarsActions.add({
       message: `You are on network ${action.payload}`,
