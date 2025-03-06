@@ -16,7 +16,7 @@ import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
 import { changeToNightlyAdapter, connectStaticWallet, getEclipseWallet } from '@utils/web3/wallet'
 import { sleep } from '@invariant-labs/sdk-eclipse'
 import { getLeaderboardQueryParams } from '@store/selectors/leaderboard'
-import { generateHash } from '@utils/utils'
+import { ensureError, generateHash } from '@utils/utils'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -64,7 +64,8 @@ export const HeaderWrapper: React.FC = () => {
             itemsPerPage: leaderboardQueryParams.pageSize
           })
         )
-      } catch (error) {
+      } catch (e: unknown) {
+        const error = ensureError(e)
         console.error('Error during Nightly eager connection:', error)
       }
     }
@@ -78,10 +79,13 @@ export const HeaderWrapper: React.FC = () => {
       const walletType = localStorage.getItem('WALLET_TYPE') as WalletType | null
 
       if (walletType === WalletType.NIGHTLY) {
-        const canEagerConnect = await nightlyConnectAdapter.canEagerConnect().catch(error => {
-          console.error('Error checking eager connect:', error)
-          return false
-        })
+        const canEagerConnect = await nightlyConnectAdapter
+          .canEagerConnect()
+          .catch((e: unknown) => {
+            const error = ensureError(e)
+            console.error('Error checking eager connect:', error)
+            return false
+          })
         if (canEagerConnect) {
           await eagerConnectToNightly()
         }
@@ -110,7 +114,8 @@ export const HeaderWrapper: React.FC = () => {
       }
 
       return false
-    } catch (error) {
+    } catch (e: unknown) {
+      const error = ensureError(e)
       console.error('Error accessing localStorage:', error)
       return true
     }

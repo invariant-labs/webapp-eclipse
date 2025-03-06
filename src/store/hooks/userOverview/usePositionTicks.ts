@@ -4,6 +4,7 @@ import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 import { NetworkType } from '@store/consts/static'
+import { ensureError } from '@utils/utils'
 
 interface PositionTicks {
   lowerTick: Tick | undefined
@@ -64,8 +65,10 @@ export const usePositionTicks = ({
         upperTick,
         loading: false
       })
-    } catch (error) {
+    } catch (e: unknown) {
+      const error = ensureError(e)
       console.error('Error fetching ticks:', error)
+
       setPositionTicks({
         lowerTick: undefined,
         upperTick: undefined,

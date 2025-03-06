@@ -8,6 +8,7 @@ import { creatorState } from '@store/selectors/creator'
 import { TokenCreator } from '@components/TokenCreator/TokenCreator'
 import { validateDecimals, validateSupply } from '@utils/tokenCreatorUtils'
 import { FormData } from '@store/consts/tokenCreator/types'
+import { ensureError } from '@utils/utils'
 
 export const TokenCreatorWrapper: React.FC = () => {
   const currentNetwork = useSelector(network)
@@ -35,7 +36,8 @@ export const TokenCreatorWrapper: React.FC = () => {
       }
 
       dispatch(actions.createToken({ data, network: currentNetwork }))
-    } catch (error) {
+    } catch (e: unknown) {
+      const error = ensureError(e)
       console.error('Error submitting form:', error)
     }
   }
