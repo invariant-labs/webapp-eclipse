@@ -119,7 +119,11 @@ const MarketEvents = () => {
 
   // User position pool subscriptions
   useEffect(() => {
-    if (networkStatus !== Status.Initialized || !marketProgram) {
+    if (
+      networkStatus !== Status.Initialized ||
+      !marketProgram ||
+      (!location.pathname.startsWith(`/portfolio`) && !location.pathname.startsWith(`/position`))
+    ) {
       return
     }
 
@@ -209,7 +213,8 @@ const MarketEvents = () => {
     positionsList,
     networkStatus,
     marketProgram,
-    currentPositionIndex
+    currentPositionIndex,
+    location.pathname
   ])
 
   useEffect(() => {
@@ -279,6 +284,13 @@ const MarketEvents = () => {
     ) {
       marketProgram.program.account.pool.unsubscribe(newPositionSubscribedPool)
       setNewPositionSubscribedPool(PublicKey.default)
+    }
+    // Unsubscribe from position details pools on different pages than portfolio
+    if (!location.pathname.startsWith(`/portfolio`) && !location.pathname.startsWith(`/position`)) {
+      for (const pool of Array.from(subscribedPositionsPools)) {
+        marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
+        subscribedPositionsPools.delete(pool)
+      }
     }
   }, [location.pathname])
 
