@@ -19,6 +19,7 @@ import {
   lockedPositionsWithPoolsData,
   positionsWithPoolsData
 } from '@store/selectors/positions'
+import { useLocation } from 'react-router-dom'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -39,6 +40,8 @@ const MarketEvents = () => {
   const [newPositionSubscribedPool, setNewPositionSubscribedPool] = useState<PublicKey>(
     PublicKey.default
   )
+
+  const location = useLocation()
 
   useEffect(() => {
     const connection = getCurrentSolanaConnection()
@@ -285,6 +288,25 @@ const MarketEvents = () => {
       }
     }
   }, [tokenFrom, tokenTo])
+
+  useEffect(() => {
+    // Unsubscribe from swap pools on different pages than swap
+    if (!location.pathname.startsWith('/exchange')) {
+      for (const pool of Array.from(subscribedSwapPools)) {
+        marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
+        subscribedSwapPools.delete(pool)
+      }
+    }
+
+    // Unsubscribe from new position pool on different pages than new position
+    if (
+      !location.pathname.startsWith(`/newPosition`) &&
+      !newPositionSubscribedPool.equals(PublicKey.default)
+    ) {
+      marketProgram.program.account.pool.unsubscribe(newPositionSubscribedPool)
+      setNewPositionSubscribedPool(PublicKey.default)
+    }
+  }, [location.pathname])
 
   return null
 }
