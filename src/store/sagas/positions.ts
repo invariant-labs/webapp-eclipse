@@ -2018,10 +2018,6 @@ export function* getCurrentPositionRangeTicksHandler(): Generator {
   yield* takeEvery(actions.getCurrentPositionRangeTicks, handleGetCurrentPositionRangeTicks)
 }
 
-export function* updatePositionTicksRangeHandler(): Generator {
-  yield* takeEvery(actions.updatePositionTicksRange, handleUpdatePositionsRangeTicks)
-}
-
 export function* positionsSaga(): Generator {
   yield all(
     [
@@ -2033,8 +2029,7 @@ export function* positionsSaga(): Generator {
       claimAllFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,
-      getCurrentPositionRangeTicksHandler,
-      updatePositionTicksRangeHandler
+      getCurrentPositionRangeTicksHandler
     ].map(spawn)
   )
 }
