@@ -200,6 +200,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   const navigate = useNavigate()
 
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [positionOpeningMethod, setPositionOpeningMethod] = useState<PositionOpeningMethod>(
     initialOpeningPositionMethod
@@ -1049,7 +1050,12 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Fade in={isPromotedPool} timeout={250} style={{ width: '100%' }}>
+      <Fade
+        in={isPromotedPool}
+        timeout={250}
+        style={{ width: '100%' }}
+        unmountOnExit={isMd}
+        mountOnEnter={isMd}>
         <div>
           <EstimatedPoints
             handleClickFAQ={handleClickFAQ}
