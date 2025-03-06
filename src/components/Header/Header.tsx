@@ -52,7 +52,6 @@ export const Header: React.FC<IHeader> = ({
   const { classes } = useStyles()
   const navigate = useNavigate()
 
-  const is650Down = useMediaQuery(theme.breakpoints.down(650))
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
 
   const routes = [
@@ -130,8 +129,8 @@ export const Header: React.FC<IHeader> = ({
       <Grid container className={classes.root} direction='row' alignItems='center' wrap='nowrap'>
         <Grid container item className={classes.leftSide} justifyContent='flex-start'>
           <CardMedia
-            className={is650Down ? classes.logoShort : classes.logo}
-            image={is650Down ? icons.LogoShort : icons.LogoTitle}
+            className={classes.logo}
+            image={icons.LogoTitle}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
                 navigate('/exchange')
@@ -173,6 +172,15 @@ export const Header: React.FC<IHeader> = ({
         </Grid>
 
         <Grid container item className={classes.buttons} wrap='nowrap'>
+          <CardMedia
+            className={classes.logoShort}
+            image={icons.LogoShort}
+            onClick={() => {
+              if (!activePath.startsWith('exchange')) {
+                navigate('/exchange')
+              }
+            }}
+          />
           <Bar
             rpcs={rpcs}
             activeNetwork={typeOfNetwork}

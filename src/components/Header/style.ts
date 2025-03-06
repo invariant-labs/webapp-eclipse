@@ -29,6 +29,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       minWidth: 40,
       height: 30,
       marginRight: 8,
+      [theme.breakpoints.up(650)]: {
+        display: 'none'
+      },
 
       '&:hover': {
         cursor: 'pointer'
@@ -68,7 +71,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       },
 
       [theme.breakpoints.down('sm')]: {
-        gap: 8
+        justifyContent: 'space-between'
       }
     },
     leftButtons: {
@@ -117,6 +120,9 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     leftSide: {
       width: 'auto',
+      [theme.breakpoints.down(650)]: {
+        display: 'none'
+      },
 
       [theme.breakpoints.up(1450)]: {
         flex: '1 1 0%'
