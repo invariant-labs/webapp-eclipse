@@ -200,7 +200,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   const navigate = useNavigate()
 
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const [positionOpeningMethod, setPositionOpeningMethod] = useState<PositionOpeningMethod>(
     initialOpeningPositionMethod
