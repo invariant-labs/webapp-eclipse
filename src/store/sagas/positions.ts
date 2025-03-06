@@ -45,6 +45,7 @@ import {
   createLiquidityPlot,
   createLoaderKey,
   createPlaceholderLiquidityPlot,
+  ensureError,
   getLiquidityTicksByPositionsList,
   getPositionsAddressesFromRange,
   printBN
@@ -292,7 +293,8 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
 
     closeSnackbar(loaderCreatePool)
     yield put(snackbarsActions.remove(loaderCreatePool))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     yield put(actions.setInitPositionSuccess(false))
@@ -323,7 +325,7 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -510,7 +512,8 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     closeSnackbar(loaderCreatePosition)
     yield put(snackbarsActions.remove(loaderCreatePosition))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     yield put(actions.setInitPositionSuccess(false))
@@ -541,7 +544,7 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -730,7 +733,8 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
 
     closeSnackbar(loaderCreatePosition)
     yield put(snackbarsActions.remove(loaderCreatePosition))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     yield put(actions.setInitPositionSuccess(false))
@@ -761,7 +765,7 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -812,8 +816,10 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
         rawTickIndexes: rawTicks.map(t => t.index)
       })
     )
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
+
     const data = createPlaceholderLiquidityPlot(
       action.payload.isXtoY,
       10,
@@ -823,7 +829,7 @@ export function* handleGetCurrentPlotTicks(action: PayloadAction<GetCurrentTicks
     )
     yield put(actions.setErrorPlotTicks(data))
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -884,7 +890,10 @@ export function* handleGetPositionsList() {
         ...position,
         address: lockedAddresses[index]
       }))
-    } catch (e) {
+    } catch (e: unknown) {
+      const error = ensureError(e)
+      console.log(error)
+
       lockedPositions = []
     }
 
@@ -914,11 +923,14 @@ export function* handleGetPositionsList() {
 
     yield* put(actions.setLockedPositionsList(lockedPositions))
     yield* put(actions.setPositionsList([positions, { head, bump }, true]))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     yield* put(actions.setLockedPositionsList([]))
     yield* put(actions.setPositionsList([[], { head: 0, bump: 0 }, false]))
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -1066,7 +1078,8 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
 
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     closeSnackbar(loaderClaimFee)
@@ -1095,7 +1108,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -1233,7 +1246,8 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
 
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     closeSnackbar(loaderClaimFee)
@@ -1263,7 +1277,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -1378,10 +1392,11 @@ export function* handleClaimAllFees() {
     yield put(actions.calculateTotalUnclaimedFees())
 
     yield* put(actions.setAllClaimLoader(false))
-  } catch (error) {
-    yield* put(actions.setAllClaimLoader(false))
-
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
+
+    yield* put(actions.setAllClaimLoader(false))
 
     closeSnackbar(loaderClaimAllFees)
     yield put(snackbarsActions.remove(loaderClaimAllFees))
@@ -1409,13 +1424,7 @@ export function* handleClaimAllFees() {
       )
     }
 
-    try {
-      if (error instanceof Error) {
-        yield* call(handleRpcError, error.message)
-      }
-    } catch (rpcError) {
-      console.error('RPC error handling failed:', rpcError)
-    }
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -1545,7 +1554,8 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
 
     closeSnackbar(loaderClosePosition)
     yield put(snackbarsActions.remove(loaderClosePosition))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     closeSnackbar(loaderClosePosition)
@@ -1574,7 +1584,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -1693,7 +1703,8 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
 
     closeSnackbar(loaderClosePosition)
     yield put(snackbarsActions.remove(loaderClosePosition))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     closeSnackbar(loaderClosePosition)
@@ -1722,7 +1733,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -1752,10 +1763,11 @@ export function* handleGetSinglePosition(
         position
       })
     )
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -1820,10 +1832,83 @@ export function* handleGetCurrentPositionRangeTicks(
         })
       )
     }
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
+  }
+}
+
+export function* handleUpdatePositionsRangeTicks(
+  action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+) {
+  try {
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const wallet = yield* call(getWallet)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    const { positionId, fetchTick } = action.payload
+
+    const positionData = yield* select(singlePositionData(positionId))
+
+    if (typeof positionData === 'undefined') {
+      return
+    }
+
+    const pair = new Pair(positionData.poolData.tokenX, positionData.poolData.tokenY, {
+      fee: positionData.poolData.fee,
+      tickSpacing: positionData.poolData.tickSpacing
+    })
+
+    if (fetchTick === 'lower') {
+      const lowerTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.lowerTickIndex
+      )
+
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: lowerTick.index,
+          upperTick: positionData.upperTickIndex
+        })
+      )
+    } else if (fetchTick === 'upper') {
+      const upperTick = yield* call(
+        [marketProgram, marketProgram.getTick],
+        pair,
+        positionData.upperTickIndex
+      )
+
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: positionData.lowerTickIndex,
+          upperTick: upperTick.index
+        })
+      )
+    } else {
+      const { lowerTick, upperTick } = yield* all({
+        lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
+        upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
+      })
+
+      yield put(
+        actions.setPositionRangeTicks({
+          positionId: positionId,
+          lowerTick: lowerTick.index,
+          upperTick: upperTick.index
+        })
+      )
+    }
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -1894,7 +1979,9 @@ export function* handleCalculateTotalUnclaimedFees() {
     }, 0)
 
     yield* put(actions.setUnclaimedFees(isFinite(total) ? total : 0))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+
     console.error('Error calculating unclaimed fees:', error)
     yield* put(actions.setUnclaimedFeesError())
   }

@@ -24,7 +24,7 @@ import {
 import { BN } from '@coral-xyz/anchor'
 import { PoolStructure, Position } from '@invariant-labs/sdk-eclipse/src/market'
 import { isLoadingPositionsList } from '@store/selectors/positions'
-import { checkDataDelay, hexToDate } from '@utils/utils'
+import { checkDataDelay, ensureError, hexToDate } from '@utils/utils'
 import {
   BANNER_HIDE_DURATION,
   BANNER_STORAGE_KEY,
@@ -185,7 +185,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
             localStorage.removeItem(BANNER_STORAGE_KEY)
             setShowWarningBanner(true)
           }
-        } catch (error) {
+        } catch (e: unknown) {
+          const error = ensureError(e)
           console.error('Error parsing banner state:', error)
           localStorage.removeItem(BANNER_STORAGE_KEY)
         }
