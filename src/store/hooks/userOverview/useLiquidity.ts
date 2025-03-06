@@ -1,7 +1,7 @@
 import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
-import { printBN } from '@utils/utils'
+import { ensureError, printBN } from '@utils/utils'
 import { useMemo } from 'react'
 
 export const useLiquidity = (position: ISinglePositionData | undefined) => {
@@ -17,7 +17,9 @@ export const useLiquidity = (position: ISinglePositionData | undefined) => {
           ),
           position.tokenX.decimals
         )
-      } catch (error) {
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        console.log(error)
         return 0
       }
     }
@@ -37,7 +39,8 @@ export const useLiquidity = (position: ISinglePositionData | undefined) => {
           ),
           position.tokenY.decimals
         )
-      } catch (error) {
+      } catch (e: unknown) {
+        const error = ensureError(e)
         console.log(error)
         return 0
       }

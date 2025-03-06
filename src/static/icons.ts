@@ -77,8 +77,17 @@ import githubFill from './svg/githubFill.svg'
 import mediumFill from './svg/MediumFill.svg'
 import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
+import settings2 from './svg/settings2.svg'
+import mainnetGlow from './svg/mainnetGlow.svg'
+import testnetGlow from './svg/testnetGlow.svg'
+import active2 from './svg/active2.svg'
+import solanaGlow from './svg/solanaGlow.svg'
+import eclipseGlow from './svg/eclipseGlow.svg'
+import alephiumGlow from './svg/alephiumGlow.svg'
 import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
+import settings3 from './svg/settings3.svg'
+import faucet from './svg/faucet.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -160,8 +169,17 @@ const icons: { [key: string]: string } = {
   airdropGrey,
   infoError,
   okxLogo,
+  settings2,
+  mainnetGlow,
+  testnetGlow,
+  active2,
+  solanaGlow,
+  eclipseGlow,
+  alephiumGlow,
   liquidityEmpty,
-  assetsEmpty
+  assetsEmpty,
+  settings3,
+  faucet
 }
 
 export default icons
