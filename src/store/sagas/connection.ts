@@ -6,6 +6,7 @@ import { network, rpcAddress, rpcStatus } from '@store/selectors/solanaConnectio
 import { getSolanaConnection } from '@utils/web3/connection'
 import { actions, RpcStatus, Status } from '@store/reducers/solanaConnection'
 import { NetworkType, RECOMMENDED_RPC_ADDRESS } from '@store/consts/static'
+import { ensureError } from '@utils/utils'
 
 export function* handleRpcError(error: string): Generator {
   const currentRpc = yield* select(rpcAddress)
@@ -49,8 +50,10 @@ export function* initConnection(): Generator {
       })
     )
     yield* put(actions.setStatus(Status.Initialized))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
+
     yield* put(actions.setStatus(Status.Error))
     yield put(
       snackbarsActions.add({
@@ -60,7 +63,7 @@ export function* initConnection(): Generator {
       })
     )
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 

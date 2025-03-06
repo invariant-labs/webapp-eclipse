@@ -12,6 +12,7 @@ export const {
   positionsList,
   unclaimedFees,
   plotTicks,
+  currentPoolIndex,
   prices,
   currentPositionId,
   currentPositionTicks,
@@ -20,6 +21,7 @@ export const {
 } = keySelectors(store, [
   'lastPage',
   'positionsList',
+  'currentPoolIndex',
   'unclaimedFees',
   'plotTicks',
   'prices',
