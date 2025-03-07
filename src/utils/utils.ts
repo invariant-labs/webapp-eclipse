@@ -1938,8 +1938,9 @@ export const calculatePoints = (
 }
 
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
-  neededValue =
-    neededValue > concentrationArray.length ? concentrationArray.length - 1 : neededValue
+  if (neededValue > concentrationArray[concentrationArray.length - 1]) {
+    return concentrationArray.length - 1
+  }
 
   let concentrationIndex = 0
 
