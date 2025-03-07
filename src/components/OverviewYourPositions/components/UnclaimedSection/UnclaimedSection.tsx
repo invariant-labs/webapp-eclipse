@@ -3,7 +3,7 @@ import { formatNumberWithoutSuffix } from '@utils/utils'
 import { theme } from '@static/theme'
 import loadingAnimation from '@static/gif/loading.gif'
 import { useStyles } from './styles'
-import { Button } from '../../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 interface UnclaimedSectionProps {
   unclaimedTotal: number

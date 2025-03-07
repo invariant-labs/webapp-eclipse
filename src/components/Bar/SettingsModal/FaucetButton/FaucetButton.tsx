@@ -1,6 +1,6 @@
 import icons from '@static/icons'
 import { useStyles } from './style'
-import { Button } from '../../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 import { Box } from '@mui/material'
 
 type Props = {

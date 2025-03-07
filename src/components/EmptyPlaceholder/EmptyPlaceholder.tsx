@@ -3,7 +3,7 @@ import classNames from 'classnames'
 import React from 'react'
 import { useStyles } from './style'
 import icons from '@static/icons'
-import { Button } from '../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 export interface IEmptyPlaceholder {
   desc: string

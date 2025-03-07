@@ -5,7 +5,7 @@ import './animation.css'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 export const InfoComponent = () => {
   const { classes } = useStyles()

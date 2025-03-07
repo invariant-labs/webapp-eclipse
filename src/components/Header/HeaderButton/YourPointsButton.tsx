@@ -10,7 +10,7 @@ import { printBN, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { network } from '@store/selectors/solanaConnection'
 import { LEADERBOARD_DECIMAL, NetworkType } from '@store/consts/static'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 export interface IProps {
   disabled?: boolean

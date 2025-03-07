@@ -13,7 +13,7 @@ import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { FormatNumberThreshold, PrefixConfig } from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 export interface BoxInfoToken extends Omit<ILiquidityToken, 'claimValue' | 'liqValue'> {
   value: number

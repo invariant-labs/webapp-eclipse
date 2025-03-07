@@ -4,7 +4,7 @@ import useStyles from './styles'
 import infoIcon from '@static/svg/info.svg'
 import { blurContent } from '@utils/uiUtils'
 import { theme } from '@static/theme'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 interface IProgressItemProps {
   onModalOpen?: (open: boolean) => void

@@ -25,7 +25,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean

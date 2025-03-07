@@ -13,7 +13,7 @@ import { BN } from '@coral-xyz/anchor'
 import { network } from '@store/selectors/solanaConnection'
 import { NetworkType } from '@store/consts/static'
 import { formatLargeNumber } from '@utils/uiUtils'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 export interface ISelectNetworkModal {
   open: boolean

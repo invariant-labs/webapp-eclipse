@@ -12,7 +12,7 @@ import {
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'
 

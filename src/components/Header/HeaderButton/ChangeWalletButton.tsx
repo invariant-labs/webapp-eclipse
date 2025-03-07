@@ -9,7 +9,7 @@ import SelectWalletModal from '@components/Modals/SelectWalletModal/SelectWallet
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 export interface IProps {
   name: string

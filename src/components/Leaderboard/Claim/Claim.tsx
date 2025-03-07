@@ -13,7 +13,7 @@ import RewardsList from './RewardsList/RewardsList'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { CurrentUser } from '@store/reducers/leaderboard'
 import { PublicKey } from '@solana/web3.js'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 interface ClaimProps {
   walletStatus: Status

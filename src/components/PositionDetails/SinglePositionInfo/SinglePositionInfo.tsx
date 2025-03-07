@@ -19,7 +19,7 @@ import {
   WETH_CLOSE_POSITION_LAMPORTS_TEST
 } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
-import { Button } from '../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 interface IProp {
   fee: number

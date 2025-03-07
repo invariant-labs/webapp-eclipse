@@ -32,7 +32,7 @@ import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
-import { Button } from '../../../../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 interface ILoadingStates {
   pairName?: boolean

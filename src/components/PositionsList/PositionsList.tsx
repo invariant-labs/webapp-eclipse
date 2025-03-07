@@ -23,7 +23,7 @@ import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/
 import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
 import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
-import { Button } from '../../common/Button/Button'
+import { Button } from '@common/Button/Button'
 
 export enum LiquidityPools {
   Standard = 'Standard',
