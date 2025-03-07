@@ -10,7 +10,7 @@ import {
   USDC_TEST,
   WETH_TEST
 } from '@store/consts/static'
-import { PaginationList } from '@components/Pagination/Pagination'
+import { PaginationList } from '@common/Pagination/Pagination'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
