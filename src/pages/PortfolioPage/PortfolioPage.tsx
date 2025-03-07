@@ -28,23 +28,26 @@ const PortfolioPage: React.FC = () => {
         ) : (
           <Box className={classes.notConnectedPlaceholder}>
             <img src={icons.empty} height={96} width={96} />
-            <Typography style={{ color: colors.invariant.textGrey, ...typography.body2 }}>
-              Wallet is not connected.
+            <Typography
+              style={{ color: colors.invariant.text, ...typography.heading2, marginBottom: '8px' }}>
+              Wallet is not connected
             </Typography>
             <Typography style={{ color: colors.invariant.textGrey, ...typography.body2 }}>
               No liquidity positions to show.
             </Typography>
-            <ChangeWalletButton
-              name='Connect wallet'
-              onConnect={() => {
-                dispatch(walletActions.connect(false))
-              }}
-              onDisconnect={() => {
-                dispatch(walletActions.disconnect())
-              }}
-              connected={false}
-              className={classes.button}
-            />
+            <Box mt={3}>
+              <ChangeWalletButton
+                name='Connect wallet'
+                onConnect={() => {
+                  dispatch(walletActions.connect(false))
+                }}
+                onDisconnect={() => {
+                  dispatch(walletActions.disconnect())
+                }}
+                connected={false}
+                className={classes.button}
+              />
+            </Box>
           </Box>
         )}
       </Grid>

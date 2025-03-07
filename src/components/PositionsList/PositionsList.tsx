@@ -150,6 +150,8 @@ export const PositionsList: React.FC<IProps> = ({
       return (
         <EmptyPlaceholder
           newVersion
+          themeDark
+          roundedCorners
           desc={
             noInitialPositions
               ? 'Add your first position by pressing the button and start earning!'

@@ -11,7 +11,7 @@ import { PayloadAction } from '@reduxjs/toolkit'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as positionsActions } from '@store/reducers/positions'
 import { DEFAULT_PUBLICKEY, SIGNING_SNACKBAR_CONFIG } from '@store/consts/static'
-import { createLoaderKey } from '@utils/utils'
+import { createLoaderKey, ensureError } from '@utils/utils'
 import { closeSnackbar } from 'notistack'
 
 export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) {
@@ -102,7 +102,10 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
       return
     }
     yield put(actions.setLockSuccess(false))
-  } catch (e) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     yield put(actions.setLockSuccess(false))
     closeSnackbar(loaderLockPosition)
     yield put(snackbarsActions.remove(loaderLockPosition))
