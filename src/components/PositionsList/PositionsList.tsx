@@ -1,4 +1,4 @@
-import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
+import { INoConnected, NoConnected } from '@common/NoConnected/NoConnected'
 import {
   Box,
   Button as MuiButton,
