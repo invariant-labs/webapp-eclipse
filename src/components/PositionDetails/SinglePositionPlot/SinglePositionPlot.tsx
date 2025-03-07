@@ -1,5 +1,5 @@
 import LiquidationRangeInfo from '@components/PositionDetails/LiquidationRangeInfo/LiquidationRangeInfo'
-import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 
 import { Card, Grid, Tooltip, Typography } from '@mui/material'
 import activeLiquidity from '@static/svg/activeLiquidity.svg'
