@@ -120,7 +120,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       index: 0,
       x: 0
     }
-  }, [position?.id])
+  }, [position?.id, position?.poolData?.sqrtPrice])
 
   const leftRange = useMemo(() => {
     if (position) {
