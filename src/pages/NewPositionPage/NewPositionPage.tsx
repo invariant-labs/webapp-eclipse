@@ -54,7 +54,7 @@ const NewPositionPage: React.FC = () => {
           initialTokenFrom={tokenFrom}
           initialTokenTo={tokenTo}
           initialFee={fee}
-          initialConcentration={concentration && +concentration ? concentration : '34'}
+          initialConcentration={concentration && +concentration > 1 ? concentration : '34'}
           initialIsRange={isRange ? isRange?.toLocaleLowerCase() === 'true' : null}
         />
       </Grid>
