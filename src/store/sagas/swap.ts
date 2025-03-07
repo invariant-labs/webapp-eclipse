@@ -24,7 +24,7 @@ import {
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { createLoaderKey } from '@utils/utils'
+import { createLoaderKey, ensureError } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createNativeAtaInstructions,
@@ -274,7 +274,8 @@ export function* handleSwapWithETH(): Generator {
 
     closeSnackbar(loaderSwappingTokens)
     yield put(snackbarsActions.remove(loaderSwappingTokens))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     yield put(swapActions.setSwapSuccess(false))
@@ -305,7 +306,7 @@ export function* handleSwapWithETH(): Generator {
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -437,7 +438,8 @@ export function* handleSwap(): Generator {
 
     closeSnackbar(loaderSwappingTokens)
     yield put(snackbarsActions.remove(loaderSwappingTokens))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
     yield put(swapActions.setSwapSuccess(false))
@@ -468,7 +470,7 @@ export function* handleSwap(): Generator {
       )
     }
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
