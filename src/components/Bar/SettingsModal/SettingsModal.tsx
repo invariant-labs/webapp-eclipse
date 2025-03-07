@@ -6,7 +6,7 @@ import { NetworkType } from '@store/consts/static'
 import { ISelectNetwork } from '@store/consts/types'
 import { Modal } from '../Modal/Modal'
 import { FaucetButton } from './FaucetButton/FaucetButton'
-import { Separator } from '@components/Separator/Separator'
+import { Separator } from '@common/Separator/Separator'
 import { useModal } from '../Modal/useModal'
 
 type Props = {
