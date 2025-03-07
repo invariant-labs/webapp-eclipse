@@ -5,7 +5,7 @@ import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import icons from '@static/icons'
 import { getButtonClassName } from '@utils/uiUtils'
-import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
+import { OutlinedButton } from '@common/OutlinedButton/OutlinedButton'
 
 interface ActionButton {
   label: string
