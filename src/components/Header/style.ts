@@ -60,7 +60,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       width: 'auto',
       justifyContent: 'flex-end',
-      gap: 16,
+      gap: 12,
       flexWrap: 'nowrap',
       alignItems: 'center',
       [theme.breakpoints.up(1450)]: {
