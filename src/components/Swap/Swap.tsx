@@ -333,7 +333,7 @@ export const Swap: React.FC<ISwap> = ({
             ))
       )
       setIsFirstPairGivingPoints(isFirstPoints)
-      setIsFirstPairGivingPoints(isSecondPoints)
+      setIsSecondPairGivingPoints(isSecondPoints)
     } else {
       const isPoints = promotedSwapPairs.some(
         item =>
@@ -377,22 +377,22 @@ export const Swap: React.FC<ISwap> = ({
 
       if (swapType === SwapType.WITH_HOP) {
         const firstFeed = feeds[simulationPath.tokenFrom?.assetAddress.toString() ?? '']
-        const secondFeed = feeds[simulationPath.tokenTo?.assetAddress.toString() ?? '']
+        const secondFeed = feeds[simulationPath.tokenBetween?.assetAddress.toString() ?? '']
 
         const firstPoints = calculatePoints(
           simulationPath.firstAmount ?? new BN(0),
           simulationPath.tokenFrom?.decimals ?? 0,
           simulationPath.firstFee ?? new BN(0),
-          firstFeed.price,
-          firstFeed.priceDecimals,
+          firstFeed?.price ?? '0',
+          firstFeed?.priceDecimals ?? 0,
           pointsPerUSD
         )
         const secondPoints = calculatePoints(
           simulationPath.secondAmount ?? new BN(0),
           simulationPath.tokenBetween?.decimals ?? 0,
           simulationPath.secondFee,
-          secondFeed.price,
-          secondFeed.priceDecimals,
+          secondFeed?.price ?? '0',
+          secondFeed?.priceDecimals ?? 0,
           pointsPerUSD
         )
         setPointsForSwap(firstPoints.add(secondPoints))
