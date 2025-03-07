@@ -22,6 +22,7 @@ import {
   convertBalanceToBN,
   findPairs,
   handleSimulate,
+  handleSimulateWithHop,
   printBN,
   trimLeadingZeros
 } from '@utils/utils'
@@ -41,12 +42,13 @@ import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
-import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
+import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
 import icons from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
+import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 
 export interface Pools {
   tokenX: PublicKey
@@ -124,6 +126,22 @@ export interface ISwap {
   >
   promotedSwapPairs: { tokenX: string; tokenY: string }[]
   swapMultiplier: string
+  market: Market
+  tokensDict: Record<string, SwapToken>
+  swapAccounts: FetcherRecords
+  swapIsLoading: boolean
+}
+
+export type SimulationPath = {
+  tokenFrom: SwapToken | null
+  tokenBetween: SwapToken | null
+  tokenTo: SwapToken | null
+  firstFee: BN | null
+  secondFee: BN | null
+  firstAmount: BN | null
+  secondAmount: BN | null
+  firstPriceImpact: BN | null
+  secondPriceImpact: BN | null
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -164,13 +182,21 @@ export const Swap: React.FC<ISwap> = ({
   pointsPerUsdFee,
   feeds,
   promotedSwapPairs,
-  swapMultiplier
+  swapMultiplier,
+  market,
+  tokensDict,
+  swapAccounts,
+  swapIsLoading
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
     DEFAULT = 'default',
     FROM = 'from',
     TO = 'to'
+  }
+  enum SwapType {
+    NORMAL,
+    WITH_HOP
   }
   const [tokenFromIndex, setTokenFromIndex] = React.useState<number | null>(null)
   const [tokenToIndex, setTokenToIndex] = React.useState<number | null>(null)
@@ -185,7 +211,8 @@ export const Swap: React.FC<ISwap> = ({
   const [settings, setSettings] = React.useState<boolean>(false)
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
-  const [isPairGivingPoints, setIsPairGivingPoints] = React.useState<boolean>(false)
+  const [isFirstPairGivingPoints, setIsFirstPairGivingPoints] = React.useState<boolean>(false)
+  const [isSecondPairGivingPoints, setIsSecondPairGivingPoints] = React.useState<boolean>(false)
   const [rateReversed, setRateReversed] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
@@ -197,7 +224,7 @@ export const Swap: React.FC<ISwap> = ({
     poolIndex: number
     AmountOutWithFee: BN
     estimatedPriceAfterSwap: BN
-    // minimumReceived: BN
+    minimumReceived: BN
     priceImpact: BN
     error: string[]
   }>({
@@ -205,12 +232,32 @@ export const Swap: React.FC<ISwap> = ({
     poolIndex: 0,
     AmountOutWithFee: new BN(0),
     estimatedPriceAfterSwap: new BN(0),
-    // minimumReceived: new BN(0),
+    minimumReceived: new BN(0),
     priceImpact: new BN(0),
     error: []
   })
   const [isPointsPopoverOpen, setIsPointsPopoverOpen] = useState(false)
   const pointsBoxRef = useRef<HTMLDivElement>(null)
+  const [simulateWithHopResult, setSimulateWithHopResult] = useState<{
+    simulation: SimulationTwoHopResult | null
+    route: [Pair, Pair] | null
+    error: boolean
+  }>({ simulation: null, route: null, error: false })
+  const [simulationPath, setSimulationPath] = useState<SimulationPath>({
+    tokenFrom: null,
+    tokenBetween: null,
+    tokenTo: null,
+    firstFee: null,
+    secondFee: null,
+    firstAmount: null,
+    secondAmount: null,
+    firstPriceImpact: null,
+    secondPriceImpact: null
+  })
+  const [bestAmount, setBestAmount] = useState(new BN(0))
+  const [swapType, setSwapType] = useState(SwapType.NORMAL)
+  const [addBlur, setAddBlur] = useState(false)
+
   const handlePointerEnter = () => {
     setIsPointsPopoverOpen(true)
   }
@@ -226,8 +273,13 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
+  const priceImpact = Math.max(
+    +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
+    +printBN(+simulationPath.secondPriceImpact, DECIMAL - 2)
+  )
+
   const IS_ERROR_LABEL_SHOW =
-    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 5 ||
+    priceImpact > 5 ||
     tokens[tokenFromIndex ?? '']?.isUnknown ||
     tokens[tokenToIndex ?? '']?.isUnknown
 
@@ -249,14 +301,51 @@ export const Swap: React.FC<ISwap> = ({
     if (tokenFromIndex === null || tokenToIndex === null) return
     if (!tokens[tokenFromIndex] || !tokens[tokenToIndex]) return
 
-    const isPoints = promotedSwapPairs.some(
-      item =>
-        (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-          new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-        (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-          new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-    )
-    setIsPairGivingPoints(isPoints)
+    if (swapType === SwapType.WITH_HOP) {
+      const isFirstPoints = promotedSwapPairs.some(
+        item =>
+          (new PublicKey(item.tokenX).equals(
+            simulationPath.tokenFrom?.assetAddress ?? new PublicKey('')
+          ) &&
+            new PublicKey(item.tokenY).equals(
+              simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
+            )) ||
+          (new PublicKey(item.tokenX).equals(
+            simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
+          ) &&
+            new PublicKey(item.tokenY).equals(
+              simulationPath.tokenFrom?.assetAddress ?? new PublicKey('')
+            ))
+      )
+      const isSecondPoints = promotedSwapPairs.some(
+        item =>
+          (new PublicKey(item.tokenX).equals(
+            simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
+          ) &&
+            new PublicKey(item.tokenY).equals(
+              simulationPath.tokenTo?.assetAddress ?? new PublicKey('')
+            )) ||
+          (new PublicKey(item.tokenX).equals(
+            simulationPath.tokenTo?.assetAddress ?? new PublicKey('')
+          ) &&
+            new PublicKey(item.tokenY).equals(
+              simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
+            ))
+      )
+      setIsFirstPairGivingPoints(isFirstPoints)
+      setIsSecondPairGivingPoints(isSecondPoints)
+    } else {
+      const isPoints = promotedSwapPairs.some(
+        item =>
+          (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+            new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+          (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+            new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+      )
+      setIsFirstPairGivingPoints(isPoints)
+      setIsSecondPairGivingPoints(false)
+    }
+
     setPointsForSwap(new BN(0))
 
     clearTimeout(urlUpdateTimeoutRef.current)
@@ -271,41 +360,75 @@ export const Swap: React.FC<ISwap> = ({
     }, 500)
 
     return () => clearTimeout(urlUpdateTimeoutRef.current)
-  }, [tokenFromIndex, tokenToIndex, tokens.length, network, promotedSwapPairs])
+  }, [
+    tokenFromIndex,
+    tokenToIndex,
+    tokens.length,
+    network,
+    promotedSwapPairs,
+    simulationPath.tokenFrom,
+    simulationPath.tokenBetween,
+    simulationPath.tokenTo
+  ])
 
   useEffect(() => {
-    if (simulateResult && isPairGivingPoints) {
+    if (simulateResult && (isFirstPairGivingPoints || isSecondPairGivingPoints)) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
-      const feePercentage = pools[simulateResult.poolIndex].fee
-      let desiredAmount: string
-      let desiredIndex: number | null
-      if (inputRef === inputTarget.FROM) {
-        desiredIndex = tokenFromIndex
-        desiredAmount = amountFrom
-      } else {
-        desiredIndex = tokenToIndex
-        desiredAmount = amountTo
-      }
-      const feed = feeds[tokens[desiredIndex!].assetAddress.toString()]
-      const amount = convertBalanceToBN(desiredAmount, tokens[desiredIndex!].decimals)
 
-      if (!feed || !feed.price || simulateResult.amountOut.eqn(0)) {
-        setPointsForSwap(new BN(0))
-        return
+      if (swapType === SwapType.WITH_HOP) {
+        const firstFeed = feeds[simulationPath.tokenFrom?.assetAddress.toString() ?? '']
+        const secondFeed = feeds[simulationPath.tokenBetween?.assetAddress.toString() ?? '']
+
+        const firstPoints = calculatePoints(
+          simulationPath.firstAmount ?? new BN(0),
+          simulationPath.tokenFrom?.decimals ?? 0,
+          simulationPath.firstFee ?? new BN(0),
+          firstFeed?.price ?? '0',
+          firstFeed?.priceDecimals ?? 0,
+          pointsPerUSD
+        )
+        const secondPoints = calculatePoints(
+          simulationPath.secondAmount ?? new BN(0),
+          simulationPath.tokenBetween?.decimals ?? 0,
+          simulationPath.secondFee,
+          secondFeed?.price ?? '0',
+          secondFeed?.priceDecimals ?? 0,
+          pointsPerUSD
+        )
+        setPointsForSwap(firstPoints.add(secondPoints))
+      } else {
+        const feePercentage = pools[simulateResult.poolIndex].fee
+        let desiredAmount: string
+        let desiredIndex: number | null
+        if (inputRef === inputTarget.FROM) {
+          desiredIndex = tokenFromIndex
+          desiredAmount = amountFrom
+        } else {
+          desiredIndex = tokenToIndex
+          desiredAmount = amountTo
+        }
+        const feed = feeds[tokens[desiredIndex!].assetAddress.toString()]
+        const amount = convertBalanceToBN(desiredAmount, tokens[desiredIndex!].decimals)
+
+        if (!feed || !feed.price || simulateResult.amountOut.eqn(0)) {
+          setPointsForSwap(new BN(0))
+          return
+        }
+
+        const points = calculatePoints(
+          amount,
+          tokens[desiredIndex!].decimals,
+          feePercentage,
+          feed.price,
+          feed.priceDecimals,
+          pointsPerUSD
+        )
+        setPointsForSwap(points)
       }
-      const points = calculatePoints(
-        amount,
-        tokens[desiredIndex!].decimals,
-        feePercentage,
-        feed.price,
-        feed.priceDecimals,
-        pointsPerUSD
-      )
-      setPointsForSwap(points)
     } else {
       setPointsForSwap(new BN(0))
     }
-  }, [simulateResult])
+  }, [simulateResult, simulateWithHopResult, isFirstPairGivingPoints, isSecondPairGivingPoints])
 
   useEffect(() => {
     if (!!tokens.length && tokenFromIndex === null && tokenToIndex === null && canNavigate) {
@@ -379,7 +502,9 @@ export const Swap: React.FC<ISwap> = ({
         setAmountFrom('')
       }
     }
-  }, [simulateResult])
+
+    setAddBlur(false)
+  }, [bestAmount, simulateResult, simulateWithHopResult])
 
   useEffect(() => {
     updateEstimatedAmount()
@@ -411,54 +536,178 @@ export const Swap: React.FC<ISwap> = ({
   }, [tokenFromIndex, tokenToIndex])
 
   const getAmountOut = (assetFor: SwapToken) => {
-    const amountOut: number = Number(printBN(simulateResult.amountOut, assetFor.decimals))
+    const amountOut: number = Number(printBN(bestAmount, assetFor.decimals))
 
     return amountOut.toFixed(assetFor.decimals)
   }
 
   const setSimulateAmount = async () => {
     if (tokenFromIndex !== null && tokenToIndex !== null) {
-      const pair = findPairs(
-        tokens[tokenFromIndex].assetAddress,
-        tokens[tokenToIndex].assetAddress,
-        pools
-      )[0]
-      if (typeof pair === 'undefined') {
-        setAmountTo('')
-        return
-      }
-      const indexPool = Object.keys(poolTicks).filter(key => {
-        return key === pair.address.toString()
-      })
+      // const pair = findPairs(
+      //   tokens[tokenFromIndex].assetAddress,
+      //   tokens[tokenToIndex].assetAddress,
+      //   pools
+      // )[0]
+      // if (typeof pair === 'undefined') {
+      //   setAmountTo('')
+      //   setAddBlur(false)
+      //   return
+      // }
+      // const indexPool = Object.keys(poolTicks).filter(key => {
+      //   return key === pair.address.toString()
+      // })
 
-      if (indexPool.length === 0) {
-        setAmountTo('')
-        return
-      }
+      // if (indexPool.length === 0) {
+      //   setAmountTo('')
+      //   setAddBlur(false)
+      //   return
+      // }
 
       if (inputRef === inputTarget.FROM) {
-        await handleSimulate(
-          pools,
-          poolTicks,
-          tickmap,
-          fromFee(new BN(Number(+slippTolerance * 1000))),
-          tokens[tokenFromIndex].assetAddress,
-          tokens[tokenToIndex].assetAddress,
-          convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-          true
-        ).then(value => setSimulateResult(value))
+        const [simulateValue, simulateWithHopValue] = await Promise.all([
+          handleSimulate(
+            pools,
+            poolTicks,
+            tickmap,
+            fromFee(new BN(Number(+slippTolerance * 1000))),
+            tokens[tokenFromIndex].assetAddress,
+            tokens[tokenToIndex].assetAddress,
+            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+            true
+          ),
+          handleSimulateWithHop(
+            market,
+            tokens[tokenFromIndex].assetAddress,
+            tokens[tokenToIndex].assetAddress,
+            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+            true,
+            swapAccounts
+          )
+        ])
+
+        updateSimulation(simulateValue, simulateWithHopValue)
+        setSimulateResult(simulateValue)
+        setSimulateWithHopResult(simulateWithHopValue)
       } else if (inputRef === inputTarget.TO) {
-        await handleSimulate(
-          pools,
-          poolTicks,
-          tickmap,
-          fromFee(new BN(Number(+slippTolerance * 1000))),
-          tokens[tokenFromIndex].assetAddress,
-          tokens[tokenToIndex].assetAddress,
-          convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-          false
-        ).then(value => setSimulateResult(value))
+        const [simulateValue, simulateWithHopValue] = await Promise.all([
+          handleSimulate(
+            pools,
+            poolTicks,
+            tickmap,
+            fromFee(new BN(Number(+slippTolerance * 1000))),
+            tokens[tokenFromIndex].assetAddress,
+            tokens[tokenToIndex].assetAddress,
+            convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+            false
+          ),
+          handleSimulateWithHop(
+            market,
+            tokens[tokenFromIndex].assetAddress,
+            tokens[tokenToIndex].assetAddress,
+            convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+            false,
+            swapAccounts
+          )
+        ])
+
+        updateSimulation(simulateValue, simulateWithHopValue)
+        setSimulateResult(simulateValue)
+        setSimulateWithHopResult(simulateWithHopValue)
       }
+    } else {
+      setAddBlur(false)
+    }
+  }
+
+  const updateSimulation = (
+    simulateResult: {
+      amountOut: BN
+      poolIndex: number
+      AmountOutWithFee: BN
+      estimatedPriceAfterSwap: BN
+      minimumReceived: BN
+      priceImpact: BN
+      error: string[]
+    },
+    simulateWithHopResult: {
+      simulation: SimulationTwoHopResult | null
+      route: [Pair, Pair] | null
+      error: boolean
+    }
+  ) => {
+    console.log(
+      1,
+      simulateResult.amountOut.toString(),
+      simulateResult.error,
+      '|',
+      simulateWithHopResult.simulation?.totalAmountIn.toString(),
+      simulateWithHopResult.simulation?.totalAmountOut.toString(),
+      simulateWithHopResult.simulation?.swapHopOne.status,
+      simulateWithHopResult.simulation?.swapHopOne.status,
+      simulateWithHopResult.error
+    )
+    let useTwoHop = false
+
+    const isSimulateError =
+      simulateResult.error.length > 0 || simulateResult.amountOut.eq(new BN(0))
+    const isSimulateWithHopError = simulateWithHopResult.error
+
+    if (isSimulateError && !isSimulateWithHopError) {
+      useTwoHop = true
+    }
+
+    if (
+      (isSimulateError && isSimulateWithHopError) ||
+      (!isSimulateError && !isSimulateWithHopError)
+    ) {
+      if (simulateWithHopResult?.simulation?.totalAmountOut.gte(simulateResult.amountOut)) {
+        useTwoHop = true
+      }
+    }
+
+    if (useTwoHop && simulateWithHopResult.simulation && simulateWithHopResult.route) {
+      setSimulationPath({
+        tokenFrom: tokens[tokenFromIndex ?? 0],
+        tokenBetween:
+          tokensDict[
+            simulateWithHopResult.simulation.xToYHopOne
+              ? simulateWithHopResult.route[0].tokenY.toString()
+              : simulateWithHopResult.route[0].tokenX.toString()
+          ],
+        tokenTo: tokens[tokenToIndex ?? 0],
+        firstFee: simulateWithHopResult.route[0].feeTier.fee,
+        secondFee: simulateWithHopResult.route[1].feeTier.fee,
+        firstAmount: simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
+          simulateWithHopResult.simulation.swapHopOne.accumulatedFee
+        ),
+        secondAmount: simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountIn.add(
+          simulateWithHopResult.simulation.swapHopTwo.accumulatedFee
+        ),
+        firstPriceImpact: simulateWithHopResult.simulation.swapHopOne.priceImpact,
+        secondPriceImpact: simulateWithHopResult.simulation.swapHopTwo.priceImpact
+      })
+      setBestAmount(
+        inputRef === inputTarget.FROM
+          ? simulateWithHopResult.simulation?.swapHopTwo.accumulatedAmountOut.toString()
+          : simulateWithHopResult.simulation?.swapHopOne.accumulatedAmountIn
+              .add(simulateWithHopResult.simulation.swapHopOne.accumulatedFee)
+              .toString()
+      )
+      setSwapType(SwapType.WITH_HOP)
+    } else {
+      setSimulationPath({
+        tokenFrom: tokens[tokenFromIndex ?? 0],
+        tokenBetween: null,
+        tokenTo: tokens[tokenToIndex ?? 0],
+        firstFee: pools[simulateResult.poolIndex]?.fee ?? new BN(0),
+        secondFee: null,
+        firstAmount: convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals),
+        secondAmount: null,
+        firstPriceImpact: simulateResult.priceImpact,
+        secondPriceImpact: null
+      })
+      setBestAmount(simulateResult.amountOut)
+      setSwapType(SwapType.NORMAL)
     }
   }
 
@@ -479,7 +728,7 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const isError = (error: string) => {
-    return simulateResult.error.some(err => err === error)
+    return swapType === SwapType.NORMAL ? simulateResult.error.some(err => err === error) : false
   }
 
   const isEveryPoolEmpty = useMemo(() => {
@@ -526,13 +775,20 @@ export const Swap: React.FC<ISwap> = ({
       return 'Select different tokens'
     }
 
-    if (!getIsXToY(tokens[tokenFromIndex].assetAddress, tokens[tokenToIndex].assetAddress)) {
-      return "Pool doesn't exist."
+    if (
+      !getIsXToY(tokens[tokenFromIndex].assetAddress, tokens[tokenToIndex].assetAddress) &&
+      simulateWithHopResult.simulation === null &&
+      simulateWithHopResult.route === null
+    ) {
+      return "Route doesn't exist."
     }
 
     if (
       isError(SimulationStatus.SwapStepLimitReached) ||
-      isError(SimulationStatus.PriceLimitReached)
+      (isError(SimulationStatus.PriceLimitReached) &&
+        simulateWithHopResult.simulation === null &&
+        simulateWithHopResult.route === null) ||
+      simulateWithHopResult.error
     ) {
       return 'Insufficient liquidity'
     }
@@ -576,7 +832,7 @@ export const Swap: React.FC<ISwap> = ({
     }
 
     // Fallback error message
-    if (simulateResult.error.length !== 0) {
+    if (swapType === SwapType.NORMAL && simulateResult.error.length !== 0) {
       console.warn('Errors not handled explictly', simulateResult.error)
       return 'Not enough liquidity'
     }
@@ -647,9 +903,30 @@ export const Swap: React.FC<ISwap> = ({
     setRefresherTime(REFRESHER_INTERVAL)
   }
 
+  const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
+  const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
+
   useEffect(() => {
-    void setSimulateAmount()
+    if (isFetchingNewPool) {
+      setAddBlur(true)
+      setWasIsFetchingNewPoolRun(true)
+    }
   }, [isFetchingNewPool])
+
+  useEffect(() => {
+    if (swapIsLoading) {
+      setAddBlur(true)
+      setWasSwapIsLoadingRun(true)
+    }
+  }, [swapIsLoading])
+
+  useEffect(() => {
+    if (wasIsFetchingNewPoolRun && wasSwapIsLoadingRun && !isFetchingNewPool && !swapIsLoading) {
+      void setSimulateAmount()
+      setWasIsFetchingNewPoolRun(false)
+      setWasSwapIsLoadingRun(false)
+    }
+  }, [wasIsFetchingNewPoolRun, wasSwapIsLoadingRun, isFetchingNewPool, swapIsLoading])
 
   useEffect(() => {
     setRefresherTime(REFRESHER_INTERVAL)
@@ -699,7 +976,7 @@ export const Swap: React.FC<ISwap> = ({
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {network === NetworkType.Mainnet ? (
         <SwapPointsPopover
-          isPairGivingPoints={isPairGivingPoints}
+          isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
           anchorEl={pointsBoxRef.current}
           open={isPointsPopoverOpen}
           onClose={() => setIsPointsPopoverOpen(false)}
@@ -724,7 +1001,7 @@ export const Swap: React.FC<ISwap> = ({
           </Typography>
           {network === NetworkType.Mainnet ? (
             <EstimatedPointsLabel
-              isAnimating={isPairGivingPoints}
+              isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
               decimalIndex={decimalIndex}
               pointsForSwap={pointsForSwap}
               handlePointerEnter={handlePointerEnter}
@@ -786,14 +1063,18 @@ export const Swap: React.FC<ISwap> = ({
       <Box
         className={classNames(
           classes.borderContainer,
-          isPairGivingPoints && classes.gradientBorderForContainer
+          (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
+            classes.gradientBorderForContainer
         )}>
         <Grid container className={classes.root} direction='column'>
-          <AnimatedWaves wavePosition={'top'} isAnimating={isPairGivingPoints} />
+          <AnimatedWaves
+            wavePosition={'top'}
+            isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
+          />
           <Typography
             className={classNames(
               classes.swapLabel,
-              isPairGivingPoints && classes.textShadowLabel
+              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
             )}>
             Pay
           </Typography>
@@ -801,7 +1082,7 @@ export const Swap: React.FC<ISwap> = ({
             className={classNames(
               classes.exchangeRoot,
               lockAnimation ? classes.amountInputDown : undefined,
-              isPairGivingPoints && classes.darkBackground
+              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
             )}>
             <ExchangeAmountInput
               value={amountFrom}
@@ -855,13 +1136,14 @@ export const Swap: React.FC<ISwap> = ({
               isBalanceLoading={isBalanceLoading}
               showMaxButton={true}
               showBlur={
+                (inputRef === inputTarget.TO && addBlur) ||
                 lockAnimation ||
                 (getStateMessage() === 'Loading' &&
                   (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
               }
               hiddenUnknownTokens={hideUnknownTokens}
               network={network}
-              isPairGivingPoints={isPairGivingPoints}
+              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
             />
           </Box>
 
@@ -869,7 +1151,7 @@ export const Swap: React.FC<ISwap> = ({
             <Box
               className={classNames(
                 classes.swapArrowBox,
-                isPairGivingPoints && classes.darkBackground
+                (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
               )}
               onClick={() => {
                 if (lockAnimation) return
@@ -890,7 +1172,8 @@ export const Swap: React.FC<ISwap> = ({
               <Box
                 className={classNames(
                   classes.swapImgRoot,
-                  isPairGivingPoints && classes.componentBackground
+                  (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
+                    classes.componentBackground
                 )}>
                 <img
                   src={SwapArrows}
@@ -904,7 +1187,10 @@ export const Swap: React.FC<ISwap> = ({
             </Box>
           </Box>
           <Typography
-            className={classNames(classes.swapLabel, isPairGivingPoints && classes.textShadowLabel)}
+            className={classNames(
+              classes.swapLabel,
+              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
+            )}
             mt={1.5}>
             Receive
           </Typography>
@@ -913,7 +1199,7 @@ export const Swap: React.FC<ISwap> = ({
               classes.exchangeRoot,
               classes.transactionBottom,
               lockAnimation ? classes.amountInputUp : undefined,
-              isPairGivingPoints && classes.darkBackground
+              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
             )}>
             <ExchangeAmountInput
               value={amountTo}
@@ -967,22 +1253,23 @@ export const Swap: React.FC<ISwap> = ({
               isBalanceLoading={isBalanceLoading}
               showMaxButton={false}
               showBlur={
+                (inputRef === inputTarget.FROM && addBlur) ||
                 lockAnimation ||
                 (getStateMessage() === 'Loading' &&
                   (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
               }
               hiddenUnknownTokens={hideUnknownTokens}
               network={network}
-              isPairGivingPoints={isPairGivingPoints}
+              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
             />
           </Box>
           <Box
             className={classes.unknownWarningContainer}
             style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
-            {+printBN(simulateResult.priceImpact, DECIMAL - 2) > 5 && (
+            {priceImpact > 5 && (
               <TooltipHover text='Your trade size might be too large'>
                 <Box className={classes.unknownWarning}>
-                  {(+printBN(simulateResult.priceImpact, DECIMAL - 2)).toFixed(2)}% Price impact
+                  {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`} Price impact
                 </Box>
               </TooltipHover>
             )}
@@ -1056,7 +1343,7 @@ export const Swap: React.FC<ISwap> = ({
               <Box
                 className={classNames(
                   classes.exchangeRateWrapper,
-                  isPairGivingPoints && classes.darkBackground
+                  (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
                 )}>
                 <ExchangeRate
                   onClick={() => setRateReversed(!rateReversed)}
@@ -1071,7 +1358,6 @@ export const Swap: React.FC<ISwap> = ({
           </Box>
           <TransactionDetailsBox
             open={detailsOpen && canShowDetails}
-            fee={canShowDetails ? pools[simulateResult.poolIndex].fee : new BN(0)}
             exchangeRate={{
               val: rateReversed ? 1 / swapRate : swapRate,
               symbol: canShowDetails
@@ -1081,9 +1367,10 @@ export const Swap: React.FC<ISwap> = ({
                 ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
                 : 0
             }}
-            priceImpact={simulateResult.priceImpact}
             slippage={+slippTolerance}
+            priceImpact={priceImpact}
             isLoadingRate={getStateMessage() === 'Loading'}
+            simulationPath={simulationPath}
           />
           <TokensInfo
             tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
@@ -1092,7 +1379,7 @@ export const Swap: React.FC<ISwap> = ({
             tokenFromPrice={tokenFromPriceData?.price}
             copyTokenAddressHandler={copyTokenAddressHandler}
             network={network}
-            isPairGivingPoints={isPairGivingPoints}
+            isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
           />
           {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
             <ChangeWalletButton
@@ -1164,7 +1451,10 @@ export const Swap: React.FC<ISwap> = ({
               progress={progress}
             />
           )}
-          <AnimatedWaves wavePosition={'bottom'} isAnimating={isPairGivingPoints} />
+          <AnimatedWaves
+            wavePosition={'bottom'}
+            isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
+          />
         </Grid>
       </Box>
       <img src={icons.audit} alt='Audit' style={{ marginTop: '24px' }} width={180} />
