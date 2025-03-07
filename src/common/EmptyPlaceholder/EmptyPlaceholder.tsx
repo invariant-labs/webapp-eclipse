@@ -1,8 +1,9 @@
-import { Button, Grid, Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import classNames from 'classnames'
 import React from 'react'
 import { useStyles } from './style'
 import icons from '@static/icons'
+import { Button } from '@common/Button/Button'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 
 export interface IEmptyPlaceholder {
@@ -55,7 +56,7 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
           </Grid>
           <Grid container flexDirection='column' alignContent='center'>
             {withButton && (
-              <Button className={classes.button} onClick={onAction} variant='contained'>
+              <Button scheme='pink' padding='0 48px' onClick={onAction}>
                 {buttonName ? buttonName : 'Add a position'}
               </Button>
             )}

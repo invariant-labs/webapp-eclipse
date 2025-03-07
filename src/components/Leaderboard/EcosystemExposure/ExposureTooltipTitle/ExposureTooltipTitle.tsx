@@ -2,7 +2,7 @@ import { Grid, Typography } from '@mui/material'
 import useStyles from './styles'
 import check from '@static/svg/checkRainbow.svg'
 import airdrop from '@static/svg/airdropRainbow.svg'
-import GradientBorder from '@components/GradientBorder/GradientBorder'
+import GradientBorder from '@common/GradientBorder/GradientBorder'
 import newTab from '@static/svg/newTab.svg'
 interface ExposureTooltipTitleProps {
   footerDescription?: string

@@ -35,17 +35,19 @@ const PortfolioPage: React.FC = () => {
             <Typography style={{ color: colors.invariant.textGrey, ...typography.body2 }}>
               No liquidity positions to show.
             </Typography>
-            <ChangeWalletButton
-              name='Connect wallet'
-              onConnect={() => {
-                dispatch(walletActions.connect(false))
-              }}
-              onDisconnect={() => {
-                dispatch(walletActions.disconnect())
-              }}
-              connected={false}
-              className={classes.button}
-            />
+            <Box mt={3}>
+              <ChangeWalletButton
+                name='Connect wallet'
+                onConnect={() => {
+                  dispatch(walletActions.connect(false))
+                }}
+                onDisconnect={() => {
+                  dispatch(walletActions.disconnect())
+                }}
+                connected={false}
+                className={classes.button}
+              />
+            </Box>
           </Box>
         )}
       </Grid>

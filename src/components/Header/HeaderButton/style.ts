@@ -64,85 +64,6 @@ const useStyles = makeStyles()((theme: Theme) => {
     label: {
       WebkitPaddingBefore: '2px'
     },
-    headerButtonConnected: {
-      background: colors.invariant.light,
-      color: colors.white.main,
-      paddingInline: 12,
-      borderRadius: 14,
-      textTransform: 'none',
-      ...typography.body1,
-      height: 40,
-
-      '&:hover': {
-        background: colors.blue.deep,
-        '@media (hover: none)': {
-          background: colors.invariant.light
-        }
-      },
-
-      '&.Mui-disabled': {
-        background: colors.invariant.componentBcg,
-        backgroundImage: 'none !important',
-        opacity: 0.5,
-        pointerEvents: 'auto',
-        color: `${colors.invariant.textGrey} !important`,
-        '&:hover': {
-          background: colors.invariant.componentBcg,
-          boxShadow: 'none',
-          cursor: 'not-allowed'
-        }
-      }
-    },
-    swapChangeWallet: {
-      zIndex: 1,
-      background: colors.invariant.pinkLinearGradient,
-      '&:hover': {
-        boxShadow: `0 0 15px ${colors.invariant.light}`,
-        backgroundColor: colors.invariant.light,
-        '@media (hover: none)': {
-          zIndex: 1,
-          background: colors.invariant.pinkLinearGradient,
-          boxShadow: 'none'
-        }
-      }
-    },
-    headerButtonConnect: {
-      background: colors.invariant.pinkLinearGradientOpacity,
-      color: colors.invariant.newDark,
-      paddingInline: 12,
-      borderRadius: 14,
-      textTransform: 'none',
-      ...typography.body1,
-      height: 40,
-      minWidth: 130,
-
-      [theme.breakpoints.down('sm')]: {
-        minWidth: 100,
-        width: 100
-      },
-
-      '&:hover': {
-        boxShadow: `0 0 15px ${colors.invariant.light}`,
-        backgroundColor: colors.invariant.light,
-        '@media (hover: none)': {
-          background: colors.invariant.pinkLinearGradientOpacity,
-          boxShadow: 'none'
-        }
-      },
-
-      '&.Mui-disabled': {
-        background: colors.invariant.componentBcg,
-        backgroundImage: 'none !important',
-        opacity: 0.5,
-        pointerEvents: 'auto',
-        color: `${colors.invariant.textGrey} !important`,
-        '&:hover': {
-          background: colors.invariant.componentBcg,
-          boxShadow: 'none',
-          cursor: 'not-allowed'
-        }
-      }
-    },
     headerButtonTextEllipsis: {
       textTransform: 'none',
       overflow: 'hidden',
@@ -164,12 +85,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       boxShadow: 'none'
     },
     startIcon: {
-      marginLeft: 0,
-      marginBottom: 3
+      marginTop: 3
     },
     endIcon: {
-      minWidth: 20,
-      marginTop: 2
+      marginBottom: 3
     },
     innerEndIcon: {
       marginLeft: 0,
@@ -178,6 +97,11 @@ const useStyles = makeStyles()((theme: Theme) => {
     warningIcon: {
       height: 16,
       marginRight: 4
+    },
+    headerButtonContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 4
     }
   }
 })
