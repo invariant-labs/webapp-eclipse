@@ -13,7 +13,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
 import { TokenPriceData } from '@store/consts/types'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
   addressToTicker,
   formatNumberWithSuffix,

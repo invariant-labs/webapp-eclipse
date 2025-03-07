@@ -11,7 +11,7 @@ import {
 } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import classNames from 'classnames'
 import { useEffect, useState } from 'react'

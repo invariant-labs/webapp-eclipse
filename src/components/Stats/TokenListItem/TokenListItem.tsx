@@ -9,7 +9,7 @@ import { NetworkType, SortTypeTokenList } from '@store/consts/static'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 interface IProps {

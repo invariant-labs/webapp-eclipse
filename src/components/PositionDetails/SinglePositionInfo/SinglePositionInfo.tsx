@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import { TokenPriceData } from '@store/consts/types'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import icons from '@static/icons'
 import { addressToTicker } from '@utils/utils'
 import {
