@@ -1,6 +1,6 @@
 import { useStyles } from './style'
 import icons from '@static/icons'
-// import { Switch } from '@components/Switch/Switch'
+// import { Switch } from '@common/Switch/Switch'
 import { SelectNetworkAndRPC } from './SelectNetworkAndRPC/SelectNetworkAndRPC'
 import { NetworkType } from '@store/consts/static'
 import { ISelectNetwork } from '@store/consts/types'
