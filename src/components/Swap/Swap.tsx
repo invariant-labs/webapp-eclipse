@@ -209,14 +209,6 @@ export const Swap: React.FC<ISwap> = ({
     priceImpact: new BN(0),
     error: []
   })
-  const [isPointsPopoverOpen, setIsPointsPopoverOpen] = useState(false)
-  const pointsBoxRef = useRef<HTMLDivElement>(null)
-  const handlePointerEnter = () => {
-    setIsPointsPopoverOpen(true)
-  }
-  const handlePointerLeave = () => {
-    setIsPointsPopoverOpen(false)
-  }
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -697,17 +689,6 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
-      {network === NetworkType.Mainnet ? (
-        <SwapPointsPopover
-          isPairGivingPoints={isPairGivingPoints}
-          anchorEl={pointsBoxRef.current}
-          open={isPointsPopoverOpen}
-          onClose={() => setIsPointsPopoverOpen(false)}
-          network={network}
-          promotedSwapPairs={promotedSwapPairs}
-        />
-      ) : null}
-
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}
@@ -723,18 +704,22 @@ export const Swap: React.FC<ISwap> = ({
             Swap tokens
           </Typography>
           {network === NetworkType.Mainnet ? (
-            <EstimatedPointsLabel
-              isAnimating={isPairGivingPoints}
-              decimalIndex={decimalIndex}
-              pointsForSwap={pointsForSwap}
-              handlePointerEnter={handlePointerEnter}
-              handlePointerLeave={handlePointerLeave}
-              pointsBoxRef={pointsBoxRef}
-              swapMultiplier={swapMultiplier}
-              isLessThanOne={isLessThanOne}
-              stringPointsValue={stringPointsValue}
-              isAnyBlurShowed={isAnyBlurShowed}
-            />
+            <SwapPointsPopover
+              isPairGivingPoints={isPairGivingPoints}
+              network={network}
+              promotedSwapPairs={promotedSwapPairs}>
+              <div>
+                <EstimatedPointsLabel
+                  isAnimating={isPairGivingPoints}
+                  decimalIndex={decimalIndex}
+                  pointsForSwap={pointsForSwap}
+                  swapMultiplier={swapMultiplier}
+                  isLessThanOne={isLessThanOne}
+                  stringPointsValue={stringPointsValue}
+                  isAnyBlurShowed={isAnyBlurShowed}
+                />
+              </div>
+            </SwapPointsPopover>
           ) : null}
         </Box>
 
@@ -746,7 +731,7 @@ export const Swap: React.FC<ISwap> = ({
           </Button>
 
           <Box className={classes.swapControls}>
-            <TooltipHover text='Refresh'>
+            <TooltipHover title='Refresh'>
               <Grid display='flex' alignItems='center'>
                 <Button
                   onClick={handleRefresh}
@@ -764,7 +749,7 @@ export const Swap: React.FC<ISwap> = ({
                 </Button>
               </Grid>
             </TooltipHover>
-            <TooltipHover text='Settings'>
+            <TooltipHover title='Settings'>
               <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
                 <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
               </Button>
@@ -980,7 +965,7 @@ export const Swap: React.FC<ISwap> = ({
             className={classes.unknownWarningContainer}
             style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
             {+printBN(simulateResult.priceImpact, DECIMAL - 2) > 5 && (
-              <TooltipHover text='Your trade size might be too large'>
+              <TooltipHover title='Your trade size might be too large'>
                 <Box className={classes.unknownWarning}>
                   {(+printBN(simulateResult.priceImpact, DECIMAL - 2)).toFixed(2)}% Price impact
                 </Box>
@@ -988,7 +973,7 @@ export const Swap: React.FC<ISwap> = ({
             )}
             {tokens[tokenFromIndex ?? '']?.isUnknown && (
               <TooltipHover
-                text={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenFromIndex ?? ''].symbol} is not verified
                 </Box>
@@ -996,7 +981,7 @@ export const Swap: React.FC<ISwap> = ({
             )}
             {tokens[tokenToIndex ?? '']?.isUnknown && (
               <TooltipHover
-                text={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenToIndex ?? ''].symbol} is not verified
                 </Box>
@@ -1034,7 +1019,7 @@ export const Swap: React.FC<ISwap> = ({
               {tokenFromIndex !== null &&
                 tokenToIndex !== null &&
                 tokenFromIndex !== tokenToIndex && (
-                  <TooltipHover text='Refresh'>
+                  <TooltipHover title='Refresh'>
                     <Grid
                       container
                       alignItems='center'
@@ -1105,7 +1090,7 @@ export const Swap: React.FC<ISwap> = ({
             />
           ) : getStateMessage() === 'Insufficient Wrapped ETH' ? (
             <TooltipHover
-              text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+              title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
               top={-45}>
               <div>
                 <AnimatedButton

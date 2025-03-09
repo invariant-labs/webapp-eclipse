@@ -1,12 +1,10 @@
 import { BN } from '@coral-xyz/anchor'
 import useStyles from './style'
-import { Popover, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 export interface IPromotedPoolPopover {
-  open: boolean
-  anchorEl: HTMLElement | null
-  onClose: () => void
   isActive?: boolean
   apr?: BN
   apy?: number
@@ -15,12 +13,10 @@ export interface IPromotedPoolPopover {
   headerText?: string | React.ReactNode
   pointsLabel?: string | React.ReactNode
   showEstPointsFirst?: boolean
+  children: React.ReactElement<any, any>
 }
 
 export const PromotedPoolPopover = ({
-  open,
-  onClose,
-  anchorEl,
   isActive,
   apr,
   apy,
@@ -28,7 +24,8 @@ export const PromotedPoolPopover = ({
   points,
   headerText = 'The pool distributes points:',
   pointsLabel = 'Points per 24H',
-  showEstPointsFirst = false
+  showEstPointsFirst = false,
+  children
 }: IPromotedPoolPopover) => {
   const { classes } = useStyles()
 
@@ -36,8 +33,6 @@ export const PromotedPoolPopover = ({
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
     return value.lt(minimalValue)
   }
-
-  if (!anchorEl) return null
 
   const TotalPointsSection = (
     <div className={classes.insideBox}>
@@ -68,32 +63,8 @@ export const PromotedPoolPopover = ({
   ) : null
 
   return (
-    <Popover
-      onClick={e => e.stopPropagation()}
-      open={open}
-      anchorEl={anchorEl}
-      className='promoted-pool-popover'
-      classes={{
-        paper: classes.paper,
-        root: classes.popover
-      }}
-      onClose={onClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'center'
-      }}
-      disableRestoreFocus
-      slotProps={{
-        paper: {
-          onMouseLeave: onClose
-        }
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'center'
-      }}
-      marginThreshold={16}>
-      <div className={classes.root}>
+    <TooltipGradient
+      title={
         <div className={classes.container}>
           {/* Content remains the same */}
           <Typography
@@ -133,8 +104,11 @@ export const PromotedPoolPopover = ({
             </>
           ) : null}
         </div>
-      </div>
-    </Popover>
+      }
+      placement='bottom'
+      top={1}>
+      {children}
+    </TooltipGradient>
   )
 }
 

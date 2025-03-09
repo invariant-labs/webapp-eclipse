@@ -139,7 +139,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
       {isSubmitButton ? (
         !createAvailable ? (
           <TooltipHover
-            text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+            title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
             top={-45}>
             <div>
               <AnimatedButton

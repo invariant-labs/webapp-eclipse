@@ -3,13 +3,12 @@ import {
   TableRow,
   TableCell,
   Button,
-  Tooltip,
   Typography,
   useMediaQuery,
   Box,
   Skeleton
 } from '@mui/material'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { IPositionItem } from '../../../types'
 import { colors, theme } from '@static/theme'
@@ -33,6 +32,7 @@ import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -84,7 +84,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   )
   const positionSingleData = useSelector(singlePositionData(id ?? ''))
   const airdropIconRef = useRef<any>(null)
-  const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
 
@@ -150,7 +149,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             src={xToY ? tokenXIcon : tokenYIcon}
             alt={xToY ? tokenXName : tokenYName}
           />
-          <TooltipHover text='Reverse tokens'>
+          <TooltipHover title='Reverse tokens'>
             <img
               className={sharedClasses.arrows}
               src={SwapList}
@@ -175,24 +174,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     )
   }, [loading, xToY, tokenXIcon, tokenYIcon, tokenXName, tokenYName])
 
-  const handleMouseEnter = useCallback(() => {
-    setIsPromotedPoolPopoverOpen(true)
-  }, [])
-
-  const handleMouseLeave = useCallback(() => {
-    setIsPromotedPoolPopoverOpen(false)
-  }, [])
-
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
-
-  const handleTooltipEnter = useCallback(() => {
-    setIsTooltipOpen(true)
-  }, [])
-
-  const handleTooltipLeave = useCallback(() => {
-    setIsTooltipOpen(false)
-  }, [])
-
   const feeFragment = useMemo(() => {
     if (isItemLoading('feeTier')) {
       return (
@@ -205,10 +186,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       )
     }
     return (
-      <Tooltip
-        enterTouchDelay={0}
-        leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-        onClick={e => e.stopPropagation()}
+      <TooltipGradient
         title={
           isActive ? (
             <>
@@ -223,9 +201,8 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           )
         }
         placement='top'
-        classes={{
-          tooltip: sharedClasses.tooltip
-        }}>
+        top={1}
+        noGradient>
         <Grid
           container
           item
@@ -241,7 +218,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             {fee}%
           </Typography>
         </Grid>
-      </Tooltip>
+      </TooltipGradient>
     )
   }, [fee, classes, isActive])
 
@@ -408,27 +385,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     if (isPromoted && isActive) {
       return (
         <>
-          <div
-            ref={airdropIconRef}
-            onClick={e => e.stopPropagation()}
-            className={classes.actionButton}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}>
-            <img
-              src={icons.airdropRainbow}
-              alt={'Airdrop'}
-              style={{
-                height: '32px',
-                width: '30px'
-              }}
-            />
-          </div>
           <PromotedPoolPopover
             showEstPointsFirst
             isActive={true}
-            anchorEl={airdropIconRef.current}
-            open={isPromotedPoolPopoverOpen}
-            onClose={() => setIsPromotedPoolPopoverOpen(false)}
             headerText={
               <>
                 This position is currently <b>earning points</b>
@@ -436,33 +395,29 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             }
             pointsLabel={'Total points distributed across the pool per 24H:'}
             estPoints={estimated24hPoints}
-            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-          />
+            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+            <div ref={airdropIconRef} className={classes.actionButton}>
+              <img
+                src={icons.airdropRainbow}
+                alt={'Airdrop'}
+                style={{
+                  height: '32px',
+                  width: '30px'
+                }}
+              />
+            </div>
+          </PromotedPoolPopover>
         </>
       )
     }
 
     return (
-      <Tooltip
-        open={isTooltipOpen}
-        onOpen={() => setIsTooltipOpen(true)}
-        onClose={() => setIsTooltipOpen(false)}
-        enterTouchDelay={0}
-        leaveTouchDelay={0}
-        onClick={e => e.stopPropagation()}
-        title={
-          <div onMouseEnter={handleTooltipEnter} onMouseLeave={handleTooltipLeave}>
-            <PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />
-          </div>
-        }
+      <TooltipGradient
+        title={<PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />}
         placement='top'
-        classes={{
-          tooltip: sharedClasses.tooltip
-        }}>
-        <div
-          onMouseEnter={handleTooltipEnter}
-          onMouseLeave={handleTooltipLeave}
-          style={{ display: 'flex', justifyContent: 'center' }}>
+        top={1}
+        noGradient>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
           <img
             src={icons.airdropRainbow}
             alt={'Airdrop'}
@@ -475,20 +430,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             }}
           />
         </div>
-      </Tooltip>
+      </TooltipGradient>
     )
-  }, [
-    isPromoted,
-    isActive,
-    isPromotedPoolPopoverOpen,
-    isTooltipOpen,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleTooltipEnter,
-    handleTooltipLeave,
-    estimated24hPoints,
-    pointsPerSecond
-  ])
+  }, [isPromoted, estimated24hPoints, pointsPerSecond])
 
   const [isActionPopoverOpen, setActionPopoverOpen] = React.useState<boolean>(false)
 

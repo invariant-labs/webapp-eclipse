@@ -184,36 +184,34 @@ const Card: React.FC<ICard> = ({
                 {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}{' '}
                 {isPromoted && (
                   <>
-                    <div
-                      ref={airdropIconRef}
-                      className={classes.actionButton}
-                      onPointerEnter={() => {
-                        if (!isMobile) {
-                          setIsPromotedPoolPopoverOpen(true)
-                        }
-                      }}
-                      onPointerLeave={() => {
-                        if (!isMobile) {
-                          setIsPromotedPoolPopoverOpen(false)
-                        }
-                      }}
-                      onClick={() => {
-                        if (isMobile) {
-                          setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                        }
-                      }}>
-                      <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '24px' }} />
-                    </div>
                     <PromotedPoolPopover
-                      anchorEl={airdropIconRef.current}
-                      open={isPromotedPoolPopoverOpen}
-                      onClose={() => {
-                        setIsPromotedPoolPopoverOpen(false)
-                      }}
                       apr={convertedApr ?? 0}
                       apy={convertedApy ?? 0}
-                      points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-                    />
+                      points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+                      <div
+                        className={classes.actionButton}
+                        onPointerEnter={() => {
+                          if (!isMobile) {
+                            setIsPromotedPoolPopoverOpen(true)
+                          }
+                        }}
+                        onPointerLeave={() => {
+                          if (!isMobile) {
+                            setIsPromotedPoolPopoverOpen(false)
+                          }
+                        }}
+                        onClick={() => {
+                          if (isMobile) {
+                            setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                          }
+                        }}>
+                        <img
+                          src={icons.airdropRainbow}
+                          alt={'Airdrop'}
+                          style={{ height: '24px' }}
+                        />
+                      </div>
+                    </PromotedPoolPopover>
                   </>
                 )}
               </Typography>

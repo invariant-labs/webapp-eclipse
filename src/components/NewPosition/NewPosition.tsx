@@ -413,24 +413,24 @@ export const NewPosition: React.FC<INewPosition> = ({
   const bestTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (bestTiers.find(
+      : bestTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
+        )?.bestTierIndex ?? undefined
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -676,7 +676,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             </Fade>
           )}
           {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
-            <TooltipHover text='Refresh'>
+            <TooltipHover title='Refresh'>
               <Box mr={2}>
                 <Refresher
                   currentIndex={refresherTime}
@@ -699,7 +699,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                   marketId={poolAddress}
                   copyPoolAddressHandler={copyPoolAddressHandler}
                 />
-                <TooltipHover text='Open pool in explorer'>
+                <TooltipHover title='Open pool in explorer'>
                   <Grid width={'12px'} height={'24px'}>
                     <a
                       href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
@@ -749,7 +749,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 )}
               </Hidden>
               {poolIndex !== null && tokenAIndex !== tokenBIndex && isMd && (
-                <TooltipHover text='Refresh'>
+                <TooltipHover title='Refresh'>
                   <Box>
                     <Refresher
                       currentIndex={refresherTime}
@@ -763,7 +763,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 </TooltipHover>
               )}
               {poolIndex !== null && (
-                <TooltipHover text='Settings'>
+                <TooltipHover title='Settings'>
                   <Button
                     onClick={handleClickSettings}
                     className={classes.settingsIconBtn}

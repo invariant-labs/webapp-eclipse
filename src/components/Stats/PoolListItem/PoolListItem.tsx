@@ -237,7 +237,7 @@ const PoolListItem: React.FC<IProps> = ({
                   {shortenAddress(tokenBData.symbol ?? '')}
                 </Typography>
               )}
-              <TooltipHover text='Copy pool address'>
+              <TooltipHover title='Copy pool address'>
                 <FileCopyOutlinedIcon
                   onClick={copyToClipboard}
                   classes={{ root: classes.clipboardIcon }}
@@ -256,37 +256,29 @@ const PoolListItem: React.FC<IProps> = ({
               </Typography>
               {isPromoted && (
                 <Box mr={1}>
-                  <Box
-                    className={classes.actionButton}
-                    ref={airdropIconRef}
-                    onPointerEnter={() => {
-                      if (!isMobile) {
-                        setIsPromotedPoolPopoverOpen(true)
-                      }
-                    }}
-                    onPointerLeave={() => {
-                      if (!isMobile) {
-                        setIsPromotedPoolPopoverOpen(false)
-                      }
-                    }}
-                    onClick={() => {
-                      if (isMobile) {
-                        setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                      }
-                    }}
-                    mr={3}>
-                    <img width={32} height={32} src={icons.airdropRainbow} alt={'Airdrop'} />
-                  </Box>
-                  <PromotedPoolPopover
-                    anchorEl={airdropIconRef.current}
-                    open={isPromotedPoolPopoverOpen}
-                    onClose={() => {
-                      setIsPromotedPoolPopoverOpen(false)
-                    }}
-                    apr={convertedApr}
-                    apy={convertedApy}
-                    points={points}
-                  />
+                  <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
+                    <Box
+                      className={classes.actionButton}
+                      ref={airdropIconRef}
+                      onPointerEnter={() => {
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(true)
+                        }
+                      }}
+                      onPointerLeave={() => {
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(false)
+                        }
+                      }}
+                      onClick={() => {
+                        if (isMobile) {
+                          setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                        }
+                      }}
+                      mr={3}>
+                      <img width={32} height={32} src={icons.airdropRainbow} alt={'Airdrop'} />
+                    </Box>
+                  </PromotedPoolPopover>
                 </Box>
               )}
             </Grid>
@@ -321,17 +313,17 @@ const PoolListItem: React.FC<IProps> = ({
                 </>
               )}
 
-              <TooltipHover text='Exchange'>
+              <TooltipHover title='Exchange'>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
                   <img width={32} height={32} src={icons.horizontalSwapIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
-              <TooltipHover text='Add position'>
+              <TooltipHover title='Add position'>
                 <button className={classes.actionButton} onClick={handleOpenPosition}>
                   <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
                 </button>
               </TooltipHover>
-              <TooltipHover text='Open in explorer'>
+              <TooltipHover title='Open in explorer'>
                 <button
                   className={classes.actionButton}
                   onClick={() =>

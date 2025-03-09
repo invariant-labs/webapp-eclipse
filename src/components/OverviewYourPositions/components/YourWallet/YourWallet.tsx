@@ -205,7 +205,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
 
   const renderActions = (pool: TokenPool, strategy: StrategyConfig) => (
     <>
-      <TooltipHover text='Add Position'>
+      <TooltipHover title='Add Position'>
         <Box
           className={classes.actionIcon}
           onClick={() => {
@@ -229,7 +229,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
           <img src={icons.plusIcon} height={24} width={24} alt='Add' />
         </Box>
       </TooltipHover>
-      <TooltipHover text='Exchange'>
+      <TooltipHover title='Exchange'>
         <Box
           className={classes.actionIcon}
           onClick={() => {
@@ -252,7 +252,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
           <img src={icons.horizontalSwapIcon} height={24} width={24} alt='Add' />
         </Box>
       </TooltipHover>
-      <TooltipHover text='Open in explorer'>
+      <TooltipHover title='Open in explorer'>
         <Box
           className={classes.actionIcon}
           onClick={() => {
@@ -337,7 +337,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                                 ? pool.symbol
                                 : shortenAddress(pool.symbol, 2)}
                             </Typography>
-                            <TooltipHover text='Copy token address'>
+                            <TooltipHover title='Copy token address'>
                               <FileCopyOutlinedIcon
                                 onClick={() => {
                                   navigator.clipboard.writeText(poolAddress)

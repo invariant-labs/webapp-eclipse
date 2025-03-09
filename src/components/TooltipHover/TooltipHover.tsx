@@ -1,22 +1,22 @@
-import { Tooltip } from '@mui/material'
+import { Tooltip, TooltipProps } from '@mui/material'
 import useStyles from './style'
 import { TooltipTransition } from './TooltipTransition/TooltipTransition'
 
-type Props = {
-  text: string
+interface Props extends TooltipProps {
   top?: number
   children: React.ReactElement<any, any>
 }
 
-export const TooltipHover = ({ text, top, children }: Props) => {
+export const TooltipHover = ({ top, children, ...props }: Props) => {
   const { classes } = useStyles({ top })
 
   return (
     <Tooltip
       classes={{ tooltip: classes.tooltip }}
-      title={text}
       placement='top'
-      TransitionComponent={TooltipTransition}>
+      TransitionComponent={TooltipTransition}
+      enterTouchDelay={0}
+      {...props}>
       {children}
     </Tooltip>
   )

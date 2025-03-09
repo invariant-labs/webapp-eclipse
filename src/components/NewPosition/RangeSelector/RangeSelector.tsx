@@ -1,6 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import { Button, Grid, Tooltip, Typography } from '@mui/material'
+import { Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import activeLiquidity from '@static/svg/activeLiquidity.svg'
 import {
@@ -20,6 +20,7 @@ import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -431,8 +432,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             )}
           </Grid>
           <Grid className={classes.activeLiquidityContainer} container direction='column'>
-            <Tooltip
-              enterTouchDelay={0}
+            <TooltipGradient
               title={
                 <>
                   <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
@@ -460,13 +460,12 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 </>
               }
               placement='bottom'
-              classes={{
-                tooltip: classes.liquidityTooltip
-              }}>
+              top={1}
+              noGradient>
               <Typography className={classes.activeLiquidity}>
                 Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
               </Typography>
-            </Tooltip>
+            </TooltipGradient>
             <Grid>
               <Typography className={classes.currentPrice}>Current price ━━━</Typography>
             </Grid>
