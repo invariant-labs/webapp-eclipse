@@ -149,53 +149,68 @@ const MarketEvents = () => {
 
         subscribedPositionsPools.add(pool.address.toBase58())
 
+        const positionsInPool = allPositions.filter(position => {
+          return position.poolData.address.toString() === pool.address.toString()
+        })
+
         marketProgram.onPoolChange(
           pool.tokenX,
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
-            const positionsInPool = allPositions.filter(position =>
-              position.pool.equals(pool.address)
-            )
-
+            // update position list
             if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
               positionsInPool.map(position => {
-                //update position list
                 if (
-                  (pool.currentTickIndex >= position.lowerTickIndex &&
-                    poolStructure.currentTickIndex < position.lowerTickIndex) ||
-                  (pool.currentTickIndex < position.lowerTickIndex &&
-                    poolStructure.currentTickIndex >= position.lowerTickIndex)
+                  (pool.currentTickIndex >= position?.lowerTickIndex &&
+                    poolStructure.currentTickIndex < position?.lowerTickIndex) ||
+                  (pool.currentTickIndex < position?.lowerTickIndex &&
+                    poolStructure.currentTickIndex >= position?.lowerTickIndex)
                 ) {
-                  dispatch(positionsActions.calculateTotalUnclaimedFees())
+                  dispatch(
+                    positionsActions.updatePositionTicksRange({
+                      positionId: position.id.toString() + '_' + position.pool.toString(),
+                      fetchTick: 'lower'
+                    })
+                  )
+                } else if (
+                  (pool.currentTickIndex < position?.upperTickIndex &&
+                    poolStructure.currentTickIndex >= position?.upperTickIndex) ||
+                  (pool.currentTickIndex >= position?.upperTickIndex &&
+                    poolStructure.currentTickIndex < position?.upperTickIndex)
+                ) {
+                  dispatch(
+                    positionsActions.updatePositionTicksRange({
+                      positionId: position.id.toString() + '_' + position.pool.toString(),
+                      fetchTick: 'upper'
+                    })
+                  )
+                }
 
+                //update current position details
+                if (
+                  currentPositionIndex ===
+                    position.id.toString() + '_' + position.pool.toString() &&
+                  currentPosition
+                ) {
                   if (
-                    currentPositionIndex ===
-                      position.id.toString() + '_' + position.pool.toString() &&
-                    currentPosition
+                    (pool.currentTickIndex >= currentPosition?.lowerTickIndex &&
+                      poolStructure.currentTickIndex < currentPosition?.lowerTickIndex) ||
+                    (pool.currentTickIndex < currentPosition?.lowerTickIndex &&
+                      poolStructure.currentTickIndex >= currentPosition?.lowerTickIndex)
                   ) {
-                    //update current position details
                     dispatch(
                       positionsActions.getCurrentPositionRangeTicks({
                         id: currentPositionIndex,
                         fetchTick: 'lower'
                       })
                     )
-                  }
-                } else if (
-                  (pool.currentTickIndex < position.upperTickIndex &&
-                    poolStructure.currentTickIndex >= position.upperTickIndex) ||
-                  (pool.currentTickIndex >= position.upperTickIndex &&
-                    poolStructure.currentTickIndex < position.upperTickIndex)
-                ) {
-                  dispatch(positionsActions.calculateTotalUnclaimedFees())
-
-                  if (
-                    currentPositionIndex ===
-                      position.id.toString() + '_' + position.pool.toString() &&
-                    currentPosition
+                  } else if (
+                    (pool.currentTickIndex < currentPosition?.upperTickIndex &&
+                      poolStructure.currentTickIndex >= currentPosition?.upperTickIndex) ||
+                    (pool.currentTickIndex >= currentPosition?.upperTickIndex &&
+                      poolStructure.currentTickIndex < currentPosition?.upperTickIndex)
                   ) {
-                    //update current position details
                     dispatch(
                       positionsActions.getCurrentPositionRangeTicks({
                         id: currentPositionIndex,

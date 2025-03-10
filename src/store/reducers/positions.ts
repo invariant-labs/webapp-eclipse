@@ -10,7 +10,13 @@ import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
 export type FetchTick = 'lower' | 'upper'
-export interface PositionWithAddress extends Position {
+
+export interface PositionWithTicks extends Position {
+  lowerTick: Tick
+  upperTick: Tick
+  ticksLoading: boolean
+}
+export interface PositionWithAddress extends PositionWithTicks {
   address: PublicKey
 }
 export interface PositionsListStore {
@@ -234,9 +240,59 @@ const positionsSlice = createSlice({
     setSinglePosition(state, action: PayloadAction<SetPositionData>) {
       state.positionsList.list[action.payload.index] = {
         address: state.positionsList.list[action.payload.index].address,
+        lowerTick: state.positionsList.list[action.payload.index].lowerTick,
+        upperTick: state.positionsList.list[action.payload.index].upperTick,
+        ticksLoading: state.positionsList.list[action.payload.index].ticksLoading,
         ...action.payload.position
       }
       return state
+    },
+    updatePositionTicksRange(
+      state,
+      action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+    ) {
+      state.positionsList.list.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            ticksLoading: true
+          }
+        }
+      })
+
+      state.positionsList.lockedList.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            ticksLoading: true
+          }
+        }
+      })
+      return state
+    },
+    setPositionRangeTicks(
+      state,
+      action: PayloadAction<{ positionId: string; lowerTick: Tick; upperTick: Tick }>
+    ) {
+      state.positionsList.list.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            lowerTick: action.payload.lowerTick,
+            upperTick: action.payload.upperTick
+          }
+        }
+      })
+
+      state.positionsList.lockedList.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            lowerTick: action.payload.lowerTick,
+            upperTick: action.payload.upperTick
+          }
+        }
+      })
     },
     getCurrentPositionRangeTicks(
       state,
