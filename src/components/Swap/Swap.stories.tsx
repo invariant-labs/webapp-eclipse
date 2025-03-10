@@ -110,7 +110,15 @@ export const Primary: Story = {
     isTimeoutError: false,
     canNavigate: true,
     feeds: {},
-    pointsPerUsdFee: new BN(0)
+    pointsPerUsdFee: new BN(0),
+    market: {} as any,
+    tokensDict: {},
+    swapAccounts: {
+      pools: {},
+      tickmaps: {},
+      ticks: {}
+    },
+    swapIsLoading: false
   },
   render: args => {
     return <Swap {...args} />
