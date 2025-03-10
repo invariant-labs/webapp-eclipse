@@ -226,11 +226,6 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
-  const IS_ERROR_LABEL_SHOW =
-    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 5 ||
-    tokens[tokenFromIndex ?? '']?.isUnknown ||
-    tokens[tokenToIndex ?? '']?.isUnknown
-
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
