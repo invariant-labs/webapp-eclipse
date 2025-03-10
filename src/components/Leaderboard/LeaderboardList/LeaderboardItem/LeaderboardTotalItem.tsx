@@ -122,7 +122,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
-        <Typography>
+        <Box>
           {domain
             ? isVerySmallScreen || isNarrowMediumScreen
               ? shortDomain
@@ -148,7 +148,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
               </Link>
             </TooltipHover>
           </Box>
-        </Typography>
+        </Box>
 
         <Typography>
           {new BN(points, 'hex').isZero()

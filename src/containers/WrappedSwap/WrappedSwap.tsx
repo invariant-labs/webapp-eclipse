@@ -118,13 +118,13 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   }, [isFetchingNewPool])
 
   const lastTokenFrom =
-    tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
+    initialTokenFrom && tickerToAddress(networkType, initialTokenFrom)
       ? tickerToAddress(networkType, initialTokenFrom)
-      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString())
+      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString()
 
   const lastTokenTo =
-    tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
+    initialTokenTo && tickerToAddress(networkType, initialTokenTo)
       ? tickerToAddress(networkType, initialTokenTo)
       : localStorage.getItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`)
 
