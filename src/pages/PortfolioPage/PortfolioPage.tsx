@@ -1,7 +1,7 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import useStyles from './styles'
 import icons from '@static/icons'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { useDispatch, useSelector } from 'react-redux'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
@@ -14,6 +14,8 @@ const PortfolioPage: React.FC = () => {
   const { classes } = useStyles()
   const dispatch = useDispatch()
   const walletStatus = useSelector(status)
+
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
@@ -36,7 +38,7 @@ const PortfolioPage: React.FC = () => {
               No liquidity positions to show.
             </Typography>
             <ChangeWalletButton
-              name='Connect wallet'
+              name={isSm ? 'Connect' : 'Connect wallet'}
               onConnect={() => {
                 dispatch(walletActions.connect(false))
               }}
