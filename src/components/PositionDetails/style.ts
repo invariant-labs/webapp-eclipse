@@ -124,6 +124,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 40,
     padding: 0,
     minWidth: 40,
+    transition: '300ms',
     '&:hover': {
       background: colors.invariant.greenLinearGradient,
       boxShadow: `0 0 16px ${colors.invariant.greenLinearGradient}`
@@ -132,7 +133,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       background: colors.invariant.light,
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
-      transition: 'all 0.2s',
+      transition: 'all 0.3s',
       '&:hover': {
         boxShadow: 'none',
         cursor: 'not-allowed',
@@ -150,6 +151,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 40,
     padding: 0,
     minWidth: 40,
+    transition: '300ms',
     '&:hover': {
       background: colors.invariant.pinkLinearGradient,
       boxShadow: `0 0 16px ${colors.invariant.pink}`

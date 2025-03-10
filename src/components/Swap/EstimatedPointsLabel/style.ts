@@ -33,7 +33,7 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
     pointsValue: {
       width: '50px',
       textAlign: 'center',
-      transition: 'filter 0.2s ease-in-out',
+      transition: 'filter 0.3s ease-in-out',
       filter: isChanging ? 'blur(10px)' : 'blur(0)'
     },
 

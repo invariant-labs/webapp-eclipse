@@ -33,7 +33,8 @@ const useStyles = makeStyles()(() => {
     footerLink: {
       width: '100%',
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      transition: '300ms'
     },
     tooltip: {
       color: colors.invariant.textGrey,

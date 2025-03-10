@@ -67,6 +67,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingInline: 0,
     background:
       'linear-gradient(180deg, rgba(239, 132, 245, 0.8) 0%, rgba(156, 62, 189, 0.8) 100%)',
+    transition: '300ms',
 
     '&:hover': {
       background: 'linear-gradient(180deg, #EF84F5 0%, #9C3EBD 100%)',
@@ -216,7 +217,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '&:disabled': {
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
-      transition: 'all 0.2s',
+      transition: 'all 0.3s',
       '&:hover': {
         boxShadow: 'none',
         cursor: 'not-allowed',

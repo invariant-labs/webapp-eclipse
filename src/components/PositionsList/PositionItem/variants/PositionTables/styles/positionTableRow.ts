@@ -108,7 +108,7 @@ export const usePositionTableRowStyle = makeStyles()((theme: Theme) => ({
   arrows: {
     width: 36,
     cursor: 'pointer',
-    transition: 'filter 0.2s',
+    transition: 'filter 0.3s',
     '&:hover': {
       filter: 'brightness(2)'
     }
@@ -158,7 +158,7 @@ export const usePositionTableRowStyle = makeStyles()((theme: Theme) => ({
     color: colors.invariant.black,
     textTransform: 'none',
 
-    transition: 'filter 0.2s linear',
+    transition: 'filter 0.3s linear',
 
     '&:hover': {
       filter: 'brightness(1.2)',

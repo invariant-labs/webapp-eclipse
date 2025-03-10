@@ -9,6 +9,7 @@ export const useStyles = makeStyles()(() => {
       borderRadius: 12,
       color: colors.white.main,
       ...typography.body1,
+      transition: '300ms',
 
       '&:hover': {
         background: colors.invariant.light

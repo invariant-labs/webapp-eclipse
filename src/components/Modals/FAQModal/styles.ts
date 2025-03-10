@@ -122,7 +122,7 @@ const useStyles = makeStyles()(() => {
       paddingInline: 8,
       textAlign: 'center',
       verticalAlign: 'middle',
-      transition: 'transform 0.2s',
+      transition: 'transform 0.3s',
 
       '&:hover': {
         cursor: 'pointer',

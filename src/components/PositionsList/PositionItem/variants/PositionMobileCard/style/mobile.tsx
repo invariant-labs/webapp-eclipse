@@ -18,7 +18,8 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     },
     '&:hover': {
       background: `${colors.invariant.component}B0`
-    }
+    },
+    transition: '300ms'
   },
   actionButton: {
     display: 'flex',
