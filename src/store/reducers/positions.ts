@@ -228,20 +228,6 @@ const positionsSlice = createSlice({
       state.positionsList.loading = true
       return state
     },
-    setPositionRangeTicks(
-      state,
-      action: PayloadAction<{ positionId: string; lowerTick: number; upperTick: number }>
-    ) {
-      state.positionsList.list.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
-          position = {
-            ...position,
-            lowerTickIndex: action.payload.lowerTick,
-            upperTickIndex: action.payload.upperTick
-          }
-        }
-      })
-    },
     getSinglePosition(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
     },
