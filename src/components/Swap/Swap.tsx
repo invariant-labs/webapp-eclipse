@@ -397,7 +397,7 @@ export const Swap: React.FC<ISwap> = ({
         )
         setPointsForSwap(firstPoints.add(secondPoints))
       } else {
-        const feePercentage = pools[simulateResult.poolIndex].fee
+        const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
         let desiredAmount: string
         let desiredIndex: number | null
         if (inputRef === inputTarget.FROM) {
