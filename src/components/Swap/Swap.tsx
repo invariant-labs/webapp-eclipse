@@ -660,8 +660,18 @@ export const Swap: React.FC<ISwap> = ({
       (isSimulateError && isSimulateWithHopError) ||
       (!isSimulateError && !isSimulateWithHopError)
     ) {
-      if (simulateWithHopResult?.simulation?.totalAmountOut.gte(simulateResult.amountOut)) {
-        useTwoHop = true
+      if (inputRef === inputTarget.FROM) {
+        if (simulateWithHopResult?.simulation?.totalAmountOut.gte(simulateResult.amountOut)) {
+          useTwoHop = true
+        }
+      } else {
+        if (
+          simulateWithHopResult?.simulation?.totalAmountIn
+            .add(simulateWithHopResult?.simulation?.swapHopOne.accumulatedFee)
+            .lte(simulateResult.amountOut)
+        ) {
+          useTwoHop = true
+        }
       }
     }
 
