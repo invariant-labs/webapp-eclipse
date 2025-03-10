@@ -99,6 +99,11 @@ export const useStyles = makeStyles<StyleProps>()(
     buttonText: {
       ...typography.body2
     },
-    button2: {}
+    button2: {},
+    buttonContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }
   })
 )
