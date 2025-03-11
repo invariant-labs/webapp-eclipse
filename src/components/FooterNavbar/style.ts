@@ -6,6 +6,9 @@ const useStyles = makeStyles()(() => {
     activeLink: {
       background: colors.invariant.blue
     },
+    navbarContainer: {
+      marginTop: 79
+    },
     navbar: {
       display: 'flex',
       width: '100%',
