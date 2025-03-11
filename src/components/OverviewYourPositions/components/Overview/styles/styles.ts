@@ -60,7 +60,7 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     height: '100%',
     position: 'relative',
     cursor: 'pointer',
-    transition: 'all 0.2s'
+    transition: 'all 0.3s'
   },
   emptyState: {
     display: 'flex',
