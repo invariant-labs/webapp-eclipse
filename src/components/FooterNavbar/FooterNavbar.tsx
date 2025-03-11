@@ -79,7 +79,8 @@ export const FooterNavbar = () => {
     }
 
     window.visualViewport!.addEventListener('resize', resizeHandler)
-    window.addEventListener('resize', resizeHandler)
+
+    return () => window.visualViewport!.addEventListener('resize', resizeHandler)
   }, [])
 
   return (
