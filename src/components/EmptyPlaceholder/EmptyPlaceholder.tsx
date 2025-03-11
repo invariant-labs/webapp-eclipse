@@ -1,9 +1,10 @@
-import { Button, Grid, Typography } from '@mui/material'
+import { Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import classNames from 'classnames'
 import React from 'react'
 import { useStyles } from './style'
 import icons from '@static/icons'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
+import { theme } from '@static/theme'
 
 export interface IEmptyPlaceholder {
   desc: string
@@ -41,19 +42,21 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
 }) => {
   const { classes } = useStyles({ newVersion, themeDark, roundedCorners, height })
 
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+
   return (
     <Grid container className={classes.wrapperContainer}>
       <Grid className={classNames(classes.blur, 'blurLayer')} />
       <Grid sx={style} className={classNames(classes.container, 'blurLayer')}>
         <Grid className={classNames(classes.root, 'blurInfo')} gap='24px'>
           <img src={img} alt='Not connected' />
-          <Grid container flexDirection='column' gap='10px'>
+          <Grid className={classes.buttonContainer}>
             <Typography sx={{ opacity: 0.8 }} className={classes.title}>
               {mainTitle}
             </Typography>
             {desc?.length > 0 && <Typography className={classes.desc}>{desc}</Typography>}
           </Grid>
-          <Grid container flexDirection='column' alignContent='center'>
+          <Grid className={classes.buttonContainer}>
             {withButton && (
               <Button className={classes.button} onClick={onAction} variant='contained'>
                 {buttonName ? buttonName : 'Add a position'}
@@ -61,7 +64,7 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
             )}
             {onAction2 && connectButton && (
               <ChangeWalletButton
-                name='Connect wallet'
+                name={isSm ? 'Connect' : 'Connect wallet'}
                 onConnect={onAction2}
                 connected={false}
                 onDisconnect={() => {}}
