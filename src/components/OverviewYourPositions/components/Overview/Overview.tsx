@@ -99,7 +99,6 @@ export const Overview: React.FC<OverviewProps> = () => {
 
   useEffect(() => {
     if (Object.keys(prices).length > 0) {
-      console.log(prices)
       dispatch(actions.setPrices(prices))
     }
   }, [prices])

@@ -160,7 +160,6 @@ const poolsSlice = createSlice({
       return state
     },
     addPoolsForList(state, action: PayloadAction<ListPoolsResponse>) {
-      console.log('new pool', action.payload.data)
       const newData = action.payload.data.reduce(
         (acc, pool) => ({
           ...acc,
