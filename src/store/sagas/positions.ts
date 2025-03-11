@@ -1932,7 +1932,7 @@ export function* handleUpdatePositionsRangeTicks(
 
       yield put(
         actions.setPositionRangeTicks({
-          positionId: positionId,
+          positionAddress: positionData.address,
           lowerTick: lowerTick,
           upperTick: positionData.upperTick
         })
@@ -1946,7 +1946,7 @@ export function* handleUpdatePositionsRangeTicks(
 
       yield put(
         actions.setPositionRangeTicks({
-          positionId: positionId,
+          positionAddress: positionData.address,
           lowerTick: positionData.lowerTick,
           upperTick: upperTick
         })
@@ -1959,7 +1959,7 @@ export function* handleUpdatePositionsRangeTicks(
 
       yield put(
         actions.setPositionRangeTicks({
-          positionId: positionId,
+          positionAddress: positionData.address,
           lowerTick: lowerTick,
           upperTick: upperTick
         })

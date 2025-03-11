@@ -50,7 +50,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
-  const unclaimedFees = useSelector(totalUnlaimedFees)
+  const { total: unclaimedFees } = useSelector(totalUnlaimedFees)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
   const { positions } = useAgregatedPositions(positionList, prices)
 

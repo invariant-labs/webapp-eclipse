@@ -243,10 +243,15 @@ const positionsSlice = createSlice({
     },
     setPositionRangeTicks(
       state,
-      action: PayloadAction<{ positionId: string; lowerTick: Tick; upperTick: Tick }>
+      action: PayloadAction<{ positionAddress: PublicKey; lowerTick: Tick; upperTick: Tick }>
     ) {
       state.positionsList.list.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
+        if (position.address.toString() === action.payload.positionAddress.toString()) {
+          console.log(position.lowerTick)
+          console.log(action.payload.lowerTick)
+
+          console.log(position.upperTick)
+          console.log(action.payload.upperTick)
           position = {
             ...position,
             lowerTick: action.payload.lowerTick,
@@ -256,7 +261,7 @@ const positionsSlice = createSlice({
       })
 
       state.positionsList.lockedList.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
+        if (position.address.toString() === action.payload.positionAddress.toString()) {
           position = {
             ...position,
             lowerTick: action.payload.lowerTick,

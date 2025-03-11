@@ -124,6 +124,7 @@ export const totalUnlaimedFees = createSelector(
   (positions, lockedPositions, pricesData) => {
     const allPositions = [...positions, ...lockedPositions]
 
+    let isLoading = false
     const total = allPositions.reduce((acc: number, position) => {
       const [bnX, bnY] = calculateClaimAmount({
         position,
@@ -141,9 +142,13 @@ export const totalUnlaimedFees = createSelector(
         +printBN(bnY, position.tokenY.decimals) *
         (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
 
+      if (position.ticksLoading) {
+        isLoading = true
+      }
       return acc + xValue + yValue
     }, 0)
-    return total
+    console.log(total)
+    return { total, isLoading }
   }
 )
 

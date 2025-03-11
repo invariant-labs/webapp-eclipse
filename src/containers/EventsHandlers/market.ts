@@ -241,6 +241,7 @@ const MarketEvents = () => {
     networkStatus,
     marketProgram,
     currentPositionIndex,
+    currentPosition,
     location.pathname
   ])
 
