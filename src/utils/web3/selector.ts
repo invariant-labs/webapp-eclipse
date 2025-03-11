@@ -1,4 +1,5 @@
 import { NightlyConnectAdapter } from '@nightlylabs/wallet-selector-solana'
+import { ensureError } from '@utils/utils'
 import { WalletAdapter } from './adapters/types'
 
 export interface MergedWalletAdapter extends WalletAdapter {
@@ -23,7 +24,8 @@ export const openWalletSelectorModal = async () => {
       return
     }
     await nightlyConnectAdapter.connect()
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
   }
 }

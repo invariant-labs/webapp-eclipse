@@ -1,7 +1,7 @@
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
-import { printBN, getTokenPrice } from '@utils/utils'
+import { printBN, getTokenPrice, ensureError } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
 interface Token {
@@ -50,7 +50,8 @@ export const useProcessedTokens = (
           try {
             const priceData = await getTokenPrice(token.assetAddress.toString() ?? '', network)
             price = priceData ?? 0
-          } catch (error) {
+          } catch (e: unknown) {
+            const error = ensureError(e)
             console.error(`Failed to fetch price for ${token.symbol}:`, error)
           }
           return {

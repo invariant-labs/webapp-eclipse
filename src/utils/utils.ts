@@ -1196,8 +1196,11 @@ export const handleSimulate = async (
       if (swapSimulateResult.status !== SimulationStatus.Ok) {
         errorMessage.push(swapSimulateResult.status)
       }
-    } catch (err: any) {
-      errorMessage.push(err.toString())
+    } catch (e: unknown) {
+      const error = ensureError(e)
+      console.log(error)
+
+      errorMessage.push(error.message.toString())
     }
   }
   if (okChanges === 0 && failChanges === 0) {
@@ -1349,8 +1352,10 @@ export const getPoolsFromAddresses = async (
           address: addresses[index]
         }
       }) as PoolWithAddress[]
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
+
     return []
   }
 }
@@ -1372,8 +1377,10 @@ export const getTickmapsFromPools = async (
         }
         return acc
       }, {})
-    } catch (error) {
+    } catch (e: unknown) {
+      const error = ensureError(e)
       console.log(error)
+
       return {}
     }
   }
@@ -1382,8 +1389,10 @@ export const getTickmapsFromPools = async (
 export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
   try {
     return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
-  } catch (e) {
-    console.log(e)
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     return []
   }
 }
@@ -1394,11 +1403,12 @@ export const getPools = async (
 ): Promise<PoolWithAddress[]> => {
   try {
     const addresses: PublicKey[] = await Promise.all(
-      pairs.map(async pair => await pair.getAddress(marketProgram.program.programId))
+      pairs.map(pair => pair.getAddress(marketProgram.program.programId))
     )
 
     return await getPoolsFromAddresses(addresses, marketProgram)
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
     return []
   }
@@ -1608,7 +1618,10 @@ export async function getTokenMetadata(
       logoURI: nft?.json?.image || irisTokenData?.image || '/unknownToken.svg',
       isUnknown: true
     }
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     return {
       tokenProgram,
       address: mintAddress,
@@ -1658,7 +1671,10 @@ export const stringToFixed = (
 export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
   try {
     return getAddressTickerMap(network)[ticker].toString()
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     return ticker
   }
 }
@@ -1807,7 +1823,10 @@ export const getTokenPrice = async (
           : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET',
         String(Date.now())
       )
-    } catch (e) {
+    } catch (e: unknown) {
+      const error = ensureError(e)
+      console.log(error)
+      
       localStorage.removeItem(
         network === NetworkType.Mainnet
           ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
@@ -1817,7 +1836,6 @@ export const getTokenPrice = async (
         network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET'
       )
       priceData = null
-      console.log(e)
     }
   } else {
     priceData = JSON.parse(cachedPriceData)
@@ -1850,7 +1868,9 @@ export const getPoolsAPY = async (name: string): Promise<Record<string, number>>
     )
 
     return data
-  } catch (_err) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
     return {}
   }
 }
@@ -1864,7 +1884,9 @@ export const getIncentivesRewardData = async (
     )
 
     return data
-  } catch (_err) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
     return {}
   }
 }
@@ -1876,7 +1898,9 @@ export const getPoolsVolumeRanges = async (name: string): Promise<Record<string,
     )
 
     return data
-  } catch (_err) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
     return {}
   }
 }
@@ -1897,7 +1921,7 @@ export const isValidPublicKey = (keyString?: string | null) => {
     }
     new PublicKey(keyString)
     return true
-  } catch (error) {
+  } catch {
     return false
   }
 }
@@ -2070,4 +2094,15 @@ export const sciToString = (sciStr: string | number) => {
 
   const fullStr = number.toLocaleString('fullwide', { useGrouping: false })
   return BigInt(fullStr).toString()
+}
+
+export const ensureError = (value: unknown): Error => {
+  if (value instanceof Error) return value
+
+  let stringified = '[Unable to stringify the thrown value]'
+
+  stringified = JSON.stringify(value)
+
+  const error = new Error(stringified)
+  return error
 }

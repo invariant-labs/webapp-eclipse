@@ -1218,7 +1218,12 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Fade in={isPromotedPool} timeout={250} style={{ width: '100%' }}>
+      <Fade
+        in={isPromotedPool}
+        timeout={250}
+        style={{ width: '100%' }}
+        unmountOnExit={isMd}
+        mountOnEnter={isMd}>
         <div>
           <EstimatedPoints
             handleClickFAQ={handleClickFAQ}

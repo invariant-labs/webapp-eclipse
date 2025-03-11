@@ -619,7 +619,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
         return result.x
       }
-    } catch (error) {
+    } catch {
       const result = (byX ? getLiquidityByY : getLiquidityByX)(
         amount,
         lowerTick,
