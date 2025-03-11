@@ -51,7 +51,7 @@ const useStyles = makeStyles()(() => {
         background: colors.invariant.light,
         color: colors.invariant.componentBcg,
         pointerEvents: 'auto',
-        transition: 'all 0.2s',
+        transition: '300ms',
         '&:hover': {
           boxShadow: 'none',
           cursor: 'not-allowed',

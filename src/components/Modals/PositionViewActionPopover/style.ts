@@ -23,6 +23,7 @@ const useStyles = makeStyles()(() => {
       cursor: 'pointer',
       display: 'flex',
       alignItems: 'center',
+      transition: '300ms',
       '&:hover': {
         background: colors.invariant.light,
         color: colors.white.main,
@@ -44,7 +45,7 @@ const useStyles = makeStyles()(() => {
         background: colors.invariant.light,
         color: colors.invariant.black,
         pointerEvents: 'auto',
-        transition: 'all 0.2s',
+        transition: 'all 0.3s',
         '&:hover': {
           boxShadow: 'none',
           cursor: 'not-allowed',
