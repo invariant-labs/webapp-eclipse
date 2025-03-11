@@ -103,7 +103,12 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
     <Box mt={3} mb={4}>
       <GradientBorder borderRadius={24} borderWidth={2}>
         <Grid className={classNames(classes.wrapper)}>
-          <Grid display='flex' gap={3} className={classNames(classes.innerWrapper)} spacing={3}>
+          <Grid
+            container
+            display='flex'
+            gap={3}
+            className={classNames(classes.innerWrapper)}
+            spacing={3}>
             <Grid className={classes.column}>
               <Grid container direction='column' spacing={1} className={classes.leftHeaderItems}>
                 <Grid item>
