@@ -1582,7 +1582,7 @@ export const stringToFixed = (
 
 export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
   try {
-    return getAddressTickerMap(network)[ticker].toString()
+    return getAddressTickerMap(network)[ticker] ?? ticker
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
@@ -1738,7 +1738,7 @@ export const getTokenPrice = async (
     } catch (e: unknown) {
       const error = ensureError(e)
       console.log(error)
-      
+
       localStorage.removeItem(
         network === NetworkType.Mainnet
           ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
@@ -1981,8 +1981,8 @@ export const generatePositionTableLoadingData = () => {
       return {
         id: `loading-${index}`,
         poolAddress: `pool-${index}`,
-        tokenXName: 'FOO',
-        tokenYName: 'BAR',
+        tokenXName: 'ETH',
+        tokenYName: 'USDC',
         tokenXIcon: undefined,
         tokenYIcon: undefined,
         currentPrice,
@@ -1996,7 +1996,8 @@ export const generatePositionTableLoadingData = () => {
         isActive: Math.random() > 0.5,
         tokenXLiq: getRandomNumber(100, 1000),
         tokenYLiq: getRandomNumber(10000, 100000),
-        network: 'mainnet'
+        network: NetworkType.Mainnet,
+        unclaimedFeesInUSD: { value: 0, loading: true }
       }
     })
 }
