@@ -62,11 +62,6 @@ export interface IPositionsStore {
   currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
-  unclaimedFees: {
-    total: number
-    loading: boolean
-    lastUpdate: number
-  }
   prices: {
     data: Record<string, number>
   }
@@ -132,11 +127,6 @@ export const defaultState: IPositionsStore = {
     inProgress: false,
     success: false
   },
-  unclaimedFees: {
-    total: 0,
-    loading: false,
-    lastUpdate: 0
-  },
   prices: {
     data: {}
   },
@@ -186,25 +176,6 @@ const positionsSlice = createSlice({
     },
     setAllClaimLoader(state, action: PayloadAction<boolean>) {
       state.positionsList.isAllClaimFeesLoading = action.payload
-    },
-    calculateTotalUnclaimedFees(state) {
-      state.unclaimedFees.loading = true
-      return state
-    },
-    setUnclaimedFees(state, action: PayloadAction<number>) {
-      state.unclaimedFees = {
-        total: action.payload,
-        loading: false,
-        lastUpdate: Date.now()
-      }
-      return state
-    },
-    setUnclaimedFeesError(state) {
-      state.unclaimedFees = {
-        ...state.unclaimedFees,
-        loading: false
-      }
-      return state
     },
     setPrices(state, action: PayloadAction<Record<string, number>>) {
       state.prices = {

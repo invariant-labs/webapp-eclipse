@@ -1457,7 +1457,6 @@ export function* handleClaimAllFees() {
     yield put(snackbarsActions.remove(loaderClaimAllFees))
 
     yield put(actions.getPositionsList())
-    yield put(actions.calculateTotalUnclaimedFees())
 
     yield* put(actions.setAllClaimLoader(false))
   } catch (e: unknown) {
@@ -1979,81 +1978,6 @@ export function* handleUpdatePositionsRangeTicks(
   }
 }
 
-function* getTickWithCache(
-  pair: Pair,
-  tickIndex: number,
-  ticksCache: Map<string, Tick>,
-  marketProgram: Market
-): Generator<any, Tick, any> {
-  const cacheKey = `${pair.tokenX.toString()}-${pair.tokenY.toString()}-${tickIndex}`
-
-  if (ticksCache.has(cacheKey)) {
-    return ticksCache.get(cacheKey)!
-  }
-
-  const tick = yield* call([marketProgram, 'getTick'], pair, tickIndex)
-  ticksCache.set(cacheKey, tick)
-  return tick
-}
-
-export function* handleCalculateTotalUnclaimedFees() {
-  try {
-    const positionList = yield* select(positionsWithPoolsData)
-    const pricesData = yield* select(prices)
-    const networkType = yield* select(network)
-    const rpc = yield* select(rpcAddress)
-
-    const wallet = getEclipseWallet() as IWallet
-    const marketProgram: Market = yield* call(getMarketProgram, networkType, rpc, wallet)
-
-    const ticksCache: Map<string, Tick> = new Map()
-
-    const ticks: Tick[][] = yield* all(
-      positionList.map(function* (position) {
-        const pair = new Pair(position.poolData.tokenX, position.poolData.tokenY, {
-          fee: position.poolData.fee,
-          tickSpacing: position.poolData.tickSpacing
-        })
-
-        const [lowerTick, upperTick]: Tick[] = yield* all([
-          call(getTickWithCache, pair, position.lowerTickIndex, ticksCache, marketProgram),
-          call(getTickWithCache, pair, position.upperTickIndex, ticksCache, marketProgram)
-        ])
-
-        return [lowerTick, upperTick]
-      })
-    )
-
-    const total = positionList.reduce((acc: number, position, i: number) => {
-      const [lowerTick, upperTick] = ticks[i]
-      const [bnX, bnY] = calculateClaimAmount({
-        position,
-        tickLower: lowerTick,
-        tickUpper: upperTick,
-        tickCurrent: position.poolData.currentTickIndex,
-        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
-        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
-      })
-
-      const xValue =
-        +printBN(bnX, position.tokenX.decimals) *
-        (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
-      const yValue =
-        +printBN(bnY, position.tokenY.decimals) *
-        (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
-
-      return acc + xValue + yValue
-    }, 0)
-
-    yield* put(actions.setUnclaimedFees(isFinite(total) ? total : 0))
-  } catch (e: unknown) {
-    const error = ensureError(e)
-
-    console.error('Error calculating unclaimed fees:', error)
-    yield* put(actions.setUnclaimedFeesError())
-  }
-}
-
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)
 }
@@ -2069,10 +1993,6 @@ export function* claimFeeHandler(): Generator {
 
 export function* claimAllFeeHandler(): Generator {
   yield* takeEvery(actions.claimAllFee, handleClaimAllFees)
-}
-
-export function* unclaimedFeesHandler(): Generator {
-  yield* takeEvery(actions.calculateTotalUnclaimedFees, handleCalculateTotalUnclaimedFees)
 }
 
 export function* closePositionHandler(): Generator {
@@ -2096,7 +2016,6 @@ export function* positionsSaga(): Generator {
       getCurrentPlotTicksHandler,
       getPositionsListHandler,
       claimFeeHandler,
-      unclaimedFeesHandler,
       claimAllFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,

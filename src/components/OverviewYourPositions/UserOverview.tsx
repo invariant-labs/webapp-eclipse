@@ -15,7 +15,11 @@ import { Overview } from './components/Overview/Overview'
 import { YourWallet } from './components/YourWallet/YourWallet'
 import { useDispatch, useSelector } from 'react-redux'
 import { balanceLoading, swapTokens } from '@store/selectors/solanaWallet'
-import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
+import {
+  isLoadingPositionsList,
+  positionsWithPoolsData,
+  totalUnlaimedFees
+} from '@store/selectors/positions'
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
@@ -45,6 +49,7 @@ export const UserOverview = () => {
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isDownMd = useMediaQuery(theme.breakpoints.down('md'))
   const list = useSelector(positionsWithPoolsData)
+  const fees = useSelector(totalUnlaimedFees)
   const [activePanel, setActivePanel] = useState<CardSwitcher>(CardSwitcher.Overview)
   const dispatch = useDispatch()
   const handleSwitchPools = (
@@ -55,7 +60,7 @@ export const UserOverview = () => {
       setActivePanel(newAlignment)
     }
   }
-
+  console.log(fees)
   const initialHideUnknownTokensValue =
     localStorage.getItem('HIDE_UNKNOWN_TOKENS') === 'true' ||
     localStorage.getItem('HIDE_UNKNOWN_TOKENS') === null

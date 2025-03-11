@@ -162,28 +162,25 @@ export const PositionsList: React.FC<IProps> = ({
       )
     }
 
-    return filteredData.map((element, index) => {
-      console.log(filteredData[4]?.unclaimedFeesInUSD)
-      return (
-        <Grid
-          onClick={() => {
-            if (allowPropagation) {
-              navigate(`/position/${element.id}`)
-            }
-          }}
-          key={element.id}
-          className={classes.itemLink}>
-          <PositionItemMobile
-            key={index}
-            {...element}
-            setAllowPropagation={setAllowPropagation}
-            handleLockPosition={handleLockPosition}
-            handleClosePosition={handleClosePosition}
-            handleClaimFee={handleClaimFee}
-          />
-        </Grid>
-      )
-    })
+    return filteredData.map((element, index) => (
+      <Grid
+        onClick={() => {
+          if (allowPropagation) {
+            navigate(`/position/${element.id}`)
+          }
+        }}
+        key={element.id}
+        className={classes.itemLink}>
+        <PositionItemMobile
+          key={index}
+          {...element}
+          setAllowPropagation={setAllowPropagation}
+          handleLockPosition={handleLockPosition}
+          handleClosePosition={handleClosePosition}
+          handleClaimFee={handleClaimFee}
+        />
+      </Grid>
+    ))
   }
 
   return (
