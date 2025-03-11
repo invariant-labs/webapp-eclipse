@@ -71,20 +71,22 @@ export const FooterNavbar = () => {
     ...(typeOfNetwork === NetworkType.Testnet ? { creator: [/^creator\/*/] } : {})
   }
 
-  const [bottom, setBottom] = useState(0)
+  const [display, setDisplay] = useState(true)
 
   useEffect(() => {
     const resizeHandler = () => {
-      setBottom(
-        window.innerHeight - window.visualViewport!.height - window.visualViewport!.offsetTop
-      )
+      setDisplay(window.innerHeight !== window.visualViewport!.height)
     }
 
     window.visualViewport!.addEventListener('resize', resizeHandler)
+    window.addEventListener('resize', resizeHandler)
   }, [])
 
   return (
-    <Box component='footer' className={classes.navbar} style={{ bottom }}>
+    <Box
+      component='footer'
+      className={classes.navbar}
+      style={{ display: display ? 'flex' : 'none' }}>
       {links.map(link => {
         const active =
           link.url === activePath ||
