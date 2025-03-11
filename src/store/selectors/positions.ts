@@ -124,7 +124,7 @@ export const totalUnlaimedFees = createSelector(
   (positions, lockedPositions, pricesData) => {
     const allPositions = [...positions, ...lockedPositions]
 
-    const total = allPositions.reduce((acc: number, position, i: number) => {
+    const total = allPositions.reduce((acc: number, position) => {
       const [bnX, bnY] = calculateClaimAmount({
         position,
         tickLower: position.lowerTick,

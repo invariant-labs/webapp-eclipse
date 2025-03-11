@@ -16,7 +16,6 @@ import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { accounts } from '@store/selectors/solanaWallet'
 import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
-
 import {
   Transaction,
   sendAndConfirmRawTransaction,
@@ -35,8 +34,7 @@ import {
   positionsList,
   positionsWithPoolsData,
   singlePositionData,
-  currentPositionTicks,
-  prices
+  currentPositionTicks
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -48,19 +46,15 @@ import {
   createPlaceholderLiquidityPlot,
   ensureError,
   getLiquidityTicksByPositionsList,
-  getPositionsAddressesFromRange,
-  printBN
+  getPositionsAddressesFromRange
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
-  calculateClaimAmount,
   createNativeAtaInstructions,
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import { ClaimAllFee, Market, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
-import { getEclipseWallet } from '@utils/web3/wallet'
-import PoolList from '@components/Stats/PoolList/PoolList'
+import { ClaimAllFee, Position } from '@invariant-labs/sdk-eclipse/lib/market'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
