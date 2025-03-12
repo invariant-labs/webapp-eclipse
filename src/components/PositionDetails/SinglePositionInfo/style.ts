@@ -380,6 +380,20 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         boxShadow: 'none'
       }
     },
+    '&:disabled': {
+      background: colors.invariant.light,
+      color: colors.invariant.componentBcg,
+      pointerEvents: 'auto',
+      transition: 'all 0.2s',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed',
+        filter: 'brightness(1.15)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
+      }
+    },
     [theme.breakpoints.down('sm')]: {
       width: '33%',
       height: 40,
