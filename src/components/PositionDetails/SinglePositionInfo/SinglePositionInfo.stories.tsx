@@ -49,7 +49,8 @@ export const Primary: Story = {
     isActive: true,
     network: NetworkType.Testnet,
     isLocked: false,
-    ethBalance: new BN(10000000)
+    ethBalance: new BN(10000000),
+    isPreview: false
   },
   render: args => {
     return (

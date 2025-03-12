@@ -53,7 +53,8 @@ const defaultArgs = {
   tokenYAddress: new PublicKey('22'),
   poolAddress: new PublicKey('32'),
   isLocked: false,
-  ethBalance: new BN(10000000)
+  ethBalance: new BN(10000000),
+  isPreview: false
 }
 
 const meta = {
