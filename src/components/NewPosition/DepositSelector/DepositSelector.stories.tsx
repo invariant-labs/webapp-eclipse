@@ -76,6 +76,7 @@ const PrimaryComponent: React.FC<IDepositSelector> = args => {
 
 export const Primary: Story = {
   args: {
+    updateLiquidity: fn(),
     tokenACheckbox: false,
     setTokenACheckbox: fn(),
     tokenBCheckbox: false,
