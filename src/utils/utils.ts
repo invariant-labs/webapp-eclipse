@@ -1826,7 +1826,7 @@ export const getTokenPrice = async (
     } catch (e: unknown) {
       const error = ensureError(e)
       console.log(error)
-      
+
       localStorage.removeItem(
         network === NetworkType.Mainnet
           ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
@@ -2026,6 +2026,10 @@ export const calculatePoints = (
 }
 
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
+  if (neededValue > concentrationArray[concentrationArray.length - 1]) {
+    return concentrationArray.length - 1
+  }
+
   let concentrationIndex = 0
 
   for (let index = 0; index < concentrationArray.length; index++) {

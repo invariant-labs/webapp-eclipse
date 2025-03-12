@@ -69,6 +69,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       border: 'none',
       borderRadius: 10,
       zIndex: 2,
+      transition: '300ms',
       '&.Mui-selected': {
         backgroundColor: 'transparent'
       },
@@ -82,7 +83,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       '&:disabled': {
         color: colors.invariant.componentBcg,
         pointerEvents: 'auto',
-        transition: 'all 0.2s',
+        transition: 'all 0.3s',
         '&:hover': {
           boxShadow: 'none',
           cursor: 'not-allowed',

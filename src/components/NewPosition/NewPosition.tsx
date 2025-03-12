@@ -391,7 +391,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? concentrationArray[concentrationIndex]
+        ? concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1]
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -530,6 +531,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
         )?.index ?? undefined
+
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
 

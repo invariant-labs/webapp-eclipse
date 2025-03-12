@@ -33,6 +33,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 32,
     borderRadius: '100%',
     padding: 4,
+    transition: '300ms',
 
     [theme.breakpoints.down('sm')]: {
       width: 15,
@@ -173,6 +174,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 116,
     height: 32,
     ...typography.body1,
+    transition: '300ms',
     '&:hover': {
       background: colors.invariant.pinkLinearGradient,
       boxShadow: '0px 0px 16px rgba(46, 224, 154, 0.35)',
@@ -289,7 +291,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       background: colors.invariant.light,
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
-      transition: 'all 0.2s',
+      transition: 'all 0.3s',
       '&:hover': {
         boxShadow: 'none',
         cursor: 'not-allowed',
@@ -337,6 +339,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 36,
     padding: 0,
     minWidth: 36,
+    transition: '300ms',
     '&:hover': {
       background: colors.invariant.greenLinearGradient,
       boxShadow: `0 0 16px ${colors.invariant.greenLinearGradient}`,
@@ -349,7 +352,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       background: colors.invariant.light,
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
-      transition: 'all 0.2s',
+      transition: 'all 0.3s',
       '&:hover': {
         boxShadow: 'none',
         cursor: 'not-allowed',
@@ -411,6 +414,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     top: 'calc(50% - 8px)',
     left: 'calc(50% - 16px)',
     cursor: 'pointer',
+    transition: '300ms',
 
     '&:hover': {
       filter: 'brightness(2)',
