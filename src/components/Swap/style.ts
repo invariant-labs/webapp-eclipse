@@ -381,6 +381,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingInline: 12,
     marginBottom: 16
   },
+  agregatorContainer: {
+    borderRadius: 8,
+    padding: 4,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16
+  },
   unwrapNowButton: {
     cursor: 'pointer'
   },
