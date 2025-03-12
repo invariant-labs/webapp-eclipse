@@ -1,6 +1,6 @@
 import Select from '@components/Inputs/Select/Select'
 import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
-import { Grid, Input, Typography } from '@mui/material'
+import { Grid, Input, Typography, useMediaQuery } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumberWithSuffix, trimDecimalZeros } from '@utils/utils'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -11,6 +11,7 @@ import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import { getButtonClassName } from '@utils/uiUtils'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { theme } from '@static/theme'
 
 interface ActionButton {
   label: string
@@ -83,6 +84,8 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
   const hideBalance = balance === '- -' || !balance || hideBalances
   const { classes } = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const isMd = useMediaQuery(theme.breakpoints.up('md'))
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
     const onlyNumbersRegex = /^\d*\.?\d*$/
@@ -231,7 +234,8 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
               <TooltipHover
                 title='Estimated USD Value of the Entered Tokens'
                 placement='bottom'
-                top={1}>
+                top={1}
+                left={isMd ? 'auto' : -90}>
                 <Typography className={classes.caption2}>
                   ~${formatNumberWithSuffix(usdBalance.toFixed(2))}
                 </Typography>

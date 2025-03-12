@@ -1,4 +1,4 @@
-import { Box, Grid, Input, Typography } from '@mui/material'
+import { Box, Grid, Input, Typography, useMediaQuery } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumberWithSuffix, formatNumberWithoutSuffix, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
@@ -7,6 +7,7 @@ import icons from '@static/icons'
 import { getButtonClassName } from '@utils/uiUtils'
 import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { theme } from '@static/theme'
 
 interface ActionButton {
   label: string
@@ -60,6 +61,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
   const { classes } = useStyles({ isSelected: !!currency && !walletUninitialized })
 
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const isMd = useMediaQuery(theme.breakpoints.up('md'))
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
     const regex = /^\d*\.?\d*$/
@@ -215,7 +218,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
                 <TooltipHover
                   title='Estimated USD Value of the Entered Tokens'
                   placement='bottom'
-                  top={1}>
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.estimatedBalance}>
                     ~${formatNumberWithoutSuffix(usdBalance)}
                   </Typography>

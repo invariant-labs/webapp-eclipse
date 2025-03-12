@@ -272,7 +272,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 isActive ? sharedClasses.activeFee : undefined
               )}
               justifyContent='center'
-              alignItems='center'>
+              alignItems='center'
+              onClick={e => e.stopPropagation()}>
               <Typography
                 className={classNames(
                   sharedClasses.infoText,

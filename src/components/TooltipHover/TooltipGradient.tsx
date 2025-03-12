@@ -17,6 +17,7 @@ export const TooltipGradient = ({ top, children, noGradient, ...props }: Props) 
       placement='bottom'
       TransitionComponent={TooltipTransition}
       enterTouchDelay={0}
+      leaveTouchDelay={Number.MAX_SAFE_INTEGER}
       {...props}>
       {children}
     </Tooltip>

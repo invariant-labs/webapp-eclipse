@@ -1,4 +1,4 @@
-import { Button, Grid, Typography } from '@mui/material'
+import { Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import loader from '@static/gif/loading2.gif'
 import SwapPosition from '@static/svg/swap-position.svg'
 import {
@@ -13,6 +13,7 @@ import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { FormatNumberThreshold, PrefixConfig } from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { theme } from '@static/theme'
 
 export interface BoxInfoToken extends Omit<ILiquidityToken, 'claimValue' | 'liqValue'> {
   value: number
@@ -80,6 +81,8 @@ export const BoxInfo: React.FC<{
   const tokenYPrintValue =
     Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal) ? 0 : Number(tokenB.value)
 
+  const isMd = useMediaQuery(theme.breakpoints.up('md'))
+
   return (
     <Grid className={classes.boxInfo}>
       <Grid container justifyContent='space-between'>
@@ -131,13 +134,18 @@ export const BoxInfo: React.FC<{
                 <TooltipHover
                   title="Estimated USD Value of the Position's Tokens"
                   placement='bottom'
-                  top={1}>
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.tokenUSDValue}>
                     ~${formatNumberWithSuffix((tokenA.value * tokenA.price).toFixed(2))}
                   </Typography>
                 </TooltipHover>
               ) : (
-                <TooltipHover title='Cannot fetch price of token' placement='bottom' top={1}>
+                <TooltipHover
+                  title='Cannot fetch price of token'
+                  placement='bottom'
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.noData}>
                     <span className={classes.noDataIcon}>?</span>No data
                   </Typography>
@@ -186,13 +194,18 @@ export const BoxInfo: React.FC<{
                 <TooltipHover
                   title="Estimated USD Value of the Position's Tokens"
                   placement='bottom'
-                  top={1}>
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.tokenUSDValue}>
                     ~${formatNumberWithoutSuffix(tokenB.value * tokenB.price)}
                   </Typography>
                 </TooltipHover>
               ) : (
-                <TooltipHover title='Cannot fetch price of token' placement='bottom' top={1}>
+                <TooltipHover
+                  title='Cannot fetch price of token'
+                  placement='bottom'
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.noData}>
                     <span className={classes.noDataIcon}>?</span>No data
                   </Typography>
