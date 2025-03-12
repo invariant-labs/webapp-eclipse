@@ -120,8 +120,8 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const lastTokenFrom =
     tickerToAddress(networkType, initialTokenFrom) && initialTokenFrom !== '-'
       ? tickerToAddress(networkType, initialTokenFrom)
-      : localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
-        WETH_MAIN.address.toString()
+      : (localStorage.getItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`) ??
+        WETH_MAIN.address.toString())
 
   const lastTokenTo =
     tickerToAddress(networkType, initialTokenTo) && initialTokenTo !== '-'
@@ -134,7 +134,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       : Object.values(tokensList).findIndex(token => {
           try {
             return token.assetAddress.equals(new PublicKey(lastTokenFrom))
-          } catch (e) {
+          } catch {
             return false
           }
         })
@@ -144,7 +144,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       : Object.values(tokensList).findIndex(token => {
           try {
             return token.assetAddress.equals(new PublicKey(lastTokenTo))
-          } catch (e) {
+          } catch {
             return false
           }
         })

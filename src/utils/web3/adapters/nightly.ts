@@ -2,6 +2,7 @@ import { Transaction, VersionedTransaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
 import { nightlyConnectAdapter } from '../selector'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+import { ensureError } from '@utils/utils'
 
 export class NightlyWalletAdapter implements WalletAdapter {
   constructor() {
@@ -34,7 +35,8 @@ export class NightlyWalletAdapter implements WalletAdapter {
     if (!nightlyConnectAdapter.connected) {
       try {
         await nightlyConnectAdapter.connect()
-      } catch (error) {
+      } catch (e: unknown) {
+        const error = ensureError(e)
         console.log(error)
       }
     }
@@ -44,7 +46,8 @@ export class NightlyWalletAdapter implements WalletAdapter {
     if (nightlyConnectAdapter) {
       try {
         await nightlyConnectAdapter.disconnect()
-      } catch (error) {
+      } catch (e: unknown) {
+        const error = ensureError(e)
         console.log(error)
       }
     }

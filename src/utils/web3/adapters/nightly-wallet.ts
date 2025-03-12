@@ -1,6 +1,7 @@
 import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+import { ensureError } from '@utils/utils'
 
 interface NightlyProvider {
   publicKey: PublicKey
@@ -88,7 +89,8 @@ export class NightlyAdapter implements WalletAdapter {
       try {
         await this._nightlyProvider.disconnect()
         this._nightlyProvider = undefined
-      } catch (error) {
+      } catch (e: unknown) {
+        const error = ensureError(e)
         console.log(error)
       }
     }

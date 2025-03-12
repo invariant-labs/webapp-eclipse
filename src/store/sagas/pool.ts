@@ -18,6 +18,7 @@ import {
 import { tokens } from '@store/selectors/pools'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import {
+  ensureError,
   findPairs,
   getFullNewTokensData,
   getPools,
@@ -51,10 +52,13 @@ export function* fetchPoolData(action: PayloadAction<Pair>) {
         }
       ])
     )
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     yield* put(actions.addPools([]))
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -94,10 +98,11 @@ export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
     const pools: PoolWithAddress[] = yield call(getPools, pairs, marketProgram)
 
     yield* put(actions.addPools(pools))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -198,10 +203,11 @@ export function* fetchTicksAndTickMaps(action: PayloadAction<FetchTicksAndTickMa
         yield* put(actions.setTicks({ index: pool.address.toString(), tickStructure: ticks }))
       }
     }
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
 
-    yield* call(handleRpcError, (error as Error).message)
+    yield* call(handleRpcError, error.message)
   }
 }
 export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTickMaps>) {
@@ -263,9 +269,11 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
         )
       }
     }
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
-    yield* call(handleRpcError, (error as Error).message)
+
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -319,7 +327,10 @@ export function* handleGetPathTokens(action: PayloadAction<string[]>) {
     )
 
     yield* put(actions.addPathTokens(tokensData))
-  } catch (e) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     yield* put(actions.setTokensError(true))
   }
 }

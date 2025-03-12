@@ -19,6 +19,7 @@ import { network } from '@store/selectors/solanaConnection'
 import { NormalBanner } from '@components/Leaderboard/LeaderboardBanner/NormalBanner'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { ensureError } from '@utils/utils'
 
 const BANNER_STORAGE_KEY = 'invariant-banner-state-4'
 const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 24 // 24 hours
@@ -31,7 +32,7 @@ const RootPage: React.FC = memo(() => {
         const { hiddenAt } = JSON.parse(storedData)
         const currentTime = new Date().getTime()
         return currentTime - hiddenAt >= BANNER_HIDE_DURATION
-      } catch (error) {
+      } catch {
         return true
       }
     }
@@ -149,7 +150,8 @@ const RootPage: React.FC = memo(() => {
             localStorage.removeItem(BANNER_STORAGE_KEY)
             setShowHeader(true)
           }
-        } catch (error) {
+        } catch (e: unknown) {
+          const error = ensureError(e)
           console.error('Error parsing banner state:', error)
           localStorage.removeItem(BANNER_STORAGE_KEY)
         }

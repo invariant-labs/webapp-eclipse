@@ -52,6 +52,7 @@ export interface CurrentPositionTicksStore {
 export interface IPositionsStore {
   lastPage: number
   plotTicks: PlotTicks
+  currentPoolIndex: number | null
   positionsList: PositionsListStore
   currentPositionId: string
   currentPositionTicks: CurrentPositionTicksStore
@@ -127,6 +128,7 @@ export interface SetPositionData {
 
 export const defaultState: IPositionsStore = {
   lastPage: 1,
+  currentPoolIndex: null,
   plotTicks: {
     rawTickIndexes: [],
     allData: [],
@@ -238,6 +240,7 @@ const positionsSlice = createSlice({
     },
 
     getCurrentPlotTicks(state, action: PayloadAction<GetCurrentTicksData>) {
+      state.currentPoolIndex = action.payload.poolIndex
       state.plotTicks.loading = !action.payload.disableLoading
       return state
     },
@@ -253,10 +256,8 @@ const positionsSlice = createSlice({
       state.positionsList.lockedList = action.payload
       return state
     },
-    updatePositionTicksRange(
-      state,
-      _action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
-    ) {
+    getPositionsList(state) {
+      state.positionsList.loading = true
       return state
     },
     setPositionRangeTicks(
@@ -272,20 +273,6 @@ const positionsSlice = createSlice({
           }
         }
       })
-
-      state.positionsList.lockedList.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
-          position = {
-            ...position,
-            lowerTickIndex: action.payload.lowerTick,
-            upperTickIndex: action.payload.upperTick
-          }
-        }
-      })
-    },
-    getPositionsList(state) {
-      state.positionsList.loading = true
-      return state
     },
     getSinglePosition(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
