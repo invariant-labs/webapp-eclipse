@@ -593,9 +593,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
           true
         )
-
-        setLiquidity(result.liquidity)
-        return result.y
+        return { amount: result.y, liquidity: result.liquidity }
       } else {
         const result = getLiquidityByY(
           amount,
@@ -604,20 +602,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
           true
         )
-
-        setLiquidity(result.liquidity)
-        return result.x
+        return { amount: result.x, liquidity: result.liquidity }
       }
     } catch {
-      const result = (byX ? getLiquidityByY : getLiquidityByX)(
-        amount,
-        lowerTick,
-        upperTick,
-        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-        true
-      )
-      setLiquidity(result.liquidity)
-      return new BN(0)
+      return { amount: new BN(0), liquidity: new BN(0) }
     }
   }
 
@@ -896,7 +884,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         swapSlippage,
         positionSlippage,
         minUtilizationPercentage,
-        liquidityDelta,
         leftTickIndex,
         rightTickIndex
       ) => {
@@ -943,7 +930,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             positionSlippage,
             lowerTick: lowerTickIndex,
             upperTick: upperTickIndex,
-            liquidityDelta,
+            liquidityDelta: liquidity,
             minUtilizationPercentage,
             isSamePool: allPools[poolIndex].address.equals(autoSwapPool.swapPool.address)
           })
@@ -1015,6 +1002,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           ? allPools[poolIndex].sqrtPrice
           : calculatePriceSqrt(midPrice.index)
       }
+      updateLiquidity={(lq: BN) => setLiquidity(lq)}
       handleAddToken={addTokenHandler}
       commonTokens={commonTokensForNetworks[currentNetwork]}
       initialOpeningPositionMethod={initialOpeningPositionMethod}

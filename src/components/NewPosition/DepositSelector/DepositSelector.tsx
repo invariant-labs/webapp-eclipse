@@ -89,8 +89,7 @@ export interface IDepositSelector {
     crossedTicks: number[],
     swapSlippage: BN,
     positionSlippage: BN,
-    minUtilizationPercentage: BN,
-    liquidityDelta: BN
+    minUtilizationPercentage: BN
   ) => void
   tokenAInputState: InputState
   tokenBInputState: InputState
@@ -152,6 +151,7 @@ export interface IDepositSelector {
   setTokenBCheckbox: (val: boolean) => void
   alignment: DepositOptions
   setAlignment: (val: DepositOptions) => void
+  updateLiquidity: (lq: BN) => void
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -213,7 +213,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   tokenBCheckbox,
   setTokenBCheckbox,
   alignment,
-  setAlignment
+  setAlignment,
+  updateLiquidity
 }) => {
   const { classes } = useStyles()
   const breakpoint630Down = useMediaQuery(theme.breakpoints.down(630))
@@ -727,6 +728,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         simulationParams.actualPoolPrice
       )
     }
+    if (result) {
+      updateLiquidity(result.position.liquidity)
+    }
     setSimulation(result)
   }
 
@@ -1056,8 +1060,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                     simulation.swapSimulation.crossedTicks,
                     toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
                     toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
-                    userMinUtilization,
-                    simulation.position.liquidity
+                    userMinUtilization
                   )
                 }
               }
