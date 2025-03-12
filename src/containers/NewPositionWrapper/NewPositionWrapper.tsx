@@ -243,8 +243,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [])
 
-  const liquidityRef = useRef<BN>(new BN(0))
-
   useEffect(() => {
     setProgress('none')
   }, [poolIndex])
@@ -596,10 +594,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           true
         )
 
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
-        }
-
         setLiquidity(result.liquidity)
         return result.y
       } else {
@@ -611,12 +605,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           true
         )
 
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
-        }
-
         setLiquidity(result.liquidity)
-
         return result.x
       }
     } catch {
@@ -627,12 +616,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
         true
       )
-      if (isMountedRef.current) {
-        liquidityRef.current = result.liquidity
-      }
+      setLiquidity(result.liquidity)
+      return new BN(0)
     }
-
-    return new BN(0)
   }
 
   const unblockUpdatePriceRange = () => {
@@ -984,7 +970,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             fee,
             lowerTick: lowerTickIndex,
             upperTick: upperTickIndex,
-            liquidityDelta: liquidityRef.current,
+            liquidityDelta: liquidity,
             initPool: poolIndex === null,
             initTick: poolIndex === null ? midPrice.index : undefined,
             xAmount: Math.floor(xAmount),

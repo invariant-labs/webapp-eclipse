@@ -927,8 +927,6 @@ export const NewPosition: React.FC<INewPosition> = ({
             if (tokenAIndex !== null && tokenBIndex !== null) {
               const tokenADecimals = tokens[tokenAIndex].decimals
               const tokenBDecimals = tokens[tokenBIndex].decimals
-              console.log(2)
-              console.log(tokenADeposit, tokenBDeposit)
               addLiquidityHandler(
                 leftRange,
                 rightRange,
