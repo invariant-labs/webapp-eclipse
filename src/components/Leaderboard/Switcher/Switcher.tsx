@@ -3,7 +3,6 @@ import { Box, ToggleButtonGroup, ToggleButton, Typography } from '@mui/material'
 import useStyles from './styles'
 import { LeaderBoardType, PointsPageContent } from '@store/consts/static'
 import LeaderboardSwitcher from './LeaderboardSwitcher/LeaderboardSwitcher'
-import { typography } from '@static/theme'
 
 interface ISwitcherProps {
   alignment: PointsPageContent
