@@ -584,8 +584,32 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const lowerTick = Math.min(left, right)
     const upperTick = Math.max(left, right)
 
-    if (byX) {
-      const result = getLiquidityByX(
+    try {
+      if (byX) {
+        const result = getLiquidityByX(
+          amount,
+          lowerTick,
+          upperTick,
+          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
+          true
+        )
+
+        setLiquidity(result.liquidity)
+        return result.y
+      } else {
+        const result = getLiquidityByY(
+          amount,
+          lowerTick,
+          upperTick,
+          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
+          true
+        )
+
+        setLiquidity(result.liquidity)
+        return result.x
+      }
+    } catch {
+      const result = (byX ? getLiquidityByY : getLiquidityByX)(
         amount,
         lowerTick,
         upperTick,
@@ -593,17 +617,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         true
       )
       setLiquidity(result.liquidity)
-      return result.y
-    } else {
-      const result = getLiquidityByY(
-        amount,
-        lowerTick,
-        upperTick,
-        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-        true
-      )
-      setLiquidity(result.liquidity)
-      return result.x
+      return new BN(0)
     }
   }
 
