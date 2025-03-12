@@ -243,8 +243,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [])
 
-  const liquidityRef = useRef<BN>(new BN(0))
-
   useEffect(() => {
     setProgress('none')
   }, [poolIndex])
@@ -586,53 +584,27 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const lowerTick = Math.min(left, right)
     const upperTick = Math.max(left, right)
 
-    try {
-      if (byX) {
-        const result = getLiquidityByX(
-          amount,
-          lowerTick,
-          upperTick,
-          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-          true
-        )
-
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
-        }
-
-        setLiquidity(result.liquidity)
-        return result.y
-      } else {
-        const result = getLiquidityByY(
-          amount,
-          lowerTick,
-          upperTick,
-          poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-          true
-        )
-
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
-        }
-
-        setLiquidity(result.liquidity)
-
-        return result.x
-      }
-    } catch {
-      const result = (byX ? getLiquidityByY : getLiquidityByX)(
+    if (byX) {
+      const result = getLiquidityByX(
         amount,
         lowerTick,
         upperTick,
         poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
         true
       )
-      if (isMountedRef.current) {
-        liquidityRef.current = result.liquidity
-      }
+      setLiquidity(result.liquidity)
+      return result.y
+    } else {
+      const result = getLiquidityByY(
+        amount,
+        lowerTick,
+        upperTick,
+        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
+        true
+      )
+      setLiquidity(result.liquidity)
+      return result.x
     }
-
-    return new BN(0)
   }
 
   const unblockUpdatePriceRange = () => {
@@ -984,7 +956,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             fee,
             lowerTick: lowerTickIndex,
             upperTick: upperTickIndex,
-            liquidityDelta: liquidityRef.current,
+            liquidityDelta: liquidity,
             initPool: poolIndex === null,
             initTick: poolIndex === null ? midPrice.index : undefined,
             xAmount: Math.floor(xAmount),

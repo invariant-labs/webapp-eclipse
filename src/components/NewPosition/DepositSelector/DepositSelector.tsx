@@ -728,7 +728,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     }
     setSimulation(result)
-    console.log(result)
   }
 
   useEffect(() => {
@@ -1023,7 +1022,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 !simulation.swapSimulation &&
                 simulation.position
               ) {
-                console.log(1)
                 onAddLiquidity()
               } else {
                 if (
