@@ -1,4 +1,4 @@
-import { Button, Grid, Tooltip, Typography } from '@mui/material'
+import { Box, Button, Grid, Tooltip, Typography } from '@mui/material'
 import loader from '@static/gif/loading2.gif'
 import SwapPosition from '@static/svg/swap-position.svg'
 import {
@@ -28,6 +28,7 @@ export const BoxInfo: React.FC<{
   swapHandler?: () => void
   showLoader?: boolean
   isBalanceLoading: boolean
+  isPreview: boolean
 }> = ({
   title,
   onClickButton,
@@ -36,7 +37,8 @@ export const BoxInfo: React.FC<{
   showBalance = false,
   swapHandler,
   showLoader = false,
-  isBalanceLoading
+  isBalanceLoading,
+  isPreview
 }) => {
   const { classes } = useStyles()
 
@@ -85,16 +87,21 @@ export const BoxInfo: React.FC<{
       <Grid container justifyContent='space-between'>
         <Typography className={classes.title}> {title}</Typography>
         {onClickButton ? (
-          <Button
-            className={classes.violetButton}
-            variant='contained'
-            onClick={onClickButton}
-            disabled={
-              Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) &&
-              Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal)
-            }>
-            Claim fee
-          </Button>
+          <TooltipHover text={isPreview ? "Can't claim fee in preview" : ''}>
+            <Box>
+              <Button
+                className={classes.violetButton}
+                variant='contained'
+                onClick={onClickButton}
+                disabled={
+                  (Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) &&
+                    Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal)) ||
+                  isPreview
+                }>
+                Claim fee
+              </Button>
+            </Box>
+          </TooltipHover>
         ) : null}
       </Grid>
 
