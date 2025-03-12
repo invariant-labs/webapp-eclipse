@@ -6,7 +6,6 @@ import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
-import { colors, typography } from '@static/theme'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { printBN, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
@@ -47,25 +46,12 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
         <Box className={classes.counterContainer}>
           {currentNetwork === NetworkType.Testnet ? (
             <Box className={classes.counterItem}>
-              <Typography style={{ color: colors.invariant.text }}>
-                Points Program is{' '}
-                <span
-                  style={{
-                    color: colors.invariant.pink,
-                    textAlign: 'center',
-                    textShadow: `0 0 22px ${colors.invariant.pink}`
-                  }}>
-                  live!
-                </span>
+              <Typography>
+                Points Program is <span className={classes.pinkLabel}>live!</span>
               </Typography>
               {<Divider className={classes.divider} />}
 
-              <Typography
-                style={{
-                  color: colors.invariant.text,
-                  textAlign: 'center',
-                  marginTop: '16px'
-                }}>
+              <Typography component='h1'>
                 You are currently on the testnet, where points distribution is unavailable. Please
                 switch to the mainnet to access the Invariant Points System.
               </Typography>
@@ -112,26 +98,10 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                 </>
               ) : (
                 <Box className={classes.counterItem}>
-                  <Typography style={{ color: colors.invariant.text }}>
-                    Points Program is{' '}
-                    <span
-                      style={{
-                        color: colors.invariant.pink,
-                        textAlign: 'center',
-                        textShadow: `0 0 22px ${colors.invariant.pink}`
-                      }}>
-                      live!
-                    </span>
+                  <Typography>
+                    Points Program is <span className={classes.pinkLabel}>live!</span>
                   </Typography>
-                  <Typography
-                    style={{
-                      color: colors.invariant.textGrey,
-                      ...typography.body2,
-                      marginTop: '8px',
-                      textAlign: 'center'
-                    }}>
-                    Visit Points Tab to track your progress.
-                  </Typography>
+                  <Typography component='h2'>Visit Points Tab to track your progress.</Typography>
                   <Button
                     style={{ marginTop: '16px' }}
                     className={classes.button}

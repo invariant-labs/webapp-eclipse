@@ -20,6 +20,22 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
   }
 
   return {
+    mainWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: '24px',
+      width: '100%',
+      marginTop: '24px'
+    },
+    switchWrapper: {
+      display: 'flex',
+      position: 'relative',
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      flexWrap: 'wrap-reverse'
+    },
     switchPoolsContainer: {
       position: 'relative',
       width: 'fit-content',

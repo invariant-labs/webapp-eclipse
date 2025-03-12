@@ -46,7 +46,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
       {isLoading ? (
         <Skeleton variant='rounded' animation='wave' className={classes.blur} />
       ) : isMobile && withButton ? (
-        <Box display='grid' gridTemplateColumns='auto 1fr auto' gap='8px' alignItems='center'>
+        <Box className={classes.withButtonWrapper}>
           <Box sx={{ visibility: 'hidden' }}>
             <Button className={classes.button}>More</Button>
           </Box>
@@ -65,7 +65,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
           </Button>
         </Box>
       ) : (
-        <Box display='flex' alignItems='center' gap='8px'>
+        <Box className={classes.valueWrapper}>
           <Typography className={classes.headerBigText}>{value}</Typography>
           {withButton && (
             <Button

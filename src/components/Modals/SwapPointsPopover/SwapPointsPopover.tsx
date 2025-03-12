@@ -1,6 +1,5 @@
 import useStyles from './style'
 import { Popover, Typography, Box } from '@mui/material'
-import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
 import { addressToTicker } from '@utils/utils'
 import { useState, useEffect } from 'react'
@@ -26,7 +25,6 @@ export const SwapPointsPopover = ({
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
   const isMobile = useIsMobile()
-
   useEffect(() => {
     if (open && !animationTriggered) {
       const ANIM_TIME = 500
@@ -96,19 +94,13 @@ export const SwapPointsPopover = ({
             </>
           )}
         </div>
-        <Box
-          sx={{
-            width: '2px',
-            backgroundColor: colors.invariant.light,
-            alignSelf: 'stretch'
-          }}
-        />
+        <Box className={classes.rightWrapper} />
         <div
           className={isPairGivingPoints ? classes.promotedSwapsContainer : classes.halfContainer}>
           <Typography className={classes.standardText}>
             Pairs currently distributing swap points:
           </Typography>
-          <Box display={'flex'} gap={'4px'} flexDirection={'column'} padding={'4px'}>
+          <Box className={classes.promotedPoolsWrapper}>
             {promotedSwapPairs.map(item => (
               <Typography className={classes.listText}>
                 • {addressToTicker(network, item.tokenX.toString())}/

@@ -167,13 +167,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
               </TooltipHover>
             </Box>
           </Grid>
-          <Grid
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              paddingTop: '24px',
-              paddingBottom: '24px'
-            }}>
+          <Grid className={classes.infoWrapper}>
             <Box>
               <Typography style={{ ...typography.body2, color: colors.invariant.textGrey }}>
                 Fee

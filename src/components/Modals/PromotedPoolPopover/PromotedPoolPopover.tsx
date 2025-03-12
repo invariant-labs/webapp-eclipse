@@ -95,7 +95,6 @@ export const PromotedPoolPopover = ({
       marginThreshold={16}>
       <div className={classes.root}>
         <div className={classes.container}>
-          {/* Content remains the same */}
           <Typography
             className={classes.greyText}
             dangerouslySetInnerHTML={

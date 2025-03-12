@@ -18,6 +18,12 @@ export const useStyles = makeStyles()(() => ({
     },
     borderBottom: `1px solid ${colors.invariant.light}`
   },
+  infoWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingTop: '24px',
+    paddingBottom: '24px'
+  },
   container: {
     color: colors.white.main,
     display: 'grid',

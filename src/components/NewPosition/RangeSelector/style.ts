@@ -5,6 +5,7 @@ const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
       borderRadius: 24,
+      flexDirection: 'column',
       backgroundColor: colors.invariant.component,
       padding: '16px 24px 6px 24px',
       flex: '1 1 0%',
@@ -17,6 +18,7 @@ const useStyles = makeStyles()(theme => {
       }
     },
     headerContainer: {
+      justifyContent: 'space-between',
       marginBottom: 12
     },
     header: {
@@ -111,12 +113,13 @@ const useStyles = makeStyles()(theme => {
       zIndex: 99
     },
     buttons: {
+      justifyContent: 'center',
+      alignItems: 'center',
       marginTop: 4,
       width: '100%',
       height: 70,
       flexDirection: 'row',
-      gap: 16,
-      alignItems: 'center'
+      gap: 16
     },
     sliderWrapper: {
       paddingTop: 22,
@@ -229,7 +232,19 @@ const useStyles = makeStyles()(theme => {
       fontSize: 14,
       fontWeight: 'normal'
     },
+    liquidityDescWrapper: {
+      flexDirection: 'row',
+      flexWrap: 'nowrap',
+      alignItems: 'center',
+      marginBottom: 12
+    },
+    subheaderWrapper: {
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      minHeight: 36
+    },
     activeLiquidityContainer: {
+      flexDirection: 'column',
       width: 'auto'
     },
     rangeConcentration: {
