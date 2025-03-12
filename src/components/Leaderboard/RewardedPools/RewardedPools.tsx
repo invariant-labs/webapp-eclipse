@@ -78,7 +78,7 @@ export const RewardedPools: React.FC<IProps> = ({
               style={{
                 width: '100%',
 
-                borderBottom: `2px solid ${colors.invariant.light}`
+                borderBottom: `1px solid ${colors.invariant.light}`
               }}>
               <Typography
                 style={{

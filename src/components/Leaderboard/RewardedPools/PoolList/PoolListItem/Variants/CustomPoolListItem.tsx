@@ -100,12 +100,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
       }
 
   return (
-    <Grid
-      maxWidth='100%'
-      className={classes.wrapper}
-      style={{
-        border: hideBottomLine ? 'none' : undefined
-      }}>
+    <Grid maxWidth='100%' className={classes.wrapper}>
       {displayType === 'token' ? (
         <>
           <Grid
