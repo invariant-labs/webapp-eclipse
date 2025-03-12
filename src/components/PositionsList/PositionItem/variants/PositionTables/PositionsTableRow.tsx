@@ -33,6 +33,7 @@ import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
+import { useSkeletonStyle } from './styles/skeletons'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -79,6 +80,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 }) => {
   const { classes } = usePositionTableRowStyle()
   const { classes: sharedClasses } = useSharedStyles()
+  const { classes: skeletonClasses } = useSkeletonStyle()
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
@@ -123,28 +125,18 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const pairNameContent = useMemo(() => {
     if (isItemLoading('pairName')) {
       return (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}>
-          <Skeleton variant='circular' width={40} height={40} />
-          <Skeleton variant='circular' width={36} height={36} />
-          <Skeleton variant='circular' width={40} height={40} />
-          <Skeleton
-            variant='rectangular'
-            width={100}
-            height={36}
-            sx={{ ml: 1.5, borderRadius: '10px' }}
-          />
+        <Box className={skeletonClasses.skeletonBox}>
+          <Skeleton variant='circular' className={skeletonClasses.skeletonCircle40} />
+          <Skeleton variant='circular' className={skeletonClasses.skeletonCircle36} />
+          <Skeleton variant='circular' className={skeletonClasses.skeletonCircle40} />
+          <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect100x36} />
         </Box>
       )
     }
 
     return (
-      <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
-        <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
+      <Grid container item className={classes.iconsAndNames}>
+        <Grid container item className={sharedClasses.icons}>
           <img
             className={sharedClasses.tokenIcon}
             src={xToY ? tokenXIcon : tokenYIcon}
@@ -195,14 +187,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const feeFragment = useMemo(() => {
     if (isItemLoading('feeTier')) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='60px'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto', marginRight: '8px' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect60x36} />
     }
     return (
       <Tooltip
@@ -230,9 +215,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           container
           item
           sx={{ width: 65 }}
-          className={classNames(sharedClasses.fee, isActive ? sharedClasses.activeFee : undefined)}
-          justifyContent='center'
-          alignItems='center'>
+          className={classNames(sharedClasses.fee, isActive ? sharedClasses.activeFee : undefined)}>
           <Typography
             className={classNames(
               sharedClasses.infoText,
@@ -247,19 +230,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const tokenRatioContent = useMemo(() => {
     if (isItemLoading('tokenRatio')) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='100%'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
 
     return (
       <Typography
-        className={`${sharedClasses.infoText}`}
+        className={sharedClasses.infoText}
         style={{
           background: colors.invariant.light,
           padding: '8px 12px',
@@ -291,25 +267,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const valueFragment = useMemo(() => {
     if (isItemLoading('value') || tokenValueInUsd.loading) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='100%'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
 
     return (
-      <Grid
-        container
-        item
-        className={`${sharedClasses.value} ${classes.itemCellContainer}`}
-        justifyContent='space-between'
-        alignItems='center'
-        wrap='nowrap'>
-        <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
+      <Grid container item className={`${sharedClasses.value} ${classes.itemCellContainer}`}>
+        <Grid className={sharedClasses.infoCenter} container item>
           <Typography className={sharedClasses.greenText}>
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
@@ -331,24 +294,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const unclaimedFee = useMemo(() => {
     if (isItemLoading('unclaimedFee') || unclaimedFeesInUSD.loading) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='100%'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
     return (
-      <Grid
-        container
-        item
-        className={`${sharedClasses.value} ${classes.itemCellContainer}`}
-        justifyContent='space-between'
-        alignItems='center'
-        wrap='nowrap'>
-        <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
+      <Grid container item className={`${sharedClasses.value} ${classes.itemCellContainer}`}>
+        <Grid className={sharedClasses.infoCenter} container item>
           <Typography className={sharedClasses.greenText}>
             ${formatNumberWithoutSuffix(unclaimedFeesInUSD.value, { twoDecimals: true })}
           </Typography>
@@ -359,14 +309,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const chartFragment = useMemo(() => {
     if (isItemLoading('chart')) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='100%'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
 
     return (
@@ -382,14 +325,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const actionsFragment = useMemo(() => {
     if (isItemLoading('actions')) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width={32}
-          height={32}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect32x32} />
     }
 
     return (
@@ -463,17 +399,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           onMouseEnter={handleTooltipEnter}
           onMouseLeave={handleTooltipLeave}
           style={{ display: 'flex', justifyContent: 'center' }}>
-          <img
-            src={icons.airdropRainbow}
-            alt={'Airdrop'}
-            style={{
-              flexShrink: '0',
-              height: '32px',
-              width: '32px',
-              opacity: 0.3,
-              filter: 'grayscale(1)'
-            }}
-          />
+          <img src={icons.airdropRainbow} alt={'Airdrop'} className={classes.airdropIcon} />
         </div>
       </Tooltip>
     )

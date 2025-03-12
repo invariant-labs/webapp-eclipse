@@ -165,7 +165,7 @@ const PositionDetails: React.FC<IProps> = ({
   }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
   return (
-    <Grid container className={classes.wrapperContainer} wrap='nowrap'>
+    <Grid container className={classes.wrapperContainer}>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={onLockPositionModalClose}
@@ -181,15 +181,15 @@ const PositionDetails: React.FC<IProps> = ({
         success={success}
         inProgress={inProgress}
       />
-      <Grid className={classes.positionDetails} container item direction='column'>
+      <Grid className={classes.positionDetails} container item>
         <Grid className={classes.backContainer} container>
           <Link to='/portfolio' style={{ textDecoration: 'none' }}>
-            <Grid className={classes.back} container item alignItems='center'>
+            <Grid className={classes.back} container item>
               <img className={classes.backIcon} src={backIcon} alt='Back' />
               <Typography className={classes.backText}>Positions</Typography>
             </Grid>
           </Link>
-          <Grid container width='auto' className={classes.marketIdWithRefresher}>
+          <Grid container className={classes.marketIdWithRefresher}>
             <Hidden mdUp>
               <MarketIdLabel
                 marketId={poolAddress.toString()}
@@ -251,24 +251,9 @@ const PositionDetails: React.FC<IProps> = ({
           ethBalance={ethBalance}
         />
       </Grid>
-      <Grid
-        container
-        item
-        direction='column'
-        alignItems='flex-end'
-        className={classes.right}
-        wrap='nowrap'>
+      <Grid container item className={classes.right}>
         <Grid className={classes.positionPlotWrapper}>
-          <Grid
-            container
-            item
-            direction='row'
-            alignItems='center'
-            flexDirection='row-reverse'
-            className={classes.rightHeaderWrapper}
-            mt='22px'
-            gap='8px'
-            wrap='nowrap'>
+          <Grid container item className={classes.rightHeaderWrapper}>
             <Hidden mdDown>
               {!isLocked ? (
                 <TooltipHover text={'Lock liquidity'}>
@@ -330,14 +315,7 @@ const PositionDetails: React.FC<IProps> = ({
                   />
                 </Grid>
               </TooltipHover>
-              <Grid
-                display={'flex'}
-                style={{
-                  padding: '8px 8px  0 0px',
-                  height: '24px',
-                  minWidth: '200px',
-                  marginRight: 'auto'
-                }}>
+              <Grid className={classes.marketIdWrapper}>
                 <MarketIdLabel
                   marketId={poolAddress.toString()}
                   displayLength={5}

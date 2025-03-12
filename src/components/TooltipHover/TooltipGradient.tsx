@@ -9,7 +9,7 @@ interface Props extends TooltipProps {
 }
 
 export const TooltipGradient = ({ top, children, underline, ...props }: Props) => {
-  const { classes } = useStyles({ top })
+  const { classes } = useStyles({ top, underline })
 
   return (
     <Tooltip
@@ -18,15 +18,7 @@ export const TooltipGradient = ({ top, children, underline, ...props }: Props) =
       TransitionComponent={TooltipTransition}
       enterTouchDelay={0}
       {...props}>
-      <span
-        style={{
-          cursor: 'pointer',
-          textDecoration: underline ? 'underline' : '',
-          display: 'inline-flex',
-          alignItems: 'center'
-        }}>
-        {children}
-      </span>
+      <span className={classes.span}>{children}</span>
     </Tooltip>
   )
 }

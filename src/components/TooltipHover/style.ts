@@ -1,41 +1,49 @@
 import { makeStyles } from 'tss-react/mui'
 import { colors, typography } from '@static/theme'
 
-const useStyles = makeStyles<{ top?: number }>()((_theme, { top }) => ({
-  tooltip: {
-    color: colors.invariant.textGrey,
-    ...typography.caption4,
-    lineHeight: '24px',
-    background: colors.black.full,
-    borderRadius: 12,
-    width: 'max-content',
-    textAlign: 'center',
-    position: 'absolute',
-    transform: 'translate(-50%, -50%)',
-    top: top ? top : -30
-  },
-  tooltipGradient: {
-    position: 'relative',
-    borderRadius: 14,
-    background: colors.invariant.component,
-    ...typography.body2,
-    color: colors.invariant.textGrey,
-    padding: '16px 24px',
-    top: top ? top : -30,
-
-    '&::before': {
-      content: '""',
+const useStyles = makeStyles<{ top?: number; underline?: boolean }>()(
+  (_theme, { top, underline }) => ({
+    tooltip: {
+      color: colors.invariant.textGrey,
+      ...typography.caption4,
+      lineHeight: '24px',
+      background: colors.black.full,
+      borderRadius: 12,
+      width: 'max-content',
+      textAlign: 'center',
       position: 'absolute',
-      top: '-1px', // border thickness
-      left: '-1px',
-      right: '-1px',
-      bottom: '-1px',
-      zIndex: -1,
+      transform: 'translate(-50%, -50%)',
+      top: top ? top : -30
+    },
+    span: {
+      cursor: 'pointer',
+      textDecoration: underline ? 'underline' : '',
+      display: 'inline-flex',
+      alignItems: 'center'
+    },
+    tooltipGradient: {
+      position: 'relative',
       borderRadius: 14,
-      background: colors.invariant.pinkGreenLinearGradient,
-      boxSizing: 'border-box'
+      background: colors.invariant.component,
+      ...typography.body2,
+      color: colors.invariant.textGrey,
+      padding: '16px 24px',
+      top: top ? top : -30,
+
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: '-1px', // border thickness
+        left: '-1px',
+        right: '-1px',
+        bottom: '-1px',
+        zIndex: -1,
+        borderRadius: 14,
+        background: colors.invariant.pinkGreenLinearGradient,
+        boxSizing: 'border-box'
+      }
     }
-  }
-}))
+  })
+)
 
 export default useStyles

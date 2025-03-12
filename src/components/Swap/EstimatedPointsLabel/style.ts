@@ -23,8 +23,24 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
       position: 'relative',
       overflow: 'hidden'
     },
-
+    boostPoints: {
+      height: '14px',
+      width: '12px'
+    },
+    infoCircle: {
+      width: '15px',
+      marginLeft: '5px'
+    },
+    boostWrapper: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 4,
+      marginLeft: '8px'
+    },
     pointsAmount: {
+      borderRight: '1px solid #3A466B',
+      paddingRight: '10px',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',

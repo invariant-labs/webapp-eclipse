@@ -8,7 +8,6 @@ import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
-import { colors } from '@static/theme'
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import { useNavigate } from 'react-router-dom'
 
@@ -138,7 +137,6 @@ const PoolList: React.FC<PoolListInterface> = ({
   return (
     <Grid
       container
-      direction='column'
       classes={{ root: classes.container }}
       className={classNames({ [classes.loadingOverlay]: isLoading })}>
       <PoolListItem
@@ -190,12 +188,7 @@ const PoolList: React.FC<PoolListInterface> = ({
           ))}
         </>
       ) : (
-        <Grid
-          container
-          sx={{
-            background: colors.invariant.component,
-            borderBottom: `1px solid ${colors.invariant.light}`
-          }}>
+        <Grid container className={classes.emptyContainer}>
           <EmptyPlaceholder
             newVersion
             height={690}
