@@ -154,7 +154,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                 style={{ whiteSpace: 'nowrap', ...typography.heading4, fontSize: '18px' }}>
                 <span>Your Estimated Points: &nbsp;</span>
                 <span className={classes.pinkText}>
-                  {singleDepositWarning ? 0 : pointsPerDayFormat} Points/24h
+                  {singleDepositWarning || showWarning ? 0 : pointsPerDayFormat} Points/24h
                 </span>
               </Typography>
               <Grid display='flex' justifyContent='space-between' container mt={1}>

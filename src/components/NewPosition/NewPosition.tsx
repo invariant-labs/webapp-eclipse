@@ -87,7 +87,6 @@ export interface INewPosition {
     swapSlippage: BN,
     positionSlippage: BN,
     minUtilizationPercentage: BN,
-    liquidityDelta: BN,
     leftTickIndex: number,
     rightTickIndex: number
   ) => void
@@ -102,7 +101,7 @@ export interface INewPosition {
     leftRangeTickIndex: number,
     rightRangeTickIndex: number,
     tokenAddress: PublicKey
-  ) => BN
+  ) => { amount: BN; liquidity: BN }
   feeTiers: Array<{
     feeValue: number
   }>
@@ -164,6 +163,7 @@ export interface INewPosition {
   initialMaxSlippageToleranceSwap: string
   onMaxSlippageToleranceCreatePositionChange: (val: string) => void
   initialMaxSlippageToleranceCreatePosition: string
+  updateLiquidity: (lq: BN) => void
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -182,6 +182,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   onChangePositionTokens,
   isCurrentPoolExisting,
   calcAmount,
+  updateLiquidity,
   feeTiers,
   isLoadingTicksOrTickmap,
   isXtoY,
@@ -319,6 +320,8 @@ export const NewPosition: React.FC<INewPosition> = ({
     [tokenAIndex, tokenBIndex]
   )
 
+  const isDepositEmptyOrZero = (val: string) => val === '' || +val === 0
+
   const isAutoswapOn = useMemo(
     () =>
       isAutoSwapAvailable && (tokenACheckbox || tokenBCheckbox) && alignment == DepositOptions.Auto,
@@ -368,24 +371,15 @@ export const NewPosition: React.FC<INewPosition> = ({
     tokenBSymbol: 'XYZ'
   }
 
-  const getOtherTokenAmount = (
-    amount: BN,
-    left: number,
-    right: number,
-    byFirst: boolean,
-    otherDeposit: string,
-    isAutoswapOn: boolean
-  ) => {
+  const getOtherTokenAmount = (amount: BN, left: number, right: number, byFirst: boolean) => {
     const printIndex = byFirst ? tokenBIndex : tokenAIndex
     const calcIndex = byFirst ? tokenAIndex : tokenBIndex
     if (printIndex === null || calcIndex === null) {
       return '0.0'
     }
     const result = calcAmount(amount, left, right, tokens[calcIndex].assetAddress)
-    if (isAutoswapOn) {
-      return otherDeposit
-    }
-    return trimLeadingZeros(printBN(result, tokens[printIndex].decimals))
+    updateLiquidity(result.liquidity)
+    return trimLeadingZeros(printBN(result.amount, tokens[printIndex].decimals))
   }
 
   const estimatedScalePoints = useMemo(() => {
@@ -437,14 +431,14 @@ export const NewPosition: React.FC<INewPosition> = ({
       (isXtoY ? rightRange > midPrice.index : rightRange < midPrice.index)
     ) {
       const deposit = tokenADeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
-        leftRange,
-        rightRange,
-        true,
-        tokenBDeposit,
-        isAutoswapOn
-      )
+      const amount = isAutoswapOn
+        ? tokenBDeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+            leftRange,
+            rightRange,
+            true
+          )
 
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
@@ -453,14 +447,14 @@ export const NewPosition: React.FC<INewPosition> = ({
       }
     } else if (tokenBIndex !== null) {
       const deposit = tokenBDeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-        leftRange,
-        rightRange,
-        false,
-        tokenADeposit,
-        isAutoswapOn
-      )
+      const amount = isAutoswapOn
+        ? tokenADeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+            leftRange,
+            rightRange,
+            false
+          )
 
       if (tokenAIndex !== null && +deposit !== 0) {
         setTokenBDeposit(deposit)
@@ -478,14 +472,14 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     if (tokenAIndex !== null && (isXtoY ? rightRange > tickIndex : rightRange < tickIndex)) {
       const deposit = tokenADeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
-        leftRange,
-        rightRange,
-        true,
-        tokenBDeposit,
-        isAutoswapOn
-      )
+      const amount = isAutoswapOn
+        ? tokenBDeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenAIndex].decimals),
+            leftRange,
+            rightRange,
+            true
+          )
       if (tokenBIndex !== null && +deposit !== 0) {
         setTokenADeposit(deposit)
         setTokenBDeposit(amount)
@@ -494,14 +488,14 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
     if (tokenBIndex !== null && (isXtoY ? leftRange < tickIndex : leftRange > tickIndex)) {
       const deposit = tokenBDeposit
-      const amount = getOtherTokenAmount(
-        convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
-        leftRange,
-        rightRange,
-        false,
-        tokenADeposit,
-        isAutoswapOn
-      )
+      const amount = isAutoswapOn
+        ? tokenADeposit
+        : getOtherTokenAmount(
+            convertBalanceToBN(deposit, tokens[tokenBIndex].decimals),
+            leftRange,
+            rightRange,
+            false
+          )
 
       if (tokenAIndex !== null && +deposit !== 0) {
         setTokenBDeposit(deposit)
@@ -952,8 +946,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             crossedTicks,
             swapSlippage,
             positionSlippage,
-            minUtilizationPercentage,
-            liquidityDelta
+            minUtilizationPercentage
           ) => {
             swapAndAddLiquidityHandler(
               xAmount,
@@ -966,7 +959,6 @@ export const NewPosition: React.FC<INewPosition> = ({
               swapSlippage,
               positionSlippage,
               minUtilizationPercentage,
-              liquidityDelta,
               leftRange,
               rightRange
             )
@@ -986,16 +978,15 @@ export const NewPosition: React.FC<INewPosition> = ({
               }
 
               setTokenADeposit(value)
-              setTokenBDeposit(
-                getOtherTokenAmount(
-                  convertBalanceToBN(value, tokens[tokenAIndex].decimals),
-                  leftRange,
-                  rightRange,
-                  true,
-                  tokenBDeposit,
-                  isAutoswapOn
+              !isAutoswapOn &&
+                setTokenBDeposit(
+                  getOtherTokenAmount(
+                    convertBalanceToBN(value, tokens[tokenAIndex].decimals),
+                    leftRange,
+                    rightRange,
+                    true
+                  )
                 )
-              )
             },
             blocked:
               (tokenAIndex !== null &&
@@ -1026,16 +1017,15 @@ export const NewPosition: React.FC<INewPosition> = ({
               }
 
               setTokenBDeposit(value)
-              setTokenADeposit(
-                getOtherTokenAmount(
-                  convertBalanceToBN(value, tokens[tokenBIndex].decimals),
-                  leftRange,
-                  rightRange,
-                  false,
-                  tokenADeposit,
-                  isAutoswapOn
+              !isAutoswapOn &&
+                setTokenADeposit(
+                  getOtherTokenAmount(
+                    convertBalanceToBN(value, tokens[tokenBIndex].decimals),
+                    leftRange,
+                    rightRange,
+                    false
+                  )
                 )
-              )
             },
             blocked:
               (tokenAIndex !== null &&
@@ -1118,6 +1108,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           setTokenBCheckbox={setTokenBCheckbox}
           alignment={alignment}
           setAlignment={setAlignment}
+          updateLiquidity={updateLiquidity}
         />
         <Hidden mdUp>
           <Grid container alignSelf='flex-end' mb={2} width='200px'>
@@ -1252,20 +1243,17 @@ export const NewPosition: React.FC<INewPosition> = ({
             estimatedScalePoints={estimatedScalePoints}
             isConnected={walletStatus === Status.Init}
             showWarning={
-              tokenADeposit === '' ||
-              tokenBDeposit === '' ||
-              +tokenADeposit === 0 ||
-              +tokenBDeposit === 0
+              (isAutoswapOn &&
+                isDepositEmptyOrZero(tokenADeposit) &&
+                isDepositEmptyOrZero(tokenBDeposit)) ||
+              (!isAutoswapOn &&
+                (isDepositEmptyOrZero(tokenADeposit) || isDepositEmptyOrZero(tokenBDeposit))) ||
+              (!tokenACheckbox && isDepositEmptyOrZero(tokenBDeposit)) ||
+              (!tokenBCheckbox && isDepositEmptyOrZero(tokenADeposit)) ||
+              (!tokenACheckbox && !tokenBCheckbox)
             }
             singleDepositWarning={
-              (tokenAIndex !== null &&
-                tokenBIndex !== null &&
-                !isWaitingForNewPool &&
-                blockedToken === PositionTokenBlock.A) ||
-              (tokenAIndex !== null &&
-                tokenBIndex !== null &&
-                !isWaitingForNewPool &&
-                blockedToken === PositionTokenBlock.B)
+              tokenAIndex !== null && tokenBIndex !== null && !isWaitingForNewPool && !!blockedToken
             }
             positionOpeningMethod={positionOpeningMethod}
           />
