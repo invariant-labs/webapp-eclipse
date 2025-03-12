@@ -1,4 +1,5 @@
 import { NightlyConnectAdapter } from '@nightlylabs/wallet-selector-solana'
+import { ensureError } from '@utils/utils'
 
 export const nightlyConnectAdapter: NightlyConnectAdapter = await NightlyConnectAdapter.build(
   {
@@ -18,7 +19,8 @@ export const openWalletSelectorModal = async () => {
       return
     }
     await nightlyConnectAdapter.connect()
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
   }
 }

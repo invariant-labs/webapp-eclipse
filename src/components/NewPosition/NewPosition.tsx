@@ -300,7 +300,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? concentrationArray[concentrationIndex]
+        ? concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1]
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -1049,7 +1050,12 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Fade in={isPromotedPool} timeout={250} style={{ width: '100%' }}>
+      <Fade
+        in={isPromotedPool}
+        timeout={250}
+        style={{ width: '100%' }}
+        unmountOnExit={isMd}
+        mountOnEnter={isMd}>
         <div>
           <EstimatedPoints
             handleClickFAQ={handleClickFAQ}

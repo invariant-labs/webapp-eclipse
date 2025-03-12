@@ -69,7 +69,7 @@ export const useStyles = makeStyles()(() => ({
     textTransform: 'none',
     zIndex: 1000000,
 
-    transition: 'filter 0.2s linear',
+    transition: 'filter 0.3s linear',
 
     '&:hover': {
       filter: 'brightness(1.2)',
@@ -113,6 +113,7 @@ export const useStyles = makeStyles()(() => ({
     paddingLeft: 9,
     letterSpacing: -0.03,
     fontSize: 16,
+    transition: '300ms',
 
     '&:hover': {
       background: colors.invariant.pinkLinearGradient,

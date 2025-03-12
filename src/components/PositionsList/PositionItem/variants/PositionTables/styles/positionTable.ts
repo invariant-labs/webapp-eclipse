@@ -117,7 +117,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
 
       '& > tr:nth-of-type(even)': {
         background: colors.invariant.component,
-        transition: 'filter .05s ease-in-out',
+        transition: 'filter 300ms ease-in-out',
 
         '&:hover': {
           filter: 'brightness(1.1)',
@@ -126,7 +126,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       },
       '& > tr:nth-of-type(odd)': {
         background: `${colors.invariant.componentDark}F0`,
-        transition: 'filter .05s ease-in-out',
+        transition: 'filter 300ms ease-in-out',
         '&:hover': {
           filter: 'brightness(1.1)',
 

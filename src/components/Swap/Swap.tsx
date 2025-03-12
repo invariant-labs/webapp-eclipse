@@ -218,11 +218,6 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
-  const IS_ERROR_LABEL_SHOW =
-    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 5 ||
-    tokens[tokenFromIndex ?? '']?.isUnknown ||
-    tokens[tokenToIndex ?? '']?.isUnknown
-
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
@@ -634,14 +629,6 @@ export const Swap: React.FC<ISwap> = ({
     amountFrom !== '' &&
     amountTo !== ''
 
-  const [prevOpenState, setPrevOpenState] = useState(detailsOpen && canShowDetails)
-
-  useEffect(() => {
-    if (getStateMessage() !== 'Loading') {
-      setPrevOpenState(detailsOpen && canShowDetails)
-    }
-  }, [detailsOpen, canShowDetails])
-
   const handleRefresh = async () => {
     onRefresh(tokenFromIndex, tokenToIndex)
     setRefresherTime(REFRESHER_INTERVAL)
@@ -969,13 +956,13 @@ export const Swap: React.FC<ISwap> = ({
               isPairGivingPoints={isPairGivingPoints}
             />
           </Box>
-          <Box
-            className={classes.unknownWarningContainer}
-            style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
+          <Box className={classes.unknownWarningContainer}>
             {+printBN(simulateResult.priceImpact, DECIMAL - 2) > 5 && (
               <TooltipHover title='Your trade size might be too large'>
                 <Box className={classes.unknownWarning}>
-                  {(+printBN(simulateResult.priceImpact, DECIMAL - 2)).toFixed(2)}% Price impact
+                  High price impact:{' '}
+                  {(+printBN(simulateResult.priceImpact, DECIMAL - 2)).toFixed(2)}%! This swap will
+                  cause a significant price movement.
                 </Box>
               </TooltipHover>
             )}
@@ -1063,11 +1050,7 @@ export const Swap: React.FC<ISwap> = ({
             ) : null}
           </Box>
           <TransactionDetailsBox
-            open={
-              getStateMessage() !== 'Loading'
-                ? detailsOpen && canShowDetails
-                : detailsOpen && prevOpenState
-            }
+            open={detailsOpen && canShowDetails}
             fee={canShowDetails ? pools[simulateResult.poolIndex].fee : new BN(0)}
             exchangeRate={{
               val: rateReversed ? 1 / swapRate : swapRate,
