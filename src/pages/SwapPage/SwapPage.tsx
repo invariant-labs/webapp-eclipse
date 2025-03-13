@@ -2,7 +2,6 @@ import WrappedSwap from '@containers/WrappedSwap/WrappedSwap'
 import useStyles from './styles'
 import { Grid } from '@mui/material'
 import { useParams } from 'react-router-dom'
-import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
 
 export const SwapPage: React.FC = () => {
   const { classes } = useStyles()

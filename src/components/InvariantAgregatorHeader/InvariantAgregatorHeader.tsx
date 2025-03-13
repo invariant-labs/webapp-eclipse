@@ -1,4 +1,3 @@
-import React from 'react'
 import useStyles from './style'
 import { Box, useMediaQuery, useTheme } from '@mui/material'
 import HeaderLogo from '@static/png/InvariantAggregator/header-logo.png'

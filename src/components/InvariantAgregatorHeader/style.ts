@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(theme => {
