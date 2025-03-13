@@ -1,7 +1,7 @@
 import LiquidationRangeInfo from '@components/PositionDetails/LiquidationRangeInfo/LiquidationRangeInfo'
 import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
 
-import { Card, Grid, Tooltip, Typography } from '@mui/material'
+import { Card, Grid, Typography } from '@mui/material'
 import activeLiquidity from '@static/svg/activeLiquidity.svg'
 import {
   calcPriceByTickIndex,
@@ -14,6 +14,7 @@ import React, { useEffect, useState } from 'react'
 import { ILiquidityToken } from '../SinglePositionInfo/consts'
 import useStyles from './style'
 import { getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -140,8 +141,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
       <Grid className={classes.headerContainer} container justifyContent='space-between'>
         <Typography className={classes.header}>Price range</Typography>
         <Grid>
-          <Tooltip
-            enterTouchDelay={0}
+          <TooltipGradient
             title={
               <>
                 <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
@@ -169,13 +169,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
               </>
             }
             placement='bottom'
-            classes={{
-              tooltip: classes.liquidityTooltip
-            }}>
+            top={1}
+            noGradient>
             <Typography className={classes.activeLiquidity}>
               Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
             </Typography>
-          </Tooltip>
+          </TooltipGradient>
           <Typography className={classes.currentPrice}>Current price ━━━</Typography>
         </Grid>
       </Grid>

@@ -677,7 +677,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             </Fade>
           )}
           {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
-            <TooltipHover text='Refresh'>
+            <TooltipHover title='Refresh'>
               <Box mr={2}>
                 <Refresher
                   currentIndex={refresherTime}
@@ -700,7 +700,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                   marketId={poolAddress}
                   copyPoolAddressHandler={copyPoolAddressHandler}
                 />
-                <TooltipHover text='Open pool in explorer'>
+                <TooltipHover title='Open pool in explorer'>
                   <Grid width={'12px'} height={'24px'}>
                     <a
                       href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
@@ -750,7 +750,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 )}
               </Hidden>
               {poolIndex !== null && tokenAIndex !== tokenBIndex && isMd && (
-                <TooltipHover text='Refresh'>
+                <TooltipHover title='Refresh'>
                   <Box>
                     <Refresher
                       currentIndex={refresherTime}
@@ -764,7 +764,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 </TooltipHover>
               )}
               {poolIndex !== null && (
-                <TooltipHover text='Settings'>
+                <TooltipHover title='Settings'>
                   <Button
                     onClick={handleClickSettings}
                     className={classes.settingsIconBtn}

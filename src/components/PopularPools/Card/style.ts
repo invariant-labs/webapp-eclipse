@@ -67,6 +67,7 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     color: colors.invariant.black,
     textTransform: 'none',
+    zIndex: 1000000,
 
     transition: 'filter 0.3s linear',
 
