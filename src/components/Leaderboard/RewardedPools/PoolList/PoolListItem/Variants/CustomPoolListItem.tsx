@@ -14,7 +14,8 @@ import {
   formatNumberWithCommas,
   initialXtoY,
   parseFeeToPathFee,
-  printBN
+  printBN,
+  ROUTES
 } from '@utils/utils'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { IProps } from '../PoolListItem'
@@ -55,7 +56,11 @@ export const CustomPoolListItem: React.FC<IProps> = ({
       : addressToTicker(network, addressFrom ?? '')
 
     navigate(
-      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      ROUTES.getNewPositionRoute(
+        tokenA,
+        tokenB,
+        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+      ),
       { state: { referer: 'stats' } }
     )
   }

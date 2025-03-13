@@ -8,7 +8,7 @@ import { status } from '@store/selectors/solanaWallet'
 import { Status } from '@store/reducers/solanaWallet'
 import { colors, typography } from '@static/theme'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import { printBN, trimZeros } from '@utils/utils'
+import { printBN, ROUTES, trimZeros } from '@utils/utils'
 import { BN } from '@coral-xyz/anchor'
 import { network } from '@store/selectors/solanaConnection'
 import { NetworkType } from '@store/consts/static'
@@ -105,7 +105,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                     style={{ marginTop: '16px' }}
                     onClick={() => {
                       handleClose()
-                      navigate('/points')
+                      navigate(ROUTES.POINTS)
                     }}>
                     Go to Points Tab
                   </Button>
@@ -137,7 +137,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                     className={classes.button}
                     onClick={() => {
                       handleClose()
-                      navigate('/points')
+                      navigate(ROUTES.POINTS)
                     }}>
                     Go to Points Tab
                   </Button>
