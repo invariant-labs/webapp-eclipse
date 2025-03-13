@@ -32,7 +32,9 @@ export const Primary: Story = {
     currentValue: 0,
     feeTiers: [0.02, 0.04, 0.1, 0.3, 1],
     onSelect: fn(),
-    bestTierIndex: 2
+    bestTierIndex: 2,
+    feeTiersWithTvl: {},
+    totalTvl: 0
   },
   render: args => <PrimaryComponent {...args} />
 }

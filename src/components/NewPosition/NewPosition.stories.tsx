@@ -119,7 +119,9 @@ export const Primary: Story = {
       middle: new BN(100000000000),
       max: new BN(10000000000000)
     }),
-    isPromotedPool: false
+    isPromotedPool: false,
+    feeTiersWithTvl: {},
+    totalTvl: 0
   },
   render: () => {
     return (
@@ -189,6 +191,8 @@ export const Primary: Story = {
           middle: new BN(100000000000),
           max: new BN(10000000000000)
         })}
+        feeTiersWithTvl={{}}
+        totalTvl={0}
       />
     )
   }

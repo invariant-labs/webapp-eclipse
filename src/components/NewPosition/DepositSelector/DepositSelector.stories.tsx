@@ -130,7 +130,9 @@ export const Primary: Story = {
     tokenAIndex: 0,
     tokenBIndex: 1,
     canNavigate: true,
-    isCurrentPoolExisting: true
+    isCurrentPoolExisting: true,
+    feeTiersWithTvl: {},
+    totalTvl: 0
   },
   render: args => <PrimaryComponent {...args} />
 }
