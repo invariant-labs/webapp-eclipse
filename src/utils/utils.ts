@@ -2022,3 +2022,33 @@ export const ensureError = (value: unknown): Error => {
   const error = new Error(stringified)
   return error
 }
+
+export const ROUTES = {
+  ROOT: '/',
+  EXCHANGE: '/exchange',
+  EXCHANGE_WITH_PARAMS: '/exchange/:item1?/:item2?',
+  LIQUIDITY: '/liquidity',
+  STATISTICS: '/statistics',
+  NEW_POSITION: '/newPosition',
+  NEW_POSITION_WITH_PARAMS: '/newPosition/:item1?/:item2?/:item3?',
+  POSITION: '/position',
+  POSITION_WITH_ID: '/position/:id',
+  PORTFOLIO: '/portfolio',
+  CREATOR: '/creator',
+  POINTS: '/points',
+
+  getExchangeRoute: (item1?: string, item2?: string): string => {
+    if (!item1) return ROUTES.EXCHANGE
+    if (!item2) return `${ROUTES.EXCHANGE}/${item1}`
+    return `${ROUTES.EXCHANGE}/${item1}/${item2}`
+  },
+
+  getNewPositionRoute: (item1?: string, item2?: string, item3?: string): string => {
+    if (!item1) return ROUTES.NEW_POSITION
+    if (!item2) return `${ROUTES.NEW_POSITION}/${item1}`
+    if (!item3) return `${ROUTES.NEW_POSITION}/${item1}/${item2}`
+    return `${ROUTES.NEW_POSITION}/${item1}/${item2}/${item3}`
+  },
+
+  getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
+}
