@@ -23,6 +23,7 @@ import {
   findPairs,
   handleSimulate,
   printBN,
+  ROUTES,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
@@ -30,7 +31,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
 import useStyles from './style'
@@ -233,11 +234,6 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [network])
 
-  const IS_ERROR_LABEL_SHOW =
-    +printBN(simulateResult.priceImpact, DECIMAL - 2) > 5 ||
-    tokens[tokenFromIndex ?? '']?.isUnknown ||
-    tokens[tokenToIndex ?? '']?.isUnknown
-
   const timeoutRef = useRef<number>(0)
 
   const navigate = useNavigate()
@@ -270,7 +266,7 @@ export const Swap: React.FC<ISwap> = ({
     urlUpdateTimeoutRef.current = setTimeout(() => {
       const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
       const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-      const newPath = `/exchange/${fromTicker}/${toTicker}`
+      const newPath = ROUTES.getExchangeRoute(fromTicker, toTicker)
 
       if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
         navigate(newPath, { replace: true })
@@ -735,17 +731,6 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
-      {network === NetworkType.Mainnet ? (
-        <SwapPointsPopover
-          isPairGivingPoints={isPairGivingPoints}
-          anchorEl={pointsBoxRef.current}
-          open={isPointsPopoverOpen}
-          onClose={() => setIsPointsPopoverOpen(false)}
-          network={network}
-          promotedSwapPairs={promotedSwapPairs}
-        />
-      ) : null}
-
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}

@@ -66,6 +66,7 @@ const useStyles = makeStyles()(theme => {
       paddingInline: 8,
       backgroundColor: colors.invariant.light,
       borderRadius: 11,
+      transition: '300ms',
 
       '&:hover': {
         backgroundColor: colors.invariant.lightHover2,
@@ -122,10 +123,9 @@ const useStyles = makeStyles()(theme => {
       paddingTop: 22,
       paddingInline: 8,
       position: 'relative',
-
       [theme.breakpoints.down('md')]: {
-        paddingInline: 20,
-        paddingTop: 15
+        paddingTop: 12,
+        paddingInline: 8
       }
     },
     rangeConcentration: {

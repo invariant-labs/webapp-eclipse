@@ -51,7 +51,7 @@ export const InfoComponent = () => {
           className={`${classes.astronaut} floating-astronaut`}
           style={{
             opacity: imageLoaded ? 1 : 0,
-            transition: 'opacity 0.7s ease-in',
+            transition: 'opacity 0.3s ease-in',
             position: imageLoaded ? 'relative' : 'absolute',
             top: 0,
             left: 0
