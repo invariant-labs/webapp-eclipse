@@ -1,6 +1,6 @@
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import icons from '@static/icons'
-import { colors, theme, typography } from '@static/theme'
+import { theme } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 import useStyles from './styles'
 
@@ -14,34 +14,16 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
   const bannerHeight = 'fit-content'
   const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
 
-  const { classes } = useStyles()
+  const { classes } = useStyles({ isHiding })
 
-  const airdrop = (
-    <Box
-      component='img'
-      src={icons.airdrop}
-      sx={{
-        width: '24px',
-        height: '24px',
-        minWidth: '24px',
-        objectFit: 'contain',
-        marginRight: '12px'
-      }}
-    />
-  )
+  const airdrop = <Box component='img' src={icons.airdrop} className={classes.airdrop} />
 
   const text = (
     <span>
       {!isSmallDevice && `Invariant Points are live!`} SOL/USDC is now the next pool distributing
       points! Check it out
       <span
-        style={{
-          color: colors.invariant.pink,
-          textDecoration: 'underline',
-          marginLeft: '6px',
-          cursor: 'pointer',
-          ...typography.body1
-        }}
+        className={classes.text}
         onClick={() => {
           navigate('/points')
 
@@ -92,35 +74,13 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
     <>
       {!isSmallDevice && (
         <Box
+          className={classes.bannerWrapper}
           sx={{
-            position: 'relative',
-            background: colors.invariant.light,
-            padding: isHiding ? '0px 0px' : { xs: '12px 16px', sm: '10px 25px' },
-            width: '100%',
-            maxWidth: '100%',
             height: isHiding ? '0px' : bannerHeight,
-            display: 'flex',
-            ...typography.body1,
-            justifyContent: 'center',
-            alignItems: 'center',
-            boxSizing: 'border-box',
-            color: colors.invariant.text,
-            margin: isHiding ? '0' : undefined,
-            overflow: 'hidden',
-            opacity: isHiding ? 0 : 1,
-            transition: 'all 0.3s ease-in-out',
-            willChange: 'height,padding,margin'
+            padding: isHiding ? '0px 0px' : { xs: '12px 16px', sm: '10px 25px' }
           }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              transform: isHiding ? 'translateY(-100%)' : 'translateY(0)',
-              transition: 'transform 0.3s ease-in-out',
-              position: 'relative',
-              gap: '12px'
-            }}>
-            <Grid display='flex' justifyContent='center' alignItems='center' width='100%' mr={3}>
+          <Box className={classes.airdropWrapper}>
+            <Grid className={classes.labelWrapper}>
               {airdrop}
               <Box
                 sx={{

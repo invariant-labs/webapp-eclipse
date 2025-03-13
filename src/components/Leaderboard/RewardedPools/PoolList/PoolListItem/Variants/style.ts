@@ -18,6 +18,29 @@ export const useStyles = makeStyles()(() => ({
     },
     borderBottom: `1px solid ${colors.invariant.light}`
   },
+  APYLabel: {
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    alignSelf: 'flex-end'
+  },
+  APRLabel: {
+    ...typography.tiny2,
+    color: colors.invariant.textGrey,
+    alignSelf: 'flex-end',
+    marginLeft: '8px'
+  },
+  APRValue: {
+    ...typography.tiny2,
+    color: colors.invariant.text,
+    alignSelf: 'flex-end',
+    marginLeft: '8px',
+    marginBottom: '2px'
+  },
+  APYValue: {
+    ...typography.heading4,
+    color: colors.invariant.text,
+    alignSelf: 'flex-end'
+  },
   infoWrapper: {
     display: 'flex',
     justifyContent: 'space-between',

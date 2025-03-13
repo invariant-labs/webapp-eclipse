@@ -7,7 +7,7 @@ import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
 import { Status } from '@store/reducers/solanaWallet'
 import { CurrentUser, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
-import { colors, theme } from '@static/theme'
+import { theme } from '@static/theme'
 import LeaderboardSwapItem from './LeaderboardItem/LeaderboardSwapItem'
 import LeaderboardLpItem from './LeaderboardItem/LeaderboardLpItem'
 import LeaderboardTotalItem from './LeaderboardItem/LeaderboardTotalItem'
@@ -347,16 +347,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
 
       {totalPages >= 1 && (
         <Box sx={isMobile ? { paddingLeft: '8px', paddingRight: '8px' } : {}}>
-          <Box
-            sx={{
-              width: '100%',
-              position: 'relative',
-              display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '20px 0 10px 0'
-            }}>
+          <Box className={classes.pagerWrapper}>
             <PaginationList
               pages={totalPages}
               defaultPage={currentPage}
@@ -364,14 +355,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
               variant='center'
             />
 
-            <Typography
-              sx={{
-                ...(!isMobile && {
-                  right: '24px'
-                }),
-                position: !isMobile ? 'absolute' : 'relative',
-                color: colors.invariant.textGrey
-              }}>
+            <Typography className={classes.pageLabel}>
               Showing {lowerBound}-{upperBound} of {totalItems}
             </Typography>
           </Box>

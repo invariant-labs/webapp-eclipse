@@ -178,45 +178,18 @@ export const CustomPoolListItem: React.FC<IProps> = ({
             </Box>
             <Box>
               <Box style={{ display: 'flex' }}>
-                <span
-                  style={{
-                    ...typography.body2,
-                    color: colors.invariant.textGrey,
-                    alignSelf: 'flex-end'
-                  }}>
-                  APY
-                </span>
-                <span
-                  style={{
-                    ...typography.tiny2,
-                    color: colors.invariant.textGrey,
-                    alignSelf: 'flex-end',
-                    marginLeft: '8px'
-                  }}>
-                  APR
-                </span>
+                <span className={classes.APYLabel}>APY</span>
+                <span className={classes.APRLabel}>APR</span>
               </Box>
               <Box style={{ display: 'flex' }}>
-                <span
-                  style={{
-                    ...typography.heading4,
-                    color: colors.invariant.text,
-                    alignSelf: 'flex-end'
-                  }}>
+                <span className={classes.APYValue}>
                   {convertedApy > 1000
                     ? '>1000%'
                     : convertedApy === 0
                       ? ''
                       : Math.abs(convertedApy).toFixed(2) + '%'}
                 </span>
-                <span
-                  style={{
-                    ...typography.tiny2,
-                    color: colors.invariant.text,
-                    alignSelf: 'flex-end',
-                    marginLeft: '8px',
-                    marginBottom: '2px'
-                  }}>
+                <span className={classes.APRValue}>
                   {convertedApr > 1000
                     ? '>1000%'
                     : convertedApr === 0

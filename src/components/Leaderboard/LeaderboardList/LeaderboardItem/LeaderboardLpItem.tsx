@@ -116,13 +116,7 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
         <Typography style={{ paddingRight: '24px', width: 'auto' }}>
-          <span
-            style={{
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              color: colors.invariant.text
-            }}>
+          <span className={classes.address}>
             {domain
               ? isVerySmallScreen || isNarrowMediumScreen
                 ? shortDomain
@@ -135,7 +129,7 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
               (You)
             </Typography>
           ) : null}
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline' }}>
+          <Box className={classes.copyWrapper}>
             <TooltipHover text='Copy address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}

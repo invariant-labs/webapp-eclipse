@@ -1,5 +1,5 @@
 import { alpha } from '@mui/material'
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -18,6 +18,26 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     zIndex: 2,
     backgroundColor: `${colors.invariant.newDark} !important`
+  },
+  pagerWrapper: {
+    width: '100%',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px 0 10px 0',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    }
+  },
+  pageLabel: {
+    position: 'absolute',
+    color: colors.invariant.textGrey,
+    [theme.breakpoints.down('md')]: {
+      postion: 'relative',
+      right: '24px'
+    }
   },
 
   waveImage: {

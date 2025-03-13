@@ -70,6 +70,12 @@ export const useStyles = makeStyles()(() => ({
       padding: '18px 8px'
     }
   },
+  address: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    color: colors.invariant.text
+  },
   iconContainer: {
     minWidth: 28,
     maxWidth: 28,
@@ -83,6 +89,11 @@ export const useStyles = makeStyles()(() => ({
     height: 28,
     marginRight: 3,
     borderRadius: '50%'
+  },
+  copyWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'baseline'
   },
   clipboardIcon: {
     marginLeft: 4,
