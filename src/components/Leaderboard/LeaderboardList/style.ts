@@ -19,26 +19,6 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 2,
     backgroundColor: `${colors.invariant.newDark} !important`
   },
-  pagerWrapper: {
-    width: '100%',
-    position: 'relative',
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: '20px 0 10px 0',
-    [theme.breakpoints.down('md')]: {
-      flexDirection: 'column'
-    }
-  },
-  pageLabel: {
-    position: 'absolute',
-    color: colors.invariant.textGrey,
-    [theme.breakpoints.down('md')]: {
-      postion: 'relative',
-      right: '24px'
-    }
-  },
 
   waveImage: {
     pointerEvents: 'none',
@@ -94,6 +74,21 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 0,
     animation: 'pulse 1.5s ease-in-out infinite',
     opacity: 0.7
+  },
+  pagerWrapper: {
+    width: '100%',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px 0 10px 0',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    },
+    '& span': {
+      color: colors.invariant.textGrey
+    }
   },
   '@keyframes pulse': {
     '0%': {

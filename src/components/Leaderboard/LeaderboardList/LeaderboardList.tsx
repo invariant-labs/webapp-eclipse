@@ -355,7 +355,14 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
               variant='center'
             />
 
-            <Typography className={classes.pageLabel}>
+            <Typography
+              component='span'
+              sx={{
+                ...(!isMobile && {
+                  right: '24px'
+                }),
+                position: !isMobile ? 'absolute' : 'relative'
+              }}>
               Showing {lowerBound}-{upperBound} of {totalItems}
             </Typography>
           </Box>

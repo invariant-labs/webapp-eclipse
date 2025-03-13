@@ -34,7 +34,7 @@ const useStyles = makeStyles()(() => {
       width: '100%',
 
       borderBottom: `2px solid ${colors.invariant.light}`,
-      '& h1': {
+      '& h2': {
         paddingLeft: '42px',
         marginBottom: '16px',
         ...typography.heading4,
