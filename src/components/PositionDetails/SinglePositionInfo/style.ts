@@ -183,7 +183,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
     '&:disabled': {
       background: colors.invariant.light,
-      color: colors.invariant.dark
+      color: colors.invariant.dark,
+      pointerEvents: 'auto',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed'
+      }
     },
 
     [theme.breakpoints.down('sm')]: {
