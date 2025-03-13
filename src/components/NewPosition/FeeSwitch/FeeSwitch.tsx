@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import useStyles, { useSingleTabStyles, useTabsStyles } from './style'
 import classNames from 'classnames'
 import { Grid, Tab, Tabs } from '@mui/material'
+import { Box } from '@mui/material'
+import { formatNumberWithSuffix } from '@utils/utils'
 
 export interface IFeeSwitch {
   onSelect: (value: number) => void
@@ -11,6 +13,8 @@ export interface IFeeSwitch {
   bestTierIndex?: number
   currentValue: number
   promotedPoolTierIndex: number | undefined
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
 }
 
 export const FeeSwitch: React.FC<IFeeSwitch> = ({
@@ -19,7 +23,9 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   feeTiers,
   bestTierIndex,
   promotedPoolTierIndex,
-  currentValue
+  currentValue,
+  feeTiersWithTvl,
+  totalTvl
 }) => {
   const { classes } = useStyles()
 
@@ -50,7 +56,22 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
           <Tab
             key={index}
             disableRipple
-            label={showOnlyPercents ? `${tier}%` : `${tier}% fee`}
+            label={
+              <Box className={classes.tabContainer}>
+                <Box>{showOnlyPercents ? `${tier}%` : `${tier}% fee`}</Box>
+                <Box className={classes.tabTvl}>
+                  <span
+                    className={classNames({
+                      [classes.tabSelectedTvl]:
+                        currentValue === index || promotedPoolTierIndex === index
+                    })}>
+                    TVL
+                  </span>
+                  <br />${formatNumberWithSuffix(feeTiersWithTvl[tier])}(
+                  {Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)}%)
+                </Box>
+              </Box>
+            }
             classes={{
               root: classNames(
                 singleTabClasses.root,

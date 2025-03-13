@@ -88,6 +88,8 @@ export interface IDepositSelector {
   canNavigate: boolean
   isCurrentPoolExisting: boolean
   promotedPoolTierIndex: number | undefined
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -128,7 +130,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onDisconnectWallet,
   ethBalance,
   canNavigate,
-  isCurrentPoolExisting
+  isCurrentPoolExisting,
+  feeTiersWithTvl,
+  totalTvl
 }) => {
   const { classes } = useStyles()
 
@@ -400,6 +404,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           bestTierIndex={bestTierIndex}
           promotedPoolTierIndex={promotedPoolTierIndex}
           currentValue={feeTierIndex}
+          feeTiersWithTvl={feeTiersWithTvl}
+          totalTvl={totalTvl}
         />
       </Grid>
 
@@ -409,9 +415,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -458,9 +462,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {

@@ -51,6 +51,8 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { estimatePointsForLiquidity } from '@invariant-labs/points-sdk'
 import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { actions as statsActions } from '@store/reducers/stats'
+import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
 
 export interface IProps {
   initialTokenFrom: string
@@ -714,6 +716,31 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }
 
+  const poolsList = useSelector(poolsStatsWithTokensDetails)
+
+  useEffect(() => {
+    dispatch(statsActions.getCurrentStats())
+  }, [])
+
+  const { feeTiersWithTvl, totalTvl } = useMemo(() => {
+    const feeTiersWithTvl: Record<number, number> = {}
+    let totalTvl = 0
+
+    poolsList.map(pool => {
+      if (
+        (pool.tokenX.equals(tokens[tokenAIndex ?? 0].assetAddress) &&
+          pool.tokenY.equals(tokens[tokenBIndex ?? 0].assetAddress)) ||
+        (pool.tokenX.equals(tokens[tokenBIndex ?? 0].assetAddress) &&
+          pool.tokenY.equals(tokens[tokenAIndex ?? 0].assetAddress))
+      ) {
+        feeTiersWithTvl[pool.fee] = pool.tvl
+        totalTvl += pool.tvl
+      }
+    })
+
+    return { feeTiersWithTvl, totalTvl }
+  }, [poolsList])
+
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
@@ -898,6 +925,8 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       estimatedPointsPerDay={estimatedPointsPerDay}
       estimatedPointsForScale={estimatedPointsForScale}
       isPromotedPool={isPromotedPool}
+      feeTiersWithTvl={feeTiersWithTvl}
+      totalTvl={totalTvl}
     />
   )
 }

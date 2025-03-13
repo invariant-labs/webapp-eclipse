@@ -134,6 +134,8 @@ export interface INewPosition {
     concentrationArray: number[]
   ) => { min: BN; middle: BN; max: BN }
   isPromotedPool: boolean
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -194,7 +196,9 @@ export const NewPosition: React.FC<INewPosition> = ({
   canNavigate,
   estimatedPointsPerDay,
   estimatedPointsForScale,
-  isPromotedPool
+  isPromotedPool,
+  feeTiersWithTvl,
+  totalTvl
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -939,6 +943,8 @@ export const NewPosition: React.FC<INewPosition> = ({
           canNavigate={canNavigate}
           isCurrentPoolExisting={isCurrentPoolExisting}
           promotedPoolTierIndex={promotedPoolTierIndex}
+          feeTiersWithTvl={feeTiersWithTvl}
+          totalTvl={totalTvl}
         />
         <Hidden mdUp>
           <Grid container alignSelf='flex-end' mb={2} width='200px'>
