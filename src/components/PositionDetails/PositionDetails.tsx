@@ -63,6 +63,7 @@ interface IProps {
   success: boolean
   inProgress: boolean
   ethBalance: BN
+  isPreview: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -97,7 +98,8 @@ const PositionDetails: React.FC<IProps> = ({
   isLocked,
   success,
   inProgress,
-  ethBalance
+  ethBalance,
+  isPreview
 }) => {
   const { classes } = useStyles()
 
@@ -249,6 +251,7 @@ const PositionDetails: React.FC<IProps> = ({
             blurContent()
           }}
           ethBalance={ethBalance}
+          isPreview={isPreview}
         />
       </Grid>
       <Grid
@@ -271,17 +274,20 @@ const PositionDetails: React.FC<IProps> = ({
             wrap='nowrap'>
             <Hidden mdDown>
               {!isLocked ? (
-                <TooltipHover text={'Lock liquidity'}>
-                  <Button
-                    className={classes.lockButton}
-                    disabled={isLocked}
-                    variant='contained'
-                    onClick={() => {
-                      setIsLockPositionModalOpen(true)
-                      blurContent()
-                    }}>
-                    <img src={lockIcon} alt='Lock' />
-                  </Button>
+                <TooltipHover
+                  text={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
+                  <Box>
+                    <Button
+                      className={classes.lockButton}
+                      disabled={isLocked || isPreview}
+                      variant='contained'
+                      onClick={() => {
+                        setIsLockPositionModalOpen(true)
+                        blurContent()
+                      }}>
+                      <img src={lockIcon} alt='Lock' />
+                    </Button>
+                  </Box>
                 </TooltipHover>
               ) : (
                 <TooltipHover text={'Unlocking liquidity is forbidden'}>
