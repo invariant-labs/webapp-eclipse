@@ -733,7 +733,7 @@ export const Swap: React.FC<ISwap> = ({
         </Box>
       )}
 
-      <Box>
+      <Box marginLeft={'150px'}>
         {isMd && (
           <Box className={classes.agregatorContainer}>
             <InvariantAgregatorHeader />
@@ -1216,7 +1216,7 @@ export const Swap: React.FC<ISwap> = ({
               <AnimatedWaves wavePosition={'bottom'} isAnimating={isPairGivingPoints} />
             </Grid>
           </Box>
-          <Box sx={{ height: '100%' }}>
+          <Box sx={{ height: '100%', width: '350px' }}>
             {!isMd && (
               <TransactionRoute
                 routeData={route}
