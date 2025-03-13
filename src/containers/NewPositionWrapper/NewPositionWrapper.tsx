@@ -575,7 +575,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
-      return new BN(0)
+      return { amount: new BN(0), liquidity: new BN(0) }
     }
 
     const byX = tokenAddress.equals(
