@@ -20,14 +20,13 @@ export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition
     [
       {
         type: 'node',
-        shape: 'rectangle',
+        shape: 'rect',
         dexInfo: {
           logo: exchanges[0].logoUrl,
           fee: exchanges[0].fee,
           link: 'http://foo.bar',
           name: exchanges[0].name
         },
-        label: 'A',
         connectors: [
           { direction: 'down', longerConnector: true, withArrow: true },
           { direction: 'up', longerConnector: true }
@@ -69,14 +68,14 @@ export const generateTwoHopTemplate = (data: RouteTemplateProps): GridDefinition
     [
       {
         type: 'node',
-        shape: 'rectangle',
+        shape: 'rect',
         dexInfo: {
           logo: exchanges[0].logoUrl,
           fee: exchanges[0].fee,
           link: 'http://foo.bar',
           name: exchanges[0].name
         },
-        label: 'A',
+
         connectors: [{ direction: 'down' }]
       }
     ],
@@ -94,14 +93,14 @@ export const generateTwoHopTemplate = (data: RouteTemplateProps): GridDefinition
     [
       {
         type: 'node',
-        shape: 'rectangle',
+        shape: 'rect',
         dexInfo: {
           logo: exchanges[1].logoUrl,
           fee: exchanges[1].fee,
           link: 'http://foo.bar',
           name: exchanges[1].name
         },
-        label: 'A',
+
         connectors: [{ direction: 'down', withArrow: true }, { direction: 'up' }]
       }
     ],
@@ -136,14 +135,14 @@ export const generateThreeHopTemplate = (data: RouteTemplateProps): GridDefiniti
 
       {
         type: 'node',
-        shape: 'rectangle',
+        shape: 'rect',
         dexInfo: {
           logo: exchanges[0].logoUrl,
           fee: exchanges[0].fee,
           link: 'http://foo.bar',
           name: exchanges[0].name
         },
-        label: 'A',
+
         connectors: [{ direction: 'down' }]
       }
     ],
@@ -162,14 +161,14 @@ export const generateThreeHopTemplate = (data: RouteTemplateProps): GridDefiniti
       null,
       {
         type: 'node',
-        shape: 'rectangle',
+        shape: 'rect',
         dexInfo: {
           logo: exchanges[1].logoUrl,
           fee: exchanges[1].fee,
           link: 'http://foo.bar',
           name: exchanges[1].name
         },
-        label: 'A',
+
         connectors: [{ direction: 'down' }, { direction: 'up' }]
       }
     ],
@@ -195,14 +194,13 @@ export const generateThreeHopTemplate = (data: RouteTemplateProps): GridDefiniti
       },
       {
         type: 'node',
-        shape: 'rectangle',
+        shape: 'rect',
         dexInfo: {
           logo: exchanges[2].logoUrl,
           fee: exchanges[2].fee,
           link: 'http://foo.bar',
           name: exchanges[2].name
         },
-        label: 'A',
 
         connectors: [{ direction: 'up' }, { direction: 'left', withArrow: true }]
       }
@@ -225,14 +223,14 @@ export const generateFourHopTemplate = (data: RouteTemplateProps): GridDefinitio
       },
       {
         type: 'node',
-        shape: 'rectangle',
+        shape: 'rect',
         dexInfo: {
           logo: exchanges[0].logoUrl,
           fee: exchanges[0].fee,
           link: 'http://foo.bar',
           name: exchanges[0].name
         },
-        label: 'A',
+
         connectors: [{ direction: 'right' }, { direction: 'left' }]
       },
       {
@@ -250,14 +248,13 @@ export const generateFourHopTemplate = (data: RouteTemplateProps): GridDefinitio
       null,
       {
         type: 'node',
-        shape: 'rectangle',
+        shape: 'rect',
         dexInfo: {
           logo: exchanges[1].logoUrl,
           fee: exchanges[1].fee,
           link: 'http://foo.bar',
           name: exchanges[1].name
         },
-        label: 'A',
 
         connectors: [{ direction: 'up' }, { direction: 'down' }]
       }
@@ -280,8 +277,8 @@ export const generateFourHopTemplate = (data: RouteTemplateProps): GridDefinitio
       null,
       {
         type: 'node',
-        shape: 'rectangle',
-        label: 'A',
+        shape: 'rect',
+
         dexInfo: {
           logo: exchanges[2].logoUrl,
           fee: exchanges[2].fee,
@@ -304,8 +301,8 @@ export const generateFourHopTemplate = (data: RouteTemplateProps): GridDefinitio
 
       {
         type: 'node',
-        shape: 'rectangle',
-        label: 'A',
+        shape: 'rect',
+
         dexInfo: {
           logo: exchanges[3].logoUrl,
           fee: exchanges[3].fee,

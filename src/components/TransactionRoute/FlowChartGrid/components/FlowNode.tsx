@@ -1,11 +1,13 @@
+import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { NodeConnector } from './NodeConnector'
 import { typography, colors } from '@static/theme'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
-export const FlowNode = ({
+import { FlowNodeProps } from '../types/types'
+
+export const FlowNode: React.FC<FlowNodeProps> = ({
   shape,
-  label,
   textA,
   dexInfo,
   textB,
@@ -41,11 +43,11 @@ export const FlowNode = ({
           zIndex: 10,
           border: '1px solid #A9B6BF',
           gap: '6px',
-          backgroundImage: shape === 'circle' ? `url(${logoImg})` : 'none',
+          backgroundImage: shape === 'circle' && logoImg ? `url(${logoImg})` : 'none',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}>
-        {label && (
+        {dexInfo && (
           <Typography
             variant='body2'
             color='white'
@@ -69,6 +71,7 @@ export const FlowNode = ({
                 maxWidth: '13px',
                 maxHeight: '18px'
               }}
+              alt={dexInfo.name}
             />
             <Box>
               <Typography
@@ -77,7 +80,7 @@ export const FlowNode = ({
                 }}>
                 {dexInfo.fee}%
               </Typography>
-              <a href={dexInfo.link} target='_blank'>
+              <a href={dexInfo.link} target='_blank' rel='noopener noreferrer'>
                 <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                   <Typography
                     sx={{
@@ -131,7 +134,7 @@ export const FlowNode = ({
           {textA ?? ''}
         </Typography>
         <Typography sx={{ color: colors.invariant.text, ...typography.body2, textWrap: 'nowrap' }}>
-          {(shape === 'circle' && formatNumberWithSuffix(textB)) ?? ''} {textA ?? ''}
+          {(shape === 'circle' && textB && formatNumberWithSuffix(textB)) ?? ''} {textA ?? ''}
         </Typography>
       </Box>
     </Box>

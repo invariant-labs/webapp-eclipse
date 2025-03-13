@@ -4,7 +4,7 @@ import { Box, useMediaQuery, useTheme } from '@mui/material'
 import HeaderLogo from '@static/png/InvariantAggregator/header-logo.png'
 import SolarLogo from '@static/png/InvariantAggregator/solar.png'
 import LifinityLogo from '@static/png/InvariantAggregator/lifinity.png'
-import FrameLogo from '@static/png/InvariantAggregator/Frame.png'
+import OrcaLogo from '@static/png/InvariantAggregator/Orca.png'
 import UmbraLogo from '@static/png/InvariantAggregator/umbra.png'
 import InvariantLogo from '@static/png/InvariantAggregator/Invariant.png'
 
@@ -16,7 +16,7 @@ const InvariantAgregatorHeader = () => {
   const logos = [
     { src: SolarLogo, alt: 'Solar' },
     { src: LifinityLogo, alt: 'Lifinity' },
-    { src: FrameLogo, alt: 'Frame' },
+    { src: OrcaLogo, alt: 'Orca' },
     { src: UmbraLogo, alt: 'Umbra' },
     { src: InvariantLogo, alt: 'Invariant' }
   ]

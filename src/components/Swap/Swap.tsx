@@ -4,7 +4,7 @@ import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/Exchange
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@components/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
 import refreshIcon from '@static/svg/refresh.svg'
 import settingIcon from '@static/svg/settings.svg'
 import SwapArrows from '@static/svg/swap-arrows.svg'
@@ -48,13 +48,11 @@ import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
 import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
-import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
+import TransactionRoute, { RouteTemplateProps } from '@components/TransactionRoute/TransactionRoute'
 
-import SolarLogo from '@static/png/InvariantAggregator/solar.png'
-import LifinityLogo from '@static/png/InvariantAggregator/lifinity.png'
-import FrameLogo from '@static/png/InvariantAggregator/Frame.png'
-import UmbraLogo from '@static/png/InvariantAggregator/umbra.png'
-import InvariantLogo from '@static/png/InvariantAggregator/Invariant.png'
+import { theme, typography } from '@static/theme'
+import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
+import { routes } from './routes'
 
 export interface Pools {
   tokenX: PublicKey
@@ -218,6 +216,7 @@ export const Swap: React.FC<ISwap> = ({
     error: []
   })
   const [isPointsPopoverOpen, setIsPointsPopoverOpen] = useState(false)
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const pointsBoxRef = useRef<HTMLDivElement>(null)
   const handlePointerEnter = () => {
     setIsPointsPopoverOpen(true)
@@ -702,6 +701,37 @@ export const Swap: React.FC<ISwap> = ({
     lockAnimation ||
     (getStateMessage() === 'Loading' &&
       (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+  const [isTransactionRouteModalOpen, setTransactionRouteModalOpen] = useState(false)
+  const [isRouteLoading, setRouteLoading] = useState(false)
+  const [route, setRoute] = useState<RouteTemplateProps | undefined>(undefined)
+
+  const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
+    let currentIndex = 0
+
+    const updateRoute = () => {
+      setRouteLoading(true)
+
+      setTimeout(() => {
+        setRoute(routes[currentIndex])
+
+        setTimeout(() => {
+          setRouteLoading(false)
+
+          setTimeout(() => {
+            currentIndex = (currentIndex + 1) % routes.length
+
+            updateRoute()
+          }, 3000)
+        }, intervalMs / 2)
+      }, intervalMs / 2)
+    }
+
+    updateRoute()
+  }
+
+  useEffect(() => {
+    simulateRouteLoading(routes, 3000)
+  }, [])
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -724,11 +754,19 @@ export const Swap: React.FC<ISwap> = ({
           </u>
         </Box>
       )}
-      <Box className={classes.agregatorContainer}>
-        <InvariantAgregatorHeader />
-      </Box>
       <Box>
+        {isMd && (
+          <Box className={classes.agregatorContainer}>
+            <InvariantAgregatorHeader />
+          </Box>
+        )}
+
         <Grid container className={classes.header}>
+          {!isMd && (
+            <Box className={classes.agregatorContainer}>
+              <InvariantAgregatorHeader />
+            </Box>
+          )}
           <Box className={classes.leftSection}>
             <Typography component='h1' style={{ height: '27px' }}>
               Swap tokens
@@ -1021,7 +1059,7 @@ export const Swap: React.FC<ISwap> = ({
                 )}
               </Box>
               <Box className={classes.transactionDetails}>
-                <Box className={classes.transactionDetailsInner}>
+                <Box className={classes.transactionDetailsInner} sx={{ gap: '8px' }}>
                   <button
                     onClick={
                       tokenFromIndex !== null &&
@@ -1048,6 +1086,17 @@ export const Swap: React.FC<ISwap> = ({
                       </Typography>
                     </Grid>
                   </button>
+                  {isMd && (
+                    <button
+                      onClick={() => {
+                        setTransactionRouteModalOpen(true)
+                        blurContent()
+                      }}
+                      className={classes.routeButton}>
+                      <Typography sx={{ ...typography.caption2 }}>Route</Typography>
+                    </button>
+                  )}
+
                   {tokenFromIndex !== null &&
                     tokenToIndex !== null &&
                     tokenFromIndex !== tokenToIndex && (
@@ -1187,49 +1236,24 @@ export const Swap: React.FC<ISwap> = ({
             </Grid>
           </Box>
           <Grid sx={{ height: '100%' }}>
-            <TransactionRoute
-              hopCount={3}
-              routeData={{
-                sourceToken: {
-                  symbol: 'ETH',
-                  logoUrl:
-                    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-                  amount: 1
-                },
-                destinationToken: {
-                  symbol: 'MOON',
-                  logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
-                  amount: 1
-                },
-                exchanges: [
-                  {
-                    name: 'Solar',
-                    logoUrl: SolarLogo,
-                    toToken: {
-                      symbol: 'MOON',
-                      logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
-                      amount: 1
-                    },
-                    fee: 0.01
-                  },
-                  {
-                    name: 'Invariant',
-                    logoUrl: InvariantLogo,
-                    fee: 0.01,
-                    toToken: {
-                      symbol: 'MOON',
-                      logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
-                      amount: 1
-                    }
-                  },
-                  {
-                    name: 'Lifinity',
-                    logoUrl: LifinityLogo,
-                    fee: 0.01
-                  }
-                ]
-              }}
-            />
+            {!isMd && (
+              <TransactionRoute
+                routeData={route}
+                showCloseButton={false}
+                isLoading={isRouteLoading}
+              />
+            )}
+            {isMd && (
+              <TransactionRouteModal
+                isLoading={isRouteLoading}
+                open={isTransactionRouteModalOpen}
+                handleClose={() => {
+                  setTransactionRouteModalOpen(false)
+                  unblurContent()
+                }}
+                routeData={route}
+              />
+            )}
           </Grid>
         </Box>
       </Box>

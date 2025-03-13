@@ -1,6 +1,8 @@
-import { Box } from '@mui/material'
+import React from 'react'
+import { Box, SxProps, Theme } from '@mui/material'
+import { NodeConnectorProps } from '../types/types'
 
-export const NodeConnector = ({
+export const NodeConnector: React.FC<NodeConnectorProps> = ({
   direction = 'right',
   withArrow = false,
   shape,
@@ -29,22 +31,22 @@ export const NodeConnector = ({
             height: '1px',
             display: 'flex',
             alignItems: 'center'
-          },
+          } as SxProps<Theme>,
           line: {
             width: lineLength,
             height: '1px',
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
-          },
+          } as SxProps<Theme>,
           arrow: withArrow
-            ? {
+            ? ({
                 width: 0,
                 height: 0,
                 borderTop: `${arrowSize}px solid transparent`,
                 borderBottom: `${arrowSize}px solid transparent`,
                 borderLeft: `${arrowSize}px solid rgba(255, 255, 255, 0.2)`,
                 marginLeft: '-1px'
-              }
-            : null
+              } as SxProps<Theme>)
+            : undefined
         }
       case 'left':
         return {
@@ -57,22 +59,22 @@ export const NodeConnector = ({
             display: 'flex',
             alignItems: 'center',
             flexDirection: 'row-reverse'
-          },
+          } as SxProps<Theme>,
           line: {
             width: lineLength - 9,
             height: '1px',
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
-          },
+          } as SxProps<Theme>,
           arrow: withArrow
-            ? {
+            ? ({
                 width: 0,
                 height: 0,
                 borderTop: `${arrowSize}px solid transparent`,
                 borderBottom: `${arrowSize}px solid transparent`,
                 borderRight: `${arrowSize}px solid rgba(255, 255, 255, 0.2)`,
                 marginRight: '-1px'
-              }
-            : null
+              } as SxProps<Theme>)
+            : undefined
         }
       case 'down':
         return {
@@ -85,22 +87,22 @@ export const NodeConnector = ({
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center'
-          },
+          } as SxProps<Theme>,
           line: {
             height: longerConnector ? lineLength + 80 : lineLength,
             width: 1.5,
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
-          },
+          } as SxProps<Theme>,
           arrow: withArrow
-            ? {
+            ? ({
                 width: 0,
                 height: 0,
                 borderLeft: `${arrowSize}px solid transparent`,
                 borderRight: `${arrowSize}px solid transparent`,
                 borderTop: `${arrowSize}px solid rgba(255, 255, 255, 0.2)`,
                 marginTop: '-1px'
-              }
-            : null
+              } as SxProps<Theme>)
+            : undefined
         }
       case 'up':
         return {
@@ -113,22 +115,22 @@ export const NodeConnector = ({
             display: 'flex',
             flexDirection: 'column-reverse',
             alignItems: 'center'
-          },
+          } as SxProps<Theme>,
           line: {
             height: longerConnector ? lineLength + 80 : lineLength,
             width: 1.5,
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
-          },
+          } as SxProps<Theme>,
           arrow: withArrow
-            ? {
+            ? ({
                 width: 0,
                 height: 0,
                 borderLeft: `${arrowSize}px solid transparent`,
                 borderRight: `${arrowSize}px solid transparent`,
                 borderBottom: `${arrowSize}px solid rgba(255, 255, 255, 0.2)`,
                 marginBottom: '-1px'
-              }
-            : null
+              } as SxProps<Theme>)
+            : undefined
         }
       case 'right-down':
         return {
@@ -138,15 +140,15 @@ export const NodeConnector = ({
             bottom: -lineLength / 2,
             width: lineLength,
             height: lineLength
-          },
+          } as SxProps<Theme>,
           line1: {
             position: 'absolute',
             top: 0,
             left: 0,
             width: '50%',
-            height: '1px',
+            height: 1,
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
-          },
+          } as SxProps<Theme>,
           line2: {
             position: 'absolute',
             top: 0,
@@ -154,9 +156,9 @@ export const NodeConnector = ({
             width: 1.5,
             height: '100%',
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
-          },
+          } as SxProps<Theme>,
           arrow: withArrow
-            ? {
+            ? ({
                 position: 'absolute',
                 bottom: 0,
                 left: '50%',
@@ -166,8 +168,8 @@ export const NodeConnector = ({
                 borderRight: `${arrowSize}px solid transparent`,
                 borderTop: `${arrowSize}px solid rgba(255, 255, 255, 0.2)`,
                 transform: 'translateX(-50%)'
-              }
-            : null
+              } as SxProps<Theme>)
+            : undefined
         }
       case 'down-right':
         return {
@@ -177,7 +179,7 @@ export const NodeConnector = ({
             right: -lineLength / 2,
             width: lineLength,
             height: lineLength
-          },
+          } as SxProps<Theme>,
           line1: {
             position: 'absolute',
             top: 0,
@@ -185,17 +187,17 @@ export const NodeConnector = ({
             width: 1.5,
             height: '50%',
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
-          },
+          } as SxProps<Theme>,
           line2: {
             position: 'absolute',
             top: '50%',
             left: 0,
             width: '100%',
-            height: '1px',
+            height: 1,
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
-          },
+          } as SxProps<Theme>,
           arrow: withArrow
-            ? {
+            ? ({
                 position: 'absolute',
                 right: 0,
                 top: '50%',
@@ -205,8 +207,8 @@ export const NodeConnector = ({
                 borderBottom: `${arrowSize}px solid transparent`,
                 borderLeft: `${arrowSize}px solid rgba(255, 255, 255, 0.2)`,
                 transform: 'translateY(-50%)'
-              }
-            : null
+              } as SxProps<Theme>)
+            : undefined
         }
       default:
         return {}

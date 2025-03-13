@@ -1,7 +1,6 @@
-import React from 'react'
-import { Box, Typography, useTheme } from '@mui/material'
-import { NodeConnector } from './components/NodeConnector'
+import { Box } from '@mui/material'
 import { FlowNode } from './components/FlowNode'
+import { CellDefinition, FlowChartGridProps } from './types/types'
 
 const GridCell = ({ children, colSpan = 1, rowSpan = 1 }) => {
   return (
@@ -20,7 +19,7 @@ const GridCell = ({ children, colSpan = 1, rowSpan = 1 }) => {
   )
 }
 
-export const FlowChartGrid = ({ gridDefinition, cellSize = 80 }) => {
+export const FlowChartGrid = ({ gridDefinition, cellSize = 80 }: FlowChartGridProps) => {
   const processedGrid = gridDefinition.map(row => {
     return row.map(cell => {
       if (!cell || cell.type !== 'node') return cell
@@ -35,7 +34,7 @@ export const FlowChartGrid = ({ gridDefinition, cellSize = 80 }) => {
     })
   })
 
-  const renderCellContent = cell => {
+  const renderCellContent = (cell: CellDefinition | null) => {
     if (!cell || !cell.type) return null
 
     if (cell.type === 'node') {
@@ -43,7 +42,6 @@ export const FlowChartGrid = ({ gridDefinition, cellSize = 80 }) => {
         <FlowNode
           shape={cell.shape}
           bigNode={cell.bigNode}
-          label={cell.label}
           textA={cell.textA}
           logoImg={cell.logoImg}
           dexInfo={cell.dexInfo}
