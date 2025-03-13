@@ -1,9 +1,8 @@
 import { Box, Typography } from '@mui/material'
 import { NodeConnector } from './NodeConnector'
 import { typography, colors } from '@static/theme'
-import LifinityLogo from '@static/png/InvariantAggregator/lifinity.png'
-import { Height } from '@mui/icons-material'
 import icons from '@static/icons'
+import { formatNumberWithSuffix } from '@utils/utils'
 export const FlowNode = ({
   shape,
   label,
@@ -105,6 +104,7 @@ export const FlowNode = ({
           <NodeConnector
             key={`connector-${index}`}
             direction={connector.direction}
+            longerConnector={connector.longerConnector}
             withArrow={connector.withArrow}
             shape={shape}
           />
@@ -131,7 +131,7 @@ export const FlowNode = ({
           {textA ?? ''}
         </Typography>
         <Typography sx={{ color: colors.invariant.text, ...typography.body2, textWrap: 'nowrap' }}>
-          {textB ?? ''}
+          {(shape === 'circle' && formatNumberWithSuffix(textB)) ?? ''} {textA ?? ''}
         </Typography>
       </Box>
     </Box>

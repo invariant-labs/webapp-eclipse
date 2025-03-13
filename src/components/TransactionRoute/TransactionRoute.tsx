@@ -102,136 +102,84 @@ const useStyles = makeStyles()(theme => {
   }
 })
 
-import SolarLogo from '@static/png/InvariantAggregator/solar.png'
-import LifinityLogo from '@static/png/InvariantAggregator/lifinity.png'
-import FrameLogo from '@static/png/InvariantAggregator/Frame.png'
-import UmbraLogo from '@static/png/InvariantAggregator/umbra.png'
-import InvariantLogo from '@static/png/InvariantAggregator/Invariant.png'
+import {
+  generateFourHopTemplate,
+  generateOneHopTemplate,
+  generateThreeHopTemplate,
+  generateTwoHopTemplate
+} from './FlowChartGrid/utils/generateTemplates'
+import { BN } from '@coral-xyz/anchor'
 
-const TransactionRoute = () => {
+export interface DexInfo {
+  logo: string
+  fee: number
+  link: string
+  name: string
+}
+
+export interface Connector {
+  direction: 'up' | 'down' | 'left' | 'right'
+  withArrow?: boolean
+  longerConnector?: boolean
+}
+
+export interface NodeDefinition {
+  type: 'node'
+  shape: 'circle' | 'rectangle'
+  bigNode?: boolean
+  labelPos?: 'bottom' | 'right'
+  textA?: string
+  textB?: string
+  label?: string
+  connectors?: Connector[]
+  logoImg?: string
+  dexInfo?: DexInfo
+}
+
+export interface FlowChartTokenNode {
+  symbol: string
+  logoUrl: string
+  amount: BN
+}
+
+export type GridCell = NodeDefinition | null
+export type GridDefinition = GridCell[][]
+
+export interface RouteTemplateProps {
+  sourceToken: FlowChartTokenNode
+  exchanges: Array<{
+    name: string
+    logoUrl: string
+    fee: number
+    toToken?: FlowChartTokenNode
+  }>
+  destinationToken: FlowChartTokenNode
+}
+
+interface FlowChartProps {
+  routeData: RouteTemplateProps
+  hopCount: number
+}
+
+const getTemplateForHopCount = (hopCount: number, data: RouteTemplateProps): GridDefinition => {
+  switch (hopCount) {
+    case 1:
+      return generateOneHopTemplate(data)
+    case 2:
+      return generateTwoHopTemplate(data)
+    case 3:
+      return generateThreeHopTemplate(data)
+    case 4:
+      return generateFourHopTemplate(data)
+    default:
+      return generateOneHopTemplate(data)
+  }
+}
+const TransactionRoute: React.FC<FlowChartProps> = ({ hopCount, routeData }) => {
   const { classes } = useStyles()
-  const gridDefinition = [
-    [
-      {
-        type: 'node',
-        shape: 'circle',
-        color: '#2196F3',
-        bigNode: true,
-        textA: 'ETH',
-        textB: '1 ETH',
-        connectors: [{ direction: 'right' }],
-        logoImg:
-          'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png'
-      },
-      {
-        type: 'node',
-        shape: 'rectangle',
-        color: '#2196F3',
-        dexInfo: {
-          logo: SolarLogo,
-          fee: 0.01,
-          link: 'http://foo.bar',
-          name: 'Solar'
-        },
-        label: 'A',
-        connectors: [{ direction: 'right' }, { direction: 'left' }]
-      },
-      {
-        type: 'node',
-        shape: 'circle',
-        color: '#2196F3',
-        labelPos: 'right',
-        textA: 'ETH',
-        textB: '1 ETH',
-        logoImg:
-          'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png'
-      }
-    ],
-    [
-      null,
-      null,
-      {
-        type: 'node',
-        shape: 'rectangle',
-        dexInfo: {
-          logo: UmbraLogo,
-          fee: 0.05,
-          link: 'http://foo.bar',
-          name: 'Umbra'
-        },
-        color: '#2196F3',
-        label: 'A',
 
-        connectors: [{ direction: 'up' }, { direction: 'down' }]
-      }
-    ],
-    [
-      null,
-      null,
-      {
-        type: 'node',
-        shape: 'circle',
-        textA: 'ETH',
-        textB: '1 ETH',
-        logoImg:
-          'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
-        labelPos: 'right'
-      }
-    ],
-    [
-      null,
-      null,
-      {
-        type: 'node',
-        shape: 'rectangle',
-        label: 'A',
-        dexInfo: {
-          logo: InvariantLogo,
-          fee: 0.05,
-          link: 'http://foo.bar',
-          name: 'Invariant'
-        },
+  const gridDefinition = getTemplateForHopCount(hopCount, routeData)
 
-        color: '#2196F3',
-        connectors: [{ direction: 'up' }, { direction: 'down' }]
-      }
-    ],
-    [
-      {
-        type: 'node',
-        shape: 'circle',
-        textA: 'ETH',
-        bigNode: true,
-
-        textB: '1 ETH',
-        logoImg:
-          'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png'
-      },
-      {
-        type: 'node',
-        shape: 'rectangle',
-        label: 'A',
-        dexInfo: {
-          logo: LifinityLogo,
-          fee: 0.01,
-          link: 'http://foo.bar',
-          name: 'Lifinity'
-        },
-
-        color: '#2196F3',
-        connectors: [{ direction: 'right' }, { direction: 'left', withArrow: true }]
-      },
-      {
-        type: 'node',
-        shape: 'circle',
-        textA: 'MOON',
-        textB: '1 MOON',
-
-        labelPos: 'right',
-        logoImg: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png'
-      }
-    ]
-  ]
   return (
     <Box className={classes.container}>
       <Typography className={classes.routeTitle}>Transaction route</Typography>

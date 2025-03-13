@@ -1,6 +1,11 @@
 import { Box } from '@mui/material'
 
-export const NodeConnector = ({ direction = 'right', withArrow = false, shape }) => {
+export const NodeConnector = ({
+  direction = 'right',
+  withArrow = false,
+  shape,
+  longerConnector = false
+}) => {
   const lineLength = 24
   const arrowSize = 5
 
@@ -73,7 +78,7 @@ export const NodeConnector = ({ direction = 'right', withArrow = false, shape })
         return {
           container: {
             position: 'absolute',
-            bottom: -lineLength,
+            bottom: longerConnector ? -lineLength - 80 : -lineLength,
             left: '50%',
             transform: `translateX(calc(-50% + ${adjustment.x}px))`,
             width: 1.5,
@@ -82,7 +87,7 @@ export const NodeConnector = ({ direction = 'right', withArrow = false, shape })
             alignItems: 'center'
           },
           line: {
-            height: lineLength,
+            height: longerConnector ? lineLength + 80 : lineLength,
             width: 1.5,
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
           },
@@ -101,7 +106,7 @@ export const NodeConnector = ({ direction = 'right', withArrow = false, shape })
         return {
           container: {
             position: 'absolute',
-            top: -lineLength,
+            top: longerConnector ? -lineLength - 80 : -lineLength,
             left: '50%',
             transform: `translateX(calc(-50% + ${adjustment.x}px))`,
             width: 1.5,
@@ -110,7 +115,7 @@ export const NodeConnector = ({ direction = 'right', withArrow = false, shape })
             alignItems: 'center'
           },
           line: {
-            height: lineLength,
+            height: longerConnector ? lineLength + 80 : lineLength,
             width: 1.5,
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
           },

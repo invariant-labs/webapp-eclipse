@@ -50,6 +50,12 @@ import { useNavigate } from 'react-router-dom'
 import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
 import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
 
+import SolarLogo from '@static/png/InvariantAggregator/solar.png'
+import LifinityLogo from '@static/png/InvariantAggregator/lifinity.png'
+import FrameLogo from '@static/png/InvariantAggregator/Frame.png'
+import UmbraLogo from '@static/png/InvariantAggregator/umbra.png'
+import InvariantLogo from '@static/png/InvariantAggregator/Invariant.png'
+
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -1181,7 +1187,49 @@ export const Swap: React.FC<ISwap> = ({
             </Grid>
           </Box>
           <Grid sx={{ height: '100%' }}>
-            <TransactionRoute />
+            <TransactionRoute
+              hopCount={3}
+              routeData={{
+                sourceToken: {
+                  symbol: 'ETH',
+                  logoUrl:
+                    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
+                  amount: 1
+                },
+                destinationToken: {
+                  symbol: 'MOON',
+                  logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
+                  amount: 1
+                },
+                exchanges: [
+                  {
+                    name: 'Solar',
+                    logoUrl: SolarLogo,
+                    toToken: {
+                      symbol: 'MOON',
+                      logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
+                      amount: 1
+                    },
+                    fee: 0.01
+                  },
+                  {
+                    name: 'Invariant',
+                    logoUrl: InvariantLogo,
+                    fee: 0.01,
+                    toToken: {
+                      symbol: 'MOON',
+                      logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
+                      amount: 1
+                    }
+                  },
+                  {
+                    name: 'Lifinity',
+                    logoUrl: LifinityLogo,
+                    fee: 0.01
+                  }
+                ]
+              }}
+            />
           </Grid>
         </Box>
       </Box>
