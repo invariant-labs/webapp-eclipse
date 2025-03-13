@@ -33,6 +33,7 @@ const useStyles = makeStyles<{
     padding: '16px 24px',
     top: top ? top : -30,
     pointerEvents: 'auto',
+    marginTop: '14px !important',
 
     '&::before': {
       content: '""',
