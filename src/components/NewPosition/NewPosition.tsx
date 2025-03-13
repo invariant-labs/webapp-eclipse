@@ -233,7 +233,10 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [tickSpacing, midPrice.index])
 
   const [concentrationIndex, setConcentrationIndex] = useState(
-    getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 34)
+    getConcentrationIndex(
+      concentrationArray,
+      +initialConcentration < 2 ? 2 : initialConcentration ? +initialConcentration : 34
+    )
   )
 
   const rangeConcentrationArray = useMemo(() => {
