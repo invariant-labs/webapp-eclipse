@@ -10,7 +10,13 @@ import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
 export type FetchTick = 'lower' | 'upper'
-export interface PositionWithAddress extends Position {
+
+export interface PositionWithTicks extends Position {
+  lowerTick: Tick
+  upperTick: Tick
+  ticksLoading: boolean
+}
+export interface PositionWithAddress extends PositionWithTicks {
   address: PublicKey
 }
 export interface PositionsListStore {
@@ -56,11 +62,6 @@ export interface IPositionsStore {
   currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
-  unclaimedFees: {
-    total: number
-    loading: boolean
-    lastUpdate: number
-  }
   prices: {
     data: Record<string, number>
   }
@@ -126,11 +127,6 @@ export const defaultState: IPositionsStore = {
     inProgress: false,
     success: false
   },
-  unclaimedFees: {
-    total: 0,
-    loading: false,
-    lastUpdate: 0
-  },
   prices: {
     data: {}
   },
@@ -181,25 +177,6 @@ const positionsSlice = createSlice({
     setAllClaimLoader(state, action: PayloadAction<boolean>) {
       state.positionsList.isAllClaimFeesLoading = action.payload
     },
-    calculateTotalUnclaimedFees(state) {
-      state.unclaimedFees.loading = true
-      return state
-    },
-    setUnclaimedFees(state, action: PayloadAction<number>) {
-      state.unclaimedFees = {
-        total: action.payload,
-        loading: false,
-        lastUpdate: Date.now()
-      }
-      return state
-    },
-    setUnclaimedFeesError(state) {
-      state.unclaimedFees = {
-        ...state.unclaimedFees,
-        loading: false
-      }
-      return state
-    },
     setPrices(state, action: PayloadAction<Record<string, number>>) {
       state.prices = {
         data: action.payload
@@ -228,29 +205,70 @@ const positionsSlice = createSlice({
       state.positionsList.loading = true
       return state
     },
-    setPositionRangeTicks(
-      state,
-      action: PayloadAction<{ positionId: string; lowerTick: number; upperTick: number }>
-    ) {
-      state.positionsList.list.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
-          position = {
-            ...position,
-            lowerTickIndex: action.payload.lowerTick,
-            upperTickIndex: action.payload.upperTick
-          }
-        }
-      })
-    },
     getSinglePosition(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
     },
     setSinglePosition(state, action: PayloadAction<SetPositionData>) {
       state.positionsList.list[action.payload.index] = {
         address: state.positionsList.list[action.payload.index].address,
+        lowerTick: state.positionsList.list[action.payload.index].lowerTick,
+        upperTick: state.positionsList.list[action.payload.index].upperTick,
+        ticksLoading: state.positionsList.list[action.payload.index].ticksLoading,
         ...action.payload.position
       }
       return state
+    },
+    updatePositionTicksRange(
+      state,
+      action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+    ) {
+      state.positionsList.list.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            ticksLoading: true
+          }
+        }
+      })
+
+      state.positionsList.lockedList.map(position => {
+        if (position.address.toString() === action.payload.positionId) {
+          position = {
+            ...position,
+            ticksLoading: true
+          }
+        }
+      })
+      return state
+    },
+    setPositionRangeTicks(
+      state,
+      action: PayloadAction<{ positionAddress: PublicKey; lowerTick: Tick; upperTick: Tick }>
+    ) {
+      state.positionsList.list.map(position => {
+        if (position.address.toString() === action.payload.positionAddress.toString()) {
+          console.log(position.lowerTick)
+          console.log(action.payload.lowerTick)
+
+          console.log(position.upperTick)
+          console.log(action.payload.upperTick)
+          position = {
+            ...position,
+            lowerTick: action.payload.lowerTick,
+            upperTick: action.payload.upperTick
+          }
+        }
+      })
+
+      state.positionsList.lockedList.map(position => {
+        if (position.address.toString() === action.payload.positionAddress.toString()) {
+          position = {
+            ...position,
+            lowerTick: action.payload.lowerTick,
+            upperTick: action.payload.upperTick
+          }
+        }
+      })
     },
     getCurrentPositionRangeTicks(
       state,
