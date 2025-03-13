@@ -33,7 +33,7 @@ export const StyledBackground = styled('div')({
   height: '100%',
   left: 0,
   top: 2,
-  transition: 'opacity 1s ease-in',
+  transition: 'opacity 0.3s ease-in',
   background: `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.pink})`,
   borderRadius: 17
 })

@@ -184,7 +184,7 @@ The algorithm takes into account factors such as the size of the position (TVL),
                 pointerEvents: 'none',
                 height: '100%',
                 padding: '0px 10px',
-                transiton: 'all 1s ease-in-out',
+                transiton: 'all 0.3s ease-in-out',
                 width: '100%',
                 background: `linear-gradient(to right, ${alpha(colors.invariant.light, 0.2)} , transparent)`,
                 opacity: 1
