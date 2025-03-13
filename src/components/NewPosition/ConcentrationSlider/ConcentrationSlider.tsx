@@ -37,7 +37,6 @@ export const ConcentrationSlider: React.FC<IProps> = ({
 
   const { classes } = useSliderStyles({
     valuesLength: values.length,
-    valueIndex,
     disabledRange: disabledPercentageRange
   })
 

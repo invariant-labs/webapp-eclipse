@@ -23,7 +23,6 @@ export const useThumbStyles = makeStyles()(() => {
 export const useSliderStyles = makeStyles<{
   valuesLength: number
   disabledRange: number
-  valueIndex: number
 }>()((_theme, { disabledRange, valuesLength }) => ({
   root: {
     width: '100%',
