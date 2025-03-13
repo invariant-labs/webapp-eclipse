@@ -12,7 +12,8 @@ import {
   formatNumberWithCommas,
   initialXtoY,
   parseFeeToPathFee,
-  printBN
+  printBN,
+  ROUTES
 } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { shortenAddress } from '@utils/uiUtils'
@@ -84,7 +85,11 @@ const PoolListItem: React.FC<IProps> = ({
       : addressToTicker(network, addressFrom ?? '')
 
     navigate(
-      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      ROUTES.getNewPositionRoute(
+        tokenA,
+        tokenB,
+        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+      ),
       { state: { referer: 'stats' } }
     )
   }

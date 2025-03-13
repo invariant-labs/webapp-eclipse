@@ -12,7 +12,7 @@ import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import icons from '@static/icons'
-import { addressToTicker } from '@utils/utils'
+import { addressToTicker, ROUTES } from '@utils/utils'
 import {
   NetworkType,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
@@ -269,7 +269,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   const address1 = addressToTicker(network, tokenX.name)
                   const address2 = addressToTicker(network, tokenY.name)
 
-                  navigate(`/newPosition/${address1}/${address2}/${fee}`)
+                  navigate(ROUTES.getNewPositionRoute(address1, address2, fee.toString()))
                 }}>
                 <span className={classes.buttonText}>+ Add Position</span>
               </Button>

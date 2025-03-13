@@ -14,6 +14,7 @@ import { PublicKey } from '@solana/web3.js'
 import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
 import { Bar } from '@components/Bar/Bar'
+import { ROUTES } from '@utils/utils'
 
 export interface IHeader {
   address: PublicKey
@@ -133,7 +134,7 @@ export const Header: React.FC<IHeader> = ({
             image={icons.LogoTitle}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
-                navigate('/exchange')
+                navigate(ROUTES.EXCHANGE)
               }
             }}
           />
@@ -177,7 +178,7 @@ export const Header: React.FC<IHeader> = ({
             image={icons.LogoShort}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
-                navigate('/exchange')
+                navigate(ROUTES.EXCHANGE)
               }
             }}
           />

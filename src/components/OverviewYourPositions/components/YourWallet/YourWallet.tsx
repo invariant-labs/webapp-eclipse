@@ -15,7 +15,7 @@ import { useNavigate } from 'react-router-dom'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
 import icons from '@static/icons'
 import { NetworkType, USDC_MAIN, USDC_TEST, WETH_MAIN, WETH_TEST } from '@store/consts/static'
-import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
+import { addressToTicker, formatNumberWithoutSuffix, ROUTES } from '@utils/utils'
 import { useStyles } from './styles'
 import { network } from '@store/selectors/solanaConnection'
 import { MobileCard } from './MobileCard'
@@ -220,7 +220,11 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                   : WETH_TEST.address
 
             navigate(
-              `/newPosition/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}/${strategy.feeTier}`,
+              ROUTES.getNewPositionRoute(
+                sourceToken,
+                addressToTicker(currentNetwork, targetToken.toString()),
+                strategy.feeTier
+              ),
               {
                 state: { referer: 'portfolio' }
               }
@@ -243,7 +247,11 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                   ? WETH_MAIN.address
                   : WETH_TEST.address
             navigate(
-              `/exchange/${sourceToken}/${addressToTicker(currentNetwork, targetToken.toString())}`,
+              ROUTES.getExchangeRoute(
+                sourceToken,
+                addressToTicker(currentNetwork, targetToken.toString())
+              ),
+
               {
                 state: { referer: 'portfolio' }
               }

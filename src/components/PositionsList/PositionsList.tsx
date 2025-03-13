@@ -23,6 +23,7 @@ import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/
 import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
 import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
+import { ROUTES } from '@utils/utils'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -166,7 +167,7 @@ export const PositionsList: React.FC<IProps> = ({
       <Grid
         onClick={() => {
           if (allowPropagation) {
-            navigate(`/position/${element.id}`)
+            navigate(ROUTES.getPositionRoute(element.id))
           }
         }}
         key={element.id}
