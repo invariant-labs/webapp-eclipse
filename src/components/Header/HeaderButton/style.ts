@@ -167,12 +167,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       boxShadow: 'none'
     },
     startIcon: {
-      marginLeft: 0,
-      marginBottom: 3
+      marginTop: 3
     },
     endIcon: {
-      minWidth: 20,
-      marginTop: 2
+      marginBottom: 3
     },
     innerEndIcon: {
       marginLeft: 0,
@@ -181,6 +179,11 @@ const useStyles = makeStyles()((theme: Theme) => {
     warningIcon: {
       height: 16,
       marginRight: 4
+    },
+    headerButtonContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 4
     }
   }
 })

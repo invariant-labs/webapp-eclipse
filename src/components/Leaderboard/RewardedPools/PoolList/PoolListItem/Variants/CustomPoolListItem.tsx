@@ -1,5 +1,5 @@
 import React from 'react'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { useMediaQuery, Grid, Typography, Box } from '@mui/material'
 import icons from '@static/icons'
 import { colors, theme, typography } from '@static/theme'

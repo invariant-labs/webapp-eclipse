@@ -2,7 +2,6 @@ import {
   Grid,
   TableRow,
   TableCell,
-  Button,
   Tooltip,
   Typography,
   useMediaQuery,
@@ -21,7 +20,7 @@ import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { useSharedStyles } from '../PositionMobileCard/style/shared'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import SwapList from '@static/svg/swap-list.svg'
 import PositionStatusTooltip from '../../components/PositionStatusTooltip/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
@@ -33,6 +32,7 @@ import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
+import { Button } from '@common/Button/Button'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -394,7 +394,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <Button
-        className={classes.button}
+        scheme='green'
         onClick={e => {
           e.stopPropagation()
           handleClick(e)

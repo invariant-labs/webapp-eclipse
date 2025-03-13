@@ -1,6 +1,6 @@
 import icons from '@static/icons'
 import useStyles from './styles'
-import GradientBorder from '@components/GradientBorder/GradientBorder'
+import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors } from '@static/theme'
 import { Grid } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
