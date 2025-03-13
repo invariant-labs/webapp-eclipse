@@ -739,7 +739,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     })
 
     return { feeTiersWithTvl, totalTvl }
-  }, [poolsList])
+  }, [poolsList, tokenAIndex, tokenBIndex])
 
   return (
     <NewPosition

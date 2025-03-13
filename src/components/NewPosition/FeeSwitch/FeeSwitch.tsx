@@ -67,8 +67,10 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                     })}>
                     TVL
                   </span>
-                  <br />${formatNumberWithSuffix(feeTiersWithTvl[tier])}(
-                  {Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)}%)
+                  <br />
+                  {feeTiersWithTvl[tier]
+                    ? `$${+formatNumberWithSuffix(feeTiersWithTvl[tier]) < 1000 ? (+formatNumberWithSuffix(feeTiersWithTvl[tier])).toFixed(2) : formatNumberWithSuffix(feeTiersWithTvl[tier])}(${Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)}%)`
+                    : 'Not created'}
                 </Box>
               </Box>
             }
