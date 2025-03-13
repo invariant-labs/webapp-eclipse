@@ -124,10 +124,7 @@ const useStyles = makeStyles()(theme => {
       position: 'relative',
       [theme.breakpoints.down('md')]: {
         paddingTop: 12,
-        paddingInline: 20
-      },
-      [theme.breakpoints.down('sm')]: {
-        paddingInline: 10
+        paddingInline: 8
       }
     },
     warningWrapper: {

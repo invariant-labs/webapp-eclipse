@@ -67,7 +67,7 @@ export const ConcentrationSlider: React.FC<IProps> = ({
       sx={{
         '& .MuiSlider-valueLabel': {
           transition: 'transform 0.3s ease',
-          [theme.breakpoints.down('sm')]: {
+          [theme.breakpoints.down('md')]: {
             transform:
               valueIndex < values.length * 0.05
                 ? 'translateX(30%) translateY(-100%)'
