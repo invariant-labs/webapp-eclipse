@@ -23,7 +23,7 @@ const useStyles = makeStyles()(() => {
       boxShadow: 'none',
       borderRadius: '16px',
       boxSizing: 'border-box',
-      marginTop: '-16px'
+      marginTop: '8px'
     },
     optionButton: {
       width: '100%',
