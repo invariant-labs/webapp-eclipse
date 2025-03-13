@@ -2038,16 +2038,13 @@ export const ROUTES = {
   POINTS: '/points',
 
   getExchangeRoute: (item1?: string, item2?: string): string => {
-    if (!item1) return ROUTES.EXCHANGE
-    if (!item2) return `${ROUTES.EXCHANGE}/${item1}`
-    return `${ROUTES.EXCHANGE}/${item1}/${item2}`
+    const parts = [item1, item2].filter(Boolean)
+    return `${ROUTES.EXCHANGE}${parts.length ? '/' + parts.join('/') : ''}`
   },
 
   getNewPositionRoute: (item1?: string, item2?: string, item3?: string): string => {
-    if (!item1) return ROUTES.NEW_POSITION
-    if (!item2) return `${ROUTES.NEW_POSITION}/${item1}`
-    if (!item3) return `${ROUTES.NEW_POSITION}/${item1}/${item2}`
-    return `${ROUTES.NEW_POSITION}/${item1}/${item2}/${item3}`
+    const parts = [item1, item2, item3].filter(Boolean)
+    return `${ROUTES.NEW_POSITION}${parts.length ? '/' + parts.join('/') : ''}`
   },
 
   getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
