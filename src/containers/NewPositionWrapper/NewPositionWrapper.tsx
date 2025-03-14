@@ -4,7 +4,6 @@ import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_NEW_POSITION_SLIPPAGE,
   LEADERBOARD_DECIMAL,
-  bestTiers,
   commonTokensForNetworks
 } from '@store/consts/static'
 import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
@@ -52,7 +51,7 @@ import { estimatePointsForLiquidity } from '@invariant-labs/points-sdk'
 import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { actions as statsActions } from '@store/reducers/stats'
-import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 
 export interface IProps {
   initialTokenFrom: string
@@ -717,6 +716,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   }
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
+  const isLoadingStats = useSelector(isLoading)
 
   useEffect(() => {
     dispatch(statsActions.getCurrentStats())
@@ -889,7 +889,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isWaitingForNewPool={isWaitingForNewPool || initialLoader}
       poolIndex={poolIndex}
       currentPairReversed={currentPairReversed}
-      bestTiers={bestTiers[currentNetwork]}
       currentPriceSqrt={
         poolIndex !== null && !!allPools[poolIndex]
           ? allPools[poolIndex].sqrtPrice
@@ -927,6 +926,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isPromotedPool={isPromotedPool}
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
+      isLoadingStats={isLoadingStats}
     />
   )
 }

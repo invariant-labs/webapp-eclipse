@@ -35,7 +35,7 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -97,7 +97,6 @@ export interface INewPosition {
   isWaitingForNewPool: boolean
   poolIndex: number | null
   currentPairReversed: boolean | null
-  bestTiers: BestTier[]
   currentPriceSqrt: BN
   handleAddToken: (address: string) => void
   commonTokens: PublicKey[]
@@ -136,6 +135,7 @@ export interface INewPosition {
   isPromotedPool: boolean
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
+  isLoadingStats: boolean
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -163,7 +163,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   isWaitingForNewPool,
   poolIndex,
   currentPairReversed,
-  bestTiers,
   handleAddToken,
   commonTokens,
   initialOpeningPositionMethod,
@@ -198,7 +197,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   estimatedPointsForScale,
   isPromotedPool,
   feeTiersWithTvl,
-  totalTvl
+  totalTvl,
+  isLoadingStats
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -414,17 +414,6 @@ export const NewPosition: React.FC<INewPosition> = ({
       }
     }
   }
-
-  const bestTierIndex =
-    tokenAIndex === null || tokenBIndex === null
-      ? undefined
-      : bestTiers.find(
-          tier =>
-            (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-              tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-            (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-              tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined
 
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
@@ -918,7 +907,6 @@ export const NewPosition: React.FC<INewPosition> = ({
             }
           }}
           poolIndex={poolIndex}
-          bestTierIndex={bestTierIndex}
           handleAddToken={handleAddToken}
           commonTokens={commonTokens}
           initialHideUnknownTokensValue={initialHideUnknownTokensValue}
@@ -945,6 +933,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           promotedPoolTierIndex={promotedPoolTierIndex}
           feeTiersWithTvl={feeTiersWithTvl}
           totalTvl={totalTvl}
+          isLoadingStats={isLoadingStats}
         />
         <Hidden mdUp>
           <Grid container alignSelf='flex-end' mb={2} width='200px'>

@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import useStyles, { useSingleTabStyles, useTabsStyles } from './style'
 import classNames from 'classnames'
-import { Grid, Tab, Tabs } from '@mui/material'
+import { Grid, Skeleton, Tab, Tabs, Typography } from '@mui/material'
 import { Box } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 
@@ -10,22 +10,22 @@ export interface IFeeSwitch {
   onSelect: (value: number) => void
   showOnlyPercents?: boolean
   feeTiers: number[]
-  bestTierIndex?: number
   currentValue: number
   promotedPoolTierIndex: number | undefined
   feeTiersWithTvl: Record<number, number>
   totalTvl: number
+  isLoadingStats: boolean
 }
 
 export const FeeSwitch: React.FC<IFeeSwitch> = ({
   onSelect,
   showOnlyPercents = false,
   feeTiers,
-  bestTierIndex,
   promotedPoolTierIndex,
   currentValue,
   feeTiersWithTvl,
-  totalTvl
+  totalTvl,
+  isLoadingStats
 }) => {
   const { classes } = useStyles()
 
@@ -43,6 +43,13 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
       }, 200)
     }
   }
+
+  const bestTierIndex = promotedPoolTierIndex
+    ? -1
+    : feeTiers.findIndex(
+        tier => feeTiersWithTvl[tier] === Math.max(...Object.values(feeTiersWithTvl))
+      )
+
   return (
     <Grid className={classes.wrapper}>
       <Tabs
@@ -58,20 +65,27 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
             disableRipple
             label={
               <Box className={classes.tabContainer}>
+                <Typography
+                  className={classNames(classes.tabTvl, {
+                    [classes.tabSelectedTvl]:
+                      currentValue === index || promotedPoolTierIndex === index
+                  })}>
+                  TVL
+                </Typography>
                 <Box>{showOnlyPercents ? `${tier}%` : `${tier}% fee`}</Box>
-                <Box className={classes.tabTvl}>
-                  <span
-                    className={classNames({
+                {isLoadingStats ? (
+                  <Skeleton height={15} width={60} />
+                ) : (
+                  <Typography
+                    className={classNames(classes.tabTvl, {
                       [classes.tabSelectedTvl]:
                         currentValue === index || promotedPoolTierIndex === index
                     })}>
-                    TVL
-                  </span>
-                  <br />
-                  {feeTiersWithTvl[tier]
-                    ? `$${+formatNumberWithSuffix(feeTiersWithTvl[tier]) < 1000 ? (+formatNumberWithSuffix(feeTiersWithTvl[tier])).toFixed(2) : formatNumberWithSuffix(feeTiersWithTvl[tier])}(${Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)}%)`
-                    : 'Not created'}
-                </Box>
+                    {feeTiersWithTvl[tier]
+                      ? `$${+formatNumberWithSuffix(feeTiersWithTvl[tier]) < 1000 ? (+formatNumberWithSuffix(feeTiersWithTvl[tier])).toFixed(2) : formatNumberWithSuffix(feeTiersWithTvl[tier])}(${Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)}%)`
+                      : 'Not created'}
+                  </Typography>
+                )}
               </Box>
             }
             classes={{
