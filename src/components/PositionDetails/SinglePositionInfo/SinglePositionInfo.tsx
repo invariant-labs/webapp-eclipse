@@ -3,7 +3,6 @@ import { Button, Grid, Hidden, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
 import { useMemo, useRef, useState } from 'react'
-import { BoxInfo } from './BoxInfo'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { useNavigate } from 'react-router-dom'
@@ -20,6 +19,13 @@ import {
 } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { Section } from './Section/Section'
+import { PoolDetails } from './PoolDetails/PoolDetails'
+import { UnclaimedFees } from './UnclaimedFees/UnclaimedFees'
+import { Liquidity } from './Liquidity/Liquidity'
+import { Separator } from '@components/Separator/Separator'
+import { PositionStats } from './PositionStats/PositionStats'
+import { colors } from '@static/theme'
 
 interface IProp {
   fee: number
@@ -33,7 +39,6 @@ interface IProp {
   swapHandler: () => void
   showFeesLoader?: boolean
   userHasStakes?: boolean
-  isBalanceLoading: boolean
   isActive: boolean
   network: NetworkType
   isLocked: boolean
@@ -53,7 +58,6 @@ const SinglePositionInfo: React.FC<IProp> = ({
   swapHandler,
   showFeesLoader = false,
   userHasStakes = false,
-  isBalanceLoading,
   isActive,
   network,
   onModalOpen,
@@ -271,38 +275,89 @@ const SinglePositionInfo: React.FC<IProp> = ({
           </Grid>
         </Grid>
         <Grid className={classes.bottomGrid}>
-          <BoxInfo
-            title={'Liquidity'}
-            tokenA={
-              xToY
-                ? { ...tokenX, value: tokenX.liqValue, price: tokenXPriceData?.price }
-                : { ...tokenY, value: tokenY.liqValue, price: tokenYPriceData?.price }
-            }
-            tokenB={
-              xToY
-                ? { ...tokenY, value: tokenY.liqValue, price: tokenYPriceData?.price }
-                : { ...tokenX, value: tokenX.liqValue, price: tokenXPriceData?.price }
-            }
-            showBalance
-            swapHandler={swapHandler}
-            isBalanceLoading={isBalanceLoading}
-          />
-          <BoxInfo
-            title={'Unclaimed fees'}
-            tokenA={
-              xToY
-                ? { ...tokenX, value: tokenX.claimValue }
-                : { ...tokenY, value: tokenY.claimValue }
-            }
-            tokenB={
-              xToY
-                ? { ...tokenY, value: tokenY.claimValue }
-                : { ...tokenX, value: tokenX.claimValue }
-            }
-            onClickButton={onClickClaimFee}
-            showLoader={showFeesLoader}
-            isBalanceLoading={isBalanceLoading}
-          />
+          <PositionStats value={3} pendingFees={3} poolApr={3} />
+          <Separator size='100%' isHorizontal color={colors.invariant.light} />
+          <Section title='Liquidity'>
+            <Liquidity
+              tokenA={
+                xToY
+                  ? {
+                      icon: tokenX.icon,
+                      ticker: tokenX.name,
+                      amount: tokenX.liqValue,
+                      price: tokenXPriceData?.price
+                    }
+                  : {
+                      icon: tokenY.icon,
+                      ticker: tokenY.name,
+                      amount: tokenY.liqValue,
+                      price: tokenYPriceData?.price
+                    }
+              }
+              tokenB={
+                xToY
+                  ? {
+                      icon: tokenY.icon,
+                      ticker: tokenY.name,
+                      amount: tokenY.liqValue,
+                      price: tokenYPriceData?.price
+                    }
+                  : {
+                      icon: tokenX.icon,
+                      ticker: tokenX.name,
+                      amount: tokenX.liqValue,
+                      price: tokenXPriceData?.price
+                    }
+              }
+            />
+          </Section>
+          <Section
+            title='Unclaimed fees'
+            item={
+              <Button
+                className={classes.claimButton}
+                variant='contained'
+                onClick={() => onClickClaimFee}>
+                Claim
+              </Button>
+            }>
+            <UnclaimedFees
+              tokenA={
+                xToY
+                  ? {
+                      icon: tokenX.icon,
+                      ticker: tokenX.name,
+                      amount: tokenX.claimValue,
+                      price: tokenXPriceData?.price
+                    }
+                  : {
+                      icon: tokenY.icon,
+                      ticker: tokenY.name,
+                      amount: tokenY.claimValue,
+                      price: tokenYPriceData?.price
+                    }
+              }
+              tokenB={
+                xToY
+                  ? {
+                      icon: tokenY.icon,
+                      ticker: tokenY.name,
+                      amount: tokenY.claimValue,
+                      price: tokenYPriceData?.price
+                    }
+                  : {
+                      icon: tokenX.icon,
+                      ticker: tokenX.name,
+                      amount: tokenX.claimValue,
+                      price: tokenXPriceData?.price
+                    }
+              }
+              isLoading={showFeesLoader || false}
+            />
+          </Section>
+          <Section title='Pool details'>
+            <PoolDetails tvl={0.004} volume24={10} fee24={10} />
+          </Section>
         </Grid>
       </Grid>
     </>
