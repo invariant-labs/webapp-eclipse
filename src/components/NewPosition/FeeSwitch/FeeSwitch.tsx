@@ -68,7 +68,9 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                 <Typography
                   className={classNames(classes.tabTvl, {
                     [classes.tabSelectedTvl]:
-                      currentValue === index || promotedPoolTierIndex === index
+                      currentValue === index ||
+                      promotedPoolTierIndex === index ||
+                      bestTierIndex === index
                   })}>
                   TVL (
                   {feeTiersWithTvl[tier] ? Math.round((feeTiersWithTvl[tier] / totalTvl) * 100) : 0}
@@ -81,10 +83,12 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                   <Typography
                     className={classNames(classes.tabTvl, {
                       [classes.tabSelectedTvl]:
-                        currentValue === index || promotedPoolTierIndex === index
+                        currentValue === index ||
+                        promotedPoolTierIndex === index ||
+                        bestTierIndex === index
                     })}>
                     {feeTiersWithTvl[tier]
-                      ? `$${+formatNumberWithSuffix(feeTiersWithTvl[tier]) < 1000 ? (+formatNumberWithSuffix(feeTiersWithTvl[tier])).toFixed(2) : formatNumberWithSuffix(feeTiersWithTvl[tier])}`
+                      ? `$${+formatNumberWithSuffix(feeTiersWithTvl[tier], true, 18) < 1000 ? (+formatNumberWithSuffix(feeTiersWithTvl[tier], true, 18)).toFixed(2) : formatNumberWithSuffix(feeTiersWithTvl[tier])}`
                       : 'Not created'}
                   </Typography>
                 )}
