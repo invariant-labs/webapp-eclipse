@@ -8,7 +8,6 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
-      gap: 24,
       [theme.breakpoints.down('lg')]: {
         flexDirection: 'column'
       }

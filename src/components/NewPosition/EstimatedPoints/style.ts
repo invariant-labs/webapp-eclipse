@@ -36,7 +36,7 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     height: 24,
     background: colors.invariant.pinkGreenLinearGradient,
     borderRadius: 8,
-    transition: 'width 0.5s'
+    transition: 'width 0.3s'
   },
   pointsLabel: {
     backgroundColor: colors.invariant.light,

@@ -23,6 +23,7 @@ import {
   findPairs,
   handleSimulate,
   printBN,
+  ROUTES,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
@@ -250,7 +251,7 @@ export const Swap: React.FC<ISwap> = ({
     urlUpdateTimeoutRef.current = setTimeout(() => {
       const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
       const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-      const newPath = `/exchange/${fromTicker}/${toTicker}`
+      const newPath = ROUTES.getExchangeRoute(fromTicker, toTicker)
 
       if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
         navigate(newPath, { replace: true })
