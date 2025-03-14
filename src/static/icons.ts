@@ -62,6 +62,7 @@ import boostPoints from './svg/boostPoints.svg'
 import airdropGrey from './svg/airdropGrey.svg'
 import infoError from './svg/infoError.svg'
 import okxLogo from './svg/okx-logo.svg'
+import goldenInfoCircle from './svg/goldenInfoCircle.svg'
 import infoIcon from './svg/info.svg'
 import infoIconPink from './svg/infoIconPink.svg'
 import slider from './svg/slider.svg'
@@ -88,6 +89,7 @@ import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
 import faucet from './svg/faucet.svg'
+import settingCirc from './svg/settings_ic.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -179,7 +181,9 @@ const icons: { [key: string]: string } = {
   liquidityEmpty,
   assetsEmpty,
   settings3,
-  faucet
+  faucet,
+  goldenInfoCircle,
+  settingCirc
 }
 
 export default icons

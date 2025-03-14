@@ -55,6 +55,20 @@ const tokens: SwapToken[] = [
 
 export const Primary: Story = {
   args: {
+    updateLiquidity: fn(),
+    actualPoolPrice: new BN(0),
+    onMaxSlippageToleranceSwapChange: fn(),
+    initialMaxSlippageToleranceSwap: '',
+    onMaxSlippageToleranceCreatePositionChange: fn(),
+    initialMaxSlippageToleranceCreatePosition: '',
+    swapAndAddLiquidityHandler: fn(),
+    initialMaxPriceImpact: '',
+    onMaxPriceImpactChange: fn(),
+    initialMinUtilization: '',
+    onMinUtilizationChange: fn(),
+    autoSwapPoolData: null,
+    autoSwapTickmap: null,
+    autoSwapTicks: null,
     currentPairReversed: false,
     isXtoY: true,
     addLiquidityHandler: fn(),
@@ -89,14 +103,13 @@ export const Primary: Story = {
     progress: 'progress',
     reloadHandler: fn(),
     setMidPrice: fn(),
-    ticksLoading: false,
+    isLoadingTicksOrTickmap: false,
     tickSpacing: 1,
     tokens: tokens,
     xDecimal: 9,
     yDecimal: 12,
     hasTicksError: false,
     calcAmount: fn(),
-    loadingTicksAndTickMaps: false,
     onRefresh: fn(),
     isBalanceLoading: false,
     shouldNotUpdatePriceRange: false,
@@ -124,9 +137,11 @@ export const Primary: Story = {
   render: () => {
     return (
       <NewPosition
+        updateLiquidity={() => {}}
         midPrice={{ x: 1234, index: 23, sqrtPrice: 123 }}
         currentPriceSqrt={123}
         tickSpacing={1}
+        actualPoolPrice={new BN(0)}
         xDecimal={9}
         yDecimal={12}
         commonTokens={[]}
@@ -134,11 +149,12 @@ export const Primary: Story = {
         onChangePositionTokens={fn()}
         onPositionOpeningMethodChange={fn()}
         onSlippageChange={fn()}
+        swapAndAddLiquidityHandler={fn()}
         onHideUnknownTokensChange={fn()}
         copyPoolAddressHandler={fn()}
         reloadHandler={fn()}
         setMidPrice={fn()}
-        ticksLoading={false}
+        isLoadingTicksOrTickmap={false}
         hasTicksError={false}
         progress='progress'
         isCurrentPoolExisting={true}
@@ -164,8 +180,9 @@ export const Primary: Story = {
           { feeValue: 0.5 }
         ]}
         addLiquidityHandler={fn()}
-        calcAmount={() => 1n}
-        loadingTicksAndTickMaps={false}
+        calcAmount={() => {
+          return { amount: new BN(0), liquidity: new BN(0) }
+        }}
         onRefresh={fn()}
         isBalanceLoading={false}
         shouldNotUpdatePriceRange={false}
@@ -189,6 +206,17 @@ export const Primary: Story = {
           middle: new BN(100000000000),
           max: new BN(10000000000000)
         })}
+        autoSwapPoolData={null}
+        autoSwapTickmap={null}
+        autoSwapTicks={null}
+        initialMaxPriceImpact={''}
+        onMaxPriceImpactChange={() => {}}
+        initialMinUtilization={''}
+        onMinUtilizationChange={() => {}}
+        onMaxSlippageToleranceSwapChange={() => {}}
+        initialMaxSlippageToleranceSwap={''}
+        onMaxSlippageToleranceCreatePositionChange={() => {}}
+        initialMaxSlippageToleranceCreatePosition={''}
       />
     )
   }

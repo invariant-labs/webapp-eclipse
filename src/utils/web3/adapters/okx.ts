@@ -1,4 +1,4 @@
-import { PublicKey, Transaction } from '@solana/web3.js'
+import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 
@@ -8,8 +8,12 @@ type OkxRequestMethod = 'connect' | 'disconnect' | 'signTransaction' | 'signAllT
 interface OkxProvider {
   publicKey?: PublicKey
   isConnected?: boolean
-  signTransaction: (transaction: Transaction) => Promise<Transaction>
-  signAllTransactions: (transactions: Transaction[]) => Promise<Transaction[]>
+  signTransaction: (
+    transaction: Transaction | VersionedTransaction
+  ) => Promise<Transaction | VersionedTransaction>
+  signAllTransactions: (
+    transactions: Transaction[] | VersionedTransaction[]
+  ) => Promise<Transaction[] | VersionedTransaction[]>
   signMessage: (message: Uint8Array) => Promise<any>
   sendMessage: (message: Uint8Array) => Promise<Uint8Array>
   connect: () => Promise<void>
@@ -28,7 +32,9 @@ export class OkxWalletAdapter implements WalletAdapter {
     return this._okxProvider?.isConnected || false
   }
 
-  signAllTransactions = async (transactions: Transaction[]): Promise<Transaction[]> => {
+  signAllTransactions = async (
+    transactions: Transaction[] | VersionedTransaction[]
+  ): Promise<Transaction[] | VersionedTransaction[]> => {
     if (!this._okxProvider) {
       return transactions
     }
@@ -42,7 +48,7 @@ export class OkxWalletAdapter implements WalletAdapter {
       : DEFAULT_PUBLICKEY
   }
 
-  signTransaction = async (transaction: Transaction) => {
+  signTransaction = async (transaction: Transaction | VersionedTransaction) => {
     if (!this._okxProvider) {
       return transaction
     }
