@@ -21,6 +21,7 @@ import {
   getConcentrationIndex,
   parseFeeToPathFee,
   printBN,
+  ROUTES,
   trimLeadingZeros,
   validConcentrationMidPriceTick
 } from '@utils/utils'
@@ -236,7 +237,10 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [tickSpacing, midPrice.index])
 
   const [concentrationIndex, setConcentrationIndex] = useState(
-    getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 34)
+    getConcentrationIndex(
+      concentrationArray,
+      +initialConcentration < 2 ? 2 : initialConcentration ? +initialConcentration : 34
+    )
   )
 
   const rangeConcentrationArray = useMemo(() => {
@@ -536,7 +540,11 @@ export const NewPosition: React.FC<INewPosition> = ({
         urlUpdateTimeoutRef.current = setTimeout(
           () =>
             navigate(
-              `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
+              ROUTES.getNewPositionRoute(
+                token1Symbol,
+                token2Symbol,
+                parsedFee + concParam + rangeParam
+              ),
               {
                 replace: true
               }
@@ -546,18 +554,18 @@ export const NewPosition: React.FC<INewPosition> = ({
       } else if (index1 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
         urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          () => navigate(ROUTES.getNewPositionRoute(tokenSymbol, parsedFee), { replace: true }),
           500
         )
       } else if (index2 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
         urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          () => navigate(ROUTES.getNewPositionRoute(tokenSymbol, parsedFee), { replace: true }),
           500
         )
       } else if (fee != null) {
         urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(`/newPosition/${parsedFee}`, { replace: true }),
+          () => navigate(ROUTES.getNewPositionRoute(parsedFee), { replace: true }),
           500
         )
       }
@@ -614,7 +622,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   return (
     <Grid container className={classes.wrapper} direction='column'>
-      <Link to='/portfolio' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
+      <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
         <Grid className={classes.back} container item alignItems='center'>
           <img className={classes.backIcon} src={backIcon} alt='back' />
           <Typography className={classes.backText}>Positions</Typography>
@@ -670,7 +678,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             </Fade>
           )}
           {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
-            <TooltipHover text='Refresh'>
+            <TooltipHover title='Refresh'>
               <Box mr={2}>
                 <Refresher
                   currentIndex={refresherTime}
@@ -693,7 +701,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                   marketId={poolAddress}
                   copyPoolAddressHandler={copyPoolAddressHandler}
                 />
-                <TooltipHover text='Open pool in explorer'>
+                <TooltipHover title='Open pool in explorer'>
                   <Grid width={'12px'} height={'24px'}>
                     <a
                       href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
@@ -743,7 +751,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 )}
               </Hidden>
               {poolIndex !== null && tokenAIndex !== tokenBIndex && isMd && (
-                <TooltipHover text='Refresh'>
+                <TooltipHover title='Refresh'>
                   <Box>
                     <Refresher
                       currentIndex={refresherTime}
@@ -757,7 +765,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 </TooltipHover>
               )}
               {poolIndex !== null && (
-                <TooltipHover text='Settings'>
+                <TooltipHover title='Settings'>
                   <Button
                     onClick={handleClickSettings}
                     className={classes.settingsIconBtn}

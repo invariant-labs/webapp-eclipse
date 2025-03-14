@@ -16,6 +16,7 @@ import {
   getNewTokenOrThrow,
   getTokenPrice,
   printBN,
+  ROUTES,
   sciToString,
   tickerToAddress
 } from '@utils/utils'
@@ -199,14 +200,18 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     if (fromAddress && fromIndex !== -1 && toAddress && toIndex !== -1) {
-      return `/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}${concentrationParam}${rangeParam}`
+      return ROUTES.getNewPositionRoute(
+        initialTokenFrom,
+        initialTokenTo,
+        initialFee + concentrationParam + rangeParam
+      )
     }
 
     if (fromAddress && fromIndex !== -1) {
-      return `/newPosition/${initialTokenFrom}/${initialFee}`
+      return ROUTES.getNewPositionRoute(initialTokenFrom, initialFee)
     }
 
-    return `/newPosition/${initialFee}`
+    return ROUTES.getNewPositionRoute(initialFee)
   }
 
   const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
