@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
+    flexDirection: 'column',
     maxWidth: 1072
   },
   pagination: {
@@ -17,6 +18,10 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('lg')]: {
       padding: '20px 8px'
     }
+  },
+  emptyContainer: {
+    background: colors.invariant.component,
+    borderBottom: `1px solid ${colors.invariant.light}`
   },
   loadingOverlay: {
     position: 'relative',

@@ -44,7 +44,7 @@ const SingleToken: React.FC<IProps> = ({ token, network, tokenPrice, copyTokenAd
 
   return (
     <Grid className={classes.token}>
-      <Grid container direction='row' justifyContent='flex-start' alignItems='center' wrap='nowrap'>
+      <Grid container className={classes.innerToken}>
         {token?.logoURI ? (
           <Box className={classes.imageContainer}>
             <img

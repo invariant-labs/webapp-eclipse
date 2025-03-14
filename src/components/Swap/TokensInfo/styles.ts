@@ -3,6 +3,9 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useWrapperStyles = makeStyles()(theme => ({
   wrapper: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
     margin: '0px 0 24px',
     borderRadius: 16,
     border: `1px solid ${colors.invariant.light}`,
@@ -29,6 +32,12 @@ export const useWrapperStyles = makeStyles()(theme => ({
 }))
 
 export const useStyles = makeStyles<{ isToken: boolean }>()((_theme, { isToken }) => ({
+  innerToken: {
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
+    alignItems: 'center',
+    flexWrap: 'nowrap'
+  },
   token: {
     display: 'flex',
     justifyContent: 'flex-start',

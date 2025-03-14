@@ -13,7 +13,11 @@ const useStyles = makeStyles()(() => {
       borderRadius: 5,
       marginTop: 7
     },
-
+    pinkLabel: {
+      color: `${colors.invariant.pink} !important`,
+      textAlign: 'center',
+      textShadow: `0 0 22px ${colors.invariant.pink}`
+    },
     listItem: {
       color: colors.invariant.textGrey,
       background: colors.invariant.component,
@@ -82,7 +86,18 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      '& h1': {
+        color: colors.invariant.text,
+        textAlign: 'center',
+        marginTop: '16px'
+      },
+      '& h2': {
+        color: colors.invariant.textGrey,
+        ...typography.body2,
+        marginTop: '8px',
+        textAlign: 'center'
+      }
     },
     button: {
       display: 'flex',

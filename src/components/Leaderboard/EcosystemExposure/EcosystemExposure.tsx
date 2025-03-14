@@ -205,7 +205,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                 key={task.id}
                 top={1}
                 title={
-                  <Grid display='flex' flexDirection='column' gap='10px'>
+                  <Grid className={classes.exposureWrapper}>
                     <ExposureTooltipTitle
                       title={task.title}
                       img={task.img}

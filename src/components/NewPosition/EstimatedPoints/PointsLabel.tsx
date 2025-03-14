@@ -49,7 +49,7 @@ export const PointsLabel: React.FC<IPointsLabel> = ({
           <Typography className={classes.pointsAmount}>
             {pointsPerDayFormat.toString() === '0' ? '0.00' : pointsPerDayFormat}
           </Typography>
-          <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
+          <img src={icons.infoCircle} alt='' className={classes.infoCircle} />
         </Box>
 
         <Fade in={showModal}>

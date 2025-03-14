@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   container: {
     display: 'flex',
+    flexWrap: 'wrap',
     minHeight: '60vh',
     justifyContent: 'center',
     alignItems: 'center',

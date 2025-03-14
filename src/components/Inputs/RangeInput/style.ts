@@ -4,6 +4,9 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   data: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     height: 36,
     paddingInline: 8,
     flexWrap: 'nowrap',
@@ -50,7 +53,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 10,
     '& input.Mui-disabled': {
       WebkitTextFillColor: colors.white.main + '!important'
-    }
+    },
+    flexDirection: 'row',
+    alignItems: 'center',
+    wrap: 'nowrap'
   },
   button: {
     minWidth: 36,
@@ -101,6 +107,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   diffWrapper: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     borderRadius: 11,
     height: 36,
     backgroundColor: colors.invariant.black

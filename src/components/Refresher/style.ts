@@ -3,6 +3,8 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   ring: {
     cursor: 'pointer',
+    width: '20px',
+    height: '20px',
     transition: '300ms',
     '&:hover': {
       filter: 'brightness(1.25)',

@@ -271,8 +271,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 sharedClasses.fee,
                 isActive ? sharedClasses.activeFee : undefined
               )}
-              justifyContent='center'
-              alignItems='center'
               onClick={e => e.stopPropagation()}>
               <Typography
                 className={classNames(
@@ -294,12 +292,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               sx={{ borderRadius: '10px' }}
             />
           ) : (
-            <Grid
-              container
-              justifyContent='center'
-              alignItems='center'
-              className={sharedClasses.fee}
-              sx={{ width: '100%' }}>
+            <Grid container className={sharedClasses.fee} sx={{ width: '100%' }}>
               <Box className={sharedClasses.unclaimedFeeContainer}>
                 <Typography className={sharedClasses.infoText}>Unclaimed Fee</Typography>
                 <Typography className={sharedClasses.greenText}>
@@ -404,7 +397,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   const { success, inProgress } = useSelector(lockerState)
 
   return (
-    <Grid className={classes.root} container direction='column'>
+    <Grid className={classes.root} container>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={() => setIsLockPositionModalOpen(false)}
@@ -435,22 +428,10 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
-      <Grid
-        container
-        item
-        className={classes.mdTop}
-        direction='row'
-        wrap='nowrap'
-        sx={{ marginBottom: 2 }}>
-        <Grid
-          container
-          item
-          className={classes.iconsAndNames}
-          alignItems='center'
-          justifyContent={'space-between'}
-          wrap='nowrap'>
+      <Grid container item className={classes.mdTop}>
+        <Grid container item className={classes.iconsAndNames}>
           <Box display='flex' alignItems={'center'}>
-            <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
+            <Grid container item className={sharedClasses.icons}>
               <img
                 className={sharedClasses.tokenIcon}
                 src={xToY ? tokenXIcon : tokenYIcon}

@@ -17,8 +17,18 @@ export const usePositionTableRowStyle = makeStyles()((theme: Theme) => ({
     textAlign: 'left',
     padding: '14px 41px 14px 22px !important'
   },
+  airdropIcon: {
+    flexShrink: '0',
+    height: '32px',
+    width: '32px',
+    opacity: 0.3,
+    filter: 'grayscale(1)'
+  },
   itemCellContainer: {
     width: 100,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     [theme.breakpoints.down(1029)]: {
       marginRight: 0
     },
@@ -85,6 +95,7 @@ export const usePositionTableRowStyle = makeStyles()((theme: Theme) => ({
   },
 
   iconsAndNames: {
+    flexWrap: 'nowrap',
     width: 'fit-content',
     display: 'flex',
     alignItems: 'center'

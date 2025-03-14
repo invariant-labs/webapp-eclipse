@@ -84,6 +84,21 @@ export const useStyles = makeStyles()(() => ({
     animation: 'pulse 1.5s ease-in-out infinite',
     opacity: 0.7
   },
+  pagerWrapper: {
+    width: '100%',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px 0 10px 0',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    },
+    '& span': {
+      color: colors.invariant.textGrey
+    }
+  },
   '@keyframes pulse': {
     '0%': {
       opacity: 0.7

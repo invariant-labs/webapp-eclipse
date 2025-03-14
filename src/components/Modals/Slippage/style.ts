@@ -23,6 +23,10 @@ export const useStyles = makeStyles()(() => {
         paddingBottom: 10
       }
     },
+    headerWrapper: {
+      justifyContent: 'space-between',
+      marginBottom: 6
+    },
 
     label: {
       ...typography.body2,

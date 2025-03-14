@@ -7,7 +7,7 @@ export const StatsPage: React.FC = () => {
   const { classes } = useStyles()
 
   return (
-    <Grid container className={classes.container}>
+    <Grid className={classes.container}>
       {/* <img src={comingSoon} alt='Coming soon' /> */}
 
       <WrappedStats />

@@ -25,6 +25,13 @@ const useStyles = makeStyles()((theme: Theme) => {
       ...typography.heading3,
       color: colors.white.main
     },
+    rewardedPoolsWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: theme.spacing(3),
+      width: '100%'
+    },
     leaderBoardWrapper: {
       display: 'flex',
       flexDirection: 'column',

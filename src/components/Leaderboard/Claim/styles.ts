@@ -36,6 +36,41 @@ export const useStyles = makeStyles()(() => ({
     marginTop: '32px',
     maxWidth: '1032px'
   },
+  pointsWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    flexDirection: 'column',
+    alignItems: 'center',
+    marginTop: '32px'
+  },
+  iconWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    '& p': {
+      color: colors.invariant.textGrey,
+      fontSize: '20px',
+      fontWeight: 400,
+      lineHeight: '24px',
+      letterSpacing: '-3%'
+    }
+  },
+  description2: {
+    color: colors.invariant.textGrey,
+    [theme.breakpoints.down('md')]: {
+      fontSize: '20px'
+    },
+    fontSize: '16px',
+    fontWeight: '400',
+    lineHeight: '20px',
+    letterSpacing: '-0.03em',
+    maxWidth: '1032px',
+    display: 'flex',
+    justifyItems: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    marginTop: '32px'
+  },
   header: {
     [theme.breakpoints.down('md')]: {
       fontSize: '30px'

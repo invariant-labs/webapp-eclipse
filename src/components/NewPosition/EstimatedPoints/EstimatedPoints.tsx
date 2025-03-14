@@ -102,26 +102,17 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
   return (
     <Box mt={3} mb={4}>
       <GradientBorder borderRadius={24} borderWidth={2}>
-        <Grid className={classNames(classes.wrapper)}>
-          <Grid display='flex' gap={3} className={classNames(classes.innerWrapper)} spacing={3}>
+        <Grid className={classes.wrapper}>
+          <Grid className={classes.innerWrapper}>
             <Grid className={classes.column}>
-              <Grid container direction='column' spacing={1} className={classes.leftHeaderItems}>
+              <Grid container className={classes.leftHeaderItems}>
                 <Grid item>
-                  <Grid display='flex' gap={1} alignItems='center' justifyContent={'space-between'}>
+                  <Grid className={classes.headerWrapper}>
                     <Typography style={{ whiteSpace: 'nowrap', ...typography.heading4 }}>
                       Estimated Points
                     </Typography>
-                    <Grid
-                      display='flex'
-                      alignItems='center'
-                      justifyContent='center'
-                      className={classes.pointsLabel}
-                      flexWrap='nowrap'>
-                      <img
-                        src={icons.airdropRainbow}
-                        alt='Airdrop'
-                        style={{ height: '16px', marginLeft: '-8px' }}
-                      />
+                    <Grid className={classes.pointsLabel}>
+                      <img src={icons.airdropRainbow} alt='Airdrop' />
                       <Typography noWrap>
                         Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
                       </Typography>
@@ -134,12 +125,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                   Points you accrue depend on the concentration of your position. Adjust the
                   concentration slider to see how many points your current position will accrue.{' '}
                   <button className={classes.questionButton} onClick={handleClickFAQ}>
-                    <img
-                      src={icons.infoIconPink}
-                      alt='i'
-                      width={14}
-                      style={{ marginLeft: '-2px', marginRight: '4px', marginBottom: '-2px' }}
-                    />
+                    <img src={icons.infoIconPink} alt='i' className={classes.infoPink} />
                     <Typography
                       display='inline'
                       className={classNames(classes.pinkText, classes.link)}>
@@ -150,14 +136,13 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
               </Grid>
             </Grid>
             <Grid className={classes.column} style={{ alignItems: 'center' }}>
-              <Typography
-                style={{ whiteSpace: 'nowrap', ...typography.heading4, fontSize: '18px' }}>
+              <Typography className={classes.estimatedPointsLabel}>
                 <span>Your Estimated Points: &nbsp;</span>
                 <span className={classes.pinkText}>
                   {singleDepositWarning ? 0 : pointsPerDayFormat} Points/24h
                 </span>
               </Typography>
-              <Grid display='flex' justifyContent='space-between' container mt={1}>
+              <Grid container className={classes.barWrapper}>
                 <Typography className={classes.sliderLabel}>{minConc}x</Typography>
                 <Typography className={classes.sliderLabel}>{middleConc}x</Typography>
                 <Typography className={classes.sliderLabel}>{maxConc}x</Typography>
@@ -169,13 +154,11 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
               {!warningText ? (
                 <Grid container justifyContent='space-between' alignItems='center'>
                   <Typography
-                    display='flex'
                     flexDirection={isSm ? 'column' : 'row'}
                     className={classes.sliderLabel}>
                     {estimatedPointsForScaleFormat.min} {isSm ? <span>Pts/24h</span> : 'Points/24h'}
                   </Typography>
                   <Typography
-                    display='flex'
                     alignItems='center'
                     flexDirection={isSm ? 'column' : 'row'}
                     className={classes.sliderLabel}>
@@ -183,7 +166,6 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                     {isSm ? <span>Pts/24h</span> : 'Points/24h'}
                   </Typography>
                   <Typography
-                    display='flex'
                     alignItems='flex-end'
                     flexDirection={isSm ? 'column' : 'row'}
                     className={classes.sliderLabel}>
@@ -196,11 +178,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
             </Grid>
           </Grid>
           {warningText ? (
-            <Typography
-              display='flex'
-              mt={isSm ? '24px' : '16px'}
-              alignItems='center'
-              columnGap={2}>
+            <Typography className={classes.warningWrapper}>
               <img
                 width={20}
                 src={icons.warning2}

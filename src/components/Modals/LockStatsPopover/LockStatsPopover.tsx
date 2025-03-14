@@ -30,7 +30,6 @@ export const LockStatsPopover = ({
 }: ILockStatsPopover) => {
   const { classes } = useStyles()
   const [animationTriggered, setAnimationTriggered] = useState(false)
-
   const percentagesAndValues = useMemo(() => {
     const totalLocked = lockedX + lockedY
 
@@ -142,18 +141,10 @@ export const LockStatsPopover = ({
       }}
       marginThreshold={16}>
       <div className={classes.backgroundContainer}>
-        <div className={classes.statsContainer} style={{ gap: '16px' }}>
-          <div style={{ display: 'flex', width: '38%', gap: '16px' }}>
-            <div
-              style={{
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '12px'
-              }}>
-              <Typography className={classes.chartTitle} style={{ textAlign: 'center' }}>
-                Lock Liquidity Distribution
-              </Typography>
+        <div className={classes.statsContainer}>
+          <div className={classes.leftWrapper}>
+            <div className={classes.leftInnerWrapper}>
+              <Typography className={classes.chartTitle}>Lock Liquidity Distribution</Typography>
 
               <Typography
                 className={classes.description}
@@ -188,31 +179,19 @@ export const LockStatsPopover = ({
             </div>
           </div>
 
-          <Box
-            sx={{
-              width: '2px',
-              backgroundColor: colors.invariant.light,
-              alignSelf: 'stretch'
-            }}
-          />
+          <Box className={classes.separator} />
 
-          <div
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '10px',
-              width: '50%'
-            }}>
+          <div className={classes.rightWrapper}>
             <Typography
               className={classes.chartTitle}
-              style={{ textAlign: 'center', width: 'fit-content', alignSelf: 'center' }}>
+              style={{ width: 'fit-content', alignSelf: 'center' }}>
               Positions Liquidity Share
             </Typography>
             <Typography className={classes.description}>
               Represents the ratio of locked liquidity to the total TVL in the pool.
             </Typography>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '8px', width: '100%' }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+            <div className={classes.chartsWrapper}>
+              <div className={classes.chartWrapper}>
                 <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
                   {symbolX}:{' '}
                   <span style={{ color: colors.invariant.pink }}>
@@ -232,12 +211,7 @@ export const LockStatsPopover = ({
                     %)
                   </span>
                 </Typography>
-                <Box
-                  sx={{
-                    width: '40%',
-                    ml: '60px',
-                    position: 'relative'
-                  }}>
+                <Box className={classes.barWrapper}>
                   <LinearProgress
                     variant='determinate'
                     value={animationTriggered ? +percentagesAndValues.xStandard : 0}
@@ -251,21 +225,16 @@ export const LockStatsPopover = ({
                     }}
                   />
                   <Box
+                    className={classes.progress}
                     sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
                       width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%',
-                      height: '3px',
-                      borderRadius: 4,
-                      transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
                     }}
                   />
                 </Box>
               </div>
 
-              <div style={{ display: 'flex', alignItems: 'center' }}>
+              <div className={classes.chartWrapper}>
                 <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
                   {symbolY}:{' '}
                   <span style={{ color: colors.invariant.green }}>
@@ -285,12 +254,7 @@ export const LockStatsPopover = ({
                   </span>
                 </Typography>
 
-                <Box
-                  sx={{
-                    width: '40%',
-                    ml: '60px',
-                    position: 'relative'
-                  }}>
+                <Box className={classes.barWrapper}>
                   <LinearProgress
                     variant='determinate'
                     value={animationTriggered ? +percentagesAndValues.yStandard : 0}
@@ -304,14 +268,10 @@ export const LockStatsPopover = ({
                     }}
                   />
                   <Box
+                    className={classes.progress}
                     sx={{
-                      position: 'absolute',
-                      top: 0,
-                      left: 0,
                       width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
-                      height: '3px',
-                      borderRadius: 4,
-                      transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+
                       boxShadow: `0 0 6px 1px ${colors.invariant.green}`
                     }}
                   />

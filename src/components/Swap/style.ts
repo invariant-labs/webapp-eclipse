@@ -11,13 +11,19 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       padding: '0 8px'
     }
   },
+  refreshIconContainer: {
+    display: 'flex',
+    alignItems: 'center'
+  },
 
   leftSection: {
     display: 'flex',
     flexDirection: 'row',
     gap: 8,
     alignItems: 'center',
-
+    '& h1': {
+      height: '27px'
+    },
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
       alignItems: 'flex-start',
@@ -144,7 +150,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   slippage: {
     position: 'absolute'
   },
+  tooltipRefresh: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 20,
+    height: 34,
+    minWidth: 'fit-content',
+    marginLeft: 8
+  },
   root: {
+    flexDirection: 'column',
     position: 'relative',
     maxWidth: 500,
     background: colors.invariant.component,

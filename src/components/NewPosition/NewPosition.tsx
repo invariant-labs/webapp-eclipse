@@ -628,20 +628,15 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [network])
 
   return (
-    <Grid container className={classes.wrapper} direction='column'>
+    <Grid container className={classes.wrapper}>
       <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
-        <Grid className={classes.back} container item alignItems='center'>
+        <Grid className={classes.back} container item>
           <img className={classes.backIcon} src={backIcon} alt='back' />
           <Typography className={classes.backText}>Positions</Typography>
         </Grid>
       </Link>
 
-      <Grid
-        container
-        justifyContent='space-between'
-        alignItems='center'
-        className={classes.headerContainer}
-        mb={1}>
+      <Grid container className={classes.headerContainer}>
         <Box className={classes.titleContainer}>
           <Typography className={classes.title}>Add new position</Typography>
 
@@ -700,7 +695,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           )}
         </Box>
         {tokenAIndex !== null && tokenBIndex !== null && (
-          <Grid container item alignItems='center' className={classes.options}>
+          <Grid container item className={classes.options}>
             {poolIndex !== null && poolAddress ? (
               <>
                 <MarketIdLabel
@@ -798,7 +793,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         />
       }
 
-      <Grid container className={classes.row} alignItems='stretch'>
+      <Grid container className={classes.row}>
         <DepositSelector
           tokenAIndex={tokenAIndex}
           tokenBIndex={tokenBIndex}

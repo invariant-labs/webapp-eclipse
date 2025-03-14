@@ -21,6 +21,14 @@ const useStyles = makeStyles()(() => {
         ...typography.heading2
       }
     },
+    headerWrapper: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flexDirection: 'column',
+      width: '100%',
+      textWrap: 'nowrap'
+    },
     headerSmallText: {
       maxWidth: '100%',
       ...typography.body1,

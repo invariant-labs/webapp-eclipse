@@ -41,5 +41,9 @@ export const useStyles = makeStyles()(() => ({
   emptyRowBorder: {
     height: 68,
     borderBottom: `1px solid ${colors.invariant.light}`
+  },
+  emptyWrapper: {
+    background: colors.invariant.component,
+    borderBottom: `1px solid ${colors.invariant.light}`
   }
 }))

@@ -13,10 +13,13 @@ export const useStyles = makeStyles<{ open: boolean }>()((_theme, { open }) => (
     zIndex: 1
   },
   innerWrapper: {
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
     padding: 16,
     minHeight: 132
   },
   row: {
+    justifyContent: 'space-between',
     '&:not(:last-child)': {
       marginBottom: 8
     }

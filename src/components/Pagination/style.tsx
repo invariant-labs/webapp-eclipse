@@ -5,6 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'flex',
+    alignItems: 'center',
 
     [theme.breakpoints.down('sm')]: {
       width: '100%'

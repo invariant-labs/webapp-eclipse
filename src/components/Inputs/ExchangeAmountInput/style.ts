@@ -111,6 +111,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.lightGrey
   },
   exchangeContainer: {
+    flexWrap: 'nowrap',
     height: 65,
     padding: `10px 15px 0 15px `,
     display: 'flex',
@@ -156,6 +157,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 12
   },
   percentages: {
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     flexShrink: 0,
     width: 'fit-content',
     justifyContent: 'end',
@@ -188,7 +191,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     textOverflow: 'ellipsis'
   },
   bottom: {
-    paddingInline: 15
+    paddingInline: 15,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
   },
   blur: {
     width: 120,

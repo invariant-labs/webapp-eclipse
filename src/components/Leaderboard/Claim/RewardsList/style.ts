@@ -39,9 +39,28 @@ export const useStylesList = makeStyles()(theme => ({
     }
   },
   list: {
-    paddingRight: 48
+    paddingRight: 48,
+
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing(3),
+    marginBottom: theme.spacing(2),
+    [theme.breakpoints.down('lg')]: {
+      marginBottom: 0
+    }
   },
-  scrollbar: {}
+  scrollbar: {},
+  historyLabel: {
+    marginBottom: theme.spacing(3),
+    ...typography.heading3,
+    color: colors.invariant.text
+  },
+  rewardWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: theme.spacing(3),
+    marginBottom: theme.spacing(0)
+  }
 }))
 
 export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) => ({
@@ -52,9 +71,19 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     backgroundPosition: 'center',
     position: 'relative',
     background: isEven ? colors.invariant.darkGreenGradient : colors.invariant.darkPinkGradient,
-    zIndex: 2
+    zIndex: 2,
+    alignItems: 'center'
   },
+  rewardWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+
   innerContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column'
     }
@@ -151,12 +180,38 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
   textGreen: {
     color: colors.invariant.green
   },
+  infoWrapper: {
+    display: 'flex',
+    gap: theme.spacing(3),
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    [theme.breakpoints.down('md')]: {
+      gap: theme.spacing(2)
+    }
+  },
+  pointsWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  },
+  centerWrapper: {
+    display: 'flex',
+    gap: theme.spacing(3),
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    margin: theme.spacing(6)
+  },
   label: {
     backgroundColor: colors.invariant.light,
     padding: '8px 16px',
     borderRadius: 16,
     maxWidth: 282,
     width: 282,
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
 
     [theme.breakpoints.down('md')]: {
       width: '100%'

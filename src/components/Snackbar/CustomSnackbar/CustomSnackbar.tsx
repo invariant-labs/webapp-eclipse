@@ -10,7 +10,8 @@ import {
   StyledHideContainer,
   StyledIcon,
   StyledSnackbarContent,
-  StyledTitle
+  StyledTitle,
+  useStyles
 } from './style'
 import { Grid } from '@mui/material'
 import { useDispatch } from 'react-redux'
@@ -30,6 +31,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
   ({ message, txid, variant = 'default', snackbarId, iconVariant, link, network }, ref) => {
     const { closeSnackbar } = useSnackbar()
     const dispatch = useDispatch()
+    const { classes } = useStyles()
 
     const handleDismiss = useCallback(() => {
       if (!snackbarId) return
@@ -57,12 +59,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
     const Content = () => {
       return (
         <>
-          <Grid
-            display='flex'
-            alignItems='center'
-            ml={2}
-            flexDirection='row'
-            style={{ width: 'fix-content', flexWrap: 'nowrap' }}>
+          <Grid className={classes.wrapper}>
             <Grid ml={1}>
               {variant === 'pending' ? (
                 <StyledCircularProgress size={13} />
@@ -73,7 +70,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
             <StyledTitle>{message}</StyledTitle>
           </Grid>
           {txid && (
-            <Grid display='flex' mx={1} minWidth='fit-content'>
+            <Grid className={classes.transactionWrapper}>
               <StyledDetails
                 onClick={() => {
                   window.open(
@@ -90,7 +87,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
             </Grid>
           )}
           {link && (
-            <Grid display='flex' mx={1} minWidth='fit-content'>
+            <Grid className={classes.transactionWrapper}>
               <StyledDetails
                 onClick={() => {
                   window.open(link.href, '_blank')
@@ -104,7 +101,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
             </Grid>
           )}
           {!link && !txid && (
-            <Grid display='flex' mx={1} minWidth='fit-content'>
+            <Grid className={classes.transactionWrapper}>
               <StyledCloseButton onClick={handleDismiss}>
                 <img width={16} src={icons.closeIcon} alt='Close'></img>
               </StyledCloseButton>

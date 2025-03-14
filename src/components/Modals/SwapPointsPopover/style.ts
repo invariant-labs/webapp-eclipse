@@ -11,6 +11,17 @@ const useStyles = makeStyles()((theme: Theme) => {
         width: '100%'
       }
     },
+    rightWrapper: {
+      width: '2px',
+      backgroundColor: colors.invariant.light,
+      alignSelf: 'stretch'
+    },
+    promotedPoolsWrapper: {
+      display: 'flex',
+      gap: '4px',
+      flexDirection: 'column',
+      padding: '4px'
+    },
     paper: {
       marginRight: '6px',
       marginLeft: '8px',
