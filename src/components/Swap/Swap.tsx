@@ -733,7 +733,7 @@ export const Swap: React.FC<ISwap> = ({
         </Box>
       )}
 
-      <Box marginLeft={'150px'}>
+      <Box>
         {isMd && (
           <Box className={classes.agregatorContainer}>
             <InvariantAgregatorHeader />
@@ -1216,26 +1216,24 @@ export const Swap: React.FC<ISwap> = ({
               <AnimatedWaves wavePosition={'bottom'} isAnimating={isPairGivingPoints} />
             </Grid>
           </Box>
-          <Box sx={{ height: '100%', width: '350px' }}>
-            {!isMd && (
-              <TransactionRoute
-                routeData={route}
-                showCloseButton={false}
-                isLoading={isRouteLoading}
-              />
-            )}
-            {isMd && (
-              <TransactionRouteModal
-                isLoading={isRouteLoading}
-                open={isTransactionRouteModalOpen}
-                handleClose={() => {
-                  setTransactionRouteModalOpen(false)
-                  unblurContent()
-                }}
-                routeData={route}
-              />
-            )}
-          </Box>
+          {!isMd && (
+            <TransactionRoute
+              routeData={route}
+              showCloseButton={false}
+              isLoading={isRouteLoading}
+            />
+          )}
+          {isMd && (
+            <TransactionRouteModal
+              isLoading={isRouteLoading}
+              open={isTransactionRouteModalOpen}
+              handleClose={() => {
+                setTransactionRouteModalOpen(false)
+                unblurContent()
+              }}
+              routeData={route}
+            />
+          )}
         </Box>
       </Box>
 
