@@ -139,10 +139,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     flexGrow: 1,
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between',
-    [theme.breakpoints.down('sm')]: {
-      padding: '16px 8px  16px 8px '
-    }
+    gap: 24
   },
   iconSmall: {
     width: 20,
@@ -480,6 +477,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     textAlign: 'center',
     alignSelf: 'center',
     cursor: 'default'
+  },
+  claimButton: {
+    background: colors.invariant.pinkLinearGradientOpacity,
+    borderRadius: 12,
+    height: 36,
+    width: 72,
+    color: colors.invariant.dark,
+    textTransform: 'none',
+    ...typography.body1
   }
 }))
 

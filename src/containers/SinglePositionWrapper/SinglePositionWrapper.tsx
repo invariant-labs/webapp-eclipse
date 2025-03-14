@@ -37,9 +37,18 @@ import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
 import icons from '@static/icons'
 import { theme } from '@static/theme'
+import { actions as statsActions } from '@store/reducers/stats'
+import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
 
 export interface IProps {
   id: string
+}
+
+export type PoolDetails = {
+  tvl: number
+  volume24: number
+  fee24: number
+  apy: number
 }
 
 export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
@@ -375,6 +384,31 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
   }, [isLoadingList])
 
+  const poolsList = useSelector(poolsStatsWithTokensDetails)
+
+  useEffect(() => {
+    dispatch(statsActions.getCurrentStats())
+  }, [])
+
+  const poolDetails = useMemo(() => {
+    if (!position) {
+      return null
+    }
+
+    const pool = poolsList.find(pool => pool.poolAddress.equals(position?.poolData.address))
+
+    if (!pool) {
+      return null
+    }
+
+    return {
+      tvl: pool.tvl,
+      volume24: pool.volume24,
+      fee24: (pool.volume24 * pool.fee) / 100,
+      apy: pool.apy
+    }
+  }, [poolsList])
+
   if (position) {
     return (
       <PositionDetails
@@ -456,6 +490,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         success={success}
         inProgress={inProgress}
         ethBalance={ethBalance}
+        poolDetails={poolDetails}
       />
     )
   }

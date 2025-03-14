@@ -14,11 +14,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   headerContainer: {
-    ...typography.heading4,
-    color: '#FFFFFF'
+    display: 'flex',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 32
   },
   header: {
-    paddingBottom: 30
+    ...typography.heading4,
+    color: colors.white.main
   },
   plotWrapper: {
     paddingBottom: 29
@@ -144,6 +147,34 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.yellow,
     ...typography.caption2,
     textAlign: 'right'
+  },
+  statsWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16
+  },
+  statsContainer: {
+    display: 'flex',
+    gap: 16
+  },
+  value: {
+    color: colors.white.main
+  },
+  valuePercentagePlus: {
+    color: colors.invariant.green
+  },
+  valuePercentageMinus: {
+    color: colors.invariant.Error
+  },
+  concentrationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4
+  },
+  concentrationValue: {
+    fontSize: 20,
+    fontWeight: 400,
+    color: colors.white.main
   }
 }))
 

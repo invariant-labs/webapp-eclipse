@@ -30,6 +30,7 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
+import { PoolDetails } from '@containers/SinglePositionWrapper/SinglePositionWrapper'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -64,6 +65,7 @@ interface IProps {
   success: boolean
   inProgress: boolean
   ethBalance: BN
+  poolDetails: PoolDetails | null
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -93,7 +95,6 @@ const PositionDetails: React.FC<IProps> = ({
   reloadHandler,
   userHasStakes = false,
   onRefresh,
-  isBalanceLoading,
   network,
   isLocked,
   success,
@@ -241,7 +242,6 @@ const PositionDetails: React.FC<IProps> = ({
           swapHandler={() => setXToY(!xToY)}
           showFeesLoader={showFeesLoader}
           userHasStakes={userHasStakes}
-          isBalanceLoading={isBalanceLoading}
           isActive={isActive}
           network={network}
           isLocked={isLocked}

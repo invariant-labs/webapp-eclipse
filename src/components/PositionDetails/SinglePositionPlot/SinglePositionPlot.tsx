@@ -1,11 +1,9 @@
-import LiquidationRangeInfo from '@components/PositionDetails/LiquidationRangeInfo/LiquidationRangeInfo'
 import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-
-import { Card, Grid, Typography } from '@mui/material'
-import activeLiquidity from '@static/svg/activeLiquidity.svg'
+import { Box, Grid, Typography } from '@mui/material'
 import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
+  formatNumberWithSuffix,
   numberToString,
   spacingMultiplicityGte
 } from '@utils/utils'
@@ -14,7 +12,9 @@ import React, { useEffect, useState } from 'react'
 import { ILiquidityToken } from '../SinglePositionInfo/consts'
 import useStyles from './style'
 import { getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { Stat } from './Stat/Stat'
+import icons from '@static/icons'
+import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -138,46 +138,10 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
 
   return (
     <Grid item className={classes.root}>
-      <Grid className={classes.headerContainer} container justifyContent='space-between'>
+      <Box className={classes.headerContainer}>
         <Typography className={classes.header}>Price range</Typography>
-        <Grid>
-          <TooltipGradient
-            title={
-              <>
-                <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
-                <Typography className={classes.liquidityDesc} style={{ marginBottom: 12 }}>
-                  While selecting the price range, note where active liquidity is located. Your
-                  liquidity can be inactive and, as a consequence, not generate profits.
-                </Typography>
-                <Grid
-                  container
-                  direction='row'
-                  wrap='nowrap'
-                  alignItems='center'
-                  style={{ marginBottom: 12 }}>
-                  <Typography className={classes.liquidityDesc}>
-                    The active liquidity range is represented by white, dashed lines in the
-                    liquidity chart. Active liquidity is determined by the maximum price range
-                    resulting from the statistical volume of exchanges for the last 7 days.
-                  </Typography>
-                  <img className={classes.liquidityImg} src={activeLiquidity} alt='Liquidity' />
-                </Grid>
-                <Typography className={classes.liquidityNote}>
-                  Note: active liquidity borders are always aligned to the nearest initialized
-                  ticks.
-                </Typography>
-              </>
-            }
-            placement='bottom'
-            top={1}
-            noGradient>
-            <Typography className={classes.activeLiquidity}>
-              Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
-            </Typography>
-          </TooltipGradient>
-          <Typography className={classes.currentPrice}>Current price ━━━</Typography>
-        </Grid>
-      </Grid>
+        <RangeIndicator inRange={min <= currentPrice && currentPrice <= max} />
+      </Box>
       <Grid className={classes.plotWrapper}>
         <PriceRangePlot
           data={data}
@@ -200,31 +164,82 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
           reloadHandler={reloadHandler}
         />
       </Grid>
-      <Grid className={classes.minMaxInfo}>
-        <LiquidationRangeInfo
-          label='min'
-          amount={min}
-          tokenX={xToY ? tokenX.name : tokenY.name}
-          tokenY={xToY ? tokenY.name : tokenX.name}
-        />
-        <LiquidationRangeInfo
-          label='max'
-          amount={max}
-          tokenX={xToY ? tokenX.name : tokenY.name}
-          tokenY={xToY ? tokenY.name : tokenX.name}
-        />
-      </Grid>
-      <Grid className={classes.currentPriceContainer}>
-        <Card className={classes.currentPriceLabel}>
-          <Typography component='p'>current price</Typography>
-        </Card>
-        <Card className={classes.currentPriceAmonut}>
-          <Typography component='p'>
-            <Typography component='span'>{numberToString(currentPrice)}</Typography>
-            {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
-          </Typography>
-        </Card>
-      </Grid>
+      <Box className={classes.statsWrapper}>
+        <Box className={classes.statsContainer}>
+          <Stat
+            name='CURRENT PRICE'
+            value={
+              <Box>
+                <Typography component='span' className={classes.value}>
+                  {numberToString(currentPrice.toFixed(xToY ? tokenY.decimal : tokenX.decimal))}
+                </Typography>{' '}
+                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+              </Box>
+            }
+          />
+          <Stat
+            name={
+              <Box className={classes.concentrationContainer}>
+                <img src={icons.boostPoints} />
+                CONCENTRATION
+              </Box>
+            }
+            value={<Typography className={classes.concentrationValue}>2001x</Typography>}
+          />
+        </Box>
+        <Box className={classes.statsContainer}>
+          <Stat
+            name='MIN'
+            value={
+              <Box>
+                <Typography component='span' className={classes.value}>
+                  {formatNumberWithSuffix(min)}
+                </Typography>{' '}
+                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+              </Box>
+            }
+            isHorizontal
+          />
+          <Stat
+            name='MAX'
+            value={
+              <Box>
+                <Typography component='span' className={classes.value}>
+                  {formatNumberWithSuffix(max)}
+                </Typography>{' '}
+                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+              </Box>
+            }
+            isHorizontal
+          />
+        </Box>
+        <Box className={classes.statsContainer}>
+          <Stat
+            name='% MIN'
+            value={
+              <Box>
+                <Typography component='span' className={classes.valuePercentagePlus}>
+                  +9.29%
+                </Typography>{' '}
+                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+              </Box>
+            }
+            isHorizontal
+          />
+          <Stat
+            name='% MAX'
+            value={
+              <Box>
+                <Typography component='span' className={classes.valuePercentageMinus}>
+                  -9.29%
+                </Typography>{' '}
+                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+              </Box>
+            }
+            isHorizontal
+          />
+        </Box>
+      </Box>
     </Grid>
   )
 }
