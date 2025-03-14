@@ -95,7 +95,6 @@ const PositionDetails: React.FC<IProps> = ({
   reloadHandler,
   userHasStakes = false,
   onRefresh,
-  isBalanceLoading,
   network,
   isLocked,
   success,
@@ -243,7 +242,6 @@ const PositionDetails: React.FC<IProps> = ({
           swapHandler={() => setXToY(!xToY)}
           showFeesLoader={showFeesLoader}
           userHasStakes={userHasStakes}
-          isBalanceLoading={isBalanceLoading}
           isActive={isActive}
           network={network}
           isLocked={isLocked}
