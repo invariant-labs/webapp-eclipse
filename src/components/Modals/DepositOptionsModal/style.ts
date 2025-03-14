@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => {
@@ -23,7 +23,7 @@ export const useStyles = makeStyles()(() => {
       borderRadius: 8
     },
     detailsWrapper: {
-      width: 664,
+      width: 332,
       display: 'flex',
       flexDirection: 'column',
       backgroundColor: colors.invariant.component,
@@ -35,7 +35,21 @@ export const useStyles = makeStyles()(() => {
         paddingBottom: 10
       }
     },
-
+    closeModal: {
+      position: 'absolute',
+      right: 16,
+      minWidth: 0,
+      height: 20,
+      '&:after': {
+        content: '"\u2715"',
+        fontSize: 22,
+        position: 'absolute',
+        color: 'white',
+        top: '50%',
+        right: '0%',
+        transform: 'translateY(-50%)'
+      }
+    },
     label: {
       ...typography.body2,
       color: colors.invariant.lightHover,
@@ -62,7 +76,11 @@ export const useStyles = makeStyles()(() => {
         transform: 'translateY(-50%)'
       }
     },
+    detailsInfoTextContainer: {
+      height: 85
+    },
     detailsInfoForm: {
+      marginTop: 6,
       border: `1px solid ${colors.invariant.component}`,
       color: colors.invariant.textGrey,
       borderRadius: 15,
@@ -88,19 +106,31 @@ export const useStyles = makeStyles()(() => {
         color: colors.invariant.text
       }
     },
-
+    headerContainer: {
+      width: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start'
+    },
+    optionsContainer: {
+      display: 'flex',
+      justifyContent: 'flex-start',
+      alignItems: 'flex-start',
+      flexDirection: 'column'
+    },
     innerInput: {
       paddingBlock: 0,
       textAlign: 'right'
     },
     setAsDefaultBtn: {
-      width: 118,
+      width: '100%',
       height: 44,
       color: colors.invariant.newDark,
       backgroundColor: `${colors.invariant.green} !important`,
       textTransform: 'none',
       textDecoration: 'none',
-      borderRadius: 10,
+      borderRadius: 16,
       cursor: 'pointer',
       ...typography.body1,
       '&:hover': {
@@ -183,18 +213,122 @@ export const useStyles = makeStyles()(() => {
       marginTop: 9.5,
       marginBottom: 9.5
     },
-    dividerHorizontal: {
-      height: 414,
-      width: 1,
-      borderLeft: `1px solid ${colors.invariant.light}`,
-      marginLeft: 9.5,
-      marginRight: 9.5
-    },
     grayscaleIcon: {
       filter: 'grayscale(100%)',
       transition: 'filter 0.7s ease-in-out',
       minWidth: '8px',
       minHeight: '8px'
+    },
+    switchSettingsTypeContainer: {
+      marginTop: 10,
+      position: 'relative',
+      width: '100%',
+      backgroundColor: colors.invariant.dark,
+      borderRadius: 10,
+      overflow: 'hidden',
+      display: 'inline-flex',
+      height: 32,
+      [theme.breakpoints.down('sm')]: {
+        height: 48
+      }
+    },
+    switchSettingsTypeMarker: {
+      position: 'absolute',
+      top: 0,
+      bottom: 0,
+      width: '50%',
+      backgroundColor: colors.invariant.light,
+      borderRadius: 10,
+      transition: 'all 0.3s ease',
+      zIndex: 1
+    },
+    switchSettingsTypeButtonsGroup: {
+      position: 'relative',
+      zIndex: 2,
+      display: 'flex',
+      width: '100%'
+    },
+    switchSettingsTypeButton: {
+      ...typography.caption1,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      flex: 1,
+      textTransform: 'none',
+      border: 'none',
+      borderRadius: 10,
+      zIndex: 2,
+      '&.Mui-selected': {
+        backgroundColor: 'transparent'
+      },
+      '&:hover': {
+        backgroundColor: 'transparent'
+      },
+      '&.Mui-selected:hover': {
+        backgroundColor: 'transparent'
+      },
+      '&:disabled': {
+        color: colors.invariant.textGrey,
+        fontWeight: 200,
+        pointerEvents: 'auto',
+        transition: 'all 0.2s',
+        '&:hover': {
+          boxShadow: 'none',
+          cursor: 'not-allowed',
+          filter: 'brightness(1.15)',
+          '@media (hover: none)': {
+            filter: 'none'
+          }
+        }
+      },
+      letterSpacing: '-0.03em',
+      height: 32,
+      [theme.breakpoints.down('sm')]: {
+        height: 48
+      }
+    },
+    switchSelected: { colort: colors.invariant.text, fontWeight: 700 },
+    switchNotSelected: { color: colors.invariant.text, fontWeight: 400 },
+    defaultOptionsContainer: {
+      gap: 9
+    },
+    singleOption: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      height: '100%',
+      gap: 2
+    },
+    singleOptionValue: {
+      fontWeight: 700,
+      fontSize: 14,
+      marginTop: -8
+    },
+    singleOptionTooltipContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      flexDirection: 'row',
+      justifyContent: 'center'
+    },
+    singleOptionTooltipIcon: {
+      width: 12,
+      height: 12
+    },
+    singleOptionMessageContainer: {
+      width: 141
+    },
+    labelInfoItem: {
+      width: 8,
+      marginTop: 0,
+      marginLeft: 2
+    },
+    singleItemLabel: {
+      fontWeight: 400,
+      fontSize: 10,
+      letterSpacing: '-0.03%',
+      textTransform: 'none',
+      marginLeft: -4
     }
   }
 })

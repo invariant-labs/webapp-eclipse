@@ -94,7 +94,7 @@ const DepositOption: React.FC<Props> = ({
     <>
       {divider && <Divider className={classes.divider} />}
       <Typography className={classes.label}>{label}</Typography>
-      <Grid container gap='9px'>
+      <Grid container className={classes.defaultOptionsContainer}>
         {options.map((tier, index) => (
           <Button
             className={classNames(
@@ -107,55 +107,27 @@ const DepositOption: React.FC<Props> = ({
               setValue(Number(options[index].value).toFixed(2))
               saveValue(Number(options[index].value).toFixed(2))
             }}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                height: '100%',
-                gap: '2px'
-              }}>
-              <Box
-                sx={{
-                  fontWeight: 700,
-                  fontSize: 14,
-                  marginTop: '-8px'
-                }}>
-                {tier.value}%
-              </Box>
+            <Box className={classes.singleOption}>
+              <Box className={classes.singleOptionValue}>{tier.value}%</Box>
               <Tooltip
                 title={
-                  <Box
-                    style={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '6px',
-                      flexDirection: 'row',
-                      justifyContent: 'center'
-                    }}>
-                    <Box width={'12px'}>
-                      <img src={icons.goldenInfoCircle} alt='' width={'12px'} height={'12px'} />
-                    </Box>
-                    <span style={{ width: '141px' }}>{tier.message}</span>
+                  <Box className={classes.singleOptionTooltipContainer}>
+                    <img
+                      src={icons.goldenInfoCircle}
+                      alt=''
+                      className={classes.singleOptionTooltipIcon}
+                    />
+                    <Box className={classes.singleOptionMessageContainer}>{tier.message}</Box>
                   </Box>
                 }
                 classes={{ tooltip: classes.tooltip }}>
-                <Typography
-                  style={{
-                    fontWeight: 400,
-                    fontSize: 10,
-                    letterSpacing: '-0.03%',
-                    textTransform: 'none',
-                    marginLeft: '-4px'
-                  }}>
+                <Typography className={classes.singleItemLabel}>
                   {tier.label}
                   {tier.message !== '' ? (
                     <img
                       src={icons.infoCircle}
                       alt=''
-                      width='8px'
-                      style={{ marginTop: '0px', marginLeft: '2px' }}
-                      className={classes.grayscaleIcon}
+                      className={classNames(classes.grayscaleIcon, classes.labelInfoItem)}
                     />
                   ) : null}
                 </Typography>
@@ -164,42 +136,43 @@ const DepositOption: React.FC<Props> = ({
           </Button>
         ))}
       </Grid>
-      <Box marginTop='6px'>
-        <Input
-          disableUnderline
-          placeholder='0.00'
-          className={classNames(
-            classes.detailsInfoForm,
-            valueIndex === -1 && classes.customSlippageActive
-          )}
-          type={'text'}
-          value={temp}
-          onChange={e => {
-            allowOnlyDigitsAndTrimUnnecessaryZeros(e)
-            checkValue(e)
-          }}
-          ref={inputRef}
-          startAdornment='Custom'
-          endAdornment={
-            <>
-              %
-              <button
-                className={classes.detailsInfoBtn}
-                onClick={() => {
-                  setValue(Number(temp).toFixed(2))
-                  saveValue(Number(temp).toFixed(2))
-                }}>
-                Save
-              </button>
-            </>
-          }
-          classes={{
-            input: classes.innerInput,
-            inputAdornedEnd: classes.inputAdornedEnd
-          }}
-        />
-      </Box>
-      <Typography className={classes.info}>{description}</Typography>
+      <Input
+        disableUnderline
+        placeholder='0.00'
+        className={classNames(
+          classes.detailsInfoForm,
+          valueIndex === -1 && classes.customSlippageActive
+        )}
+        type={'text'}
+        value={temp}
+        onChange={e => {
+          allowOnlyDigitsAndTrimUnnecessaryZeros(e)
+          checkValue(e)
+        }}
+        ref={inputRef}
+        startAdornment='Custom'
+        endAdornment={
+          <>
+            %
+            <button
+              className={classes.detailsInfoBtn}
+              onClick={() => {
+                setValue(Number(temp).toFixed(2))
+                saveValue(Number(temp).toFixed(2))
+              }}>
+              Save
+            </button>
+          </>
+        }
+        classes={{
+          input: classes.innerInput,
+          inputAdornedEnd: classes.inputAdornedEnd
+        }}
+      />
+
+      <Typography className={classNames(classes.info, classes.detailsInfoTextContainer)}>
+        {description}
+      </Typography>
     </>
   )
 }
