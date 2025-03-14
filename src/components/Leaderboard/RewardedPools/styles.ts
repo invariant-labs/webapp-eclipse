@@ -31,8 +31,7 @@ const useStyles = makeStyles()(() => {
     },
     headerWrapper: {
       width: '100%',
-
-      borderBottom: `2px solid ${colors.invariant.light}`,
+      borderBottom: `1px solid ${colors.invariant.light}`,
       '& h2': {
         paddingLeft: '42px',
         marginBottom: '16px',
