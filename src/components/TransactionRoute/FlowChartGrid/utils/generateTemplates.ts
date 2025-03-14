@@ -76,7 +76,7 @@ export const generateTwoHopTemplate = (data: RouteTemplateProps): GridDefinition
           name: exchanges[0].name
         },
 
-        connectors: [{ direction: 'down' }]
+        connectors: [{ direction: 'down', withArrow: true }]
       }
     ],
     [
@@ -143,7 +143,7 @@ export const generateThreeHopTemplate = (data: RouteTemplateProps): GridDefiniti
           name: exchanges[0].name
         },
 
-        connectors: [{ direction: 'down' }]
+        connectors: [{ direction: 'down', withArrow: true }]
       }
     ],
     [
@@ -169,7 +169,7 @@ export const generateThreeHopTemplate = (data: RouteTemplateProps): GridDefiniti
           name: exchanges[1].name
         },
 
-        connectors: [{ direction: 'down' }, { direction: 'up' }]
+        connectors: [{ direction: 'down', withArrow: true }, { direction: 'up' }]
       }
     ],
     [
@@ -256,7 +256,7 @@ export const generateFourHopTemplate = (data: RouteTemplateProps): GridDefinitio
           name: exchanges[1].name
         },
 
-        connectors: [{ direction: 'up' }, { direction: 'down' }]
+        connectors: [{ direction: 'up' }, { direction: 'down', withArrow: true }]
       }
     ],
     [
@@ -286,7 +286,7 @@ export const generateFourHopTemplate = (data: RouteTemplateProps): GridDefinitio
           name: exchanges[2].name
         },
 
-        connectors: [{ direction: 'up' }, { direction: 'down' }]
+        connectors: [{ direction: 'up' }, { direction: 'down', withArrow: true }]
       }
     ],
     [

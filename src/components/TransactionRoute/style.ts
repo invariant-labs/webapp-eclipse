@@ -26,7 +26,6 @@ const useStyles = makeStyles<{ isLoading: boolean; width: string }>()((
     },
     graphContainer: {
       display: 'flex',
-      height: '90%',
       justifyContent: isLoading ? 'center' : 'flex-start',
       position: 'relative'
     },

@@ -52,7 +52,7 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
         return {
           container: {
             position: 'absolute',
-            left: -lineLength + 5,
+            left: -lineLength + 8,
             top: '50%',
             transform: `translateY(calc(-50% + ${adjustment.y}px))`,
             height: '1px',
@@ -61,7 +61,7 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
             flexDirection: 'row-reverse'
           } as SxProps<Theme>,
           line: {
-            width: lineLength - 9,
+            width: lineLength - 12,
             height: '1px',
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
           } as SxProps<Theme>,
@@ -80,7 +80,7 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
         return {
           container: {
             position: 'absolute',
-            bottom: longerConnector ? -lineLength - 80 : -lineLength,
+            bottom: longerConnector ? -lineLength - 85 : -lineLength - 10,
             left: '50%',
             transform: `translateX(calc(-50% + ${adjustment.x}px))`,
             width: 1.5,
@@ -89,7 +89,7 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
             alignItems: 'center'
           } as SxProps<Theme>,
           line: {
-            height: longerConnector ? lineLength + 80 : lineLength,
+            height: longerConnector ? lineLength + 80 : lineLength + 6,
             width: 1.5,
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
           } as SxProps<Theme>,
@@ -108,7 +108,7 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
         return {
           container: {
             position: 'absolute',
-            top: longerConnector ? -lineLength - 80 : -lineLength,
+            top: longerConnector ? -lineLength - 60 : -lineLength,
             left: '50%',
             transform: `translateX(calc(-50% + ${adjustment.x}px))`,
             width: 1.5,
@@ -117,7 +117,7 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
             alignItems: 'center'
           } as SxProps<Theme>,
           line: {
-            height: longerConnector ? lineLength + 80 : lineLength,
+            height: longerConnector ? lineLength + 60 : lineLength,
             width: 1.5,
             backgroundColor: 'rgba(255, 255, 255, 0.2)'
           } as SxProps<Theme>,

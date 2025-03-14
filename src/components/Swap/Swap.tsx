@@ -695,28 +695,28 @@ export const Swap: React.FC<ISwap> = ({
   const [route, setRoute] = useState<RouteTemplateProps | undefined>(undefined)
 
   const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
-    let currentIndex = 0
+    const currentIndex = 0
 
-    const updateRoute = () => {
-      setRouteLoading(true)
+    setRoute(routes[currentIndex])
+    // const updateRoute = () => {
+    // setRouteLoading(true)
 
-      setTimeout(() => {
-        setRoute(routes[currentIndex])
+    // setTimeout(() => {
 
-        setTimeout(() => {
-          setRouteLoading(false)
+    //       setTimeout(() => {
+    //         setRouteLoading(false)
 
-          setTimeout(() => {
-            currentIndex = (currentIndex + 1) % routes.length
+    //         setTimeout(() => {
+    //           currentIndex = (currentIndex + 1) % routes.length
 
-            updateRoute()
-          }, 3000)
-        }, intervalMs / 2)
-      }, intervalMs / 2)
-    }
-
-    updateRoute()
+    //           updateRoute()
+    //         }, 3000)
+    //       }, intervalMs / 2)
+    //     }, intervalMs / 2)
   }
+
+  //   updateRoute()
+  // }
 
   useEffect(() => {
     simulateRouteLoading(routes, 3000)

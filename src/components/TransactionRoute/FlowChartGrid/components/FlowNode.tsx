@@ -17,8 +17,8 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
   labelPos = 'bottom'
 }) => {
   const circleSize = bigNode ? 36 : 27
-  const rectWidth = 82
-  const rectHeight = 40
+  const rectWidth = 90
+  const rectHeight = 50
 
   return (
     <Box
@@ -68,15 +68,15 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
                 marginRight: '8px',
                 width: '100%',
                 height: 'auto',
-                maxWidth: '13px',
-                maxHeight: '18px'
+                maxWidth: '18px',
+                maxHeight: '21px'
               }}
               alt={dexInfo.name}
             />
             <Box>
               <Typography
                 sx={{
-                  ...typography.caption4
+                  ...typography.caption3
                 }}>
                 {dexInfo.fee}%
               </Typography>
@@ -118,12 +118,10 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
         sx={{
           display: 'flex',
           flexDirection: 'column',
-          alignItems: 'center',
           lineHeight: '5px',
-          textAlign: 'center',
           position: 'absolute',
           ...(labelPos === 'right' ? { top: '25%', left: bigNode ? '30px' : '20px' } : {}),
-          ...(labelPos === 'bottom' ? { top: bigNode ? '80%' : '70%' } : {})
+          ...(labelPos === 'bottom' ? { top: bigNode ? '80%' : '70%', textAlign: 'center' } : {})
         }}>
         <Typography
           sx={{
