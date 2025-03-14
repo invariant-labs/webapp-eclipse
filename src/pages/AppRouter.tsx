@@ -17,24 +17,25 @@ import SinglePositionPage from './SinglePositionPage/SinglePositionPage'
 import TokenCreatorPage from './TokenCreatorPage/TokenCreatorPage'
 import StatsPage from './StatsPage/StatsPage'
 import SwapPage from './SwapPage/SwapPage'
+import { ROUTES } from '@utils/utils'
 
 const createRouter = (currentNetwork: NetworkType) =>
   createBrowserRouter(
     createRoutesFromElements(
-      <Route path='/' element={<RootPage />}>
-        <Route path='/exchange/:item1?/:item2?' element={<SwapPage />} />
-        <Route path='/liquidity' element={<ListPage />} />
-        <Route path='/statistics' element={<StatsPage />} />
-        <Route path='/newPosition/:item1?/:item2?/:item3?' element={<NewPositionPage />} />
-        <Route path='/position/:id' element={<SinglePositionPage />} />
-        <Route path='/portfolio' element={<PortfolioPage />} />
+      <Route path={ROUTES.ROOT} element={<RootPage />}>
+        <Route path={ROUTES.EXCHANGE_WITH_PARAMS} element={<SwapPage />} />
+        <Route path={ROUTES.LIQUIDITY} element={<ListPage />} />
+        <Route path={ROUTES.STATISTICS} element={<StatsPage />} />
+        <Route path={ROUTES.NEW_POSITION_WITH_PARAMS} element={<NewPositionPage />} />
+        <Route path={ROUTES.POSITION_WITH_ID} element={<SinglePositionPage />} />
+        <Route path={ROUTES.PORTFOLIO} element={<PortfolioPage />} />
         {currentNetwork === NetworkType.Testnet && (
-          <Route path='/creator' element={<TokenCreatorPage />} />
+          <Route path={ROUTES.CREATOR} element={<TokenCreatorPage />} />
         )}
         {currentNetwork === NetworkType.Mainnet && (
-          <Route path='/points' element={<LeaderBoardPage />} />
+          <Route path={ROUTES.POINTS} element={<LeaderBoardPage />} />
         )}
-        <Route path='*' element={<Navigate to='/exchange' replace />} />
+        <Route path='*' element={<Navigate to={ROUTES.EXCHANGE} replace />} />
       </Route>
     )
   )
