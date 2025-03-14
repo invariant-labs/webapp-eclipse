@@ -697,11 +697,12 @@ export const Swap: React.FC<ISwap> = ({
   const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
     let currentIndex = 0
 
-    setRoute(routes[currentIndex])
     const updateRoute = () => {
       setRouteLoading(true)
 
       setTimeout(() => {
+        setRoute(routes[currentIndex])
+
         setTimeout(() => {
           setRouteLoading(false)
 
