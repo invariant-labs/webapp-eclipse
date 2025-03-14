@@ -114,7 +114,6 @@ export const Primary: Story = {
       blockerInfo: '',
       decimalsLimit: 12
     },
-    bestTierIndex: 2,
     priceA: 1111,
     priceB: 2222,
     isBalanceLoading: false,
@@ -132,7 +131,8 @@ export const Primary: Story = {
     canNavigate: true,
     isCurrentPoolExisting: true,
     feeTiersWithTvl: {},
-    totalTvl: 0
+    totalTvl: 0,
+    isLoadingStats: false
   },
   render: args => <PrimaryComponent {...args} />
 }
