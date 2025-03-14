@@ -70,7 +70,9 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                     [classes.tabSelectedTvl]:
                       currentValue === index || promotedPoolTierIndex === index
                   })}>
-                  TVL
+                  TVL (
+                  {feeTiersWithTvl[tier] ? Math.round((feeTiersWithTvl[tier] / totalTvl) * 100) : 0}
+                  %)
                 </Typography>
                 <Box>{showOnlyPercents ? `${tier}%` : `${tier}% fee`}</Box>
                 {isLoadingStats ? (
@@ -82,7 +84,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                         currentValue === index || promotedPoolTierIndex === index
                     })}>
                     {feeTiersWithTvl[tier]
-                      ? `$${+formatNumberWithSuffix(feeTiersWithTvl[tier]) < 1000 ? (+formatNumberWithSuffix(feeTiersWithTvl[tier])).toFixed(2) : formatNumberWithSuffix(feeTiersWithTvl[tier])}(${Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)}%)`
+                      ? `$${+formatNumberWithSuffix(feeTiersWithTvl[tier]) < 1000 ? (+formatNumberWithSuffix(feeTiersWithTvl[tier])).toFixed(2) : formatNumberWithSuffix(feeTiersWithTvl[tier])}`
                       : 'Not created'}
                   </Typography>
                 )}
