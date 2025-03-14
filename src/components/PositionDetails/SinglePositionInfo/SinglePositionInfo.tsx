@@ -1,5 +1,5 @@
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
-import { Button, Grid, Hidden, Tooltip, Typography } from '@mui/material'
+import { Button, Grid, Hidden, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
 import { useMemo, useRef, useState } from 'react'
@@ -12,13 +12,14 @@ import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import icons from '@static/icons'
-import { addressToTicker } from '@utils/utils'
+import { addressToTicker, ROUTES } from '@utils/utils'
 import {
   NetworkType,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
   WETH_CLOSE_POSITION_LAMPORTS_TEST
 } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 interface IProp {
   fee: number
@@ -115,7 +116,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                 src={xToY ? tokenX.icon : tokenY.icon}
                 alt={xToY ? tokenX.name : tokenY.name}
               />
-              <TooltipHover text='Reverse tokens'>
+              <TooltipHover title='Reverse tokens'>
                 <img
                   className={classes.arrowIcon}
                   src={icons.swapListIcon}
@@ -135,12 +136,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
               </Grid>
             </Grid>
             <Grid className={classes.rangeGrid} sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <Tooltip
-                open={isFeeTooltipOpen}
-                onClose={() => setIsFeeTooltipOpen(false)}
-                disableFocusListener
-                disableHoverListener
-                disableTouchListener
+              <TooltipGradient
                 title={
                   isActive ? (
                     <>
@@ -155,9 +151,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   )
                 }
                 placement='top'
-                classes={{
-                  tooltip: classes.tooltip
-                }}>
+                top={1}
+                noGradient>
                 <Typography
                   ref={feeRef}
                   onClick={e => {
@@ -171,13 +166,13 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   )}>
                   {fee.toString()}% fee
                 </Typography>
-              </Tooltip>
+              </TooltipGradient>
             </Grid>
           </Grid>
 
           <Grid className={classes.headerButtons}>
             <Grid className={classes.rangeGrid} sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <Tooltip
+              <TooltipGradient
                 title={
                   isActive ? (
                     <>
@@ -192,9 +187,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   )
                 }
                 placement='top'
-                classes={{
-                  tooltip: classes.tooltip
-                }}>
+                top={1}
+                noGradient>
                 <Typography
                   className={classNames(
                     classes.text,
@@ -203,10 +197,10 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   )}>
                   {fee.toString()}% fee
                 </Typography>
-              </Tooltip>
+              </TooltipGradient>
             </Grid>
             <TooltipHover
-              text={
+              title={
                 isLocked
                   ? 'Closing positions is disabled when position is locked'
                   : canClosePosition
@@ -232,7 +226,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             </TooltipHover>
             <Hidden mdUp>
               {!isLocked ? (
-                <TooltipHover text={'Lock liquidity'}>
+                <TooltipHover title={'Lock liquidity'}>
                   <Button
                     className={classes.lockButton}
                     disabled={isLocked}
@@ -242,7 +236,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   </Button>
                 </TooltipHover>
               ) : (
-                <TooltipHover text={'Unlocking liquidity is forbidden'}>
+                <TooltipHover title={'Unlocking liquidity is forbidden'}>
                   <Button
                     disabled
                     className={classes.unlockButton}
@@ -261,7 +255,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   const address1 = addressToTicker(network, tokenX.name)
                   const address2 = addressToTicker(network, tokenY.name)
 
-                  navigate(`/newPosition/${address1}/${address2}/${fee}`)
+                  navigate(ROUTES.getNewPositionRoute(address1, address2, fee.toString()))
                 }}>
                 <span className={classes.buttonText}>+ Add Position</span>
               </Button>

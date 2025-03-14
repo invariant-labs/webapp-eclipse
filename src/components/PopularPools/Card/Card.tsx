@@ -15,7 +15,8 @@ import {
   calculateAPYAndAPR,
   formatNumberWithSuffix,
   initialXtoY,
-  parseFeeToPathFee
+  parseFeeToPathFee,
+  ROUTES
 } from '@utils/utils'
 import { useNavigate } from 'react-router-dom'
 import { NetworkType } from '@store/consts/static'
@@ -82,14 +83,21 @@ const Card: React.FC<ICard> = ({
       : addressToTicker(network, addressFrom ?? '')
 
     navigate(
-      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      ROUTES.getNewPositionRoute(
+        tokenA,
+        tokenB,
+        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+      ),
       { state: { referer: 'liquidity' } }
     )
   }
 
   const handleOpenSwap = () => {
     navigate(
-      `/exchange/${addressToTicker(network, addressFrom ?? '')}/${addressToTicker(network, addressTo ?? '')}`,
+      ROUTES.getExchangeRoute(
+        addressToTicker(network, addressFrom ?? ''),
+        addressToTicker(network, addressTo ?? '')
+      ),
       { state: { referer: 'liquidity' } }
     )
   }
@@ -178,36 +186,34 @@ const Card: React.FC<ICard> = ({
                 {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}{' '}
                 {isPromoted && (
                   <>
-                    <div
-                      ref={airdropIconRef}
-                      className={classes.actionButton}
-                      onPointerEnter={() => {
-                        if (!isMobile) {
-                          setIsPromotedPoolPopoverOpen(true)
-                        }
-                      }}
-                      onPointerLeave={() => {
-                        if (!isMobile) {
-                          setIsPromotedPoolPopoverOpen(false)
-                        }
-                      }}
-                      onClick={() => {
-                        if (isMobile) {
-                          setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                        }
-                      }}>
-                      <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '24px' }} />
-                    </div>
                     <PromotedPoolPopover
-                      anchorEl={airdropIconRef.current}
-                      open={isPromotedPoolPopoverOpen}
-                      onClose={() => {
-                        setIsPromotedPoolPopoverOpen(false)
-                      }}
                       apr={convertedApr ?? 0}
                       apy={convertedApy ?? 0}
-                      points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-                    />
+                      points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+                      <div
+                        className={classes.actionButton}
+                        onPointerEnter={() => {
+                          if (!isMobile) {
+                            setIsPromotedPoolPopoverOpen(true)
+                          }
+                        }}
+                        onPointerLeave={() => {
+                          if (!isMobile) {
+                            setIsPromotedPoolPopoverOpen(false)
+                          }
+                        }}
+                        onClick={() => {
+                          if (isMobile) {
+                            setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                          }
+                        }}>
+                        <img
+                          src={icons.airdropRainbow}
+                          alt={'Airdrop'}
+                          style={{ height: '24px' }}
+                        />
+                      </div>
+                    </PromotedPoolPopover>
                   </>
                 )}
               </Typography>

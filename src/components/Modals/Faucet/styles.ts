@@ -80,7 +80,7 @@ const useStyles = makeStyles()(() => {
       width: 26,
       height: 21,
       cursor: 'pointer',
-      transition: 'filter 100ms',
+      transition: 'filter 300ms',
       '&:hover': {
         filter: 'brightness(1.5)'
       }

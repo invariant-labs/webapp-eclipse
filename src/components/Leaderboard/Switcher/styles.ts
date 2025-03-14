@@ -72,13 +72,12 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
     },
     switchPoolsButton: {
       ...typography.body2,
-      fontFamily: 'Arial',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       color: 'white',
       flex: 1,
-      width: 'calc(100% / 3)',
+      width: 120,
       minWidth: 'unset',
       textTransform: 'none',
       textWrap: 'nowrap',
@@ -111,9 +110,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { alignment }) => {
       },
       letterSpacing: '-0.03em',
       paddingTop: 6,
-      paddingBottom: 6,
-      paddingLeft: 32,
-      paddingRight: 32
+      paddingBottom: 6
     },
     leaderboardHeaderSectionTitle: { ...typography.heading3, color: colors.white.main }
   }

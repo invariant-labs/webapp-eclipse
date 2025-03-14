@@ -19,7 +19,7 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
       textTransform: 'none',
       willChange: 'width',
       gap: 4,
-      transition: 'width 0.7s ease-in-out',
+      transition: 'width 0.3s ease-in-out',
       position: 'relative',
       overflow: 'hidden'
     },
@@ -88,7 +88,7 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
 
     grayscaleIcon: {
       filter: 'grayscale(100%)',
-      transition: 'filter 0.7s ease-in-out',
+      transition: 'filter 0.3s ease-in-out',
       minWidth: '12px',
       minHeight: '12px'
     }

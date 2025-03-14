@@ -126,13 +126,13 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
             </Typography>
           ) : null}
           <Box className={classes.copyWrapper}>
-            <TooltipHover text='Copy address'>
+            <TooltipHover title='Copy address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}
                 classes={{ root: classes.clipboardIcon }}
               />
             </TooltipHover>
-            <TooltipHover text='Open in explorer'>
+            <TooltipHover title='Open in explorer'>
               <Link
                 to={`https://eclipsescan.xyz/token/${address}?cluster=${currentNetwork.toLocaleLowerCase()}`}
                 target='_blank'>

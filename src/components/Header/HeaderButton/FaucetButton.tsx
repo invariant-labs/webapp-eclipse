@@ -67,7 +67,7 @@ export const FaucetButton: React.FC<IProps> = ({
 
   return (
     <>
-      <TooltipHover text={getTooltipText()} top={50}>
+      <TooltipHover title={getTooltipText()} top={50}>
         <div>
           <Button
             className={classNames(classes.headerButton, { [classes.disabled]: isDisabled })}

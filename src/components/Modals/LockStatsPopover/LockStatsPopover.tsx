@@ -111,7 +111,7 @@ export const LockStatsPopover = ({
     borderRadius: 4,
     backgroundColor: colors.invariant.light,
     '.MuiLinearProgress-bar': {
-      transition: 'transform 1s cubic-bezier(0.4, 0, 0.2, 1)',
+      transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       borderRadius: 4
     }
   }
@@ -270,7 +270,8 @@ export const LockStatsPopover = ({
                   <Box
                     className={classes.progress}
                     sx={{
-                      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
+                      width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
+
                       boxShadow: `0 0 6px 1px ${colors.invariant.green}`
                     }}
                   />

@@ -23,6 +23,7 @@ import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/
 import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
 import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
+import { ROUTES } from '@utils/utils'
 import { LiquidityPools } from '@store/types/userOverview'
 
 interface IProps {
@@ -162,7 +163,7 @@ export const PositionsList: React.FC<IProps> = ({
       <Grid
         onClick={() => {
           if (allowPropagation) {
-            navigate(`/position/${element.id}`)
+            navigate(ROUTES.getPositionRoute(element.id))
           }
         }}
         key={element.id}
@@ -186,7 +187,7 @@ export const PositionsList: React.FC<IProps> = ({
           <Grid className={classes.searchRoot}>
             <Grid className={classes.titleBar}>
               <Typography className={classes.title}>Your Positions</Typography>
-              <TooltipHover text='Total number of your positions'>
+              <TooltipHover title='Total number of your positions'>
                 <Typography className={classes.positionsNumber}>
                   {String(filteredData.length)}
                 </Typography>
@@ -273,7 +274,7 @@ export const PositionsList: React.FC<IProps> = ({
               </Grid>
 
               <Grid className={classes.fullWidthWrapper}>
-                <TooltipHover text='Refresh'>
+                <TooltipHover title='Refresh'>
                   <Grid display='flex' alignItems='center'>
                     <Button
                       disabled={showNoConnected}
@@ -295,7 +296,7 @@ export const PositionsList: React.FC<IProps> = ({
           <Grid className={classes.searchRoot}>
             <Grid className={classes.titleBar}>
               <Typography className={classes.title}>Your Positions</Typography>
-              <TooltipHover text='Total number of your positions'>
+              <TooltipHover title='Total number of your positions'>
                 <Typography className={classes.positionsNumber}>
                   {String(filteredData.length)}
                 </Typography>
@@ -338,7 +339,7 @@ export const PositionsList: React.FC<IProps> = ({
                 </Box>
 
                 <Grid className={classes.fullWidthWrapper}>
-                  <TooltipHover text='Refresh'>
+                  <TooltipHover title='Refresh'>
                     <Grid display='flex' alignItems='center'>
                       <Button
                         disabled={showNoConnected}

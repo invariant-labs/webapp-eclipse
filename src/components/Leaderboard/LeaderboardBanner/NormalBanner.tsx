@@ -3,6 +3,7 @@ import icons from '@static/icons'
 import { theme } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 import useStyles from './styles'
+import { ROUTES } from '@utils/utils'
 
 interface INormalBannerProps {
   onClose: () => void
@@ -25,7 +26,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
       <span
         className={classes.text}
         onClick={() => {
-          navigate('/points')
+          navigate(ROUTES.POINTS)
 
           if (isSmallDevice) {
             onClose()
@@ -43,7 +44,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
           ...typography.body1
         }}
         onClick={() => {
-          navigate('/points')
+          navigate(ROUTES.POINTS)
 
           if (isSmallDevice) {
             onClose()
