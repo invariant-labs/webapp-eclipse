@@ -119,12 +119,6 @@ export interface PoolSnapshot {
   feeY: SnapshotValueData
 }
 
-export interface BestTier {
-  tokenX: PublicKey
-  tokenY: PublicKey
-  bestTierIndex: number
-}
-
 export interface ISelectChain {
   name: Chain
   address: string
