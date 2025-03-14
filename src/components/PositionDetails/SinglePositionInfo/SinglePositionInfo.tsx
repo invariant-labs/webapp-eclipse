@@ -275,7 +275,17 @@ const SinglePositionInfo: React.FC<IProp> = ({
           </Grid>
         </Grid>
         <Grid className={classes.bottomGrid}>
-          <PositionStats value={3} pendingFees={3} poolApr={3} />
+          <PositionStats
+            value={
+              tokenX.liqValue * (tokenXPriceData?.price ?? 0) +
+              tokenY.liqValue * (tokenYPriceData?.price ?? 0)
+            }
+            pendingFees={
+              tokenX.claimValue * (tokenXPriceData?.price ?? 0) +
+              tokenY.claimValue * (tokenYPriceData?.price ?? 0)
+            }
+            poolApr={10}
+          />
           <Separator size='100%' isHorizontal color={colors.invariant.light} />
           <Section title='Liquidity'>
             <Liquidity
@@ -356,7 +366,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             />
           </Section>
           <Section title='Pool details'>
-            <PoolDetails tvl={0.004} volume24={10} fee24={10} />
+            <PoolDetails tvl={10} volume24={10} fee24={10} />
           </Section>
         </Grid>
       </Grid>
