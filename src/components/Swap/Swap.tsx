@@ -1216,7 +1216,7 @@ export const Swap: React.FC<ISwap> = ({
               <AnimatedWaves wavePosition={'bottom'} isAnimating={isPairGivingPoints} />
             </Grid>
           </Box>
-          <Box width={route ? '350px' : '0px'}>
+          <Box width={route && !isMd ? '350px' : '0px'}>
             {!isMd && (
               <TransactionRoute
                 routeData={route}
