@@ -123,7 +123,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       ),
 
       footerDescription: '150 ICE every 24h',
-      completed: userStats ? currentRanking <= 2000 : false
+      completed: userStats ? currentRanking <= 3000 : false
     }
   ]
 
