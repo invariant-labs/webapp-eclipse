@@ -8,7 +8,6 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
@@ -24,6 +23,7 @@ import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearc
 import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
 import { ROUTES } from '@utils/utils'
+import icons from '@static/icons'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -293,7 +293,7 @@ export const PositionsList: React.FC<IProps> = ({
                       disabled={showNoConnected}
                       onClick={showNoConnected ? () => {} : handleRefresh}
                       className={classes.refreshIconBtn}>
-                      <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                      <img src={icons.refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                     </Button>
                   </Grid>
                 </TooltipHover>
@@ -367,7 +367,11 @@ export const PositionsList: React.FC<IProps> = ({
                         disabled={showNoConnected}
                         onClick={showNoConnected ? () => {} : handleRefresh}
                         className={classes.refreshIconBtn}>
-                        <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                        <img
+                          src={icons.refreshIcon}
+                          className={classes.refreshIcon}
+                          alt='Refresh'
+                        />
                       </Button>
                     </Grid>
                   </TooltipHover>

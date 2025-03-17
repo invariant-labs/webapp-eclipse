@@ -4,7 +4,6 @@ import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/S
 import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
 import Refresher from '@components/Refresher/Refresher'
 import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
-import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'
@@ -28,8 +27,6 @@ import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import lockIcon from '@static/svg/lock.svg'
-import unlockIcon from '@static/svg/unlock.svg'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -186,7 +183,7 @@ const PositionDetails: React.FC<IProps> = ({
         <Grid className={classes.backContainer} container>
           <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none' }}>
             <Grid className={classes.back} container item alignItems='center'>
-              <img className={classes.backIcon} src={backIcon} alt='Back' />
+              <img className={classes.backIcon} src={icons.backIcon} alt='Back' />
               <Typography className={classes.backText}>Positions</Typography>
             </Grid>
           </Link>
@@ -281,7 +278,7 @@ const PositionDetails: React.FC<IProps> = ({
                       setIsLockPositionModalOpen(true)
                       blurContent()
                     }}>
-                    <img src={lockIcon} alt='Lock' />
+                    <img src={icons.lockIcon} alt='Lock' />
                   </Button>
                 </TooltipHover>
               ) : (
@@ -291,7 +288,7 @@ const PositionDetails: React.FC<IProps> = ({
                     className={classes.unlockButton}
                     variant='contained'
                     onClick={() => {}}>
-                    <img src={unlockIcon} alt='Lock' />
+                    <img src={icons.unlockIcon} alt='Lock' />
                   </Button>
                 </TooltipHover>
               )}

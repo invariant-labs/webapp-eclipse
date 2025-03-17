@@ -7,7 +7,6 @@ import { VariantType } from 'notistack'
 import icons from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme, typography } from '@static/theme'
-import infoIcon from '@static/svg/info.svg'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
@@ -110,7 +109,7 @@ export const RewardedPools: React.FC<IProps> = ({
                   }
                   placement='bottom'
                   top={1}>
-                  <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
+                  <img src={icons.infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
                 </TooltipGradient>
               </Typography>
             </Box>

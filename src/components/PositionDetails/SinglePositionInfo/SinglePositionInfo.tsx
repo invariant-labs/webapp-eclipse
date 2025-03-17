@@ -8,8 +8,7 @@ import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { useNavigate } from 'react-router-dom'
 import { TokenPriceData } from '@store/consts/types'
-import lockIcon from '@static/svg/lock.svg'
-import unlockIcon from '@static/svg/unlock.svg'
+
 import { TooltipHover } from '@components/TooltipHover/TooltipHover'
 import icons from '@static/icons'
 import { addressToTicker, ROUTES } from '@utils/utils'
@@ -240,7 +239,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     disabled={isLocked}
                     variant='contained'
                     onClick={onModalOpen}>
-                    <img src={lockIcon} alt='Lock' />
+                    <img src={icons.lockIcon} alt='Lock' />
                   </Button>
                 </TooltipHover>
               ) : (
@@ -250,7 +249,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     className={classes.unlockButton}
                     variant='contained'
                     onClick={() => {}}>
-                    <img src={unlockIcon} alt='Lock' />
+                    <img src={icons.unlockIcon} alt='Lock' />
                   </Button>
                 </TooltipHover>
               )}

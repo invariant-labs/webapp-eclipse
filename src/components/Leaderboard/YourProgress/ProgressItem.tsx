@@ -1,10 +1,10 @@
 import { Box, Button, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
-import infoIcon from '@static/svg/info.svg'
 import { blurContent } from '@utils/uiUtils'
 import { theme } from '@static/theme'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import icons from '@static/icons'
 
 interface IProgressItemProps {
   onModalOpen?: (open: boolean) => void
@@ -34,7 +34,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
         <Typography className={classes.headerSmallText}>{label}</Typography>
         {tooltip && (
           <TooltipGradient title={tooltip} placement='bottom' top={1}>
-            <img src={infoIcon} alt='i' width={14} />
+            <img src={icons.infoIcon} alt='i' width={14} />
           </TooltipGradient>
         )}
       </Grid>
