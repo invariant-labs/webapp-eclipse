@@ -65,17 +65,23 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
             disableRipple
             label={
               <Box className={classes.tabContainer}>
-                <Typography
-                  className={classNames(classes.tabTvl, {
-                    [classes.tabSelectedTvl]:
-                      currentValue === index ||
-                      promotedPoolTierIndex === index ||
-                      bestTierIndex === index
-                  })}>
-                  TVL (
-                  {feeTiersWithTvl[tier] ? Math.round((feeTiersWithTvl[tier] / totalTvl) * 100) : 0}
-                  %)
-                </Typography>
+                {isLoadingStats ? (
+                  <Skeleton height={15} width={60} />
+                ) : (
+                  <Typography
+                    className={classNames(classes.tabTvl, {
+                      [classes.tabSelectedTvl]:
+                        currentValue === index ||
+                        promotedPoolTierIndex === index ||
+                        bestTierIndex === index
+                    })}>
+                    TVL{' '}
+                    {feeTiersWithTvl[tier]
+                      ? Math.round((feeTiersWithTvl[tier] / totalTvl) * 100)
+                      : 0}
+                    %
+                  </Typography>
+                )}
                 <Box>{showOnlyPercents ? `${tier}%` : `${tier}% fee`}</Box>
                 {isLoadingStats ? (
                   <Skeleton height={15} width={60} />
