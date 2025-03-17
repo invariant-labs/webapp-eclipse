@@ -491,6 +491,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         inProgress={inProgress}
         ethBalance={ethBalance}
         poolDetails={poolDetails}
+        onGoBackClick={() => navigate(ROUTES.PORTFOLIO)}
       />
     )
   }

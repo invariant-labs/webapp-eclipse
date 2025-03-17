@@ -88,6 +88,10 @@ import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
 import faucet from './svg/faucet.svg'
+import reverseTokens from './svg/reverse-tokens.svg'
+import backArrow from '@static/svg/back-arrow.svg'
+import lock from '@static/svg/lock.svg'
+import unlock from '@static/svg/unlock.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -179,7 +183,11 @@ const icons: { [key: string]: string } = {
   liquidityEmpty,
   assetsEmpty,
   settings3,
-  faucet
+  faucet,
+  reverseTokens,
+  backArrow,
+  lock,
+  unlock
 }
 
 export default icons

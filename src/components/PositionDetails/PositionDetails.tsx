@@ -1,36 +1,30 @@
-import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import Refresher from '@components/Refresher/Refresher'
-import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
-import backIcon from '@static/svg/back-arrow.svg'
-import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
+import { Box } from '@mui/material'
+import {
+  NetworkType,
+  REFRESHER_INTERVAL,
+  WETH_CLOSE_POSITION_LAMPORTS_MAIN,
+  WETH_CLOSE_POSITION_LAMPORTS_TEST
+} from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'
 import { useEffect, useMemo, useState } from 'react'
-import { Link, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
 import { TokenPriceData } from '@store/consts/types'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import {
-  addressToTicker,
-  formatNumberWithSuffix,
-  initialXtoY,
-  parseFeeToPathFee,
-  ROUTES
-} from '@utils/utils'
+import { addressToTicker, formatNumberWithSuffix, initialXtoY, ROUTES } from '@utils/utils'
 import { printBN } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PublicKey } from '@solana/web3.js'
-import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import lockIcon from '@static/svg/lock.svg'
-import unlockIcon from '@static/svg/unlock.svg'
 import { PoolDetails } from '@containers/SinglePositionWrapper/SinglePositionWrapper'
+import { PositionHeader } from './SinglePositionInfo/PositionHeader/PositionHeader'
+import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -66,6 +60,7 @@ interface IProps {
   inProgress: boolean
   ethBalance: BN
   poolDetails: PoolDetails | null
+  onGoBackClick: () => void
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -99,7 +94,8 @@ const PositionDetails: React.FC<IProps> = ({
   isLocked,
   success,
   inProgress,
-  ethBalance
+  ethBalance,
+  onGoBackClick
 }) => {
   const { classes } = useStyles()
 
@@ -166,8 +162,35 @@ const PositionDetails: React.FC<IProps> = ({
     }
   }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
+  const canClosePosition = useMemo(() => {
+    if (network === NetworkType.Testnet) {
+      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_TEST)
+    } else {
+      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_MAIN)
+    }
+  }, [ethBalance, network])
+
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
   return (
-    <Grid container className={classes.wrapperContainer} wrap='nowrap'>
+    <Box className={classes.mainContainer}>
+      <ClosePositionWarning
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false)
+          unblurContent()
+        }}
+        onClose={() => {
+          closePosition()
+          setIsModalOpen(false)
+          unblurContent()
+        }}
+        onClaim={() => {
+          closePosition(true)
+          setIsModalOpen(false)
+          unblurContent()
+        }}
+      />
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={onLockPositionModalClose}
@@ -183,192 +206,59 @@ const PositionDetails: React.FC<IProps> = ({
         success={success}
         inProgress={inProgress}
       />
-      <Grid className={classes.positionDetails} container item direction='column'>
-        <Grid className={classes.backContainer} container>
-          <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none' }}>
-            <Grid className={classes.back} container item alignItems='center'>
-              <img className={classes.backIcon} src={backIcon} alt='Back' />
-              <Typography className={classes.backText}>Positions</Typography>
-            </Grid>
-          </Link>
-          <Grid container width='auto' className={classes.marketIdWithRefresher}>
-            <Hidden mdUp>
-              <MarketIdLabel
-                marketId={poolAddress.toString()}
-                displayLength={5}
-                copyPoolAddressHandler={copyPoolAddressHandler}
-                style={{ paddingRight: 8 }}
-              />
-              {poolAddress.toString() && (
-                <TooltipHover title='Open pool in explorer'>
-                  <Grid height={'24px'} mr={'12px'}>
-                    <a
-                      href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      onClick={event => {
-                        event.stopPropagation()
-                      }}
-                      className={classes.link}>
-                      <img width={14} height={14} src={icons.newTab} alt={'Token address'} />
-                    </a>
-                  </Grid>
-                </TooltipHover>
-              )}
-              <Grid flex={1} justifyItems={'flex-end'}>
-                <TooltipHover title='Refresh'>
-                  <Refresher
-                    currentIndex={refresherTime}
-                    maxIndex={REFRESHER_INTERVAL}
-                    onClick={() => {
-                      onRefresh()
-                      setRefresherTime(REFRESHER_INTERVAL)
-                    }}
-                  />
-                </TooltipHover>
-              </Grid>
-            </Hidden>
-          </Grid>
-        </Grid>
-        <SinglePositionInfo
-          fee={+printBN(fee, DECIMAL - 2)}
-          onClickClaimFee={onClickClaimFee}
-          closePosition={closePosition}
-          tokenX={tokenX}
-          tokenY={tokenY}
-          tokenXPriceData={tokenXPriceData}
-          tokenYPriceData={tokenYPriceData}
-          xToY={xToY}
-          swapHandler={() => setXToY(!xToY)}
-          showFeesLoader={showFeesLoader}
-          userHasStakes={userHasStakes}
-          isActive={isActive}
-          network={network}
-          isLocked={isLocked}
-          onModalOpen={() => {
-            setIsLockPositionModalOpen(true)
+      <PositionHeader
+        tokenA={
+          xToY
+            ? { icon: tokenX.icon, ticker: tokenY.name }
+            : { icon: tokenY.icon, ticker: tokenX.name }
+        }
+        tokenB={
+          xToY
+            ? { icon: tokenY.icon, ticker: tokenX.name }
+            : { icon: tokenX.icon, ticker: tokenY.name }
+        }
+        fee={+printBN(fee, DECIMAL - 2)}
+        closePositionDisabled={isLocked || !canClosePosition}
+        isPromoted={false}
+        poolAddress={poolAddress.toString()}
+        networkUrl={networkUrl}
+        isLocked={isLocked}
+        onReverseTokensClick={() => setXToY(!xToY)}
+        onClosePositionClick={() => {
+          if (!userHasStakes) {
+            closePosition()
+          } else {
+            setIsModalOpen(true)
             blurContent()
-          }}
-          ethBalance={ethBalance}
-        />
-      </Grid>
-      <Grid
-        container
-        item
-        direction='column'
-        alignItems='flex-end'
-        className={classes.right}
-        wrap='nowrap'>
-        <Grid className={classes.positionPlotWrapper}>
-          <Grid
-            container
-            item
-            direction='row'
-            alignItems='center'
-            flexDirection='row-reverse'
-            className={classes.rightHeaderWrapper}
-            mt='22px'
-            gap='8px'
-            wrap='nowrap'>
-            <Hidden mdDown>
-              {!isLocked ? (
-                <TooltipHover title={'Lock liquidity'}>
-                  <Button
-                    className={classes.lockButton}
-                    disabled={isLocked}
-                    variant='contained'
-                    onClick={() => {
-                      setIsLockPositionModalOpen(true)
-                      blurContent()
-                    }}>
-                    <img src={lockIcon} alt='Lock' />
-                  </Button>
-                </TooltipHover>
-              ) : (
-                <TooltipHover title={'Unlocking liquidity is forbidden'}>
-                  <Button
-                    disabled
-                    className={classes.unlockButton}
-                    variant='contained'
-                    onClick={() => {}}>
-                    <img src={unlockIcon} alt='Lock' />
-                  </Button>
-                </TooltipHover>
-              )}
-            </Hidden>
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Button
-                className={classes.button}
-                variant='contained'
-                onClick={() => {
-                  const parsedFee = parseFeeToPathFee(fee)
-                  const address1 = addressToTicker(network, tokenXAddress.toString())
-                  const address2 = addressToTicker(network, tokenYAddress.toString())
+          }
+        }}
+        onAddPositionClick={() => {
+          const address1 = addressToTicker(network, tokenX.name)
+          const address2 = addressToTicker(network, tokenY.name)
 
-                  const isXtoY = initialXtoY(
-                    tokenXAddress.toString() ?? '',
-                    tokenYAddress.toString() ?? ''
-                  )
-
-                  const tokenA = isXtoY ? address1 : address2
-                  const tokenB = isXtoY ? address2 : address1
-
-                  navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
-                }}>
-                <span className={classes.buttonText}>+ Add Position</span>
-              </Button>
-            </Box>
-            <Hidden mdDown>
-              <TooltipHover title='Refresh'>
-                <Grid display='flex' justifyContent='center'>
-                  <Refresher
-                    currentIndex={refresherTime}
-                    maxIndex={REFRESHER_INTERVAL}
-                    onClick={() => {
-                      onRefresh()
-                      setRefresherTime(REFRESHER_INTERVAL)
-                    }}
-                  />
-                </Grid>
-              </TooltipHover>
-              <Grid
-                display={'flex'}
-                style={{
-                  padding: '8px 8px  0 0px',
-                  height: '24px',
-                  minWidth: '200px',
-                  marginRight: 'auto'
-                }}>
-                <MarketIdLabel
-                  marketId={poolAddress.toString()}
-                  displayLength={5}
-                  copyPoolAddressHandler={copyPoolAddressHandler}
-                />
-                {poolAddress.toString() && (
-                  <TooltipHover title='Open pool in explorer'>
-                    <Grid>
-                      <a
-                        href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
-                        target='_blank'
-                        rel='noopener noreferrer'
-                        onClick={event => {
-                          event.stopPropagation()
-                        }}
-                        className={classes.link}>
-                        <img
-                          width={14}
-                          height={14}
-                          src={icons.newTab}
-                          alt={'Token address'}
-                          style={{ transform: 'translateY(-2px)' }}
-                        />
-                      </a>
-                    </Grid>
-                  </TooltipHover>
-                )}
-              </Grid>
-            </Hidden>
-          </Grid>
+          navigate(ROUTES.getNewPositionRoute(address1, address2, fee.toString()))
+        }}
+        onRefreshClick={() => onRefresh()}
+        onGoBackClick={() => onGoBackClick()}
+        onLockClick={() => {
+          setIsLockPositionModalOpen(true)
+          blurContent()
+        }}
+        copyPoolAddressHandler={copyPoolAddressHandler}
+      />
+      <Box className={classes.container}>
+        <Box className={classes.leftSide}>
+          <SinglePositionInfo
+            onClickClaimFee={onClickClaimFee}
+            tokenX={tokenX}
+            tokenY={tokenY}
+            tokenXPriceData={tokenXPriceData}
+            tokenYPriceData={tokenYPriceData}
+            xToY={xToY}
+            showFeesLoader={showFeesLoader}
+          />
+        </Box>
+        <Box className={classes.rightSide}>
           <SinglePositionPlot
             data={
               detailsData.length
@@ -396,9 +286,9 @@ const PositionDetails: React.FC<IProps> = ({
             hasTicksError={hasTicksError}
             reloadHandler={reloadHandler}
           />
-        </Grid>
-      </Grid>
-    </Grid>
+        </Box>
+      </Box>
+    </Box>
   )
 }
 
