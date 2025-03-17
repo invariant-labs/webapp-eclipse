@@ -5,8 +5,7 @@
     local('Mukta-Regular'),
     url('/fonts/Mukta-Regular.woff2') format('woff2');
   font-weight: 400;
-  font-style: normal;
-  font-display: swap;
+  unicode-range: U+0020-FFFF;
 }
 
 @font-face {
@@ -16,8 +15,7 @@
     local('Mukta-Medium'),
     url('/fonts/Mukta-Medium.woff2') format('woff2');
   font-weight: 500;
-  font-style: normal;
-  font-display: swap;
+  unicode-range: U+0020-FFFF;
 }
 
 @font-face {
@@ -27,8 +25,7 @@
     local('Mukta-SemiBold'),
     url('/fonts/Mukta-SemiBold.woff2') format('woff2');
   font-weight: 600;
-  font-style: normal;
-  font-display: swap;
+  unicode-range: U+0020-FFFF;
 }
 
 @font-face {
@@ -38,8 +35,7 @@
     local('Mukta-Bold'),
     url('/fonts/Mukta-Bold.woff2') format('woff2');
   font-weight: 700;
-  font-style: normal;
-  font-display: swap;
+  unicode-range: U+0020-FFFF;
 }
 
 * {

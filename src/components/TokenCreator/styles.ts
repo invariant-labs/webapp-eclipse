@@ -20,7 +20,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       ...typography.body2,
       outline: 'none',
       marginRight: -8,
-      fontFamily: 'Mukta',
       outlineStyle: 'none',
       fontSize: 16,
       backgroundColor: colors.invariant.newDark,
@@ -117,7 +116,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     headerTitle: {
-      fontFamily: 'Mukta',
       fontStyle: 'normal',
       fontWeight: 700,
       fontSize: '20px',
