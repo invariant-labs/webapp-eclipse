@@ -950,7 +950,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             {' '}
             <Tooltip
               title={
-                tokenACheckbox
+                tokenBCheckbox
                   ? "Disabling this input means you don't need to provide the corresponding token."
                   : 'Enable to provide this token.'
               }
