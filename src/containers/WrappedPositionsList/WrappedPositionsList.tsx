@@ -15,7 +15,7 @@ import { address, status } from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
+import { calcYPerXPriceBySqrtPrice, printBN, ROUTES } from '@utils/utils'
 import { IPositionItem } from '@components/PositionsList/types'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as actionsStats } from '@store/reducers/stats'
@@ -63,7 +63,7 @@ export const WrappedPositionsList: React.FC = () => {
       actions.closePosition({
         positionIndex: index,
         onSuccess: () => {
-          navigate('/portfolio')
+          navigate(ROUTES.PORTFOLIO)
         }
       })
     )
@@ -253,7 +253,7 @@ export const WrappedPositionsList: React.FC = () => {
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}
       onAddPositionClick={() => {
-        navigate('/newPosition')
+        navigate(ROUTES.NEW_POSITION)
       }}
       currentNetwork={currentNetwork}
       data={data}

@@ -17,6 +17,7 @@ import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import check from '@static/svg/checkFill.svg'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
+import celestialMammoth from '@static/svg/celestialMammoth.svg'
 
 interface EcosystemExposureI {
   isLoading: boolean
@@ -97,6 +98,32 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
       footerDescription: 'Nucleus Points',
       completed: hasTETHPosition
+    },
+    {
+      id: 'CelestialMammoth',
+      link: 'https://linktr.ee/celestialmmammoth',
+      title: 'Reach TOP 3000',
+      img: celestialMammoth,
+      max: 3000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            Will you unfreeze your mammoth? Reach the TOP 3000 and earn passive ICE daily in the
+            Frost Mammoth game!
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: '150 ICE every 24h',
+      completed: userStats ? currentRanking <= 3000 : false
     }
   ]
 

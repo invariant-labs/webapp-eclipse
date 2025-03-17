@@ -78,7 +78,7 @@ export const RewardedPools: React.FC<IProps> = ({
               style={{
                 width: '100%',
 
-                borderBottom: `2px solid ${colors.invariant.light}`
+                borderBottom: `1px solid ${colors.invariant.light}`
               }}>
               <Typography
                 style={{
@@ -109,7 +109,7 @@ export const RewardedPools: React.FC<IProps> = ({
                     </div>
                   }
                   placement='bottom'
-                  enterTouchDelay={0}>
+                  top={1}>
                   <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
                 </TooltipGradient>
               </Typography>

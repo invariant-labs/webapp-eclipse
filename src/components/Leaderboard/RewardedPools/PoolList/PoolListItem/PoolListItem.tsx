@@ -12,7 +12,8 @@ import {
   formatNumberWithCommas,
   initialXtoY,
   parseFeeToPathFee,
-  printBN
+  printBN,
+  ROUTES
 } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { shortenAddress } from '@utils/uiUtils'
@@ -84,7 +85,11 @@ const PoolListItem: React.FC<IProps> = ({
       : addressToTicker(network, addressFrom ?? '')
 
     navigate(
-      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      ROUTES.getNewPositionRoute(
+        tokenA,
+        tokenB,
+        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+      ),
       { state: { referer: 'stats' } }
     )
   }
@@ -168,7 +173,7 @@ const PoolListItem: React.FC<IProps> = ({
                   {shortenAddress(tokenAData.symbol ?? '')}/
                   {shortenAddress(tokenBData.symbol ?? '')}
                 </Typography>
-                <TooltipHover text='Copy pool address'>
+                <TooltipHover title='Copy pool address'>
                   <FileCopyOutlinedIcon
                     onClick={copyToClipboard}
                     classes={{ root: classes.clipboardIcon }}
@@ -195,7 +200,7 @@ const PoolListItem: React.FC<IProps> = ({
 
           {!isSm && (
             <Box className={classes.action}>
-              <TooltipHover text='Add position'>
+              <TooltipHover title='Add position'>
                 <button className={classes.actionButton} onClick={handleOpenPosition}>
                   <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
                 </button>

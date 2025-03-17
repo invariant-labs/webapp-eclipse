@@ -24,6 +24,7 @@ import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
 import { Button } from '@common/Button/Button'
+import { ROUTES } from '@utils/utils'
 
 export enum LiquidityPools {
   Standard = 'Standard',
@@ -167,7 +168,7 @@ export const PositionsList: React.FC<IProps> = ({
       <Grid
         onClick={() => {
           if (allowPropagation) {
-            navigate(`/position/${element.id}`)
+            navigate(ROUTES.getPositionRoute(element.id))
           }
         }}
         key={element.id}
@@ -196,7 +197,7 @@ export const PositionsList: React.FC<IProps> = ({
           <Grid className={classes.searchRoot}>
             <Grid className={classes.titleBar}>
               <Typography className={classes.title}>Your Positions</Typography>
-              <TooltipHover text='Total number of your positions'>
+              <TooltipHover title='Total number of your positions'>
                 <Typography className={classes.positionsNumber}>
                   {String(filteredData.length)}
                 </Typography>
@@ -287,7 +288,7 @@ export const PositionsList: React.FC<IProps> = ({
                 columnGap={2}
                 justifyContent='space-between'
                 className={classes.fullWidthWrapper}>
-                <TooltipHover text='Refresh'>
+                <TooltipHover title='Refresh'>
                   <Grid display='flex' alignItems='center'>
                     <MuiButton
                       disabled={showNoConnected}
@@ -314,7 +315,7 @@ export const PositionsList: React.FC<IProps> = ({
           <Grid className={classes.searchRoot}>
             <Grid className={classes.titleBar}>
               <Typography className={classes.title}>Your Positions</Typography>
-              <TooltipHover text='Total number of your positions'>
+              <TooltipHover title='Total number of your positions'>
                 <Typography className={classes.positionsNumber}>
                   {String(filteredData.length)}
                 </Typography>
@@ -361,7 +362,7 @@ export const PositionsList: React.FC<IProps> = ({
                   columnGap={2}
                   justifyContent='space-between'
                   className={classes.fullWidthWrapper}>
-                  <TooltipHover text='Refresh'>
+                  <TooltipHover title='Refresh'>
                     <Grid display='flex' alignItems='center'>
                       <MuiButton
                         disabled={showNoConnected}

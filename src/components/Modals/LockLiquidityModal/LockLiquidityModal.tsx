@@ -1,6 +1,6 @@
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import useStyles from './style'
-import { Button, Grid, InputBase, Popover, Tooltip, Typography } from '@mui/material'
+import { Button, Grid, InputBase, Popover, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -8,6 +8,7 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '@static/theme'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 const confirmText = 'Lock my liquidity permanently'
 export interface ILockLiquidityModal {
@@ -127,7 +128,7 @@ export const LockLiquidityModal = ({
                   src={xToY ? tokenX.icon : tokenY.icon}
                   alt={xToY ? tokenX.name : tokenY.name}
                 />
-                <TooltipHover text='Reverse tokens'>
+                <TooltipHover title='Reverse tokens'>
                   <img
                     className={classes.arrowIcon}
                     src={icons.swapListIcon}
@@ -148,7 +149,7 @@ export const LockLiquidityModal = ({
             <Grid item className={classes.pairDetails}>
               <Grid item container className={classes.pairValues}>
                 <Grid item className={classes.pairFee}>
-                  <Tooltip
+                  <TooltipGradient
                     title={
                       isActive ? (
                         <>
@@ -163,11 +164,10 @@ export const LockLiquidityModal = ({
                       )
                     }
                     placement='top'
-                    classes={{
-                      tooltip: classes.tooltip
-                    }}>
+                    top={1}
+                    noGradient>
                     <Typography>{fee}</Typography>
-                  </Tooltip>
+                  </TooltipGradient>
                 </Grid>
                 <Grid item className={classes.pairRange}>
                   <Typography className={classes.normalText}>
@@ -237,7 +237,7 @@ export const LockLiquidityModal = ({
           </Grid>
 
           <TooltipHover
-            text={
+            title={
               isCorrectValue
                 ? ''
                 : 'Confirm that you understand the consequences by typing the text above'

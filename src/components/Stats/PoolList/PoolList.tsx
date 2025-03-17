@@ -11,6 +11,7 @@ import { BN } from '@coral-xyz/anchor'
 import { colors } from '@static/theme'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@utils/utils'
 
 export interface PoolListInterface {
   data: Array<{
@@ -202,7 +203,7 @@ const PoolList: React.FC<PoolListInterface> = ({
             mainTitle='Pool not found...'
             desc='You can create it yourself!'
             desc2='Or try adjusting your search criteria!'
-            onAction={() => navigate('/newPosition')}
+            onAction={() => navigate(ROUTES.NEW_POSITION)}
             buttonName='Create Pool'
             withButton={true}
           />

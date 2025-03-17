@@ -11,16 +11,6 @@ const useStyles = makeStyles()(() => {
         padding: '16px'
       }
     },
-    root: {
-      background: colors.invariant.component,
-      width: 'fit-content',
-      height: 'fit-content',
-      borderRadius: 14,
-      paddingTop: 16,
-      paddingBottom: 16,
-      paddingLeft: 24,
-      paddingRight: 24
-    },
     paper: {
       background: 'transparent',
       boxShadow: 'none',
