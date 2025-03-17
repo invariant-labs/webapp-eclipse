@@ -48,18 +48,12 @@ export interface InitPositionStore {
   success: boolean
 }
 
-export interface CurrentPositionTicksStore {
-  lowerTick?: Tick
-  upperTick?: Tick
-  loading: boolean
-}
 export interface IPositionsStore {
   lastPage: number
   plotTicks: PlotTicks
   currentPoolIndex: number | null
   positionsList: PositionsListStore
   currentPositionId: string
-  currentPositionTicks: CurrentPositionTicksStore
   initPosition: InitPositionStore
   shouldNotUpdateRange: boolean
   prices: {
@@ -97,6 +91,8 @@ export interface ClosePositionData {
 export interface SetPositionData {
   index: number
   position: Position
+  lowerTick: Tick
+  upperTick: Tick
 }
 
 export const defaultState: IPositionsStore = {
@@ -118,11 +114,6 @@ export const defaultState: IPositionsStore = {
     loading: true
   },
   currentPositionId: '',
-  currentPositionTicks: {
-    lowerTick: undefined,
-    upperTick: undefined,
-    loading: false
-  },
   initPosition: {
     inProgress: false,
     success: false
@@ -211,9 +202,9 @@ const positionsSlice = createSlice({
     setSinglePosition(state, action: PayloadAction<SetPositionData>) {
       state.positionsList.list[action.payload.index] = {
         address: state.positionsList.list[action.payload.index].address,
-        lowerTick: state.positionsList.list[action.payload.index].lowerTick,
-        upperTick: state.positionsList.list[action.payload.index].upperTick,
-        ticksLoading: state.positionsList.list[action.payload.index].ticksLoading,
+        lowerTick: action.payload.lowerTick,
+        upperTick: action.payload.upperTick,
+        ticksLoading: false,
         ...action.payload.position
       }
       return state
@@ -222,23 +213,18 @@ const positionsSlice = createSlice({
       state,
       action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
     ) {
-      state.positionsList.list.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
-          position = {
-            ...position,
-            ticksLoading: true
-          }
-        }
-      })
+      state.positionsList.list = state.positionsList.list.map(position =>
+        position.address.toString() === action.payload.positionId
+          ? { ...position, ticksLoading: true }
+          : position
+      )
 
-      state.positionsList.lockedList.map(position => {
-        if (position.address.toString() === action.payload.positionId) {
-          position = {
-            ...position,
-            ticksLoading: true
-          }
-        }
-      })
+      state.positionsList.lockedList = state.positionsList.lockedList.map(position =>
+        position.address.toString() === action.payload.positionId
+          ? { ...position, ticksLoading: true }
+          : position
+      )
+
       return state
     },
     setPositionRangeTicks(
@@ -250,7 +236,8 @@ const positionsSlice = createSlice({
           return {
             ...position,
             lowerTick: action.payload.lowerTick,
-            upperTick: action.payload.upperTick
+            upperTick: action.payload.upperTick,
+            ticksLoading: false
           }
         }
         return position
@@ -261,33 +248,12 @@ const positionsSlice = createSlice({
           return {
             ...position,
             lowerTick: action.payload.lowerTick,
-            upperTick: action.payload.upperTick
+            upperTick: action.payload.upperTick,
+            ticksLoading: false
           }
         }
         return position
       })
-    },
-    getCurrentPositionRangeTicks(
-      state,
-      _action: PayloadAction<{ id: string; fetchTick?: FetchTick }>
-    ) {
-      state.currentPositionTicks.loading = true
-      return state
-    },
-    setCurrentPositionRangeTicks(
-      state,
-      action: PayloadAction<{ lowerTick?: Tick; upperTick?: Tick }>
-    ) {
-      state.currentPositionTicks = {
-        lowerTick: action.payload.lowerTick
-          ? action.payload.lowerTick
-          : state.currentPositionTicks.lowerTick,
-        upperTick: action.payload.upperTick
-          ? action.payload.upperTick
-          : state.currentPositionTicks.upperTick,
-        loading: false
-      }
-      return state
     },
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state

@@ -16,7 +16,6 @@ export const {
   currentPoolIndex,
   prices,
   currentPositionId,
-  currentPositionTicks,
   initPosition,
   shouldNotUpdateRange
 } = keySelectors(store, [
@@ -26,7 +25,6 @@ export const {
   'plotTicks',
   'prices',
   'currentPositionId',
-  'currentPositionTicks',
   'initPosition',
   'shouldNotUpdateRange'
 ])
@@ -156,7 +154,6 @@ export const positionsSelectors = {
   positionsList,
   plotTicks,
   currentPositionId,
-  currentPositionTicks,
   initPosition,
   shouldNotUpdateRange
 }
