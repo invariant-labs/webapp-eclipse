@@ -8,7 +8,7 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '@static/theme'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 const confirmText = 'Lock my liquidity permanently'
 export interface ILockLiquidityModal {
