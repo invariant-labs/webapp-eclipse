@@ -147,7 +147,7 @@ export const totalUnlaimedFees = createSelector(
       }
       return acc + xValue + yValue
     }, 0)
-    console.log(total)
+
     return { total, isLoading }
   }
 )
