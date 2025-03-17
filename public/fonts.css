@@ -1,0 +1,76 @@
+@font-face {
+  font-family: 'Mukta';
+  src:
+    local('Mukta ExtraLight'),
+    local('Mukta-ExtraLight'),
+    url('/fonts/Mukta-Light.woff2') format('woff2');
+  font-weight: 200;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mukta';
+  src:
+    local('Mukta Light'),
+    local('Mukta-Light'),
+    url('/fonts/Mukta-Light.woff2') format('woff2');
+  font-weight: 300;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mukta';
+  src:
+    local('Mukta Regular'),
+    local('Mukta-Regular'),
+    url('/fonts/Mukta-Regular.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mukta';
+  src:
+    local('Mukta Medium'),
+    local('Mukta-Medium'),
+    url('/fonts/Mukta-Medium.woff2') format('woff2');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mukta';
+  src:
+    local('Mukta SemiBold'),
+    local('Mukta-SemiBold'),
+    url('/fonts/Mukta-SemiBold.woff2') format('woff2');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mukta';
+  src:
+    local('Mukta Bold'),
+    local('Mukta-Bold'),
+    url('/fonts/Mukta-Bold.woff2') format('woff2');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Mukta';
+  src:
+    local('Mukta ExtraBold'),
+    local('Mukta-ExtraBold'),
+    url('/fonts/Mukta-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
