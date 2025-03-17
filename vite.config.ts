@@ -40,7 +40,6 @@ export default defineConfig({
     port: 3000
   },
   build: {
-    assetsInlineLimit: 0,
     target: 'es2020',
     rollupOptions: {
       external: ['fs/promises', 'path'],

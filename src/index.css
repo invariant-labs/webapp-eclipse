@@ -5,6 +5,7 @@
     local('Mukta-Regular'),
     url('/fonts/Mukta-Regular.woff2') format('woff2');
   font-weight: 400;
+  font-display: block;
   unicode-range: U+0020-FFFF;
 }
 
@@ -15,6 +16,7 @@
     local('Mukta-Medium'),
     url('/fonts/Mukta-Medium.woff2') format('woff2');
   font-weight: 500;
+  font-display: block;
   unicode-range: U+0020-FFFF;
 }
 
@@ -25,6 +27,7 @@
     local('Mukta-SemiBold'),
     url('/fonts/Mukta-SemiBold.woff2') format('woff2');
   font-weight: 600;
+  font-display: block;
   unicode-range: U+0020-FFFF;
 }
 
@@ -35,6 +38,7 @@
     local('Mukta-Bold'),
     url('/fonts/Mukta-Bold.woff2') format('woff2');
   font-weight: 700;
+  font-display: block;
   unicode-range: U+0020-FFFF;
 }
 
