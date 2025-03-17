@@ -38,7 +38,7 @@ import { lockerState } from '@store/selectors/locker'
 import icons from '@static/icons'
 import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
-import { poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 
 export interface IProps {
   id: string
@@ -384,6 +384,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
   }, [isLoadingList])
 
+  const isLoadingStats = useSelector(isLoading)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
 
   useEffect(() => {
@@ -492,6 +493,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         ethBalance={ethBalance}
         poolDetails={poolDetails}
         onGoBackClick={() => navigate(ROUTES.PORTFOLIO)}
+        showPoolDetailsLoader={isLoadingStats}
       />
     )
   }

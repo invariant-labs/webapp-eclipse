@@ -61,6 +61,7 @@ interface IProps {
   ethBalance: BN
   poolDetails: PoolDetails | null
   onGoBackClick: () => void
+  showPoolDetailsLoader: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -96,7 +97,8 @@ const PositionDetails: React.FC<IProps> = ({
   inProgress,
   ethBalance,
   onGoBackClick,
-  poolDetails
+  poolDetails,
+  showPoolDetailsLoader
 }) => {
   const { classes } = useStyles()
 
@@ -259,6 +261,7 @@ const PositionDetails: React.FC<IProps> = ({
             xToY={xToY}
             showFeesLoader={showFeesLoader}
             poolDetails={poolDetails}
+            showPoolDetailsLoader={showPoolDetailsLoader}
           />
         </Box>
         <Box className={classes.rightSide}>

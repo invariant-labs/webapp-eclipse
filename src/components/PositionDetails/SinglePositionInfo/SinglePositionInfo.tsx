@@ -22,6 +22,7 @@ interface IProp {
   xToY: boolean
   showFeesLoader?: boolean
   poolDetails: PoolDetailsType | null
+  showPoolDetailsLoader?: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -32,6 +33,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
   tokenYPriceData,
   xToY,
   showFeesLoader = false,
+  showPoolDetailsLoader = false,
   poolDetails
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
@@ -164,6 +166,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             tvl={poolDetails?.tvl ?? 0}
             volume24={poolDetails?.volume24 ?? 0}
             fee24={poolDetails?.fee24 ?? 0}
+            showPoolDetailsLoader={showPoolDetailsLoader}
           />
         </Section>
       </Box>
