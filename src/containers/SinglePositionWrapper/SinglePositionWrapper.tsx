@@ -70,7 +70,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     if (position?.id) {
       dispatch(actions.setCurrentPositionId(id))
 
-      if (position.ticksLoading !== false) {
+      if (position) {
         dispatch(
           actions.getCurrentPlotTicks({
             poolIndex: position.poolData.poolIndex,
