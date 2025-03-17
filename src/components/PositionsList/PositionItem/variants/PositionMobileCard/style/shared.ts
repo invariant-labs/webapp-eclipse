@@ -5,7 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useSharedStyles = makeStyles()((theme: Theme) => ({
   icons: {
     alignItems: 'center',
-    wrap: 'nowrap',
+    flexWrap: 'nowrap',
     marginRight: 12,
     width: 'fit-content',
     [theme.breakpoints.down('lg')]: {

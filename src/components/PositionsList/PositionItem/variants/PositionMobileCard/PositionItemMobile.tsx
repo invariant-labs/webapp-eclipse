@@ -271,6 +271,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 sharedClasses.fee,
                 isActive ? sharedClasses.activeFee : undefined
               )}
+              justifyContent='center'
+              alignItems='center'
               onClick={e => e.stopPropagation()}>
               <Typography
                 className={classNames(
@@ -292,7 +294,12 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               sx={{ borderRadius: '10px' }}
             />
           ) : (
-            <Grid container className={sharedClasses.fee} sx={{ width: '100%' }}>
+            <Grid
+              container
+              justifyContent='center'
+              alignItems='center'
+              className={sharedClasses.fee}
+              sx={{ width: '100%' }}>
               <Box className={sharedClasses.unclaimedFeeContainer}>
                 <Typography className={sharedClasses.infoText}>Unclaimed Fee</Typography>
                 <Typography className={sharedClasses.greenText}>
@@ -397,7 +404,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   const { success, inProgress } = useSelector(lockerState)
 
   return (
-    <Grid className={classes.root} container>
+    <Grid className={classes.root} container direction='column'>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={() => setIsLockPositionModalOpen(false)}

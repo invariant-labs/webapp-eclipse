@@ -8,7 +8,6 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     height: '290px',
     marginTop: '16px',
     flexWrap: 'wrap',
-    flexDirection: 'column',
     [theme.breakpoints.down('sm')]: {
       padding: 8
     },
@@ -60,16 +59,16 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     width: '100%'
   },
   mdTop: {
+    marginBottom: theme.spacing(2),
     justifyContent: 'space-between',
+    width: '100%',
     flexDirection: 'row',
-    flexWrap: 'nowrap',
-    marginBottom: '2px',
-    width: '100%'
+    flexWrap: 'nowrap'
   },
   iconsAndNames: {
+    display: 'flex',
     alignItems: 'center',
     justifyContent: 'space-between',
-    flexWrap: 'nowrap',
-    display: 'flex'
+    flexWrap: 'nowrap'
   }
 }))
