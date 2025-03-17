@@ -650,7 +650,23 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               : classes.errorWarning
           }>
           <Tooltip
-            title={'Impact on the price for token exchange'}
+            title={
+              <>
+                Impact on the price for token exchange.
+                {new BN(simulation?.swapSimulation?.priceImpact ?? 0).gt(
+                  toDecimal(+Number(priceImpact).toFixed(4), 2)
+                ) ? (
+                  <>
+                    {' '}
+                    In order to create position you have to either:
+                    <p>1. Split the position into smaller ones to minimize prize impact.</p>
+                    <p>2. Change swap price impact tolerance in the settings.</p>
+                  </>
+                ) : (
+                  ''
+                )}
+              </>
+            }
             classes={{ tooltip: classes.tooltip }}>
             <img
               src={icons.infoCircle}
@@ -658,7 +674,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               width='12px'
               style={{ marginRight: '4px', marginBottom: '-1.5px' }}
               className={
-                new BN(simulation?.swapSimulation?.priceImpact ?? 0).lt(
+                new BN(simulation?.swapSimulation?.priceImpact ?? 0).lte(
                   toDecimal(+Number(priceImpact).toFixed(4), 2)
                 )
                   ? classes.grayscaleIcon
@@ -863,12 +879,20 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               width: alignment === DepositOptions.Auto ? '31px' : '0px',
               opacity: alignment === DepositOptions.Auto ? 1 : 0
             }}>
-            <Checkbox
-              checked={tokenACheckbox}
-              onChange={e => setTokenACheckbox(e.target.checked)}
-              className={classes.checkbox}
-              icon={<span className={classes.customIcon} />}
-            />
+            <Tooltip
+              title={
+                tokenACheckbox
+                  ? "Disabling this input means you don't need to provide the corresponding token."
+                  : 'Enable to provide this token.'
+              }
+              classes={{ tooltip: classes.tooltip }}>
+              <Checkbox
+                checked={tokenACheckbox}
+                onChange={e => setTokenACheckbox(e.target.checked)}
+                className={classes.checkbox}
+                icon={<span className={classes.customIcon} />}
+              />
+            </Tooltip>
           </Box>
           <DepositAmountInput
             tokenPrice={priceA}
@@ -923,14 +947,23 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               width: alignment === DepositOptions.Auto ? '31px' : '0px',
               opacity: alignment === DepositOptions.Auto ? 1 : 0
             }}>
-            <Checkbox
-              checked={tokenBCheckbox}
-              onChange={e => {
-                setTokenBCheckbox(e.target.checked)
-              }}
-              className={classes.checkbox}
-              icon={<span className={classes.customIcon} />}
-            />
+            {' '}
+            <Tooltip
+              title={
+                tokenACheckbox
+                  ? "Disabling this input means you don't need to provide the corresponding token."
+                  : 'Enable to provide this token.'
+              }
+              classes={{ tooltip: classes.tooltip }}>
+              <Checkbox
+                checked={tokenBCheckbox}
+                onChange={e => {
+                  setTokenBCheckbox(e.target.checked)
+                }}
+                className={classes.checkbox}
+                icon={<span className={classes.customIcon} />}
+              />
+            </Tooltip>
           </Box>
           <DepositAmountInput
             tokenPrice={priceB}
