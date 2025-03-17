@@ -61,7 +61,15 @@ export const useStyles = makeStyles()(() => ({
     gap: 8
   },
   backContainer: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+    transition: 'filter 300ms',
+
+    '&:hover': {
+      filter: 'brightness(1.4)',
+      '@media (hover: none)': {
+        filter: 'brightness(1)'
+      }
+    }
   },
   iconContainer: { display: 'flex', alignItems: 'center', gap: 8 },
   icon: {
@@ -107,6 +115,12 @@ export const useStyles = makeStyles()(() => ({
 
     [theme.breakpoints.up(688)]: {
       width: 108
+    },
+
+    '&:disabled': {
+      pointerEvents: 'all',
+      background: colors.invariant.light,
+      color: colors.invariant.textGrey
     }
   },
   addButton: {
@@ -132,7 +146,13 @@ export const useStyles = makeStyles()(() => ({
     textTransform: 'none',
     padding: 0,
     minWidth: 0,
-    ...typography.body1
+    ...typography.body1,
+
+    '&:disabled': {
+      pointerEvents: 'all',
+      background: colors.invariant.light,
+      color: colors.invariant.textGrey
+    }
   },
   airdropIcon: {
     height: 24

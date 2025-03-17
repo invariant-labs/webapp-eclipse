@@ -23,7 +23,7 @@ import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { PoolDetails } from '@containers/SinglePositionWrapper/SinglePositionWrapper'
-import { PositionHeader } from './SinglePositionInfo/PositionHeader/PositionHeader'
+import { PositionHeader } from './PositionHeader/PositionHeader'
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
 
 interface IProps {
@@ -95,7 +95,8 @@ const PositionDetails: React.FC<IProps> = ({
   success,
   inProgress,
   ethBalance,
-  onGoBackClick
+  onGoBackClick,
+  poolDetails
 }) => {
   const { classes } = useStyles()
 
@@ -162,7 +163,7 @@ const PositionDetails: React.FC<IProps> = ({
     }
   }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
-  const canClosePosition = useMemo(() => {
+  const hasEnoughETH = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_TEST)
     } else {
@@ -218,11 +219,12 @@ const PositionDetails: React.FC<IProps> = ({
             : { icon: tokenX.icon, ticker: tokenY.name }
         }
         fee={+printBN(fee, DECIMAL - 2)}
-        closePositionDisabled={isLocked || !canClosePosition}
         isPromoted={false}
         poolAddress={poolAddress.toString()}
         networkUrl={networkUrl}
         isLocked={isLocked}
+        isActive={isActive}
+        hasEnoughETH={hasEnoughETH}
         onReverseTokensClick={() => setXToY(!xToY)}
         onClosePositionClick={() => {
           if (!userHasStakes) {
@@ -256,6 +258,7 @@ const PositionDetails: React.FC<IProps> = ({
             tokenYPriceData={tokenYPriceData}
             xToY={xToY}
             showFeesLoader={showFeesLoader}
+            poolDetails={poolDetails}
           />
         </Box>
         <Box className={classes.rightSide}>

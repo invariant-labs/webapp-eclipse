@@ -9,6 +9,7 @@ import { VariantType } from 'notistack'
 import Refresher from '@components/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useState } from 'react'
+import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
 
 type Props = {
   tokenA: {
@@ -20,11 +21,12 @@ type Props = {
     ticker: string
   }
   fee: number
-  closePositionDisabled: boolean
+  hasEnoughETH: boolean
   isPromoted: boolean
   poolAddress: string
   networkUrl: string
   isLocked: boolean
+  isActive: boolean
   onReverseTokensClick: () => void
   onClosePositionClick: () => void
   onAddPositionClick: () => void
@@ -38,11 +40,12 @@ export const PositionHeader = ({
   tokenA,
   tokenB,
   fee,
-  closePositionDisabled,
+  hasEnoughETH,
   isPromoted,
   poolAddress,
   networkUrl,
   isLocked,
+  isActive,
   onReverseTokensClick,
   onClosePositionClick,
   onAddPositionClick,
@@ -73,21 +76,26 @@ export const PositionHeader = ({
   }, [refresherTime])
 
   const closeButton = (
-    <Button
-      className={classes.closeButton}
-      disabled={closePositionDisabled}
-      variant='contained'
-      onClick={() => onClosePositionClick()}>
-      Close position
-    </Button>
+    <TooltipHover
+      title={
+        isLocked
+          ? 'Closing positions is disabled when position is locked'
+          : hasEnoughETH
+            ? 'Unclaimed fees will be returned when closing the position'
+            : 'Insufficient ETH to close position'
+      }>
+      <Button
+        className={classes.closeButton}
+        disabled={isLocked || !hasEnoughETH}
+        variant='contained'
+        onClick={() => onClosePositionClick()}>
+        Close position
+      </Button>
+    </TooltipHover>
   )
 
   const addButton = (
-    <Button
-      className={classes.addButton}
-      disabled={closePositionDisabled}
-      variant='contained'
-      onClick={() => onAddPositionClick()}>
+    <Button className={classes.addButton} variant='contained' onClick={() => onAddPositionClick()}>
       + Add position
     </Button>
   )
@@ -111,14 +119,18 @@ export const PositionHeader = ({
   )
 
   const refresher = (
-    <Refresher
-      currentIndex={refresherTime}
-      maxIndex={REFRESHER_INTERVAL}
-      onClick={() => {
-        onRefreshClick()
-        setRefresherTime(REFRESHER_INTERVAL)
-      }}
-    />
+    <TooltipHover title='Refresh'>
+      <Box>
+        <Refresher
+          currentIndex={refresherTime}
+          maxIndex={REFRESHER_INTERVAL}
+          onClick={() => {
+            onRefreshClick()
+            setRefresherTime(REFRESHER_INTERVAL)
+          }}
+        />
+      </Box>
+    </TooltipHover>
   )
 
   const lockButton = !isLocked ? (
@@ -181,7 +193,25 @@ export const PositionHeader = ({
             />
           </Box>
           <Box className={classes.wrapper}>
-            <Box className={classes.feeContainer}>{fee.toFixed(2)}%</Box>
+            <TooltipGradient
+              title={
+                isActive ? (
+                  <>
+                    The position is <b>active</b> and <b>earning a fee</b> as long as the current
+                    price is <b>within</b> the position's price range.
+                  </>
+                ) : (
+                  <>
+                    The position is <b>inactive</b> and <b>not earning a fee</b> as long as the
+                    current price is <b>outside</b> the position's price range.
+                  </>
+                )
+              }
+              placement='top'
+              top={3}
+              noGradient>
+              <Box className={classes.feeContainer}>{fee.toFixed(2)}%</Box>
+            </TooltipGradient>
             {!isSmDown && closeButton}
             {!isSmDown && isMdDown && (
               <>

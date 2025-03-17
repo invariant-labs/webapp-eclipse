@@ -10,6 +10,8 @@ import { Liquidity } from './Liquidity/Liquidity'
 import { Separator } from '@components/Separator/Separator'
 import { PositionStats } from './PositionStats/PositionStats'
 import { colors } from '@static/theme'
+import { PoolDetails as PoolDetailsType } from '@containers/SinglePositionWrapper/SinglePositionWrapper'
+import { apyToApr } from '@utils/uiUtils'
 
 interface IProp {
   onClickClaimFee: () => void
@@ -19,6 +21,7 @@ interface IProp {
   tokenYPriceData?: TokenPriceData
   xToY: boolean
   showFeesLoader?: boolean
+  poolDetails: PoolDetailsType | null
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -28,7 +31,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   tokenXPriceData,
   tokenYPriceData,
   xToY,
-  showFeesLoader = false
+  showFeesLoader = false,
+  poolDetails
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -65,7 +69,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
             tokenX.claimValue * (tokenXPriceData?.price ?? 0) +
             tokenY.claimValue * (tokenYPriceData?.price ?? 0)
           }
-          poolApr={10}
+          poolApr={apyToApr(poolDetails?.apy ?? 0)}
+          isLoading={showFeesLoader}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />
         <Section title='Liquidity'>
@@ -76,12 +81,14 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     icon: tokenX.icon,
                     ticker: tokenX.name,
                     amount: tokenX.liqValue,
+                    decimal: tokenX.decimal,
                     price: tokenXPriceData?.price
                   }
                 : {
                     icon: tokenY.icon,
                     ticker: tokenY.name,
                     amount: tokenY.liqValue,
+                    decimal: tokenY.decimal,
                     price: tokenYPriceData?.price
                   }
             }
@@ -91,12 +98,14 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     icon: tokenY.icon,
                     ticker: tokenY.name,
                     amount: tokenY.liqValue,
+                    decimal: tokenY.decimal,
                     price: tokenYPriceData?.price
                   }
                 : {
                     icon: tokenX.icon,
                     ticker: tokenX.name,
                     amount: tokenX.liqValue,
+                    decimal: tokenX.decimal,
                     price: tokenXPriceData?.price
                   }
             }
@@ -119,12 +128,14 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     icon: tokenX.icon,
                     ticker: tokenX.name,
                     amount: tokenX.claimValue,
+                    decimal: tokenX.decimal,
                     price: tokenXPriceData?.price
                   }
                 : {
                     icon: tokenY.icon,
                     ticker: tokenY.name,
                     amount: tokenY.claimValue,
+                    decimal: tokenY.decimal,
                     price: tokenYPriceData?.price
                   }
             }
@@ -134,12 +145,14 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     icon: tokenY.icon,
                     ticker: tokenY.name,
                     amount: tokenY.claimValue,
+                    decimal: tokenY.decimal,
                     price: tokenYPriceData?.price
                   }
                 : {
                     icon: tokenX.icon,
                     ticker: tokenX.name,
                     amount: tokenX.claimValue,
+                    decimal: tokenX.decimal,
                     price: tokenXPriceData?.price
                   }
             }
@@ -147,7 +160,11 @@ const SinglePositionInfo: React.FC<IProp> = ({
           />
         </Section>
         <Section title='Pool details'>
-          <PoolDetails tvl={10} volume24={10} fee24={10} />
+          <PoolDetails
+            tvl={poolDetails?.tvl ?? 0}
+            volume24={poolDetails?.volume24 ?? 0}
+            fee24={poolDetails?.fee24 ?? 0}
+          />
         </Section>
       </Box>
     </>
