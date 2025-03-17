@@ -86,7 +86,7 @@ export const useStyles = makeStyles<StyleProps>()(
       backgroundColor: colors.invariant.light,
       borderRadius: 14,
 
-      transition: '0.1s',
+      transition: '0.3s',
       '&:hover': {
         boxShadow: '0px 0px 16px rgba(255, 255, 255, 0.1)',
         backgroundColor: colors.invariant.light,
@@ -99,6 +99,10 @@ export const useStyles = makeStyles<StyleProps>()(
     buttonText: {
       ...typography.body2
     },
-    button2: {}
+    buttonContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center'
+    }
   })
 )
