@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton } from '@mui/material'
 import { useStyles } from './style'
 import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
@@ -7,7 +7,7 @@ import { PaginationList } from '@components/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
 import { Status } from '@store/reducers/solanaWallet'
 import { CurrentUser, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
-import { colors, theme } from '@static/theme'
+import { theme } from '@static/theme'
 import LeaderboardSwapItem from './LeaderboardItem/LeaderboardSwapItem'
 import LeaderboardLpItem from './LeaderboardItem/LeaderboardLpItem'
 import LeaderboardTotalItem from './LeaderboardItem/LeaderboardTotalItem'
@@ -276,8 +276,6 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
 }) => {
   const { classes } = useStyles()
 
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
-
   const currentData = useMemo(() => {
     if (type === 'Liquidity') return lpData
     if (type === 'Swap') return swapData
@@ -292,14 +290,6 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
 
   const totalPages = useMemo(
     () => Math.ceil(totalItems / itemsPerPage),
-    [lpData, swapData, totalData, type]
-  )
-  const lowerBound = useMemo(
-    () => (currentPage - 1) * itemsPerPage + 1,
-    [currentPage, itemsPerPage, type]
-  )
-  const upperBound = useMemo(
-    () => Math.min(currentPage * itemsPerPage, totalItems),
     [lpData, swapData, totalData, type]
   )
 
@@ -346,35 +336,13 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
       </Grid>
 
       {totalPages >= 1 && (
-        <Box sx={isMobile ? { paddingLeft: '8px', paddingRight: '8px' } : {}}>
-          <Box
-            sx={{
-              width: '100%',
-              position: 'relative',
-              display: 'flex',
-              flexDirection: isMobile ? 'column' : 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '20px 0 10px 0'
-            }}>
-            <PaginationList
-              pages={totalPages}
-              defaultPage={currentPage}
-              handleChangePage={handlePageChange}
-              variant='center'
-            />
-
-            <Typography
-              sx={{
-                ...(!isMobile && {
-                  right: '24px'
-                }),
-                position: !isMobile ? 'absolute' : 'relative',
-                color: colors.invariant.textGrey
-              }}>
-              Showing {lowerBound}-{upperBound} of {totalItems}
-            </Typography>
-          </Box>
+        <Box className={classes.pagination}>
+          <PaginationList
+            pages={totalPages}
+            defaultPage={currentPage}
+            handleChangePage={handlePageChange}
+            variant='flex-end'
+          />
         </Box>
       )}
 

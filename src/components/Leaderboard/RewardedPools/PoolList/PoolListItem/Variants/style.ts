@@ -12,11 +12,11 @@ export const useStyles = makeStyles()(() => ({
     },
 
     '&:first-child': {
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
+      padding: '12px 24px',
       background: colors.invariant.component
     },
-    borderBottom: `1px solid ${colors.invariant.light}`
+
+    borderTop: `1px solid ${colors.invariant.light}`
   },
   container: {
     color: colors.white.main,
@@ -150,7 +150,7 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.black,
     textTransform: 'none',
 
-    transition: 'filter 0.2s linear',
+    transition: 'filter 0.3s linear',
 
     '&:hover': {
       filter: 'brightness(1.2)',

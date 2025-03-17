@@ -112,7 +112,7 @@ export const LockStatsPopover = ({
     borderRadius: 4,
     backgroundColor: colors.invariant.light,
     '.MuiLinearProgress-bar': {
-      transition: 'transform 1s cubic-bezier(0.4, 0, 0.2, 1)',
+      transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
       borderRadius: 4
     }
   }
@@ -258,7 +258,7 @@ export const LockStatsPopover = ({
                       width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%',
                       height: '3px',
                       borderRadius: 4,
-                      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
                     }}
                   />
@@ -311,7 +311,7 @@ export const LockStatsPopover = ({
                       width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
                       height: '3px',
                       borderRadius: 4,
-                      transition: 'width 1s cubic-bezier(0.4, 0, 0.2, 1)',
+                      transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
                       boxShadow: `0 0 6px 1px ${colors.invariant.green}`
                     }}
                   />

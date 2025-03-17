@@ -3,6 +3,7 @@ import { colors, typography } from '@static/theme'
 import React from 'react'
 import useStyles from './style'
 import { useNavigate } from 'react-router-dom'
+import { ROUTES } from '@utils/utils'
 
 interface ITimerProps {
   hours: string
@@ -92,7 +93,7 @@ export const Timer: React.FC<ITimerProps> = ({ hours, minutes, seconds, handleCl
         style={{ marginTop: '16px' }}
         onClick={() => {
           handleClose()
-          navigate('/points')
+          navigate(ROUTES.POINTS)
         }}>
         Go to Points Tab
       </Button>
