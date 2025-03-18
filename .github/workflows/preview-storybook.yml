@@ -17,7 +17,7 @@ jobs:
           node-version: '20'
 
       - name: Install Dependencies
-        run: npm install
+        run: npm i
 
       - name: Build Storybook
         run: npm run build-storybook
@@ -25,17 +25,24 @@ jobs:
   upload-storybook:
     runs-on: ubuntu-latest
     permissions: write-all
+    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
-      - name: Install Vercel CLI
-        run: npm install -g vercel@22.0.1
-      - name: Deploy Storybook to Vercel
-        uses: BetaHuhn/deploy-to-vercel-action@v1
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
         with:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
-          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          PRODUCTION: false
+          node-version: '20'
+      - name: Install Dependencies
+        run: npm i
+      - name: Build Storybook
+        run: npm run build-storybook
+
+      - name: Deploy Storybook to Vercel Action
+        uses: amondnet/vercel-action@v20
+        with:
+          vercel-token: ${{ secrets.VERCEL_TOKEN }}
+          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-scope: ${{ secrets.VERCEL_ORG_ID }}
+          vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
+          vercel-args: "storybook-static"
