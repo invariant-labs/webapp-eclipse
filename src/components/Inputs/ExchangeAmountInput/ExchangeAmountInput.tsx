@@ -153,7 +153,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
 
   return (
     <>
-      <Grid container alignItems='center' wrap='nowrap' className={classes.exchangeContainer}>
+      <Grid container className={classes.exchangeContainer}>
         <Select
           centered={true}
           tokens={tokens}
@@ -197,13 +197,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
         )}
       </Grid>
 
-      <Grid
-        container
-        justifyContent='space-between'
-        alignItems='center'
-        direction='row'
-        wrap='nowrap'
-        className={classes.bottom}>
+      <Grid container className={classes.bottom}>
         <Grid
           className={classNames(classes.balanceContainer, {
             [classes.showMaxButton]: showMaxButton
@@ -225,7 +219,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           {showMaxButton && <>{actionButtons.map(renderActionButton)}</>}
         </Grid>
 
-        <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
+        <Grid className={classes.percentages} container>
           {current ? (
             priceLoading ? (
               <img src={loadingAnimation} className={classes.loading} alt='loading' />

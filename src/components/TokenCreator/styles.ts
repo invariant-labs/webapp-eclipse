@@ -47,6 +47,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
 
     row: {
+      gap: '20px',
       display: 'flex',
       justifyContent: 'center',
       flexDirection: 'row',
