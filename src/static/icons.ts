@@ -93,7 +93,7 @@ import backArrow from '@static/svg/back-arrow.svg'
 import lock from '@static/svg/lock.svg'
 import unlock from '@static/svg/unlock.svg'
 
-const icons: { [key: string]: string } = {
+const icons = {
   tokenCreator,
   docsFill,
   mediumFill,

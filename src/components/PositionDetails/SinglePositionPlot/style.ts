@@ -17,6 +17,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       padding: 24
     }
   },
+  liqWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    marginBottom: '12px'
+  },
   headerContainer: {
     display: 'flex',
     justifyContent: 'space-between',
