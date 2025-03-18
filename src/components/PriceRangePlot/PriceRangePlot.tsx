@@ -375,7 +375,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
       ) : null}
       {!loading && hasError ? (
         <Grid container className={classes.cover}>
-          <Grid className={classes.errorWrapper} container direction='column' alignItems='center'>
+          <Grid className={classes.errorWrapper} container>
             <Typography className={classes.errorText}>Unable to load liquidity chart</Typography>
             <Button className={classes.reloadButton} onClick={reloadHandler}>
               Reload chart

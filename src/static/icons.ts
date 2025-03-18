@@ -112,7 +112,7 @@ import handleMin from '@static/svg/narrowChartMinHandle.svg'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
 
-const icons: { [key: string]: string } = {
+const icons = {
   ZoomInIcon,
   ZoomOutIcon,
   handleMax,
