@@ -54,5 +54,5 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
           PRODUCTION: false
-          COMMENT_IDENTIFIER: 'vercel-storybook'
+          GITHUB_DEPLOYMENT_ENV: 'storybook'
           WORKING_DIRECTORY: 'storybook-static'
