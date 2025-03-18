@@ -36,23 +36,13 @@ jobs:
         run: npm i
       - name: Build Storybook
         run: npm run build-storybook
-      - name: Create Storybook Vercel Config
+      - name: Create Vercel Config for Storybook
         run: |
-          cat <<'EOF' > storybook-static/vercel.json
+          cat << 'EOF' > storybook-static/vercel.json
           {
-            "builds": [
-              { "src": "**/*", "use": "@vercel/static" }
-            ],
-            "routes": [
-              { "src": "/(.*)", "dest": "/$1" }
-            ]
+            "buildCommand": "",
+            "outputDirectory": "."
           }
-          EOF
-      - name: Copy Prebuilt Output to .vercel/output
-        run: |
-          rm -rf .vercel/output
-          mkdir -p .vercel/output
-          cp -r storybook-static/* .vercel/output/
       - name: Install Vercel CLI globally
         run: npm install -g vercel
       - name: Deploy Storybook to Vercel Action
@@ -64,5 +54,4 @@ jobs:
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
           PRODUCTION: 'false'
-          WORKING_DIRECTORY: '.vercel/output'
-          PREBUILT: 'true'
+          WORKING_DIRECTORY: 'storybook-static'
