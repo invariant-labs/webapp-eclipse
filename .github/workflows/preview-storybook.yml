@@ -25,7 +25,6 @@ jobs:
   upload-storybook:
     runs-on: ubuntu-latest
     permissions: write-all
-    runs-on: ubuntu-latest
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -45,4 +44,4 @@ jobs:
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-scope: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: "storybook-static"
+          vercel-args: 'storybook-static'
