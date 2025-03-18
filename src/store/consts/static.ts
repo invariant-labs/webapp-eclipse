@@ -2,7 +2,7 @@ import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
-import { BestTier, Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
+import { Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
@@ -486,94 +486,6 @@ export const tokens: Record<NetworkType, Token[]> = {
   Local: []
 }
 
-const mainnetBestTiersCreator = () => {
-  // const stableTokens: Record<string, PublicKey> = {
-  // }
-
-  // const unstableTokens: Record<string, PublicKey> = {
-  // }
-
-  const bestTiers: BestTier[] = []
-
-  // for (let i = 0; i < 4; i++) {
-  //   const tokenX = Object.values(stableTokens)[i]
-  //   for (let j = i + 1; j < 4; j++) {
-  //     const tokenY = Object.values(stableTokens)[j]
-
-  //     bestTiers.push({
-  //       tokenX,
-  //       tokenY,
-  //       bestTierIndex: 0
-  //     })
-  //   }
-  // }
-
-  // for (let i = 0; i < 5; i++) {
-  //   const [symbolX, tokenX] = Object.entries(unstableTokens)[i]
-  //   for (let j = i + 1; j < 5; j++) {
-  //     const [symbolY, tokenY] = Object.entries(unstableTokens)[j]
-
-  //     if (symbolX.slice(-3) === 'ETH' && symbolY.slice(-3) === 'ETH') {
-  //       bestTiers.push({
-  //         tokenX,
-  //         tokenY,
-  //         bestTierIndex: 0
-  //       })
-  //     } else {
-  //       bestTiers.push({
-  //         tokenX,
-  //         tokenY,
-  //         bestTierIndex: 2
-  //       })
-  //     }
-  //   }
-  // }
-
-  // for (let i = 0; i < 4; i++) {
-  //   const tokenX = Object.values(stableTokens)[i]
-  //   for (let j = 0; j < 5; j++) {
-  //     const tokenY = Object.values(unstableTokens)[j]
-
-  //     bestTiers.push({
-  //       tokenX,
-  //       tokenY,
-  //       bestTierIndex: 2
-  //     })
-  //   }
-  // }
-
-  return bestTiers
-}
-
-export const bestTiers: Record<NetworkType, BestTier[]> = {
-  [NetworkType.Devnet]: [
-    {
-      tokenX: USDC_DEV.address,
-      tokenY: WETH_DEV.address,
-      bestTierIndex: 2
-    },
-    {
-      tokenX: USDC_DEV.address,
-      tokenY: BTC_DEV.address,
-      bestTierIndex: 2
-    }
-  ],
-  [NetworkType.Testnet]: [
-    {
-      tokenX: USDC_TEST.address,
-      tokenY: WETH_TEST.address,
-      bestTierIndex: 2
-    },
-    {
-      tokenX: USDC_TEST.address,
-      tokenY: BTC_TEST.address,
-      bestTierIndex: 2
-    }
-  ],
-  [NetworkType.Mainnet]: mainnetBestTiersCreator(),
-  [NetworkType.Local]: []
-}
-
 export const promotedTiers = [
   {
     tokenX: USDC_MAIN.address,
@@ -877,3 +789,5 @@ export enum OverviewSwitcher {
   Overview = 'Overview',
   Wallet = 'Wallet'
 }
+
+export const STATS_CACHE_TIME = 30 * 60 * 1000

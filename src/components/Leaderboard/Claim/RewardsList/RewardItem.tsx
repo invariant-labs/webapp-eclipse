@@ -52,7 +52,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({
   }, [isConnected, rewardReceived])
 
   return (
-    <Grid className={classes.container} container alignItems='center'>
+    <Grid className={classes.container} container>
       {isMd ? (
         <>
           <div className={classes.mobileBackgroundTop} />
@@ -61,15 +61,10 @@ const RewardItem: React.FC<RewardItemInterface> = ({
       ) : (
         <div className={classes.background} />
       )}
-      <Grid
-        display='flex'
-        flex={1}
-        alignItems='center'
-        justifyContent='space-between'
-        className={classes.innerContainer}>
+      <Grid flex={1} className={classes.innerContainer}>
         <Grid className={classes.leftItems}>
           <Typography className={classes.number}>{number}</Typography>
-          <Grid display='flex' justifyContent='center' alignItems='center'>
+          <Grid className={classes.rewardWrapper}>
             <img
               src={rewardsImages[reward.image]}
               alt={reward.name}
@@ -79,14 +74,8 @@ const RewardItem: React.FC<RewardItemInterface> = ({
           {isMd && <div style={{ width: '36px' }} />}
         </Grid>
 
-        <Grid
-          display='flex'
-          gap={3}
-          flexDirection='column'
-          justifyContent='center'
-          alignItems='center'
-          m={6}>
-          <Grid display='flex' justifyContent='center' alignItems='center'>
+        <Grid className={classes.centerWrapper}>
+          <Grid className={classes.pointsWrapper}>
             <img src={icons.airdropGrey} alt='points' />
             <Typography className={classes.subtitle}>{reward.name}</Typography>
           </Grid>
@@ -100,34 +89,16 @@ const RewardItem: React.FC<RewardItemInterface> = ({
             </Typography>
           </TooltipGradient>
         </Grid>
-        <Grid
-          container={isMd}
-          display='flex'
-          gap={isMd ? 2 : 3}
-          flexDirection='column'
-          justifyContent='center'
-          alignItems='center'>
-          <Grid
-            display='flex'
-            justifyContent='space-between'
-            alignItems='center'
-            className={classes.label}>
+        <Grid container={isMd} className={classes.infoWrapper}>
+          <Grid className={classes.label}>
             <Typography>Distribution date:</Typography>
             <span>{reward.distributionDate}</span>
           </Grid>
-          <Grid
-            display='flex'
-            justifyContent='space-between'
-            alignItems='center'
-            className={classes.label}>
+          <Grid className={classes.label}>
             <Typography>Type:</Typography>
             <span>{reward.type}</span>
           </Grid>
-          <Grid
-            display='flex'
-            justifyContent='space-between'
-            alignItems='center'
-            className={classes.label}>
+          <Grid className={classes.label}>
             <Typography>Eligible:</Typography>
             <span>{reward.eligible}</span>
           </Grid>

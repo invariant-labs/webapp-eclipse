@@ -13,7 +13,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   header: {
     paddingBottom: 16,
     display: 'flex',
-    alignItems: 'flex-end',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+
     [theme.breakpoints.down('sm')]: {
       justifyContent: 'center'
     }
@@ -67,6 +70,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingInline: 0,
     background:
       'linear-gradient(180deg, rgba(239, 132, 245, 0.8) 0%, rgba(156, 62, 189, 0.8) 100%)',
+    transition: '300ms',
 
     '&:hover': {
       background: 'linear-gradient(180deg, #EF84F5 0%, #9C3EBD 100%)',
@@ -82,6 +86,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   fullWidthWrapper: {
+    display: 'flex',
+    gap: theme.spacing(2),
+    justifyContent: 'space-between',
     marginBottom: 8,
     [theme.breakpoints.down('sm')]: {
       width: '100%',
@@ -117,6 +124,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.text
   },
   list: {
+    justifyContent: 'flex-start',
+    flexDirection: 'column',
     position: 'relative',
     flex: 1
   },
@@ -160,7 +169,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     width: 26,
     height: 21,
     cursor: 'pointer',
-    transition: 'filter 100ms',
+    transition: 'filter 300ms',
     '&:hover': {
       filter: 'brightness(1.5)'
     }
@@ -216,7 +225,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '&:disabled': {
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
-      transition: 'all 0.2s',
+      transition: 'all 0.3s',
       '&:hover': {
         boxShadow: 'none',
         cursor: 'not-allowed',

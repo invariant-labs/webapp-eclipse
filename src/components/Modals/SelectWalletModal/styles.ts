@@ -94,6 +94,7 @@ const useStyles = makeStyles()(() => {
       textTransform: 'none',
       borderRadius: 14,
       background: colors.invariant.pinkLinearGradientOpacity,
+      transition: '300ms',
 
       '&:hover': {
         background: colors.invariant.pinkLinearGradient,
@@ -118,10 +119,7 @@ const useStyles = makeStyles()(() => {
       pointerEvents: 'auto',
       display: 'flex',
       justifyContent: 'flex-end',
-      '&:hover': {
-        cursor: 'pointer',
-        filter: 'brightness(1.5)'
-      }
+      cursor: 'pointer'
     },
     button: {
       color: colors.invariant.lightGrey,
@@ -134,6 +132,7 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       justifyContent: 'center',
       background: colors.invariant.component,
+      transition: '300ms',
 
       '&:hover': {
         color: colors.white.main,

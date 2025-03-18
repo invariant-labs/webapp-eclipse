@@ -5,6 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()((theme: Theme) => ({
   root: {
     display: 'flex',
+    alignItems: 'center',
 
     [theme.breakpoints.down('sm')]: {
       width: '100%'
@@ -35,6 +36,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     '& .MuiPaginationItem-page:hover': {
+      transition: '300ms',
       color: colors.invariant.textGrey
     },
 

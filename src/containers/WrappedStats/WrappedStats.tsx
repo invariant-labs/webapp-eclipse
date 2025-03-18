@@ -109,15 +109,15 @@ export const WrappedStats: React.FC = () => {
   }
 
   return (
-    <Grid container className={classes.wrapper} direction='column'>
+    <Grid container className={classes.wrapper}>
       {liquidityPlotData.length === 0 && !isLoadingStats ? (
-        <Grid container direction='column' alignItems='center' justifyContent='center'>
+        <Grid container className={classes.emptyContainer}>
           <EmptyPlaceholder desc={'We have not started collecting statistics yet'} />
         </Grid>
       ) : (
         <>
           <Typography className={classes.subheader}>Overview</Typography>
-          <Grid container className={classes.plotsRow} wrap='nowrap'>
+          <Grid container className={classes.plotsRow}>
             <Volume
               volume={volume24h.value}
               percentVolume={volume24h.change}
@@ -144,11 +144,7 @@ export const WrappedStats: React.FC = () => {
               isLoading={isLoadingStats}
             />
           </Grid>
-          <Grid
-            display='flex'
-            alignItems='end'
-            justifyContent='space-between'
-            className={classes.rowContainer}>
+          <Grid className={classes.rowContainer}>
             <Typography className={classes.subheader} mb={2}>
               Top tokens
             </Typography>
@@ -178,11 +174,7 @@ export const WrappedStats: React.FC = () => {
               isLoading={isLoadingStats}
             />
           </Grid>
-          <Grid
-            display='flex'
-            alignItems='end'
-            justifyContent='space-between'
-            className={classes.rowContainer}>
+          <Grid className={classes.rowContainer}>
             <Typography className={classes.subheader} mb={2}>
               Top pools
             </Typography>

@@ -10,7 +10,7 @@ import { IWallet } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
-import { getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
+import { getFullNewTokensData, getNetworkTokensList, ROUTES } from '@utils/utils'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import {
   currentPoolIndex,
@@ -118,7 +118,8 @@ const MarketEvents = () => {
     if (
       networkStatus !== Status.Initialized ||
       !marketProgram ||
-      (!location.pathname.startsWith(`/portfolio`) && !location.pathname.startsWith(`/position`))
+      (!location.pathname.startsWith(ROUTES.PORTFOLIO) &&
+        !location.pathname.startsWith(ROUTES.POSITION))
     ) {
       return
     }
@@ -261,7 +262,7 @@ const MarketEvents = () => {
 
   useEffect(() => {
     // Unsubscribe from swap pools on different pages than swap
-    if (!location.pathname.startsWith('/exchange')) {
+    if (!location.pathname.startsWith(ROUTES.EXCHANGE)) {
       for (const pool of Array.from(subscribedSwapPools)) {
         marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
         subscribedSwapPools.delete(pool)
@@ -270,14 +271,17 @@ const MarketEvents = () => {
 
     // Unsubscribe from new position pool on different pages than new position
     if (
-      !location.pathname.startsWith(`/newPosition`) &&
+      !location.pathname.startsWith(ROUTES.NEW_POSITION) &&
       !newPositionSubscribedPool.equals(PublicKey.default)
     ) {
       marketProgram.program.account.pool.unsubscribe(newPositionSubscribedPool)
       setNewPositionSubscribedPool(PublicKey.default)
     }
     // Unsubscribe from position details pools on different pages than portfolio
-    if (!location.pathname.startsWith(`/portfolio`) && !location.pathname.startsWith(`/position`)) {
+    if (
+      !location.pathname.startsWith(ROUTES.PORTFOLIO) &&
+      !location.pathname.startsWith(ROUTES.POSITION)
+    ) {
       for (const pool of Array.from(subscribedPositionsPools)) {
         marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
         subscribedPositionsPools.delete(pool)

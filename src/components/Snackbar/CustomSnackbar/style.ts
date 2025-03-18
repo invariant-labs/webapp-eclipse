@@ -1,7 +1,24 @@
 import { CircularProgress, Typography } from '@mui/material'
 import { styled } from '@mui/system'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { SnackbarContent } from 'notistack'
+import { makeStyles } from 'tss-react/mui'
+
+export const useStyles = makeStyles()(() => ({
+  wrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: theme.spacing(2),
+    flexDirection: 'row',
+    width: 'fix-content',
+    flexWrap: 'nowrap'
+  },
+  transactionWrapper: {
+    display: 'flex',
+    mx: theme.spacing(1),
+    minWidth: 'fit-content'
+  }
+}))
 
 export const StyledSnackbarContent = styled(SnackbarContent)(({ theme }) => ({
   display: 'flex',
@@ -33,7 +50,7 @@ export const StyledBackground = styled('div')({
   height: '100%',
   left: 0,
   top: 2,
-  transition: 'opacity 1s ease-in',
+  transition: 'opacity 0.3s ease-in',
   background: `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.pink})`,
   borderRadius: 17
 })
@@ -101,7 +118,7 @@ export const StyledCloseButton = styled('button')({
   cursor: 'pointer',
   '&:hover': {
     '& img': {
-      transition: '.2s all ease-in',
+      transition: '.3s all ease-in',
       transform: 'scale(1.2)',
       '@media (hover: none)': {
         transform: 'none'
@@ -131,7 +148,7 @@ export const StyledDetails = styled('button')({
   fontSize: 14,
   fontWeight: 600,
   cursor: 'pointer',
-  transition: '0.2s all cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+  transition: '0.3s all cubic-bezier(0.25, 0.46, 0.45, 0.94)',
   backfaceVisibility: 'hidden',
   fontSmoothing: 'subpixel-antialiased',
   width: 'auto',

@@ -20,7 +20,7 @@ const useStyles = makeStyles<{ isVisible: boolean }>()((_theme, { isVisible }) =
     position: 'absolute',
     top: 0,
     opacity: isVisible ? 1 : 0,
-    transition: 'opacity 0.7s ease-in-out',
+    transition: 'opacity 0.3s ease-in-out',
     left: 0,
     '& img': {
       borderTopLeftRadius: 24
@@ -30,7 +30,7 @@ const useStyles = makeStyles<{ isVisible: boolean }>()((_theme, { isVisible }) =
     width: '100%',
     position: 'absolute',
     opacity: isVisible ? 1 : 0,
-    transition: 'opacity 0.7s ease-in-out',
+    transition: 'opacity 0.3s ease-in-out',
     bottom: 0,
     left: 0,
     '& img': {

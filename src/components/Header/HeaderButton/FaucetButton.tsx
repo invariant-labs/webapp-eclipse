@@ -11,7 +11,6 @@ import {
   WETH_MIN_FAUCET_FEE_TEST
 } from '@store/consts/static'
 import classNames from 'classnames'
-import { typography, colors } from '@static/theme'
 
 export interface IProps {
   onFaucet: () => void
@@ -68,31 +67,15 @@ export const FaucetButton: React.FC<IProps> = ({
 
   return (
     <>
-      <TooltipHover text={getTooltipText()} top={50}>
+      <TooltipHover title={getTooltipText()} top={50}>
         <div>
           <Button
             className={classNames(classes.headerButton, { [classes.disabled]: isDisabled })}
             variant='contained'
             onClick={isDisabled ? () => {} : handleClick}>
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                justifyContent: 'center',
-                height: '100%'
-              }}>
-              <Box style={{ color: colors.invariant.text, lineHeight: '12px', textAlign: 'left' }}>
-                {children}
-              </Box>
-              <Typography
-                style={{
-                  color: colors.invariant.textGrey,
-                  ...typography.caption4,
-                  marginTop: '4px',
-                  textAlign: 'left'
-                }}>
-                Get tokens
-              </Typography>
+            <Box className={classes.wrapper}>
+              <Box className={classes.childrenWrapper}>{children}</Box>
+              <Typography className={classes.buttonLabel}>Get tokens</Typography>
             </Box>
           </Button>
         </div>

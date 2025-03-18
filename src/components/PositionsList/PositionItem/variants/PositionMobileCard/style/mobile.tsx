@@ -18,7 +18,8 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     },
     '&:hover': {
       background: `${colors.invariant.component}B0`
-    }
+    },
+    transition: '300ms'
   },
   actionButton: {
     display: 'flex',
@@ -58,10 +59,16 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     width: '100%'
   },
   mdTop: {
+    marginBottom: theme.spacing(2),
     justifyContent: 'space-between',
-    width: '100%'
+    width: '100%',
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
   },
   iconsAndNames: {
-    display: 'flex'
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap'
   }
 }))

@@ -4,6 +4,8 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useSharedStyles = makeStyles()((theme: Theme) => ({
   icons: {
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     marginRight: 12,
     width: 'fit-content',
     [theme.breakpoints.down('lg')]: {
@@ -25,7 +27,7 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     position: 'relative',
     color: colors.invariant.black,
     textTransform: 'none',
-    transition: 'filter 0.2s linear',
+    transition: 'filter 0.3s linear',
     '&:hover': {
       filter: 'brightness(1.2)',
       cursor: 'pointer',
@@ -46,7 +48,8 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     },
     '&:hover': {
       filter: 'brightness(2)'
-    }
+    },
+    transition: '300ms'
   },
   names: {
     textOverflow: 'ellipsis',
@@ -135,7 +138,8 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
-
+    justifyContent: 'center',
+    alignItems: 'center',
     [theme.breakpoints.down('md')]: {
       marginRight: 0
     }
@@ -144,7 +148,8 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     marginLeft: '16px',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    transition: '300ms'
   },
   unclaimedFeeContainer: {
     display: 'flex',
@@ -157,7 +162,8 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.greenLinearGradient
   },
   infoCenter: {
-    flex: '1 1 0%'
+    flex: '1 1 0%',
+    justifyContent: 'center'
   },
   dropdown: {
     background: colors.invariant.greenLinearGradient,

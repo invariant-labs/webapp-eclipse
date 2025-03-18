@@ -11,17 +11,10 @@ export interface INotFoundPlaceholder {
 }
 
 const NotFoundPlaceholder: React.FC<INotFoundPlaceholder> = ({ title, subtitle, isStats }) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({ isStats })
 
   return (
-    <Grid
-      container
-      flexDirection='column'
-      justifyContent='center'
-      alignItems='center'
-      my={isStats ? 0 : 5}
-      minHeight={isStats ? '690px' : '220px'}
-      className={classNames({ [classes.container]: isStats })}>
+    <Grid container className={classNames(classes.root, { [classes.container]: isStats })}>
       <img className={classes.img} src={icons.emptyIcon} alt='Not connected' />
       <Typography className={classes.title}>{title}</Typography>
       {subtitle && <Typography className={classes.subtitle}>{subtitle}</Typography>}

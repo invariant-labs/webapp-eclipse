@@ -44,7 +44,7 @@ const SingleToken: React.FC<IProps> = ({ token, network, tokenPrice, copyTokenAd
 
   return (
     <Grid className={classes.token}>
-      <Grid container direction='row' justifyContent='flex-start' alignItems='center' wrap='nowrap'>
+      <Grid container className={classes.innerToken}>
         {token?.logoURI ? (
           <Box className={classes.imageContainer}>
             <img
@@ -76,7 +76,7 @@ const SingleToken: React.FC<IProps> = ({ token, network, tokenPrice, copyTokenAd
             </Typography>
 
             {token && (
-              <TooltipHover text='Token details'>
+              <TooltipHover title='Token details'>
                 <a
                   href={`https://eclipsescan.xyz/token/${token.assetAddress.toString()}${networkUrl}`}
                   target='_blank'
@@ -100,7 +100,7 @@ const SingleToken: React.FC<IProps> = ({ token, network, tokenPrice, copyTokenAd
         <Typography className={classes.price}>
           {token ? (tokenPrice ? '$' + formatNumberWithSuffix(tokenPrice) : 'No data') : '--'}
         </Typography>
-        <TooltipHover text='Copy'>
+        <TooltipHover title='Copy'>
           <Grid className={classes.tokenAddress} onClick={copyToClipboard}>
             <Typography>
               {token

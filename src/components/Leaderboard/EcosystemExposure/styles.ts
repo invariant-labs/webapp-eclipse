@@ -19,7 +19,11 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
         maxWidth: '100%'
       }
     },
-
+    exposureWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px'
+    },
     boxWrapper: {
       gap: '8px',
       alignItems: 'center',
@@ -115,7 +119,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
       background: colors.invariant.pinkGreenLinearGradient,
       border: `${exposure > 0 ? 2 : 0}px solid ${colors.invariant.component}`,
       borderRadius: 8,
-      transition: 'width 0.5s'
+      transition: 'width 0.3s'
     },
     expLabel: {
       width: '100%',

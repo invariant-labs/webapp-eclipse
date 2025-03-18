@@ -18,7 +18,8 @@ import {
   addressToTicker,
   formatNumberWithSuffix,
   initialXtoY,
-  parseFeeToPathFee
+  parseFeeToPathFee,
+  ROUTES
 } from '@utils/utils'
 import { printBN } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -165,7 +166,7 @@ const PositionDetails: React.FC<IProps> = ({
   }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
   return (
-    <Grid container className={classes.wrapperContainer} wrap='nowrap'>
+    <Grid container className={classes.wrapperContainer}>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={onLockPositionModalClose}
@@ -181,15 +182,15 @@ const PositionDetails: React.FC<IProps> = ({
         success={success}
         inProgress={inProgress}
       />
-      <Grid className={classes.positionDetails} container item direction='column'>
+      <Grid className={classes.positionDetails} container item>
         <Grid className={classes.backContainer} container>
-          <Link to='/portfolio' style={{ textDecoration: 'none' }}>
-            <Grid className={classes.back} container item alignItems='center'>
+          <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none' }}>
+            <Grid className={classes.back} container item>
               <img className={classes.backIcon} src={backIcon} alt='Back' />
               <Typography className={classes.backText}>Positions</Typography>
             </Grid>
           </Link>
-          <Grid container width='auto' className={classes.marketIdWithRefresher}>
+          <Grid container className={classes.marketIdWithRefresher}>
             <Hidden mdUp>
               <MarketIdLabel
                 marketId={poolAddress.toString()}
@@ -198,7 +199,7 @@ const PositionDetails: React.FC<IProps> = ({
                 style={{ paddingRight: 8 }}
               />
               {poolAddress.toString() && (
-                <TooltipHover text='Open pool in explorer'>
+                <TooltipHover title='Open pool in explorer'>
                   <Grid height={'24px'} mr={'12px'}>
                     <a
                       href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
@@ -214,7 +215,7 @@ const PositionDetails: React.FC<IProps> = ({
                 </TooltipHover>
               )}
               <Grid flex={1} justifyItems={'flex-end'}>
-                <TooltipHover text='Refresh'>
+                <TooltipHover title='Refresh'>
                   <Refresher
                     currentIndex={refresherTime}
                     maxIndex={REFRESHER_INTERVAL}
@@ -251,27 +252,12 @@ const PositionDetails: React.FC<IProps> = ({
           ethBalance={ethBalance}
         />
       </Grid>
-      <Grid
-        container
-        item
-        direction='column'
-        alignItems='flex-end'
-        className={classes.right}
-        wrap='nowrap'>
+      <Grid container item className={classes.right}>
         <Grid className={classes.positionPlotWrapper}>
-          <Grid
-            container
-            item
-            direction='row'
-            alignItems='center'
-            flexDirection='row-reverse'
-            className={classes.rightHeaderWrapper}
-            mt='22px'
-            gap='8px'
-            wrap='nowrap'>
+          <Grid container item className={classes.rightHeaderWrapper}>
             <Hidden mdDown>
               {!isLocked ? (
-                <TooltipHover text={'Lock liquidity'}>
+                <TooltipHover title={'Lock liquidity'}>
                   <Button
                     className={classes.lockButton}
                     disabled={isLocked}
@@ -284,7 +270,7 @@ const PositionDetails: React.FC<IProps> = ({
                   </Button>
                 </TooltipHover>
               ) : (
-                <TooltipHover text={'Unlocking liquidity is forbidden'}>
+                <TooltipHover title={'Unlocking liquidity is forbidden'}>
                   <Button
                     disabled
                     className={classes.unlockButton}
@@ -312,13 +298,13 @@ const PositionDetails: React.FC<IProps> = ({
                   const tokenA = isXtoY ? address1 : address2
                   const tokenB = isXtoY ? address2 : address1
 
-                  navigate(`/newPosition/${tokenA}/${tokenB}/${parsedFee}`)
+                  navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
                 }}>
                 <span className={classes.buttonText}>+ Add Position</span>
               </Button>
             </Box>
             <Hidden mdDown>
-              <TooltipHover text='Refresh'>
+              <TooltipHover title='Refresh'>
                 <Grid display='flex' justifyContent='center'>
                   <Refresher
                     currentIndex={refresherTime}
@@ -330,21 +316,14 @@ const PositionDetails: React.FC<IProps> = ({
                   />
                 </Grid>
               </TooltipHover>
-              <Grid
-                display={'flex'}
-                style={{
-                  padding: '8px 8px  0 0px',
-                  height: '24px',
-                  minWidth: '200px',
-                  marginRight: 'auto'
-                }}>
+              <Grid className={classes.marketIdWrapper}>
                 <MarketIdLabel
                   marketId={poolAddress.toString()}
                   displayLength={5}
                   copyPoolAddressHandler={copyPoolAddressHandler}
                 />
                 {poolAddress.toString() && (
-                  <TooltipHover text='Open pool in explorer'>
+                  <TooltipHover title='Open pool in explorer'>
                     <Grid>
                       <a
                         href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}

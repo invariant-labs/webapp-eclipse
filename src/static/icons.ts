@@ -89,7 +89,7 @@ import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
 import faucet from './svg/faucet.svg'
 
-const icons: { [key: string]: string } = {
+const icons = {
   tokenCreator,
   docsFill,
   mediumFill,

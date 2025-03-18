@@ -19,12 +19,28 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
       textTransform: 'none',
       willChange: 'width',
       gap: 4,
-      transition: 'width 0.7s ease-in-out',
+      transition: 'width 0.3s ease-in-out',
       position: 'relative',
       overflow: 'hidden'
     },
-
+    boostPoints: {
+      height: '14px',
+      width: '12px'
+    },
+    infoCircle: {
+      width: '15px',
+      marginLeft: '5px'
+    },
+    boostWrapper: {
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: 4,
+      marginLeft: '8px'
+    },
     pointsAmount: {
+      borderRight: '1px solid #3A466B',
+      paddingRight: '10px',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
@@ -33,7 +49,7 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
     pointsValue: {
       width: '50px',
       textAlign: 'center',
-      transition: 'filter 0.2s ease-in-out',
+      transition: 'filter 0.3s ease-in-out',
       filter: isChanging ? 'blur(10px)' : 'blur(0)'
     },
 
@@ -72,7 +88,7 @@ const useStyles = makeStyles<{ isVisible: boolean; width: number; isChanging: bo
 
     grayscaleIcon: {
       filter: 'grayscale(100%)',
-      transition: 'filter 0.7s ease-in-out',
+      transition: 'filter 0.3s ease-in-out',
       minWidth: '12px',
       minHeight: '12px'
     }

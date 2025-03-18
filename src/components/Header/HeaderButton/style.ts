@@ -4,6 +4,12 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
+    wrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      height: '100%'
+    },
     headerButton: {
       background: 'transparent',
       color: colors.white.main,
@@ -52,6 +58,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       backgroundOrigin: 'border-box',
       backgroundClip: 'padding-box, border-box',
       color: colors.invariant.text,
+      transition: '300ms',
 
       [theme.breakpoints.down(450)]: {
         padding: '0px 2px'
@@ -72,6 +79,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       textTransform: 'none',
       ...typography.body1,
       height: 40,
+      transition: '300ms',
 
       '&:hover': {
         background: colors.blue.deep,
@@ -115,6 +123,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       ...typography.body1,
       height: 40,
       minWidth: 130,
+      transition: '300ms',
 
       [theme.breakpoints.down('sm')]: {
         minWidth: 100,
@@ -178,6 +187,17 @@ const useStyles = makeStyles()((theme: Theme) => {
     warningIcon: {
       height: 16,
       marginRight: 4
+    },
+    childrenWrapper: {
+      color: colors.invariant.text,
+      lineHeight: '12px',
+      textAlign: 'left'
+    },
+    buttonLabel: {
+      color: colors.invariant.textGrey,
+      ...typography.caption4,
+      marginTop: '4px',
+      textAlign: 'left'
     }
   }
 })

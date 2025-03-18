@@ -42,7 +42,7 @@ import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
-import { colors } from '@static/theme'
+import { ROUTES } from '@utils/utils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -191,12 +191,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             ))}
           </>
         ) : (
-          <Grid
-            container
-            sx={{
-              background: colors.invariant.component,
-              borderBottom: `1px solid ${colors.invariant.light}`
-            }}>
+          <Grid container className={classes.emptyWrapper}>
             <EmptyPlaceholder
               height={690}
               newVersion
@@ -204,7 +199,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
               desc={'You can create it yourself!'}
               desc2={'Or try adjusting your search criteria!'}
               buttonName='Create Pool'
-              onAction={() => navigate('/newPosition')}
+              onAction={() => navigate(ROUTES.NEW_POSITION)}
               withButton={true}
             />
           </Grid>
