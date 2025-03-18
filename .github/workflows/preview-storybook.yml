@@ -36,13 +36,25 @@ jobs:
         run: npm i
       - name: Build Storybook
         run: npm run build-storybook
+      - name: Create Storybook Vercel Config
+        run: |
+          cat <<'EOF' > storybook-static/vercel.json
+          {
+            "builds": [
+              { "src": "**/*", "use": "@vercel/static" }
+            ],
+            "routes": [
+              { "src": "/(.*)", "dest": "/$1" }
+            ]
+          }
+          EOF
       - name: Deploy Storybook to Vercel Action
         uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
           PRODUCTION: 'false'
           WORKING_DIRECTORY: 'storybook-static'
