@@ -95,6 +95,12 @@ export interface SetPositionData {
   upperTick: Tick
 }
 
+export interface UpdatePositionRangeRicksData {
+  positionAddress: PublicKey
+  positionId: string
+  fetchTick?: FetchTick
+}
+
 export const defaultState: IPositionsStore = {
   lastPage: 1,
   currentPoolIndex: null,
@@ -209,18 +215,15 @@ const positionsSlice = createSlice({
       }
       return state
     },
-    updatePositionTicksRange(
-      state,
-      action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
-    ) {
-      state.positionsList.list = state.positionsList.list.map(position =>
-        position.address.toString() === action.payload.positionId
+    updatePositionTicksRange(state, action: PayloadAction<UpdatePositionRangeRicksData>) {
+      state.positionsList.list = state.positionsList.list.map(position => {
+        return position.address.toString() === action.payload.positionAddress.toString()
           ? { ...position, ticksLoading: true }
           : position
-      )
+      })
 
       state.positionsList.lockedList = state.positionsList.lockedList.map(position =>
-        position.address.toString() === action.payload.positionId
+        position.address.toString() === action.payload.positionAddress.toString()
           ? { ...position, ticksLoading: true }
           : position
       )
@@ -254,6 +257,8 @@ const positionsSlice = createSlice({
         }
         return position
       })
+
+      return state
     },
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
       return state
@@ -264,9 +269,8 @@ const positionsSlice = createSlice({
     closePosition(state, _action: PayloadAction<ClosePositionData>) {
       return state
     },
-    resetState(state) {
-      state = defaultState
-      return state
+    resetState() {
+      return defaultState
     },
     setShouldNotUpdateRange(state, action: PayloadAction<boolean>) {
       state.shouldNotUpdateRange = action.payload

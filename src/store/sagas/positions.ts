@@ -6,10 +6,10 @@ import { getConnection, handleRpcError } from './connection'
 import {
   actions,
   ClosePositionData,
-  FetchTick,
   GetCurrentTicksData,
   InitPositionData,
-  PositionWithAddress
+  PositionWithAddress,
+  UpdatePositionRangeRicksData
 } from '@store/reducers/positions'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
@@ -1848,7 +1848,7 @@ export function* handleGetSinglePosition(
 }
 
 export function* handleUpdatePositionsRangeTicks(
-  action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+  action: PayloadAction<UpdatePositionRangeRicksData>
 ) {
   try {
     const networkType = yield* select(network)
@@ -1856,7 +1856,7 @@ export function* handleUpdatePositionsRangeTicks(
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
 
-    const { positionId, fetchTick } = action.payload
+    const { fetchTick, positionId } = action.payload
 
     const positionData = yield* select(singlePositionData(positionId))
 

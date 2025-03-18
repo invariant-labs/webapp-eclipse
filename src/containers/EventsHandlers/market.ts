@@ -165,6 +165,7 @@ const MarketEvents = () => {
                 ) {
                   dispatch(
                     positionsActions.updatePositionTicksRange({
+                      positionAddress: position.address,
                       positionId: position.id.toString() + '_' + position.pool.toString(),
                       fetchTick: 'lower'
                     })
@@ -177,6 +178,7 @@ const MarketEvents = () => {
                 ) {
                   dispatch(
                     positionsActions.updatePositionTicksRange({
+                      positionAddress: position.address,
                       positionId: position.id.toString() + '_' + position.pool.toString(),
                       fetchTick: 'upper'
                     })

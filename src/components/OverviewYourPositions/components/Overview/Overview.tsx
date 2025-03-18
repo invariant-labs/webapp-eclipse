@@ -50,7 +50,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
-  const { total: unclaimedFees } = useSelector(totalUnlaimedFees)
+  const { total: unclaimedFees, isLoading: unClaimedFeesLoading } = useSelector(totalUnlaimedFees)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
   const { positions } = useAgregatedPositions(positionList, prices)
 
@@ -185,7 +185,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       <UnclaimedSection
         unclaimedTotal={unclaimedFees}
         handleClaimAll={handleClaimAll}
-        loading={isLoadingList || isAllClaimFeesLoading}
+        loading={isLoadingList || isAllClaimFeesLoading || unClaimedFeesLoading}
       />
 
       {isLg ? (
