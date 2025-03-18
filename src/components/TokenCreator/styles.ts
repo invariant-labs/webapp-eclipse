@@ -116,7 +116,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     headerTitle: {
-      fontStyle: 'normal',
       fontWeight: 700,
       fontSize: '20px',
       lineHeight: '24px',

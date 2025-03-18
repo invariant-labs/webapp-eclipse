@@ -17,6 +17,7 @@
     url('/fonts/Mukta-Medium.woff2') format('woff2');
   font-weight: 500;
   font-display: swap;
+  unicode-range: U+0020-FFFF;
 }
 
 @font-face {
@@ -27,6 +28,7 @@
     url('/fonts/Mukta-SemiBold.woff2') format('woff2');
   font-weight: 600;
   font-display: swap;
+  unicode-range: U+0020-FFFF;
 }
 
 @font-face {
@@ -37,6 +39,7 @@
     url('/fonts/Mukta-Bold.woff2') format('woff2');
   font-weight: 700;
   font-display: swap;
+  unicode-range: U+0020-FFFF;
 }
 
 * {
