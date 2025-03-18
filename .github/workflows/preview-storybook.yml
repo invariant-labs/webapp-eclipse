@@ -48,7 +48,11 @@ jobs:
             ]
           }
           EOF
-
+      - name: Copy Prebuilt Output to .vercel/output
+        run: |
+          rm -rf .vercel/output
+          mkdir -p .vercel/output
+          cp -r storybook-static/* .vercel/output/
       - name: Install Vercel CLI globally
         run: npm install -g vercel
       - name: Deploy Storybook to Vercel Action
