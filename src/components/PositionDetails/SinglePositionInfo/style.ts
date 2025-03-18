@@ -16,6 +16,15 @@ export const useStyles = makeStyles()(() => ({
       padding: 24
     }
   },
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1300,
+    backgroundColor: 'transparent'
+  },
   claimButton: {
     background: colors.invariant.pinkLinearGradientOpacity,
     borderRadius: 12,
