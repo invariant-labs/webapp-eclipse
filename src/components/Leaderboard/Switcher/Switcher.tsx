@@ -37,15 +37,7 @@ export const Switcher: React.FC<ISwitcherProps> = ({
   }
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        gap: '24px',
-        width: '100%',
-        marginTop: '24px'
-      }}>
+    <Box className={classes.mainWrapper}>
       <Typography className={classes.leaderboardHeaderSectionTitle}>
         {(() => {
           switch (alignment) {
@@ -64,15 +56,7 @@ export const Switcher: React.FC<ISwitcherProps> = ({
           }
         })()}
       </Typography>
-      <Box
-        sx={{
-          display: 'flex',
-          position: 'relative',
-          justifyContent: 'center',
-          alignItems: 'center',
-          width: '100%',
-          flexWrap: 'wrap-reverse'
-        }}>
+      <Box className={classes.switchWrapper}>
         {alignment === PointsPageContent.Leaderboard && (
           <LeaderboardSwitcher
             handleClick={handleClick}
