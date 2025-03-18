@@ -1,4 +1,4 @@
-name: preview
+name: Preview Storybook
 
 on:
   pull_request:
@@ -15,25 +15,43 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-      - name: install
+
+      - name: Install dependencies
         run: npm i
-      - name: build
+
+      - name: Build Storybook
         run: npm run build-storybook
+
+      - name: Upload Storybook Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: storybook-static
+          path: storybook-static
 
   upload-storybook:
     runs-on: ubuntu-latest
-    permissions: write-all
+    needs: build-storybook
+    permissions:
+      contents: write
     steps:
       - name: Checkout
         uses: actions/checkout@v3
+
+      - name: Download Storybook Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: storybook-static
+
       - name: Install Vercel CLI
         run: npm install -g vercel@22.0.1
-      - name: Deploy to Vercel Action
+
+      - name: Deploy to Vercel (Storybook)
         uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
-          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          DIRECTORY: storybook-static
           PRODUCTION: false
