@@ -5,9 +5,8 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build-and-deploy:
+  build-app:
     runs-on: ubuntu-latest
-    permissions: write-all
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -16,17 +15,20 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: '20'
-
-      - name: Install dependencies
+      - name: install
         run: npm i
-
-      - name: Build
+      - name: build
         run: npm run build
 
+  upload-app:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
       - name: Install Vercel CLI
         run: npm install -g vercel@22.0.1
-
-      - name: Deploy to Vercel (App)
+      - name: Deploy to Vercel Action
         uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -34,6 +36,4 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          WORKING_DIRECTORY: storybook-static
-          PREBUILT: true
           PRODUCTION: false
