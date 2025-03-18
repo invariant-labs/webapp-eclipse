@@ -39,6 +39,7 @@ import icons from '@static/icons'
 import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { getPromotedPools } from '@store/selectors/leaderboard'
 
 export interface IProps {
   id: string
@@ -245,7 +246,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     return 0
   }, [position])
 
-  const [tokenXClaim, tokenYClaim] = useMemo(() => {
+  const [tokenXClaim, setTokenXClaim] = useState(0)
+  const [tokenYClaim, setTokenYClaim] = useState(0)
+
+  useEffect(() => {
     if (
       waitingForTicksData === false &&
       position?.poolData &&
@@ -261,12 +265,11 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
       })
 
+      setTokenXClaim(+printBN(bnX, position.tokenX.decimals))
+      setTokenYClaim(+printBN(bnY, position.tokenY.decimals))
+
       setShowFeesLoader(false)
-
-      return [+printBN(bnX, position.tokenX.decimals), +printBN(bnY, position.tokenY.decimals)]
     }
-
-    return [0, 0]
   }, [position, lowerTick, upperTick, waitingForTicksData])
 
   const data = useMemo(() => {
@@ -410,6 +413,16 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
   }, [poolsList])
 
+  const promotedPools = useSelector(getPromotedPools)
+
+  const isPromoted = useMemo(() => {
+    if (!position) {
+      return false
+    }
+
+    return promotedPools.some(pool => pool.address === position.poolData.address.toString())
+  }, [promotedPools])
+
   if (position) {
     return (
       <PositionDetails
@@ -494,6 +507,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         poolDetails={poolDetails}
         onGoBackClick={() => navigate(ROUTES.PORTFOLIO)}
         showPoolDetailsLoader={isLoadingStats}
+        isPromoted={isPromoted}
       />
     )
   }

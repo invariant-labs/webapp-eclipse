@@ -1,13 +1,20 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
     display: 'flex',
-    justifyContent: 'space-between',
+    flexDirection: 'column',
+    alignItems: 'center',
     padding: 12,
+    justifyContent: 'space-between',
     background: colors.invariant.dark,
-    borderRadius: 16
+    borderRadius: 16,
+    gap: 12,
+
+    [theme.breakpoints.up(416)]: {
+      flexDirection: 'row'
+    }
   },
   stat: {
     display: 'flex',

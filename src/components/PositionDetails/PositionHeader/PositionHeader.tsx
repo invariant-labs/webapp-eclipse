@@ -22,6 +22,7 @@ type Props = {
   }
   fee: number
   hasEnoughETH: boolean
+  hasFees: boolean
   isPromoted: boolean
   poolAddress: string
   networkUrl: string
@@ -41,6 +42,7 @@ export const PositionHeader = ({
   tokenB,
   fee,
   hasEnoughETH,
+  hasFees,
   isPromoted,
   poolAddress,
   networkUrl,
@@ -81,7 +83,9 @@ export const PositionHeader = ({
         isLocked
           ? 'Closing positions is disabled when position is locked'
           : hasEnoughETH
-            ? 'Unclaimed fees will be returned when closing the position'
+            ? hasFees
+              ? 'Unclaimed fees will be returned when closing the position'
+              : ''
             : 'Insufficient ETH to close position'
       }>
       <Button
@@ -95,9 +99,14 @@ export const PositionHeader = ({
   )
 
   const addButton = (
-    <Button className={classes.addButton} variant='contained' onClick={() => onAddPositionClick()}>
-      + Add position
-    </Button>
+    <TooltipHover title='Add more liquidity to this pool'>
+      <Button
+        className={classes.addButton}
+        variant='contained'
+        onClick={() => onAddPositionClick()}>
+        + Add position
+      </Button>
+    </TooltipHover>
   )
 
   const marketIdLabel = (
@@ -184,13 +193,15 @@ export const PositionHeader = ({
             <Typography className={classes.tickerContainer}>
               {tokenA.ticker} - {tokenB.ticker}
             </Typography>
-            <img
-              className={classNames(classes.airdropIcon, {
-                [classes.airdropIconInActive]: !isPromoted
-              })}
-              src={icons.airdropRainbow}
-              alt='Points'
-            />
+            <TooltipHover title='This pool distributes points'>
+              <img
+                className={classNames(classes.airdropIcon, {
+                  [classes.airdropIconInActive]: !isPromoted
+                })}
+                src={icons.airdropRainbow}
+                alt='Points'
+              />
+            </TooltipHover>
           </Box>
           <Box className={classes.wrapper}>
             <TooltipGradient

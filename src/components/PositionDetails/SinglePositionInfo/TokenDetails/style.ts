@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -10,8 +10,14 @@ export const useStyles = makeStyles()(() => ({
   },
   tokenLeftSide: {
     display: 'flex',
-    alignItems: 'center',
-    gap: 8
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+    gap: 8,
+
+    [theme.breakpoints.up(368)]: {
+      flexDirection: 'row',
+      alignItems: 'center'
+    }
   },
   tokenValue: {
     ...typography.caption2,

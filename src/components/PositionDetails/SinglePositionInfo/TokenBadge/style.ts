@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 export const useStyles = makeStyles()(() => ({
   container: {
     width: 'fit-content',
-    height: 36,
+    height: 24,
     background: colors.invariant.light,
     padding: '6px 12px',
     borderRadius: 12,

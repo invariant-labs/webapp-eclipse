@@ -14,19 +14,28 @@ type Props = {
   amount: number
   decimal: number
   price?: number
-  isLoading: boolean
+  isLoadingBalance: boolean
+  isLoadingAmount: boolean
 }
 
-export const TokenDetails = ({ icon, ticker, amount, decimal, price, isLoading }: Props) => {
+export const TokenDetails = ({
+  icon,
+  ticker,
+  amount,
+  decimal,
+  price,
+  isLoadingBalance,
+  isLoadingAmount
+}: Props) => {
   const { classes } = useStyles()
 
-  const parsedTokenAmount = Math.abs(Number(amount)) < 10 ** Number(-decimal) ? 0 : Number(amount)
+  const parsedTokenAmount = Math.abs(amount) < 10 ** -decimal ? 0 : amount
 
   return (
     <Box className={classes.tokenContainer}>
       <Box className={classes.tokenLeftSide}>
         <TokenBadge icon={icon} ticker={ticker} />
-        {isLoading ? (
+        {isLoadingBalance ? (
           <Skeleton variant='rounded' height={17} width={32} />
         ) : (
           <Typography className={classes.tokenValue}>
@@ -34,14 +43,12 @@ export const TokenDetails = ({ icon, ticker, amount, decimal, price, isLoading }
           </Typography>
         )}
       </Box>
-      {isLoading ? (
+      {isLoadingAmount ? (
         <Skeleton variant='rounded' height={32} width={160} />
       ) : (
         <Typography className={classes.tokenAmount}>
           {trimZeros(
-            formatNumbers(thresholdsWithTokenDecimal(Number(decimal)))(
-              `${parsedTokenAmount}`.toString()
-            )
+            formatNumbers(thresholdsWithTokenDecimal(decimal))(parsedTokenAmount.toString())
           )}
         </Typography>
       )}

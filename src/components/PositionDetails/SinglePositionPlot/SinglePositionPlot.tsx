@@ -1,8 +1,9 @@
 import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
+  calculateConcentration,
   formatNumberWithSuffix,
   numberToString,
   spacingMultiplicityGte
@@ -136,34 +137,36 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     }
   }
 
+  const minPercentage = (min / currentPrice - 1) * 100
+  const maxPercentage = (max / currentPrice - 1) * 100
+  const concentration = calculateConcentration(leftRange.index, rightRange.index)
+
   return (
-    <Grid item className={classes.root}>
+    <Box className={classes.container}>
       <Box className={classes.headerContainer}>
         <Typography className={classes.header}>Price range</Typography>
         <RangeIndicator inRange={min <= currentPrice && currentPrice <= max} />
       </Box>
-      <Grid className={classes.plotWrapper}>
-        <PriceRangePlot
-          data={data}
-          plotMin={plotMin}
-          plotMax={plotMax}
-          zoomMinus={zoomMinus}
-          zoomPlus={zoomPlus}
-          disabled
-          leftRange={leftRange}
-          rightRange={rightRange}
-          midPrice={midPrice}
-          className={classes.plot}
-          loading={ticksLoading}
-          isXtoY={xToY}
-          tickSpacing={tickSpacing}
-          xDecimal={tokenX.decimal}
-          yDecimal={tokenY.decimal}
-          coverOnLoading
-          hasError={hasTicksError}
-          reloadHandler={reloadHandler}
-        />
-      </Grid>
+      <PriceRangePlot
+        data={data}
+        plotMin={plotMin}
+        plotMax={plotMax}
+        zoomMinus={zoomMinus}
+        zoomPlus={zoomPlus}
+        disabled
+        leftRange={leftRange}
+        rightRange={rightRange}
+        midPrice={midPrice}
+        className={classes.plot}
+        loading={ticksLoading}
+        isXtoY={xToY}
+        tickSpacing={tickSpacing}
+        xDecimal={tokenX.decimal}
+        yDecimal={tokenY.decimal}
+        coverOnLoading
+        hasError={hasTicksError}
+        reloadHandler={reloadHandler}
+      />
       <Box className={classes.statsWrapper}>
         <Box className={classes.statsContainer}>
           <Stat
@@ -184,7 +187,11 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 CONCENTRATION
               </Box>
             }
-            value={<Typography className={classes.concentrationValue}>2001x</Typography>}
+            value={
+              <Typography className={classes.concentrationValue}>
+                {concentration.toFixed(2)}x
+              </Typography>
+            }
           />
         </Box>
         <Box className={classes.statsContainer}>
@@ -218,10 +225,10 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
             name='% MIN'
             value={
               <Box>
-                <Typography component='span' className={classes.valuePercentagePlus}>
-                  +9.29%
-                </Typography>{' '}
-                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+                <Typography component='span' className={classes.value}>
+                  {minPercentage > 0 && '+'}
+                  {minPercentage.toFixed(2)}%
+                </Typography>
               </Box>
             }
             isHorizontal
@@ -230,17 +237,17 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
             name='% MAX'
             value={
               <Box>
-                <Typography component='span' className={classes.valuePercentageMinus}>
-                  -9.29%
-                </Typography>{' '}
-                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+                <Typography component='span' className={classes.value}>
+                  {maxPercentage > 0 && '+'}
+                  {maxPercentage.toFixed(2)}%
+                </Typography>
               </Box>
             }
             isHorizontal
           />
         </Box>
       </Box>
-    </Grid>
+    </Box>
   )
 }
 

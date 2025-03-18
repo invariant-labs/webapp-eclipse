@@ -82,7 +82,14 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   reverseTokensIcon: {
-    cursor: 'pointer'
+    cursor: 'pointer',
+
+    '&:hover': {
+      filter: 'brightness(1.4)',
+      '@media (hover: none)': {
+        filter: 'brightness(1)'
+      }
+    }
   },
   tickerContainer: {
     ...typography.heading4,

@@ -1,14 +1,20 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
+    height: '100%',
     background: colors.invariant.component,
-    padding: 24,
-    borderRadius: 16,
+    padding: 8,
+    borderRadius: 24,
     display: 'flex',
     flexDirection: 'column',
-    gap: 24
+    justifyContent: 'space-between',
+    gap: 12,
+
+    [theme.breakpoints.up('sm')]: {
+      padding: 24
+    }
   },
   claimButton: {
     background: colors.invariant.pinkLinearGradientOpacity,
@@ -17,7 +23,13 @@ export const useStyles = makeStyles()(() => ({
     width: 72,
     color: colors.invariant.dark,
     textTransform: 'none',
-    ...typography.body1
+    ...typography.body1,
+
+    '&:disabled': {
+      pointerEvents: 'all',
+      background: colors.invariant.light,
+      color: colors.invariant.textGrey
+    }
   }
 }))
 

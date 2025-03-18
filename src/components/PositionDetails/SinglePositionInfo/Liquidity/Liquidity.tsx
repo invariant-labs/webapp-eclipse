@@ -17,9 +17,10 @@ type Props = {
     decimal: number
     price?: number
   }
+  isLoadingBalance: boolean
 }
 
-export const Liquidity = ({ tokenA, tokenB }: Props) => {
+export const Liquidity = ({ tokenA, tokenB, isLoadingBalance }: Props) => {
   const { classes } = useStyles()
 
   return (
@@ -31,7 +32,8 @@ export const Liquidity = ({ tokenA, tokenB }: Props) => {
           amount={tokenA.amount}
           decimal={tokenA.decimal}
           price={tokenA.price}
-          isLoading={false}
+          isLoadingBalance={isLoadingBalance}
+          isLoadingAmount={false}
         />
       </Box>
       <Box className={classes.tokenContainer}>
@@ -41,7 +43,8 @@ export const Liquidity = ({ tokenA, tokenB }: Props) => {
           amount={tokenB.amount}
           decimal={tokenB.decimal}
           price={tokenB.price}
-          isLoading={false}
+          isLoadingBalance={isLoadingBalance}
+          isLoadingAmount={false}
         />
       </Box>
     </Box>

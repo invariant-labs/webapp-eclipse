@@ -23,6 +23,7 @@ interface IProp {
   showFeesLoader?: boolean
   poolDetails: PoolDetailsType | null
   showPoolDetailsLoader?: boolean
+  showBalanceLoader?: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -34,7 +35,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   xToY,
   showFeesLoader = false,
   showPoolDetailsLoader = false,
-  poolDetails
+  poolDetails,
+  showBalanceLoader = false
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -111,6 +113,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     price: tokenXPriceData?.price
                   }
             }
+            isLoadingBalance={showBalanceLoader}
           />
         </Section>
         <Section
@@ -118,8 +121,9 @@ const SinglePositionInfo: React.FC<IProp> = ({
           item={
             <Button
               className={classes.claimButton}
+              disabled={tokenX.claimValue + tokenY.claimValue === 0}
               variant='contained'
-              onClick={() => onClickClaimFee}>
+              onClick={() => onClickClaimFee()}>
               Claim
             </Button>
           }>
@@ -158,7 +162,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     price: tokenXPriceData?.price
                   }
             }
-            isLoading={showFeesLoader || false}
+            isLoading={showFeesLoader}
           />
         </Section>
         <Section title='Pool details'>

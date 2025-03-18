@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 24
+    gap: 20
   },
   title: {
     ...typography.heading4,

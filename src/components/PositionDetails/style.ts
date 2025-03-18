@@ -8,19 +8,23 @@ export const useStyles = makeStyles()(() => ({
   },
   container: {
     display: 'flex',
-    flexDirection: 'column',
     gap: 16,
     marginTop: 24,
+    marginBottom: 48,
 
-    [theme.breakpoints.up(1040)]: {
-      flexDirection: 'row'
+    [theme.breakpoints.down(1040)]: {
+      flexDirection: 'column',
+      alignItems: 'stretch',
+      gap: 24,
+      marginBottom: 0
     }
   },
   leftSide: {
-    flexGrow: 1,
+    width: 464,
 
-    [theme.breakpoints.up(1040)]: {
-      width: 464
+    [theme.breakpoints.down(1040)]: {
+      flexGrow: 1,
+      width: '100%'
     }
   },
   rightSide: {

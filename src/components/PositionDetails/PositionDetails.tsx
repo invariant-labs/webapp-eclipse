@@ -62,6 +62,7 @@ interface IProps {
   poolDetails: PoolDetails | null
   onGoBackClick: () => void
   showPoolDetailsLoader: boolean
+  isPromoted: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -98,7 +99,9 @@ const PositionDetails: React.FC<IProps> = ({
   ethBalance,
   onGoBackClick,
   poolDetails,
-  showPoolDetailsLoader
+  showPoolDetailsLoader,
+  isPromoted,
+  isBalanceLoading
 }) => {
   const { classes } = useStyles()
 
@@ -221,12 +224,13 @@ const PositionDetails: React.FC<IProps> = ({
             : { icon: tokenX.icon, ticker: tokenY.name }
         }
         fee={+printBN(fee, DECIMAL - 2)}
-        isPromoted={false}
+        isPromoted={isPromoted}
         poolAddress={poolAddress.toString()}
         networkUrl={networkUrl}
         isLocked={isLocked}
         isActive={isActive}
         hasEnoughETH={hasEnoughETH}
+        hasFees={tokenX.claimValue + tokenY.claimValue > 0}
         onReverseTokensClick={() => setXToY(!xToY)}
         onClosePositionClick={() => {
           if (!userHasStakes) {
@@ -262,6 +266,7 @@ const PositionDetails: React.FC<IProps> = ({
             showFeesLoader={showFeesLoader}
             poolDetails={poolDetails}
             showPoolDetailsLoader={showPoolDetailsLoader}
+            showBalanceLoader={isBalanceLoading}
           />
         </Box>
         <Box className={classes.rightSide}>
