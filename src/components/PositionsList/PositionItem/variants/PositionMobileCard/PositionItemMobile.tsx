@@ -45,6 +45,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   max,
   position,
   id,
+  isFullRange,
   setAllowPropagation,
   poolData,
   isActive = false,
@@ -376,6 +377,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     () => (
       <Grid container justifyContent='center' margin={'0 auto'} width={'80%'}>
         <MinMaxChart
+          isFullRange={isFullRange}
           min={Number(xToY ? min : 1 / max)}
           max={Number(xToY ? max : 1 / min)}
           current={
