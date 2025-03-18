@@ -656,7 +656,7 @@ export function* handleSwapAndInitPositionWithETH(
       (allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
         action.payload.yAmount.eq(new BN(0)))
 
-    const prependedIxs = [createIx, initIx, ...(isInitialEthZero ? [] : [transferIx])]
+    const prependedIxs = [createIx, ...(isInitialEthZero ? [] : [transferIx]), initIx]
 
     const tx = yield* call(
       [marketProgram, marketProgram.versionedSwapAndCreatePositionTx],
