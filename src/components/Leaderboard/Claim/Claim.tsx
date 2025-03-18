@@ -1,7 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import LaunchIcon from '@mui/icons-material/Launch'
-import { colors } from '@static/theme'
 import icons from '@static/icons'
 import { useMemo } from 'react'
 import { Status } from '@store/reducers/solanaWallet'
@@ -44,32 +43,11 @@ export const Claim: React.FC<ClaimProps> = ({
               Accumulated points can be used for future exclusive benefits.
             </Typography>
             <Box sx={{ marginTop: '32px' }}>
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                }}>
+              <Box className={classes.iconWrapper}>
                 <img src={icons.airdrop} style={{ height: '32px', marginRight: '16px' }} />
-                <Typography
-                  style={{
-                    color: colors.invariant.textGrey,
-                    fontSize: '20px',
-                    fontWeight: 400,
-                    lineHeight: '24px',
-                    letterSpacing: '-3%'
-                  }}>
-                  You currently have:
-                </Typography>
+                <Typography>You currently have:</Typography>
               </Box>
-              <Box
-                style={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  flexDirection: 'column',
-                  alignItems: 'center',
-                  marginTop: '32px'
-                }}>
+              <Box className={classes.pointsWrapper}>
                 <Typography className={classes.pointsValue}>
                   {currentUser
                     ? removeAdditionalDecimals(
@@ -93,15 +71,7 @@ export const Claim: React.FC<ClaimProps> = ({
                 </Box>
               </Box>
             </Box>
-            <Typography
-              className={classes.description}
-              style={{
-                display: 'flex',
-                justifyItems: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                marginTop: '32px'
-              }}>
+            <Typography className={classes.description2}>
               If you want to learn more about points distribution, check out our docs.
               <Link
                 to='https://docs.invariant.app/docs/invariant_points/mechanism'

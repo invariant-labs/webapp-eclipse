@@ -133,7 +133,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
               (You)
             </Typography>
           ) : null}
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline' }}>
+          <Box className={classes.copyWrapper}>
             <TooltipHover title='Copy address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}

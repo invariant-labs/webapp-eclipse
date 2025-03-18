@@ -309,7 +309,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   }, [price])
 
   return (
-    <Grid container direction='column' className={classes.wrapper}>
+    <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
         <Typography className={classes.header}>Starting price</Typography>
         <Grid className={classes.infoWrapper}>
@@ -330,11 +330,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
           }}
         />
 
-        <Grid
-          className={classes.priceWrapper}
-          container
-          justifyContent='space-between'
-          alignItems='center'>
+        <Grid className={classes.priceWrapper} container>
           <Typography className={classes.priceLabel}>{tokenASymbol} starting price: </Typography>
           <Typography className={classes.priceValue}>
             <span>~</span>
@@ -345,7 +341,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
         </Grid>
       </Grid>
       <Grid className={classes.bottomInnerWrapper}>
-        <Grid container justifyContent='space-between' alignItems='center' minHeight={36}>
+        <Grid container className={classes.subheaderWrapper}>
           <Typography className={classes.subheader}>Set price range</Typography>
           {positionOpeningMethod === 'range' && (
             <Grid className={classes.rangeConcentration}>
@@ -454,7 +450,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
             />
           </Grid>
         ) : (
-          <Grid container className={classes.buttons} justifyContent='center' alignItems='center'>
+          <Grid container className={classes.buttons}>
             <Button className={classes.button} onClick={resetRange}>
               Reset range
             </Button>

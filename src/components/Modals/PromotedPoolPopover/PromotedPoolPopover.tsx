@@ -66,7 +66,6 @@ export const PromotedPoolPopover = ({
     <TooltipGradient
       title={
         <div className={classes.container}>
-          {/* Content remains the same */}
           <Typography
             className={classes.greyText}
             dangerouslySetInnerHTML={

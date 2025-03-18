@@ -105,7 +105,7 @@ export const BoxInfo: React.FC<{
         ) : null}
       </Grid>
 
-      <Grid className={classes.tokenGrid} container direction='column'>
+      <Grid className={classes.tokenGrid} container>
         {showLoader ? (
           <Grid container className={classes.cover}>
             <img src={loader} className={classes.loader} alt='Loader' />

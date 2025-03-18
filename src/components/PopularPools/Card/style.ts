@@ -17,7 +17,12 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center'
   },
-
+  skeleton: {
+    width: '220px',
+    height: '344px',
+    opacity: 0.7,
+    borderRadius: 24
+  },
   iconsWrapper: {
     display: 'flex',
     justifyContent: 'center',
@@ -80,6 +85,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   back: {
+    alignItems: 'center',
     width: 'fit-content',
     transition: 'filter 300ms',
     padding: '6px',
@@ -123,5 +129,15 @@ export const useStyles = makeStyles()(() => ({
         boxShadow: 'none'
       }
     }
+  },
+  cardWrapper: {
+    padding: '20px',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
+  footerWrapper: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 'auto'
   }
 }))

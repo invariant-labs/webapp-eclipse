@@ -19,7 +19,11 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
         maxWidth: '100%'
       }
     },
-
+    exposureWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      gap: '10px'
+    },
     boxWrapper: {
       gap: '8px',
       alignItems: 'center',
