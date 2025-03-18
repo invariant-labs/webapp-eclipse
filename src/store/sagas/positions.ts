@@ -650,6 +650,14 @@ export function* handleSwapAndInitPositionWithETH(
         ? true
         : undefined
 
+    const isInitialEthZero =
+      (allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
+        action.payload.xAmount.eq(new BN(0))) ||
+      (allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
+        action.payload.yAmount.eq(new BN(0)))
+
+    const prependedIxs = [createIx, initIx, ...(isInitialEthZero ? [] : [transferIx])]
+
     const tx = yield* call(
       [marketProgram, marketProgram.versionedSwapAndCreatePositionTx],
       {
@@ -688,7 +696,7 @@ export function* handleSwapAndInitPositionWithETH(
           pool: action.payload.swapPool
         }
       },
-      [createIx, transferIx, initIx],
+      prependedIxs,
       [unwrapIx]
     )
 
@@ -777,10 +785,8 @@ export function* handleSwapAndInitPosition(
     const allTokens = yield* select(tokens)
 
     if (
-      (allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
-        !action.payload.xAmount.eq(new BN(0))) ||
-      (allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS &&
-        !action.payload.yAmount.eq(new BN(0)))
+      allTokens[action.payload.tokenX.toString()].address.toString() === WRAPPED_ETH_ADDRESS ||
+      allTokens[action.payload.tokenY.toString()].address.toString() === WRAPPED_ETH_ADDRESS
     ) {
       return yield* call(handleSwapAndInitPositionWithETH, action)
     }
