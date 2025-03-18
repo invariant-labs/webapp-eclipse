@@ -33,5 +33,6 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          DIRECTORY: dist
+          WORKING_DIRECTORY: storybook-static
+          PREBUILT: true
           PRODUCTION: false
