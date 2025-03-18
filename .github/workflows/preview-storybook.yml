@@ -36,7 +36,6 @@ jobs:
         run: npm i
       - name: Build Storybook
         run: npm run build-storybook
-
       - name: Deploy Storybook to Vercel Action
         uses: amondnet/vercel-action@v20
         with:
@@ -44,4 +43,4 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
-          vercel-args: 'storybook-static'
+          vercel-args: 'storybook-static --prebuilt'
