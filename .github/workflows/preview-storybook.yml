@@ -37,11 +37,13 @@ jobs:
       - name: Build Storybook
         run: npm run build-storybook
       - name: Deploy Storybook to Vercel Action
-        uses: amondnet/vercel-action@v20
+        uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          vercel-token: ${{ secrets.VERCEL_TOKEN }}
-          vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
-          scope: ${{ secrets.VERCEL_ORG_ID }}
-          vercel-project-id: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
-          vercel-args: 'storybook-static --local-config vercel.storybook.json'
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
+          PRODUCTION: 'false'
+          WORKING_DIRECTORY: 'storybook-static'
+          PREBUILT: 'true'
