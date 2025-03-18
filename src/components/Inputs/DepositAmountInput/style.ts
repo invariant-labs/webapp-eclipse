@@ -31,6 +31,10 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
   },
   inputContainer: {
     marginBottom: 6,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
 
     [theme.breakpoints.down('sm')]: {
       marginBottom: 0
@@ -53,7 +57,16 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
       textAlign: 'right'
     }
   },
+  balanceWrapper: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
+  },
   currency: {
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     height: 36,
     minWidth: 85,
     width: 'fit-content',
@@ -72,7 +85,9 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
     flexShrink: 0,
     width: 'fit-content',
     justifyContent: 'end',
-    height: 17
+    height: 17,
+    alignItems: 'center',
+    flexWrap: 'nowrap'
   },
   percentage: {
     ...typography.tiny1,
@@ -126,6 +141,8 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
   },
   balance: {
     height: 17,
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     cursor: isSelected ? 'pointer' : '',
     flexShrink: 1,
     marginRight: 10
@@ -231,6 +248,8 @@ export const useStyles = makeStyles<{ isSelected: boolean }>()((theme: Theme, { 
     borderRadius: 20
   },
   blockedInfoWrapper: {
+    justifyContent: 'center',
+    alignItems: 'center',
     position: 'absolute',
     top: 0,
     left: 0,

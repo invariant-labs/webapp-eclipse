@@ -100,7 +100,6 @@ export interface IDepositSelector {
   priceB?: number
   onReverseTokens: () => void
   poolIndex: number | null
-  bestTierIndex?: number
   handleAddToken: (address: string) => void
   commonTokens: PublicKey[]
   initialHideUnknownTokensValue: boolean
@@ -127,6 +126,9 @@ export interface IDepositSelector {
   canNavigate: boolean
   isCurrentPoolExisting: boolean
   promotedPoolTierIndex: number | undefined
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
+  isLoadingStats: boolean
   isAutoSwapAvailable: boolean
   isAutoSwapOnTheSamePool: boolean
   autoSwapPoolData: PoolWithAddress | null
@@ -170,7 +172,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   priceB,
   onReverseTokens,
   poolIndex,
-  bestTierIndex,
   promotedPoolTierIndex,
   handleAddToken,
   commonTokens,
@@ -193,6 +194,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   ethBalance,
   canNavigate,
   isCurrentPoolExisting,
+  feeTiersWithTvl,
+  totalTvl,
+  isLoadingStats,
   isAutoSwapAvailable,
   autoSwapPoolData,
   autoSwapTickmap,
@@ -771,7 +775,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   ])
 
   return (
-    <Grid container direction='column' className={classNames(classes.wrapper, className)}>
+    <Grid container className={classNames(classes.wrapper, className)}>
       <DepoSitOptionsModal
         initialMaxPriceImpact={initialMaxPriceImpact}
         setMaxPriceImpact={setMaxPriceImpact}
@@ -787,7 +791,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       <Typography className={classes.sectionTitle}>Tokens</Typography>
 
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
-        <Grid container className={classes.selects} direction='row' justifyContent='space-between'>
+        <Grid container className={classes.selects}>
           <Grid className={classes.selectWrapper}>
             <Select
               tokens={tokens}
@@ -845,9 +849,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           }}
           feeTiers={feeTiers}
           showOnlyPercents
-          bestTierIndex={bestTierIndex}
           promotedPoolTierIndex={promotedPoolTierIndex}
           currentValue={feeTierIndex}
+          feeTiersWithTvl={feeTiersWithTvl}
+          totalTvl={totalTvl}
+          isLoadingStats={isLoadingStats}
         />
       </Grid>
       <Grid container className={classes.depositHeader}>

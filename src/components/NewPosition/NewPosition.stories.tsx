@@ -73,7 +73,6 @@ export const Primary: Story = {
     isXtoY: true,
     addLiquidityHandler: fn(),
     midPrice: { x: 1234, index: 23, sqrtPrice: new BN(1111111111123) },
-    bestTiers: [],
     commonTokens: [],
     copyPoolAddressHandler: fn(),
     currentFeeIndex: 0,
@@ -132,7 +131,10 @@ export const Primary: Story = {
       middle: new BN(100000000000),
       max: new BN(10000000000000)
     }),
-    isPromotedPool: false
+    isPromotedPool: false,
+    feeTiersWithTvl: {},
+    totalTvl: 0,
+    isLoadingStats: false
   },
   render: () => {
     return (
@@ -161,7 +163,6 @@ export const Primary: Story = {
         isWaitingForNewPool={false}
         poolIndex={0}
         tokens={tokens}
-        bestTiers={[]}
         currentPairReversed={false}
         isXtoY={true}
         initialTokenFrom='BTC'
@@ -206,6 +207,9 @@ export const Primary: Story = {
           middle: new BN(100000000000),
           max: new BN(10000000000000)
         })}
+        feeTiersWithTvl={{}}
+        totalTvl={0}
+        isLoadingStats={false}
         autoSwapPoolData={null}
         autoSwapTickmap={null}
         autoSwapTicks={null}

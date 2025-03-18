@@ -11,7 +11,7 @@ export const SwapPage: React.FC = () => {
   const initialTokenTo = item2 || ''
 
   return (
-    <Grid container className={classes.container}>
+    <Grid className={classes.container}>
       <WrappedSwap initialTokenFrom={initialTokenFrom} initialTokenTo={initialTokenTo} />
     </Grid>
   )

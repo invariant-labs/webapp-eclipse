@@ -91,7 +91,7 @@ import settings3 from './svg/settings3.svg'
 import faucet from './svg/faucet.svg'
 import settingCirc from './svg/settings_ic.svg'
 
-const icons: { [key: string]: string } = {
+const icons = {
   tokenCreator,
   docsFill,
   mediumFill,
