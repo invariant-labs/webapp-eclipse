@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -22,26 +22,6 @@ jobs:
       - name: Build
         run: npm run build
 
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: app-dist
-          path: dist
-
-  upload:
-    runs-on: ubuntu-latest
-    needs: build
-    permissions:
-      contents: write
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v3
-
-      - name: Download Build Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: app-dist
-
       - name: Install Vercel CLI
         run: npm install -g vercel@22.0.1
 
@@ -53,5 +33,5 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          DIRECTORY: app-dist
+          DIRECTORY: dist
           PRODUCTION: false
