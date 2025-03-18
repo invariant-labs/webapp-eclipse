@@ -43,4 +43,4 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_STORYBOOK_PROJECT_ID }}
-          vercel-args: 'storybook-static --prebuilt'
+          vercel-args: 'storybook-static --prebuilt --local-config vercel.storybook.json'
