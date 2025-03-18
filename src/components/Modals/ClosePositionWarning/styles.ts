@@ -7,7 +7,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     background: colors.invariant.component,
     width: 480,
     borderRadius: 24,
-    padding: '20px 24px'
+    padding: '20px 24px',
+    flexDirection: 'column',
+    justifyContent: 'space-between'
   },
   popover: {
     marginTop: 'calc(50vh - 143px)',
@@ -24,7 +26,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   upperRow: {
     height: 20,
-    marginBottom: 16
+    marginBottom: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between'
   },
   title: {
     ...typography.heading4,

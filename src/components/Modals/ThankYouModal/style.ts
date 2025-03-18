@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
@@ -12,6 +12,12 @@ const useStyles = makeStyles()(() => {
       right: 0,
       zIndex: 51,
       opacity: 0.7
+    },
+    subheaderWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      gap: theme.spacing(2)
     },
     container: {
       width: 544,

@@ -10,6 +10,8 @@ const useStyles = makeStyles()((theme: Theme) => {
       borderRadius: 24,
       padding: '20px 24px',
       maxWidth: '100%',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
 
       [theme.breakpoints.down('sm')]: {
         padding: '20px 16px '
@@ -34,7 +36,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       '& p': {
         ...typography.heading4,
         color: colors.white.main
-      }
+      },
+      flexDirection: 'row',
+      justifyContent: 'space-between'
     },
     title: {
       ...typography.heading4,
@@ -81,6 +85,11 @@ const useStyles = makeStyles()((theme: Theme) => {
         background: colors.invariant.light,
         color: colors.invariant.black
       }
+    },
+    inputWrapper: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      flexWrap: 'nowrap'
     }
   }
 })
