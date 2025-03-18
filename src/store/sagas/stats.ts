@@ -4,9 +4,17 @@ import { network } from '@store/selectors/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
 import { handleRpcError } from './connection'
 import { ensureError, getFullSnap } from '@utils/utils'
+import { lastTimestamp } from '@store/selectors/stats'
+import { STATS_CACHE_TIME } from '@store/consts/static'
 
 export function* getStats(): Generator {
   try {
+    const lastFetchTimestamp = yield* select(lastTimestamp)
+
+    if (+Date.now() < lastFetchTimestamp + STATS_CACHE_TIME) {
+      return yield* put(actions.setLoadingStats(false))
+    }
+
     const currentNetwork = yield* select(network)
 
     const fullSnap = yield* call(getFullSnap, currentNetwork.toLowerCase())

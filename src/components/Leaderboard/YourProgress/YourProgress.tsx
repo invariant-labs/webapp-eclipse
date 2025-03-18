@@ -67,7 +67,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
 
   return (
     <Grid className={classes.mainWrapper}>
-      <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
+      <Grid className={classes.boxWrapper}>
         {!isLoadingList && <BlurOverlay isConnected={isConnected} />}
 
         <Grid className={classes.header}>

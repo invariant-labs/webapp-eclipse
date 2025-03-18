@@ -5,6 +5,7 @@ export const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
       borderRadius: 24,
+      flexDirection: 'column',
       backgroundColor: colors.invariant.component,
       padding: '16px 24px 16px 24px',
       flex: '1 1 0%',
@@ -31,6 +32,8 @@ export const useStyles = makeStyles()(theme => {
       marginBottom: 3
     },
     selects: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       gap: 12,
       marginBottom: 10
     },
