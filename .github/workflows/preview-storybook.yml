@@ -5,7 +5,7 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build:
+  build-storybook:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -18,9 +18,9 @@ jobs:
       - name: install
         run: npm i
       - name: build
-        run: npm run build
+        run: npm run build-storybook
 
-  upload:
+  upload-storybook:
     runs-on: ubuntu-latest
     permissions: write-all
     steps:
