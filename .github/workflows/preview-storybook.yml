@@ -48,6 +48,9 @@ jobs:
             ]
           }
           EOF
+
+      - name: Install Vercel CLI globally
+        run: npm install -g vercel
       - name: Deploy Storybook to Vercel Action
         uses: BetaHuhn/deploy-to-vercel-action@v1
         with:
