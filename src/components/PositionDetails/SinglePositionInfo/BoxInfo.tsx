@@ -93,8 +93,8 @@ export const BoxInfo: React.FC<{
           <Button
             scheme='pink'
             height={32}
-            padding='0 30px'
-            borderRadius={8}
+            padding='0 24px'
+            borderRadius={12}
             onClick={onClickButton}
             disabled={
               Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) &&

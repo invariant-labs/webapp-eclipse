@@ -213,6 +213,9 @@ const SinglePositionInfo: React.FC<IProp> = ({
               <Box>
                 <Button
                   scheme='green'
+                  height={36}
+                  padding='0 6px'
+                  borderRadius={14}
                   disabled={isLocked || !canClosePosition}
                   onClick={() => {
                     if (!userHasStakes) {
