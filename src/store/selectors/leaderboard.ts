@@ -57,7 +57,6 @@ export const getPromotedPools = createSelector(
 )
 
 export const getContentProgramDates = createSelector(config, config => {
-  console.log(config)
   return { start: config.contentProgramDateStart, end: config.contentProgramDateEnd }
 })
 
