@@ -117,12 +117,8 @@ export const useStyles = makeStyles()(() => ({
     flexGrow: 1,
     color: colors.invariant.dark,
     textTransform: 'none',
-    padding: 0,
+    padding: '0 8px',
     ...typography.body1,
-
-    [theme.breakpoints.up(688)]: {
-      width: 108
-    },
 
     '&:disabled': {
       pointerEvents: 'all',
@@ -137,12 +133,8 @@ export const useStyles = makeStyles()(() => ({
     flexGrow: 1,
     color: colors.invariant.dark,
     textTransform: 'none',
-    padding: 0,
-    ...typography.body1,
-
-    [theme.breakpoints.up(688)]: {
-      width: 108
-    }
+    padding: '0 8px',
+    ...typography.body1
   },
   lockButton: {
     background: colors.invariant.pinkLinearGradientOpacity,

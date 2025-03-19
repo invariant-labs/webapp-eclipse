@@ -3,19 +3,18 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    gap: 12,
+    gap: 6,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
 
-    [theme.breakpoints.up(416)]: {
+    [theme.breakpoints.up(432)]: {
       flexDirection: 'row'
     }
   },
   statContainer: {
-    height: 32,
     background: colors.invariant.newDark,
-    padding: '0 12px',
+    padding: '6px 8px',
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -23,11 +22,11 @@ export const useStyles = makeStyles()(() => ({
     borderRadius: 12
   },
   statName: {
-    ...typography.caption2,
+    ...typography.body2,
     color: colors.invariant.textGrey
   },
   statValue: {
-    ...typography.caption1,
+    ...typography.body1,
     color: colors.white.main
   },
   statContainerHiglighted: {

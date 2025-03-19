@@ -13,7 +13,8 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'space-between',
     gap: 20,
 
-    [theme.breakpoints.up('sm')]: {
+    [theme.breakpoints.up(1040)]: {
+      gap: 0,
       paddingInline: 24
     }
   },
