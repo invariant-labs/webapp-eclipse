@@ -22,6 +22,7 @@ import {
   convertBalanceToBN,
   findPairs,
   handleSimulate,
+  initialXtoY,
   printBN,
   ROUTES,
   trimLeadingZeros
@@ -187,7 +188,15 @@ export const Swap: React.FC<ISwap> = ({
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
   const [isPairGivingPoints, setIsPairGivingPoints] = React.useState<boolean>(false)
-  const [rateReversed, setRateReversed] = React.useState<boolean>(false)
+  const [rateReversed, setRateReversed] = React.useState<boolean>(
+    tokenFromIndex && tokenToIndex
+      ? !initialXtoY(
+          tokens[tokenFromIndex].assetAddress.toString(),
+          tokens[tokenToIndex].assetAddress.toString()
+        )
+      : false
+  )
+  const [rateLoading, setRateLoading] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
@@ -395,7 +404,15 @@ export const Swap: React.FC<ISwap> = ({
   }, [swap])
 
   useEffect(() => {
-    setRateReversed(false)
+    if (tokenFromIndex !== null && tokenToIndex !== null) {
+      setRateReversed(
+        !initialXtoY(
+          tokens[tokenFromIndex].assetAddress.toString(),
+          tokens[tokenToIndex].assetAddress.toString()
+        )
+      )
+      setRateLoading(false)
+    }
   }, [tokenFromIndex, tokenToIndex])
 
   const getAmountOut = (assetFor: SwapToken) => {
@@ -854,6 +871,7 @@ export const Swap: React.FC<ISwap> = ({
               )}
               onClick={() => {
                 if (lockAnimation) return
+                setRateLoading(true)
                 setLockAnimation(!lockAnimation)
                 setRotates(rotates + 1)
                 swap !== null ? setSwap(!swap) : setSwap(true)
@@ -1045,7 +1063,7 @@ export const Swap: React.FC<ISwap> = ({
                   tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
                   amount={rateReversed ? 1 / swapRate : swapRate}
                   tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
-                  loading={getStateMessage() === 'Loading'}
+                  loading={getStateMessage() === 'Loading' || rateLoading}
                 />
               </Box>
             ) : null}
