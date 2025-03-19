@@ -70,6 +70,8 @@ export interface ILeaderboardStore {
     pointsPerUsd: number
     swapPairs: { tokenX: string; tokenY: string }[]
     swapMultiplier: string
+    contentProgramDateStart: string
+    contentProgramDateEnd: string
   }
   priceFeeds: Record<
     string,
@@ -98,7 +100,9 @@ export const defaultState: ILeaderboardStore = {
     swapPairs: [],
     lastSnapTimestamp: '',
     pointsPerUsd: 0,
-    swapMultiplier: '01'
+    swapMultiplier: '01',
+    contentProgramDateStart: '01.01.2025',
+    contentProgramDateEnd: '31.12.2025'
   },
   priceFeeds: {},
   contentPoints: null
@@ -190,6 +194,8 @@ const leaderboardSlice = createSlice({
         lastSnapTimestamp: string
         pointsPerUSD: number
         swapMultiplier: string
+        contentProgramDateStart: string
+        contentProgramDateEnd: string
       }>
     ) {
       state.config = {
@@ -199,7 +205,9 @@ const leaderboardSlice = createSlice({
         swapPairs: action.payload.swapPairs,
         lastSnapTimestamp: action.payload.lastSnapTimestamp,
         pointsPerUsd: action.payload.pointsPerUSD,
-        swapMultiplier: action.payload.swapMultiplier
+        swapMultiplier: action.payload.swapMultiplier,
+        contentProgramDateStart: action.payload.contentProgramDateStart,
+        contentProgramDateEnd: action.payload.contentProgramDateEnd
       }
       return state
     },

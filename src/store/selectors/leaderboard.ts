@@ -56,6 +56,11 @@ export const getPromotedPools = createSelector(
     config.promotedPools
 )
 
+export const getContentProgramDates = createSelector(config, config => {
+  console.log(config)
+  return { start: config.contentProgramDateStart, end: config.contentProgramDateEnd }
+})
+
 export const lastTimestamp = createSelector(config, config => config.lastSnapTimestamp)
 export const pointsPerUsd = createSelector(config, config => config.pointsPerUsd)
 export const swapPairs = createSelector(config, config => config.swapPairs)
