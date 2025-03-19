@@ -92,6 +92,7 @@ import reverseTokens from './svg/reverse-tokens.svg'
 import backArrow from '@static/svg/back-arrow.svg'
 import lock from '@static/svg/lock.svg'
 import unlock from '@static/svg/unlock.svg'
+import boostPointsBold from '@static/svg/boostPointsBold.svg'
 
 const icons = {
   tokenCreator,
@@ -187,7 +188,8 @@ const icons = {
   reverseTokens,
   backArrow,
   lock,
-  unlock
+  unlock,
+  boostPointsBold
 }
 
 export default icons

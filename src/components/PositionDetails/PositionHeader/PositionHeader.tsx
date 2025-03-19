@@ -193,7 +193,10 @@ export const PositionHeader = ({
             <Typography className={classes.tickerContainer}>
               {tokenA.ticker} - {tokenB.ticker}
             </Typography>
-            <TooltipHover title='This pool distributes points'>
+            <TooltipHover
+              title={
+                isPromoted ? 'This pool distributes points' : "This pool doesn't distribute points"
+              }>
               <img
                 className={classNames(classes.airdropIcon, {
                   [classes.airdropIconInActive]: !isPromoted
@@ -226,7 +229,7 @@ export const PositionHeader = ({
             {!isSmDown && closeButton}
             {!isSmDown && isMdDown && (
               <>
-                {lockButton} {addButton}
+                {addButton} {lockButton}
               </>
             )}
           </Box>
@@ -237,14 +240,14 @@ export const PositionHeader = ({
               <>
                 {marketIdLabel}
                 <Box className={classes.wrapper}>
-                  {refresher} {lockButton} {addButton}
+                  {refresher} {addButton} {lockButton}
                 </Box>
               </>
             ) : (
               <>
                 {closeButton}
-                {lockButton}
                 {addButton}
+                {lockButton}
               </>
             )}
           </Box>

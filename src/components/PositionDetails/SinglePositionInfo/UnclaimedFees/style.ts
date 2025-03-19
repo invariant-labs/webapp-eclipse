@@ -7,7 +7,7 @@ export const useStyles = makeStyles()(() => ({
     flexDirection: 'column',
     gap: 8,
     padding: 12,
-    background: colors.invariant.dark,
+    background: colors.invariant.newDark,
     borderRadius: 16
   }
 }))

@@ -183,7 +183,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
           <Stat
             name={
               <Box className={classes.concentrationContainer}>
-                <img src={icons.boostPoints} />
+                <img className={classes.concentrationIcon} src={icons.boostPointsBold} />
                 CONCENTRATION
               </Box>
             }

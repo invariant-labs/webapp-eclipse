@@ -5,7 +5,7 @@ export const useStyles = makeStyles()(() => ({
   container: {
     height: 28,
     padding: '0 12px',
-    background: colors.invariant.dark,
+    background: colors.invariant.newDark,
     display: 'flex',
     alignItems: 'center',
     gap: 4,

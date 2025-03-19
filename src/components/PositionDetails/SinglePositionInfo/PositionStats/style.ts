@@ -14,7 +14,7 @@ export const useStyles = makeStyles()(() => ({
   },
   statContainer: {
     height: 32,
-    background: colors.invariant.dark,
+    background: colors.invariant.newDark,
     padding: '0 12px',
     display: 'flex',
     justifyContent: 'space-between',

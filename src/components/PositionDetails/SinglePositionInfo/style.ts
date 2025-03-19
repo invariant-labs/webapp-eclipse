@@ -5,15 +5,16 @@ export const useStyles = makeStyles()(() => ({
   container: {
     height: '100%',
     background: colors.invariant.component,
-    padding: 8,
+    padding: 24,
+    paddingInline: 8,
     borderRadius: 24,
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-between',
-    gap: 12,
+    gap: 20,
 
     [theme.breakpoints.up('sm')]: {
-      padding: 24
+      paddingInline: 24
     }
   },
   overlay: {

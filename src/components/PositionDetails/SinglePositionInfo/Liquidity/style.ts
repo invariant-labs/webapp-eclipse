@@ -8,7 +8,7 @@ export const useStyles = makeStyles()(() => ({
     gap: 12
   },
   tokenContainer: {
-    background: colors.invariant.dark,
+    background: colors.invariant.newDark,
     borderRadius: 16,
     padding: 12,
     display: 'flex',

@@ -6,7 +6,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   container: {
     height: '100%',
     backgroundColor: colors.invariant.component,
-    padding: 8,
+    padding: 24,
+    paddingInline: 8,
     borderRadius: 24,
     display: 'flex',
     flexDirection: 'column',
@@ -14,7 +15,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     gap: 12,
 
     [theme.breakpoints.up('sm')]: {
-      padding: 24
+      paddingInline: 24
     }
   },
   liqWrapper: {
@@ -74,6 +75,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontSize: 20,
     fontWeight: 400,
     color: colors.white.main
+  },
+  concentrationIcon: {
+    marginBottom: 3
   }
 }))
 

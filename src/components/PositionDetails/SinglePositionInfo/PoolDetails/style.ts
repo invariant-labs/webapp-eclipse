@@ -8,7 +8,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     padding: 12,
     justifyContent: 'space-between',
-    background: colors.invariant.dark,
+    background: colors.invariant.newDark,
     borderRadius: 16,
     gap: 12,
 

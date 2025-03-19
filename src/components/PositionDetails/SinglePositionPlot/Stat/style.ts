@@ -8,7 +8,7 @@ type Props = {
 export const useStyles = makeStyles<Props>()((_theme, { isHorizontal }) => ({
   container: {
     width: '100%',
-    background: colors.invariant.dark,
+    background: colors.invariant.newDark,
     borderRadius: 12,
     display: 'flex',
     flexDirection: isHorizontal ? 'row' : 'column'

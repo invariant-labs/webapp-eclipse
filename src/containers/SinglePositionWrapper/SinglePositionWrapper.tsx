@@ -40,6 +40,7 @@ import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { getPromotedPools } from '@store/selectors/leaderboard'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 
 export interface IProps {
   id: string
@@ -413,15 +414,15 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
   }, [poolsList])
 
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [])
+
   const promotedPools = useSelector(getPromotedPools)
 
-  const isPromoted = useMemo(() => {
-    if (!position) {
-      return false
-    }
-
-    return promotedPools.some(pool => pool.address === position.poolData.address.toString())
-  }, [promotedPools])
+  const isPromoted = promotedPools.some(
+    pool => pool.address === position?.poolData.address.toString()
+  )
 
   if (position) {
     return (
