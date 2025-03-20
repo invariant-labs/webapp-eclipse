@@ -88,6 +88,8 @@ import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
 import faucet from './svg/faucet.svg'
+import eyeYellow from './svg/eyeYellow.svg'
+import closeYellow from './svg/closeYellow.svg'
 
 const icons: { [key: string]: string } = {
   tokenCreator,
@@ -179,7 +181,9 @@ const icons: { [key: string]: string } = {
   liquidityEmpty,
   assetsEmpty,
   settings3,
-  faucet
+  faucet,
+  eyeYellow,
+  closeYellow
 }
 
 export default icons

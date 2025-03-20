@@ -170,5 +170,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         }
       }
     }
+  },
+  informationContainer: {
+    marginBottom: 24
+  },
+  information: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
   }
 }))
