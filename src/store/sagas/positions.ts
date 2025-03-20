@@ -6,22 +6,22 @@ import { getConnection, handleRpcError } from './connection'
 import {
   actions,
   ClosePositionData,
-  FetchTick,
   GetCurrentTicksData,
   InitPositionData,
-  PositionWithAddress
+  PositionWithAddress,
+  UpdatePositionRangeRicksData
 } from '@store/reducers/positions'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
 import { IWallet, Pair } from '@invariant-labs/sdk-eclipse'
 import { accounts } from '@store/selectors/solanaWallet'
 import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
-
 import {
   Transaction,
   sendAndConfirmRawTransaction,
   Keypair,
-  TransactionExpiredTimeoutError
+  TransactionExpiredTimeoutError,
+  PublicKey
 } from '@solana/web3.js'
 import {
   SIGNING_SNACKBAR_CONFIG,
@@ -33,9 +33,7 @@ import {
   lockedPositionsWithPoolsData,
   positionsList,
   positionsWithPoolsData,
-  singlePositionData,
-  currentPositionTicks,
-  prices
+  singlePositionData
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -47,18 +45,15 @@ import {
   createPlaceholderLiquidityPlot,
   ensureError,
   getLiquidityTicksByPositionsList,
-  getPositionsAddressesFromRange,
-  printBN
+  getPositionsAddressesFromRange
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
-  calculateClaimAmount,
   createNativeAtaInstructions,
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import { ClaimAllFee, Market, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
-import { getEclipseWallet } from '@utils/web3/wallet'
+import { ClaimAllFee, Position } from '@invariant-labs/sdk-eclipse/lib/market'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -856,14 +851,12 @@ export function* handleGetPositionsList() {
       addresses: call(getPositionsAddressesFromRange, marketProgram, wallet.publicKey, 0, head - 1)
     })
 
-    const positions = list.map((position, index) => ({
-      ...position,
-      address: addresses[index]
-    }))
+    const pools = new Set(list.map(pos => pos.pool.toString()))
 
     const [lockerAuth] = lockerProgram.getUserLocksAddress(wallet.publicKey)
 
-    let lockedPositions: PositionWithAddress[]
+    let lockedPositions: (Position & { address: PublicKey })[] = []
+
     try {
       const { head: lockedHead } = yield* call(
         [marketProgram, marketProgram.getPositionList],
@@ -897,11 +890,79 @@ export function* handleGetPositionsList() {
       lockedPositions = []
     }
 
-    const pools = new Set(list.map(pos => pos.pool.toString()))
-
     lockedPositions.forEach(lock => {
       pools.add(lock.pool.toString())
     })
+
+    yield* put(
+      poolsActions.getPoolsDataForList({
+        addresses: Array.from(pools),
+        listType: ListType.POSITIONS
+      })
+    )
+    yield* take(poolsActions.addPoolsForList.type)
+
+    const poolsList = yield* select(poolsArraySortedByFees)
+    const positions = list.map((position, index) => {
+      return {
+        ...position,
+        address: addresses[index]
+      }
+    })
+
+    const positionsWithTicks: PositionWithAddress[] = []
+
+    for (const position of positions) {
+      const pool = poolsList.find(pool => pool.address.toString() === position.pool.toString())
+
+      if (!pool) {
+        continue
+      }
+
+      const pair = new Pair(pool.tokenX, pool.tokenY, {
+        fee: pool.fee,
+        tickSpacing: pool.tickSpacing
+      })
+
+      const { lowerTick, upperTick } = yield* all({
+        lowerTick: call([marketProgram, marketProgram.getTick], pair, position.lowerTickIndex),
+        upperTick: call([marketProgram, marketProgram.getTick], pair, position.upperTickIndex)
+      })
+
+      positionsWithTicks.push({
+        ...position,
+        lowerTick,
+        upperTick,
+        ticksLoading: false
+      })
+    }
+
+    const lockedPositionsWithTicks: PositionWithAddress[] = []
+
+    for (const position of lockedPositions) {
+      const pool = poolsList.find(pool => pool.address.toString() === position.pool.toString())
+
+      if (!pool) {
+        continue
+      }
+
+      const pair = new Pair(pool.tokenX, pool.tokenY, {
+        fee: pool.fee,
+        tickSpacing: pool.tickSpacing
+      })
+
+      const { lowerTick, upperTick } = yield* all({
+        lowerTick: call([marketProgram, marketProgram.getTick], pair, position.lowerTickIndex),
+        upperTick: call([marketProgram, marketProgram.getTick], pair, position.upperTickIndex)
+      })
+
+      lockedPositionsWithTicks.push({
+        ...position,
+        lowerTick,
+        upperTick,
+        ticksLoading: false
+      })
+    }
 
     yield* put(
       poolsActions.getPoolsDataForList({
@@ -921,8 +982,8 @@ export function* handleGetPositionsList() {
 
     yield* take(pattern)
 
-    yield* put(actions.setLockedPositionsList(lockedPositions))
-    yield* put(actions.setPositionsList([positions, { head, bump }, true]))
+    yield* put(actions.setLockedPositionsList(lockedPositionsWithTicks))
+    yield* put(actions.setPositionsList([positionsWithTicks, { head, bump }, true]))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
@@ -1389,7 +1450,6 @@ export function* handleClaimAllFees() {
     yield put(snackbarsActions.remove(loaderClaimAllFees))
 
     yield put(actions.getPositionsList())
-    yield put(actions.calculateTotalUnclaimedFees())
 
     yield* put(actions.setAllClaimLoader(false))
   } catch (e: unknown) {
@@ -1748,8 +1808,7 @@ export function* handleGetSinglePosition(
     const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
 
     const [lockerAuth] = lockerProgram.getUserLocksAddress(wallet.publicKey)
-
-    yield put(actions.getCurrentPositionRangeTicks({ id: action.payload.index.toString() }))
+    const poolsList = yield* select(poolsArraySortedByFees)
 
     const position = yield* call(
       [marketProgram, marketProgram.getPosition],
@@ -1757,81 +1816,37 @@ export function* handleGetSinglePosition(
       action.payload.index
     )
 
-    yield put(
-      actions.setSinglePosition({
-        index: action.payload.index,
-        position
-      })
-    )
-  } catch (e: unknown) {
-    const error = ensureError(e)
-    console.log(error)
-
-    yield* call(handleRpcError, error.message)
-  }
-}
-
-export function* handleGetCurrentPositionRangeTicks(
-  action: PayloadAction<{ id: string; fetchTick?: FetchTick }>
-) {
-  try {
-    const { id, fetchTick } = action.payload
-    const networkType = yield* select(network)
-    const rpc = yield* select(rpcAddress)
-    const wallet = yield* call(getWallet)
-    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    const positionData = yield* select(singlePositionData(id))
-    const { lowerTick: lowerTickState, upperTick: upperTickState } =
-      yield* select(currentPositionTicks)
-
-    if (typeof positionData === 'undefined') {
+    const pool = poolsList.find(pool => pool.address.toString() === position.pool.toString())
+    if (!pool) {
       return
     }
 
-    const pair = new Pair(positionData.poolData.tokenX, positionData.poolData.tokenY, {
-      fee: positionData.poolData.fee,
-      tickSpacing: positionData.poolData.tickSpacing
+    const pair = new Pair(pool.tokenX, pool.tokenY, {
+      fee: pool.fee,
+      tickSpacing: pool.tickSpacing
     })
 
-    if (fetchTick === 'lower') {
-      const lowerTick = yield* call(
-        [marketProgram, marketProgram.getTick],
-        pair,
-        positionData.lowerTickIndex
-      )
+    const { lowerTick, upperTick } = yield* all({
+      lowerTick: call([marketProgram, marketProgram.getTick], pair, position.lowerTickIndex),
+      upperTick: call([marketProgram, marketProgram.getTick], pair, position.upperTickIndex)
+    })
 
-      yield put(
-        actions.setCurrentPositionRangeTicks({
-          lowerTick,
-          upperTick: upperTickState
-        })
-      )
-    } else if (fetchTick === 'upper') {
-      const upperTick = yield* call(
-        [marketProgram, marketProgram.getTick],
-        pair,
-        positionData.upperTickIndex
-      )
-
-      yield put(
-        actions.setCurrentPositionRangeTicks({
-          lowerTick: lowerTickState,
-          upperTick
-        })
-      )
-    } else {
-      const { lowerTick, upperTick } = yield* all({
-        lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
-        upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
+    yield put(
+      actions.setSinglePosition({
+        index: action.payload.index,
+        isLocked: action.payload.isLocked,
+        position,
+        lowerTick,
+        upperTick
       })
-
-      yield put(
-        actions.setCurrentPositionRangeTicks({
-          lowerTick,
-          upperTick
-        })
-      )
-    }
+    )
+    console.log(position.id.toString() + '_' + position.pool.toString())
+    yield* call(sleep, 500)
+    yield put(
+      actions.updatePositionTicksRange({
+        positionId: position.id.toString() + '_' + position.pool.toString()
+      })
+    )
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
@@ -1841,7 +1856,7 @@ export function* handleGetCurrentPositionRangeTicks(
 }
 
 export function* handleUpdatePositionsRangeTicks(
-  action: PayloadAction<{ positionId: string; fetchTick?: FetchTick }>
+  action: PayloadAction<UpdatePositionRangeRicksData>
 ) {
   try {
     const networkType = yield* select(network)
@@ -1849,7 +1864,7 @@ export function* handleUpdatePositionsRangeTicks(
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
 
-    const { positionId, fetchTick } = action.payload
+    const { fetchTick, positionId } = action.payload
 
     const positionData = yield* select(singlePositionData(positionId))
 
@@ -1871,9 +1886,9 @@ export function* handleUpdatePositionsRangeTicks(
 
       yield put(
         actions.setPositionRangeTicks({
-          positionId: positionId,
-          lowerTick: lowerTick.index,
-          upperTick: positionData.upperTickIndex
+          positionAddress: positionData.address,
+          lowerTick: lowerTick,
+          upperTick: positionData.upperTick
         })
       )
     } else if (fetchTick === 'upper') {
@@ -1885,9 +1900,9 @@ export function* handleUpdatePositionsRangeTicks(
 
       yield put(
         actions.setPositionRangeTicks({
-          positionId: positionId,
-          lowerTick: positionData.lowerTickIndex,
-          upperTick: upperTick.index
+          positionAddress: positionData.address,
+          lowerTick: positionData.lowerTick,
+          upperTick: upperTick
         })
       )
     } else {
@@ -1898,92 +1913,16 @@ export function* handleUpdatePositionsRangeTicks(
 
       yield put(
         actions.setPositionRangeTicks({
-          positionId: positionId,
-          lowerTick: lowerTick.index,
-          upperTick: upperTick.index
+          positionAddress: positionData.address,
+          lowerTick: lowerTick,
+          upperTick: upperTick
         })
       )
     }
-  } catch (e: unknown) {
-    const error = ensureError(e)
+  } catch (error) {
     console.log(error)
 
-    yield* call(handleRpcError, error.message)
-  }
-}
-
-function* getTickWithCache(
-  pair: Pair,
-  tickIndex: number,
-  ticksCache: Map<string, Tick>,
-  marketProgram: Market
-): Generator<any, Tick, any> {
-  const cacheKey = `${pair.tokenX.toString()}-${pair.tokenY.toString()}-${tickIndex}`
-
-  if (ticksCache.has(cacheKey)) {
-    return ticksCache.get(cacheKey)!
-  }
-
-  const tick = yield* call([marketProgram, 'getTick'], pair, tickIndex)
-  ticksCache.set(cacheKey, tick)
-  return tick
-}
-
-export function* handleCalculateTotalUnclaimedFees() {
-  try {
-    const positionList = yield* select(positionsWithPoolsData)
-    const pricesData = yield* select(prices)
-    const networkType = yield* select(network)
-    const rpc = yield* select(rpcAddress)
-
-    const wallet = getEclipseWallet() as IWallet
-    const marketProgram: Market = yield* call(getMarketProgram, networkType, rpc, wallet)
-
-    const ticksCache: Map<string, Tick> = new Map()
-
-    const ticks: Tick[][] = yield* all(
-      positionList.map(function* (position) {
-        const pair = new Pair(position.poolData.tokenX, position.poolData.tokenY, {
-          fee: position.poolData.fee,
-          tickSpacing: position.poolData.tickSpacing
-        })
-
-        const [lowerTick, upperTick]: Tick[] = yield* all([
-          call(getTickWithCache, pair, position.lowerTickIndex, ticksCache, marketProgram),
-          call(getTickWithCache, pair, position.upperTickIndex, ticksCache, marketProgram)
-        ])
-
-        return [lowerTick, upperTick]
-      })
-    )
-
-    const total = positionList.reduce((acc: number, position, i: number) => {
-      const [lowerTick, upperTick] = ticks[i]
-      const [bnX, bnY] = calculateClaimAmount({
-        position,
-        tickLower: lowerTick,
-        tickUpper: upperTick,
-        tickCurrent: position.poolData.currentTickIndex,
-        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
-        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
-      })
-
-      const xValue =
-        +printBN(bnX, position.tokenX.decimals) *
-        (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
-      const yValue =
-        +printBN(bnY, position.tokenY.decimals) *
-        (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
-
-      return acc + xValue + yValue
-    }, 0)
-
-    yield* put(actions.setUnclaimedFees(isFinite(total) ? total : 0))
-  } catch (e: unknown) {
-    const error = ensureError(e)
-
-    console.error('Error calculating unclaimed fees:', error)
-    yield* put(actions.setUnclaimedFeesError())
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -2004,18 +1943,15 @@ export function* claimAllFeeHandler(): Generator {
   yield* takeEvery(actions.claimAllFee, handleClaimAllFees)
 }
 
-export function* unclaimedFeesHandler(): Generator {
-  yield* takeEvery(actions.calculateTotalUnclaimedFees, handleCalculateTotalUnclaimedFees)
-}
-
 export function* closePositionHandler(): Generator {
   yield* takeEvery(actions.closePosition, handleClosePosition)
 }
 export function* getSinglePositionHandler(): Generator {
   yield* takeEvery(actions.getSinglePosition, handleGetSinglePosition)
 }
-export function* getCurrentPositionRangeTicksHandler(): Generator {
-  yield* takeEvery(actions.getCurrentPositionRangeTicks, handleGetCurrentPositionRangeTicks)
+
+export function* updatePositionTicksRangeHandler(): Generator {
+  yield* takeEvery(actions.updatePositionTicksRange, handleUpdatePositionsRangeTicks)
 }
 
 export function* positionsSaga(): Generator {
@@ -2025,11 +1961,10 @@ export function* positionsSaga(): Generator {
       getCurrentPlotTicksHandler,
       getPositionsListHandler,
       claimFeeHandler,
-      unclaimedFeesHandler,
       claimAllFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,
-      getCurrentPositionRangeTicksHandler
+      updatePositionTicksRangeHandler
     ].map(spawn)
   )
 }

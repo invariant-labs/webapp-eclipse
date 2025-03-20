@@ -14,8 +14,6 @@ import { getFullNewTokensData, getNetworkTokensList, ROUTES } from '@utils/utils
 import { getEclipseWallet } from '@utils/web3/wallet'
 import {
   currentPoolIndex,
-  currentPositionData,
-  currentPositionId,
   lockedPositionsWithPoolsData,
   positionsWithPoolsData
 } from '@store/selectors/positions'
@@ -32,8 +30,6 @@ const MarketEvents = () => {
   const allPools = useSelector(poolsArraySortedByFees)
   const positionsList = useSelector(positionsWithPoolsData)
   const lockedPositionsList = useSelector(lockedPositionsWithPoolsData)
-  const currentPositionIndex = useSelector(currentPositionId)
-  const currentPosition = useSelector(currentPositionData)
   const newPositionPoolIndex = useSelector(currentPoolIndex)
   const [subscribedSwapPools, _setSubscribedSwapPools] = useState<Set<string>>(new Set())
   const [subscribedPositionsPools, _setSubscribedPositionsPools] = useState<Set<string>>(new Set())
@@ -150,58 +146,59 @@ const MarketEvents = () => {
 
         subscribedPositionsPools.add(pool.address.toBase58())
 
+        const positionsInPool = allPositions.filter(position => {
+          return position.poolData.address.toString() === pool.address.toString()
+        })
+
         marketProgram.onPoolChange(
           pool.tokenX,
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
-            const positionsInPool = allPositions.filter(position =>
-              position.pool.equals(pool.address)
-            )
-
+            // update position list
             if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
+              dispatch(
+                actions.updatePool({
+                  address: pool.address,
+                  poolStructure
+                })
+              )
+
               positionsInPool.map(position => {
-                //update current position details
-                if (
-                  currentPositionIndex ===
-                    position.id.toString() + '_' + position.pool.toString() &&
-                  currentPosition
-                ) {
-                  if (
-                    (pool.currentTickIndex >= currentPosition?.lowerTickIndex &&
-                      poolStructure.currentTickIndex < currentPosition?.lowerTickIndex) ||
-                    (pool.currentTickIndex < currentPosition?.lowerTickIndex &&
-                      poolStructure.currentTickIndex >= currentPosition?.lowerTickIndex)
-                  ) {
-                    dispatch(
-                      positionsActions.getCurrentPositionRangeTicks({
-                        id: currentPositionIndex,
-                        fetchTick: 'lower'
-                      })
-                    )
-                  } else if (
-                    (pool.currentTickIndex < currentPosition?.upperTickIndex &&
-                      poolStructure.currentTickIndex >= currentPosition?.upperTickIndex) ||
-                    (pool.currentTickIndex >= currentPosition?.upperTickIndex &&
-                      poolStructure.currentTickIndex < currentPosition?.upperTickIndex)
-                  ) {
-                    dispatch(
-                      positionsActions.getCurrentPositionRangeTicks({
-                        id: currentPositionIndex,
-                        fetchTick: 'upper'
-                      })
-                    )
-                  }
-                }
+                dispatch(
+                  positionsActions.getSinglePosition({
+                    index: position.positionIndex,
+                    isLocked: position.isLocked
+                  })
+                )
+
+                // if (
+                //   (pool.currentTickIndex >= position?.lowerTickIndex &&
+                //     poolStructure.currentTickIndex < position?.lowerTickIndex) ||
+                //   (pool.currentTickIndex < position?.lowerTickIndex &&
+                //     poolStructure.currentTickIndex >= position?.lowerTickIndex)
+                // ) {
+                //   dispatch(
+                //     positionsActions.getSinglePosition({
+                //       index: position.positionIndex,
+                //       isLocked: position.isLocked
+                //     })
+                //   )
+                // } else if (
+                //   (pool.currentTickIndex < position?.upperTickIndex &&
+                //     poolStructure.currentTickIndex >= position?.upperTickIndex) ||
+                //   (pool.currentTickIndex >= position?.upperTickIndex &&
+                //     poolStructure.currentTickIndex < position?.upperTickIndex)
+                // ) {
+                //   dispatch(
+                //     positionsActions.getSinglePosition({
+                //       index: position.positionIndex,
+                //       isLocked: position.isLocked
+                //     })
+                //   )
+                // }
               })
             }
-
-            dispatch(
-              actions.updatePool({
-                address: pool.address,
-                poolStructure
-              })
-            )
           }
         )
       }
@@ -214,7 +211,6 @@ const MarketEvents = () => {
     positionsList,
     networkStatus,
     marketProgram,
-    currentPositionIndex,
     location.pathname
   ])
 
