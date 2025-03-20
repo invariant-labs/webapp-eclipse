@@ -35,7 +35,8 @@ import {
   positionsWithPoolsData,
   singlePositionData,
   currentPositionTicks,
-  prices
+  prices,
+  positionWithPoolData
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -47,6 +48,7 @@ import {
   createPlaceholderLiquidityPlot,
   ensureError,
   getLiquidityTicksByPositionsList,
+  getPositionByIdAndPoolAddress,
   getPositionsAddressesFromRange,
   printBN
 } from '@utils/utils'
@@ -1780,7 +1782,9 @@ export function* handleGetCurrentPositionRangeTicks(
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    const positionData = yield* select(singlePositionData(id))
+    const positionDataFromPositionList = yield* select(singlePositionData(id))
+    const positionDataFromProgram = yield* select(positionWithPoolData)
+    const positionData = (positionDataFromPositionList ?? positionDataFromProgram)!
     const { lowerTick: lowerTickState, upperTick: upperTickState } =
       yield* select(currentPositionTicks)
 
@@ -1987,6 +1991,32 @@ export function* handleCalculateTotalUnclaimedFees() {
   }
 }
 
+export function* handleGetPosition(action: PayloadAction<string>) {
+  try {
+    const [id, poolAddress] = action.payload.split('_')
+
+    const wallet = yield* call(getWallet)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    const position = yield* call(getPositionByIdAndPoolAddress, marketProgram, id, poolAddress)
+
+    if (position) {
+      yield* put(
+        poolsActions.getPoolsDataForList({
+          addresses: [position.pool.toString()],
+          listType: ListType.POSITIONS
+        })
+      )
+    }
+
+    yield* put(actions.setPosition(position))
+  } catch {
+    yield* put(actions.setPosition(null))
+  }
+}
+
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)
 }
@@ -2018,6 +2048,10 @@ export function* getCurrentPositionRangeTicksHandler(): Generator {
   yield* takeEvery(actions.getCurrentPositionRangeTicks, handleGetCurrentPositionRangeTicks)
 }
 
+export function* getPositionHandler(): Generator {
+  yield* takeEvery(actions.getPosition, handleGetPosition)
+}
+
 export function* positionsSaga(): Generator {
   yield all(
     [
@@ -2029,7 +2063,8 @@ export function* positionsSaga(): Generator {
       claimAllFeeHandler,
       closePositionHandler,
       getSinglePositionHandler,
-      getCurrentPositionRangeTicksHandler
+      getCurrentPositionRangeTicksHandler,
+      getPositionHandler
     ].map(spawn)
   )
 }

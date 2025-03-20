@@ -1,5 +1,5 @@
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
-import { Button, Grid, Hidden, Typography } from '@mui/material'
+import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
 import { useMemo, useRef, useState } from 'react'
@@ -39,6 +39,7 @@ interface IProp {
   isLocked: boolean
   onModalOpen: () => void
   ethBalance: BN
+  isPreview: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -58,7 +59,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   network,
   onModalOpen,
   isLocked,
-  ethBalance
+  ethBalance,
+  isPreview
 }) => {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -201,17 +203,19 @@ const SinglePositionInfo: React.FC<IProp> = ({
             </Grid>
             <TooltipHover
               title={
-                isLocked
-                  ? 'Closing positions is disabled when position is locked'
-                  : canClosePosition
-                    ? tokenX.claimValue > 0 || tokenY.claimValue > 0
-                      ? 'Unclaimed fees will be returned when closing the position'
-                      : ''
-                    : 'Insufficient ETH to close position'
+                isPreview
+                  ? "Can't close position in preview"
+                  : isLocked
+                    ? 'Closing positions is disabled when position is locked'
+                    : canClosePosition
+                      ? tokenX.claimValue > 0 || tokenY.claimValue > 0
+                        ? 'Unclaimed fees will be returned when closing the position'
+                        : ''
+                      : 'Insufficient ETH to close position'
               }>
               <Button
                 className={classes.closeButton}
-                disabled={isLocked || !canClosePosition}
+                disabled={isLocked || !canClosePosition || isPreview}
                 variant='contained'
                 onClick={() => {
                   if (!userHasStakes) {
@@ -221,19 +225,22 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     blurContent()
                   }
                 }}>
-                {canClosePosition ? 'Close position' : 'Lacking ETH'}
+                {canClosePosition || isPreview ? 'Close position' : 'Lacking ETH'}
               </Button>
             </TooltipHover>
             <Hidden mdUp>
               {!isLocked ? (
-                <TooltipHover title={'Lock liquidity'}>
-                  <Button
-                    className={classes.lockButton}
-                    disabled={isLocked}
-                    variant='contained'
-                    onClick={onModalOpen}>
-                    <img src={lockIcon} alt='Lock' />
-                  </Button>
+                <TooltipHover
+                  title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
+                  <Box>
+                    <Button
+                      className={classes.lockButton}
+                      disabled={isLocked || isPreview}
+                      variant='contained'
+                      onClick={onModalOpen}>
+                      <img src={lockIcon} alt='Lock' />
+                    </Button>
+                  </Box>
                 </TooltipHover>
               ) : (
                 <TooltipHover title={'Unlocking liquidity is forbidden'}>
@@ -278,6 +285,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             showBalance
             swapHandler={swapHandler}
             isBalanceLoading={isBalanceLoading}
+            isPreview={isPreview}
           />
           <BoxInfo
             title={'Unclaimed fees'}
@@ -294,6 +302,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             onClickButton={onClickClaimFee}
             showLoader={showFeesLoader}
             isBalanceLoading={isBalanceLoading}
+            isPreview={isPreview}
           />
         </Grid>
       </Grid>

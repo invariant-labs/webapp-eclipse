@@ -2023,6 +2023,40 @@ export const ensureError = (value: unknown): Error => {
   return error
 }
 
+export const getPositionByIdAndPoolAddress = async (
+  marketProgram: Market,
+  id: string,
+  poolAddress: string
+): Promise<PositionWithAddress | null> => {
+  const positions = await marketProgram.program.account.position.all([
+    {
+      memcmp: {
+        bytes: bs58.encode(new PublicKey(poolAddress).toBuffer()),
+        offset: 40
+      }
+    },
+    {
+      memcmp: {
+        bytes: bs58.encode(new BN(id).toBuffer('le', 16)),
+        offset: 72
+      }
+    }
+  ])
+
+  return positions[0]
+    ? {
+        ...positions[0].account,
+        feeGrowthInsideX: positions[0].account.feeGrowthInsideX.v,
+        feeGrowthInsideY: positions[0].account.feeGrowthInsideY.v,
+        liquidity: positions[0].account.liquidity.v,
+        secondsPerLiquidityInside: positions[0].account.secondsPerLiquidityInside.v,
+        tokensOwedX: positions[0].account.tokensOwedX.v,
+        tokensOwedY: positions[0].account.tokensOwedY.v,
+        address: positions[0].publicKey
+      }
+    : null
+}
+
 export const ROUTES = {
   ROOT: '/',
   EXCHANGE: '/exchange',

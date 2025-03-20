@@ -194,7 +194,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
     '&:disabled': {
       background: colors.invariant.light,
-      color: colors.invariant.dark
+      color: colors.invariant.dark,
+      pointerEvents: 'auto',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed'
+      }
     },
 
     [theme.breakpoints.down('sm')]: {
@@ -391,6 +396,20 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       '@media (hover: none)': {
         background: colors.invariant.pinkLinearGradientOpacity,
         boxShadow: 'none'
+      }
+    },
+    '&:disabled': {
+      background: colors.invariant.light,
+      color: colors.invariant.componentBcg,
+      pointerEvents: 'auto',
+      transition: 'all 0.2s',
+      '&:hover': {
+        boxShadow: 'none',
+        cursor: 'not-allowed',
+        filter: 'brightness(1.15)',
+        '@media (hover: none)': {
+          filter: 'none'
+        }
       }
     },
     [theme.breakpoints.down('sm')]: {

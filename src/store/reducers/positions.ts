@@ -64,6 +64,10 @@ export interface IPositionsStore {
   prices: {
     data: Record<string, number>
   }
+  positionData: {
+    position: PositionWithAddress | null
+    loading: boolean
+  }
 }
 
 export interface InitPositionData
@@ -135,7 +139,11 @@ export const defaultState: IPositionsStore = {
     data: {}
   },
 
-  shouldNotUpdateRange: false
+  shouldNotUpdateRange: false,
+  positionData: {
+    position: null,
+    loading: false
+  }
 }
 
 export const positionsSliceName = 'positions'
@@ -220,12 +228,21 @@ const positionsSlice = createSlice({
       state.positionsList.loading = false
       return state
     },
+    setPosition(state, action: PayloadAction<PositionWithAddress | null>) {
+      state.positionData.position = action.payload
+      state.positionData.loading = false
+      return state
+    },
     setLockedPositionsList(state, action: PayloadAction<PositionWithAddress[]>) {
       state.positionsList.lockedList = action.payload
       return state
     },
     getPositionsList(state) {
       state.positionsList.loading = true
+      return state
+    },
+    getPosition(state, _action: PayloadAction<string>) {
+      state.positionData.loading = true
       return state
     },
     setPositionRangeTicks(

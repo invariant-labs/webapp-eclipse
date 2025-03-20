@@ -22,6 +22,8 @@ import {
   currentPositionTicks,
   isLoadingPositionsList,
   plotTicks,
+  positionData,
+  positionWithPoolData,
   singlePositionData
 } from '@store/selectors/positions'
 import { balance, balanceLoading, status } from '@store/selectors/solanaWallet'
@@ -49,7 +51,11 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const navigate = useNavigate()
 
   const currentNetwork = useSelector(network)
-  const position = useSelector(singlePositionData(id))
+  const positionPositionList = useSelector(singlePositionData(id))
+  const positionPreview = useSelector(positionWithPoolData)
+  const position = positionPositionList ?? positionPreview ?? undefined
+  const isPreview = !positionPositionList
+  const { loading: positionPreviewLoading } = useSelector(positionData)
   const { success, inProgress } = useSelector(lockerState)
 
   const isLoadingList = useSelector(isLoadingPositionsList)
@@ -339,9 +345,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
     setTriggerFetchPrice(!triggerFetchPrice)
     setShowFeesLoader(true)
-    dispatch(
-      actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
-    )
+
+    if (isPreview) {
+      dispatch(actions.getPosition(id))
+    } else {
+      dispatch(
+        actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
+      )
+    }
 
     if (position) {
       dispatch(
@@ -361,6 +372,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       dispatch(actions.getPositionsList())
     }
   }, [isTimeoutError])
+
+  useEffect(() => {
+    dispatch(actions.getPosition(id))
+  }, [])
 
   useEffect(() => {
     if (!isLoadingList && isTimeoutError) {
@@ -439,7 +454,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         fee={position.poolData.fee}
         min={min}
         max={max}
-        showFeesLoader={showFeesLoader}
+        showFeesLoader={showFeesLoader || positionPreviewLoading}
         hasTicksError={hasTicksError}
         reloadHandler={() => {
           dispatch(
@@ -456,10 +471,15 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         success={success}
         inProgress={inProgress}
         ethBalance={ethBalance}
+        isPreview={isPreview}
       />
     )
   }
-  if ((isLoadingListDelay && walletStatus === Status.Initialized) || !isFinishedDelayRender) {
+  if (
+    (isLoadingListDelay && walletStatus === Status.Initialized) ||
+    !isFinishedDelayRender ||
+    positionPreviewLoading
+  ) {
     return (
       <Grid
         container
