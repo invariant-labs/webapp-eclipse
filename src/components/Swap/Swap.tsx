@@ -696,9 +696,7 @@ export const Swap: React.FC<ISwap> = ({
 
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
-          <Typography component='h1' style={{ height: '27px' }}>
-            Swap tokens
-          </Typography>
+          <Typography component='h1'>Swap tokens</Typography>
           {network === NetworkType.Mainnet ? (
             <SwapPointsPopover
               isPairGivingPoints={isPairGivingPoints}
@@ -728,7 +726,7 @@ export const Swap: React.FC<ISwap> = ({
 
           <Box className={classes.swapControls}>
             <TooltipHover title='Refresh'>
-              <Grid display='flex' alignItems='center'>
+              <Grid className={classes.refreshIconContainer}>
                 <Button
                   onClick={handleRefresh}
                   className={classes.refreshIconBtn}
@@ -769,7 +767,7 @@ export const Swap: React.FC<ISwap> = ({
           classes.borderContainer,
           isPairGivingPoints && classes.gradientBorderForContainer
         )}>
-        <Grid container className={classes.root} direction='column'>
+        <Grid container className={classes.root}>
           <AnimatedWaves wavePosition={'top'} isAnimating={isPairGivingPoints} />
           <Typography
             className={classNames(
@@ -1016,14 +1014,7 @@ export const Swap: React.FC<ISwap> = ({
                 tokenToIndex !== null &&
                 tokenFromIndex !== tokenToIndex && (
                   <TooltipHover title='Refresh'>
-                    <Grid
-                      container
-                      alignItems='center'
-                      justifyContent='center'
-                      width={20}
-                      height={34}
-                      minWidth='fit-content'
-                      ml={1}>
+                    <Grid container className={classes.tooltipRefresh}>
                       <Refresher
                         currentIndex={refresherTime}
                         maxIndex={REFRESHER_INTERVAL}

@@ -173,7 +173,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             totalItems={totalItems.total}
           />
         </Grid>
-        <Grid display='flex' flexDirection='column' alignItems='center' gap={3} width='100%'>
+        <Grid className={classes.rewardedPoolsWrapper}>
           <RewardedPools
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}

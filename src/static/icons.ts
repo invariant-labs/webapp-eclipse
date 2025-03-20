@@ -91,7 +91,7 @@ import faucet from './svg/faucet.svg'
 import eyeYellow from './svg/eyeYellow.svg'
 import closeYellow from './svg/closeYellow.svg'
 
-const icons: { [key: string]: string } = {
+const icons = {
   tokenCreator,
   docsFill,
   mediumFill,

@@ -4,6 +4,7 @@ const useStyles = makeStyles()(() => {
   return {
     container: {
       display: 'flex',
+      flexWrap: 'wrap',
       minHeight: '60vh',
       justifyContent: 'center',
       backgroundColor: 'transparent',
