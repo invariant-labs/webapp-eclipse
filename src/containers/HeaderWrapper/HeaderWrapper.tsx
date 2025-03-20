@@ -36,8 +36,11 @@ export const HeaderWrapper: React.FC = () => {
 
   useEffect(() => {
     const reconnectStaticWallet = async (wallet: WalletType) => {
-      await connectStaticWallet(wallet)
-      dispatch(walletActions.connect(true))
+      const isConnected = await connectStaticWallet(wallet)
+      if (!isConnected) localStorage.setItem('WALLET_TYPE', '')
+      else {
+        dispatch(walletActions.connect(true))
+      }
       dispatch(
         leaderboardActions.getLeaderboardData({
           page: leaderboardQueryParams.page,

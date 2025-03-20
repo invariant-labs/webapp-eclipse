@@ -38,6 +38,8 @@ const connectStaticWallet = async (wallet: WalletType) => {
 
   await sleep(300)
   await _wallet.connect()
+
+  return _wallet.connected ? (localStorage.setItem('WALLET_TYPE', wallet.toString()), true) : false
 }
 
 const changeToNightlyAdapter = () => {

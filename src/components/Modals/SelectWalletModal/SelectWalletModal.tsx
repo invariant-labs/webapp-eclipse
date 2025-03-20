@@ -42,7 +42,6 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
 
       await connectStaticWallet(wallet)
       handleConnect()
-      setWallet(wallet)
     }, 300)
   }
 
