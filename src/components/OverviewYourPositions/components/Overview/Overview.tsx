@@ -131,7 +131,7 @@ export const Overview: React.FC<OverviewProps> = () => {
     }
 
     loadPrices()
-  }, [positionList])
+  }, [positionList.length])
 
   useEffect(() => {
     sortedPositions.forEach(position => {

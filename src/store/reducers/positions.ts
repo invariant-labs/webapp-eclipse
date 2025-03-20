@@ -90,13 +90,13 @@ export interface ClosePositionData {
 
 export interface SetPositionData {
   index: number
+  isLocked: boolean
   position: Position
   lowerTick: Tick
   upperTick: Tick
 }
 
 export interface UpdatePositionRangeRicksData {
-  positionAddress: PublicKey
   positionId: string
   fetchTick?: FetchTick
 }
@@ -202,28 +202,45 @@ const positionsSlice = createSlice({
       state.positionsList.loading = true
       return state
     },
-    getSinglePosition(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
+    getSinglePosition(state, action: PayloadAction<{ index: number; isLocked: boolean }>) {
+      const targetList = action.payload.isLocked
+        ? state.positionsList.lockedList
+        : state.positionsList.list
+
+      if (targetList[action.payload.index]) {
+        targetList[action.payload.index].ticksLoading = true
+      }
+
       return state
     },
     setSinglePosition(state, action: PayloadAction<SetPositionData>) {
-      state.positionsList.list[action.payload.index] = {
-        address: state.positionsList.list[action.payload.index].address,
-        lowerTick: action.payload.lowerTick,
-        upperTick: action.payload.upperTick,
-        ticksLoading: false,
-        ...action.payload.position
-      }
+      console.log('update')
+      action.payload.isLocked
+        ? (state.positionsList.lockedList[action.payload.index] = {
+            address: state.positionsList.lockedList[action.payload.index].address,
+            lowerTick: action.payload.lowerTick,
+            upperTick: action.payload.upperTick,
+            ticksLoading: false,
+            ...action.payload.position
+          })
+        : (state.positionsList.list[action.payload.index] = {
+            address: state.positionsList.list[action.payload.index].address,
+            lowerTick: action.payload.lowerTick,
+            upperTick: action.payload.upperTick,
+            ticksLoading: false,
+            ...action.payload.position
+          })
       return state
     },
     updatePositionTicksRange(state, action: PayloadAction<UpdatePositionRangeRicksData>) {
       state.positionsList.list = state.positionsList.list.map(position => {
-        return position.address.toString() === action.payload.positionAddress.toString()
+        return position.id.toString() + '_' + position.pool.toString() === action.payload.positionId
           ? { ...position, ticksLoading: true }
           : position
       })
 
       state.positionsList.lockedList = state.positionsList.lockedList.map(position =>
-        position.address.toString() === action.payload.positionAddress.toString()
+        position.id.toString() + '_' + position.pool.toString() === action.payload.positionId
           ? { ...position, ticksLoading: true }
           : position
       )

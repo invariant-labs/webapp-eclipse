@@ -1834,9 +1834,17 @@ export function* handleGetSinglePosition(
     yield put(
       actions.setSinglePosition({
         index: action.payload.index,
+        isLocked: action.payload.isLocked,
         position,
         lowerTick,
         upperTick
+      })
+    )
+    console.log(position.id.toString() + '_' + position.pool.toString())
+    yield* call(sleep, 500)
+    yield put(
+      actions.updatePositionTicksRange({
+        positionId: position.id.toString() + '_' + position.pool.toString()
       })
     )
   } catch (e: unknown) {

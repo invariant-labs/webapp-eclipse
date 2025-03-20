@@ -157,43 +157,48 @@ const MarketEvents = () => {
           poolStructure => {
             // update position list
             if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
+              dispatch(
+                actions.updatePool({
+                  address: pool.address,
+                  poolStructure
+                })
+              )
+
               positionsInPool.map(position => {
-                if (
-                  (pool.currentTickIndex >= position?.lowerTickIndex &&
-                    poolStructure.currentTickIndex < position?.lowerTickIndex) ||
-                  (pool.currentTickIndex < position?.lowerTickIndex &&
-                    poolStructure.currentTickIndex >= position?.lowerTickIndex)
-                ) {
-                  dispatch(
-                    positionsActions.updatePositionTicksRange({
-                      positionAddress: position.address,
-                      positionId: position.id.toString() + '_' + position.pool.toString(),
-                      fetchTick: 'lower'
-                    })
-                  )
-                } else if (
-                  (pool.currentTickIndex < position?.upperTickIndex &&
-                    poolStructure.currentTickIndex >= position?.upperTickIndex) ||
-                  (pool.currentTickIndex >= position?.upperTickIndex &&
-                    poolStructure.currentTickIndex < position?.upperTickIndex)
-                ) {
-                  dispatch(
-                    positionsActions.updatePositionTicksRange({
-                      positionAddress: position.address,
-                      positionId: position.id.toString() + '_' + position.pool.toString(),
-                      fetchTick: 'upper'
-                    })
-                  )
-                }
+                dispatch(
+                  positionsActions.getSinglePosition({
+                    index: position.positionIndex,
+                    isLocked: position.isLocked
+                  })
+                )
+
+                // if (
+                //   (pool.currentTickIndex >= position?.lowerTickIndex &&
+                //     poolStructure.currentTickIndex < position?.lowerTickIndex) ||
+                //   (pool.currentTickIndex < position?.lowerTickIndex &&
+                //     poolStructure.currentTickIndex >= position?.lowerTickIndex)
+                // ) {
+                //   dispatch(
+                //     positionsActions.getSinglePosition({
+                //       index: position.positionIndex,
+                //       isLocked: position.isLocked
+                //     })
+                //   )
+                // } else if (
+                //   (pool.currentTickIndex < position?.upperTickIndex &&
+                //     poolStructure.currentTickIndex >= position?.upperTickIndex) ||
+                //   (pool.currentTickIndex >= position?.upperTickIndex &&
+                //     poolStructure.currentTickIndex < position?.upperTickIndex)
+                // ) {
+                //   dispatch(
+                //     positionsActions.getSinglePosition({
+                //       index: position.positionIndex,
+                //       isLocked: position.isLocked
+                //     })
+                //   )
+                // }
               })
             }
-
-            dispatch(
-              actions.updatePool({
-                address: pool.address,
-                poolStructure
-              })
-            )
           }
         )
       }

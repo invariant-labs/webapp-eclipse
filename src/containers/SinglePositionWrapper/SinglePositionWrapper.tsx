@@ -78,9 +78,13 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             isXtoY: true
           })
         )
+
+        dispatch(
+          actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
+        )
       }
     }
-  }, [position?.id])
+  }, [position?.id.toString()])
 
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const midPrice = useMemo(() => {
