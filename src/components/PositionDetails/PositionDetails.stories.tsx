@@ -62,7 +62,8 @@ const defaultArgs = {
   },
   isPromoted: true,
   showPoolDetailsLoader: true,
-  onGoBackClick: () => {}
+  onGoBackClick: () => {},
+  points24: 0
 }
 
 const meta = {

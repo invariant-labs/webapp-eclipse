@@ -44,7 +44,8 @@ export const Primary: Story = {
       volume24: 0,
       fee24: 0,
       apy: 0
-    }
+    },
+    points24: 0
   },
   render: args => {
     return (
