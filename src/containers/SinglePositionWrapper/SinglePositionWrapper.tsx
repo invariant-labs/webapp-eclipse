@@ -41,6 +41,9 @@ import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
+import { BN } from '@coral-xyz/anchor'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 
 export interface IProps {
   id: string
@@ -424,6 +427,24 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     pool => pool.address === position?.poolData.address.toString()
   )
 
+  const calculatePoints24 = () => {
+    if (!position) {
+      return 0
+    }
+
+    const pointsPerSecond = promotedPools.find(
+      pool => pool.address === position?.poolData.address.toString()
+    )?.pointsPerSecond
+
+    return estimatePointsForUserPositions(
+      [position],
+      position.poolData,
+      new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+  }
+
+  const points24 = calculatePoints24()
+
   if (position) {
     return (
       <PositionDetails
@@ -509,6 +530,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         onGoBackClick={() => navigate(ROUTES.PORTFOLIO)}
         showPoolDetailsLoader={isLoadingStats}
         isPromoted={isPromoted}
+        points24={points24}
       />
     )
   }

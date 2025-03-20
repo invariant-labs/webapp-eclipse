@@ -224,7 +224,12 @@ export const PositionHeader = ({
               placement='top'
               top={3}
               noGradient>
-              <Box className={classes.feeContainer}>{fee.toFixed(2)}%</Box>
+              <Box
+                className={classNames(classes.feeContainer, {
+                  [classes.feeContainerIsActive]: isActive
+                })}>
+                {fee.toFixed(2)}%
+              </Box>
             </TooltipGradient>
             {!isSmDown && closeButton}
             {!isSmDown && isMdDown && (

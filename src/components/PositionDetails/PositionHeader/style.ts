@@ -100,7 +100,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   feeContainer: {
-    height: 36,
+    height: 34,
     padding: '0 8px',
     background: colors.invariant.component,
     borderRadius: 12,
@@ -108,7 +108,12 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
-    color: colors.invariant.textGrey
+    color: colors.invariant.textGrey,
+    border: `1px solid ${colors.invariant.component}`
+  },
+  feeContainerIsActive: {
+    color: colors.invariant.green,
+    border: `1px solid ${colors.invariant.green}`
   },
   closeButton: {
     background: colors.invariant.greenLinearGradientOpacity,

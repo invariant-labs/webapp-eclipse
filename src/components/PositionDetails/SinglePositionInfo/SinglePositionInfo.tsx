@@ -23,6 +23,7 @@ interface IProp {
   poolDetails: PoolDetailsType | null
   showPoolDetailsLoader?: boolean
   showBalanceLoader?: boolean
+  points24: number
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -35,7 +36,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   showFeesLoader = false,
   showPoolDetailsLoader = false,
   poolDetails,
-  showBalanceLoader = false
+  showBalanceLoader = false,
+  points24
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -65,6 +67,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             tokenY.claimValue * (tokenYPriceData?.price ?? 0)
           }
           poolApr={apyToApr(poolDetails?.apy ?? 0)}
+          points24={points24}
           isLoading={showFeesLoader}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />

@@ -62,6 +62,7 @@ interface IProps {
   onGoBackClick: () => void
   showPoolDetailsLoader: boolean
   isPromoted: boolean
+  points24: number
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -100,7 +101,8 @@ const PositionDetails: React.FC<IProps> = ({
   poolDetails,
   showPoolDetailsLoader,
   isPromoted,
-  isBalanceLoading
+  isBalanceLoading,
+  points24
 }) => {
   const { classes } = useStyles()
 
@@ -266,6 +268,7 @@ const PositionDetails: React.FC<IProps> = ({
             poolDetails={poolDetails}
             showPoolDetailsLoader={showPoolDetailsLoader}
             showBalanceLoader={isBalanceLoading}
+            points24={points24}
           />
         </Box>
         <Box className={classes.rightSide}>
