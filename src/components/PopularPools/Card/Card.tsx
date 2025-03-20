@@ -182,7 +182,7 @@ const Card: React.FC<ICard> = ({
                 </Box>
               </Grid>
 
-              <Typography className={classes.symbolsContainer}>
+              <Box className={classes.symbolsContainer}>
                 {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}{' '}
                 {isPromoted && (
                   <>
@@ -216,7 +216,7 @@ const Card: React.FC<ICard> = ({
                     </PromotedPoolPopover>
                   </>
                 )}
-              </Typography>
+              </Box>
               <Grid container gap='8px'>
                 {apy !== undefined && showAPY && (
                   <StatsLabel

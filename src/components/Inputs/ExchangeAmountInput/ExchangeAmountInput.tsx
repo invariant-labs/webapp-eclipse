@@ -138,17 +138,16 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
       default: classes.actionButton
     })
     return (
-      <>
-        <OutlinedButton
-          name={button.label}
-          onClick={button.onClick}
-          className={` ${hideBalances ? `${classes.actionButtonNotActive} ${classes.actionButton}` : buttonClassName}`}
-          labelClassName={classes.label}
-          disabled={
-            disabled && isNaN(Number(balance)) ? disabled : isNaN(Number(balance)) || hideBalances
-          }
-        />
-      </>
+      <OutlinedButton
+        key={button.label}
+        name={button.label}
+        onClick={button.onClick}
+        className={` ${hideBalances ? `${classes.actionButtonNotActive} ${classes.actionButton}` : buttonClassName}`}
+        labelClassName={classes.label}
+        disabled={
+          disabled && isNaN(Number(balance)) ? disabled : isNaN(Number(balance)) || hideBalances
+        }
+      />
     )
   }
 

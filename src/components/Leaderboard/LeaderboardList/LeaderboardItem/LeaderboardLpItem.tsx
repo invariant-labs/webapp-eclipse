@@ -115,7 +115,7 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
-        <Typography style={{ paddingRight: '24px', width: 'auto' }}>
+        <Box style={{ paddingRight: '24px', width: 'auto' }}>
           <span className={classes.address}>
             {domain
               ? isVerySmallScreen || isNarrowMediumScreen
@@ -144,7 +144,7 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
               </Link>
             </TooltipHover>
           </Box>
-        </Typography>
+        </Box>
 
         <Typography>
           {new BN(points, 'hex').isZero()
