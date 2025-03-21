@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import {
   contentPoints,
+  getContentProgramDates,
   getPromotedPools,
   lastTimestamp,
   leaderboardSelectors,
@@ -53,6 +54,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const promotedPools = useSelector(getPromotedPools)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
+  const contentProgramDates = useSelector(getContentProgramDates)
   const walletStatus = useSelector(status)
   const userAddress = useSelector(address)
   const lpData = useSelector(topRankedLpUsers)
@@ -230,6 +232,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       userAddress={userAddress}
       walletStatus={walletStatus}
       isLoadingLeaderboardList={isLoadingLeaderboardList}
+      contentProgramDates={contentProgramDates}
     />
   )
 }
