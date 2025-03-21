@@ -14,6 +14,7 @@ import {
   isLoadingPositionsList,
   lastPageSelector,
   lockedPositionsWithPoolsData,
+  PositionData,
   positionsWithPoolsData,
   prices
 } from '@store/selectors/positions'
@@ -80,6 +81,27 @@ export const WrappedPositionsList: React.FC = () => {
     dispatch(actions.claimFee({ index, isLocked }))
   }
 
+  const calculateUnclaimedFees = (position: PositionData) => {
+    const [bnX, bnY] = calculateClaimAmount({
+      position: position,
+      tickLower: position.lowerTick,
+      tickUpper: position.upperTick,
+      tickCurrent: position.poolData.currentTickIndex,
+      feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+      feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+    })
+
+    const xValue =
+      +printBN(bnX, position.tokenX.decimals) *
+      (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
+    const yValue =
+      +printBN(bnY, position.tokenY.decimals) *
+      (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
+
+    const unclaimedFeesInUSD = xValue + yValue
+    return unclaimedFeesInUSD
+  }
+
   const data: IPositionItem[] = useMemo(
     () =>
       list.map(position => {
@@ -139,23 +161,7 @@ export const WrappedPositionsList: React.FC = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
-        const [bnX, bnY] = calculateClaimAmount({
-          position: position,
-          tickLower: position.lowerTick,
-          tickUpper: position.upperTick,
-          tickCurrent: position.poolData.currentTickIndex,
-          feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
-          feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
-        })
-
-        const xValue =
-          +printBN(bnX, position.tokenX.decimals) *
-          (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
-        const yValue =
-          +printBN(bnY, position.tokenY.decimals) *
-          (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
-
-        const unclaimedFeesInUSD = xValue + yValue
+        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
@@ -244,24 +250,7 @@ export const WrappedPositionsList: React.FC = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
-        const [bnX, bnY] = calculateClaimAmount({
-          position: position,
-          tickLower: position.lowerTick,
-          tickUpper: position.upperTick,
-          tickCurrent: position.poolData.currentTickIndex,
-          feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
-          feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
-        })
-
-        const xValue =
-          +printBN(bnX, position.tokenX.decimals) *
-          (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
-        const yValue =
-          +printBN(bnY, position.tokenY.decimals) *
-          (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
-
-        const unclaimedFeesInUSD = xValue + yValue
-
+        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,

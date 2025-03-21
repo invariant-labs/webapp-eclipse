@@ -44,6 +44,8 @@ export interface PositionWithPoolData extends PositionWithAddress {
   positionIndex: number
 }
 
+export type PositionData = ReturnType<typeof positionsWithPoolsData>[number]
+
 export const positionsWithPoolsData = createSelector(
   poolsArraySortedByFees,
   positionsList,
