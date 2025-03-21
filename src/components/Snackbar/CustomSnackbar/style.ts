@@ -15,7 +15,7 @@ export const useStyles = makeStyles()(() => ({
   },
   transactionWrapper: {
     display: 'flex',
-    mx: theme.spacing(1),
+    marginInline: theme.spacing(1),
     minWidth: 'fit-content'
   }
 }))
