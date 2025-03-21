@@ -180,7 +180,6 @@ const positionsSlice = createSlice({
       }
       return state
     },
-
     getCurrentPlotTicks(state, action: PayloadAction<GetCurrentTicksData>) {
       state.currentPoolIndex = action.payload.poolIndex
       state.plotTicks.loading = !action.payload.disableLoading
@@ -214,7 +213,6 @@ const positionsSlice = createSlice({
       return state
     },
     setSinglePosition(state, action: PayloadAction<SetPositionData>) {
-      console.log('update')
       action.payload.isLocked
         ? (state.positionsList.lockedList[action.payload.index] = {
             address: state.positionsList.lockedList[action.payload.index].address,
@@ -230,51 +228,6 @@ const positionsSlice = createSlice({
             ticksLoading: false,
             ...action.payload.position
           })
-      return state
-    },
-    updatePositionTicksRange(state, action: PayloadAction<UpdatePositionRangeRicksData>) {
-      state.positionsList.list = state.positionsList.list.map(position => {
-        return position.id.toString() + '_' + position.pool.toString() === action.payload.positionId
-          ? { ...position, ticksLoading: true }
-          : position
-      })
-
-      state.positionsList.lockedList = state.positionsList.lockedList.map(position =>
-        position.id.toString() + '_' + position.pool.toString() === action.payload.positionId
-          ? { ...position, ticksLoading: true }
-          : position
-      )
-
-      return state
-    },
-    setPositionRangeTicks(
-      state,
-      action: PayloadAction<{ positionAddress: PublicKey; lowerTick: Tick; upperTick: Tick }>
-    ) {
-      state.positionsList.list = state.positionsList.list.map(position => {
-        if (position.address.toString() === action.payload.positionAddress.toString()) {
-          return {
-            ...position,
-            lowerTick: action.payload.lowerTick,
-            upperTick: action.payload.upperTick,
-            ticksLoading: false
-          }
-        }
-        return position
-      })
-
-      state.positionsList.lockedList = state.positionsList.lockedList.map(position => {
-        if (position.address.toString() === action.payload.positionAddress.toString()) {
-          return {
-            ...position,
-            lowerTick: action.payload.lowerTick,
-            upperTick: action.payload.upperTick,
-            ticksLoading: false
-          }
-        }
-        return position
-      })
-
       return state
     },
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {

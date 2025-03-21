@@ -1826,6 +1826,8 @@ export function* handleGetSinglePosition(
       tickSpacing: pool.tickSpacing
     })
 
+    yield put(poolsActions.getPoolData(pair))
+
     const { lowerTick, upperTick } = yield* all({
       lowerTick: call([marketProgram, marketProgram.getTick], pair, position.lowerTickIndex),
       upperTick: call([marketProgram, marketProgram.getTick], pair, position.upperTickIndex)
@@ -1840,89 +1842,11 @@ export function* handleGetSinglePosition(
         upperTick
       })
     )
-    console.log(position.id.toString() + '_' + position.pool.toString())
-    yield* call(sleep, 500)
-    yield put(
-      actions.updatePositionTicksRange({
-        positionId: position.id.toString() + '_' + position.pool.toString()
-      })
-    )
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
 
     yield* call(handleRpcError, error.message)
-  }
-}
-
-export function* handleUpdatePositionsRangeTicks(
-  action: PayloadAction<UpdatePositionRangeRicksData>
-) {
-  try {
-    const networkType = yield* select(network)
-    const rpc = yield* select(rpcAddress)
-    const wallet = yield* call(getWallet)
-    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-
-    const { fetchTick, positionId } = action.payload
-
-    const positionData = yield* select(singlePositionData(positionId))
-
-    if (typeof positionData === 'undefined') {
-      return
-    }
-
-    const pair = new Pair(positionData.poolData.tokenX, positionData.poolData.tokenY, {
-      fee: positionData.poolData.fee,
-      tickSpacing: positionData.poolData.tickSpacing
-    })
-
-    if (fetchTick === 'lower') {
-      const lowerTick = yield* call(
-        [marketProgram, marketProgram.getTick],
-        pair,
-        positionData.lowerTickIndex
-      )
-
-      yield put(
-        actions.setPositionRangeTicks({
-          positionAddress: positionData.address,
-          lowerTick: lowerTick,
-          upperTick: positionData.upperTick
-        })
-      )
-    } else if (fetchTick === 'upper') {
-      const upperTick = yield* call(
-        [marketProgram, marketProgram.getTick],
-        pair,
-        positionData.upperTickIndex
-      )
-
-      yield put(
-        actions.setPositionRangeTicks({
-          positionAddress: positionData.address,
-          lowerTick: positionData.lowerTick,
-          upperTick: upperTick
-        })
-      )
-    } else {
-      const { lowerTick, upperTick } = yield* all({
-        lowerTick: call([marketProgram, marketProgram.getTick], pair, positionData.lowerTickIndex),
-        upperTick: call([marketProgram, marketProgram.getTick], pair, positionData.upperTickIndex)
-      })
-
-      yield put(
-        actions.setPositionRangeTicks({
-          positionAddress: positionData.address,
-          lowerTick: lowerTick,
-          upperTick: upperTick
-        })
-      )
-    }
-  } catch (error) {
-    console.log(error)
-
-    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -1950,10 +1874,6 @@ export function* getSinglePositionHandler(): Generator {
   yield* takeEvery(actions.getSinglePosition, handleGetSinglePosition)
 }
 
-export function* updatePositionTicksRangeHandler(): Generator {
-  yield* takeEvery(actions.updatePositionTicksRange, handleUpdatePositionsRangeTicks)
-}
-
 export function* positionsSaga(): Generator {
   yield all(
     [
@@ -1963,8 +1883,7 @@ export function* positionsSaga(): Generator {
       claimFeeHandler,
       claimAllFeeHandler,
       closePositionHandler,
-      getSinglePositionHandler,
-      updatePositionTicksRangeHandler
+      getSinglePositionHandler
     ].map(spawn)
   )
 }
