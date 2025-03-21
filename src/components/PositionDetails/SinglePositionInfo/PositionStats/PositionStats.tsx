@@ -14,10 +14,18 @@ type Props = {
   pendingFees: number
   poolApr: number
   points24: number
+  arePointsDistributed: boolean
   isLoading: boolean
 }
 
-export const PositionStats = ({ value, pendingFees, poolApr, points24, isLoading }: Props) => {
+export const PositionStats = ({
+  value,
+  pendingFees,
+  poolApr,
+  points24,
+  arePointsDistributed,
+  isLoading
+}: Props) => {
   const { classes } = useStyles()
 
   return (
@@ -48,14 +56,20 @@ export const PositionStats = ({ value, pendingFees, poolApr, points24, isLoading
       </Box>
       <Box className={classes.statWrapper}>
         <Box className={classNames(classes.statContainer, classes.statCOntainerRainbow)}>
-          <Typography className={classes.statName}>Points 24H:</Typography>
-          <Typography className={classes.statValue}>
-            {removeAdditionalDecimals(
-              formatNumberWithCommas(printBN(points24, LEADERBOARD_DECIMAL)),
-              2
-            )}{' '}
-            Points
-          </Typography>
+          {arePointsDistributed ? (
+            <>
+              <Typography className={classes.statName}>Points 24H:</Typography>
+              <Typography className={classes.statValue}>
+                {removeAdditionalDecimals(
+                  formatNumberWithCommas(printBN(points24, LEADERBOARD_DECIMAL)),
+                  2
+                )}{' '}
+                Points
+              </Typography>
+            </>
+          ) : (
+            <Typography className={classes.statName}>No points distribution</Typography>
+          )}
         </Box>
         <Box className={classNames(classes.statContainer, classes.statContainerHiglight)}>
           <Typography className={classes.statName}>Pool APR:</Typography>

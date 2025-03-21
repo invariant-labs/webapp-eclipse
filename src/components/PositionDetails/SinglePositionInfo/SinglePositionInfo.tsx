@@ -23,6 +23,7 @@ interface IProp {
   poolDetails: PoolDetailsType | null
   showPoolDetailsLoader?: boolean
   showBalanceLoader?: boolean
+  arePointsDistributed: boolean
   points24: number
 }
 
@@ -37,6 +38,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
   showPoolDetailsLoader = false,
   poolDetails,
   showBalanceLoader = false,
+  arePointsDistributed,
   points24
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
@@ -68,6 +70,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
           }
           poolApr={apyToApr(poolDetails?.apy ?? 0)}
           points24={points24}
+          arePointsDistributed={arePointsDistributed}
           isLoading={showFeesLoader}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />
