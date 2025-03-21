@@ -22,6 +22,7 @@ export interface IEmptyPlaceholder {
   desc2?: string
   connectButton?: boolean
   themeDark?: boolean
+  withImg?: boolean
 }
 
 export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
@@ -38,7 +39,8 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
   desc2,
   themeDark = false,
   style,
-  connectButton
+  connectButton,
+  withImg = true
 }) => {
   const { classes } = useStyles({ newVersion, themeDark, roundedCorners, height })
 
@@ -49,7 +51,7 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
       <Grid className={classNames(classes.blur, 'blurLayer')} />
       <Grid sx={style} className={classNames(classes.container, 'blurLayer')}>
         <Grid className={classNames(classes.root, 'blurInfo')} gap='24px'>
-          <img src={img} alt='Not connected' />
+          {withImg && <img src={img} alt='Not connected' />}
           <Grid className={classes.buttonContainer}>
             <Typography sx={{ opacity: 0.8 }} className={classes.title}>
               {mainTitle}
