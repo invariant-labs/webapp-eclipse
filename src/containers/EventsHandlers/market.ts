@@ -101,7 +101,6 @@ const MarketEvents = () => {
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
-            console.log('update pool1')
             dispatch(
               actions.updatePool({
                 address: pool.address,
