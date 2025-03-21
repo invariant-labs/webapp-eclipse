@@ -5,7 +5,59 @@ on:
     types: [opened, synchronize, reopened]
 
 jobs:
-  build:
+  build-storybook:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+
+      - name: Install Dependencies
+        run: npm i
+
+      - name: Build Storybook
+        run: npm run build-storybook
+
+  upload-storybook:
+    runs-on: ubuntu-latest
+    permissions: write-all
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+      - name: Install Dependencies
+        run: npm i
+      - name: Build Storybook
+        run: npm run build-storybook
+      - name: Create Vercel Config for Storybook
+        run: |
+          cat << 'EOF' > storybook-static/vercel.json
+          {
+            "buildCommand": "",
+            "outputDirectory": "."
+          }
+          EOF
+      - name: Install Vercel CLI globally
+        run: npm install -g vercel
+      - name: Deploy Storybook to Vercel Action
+        uses: BetaHuhn/deploy-to-vercel-action@v1
+        with:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+          VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+          VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
+          PRODUCTION: false
+          GITHUB_DEPLOYMENT_ENV: 'storybook'
+          WORKING_DIRECTORY: 'storybook-static'
+  build-app:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -20,8 +72,9 @@ jobs:
       - name: build
         run: npm run build
 
-  upload:
+  upload-app:
     runs-on: ubuntu-latest
+    needs: 'upload-storybook'
     permissions: write-all
     steps:
       - name: Checkout
@@ -36,4 +89,5 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+          GITHUB_DEPLOYMENT_ENV: 'app'
           PRODUCTION: false
