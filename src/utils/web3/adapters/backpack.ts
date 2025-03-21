@@ -1,4 +1,4 @@
-import { PublicKey, Transaction } from '@solana/web3.js'
+import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 import { ensureError } from '@utils/utils'
@@ -6,8 +6,12 @@ import { ensureError } from '@utils/utils'
 interface BackpackProvider {
   publicKey: PublicKey
   isConnected: boolean
-  signTransaction: (transaction: Transaction) => Promise<Transaction>
-  signAllTransactions: (transactions: Transaction[]) => Promise<Transaction[]>
+  signTransaction: (
+    transaction: Transaction | VersionedTransaction
+  ) => Promise<Transaction | VersionedTransaction>
+  signAllTransactions: (
+    transactions: Transaction[] | VersionedTransaction[]
+  ) => Promise<Transaction[] | VersionedTransaction[]>
   signMessage: (message: Uint8Array) => Promise<any>
   sendMessage: (message: Uint8Array) => Promise<any>
   connect: () => Promise<void>
@@ -22,7 +26,9 @@ export class BackpackWalletAdapter implements WalletAdapter {
     return this._backpackProvider?.isConnected || false
   }
 
-  signAllTransactions = async (transactions: Transaction[]): Promise<Transaction[]> => {
+  signAllTransactions = async (
+    transactions: Transaction[] | VersionedTransaction[]
+  ): Promise<Transaction[] | VersionedTransaction[]> => {
     if (!this._backpackProvider) {
       return transactions
     }
@@ -34,7 +40,7 @@ export class BackpackWalletAdapter implements WalletAdapter {
       : DEFAULT_PUBLICKEY
   }
 
-  signTransaction = async (transaction: Transaction) => {
+  signTransaction = async (transaction: Transaction | VersionedTransaction) => {
     if (!this._backpackProvider) {
       return transaction
     }
