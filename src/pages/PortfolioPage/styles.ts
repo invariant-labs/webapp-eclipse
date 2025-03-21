@@ -84,6 +84,9 @@ const useStyles = makeStyles()(theme => {
       [theme.breakpoints.down('md')]: {
         width: '100%'
       }
+    },
+    changeWalletButtonContainer: {
+      marginTop: 16
     }
   }
 })

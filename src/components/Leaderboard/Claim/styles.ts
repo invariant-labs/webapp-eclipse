@@ -142,5 +142,10 @@ export const useStyles = makeStyles()(() => ({
     [theme.breakpoints.down('md')]: {
       fontSize: '32px'
     }
+  },
+  learnMoreButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
   }
 }))

@@ -166,6 +166,10 @@ const useStyles = makeStyles()(() => {
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       textWrap: 'nowrap'
+    },
+    linkContainer: {
+      width: '100%',
+      marginTop: 16
     }
   }
 })

@@ -6,7 +6,7 @@ import { theme } from '@static/theme'
 import { Reward } from '@store/consts/types'
 import rewardsImages from '@static/png/rewards/rewardsImages'
 import classNames from 'classnames'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 export interface RewardItemInterface {
   number: number
   reward: Reward

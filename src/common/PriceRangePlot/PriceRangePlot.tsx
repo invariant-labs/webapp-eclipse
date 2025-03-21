@@ -1,4 +1,4 @@
-import { Button, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { linearGradientDef } from '@nivo/core'
 import { Layer, ResponsiveLine } from '@nivo/line'
 import loader from '@static/gif/loader.gif'
@@ -12,6 +12,7 @@ import React, { useCallback, useMemo, useRef } from 'react'
 import Brush from './Brush/Brush'
 import useStyles from './style'
 import { BN } from '@coral-xyz/anchor'
+import { Button } from '@common/Button/Button'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
@@ -362,6 +363,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
 
   const isNoPositions = data.every(tick => !(tick?.y > 0))
 
+  const isMd = useMediaQuery(theme.breakpoints.up('md'))
+
   return (
     <Grid
       container
@@ -377,7 +380,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         <Grid container className={classes.cover}>
           <Grid className={classes.errorWrapper} container>
             <Typography className={classes.errorText}>Unable to load liquidity chart</Typography>
-            <Button className={classes.reloadButton} onClick={reloadHandler}>
+            <Button scheme='pink' onClick={reloadHandler}>
               Reload chart
             </Button>
           </Grid>
@@ -388,10 +391,22 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         item
         className={classNames(classes.zoomButtonsWrapper, 'zoomBtns')}
         justifyContent='space-between'>
-        <Button className={classes.zoomButton} onClick={zoomPlus} disableRipple>
+        <Button
+          scheme='green'
+          width={isMd ? 28 : 40}
+          height={isMd ? 28 : 40}
+          borderRadius={10}
+          padding={0}
+          onClick={zoomPlus}>
           <img src={ZoomInIcon} className={classes.zoomIcon} alt='Zoom in' />
         </Button>
-        <Button className={classes.zoomButton} onClick={zoomMinus} disableRipple>
+        <Button
+          scheme='green'
+          width={isMd ? 28 : 40}
+          height={isMd ? 28 : 40}
+          borderRadius={10}
+          padding={0}
+          onClick={zoomMinus}>
           <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
         </Button>
       </Grid>

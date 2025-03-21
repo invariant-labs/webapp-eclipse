@@ -26,35 +26,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       width: 22
     }
   },
-  zoomButton: {
-    minWidth: 28,
-    width: 28,
-    height: 28,
-    borderRadius: 10,
-    backgroundColor: 'rgba(46,224,154,0.8)',
-    padding: 0,
-    '&:not(:last-child)': {
-      marginBottom: 8
-    },
-
-    '&:hover': {
-      backgroundColor: colors.invariant.green,
-      boxShadow: `0 0 10px ${colors.invariant.green}`
-    },
-
-    [theme.breakpoints.down('md')]: {
-      width: 40,
-      height: 40
-    }
-  },
   zoomButtonsWrapper: {
     position: 'absolute',
     top: 0,
     right: 8,
-    maxWidth: 21,
     height: 64,
     zIndex: 10,
-    flexDirection: 'row',
+    display: 'flex',
+    alignItems: 'flex-end',
+    flexDirection: 'column',
 
     [theme.breakpoints.down('md')]: {
       flexDirection: 'row',

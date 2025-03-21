@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import LaunchIcon from '@mui/icons-material/Launch'
 import icons from '@static/icons'
@@ -12,6 +12,7 @@ import RewardsList from './RewardsList/RewardsList'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { CurrentUser } from '@store/reducers/leaderboard'
 import { PublicKey } from '@solana/web3.js'
+import { Button } from '@common/Button/Button'
 
 interface ClaimProps {
   walletStatus: Status
@@ -58,17 +59,15 @@ export const Claim: React.FC<ClaimProps> = ({
                     : 0}{' '}
                   points
                 </Typography>
-                <Box style={{ width: '250px' }}>
-                  <Box>
-                    <ChangeWalletButton
-                      isDisabled={isConnected}
-                      name={!isConnected ? 'Connect Wallet' : 'Claim'}
-                      onConnect={onConnectWallet}
-                      connected={false}
-                      onDisconnect={() => {}}
-                      className={classes.connectWalletButton}
-                    />
-                  </Box>
+                <Box mt={3}>
+                  <ChangeWalletButton
+                    isDisabled={isConnected}
+                    name={!isConnected ? 'Connect Wallet' : 'Claim'}
+                    onConnect={onConnectWallet}
+                    connected={false}
+                    onDisconnect={() => {}}
+                    className={classes.connectWalletButton}
+                  />
                 </Box>
               </Box>
             </Box>
@@ -78,9 +77,13 @@ export const Claim: React.FC<ClaimProps> = ({
                 to='https://docs.invariant.app/docs/invariant_points/mechanism'
                 target='_blank'
                 style={{ textDecoration: 'none' }}>
-                <Button className={classes.button} style={{ marginTop: '16px' }}>
-                  Learn More <LaunchIcon classes={{ root: classes.clipboardIcon }} />
-                </Button>
+                <Box mt={2}>
+                  <Button scheme='green' padding='0 42px'>
+                    <Box className={classes.learnMoreButton}>
+                      Learn more <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+                    </Box>
+                  </Button>
+                </Box>
               </Link>
             </Typography>
           </>

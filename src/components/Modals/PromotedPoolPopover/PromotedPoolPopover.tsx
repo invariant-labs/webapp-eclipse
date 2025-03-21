@@ -3,7 +3,7 @@ import useStyles from './style'
 import { Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 export interface IPromotedPoolPopover {
   isActive?: boolean
   apr?: BN

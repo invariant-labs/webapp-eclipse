@@ -1,4 +1,4 @@
-import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
@@ -43,7 +43,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
+import { InitMidPrice } from '@common/PriceRangePlot/PriceRangePlot'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'

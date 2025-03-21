@@ -4,7 +4,7 @@ import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Box, Button, Typography } from '@mui/material'
 import { BN } from '@coral-xyz/anchor'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
   NetworkType,
   WETH_MIN_FAUCET_FEE_MAIN,
