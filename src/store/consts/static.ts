@@ -6,10 +6,7 @@ import { Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from '
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
-import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
-import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
-import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
+
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
@@ -735,7 +732,7 @@ export const walletNames = {
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
-export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
+export const defaultImages: string[] = [icons.dog1, icons.dog2, icons.cat1, icons.cat2]
 
 export const getPopularPools = (network: NetworkType) => {
   switch (network) {

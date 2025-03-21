@@ -1,8 +1,5 @@
+import icons from '@static/icons'
 import { ErrorMessage } from './types'
-import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
-import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
-import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
-import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
 
 export const MAX_VALUE = BigInt(2) ** BigInt(64) - BigInt(1)
 
@@ -21,4 +18,4 @@ export const errorMessages: Record<string, ErrorMessage> = {
   }
 }
 
-export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
+export const defaultImages: string[] = [icons.dog1, icons.dog2, icons.cat1, icons.cat2]
