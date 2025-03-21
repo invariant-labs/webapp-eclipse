@@ -45,6 +45,7 @@ export const Primary: Story = {
       fee24: 0,
       apy: 0
     },
+    arePointsDistributed: true,
     points24: 0
   },
   render: args => {
