@@ -250,6 +250,8 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
+  const [isAutoSwapAvailable, setIsAutoSwapAvailable] = useState(false)
+
   const [positionOpeningMethod, setPositionOpeningMethod] = useState<PositionOpeningMethod>(
     initialOpeningPositionMethod
   )
@@ -314,19 +316,27 @@ export const NewPosition: React.FC<INewPosition> = ({
     return index !== -1 ? index : 0
   }, [rangeConcentrationArray, leftRange, rightRange, positionOpeningMethod])
 
-  const isAutoSwapAvailable = useMemo(
-    () =>
+  useEffect(() => {
+    if (isLoadingTicksOrTickmap || isWaitingForNewPool) return
+    setIsAutoSwapAvailable(
       tokenAIndex !== null &&
-      tokenBIndex !== null &&
-      autoSwapPools.some(
-        item =>
-          (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-            item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-          (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-            item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
-      ),
-    [tokenAIndex, tokenBIndex]
-  )
+        tokenBIndex !== null &&
+        autoSwapPools.some(
+          item =>
+            (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+              item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+            (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+              item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+        ) &&
+        isCurrentPoolExisting
+    )
+  }, [
+    tokenAIndex,
+    tokenBIndex,
+    isCurrentPoolExisting,
+    isWaitingForNewPool,
+    isLoadingTicksOrTickmap
+  ])
 
   const isDepositEmptyOrZero = (val: string) => val === '' || +val === 0
 
