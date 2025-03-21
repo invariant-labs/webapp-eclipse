@@ -8,8 +8,7 @@ import {
   ClosePositionData,
   GetCurrentTicksData,
   InitPositionData,
-  PositionWithAddress,
-  UpdatePositionRangeRicksData
+  PositionWithAddress
 } from '@store/reducers/positions'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { poolsArraySortedByFees, tokens } from '@store/selectors/pools'
@@ -32,8 +31,7 @@ import {
   plotTicks,
   lockedPositionsWithPoolsData,
   positionsList,
-  positionsWithPoolsData,
-  singlePositionData
+  positionsWithPoolsData
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
