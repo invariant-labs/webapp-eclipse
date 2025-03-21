@@ -23,14 +23,14 @@ const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
         background: colors.invariant.greenLinearGradient,
         color: colors.invariant.newDark,
         backgroundHover: colors.invariant.greenLinearGradient,
-        boxShadow: colors.invariant.green
+        boxShadow: 'rgba(46, 224, 154, 0.5)'
       }
     case 'pink':
       return {
         background: colors.invariant.pinkLinearGradient,
         color: colors.invariant.newDark,
         backgroundHover: colors.invariant.pinkLinearGradient,
-        boxShadow: colors.invariant.pink
+        boxShadow: 'rgba(239, 132, 245, 0.5)'
       }
     case 'rainbow':
       return {
@@ -54,7 +54,7 @@ const useStyles = makeStyles<StyleProps>()(
       ...typography.body1,
 
       '&:hover': {
-        boxShadow: `0 0 16px ${getStyles(scheme).boxShadow}`,
+        boxShadow: `0 0 12px ${getStyles(scheme).boxShadow}`,
         ...(scheme === 'rainbow' ? {} : { background: getStyles(scheme).backgroundHover })
       }
     },

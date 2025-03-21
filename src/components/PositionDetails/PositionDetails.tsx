@@ -3,7 +3,7 @@ import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/S
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import Refresher from '@common/Refresher/Refresher'
-import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
+import { Box, Grid, Hidden, Typography } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
@@ -30,6 +30,7 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
+import { Button } from '@common/Button/Button'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -259,7 +260,7 @@ const PositionDetails: React.FC<IProps> = ({
               {!isLocked ? (
                 <TooltipHover title={'Lock liquidity'}>
                   <Button
-                    className={classes.lockButton}
+                    scheme='pink'
                     disabled={isLocked}
                     variant='contained'
                     onClick={() => {
@@ -272,6 +273,7 @@ const PositionDetails: React.FC<IProps> = ({
               ) : (
                 <TooltipHover title={'Unlocking liquidity is forbidden'}>
                   <Button
+                    scheme='pink'
                     disabled
                     className={classes.unlockButton}
                     variant='contained'
@@ -283,7 +285,7 @@ const PositionDetails: React.FC<IProps> = ({
             </Hidden>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <Button
-                className={classes.button}
+                scheme='pink'
                 variant='contained'
                 onClick={() => {
                   const parsedFee = parseFeeToPathFee(fee)
