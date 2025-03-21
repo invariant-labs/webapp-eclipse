@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react'
+import React, { useMemo, useEffect, useState } from 'react'
 import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
 import { useStyles } from './style'
 import { Grid } from '@mui/material'
@@ -11,8 +11,10 @@ import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
+import { colors } from '@static/theme'
 
 export interface PoolListInterface {
+  initialLength: number
   data: Array<{
     symbolFrom: string
     symbolTo: string
@@ -79,11 +81,14 @@ const PoolList: React.FC<PoolListInterface> = ({
   network,
   copyAddressHandler,
   isLoading,
-  showAPY
+  showAPY,
+  initialLength
 }) => {
   const navigate = useNavigate()
 
-  const { classes } = useStyles()
+  const [initialDataLength, setInitialDataLength] = useState(initialLength)
+  const { classes } = useStyles({ initialDataLength })
+
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
 
@@ -119,11 +124,18 @@ const PoolList: React.FC<PoolListInterface> = ({
         return data.sort((a, b) => b.apy - a.apy)
     }
   }, [data, sortType])
-
+  useEffect(() => {
+    setInitialDataLength(initialLength)
+  }, [initialLength])
   useEffect(() => {
     setPage(1)
   }, [data])
+  const getEmptyRowsCount = () => {
+    const displayedItems = paginator(page).length
+    const rowNumber = initialDataLength < 10 ? initialDataLength : 10
 
+    return Math.max(rowNumber - displayedItems, 0)
+  }
   const handleChangePagination = (currentPage: number) => setPage(currentPage)
   const paginator = (currentPage: number) => {
     const page = currentPage || 1
@@ -181,28 +193,38 @@ const PoolList: React.FC<PoolListInterface> = ({
               isPromoted={element.isPromoted}
             />
           ))}
-          {new Array(10 - paginator(page).length).fill('').map((_, index) => (
-            <div
-              className={classNames(classes.emptyRow, {
-                [classes.emptyRowBorder]: index === 10 - paginator(page).length - 1
-              })}></div>
-          ))}
+          {getEmptyRowsCount() > 0 &&
+            new Array(getEmptyRowsCount()).fill('').map((_, index) => (
+              <div
+                key={`empty-row-${index}`}
+                className={classNames(classes.emptyRow, {
+                  [classes.emptyRowBorder]: index === getEmptyRowsCount() - 1
+                })}
+              />
+            ))}
         </>
       ) : (
         <Grid container className={classes.emptyContainer}>
           <EmptyPlaceholder
             newVersion
-            height={690}
+            height={initialDataLength < 10 ? initialDataLength * 69 : 690}
             mainTitle='Pool not found...'
-            desc='You can create it yourself!'
-            desc2='Or try adjusting your search criteria!'
+            desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
+            desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             onAction={() => navigate(ROUTES.NEW_POSITION)}
             buttonName='Create Pool'
             withButton={true}
+            withImg={initialDataLength > 3}
           />
         </Grid>
       )}
-      <Grid className={classes.pagination}>
+      <Grid
+        className={classes.pagination}
+        sx={{
+          borderTop: `
+              ${pages > 1 ? (page !== pages ? 1 : 2) : 2}px solid ${colors.invariant.light}
+            `
+        }}>
         {pages > 1 && (
           <PaginationList
             pages={pages}
