@@ -29,11 +29,11 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import { singlePositionData } from '@store/selectors/positions'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { lockerState } from '@store/selectors/locker'
-import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
 import { useSkeletonStyle } from './styles/skeletons'
 import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { ILiquidityToken } from '@store/consts/types'
 
 interface ILoadingStates {
   pairName?: boolean

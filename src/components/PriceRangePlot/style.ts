@@ -30,7 +30,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     minWidth: 28,
     width: 28,
     height: 28,
-    borderRadius: 10,
+    borderRadius: 5,
     backgroundColor: 'rgba(46,224,154,0.8)',
     padding: 0,
     '&:not(:last-child)': {
@@ -49,7 +49,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   zoomButtonsWrapper: {
     position: 'absolute',
-    top: 0,
+    bottom: 20,
     right: 8,
     maxWidth: 21,
     height: 64,

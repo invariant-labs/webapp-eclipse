@@ -3,14 +3,19 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
-  root: {
-    width: '100%',
+  container: {
+    height: '100%',
     backgroundColor: colors.invariant.component,
     padding: 24,
-    paddingTop: 18,
+    paddingInline: 8,
     borderRadius: 24,
-    [theme.breakpoints.down('sm')]: {
-      padding: '24px 8px'
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    gap: 12,
+
+    [theme.breakpoints.up('sm')]: {
+      paddingInline: 24
     }
   },
   liqWrapper: {
@@ -20,64 +25,13 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginBottom: '12px'
   },
   headerContainer: {
+    display: 'flex',
     justifyContent: 'space-between',
-    ...typography.heading4,
-    color: '#FFFFFF'
+    alignItems: 'center'
   },
   header: {
-    paddingBottom: 30
-  },
-  plotWrapper: {
-    paddingBottom: 29
-  },
-  minMaxInfo: {
-    display: 'grid',
-    gridTemplateColumns: '1fr 1fr',
-    gridGap: '15px',
-    paddingBottom: 16,
-
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '1fr',
-      gridGap: '8px'
-    }
-  },
-  currentPriceContainer: {
-    backgroundColor: '#111931',
-    borderRadius: 11
-  },
-  currentPriceLabel: {
-    backgroundColor: colors.invariant.light,
-    color: colors.invariant.lightGrey,
-    textAlign: 'center',
-    borderRadius: '11px!important',
-    '& p': {
-      ...typography.body2,
-      textTransform: 'uppercase',
-      lineHeight: '35px',
-      [theme.breakpoints.only('md')]: {
-        ...typography.caption2,
-        lineHeight: '35px'
-      }
-    }
-  },
-  currentPriceAmonut: {
-    backgroundColor: colors.invariant.dark,
-    textAlign: 'center',
-    borderRadius: '11px!important',
-    '& span': {
-      color: colors.invariant.text,
-      ...typography.body1,
-      lineHeight: '35px',
-      paddingRight: 5
-    },
-    '& p': {
-      color: '#A9B6BF',
-      ...typography.body1,
-      [theme.breakpoints.only('md')]: {
-        ...typography.caption1,
-        lineHeight: '35px'
-      }
-    }
+    ...typography.heading4,
+    color: colors.white.main
   },
   plot: {
     width: '100%',
@@ -89,68 +43,41 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       height: 253
     }
   },
-  infoRow: {
-    marginBottom: 16
-  },
-  activeLiquidity: {
-    color: colors.invariant.text,
-    ...typography.caption2,
+  statsWrapper: {
     display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    cursor: 'default'
+    flexDirection: 'column',
+    gap: 16
   },
-  activeLiquidityIcon: {
-    marginLeft: 5,
-    height: 14,
-    width: 14,
-    border: '1px solid #FFFFFF',
-    color: colors.invariant.text,
-    borderRadius: '50%',
-    fontSize: 8,
-    lineHeight: '10px',
-    fontWeight: 400,
-    textAlign: 'center',
-    boxSizing: 'border-box',
-    paddingTop: 3,
-    cursor: 'default',
-    userSelect: 'none'
-  },
-  liquidityTooltip: {
-    background: colors.invariant.component,
-    boxShadow: '0px 4px 18px rgba(0, 0, 0, 0.35)',
-    borderRadius: 20,
-    padding: 16,
-    maxWidth: 376,
-    boxSizing: 'border-box',
+  statsContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    gap: 16,
 
-    [theme.breakpoints.down('sm')]: {
-      maxWidth: 360
+    [theme.breakpoints.up('sm')]: {
+      flexDirection: 'row'
     }
   },
-  liquidityTitle: {
-    color: colors.invariant.text,
-    ...typography.heading4,
-    marginBottom: 12
+  value: {
+    color: colors.white.main
   },
-  liquidityDesc: {
-    color: colors.invariant.text,
-    ...typography.caption2
+  valuePercentagePlus: {
+    color: colors.invariant.green
   },
-  liquidityNote: {
-    color: colors.invariant.textGrey,
-    ...typography.caption2
+  valuePercentageMinus: {
+    color: colors.invariant.Error
   },
-  liquidityImg: {
-    width: 80,
-    minWidth: 80,
-    height: 60,
-    marginLeft: 16
+  concentrationContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 4
   },
-  currentPrice: {
-    color: colors.invariant.yellow,
-    ...typography.caption2,
-    textAlign: 'right'
+  concentrationValue: {
+    fontSize: 20,
+    fontWeight: 400,
+    color: colors.white.main
+  },
+  concentrationIcon: {
+    marginBottom: 3
   }
 }))
 
