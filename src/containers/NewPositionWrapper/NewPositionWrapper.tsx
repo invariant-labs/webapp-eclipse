@@ -45,11 +45,11 @@ import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { getCurrentSolanaConnection, networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
-import { Pair } from '@invariant-labs/sdk-eclipse'
+import { getMarketAddress, Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -331,6 +331,16 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     x: 1,
     sqrtPrice: 0
   })
+
+  const currentPoolAddress = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return null
+    const net = networkTypetoProgramNetwork(currentNetwork)
+    const marketAddress = new PublicKey(getMarketAddress(net))
+    return new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+      fee,
+      tickSpacing
+    }).getAddress(marketAddress)
+  }, [tokenAIndex, tokenBIndex, fee, tickSpacing, currentNetwork])
 
   const isWaitingForNewPool = useMemo(() => {
     if (poolIndex !== null) {
@@ -904,7 +914,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiers={ALL_FEE_TIERS_DATA.map(tier => ({
         feeValue: +printBN(tier.tier.fee, DECIMAL - 2)
       }))}
-      isCurrentPoolExisting={poolIndex !== null && !!allPools[poolIndex]}
+      isCurrentPoolExisting={
+        currentPoolAddress ? allPools.some(pool => pool.address.equals(currentPoolAddress)) : false
+      }
       swapAndAddLiquidityHandler={(
         xAmount,
         yAmount,
