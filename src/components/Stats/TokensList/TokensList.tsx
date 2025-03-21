@@ -1,6 +1,6 @@
 import TokenListItem from '../TokenListItem/TokenListItem'
 import React, { useEffect, useMemo, useState } from 'react'
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import useStyles from './style'
 import { Grid, useMediaQuery } from '@mui/material'
 import {
@@ -28,6 +28,7 @@ export interface ITokensListData {
 }
 
 export interface ITokensList {
+  initialLength: number
   data: ITokensListData[]
   network: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
@@ -51,8 +52,15 @@ const generateMockData = () => {
   }))
 }
 
-const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler, isLoading }) => {
-  const { classes } = useStyles()
+const TokensList: React.FC<ITokensList> = ({
+  data,
+  initialLength,
+  network,
+  copyAddressHandler,
+  isLoading
+}) => {
+  const [initialDataLength, setInitialDataLength] = useState(initialLength)
+  const { classes } = useStyles({ initialDataLength })
   const [page, setPage] = useState(1)
   const [sortType, setSortType] = React.useState(SortTypeTokenList.VOLUME_DESC)
 
@@ -94,6 +102,9 @@ const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler, 
         return data.sort((a, b) => (a.TVL === b.TVL ? b.volume - a.volume : b.TVL - a.TVL))
     }
   }, [data, sortType, isXsDown])
+  useEffect(() => {
+    setInitialDataLength(initialLength)
+  }, [initialLength])
 
   useEffect(() => {
     setPage(1)
@@ -102,6 +113,14 @@ const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler, 
   const handleChangePagination = (page: number): void => {
     setPage(page)
   }
+
+  const getEmptyRowsCount = () => {
+    const displayedItems = paginator(page).data.length
+    const rowNumber = initialDataLength < 10 ? initialDataLength : 10
+
+    return Math.max(rowNumber - displayedItems, 0)
+  }
+
   function paginator(currentPage: number) {
     const page = currentPage || 1
     const perPage = 10
@@ -148,17 +167,27 @@ const TokensList: React.FC<ITokensList> = ({ data, network, copyAddressHandler, 
                 />
               )
             })}
-            {new Array(10 - paginator(page).data.length).fill('').map((_, index) => (
-              <div
-                className={classNames(classes.emptyRow, {
-                  [classes.emptyRowBorder]: index === 10 - paginator(page).data.length - 1
-                })}></div>
-            ))}
+            {getEmptyRowsCount() > 0 &&
+              new Array(getEmptyRowsCount()).fill('').map((_, index) => (
+                <div
+                  key={`empty-row-${index}`}
+                  className={classNames(classes.emptyRow, {
+                    [classes.emptyRowBorder]: index === getEmptyRowsCount() - 1
+                  })}
+                />
+              ))}
           </>
         ) : (
           <NotFoundPlaceholder title='No tokens found...' isStats />
         )}
-        <Grid className={classes.pagination}>
+        <Grid
+          className={classes.pagination}
+          sx={{
+            height: initialDataLength > 10 ? (page !== pages ? 90 : 91) : 69,
+            borderTop: `
+              ${pages > 1 ? (page !== pages ? 1 : 2) : 2}px solid ${colors.invariant.light}
+            `
+          }}>
           {pages > 1 && (
             <PaginationList
               pages={Math.ceil(data.length / 10)}

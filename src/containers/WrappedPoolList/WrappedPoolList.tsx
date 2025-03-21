@@ -112,6 +112,7 @@ export const WrappedPoolList: React.FC = () => {
               ?.pointsPerSecond || '0',
           isPromoted: promotedPools.some(pool => pool.address === poolData.poolAddress.toString())
         }))}
+        initialLength={poolsList.length}
         network={currentNetwork}
         copyAddressHandler={copyAddressHandler}
         isLoading={isLoadingStats}
