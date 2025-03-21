@@ -183,7 +183,7 @@ const TokensList: React.FC<ITokensList> = ({
         <Grid
           className={classes.pagination}
           sx={{
-            height: pages > 1 ? (page !== pages ? 90 : 91) : 90,
+            height: initialDataLength > 10 ? (page !== pages ? 90 : 91) : 69,
             borderTop: `
               ${pages > 1 ? (page !== pages ? 1 : 2) : 2}px solid ${colors.invariant.light}
             `

@@ -224,7 +224,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         <Grid
           className={classes.pagination}
           sx={{
-            height: pages > 1 ? (page !== pages ? 101 : 101) : 101,
+            height: initialDataLength > 10 ? (page !== pages ? 101 : 101) : 69,
             borderTop: `
               ${pages > 1 ? (page !== pages ? 1 : 2) : 2}px solid ${colors.invariant.light}
             `
