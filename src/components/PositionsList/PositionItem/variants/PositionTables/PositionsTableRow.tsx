@@ -53,6 +53,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   poolAddress,
   tokenYIcon,
   currentPrice,
+  isFullRange,
   id,
   fee,
   min,
@@ -283,6 +284,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <MinMaxChart
+        isFullRange={isFullRange}
         min={Number(xToY ? min : 1 / max)}
         max={Number(xToY ? max : 1 / min)}
         current={
