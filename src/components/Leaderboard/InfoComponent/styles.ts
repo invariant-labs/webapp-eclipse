@@ -85,9 +85,16 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   linkButtonContainer: {
+    marginTop: 32,
+
     [theme.breakpoints.down('md')]: {
       display: 'flex',
       justifyContent: 'center'
     }
+  },
+  learnMoreButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
   }
 }))

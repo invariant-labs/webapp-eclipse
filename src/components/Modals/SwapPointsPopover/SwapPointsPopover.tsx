@@ -3,7 +3,7 @@ import { Typography, Box } from '@mui/material'
 import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
 import { addressToTicker } from '@utils/utils'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 export interface ISwapPointsPopover {
   isPairGivingPoints: boolean
