@@ -201,7 +201,7 @@ export const Swap: React.FC<ISwap> = ({
         )
       : false
   )
-  const [rateLoading, setRateLoading] = React.useState<boolean>(false)
+  // const [rateLoading, setRateLoading] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
@@ -418,7 +418,7 @@ export const Swap: React.FC<ISwap> = ({
           tokens[tokenToIndex].assetAddress.toString()
         )
       )
-      setRateLoading(false)
+      // setRateLoading(false)
     }
   }, [tokenFromIndex, tokenToIndex])
 
