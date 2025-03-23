@@ -16,7 +16,7 @@ import {
 } from '@utils/utils'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { shortenAddress } from '@utils/uiUtils'
@@ -205,7 +205,7 @@ const PoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
-    <Grid maxWidth='100%' className={classes.wrapper}>
+    <Grid className={classes.wrapper}>
       {displayType === 'token' ? (
         <Grid
           container

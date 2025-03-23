@@ -4,7 +4,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
@@ -115,14 +115,8 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
-        <Typography style={{ paddingRight: '24px', width: 'auto' }}>
-          <span
-            style={{
-              whiteSpace: 'nowrap',
-              overflow: 'hidden',
-              textOverflow: 'ellipsis',
-              color: colors.invariant.text
-            }}>
+        <Box style={{ paddingRight: '24px', width: 'auto' }}>
+          <span className={classes.address}>
             {domain
               ? isVerySmallScreen || isNarrowMediumScreen
                 ? shortDomain
@@ -135,7 +129,7 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
               (You)
             </Typography>
           ) : null}
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline' }}>
+          <Box className={classes.copyWrapper}>
             <TooltipHover title='Copy address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}
@@ -150,7 +144,7 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
               </Link>
             </TooltipHover>
           </Box>
-        </Typography>
+        </Box>
 
         <Typography>
           {new BN(points, 'hex').isZero()

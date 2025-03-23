@@ -13,7 +13,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       padding: '24px 8px'
     }
   },
+  liqWrapper: {
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    alignItems: 'center',
+    marginBottom: '12px'
+  },
   headerContainer: {
+    justifyContent: 'space-between',
     ...typography.heading4,
     color: '#FFFFFF'
   },

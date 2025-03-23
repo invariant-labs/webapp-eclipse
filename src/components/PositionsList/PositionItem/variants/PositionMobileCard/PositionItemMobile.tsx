@@ -4,7 +4,7 @@ import { formatNumberWithSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style/mobile'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
 import icons from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
@@ -25,7 +25,7 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { lockerState } from '@store/selectors/locker'
 import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
@@ -45,6 +45,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   max,
   position,
   id,
+  isFullRange,
   setAllowPropagation,
   poolData,
   isActive = false,
@@ -376,6 +377,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     () => (
       <Grid container justifyContent='center' margin={'0 auto'} width={'80%'}>
         <MinMaxChart
+          isFullRange={isFullRange}
           min={Number(xToY ? min : 1 / max)}
           max={Number(xToY ? max : 1 / min)}
           current={
@@ -435,22 +437,10 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
-      <Grid
-        container
-        item
-        className={classes.mdTop}
-        direction='row'
-        wrap='nowrap'
-        sx={{ marginBottom: 2 }}>
-        <Grid
-          container
-          item
-          className={classes.iconsAndNames}
-          alignItems='center'
-          justifyContent={'space-between'}
-          wrap='nowrap'>
+      <Grid container item className={classes.mdTop}>
+        <Grid container item className={classes.iconsAndNames}>
           <Box display='flex' alignItems={'center'}>
-            <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
+            <Grid container item className={sharedClasses.icons}>
               <img
                 className={sharedClasses.tokenIcon}
                 src={xToY ? tokenXIcon : tokenYIcon}

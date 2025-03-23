@@ -1,7 +1,7 @@
-import { Box, Button, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
-import GradientBorder from '@components/GradientBorder/GradientBorder'
+import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
@@ -26,6 +26,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
+import { Button } from '@common/Button/Button'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean
@@ -70,17 +71,16 @@ const Card: React.FC<ICard> = ({
     return { isPromoted: true, pointsPerSecond: promotedPool.pointsPerSecond }
   }, [promotedPools, poolAddress])
 
+  const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
+  const tokenA = isXtoY
+    ? addressToTicker(network, addressFrom ?? '')
+    : addressToTicker(network, addressTo ?? '')
+  const tokenB = isXtoY
+    ? addressToTicker(network, addressTo ?? '')
+    : addressToTicker(network, addressFrom ?? '')
+
   const handleOpenPosition = () => {
     if (fee === undefined) return
-
-    const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
-
-    const tokenA = isXtoY
-      ? addressToTicker(network, addressFrom ?? '')
-      : addressToTicker(network, addressTo ?? '')
-    const tokenB = isXtoY
-      ? addressToTicker(network, addressTo ?? '')
-      : addressToTicker(network, addressFrom ?? '')
 
     navigate(
       ROUTES.getNewPositionRoute(
@@ -93,13 +93,7 @@ const Card: React.FC<ICard> = ({
   }
 
   const handleOpenSwap = () => {
-    navigate(
-      ROUTES.getExchangeRoute(
-        addressToTicker(network, addressFrom ?? ''),
-        addressToTicker(network, addressTo ?? '')
-      ),
-      { state: { referer: 'liquidity' } }
-    )
+    navigate(ROUTES.getExchangeRoute(tokenA, tokenB), { state: { referer: 'liquidity' } })
   }
 
   //HOTFIX
@@ -135,13 +129,7 @@ const Card: React.FC<ICard> = ({
   return (
     <Grid className={classes.root}>
       {isLoading ? (
-        <Skeleton
-          variant='rounded'
-          animation='wave'
-          width={220}
-          height={344}
-          style={{ opacity: 0.7, borderRadius: 24 }}
-        />
+        <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
       ) : (
         <Grid>
           <GradientBorder
@@ -161,7 +149,7 @@ const Card: React.FC<ICard> = ({
               className={classes.backgroundImage}
               style={{ bottom: 0, zIndex: -1 }}
             />
-            <Grid container p={'20px'} alignItems='center' flexDirection='column'>
+            <Grid container className={classes.cardWrapper}>
               <Grid container className={classes.iconsWrapper}>
                 <Box className={classes.iconContainer}>
                   <img
@@ -188,7 +176,7 @@ const Card: React.FC<ICard> = ({
                 </Box>
               </Grid>
 
-              <Typography className={classes.symbolsContainer}>
+              <Box className={classes.symbolsContainer}>
                 {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}{' '}
                 {isPromoted && (
                   <>
@@ -222,7 +210,7 @@ const Card: React.FC<ICard> = ({
                     </PromotedPoolPopover>
                   </>
                 )}
-              </Typography>
+              </Box>
               <Grid container gap='8px'>
                 {apy !== undefined && showAPY && (
                   <StatsLabel
@@ -238,17 +226,17 @@ const Card: React.FC<ICard> = ({
                   <StatsLabel title='Volume' value={`$${formatNumberWithSuffix(volume)}`} />
                 )}
               </Grid>
-              <Grid container justifyContent='space-between' alignItems='center' mt='auto'>
-                <Grid
-                  className={classes.back}
-                  container
-                  item
-                  alignItems='center'
-                  onClick={handleOpenSwap}>
+              <Grid container className={classes.footerWrapper}>
+                <Grid className={classes.back} container item onClick={handleOpenSwap}>
                   <img className={classes.backIcon} src={backIcon} alt='Back' />
                   <Typography className={classes.backText}>Swap</Typography>
                 </Grid>
-                <Button className={classes.button} variant='contained' onClick={handleOpenPosition}>
+                <Button
+                  scheme='pink'
+                  height={32}
+                  borderRadius={8}
+                  padding='0 25px'
+                  onClick={handleOpenPosition}>
                   Deposit
                 </Button>
               </Grid>

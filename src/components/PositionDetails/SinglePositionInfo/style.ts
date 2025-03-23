@@ -14,6 +14,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     justifyContent: 'space-between'
   },
+  overlay: {
+    position: 'fixed',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    zIndex: 1300,
+    backgroundColor: 'transparent'
+  },
   tickerContainer: {
     display: 'flex',
     alignItems: 'center'
@@ -161,11 +170,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading4,
     color: colors.invariant.text
   },
-  titleValue: {
-    ...typography.heading3,
-    color: colors.invariant.text,
-    fontFamily: 'Mukta'
-  },
+
   violetButton: {
     background: colors.invariant.pinkLinearGradientOpacity,
     borderRadius: 11,
@@ -196,8 +201,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   tokenGrid: {
     position: 'relative',
+    flexDirection: 'column',
     display: 'flex',
-    flexDirection: 'row',
+
     justifyContent: 'space-between',
     paddingTop: 14,
     '&:not(:last-child)': {

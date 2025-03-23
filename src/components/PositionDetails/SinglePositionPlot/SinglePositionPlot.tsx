@@ -1,5 +1,5 @@
 import LiquidationRangeInfo from '@components/PositionDetails/LiquidationRangeInfo/LiquidationRangeInfo'
-import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 
 import { Card, Grid, Typography } from '@mui/material'
 import activeLiquidity from '@static/svg/activeLiquidity.svg'
@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react'
 import { ILiquidityToken } from '../SinglePositionInfo/consts'
 import useStyles from './style'
 import { getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -138,7 +138,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
 
   return (
     <Grid item className={classes.root}>
-      <Grid className={classes.headerContainer} container justifyContent='space-between'>
+      <Grid className={classes.headerContainer} container>
         <Typography className={classes.header}>Price range</Typography>
         <Grid>
           <TooltipGradient
@@ -149,12 +149,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                   While selecting the price range, note where active liquidity is located. Your
                   liquidity can be inactive and, as a consequence, not generate profits.
                 </Typography>
-                <Grid
-                  container
-                  direction='row'
-                  wrap='nowrap'
-                  alignItems='center'
-                  style={{ marginBottom: 12 }}>
+                <Grid container className={classes.liqWrapper}>
                   <Typography className={classes.liquidityDesc}>
                     The active liquidity range is represented by white, dashed lines in the
                     liquidity chart. Active liquidity is determined by the maximum price range

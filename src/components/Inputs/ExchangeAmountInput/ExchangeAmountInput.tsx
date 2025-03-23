@@ -1,5 +1,5 @@
 import Select from '@components/Inputs/Select/Select'
-import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
+import { OutlinedButton } from '@common/OutlinedButton/OutlinedButton'
 import { Grid, Input, Typography, useMediaQuery } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumberWithSuffix, trimDecimalZeros } from '@utils/utils'
@@ -10,7 +10,7 @@ import useStyles from './style'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import { getButtonClassName } from '@utils/uiUtils'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { theme } from '@static/theme'
 
 interface ActionButton {
@@ -138,23 +138,22 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
       default: classes.actionButton
     })
     return (
-      <>
-        <OutlinedButton
-          name={button.label}
-          onClick={button.onClick}
-          className={` ${hideBalances ? `${classes.actionButtonNotActive} ${classes.actionButton}` : buttonClassName}`}
-          labelClassName={classes.label}
-          disabled={
-            disabled && isNaN(Number(balance)) ? disabled : isNaN(Number(balance)) || hideBalances
-          }
-        />
-      </>
+      <OutlinedButton
+        key={button.label}
+        name={button.label}
+        onClick={button.onClick}
+        className={` ${hideBalances ? `${classes.actionButtonNotActive} ${classes.actionButton}` : buttonClassName}`}
+        labelClassName={classes.label}
+        disabled={
+          disabled && isNaN(Number(balance)) ? disabled : isNaN(Number(balance)) || hideBalances
+        }
+      />
     )
   }
 
   return (
     <>
-      <Grid container alignItems='center' wrap='nowrap' className={classes.exchangeContainer}>
+      <Grid container className={classes.exchangeContainer}>
         <Select
           centered={true}
           tokens={tokens}
@@ -198,13 +197,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
         )}
       </Grid>
 
-      <Grid
-        container
-        justifyContent='space-between'
-        alignItems='center'
-        direction='row'
-        wrap='nowrap'
-        className={classes.bottom}>
+      <Grid container className={classes.bottom}>
         <Grid
           className={classNames(classes.balanceContainer, {
             [classes.showMaxButton]: showMaxButton
@@ -226,7 +219,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           {showMaxButton && <>{actionButtons.map(renderActionButton)}</>}
         </Grid>
 
-        <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
+        <Grid className={classes.percentages} container>
           {current ? (
             priceLoading ? (
               <img src={loadingAnimation} className={classes.loading} alt='loading' />

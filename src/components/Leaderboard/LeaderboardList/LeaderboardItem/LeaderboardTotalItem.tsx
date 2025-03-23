@@ -4,7 +4,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
@@ -122,7 +122,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
-        <Typography>
+        <Box>
           {domain
             ? isVerySmallScreen || isNarrowMediumScreen
               ? shortDomain
@@ -133,7 +133,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
               (You)
             </Typography>
           ) : null}
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline' }}>
+          <Box className={classes.copyWrapper}>
             <TooltipHover title='Copy address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}
@@ -148,7 +148,7 @@ const LeaderboardTotalItem: React.FC<LeaderboardTotalItemProps> = props => {
               </Link>
             </TooltipHover>
           </Box>
-        </Typography>
+        </Box>
 
         <Typography>
           {new BN(points, 'hex').isZero()

@@ -72,8 +72,6 @@ export const useStyles = makeStyles()(() => ({
     height: '44px',
     background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
     borderRadius: '16px',
-    fontFamily: 'Mukta',
-    fontStyle: 'normal',
     ...typography.body1,
     textTransform: 'none',
     color: colors.invariant.dark,
@@ -87,9 +85,16 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   linkButtonContainer: {
+    marginTop: 32,
+
     [theme.breakpoints.down('md')]: {
       display: 'flex',
       justifyContent: 'center'
     }
+  },
+  learnMoreButton: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
   }
 }))

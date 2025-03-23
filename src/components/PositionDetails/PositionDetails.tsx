@@ -1,9 +1,9 @@
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
-import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import Refresher from '@components/Refresher/Refresher'
-import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
+import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
+import Refresher from '@common/Refresher/Refresher'
+import { Box, Grid, Hidden, Typography } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
@@ -13,7 +13,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
 import { TokenPriceData } from '@store/consts/types'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
   addressToTicker,
   formatNumberWithSuffix,
@@ -30,6 +30,7 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
+import { Button } from '@common/Button/Button'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -166,7 +167,7 @@ const PositionDetails: React.FC<IProps> = ({
   }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
   return (
-    <Grid container className={classes.wrapperContainer} wrap='nowrap'>
+    <Grid container className={classes.wrapperContainer}>
       <LockLiquidityModal
         open={isLockPositionModalOpen}
         onClose={onLockPositionModalClose}
@@ -182,15 +183,15 @@ const PositionDetails: React.FC<IProps> = ({
         success={success}
         inProgress={inProgress}
       />
-      <Grid className={classes.positionDetails} container item direction='column'>
+      <Grid className={classes.positionDetails} container item>
         <Grid className={classes.backContainer} container>
           <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none' }}>
-            <Grid className={classes.back} container item alignItems='center'>
+            <Grid className={classes.back} container item>
               <img className={classes.backIcon} src={backIcon} alt='Back' />
               <Typography className={classes.backText}>Positions</Typography>
             </Grid>
           </Link>
-          <Grid container width='auto' className={classes.marketIdWithRefresher}>
+          <Grid container className={classes.marketIdWithRefresher}>
             <Hidden mdUp>
               <MarketIdLabel
                 marketId={poolAddress.toString()}
@@ -252,29 +253,14 @@ const PositionDetails: React.FC<IProps> = ({
           ethBalance={ethBalance}
         />
       </Grid>
-      <Grid
-        container
-        item
-        direction='column'
-        alignItems='flex-end'
-        className={classes.right}
-        wrap='nowrap'>
+      <Grid container item className={classes.right}>
         <Grid className={classes.positionPlotWrapper}>
-          <Grid
-            container
-            item
-            direction='row'
-            alignItems='center'
-            flexDirection='row-reverse'
-            className={classes.rightHeaderWrapper}
-            mt='22px'
-            gap='8px'
-            wrap='nowrap'>
+          <Grid container item className={classes.rightHeaderWrapper}>
             <Hidden mdDown>
               {!isLocked ? (
                 <TooltipHover title={'Lock liquidity'}>
                   <Button
-                    className={classes.lockButton}
+                    scheme='pink'
                     disabled={isLocked}
                     variant='contained'
                     onClick={() => {
@@ -287,6 +273,7 @@ const PositionDetails: React.FC<IProps> = ({
               ) : (
                 <TooltipHover title={'Unlocking liquidity is forbidden'}>
                   <Button
+                    scheme='pink'
                     disabled
                     className={classes.unlockButton}
                     variant='contained'
@@ -298,7 +285,7 @@ const PositionDetails: React.FC<IProps> = ({
             </Hidden>
             <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
               <Button
-                className={classes.button}
+                scheme='pink'
                 variant='contained'
                 onClick={() => {
                   const parsedFee = parseFeeToPathFee(fee)
@@ -331,14 +318,7 @@ const PositionDetails: React.FC<IProps> = ({
                   />
                 </Grid>
               </TooltipHover>
-              <Grid
-                display={'flex'}
-                style={{
-                  padding: '8px 8px  0 0px',
-                  height: '24px',
-                  minWidth: '200px',
-                  marginRight: 'auto'
-                }}>
+              <Grid className={classes.marketIdWrapper}>
                 <MarketIdLabel
                   marketId={poolAddress.toString()}
                   displayLength={5}

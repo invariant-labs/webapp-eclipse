@@ -6,9 +6,9 @@ import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import icons from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
-import { colors, theme, typography } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import infoIcon from '@static/svg/info.svg'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
   pointsPerSecond: string
@@ -72,22 +72,10 @@ export const RewardedPools: React.FC<IProps> = ({
       {data.length === 0 ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
       ) : (
-        <Box className={classes.sectionContent} width={'100%'} style={mobileStyle}>
+        <Box className={classes.sectionContent} style={mobileStyle}>
           {isMd && (
-            <Box
-              style={{
-                width: '100%',
-
-                borderBottom: `1px solid ${colors.invariant.light}`
-              }}>
-              <Typography
-                style={{
-                  paddingLeft: '42px',
-                  marginBottom: '16px',
-                  ...typography.heading4,
-                  color: colors.invariant.textGrey,
-                  justifySelf: 'self-start'
-                }}>
+            <Box className={classes.headerWrapper}>
+              <Typography component='h2'>
                 Pools Distributing Points
                 <TooltipGradient
                   title={
