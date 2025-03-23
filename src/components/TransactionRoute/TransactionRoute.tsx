@@ -30,6 +30,8 @@ export interface NodeDefinition {
   type: 'node'
   shape?: 'circle' | 'rect' | 'corner'
   bigNode?: boolean
+  arrowDirection?: 'up' | 'down' | 'left' | 'right'
+  showTriangleArrow?: boolean
   labelPos?: 'bottom' | 'right'
   textA?: string
   textB?: string

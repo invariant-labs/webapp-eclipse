@@ -14,11 +14,49 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
   bigNode = false,
   connectors,
   logoImg,
-  labelPos = 'bottom'
+  labelPos = 'bottom',
+  showTriangleArrow,
+  arrowDirection = 'right' // New prop: 'right', 'left', 'up', or 'down'
 }) => {
   const circleSize = bigNode ? 36 : 27
   const rectWidth = 90
   const rectHeight = 50
+
+  // Define triangle arrow styles based on direction
+  const getTriangleStyles = () => {
+    switch (arrowDirection) {
+      case 'right':
+        return {
+          borderTop: '6px solid transparent',
+          borderBottom: '6px solid transparent',
+          borderLeft: `12px solid ${colors.invariant.textGrey}`
+        }
+      case 'left':
+        return {
+          borderTop: '6px solid transparent',
+          borderBottom: '6px solid transparent',
+          borderRight: `12px solid ${colors.invariant.textGrey}`
+        }
+      case 'up':
+        return {
+          borderLeft: '6px solid transparent',
+          borderRight: '6px solid transparent',
+          borderBottom: `12px solid ${colors.invariant.textGrey}`
+        }
+      case 'down':
+        return {
+          borderLeft: '6px solid transparent',
+          borderRight: '6px solid transparent',
+          borderTop: `12px solid ${colors.invariant.textGrey}`
+        }
+      default:
+        return {
+          borderTop: '6px solid transparent',
+          borderBottom: '6px solid transparent',
+          borderLeft: `12px solid ${colors.invariant.textGrey}`
+        }
+    }
+  }
 
   return (
     <Box
@@ -47,6 +85,18 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}>
+        {showTriangleArrow && shape !== 'circle' && (
+          <Box
+            sx={{
+              width: 0,
+              height: 0,
+              position: 'absolute',
+              zIndex: 11,
+              ...getTriangleStyles()
+            }}
+          />
+        )}
+
         {dexInfo && (
           <Typography
             variant='body2'

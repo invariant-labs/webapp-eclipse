@@ -44,6 +44,8 @@ export const FlowChartGrid = ({ gridDefinition, cellSize = 80 }: FlowChartGridPr
           bigNode={cell.bigNode}
           textA={cell.textA}
           logoImg={cell.logoImg}
+          arrowDirection={cell.arrowDirection}
+          showTriangleArrow={cell.showTriangleArrow}
           dexInfo={cell.dexInfo}
           textB={cell.textB}
           labelPos={cell.labelPos}

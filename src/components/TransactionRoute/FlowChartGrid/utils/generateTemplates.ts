@@ -17,6 +17,8 @@ export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition
       {
         type: 'node',
         shape: 'rect',
+        showTriangleArrow: true,
+        arrowDirection: 'down',
         connectors: [{ direction: 'left', withArrow: true }, { direction: 'down' }]
       }
     ],
@@ -50,6 +52,8 @@ export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition
       },
       {
         type: 'node',
+        showTriangleArrow: true,
+        arrowDirection: 'left',
         shape: 'rect',
         connectors: [{ direction: 'left', withArrow: true, longerConnector: true }]
       }

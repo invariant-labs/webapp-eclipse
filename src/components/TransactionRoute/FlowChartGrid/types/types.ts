@@ -24,6 +24,8 @@ export interface Connector {
 
 export interface FlowNodeProps {
   shape?: 'circle' | 'rect' | 'corner'
+  showTriangleArrow?: boolean
+  arrowDirection?: 'up' | 'down' | 'left' | 'right'
   textA?: string
   textB?: string
   dexInfo?: DexInfo
@@ -42,7 +44,10 @@ export interface GridCellProps {
 export interface CellDefinition {
   type?: 'node'
   shape?: 'circle' | 'rect' | 'corner'
+  arrowDirection?: 'up' | 'down' | 'left' | 'right'
+
   bigNode?: boolean
+  showTriangleArrow?: boolean
   textA?: string
   textB?: string
   logoImg?: string
