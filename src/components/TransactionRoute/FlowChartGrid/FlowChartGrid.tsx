@@ -65,7 +65,8 @@ export const FlowChartGrid = ({ gridDefinition, cellSize = 80 }: FlowChartGridPr
         gridTemplateColumns: `repeat(${cols}, ${cellSize}px)`,
         gridTemplateRows: `repeat(${rows}, ${cellSize}px)`,
         gap: 0,
-        width: 'fit-content'
+        marginRight: '30px',
+        width: '100%'
       }}>
       {processedGrid.map((row, rowIndex) =>
         row.map((cell, colIndex) => (

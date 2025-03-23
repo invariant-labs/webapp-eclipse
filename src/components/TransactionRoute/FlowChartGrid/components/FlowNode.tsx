@@ -41,7 +41,7 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
           alignItems: 'center',
           position: 'absolute',
           zIndex: 10,
-          border: '1px solid #A9B6BF',
+          border: shape === 'corner' ? 'none' : '1px solid #A9B6BF',
           gap: '6px',
           backgroundImage: shape === 'circle' && logoImg ? `url(${logoImg})` : 'none',
           backgroundSize: 'cover',

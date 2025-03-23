@@ -10,7 +10,7 @@ import {
 } from './FlowChartGrid/utils/generateTemplates'
 import { BN } from '@coral-xyz/anchor'
 import TransactionRouteLoader from './FlowChartGrid/components/TransactionRouteLoader/TransactionRouteLoader'
-import { FlowChartProps } from './FlowChartGrid/types/types'
+import { Direction, FlowChartProps } from './FlowChartGrid/types/types'
 import useStyles from './style'
 
 export interface DexInfo {
@@ -21,14 +21,14 @@ export interface DexInfo {
 }
 
 export interface Connector {
-  direction: 'up' | 'down' | 'left' | 'right'
+  direction: Direction
   withArrow?: boolean
   longerConnector?: boolean
 }
 
 export interface NodeDefinition {
   type: 'node'
-  shape?: 'circle' | 'rect'
+  shape?: 'circle' | 'rect' | 'corner'
   bigNode?: boolean
   labelPos?: 'bottom' | 'right'
   textA?: string
@@ -81,22 +81,22 @@ const TransactionRoute: React.FC<FlowChartProps> = ({
 }) => {
   const { classes } = useStyles({
     isLoading,
-    width: routeData && routeData?.exchanges.length > 2 ? '350px' : '250px'
+    width: '280px'
   })
   if (!routeData) return null
   const gridDefinition = getTemplateForHopCount(routeData.exchanges.length, routeData)
 
   return (
     <Box className={classes.container}>
-      <Typography className={classes.routeTitle}>
-        Transaction{routeData.exchanges.length > 2 ? `'s` : ''} route
-      </Typography>
-      {showCloseButton ? (
-        <button className={classes.closeButton} onClick={handleClose}>
-          ×
-        </button>
-      ) : null}
       <Box className={classes.graphContainer}>
+        <Typography className={classes.routeTitle}>
+          Transaction{routeData.exchanges.length > 2 ? `'s` : ''} route
+        </Typography>
+        {showCloseButton ? (
+          <button className={classes.closeButton} onClick={handleClose}>
+            ×
+          </button>
+        ) : null}
         <Box>
           {isLoading ? (
             <TransactionRouteLoader />

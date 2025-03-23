@@ -9,15 +9,20 @@ export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition
         type: 'node',
         shape: 'circle',
         bigNode: true,
-        labelPos: 'right',
         textA: sourceToken.symbol,
         textB: sourceToken.amount,
-        connectors: [{ direction: 'down' }],
+        connectors: [{ direction: 'right' }],
         logoImg: sourceToken.logoUrl
+      },
+      {
+        type: 'node',
+        shape: 'rect',
+        connectors: [{ direction: 'left', withArrow: true }, { direction: 'down' }]
       }
     ],
-    [null],
+    [null, null],
     [
+      null,
       {
         type: 'node',
         shape: 'rect',
@@ -28,22 +33,25 @@ export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition
           name: exchanges[0].name
         },
         connectors: [
-          { direction: 'down', longerConnector: true, withArrow: true },
+          { direction: 'down', longerConnector: true },
           { direction: 'up', longerConnector: true }
         ]
       }
     ],
-    [null],
+    [null, null],
     [
       {
         type: 'node',
         shape: 'circle',
-        labelPos: 'right',
         textA: destinationToken.symbol,
         bigNode: true,
         textB: destinationToken.amount,
-        connectors: [],
         logoImg: destinationToken.logoUrl
+      },
+      {
+        type: 'node',
+        shape: 'rect',
+        connectors: [{ direction: 'left', withArrow: true, longerConnector: true }]
       }
     ]
   ]
@@ -58,14 +66,11 @@ export const generateTwoHopTemplate = (data: RouteTemplateProps): GridDefinition
         type: 'node',
         shape: 'circle',
         bigNode: true,
-        labelPos: 'right',
         textA: sourceToken.symbol,
         textB: sourceToken.amount,
-        connectors: [{ direction: 'down' }],
+        connectors: [{ direction: 'right' }],
         logoImg: sourceToken.logoUrl
-      }
-    ],
-    [
+      },
       {
         type: 'node',
         shape: 'rect',
@@ -75,11 +80,12 @@ export const generateTwoHopTemplate = (data: RouteTemplateProps): GridDefinition
           link: 'http://foo.bar',
           name: exchanges[0].name
         },
-
-        connectors: [{ direction: 'down', withArrow: true }]
+        connectors: [{ direction: 'down', withArrow: true, longerConnector: true }]
       }
     ],
+    [null, null],
     [
+      null,
       {
         type: 'node',
         shape: 'circle',
@@ -90,7 +96,16 @@ export const generateTwoHopTemplate = (data: RouteTemplateProps): GridDefinition
         logoImg: exchanges[0].toToken?.logoUrl
       }
     ],
+    [null, null],
     [
+      {
+        type: 'node',
+        shape: 'circle',
+        bigNode: true,
+        textA: destinationToken.symbol,
+        textB: destinationToken.amount,
+        logoImg: destinationToken.logoUrl
+      },
       {
         type: 'node',
         shape: 'rect',
@@ -101,18 +116,10 @@ export const generateTwoHopTemplate = (data: RouteTemplateProps): GridDefinition
           name: exchanges[1].name
         },
 
-        connectors: [{ direction: 'down', withArrow: true }, { direction: 'up' }]
-      }
-    ],
-    [
-      {
-        type: 'node',
-        shape: 'circle',
-        bigNode: true,
-        labelPos: 'right',
-        textA: destinationToken.symbol,
-        textB: destinationToken.amount,
-        logoImg: destinationToken.logoUrl
+        connectors: [
+          { direction: 'left', withArrow: true },
+          { direction: 'up', longerConnector: true }
+        ]
       }
     ]
   ]
@@ -129,8 +136,7 @@ export const generateThreeHopTemplate = (data: RouteTemplateProps): GridDefiniti
         bigNode: true,
         textA: sourceToken.symbol,
         textB: sourceToken.amount,
-        logoImg: sourceToken.logoUrl,
-        connectors: [{ direction: 'right' }]
+        logoImg: sourceToken.logoUrl
       },
 
       {
@@ -143,7 +149,7 @@ export const generateThreeHopTemplate = (data: RouteTemplateProps): GridDefiniti
           name: exchanges[0].name
         },
 
-        connectors: [{ direction: 'down', withArrow: true }]
+        connectors: [{ direction: 'down', withArrow: true }, { direction: 'left' }]
       }
     ],
     [

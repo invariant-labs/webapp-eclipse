@@ -11,23 +11,29 @@ const useStyles = makeStyles<{ isLoading: boolean; width: string }>()((
       position: 'relative',
       height: '490px',
       display: 'flex',
-      justifyContent: 'center',
+      justifyContent: 'space-around',
       alignItems: 'center',
       flexDirection: 'column',
       backgroundColor: colors.invariant.component,
       borderRadius: '24px',
       color: 'white',
-      marginLeft: '20px',
+      marginLeft: '10px',
+      padding: '0 20px',
       transition: 'width .1s ease-in-out'
     },
     routeTitle: {
       ...typography.body2,
+      textAlign: 'center',
+      width: '100%',
       color: colors.invariant.textGrey
     },
     graphContainer: {
       display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
       justifyContent: isLoading ? 'center' : 'flex-start',
-      position: 'relative'
+      position: 'relative',
+      width: '100%'
     },
     tokenNode: {
       display: 'flex',

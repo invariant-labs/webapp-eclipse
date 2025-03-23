@@ -5,7 +5,7 @@ export type Direction = 'right' | 'left' | 'down' | 'up' | 'right-down' | 'down-
 export interface NodeConnectorProps {
   direction?: Direction
   withArrow?: boolean
-  shape?: 'circle' | 'rect'
+  shape?: 'circle' | 'rect' | 'corner'
   longerConnector?: boolean
 }
 
@@ -23,7 +23,7 @@ export interface Connector {
 }
 
 export interface FlowNodeProps {
-  shape?: 'circle' | 'rect'
+  shape?: 'circle' | 'rect' | 'corner'
   textA?: string
   textB?: string
   dexInfo?: DexInfo
@@ -41,7 +41,7 @@ export interface GridCellProps {
 
 export interface CellDefinition {
   type?: 'node'
-  shape?: 'circle' | 'rect'
+  shape?: 'circle' | 'rect' | 'corner'
   bigNode?: boolean
   textA?: string
   textB?: string
