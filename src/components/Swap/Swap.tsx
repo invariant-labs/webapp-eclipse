@@ -215,7 +215,6 @@ export const Swap: React.FC<ISwap> = ({
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
   const [isFirstPairGivingPoints, setIsFirstPairGivingPoints] = React.useState<boolean>(false)
   const [isSecondPairGivingPoints, setIsSecondPairGivingPoints] = React.useState<boolean>(false)
-  const [isPairGivingPoints, setIsPairGivingPoints] = React.useState<boolean>(false)
   const [rateReversed, setRateReversed] = React.useState<boolean>(
     tokenFromIndex && tokenToIndex
       ? !initialXtoY(
@@ -247,8 +246,6 @@ export const Swap: React.FC<ISwap> = ({
     priceImpact: new BN(0),
     error: []
   })
-  const [isPointsPopoverOpen, setIsPointsPopoverOpen] = useState(false)
-  const pointsBoxRef = useRef<HTMLDivElement>(null)
   const [simulateWithHopResult, setSimulateWithHopResult] = useState<{
     simulation: SimulationTwoHopResult | null
     route: [Pair, Pair] | null
@@ -268,13 +265,6 @@ export const Swap: React.FC<ISwap> = ({
   const [bestAmount, setBestAmount] = useState(new BN(0))
   const [swapType, setSwapType] = useState(SwapType.NORMAL)
   const [addBlur, setAddBlur] = useState(false)
-
-  const handlePointerEnter = () => {
-    setIsPointsPopoverOpen(true)
-  }
-  const handlePointerLeave = () => {
-    setIsPointsPopoverOpen(false)
-  }
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -1003,17 +993,6 @@ export const Swap: React.FC<ISwap> = ({
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
-      {network === NetworkType.Mainnet ? (
-        <SwapPointsPopover
-          isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
-          anchorEl={pointsBoxRef.current}
-          open={isPointsPopoverOpen}
-          onClose={() => setIsPointsPopoverOpen(false)}
-          network={network}
-          promotedSwapPairs={promotedSwapPairs}
-        />
-      ) : null}
-
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}
@@ -1299,7 +1278,7 @@ export const Swap: React.FC<ISwap> = ({
             className={classes.unknownWarningContainer}
             style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
             {priceImpact > 5 && (
-              <TooltipHover text='Your trade size might be too large'>
+              <TooltipHover title='Your trade size might be too large'>
                 <Box className={classes.unknownWarning}>
                   {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`} Price impact
                 </Box>
