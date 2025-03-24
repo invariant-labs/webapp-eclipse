@@ -20,7 +20,7 @@ export interface ChartSegment {
 
 interface MobileOverviewProps {
   positions: TokenPositionEntry[]
-  totalAssets: number
+  totalAssets: { value: number; isPriceWarning: boolean }
   chartColors: string[]
 }
 
@@ -45,7 +45,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets,
   const segments: ChartSegment[] = useMemo(() => {
     let currentPosition = 0
     return sortedPositions.map((position, index) => {
-      const percentage = (position.value / totalAssets) * 100
+      const percentage = (position.value / totalAssets.value) * 100
       const segment = {
         start: currentPosition,
         width: percentage,

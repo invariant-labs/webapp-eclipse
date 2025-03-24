@@ -12,7 +12,8 @@ import {
   positionsWithPoolsData,
   positionsList as list,
   unclaimedFees,
-  PoolWithAddressAndIndex
+  PoolWithAddressAndIndex,
+  lockedPositionsWithPoolsData
 } from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
 import MobileOverview from '../MobileOverview/MobileOverview'
@@ -41,6 +42,7 @@ export type EmptyStateClasses = Record<'emptyState' | 'emptyStateText', string>
 
 export const Overview: React.FC<OverviewProps> = () => {
   const positionList = useSelector(positionsWithPoolsData)
+  const lockedPositionList = useSelector(lockedPositionsWithPoolsData)
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const { isAllClaimFeesLoading } = useSelector(list)
   const isLoadingList = useSelector(isLoadingPositionsList)
@@ -52,7 +54,9 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
   const { total: totalUnclaimedFee } = useSelector(unclaimedFees)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
-  const { positions } = useAgregatedPositions(positionList, prices)
+
+  const totalPositionList = [...positionList, ...lockedPositionList]
+  const { positions } = useAgregatedPositions(totalPositionList, prices)
 
   const isColorsLoading = useMemo(() => pendingColorLoads.size > 0, [pendingColorLoads])
 
@@ -68,10 +72,12 @@ export const Overview: React.FC<OverviewProps> = () => {
     [sortedPositions, logoColors, getTokenColor, tokenColorOverrides]
   )
 
-  const totalAssets = useMemo(
-    () => positions.reduce((acc, position) => acc + position.value, 0),
-    [positions]
-  )
+  const totalAssets = useMemo(() => {
+    const value = positions.reduce((acc, position) => acc + position.value || 0, 0)
+    const isPriceWarning = positions.some(position => position.priceWarning)
+
+    return { value, isPriceWarning }
+  }, [positions])
 
   const handleClaimAll = () => {
     dispatch(actions.claimAllFee())
@@ -106,7 +112,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   useEffect(() => {
     const loadPrices = async () => {
       const uniqueTokens = new Set<string>()
-      positionList.forEach(position => {
+      totalPositionList.forEach(position => {
         uniqueTokens.add(position.tokenX.assetAddress.toString())
         uniqueTokens.add(position.tokenY.assetAddress.toString())
       })
@@ -131,7 +137,7 @@ export const Overview: React.FC<OverviewProps> = () => {
     }
 
     loadPrices()
-  }, [positionList])
+  }, [totalPositionList.length])
 
   useEffect(() => {
     sortedPositions.forEach(position => {
@@ -184,7 +190,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   if (!isLoadingList && positions.length === 0) {
     return (
       <Box className={classes.container}>
-        <HeaderSection totalValue={0} loading={false} />
+        <HeaderSection totalValue={{ value: 0, isPriceWarning: false }} loading={false} />
         <UnclaimedSection unclaimedTotal={0} loading={false} handleClaimAll={undefined} />
         <EmptyState classes={classes} />
       </Box>
