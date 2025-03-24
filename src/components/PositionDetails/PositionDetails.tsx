@@ -260,9 +260,9 @@ const PositionDetails: React.FC<IProps> = ({
               {!isLocked ? (
                 <TooltipHover title={'Lock liquidity'}>
                   <Button
-                    scheme='pink'
-                    disabled={isLocked}
+                    scheme='green'
                     variant='contained'
+                    disabled={isLocked}
                     onClick={() => {
                       setIsLockPositionModalOpen(true)
                       blurContent()
@@ -272,13 +272,8 @@ const PositionDetails: React.FC<IProps> = ({
                 </TooltipHover>
               ) : (
                 <TooltipHover title={'Unlocking liquidity is forbidden'}>
-                  <Button
-                    scheme='pink'
-                    disabled
-                    className={classes.unlockButton}
-                    variant='contained'
-                    onClick={() => {}}>
-                    <img src={unlockIcon} alt='Lock' />
+                  <Button scheme='pink' disabled variant='contained' onClick={() => {}}>
+                    <img src={unlockIcon} alt='unlock' />
                   </Button>
                 </TooltipHover>
               )}
