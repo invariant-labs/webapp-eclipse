@@ -1,4 +1,4 @@
-import { Canvas } from '@components/Canvas/Canvas'
+import { Canvas } from '@common/Canvas/Canvas'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'

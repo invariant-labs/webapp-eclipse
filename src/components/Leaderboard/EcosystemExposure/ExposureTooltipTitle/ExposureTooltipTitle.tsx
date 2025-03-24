@@ -1,6 +1,6 @@
 import { Grid, Typography } from '@mui/material'
 import useStyles from './styles'
-import GradientBorder from '@components/GradientBorder/GradientBorder'
+import GradientBorder from '@common/GradientBorder/GradientBorder'
 import icons from '@static/icons'
 interface ExposureTooltipTitleProps {
   footerDescription?: string

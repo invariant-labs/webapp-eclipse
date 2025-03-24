@@ -1,5 +1,5 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
-import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import {
@@ -19,7 +19,7 @@ import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string

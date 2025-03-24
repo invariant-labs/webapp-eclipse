@@ -5,7 +5,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { VariantType } from 'notistack'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { NetworkType } from '@store/consts/static'
 interface IProps {
   token: SwapToken | null

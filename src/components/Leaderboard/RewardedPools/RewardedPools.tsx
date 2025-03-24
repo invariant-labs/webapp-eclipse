@@ -7,7 +7,7 @@ import { VariantType } from 'notistack'
 import icons from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme } from '@static/theme'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
   pointsPerSecond: string

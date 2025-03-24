@@ -1,7 +1,7 @@
-import { Box, Button, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { PopularPoolData } from '@containers/PopularPoolsWrapper/PopularPoolsWrapper'
-import GradientBorder from '@components/GradientBorder/GradientBorder'
+import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
@@ -25,6 +25,7 @@ import { useSelector } from 'react-redux'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
+import { Button } from '@common/Button/Button'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean
@@ -69,17 +70,16 @@ const Card: React.FC<ICard> = ({
     return { isPromoted: true, pointsPerSecond: promotedPool.pointsPerSecond }
   }, [promotedPools, poolAddress])
 
+  const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
+  const tokenA = isXtoY
+    ? addressToTicker(network, addressFrom ?? '')
+    : addressToTicker(network, addressTo ?? '')
+  const tokenB = isXtoY
+    ? addressToTicker(network, addressTo ?? '')
+    : addressToTicker(network, addressFrom ?? '')
+
   const handleOpenPosition = () => {
     if (fee === undefined) return
-
-    const isXtoY = initialXtoY(addressFrom ?? '', addressTo ?? '')
-
-    const tokenA = isXtoY
-      ? addressToTicker(network, addressFrom ?? '')
-      : addressToTicker(network, addressTo ?? '')
-    const tokenB = isXtoY
-      ? addressToTicker(network, addressTo ?? '')
-      : addressToTicker(network, addressFrom ?? '')
 
     navigate(
       ROUTES.getNewPositionRoute(
@@ -92,13 +92,7 @@ const Card: React.FC<ICard> = ({
   }
 
   const handleOpenSwap = () => {
-    navigate(
-      ROUTES.getExchangeRoute(
-        addressToTicker(network, addressFrom ?? ''),
-        addressToTicker(network, addressTo ?? '')
-      ),
-      { state: { referer: 'liquidity' } }
-    )
+    navigate(ROUTES.getExchangeRoute(tokenA, tokenB), { state: { referer: 'liquidity' } })
   }
 
   //HOTFIX
@@ -181,7 +175,7 @@ const Card: React.FC<ICard> = ({
                 </Box>
               </Grid>
 
-              <Typography className={classes.symbolsContainer}>
+              <Box className={classes.symbolsContainer}>
                 {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}{' '}
                 {isPromoted && (
                   <>
@@ -215,7 +209,7 @@ const Card: React.FC<ICard> = ({
                     </PromotedPoolPopover>
                   </>
                 )}
-              </Typography>
+              </Box>
               <Grid container gap='8px'>
                 {apy !== undefined && showAPY && (
                   <StatsLabel
@@ -236,7 +230,12 @@ const Card: React.FC<ICard> = ({
                   <img className={classes.backIcon} src={icons.backIcon} alt='Back' />
                   <Typography className={classes.backText}>Swap</Typography>
                 </Grid>
-                <Button className={classes.button} variant='contained' onClick={handleOpenPosition}>
+                <Button
+                  scheme='pink'
+                  height={32}
+                  borderRadius={8}
+                  padding='0 25px'
+                  onClick={handleOpenPosition}>
                   Deposit
                 </Button>
               </Grid>
