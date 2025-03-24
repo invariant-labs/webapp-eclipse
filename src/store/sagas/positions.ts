@@ -52,7 +52,7 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import { ClaimAllFee, parseTick, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { ClaimAllFee, parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
