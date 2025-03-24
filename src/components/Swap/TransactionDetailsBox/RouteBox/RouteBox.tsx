@@ -22,8 +22,8 @@ const RouteBox: React.FC<IProps> = ({
     tokenFrom,
     tokenBetween,
     tokenTo,
-    firstFee,
-    secondFee,
+    firstPair,
+    secondPair,
     firstAmount,
     secondAmount
   },
@@ -33,8 +33,8 @@ const RouteBox: React.FC<IProps> = ({
 
   const onePoolType = tokenBetween !== null
   const { classes } = useStyles({ onePoolType })
-  const firstFeePercent = Number(printBN(firstFee ?? new BN(0), DECIMAL - 2))
-  const secondFeePercent = Number(printBN(secondFee ?? new BN(0), DECIMAL - 2))
+  const firstFeePercent = Number(printBN(firstPair?.feeTier.fee ?? new BN(0), DECIMAL - 2))
+  const secondFeePercent = Number(printBN(secondPair?.feeTier.fee ?? new BN(0), DECIMAL - 2))
 
   return (
     <Grid

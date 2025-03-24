@@ -30,9 +30,9 @@ const TransactionDetailsBox: React.FC<IProps> = ({
 
   const feePercent = Number(
     printBN(
-      simulationPath.firstFee?.add(
-        DENOMINATOR.sub(simulationPath.firstFee)
-          .mul(simulationPath.secondFee ?? new BN(0))
+      simulationPath.firstPair?.feeTier.fee.add(
+        DENOMINATOR.sub(simulationPath.firstPair?.feeTier.fee)
+          .mul(simulationPath.secondPair?.feeTier.fee ?? new BN(0))
           .div(DENOMINATOR) ?? new BN(0)
       ) ?? new BN(0),
       DECIMAL - 2
