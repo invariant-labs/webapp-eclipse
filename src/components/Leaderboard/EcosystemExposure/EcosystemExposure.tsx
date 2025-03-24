@@ -4,6 +4,7 @@ import Slider from 'react-slick'
 import allDomains from '@static/svg/allDomains.svg'
 import turboTap from '@static/svg/turboTap.svg'
 import nucleus from '@static/svg/nucleus.svg'
+import ensofi from '@static/svg/ensofi.svg'
 import infoIcon from '@static/svg/info.svg'
 import navRight from '@static/svg/navRight.svg'
 import navLeft from '@static/svg/navLeft.svg'
@@ -41,9 +42,34 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
   const tasks = [
     {
+      id: 'EnsoFi',
+      link: 'https://app.ensofi.xyz/',
+      title: 'Reach TOP 1000',
+      img: ensofi,
+      max: 1000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            Make it to the TOP 1000 and enjoy rewards in the EnsoFi Points Program every two weeks.
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: 'EnsoFi Points every 2 weeks',
+      completed: userStats ? currentRanking <= 1000 : false
+    },
+    {
       id: 'AllDomains',
       link: 'https://eclipse.alldomains.id/',
-      title: 'Reach TOP2000',
+      title: 'Reach TOP 2000',
       a: 'AllDomains',
       img: allDomains,
       max: 2000,
