@@ -1,4 +1,4 @@
-import { Canvas } from '@components/Canvas/Canvas'
+import { Canvas } from '@common/Canvas/Canvas'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import refreshIcon from '@static/svg/refresh.svg'
 import React, { useEffect, useMemo, useState } from 'react'
@@ -73,12 +73,7 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
         horizontal: 'center'
       }}>
       <Grid className={classes.root}>
-        <Grid
-          className={classes.lowerRow}
-          container
-          direction='row'
-          justifyContent='space-between'
-          wrap='nowrap'>
+        <Grid className={classes.lowerRow} container>
           <Typography className={classes.title}>
             Please input the result of adding these two values:
           </Typography>
@@ -87,12 +82,7 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
           </Button>
         </Grid>
         <Canvas numbers={numbers} />
-        <Grid
-          className={classes.lowerRow}
-          container
-          direction='row'
-          justifyContent='space-between'
-          wrap='nowrap'>
+        <Grid className={classes.lowerRow} container>
           <Input
             className={classes.input}
             type='number'

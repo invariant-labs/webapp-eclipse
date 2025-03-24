@@ -4,11 +4,11 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(() => {
   return {
     sectionContent: {
+      width: '100%',
       display: 'flex',
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'row',
-      gap: 24,
       [theme.breakpoints.down('lg')]: {
         flexDirection: 'column'
       }
@@ -27,6 +27,17 @@ const useStyles = makeStyles()(() => {
       height: 275,
       [theme.breakpoints.down('md')]: {
         height: 750
+      }
+    },
+    headerWrapper: {
+      width: '100%',
+      borderBottom: `1px solid ${colors.invariant.light}`,
+      '& h2': {
+        paddingLeft: '42px',
+        marginBottom: '16px',
+        ...typography.heading4,
+        color: colors.invariant.textGrey,
+        justifySelf: 'self-start'
       }
     }
   }

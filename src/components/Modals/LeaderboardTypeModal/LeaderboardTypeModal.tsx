@@ -43,7 +43,11 @@ export const LeaderboardTypeModal: React.FC<ISelectNetworkModal> = ({
         {options
           .filter(item => item !== currentOption)
           .map(opt => (
-            <Button onClick={() => handleSave(opt)} className={classes.optionButton} disableRipple>
+            <Button
+              key={opt}
+              onClick={() => handleSave(opt)}
+              className={classes.optionButton}
+              disableRipple>
               {opt}
             </Button>
           ))}

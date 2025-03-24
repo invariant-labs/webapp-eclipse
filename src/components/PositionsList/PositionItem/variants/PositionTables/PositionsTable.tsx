@@ -13,8 +13,8 @@ import { PositionTableRow } from './PositionsTableRow'
 import { IPositionItem } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 import { usePositionTableStyle } from './styles/positionTable'
-import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
-import { generatePositionTableLoadingData } from '@utils/utils'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
+import { generatePositionTableLoadingData, ROUTES } from '@utils/utils'
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>
@@ -84,7 +84,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
               <TableRow
                 onClick={e => {
                   if (!isLoading && !(e.target as HTMLElement).closest('.action-button')) {
-                    navigate(`/position/${position.id}`)
+                    navigate(ROUTES.getPositionRoute(position.id))
                   }
                 }}
                 key={position.poolAddress.toString() + index}

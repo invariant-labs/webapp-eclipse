@@ -7,7 +7,7 @@ import nucleus from '@static/svg/nucleus.svg'
 import infoIcon from '@static/svg/info.svg'
 import navRight from '@static/svg/navRight.svg'
 import navLeft from '@static/svg/navLeft.svg'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { ExposureTooltipTitle } from './ExposureTooltipTitle/ExposureTooltipTitle'
 import useStyles from './styles'
 import { theme, typography } from '@static/theme'
@@ -17,6 +17,7 @@ import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import check from '@static/svg/checkFill.svg'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
+import celestialMammoth from '@static/svg/celestialMammoth.svg'
 
 interface EcosystemExposureI {
   isLoading: boolean
@@ -97,6 +98,32 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
       footerDescription: 'Nucleus Points',
       completed: hasTETHPosition
+    },
+    {
+      id: 'CelestialMammoth',
+      link: 'https://linktr.ee/celestialmmammoth',
+      title: 'Reach TOP 3000',
+      img: celestialMammoth,
+      max: 3000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            Will you unfreeze your mammoth? Reach the TOP 3000 and earn passive ICE daily in the
+            Frost Mammoth game!
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: '150 ICE every 24h',
+      completed: userStats ? currentRanking <= 3000 : false
     }
   ]
 
@@ -117,8 +144,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
           </Grid>
 
           <Grid className={classes.sliderWrapper} gap='20px' justifyContent='center'>
-            {Array.from({ length: 3 }).map(_ => (
-              <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
+            {Array.from({ length: 3 }).map((_, index) => (
+              <Skeleton key={index} variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
                 <Grid sx={{ width: 64, height: 64 }} />
               </Skeleton>
             ))}
@@ -178,7 +205,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                 key={task.id}
                 top={1}
                 title={
-                  <Grid display='flex' flexDirection='column' gap='10px'>
+                  <Grid className={classes.exposureWrapper}>
                     <ExposureTooltipTitle
                       title={task.title}
                       img={task.img}

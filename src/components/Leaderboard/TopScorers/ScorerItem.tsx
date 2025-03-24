@@ -111,15 +111,7 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({
                 }}
               />
             </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                width: '100%',
-                textWrap: 'nowrap'
-              }}>
+            <Box className={classes.headerWrapper}>
               <Typography className={classes.headerBigText}>
                 {formatNumberWithCommas(
                   Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)

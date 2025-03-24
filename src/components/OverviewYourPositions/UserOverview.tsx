@@ -17,7 +17,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { balanceLoading, swapTokens } from '@store/selectors/solanaWallet'
 import { isLoadingPositionsList, positionsWithPoolsData } from '@store/selectors/positions'
 import { DECIMAL, printBN } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { ProcessedPool } from '@store/types/userOverview'
+import { CardSwitcher, ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 import { useStyles } from './style'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
@@ -27,10 +27,6 @@ import classNames from 'classnames'
 import { VariantType } from 'notistack'
 import { network } from '@store/selectors/solanaConnection'
 
-export enum CardSwitcher {
-  Overview = 'Overview',
-  Wallet = 'Wallet'
-}
 export const UserOverview = () => {
   const { classes } = useStyles()
   const tokensList = useSelector(swapTokens)

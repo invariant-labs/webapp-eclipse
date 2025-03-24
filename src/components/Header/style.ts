@@ -6,6 +6,9 @@ const useStyles = makeStyles()((theme: Theme) => {
   return {
     root: {
       margin: 'auto',
+      flexDirection: 'row',
+      alignItems: 'center',
+      flexWrap: 'nowrap',
       maxWidth: 1920,
       height: 70,
       display: 'flex',
@@ -43,6 +46,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     routers: {
       backgroundColor: colors.invariant.black,
       borderRadius: '10px',
+      flexWrap: 'nowrap',
       transition: 'left 300ms',
       width: 'fit-content',
       margin: '0 10px 0 10px'
@@ -60,7 +64,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       width: 'auto',
       justifyContent: 'flex-end',
-      gap: 16,
+      gap: 12,
       flexWrap: 'nowrap',
       alignItems: 'center',
       [theme.breakpoints.up(1450)]: {
@@ -124,6 +128,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     leftSide: {
       width: 'auto',
+      justifyContent: 'flex-start',
       [theme.breakpoints.down(650)]: {
         display: 'none'
       },

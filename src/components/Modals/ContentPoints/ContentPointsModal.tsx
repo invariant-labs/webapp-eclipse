@@ -14,12 +14,14 @@ export interface IContentPointsModal {
   open: boolean
   userContentPoints: CurrentContentPointsEntry[] | null
   handleClose: () => void
+  contentProgramDates: { start: string; end: string }
 }
 
 export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   open,
   handleClose,
-  userContentPoints
+  userContentPoints,
+  contentProgramDates
 }) => {
   const itemSize = 56
   const allocations = userContentPoints ?? []
@@ -97,10 +99,12 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
 
           <Box className={classes.buttonRow}>
             <Box className={classes.innerRow}>
-              <Typography className={classes.dateLabel}>01.03.2025 - 14.03.2025</Typography>
+              <Typography className={classes.dateLabel}>
+                {contentProgramDates.start} - {contentProgramDates.end}
+              </Typography>
               <Button
                 component='a'
-                href='https://docs.google.com/forms/d/e/1FAIpQLSe9fziOpaFeSj8fCEZWnKm5DHON2gqGeEM771s8tldihfBZUw/viewform'
+                href='https://docs.invariant.app/docs/invariant_points/content'
                 target='_blank'
                 rel='noopener noreferrer'
                 className={classes.button}>

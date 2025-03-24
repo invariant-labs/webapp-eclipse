@@ -1719,15 +1719,8 @@ export const stringToFixed = (
   }
 }
 
-export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
-  try {
-    return getAddressTickerMap(network)[ticker].toString()
-  } catch (e: unknown) {
-    const error = ensureError(e)
-    console.log(error)
-
-    return ticker
-  }
+export const tickerToAddress = (network: NetworkType, ticker: string): string => {
+  return getAddressTickerMap(network)[ticker] || ticker
 }
 
 export const addressToTicker = (network: NetworkType, address: string): string => {
@@ -1877,7 +1870,7 @@ export const getTokenPrice = async (
     } catch (e: unknown) {
       const error = ensureError(e)
       console.log(error)
-      
+
       localStorage.removeItem(
         network === NetworkType.Mainnet
           ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
@@ -2077,6 +2070,10 @@ export const calculatePoints = (
 }
 
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
+  if (neededValue > concentrationArray[concentrationArray.length - 1]) {
+    return concentrationArray.length - 1
+  }
+
   let concentrationIndex = 0
 
   for (let index = 0; index < concentrationArray.length; index++) {
@@ -2120,8 +2117,8 @@ export const generatePositionTableLoadingData = () => {
       return {
         id: `loading-${index}`,
         poolAddress: `pool-${index}`,
-        tokenXName: 'FOO',
-        tokenYName: 'BAR',
+        tokenXName: 'ETH',
+        tokenYName: 'USDC',
         tokenXIcon: undefined,
         tokenYIcon: undefined,
         currentPrice,
@@ -2135,7 +2132,7 @@ export const generatePositionTableLoadingData = () => {
         isActive: Math.random() > 0.5,
         tokenXLiq: getRandomNumber(100, 1000),
         tokenYLiq: getRandomNumber(10000, 100000),
-        network: 'mainnet'
+        network: NetworkType.Mainnet
       }
     })
 }
@@ -2156,4 +2153,31 @@ export const ensureError = (value: unknown): Error => {
 
   const error = new Error(stringified)
   return error
+}
+
+export const ROUTES = {
+  ROOT: '/',
+  EXCHANGE: '/exchange',
+  EXCHANGE_WITH_PARAMS: '/exchange/:item1?/:item2?',
+  LIQUIDITY: '/liquidity',
+  STATISTICS: '/statistics',
+  NEW_POSITION: '/newPosition',
+  NEW_POSITION_WITH_PARAMS: '/newPosition/:item1?/:item2?/:item3?',
+  POSITION: '/position',
+  POSITION_WITH_ID: '/position/:id',
+  PORTFOLIO: '/portfolio',
+  CREATOR: '/creator',
+  POINTS: '/points',
+
+  getExchangeRoute: (item1?: string, item2?: string): string => {
+    const parts = [item1, item2].filter(Boolean)
+    return `${ROUTES.EXCHANGE}${parts.length ? '/' + parts.join('/') : ''}`
+  },
+
+  getNewPositionRoute: (item1?: string, item2?: string, item3?: string): string => {
+    const parts = [item1, item2, item3].filter(Boolean)
+    return `${ROUTES.NEW_POSITION}${parts.length ? '/' + parts.join('/') : ''}`
+  },
+
+  getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
 }

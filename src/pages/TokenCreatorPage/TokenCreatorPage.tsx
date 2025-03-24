@@ -7,7 +7,7 @@ export const TokenCreatorPage: React.FC = () => {
   const { classes } = useStyles()
 
   return (
-    <Grid container className={classes.container} justifyContent='center'>
+    <Grid className={classes.container}>
       <Grid item>
         <TokenCreatorWrapper />
       </Grid>

@@ -3,8 +3,8 @@ import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { Box, Typography } from '@mui/material'
 import InfoIcon from '@mui/icons-material/Info'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { BN } from '@coral-xyz/anchor'
 import classNames from 'classnames'
 import { getCreateTokenLamports, NetworkType } from '@store/consts/static'
@@ -139,7 +139,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
       {isSubmitButton ? (
         !createAvailable ? (
           <TooltipHover
-            text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+            title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
             top={-45}>
             <div>
               <AnimatedButton

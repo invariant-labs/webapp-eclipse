@@ -12,11 +12,40 @@ export const useStyles = makeStyles()(() => ({
     },
 
     '&:first-child': {
-      borderTopLeftRadius: 24,
-      borderTopRightRadius: 24,
+      padding: '12px 24px',
       background: colors.invariant.component
     },
-    borderBottom: `1px solid ${colors.invariant.light}`
+
+    borderTop: `1px solid ${colors.invariant.light}`
+  },
+  APYLabel: {
+    ...typography.body2,
+    color: colors.invariant.textGrey,
+    alignSelf: 'flex-end'
+  },
+  APRLabel: {
+    ...typography.tiny2,
+    color: colors.invariant.textGrey,
+    alignSelf: 'flex-end',
+    marginLeft: '8px'
+  },
+  APRValue: {
+    ...typography.tiny2,
+    color: colors.invariant.text,
+    alignSelf: 'flex-end',
+    marginLeft: '8px',
+    marginBottom: '2px'
+  },
+  APYValue: {
+    ...typography.heading4,
+    color: colors.invariant.text,
+    alignSelf: 'flex-end'
+  },
+  infoWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    paddingTop: '24px',
+    paddingBottom: '24px'
   },
   container: {
     color: colors.white.main,
@@ -150,7 +179,7 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.black,
     textTransform: 'none',
 
-    transition: 'filter 0.2s linear',
+    transition: 'filter 0.3s linear',
 
     '&:hover': {
       filter: 'brightness(1.2)',

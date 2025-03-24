@@ -14,6 +14,7 @@ import { PublicKey } from '@solana/web3.js'
 import { YourPointsButton } from './HeaderButton/YourPointsButton'
 import { BN } from '@coral-xyz/anchor'
 import { Bar } from '@components/Bar/Bar'
+import { ROUTES } from '@utils/utils'
 
 export interface IHeader {
   address: PublicKey
@@ -126,14 +127,14 @@ export const Header: React.FC<IHeader> = ({
 
   return (
     <Grid container>
-      <Grid container className={classes.root} direction='row' alignItems='center' wrap='nowrap'>
-        <Grid container item className={classes.leftSide} justifyContent='flex-start'>
+      <Grid container className={classes.root}>
+        <Grid container item className={classes.leftSide}>
           <CardMedia
             className={classes.logo}
             image={icons.LogoTitle}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
-                navigate('/exchange')
+                navigate(ROUTES.EXCHANGE)
               }
             }}
           />
@@ -143,7 +144,6 @@ export const Header: React.FC<IHeader> = ({
           container
           item
           className={classes.routers}
-          wrap='nowrap'
           sx={{
             display: { lg: 'block' },
             '@media (max-width: 1200px)': {
@@ -171,13 +171,13 @@ export const Header: React.FC<IHeader> = ({
           ))}
         </Grid>
 
-        <Grid container item className={classes.buttons} wrap='nowrap'>
+        <Grid container item className={classes.buttons}>
           <CardMedia
             className={classes.logoShort}
             image={icons.LogoShort}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
-                navigate('/exchange')
+                navigate(ROUTES.EXCHANGE)
               }
             }}
           />

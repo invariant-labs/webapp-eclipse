@@ -24,6 +24,7 @@ interface YourProgressProps {
     swap: number
     lp: number
   }
+  contentProgramDates: { start: string; end: string }
 }
 
 export const YourProgress: React.FC<YourProgressProps> = ({
@@ -32,7 +33,8 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   estimated24hPoints,
   isLoadingList,
   totalItems,
-  isConnected
+  isConnected,
+  contentProgramDates
 }) => {
   const { classes } = useStyles({})
   const [contentPointsOpen, setContentPointsOpen] = useState(false)
@@ -67,7 +69,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
 
   return (
     <Grid className={classes.mainWrapper}>
-      <Grid sx={{ position: 'relative' }} className={classes.boxWrapper}>
+      <Grid className={classes.boxWrapper}>
         {!isLoadingList && <BlurOverlay isConnected={isConnected} />}
 
         <Grid className={classes.header}>
@@ -126,6 +128,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         <ContentPointsModal
           userContentPoints={userContentPoints}
           open={contentPointsOpen}
+          contentProgramDates={contentProgramDates}
           handleClose={() => {
             setContentPointsOpen(false)
             unblurContent()

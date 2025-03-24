@@ -4,7 +4,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
@@ -125,14 +125,14 @@ const LeaderboardSwapItem: React.FC<LeaderboardSwapItemProps> = props => {
               (You)
             </Typography>
           ) : null}
-          <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'baseline' }}>
-            <TooltipHover text='Copy address'>
+          <Box className={classes.copyWrapper}>
+            <TooltipHover title='Copy address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}
                 classes={{ root: classes.clipboardIcon }}
               />
             </TooltipHover>
-            <TooltipHover text='Open in explorer'>
+            <TooltipHover title='Open in explorer'>
               <Link
                 to={`https://eclipsescan.xyz/token/${address}?cluster=${currentNetwork.toLocaleLowerCase()}`}
                 target='_blank'>

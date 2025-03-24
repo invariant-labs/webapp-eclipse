@@ -1,8 +1,8 @@
-import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import Slippage from '@components/Modals/Slippage/Slippage'
-import Refresher from '@components/Refresher/Refresher'
+import Refresher from '@common/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
 import { Box, Button, Grid, Typography } from '@mui/material'
 import refreshIcon from '@static/svg/refresh.svg'
@@ -23,7 +23,9 @@ import {
   findPairs,
   handleSimulate,
   handleSimulateWithHop,
+  initialXtoY,
   printBN,
+  ROUTES,
   trimLeadingZeros
 } from '@utils/utils'
 import { Swap as SwapData } from '@store/reducers/swap'
@@ -38,7 +40,7 @@ import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
@@ -213,7 +215,16 @@ export const Swap: React.FC<ISwap> = ({
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
   const [isFirstPairGivingPoints, setIsFirstPairGivingPoints] = React.useState<boolean>(false)
   const [isSecondPairGivingPoints, setIsSecondPairGivingPoints] = React.useState<boolean>(false)
-  const [rateReversed, setRateReversed] = React.useState<boolean>(false)
+  const [isPairGivingPoints, setIsPairGivingPoints] = React.useState<boolean>(false)
+  const [rateReversed, setRateReversed] = React.useState<boolean>(
+    tokenFromIndex && tokenToIndex
+      ? !initialXtoY(
+          tokens[tokenFromIndex].assetAddress.toString(),
+          tokens[tokenToIndex].assetAddress.toString()
+        )
+      : false
+  )
+  const [rateLoading, setRateLoading] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
@@ -352,7 +363,7 @@ export const Swap: React.FC<ISwap> = ({
     urlUpdateTimeoutRef.current = setTimeout(() => {
       const fromTicker = addressToTicker(network, tokens[tokenFromIndex].assetAddress.toString())
       const toTicker = addressToTicker(network, tokens[tokenToIndex].assetAddress.toString())
-      const newPath = `/exchange/${fromTicker}/${toTicker}`
+      const newPath = ROUTES.getExchangeRoute(fromTicker, toTicker)
 
       if (newPath !== window.location.pathname && !newPath.includes('/-/')) {
         navigate(newPath, { replace: true })
@@ -532,7 +543,15 @@ export const Swap: React.FC<ISwap> = ({
   }, [swap])
 
   useEffect(() => {
-    setRateReversed(false)
+    if (tokenFromIndex !== null && tokenToIndex !== null) {
+      setRateReversed(
+        !initialXtoY(
+          tokens[tokenFromIndex].assetAddress.toString(),
+          tokens[tokenToIndex].assetAddress.toString()
+        )
+      )
+      setRateLoading(false)
+    }
   }, [tokenFromIndex, tokenToIndex])
 
   const getAmountOut = (assetFor: SwapToken) => {
@@ -1006,22 +1025,24 @@ export const Swap: React.FC<ISwap> = ({
 
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
-          <Typography component='h1' style={{ height: '27px' }}>
-            Swap tokens
-          </Typography>
+          <Typography component='h1'>Swap tokens</Typography>
           {network === NetworkType.Mainnet ? (
-            <EstimatedPointsLabel
-              isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
-              decimalIndex={decimalIndex}
-              pointsForSwap={pointsForSwap}
-              handlePointerEnter={handlePointerEnter}
-              handlePointerLeave={handlePointerLeave}
-              pointsBoxRef={pointsBoxRef}
-              swapMultiplier={swapMultiplier}
-              isLessThanOne={isLessThanOne}
-              stringPointsValue={stringPointsValue}
-              isAnyBlurShowed={isAnyBlurShowed}
-            />
+            <SwapPointsPopover
+              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
+              network={network}
+              promotedSwapPairs={promotedSwapPairs}>
+              <div>
+                <EstimatedPointsLabel
+                  isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                  decimalIndex={decimalIndex}
+                  pointsForSwap={pointsForSwap}
+                  swapMultiplier={swapMultiplier}
+                  isLessThanOne={isLessThanOne}
+                  stringPointsValue={stringPointsValue}
+                  isAnyBlurShowed={isAnyBlurShowed}
+                />
+              </div>
+            </SwapPointsPopover>
           ) : null}
         </Box>
 
@@ -1033,8 +1054,8 @@ export const Swap: React.FC<ISwap> = ({
           </Button>
 
           <Box className={classes.swapControls}>
-            <TooltipHover text='Refresh'>
-              <Grid display='flex' alignItems='center'>
+            <TooltipHover title='Refresh'>
+              <Grid className={classes.refreshIconContainer}>
                 <Button
                   onClick={handleRefresh}
                   className={classes.refreshIconBtn}
@@ -1051,7 +1072,7 @@ export const Swap: React.FC<ISwap> = ({
                 </Button>
               </Grid>
             </TooltipHover>
-            <TooltipHover text='Settings'>
+            <TooltipHover title='Settings'>
               <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
                 <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
               </Button>
@@ -1165,6 +1186,7 @@ export const Swap: React.FC<ISwap> = ({
               )}
               onClick={() => {
                 if (lockAnimation) return
+                setRateLoading(true)
                 setLockAnimation(!lockAnimation)
                 setRotates(rotates + 1)
                 swap !== null ? setSwap(!swap) : setSwap(true)
@@ -1285,7 +1307,7 @@ export const Swap: React.FC<ISwap> = ({
             )}
             {tokens[tokenFromIndex ?? '']?.isUnknown && (
               <TooltipHover
-                text={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenFromIndex ?? ''].symbol} is not verified
                 </Box>
@@ -1293,7 +1315,7 @@ export const Swap: React.FC<ISwap> = ({
             )}
             {tokens[tokenToIndex ?? '']?.isUnknown && (
               <TooltipHover
-                text={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
                 <Box className={classes.unknownWarning}>
                   {tokens[tokenToIndex ?? ''].symbol} is not verified
                 </Box>
@@ -1331,15 +1353,8 @@ export const Swap: React.FC<ISwap> = ({
               {tokenFromIndex !== null &&
                 tokenToIndex !== null &&
                 tokenFromIndex !== tokenToIndex && (
-                  <TooltipHover text='Refresh'>
-                    <Grid
-                      container
-                      alignItems='center'
-                      justifyContent='center'
-                      width={20}
-                      height={34}
-                      minWidth='fit-content'
-                      ml={1}>
+                  <TooltipHover title='Refresh'>
+                    <Grid container className={classes.tooltipRefresh}>
                       <Refresher
                         currentIndex={refresherTime}
                         maxIndex={REFRESHER_INTERVAL}
@@ -1361,7 +1376,7 @@ export const Swap: React.FC<ISwap> = ({
                   tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
                   amount={rateReversed ? 1 / swapRate : swapRate}
                   tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
-                  loading={getStateMessage() === 'Loading'}
+                  loading={getStateMessage() === 'Loading' || rateLoading}
                 />
               </Box>
             ) : null}
@@ -1402,7 +1417,7 @@ export const Swap: React.FC<ISwap> = ({
             />
           ) : getStateMessage() === 'Insufficient Wrapped ETH' ? (
             <TooltipHover
-              text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+              title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
               top={-45}>
               <div>
                 <AnimatedButton

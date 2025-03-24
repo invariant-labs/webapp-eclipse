@@ -1,10 +1,11 @@
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import Jupi from '@static/png/jupi.png'
 import './animation.css'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { Link } from 'react-router-dom'
 import { useState } from 'react'
+import { Button } from '@common/Button/Button'
 
 export const InfoComponent = () => {
   const { classes } = useStyles()
@@ -28,8 +29,10 @@ export const InfoComponent = () => {
             style={{
               textDecoration: 'none'
             }}>
-            <Button className={classes.button} style={{ marginTop: '32px' }}>
-              Learn more <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+            <Button scheme='green' padding='0 42px'>
+              <Box className={classes.learnMoreButton}>
+                Learn more <LaunchIcon classes={{ root: classes.clipboardIcon }} />
+              </Box>
             </Button>
           </Link>
         </Box>
@@ -51,7 +54,7 @@ export const InfoComponent = () => {
           className={`${classes.astronaut} floating-astronaut`}
           style={{
             opacity: imageLoaded ? 1 : 0,
-            transition: 'opacity 0.7s ease-in',
+            transition: 'opacity 0.3s ease-in',
             position: imageLoaded ? 'relative' : 'absolute',
             top: 0,
             left: 0
