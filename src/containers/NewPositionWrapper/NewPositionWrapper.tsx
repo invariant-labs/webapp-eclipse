@@ -26,7 +26,7 @@ import { actions, actions as positionsActions } from '@store/reducers/positions'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
-import { network, timeoutError } from '@store/selectors/solanaConnection'
+import { network, rpcAddress, timeoutError } from '@store/selectors/solanaConnection'
 import {
   isLoadingLatestPoolsForTransaction,
   isLoadingPathTokens,
@@ -70,6 +70,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   initialIsRange
 }) => {
   const dispatch = useDispatch()
+  const currentRpc = useSelector(rpcAddress)
   const connection = getCurrentSolanaConnection()
   const ethBalance = useSelector(balance)
   const tokens = useSelector(poolTokens)
@@ -636,6 +637,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [isTimeoutError])
 
+  useEffect(() => {
+    onRefresh()
+  }, [currentRpc])
   const isPromotedPool = useMemo(() => {
     if (poolIndex === null) {
       return false
