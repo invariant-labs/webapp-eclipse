@@ -1582,7 +1582,7 @@ export const stringToFixed = (
 
 export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
   try {
-    return getAddressTickerMap(network)[ticker] ?? ticker
+    return getAddressTickerMap(network)[ticker] || ticker
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)

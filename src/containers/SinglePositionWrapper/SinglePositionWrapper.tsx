@@ -1,4 +1,4 @@
-import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import PositionDetails from '@components/PositionDetails/PositionDetails'
 import { Grid, useMediaQuery } from '@mui/material'
 import loader from '@static/gif/loader.gif'

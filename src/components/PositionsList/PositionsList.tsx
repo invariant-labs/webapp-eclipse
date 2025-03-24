@@ -1,7 +1,7 @@
-import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
+import { INoConnected, NoConnected } from '@common/NoConnected/NoConnected'
 import {
   Box,
-  Button,
+  Button as MuiButton,
   Grid,
   ToggleButton,
   ToggleButtonGroup,
@@ -12,17 +12,18 @@ import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { PositionItemMobile } from './PositionItem/variants/PositionMobileCard/PositionItemMobile'
 import { IPositionItem } from './types'
 import { PositionsTable } from './PositionItem/variants/PositionTables/PositionsTable'
-import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
-import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
+import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
+import { Button } from '@common/Button/Button'
 import { ROUTES } from '@utils/utils'
 import { LiquidityPools } from '@store/types/userOverview'
 
@@ -276,15 +277,15 @@ export const PositionsList: React.FC<IProps> = ({
               <Grid className={classes.fullWidthWrapper}>
                 <TooltipHover title='Refresh'>
                   <Grid display='flex' alignItems='center'>
-                    <Button
+                    <MuiButton
                       disabled={showNoConnected}
                       onClick={showNoConnected ? () => {} : handleRefresh}
                       className={classes.refreshIconBtn}>
                       <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-                    </Button>
+                    </MuiButton>
                   </Grid>
                 </TooltipHover>
-                <Button className={classes.button} variant='contained' onClick={onAddPositionClick}>
+                <Button scheme='pink' onClick={onAddPositionClick}>
                   <span className={classes.buttonText}>+ Add Position</span>
                 </Button>
               </Grid>
@@ -341,18 +342,15 @@ export const PositionsList: React.FC<IProps> = ({
                 <Grid className={classes.fullWidthWrapper}>
                   <TooltipHover title='Refresh'>
                     <Grid display='flex' alignItems='center'>
-                      <Button
+                      <MuiButton
                         disabled={showNoConnected}
                         onClick={showNoConnected ? () => {} : handleRefresh}
                         className={classes.refreshIconBtn}>
                         <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-                      </Button>
+                      </MuiButton>
                     </Grid>
                   </TooltipHover>
-                  <Button
-                    className={classes.button}
-                    variant='contained'
-                    onClick={onAddPositionClick}>
+                  <Button scheme='pink' onClick={onAddPositionClick}>
                     <span className={classes.buttonText}>+ Add Position</span>
                   </Button>
                 </Grid>
