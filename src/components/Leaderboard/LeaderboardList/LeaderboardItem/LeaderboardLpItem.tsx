@@ -115,15 +115,12 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
-        <Box style={{ paddingRight: '24px', width: 'auto' }}>
-          <span className={classes.address}>
-            {domain
-              ? isVerySmallScreen || isNarrowMediumScreen
-                ? shortDomain
-                : domain
-              : shortenAddress(address.toString(), 4)}{' '}
-          </span>
-
+        <Typography>
+          {domain
+            ? isVerySmallScreen || isNarrowMediumScreen
+              ? shortDomain
+              : domain
+            : shortenAddress(address.toString(), 4)}{' '}
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)
@@ -144,7 +141,7 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
               </Link>
             </TooltipHover>
           </Box>
-        </Box>
+        </Typography>
 
         <Typography>
           {new BN(points, 'hex').isZero()
