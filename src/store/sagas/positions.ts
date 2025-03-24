@@ -53,7 +53,6 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { ClaimAllFee, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
-import { off } from 'process'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
