@@ -43,7 +43,8 @@ import {
   createPlaceholderLiquidityPlot,
   ensureError,
   getLiquidityTicksByPositionsList,
-  getPositionsAddressesFromRange
+  getPositionsAddressesFromRange,
+  getTicksFromAddresses
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
@@ -51,7 +52,8 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import { ClaimAllFee, Position } from '@invariant-labs/sdk-eclipse/lib/market'
+import { ClaimAllFee, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { off } from 'process'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -909,6 +911,7 @@ export function* handleGetPositionsList() {
     })
 
     const positionsWithTicks: PositionWithAddress[] = []
+    const positionsTickAddresses: PublicKey[][] = []
 
     for (const position of positions) {
       const pool = poolsList.find(pool => pool.address.toString() === position.pool.toString())
@@ -922,20 +925,55 @@ export function* handleGetPositionsList() {
         tickSpacing: pool.tickSpacing
       })
 
-      const { lowerTick, upperTick } = yield* all({
-        lowerTick: call([marketProgram, marketProgram.getTick], pair, position.lowerTickIndex),
-        upperTick: call([marketProgram, marketProgram.getTick], pair, position.upperTickIndex)
-      })
+      const lowerTickAddress = marketProgram.getTickAddress(pair, position.lowerTickIndex)
+      const upperTickAddress = marketProgram.getTickAddress(pair, position.upperTickIndex)
 
-      positionsWithTicks.push({
-        ...position,
-        lowerTick,
-        upperTick,
+      positionsTickAddresses.push([lowerTickAddress.tickAddress, upperTickAddress.tickAddress])
+    }
+
+    const positionsTicks = yield* call(
+      getTicksFromAddresses,
+      marketProgram,
+      positionsTickAddresses.flat()
+    )
+
+    let offset = 0
+
+    for (let i = 0; i < positionsTickAddresses.length; i++) {
+      if (!positionsTicks[i] || !positionsTicks[i + 1]) {
+        continue
+      }
+
+      const lowerTick = {
+        ...positionsTicks[offset],
+        liquidityChange: positionsTicks[offset]?.liquidityChange.v,
+        liquidityGross: positionsTicks[offset]?.liquidityGross.v,
+        sqrtPrice: positionsTicks[offset]?.sqrtPrice.v,
+        feeGrowthOutsideX: positionsTicks[offset]?.feeGrowthOutsideX.v,
+        feeGrowthOutsideY: positionsTicks[offset]?.feeGrowthOutsideY.v,
+        secondsPerLiquidityOutside: positionsTicks[offset]?.secondsPerLiquidityOutside.v
+      }
+      const upperTick = {
+        ...positionsTicks[offset + 1],
+        liquidityChange: positionsTicks[offset + 1]?.liquidityChange.v,
+        liquidityGross: positionsTicks[offset + 1]?.liquidityGross.v,
+        sqrtPrice: positionsTicks[offset + 1]?.sqrtPrice.v,
+        feeGrowthOutsideX: positionsTicks[offset + 1]?.feeGrowthOutsideX.v,
+        feeGrowthOutsideY: positionsTicks[offset + 1]?.feeGrowthOutsideY.v,
+        secondsPerLiquidityOutside: positionsTicks[offset + 1]?.secondsPerLiquidityOutside.v
+      }
+
+      positionsWithTicks[i] = {
+        ...positions[i],
+        lowerTick: lowerTick as Tick,
+        upperTick: upperTick as Tick,
         ticksLoading: false
-      })
+      }
+      offset += 2
     }
 
     const lockedPositionsWithTicks: PositionWithAddress[] = []
+    const lockedPositionsTickAddresses: PublicKey[][] = []
 
     for (const position of lockedPositions) {
       const pool = poolsList.find(pool => pool.address.toString() === position.pool.toString())
@@ -949,17 +987,56 @@ export function* handleGetPositionsList() {
         tickSpacing: pool.tickSpacing
       })
 
-      const { lowerTick, upperTick } = yield* all({
-        lowerTick: call([marketProgram, marketProgram.getTick], pair, position.lowerTickIndex),
-        upperTick: call([marketProgram, marketProgram.getTick], pair, position.upperTickIndex)
-      })
+      const lowerTickAddress = marketProgram.getTickAddress(pair, position.lowerTickIndex)
+      const upperTickAddress = marketProgram.getTickAddress(pair, position.upperTickIndex)
 
-      lockedPositionsWithTicks.push({
-        ...position,
-        lowerTick,
-        upperTick,
+      lockedPositionsTickAddresses.push([
+        lowerTickAddress.tickAddress,
+        upperTickAddress.tickAddress
+      ])
+    }
+
+    const lockedPositionTicks = yield* call(
+      getTicksFromAddresses,
+      marketProgram,
+      lockedPositionsTickAddresses.flat()
+    )
+
+    let offsetLockedTicks = 0
+
+    for (let i = 0; i < lockedPositionsTickAddresses.length; i++) {
+      if (!lockedPositionTicks[i] || !lockedPositionTicks[i + 1]) {
+        continue
+      }
+
+      const lowerTick = {
+        ...lockedPositionTicks[offset],
+        liquidityChange: lockedPositionTicks[offsetLockedTicks]?.liquidityChange.v,
+        liquidityGross: lockedPositionTicks[offsetLockedTicks]?.liquidityGross.v,
+        sqrtPrice: lockedPositionTicks[offsetLockedTicks]?.sqrtPrice.v,
+        feeGrowthOutsideX: lockedPositionTicks[offsetLockedTicks]?.feeGrowthOutsideX.v,
+        feeGrowthOutsideY: lockedPositionTicks[offsetLockedTicks]?.feeGrowthOutsideY.v,
+        secondsPerLiquidityOutside:
+          lockedPositionTicks[offsetLockedTicks]?.secondsPerLiquidityOutside.v
+      }
+      const upperTick = {
+        ...lockedPositionTicks[offsetLockedTicks + 1],
+        liquidityChange: lockedPositionTicks[offsetLockedTicks + 1]?.liquidityChange.v,
+        liquidityGross: lockedPositionTicks[offsetLockedTicks + 1]?.liquidityGross.v,
+        sqrtPrice: lockedPositionTicks[offsetLockedTicks + 1]?.sqrtPrice.v,
+        feeGrowthOutsideX: lockedPositionTicks[offsetLockedTicks + 1]?.feeGrowthOutsideX.v,
+        feeGrowthOutsideY: lockedPositionTicks[offsetLockedTicks + 1]?.feeGrowthOutsideY.v,
+        secondsPerLiquidityOutside:
+          lockedPositionTicks[offsetLockedTicks + 1]?.secondsPerLiquidityOutside.v
+      }
+
+      lockedPositionsWithTicks[i] = {
+        ...lockedPositions[i],
+        lowerTick: lowerTick as Tick,
+        upperTick: upperTick as Tick,
         ticksLoading: false
-      })
+      }
+      offsetLockedTicks += 2
     }
 
     yield* put(
