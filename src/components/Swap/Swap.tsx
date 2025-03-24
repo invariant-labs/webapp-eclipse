@@ -1287,7 +1287,8 @@ export const Swap: React.FC<ISwap> = ({
             {priceImpact > 5 && (
               <TooltipHover title='Your trade size might be too large'>
                 <Box className={classes.unknownWarning}>
-                  {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`} Price impact
+                  High price impact: {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}!
+                  This swap will cause a significant price movement.
                 </Box>
               </TooltipHover>
             )}
