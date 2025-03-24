@@ -52,7 +52,7 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import { ClaimAllFee, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { ClaimAllFee, parseTick, Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -916,9 +916,10 @@ export function* handleGetPositionsList() {
     })
 
     const positionsWithTicks: PositionWithAddress[] = []
-    const positionsTickAddresses: PublicKey[][] = []
+    const tickAddresses = new Set<PublicKey>()
 
-    for (const position of positions) {
+    const totalPositions = [...positions, ...lockedPositions]
+    for (const position of totalPositions) {
       const pool = poolsList.find(pool => pool.address.toString() === position.pool.toString())
 
       if (!pool) {
@@ -933,115 +934,45 @@ export function* handleGetPositionsList() {
       const lowerTickAddress = marketProgram.getTickAddress(pair, position.lowerTickIndex)
       const upperTickAddress = marketProgram.getTickAddress(pair, position.upperTickIndex)
 
-      positionsTickAddresses.push([lowerTickAddress.tickAddress, upperTickAddress.tickAddress])
+      tickAddresses.add(lowerTickAddress.tickAddress).add(upperTickAddress.tickAddress)
     }
 
-    const positionsTicks = yield* call(
-      getTicksFromAddresses,
-      marketProgram,
-      positionsTickAddresses.flat()
-    )
+    const ticks = yield* call(getTicksFromAddresses, marketProgram, [...tickAddresses])
 
     let offset = 0
 
-    for (let i = 0; i < positionsTickAddresses.length; i++) {
-      if (!positionsTicks[i] || !positionsTicks[i + 1]) {
+    for (let i = 0; i < positions.length; i++) {
+      if (!ticks[i] || !ticks[i + 1]) {
         continue
       }
-
-      const lowerTick = {
-        ...positionsTicks[offset],
-        liquidityChange: positionsTicks[offset]?.liquidityChange.v,
-        liquidityGross: positionsTicks[offset]?.liquidityGross.v,
-        sqrtPrice: positionsTicks[offset]?.sqrtPrice.v,
-        feeGrowthOutsideX: positionsTicks[offset]?.feeGrowthOutsideX.v,
-        feeGrowthOutsideY: positionsTicks[offset]?.feeGrowthOutsideY.v,
-        secondsPerLiquidityOutside: positionsTicks[offset]?.secondsPerLiquidityOutside.v
-      }
-      const upperTick = {
-        ...positionsTicks[offset + 1],
-        liquidityChange: positionsTicks[offset + 1]?.liquidityChange.v,
-        liquidityGross: positionsTicks[offset + 1]?.liquidityGross.v,
-        sqrtPrice: positionsTicks[offset + 1]?.sqrtPrice.v,
-        feeGrowthOutsideX: positionsTicks[offset + 1]?.feeGrowthOutsideX.v,
-        feeGrowthOutsideY: positionsTicks[offset + 1]?.feeGrowthOutsideY.v,
-        secondsPerLiquidityOutside: positionsTicks[offset + 1]?.secondsPerLiquidityOutside.v
-      }
+      const lowerTick = parseTick(ticks[offset]!)
+      const upperTick = parseTick(ticks[offset + 1]!)
 
       positionsWithTicks[i] = {
         ...positions[i],
-        lowerTick: lowerTick as Tick,
-        upperTick: upperTick as Tick,
+        lowerTick: lowerTick,
+        upperTick: upperTick,
         ticksLoading: false
       }
       offset += 2
     }
-
     const lockedPositionsWithTicks: PositionWithAddress[] = []
-    const lockedPositionsTickAddresses: PublicKey[][] = []
 
-    for (const position of lockedPositions) {
-      const pool = poolsList.find(pool => pool.address.toString() === position.pool.toString())
-
-      if (!pool) {
+    for (let i = 0; i < lockedPositions.length; i++) {
+      if (!ticks[i] || !ticks[i + 1]) {
         continue
       }
 
-      const pair = new Pair(pool.tokenX, pool.tokenY, {
-        fee: pool.fee,
-        tickSpacing: pool.tickSpacing
-      })
-
-      const lowerTickAddress = marketProgram.getTickAddress(pair, position.lowerTickIndex)
-      const upperTickAddress = marketProgram.getTickAddress(pair, position.upperTickIndex)
-
-      lockedPositionsTickAddresses.push([
-        lowerTickAddress.tickAddress,
-        upperTickAddress.tickAddress
-      ])
-    }
-
-    const lockedPositionTicks = yield* call(
-      getTicksFromAddresses,
-      marketProgram,
-      lockedPositionsTickAddresses.flat()
-    )
-
-    let offsetLockedTicks = 0
-
-    for (let i = 0; i < lockedPositionsTickAddresses.length; i++) {
-      if (!lockedPositionTicks[i] || !lockedPositionTicks[i + 1]) {
-        continue
-      }
-
-      const lowerTick = {
-        ...lockedPositionTicks[offset],
-        liquidityChange: lockedPositionTicks[offsetLockedTicks]?.liquidityChange.v,
-        liquidityGross: lockedPositionTicks[offsetLockedTicks]?.liquidityGross.v,
-        sqrtPrice: lockedPositionTicks[offsetLockedTicks]?.sqrtPrice.v,
-        feeGrowthOutsideX: lockedPositionTicks[offsetLockedTicks]?.feeGrowthOutsideX.v,
-        feeGrowthOutsideY: lockedPositionTicks[offsetLockedTicks]?.feeGrowthOutsideY.v,
-        secondsPerLiquidityOutside:
-          lockedPositionTicks[offsetLockedTicks]?.secondsPerLiquidityOutside.v
-      }
-      const upperTick = {
-        ...lockedPositionTicks[offsetLockedTicks + 1],
-        liquidityChange: lockedPositionTicks[offsetLockedTicks + 1]?.liquidityChange.v,
-        liquidityGross: lockedPositionTicks[offsetLockedTicks + 1]?.liquidityGross.v,
-        sqrtPrice: lockedPositionTicks[offsetLockedTicks + 1]?.sqrtPrice.v,
-        feeGrowthOutsideX: lockedPositionTicks[offsetLockedTicks + 1]?.feeGrowthOutsideX.v,
-        feeGrowthOutsideY: lockedPositionTicks[offsetLockedTicks + 1]?.feeGrowthOutsideY.v,
-        secondsPerLiquidityOutside:
-          lockedPositionTicks[offsetLockedTicks + 1]?.secondsPerLiquidityOutside.v
-      }
+      const lowerTick = parseTick(ticks[offset]!)
+      const upperTick = parseTick(ticks[offset + 1]!)
 
       lockedPositionsWithTicks[i] = {
         ...lockedPositions[i],
-        lowerTick: lowerTick as Tick,
-        upperTick: upperTick as Tick,
+        lowerTick: lowerTick,
+        upperTick: upperTick,
         ticksLoading: false
       }
-      offsetLockedTicks += 2
+      offset += 2
     }
 
     yield* put(
