@@ -117,7 +117,6 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
       height: '36px',
       background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
       borderRadius: '8px',
-      fontStyle: 'normal',
 
       textTransform: 'none',
       color: colors.invariant.dark,

@@ -69,6 +69,7 @@ interface LeaderboardProps {
   userAddress: PublicKey
   isLoadingLeaderboardList: boolean
   hasTETHPosition: boolean
+  contentProgramDates: { start: string; end: string }
 }
 
 export const Leaderboard: React.FC<LeaderboardProps> = ({
@@ -99,7 +100,8 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
   onConnectWallet,
   userAddress,
   isLoadingLeaderboardList,
-  hasTETHPosition
+  hasTETHPosition,
+  contentProgramDates
 }) => {
   const { classes } = useStyles()
 
@@ -164,6 +166,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
             isLoadingList={isLoadingList || isLoadingLeaderboardList}
             totalItems={totalItems}
             isConnected={isConnected}
+            contentProgramDates={contentProgramDates}
           />
           <EcosystemExposure
             isLoading={isLoadingLeaderboardList || isLoadingList}
