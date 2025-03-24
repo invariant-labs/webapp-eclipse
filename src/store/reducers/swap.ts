@@ -5,12 +5,15 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 import { FetcherRecords } from '@invariant-labs/sdk-eclipse'
+import { Pair } from '@invariant-labs/sdk-eclipse/src'
 
 export interface Swap {
   slippage: BN
   estimatedPriceAfterSwap: BN
-  poolIndex: number
+  firstPair: Pair | null
+  secondPair: Pair | null
   tokenFrom: PublicKey
+  tokenBetween: PublicKey | null
   tokenTo: PublicKey
   amountIn: BN
   byAmountIn: boolean
@@ -40,8 +43,10 @@ export const defaultState: ISwapStore = {
   swap: {
     slippage: fromFee(new BN(1000)),
     estimatedPriceAfterSwap: new BN(0),
-    poolIndex: 0,
+    firstPair: null,
+    secondPair: null,
     tokenFrom: DEFAULT_PUBLIC_KEY,
+    tokenBetween: null,
     tokenTo: DEFAULT_PUBLIC_KEY,
     amountIn: new BN(0),
     byAmountIn: false,
@@ -70,10 +75,6 @@ const swapSlice = createSlice({
     setSwapSuccess(state, action: PayloadAction<boolean>) {
       state.swap.inProgress = false
       state.swap.success = action.payload
-      return state
-    },
-    setPoolIndex(state, action: PayloadAction<number>) {
-      state.swap.poolIndex = action.payload
       return state
     },
     setPair(state, action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>) {
