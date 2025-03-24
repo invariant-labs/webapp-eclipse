@@ -69,8 +69,6 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
                 onConnect={onAction2}
                 connected={false}
                 onDisconnect={() => {}}
-                className={classes.buttonSecondary}
-                textClassName={classes.buttonText}
               />
             )}
           </Grid>
