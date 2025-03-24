@@ -74,7 +74,7 @@ export const PositionsList: React.FC<IProps> = ({
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
+  const hidePlus = useMediaQuery(theme.breakpoints.down(350))
   const currentData = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
       return data
@@ -341,7 +341,7 @@ export const PositionsList: React.FC<IProps> = ({
 
                 <Grid className={classes.fullWidthWrapper}>
                   <TooltipHover title='Refresh'>
-                    <Grid display='flex' alignItems='center'>
+                    <Grid width={26} display='flex' alignItems='center'>
                       <MuiButton
                         disabled={showNoConnected}
                         onClick={showNoConnected ? () => {} : handleRefresh}
@@ -351,7 +351,7 @@ export const PositionsList: React.FC<IProps> = ({
                     </Grid>
                   </TooltipHover>
                   <Button scheme='pink' onClick={onAddPositionClick}>
-                    <span className={classes.buttonText}>+ Add Position</span>
+                    <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
                   </Button>
                 </Grid>
               </Grid>
