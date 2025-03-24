@@ -32,6 +32,7 @@ const PortfolioPage: React.FC = () => {
             <img src={icons.empty} />
             <Typography component='h1'>Wallet is not connected</Typography>
             <Typography component='h2'>No liquidity positions to show.</Typography>
+            <Box className={classes.changeWalletButtonContainer}></Box>
             <ChangeWalletButton
               name={isSm ? 'Connect' : 'Connect wallet'}
               onConnect={() => {
