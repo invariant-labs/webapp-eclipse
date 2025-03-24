@@ -5,7 +5,7 @@ import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import icons from '@static/icons'
 import { NetworkType } from '@store/consts/static'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
   addressToTicker,
   calculateAPYAndAPR,
