@@ -3,8 +3,10 @@ import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import { getSolanaConnection, networkTypetoProgramNetwork } from '../connection'
 import { Locker } from '@invariant-labs/locker-eclipse-sdk'
+
 let _market: Market
 let _locker: Locker
+let _currentRpc: string
 
 export const getCurrentMarketProgram = (): Market => {
   return _market
@@ -15,12 +17,14 @@ export const getMarketProgram = async (
   rpcAddress: string,
   solWallet: IWallet
 ): Promise<Market> => {
-  if (_market) {
+  if (_market && _currentRpc && _currentRpc === rpcAddress) {
     return _market
   }
+
+  _currentRpc = rpcAddress
   const net = networkTypetoProgramNetwork(networkType)
 
-  _market = await Market.build(
+  _market = Market.build(
     net,
     solWallet,
     getSolanaConnection(rpcAddress),

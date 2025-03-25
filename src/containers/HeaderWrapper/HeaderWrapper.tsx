@@ -208,7 +208,7 @@ export const HeaderWrapper: React.FC = () => {
             dispatch(actions.setRPCAddress(rpcAddress))
             dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))
             dispatch(actions.initSolanaConnection())
-            dispatch(walletActions.changeWalletInExtension())
+            dispatch(walletActions.directInitWallet())
             dispatch(leaderboardActions.getLeaderboardData({ page: 1, itemsPerPage: 25 }))
             dispatch(positionsActions.getPositionsList())
             localStorage.setItem('IS_RPC_WARNING_IGNORED', 'false')
