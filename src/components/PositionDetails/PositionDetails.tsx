@@ -3,7 +3,7 @@ import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/S
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import Refresher from '@common/Refresher/Refresher'
-import { Box, Grid, Hidden, Typography } from '@mui/material'
+import { Box, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
@@ -32,6 +32,7 @@ import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import { Button } from '@common/Button/Button'
 import { Information } from '@components/Information/Information'
+import { theme } from '@static/theme'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -105,6 +106,7 @@ const PositionDetails: React.FC<IProps> = ({
   isPreview
 }) => {
   const { classes } = useStyles()
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const navigate = useNavigate()
 
@@ -175,9 +177,11 @@ const PositionDetails: React.FC<IProps> = ({
         <Box className={classes.informationContainer}>
           <Information>
             <Box className={classes.information}>
-              <img src={icons.eyeYellow} alt='Eye' />
-              You are currently watching someone else's position. Connect your wallet or go to
-              portfolio to see your positions.
+              <img src={icons.eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
+              {isSm
+                ? `Viewing someone else's position. Wallet actions unavailable.`
+                : `You are currently watching someone else's position. Connect your wallet or go to
+              portfolio to see your positions.`}
             </Box>
           </Information>
         </Box>

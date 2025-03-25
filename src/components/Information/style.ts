@@ -1,22 +1,26 @@
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => {
   return {
     container: {
-      height: 48,
+      minHeight: 48,
       background: 'rgba(239, 208, 99, 0.2)',
       border: `2px solid ${colors.invariant.yellow}`,
       borderRadius: 24,
       color: colors.invariant.yellow,
-      padding: '0 24px',
+      paddingInline: 24,
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
-      transition: 'height 300ms'
+      transition: 'height 300ms',
+      [theme.breakpoints.down('sm')]: {
+        paddingInline: 8
+      }
     },
     closeIcon: {
-      cursor: 'pointer'
+      cursor: 'pointer',
+      minWidth: 14
     }
   }
 })
