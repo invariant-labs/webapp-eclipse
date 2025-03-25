@@ -383,7 +383,7 @@ export const Swap: React.FC<ISwap> = ({
         const firstPoints = calculatePoints(
           simulationPath.firstAmount ?? new BN(0),
           simulationPath.tokenFrom?.decimals ?? 0,
-          simulationPath.firstPair.fee ?? new BN(0),
+          simulationPath.firstPair.feeTier.fee ?? new BN(0),
           firstFeed?.price ?? '0',
           firstFeed?.priceDecimals ?? 0,
           pointsPerUSD
@@ -391,7 +391,7 @@ export const Swap: React.FC<ISwap> = ({
         const secondPoints = calculatePoints(
           simulationPath.secondAmount ?? new BN(0),
           simulationPath.tokenBetween?.decimals ?? 0,
-          simulationPath.secondPair.fee ?? new BN(0),
+          simulationPath.secondPair.feeTier.fee ?? new BN(0),
           secondFeed?.price ?? '0',
           secondFeed?.priceDecimals ?? 0,
           pointsPerUSD
