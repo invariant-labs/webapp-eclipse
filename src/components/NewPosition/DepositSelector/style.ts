@@ -228,6 +228,12 @@ export const useStyles = makeStyles()(theme => {
         }
       }
     },
+    skeleton: {
+      width: 128,
+      height: 28,
+      borderRadius: 9,
+      backgroundColor: colors.invariant.light
+    },
     unknownWarning: {
       width: 'fit-content',
       maxWidth: 131,

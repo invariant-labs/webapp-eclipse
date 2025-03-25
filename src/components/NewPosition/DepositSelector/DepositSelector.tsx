@@ -6,6 +6,7 @@ import {
   Button,
   Checkbox,
   Grid,
+  Skeleton,
   ToggleButton,
   ToggleButtonGroup,
   Tooltip,
@@ -227,6 +228,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const { value: valueA } = tokenAInputState
   const { value: valueB } = tokenBInputState
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
+  const [isSimulating, setIsSimulating] = useState<boolean>(false)
   const [utilization, setUtilization] = useState<string>(initialMinUtilization)
   const [slippageToleranceSwap, setSlippageToleranceSwap] = useState<string>(
     initialMaxSlippageToleranceSwap
@@ -626,10 +628,15 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     [isAutoSwapAvailable, alignment]
   )
 
-  const renderPriceImpactWarning = useCallback(
-    () =>
+  const renderPriceImpactWarning = useCallback(() => {
+    if (isSimulating) {
+      return <Skeleton variant='rectangular' className={classes.skeleton} />
+    }
+    if (
       (!simulation?.swapSimulation && !simulation?.position?.liquidity.eqn(0)) ||
-      !simulation?.swapSimulation?.priceImpact ? (
+      !simulation?.swapSimulation?.priceImpact
+    ) {
+      return (
         <Box className={classes.unknownWarning}>
           <Tooltip
             title={'You already have enough tokens to open position.'}
@@ -644,62 +651,64 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           </Tooltip>
           No swap required
         </Box>
-      ) : (
-        <Box
-          className={
-            new BN(simulation?.swapSimulation?.priceImpact ?? 0).lt(
-              toDecimal(+Number(priceImpact).toFixed(4), 2)
-            )
-              ? classes.unknownWarning
-              : classes.errorWarning
-          }>
-          <Tooltip
-            title={
-              <>
-                Impact on the price for token exchange.
-                {new BN(simulation?.swapSimulation?.priceImpact ?? 0).gt(
-                  toDecimal(+Number(priceImpact).toFixed(4), 2)
-                ) ? (
-                  <>
-                    {' '}
-                    In order to create position you have to either:
-                    <p>1. Split the position into smaller ones to minimize prize impact.</p>
-                    <p>2. Change swap price impact tolerance in the settings.</p>
-                  </>
-                ) : (
-                  ''
-                )}
-              </>
+      )
+    }
+    return (
+      <Box
+        className={
+          new BN(simulation?.swapSimulation?.priceImpact ?? 0).lt(
+            toDecimal(+Number(priceImpact).toFixed(4), 2)
+          )
+            ? classes.unknownWarning
+            : classes.errorWarning
+        }>
+        <Tooltip
+          title={
+            <>
+              Impact on the price for token exchange.
+              {new BN(simulation?.swapSimulation?.priceImpact ?? 0).gt(
+                toDecimal(+Number(priceImpact).toFixed(4), 2)
+              ) ? (
+                <>
+                  {' '}
+                  In order to create position you have to either:
+                  <p>1. Split the position into smaller ones to minimize prize impact.</p>
+                  <p>2. Change swap price impact tolerance in the settings.</p>
+                </>
+              ) : (
+                ''
+              )}
+            </>
+          }
+          classes={{ tooltip: classes.tooltip }}>
+          <img
+            src={icons.infoCircle}
+            alt=''
+            width='12px'
+            style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+            className={
+              new BN(simulation?.swapSimulation?.priceImpact ?? 0).lte(
+                toDecimal(+Number(priceImpact).toFixed(4), 2)
+              )
+                ? classes.grayscaleIcon
+                : classes.errorIcon
             }
-            classes={{ tooltip: classes.tooltip }}>
-            <img
-              src={icons.infoCircle}
-              alt=''
-              width='12px'
-              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-              className={
-                new BN(simulation?.swapSimulation?.priceImpact ?? 0).lte(
-                  toDecimal(+Number(priceImpact).toFixed(4), 2)
-                )
-                  ? classes.grayscaleIcon
-                  : classes.errorIcon
-              }
-            />
-          </Tooltip>
-          Price impact:{' '}
-          {!simulation || !simulation.swapSimulation
-            ? '0'
-            : simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
-              ? Number(
-                  printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)
-                ).toFixed(2)
-              : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
-          %
-        </Box>
-      ),
-    [simulation, alignment, tokenACheckbox, tokenBCheckbox]
-  )
+          />
+        </Tooltip>
+        Price impact:{' '}
+        {!simulation || !simulation.swapSimulation
+          ? '0'
+          : simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
+            ? Number(printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)).toFixed(
+                2
+              )
+            : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
+        %
+      </Box>
+    )
+  }, [isSimulating, simulation, alignment, tokenACheckbox, tokenBCheckbox])
   const simulateAutoSwapResult = async () => {
+    setIsSimulating(true)
     if (
       !autoSwapPoolData ||
       !autoSwapTicks ||
@@ -710,12 +719,18 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       !simulationParams.actualPoolPrice
     ) {
       setSimulation(null)
+      setIsSimulating(false)
       return
     }
     const tokenADecimal = tokens[tokenAIndex].decimals
     const tokenBDecimal = tokens[tokenBIndex].decimals
     const tokenAValue = tokenACheckbox ? convertBalanceToBN(valueA, tokenADecimal) : new BN(0)
     const tokenBValue = tokenBCheckbox ? convertBalanceToBN(valueB, tokenBDecimal) : new BN(0)
+    if (tokenAValue.eqn(0) && tokenBValue.eqn(0)) {
+      setSimulation(null)
+      setIsSimulating(false)
+      return
+    }
     const amountX = autoSwapPoolData.tokenX.equals(tokens[tokenAIndex].assetAddress)
       ? tokenAValue
       : tokenBValue
@@ -751,7 +766,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (result) {
       updateLiquidity(result.position.liquidity)
     }
+    console.log(result)
     setSimulation(result)
+    setIsSimulating(false)
   }
 
   useEffect(() => {
