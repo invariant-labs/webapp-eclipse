@@ -34,6 +34,8 @@ interface IConfigResponse {
   lastSnapTimestamp: string
   swapPairs: { tokenX: string; tokenY: string }[]
   swapMultiplier: string
+  contentProgramDateStart: string
+  contentProgramDateEnd: string
 }
 interface IFetchContentPointsResponse {
   startTimestamp: number
@@ -180,7 +182,9 @@ export function* getLeaderboardConfig(): Generator {
       lastSnapTimestamp,
       pointsPerUSD,
       swapPairs,
-      swapMultiplier
+      swapMultiplier,
+      contentProgramDateStart,
+      contentProgramDateEnd
     } = yield* call(fetchLeaderboardConfig)
 
     const priceFeeds = yield* call(fetchLeaderboardPriceFeed)
@@ -192,7 +196,9 @@ export function* getLeaderboardConfig(): Generator {
         lastSnapTimestamp,
         pointsPerUSD,
         swapPairs,
-        swapMultiplier
+        swapMultiplier,
+        contentProgramDateStart,
+        contentProgramDateEnd
       })
     )
 

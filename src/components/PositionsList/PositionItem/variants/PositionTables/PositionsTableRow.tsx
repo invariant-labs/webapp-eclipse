@@ -1,15 +1,5 @@
-import {
-  Grid,
-  TableRow,
-  TableCell,
-  Button,
-  Tooltip,
-  Typography,
-  useMediaQuery,
-  Box,
-  Skeleton
-} from '@mui/material'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Grid, TableRow, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { IPositionItem } from '../../../types'
 import { colors, theme } from '@static/theme'
@@ -21,7 +11,7 @@ import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { useSharedStyles } from '../PositionMobileCard/style/shared'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import SwapList from '@static/svg/swap-list.svg'
 import PositionStatusTooltip from '../../components/PositionStatusTooltip/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
@@ -33,6 +23,9 @@ import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
+import { useSkeletonStyle } from './styles/skeletons'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { Button } from '@common/Button/Button'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -60,6 +53,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   poolAddress,
   tokenYIcon,
   currentPrice,
+  isFullRange,
   id,
   fee,
   min,
@@ -79,12 +73,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 }) => {
   const { classes } = usePositionTableRowStyle()
   const { classes: sharedClasses } = useSharedStyles()
+  const { classes: skeletonClasses } = useSkeletonStyle()
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
   )
   const positionSingleData = useSelector(singlePositionData(id ?? ''))
   const airdropIconRef = useRef<any>(null)
-  const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
 
@@ -123,34 +117,24 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const pairNameContent = useMemo(() => {
     if (isItemLoading('pairName')) {
       return (
-        <Box
-          sx={{
-            display: 'flex',
-            alignItems: 'center',
-            gap: '4px'
-          }}>
-          <Skeleton variant='circular' width={40} height={40} />
-          <Skeleton variant='circular' width={36} height={36} />
-          <Skeleton variant='circular' width={40} height={40} />
-          <Skeleton
-            variant='rectangular'
-            width={100}
-            height={36}
-            sx={{ ml: 1.5, borderRadius: '10px' }}
-          />
+        <Box className={skeletonClasses.skeletonBox}>
+          <Skeleton variant='circular' className={skeletonClasses.skeletonCircle40} />
+          <Skeleton variant='circular' className={skeletonClasses.skeletonCircle36} />
+          <Skeleton variant='circular' className={skeletonClasses.skeletonCircle40} />
+          <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect100x36} />
         </Box>
       )
     }
 
     return (
-      <Grid container item className={classes.iconsAndNames} alignItems='center' wrap='nowrap'>
-        <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
+      <Grid container item className={classes.iconsAndNames}>
+        <Grid container item className={sharedClasses.icons}>
           <img
             className={sharedClasses.tokenIcon}
             src={xToY ? tokenXIcon : tokenYIcon}
             alt={xToY ? tokenXName : tokenYName}
           />
-          <TooltipHover text='Reverse tokens'>
+          <TooltipHover title='Reverse tokens'>
             <img
               className={sharedClasses.arrows}
               src={SwapList}
@@ -175,40 +159,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     )
   }, [loading, xToY, tokenXIcon, tokenYIcon, tokenXName, tokenYName])
 
-  const handleMouseEnter = useCallback(() => {
-    setIsPromotedPoolPopoverOpen(true)
-  }, [])
-
-  const handleMouseLeave = useCallback(() => {
-    setIsPromotedPoolPopoverOpen(false)
-  }, [])
-
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
-
-  const handleTooltipEnter = useCallback(() => {
-    setIsTooltipOpen(true)
-  }, [])
-
-  const handleTooltipLeave = useCallback(() => {
-    setIsTooltipOpen(false)
-  }, [])
-
   const feeFragment = useMemo(() => {
     if (isItemLoading('feeTier')) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='60px'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto', marginRight: '8px' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect60x36} />
     }
     return (
-      <Tooltip
-        enterTouchDelay={0}
-        leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-        onClick={e => e.stopPropagation()}
+      <TooltipGradient
         title={
           isActive ? (
             <>
@@ -223,16 +179,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           )
         }
         placement='top'
-        classes={{
-          tooltip: sharedClasses.tooltip
-        }}>
+        top={1}
+        noGradient>
         <Grid
           container
           item
           sx={{ width: 65 }}
-          className={classNames(sharedClasses.fee, isActive ? sharedClasses.activeFee : undefined)}
-          justifyContent='center'
-          alignItems='center'>
+          className={classNames(sharedClasses.fee, isActive ? sharedClasses.activeFee : undefined)}>
           <Typography
             className={classNames(
               sharedClasses.infoText,
@@ -241,25 +194,18 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             {fee}%
           </Typography>
         </Grid>
-      </Tooltip>
+      </TooltipGradient>
     )
   }, [fee, classes, isActive])
 
   const tokenRatioContent = useMemo(() => {
     if (isItemLoading('tokenRatio')) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='100%'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
 
     return (
       <Typography
-        className={`${sharedClasses.infoText}`}
+        className={sharedClasses.infoText}
         style={{
           background: colors.invariant.light,
           padding: '8px 12px',
@@ -291,25 +237,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const valueFragment = useMemo(() => {
     if (isItemLoading('value') || tokenValueInUsd.loading) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='100%'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
 
     return (
-      <Grid
-        container
-        item
-        className={`${sharedClasses.value} ${classes.itemCellContainer}`}
-        justifyContent='space-between'
-        alignItems='center'
-        wrap='nowrap'>
-        <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
+      <Grid container item className={`${sharedClasses.value} ${classes.itemCellContainer}`}>
+        <Grid className={sharedClasses.infoCenter} container item>
           <Typography className={sharedClasses.greenText}>
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
@@ -331,24 +264,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const unclaimedFee = useMemo(() => {
     if (isItemLoading('unclaimedFee') || unclaimedFeesInUSD.loading) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='100%'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
     return (
-      <Grid
-        container
-        item
-        className={`${sharedClasses.value} ${classes.itemCellContainer}`}
-        justifyContent='space-between'
-        alignItems='center'
-        wrap='nowrap'>
-        <Grid className={sharedClasses.infoCenter} container item justifyContent='center'>
+      <Grid container item className={`${sharedClasses.value} ${classes.itemCellContainer}`}>
+        <Grid className={sharedClasses.infoCenter} container item>
           <Typography className={sharedClasses.greenText}>
             ${formatNumberWithoutSuffix(unclaimedFeesInUSD.value, { twoDecimals: true })}
           </Typography>
@@ -359,18 +279,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const chartFragment = useMemo(() => {
     if (isItemLoading('chart')) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width='100%'
-          height={36}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
 
     return (
       <MinMaxChart
+        isFullRange={isFullRange}
         min={Number(xToY ? min : 1 / max)}
         max={Number(xToY ? max : 1 / min)}
         current={
@@ -382,19 +296,12 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
   const actionsFragment = useMemo(() => {
     if (isItemLoading('actions')) {
-      return (
-        <Skeleton
-          variant='rectangular'
-          width={32}
-          height={32}
-          sx={{ borderRadius: '10px', margin: '0 auto' }}
-        />
-      )
+      return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect32x32} />
     }
 
     return (
       <Button
-        className={classes.button}
+        scheme='green'
         onClick={e => {
           e.stopPropagation()
           handleClick(e)
@@ -408,27 +315,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     if (isPromoted && isActive) {
       return (
         <>
-          <div
-            ref={airdropIconRef}
-            onClick={e => e.stopPropagation()}
-            className={classes.actionButton}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}>
-            <img
-              src={icons.airdropRainbow}
-              alt={'Airdrop'}
-              style={{
-                height: '32px',
-                width: '30px'
-              }}
-            />
-          </div>
           <PromotedPoolPopover
             showEstPointsFirst
             isActive={true}
-            anchorEl={airdropIconRef.current}
-            open={isPromotedPoolPopoverOpen}
-            onClose={() => setIsPromotedPoolPopoverOpen(false)}
             headerText={
               <>
                 This position is currently <b>earning points</b>
@@ -436,59 +325,34 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             }
             pointsLabel={'Total points distributed across the pool per 24H:'}
             estPoints={estimated24hPoints}
-            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-          />
+            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+            <div ref={airdropIconRef} className={classes.actionButton}>
+              <img
+                src={icons.airdropRainbow}
+                alt={'Airdrop'}
+                style={{
+                  height: '32px',
+                  width: '30px'
+                }}
+              />
+            </div>
+          </PromotedPoolPopover>
         </>
       )
     }
 
     return (
-      <Tooltip
-        open={isTooltipOpen}
-        onOpen={() => setIsTooltipOpen(true)}
-        onClose={() => setIsTooltipOpen(false)}
-        enterTouchDelay={0}
-        leaveTouchDelay={0}
-        onClick={e => e.stopPropagation()}
-        title={
-          <div onMouseEnter={handleTooltipEnter} onMouseLeave={handleTooltipLeave}>
-            <PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />
-          </div>
-        }
+      <TooltipGradient
+        title={<PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />}
         placement='top'
-        classes={{
-          tooltip: sharedClasses.tooltip
-        }}>
-        <div
-          onMouseEnter={handleTooltipEnter}
-          onMouseLeave={handleTooltipLeave}
-          style={{ display: 'flex', justifyContent: 'center' }}>
-          <img
-            src={icons.airdropRainbow}
-            alt={'Airdrop'}
-            style={{
-              flexShrink: '0',
-              height: '32px',
-              width: '32px',
-              opacity: 0.3,
-              filter: 'grayscale(1)'
-            }}
-          />
+        top={1}
+        noGradient>
+        <div style={{ display: 'flex', justifyContent: 'center' }}>
+          <img src={icons.airdropRainbow} alt={'Airdrop'} className={classes.airdropIcon} />
         </div>
-      </Tooltip>
+      </TooltipGradient>
     )
-  }, [
-    isPromoted,
-    isActive,
-    isPromotedPoolPopoverOpen,
-    isTooltipOpen,
-    handleMouseEnter,
-    handleMouseLeave,
-    handleTooltipEnter,
-    handleTooltipLeave,
-    estimated24hPoints,
-    pointsPerSecond
-  ])
+  }, [isPromoted, estimated24hPoints, pointsPerSecond])
 
   const [isActionPopoverOpen, setActionPopoverOpen] = React.useState<boolean>(false)
 

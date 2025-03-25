@@ -3,7 +3,7 @@ import searchIcon from '@static/svg/lupa.svg'
 import { theme } from '@static/theme'
 import React, { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
-import useStyles from '../style'
+import useStyles from './style'
 import AddTokenModal from '@components/Modals/AddTokenModal/AddTokenModal'
 import {
   Box,
@@ -20,7 +20,7 @@ import { formatNumberWithSuffix, getTokenPrice, printBN } from '@utils/utils'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import Scrollbars from 'rc-scrollbars'
 import icons from '@static/icons'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import CustomScrollbar from './CustomScrollbar'
@@ -84,8 +84,6 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
           ...style,
           width: 'calc(100% - 50px)'
         }}
-        alignItems='center'
-        wrap='nowrap'
         onClick={() => {
           onSelect(token.index)
         }}>
@@ -94,11 +92,11 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
           {token.isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
         </Box>
         <Grid container className={classes.tokenContainer}>
-          <Grid container direction='row' columnGap='6px' alignItems='center' wrap='nowrap'>
+          <Grid container className={classes.tokenHeaderWrapper}>
             <Typography className={classes.tokenName}>
               {token.symbol ? token.symbol : 'Unknown'}{' '}
             </Typography>
-            <Grid className={classes.tokenAddress} container direction='column'>
+            <Grid className={classes.tokenAddress} container>
               <a
                 href={`https://eclipsescan.xyz/token/${token.assetAddress.toString()}${networkUrl}`}
                 target='_blank'
@@ -121,7 +119,7 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
             {token.name.length > (isXs ? 20 : 30) ? '...' : ''}
           </Typography>
         </Grid>
-        <Grid container alignItems='flex-end' flexDirection='column' wrap='nowrap'>
+        <Grid container className={classes.balanceWrapper}>
           {!hideBalances && Number(tokenBalance) > 0 ? (
             <>
               <Typography className={classes.tokenBalanceStatus} noWrap>
@@ -307,12 +305,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                 aria-label='Close'
               />
             </Grid>
-            <Grid
-              className={classes.topRow}
-              container
-              direction='row'
-              wrap='nowrap'
-              alignItems='center'>
+            <Grid className={classes.topRow} container>
               <Grid container className={classes.inputControl}>
                 <input
                   ref={inputRef}
@@ -323,7 +316,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                 />
                 <CardMedia image={searchIcon} className={classes.inputIcon} />
               </Grid>
-              <TooltipHover text='Add token'>
+              <TooltipHover title='Add token'>
                 <AddCircleOutlineIcon
                   className={classes.addIcon}
                   onClick={() => setIsAddOpen(true)}

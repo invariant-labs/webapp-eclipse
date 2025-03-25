@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   wrapperContainer: {
+    flexWrap: 'nowrap',
     width: 1004,
     flexDirection: 'row',
     maxWidth: '100%',
@@ -13,6 +14,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   positionDetails: {
+    flexDirection: 'column',
     width: 517,
     marginRight: 24,
 
@@ -26,12 +28,16 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   right: {
     width: 517,
+    flexDirection: 'column',
+    alignItems: 'flex-end',
+    flexWrap: 'nowrap',
     [theme.breakpoints.down('lg')]: {
       width: '100%'
     }
   },
   back: {
     height: 40,
+    alignItems: 'center',
     width: 'fit-content',
     transition: 'filter 300ms',
 
@@ -94,13 +100,26 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   marketIdWithRefresher: {
+    width: 'auto',
     [theme.breakpoints.down('sm')]: {
       width: '100%',
       justifyContent: 'space-between'
     }
   },
+  marketIdWrapper: {
+    display: 'flex',
+    padding: '8px 8px  0 0px',
+    height: '24px',
+    minWidth: '200px',
+    marginRight: 'auto'
+  },
   rightHeaderWrapper: {
     marginBottom: 20,
+    alignItems: 'center',
+    flexDirection: 'row-reverse',
+    marginTop: '22px',
+    gap: '8px',
+    flexWrap: 'nowrap',
     [theme.breakpoints.down('sm')]: {
       marginBottom: 0
     }
@@ -124,6 +143,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 40,
     padding: 0,
     minWidth: 40,
+    transition: '300ms',
     '&:hover': {
       background: colors.invariant.greenLinearGradient,
       boxShadow: `0 0 16px ${colors.invariant.greenLinearGradient}`
@@ -132,7 +152,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
       background: colors.invariant.light,
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
-      transition: 'all 0.2s',
+      transition: 'all 0.3s',
       '&:hover': {
         boxShadow: 'none',
         cursor: 'not-allowed',
@@ -150,6 +170,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     height: 40,
     padding: 0,
     minWidth: 40,
+    transition: '300ms',
     '&:hover': {
       background: colors.invariant.pinkLinearGradient,
       boxShadow: `0 0 16px ${colors.invariant.pink}`

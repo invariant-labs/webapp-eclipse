@@ -5,7 +5,7 @@ import useStyles from './style'
 import { colors } from '@static/theme'
 import { Button, Grid, Input, Typography } from '@mui/material'
 import { formatNumbers, showPrefix } from '@utils/utils'
-import AnimatedNumber from '@components/AnimatedNumber/AnimatedNumber'
+import AnimatedNumber from '@common/AnimatedNumber/AnimatedNumber'
 import { FormatNumberThreshold } from '@store/consts/types'
 
 export interface IRangeInput {
@@ -116,23 +116,13 @@ export const RangeInput: React.FC<IRangeInput> = ({
 
   return (
     <Grid className={className} style={style} container direction='column' alignItems='center'>
-      <Grid
-        className={classes.data}
-        container
-        direction='row'
-        justifyContent='space-between'
-        alignItems='center'>
+      <Grid className={classes.data} container>
         <Typography className={classes.label}>{label}</Typography>
         <Typography className={classes.tokens}>
           {tokenToSymbol} per {tokenFromSymbol}
         </Typography>
       </Grid>
-      <Grid
-        className={classes.controls}
-        container
-        direction='row'
-        alignItems='center'
-        wrap='nowrap'>
+      <Grid className={classes.controls} container>
         {disabled ? null : (
           <Button className={classes.button} onClick={decreaseValue} disableRipple>
             <RemoveIcon className={classes.buttonIcon} />
@@ -157,12 +147,7 @@ export const RangeInput: React.FC<IRangeInput> = ({
           </Button>
         )}
       </Grid>
-      <Grid
-        className={classes.diffWrapper}
-        container
-        direction='row'
-        alignItems='center'
-        wrap='nowrap'>
+      <Grid className={classes.diffWrapper} container>
         <Grid className={classes.diffLabelWrapper}>
           <Typography className={classes.diffLabel}>{diffLabel}</Typography>
         </Grid>

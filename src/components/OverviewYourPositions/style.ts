@@ -97,7 +97,7 @@ export const useStyles = makeStyles()(() => ({
     '&:disabled': {
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
-      transition: 'all 0.2s',
+      transition: 'all 0.3s',
       '&:hover': {
         boxShadow: 'none',
         cursor: 'not-allowed',

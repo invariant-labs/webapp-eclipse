@@ -1,10 +1,9 @@
-import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
   DEFAULT_NEW_POSITION_SLIPPAGE,
   LEADERBOARD_DECIMAL,
-  bestTiers,
   commonTokensForNetworks
 } from '@store/consts/static'
 import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
@@ -17,6 +16,7 @@ import {
   getNewTokenOrThrow,
   getTokenPrice,
   printBN,
+  ROUTES,
   sciToString,
   tickerToAddress
 } from '@utils/utils'
@@ -43,7 +43,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
+import { InitMidPrice } from '@common/PriceRangePlot/PriceRangePlot'
 import { Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
@@ -51,6 +51,8 @@ import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { estimatePointsForLiquidity } from '@invariant-labs/points-sdk'
 import { PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { actions as statsActions } from '@store/reducers/stats'
+import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 
 export interface IProps {
   initialTokenFrom: string
@@ -198,14 +200,18 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
 
     if (fromAddress && fromIndex !== -1 && toAddress && toIndex !== -1) {
-      return `/newPosition/${initialTokenFrom}/${initialTokenTo}/${initialFee}${concentrationParam}${rangeParam}`
+      return ROUTES.getNewPositionRoute(
+        initialTokenFrom,
+        initialTokenTo,
+        initialFee + concentrationParam + rangeParam
+      )
     }
 
     if (fromAddress && fromIndex !== -1) {
-      return `/newPosition/${initialTokenFrom}/${initialFee}`
+      return ROUTES.getNewPositionRoute(initialTokenFrom, initialFee)
     }
 
-    return `/newPosition/${initialFee}`
+    return ROUTES.getNewPositionRoute(initialFee)
   }
 
   const urlUpdateTimeoutRef = useRef<NodeJS.Timeout>()
@@ -714,6 +720,32 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }
 
+  const poolsList = useSelector(poolsStatsWithTokensDetails)
+  const isLoadingStats = useSelector(isLoading)
+
+  useEffect(() => {
+    dispatch(statsActions.getCurrentStats())
+  }, [])
+
+  const { feeTiersWithTvl, totalTvl } = useMemo(() => {
+    const feeTiersWithTvl: Record<number, number> = {}
+    let totalTvl = 0
+
+    poolsList.map(pool => {
+      if (
+        (pool.tokenX.equals(tokens[tokenAIndex ?? 0].assetAddress) &&
+          pool.tokenY.equals(tokens[tokenBIndex ?? 0].assetAddress)) ||
+        (pool.tokenX.equals(tokens[tokenBIndex ?? 0].assetAddress) &&
+          pool.tokenY.equals(tokens[tokenAIndex ?? 0].assetAddress))
+      ) {
+        feeTiersWithTvl[pool.fee] = pool.tvl
+        totalTvl += pool.tvl
+      }
+    })
+
+    return { feeTiersWithTvl, totalTvl }
+  }, [poolsList, tokenAIndex, tokenBIndex])
+
   return (
     <NewPosition
       initialTokenFrom={initialTokenFrom}
@@ -862,7 +894,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       isWaitingForNewPool={isWaitingForNewPool || initialLoader}
       poolIndex={poolIndex}
       currentPairReversed={currentPairReversed}
-      bestTiers={bestTiers[currentNetwork]}
       currentPriceSqrt={
         poolIndex !== null && !!allPools[poolIndex]
           ? allPools[poolIndex].sqrtPrice
@@ -898,6 +929,9 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       estimatedPointsPerDay={estimatedPointsPerDay}
       estimatedPointsForScale={estimatedPointsForScale}
       isPromotedPool={isPromotedPool}
+      feeTiersWithTvl={feeTiersWithTvl}
+      totalTvl={totalTvl}
+      isLoadingStats={isLoadingStats}
     />
   )
 }

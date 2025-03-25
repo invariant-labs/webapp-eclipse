@@ -5,6 +5,7 @@ export const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
       borderRadius: 24,
+      flexDirection: 'column',
       backgroundColor: colors.invariant.component,
       padding: '16px 24px 16px 24px',
       flex: '1 1 0%',
@@ -31,6 +32,8 @@ export const useStyles = makeStyles()(theme => {
       marginBottom: 3
     },
     selects: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       gap: 12,
       marginBottom: 10
     },
@@ -67,13 +70,14 @@ export const useStyles = makeStyles()(theme => {
       '&:hover': {
         filter: 'brightness(1.2)',
         boxShadow: `0 0 10px ${colors.invariant.pink}`,
-        transition: '.2s all',
+        transition: '.3s all',
         cursor: 'pointer'
       }
     },
     arrows: {
       width: 32,
       cursor: 'pointer',
+      transition: '300ms',
 
       '&:hover': {
         filter: 'brightness(2)',

@@ -56,7 +56,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           )}
         </Grid>
 
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid container className={classes.row}>
           <Typography className={classes.label}>Fee:</Typography>
           {isLoadingRate ? (
             <Skeleton width={80} height={20} variant='rounded' animation='wave' />
@@ -65,7 +65,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           )}
         </Grid>
 
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid container className={classes.row}>
           <Typography className={classes.label}>Price impact:</Typography>
           {isLoadingRate ? (
             <Skeleton width={80} height={20} variant='rounded' animation='wave' />
@@ -75,7 +75,7 @@ const TransactionDetailsBox: React.FC<IProps> = ({
             </Typography>
           )}
         </Grid>
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid container className={classes.row}>
           <Typography className={classes.label}>Slippage tolerance:</Typography>
           <Typography className={classes.value}>{slippage}%</Typography>
         </Grid>

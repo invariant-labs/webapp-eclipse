@@ -9,7 +9,7 @@ import { NetworkType, SortTypeTokenList } from '@store/consts/static'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 interface IProps {
@@ -83,7 +83,7 @@ const TokenListItem: React.FC<IProps> = ({
   const shouldShowText = icon === icons.unknownToken || !isSm
 
   return (
-    <Grid maxWidth='100%' className={classes.wrapper}>
+    <Grid className={classes.wrapper}>
       {displayType === 'tokens' ? (
         <Grid
           container
@@ -110,7 +110,7 @@ const TokenListItem: React.FC<IProps> = ({
                 )}
               </Typography>
             )}
-            <TooltipHover text='Copy token address'>
+            <TooltipHover title='Copy token address'>
               <FileCopyOutlinedIcon
                 onClick={copyToClipboard}
                 classes={{ root: classes.clipboardIcon }}
@@ -128,7 +128,7 @@ const TokenListItem: React.FC<IProps> = ({
           <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
           {!isSm && (
             <Box className={classes.action}>
-              <TooltipHover text='Open in explorer'>
+              <TooltipHover title='Open in explorer'>
                 <button
                   className={classes.actionButton}
                   onClick={() =>

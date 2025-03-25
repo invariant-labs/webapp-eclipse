@@ -5,12 +5,8 @@ import { formatNumberWithSuffix, removeAdditionalDecimals } from '@utils/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import useIsMobile from '@store/hooks/isMobile'
 
 interface IEstimatedPointsLabel {
-  pointsBoxRef: React.RefObject<HTMLDivElement>
-  handlePointerLeave: () => void
-  handlePointerEnter: () => void
   swapMultiplier: string
   stringPointsValue: string
   pointsForSwap: BN
@@ -21,9 +17,6 @@ interface IEstimatedPointsLabel {
 }
 
 export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
-  handlePointerEnter,
-  handlePointerLeave,
-  pointsBoxRef,
   swapMultiplier,
   pointsForSwap,
   isLessThanOne,
@@ -35,7 +28,6 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   const [displayedValue, setDisplayedValue] = useState<string>('')
   const contentRef = useRef<HTMLDivElement>(null)
   const [isChanging, setIsChanging] = useState(false)
-  const isMobile = useIsMobile()
 
   const alternativeRef = useRef<HTMLDivElement>(null)
   const { classes } = useStyles({ isVisible: isAnimating, width: 200, isChanging })
@@ -57,18 +49,11 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   }, [stringPointsValue, isAnimating, isAnyBlurShowed, pointsForSwap])
 
   return (
-    <Box
-      className={classes.pointsBox}
-      ref={pointsBoxRef}
-      onClick={isMobile ? handlePointerEnter : () => {}}
-      onPointerLeave={!isMobile ? handlePointerLeave : () => {}}
-      onPointerEnter={!isMobile ? handlePointerEnter : () => {}}>
+    <Box className={classes.pointsBox}>
       <div className={classes.contentWrapper} ref={contentRef}>
         <img src={icons.airdropRainbow} alt='' />
         Points:{' '}
-        <span
-          className={classes.pointsAmount}
-          style={{ borderRight: '1px solid #3A466B', paddingRight: '10px' }}>
+        <span className={classes.pointsAmount}>
           <p className={classes.pointsValue}>
             {' '}
             {pointsForSwap.isZero()
@@ -80,19 +65,12 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
                 : formatNumberWithSuffix(displayedValue)}
           </p>
 
-          <img src={icons.infoCircle} alt='' width='15px' style={{ marginLeft: '5px' }} />
-        </span>{' '}
-        <span
-          style={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: 4,
-            marginLeft: '8px'
-          }}>
+          <img src={icons.infoCircle} alt='' className={classes.infoCircle} />
+        </span>
+        <span className={classes.boostWrapper}>
           {new BN(swapMultiplier, 'hex').gte(new BN(1)) &&
             `${new BN(swapMultiplier, 'hex').toNumber()}x`}
-          <img src={icons.boostPoints} alt='' style={{ height: '14px', width: '12px' }} />
+          <img src={icons.boostPoints} alt='' className={classes.boostPoints} />
         </span>
       </div>
 
