@@ -52,8 +52,9 @@ import { useNavigate } from 'react-router-dom'
 import { theme, typography } from '@static/theme'
 import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
 import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
-import TransactionRoute, { RouteTemplateProps } from '@components/TransactionRoute/TransactionRoute'
+import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
 import { routes } from './routes'
+import { RouteTemplateProps } from '@components/TransactionRoute/FlowChartGrid/types/types'
 
 export interface Pools {
   tokenX: PublicKey

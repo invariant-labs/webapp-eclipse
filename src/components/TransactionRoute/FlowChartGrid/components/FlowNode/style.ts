@@ -1,6 +1,5 @@
 import { makeStyles } from 'tss-react/mui'
 import { colors, typography } from '@static/theme'
-import { LabelPos, Shape } from '../../types/types'
 
 export const useStyles = makeStyles()(_theme => {
   return {

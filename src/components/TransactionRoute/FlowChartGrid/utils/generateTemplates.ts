@@ -1,5 +1,4 @@
-import { RouteTemplateProps, GridDefinition } from '@components/TransactionRoute/TransactionRoute'
-import { CornerPosition } from '../types/types'
+import { CornerPosition, GridDefinition, RouteTemplateProps } from '../types/types'
 
 export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition => {
   const { sourceToken, destinationToken, exchanges } = data

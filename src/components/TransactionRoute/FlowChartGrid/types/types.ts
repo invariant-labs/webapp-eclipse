@@ -1,14 +1,36 @@
-import { RouteTemplateProps } from '@components/TransactionRoute/TransactionRoute'
+import { BN } from '@coral-xyz/anchor'
 
-export type Direction = 'right' | 'left' | 'down' | 'up' | 'right-down' | 'down-right'
+export type Direction = 'right' | 'left' | 'down' | 'up'
 export type Shape = 'circle' | 'rect'
 export type LabelPos = 'bottom' | 'right'
-export interface NodeConnectorProps {
-  direction?: Direction
-  withArrow?: boolean
-  shape?: 'circle' | 'rect' | 'corner'
-  longerConnector?: boolean
+
+export enum CornerPosition {
+  TopLeft = 'top-left',
+  TopRight = 'top-right',
+  BottomLeft = 'bottom-left',
+  BottomRight = 'bottom-right'
 }
+
+interface BaseNodeProps {
+  shape: Shape
+  cornerPosition?: CornerPosition
+  bigNode?: boolean
+  labelPos?: LabelPos
+  textA?: string
+  textB?: string
+}
+
+interface BaseConnectorProps {
+  direction: Direction
+  longerConnector?: boolean
+  withArrow?: boolean
+}
+
+export interface NodeConnectorProps extends BaseConnectorProps {
+  shape: Shape
+}
+
+export interface Connector extends BaseConnectorProps {}
 
 export interface DexInfo {
   name: string
@@ -17,65 +39,12 @@ export interface DexInfo {
   link: string
 }
 
-export interface Connector {
-  direction: Direction
-  longerConnector?: boolean
-  withArrow?: boolean
-}
-export enum CornerPosition {
-  TopLeft = 'top-left',
-  TopRight = 'top-right',
-  BottomLeft = 'bottom-left',
-  BottomRight = 'bottom-right'
-}
-
-export interface FlowNodeProps {
-  shape: Shape
+export interface FlowNodeProps extends BaseNodeProps {
   showTriangleArrow?: boolean
-  arrowDirection?: 'up' | 'down' | 'left' | 'right'
-  textA?: string
-  textB?: string
+  arrowDirection?: Direction
   dexInfo?: DexInfo
-  cornerPosition?: CornerPosition
-  bigNode?: boolean
   connectors: Connector[]
   logoImg?: string
-  labelPos?: LabelPos
-}
-
-export interface GridCellProps {
-  children?: React.ReactNode
-  colSpan?: number
-  rowSpan?: number
-}
-
-export interface CellDefinition {
-  type?: 'node'
-  shape?: 'circle' | 'rect' | 'corner'
-  arrowDirection?: 'up' | 'down' | 'left' | 'right'
-  cornerPosition?: CornerPosition
-  bigNode?: boolean
-  showTriangleArrow?: boolean
-  textA?: string
-  textB?: string
-  logoImg?: string
-  dexInfo?: DexInfo
-  labelPos?: 'bottom' | 'right'
-  connectors?: Connector[]
-  colSpan?: number
-  rowSpan?: number
-}
-
-export interface FlowChartGridProps {
-  gridDefinition: (CellDefinition | null)[][]
-  cellSize?: number
-}
-
-export interface FlowChartProps {
-  routeData?: RouteTemplateProps
-  isLoading?: boolean
-  showCloseButton?: boolean
-  handleClose?: () => void
 }
 
 export interface TokenInfo {
@@ -91,6 +60,26 @@ export interface ExchangeInfo {
   toToken?: TokenInfo
 }
 
+export interface GridCellProps {
+  children?: React.ReactNode
+  colSpan?: number
+  rowSpan?: number
+}
+
+export interface CellDefinition extends BaseNodeProps, GridCellProps {
+  type?: 'node'
+  arrowDirection?: Direction
+  showTriangleArrow?: boolean
+  logoImg?: string
+  dexInfo?: DexInfo
+  connectors?: Connector[]
+}
+
+export interface FlowChartGridProps {
+  gridDefinition: (CellDefinition | null)[][]
+  cellSize?: number
+}
+
 export interface RouteData {
   sourceToken: TokenInfo
   destinationToken: TokenInfo
@@ -101,3 +90,30 @@ export interface TransactionRouteProps {
   hopCount: number
   routeData: RouteData
 }
+
+export interface FlowChartTokenNode {
+  symbol: string
+  logoUrl: string
+  amount: BN
+}
+
+export interface RouteTemplateProps {
+  sourceToken: FlowChartTokenNode
+  exchanges: Array<{
+    name: string
+    logoUrl: string
+    fee: number
+    toToken?: FlowChartTokenNode
+  }>
+  destinationToken: FlowChartTokenNode
+}
+
+export interface FlowChartProps {
+  routeData?: RouteTemplateProps
+  isLoading?: boolean
+  showCloseButton?: boolean
+  handleClose?: () => void
+}
+
+export type GridCell = CellDefinition | null
+export type GridDefinition = GridCell[][]
