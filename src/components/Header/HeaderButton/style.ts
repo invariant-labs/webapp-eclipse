@@ -44,7 +44,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: colors.invariant.newDark,
       boxShadow: '0px 0px 5px 5px #2A365C',
       borderRadius: '14px',
-      fontFamily: 'Mukta',
       fontWeight: 700,
       fontSize: '16px',
       lineHeight: '20px',
@@ -173,12 +172,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       boxShadow: 'none'
     },
     startIcon: {
-      marginLeft: 0,
-      marginBottom: 3
+      marginTop: 3
     },
     endIcon: {
-      minWidth: 20,
-      marginTop: 2
+      marginBottom: 3
     },
     innerEndIcon: {
       marginLeft: 0,
@@ -187,6 +184,11 @@ const useStyles = makeStyles()((theme: Theme) => {
     warningIcon: {
       height: 16,
       marginRight: 4
+    },
+    headerButtonContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 4
     },
     childrenWrapper: {
       color: colors.invariant.text,

@@ -1,15 +1,15 @@
 import { Box, Button, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import icons from '@static/icons'
 import classNames from 'classnames'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
-import Refresher from '@components/Refresher/Refresher'
+import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useState } from 'react'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 type Props = {
   tokenA: {

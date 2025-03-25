@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { useStyles } from './style'
-import { Separator } from '@components/Separator/Separator'
+import { Separator } from '@common/Separator/Separator'
 import { TokenDetails } from '../TokenDetails/TokenDetails'
 import { colors } from '@static/theme'
 

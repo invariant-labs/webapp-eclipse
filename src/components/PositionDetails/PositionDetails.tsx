@@ -1,6 +1,6 @@
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
-import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Box } from '@mui/material'
 import {
   NetworkType,

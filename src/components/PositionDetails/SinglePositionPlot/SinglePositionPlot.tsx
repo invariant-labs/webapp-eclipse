@@ -1,4 +1,4 @@
-import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Box, Typography } from '@mui/material'
 import {
   calcPriceByTickIndex,
