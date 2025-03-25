@@ -33,8 +33,8 @@ export const getConnectorStyles = ({
 }: ConnectorStyleProps): ConnectorStyles => {
   const adjustment = getPositionAdjustment(shape)
 
-  const downLength = longerConnector ? LINE_LENGTH + 80 : LINE_LENGTH + 6
-  const upLength = longerConnector ? LINE_LENGTH + 60 : LINE_LENGTH
+  const downLength = longerConnector ? LINE_LENGTH + 85 : LINE_LENGTH + 6
+  const upLength = longerConnector ? LINE_LENGTH + 52 : LINE_LENGTH
 
   switch (direction) {
     case 'right':
@@ -100,7 +100,7 @@ export const getConnectorStyles = ({
       return {
         container: {
           position: 'absolute',
-          top: longerConnector ? -LINE_LENGTH - 60 : -LINE_LENGTH,
+          top: longerConnector ? -LINE_LENGTH - 52 : -LINE_LENGTH,
           left: '50%',
           transform: `translateX(calc(-50% + ${adjustment.x}px))`,
           width: 1.5,
