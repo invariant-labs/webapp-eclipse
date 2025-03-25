@@ -1285,14 +1285,6 @@ export const handleSimulateWithHop = async (
     const [, simulation] = simulations[n]
     const [, simulationBest] = simulations[best]
     const [, simulationBestFailed] = simulations[bestFailed]
-    console.log(
-      2,
-      simulation.totalAmountIn.toString(),
-      simulation.totalAmountOut.toString(),
-      simulation.swapHopOne.status,
-      simulation.swapHopOne.status
-    )
-
     const isSwapSuccess =
       simulation.swapHopOne.status === SimulationStatus.Ok &&
       simulation.swapHopTwo.status === SimulationStatus.Ok
@@ -1339,12 +1331,6 @@ export const handleSimulateWithHop = async (
       }
     }
   }
-
-  console.log(
-    3,
-    simulations[best][1].totalAmountIn.toString(),
-    simulations[best][1].totalAmountOut.toString()
-  )
 
   if (
     simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&

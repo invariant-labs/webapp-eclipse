@@ -446,7 +446,11 @@ export const Swap: React.FC<ISwap> = ({
   }, [tokenFromIndex, tokenToIndex, pools.length])
 
   useEffect(() => {
-    if (inputRef === inputTarget.FROM && !(amountFrom === '' && amountTo === '')) {
+    if (
+      inputRef === inputTarget.FROM &&
+      !swapIsLoading &&
+      !(amountFrom === '' && amountTo === '')
+    ) {
       simulateWithTimeout()
     }
   }, [
@@ -454,6 +458,7 @@ export const Swap: React.FC<ISwap> = ({
     tokenToIndex,
     tokenFromIndex,
     slippTolerance,
+    swapIsLoading,
     Object.keys(poolTicks).length,
     Object.keys(tickmap).length
   ])
@@ -485,7 +490,7 @@ export const Swap: React.FC<ISwap> = ({
       setSimulateAmount().finally(() => {
         setThrottle(false)
       })
-    }, 500)
+    }, 1500)
     timeoutRef.current = timeout as unknown as number
   }
 
@@ -552,26 +557,6 @@ export const Swap: React.FC<ISwap> = ({
 
   const setSimulateAmount = async () => {
     if (tokenFromIndex !== null && tokenToIndex !== null) {
-      // const pair = findPairs(
-      //   tokens[tokenFromIndex].assetAddress,
-      //   tokens[tokenToIndex].assetAddress,
-      //   pools
-      // )[0]
-      // if (typeof pair === 'undefined') {
-      //   setAmountTo('')
-      //   setAddBlur(false)
-      //   return
-      // }
-      // const indexPool = Object.keys(poolTicks).filter(key => {
-      //   return key === pair.address.toString()
-      // })
-
-      // if (indexPool.length === 0) {
-      //   setAmountTo('')
-      //   setAddBlur(false)
-      //   return
-      // }
-
       if (inputRef === inputTarget.FROM) {
         const [simulateValue, simulateWithHopValue] = await Promise.all([
           handleSimulate(
@@ -645,14 +630,17 @@ export const Swap: React.FC<ISwap> = ({
     }
   ) => {
     console.log(
-      1,
-      simulateResult.amountOut.toString(),
+      'Updating Simulations',
+      // simulateResult.amountOut.toString(),
       simulateResult.error,
       '|',
-      simulateWithHopResult.simulation?.totalAmountIn.toString(),
-      simulateWithHopResult.simulation?.totalAmountOut.toString(),
+      // simulateWithHopResult.simulation?.totalAmountIn.toString(),
+      // simulateWithHopResult.simulation?.totalAmountOut.toString(),
+      'One',
       simulateWithHopResult.simulation?.swapHopOne.status,
-      simulateWithHopResult.simulation?.swapHopOne.status,
+      'Two',
+      simulateWithHopResult.simulation?.swapHopTwo.status,
+      'isErr',
       simulateWithHopResult.error
     )
     let useTwoHop = false
@@ -754,7 +742,9 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const isError = (error: string) => {
-    return swapType === SwapType.Normal ? simulateResult.error.some(err => err === error) : false
+    return swapType === SwapType.Normal
+      ? simulateResult.error.some(err => err === error)
+      : simulateWithHopResult.error
   }
 
   const isEveryPoolEmpty = useMemo(() => {
