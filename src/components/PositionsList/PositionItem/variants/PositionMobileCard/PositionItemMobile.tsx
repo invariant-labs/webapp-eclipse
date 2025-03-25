@@ -327,14 +327,36 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               sx={{ borderRadius: '10px' }}
             />
           ) : (
-            <Grid
-              container
-              className={sharedClasses.value}
-              alignItems='center'
-              justifyContent='center'>
-              {' '}
+            <div>
               {tokenValueInUsd.priceWarning ? (
                 <TooltipHover title='No full price data available, estimated value may be incorrect'>
+                  <Grid
+                    container
+                    className={sharedClasses.value}
+                    alignItems='center'
+                    justifyContent='center'
+                    onClick={event => event.stopPropagation()}>
+                    <Box
+                      gap={'8px'}
+                      display={'flex'}
+                      alignItems={'center'}
+                      onClick={event => event.stopPropagation()}>
+                      <Typography className={sharedClasses.infoText}>Value</Typography>
+
+                      <Typography className={sharedClasses.greenText}>
+                        ${formatNumberWithSuffix(tokenValueInUsd.value)}
+                      </Typography>
+
+                      <img src={icons.warning2} />
+                    </Box>
+                  </Grid>
+                </TooltipHover>
+              ) : (
+                <Grid
+                  container
+                  className={sharedClasses.value}
+                  alignItems='center'
+                  justifyContent='center'>
                   <Box
                     gap={'8px'}
                     display={'flex'}
@@ -345,24 +367,10 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                     <Typography className={sharedClasses.greenText}>
                       ${formatNumberWithSuffix(tokenValueInUsd.value)}
                     </Typography>
-
-                    <img src={icons.warning2} />
                   </Box>
-                </TooltipHover>
-              ) : (
-                <Box
-                  gap={'8px'}
-                  display={'flex'}
-                  alignItems={'center'}
-                  onClick={event => event.stopPropagation()}>
-                  <Typography className={sharedClasses.infoText}>Value</Typography>
-
-                  <Typography className={sharedClasses.greenText}>
-                    ${formatNumberWithSuffix(tokenValueInUsd.value)}
-                  </Typography>
-                </Box>
+                </Grid>
               )}
-            </Grid>
+            </div>
           )}
         </Grid>
 
