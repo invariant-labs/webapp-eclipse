@@ -39,6 +39,7 @@ export const useStyles = makeStyles()(() => ({
   totalContainer: {
     color: colors.white.main,
     display: 'grid',
+    height: 69,
     gridTemplateColumns: '10% auto 16.6% 16.6% 16.6% 10%',
     padding: '18px 18px',
     backgroundColor: colors.invariant.component,

@@ -91,8 +91,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     justifyContent: 'space-between',
     marginBottom: 8,
     [theme.breakpoints.down('sm')]: {
-      width: '100%',
-      flexDirection: 'row-reverse'
+      flexDirection: 'row-reverse',
+      gap: theme.spacing(1)
     }
   },
   buttonSelectDisabled: {
@@ -250,9 +250,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down('md')]: {
       justifyContent: 'space-between',
       width: '100%'
-    },
-    [theme.breakpoints.down('sm')]: {
-      flexDirection: 'column'
     }
   },
   disabledSwitchButton: {

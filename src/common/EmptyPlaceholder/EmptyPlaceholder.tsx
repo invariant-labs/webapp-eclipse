@@ -52,7 +52,7 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
       <Grid className={classNames(classes.blur, 'blurLayer')} />
       <Grid sx={style} className={classNames(classes.container, 'blurLayer')}>
         <Grid className={classNames(classes.root, 'blurInfo')} gap='24px'>
-          {withImg && <img src={img} alt='Not connected' />}
+          {withImg && <img height={80} src={img} alt='Not connected' />}
           <Grid className={classes.buttonContainer}>
             <Typography sx={{ opacity: 0.8 }} className={classes.title}>
               {mainTitle}
@@ -71,8 +71,6 @@ export const EmptyPlaceholder: React.FC<IEmptyPlaceholder> = ({
                 onConnect={onAction2}
                 connected={false}
                 onDisconnect={() => {}}
-                className={classes.buttonSecondary}
-                textClassName={classes.buttonText}
               />
             )}
           </Grid>
