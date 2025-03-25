@@ -243,6 +243,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     return (
       <Grid container item className={`${sharedClasses.value} ${classes.itemCellContainer}`}>
         <Grid className={sharedClasses.infoCenter} container item>
+          {tokenValueInUsd.priceWarning && (
+            <TooltipHover title='No full price data available, estimated value may be incorrect'>
+              <img src={icons.warning2} style={{ marginRight: '4px' }} />
+            </TooltipHover>
+          )}
           <Typography className={sharedClasses.greenText}>
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>

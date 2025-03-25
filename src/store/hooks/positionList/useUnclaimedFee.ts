@@ -209,7 +209,11 @@ export const useUnclaimedFee = ({
       setPreviousTokenValueInUsd(totalValue)
     }
 
-    return { loading: false, value: totalValue }
+    return {
+      loading: false,
+      value: totalValue,
+      priceWarning: tokenXPriceData.price === 0 || tokenYPriceData.price === 0
+    }
   }, [
     tokenXLiquidity,
     tokenYLiquidity,
