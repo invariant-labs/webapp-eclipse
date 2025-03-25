@@ -6,7 +6,7 @@ import { network, rpcAddress, rpcStatus } from '@store/selectors/solanaConnectio
 import { getSolanaConnection } from '@utils/web3/connection'
 import { actions, RpcStatus, Status } from '@store/reducers/solanaConnection'
 import { NetworkType, RECOMMENDED_RPC_ADDRESS } from '@store/consts/static'
-import { ensureError } from '@utils/utils'
+import { ensureError, getRpcNameByAddress } from '@utils/utils'
 
 export function* handleRpcError(error: string): Generator {
   const currentRpc = yield* select(rpcAddress)
@@ -41,10 +41,11 @@ export function* getConnection(): SagaGenerator<Connection> {
 export function* initConnection(): Generator {
   try {
     yield* call(getConnection)
-
+    const rpc = yield* select(rpcAddress)
+    const rpcName = getRpcNameByAddress(rpc)
     yield* put(
       snackbarsActions.add({
-        message: 'Eclipse network connected',
+        message: `Eclipse network connected via ${rpcName} RPC`,
         variant: 'success',
         persist: false
       })
