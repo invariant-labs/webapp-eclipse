@@ -1,9 +1,7 @@
 import { Grid, Typography } from '@mui/material'
 import useStyles from './styles'
-import check from '@static/svg/checkRainbow.svg'
-import airdrop from '@static/svg/airdropRainbow.svg'
 import GradientBorder from '@common/GradientBorder/GradientBorder'
-import newTab from '@static/svg/newTab.svg'
+import icons from '@static/icons'
 interface ExposureTooltipTitleProps {
   footerDescription?: string
   description?: React.ReactNode
@@ -52,10 +50,10 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
             target='_blank'
             rel='noopener noreferrer'>
             {id}
-            <img src={newTab} className={classes.newTabIcon} />
+            <img src={icons.newTab} className={classes.newTabIcon} />
           </Typography>
           <Grid className={classes.progressWrapper}>
-            <img src={check} alt='check icon' />
+            <img src={icons.check} alt='check icon' />
             <Typography>
               {`${current === Infinity || current == null ? '- ' : current}/${max}`}
             </Typography>
@@ -66,7 +64,7 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
       <Grid width='fit-content'>
         <GradientBorder borderWidth={1} borderRadius={8}>
           <Grid className={classes.footer}>
-            <img src={airdrop} alt='airdrop icon' />
+            <img src={icons.airdropRainbow} alt='airdrop icon' />
             <Typography>{footerDescription}</Typography>
           </Grid>
         </GradientBorder>

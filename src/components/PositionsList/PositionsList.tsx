@@ -8,7 +8,6 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
@@ -25,6 +24,7 @@ import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
 import { Button } from '@common/Button/Button'
 import { ROUTES } from '@utils/utils'
+import icons from '@static/icons'
 import { LiquidityPools } from '@store/types/userOverview'
 
 interface IProps {
@@ -74,7 +74,7 @@ export const PositionsList: React.FC<IProps> = ({
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
+  const hidePlus = useMediaQuery(theme.breakpoints.down(350))
   const currentData = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
       return data
@@ -281,7 +281,7 @@ export const PositionsList: React.FC<IProps> = ({
                       disabled={showNoConnected}
                       onClick={showNoConnected ? () => {} : handleRefresh}
                       className={classes.refreshIconBtn}>
-                      <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                      <img src={icons.refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                     </MuiButton>
                   </Grid>
                 </TooltipHover>
@@ -341,17 +341,21 @@ export const PositionsList: React.FC<IProps> = ({
 
                 <Grid className={classes.fullWidthWrapper}>
                   <TooltipHover title='Refresh'>
-                    <Grid display='flex' alignItems='center'>
+                    <Grid width={26} display='flex' alignItems='center'>
                       <MuiButton
                         disabled={showNoConnected}
                         onClick={showNoConnected ? () => {} : handleRefresh}
                         className={classes.refreshIconBtn}>
-                        <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                        <img
+                          src={icons.refreshIcon}
+                          className={classes.refreshIcon}
+                          alt='Refresh'
+                        />
                       </MuiButton>
                     </Grid>
                   </TooltipHover>
                   <Button scheme='pink' onClick={onAddPositionClick}>
-                    <span className={classes.buttonText}>+ Add Position</span>
+                    <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
                   </Button>
                 </Grid>
               </Grid>
