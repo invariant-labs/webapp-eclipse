@@ -785,4 +785,9 @@ export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
 export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
 
+export enum OverviewSwitcher {
+  Overview = 'Overview',
+  Wallet = 'Wallet'
+}
+
 export const STATS_CACHE_TIME = 30 * 60 * 1000
