@@ -80,7 +80,7 @@ export const getConnectorStyles = ({
       return {
         container: {
           position: 'absolute',
-          bottom: longerConnector ? -LINE_LENGTH - 85 : -LINE_LENGTH - 10,
+          bottom: longerConnector ? -LINE_LENGTH - 88 : -LINE_LENGTH - 10,
           left: '50%',
           transform: `translateX(calc(-50% + ${adjustment.x}px))`,
           width: 1.5,
