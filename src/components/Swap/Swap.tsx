@@ -265,6 +265,8 @@ export const Swap: React.FC<ISwap> = ({
   const [bestAmount, setBestAmount] = useState(new BN(0))
   const [swapType, setSwapType] = useState(SwapType.Normal)
   const [addBlur, setAddBlur] = useState(false)
+  const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
+  const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -446,19 +448,14 @@ export const Swap: React.FC<ISwap> = ({
   }, [tokenFromIndex, tokenToIndex, pools.length])
 
   useEffect(() => {
-    if (
-      inputRef === inputTarget.FROM &&
-      !swapIsLoading &&
-      !(amountFrom === '' && amountTo === '')
-    ) {
+    if (inputRef === inputTarget.FROM && !(amountFrom === '' && amountTo === '')) {
       simulateWithTimeout()
     }
   }, [
     amountFrom,
-    tokenToIndex,
-    tokenFromIndex,
+    // tokenToIndex,
+    // tokenFromIndex,
     slippTolerance,
-    swapIsLoading,
     Object.keys(poolTicks).length,
     Object.keys(tickmap).length
   ])
@@ -469,8 +466,8 @@ export const Swap: React.FC<ISwap> = ({
     }
   }, [
     amountTo,
-    tokenToIndex,
-    tokenFromIndex,
+    // tokenToIndex,
+    // tokenFromIndex,
     slippTolerance,
     Object.keys(poolTicks).length,
     Object.keys(tickmap).length
@@ -490,7 +487,7 @@ export const Swap: React.FC<ISwap> = ({
       setSimulateAmount().finally(() => {
         setThrottle(false)
       })
-    }, 1500)
+    }, 500)
     timeoutRef.current = timeout as unknown as number
   }
 
@@ -556,7 +553,8 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const setSimulateAmount = async () => {
-    if (tokenFromIndex !== null && tokenToIndex !== null) {
+    setAddBlur(true)
+    if (tokenFromIndex !== null && tokenToIndex !== null && !swapIsLoading) {
       if (inputRef === inputTarget.FROM) {
         const [simulateValue, simulateWithHopValue] = await Promise.all([
           handleSimulate(
@@ -658,19 +656,25 @@ export const Swap: React.FC<ISwap> = ({
       (!isSimulateError && !isSimulateWithHopError)
     ) {
       if (inputRef === inputTarget.FROM) {
-        if (simulateWithHopResult?.simulation?.totalAmountOut.gte(simulateResult.amountOut)) {
+        if (
+          simulateWithHopResult?.simulation?.totalAmountOut.gte(simulateResult.amountOut) &&
+          !simulateWithHopResult.error
+        ) {
           useTwoHop = true
         }
       } else {
         if (
           simulateWithHopResult?.simulation?.totalAmountIn
             .add(simulateWithHopResult?.simulation?.swapHopOne.accumulatedFee)
-            .lte(simulateResult.amountOut)
+            .lte(simulateResult.amountOut) &&
+          !simulateWithHopResult.error
         ) {
           useTwoHop = true
         }
       }
     }
+
+    console.log(useTwoHop)
 
     if (useTwoHop && simulateWithHopResult.simulation && simulateWithHopResult.route) {
       setSimulationPath({
@@ -853,6 +857,10 @@ export const Swap: React.FC<ISwap> = ({
       return 'Not enough liquidity'
     }
 
+    if (addBlur) {
+      return 'Loading'
+    }
+
     return 'Exchange'
   }
   const hasShowRateMessage = () => {
@@ -918,9 +926,6 @@ export const Swap: React.FC<ISwap> = ({
     onRefresh(tokenFromIndex, tokenToIndex)
     setRefresherTime(REFRESHER_INTERVAL)
   }
-
-  const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
-  const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
 
   useEffect(() => {
     if (isFetchingNewPool) {
@@ -1371,7 +1376,7 @@ export const Swap: React.FC<ISwap> = ({
             }}
             slippage={+slippTolerance}
             priceImpact={priceImpact}
-            isLoadingRate={getStateMessage() === 'Loading'}
+            isLoadingRate={getStateMessage() === 'Loading' || addBlur}
             simulationPath={simulationPath}
           />
           <TokensInfo
