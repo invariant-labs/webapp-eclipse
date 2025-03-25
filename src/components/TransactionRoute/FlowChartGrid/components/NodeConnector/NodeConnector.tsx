@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, SxProps, Theme } from '@mui/material'
-import { NodeConnectorProps } from '../types/types'
+import { NodeConnectorProps } from '../../types/types'
 
 // Constants
 const LINE_LENGTH = 24

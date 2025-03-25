@@ -1,7 +1,8 @@
 import { RouteTemplateProps } from '@components/TransactionRoute/TransactionRoute'
 
 export type Direction = 'right' | 'left' | 'down' | 'up' | 'right-down' | 'down-right'
-
+export type Shape = 'circle' | 'rect'
+export type LabelPos = 'bottom' | 'right'
 export interface NodeConnectorProps {
   direction?: Direction
   withArrow?: boolean
@@ -29,7 +30,7 @@ export enum CornerPosition {
 }
 
 export interface FlowNodeProps {
-  shape?: 'circle' | 'rect' | 'corner'
+  shape: Shape
   showTriangleArrow?: boolean
   arrowDirection?: 'up' | 'down' | 'left' | 'right'
   textA?: string
@@ -39,7 +40,7 @@ export interface FlowNodeProps {
   bigNode?: boolean
   connectors: Connector[]
   logoImg?: string
-  labelPos?: 'bottom' | 'right'
+  labelPos?: LabelPos
 }
 
 export interface GridCellProps {

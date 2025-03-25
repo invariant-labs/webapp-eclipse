@@ -1,5 +1,5 @@
 import { Box } from '@mui/material'
-import { FlowNode } from './components/FlowNode'
+import { FlowNode } from './components/FlowNode/FlowNode'
 import { CellDefinition, FlowChartGridProps } from './types/types'
 
 const GridCell = ({ children, colSpan = 1, rowSpan = 1 }) => {
