@@ -362,8 +362,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         slippage,
         estimatedPriceAfterSwap,
         tokenFrom,
+        tokenBetween,
         tokenTo,
-        poolIndex,
+        firstPair,
+        secondPair,
         amountIn,
         amountOut,
         byAmountIn
@@ -373,8 +375,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
           actions.swap({
             slippage,
             estimatedPriceAfterSwap,
-            poolIndex,
+            firstPair,
+            secondPair,
             tokenFrom,
+            tokenBetween,
             tokenTo,
             amountIn,
             amountOut,

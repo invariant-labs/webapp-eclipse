@@ -20,6 +20,11 @@ export enum NetworkType {
 }
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
+export enum SwapType {
+  Normal,
+  WithHop
+}
+
 export const WETH_ADDRESS = {
   [NetworkType.Mainnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Testnet]: new PublicKey('So11111111111111111111111111111111111111112'),

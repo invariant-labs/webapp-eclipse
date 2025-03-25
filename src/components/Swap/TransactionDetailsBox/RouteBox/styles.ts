@@ -35,15 +35,15 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((theme, { onePoo
   },
 
   routeLabel: {
-    ...typography.caption4,
+    ...typography.caption2,
     color: colors.invariant.text
   },
   tokenIcon: {
-    width: 24,
+    width: 26,
     borderRadius: '50%'
   },
   tokenLabel: {
-    fontSize: 14,
+    fontSize: 16,
     color: colors.invariant.textGrey
   },
   tokenLabelSkeleton: {
