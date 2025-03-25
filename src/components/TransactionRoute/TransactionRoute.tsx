@@ -92,9 +92,7 @@ const TransactionRoute: React.FC<FlowChartProps> = ({
   return (
     <Box className={classes.container}>
       <Box className={classes.graphContainer}>
-        <Typography className={classes.routeTitle}>
-          Transaction{routeData.exchanges.length > 2 ? `'s` : ''} route
-        </Typography>
+        <Typography className={classes.routeTitle}>Transaction route</Typography>
         {showCloseButton ? (
           <button className={classes.closeButton} onClick={handleClose}>
             ×
