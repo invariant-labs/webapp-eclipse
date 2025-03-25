@@ -10,7 +10,7 @@ const getSolanaConnection = (url: string): Connection => {
     return _connection
   }
 
-  _connection = new Connection(url, 'recent')
+  _connection = new Connection(url, 'confirmed')
   _network = url
 
   return _connection
