@@ -1,5 +1,4 @@
 import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
 import { formatNumberWithSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -449,7 +448,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               <TooltipHover title='Reverse tokens'>
                 <img
                   className={sharedClasses.arrows}
-                  src={SwapList}
+                  src={icons.swapListIcon}
                   alt='Arrow'
                   onClick={e => {
                     e.stopPropagation()

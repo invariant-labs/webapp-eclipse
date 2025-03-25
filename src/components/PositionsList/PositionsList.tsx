@@ -8,7 +8,6 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
@@ -25,6 +24,7 @@ import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
 import { Button } from '@common/Button/Button'
 import { ROUTES } from '@utils/utils'
+import icons from '@static/icons'
 import { LiquidityPools } from '@store/types/userOverview'
 
 interface IProps {
@@ -281,7 +281,7 @@ export const PositionsList: React.FC<IProps> = ({
                       disabled={showNoConnected}
                       onClick={showNoConnected ? () => {} : handleRefresh}
                       className={classes.refreshIconBtn}>
-                      <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                      <img src={icons.refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                     </MuiButton>
                   </Grid>
                 </TooltipHover>
@@ -346,7 +346,11 @@ export const PositionsList: React.FC<IProps> = ({
                         disabled={showNoConnected}
                         onClick={showNoConnected ? () => {} : handleRefresh}
                         className={classes.refreshIconBtn}>
-                        <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                        <img
+                          src={icons.refreshIcon}
+                          className={classes.refreshIcon}
+                          alt='Refresh'
+                        />
                       </MuiButton>
                     </Grid>
                   </TooltipHover>

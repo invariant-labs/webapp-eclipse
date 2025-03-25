@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { useSharedStyles } from '../PositionMobileCard/style/shared'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import SwapList from '@static/svg/swap-list.svg'
 import PositionStatusTooltip from '../../components/PositionStatusTooltip/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import React from 'react'
@@ -137,7 +136,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           <TooltipHover title='Reverse tokens'>
             <img
               className={sharedClasses.arrows}
-              src={SwapList}
+              src={icons.swapListIcon}
               alt='Arrow'
               onClick={e => {
                 e.stopPropagation()
