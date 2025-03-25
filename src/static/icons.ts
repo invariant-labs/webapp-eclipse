@@ -1,7 +1,3 @@
-import clearIcon from './svg/clear.svg'
-import mainnetIcon from './svg/mainnet.svg'
-import devnetIcon from './svg/devnet.svg'
-import testnetIcon from './svg/testnet.svg'
 import logoTitle from './svg/Logo.svg'
 import logoShort from './svg/LogoShort.svg'
 import arrow from './svg/arrow.svg'
@@ -11,9 +7,6 @@ import telegramIcon from './svg/telegramCircle.svg'
 import mediumIcon from './svg/mediumCircle.svg'
 import discordIcon from './svg/discordCircle.svg'
 import closeIcon from './svg/closeIcon.svg'
-import activeIcon from './svg/active.svg'
-import inactiveIcon from './svg/inactive.svg'
-import allIcon from './svg/all.svg'
 import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
 import closeSmallGreenIcon from './svg/closeSmallGreen.svg'
@@ -28,14 +21,11 @@ import plusIcon from './svg/plus.svg'
 import horizontalSwapIcon from './svg/horizontalSwapArrows.svg'
 import swapListIcon from './svg/swap-list.svg'
 import a0Logo from './svg/a0Logo.svg'
-import eclipseLogo from './svg/eclipseLogo.svg'
-import solanaLogo from './svg/solanaLogo.svg'
 import varaLogo from './svg/VaraLogo.svg'
 import warningIcon from './svg/Warning.svg'
 import circleDiscord from './svg/circle-discord.svg'
 import circleTelegram from './svg/circle-telegram.svg'
 import eclipse from './svg/eclipse.svg'
-import alephiumLogo from './svg/alephiumLogo.svg'
 import phantomWalletIcon from './svg/phantom.svg'
 import solflareWalletIcon from './svg/solflare.svg'
 import backpackWalletIcon from './svg/backpack.svg'
@@ -69,15 +59,7 @@ import swapArrows from './svg/swap-arrows.svg'
 import liquidityIcon from './svg/liquidity.svg'
 import walletIcon from './svg/wallet.svg'
 import statsIcon from './svg/stats.svg'
-import closeModal from './svg/closeModal.svg'
-import discordFill from './svg/discordFill.svg'
-import xFill from './svg/xFill.svg'
-import telegramFill from './svg/telegramFill.svg'
-import githubFill from './svg/githubFill.svg'
-import mediumFill from './svg/MediumFill.svg'
-import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
-import settings2 from './svg/settings2.svg'
 import mainnetGlow from './svg/mainnetGlow.svg'
 import testnetGlow from './svg/testnetGlow.svg'
 import active2 from './svg/active2.svg'
@@ -91,33 +73,19 @@ import faucet from './svg/faucet.svg'
 
 const icons = {
   tokenCreator,
-  docsFill,
-  mediumFill,
-  githubFill,
-  telegramFill,
-  xFill,
-  discordFill,
-  closeModal,
   statsIcon,
   walletIcon,
   liquidityIcon,
   swapArrows,
-  clear: clearIcon,
   LogoShort: logoShort,
   LogoTitle: logoTitle,
   ArrowIcon: arrow,
   NoConnected: NoCon,
-  MainnetIcon: mainnetIcon,
-  DevnetIcon: devnetIcon,
-  TestnetIcon: testnetIcon,
   GithubIcon: githubIcon,
   TelegramIcon: telegramIcon,
   DiscordIcon: discordIcon,
   mediumIcon: mediumIcon,
   closeIcon: closeIcon,
-  activeIcon: activeIcon,
-  inactiveIcon: inactiveIcon,
-  allIcon: allIcon,
   closeSmallIcon: closeSmallIcon,
   closeSmallGreenIcon: closeSmallGreenIcon,
   docsIcon: docsIcon,
@@ -132,10 +100,7 @@ const icons = {
   horizontalSwapIcon: horizontalSwapIcon,
   swapListIcon: swapListIcon,
   AlephZero: a0Logo,
-  Eclipse: eclipseLogo,
-  Solana: solanaLogo,
   Vara: varaLogo,
-  Alephium: alephiumLogo,
   PhantomWallet: phantomWalletIcon,
   SolflareWallet: solflareWalletIcon,
   BackpackWallet: backpackWalletIcon,
@@ -169,7 +134,6 @@ const icons = {
   airdropGrey,
   infoError,
   okxLogo,
-  settings2,
   mainnetGlow,
   testnetGlow,
   active2,
