@@ -170,11 +170,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading4,
     color: colors.invariant.text
   },
-  titleValue: {
-    ...typography.heading3,
-    color: colors.invariant.text,
-    fontFamily: 'Mukta'
-  },
+
   violetButton: {
     background: colors.invariant.pinkLinearGradientOpacity,
     borderRadius: 11,

@@ -1,9 +1,9 @@
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
-import { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import Refresher from '@components/Refresher/Refresher'
-import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
+import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
+import Refresher from '@common/Refresher/Refresher'
+import { Box, Grid, Hidden, Typography } from '@mui/material'
 import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
@@ -13,7 +13,7 @@ import { Link, useNavigate } from 'react-router-dom'
 import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
 import { TokenPriceData } from '@store/consts/types'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
   addressToTicker,
   formatNumberWithSuffix,
@@ -30,6 +30,7 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
+import { Button } from '@common/Button/Button'
 import { Information } from '@components/Information/Information'
 
 interface IProps {
@@ -292,7 +293,7 @@ const PositionDetails: React.FC<IProps> = ({
                     title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
                     <Box>
                       <Button
-                        className={classes.lockButton}
+                        scheme='pink'
                         disabled={isLocked || isPreview}
                         variant='contained'
                         onClick={() => {
@@ -306,6 +307,7 @@ const PositionDetails: React.FC<IProps> = ({
                 ) : (
                   <TooltipHover title={'Unlocking liquidity is forbidden'}>
                     <Button
+                      scheme='pink'
                       disabled
                       className={classes.unlockButton}
                       variant='contained'
@@ -317,7 +319,7 @@ const PositionDetails: React.FC<IProps> = ({
               </Hidden>
               <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
                 <Button
-                  className={classes.button}
+                  scheme='pink'
                   variant='contained'
                   onClick={() => {
                     const parsedFee = parseFeeToPathFee(fee)

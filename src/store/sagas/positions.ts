@@ -843,6 +843,12 @@ export function* handleGetPositionsList() {
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
 
+    if (!wallet) {
+      yield* put(actions.setLockedPositionsList([]))
+      yield* put(actions.setPositionsList([[], { head: 0, bump: 0 }, false]))
+      return
+    }
+
     const { head, bump } = yield* call(
       [marketProgram, marketProgram.getPositionList],
       wallet.publicKey

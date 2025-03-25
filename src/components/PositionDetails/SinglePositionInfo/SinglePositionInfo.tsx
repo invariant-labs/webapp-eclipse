@@ -1,5 +1,5 @@
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
-import { Box, Button, Grid, Hidden, Typography } from '@mui/material'
+import { Box, Grid, Hidden, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import classNames from 'classnames'
 import { useMemo, useRef, useState } from 'react'
@@ -10,7 +10,7 @@ import { useNavigate } from 'react-router-dom'
 import { TokenPriceData } from '@store/consts/types'
 import lockIcon from '@static/svg/lock.svg'
 import unlockIcon from '@static/svg/unlock.svg'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import icons from '@static/icons'
 import { addressToTicker, ROUTES } from '@utils/utils'
 import {
@@ -19,7 +19,8 @@ import {
   WETH_CLOSE_POSITION_LAMPORTS_TEST
 } from '@store/consts/static'
 import { BN } from '@coral-xyz/anchor'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { Button } from '@common/Button/Button'
 
 interface IProp {
   fee: number
@@ -213,51 +214,48 @@ const SinglePositionInfo: React.FC<IProp> = ({
                         : ''
                       : 'Insufficient ETH to close position'
               }>
-              <Button
-                className={classes.closeButton}
-                disabled={isLocked || !canClosePosition || isPreview}
-                variant='contained'
-                onClick={() => {
-                  if (!userHasStakes) {
-                    closePosition()
-                  } else {
-                    setIsModalOpen(true)
-                    blurContent()
-                  }
-                }}>
-                {canClosePosition || isPreview ? 'Close position' : 'Lacking ETH'}
-              </Button>
+              <Box>
+                <Button
+                  scheme='green'
+                  height={36}
+                  padding='0 6px'
+                  borderRadius={14}
+                  disabled={isLocked || !canClosePosition || isPreview}
+                  onClick={() => {
+                    if (!userHasStakes) {
+                      closePosition()
+                    } else {
+                      setIsModalOpen(true)
+                      blurContent()
+                    }
+                  }}>
+                  {canClosePosition || isPreview ? 'Close position' : 'Lacking ETH'}
+                </Button>
+              </Box>
             </TooltipHover>
             <Hidden mdUp>
               {!isLocked ? (
                 <TooltipHover
                   title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
                   <Box>
-                    <Button
-                      className={classes.lockButton}
-                      disabled={isLocked || isPreview}
-                      variant='contained'
-                      onClick={onModalOpen}>
+                    <Button scheme='pink' disabled={isLocked || isPreview} onClick={onModalOpen}>
                       <img src={lockIcon} alt='Lock' />
                     </Button>
                   </Box>
                 </TooltipHover>
               ) : (
                 <TooltipHover title={'Unlocking liquidity is forbidden'}>
-                  <Button
-                    disabled
-                    className={classes.unlockButton}
-                    variant='contained'
-                    onClick={() => {}}>
-                    <img src={unlockIcon} alt='Lock' />
-                  </Button>
+                  <Box>
+                    <Button scheme='green' disabled onClick={() => {}}>
+                      <img src={unlockIcon} alt='Lock' />
+                    </Button>
+                  </Box>
                 </TooltipHover>
               )}
             </Hidden>
             <Hidden smUp>
               <Button
-                className={classes.button}
-                variant='contained'
+                scheme='pink'
                 onClick={() => {
                   const address1 = addressToTicker(network, tokenX.name)
                   const address2 = addressToTicker(network, tokenY.name)

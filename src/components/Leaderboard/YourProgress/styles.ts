@@ -138,7 +138,6 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       height: '24px',
       background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
       borderRadius: '8px',
-      fontStyle: 'normal',
       fontWeight: 700,
       fontSize: '12px',
       lineHeight: '15px',

@@ -1,6 +1,6 @@
 import useStyles from './style'
 import PositionStatusTooltip from '../PositionStatusTooltip/PositionStatusTooltip'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 export interface IPromotedPoolPopover {
   isActive?: boolean

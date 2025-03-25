@@ -1,4 +1,4 @@
-import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import loader from '@static/gif/loading2.gif'
 import SwapPosition from '@static/svg/swap-position.svg'
 import {
@@ -13,8 +13,9 @@ import loadingAnimation from '@static/gif/loading.gif'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { FormatNumberThreshold, PrefixConfig } from '@store/consts/types'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { theme } from '@static/theme'
+import { Button } from '@common/Button/Button'
 
 export interface BoxInfoToken extends Omit<ILiquidityToken, 'claimValue' | 'liqValue'> {
   value: number
@@ -94,8 +95,10 @@ export const BoxInfo: React.FC<{
           <TooltipHover title={isPreview ? "Can't claim fee in preview" : ''}>
             <Box>
               <Button
-                className={classes.violetButton}
-                variant='contained'
+                scheme='pink'
+                height={32}
+                padding='0 24px'
+                borderRadius={12}
                 onClick={onClickButton}
                 disabled={
                   (Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) &&
