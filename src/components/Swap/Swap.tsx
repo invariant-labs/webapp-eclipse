@@ -1358,7 +1358,7 @@ export const Swap: React.FC<ISwap> = ({
                   tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
                   amount={rateReversed ? 1 / swapRate : swapRate}
                   tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
-                  loading={getStateMessage() === 'Loading' || rateLoading}
+                  loading={getStateMessage() === 'Loading' || rateLoading || addBlur}
                 />
               </Box>
             ) : null}
