@@ -41,13 +41,14 @@ const TransactionRoute: React.FC<FlowChartProps> = ({
 
   return (
     <Box className={classes.container}>
+      {showCloseButton ? (
+        <button className={classes.closeButton} onClick={handleClose}>
+          ×
+        </button>
+      ) : null}
       <Box className={classes.graphContainer}>
         <Typography className={classes.routeTitle}>Transaction route</Typography>
-        {showCloseButton ? (
-          <button className={classes.closeButton} onClick={handleClose}>
-            ×
-          </button>
-        ) : null}
+
         <Box>
           {isLoading ? (
             <TransactionRouteLoader />
