@@ -1,13 +1,4 @@
-import {
-  Grid,
-  TableRow,
-  TableCell,
-  Button,
-  Typography,
-  useMediaQuery,
-  Box,
-  Skeleton
-} from '@mui/material'
+import { Grid, TableRow, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { IPositionItem } from '../../../types'
@@ -20,8 +11,7 @@ import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { useSharedStyles } from '../PositionMobileCard/style/shared'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
-import SwapList from '@static/svg/swap-list.svg'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import PositionStatusTooltip from '../../components/PositionStatusTooltip/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import React from 'react'
@@ -30,10 +20,11 @@ import { singlePositionData } from '@store/selectors/positions'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
-import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
+import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
 import { useSkeletonStyle } from './styles/skeletons'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { Button } from '@common/Button/Button'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -61,6 +52,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   poolAddress,
   tokenYIcon,
   currentPrice,
+  isFullRange,
   id,
   fee,
   min,
@@ -74,6 +66,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenYLiq,
   network,
   loading,
+  unclaimedFeesInUSD = { value: 0, loading: false },
   handleClaimFee,
   handleLockPosition,
   handleClosePosition
@@ -104,16 +97,15 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     return loading?.[item] ?? false
   }
 
-  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage, unclaimedFeesInUSD } =
-    useUnclaimedFee({
-      currentPrice,
-      id,
-      position,
-      tokenXLiq,
-      tokenYLiq,
-      positionSingleData,
-      xToY
-    })
+  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage } = useTokenValues({
+    currentPrice,
+    id,
+    position,
+    tokenXLiq,
+    tokenYLiq,
+    positionSingleData,
+    xToY
+  })
 
   const { isPromoted, pointsPerSecond, estimated24hPoints } = usePromotedPool(
     poolAddress,
@@ -144,7 +136,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           <TooltipHover title='Reverse tokens'>
             <img
               className={sharedClasses.arrows}
-              src={SwapList}
+              src={icons.swapListIcon}
               alt='Arrow'
               onClick={e => {
                 e.stopPropagation()
@@ -291,6 +283,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <MinMaxChart
+        isFullRange={isFullRange}
         min={Number(xToY ? min : 1 / max)}
         max={Number(xToY ? max : 1 / min)}
         current={
@@ -307,7 +300,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <Button
-        className={classes.button}
+        scheme='green'
         onClick={e => {
           e.stopPropagation()
           handleClick(e)

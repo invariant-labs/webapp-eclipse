@@ -1,13 +1,11 @@
-import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/ExchangeAmountInput'
 import Slippage from '@components/Modals/Slippage/Slippage'
-import Refresher from '@components/Refresher/Refresher'
+import Refresher from '@common/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
 import { Box, Button, Grid, Typography } from '@mui/material'
-import refreshIcon from '@static/svg/refresh.svg'
-import settingIcon from '@static/svg/settings.svg'
-import SwapArrows from '@static/svg/swap-arrows.svg'
+
 import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
@@ -22,6 +20,7 @@ import {
   convertBalanceToBN,
   findPairs,
   handleSimulate,
+  initialXtoY,
   printBN,
   ROUTES,
   trimLeadingZeros
@@ -38,7 +37,7 @@ import useStyles from './style'
 import { TokenPriceData } from '@store/consts/types'
 import TokensInfo from './TokensInfo/TokensInfo'
 import { VariantType } from 'notistack'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
@@ -187,7 +186,15 @@ export const Swap: React.FC<ISwap> = ({
   const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
   const [isPairGivingPoints, setIsPairGivingPoints] = React.useState<boolean>(false)
-  const [rateReversed, setRateReversed] = React.useState<boolean>(false)
+  const [rateReversed, setRateReversed] = React.useState<boolean>(
+    tokenFromIndex && tokenToIndex
+      ? !initialXtoY(
+          tokens[tokenFromIndex].assetAddress.toString(),
+          tokens[tokenToIndex].assetAddress.toString()
+        )
+      : false
+  )
+  const [rateLoading, setRateLoading] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
@@ -395,7 +402,15 @@ export const Swap: React.FC<ISwap> = ({
   }, [swap])
 
   useEffect(() => {
-    setRateReversed(false)
+    if (tokenFromIndex !== null && tokenToIndex !== null) {
+      setRateReversed(
+        !initialXtoY(
+          tokens[tokenFromIndex].assetAddress.toString(),
+          tokens[tokenToIndex].assetAddress.toString()
+        )
+      )
+      setRateLoading(false)
+    }
   }, [tokenFromIndex, tokenToIndex])
 
   const getAmountOut = (assetFor: SwapToken) => {
@@ -739,13 +754,13 @@ export const Swap: React.FC<ISwap> = ({
                     tokenToIndex === null ||
                     tokenFromIndex === tokenToIndex
                   }>
-                  <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                  <img src={icons.refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                 </Button>
               </Grid>
             </TooltipHover>
             <TooltipHover title='Settings'>
               <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
-                <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
+                <img src={icons.settingIcon} className={classes.settingsIcon} alt='Settings' />
               </Button>
             </TooltipHover>
           </Box>
@@ -852,6 +867,7 @@ export const Swap: React.FC<ISwap> = ({
               )}
               onClick={() => {
                 if (lockAnimation) return
+                setRateLoading(true)
                 setLockAnimation(!lockAnimation)
                 setRotates(rotates + 1)
                 swap !== null ? setSwap(!swap) : setSwap(true)
@@ -872,7 +888,7 @@ export const Swap: React.FC<ISwap> = ({
                   isPairGivingPoints && classes.componentBackground
                 )}>
                 <img
-                  src={SwapArrows}
+                  src={icons.swapArrows}
                   style={{
                     transform: `rotate(${-rotates * 180}deg)`
                   }}
@@ -1036,7 +1052,7 @@ export const Swap: React.FC<ISwap> = ({
                   tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
                   amount={rateReversed ? 1 / swapRate : swapRate}
                   tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
-                  loading={getStateMessage() === 'Loading'}
+                  loading={getStateMessage() === 'Loading' || rateLoading}
                 />
               </Box>
             ) : null}

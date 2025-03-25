@@ -4,7 +4,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { colors, theme, typography } from '@static/theme'
 import { useStyles } from './style'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { shortenAddress } from '@utils/uiUtils'
 import { PublicKey } from '@solana/web3.js'
 import { Link } from 'react-router-dom'
@@ -115,15 +115,12 @@ const LeaderboardLpItem: React.FC<LeaderboardLpItemProps> = props => {
         }}>
         <Typography style={{ color: getColorByPlace(rank) }}>{rank}</Typography>
 
-        <Typography style={{ paddingRight: '24px', width: 'auto' }}>
-          <span className={classes.address}>
-            {domain
-              ? isVerySmallScreen || isNarrowMediumScreen
-                ? shortDomain
-                : domain
-              : shortenAddress(address.toString(), 4)}{' '}
-          </span>
-
+        <Typography>
+          {domain
+            ? isVerySmallScreen || isNarrowMediumScreen
+              ? shortDomain
+              : domain
+            : shortenAddress(address.toString(), 4)}{' '}
           {isYou ? (
             <Typography style={{ color: colors.invariant.pink, marginLeft: '5px' }}>
               (You)

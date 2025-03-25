@@ -1,8 +1,7 @@
-import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
 import { Grid, Typography } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
@@ -18,7 +17,7 @@ import FeeSwitch from '../FeeSwitch/FeeSwitch'
 import { useStyles } from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
@@ -32,6 +31,7 @@ import {
   trimDecimalZeros
 } from '@utils/utils'
 import { createButtonActions } from '@utils/uiUtils'
+import icons from '@static/icons'
 
 export interface InputState {
   value: string
@@ -368,7 +368,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           </Grid>
 
           <TooltipHover title='Reverse tokens'>
-            <img className={classes.arrows} src={SwapList} alt='Arrow' onClick={reverseTokens} />
+            <img
+              className={classes.arrows}
+              src={icons.swapListIcon}
+              alt='Arrow'
+              onClick={reverseTokens}
+            />
           </TooltipHover>
 
           <Grid className={classes.selectWrapper}>

@@ -1,8 +1,7 @@
 import LiquidationRangeInfo from '@components/PositionDetails/LiquidationRangeInfo/LiquidationRangeInfo'
-import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 
 import { Card, Grid, Typography } from '@mui/material'
-import activeLiquidity from '@static/svg/activeLiquidity.svg'
 import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
@@ -14,7 +13,8 @@ import React, { useEffect, useState } from 'react'
 import { ILiquidityToken } from '../SinglePositionInfo/consts'
 import useStyles from './style'
 import { getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import icons from '@static/icons'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -155,7 +155,11 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                     liquidity chart. Active liquidity is determined by the maximum price range
                     resulting from the statistical volume of exchanges for the last 7 days.
                   </Typography>
-                  <img className={classes.liquidityImg} src={activeLiquidity} alt='Liquidity' />
+                  <img
+                    className={classes.liquidityImg}
+                    src={icons.activeLiquidity}
+                    alt='Liquidity'
+                  />
                 </Grid>
                 <Typography className={classes.liquidityNote}>
                   Note: active liquidity borders are always aligned to the nearest initialized
