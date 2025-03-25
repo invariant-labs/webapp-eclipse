@@ -74,7 +74,7 @@ export const Primary: Story = {
       tokenYReserve: Keypair.generate().publicKey,
       feeGrowthGlobalY: new BN(0)
     },
-
+    unclaimedFeesInUSD: { value: 0, loading: false },
     id: '0',
     address: '',
     tokenXLiq: 5000,

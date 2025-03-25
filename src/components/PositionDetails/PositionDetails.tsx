@@ -4,7 +4,6 @@ import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/S
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import Refresher from '@common/Refresher/Refresher'
 import { Box, Grid, Hidden, Typography } from '@mui/material'
-import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'
@@ -28,8 +27,6 @@ import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import lockIcon from '@static/svg/lock.svg'
-import unlockIcon from '@static/svg/unlock.svg'
 import { Button } from '@common/Button/Button'
 
 interface IProps {
@@ -187,7 +184,7 @@ const PositionDetails: React.FC<IProps> = ({
         <Grid className={classes.backContainer} container>
           <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none' }}>
             <Grid className={classes.back} container item>
-              <img className={classes.backIcon} src={backIcon} alt='Back' />
+              <img className={classes.backIcon} src={icons.backIcon} alt='Back' />
               <Typography className={classes.backText}>Positions</Typography>
             </Grid>
           </Link>
@@ -268,13 +265,13 @@ const PositionDetails: React.FC<IProps> = ({
                       setIsLockPositionModalOpen(true)
                       blurContent()
                     }}>
-                    <img src={lockIcon} alt='Lock' />
+                    <img src={icons.lockIcon} alt='Lock' />
                   </Button>
                 </TooltipHover>
               ) : (
                 <TooltipHover title={'Unlocking liquidity is forbidden'}>
                   <Button width={45} scheme='pink' disabled variant='contained' onClick={() => {}}>
-                    <img src={unlockIcon} alt='unlock' />
+                    <img src={icons.unlockIcon} alt='unlock' />
                   </Button>
                 </TooltipHover>
               )}

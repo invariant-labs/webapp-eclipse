@@ -88,8 +88,56 @@ import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
 import faucet from './svg/faucet.svg'
+import SearchIcon from './svg/lupaDark.svg'
+import allDomains from '@static/svg/allDomains.svg'
+import turboTap from '@static/svg/turboTap.svg'
+import nucleus from '@static/svg/nucleus.svg'
+import navRight from '@static/svg/navRight.svg'
+import navLeft from '@static/svg/navLeft.svg'
+import check from '@static/svg/checkFill.svg'
+import celestialMammoth from '@static/svg/celestialMammoth.svg'
+import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
+import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
+import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
+import ensofi from '@static/svg/ensofi.svg'
+import disconnectIcon from '@static/svg/disconnect.svg'
+import refreshIcon from '@static/svg/refresh.svg'
+import backIcon from '@static/svg/back-arrow.svg'
+import settingIcon from '@static/svg/settings.svg'
+import activeLiquidity from '@static/svg/activeLiquidity.svg'
+import RevertIcon from '@static/svg/revert.svg'
+import unlockIcon from '@static/svg/unlock.svg'
+import SwapPosition from '@static/svg/swap-position.svg'
+import handleMax from '@static/svg/narrowChartMaxHandle.svg'
+import handleMin from '@static/svg/narrowChartMinHandle.svg'
+import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
+import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
 
 const icons = {
+  ensofi,
+  ZoomInIcon,
+  ZoomOutIcon,
+  handleMax,
+  handleMin,
+  SwapPosition,
+  RevertIcon,
+  unlockIcon,
+  activeLiquidity,
+  backIcon,
+  settingIcon,
+  refreshIcon,
+  disconnectIcon,
+  leaderboardGolden,
+  leaderboardSilver,
+  leaderboardBronze,
+  allDomains,
+  turboTap,
+  nucleus,
+  navRight,
+  navLeft,
+  check,
+  celestialMammoth,
+  SearchIcon,
   tokenCreator,
   docsFill,
   mediumFill,
