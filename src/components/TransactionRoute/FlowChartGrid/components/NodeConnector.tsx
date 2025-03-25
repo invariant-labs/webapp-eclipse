@@ -22,9 +22,8 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
   shape,
   longerConnector = false
 }) => {
-  // Helper functions
   const getPositionAdjustment = () => {
-    return shape === 'circle' ? { x: 0, y: 0 } : { x: 0, y: 0 }
+    return shape === 'circle' ? { x: 0, y: 0.3 } : { x: -0, y: 0.3 }
   }
 
   const createArrowStyle = (arrowDirection: 'left' | 'right' | 'up' | 'down'): SxProps<Theme> => {
@@ -74,7 +73,6 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
   const getConnectorStyles = (): ConnectorStyles => {
     const adjustment = getPositionAdjustment()
 
-    // Pre-calculate lengths that would otherwise be declared in case blocks
     const downLength = longerConnector ? LINE_LENGTH + 80 : LINE_LENGTH + 6
     const upLength = longerConnector ? LINE_LENGTH + 60 : LINE_LENGTH
 
@@ -83,15 +81,14 @@ export const NodeConnector: React.FC<NodeConnectorProps> = ({
         return {
           container: {
             position: 'absolute',
-            right: -LINE_LENGTH,
+            left: '100%',
             top: '50%',
             transform: `translateY(calc(-50% + ${adjustment.y}px))`,
-            height: '1px',
             display: 'flex',
             alignItems: 'center'
           },
           line: {
-            width: LINE_LENGTH,
+            width: '100px',
             height: '0.5px',
             backgroundColor: LINE_COLOR
           },

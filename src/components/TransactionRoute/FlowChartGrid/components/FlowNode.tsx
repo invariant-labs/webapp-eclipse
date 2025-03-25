@@ -4,57 +4,123 @@ import { NodeConnector } from './NodeConnector'
 import { typography, colors } from '@static/theme'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
-import { FlowNodeProps } from '../types/types'
+import { CornerPosition, FlowNodeProps } from '../types/types'
 
 export const FlowNode: React.FC<FlowNodeProps> = ({
   shape,
   textA,
   dexInfo,
   textB,
-  bigNode = false,
   connectors,
   logoImg,
-  labelPos = 'bottom',
-  showTriangleArrow,
-  arrowDirection = 'right' // New prop: 'right', 'left', 'up', or 'down'
+  cornerPosition,
+  bigNode = false,
+  labelPos = 'bottom'
 }) => {
   const circleSize = bigNode ? 36 : 27
   const rectWidth = 90
   const rectHeight = 50
 
-  // Define triangle arrow styles based on direction
-  const getTriangleStyles = () => {
-    switch (arrowDirection) {
-      case 'right':
-        return {
-          borderTop: '6px solid transparent',
-          borderBottom: '6px solid transparent',
-          borderLeft: `12px solid ${colors.invariant.textGrey}`
-        }
-      case 'left':
-        return {
-          borderTop: '6px solid transparent',
-          borderBottom: '6px solid transparent',
-          borderRight: `12px solid ${colors.invariant.textGrey}`
-        }
-      case 'up':
-        return {
-          borderLeft: '6px solid transparent',
-          borderRight: '6px solid transparent',
-          borderBottom: `12px solid ${colors.invariant.textGrey}`
-        }
-      case 'down':
-        return {
-          borderLeft: '6px solid transparent',
-          borderRight: '6px solid transparent',
-          borderTop: `12px solid ${colors.invariant.textGrey}`
-        }
-      default:
-        return {
-          borderTop: '6px solid transparent',
-          borderBottom: '6px solid transparent',
-          borderLeft: `12px solid ${colors.invariant.textGrey}`
-        }
+  const renderFlexLines = () => {
+    const baseLineStyle = {
+      position: 'absolute',
+      backgroundColor: 'rgba(255, 255, 255, 0.2)',
+      zIndex: 11
+    }
+
+    switch (cornerPosition) {
+      case CornerPosition.BottomLeft:
+        return (
+          <>
+            <Box
+              sx={{
+                ...baseLineStyle,
+                width: `50%`,
+                height: '0.5px',
+                top: '49%',
+                left: '0%'
+              }}
+            />
+            <Box
+              sx={{
+                ...baseLineStyle,
+                width: '0.5px',
+                height: `57%`,
+                top: '51%',
+                left: '49.5%'
+              }}
+            />
+          </>
+        )
+      case CornerPosition.TopLeft:
+        return (
+          <>
+            <Box
+              sx={{
+                ...baseLineStyle,
+                width: `50%`,
+                height: '0.5px',
+                top: '50%',
+                left: '0%'
+              }}
+            />
+            <Box
+              sx={{
+                ...baseLineStyle,
+                width: '0.5px',
+                height: `52%`,
+                top: '-2%',
+                left: '49.5%'
+              }}
+            />
+          </>
+        )
+      case CornerPosition.TopRight:
+        return (
+          <>
+            <Box
+              sx={{
+                ...baseLineStyle,
+                width: `50%`,
+                height: '0.5px',
+                top: '50%',
+                left: '50%'
+              }}
+            />
+            <Box
+              sx={{
+                ...baseLineStyle,
+                width: '1px',
+                height: `50%`,
+                top: '0%',
+                left: '50%'
+              }}
+            />
+          </>
+        )
+      case CornerPosition.BottomRight:
+        return (
+          <>
+            <Box
+              sx={{
+                ...baseLineStyle,
+                width: `50%`,
+                height: '0.5px',
+                top: '50%',
+                left: '50%'
+              }}
+            />
+            <Box
+              sx={{
+                ...baseLineStyle,
+                width: '1px',
+                height: `50%`,
+                top: '50%',
+                left: '50%'
+              }}
+            />
+          </>
+        )
     }
   }
 
@@ -79,23 +145,13 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
           alignItems: 'center',
           position: 'absolute',
           zIndex: 10,
-          border: shape === 'corner' ? 'none' : '1px solid #A9B6BF',
+          border: cornerPosition ? 'none' : '1px solid #A9B6BF',
           gap: '6px',
           backgroundImage: shape === 'circle' && logoImg ? `url(${logoImg})` : 'none',
           backgroundSize: 'cover',
           backgroundPosition: 'center'
         }}>
-        {showTriangleArrow && shape !== 'circle' && (
-          <Box
-            sx={{
-              width: 0,
-              height: 0,
-              position: 'absolute',
-              zIndex: 11,
-              ...getTriangleStyles()
-            }}
-          />
-        )}
+        {shape !== 'circle' && renderFlexLines()}
 
         {dexInfo && (
           <Typography

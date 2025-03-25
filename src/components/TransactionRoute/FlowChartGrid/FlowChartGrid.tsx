@@ -42,6 +42,7 @@ export const FlowChartGrid = ({ gridDefinition, cellSize = 80 }: FlowChartGridPr
         <FlowNode
           shape={cell.shape}
           bigNode={cell.bigNode}
+          cornerPosition={cell.cornerPosition}
           textA={cell.textA}
           logoImg={cell.logoImg}
           arrowDirection={cell.arrowDirection}

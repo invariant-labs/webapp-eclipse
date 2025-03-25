@@ -10,7 +10,7 @@ import {
 } from './FlowChartGrid/utils/generateTemplates'
 import { BN } from '@coral-xyz/anchor'
 import TransactionRouteLoader from './FlowChartGrid/components/TransactionRouteLoader/TransactionRouteLoader'
-import { Direction, FlowChartProps } from './FlowChartGrid/types/types'
+import { CornerPosition, Direction, FlowChartProps } from './FlowChartGrid/types/types'
 import useStyles from './style'
 
 export interface DexInfo {
@@ -31,6 +31,7 @@ export interface NodeDefinition {
   shape?: 'circle' | 'rect' | 'corner'
   bigNode?: boolean
   arrowDirection?: 'up' | 'down' | 'left' | 'right'
+  cornerPosition?: CornerPosition
   showTriangleArrow?: boolean
   labelPos?: 'bottom' | 'right'
   textA?: string

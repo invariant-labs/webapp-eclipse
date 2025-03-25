@@ -1,4 +1,5 @@
 import { RouteTemplateProps, GridDefinition } from '@components/TransactionRoute/TransactionRoute'
+import { CornerPosition } from '../types/types'
 
 export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition => {
   const { sourceToken, destinationToken, exchanges } = data
@@ -18,8 +19,8 @@ export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition
         type: 'node',
         shape: 'rect',
         showTriangleArrow: true,
-        arrowDirection: 'down',
-        connectors: [{ direction: 'left', withArrow: true }, { direction: 'down' }]
+        cornerPosition: CornerPosition.BottomLeft,
+        connectors: [{ direction: 'down' }]
       }
     ],
     [null, null],
@@ -54,6 +55,7 @@ export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition
         type: 'node',
         showTriangleArrow: true,
         arrowDirection: 'left',
+        cornerPosition: CornerPosition.TopLeft,
         shape: 'rect',
         connectors: [{ direction: 'left', withArrow: true, longerConnector: true }]
       }

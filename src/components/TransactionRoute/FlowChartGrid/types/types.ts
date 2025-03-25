@@ -21,6 +21,12 @@ export interface Connector {
   longerConnector?: boolean
   withArrow?: boolean
 }
+export enum CornerPosition {
+  TopLeft = 'top-left',
+  TopRight = 'top-right',
+  BottomLeft = 'bottom-left',
+  BottomRight = 'bottom-right'
+}
 
 export interface FlowNodeProps {
   shape?: 'circle' | 'rect' | 'corner'
@@ -29,6 +35,7 @@ export interface FlowNodeProps {
   textA?: string
   textB?: string
   dexInfo?: DexInfo
+  cornerPosition?: CornerPosition
   bigNode?: boolean
   connectors: Connector[]
   logoImg?: string
@@ -45,7 +52,7 @@ export interface CellDefinition {
   type?: 'node'
   shape?: 'circle' | 'rect' | 'corner'
   arrowDirection?: 'up' | 'down' | 'left' | 'right'
-
+  cornerPosition?: CornerPosition
   bigNode?: boolean
   showTriangleArrow?: boolean
   textA?: string

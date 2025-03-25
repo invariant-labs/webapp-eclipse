@@ -709,19 +709,19 @@ export const Swap: React.FC<ISwap> = ({
 
   const [isTransactionRouteModalOpen, setTransactionRouteModalOpen] = useState(false)
   const [isRouteLoading, setRouteLoading] = useState(false)
-  const [route, setRoute] = useState<RouteTemplateProps | undefined>(undefined)
+  const [route, setRoute] = useState<RouteTemplateProps | undefined>(routes[0])
 
   const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
     let currentIndex = 0
 
     const updateRoute = () => {
-      setRouteLoading(true)
+      // setRouteLoading(true)
 
       setTimeout(() => {
-        setRoute(routes[currentIndex])
+        // setRoute(routes[currentIndex])
 
         setTimeout(() => {
-          setRouteLoading(false)
+          // setRouteLoading(false)
 
           setTimeout(() => {
             currentIndex = (currentIndex + 1) % routes.length
