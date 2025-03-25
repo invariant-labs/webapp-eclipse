@@ -267,6 +267,7 @@ export const Swap: React.FC<ISwap> = ({
   const [addBlur, setAddBlur] = useState(false)
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
+  const [isReversingTokens, setIsReversingTokens] = useState(false)
 
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -448,7 +449,11 @@ export const Swap: React.FC<ISwap> = ({
   }, [tokenFromIndex, tokenToIndex, pools.length])
 
   useEffect(() => {
-    if (inputRef === inputTarget.FROM && !(amountFrom === '' && amountTo === '')) {
+    if (
+      inputRef === inputTarget.FROM &&
+      !isReversingTokens &&
+      !(amountFrom === '' && amountTo === '')
+    ) {
       simulateWithTimeout()
     }
   }, [
@@ -461,7 +466,11 @@ export const Swap: React.FC<ISwap> = ({
   ])
 
   useEffect(() => {
-    if (inputRef === inputTarget.TO && !(amountFrom === '' && amountTo === '')) {
+    if (
+      inputRef === inputTarget.TO &&
+      !isReversingTokens &&
+      !(amountFrom === '' && amountTo === '')
+    ) {
       simulateWithTimeout()
     }
   }, [
@@ -946,6 +955,9 @@ export const Swap: React.FC<ISwap> = ({
       void setSimulateAmount()
       setWasIsFetchingNewPoolRun(false)
       setWasSwapIsLoadingRun(false)
+      if (isReversingTokens) {
+        setIsReversingTokens(false)
+      }
     }
   }, [wasIsFetchingNewPoolRun, wasSwapIsLoadingRun, isFetchingNewPool, swapIsLoading])
 
@@ -1167,6 +1179,7 @@ export const Swap: React.FC<ISwap> = ({
               )}
               onClick={() => {
                 if (lockAnimation) return
+                setIsReversingTokens(true)
                 setRateLoading(true)
                 setLockAnimation(!lockAnimation)
                 setRotates(rotates + 1)
