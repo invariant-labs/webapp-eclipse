@@ -34,9 +34,34 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
   const tasks = [
     {
+      id: 'EnsoFi',
+      link: 'https://app.ensofi.xyz/',
+      title: 'Reach TOP 1000',
+      img: icons.ensofi,
+      max: 1000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            Make it to the TOP 1000 and enjoy rewards in the EnsoFi Points Program every two weeks.
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: 'EnsoFi Points every 2 weeks',
+      completed: userStats ? currentRanking <= 1000 : false
+    },
+    {
       id: 'AllDomains',
       link: 'https://eclipse.alldomains.id/',
-      title: 'Reach TOP2000',
+      title: 'Reach TOP 2000',
       a: 'AllDomains',
       img: icons.allDomains,
       max: 2000,

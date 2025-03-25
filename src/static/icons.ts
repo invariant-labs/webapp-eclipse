@@ -99,6 +99,7 @@ import celestialMammoth from '@static/svg/celestialMammoth.svg'
 import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
 import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
 import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
+import ensofi from '@static/svg/ensofi.svg'
 import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
@@ -113,6 +114,7 @@ import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
 
 const icons = {
+  ensofi,
   ZoomInIcon,
   ZoomOutIcon,
   handleMax,
