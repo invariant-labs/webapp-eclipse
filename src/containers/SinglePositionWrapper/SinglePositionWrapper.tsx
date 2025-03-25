@@ -30,7 +30,6 @@ import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
-import icons from '@static/icons'
 import { theme } from '@static/theme'
 
 export interface IProps {
@@ -459,15 +458,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           newVersion
           themeDark
           style={isMobile ? { paddingTop: 8 } : {}}
-          onAction={() => {
-            navigate(ROUTES.getNewPositionRoute('0_01'))
-          }}
           roundedCorners={true}
-          desc='or start exploring liquidity pools now!'
-          buttonName='Explore pools'
+          mainTitle='Wallet is not connected
+'
+          desc='No liquidity positions to show
+'
+          withButton={false}
           connectButton={true}
           onAction2={() => dispatch(walletActions.connect(false))}
-          img={icons.NoConnected}
         />
       </Grid>
     )
