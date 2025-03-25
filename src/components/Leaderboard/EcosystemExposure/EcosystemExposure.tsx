@@ -162,7 +162,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
           </Grid>
 
           <Grid className={classes.sliderWrapper} gap='20px' justifyContent='center'>
-            {Array.from({ length: 3 }).map((_, index) => (
+            {Array.from({ length: isSm ? 3 : 4 }).map((_, index) => (
               <Skeleton key={index} variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
                 <Grid sx={{ width: 64, height: 64 }} />
               </Skeleton>
