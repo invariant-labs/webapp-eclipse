@@ -50,7 +50,7 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((theme, { onePoo
     width: 40
   },
   loader: {
-    padding: '12px 30px 12px 30px',
+    padding: '12px 18px 12px 18px',
     borderBottom: `1px solid ${colors.invariant.component}`,
     background: colors.invariant.componentBcg,
     opacity: 0,

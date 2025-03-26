@@ -78,7 +78,7 @@ const RouteBox: React.FC<IProps> = ({
             <Box className={classes.tokenContainer}>
               <img src={tokenFrom?.logoURI} className={classes.tokenIcon} />
               <Typography className={classes.tokenLabel}>
-                {tokenFrom?.symbol.length ?? 0 > MAX_DIGITS
+                {(tokenFrom?.symbol.length ?? 0) > MAX_DIGITS
                   ? tokenFrom?.symbol.slice(0, MAX_DIGITS) + '...'
                   : tokenFrom?.symbol}
               </Typography>
@@ -93,7 +93,7 @@ const RouteBox: React.FC<IProps> = ({
 
               <Typography className={classes.routeLabel}>
                 {`${formatNumberWithoutSuffix(printBN(firstAmount ?? new BN(0), tokenFrom?.decimals ?? 0))} ${
-                  tokenFrom?.symbol.length ?? 0 > MAX_DIGITS
+                  (tokenFrom?.symbol.length ?? 0) > MAX_DIGITS
                     ? tokenFrom?.symbol.slice(0, MAX_DIGITS) + '...'
                     : tokenFrom?.symbol
                 }`}
