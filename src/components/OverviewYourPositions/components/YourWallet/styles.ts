@@ -249,6 +249,10 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
       gap: '8px'
     },
     mobileStatItem: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: '8px',
       backgroundColor: colors.invariant.light,
       borderRadius: '10px',
       textAlign: 'center',
@@ -257,8 +261,7 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
     },
     mobileStatLabel: {
       ...typography.caption1,
-      color: colors.invariant.textGrey,
-      marginRight: '8px'
+      color: colors.invariant.textGrey
     },
     mobileStatValue: {
       ...typography.caption1,
