@@ -47,6 +47,13 @@ const configureAppStore = (initialState = {}) => {
             'pools/setTickMaps',
             'pools/getPoolData',
             'solanaConnection/handleRpcError'
+          ],
+          ignoredPaths: [
+            'swap.swap.firstPair',
+            // 'swap.swap.firstPair.tokenX._publicKey',
+            // 'swap.swap.firstPair.tokenY._publicKey',
+            // 'swap.swap.firstPair.feeTier',
+            'swap.swap.secondPair'
           ]
         }
       }).concat(middleware),

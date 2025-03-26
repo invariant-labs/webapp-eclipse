@@ -361,14 +361,22 @@ export function* handleTwoHopSwapWithETH(): Generator {
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     let firstPool = allPools.find(
       pool =>
-        (tokenFrom.equals(pool.tokenX) && tokenBetween.equals(pool.tokenY)) ||
-        (tokenFrom.equals(pool.tokenY) && tokenBetween.equals(pool.tokenX))
+        (tokenFrom.equals(pool.tokenX) &&
+          tokenBetween.equals(pool.tokenY) &&
+          firstPair.feeTier.fee.eq(pool.fee)) ||
+        (tokenFrom.equals(pool.tokenY) &&
+          tokenBetween.equals(pool.tokenX) &&
+          firstPair.feeTier.fee.eq(pool.fee))
     )
 
     let secondPool = allPools.find(
       pool =>
-        (tokenBetween.equals(pool.tokenX) && tokenTo.equals(pool.tokenY)) ||
-        (tokenBetween.equals(pool.tokenY) && tokenTo.equals(pool.tokenX))
+        (tokenBetween.equals(pool.tokenX) &&
+          tokenTo.equals(pool.tokenY) &&
+          secondPair.feeTier.fee.eq(pool.fee)) ||
+        (tokenBetween.equals(pool.tokenY) &&
+          tokenTo.equals(pool.tokenX) &&
+          secondPair.feeTier.fee.eq(pool.fee))
     )
 
     if (!firstPool) {
@@ -482,8 +490,10 @@ export function* handleTwoHopSwapWithETH(): Generator {
       [marketProgram, marketProgram.versionedTwoHopSwapTx],
       params,
       cache,
-      { tickCrosses: TICK_CROSSES_PER_IX },
-      { tickCrosses: TICK_CROSSES_PER_IX },
+      // { tickCrosses: TICK_CROSSES_PER_IX },
+      // { tickCrosses: TICK_CROSSES_PER_IX },
+      undefined,
+      undefined,
       prependendIxs,
       appendedIxs
     )
@@ -762,8 +772,10 @@ export function* handleTwoHopSwap(): Generator {
       [marketProgram, marketProgram.versionedTwoHopSwapTx],
       params,
       cache,
-      { tickCrosses: TICK_CROSSES_PER_IX },
-      { tickCrosses: TICK_CROSSES_PER_IX },
+      // { tickCrosses: TICK_CROSSES_PER_IX },
+      // { tickCrosses: TICK_CROSSES_PER_IX },
+      undefined,
+      undefined,
       prependendIxs,
       appendedIxs
     )
