@@ -28,9 +28,8 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
     },
     header: {
       background: colors.invariant.component,
-      width: '100%',
       display: 'flex',
-      padding: '16px 0px',
+      padding: 16,
       [theme.breakpoints.down('lg')]: {
         borderTopLeftRadius: '24px'
       },
@@ -42,7 +41,6 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
     },
     headerText: {
       ...typography.heading2,
-      paddingInline: '16px',
       color: colors.invariant.text
     },
     tableContainer: {
@@ -74,7 +72,6 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
     },
     headerCell: {
       fontSize: '20px',
-
       textWrap: 'nowrap',
       fontWeight: 600,
       color: colors.invariant.textGrey,
@@ -151,7 +148,7 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
       padding: '4px 12px',
       maxHeight: '24px',
       borderRadius: '6px',
-      gap: '16px'
+      gap: '8px'
     },
     statsLabel: {
       ...typography.caption1,

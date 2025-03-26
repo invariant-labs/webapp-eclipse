@@ -25,6 +25,6 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     color: colors.invariant.text
   },
   warning: {
-    marginRight: '8px'
+    marginLeft: '8px'
   }
 }))

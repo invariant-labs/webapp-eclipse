@@ -329,7 +329,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           ) : (
             <div>
               {tokenValueInUsd.priceWarning ? (
-                <TooltipHover title='No full price data available, estimated value may be incorrect'>
+                <TooltipHover title='The price might not be shown correctly.'>
                   <Grid
                     container
                     className={sharedClasses.value}
@@ -347,7 +347,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                         ${formatNumberWithSuffix(tokenValueInUsd.value)}
                       </Typography>
 
-                      <img src={icons.warning2} />
+                      <img src={icons.warning2} width={14} />
                     </Box>
                   </Grid>
                 </TooltipHover>

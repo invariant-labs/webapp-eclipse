@@ -22,18 +22,18 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
           </>
         ) : (
           <Grid display='flex' flexDirection='row' alignItems='center' justifyContent='center'>
-            {totalValue.isPriceWarning && (
-              <TooltipHover title='No full price data available, estimated value may be incorrect'>
-                <img src={icons.warning2} className={classes.warning} />
-              </TooltipHover>
-            )}
-
             <Typography className={classes.headerText}>
               $
               {Number.isNaN(totalValue)
                 ? 0
                 : formatNumberWithoutSuffix(totalValue.value, { twoDecimals: true })}
             </Typography>
+
+            {totalValue.isPriceWarning && (
+              <TooltipHover title='The price might not be shown correctly.'>
+                <img src={icons.warning2} className={classes.warning} width={18} />
+              </TooltipHover>
+            )}
           </Grid>
         )}
       </Box>

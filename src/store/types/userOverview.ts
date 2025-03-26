@@ -41,6 +41,7 @@ export interface TokenPool {
   isUnknown?: boolean
   value: number
   amount: number
+  isPriceWarning: boolean
 }
 
 export interface ProcessedPool {
@@ -51,13 +52,6 @@ export interface ProcessedPool {
   poolData: PoolWithAddressAndIndex
   tokenX: Token
   tokenY: Token
-}
-
-export interface TokenPositionEntry {
-  token: string
-  value: number
-  positionId: string
-  logo?: string
 }
 
 export enum LiquidityPools {

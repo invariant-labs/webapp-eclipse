@@ -28,13 +28,13 @@ interface TokenPosition {
   id: string
 }
 
-interface TokenPositionEntry {
+export interface TokenPositionEntry {
   token: string
   value: number
   name: string
   logo: string
   positionId: string
-  priceWarning?: boolean
+  isPriceWarning: boolean
 }
 
 const calculateTokenValue = (
@@ -67,7 +67,8 @@ const createPositionEntry = (
     value,
     name: token.name,
     logo: token.logoURI,
-    positionId: position.id
+    positionId: position.id,
+    isPriceWarning: false
   }
 }
 
@@ -84,7 +85,7 @@ const updateOrCreatePosition = (
 
   if (existingPosition) {
     existingPosition.value += value
-    existingPosition.priceWarning = !prices[token.assetAddress.toString()]
+    existingPosition.isPriceWarning = !prices[token.assetAddress.toString()]
     return positions
   }
 
