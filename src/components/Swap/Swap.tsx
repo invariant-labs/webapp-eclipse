@@ -126,6 +126,7 @@ export interface ISwap {
   >
   promotedSwapPairs: { tokenX: string; tokenY: string }[]
   swapMultiplier: string
+  rpc: string
 }
 
 export const Swap: React.FC<ISwap> = ({
@@ -166,7 +167,8 @@ export const Swap: React.FC<ISwap> = ({
   pointsPerUsdFee,
   feeds,
   promotedSwapPairs,
-  swapMultiplier
+  swapMultiplier,
+  rpc
 }) => {
   const { classes } = useStyles()
   enum inputTarget {
@@ -700,6 +702,9 @@ export const Swap: React.FC<ISwap> = ({
     (getStateMessage() === 'Loading' &&
       (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
 
+  useEffect(() => {
+    onRefresh(tokenFromIndex, tokenToIndex)
+  }, [rpc])
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
