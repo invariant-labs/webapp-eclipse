@@ -35,7 +35,6 @@ import warningIcon from './svg/Warning.svg'
 import circleDiscord from './svg/circle-discord.svg'
 import circleTelegram from './svg/circle-telegram.svg'
 import eclipse from './svg/eclipse.svg'
-import alephiumLogo from './svg/alephiumLogo.svg'
 import phantomWalletIcon from './svg/phantom.svg'
 import solflareWalletIcon from './svg/solflare.svg'
 import backpackWalletIcon from './svg/backpack.svg'
@@ -83,7 +82,6 @@ import testnetGlow from './svg/testnetGlow.svg'
 import active2 from './svg/active2.svg'
 import solanaGlow from './svg/solanaGlow.svg'
 import eclipseGlow from './svg/eclipseGlow.svg'
-import alephiumGlow from './svg/alephiumGlow.svg'
 import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
@@ -183,7 +181,6 @@ const icons = {
   Eclipse: eclipseLogo,
   Solana: solanaLogo,
   Vara: varaLogo,
-  Alephium: alephiumLogo,
   PhantomWallet: phantomWalletIcon,
   SolflareWallet: solflareWalletIcon,
   BackpackWallet: backpackWalletIcon,
@@ -223,7 +220,7 @@ const icons = {
   active2,
   solanaGlow,
   eclipseGlow,
-  alephiumGlow,
+
   liquidityEmpty,
   assetsEmpty,
   settings3,
