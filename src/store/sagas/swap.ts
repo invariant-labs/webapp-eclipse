@@ -13,7 +13,8 @@ import {
   sendAndConfirmRawTransaction,
   Transaction,
   TransactionExpiredTimeoutError,
-  TransactionInstruction
+  TransactionInstruction,
+  VersionedTransaction
 } from '@solana/web3.js'
 import {
   MAX_CROSSES_IN_SINGLE_TX,
@@ -39,6 +40,7 @@ import {
   TwoHopSwapCache
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PoolWithAddress } from '@store/reducers/pools'
+import nacl from 'tweetnacl'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -53,6 +55,7 @@ export function* handleSwapWithETH(): Generator {
       tokenFrom,
       tokenTo,
       amountIn,
+      firstPair,
       estimatedPriceAfterSwap,
       byAmountIn,
       amountOut
@@ -64,10 +67,19 @@ export function* handleSwapWithETH(): Generator {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    if (!firstPair) {
+      return
+    }
+
     const swapPool = allPools.find(
       pool =>
-        (tokenFrom.equals(pool.tokenX) && tokenTo.equals(pool.tokenY)) ||
-        (tokenFrom.equals(pool.tokenY) && tokenTo.equals(pool.tokenX))
+        (tokenFrom.equals(pool.tokenX) &&
+          tokenTo.equals(pool.tokenY) &&
+          firstPair?.feeTier.fee.eq(pool.fee)) ||
+        (tokenFrom.equals(pool.tokenY) &&
+          tokenTo.equals(pool.tokenX) &&
+          firstPair?.feeTier.fee.eq(pool.fee))
     )
 
     if (!swapPool) {
@@ -386,30 +398,28 @@ export function* handleTwoHopSwapWithETH(): Generator {
     const wrappedEthAccount = Keypair.generate()
 
     const net = networkTypetoProgramNetwork(networkType)
-    let initialTx: Transaction
-    let unwrapIx: TransactionInstruction
+    const prependendIxs: TransactionInstruction[] = []
+    const appendedIxs: TransactionInstruction[] = []
+
     if (allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS) {
-      const {
-        createIx,
-        transferIx,
-        initIx,
-        unwrapIx: unwrap
-      } = createNativeAtaWithTransferInstructions(
+      const { createIx, transferIx, initIx, unwrapIx } = createNativeAtaWithTransferInstructions(
         wrappedEthAccount.publicKey,
         wallet.publicKey,
         net,
         amountIn.toNumber()
       )
-      unwrapIx = unwrap
-      initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
+
+      prependendIxs.push(...[createIx, transferIx, initIx])
+      appendedIxs.push(unwrapIx)
     } else {
-      const {
-        createIx,
-        initIx,
-        unwrapIx: unwrap
-      } = createNativeAtaInstructions(wrappedEthAccount.publicKey, wallet.publicKey, net)
-      unwrapIx = unwrap
-      initialTx = new Transaction().add(createIx).add(initIx)
+      const { createIx, initIx, unwrapIx } = createNativeAtaInstructions(
+        wrappedEthAccount.publicKey,
+        wallet.publicKey,
+        net
+      )
+
+      prependendIxs.push(...[createIx, initIx])
+      appendedIxs.push(unwrapIx)
     }
 
     // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
@@ -468,46 +478,36 @@ export function* handleTwoHopSwapWithETH(): Generator {
       }
     }
 
-    const swapIx = yield* call([marketProgram, marketProgram.twoHopSwapIx], params, cache)
-
-    initialTx.add(swapIx)
-    initialTx.add(unwrapIx)
-
-    // const swapBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    // swapTx.recentBlockhash = swapBlockhash.blockhash
-    // swapTx.feePayer = wallet.publicKey
-
-    // const unwrapTx = new Transaction().add(unwrapIx)
-    // const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    // unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
-    // unwrapTx.feePayer = wallet.publicKey
-
-    const initialBlockhash = yield* call([connection, connection.getLatestBlockhash])
-    initialTx.recentBlockhash = initialBlockhash.blockhash
-    initialTx.feePayer = wallet.publicKey
+    const swapTx = yield* call(
+      [marketProgram, marketProgram.versionedTwoHopSwapTx],
+      params,
+      cache,
+      { tickCrosses: TICK_CROSSES_PER_IX },
+      { tickCrosses: TICK_CROSSES_PER_IX },
+      prependendIxs,
+      appendedIxs
+    )
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const initialSignedTx = (yield* call(
-      [wallet, wallet.signTransaction],
-      initialTx
-    )) as Transaction
+    const serializedMessage = swapTx.message.serialize()
+    const signatureUint8 = nacl.sign.detached(serializedMessage, wrappedEthAccount.secretKey)
+
+    swapTx.addSignature(wrappedEthAccount.publicKey, signatureUint8)
+
+    const signedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as VersionedTransaction
 
     closeSnackbar(loaderSigningTx)
+
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    initialSignedTx.partialSign(wrappedEthAccount)
+    const txid = yield* call([connection, connection.sendRawTransaction], signedTx.serialize(), {
+      skipPreflight: false
+    })
 
-    const initialTxid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
-      initialSignedTx.serialize(),
-      {
-        skipPreflight: false
-      }
-    )
+    yield* call([connection, connection.confirmTransaction], txid)
 
-    if (!initialTxid.length) {
+    if (!txid.length) {
       yield put(swapActions.setSwapSuccess(false))
 
       closeSnackbar(loaderSwappingTokens)
@@ -518,7 +518,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
           message: 'ETH wrapping failed. Please try again',
           variant: 'error',
           persist: false,
-          txid: initialTxid
+          txid
         })
       )
     }
@@ -550,7 +550,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
         message: 'Tokens swapped successfully',
         variant: 'success',
         persist: false,
-        txid: initialTxid
+        txid
       })
     )
     // }
@@ -646,7 +646,6 @@ export function* handleTwoHopSwap(): Generator {
     } = yield* select(swap)
 
     // No need to use wrapped ETH when it is intermediate token
-    console.log(tokenFrom.toString(), tokenTo.toString())
     if (
       tokenFrom.toString() === WRAPPED_ETH_ADDRESS ||
       tokenTo.toString() === WRAPPED_ETH_ADDRESS
@@ -667,18 +666,23 @@ export function* handleTwoHopSwap(): Generator {
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     let firstPool = allPools.find(
       pool =>
-        (tokenFrom.equals(pool.tokenX) && tokenBetween.equals(pool.tokenY)) ||
-        (tokenFrom.equals(pool.tokenY) && tokenBetween.equals(pool.tokenX))
+        (tokenFrom.equals(pool.tokenX) &&
+          tokenBetween.equals(pool.tokenY) &&
+          firstPair.feeTier.fee.eq(pool.fee)) ||
+        (tokenFrom.equals(pool.tokenY) &&
+          tokenBetween.equals(pool.tokenX) &&
+          firstPair.feeTier.fee.eq(pool.fee))
     )
 
-    console.log(tokenBetween.toString(), tokenTo.toString())
     let secondPool = allPools.find(
       pool =>
-        (tokenBetween.equals(pool.tokenX) && tokenTo.equals(pool.tokenY)) ||
-        (tokenBetween.equals(pool.tokenY) && tokenTo.equals(pool.tokenX))
+        (tokenBetween.equals(pool.tokenX) &&
+          tokenTo.equals(pool.tokenY) &&
+          secondPair.feeTier.fee.eq(pool.fee)) ||
+        (tokenBetween.equals(pool.tokenY) &&
+          tokenTo.equals(pool.tokenX) &&
+          secondPair.feeTier.fee.eq(pool.fee))
     )
-
-    console.log(firstPool, secondPool)
 
     // if (!firstPool || !secondPool) {
     if (!firstPool) {
@@ -751,23 +755,33 @@ export function* handleTwoHopSwap(): Generator {
       }
     }
 
-    const swapTx = yield* call([marketProgram, marketProgram.twoHopSwapTx], params, cache)
+    const prependendIxs = []
+    const appendedIxs = []
+
+    const swapTx = yield* call(
+      [marketProgram, marketProgram.versionedTwoHopSwapTx],
+      params,
+      cache,
+      { tickCrosses: TICK_CROSSES_PER_IX },
+      { tickCrosses: TICK_CROSSES_PER_IX },
+      prependendIxs,
+      appendedIxs
+    )
 
     const connection = yield* call(getConnection)
-    const blockhash = yield* call([connection, connection.getLatestBlockhash])
-    swapTx.recentBlockhash = blockhash.blockhash
-    swapTx.feePayer = wallet.publicKey
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const signedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as Transaction
+    const signedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as VersionedTransaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+    const txid = yield* call([connection, connection.sendRawTransaction], signedTx.serialize(), {
       skipPreflight: false
     })
+
+    yield* call([connection, connection.confirmTransaction], txid)
 
     yield put(swapActions.setSwapSuccess(!!txid.length))
 
@@ -843,6 +857,7 @@ export function* handleSwap(): Generator {
       tokenFrom,
       tokenTo,
       amountIn,
+      firstPair,
       estimatedPriceAfterSwap,
       tokenBetween,
       byAmountIn,
@@ -860,6 +875,11 @@ export function* handleSwap(): Generator {
       return yield* call(handleSwapWithETH)
     }
 
+    // Should never be trigerred
+    if (!firstPair) {
+      return
+    }
+
     const wallet = yield* call(getWallet)
     const tokensAccounts = yield* select(accounts)
     const networkType = yield* select(network)
@@ -867,8 +887,12 @@ export function* handleSwap(): Generator {
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const swapPool = allPools.find(
       pool =>
-        (tokenFrom.equals(pool.tokenX) && tokenTo.equals(pool.tokenY)) ||
-        (tokenFrom.equals(pool.tokenY) && tokenTo.equals(pool.tokenX))
+        (tokenFrom.equals(pool.tokenX) &&
+          tokenTo.equals(pool.tokenY) &&
+          firstPair?.feeTier.fee.eq(pool.fee)) ||
+        (tokenFrom.equals(pool.tokenY) &&
+          tokenTo.equals(pool.tokenX) &&
+          firstPair?.feeTier.fee.eq(pool.fee))
     )
 
     if (!swapPool) {
