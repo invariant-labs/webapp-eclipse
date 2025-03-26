@@ -25,7 +25,8 @@ import {
   swapTokens,
   swapTokensDict,
   balanceLoading,
-  balance
+  balance,
+  accounts as solanaAccounts
 } from '@store/selectors/solanaWallet'
 import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
@@ -38,6 +39,7 @@ import {
   getNewTokenOrThrow,
   tickerToAddress
 } from '@utils/utils'
+
 import { TokenPriceData } from '@store/consts/types'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
@@ -322,7 +324,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     )
   }
 
-  const allAccounts = useSelector(accounts)
+  const allAccounts = useSelector(solanaAccounts)
 
   const wrappedETHAccountExist = useMemo(() => {
     let wrappedETHAccountExist = false

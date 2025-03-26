@@ -1,4 +1,4 @@
-import { DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk-eclipse/lib/market'
+import { DEFAULT_PUBLIC_KEY, PoolStructure } from '@invariant-labs/sdk-eclipse/lib/market'
 import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
@@ -84,6 +84,10 @@ const swapSlice = createSlice({
     },
     getTwoHopSwapData(state, _action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>) {
       state.isLoading = true
+      return state
+    },
+    updateSwapPool(state, action: PayloadAction<{ address: PublicKey; pool: PoolStructure }>) {
+      state.accounts.pools[action.payload.address.toString()] = action.payload.pool
       return state
     },
     setTwoHopSwapData(
