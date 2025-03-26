@@ -265,7 +265,7 @@ const PositionDetails: React.FC<IProps> = ({
                       setIsLockPositionModalOpen(true)
                       blurContent()
                     }}>
-                    <img src={icons.lockIcon} alt='Lock' />
+                    <img src={icons.lockPosition} alt='Lock' />
                   </Button>
                 </TooltipHover>
               ) : (
