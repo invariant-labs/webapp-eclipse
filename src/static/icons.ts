@@ -47,6 +47,7 @@ import cat2 from './svg/SolanaCreator/Cat2.svg'
 import dog1 from './svg/SolanaCreator/Dog1.svg'
 import dog2 from './svg/SolanaCreator/Dog2.svg'
 import lockIcon from './svg/lockIcon.svg'
+import lockPosition from './svg/lock.svg'
 import airdrop from './svg/airdrop.svg'
 import nightly from './svg/nightly.svg'
 import airdropRainbow from './svg/airdropRainbow.svg'
@@ -114,6 +115,7 @@ import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
 
 const icons = {
+  lockPosition,
   ensofi,
   ZoomInIcon,
   ZoomOutIcon,

@@ -232,15 +232,15 @@ const SinglePositionInfo: React.FC<IProp> = ({
               {!isLocked ? (
                 <TooltipHover title={'Lock liquidity'}>
                   <Box>
-                    <Button scheme='pink' disabled={isLocked} onClick={onModalOpen}>
-                      <img src={icons.lockIcon} alt='Lock' />
+                    <Button width={45} scheme='green' disabled={isLocked} onClick={onModalOpen}>
+                      <img src={icons.lockPosition} alt='Lock' />
                     </Button>
                   </Box>
                 </TooltipHover>
               ) : (
                 <TooltipHover title={'Unlocking liquidity is forbidden'}>
                   <Box>
-                    <Button scheme='green' disabled onClick={() => {}}>
+                    <Button width={45} scheme='green' disabled onClick={() => {}}>
                       <img src={icons.unlockIcon} alt='Lock' />
                     </Button>
                   </Box>
