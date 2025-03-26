@@ -4,18 +4,18 @@ import { AnyProps, keySelectors } from './helpers'
 import { poolsArraySortedByFees } from './pools'
 import { SwapToken, swapTokensDict } from './solanaWallet'
 import { PoolWithAddress } from '@store/reducers/pools'
+import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { printBN } from '@utils/utils'
 
 const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore
 
 export const {
   lastPage,
   positionsList,
-  unclaimedFees,
   plotTicks,
   currentPoolIndex,
   prices,
   currentPositionId,
-  currentPositionTicks,
   initPosition,
   shouldNotUpdateRange,
   positionData
@@ -23,11 +23,9 @@ export const {
   'lastPage',
   'positionsList',
   'currentPoolIndex',
-  'unclaimedFees',
   'plotTicks',
   'prices',
   'currentPositionId',
-  'currentPositionTicks',
   'initPosition',
   'shouldNotUpdateRange',
   'positionData'
@@ -47,6 +45,8 @@ export interface PositionWithPoolData extends PositionWithAddress {
   tokenY: SwapToken
   positionIndex: number
 }
+
+export type PositionData = ReturnType<typeof positionsWithPoolsData>[number]
 
 export const positionsWithPoolsData = createSelector(
   poolsArraySortedByFees,
@@ -145,11 +145,43 @@ export const currentPositionData = createSelector(
   }
 )
 
+export const totalUnlaimedFees = createSelector(
+  positionsWithPoolsData,
+  lockedPositionsWithPoolsData,
+  prices,
+  (positions, lockedPositions, pricesData) => {
+    const allPositions = [...positions, ...lockedPositions]
+
+    const isLoading = allPositions.some(position => position.ticksLoading)
+
+    const total = allPositions.reduce((acc: number, position) => {
+      const [bnX, bnY] = calculateClaimAmount({
+        position,
+        tickLower: position.lowerTick,
+        tickUpper: position.upperTick,
+        tickCurrent: position.poolData.currentTickIndex,
+        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+      })
+
+      const xValue =
+        +printBN(bnX, position.tokenX.decimals) *
+        (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
+      const yValue =
+        +printBN(bnY, position.tokenY.decimals) *
+        (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
+
+      return acc + xValue + yValue
+    }, 0)
+
+    return { total, isLoading }
+  }
+)
+
 export const positionsSelectors = {
   positionsList,
   plotTicks,
   currentPositionId,
-  currentPositionTicks,
   initPosition,
   shouldNotUpdateRange
 }

@@ -28,8 +28,6 @@ import icons from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { blurContent, unblurContent } from '@utils/uiUtils'
-import lockIcon from '@static/svg/lock.svg'
-import unlockIcon from '@static/svg/unlock.svg'
 import { Button } from '@common/Button/Button'
 import { Information } from '@components/Information/Information'
 import { theme } from '@static/theme'
@@ -206,7 +204,7 @@ const PositionDetails: React.FC<IProps> = ({
           <Grid className={classes.backContainer} container>
             <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none' }}>
               <Grid className={classes.back} container item alignItems='center'>
-                <img className={classes.backIcon} src={backIcon} alt='Back' />
+                <img className={classes.backIcon} src={icons.backIcon} alt='Back' />
                 <Typography className={classes.backText}>Positions</Typography>
               </Grid>
             </Link>
@@ -304,7 +302,7 @@ const PositionDetails: React.FC<IProps> = ({
                           setIsLockPositionModalOpen(true)
                           blurContent()
                         }}>
-                        <img src={lockIcon} alt='Lock' />
+                        <img src={icons.lockIcon} alt='Lock' />
                       </Button>
                     </Box>
                   </TooltipHover>
@@ -316,7 +314,7 @@ const PositionDetails: React.FC<IProps> = ({
                       className={classes.unlockButton}
                       variant='contained'
                       onClick={() => {}}>
-                      <img src={unlockIcon} alt='Lock' />
+                      <img src={icons.unlockIcon} alt='Lock' />
                     </Button>
                   </TooltipHover>
                 )}

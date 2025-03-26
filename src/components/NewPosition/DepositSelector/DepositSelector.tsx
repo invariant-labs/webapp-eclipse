@@ -2,7 +2,6 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
 import { Grid, Typography } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
@@ -32,6 +31,7 @@ import {
   trimDecimalZeros
 } from '@utils/utils'
 import { createButtonActions } from '@utils/uiUtils'
+import icons from '@static/icons'
 
 export interface InputState {
   value: string
@@ -368,7 +368,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           </Grid>
 
           <TooltipHover title='Reverse tokens'>
-            <img className={classes.arrows} src={SwapList} alt='Arrow' onClick={reverseTokens} />
+            <img
+              className={classes.arrows}
+              src={icons.swapListIcon}
+              alt='Arrow'
+              onClick={reverseTokens}
+            />
           </TooltipHover>
 
           <Grid className={classes.selectWrapper}>

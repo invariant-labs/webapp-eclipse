@@ -86,7 +86,8 @@ const data: IPositionItem[] = [
     valueX: 10000.45,
     valueY: 21370.4,
     id: '1',
-    isLocked: false
+    isLocked: false,
+    unclaimedFeesInUSD: { value: 1, loading: false }
   },
   {
     address: 'So11111111111111111111111111111111111111112',
@@ -122,6 +123,7 @@ const data: IPositionItem[] = [
     valueX: 10000.45,
     valueY: 21370.4,
     id: '2',
+    unclaimedFeesInUSD: { value: 1, loading: false },
     isLocked: false,
     liquidity: new BN(0),
     poolAddress: Keypair.generate().publicKey,
@@ -187,6 +189,7 @@ const data: IPositionItem[] = [
     valueX: 10000.45,
     valueY: 21370.4,
     id: '3',
+    unclaimedFeesInUSD: { value: 1, loading: false },
     isLocked: false,
     liquidity: new BN(0),
     poolAddress: Keypair.generate().publicKey,
@@ -252,6 +255,7 @@ const data: IPositionItem[] = [
     valueX: 10000.45,
     valueY: 21370.4,
     id: '4',
+    unclaimedFeesInUSD: { value: 1, loading: false },
     isLocked: false,
     liquidity: new BN(0),
     poolAddress: Keypair.generate().publicKey,
