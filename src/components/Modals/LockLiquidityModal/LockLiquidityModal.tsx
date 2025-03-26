@@ -245,7 +245,7 @@ export const LockLiquidityModal = ({
             top={-40}>
             <AnimatedButton
               content={'Lock Position'}
-              className={classNames(classes.lockButton)}
+              className={classes.lockButton}
               onClick={() => {
                 if (!isCorrectValue) return
                 onLock()
