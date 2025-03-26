@@ -75,6 +75,7 @@ export const useStyles = makeStyles()(() => ({
   icon: {
     height: 28,
     width: 28,
+    borderRadius: '100%',
 
     [theme.breakpoints.up(1040)]: {
       height: 36,
