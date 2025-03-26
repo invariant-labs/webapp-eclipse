@@ -17,6 +17,8 @@ interface IProps {
   isLoadingRate: boolean
 }
 
+const MAX_DIGITS = 5
+
 const RouteBox: React.FC<IProps> = ({
   simulationPath: {
     tokenFrom,
@@ -75,7 +77,11 @@ const RouteBox: React.FC<IProps> = ({
           <>
             <Box className={classes.tokenContainer}>
               <img src={tokenFrom?.logoURI} className={classes.tokenIcon} />
-              <Typography className={classes.tokenLabel}>{tokenFrom?.symbol}</Typography>
+              <Typography className={classes.tokenLabel}>
+                {tokenFrom?.symbol.length ?? 0 > MAX_DIGITS
+                  ? tokenFrom?.symbol.slice(0, MAX_DIGITS) + '...'
+                  : tokenFrom?.symbol}
+              </Typography>
             </Box>
             <Box className={classes.arrowContainer}>
               <Typography className={classes.routeLabel}>{firstFeePercent}% fee</Typography>
@@ -86,14 +92,22 @@ const RouteBox: React.FC<IProps> = ({
               />
 
               <Typography className={classes.routeLabel}>
-                {`${formatNumberWithoutSuffix(printBN(firstAmount ?? new BN(0), tokenFrom?.decimals ?? 0))} ${tokenFrom?.symbol}`}
+                {`${formatNumberWithoutSuffix(printBN(firstAmount ?? new BN(0), tokenFrom?.decimals ?? 0))} ${
+                  tokenFrom?.symbol.length ?? 0 > MAX_DIGITS
+                    ? tokenFrom?.symbol.slice(0, MAX_DIGITS) + '...'
+                    : tokenFrom?.symbol
+                }`}
               </Typography>
             </Box>
             {onePoolType && (
               <>
                 <Box className={classes.tokenContainer}>
                   <img src={tokenBetween?.logoURI} className={classes.tokenIcon} />
-                  <Typography className={classes.tokenLabel}>{tokenBetween?.symbol}</Typography>
+                  <Typography className={classes.tokenLabel}>
+                    {(tokenBetween?.symbol.length ?? 0) > MAX_DIGITS
+                      ? tokenBetween?.symbol.slice(0, MAX_DIGITS) + '...'
+                      : tokenBetween?.symbol}
+                  </Typography>
                 </Box>
                 <Box className={classes.arrowContainer}>
                   <Typography className={classes.routeLabel}>{secondFeePercent}% fee</Typography>
@@ -102,14 +116,21 @@ const RouteBox: React.FC<IProps> = ({
                     {formatNumberWithoutSuffix(
                       printBN(secondAmount ?? new BN(0), tokenBetween?.decimals ?? 0)
                     )}{' '}
-                    {tokenBetween?.symbol}
+                    {(tokenBetween?.symbol.length ?? 0) > MAX_DIGITS
+                      ? tokenBetween?.symbol.slice(0, MAX_DIGITS) + '...'
+                      : tokenBetween?.symbol}
                   </Typography>
                 </Box>
               </>
             )}
             <Box className={classes.tokenContainer}>
               <img src={tokenTo?.logoURI} className={classes.tokenIcon} />
-              <Typography className={classes.tokenLabel}>{tokenTo?.symbol}</Typography>
+              <Typography className={classes.tokenLabel}>
+                {' '}
+                {(tokenTo?.symbol.length ?? 0) > MAX_DIGITS
+                  ? tokenTo?.symbol.slice(0, MAX_DIGITS) + '...'
+                  : tokenTo?.symbol}
+              </Typography>
             </Box>
           </>
         </>

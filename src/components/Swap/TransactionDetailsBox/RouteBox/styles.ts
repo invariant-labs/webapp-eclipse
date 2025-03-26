@@ -5,7 +5,7 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((theme, { onePoo
   swapFlowContainer: {
     maxHeight: 76,
     gap: 16,
-    padding: '12px 30px 12px 30px',
+    padding: '12px 18px 12px 18px',
     paddingInline: '',
     borderBottom: `1px solid ${colors.invariant.component}`,
     display: 'flex',
@@ -27,7 +27,7 @@ export const useStyles = makeStyles<{ onePoolType: boolean }>()((theme, { onePoo
   arrowContainer: {
     display: 'flex',
     flexDirection: 'column',
-    gap: 5,
+    gap: 4,
     alignItems: 'center'
   },
   routeIcon: {
