@@ -243,19 +243,17 @@ export const LockLiquidityModal = ({
                 : 'Confirm that you understand the consequences by typing the text above'
             }
             top={-40}>
-            <div>
-              <AnimatedButton
-                content={'Lock Position'}
-                className={classNames(classes.lockButton)}
-                onClick={() => {
-                  if (!isCorrectValue) return
-                  onLock()
-                  setProgress('progress')
-                }}
-                progress={progress}
-                disabled={!isCorrectValue}
-              />
-            </div>
+            <AnimatedButton
+              content={'Lock Position'}
+              className={classNames(classes.lockButton)}
+              onClick={() => {
+                if (!isCorrectValue) return
+                onLock()
+                setProgress('progress')
+              }}
+              progress={progress}
+              disabled={!isCorrectValue}
+            />
           </TooltipHover>
         </Grid>
       </Grid>
