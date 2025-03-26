@@ -1,5 +1,5 @@
 import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Box, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
@@ -16,6 +16,7 @@ import { Stat } from './Stat/Stat'
 import icons from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 import { ILiquidityToken } from '@store/consts/types'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -145,7 +146,45 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     <Box className={classes.container}>
       <Box className={classes.headerContainer}>
         <Typography className={classes.header}>Price range</Typography>
-        <RangeIndicator inRange={min <= currentPrice && currentPrice <= max} />
+        <Grid>
+          <RangeIndicator inRange={min <= currentPrice && currentPrice <= max} />
+          <Grid gap={1} mt={1}>
+            <TooltipGradient
+              title={
+                <>
+                  <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
+                  <Typography className={classes.liquidityDesc} style={{ marginBottom: 12 }}>
+                    While selecting the price range, note where active liquidity is located. Your
+                    liquidity can be inactive and, as a consequence, not generate profits.
+                  </Typography>
+                  <Grid container className={classes.liqWrapper}>
+                    <Typography className={classes.liquidityDesc}>
+                      The active liquidity range is represented by white, dashed lines in the
+                      liquidity chart. Active liquidity is determined by the maximum price range
+                      resulting from the statistical volume of exchanges for the last 7 days.
+                    </Typography>
+                    <img
+                      className={classes.liquidityImg}
+                      src={icons.activeLiquidity}
+                      alt='Liquidity'
+                    />
+                  </Grid>
+                  <Typography className={classes.liquidityNote}>
+                    Note: active liquidity borders are always aligned to the nearest initialized
+                    ticks.
+                  </Typography>
+                </>
+              }
+              placement='bottom'
+              top={1}
+              noGradient>
+              <Typography className={classes.activeLiquidity}>
+                Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
+              </Typography>
+            </TooltipGradient>
+            <Typography className={classes.currentPrice}>Current price ━━━</Typography>
+          </Grid>
+        </Grid>
       </Box>
       <PriceRangePlot
         data={data}

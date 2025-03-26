@@ -8,7 +8,9 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     gap: 4,
-    borderRadius: 12
+    borderRadius: 12,
+    width: 'fit-content',
+    marginLeft: 'auto'
   },
   dot: {
     width: 10,
