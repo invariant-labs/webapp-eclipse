@@ -753,9 +753,7 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const isError = (error: string) => {
-    return swapType === SwapType.Normal
-      ? simulateResult.error.some(err => err === error)
-      : simulateWithHopResult.error
+    return swapType === SwapType.Normal ? simulateResult.error.some(err => err === error) : false
   }
 
   const isEveryPoolEmpty = useMemo(() => {
@@ -815,7 +813,7 @@ export const Swap: React.FC<ISwap> = ({
       (isError(SimulationStatus.PriceLimitReached) &&
         simulateWithHopResult.simulation === null &&
         simulateWithHopResult.route === null) ||
-      simulateWithHopResult.error
+      (simulateWithHopResult.error && simulationPath.firstPair === null)
     ) {
       return 'Insufficient liquidity'
     }
@@ -854,7 +852,7 @@ export const Swap: React.FC<ISwap> = ({
       return 'Amount out is zero'
     }
 
-    if (isEveryPoolEmpty) {
+    if (isEveryPoolEmpty && simulateWithHopResult.error) {
       return 'RPC connection error'
     }
 
