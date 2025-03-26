@@ -64,7 +64,3 @@ export enum LiquidityPools {
   Standard = 'Standard',
   Locked = 'Locked'
 }
-export enum CardSwitcher {
-  Overview = 'Overview',
-  Wallet = 'Wallet'
-}

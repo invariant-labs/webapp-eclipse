@@ -1,5 +1,4 @@
 import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
 import { formatNumberWithSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
@@ -16,7 +15,7 @@ import { InactivePoolsPopover } from '../../components/InactivePoolsPopover/Inac
 import { NetworkType } from '@store/consts/static'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { useSelector } from 'react-redux'
-import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
+import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
 import { singlePositionData } from '@store/selectors/positions'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { blurContent, unblurContent } from '@utils/uiUtils'
@@ -53,6 +52,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXLiq,
   tokenYLiq,
   network,
+  unclaimedFeesInUSD = { value: 0, loading: false },
   handleLockPosition,
   handleClosePosition,
   handleClaimFee
@@ -236,16 +236,15 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     setActionPopoverOpen(false)
   }
 
-  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage, unclaimedFeesInUSD } =
-    useUnclaimedFee({
-      currentPrice,
-      id,
-      position,
-      tokenXLiq,
-      tokenYLiq,
-      positionSingleData,
-      xToY
-    })
+  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage } = useTokenValues({
+    currentPrice,
+    id,
+    position,
+    tokenXLiq,
+    tokenYLiq,
+    positionSingleData,
+    xToY
+  })
 
   const topSection = useMemo(
     () => (
@@ -449,7 +448,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               <TooltipHover title='Reverse tokens'>
                 <img
                   className={sharedClasses.arrows}
-                  src={SwapList}
+                  src={icons.swapListIcon}
                   alt='Arrow'
                   onClick={e => {
                     e.stopPropagation()

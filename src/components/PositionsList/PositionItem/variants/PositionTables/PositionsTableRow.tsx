@@ -12,7 +12,6 @@ import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { useSharedStyles } from '../PositionMobileCard/style/shared'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import SwapList from '@static/svg/swap-list.svg'
 import PositionStatusTooltip from '../../components/PositionStatusTooltip/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import React from 'react'
@@ -20,7 +19,8 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import { singlePositionData } from '@store/selectors/positions'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { lockerState } from '@store/selectors/locker'
-import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
+import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
+import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
 import { useSkeletonStyle } from './styles/skeletons'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
@@ -67,6 +67,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   tokenYLiq,
   network,
   loading,
+  unclaimedFeesInUSD = { value: 0, loading: false },
   handleClaimFee,
   handleLockPosition,
   handleClosePosition
@@ -97,16 +98,15 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     return loading?.[item] ?? false
   }
 
-  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage, unclaimedFeesInUSD } =
-    useUnclaimedFee({
-      currentPrice,
-      id,
-      position,
-      tokenXLiq,
-      tokenYLiq,
-      positionSingleData,
-      xToY
-    })
+  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage } = useTokenValues({
+    currentPrice,
+    id,
+    position,
+    tokenXLiq,
+    tokenYLiq,
+    positionSingleData,
+    xToY
+  })
 
   const { isPromoted, pointsPerSecond, estimated24hPoints } = usePromotedPool(
     poolAddress,
@@ -137,7 +137,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           <TooltipHover title='Reverse tokens'>
             <img
               className={sharedClasses.arrows}
-              src={SwapList}
+              src={icons.swapListIcon}
               alt='Arrow'
               onClick={e => {
                 e.stopPropagation()
