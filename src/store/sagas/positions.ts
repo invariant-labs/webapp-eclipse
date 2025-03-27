@@ -714,6 +714,8 @@ export function* handleSwapAndInitPositionWithETH(
 
     const txid = yield* call([connection, connection.sendTransaction], signedTx)
 
+    yield* call([connection, connection.confirmTransaction], txid)
+
     yield put(actions.setInitPositionSuccess(!!txid.length))
 
     if (!txid.length) {
@@ -909,6 +911,8 @@ export function* handleSwapAndInitPosition(
     yield put(snackbarsActions.remove(loaderSigningTx))
 
     const txid = yield* call([connection, connection.sendTransaction], signedTx)
+
+    yield* call([connection, connection.confirmTransaction], txid)
 
     yield put(actions.setInitPositionSuccess(!!txid.length))
 
