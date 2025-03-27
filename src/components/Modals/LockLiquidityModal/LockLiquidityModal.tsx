@@ -24,7 +24,6 @@ export interface ILockLiquidityModal {
   swapHandler: () => void
   success: boolean
   inProgress: boolean
-  isPreview: boolean
 }
 export const LockLiquidityModal = ({
   open,
@@ -39,8 +38,7 @@ export const LockLiquidityModal = ({
   isActive,
   swapHandler,
   success,
-  inProgress,
-  isPreview
+  inProgress
 }: ILockLiquidityModal) => {
   const { classes } = useStyles()
   const [progress, setProgress] = useState<ProgressState>('none')
@@ -248,7 +246,7 @@ export const LockLiquidityModal = ({
               content={'Lock Position'}
               className={classes.lockButton}
               onClick={() => {
-                if (!isCorrectValue || isPreview) return
+                if (!isCorrectValue) return
                 onLock()
                 setProgress('progress')
               }}

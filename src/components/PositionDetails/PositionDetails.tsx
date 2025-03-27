@@ -196,7 +196,6 @@ const PositionDetails: React.FC<IProps> = ({
           swapHandler={() => setXToY(!xToY)}
           success={success}
           inProgress={inProgress}
-          isPreview={isPreview}
         />
         <Grid className={classes.positionDetails} container item direction='column'>
           <Grid className={classes.backContainer} container>
