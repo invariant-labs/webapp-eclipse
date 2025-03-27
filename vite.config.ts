@@ -45,7 +45,16 @@ export default defineConfig({
     assetsInlineLimit: 0,
     rollupOptions: {
       external: ['fs/promises', 'path'],
-      plugins: [inject({ Buffer: ['buffer', 'Buffer'] })]
+      plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          web3: ['@solana/web3.js'],
+          utils: ['axios'],
+          animations: ['react-spring']
+        }
+      }
     }
   },
   optimizeDeps: {

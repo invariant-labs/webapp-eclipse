@@ -10,15 +10,5 @@
       "source": "/(.*)",
       "destination": "/"
     }
-  ],
-  "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/static-build",
-      "config": {
-        "distDir": "dist",
-        "buildCommand": "export NODE_OPTIONS=--max-old-space-size=8192 && tsc && vite build"
-      }
-    }
   ]
 }
