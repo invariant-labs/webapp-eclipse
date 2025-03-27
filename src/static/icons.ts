@@ -66,7 +66,6 @@ import testnetGlow from './svg/testnetGlow.svg'
 import active2 from './svg/active2.svg'
 import solanaGlow from './svg/solanaGlow.svg'
 import eclipseGlow from './svg/eclipseGlow.svg'
-import alephiumGlow from './svg/alephiumGlow.svg'
 import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
@@ -189,7 +188,7 @@ const icons = {
   active2,
   solanaGlow,
   eclipseGlow,
-  alephiumGlow,
+
   liquidityEmpty,
   assetsEmpty,
   settings3,
