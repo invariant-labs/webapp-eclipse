@@ -295,27 +295,33 @@ const PositionDetails: React.FC<IProps> = ({
                     title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
                     <Box>
                       <Button
-                        scheme='pink'
-                        disabled={isLocked || isPreview}
+                        width={45}
+                        scheme='green'
                         variant='contained'
+                        disabled={isLocked || isPreview}
                         onClick={() => {
                           if (isPreview) return
                           setIsLockPositionModalOpen(true)
                           blurContent()
                         }}>
-                        <img src={icons.lockIcon} alt='Lock' />
+                        {isPreview ? (
+                          <img src={icons.lockIcon} alt='Lock' />
+                        ) : (
+                          <img src={icons.lockPosition} alt='Lock' />
+                        )}
                       </Button>
                     </Box>
                   </TooltipHover>
                 ) : (
                   <TooltipHover title={'Unlocking liquidity is forbidden'}>
                     <Button
+                      width={45}
                       scheme='pink'
                       disabled
                       className={classes.unlockButton}
                       variant='contained'
                       onClick={() => {}}>
-                      <img src={icons.unlockIcon} alt='Lock' />
+                      <img src={icons.unlockIcon} alt='unlock' />
                     </Button>
                   </TooltipHover>
                 )}

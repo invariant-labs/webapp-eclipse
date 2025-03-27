@@ -237,15 +237,19 @@ const SinglePositionInfo: React.FC<IProp> = ({
                 <TooltipHover
                   title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
                   <Box>
-                    <Button scheme='pink' disabled={isLocked || isPreview} onClick={onModalOpen}>
-                      <img src={icons.lockIcon} alt='Lock' />
+                    <Button
+                      width={45}
+                      scheme='green'
+                      disabled={isLocked || isPreview}
+                      onClick={onModalOpen}>
+                      <img src={icons.lockPosition} alt='Lock' />
                     </Button>
                   </Box>
                 </TooltipHover>
               ) : (
                 <TooltipHover title={'Unlocking liquidity is forbidden'}>
                   <Box>
-                    <Button scheme='green' disabled onClick={() => {}}>
+                    <Button width={45} scheme='green' disabled onClick={() => {}}>
                       <img src={icons.unlockIcon} alt='Lock' />
                     </Button>
                   </Box>
