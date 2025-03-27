@@ -1394,36 +1394,34 @@ export const Swap: React.FC<ISwap> = ({
             <TooltipHover
               title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
               top={-45}>
-              <div>
-                <AnimatedButton
-                  content={getStateMessage()}
-                  className={
-                    getStateMessage() === 'Connect a wallet'
-                      ? `${classes.swapButton}`
-                      : getStateMessage() === 'Exchange' && progress === 'none'
-                        ? `${classes.swapButton} ${classes.ButtonSwapActive}`
-                        : classes.swapButton
-                  }
-                  disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
-                  onClick={() => {
-                    if (tokenFromIndex === null || tokenToIndex === null) return
+              <AnimatedButton
+                content={getStateMessage()}
+                className={
+                  getStateMessage() === 'Connect a wallet'
+                    ? `${classes.swapButton}`
+                    : getStateMessage() === 'Exchange' && progress === 'none'
+                      ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                      : classes.swapButton
+                }
+                disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
+                onClick={() => {
+                  if (tokenFromIndex === null || tokenToIndex === null) return
 
-                    onSwap(
-                      fromFee(new BN(Number(+slippTolerance * 1000))),
-                      simulateResult.estimatedPriceAfterSwap,
-                      simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
-                      simulationPath.tokenBetween?.assetAddress ?? null,
-                      simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
-                      simulationPath.firstPair,
-                      simulationPath.secondPair,
-                      convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                      convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                      inputRef === inputTarget.FROM
-                    )
-                  }}
-                  progress={progress}
-                />
-              </div>
+                  onSwap(
+                    fromFee(new BN(Number(+slippTolerance * 1000))),
+                    simulateResult.estimatedPriceAfterSwap,
+                    simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
+                    simulationPath.tokenBetween?.assetAddress ?? null,
+                    simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
+                    simulationPath.firstPair,
+                    simulationPath.secondPair,
+                    convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                    convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                    inputRef === inputTarget.FROM
+                  )
+                }}
+                progress={progress}
+              />
             </TooltipHover>
           ) : (
             <AnimatedButton
