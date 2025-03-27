@@ -3,9 +3,10 @@ import { useEffect, useState } from 'react'
 import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/pools'
+import { actions as swapActions } from '@store/reducers/swap'
 import { poolsArraySortedByFees } from '@store/selectors/pools'
 import { swap } from '@store/selectors/swap'
-import { IWallet } from '@invariant-labs/sdk-eclipse'
+import { IWallet, MAINNET_POOL_WHITELIST } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
@@ -15,6 +16,7 @@ import { currentPoolIndex } from '@store/selectors/positions'
 import { useLocation } from 'react-router-dom'
 import { autoSwapPools } from '@store/consts/static'
 import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { parsePool } from '@invariant-labs/sdk-eclipse/lib/market'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -26,6 +28,9 @@ const MarketEvents = () => {
   const networkStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
   const newPositionPoolIndex = useSelector(currentPoolIndex)
+  const [subscribedTwoHopSwapPools, _setSubscribedTwoHopSwapPools] = useState<Set<PublicKey>>(
+    new Set()
+  )
   const [subscribedSwapPools, _setSubscribedSwapPools] = useState<Set<string>>(new Set())
   const [newPositionSubscribedPool, setNewPositionSubscribedPool] = useState<PublicKey>(
     PublicKey.default
@@ -175,6 +180,27 @@ const MarketEvents = () => {
         }
       }
 
+      if (subscribedTwoHopSwapPools.size === 0) {
+        for (const pool of MAINNET_POOL_WHITELIST) {
+          const address = pool.pair.getAddress(marketProgram.program.programId)
+          subscribedTwoHopSwapPools.add(address)
+          marketProgram.onPoolChange(
+            pool.pair.tokenX,
+            pool.pair.tokenY,
+            { fee: pool.pair.feeTier.fee, tickSpacing: pool.pair.feeTier.tickSpacing },
+            poolStructure => {
+              const parsedPool = parsePool(poolStructure)
+              dispatch(
+                swapActions.updateSwapPool({
+                  address,
+                  pool: parsedPool
+                })
+              )
+            }
+          )
+        }
+      }
+
       if (pools) {
         for (const pool of pools) {
           subscribedSwapPools.add(pool.address.toString())
@@ -203,6 +229,10 @@ const MarketEvents = () => {
       for (const pool of Array.from(subscribedSwapPools)) {
         marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
         subscribedSwapPools.delete(pool)
+      }
+      for (const pool of Array.from(subscribedTwoHopSwapPools)) {
+        marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
+        subscribedTwoHopSwapPools.delete(pool)
       }
     }
 

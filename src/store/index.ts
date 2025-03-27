@@ -4,12 +4,17 @@ import combinedReducers from './reducers'
 import rootSaga from './sagas'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
+import { Pair } from '@invariant-labs/sdk-eclipse'
 
 const isLocalhost = window.location.hostname === 'localhost'
 
 const isSerializable = (value: unknown) => {
   return (
-    typeof value === 'bigint' || isPlain(value) || value instanceof PublicKey || value instanceof BN
+    typeof value === 'bigint' ||
+    isPlain(value) ||
+    value instanceof PublicKey ||
+    value instanceof BN ||
+    value instanceof Pair
   )
 }
 
@@ -26,9 +31,24 @@ const getEntries = (value: unknown) => {
     return [['BN', (value as BN).toString()]] as [string, unknown][]
   }
 
+  if (value instanceof Pair) {
+    return [
+      ['tokenX', value.tokenX.toBase58()],
+      ['tokenY', value.tokenY.toBase58()],
+      [
+        'feeTier',
+        {
+          fee: value.feeTier.fee.toString(),
+          tickSpacing: value.feeTier.tickSpacing
+        }
+      ],
+      ['feeTierAddress', value.feeTierAddress ? value.feeTierAddress.toBase58() : null],
+      ['tickSpacing', value.tickSpacing]
+    ] as [string, unknown][]
+  }
+
   return Object.entries(value as Record<string, unknown>)
 }
-
 const configureAppStore = (initialState = {}) => {
   const reduxSagaMonitorOptions = {}
   const sagaMiddleware = createSagaMiddleware(reduxSagaMonitorOptions)

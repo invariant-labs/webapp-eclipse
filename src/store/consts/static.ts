@@ -23,6 +23,11 @@ export enum DepositOptions {
 
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
+export enum SwapType {
+  Normal,
+  WithHop
+}
+
 export const WETH_ADDRESS = {
   [NetworkType.Mainnet]: new PublicKey('So11111111111111111111111111111111111111112'),
   [NetworkType.Testnet]: new PublicKey('So11111111111111111111111111111111111111112'),
@@ -750,13 +755,8 @@ export const CHAINS = [
     name: Chain.Eclipse,
     address: 'https://eclipse.invariant.app/exchange',
     iconGlow: 'eclipseGlow'
-  },
-  // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
-  {
-    name: Chain.Alephium,
-    address: 'https://alph.invariant.app/exchange',
-    iconGlow: 'alephiumGlow'
   }
+  // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
 ]
 
 export const enum SortTypePoolList {

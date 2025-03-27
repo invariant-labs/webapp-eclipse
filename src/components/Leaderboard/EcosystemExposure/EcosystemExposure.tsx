@@ -151,7 +151,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
   const { classes } = useStyles({ exposure })
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
-  if (isLoading) {
+  if (isLoading && isConnected) {
     return (
       <Grid className={classes.mainWrapper}>
         <Grid className={classes.boxWrapper}>
@@ -172,7 +172,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             <Grid className={classes.skeletonExp}>
               <Typography component='h5'>Your Exposure:</Typography>
               <Skeleton variant='rounded' height={20} animation='wave' sx={{ borderRadius: '8px' }}>
-                <Typography component='span'>99.99%</Typography>
+                <Typography component='span'>1/5 (99.99%)</Typography>
               </Skeleton>
             </Grid>
 
@@ -255,7 +255,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
         </Grid>
         <Grid className={classes.expWrapper}>
           <Typography component='h5'>
-            Your Exposure: <Typography component='span'>{exposure}%</Typography>
+            Your Exposure:{' '}
+            <Typography component='span'>{` ${completedCount}/${tasks.length} (${exposure}%)`}</Typography>
           </Typography>
           <Grid className={classes.expLabel}>
             <Typography>0%</Typography>

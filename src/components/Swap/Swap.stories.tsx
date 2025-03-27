@@ -9,8 +9,9 @@ import { NetworkType } from '@store/consts/static'
 import { DEFAULT_PUBLIC_KEY } from '@invariant-labs/sdk-eclipse/lib/market'
 import { fromFee } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
-import { PublicKey } from '@solana/web3.js'
+import { Keypair, PublicKey } from '@solana/web3.js'
 import { SwapToken } from '@store/selectors/solanaWallet'
+import { Pair } from '@invariant-labs/sdk-eclipse'
 
 const tokens: SwapToken[] = [
   {
@@ -88,7 +89,12 @@ export const Primary: Story = {
     swapData: {
       slippage: fromFee(new BN(1000)),
       estimatedPriceAfterSwap: new BN(0),
-      poolIndex: 0,
+      firstPair: new Pair(Keypair.generate().publicKey, Keypair.generate().publicKey, {
+        fee: fromFee(new BN(1000)),
+        tickSpacing: 10
+      }),
+      secondPair: null,
+      tokenBetween: null,
       tokenFrom: DEFAULT_PUBLIC_KEY,
       tokenTo: DEFAULT_PUBLIC_KEY,
       amountIn: new BN(0),
@@ -110,7 +116,15 @@ export const Primary: Story = {
     isTimeoutError: false,
     canNavigate: true,
     feeds: {},
-    pointsPerUsdFee: new BN(0)
+    pointsPerUsdFee: new BN(0),
+    market: {} as any,
+    tokensDict: {},
+    swapAccounts: {
+      pools: {},
+      tickmaps: {},
+      ticks: {}
+    },
+    swapIsLoading: false
   },
   render: args => {
     return <Swap {...args} />

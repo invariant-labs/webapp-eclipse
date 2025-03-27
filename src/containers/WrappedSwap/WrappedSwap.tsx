@@ -19,16 +19,16 @@ import {
   nearestPoolTicksForPair,
   isLoadingPathTokens
 } from '@store/selectors/pools'
-import { network, timeoutError } from '@store/selectors/solanaConnection'
+import { network, rpcAddress, timeoutError } from '@store/selectors/solanaConnection'
 import {
   status,
   swapTokens,
   swapTokensDict,
   balanceLoading,
   balance,
-  accounts
+  accounts as solanaAccounts
 } from '@store/selectors/solanaWallet'
-import { swap as swapPool } from '@store/selectors/swap'
+import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -39,12 +39,17 @@ import {
   getNewTokenOrThrow,
   tickerToAddress
 } from '@utils/utils'
+
 import { TokenPriceData } from '@store/consts/types'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
 import { VariantType } from 'notistack'
 import { BN } from '@coral-xyz/anchor'
 import { useLocation } from 'react-router-dom'
 import { feeds, pointsPerUsd, swapPairs, swapMultiplier } from '@store/selectors/leaderboard'
+import { getMarketProgramSync } from '@utils/web3/programs/amm'
+import { getEclipseWallet } from '@utils/web3/wallet'
+import { IWallet } from '@invariant-labs/sdk-eclipse'
+import { actions as swapActions } from '@store/reducers/swap'
 
 type Props = {
   initialTokenFrom: string
@@ -79,6 +84,9 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const isPathTokensLoading = useSelector(isLoadingPathTokens)
   const { state } = useLocation()
   const [block, setBlock] = useState(state?.referer === 'stats')
+  const rpc = useSelector(rpcAddress)
+  const wallet = getEclipseWallet()
+  const market = getMarketProgramSync(networkType, rpc, wallet as IWallet)
 
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
@@ -289,6 +297,14 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         second: tokensList[tokenToIndex].address
       })
     )
+
+    dispatch(
+      swapActions.getTwoHopSwapData({
+        tokenFrom: tokensList[tokenFromIndex].address,
+        tokenTo: tokensList[tokenToIndex].address
+      })
+    )
+
     dispatch(
       poolsActions.getNearestTicksForPair({
         tokenFrom: tokensList[tokenFromIndex].address,
@@ -308,7 +324,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     )
   }
 
-  const allAccounts = useSelector(accounts)
+  const allAccounts = useSelector(solanaAccounts)
 
   const wrappedETHAccountExist = useMemo(() => {
     let wrappedETHAccountExist = false
@@ -326,6 +342,20 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
     dispatch(walletActions.unwrapWETH())
   }
 
+  useEffect(() => {
+    if (tokenFrom && tokenTo) {
+      dispatch(
+        swapActions.getTwoHopSwapData({
+          tokenFrom,
+          tokenTo
+        })
+      )
+    }
+  }, [tokenFrom, tokenTo])
+
+  const swapAccounts = useSelector(accounts)
+  const swapIsLoading = useSelector(isLoading)
+
   return (
     <Swap
       isFetchingNewPool={isFetchingNewPool}
@@ -334,8 +364,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         slippage,
         estimatedPriceAfterSwap,
         tokenFrom,
+        tokenBetween,
         tokenTo,
-        poolIndex,
+        firstPair,
+        secondPair,
         amountIn,
         amountOut,
         byAmountIn
@@ -345,8 +377,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
           actions.swap({
             slippage,
             estimatedPriceAfterSwap,
-            poolIndex,
+            firstPair,
+            secondPair,
             tokenFrom,
+            tokenBetween,
             tokenTo,
             amountIn,
             amountOut,
@@ -415,6 +449,10 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       feeds={priceFeeds}
       promotedSwapPairs={promotedSwapPairs}
       swapMultiplier={multiplyer}
+      market={market}
+      tokensDict={tokensDict}
+      swapAccounts={swapAccounts}
+      swapIsLoading={swapIsLoading}
     />
   )
 }

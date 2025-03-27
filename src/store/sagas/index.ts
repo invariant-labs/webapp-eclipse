@@ -1,7 +1,7 @@
 import { all, spawn } from 'redux-saga/effects'
 import { connectionSaga } from './connection'
 import { poolsSaga } from './pool'
-import { swapHandler } from './swap'
+import { swapSaga } from './swap'
 import { walletSaga } from './wallet'
 import { positionsSaga } from './positions'
 import { statsHandler } from './stats'
@@ -14,7 +14,7 @@ export function* rootSaga(): Generator {
     [
       connectionSaga,
       walletSaga,
-      swapHandler,
+      swapSaga,
       positionsSaga,
       poolsSaga,
       statsHandler,
