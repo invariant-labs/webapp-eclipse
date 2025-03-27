@@ -171,17 +171,15 @@ const PositionDetails: React.FC<IProps> = ({
   return (
     <>
       {isPreview && (
-        <Box className={classes.informationContainer}>
-          <Information>
-            <Box className={classes.information}>
-              <img src={icons.eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
-              {isSm
-                ? `Viewing someone else's position. Wallet actions unavailable.`
-                : `You are currently watching someone else's position. Connect your wallet or go to
+        <Information mb={3}>
+          <Box className={classes.information}>
+            <img src={icons.eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
+            {isSm
+              ? `Viewing someone else's position. Wallet actions unavailable.`
+              : `You are currently watching someone else's position. Connect your wallet or go to
               portfolio to see your positions.`}
-            </Box>
-          </Information>
-        </Box>
+          </Box>
+        </Information>
       )}
       <Grid container className={classes.wrapperContainer} wrap='nowrap'>
         <LockLiquidityModal
@@ -295,17 +293,18 @@ const PositionDetails: React.FC<IProps> = ({
                     title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
                     <Box>
                       <Button
-                        width={45}
+                        // width={45}
                         scheme='green'
                         variant='contained'
                         disabled={isLocked || isPreview}
+                        padding={isPreview ? 2.5 : undefined}
                         onClick={() => {
                           if (isPreview) return
                           setIsLockPositionModalOpen(true)
                           blurContent()
                         }}>
                         {isPreview ? (
-                          <img src={icons.lockIcon} alt='Lock' />
+                          <img src={icons.lockIcon} alt='Lock' width={40} />
                         ) : (
                           <img src={icons.lockPosition} alt='Lock' />
                         )}

@@ -5,9 +5,9 @@ import { useState } from 'react'
 
 type Props = {
   children: React.ReactNode
-}
+} & React.ComponentProps<typeof Box>
 
-export const Information = ({ children }: Props) => {
+export const Information = ({ children, ...boxProps }: Props) => {
   const { classes } = useStyles()
 
   const [isOpen, setIsOpen] = useState(true)
@@ -15,7 +15,7 @@ export const Information = ({ children }: Props) => {
   return (
     <>
       {isOpen && (
-        <Box className={classes.container}>
+        <Box className={classes.container} {...boxProps}>
           {children}
           <img
             className={classes.closeIcon}
