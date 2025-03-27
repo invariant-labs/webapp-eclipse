@@ -2171,3 +2171,11 @@ export const ROUTES = {
 
   getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
 }
+
+export const truncateString = (str: string, maxLength: number): string => {
+  if (str.length <= maxLength + 1) {
+    return str
+  }
+
+  return str.slice(0, maxLength) + '...'
+}

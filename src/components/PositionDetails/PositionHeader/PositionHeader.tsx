@@ -10,6 +10,7 @@ import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useState } from 'react'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { truncateString } from '@utils/utils'
 
 type Props = {
   tokenA: {
@@ -36,6 +37,8 @@ type Props = {
   onLockClick: () => void
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
 }
+
+const MAX_DIGITS = 5
 
 export const PositionHeader = ({
   tokenA,
@@ -191,7 +194,7 @@ export const PositionHeader = ({
               <img className={classes.icon} src={tokenB.icon} alt={tokenB.ticker} />
             </Box>
             <Typography className={classes.tickerContainer}>
-              {tokenA.ticker} - {tokenB.ticker}
+              {truncateString(tokenA.ticker, 4)} - {truncateString(tokenB.ticker, 4)}
             </Typography>
             <TooltipHover
               title={

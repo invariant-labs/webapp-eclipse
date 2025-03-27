@@ -6,7 +6,8 @@ import {
   calculateConcentration,
   formatNumberWithSuffix,
   numberToString,
-  spacingMultiplicityGte
+  spacingMultiplicityGte,
+  truncateString
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
 import React, { useEffect, useState } from 'react'
@@ -148,7 +149,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         <Typography className={classes.header}>Price range</Typography>
         <Grid>
           <RangeIndicator inRange={min <= currentPrice && currentPrice <= max} />
-          <Grid gap={1} mt={1}>
+          <Grid gap={1} mt={1} display='flex' flexDirection='column' alignItems='flex-end'>
             <TooltipGradient
               title={
                 <>
@@ -215,7 +216,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 <Typography component='span' className={classes.value}>
                   {numberToString(currentPrice.toFixed(xToY ? tokenY.decimal : tokenX.decimal))}
                 </Typography>{' '}
-                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+                {xToY ? truncateString(tokenY.name, 4) : truncateString(tokenX.name, 4)} {' / '}
+                {xToY ? truncateString(tokenX.name, 4) : truncateString(tokenY.name, 4)}
               </Box>
             }
           />
@@ -241,7 +243,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 <Typography component='span' className={classes.value}>
                   {formatNumberWithSuffix(min)}
                 </Typography>{' '}
-                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+                {xToY ? truncateString(tokenY.name, 4) : truncateString(tokenX.name, 4)} {' / '}
+                {xToY ? truncateString(tokenX.name, 4) : truncateString(tokenY.name, 4)}
               </Box>
             }
             isHorizontal
@@ -253,7 +256,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 <Typography component='span' className={classes.value}>
                   {formatNumberWithSuffix(max)}
                 </Typography>{' '}
-                {xToY ? tokenY.name : tokenX.name} per {xToY ? tokenX.name : tokenY.name}
+                {xToY ? truncateString(tokenY.name, 4) : truncateString(tokenX.name, 4)} {' / '}
+                {xToY ? truncateString(tokenX.name, 4) : truncateString(tokenY.name, 4)}
               </Box>
             }
             isHorizontal

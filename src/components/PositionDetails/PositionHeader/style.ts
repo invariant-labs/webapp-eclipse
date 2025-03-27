@@ -71,7 +71,7 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
-  iconContainer: { display: 'flex', alignItems: 'center', gap: 8 },
+  iconContainer: { display: 'flex', alignItems: 'center', gap: 3 },
   icon: {
     height: 28,
     width: 28,
