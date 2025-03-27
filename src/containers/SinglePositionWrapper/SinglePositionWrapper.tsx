@@ -19,7 +19,6 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
-  currentPositionTicks,
   isLoadingPositionsList,
   plotTicks,
   positionData,
@@ -38,6 +37,7 @@ import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
 import { theme } from '@static/theme'
+import { poolsArraySortedByFees } from '@store/selectors/pools'
 
 export interface IProps {
   id: string
@@ -56,7 +56,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const isPreview = !positionPositionList
   const { loading: positionPreviewLoading } = useSelector(positionData)
   const { success, inProgress } = useSelector(lockerState)
-
+  const poolsList = useSelector(poolsArraySortedByFees)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const {
     allData: ticksData,
@@ -362,7 +362,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   useEffect(() => {
     dispatch(actions.getPosition(id))
-  }, [])
+  }, [poolsList.length])
 
   useEffect(() => {
     if (!isLoadingList && isTimeoutError) {
@@ -390,15 +390,19 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         rightRange={rightRange}
         currentPrice={current}
         onClickClaimFee={() => {
+          if (isPreview) return
+
           setShowFeesLoader(true)
           dispatch(actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked }))
         }}
         lockPosition={() => {
+          if (isPreview) return
           dispatch(
             lockerActions.lockPosition({ index: position.positionIndex, network: currentNetwork })
           )
         }}
         closePosition={claimFarmRewards => {
+          if (isPreview) return
           setIsClosingPosition(true)
           dispatch(
             actions.closePosition({

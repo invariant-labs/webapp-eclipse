@@ -4,7 +4,6 @@ import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/S
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import Refresher from '@common/Refresher/Refresher'
 import { Box, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
-import backIcon from '@static/svg/back-arrow.svg'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'

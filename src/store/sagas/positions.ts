@@ -31,8 +31,7 @@ import {
   plotTicks,
   lockedPositionsWithPoolsData,
   positionsList,
-  positionsWithPoolsData,
-  positionWithPoolData
+  positionsWithPoolsData
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -1882,8 +1881,24 @@ export function* handleGetPosition(action: PayloadAction<string>) {
         })
       )
     }
+    const poolsList = yield* select(poolsArraySortedByFees)
 
-    yield* put(actions.setPosition(position))
+    const pool = poolsList.find(pool => pool.address.toString() === poolAddress.toString())
+    if (!pool || !position) {
+      return
+    }
+
+    const pair = new Pair(pool.tokenX, pool.tokenY, {
+      fee: pool.fee,
+      tickSpacing: pool.tickSpacing
+    })
+
+    const { lowerTick, upperTick } = yield* all({
+      lowerTick: call([marketProgram, marketProgram.getTick], pair, position.lowerTickIndex),
+      upperTick: call([marketProgram, marketProgram.getTick], pair, position.upperTickIndex)
+    })
+
+    yield* put(actions.setPosition({ ...position, lowerTick, upperTick, ticksLoading: false }))
   } catch {
     yield* put(actions.setPosition(null))
   }

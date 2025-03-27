@@ -37,7 +37,7 @@ import {
   PRICE_SCALE,
   Range
 } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
+import { PlotTickData, PositionWithAddress, PositionWithoutTicks } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   AI16Z_MAIN,
@@ -2028,7 +2028,7 @@ export const getPositionByIdAndPoolAddress = async (
   marketProgram: Market,
   id: string,
   poolAddress: string
-): Promise<PositionWithAddress | null> => {
+): Promise<PositionWithoutTicks | null> => {
   const positions = await marketProgram.program.account.position.all([
     {
       memcmp: {

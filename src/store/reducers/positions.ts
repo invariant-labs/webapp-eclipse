@@ -19,6 +19,10 @@ export interface PositionWithTicks extends Position {
 export interface PositionWithAddress extends PositionWithTicks {
   address: PublicKey
 }
+
+export interface PositionWithoutTicks extends Position {
+  address: PublicKey
+}
 export interface PositionsListStore {
   list: PositionWithAddress[]
   lockedList: PositionWithAddress[]
