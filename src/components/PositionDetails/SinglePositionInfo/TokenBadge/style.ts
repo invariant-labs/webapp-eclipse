@@ -14,7 +14,8 @@ export const useStyles = makeStyles()(() => ({
   },
   icon: {
     height: 20,
-    width: 20
+    width: 20,
+    borderRadius: '100%'
   },
   ticker: {
     fontSize: 20,
