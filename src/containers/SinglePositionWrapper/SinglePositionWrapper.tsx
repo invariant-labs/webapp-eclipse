@@ -334,7 +334,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     setShowFeesLoader(true)
 
     if (isPreview) {
-      dispatch(actions.getPosition(id))
+      dispatch(actions.getPreviewPosition(id))
     } else {
       dispatch(
         actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
@@ -361,7 +361,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [isTimeoutError])
 
   useEffect(() => {
-    dispatch(actions.getPosition(id))
+    dispatch(actions.getPreviewPosition(id))
   }, [poolsList.length])
 
   useEffect(() => {

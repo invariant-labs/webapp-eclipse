@@ -1862,7 +1862,7 @@ export function* handleGetSinglePosition(
   }
 }
 
-export function* handleGetPosition(action: PayloadAction<string>) {
+export function* handleGetPreviewPosition(action: PayloadAction<string>) {
   try {
     const [id, poolAddress] = action.payload.split('_')
 
@@ -1928,7 +1928,7 @@ export function* getSinglePositionHandler(): Generator {
   yield* takeEvery(actions.getSinglePosition, handleGetSinglePosition)
 }
 export function* getPositionHandler(): Generator {
-  yield* takeEvery(actions.getPosition, handleGetPosition)
+  yield* takeEvery(actions.getPreviewPosition, handleGetPreviewPosition)
 }
 
 export function* positionsSaga(): Generator {

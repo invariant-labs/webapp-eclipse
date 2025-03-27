@@ -218,7 +218,7 @@ const positionsSlice = createSlice({
       state.positionsList.loading = true
       return state
     },
-    getPosition(state, _action: PayloadAction<string>) {
+    getPreviewPosition(state, _action: PayloadAction<string>) {
       state.positionData.loading = true
       return state
     },
