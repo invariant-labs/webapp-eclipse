@@ -2,8 +2,6 @@ import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
 import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
-import backIcon from '@static/svg/back-arrow.svg'
-import settingIcon from '@static/svg/settings.svg'
 import {
   ALL_FEE_TIERS_DATA,
   autoSwapPools,
@@ -742,7 +740,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     <Grid container className={classes.wrapper}>
       <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
         <Grid className={classes.back} container item>
-          <img className={classes.backIcon} src={backIcon} alt='back' />
+          <img className={classes.backIcon} src={icons.backIcon} alt='back' />
           <Typography className={classes.backText}>Positions</Typography>
         </Grid>
       </Link>
@@ -883,7 +881,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                     onClick={handleClickSettings}
                     className={classes.settingsIconBtn}
                     disableRipple>
-                    <img src={settingIcon} className={classes.settingsIcon} alt='settings' />
+                    <img src={icons.settingIcon} className={classes.settingsIcon} alt='settings' />
                   </Button>
                 </TooltipHover>
               )}

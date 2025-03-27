@@ -315,8 +315,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
   )
 
   const renderWaves = (position: 'top' | 'bottom', imageSrc: string) =>
-    totalPages > 1 &&
-    currentData.length > 20 && (
+    totalPages > 1 && (
       <div
         className={`${classes.waveImage} ${classes[`${position}Wave`]}`}
         style={{ alignItems: position === 'top' ? 'flex-start' : 'flex-end' }}>

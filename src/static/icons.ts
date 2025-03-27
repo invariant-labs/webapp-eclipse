@@ -1,7 +1,3 @@
-import clearIcon from './svg/clear.svg'
-import mainnetIcon from './svg/mainnet.svg'
-import devnetIcon from './svg/devnet.svg'
-import testnetIcon from './svg/testnet.svg'
 import logoTitle from './svg/Logo.svg'
 import logoShort from './svg/LogoShort.svg'
 import arrow from './svg/arrow.svg'
@@ -11,9 +7,6 @@ import telegramIcon from './svg/telegramCircle.svg'
 import mediumIcon from './svg/mediumCircle.svg'
 import discordIcon from './svg/discordCircle.svg'
 import closeIcon from './svg/closeIcon.svg'
-import activeIcon from './svg/active.svg'
-import inactiveIcon from './svg/inactive.svg'
-import allIcon from './svg/all.svg'
 import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
 import closeSmallGreenIcon from './svg/closeSmallGreen.svg'
@@ -28,14 +21,11 @@ import plusIcon from './svg/plus.svg'
 import horizontalSwapIcon from './svg/horizontalSwapArrows.svg'
 import swapListIcon from './svg/swap-list.svg'
 import a0Logo from './svg/a0Logo.svg'
-import eclipseLogo from './svg/eclipseLogo.svg'
-import solanaLogo from './svg/solanaLogo.svg'
 import varaLogo from './svg/VaraLogo.svg'
 import warningIcon from './svg/Warning.svg'
 import circleDiscord from './svg/circle-discord.svg'
 import circleTelegram from './svg/circle-telegram.svg'
 import eclipse from './svg/eclipse.svg'
-import alephiumLogo from './svg/alephiumLogo.svg'
 import phantomWalletIcon from './svg/phantom.svg'
 import solflareWalletIcon from './svg/solflare.svg'
 import backpackWalletIcon from './svg/backpack.svg'
@@ -47,6 +37,7 @@ import cat2 from './svg/SolanaCreator/Cat2.svg'
 import dog1 from './svg/SolanaCreator/Dog1.svg'
 import dog2 from './svg/SolanaCreator/Dog2.svg'
 import lockIcon from './svg/lockIcon.svg'
+import lockPosition from './svg/lock.svg'
 import airdrop from './svg/airdrop.svg'
 import nightly from './svg/nightly.svg'
 import airdropRainbow from './svg/airdropRainbow.svg'
@@ -70,15 +61,7 @@ import swapArrows from './svg/swap-arrows.svg'
 import liquidityIcon from './svg/liquidity.svg'
 import walletIcon from './svg/wallet.svg'
 import statsIcon from './svg/stats.svg'
-import closeModal from './svg/closeModal.svg'
-import discordFill from './svg/discordFill.svg'
-import xFill from './svg/xFill.svg'
-import telegramFill from './svg/telegramFill.svg'
-import githubFill from './svg/githubFill.svg'
-import mediumFill from './svg/MediumFill.svg'
-import docsFill from './svg/docsFill.svg'
 import tokenCreator from './svg/tokenCreator.svg'
-import settings2 from './svg/settings2.svg'
 import mainnetGlow from './svg/mainnetGlow.svg'
 import testnetGlow from './svg/testnetGlow.svg'
 import active2 from './svg/active2.svg'
@@ -89,37 +72,71 @@ import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
 import faucet from './svg/faucet.svg'
-import settingCirc from './svg/settings_ic.svg'
+import SearchIcon from './svg/lupaDark.svg'
+import allDomains from '@static/svg/allDomains.svg'
+import turboTap from '@static/svg/turboTap.svg'
+import nucleus from '@static/svg/nucleus.svg'
+import navRight from '@static/svg/navRight.svg'
+import navLeft from '@static/svg/navLeft.svg'
+import check from '@static/svg/checkFill.svg'
+import celestialMammoth from '@static/svg/celestialMammoth.svg'
+import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
+import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
+import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
+import ensofi from '@static/svg/ensofi.svg'
+import disconnectIcon from '@static/svg/disconnect.svg'
+import refreshIcon from '@static/svg/refresh.svg'
+import backIcon from '@static/svg/back-arrow.svg'
+import settingIcon from '@static/svg/settings.svg'
+import activeLiquidity from '@static/svg/activeLiquidity.svg'
+import RevertIcon from '@static/svg/revert.svg'
+import unlockIcon from '@static/svg/unlock.svg'
+import SwapPosition from '@static/svg/swap-position.svg'
+import handleMax from '@static/svg/narrowChartMaxHandle.svg'
+import handleMin from '@static/svg/narrowChartMinHandle.svg'
+import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
+import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
 
 const icons = {
+  lockPosition,
+  ensofi,
+  ZoomInIcon,
+  ZoomOutIcon,
+  handleMax,
+  handleMin,
+  SwapPosition,
+  RevertIcon,
+  unlockIcon,
+  activeLiquidity,
+  backIcon,
+  settingIcon,
+  refreshIcon,
+  disconnectIcon,
+  leaderboardGolden,
+  leaderboardSilver,
+  leaderboardBronze,
+  allDomains,
+  turboTap,
+  nucleus,
+  navRight,
+  navLeft,
+  check,
+  celestialMammoth,
+  SearchIcon,
   tokenCreator,
-  docsFill,
-  mediumFill,
-  githubFill,
-  telegramFill,
-  xFill,
-  discordFill,
-  closeModal,
   statsIcon,
   walletIcon,
   liquidityIcon,
   swapArrows,
-  clear: clearIcon,
   LogoShort: logoShort,
   LogoTitle: logoTitle,
   ArrowIcon: arrow,
   NoConnected: NoCon,
-  MainnetIcon: mainnetIcon,
-  DevnetIcon: devnetIcon,
-  TestnetIcon: testnetIcon,
   GithubIcon: githubIcon,
   TelegramIcon: telegramIcon,
   DiscordIcon: discordIcon,
   mediumIcon: mediumIcon,
   closeIcon: closeIcon,
-  activeIcon: activeIcon,
-  inactiveIcon: inactiveIcon,
-  allIcon: allIcon,
   closeSmallIcon: closeSmallIcon,
   closeSmallGreenIcon: closeSmallGreenIcon,
   docsIcon: docsIcon,
@@ -134,10 +151,7 @@ const icons = {
   horizontalSwapIcon: horizontalSwapIcon,
   swapListIcon: swapListIcon,
   AlephZero: a0Logo,
-  Eclipse: eclipseLogo,
-  Solana: solanaLogo,
   Vara: varaLogo,
-  Alephium: alephiumLogo,
   PhantomWallet: phantomWalletIcon,
   SolflareWallet: solflareWalletIcon,
   BackpackWallet: backpackWalletIcon,
@@ -171,7 +185,6 @@ const icons = {
   airdropGrey,
   infoError,
   okxLogo,
-  settings2,
   mainnetGlow,
   testnetGlow,
   active2,
@@ -183,7 +196,7 @@ const icons = {
   settings3,
   faucet,
   goldenInfoCircle,
-  settingCirc
+  settingCirc: settingIcon
 }
 
 export default icons

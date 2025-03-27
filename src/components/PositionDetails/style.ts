@@ -135,45 +135,5 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         filter: 'none'
       }
     }
-  },
-  unlockButton: {
-    color: colors.invariant.black,
-    background: colors.invariant.greenLinearGradientOpacity,
-    borderRadius: 12,
-    height: 40,
-    padding: 0,
-    minWidth: 40,
-    transition: '300ms',
-    '&:hover': {
-      background: colors.invariant.greenLinearGradient,
-      boxShadow: `0 0 16px ${colors.invariant.greenLinearGradient}`
-    },
-    '&:disabled': {
-      background: colors.invariant.light,
-      color: colors.invariant.componentBcg,
-      pointerEvents: 'auto',
-      transition: 'all 0.3s',
-      '&:hover': {
-        boxShadow: 'none',
-        cursor: 'not-allowed',
-        filter: 'brightness(1.15)',
-        '@media (hover: none)': {
-          filter: 'none'
-        }
-      }
-    }
-  },
-  lockButton: {
-    color: colors.invariant.black,
-    background: colors.invariant.pinkLinearGradientOpacity,
-    borderRadius: 12,
-    height: 40,
-    padding: 0,
-    minWidth: 40,
-    transition: '300ms',
-    '&:hover': {
-      background: colors.invariant.pinkLinearGradient,
-      boxShadow: `0 0 16px ${colors.invariant.pink}`
-    }
   }
 }))

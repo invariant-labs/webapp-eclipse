@@ -20,7 +20,7 @@ export const TooltipHover = ({ top, left, right, bottom, children, ...props }: P
       TransitionComponent={TooltipTransition}
       enterTouchDelay={0}
       {...props}>
-      {children}
+      <span className={classes.tooltipSpan}>{children}</span>
     </Tooltip>
   )
 }

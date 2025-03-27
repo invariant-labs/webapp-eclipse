@@ -13,7 +13,6 @@ import {
   Typography,
   useMediaQuery
 } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
   DepositOptions,
@@ -833,7 +832,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           </Grid>
 
           <TooltipHover title='Reverse tokens'>
-            <img className={classes.arrows} src={SwapList} alt='Arrow' onClick={reverseTokens} />
+            <img
+              className={classes.arrows}
+              src={icons.swapListIcon}
+              alt='Arrow'
+              onClick={reverseTokens}
+            />
           </TooltipHover>
 
           <Grid className={classes.selectWrapper}>
