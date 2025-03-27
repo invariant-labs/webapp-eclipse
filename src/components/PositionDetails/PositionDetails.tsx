@@ -3,11 +3,11 @@ import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/S
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import Refresher from '@common/Refresher/Refresher'
-import { Box, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
+import { Box, Collapse, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom'
 import { ILiquidityToken } from './SinglePositionInfo/consts'
 import { useStyles } from './style'
@@ -115,6 +115,9 @@ const PositionDetails: React.FC<IProps> = ({
 
   const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
 
+  const [showPreviewInfo, setShowPreviewInfo] = useState(false)
+  const [connectWalletDelay, setConnectWalletDelay] = useState(false)
+
   const isActive = midPrice.x >= min && midPrice.x <= max
 
   useEffect(() => {
@@ -168,19 +171,34 @@ const PositionDetails: React.FC<IProps> = ({
     }
   }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setConnectWalletDelay(true)
+    }, 1000)
+
+    return () => clearTimeout(timeout)
+  }, [])
+
+  useEffect(() => {
+    if (isPreview && connectWalletDelay) {
+      setShowPreviewInfo(true)
+    } else {
+      setShowPreviewInfo(false)
+    }
+  }, [isPreview, connectWalletDelay])
+
   return (
     <>
-      {isPreview && (
-        <Information mb={3}>
-          <Box className={classes.information}>
-            <img src={icons.eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
-            {isSm
-              ? `Viewing someone else's position. Wallet actions unavailable.`
-              : `You are currently watching someone else's position. Connect your wallet or go to
+      <Information mb={3} transitionTimeout={300} shouldOpen={showPreviewInfo}>
+        <Box className={classes.information}>
+          <img src={icons.eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
+          {isSm
+            ? `Viewing someone else's position. Wallet actions unavailable.`
+            : `You are currently watching someone else's position. Connect your wallet or go to
               portfolio to see your positions.`}
-          </Box>
-        </Information>
-      )}
+        </Box>
+      </Information>
+
       <Grid container className={classes.wrapperContainer} wrap='nowrap'>
         <LockLiquidityModal
           open={isLockPositionModalOpen}
