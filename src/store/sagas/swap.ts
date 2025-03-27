@@ -100,30 +100,27 @@ export function* handleSwapWithETH(): Generator {
     const wrappedEthAccount = Keypair.generate()
 
     const net = networkTypetoProgramNetwork(networkType)
-    let initialTx: Transaction
-    let unwrapIx: TransactionInstruction
+    const prependendIxs: TransactionInstruction[] = []
+    const appendedIxs: TransactionInstruction[] = []
+
     if (allTokens[tokenFrom.toString()].address.toString() === WRAPPED_ETH_ADDRESS) {
-      const {
-        createIx,
-        transferIx,
-        initIx,
-        unwrapIx: unwrap
-      } = createNativeAtaWithTransferInstructions(
+      const { createIx, transferIx, initIx, unwrapIx } = createNativeAtaWithTransferInstructions(
         wrappedEthAccount.publicKey,
         wallet.publicKey,
         net,
         amountIn.toNumber()
       )
-      unwrapIx = unwrap
-      initialTx = new Transaction().add(createIx).add(transferIx).add(initIx)
+
+      prependendIxs.push(...[createIx, transferIx, initIx])
+      appendedIxs.push(unwrapIx)
     } else {
-      const {
-        createIx,
-        initIx,
-        unwrapIx: unwrap
-      } = createNativeAtaInstructions(wrappedEthAccount.publicKey, wallet.publicKey, net)
-      unwrapIx = unwrap
-      initialTx = new Transaction().add(createIx).add(initIx)
+      const { createIx, initIx, unwrapIx } = createNativeAtaInstructions(
+        wrappedEthAccount.publicKey,
+        wallet.publicKey,
+        net
+      )
+      prependendIxs.push(...[createIx, initIx])
+      appendedIxs.push(unwrapIx)
     }
 
     // const initialBlockhash = yield* call([connection, connection.getRecentBlockhash])
@@ -149,8 +146,8 @@ export function* handleSwapWithETH(): Generator {
       toAddress = yield* call(createAccount, tokenTo)
     }
 
-    const swapIx = yield* call(
-      [marketProgram, marketProgram.swapIx],
+    const swapTx = yield* call(
+      [marketProgram, marketProgram.versionedSwapTx],
       {
         pair: new Pair(tokenFrom, tokenTo, {
           fee: swapPool.fee,
@@ -169,11 +166,10 @@ export function* handleSwapWithETH(): Generator {
         pool: swapPool,
         tickmap: tickmaps[swapPool.tickmap.toString()]
       },
-      { tickCrosses: MAX_CROSSES_IN_SINGLE_TX }
+      { tickCrosses: MAX_CROSSES_IN_SINGLE_TX },
+      prependendIxs,
+      appendedIxs
     )
-
-    initialTx.add(swapIx)
-    initialTx.add(unwrapIx)
 
     // const swapBlockhash = yield* call([connection, connection.getRecentBlockhash])
     // swapTx.recentBlockhash = swapBlockhash.blockhash
@@ -184,16 +180,9 @@ export function* handleSwapWithETH(): Generator {
     // unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
     // unwrapTx.feePayer = wallet.publicKey
 
-    const initialBlockhash = yield* call([connection, connection.getLatestBlockhash])
-    initialTx.recentBlockhash = initialBlockhash.blockhash
-    initialTx.feePayer = wallet.publicKey
-
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const initialSignedTx = (yield* call(
-      [wallet, wallet.signTransaction],
-      initialTx
-    )) as Transaction
+    const initialSignedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
@@ -931,7 +920,7 @@ export function* handleSwap(): Generator {
     }
 
     const swapTx = yield* call(
-      [marketProgram, marketProgram.swapTx],
+      [marketProgram, marketProgram.versionedSwapTx],
       {
         pair: new Pair(tokenFrom, tokenTo, {
           fee: swapPool.fee,
@@ -954,9 +943,6 @@ export function* handleSwap(): Generator {
       }
     )
     const connection = yield* call(getConnection)
-    const blockhash = yield* call([connection, connection.getLatestBlockhash])
-    swapTx.recentBlockhash = blockhash.blockhash
-    swapTx.feePayer = wallet.publicKey
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
