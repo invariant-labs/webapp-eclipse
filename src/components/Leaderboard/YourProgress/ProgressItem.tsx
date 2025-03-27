@@ -1,10 +1,10 @@
 import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import React from 'react'
 import useStyles from './styles'
-import infoIcon from '@static/svg/info.svg'
 import { blurContent } from '@utils/uiUtils'
 import { theme } from '@static/theme'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import icons from '@static/icons'
 import { Button } from '@common/Button/Button'
 
 interface IProgressItemProps {
@@ -15,6 +15,7 @@ interface IProgressItemProps {
   tooltip?: React.ReactNode
   isLoading?: boolean
   withButton?: boolean
+  isConnected: boolean
 }
 
 export const ProgressItem: React.FC<IProgressItemProps> = ({
@@ -24,6 +25,7 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
   bgImage,
   withButton = false,
   isLoading = false,
+  isConnected,
   onModalOpen
 }) => {
   const { classes } = useStyles({ bgImage })
@@ -35,11 +37,11 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
         <Typography className={classes.headerSmallText}>{label}</Typography>
         {tooltip && (
           <TooltipGradient title={tooltip} placement='bottom' top={1}>
-            <img src={infoIcon} alt='i' width={14} />
+            <img src={icons.infoIcon} alt='i' width={14} />
           </TooltipGradient>
         )}
       </Grid>
-      {isLoading ? (
+      {isLoading && isConnected ? (
         <Skeleton variant='rounded' animation='wave' className={classes.blur} />
       ) : isMobile && withButton ? (
         <Box className={classes.withButtonWrapper}>
