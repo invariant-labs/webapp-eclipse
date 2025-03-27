@@ -327,7 +327,6 @@ export function* handleSwapWithETH(): Generator {
 }
 
 export function* handleTwoHopSwapWithETH(): Generator {
-  console.log('Handling Two Hop Swap With ETH!')
   const loaderSwappingTokens = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
 
@@ -348,7 +347,6 @@ export function* handleTwoHopSwapWithETH(): Generator {
     } = yield* select(swap)
 
     // Should never be triggered
-    console.log(tokenBetween?.toString(), firstPair, secondPair)
     if (!tokenBetween || !firstPair || !secondPair) {
       return
     }
@@ -635,7 +633,6 @@ export function* handleTwoHopSwapWithETH(): Generator {
 }
 
 export function* handleTwoHopSwap(): Generator {
-  console.log('Handling Two Hop Swap!')
   const loaderSwappingTokens = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
   const tickmaps = yield* select(tickMaps)
@@ -663,7 +660,6 @@ export function* handleTwoHopSwap(): Generator {
       return yield* call(handleTwoHopSwapWithETH)
     }
 
-    console.log(tokenBetween?.toString(), firstPair, secondPair)
     // Should never be triggered
     if (!tokenBetween || !firstPair || !secondPair) {
       return
@@ -856,7 +852,6 @@ export function* handleTwoHopSwap(): Generator {
 }
 
 export function* handleSwap(): Generator {
-  console.log('Handling Swap!')
   const loaderSwappingTokens = createLoaderKey()
   const loaderSigningTx = createLoaderKey()
   const tickmaps = yield* select(tickMaps)

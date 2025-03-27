@@ -634,20 +634,6 @@ export const Swap: React.FC<ISwap> = ({
       error: boolean
     }
   ) => {
-    console.log(
-      'Updating Simulations',
-      // simulateResult.amountOut.toString(),
-      simulateResult.error,
-      '|',
-      // simulateWithHopResult.simulation?.totalAmountIn.toString(),
-      // simulateWithHopResult.simulation?.totalAmountOut.toString(),
-      'One',
-      simulateWithHopResult.simulation?.swapHopOne.status,
-      'Two',
-      simulateWithHopResult.simulation?.swapHopTwo.status,
-      'isErr',
-      simulateWithHopResult.error
-    )
     let useTwoHop = false
 
     const isSimulateError =
@@ -680,8 +666,6 @@ export const Swap: React.FC<ISwap> = ({
         }
       }
     }
-
-    console.log(useTwoHop)
 
     if (useTwoHop && simulateWithHopResult.simulation && simulateWithHopResult.route) {
       setSimulationPath({
