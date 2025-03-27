@@ -38,8 +38,6 @@ type Props = {
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
 }
 
-const MAX_DIGITS = 5
-
 export const PositionHeader = ({
   tokenA,
   tokenB,
