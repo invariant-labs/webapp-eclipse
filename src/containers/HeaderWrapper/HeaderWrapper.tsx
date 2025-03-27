@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { actions as positionsActions } from '@store/reducers/positions'
 import { Chain, WalletType } from '@store/consts/types'
 import { RpcErrorModal } from '@components/RpcErrorModal/RpcErrorModal'
 import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
@@ -206,8 +207,11 @@ export const HeaderWrapper: React.FC = () => {
             localStorage.setItem(`INVARIANT_RPC_Eclipse_${network}`, rpcAddress)
             dispatch(actions.setRPCAddress(rpcAddress))
             dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))
+            dispatch(actions.initSolanaConnection())
+            dispatch(walletActions.directInitWallet())
+            dispatch(leaderboardActions.getLeaderboardData({ page: 1, itemsPerPage: 25 }))
+            dispatch(positionsActions.getPositionsList())
             localStorage.setItem('IS_RPC_WARNING_IGNORED', 'false')
-            window.location.reload()
           }
 
           if (network !== currentNetwork) {

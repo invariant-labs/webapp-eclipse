@@ -1,5 +1,5 @@
 import { useDispatch, useSelector } from 'react-redux'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/pools'
@@ -19,7 +19,6 @@ const MarketEvents = () => {
   const networkType = useSelector(network)
   const rpc = useSelector(rpcAddress)
   const wallet = getEclipseWallet()
-  const marketProgram = getMarketProgramSync(networkType, rpc, wallet as IWallet)
   const { tokenFrom, tokenTo } = useSelector(swap)
   const networkStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
@@ -27,6 +26,11 @@ const MarketEvents = () => {
   const [subscribedSwapPools, _setSubscribedSwapPools] = useState<Set<string>>(new Set())
   const [newPositionSubscribedPool, setNewPositionSubscribedPool] = useState<PublicKey>(
     PublicKey.default
+  )
+
+  const marketProgram = useMemo(
+    () => getMarketProgramSync(networkType, rpc, wallet as IWallet),
+    [rpc, wallet, networkType]
   )
 
   const location = useLocation()
@@ -79,7 +83,7 @@ const MarketEvents = () => {
     }
 
     connectEvents()
-  }, [dispatch, networkStatus])
+  }, [dispatch, networkStatus, rpc])
 
   // New position pool subscription
   useEffect(() => {
@@ -111,7 +115,7 @@ const MarketEvents = () => {
         )
       }
     }
-  }, [dispatch, networkStatus, newPositionPoolIndex])
+  }, [dispatch, networkStatus, newPositionPoolIndex, rpc])
 
   useEffect(() => {
     window.addEventListener('unhandledrejection', e => {
@@ -162,7 +166,7 @@ const MarketEvents = () => {
         }
       }
     }
-  }, [tokenFrom, tokenTo])
+  }, [tokenFrom, tokenTo, rpc])
 
   useEffect(() => {
     // Unsubscribe from swap pools on different pages than swap
@@ -181,7 +185,7 @@ const MarketEvents = () => {
       marketProgram.program.account.pool.unsubscribe(newPositionSubscribedPool)
       setNewPositionSubscribedPool(PublicKey.default)
     }
-  }, [location.pathname])
+  }, [location.pathname, rpc])
 
   return null
 }

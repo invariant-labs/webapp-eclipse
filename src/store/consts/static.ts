@@ -420,6 +420,16 @@ export enum RPC {
   LOCAL = 'http://127.0.0.1:8899'
 }
 
+export const RPCNames: Record<string, string> = {
+  [RPC.TEST]: 'Eclipse Testnet',
+  [RPC.MAIN]: 'Eclipse Mainnet',
+  [RPC.MAIN_HELIUS]: 'Helius',
+  [RPC.MAIN_TRITON]: 'Triton',
+  [RPC.MAIN_LGNS]: 'Lgns',
+  [RPC.DEV]: 'Eclipse Devnet',
+  [RPC.LOCAL]: 'Local'
+}
+
 export const EGOAT_MAIN: Token = {
   tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'EGoat',

@@ -17,7 +17,7 @@ import { actions } from '@store/reducers/positions'
 import { actions as lockerActions } from '@store/reducers/locker'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
-import { network, timeoutError } from '@store/selectors/solanaConnection'
+import { network, rpcAddress, timeoutError } from '@store/selectors/solanaConnection'
 import { isLoadingPositionsList, plotTicks, singlePositionData } from '@store/selectors/positions'
 import { balance, balanceLoading, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
@@ -43,6 +43,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const navigate = useNavigate()
 
   const currentNetwork = useSelector(network)
+  const currentRpc = useSelector(rpcAddress)
   const position = useSelector(singlePositionData(id))
   const { success, inProgress } = useSelector(lockerState)
 
@@ -356,6 +357,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       }
     }
   }, [isLoadingList])
+
+  useEffect(() => {
+    onRefresh()
+  }, [currentRpc])
 
   if (position) {
     return (

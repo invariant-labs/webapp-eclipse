@@ -91,7 +91,8 @@ import {
   KYSOL_MAIN,
   EZSOL_MAIN,
   LEADERBOARD_DECIMAL,
-  POSITIONS_PER_PAGE
+  POSITIONS_PER_PAGE,
+  RPCNames
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -2049,4 +2050,8 @@ export const ROUTES = {
   },
 
   getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
+}
+
+export const getRpcNameByAddress = (addr: string) => {
+  return RPCNames[addr] ?? 'Custom'
 }

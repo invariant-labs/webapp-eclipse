@@ -532,6 +532,7 @@ export function* init(isEagerConnect: boolean): Generator {
         })
       )
     }
+
     yield* put(actions.setStatus(Status.Initialized))
     yield* call(handleBalance)
   } catch (e: unknown) {
@@ -581,7 +582,7 @@ export function* handleConnect(action: PayloadAction<boolean>): Generator {
   }
 }
 
-export function* handleChangeWalletInExtenstion(): Generator {
+export function* handleDirectInitWallet(): Generator {
   try {
     yield* call(init, false)
   } catch (e: unknown) {
@@ -699,8 +700,8 @@ export function* handleUnwrapWETH(): Generator {
   yield put(snackbarsActions.remove(loaderUnwrapWETH))
 }
 
-export function* changeWalletInExtenstionHandler(): Generator {
-  yield takeLatest(actions.changeWalletInExtension, handleChangeWalletInExtenstion)
+export function* directInitWalletHandler(): Generator {
+  yield takeLatest(actions.directInitWallet, handleDirectInitWallet)
 }
 export function* connectHandler(): Generator {
   yield takeLatest(actions.connect, handleConnect)
@@ -730,7 +731,7 @@ export function* walletSaga(): Generator {
       disconnectHandler,
       handleBalanceSaga,
       unwrapWETHHandler,
-      changeWalletInExtenstionHandler
+      directInitWalletHandler
     ].map(spawn)
   )
 }

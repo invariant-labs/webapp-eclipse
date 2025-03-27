@@ -19,7 +19,7 @@ import {
   nearestPoolTicksForPair,
   isLoadingPathTokens
 } from '@store/selectors/pools'
-import { network, timeoutError } from '@store/selectors/solanaConnection'
+import { network, rpcAddress, timeoutError } from '@store/selectors/solanaConnection'
 import {
   status,
   swapTokens,
@@ -55,7 +55,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const dispatch = useDispatch()
 
   const connection = getCurrentSolanaConnection()
-
+  const rpc = useSelector(rpcAddress)
   const walletStatus = useSelector(status)
   const swap = useSelector(swapPool)
   const tickmap = useSelector(tickMaps)
@@ -415,6 +415,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
       feeds={priceFeeds}
       promotedSwapPairs={promotedSwapPairs}
       swapMultiplier={multiplyer}
+      rpc={rpc}
     />
   )
 }
