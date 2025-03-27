@@ -317,7 +317,6 @@ const PositionDetails: React.FC<IProps> = ({
                       width={45}
                       scheme='pink'
                       disabled
-                      className={classes.unlockButton}
                       variant='contained'
                       onClick={() => {}}>
                       <img src={icons.unlockIcon} alt='unlock' />
