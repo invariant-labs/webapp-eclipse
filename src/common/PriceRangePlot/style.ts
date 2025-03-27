@@ -27,6 +27,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   zoomButtonsWrapper: {
+    justifyContent: 'space-between',
     position: 'absolute',
     bottom: 20,
     right: 8,
@@ -39,6 +40,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down('md')]: {
       flexDirection: 'row',
       maxWidth: 92,
+      gap: 10,
       height: 40
     }
   },

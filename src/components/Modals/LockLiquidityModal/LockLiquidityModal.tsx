@@ -4,7 +4,6 @@ import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
-import classNames from 'classnames'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '@static/theme'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
@@ -243,19 +242,17 @@ export const LockLiquidityModal = ({
                 : 'Confirm that you understand the consequences by typing the text above'
             }
             top={-40}>
-            <div>
-              <AnimatedButton
-                content={'Lock Position'}
-                className={classNames(classes.lockButton)}
-                onClick={() => {
-                  if (!isCorrectValue) return
-                  onLock()
-                  setProgress('progress')
-                }}
-                progress={progress}
-                disabled={!isCorrectValue}
-              />
-            </div>
+            <AnimatedButton
+              content={'Lock Position'}
+              className={classes.lockButton}
+              onClick={() => {
+                if (!isCorrectValue) return
+                onLock()
+                setProgress('progress')
+              }}
+              progress={progress}
+              disabled={!isCorrectValue}
+            />
           </TooltipHover>
         </Grid>
       </Grid>

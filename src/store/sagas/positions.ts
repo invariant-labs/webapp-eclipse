@@ -1420,11 +1420,11 @@ export function* handleClaimAllFees() {
 
       let signedTx: Transaction
       if (additionalSigner) {
-        const partiallySignedTx = yield* call([wallet, wallet.signTransaction], tx)
+        const partiallySignedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
         partiallySignedTx.partialSign(additionalSigner)
         signedTx = partiallySignedTx
       } else {
-        signedTx = yield* call([wallet, wallet.signTransaction], tx)
+        signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
       }
 
       const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
