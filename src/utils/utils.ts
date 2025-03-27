@@ -1,11 +1,13 @@
 import {
   calculatePriceSqrt,
   DENOMINATOR,
+  FetcherRecords,
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
   Pair,
-  PRICE_DENOMINATOR
+  PRICE_DENOMINATOR,
+  routingEssentials
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
@@ -1222,6 +1224,129 @@ export const handleSimulate = async (
   return {
     ...successData,
     error: []
+  }
+}
+
+export const handleSimulateWithHop = async (
+  market: Market,
+  tokenIn: PublicKey,
+  tokenOut: PublicKey,
+  amount: BN,
+  byAmountIn: boolean,
+  accounts: FetcherRecords
+) => {
+  const { routeCandidates } = routingEssentials(
+    tokenIn,
+    tokenOut,
+    market.program.programId,
+    market.network
+  )
+
+  for (let i = routeCandidates.length - 1; i >= 0; i--) {
+    const [pairIn, pairOut] = routeCandidates[i]
+
+    if (
+      !accounts.pools[pairIn.getAddress(market.program.programId).toBase58()] ||
+      !accounts.pools[pairOut.getAddress(market.program.programId).toBase58()]
+    ) {
+      const lastCandidate = routeCandidates.pop()!
+      if (i !== routeCandidates.length) {
+        routeCandidates[i] = lastCandidate
+      }
+    }
+  }
+
+  if (routeCandidates.length === 0) {
+    return { simulation: null, route: null, error: true }
+  }
+
+  const crossLimit =
+    tokenIn.toString() === WRAPPED_ETH_ADDRESS || tokenOut.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+
+  const simulations = await market.routeTwoHop(
+    tokenIn,
+    tokenOut,
+    amount,
+    byAmountIn,
+    routeCandidates,
+    accounts,
+    crossLimit
+  )
+
+  if (simulations.length === 0) {
+    return { simulation: null, route: null, error: true }
+  }
+
+  let best = 0
+  let bestFailed = 0
+  for (let n = 0; n < simulations.length; ++n) {
+    const [, simulation] = simulations[n]
+    const [, simulationBest] = simulations[best]
+    const [, simulationBestFailed] = simulations[bestFailed]
+    const isSwapSuccess =
+      simulation.swapHopOne.status === SimulationStatus.Ok &&
+      simulation.swapHopTwo.status === SimulationStatus.Ok
+
+    const isBestSwapFailed =
+      simulationBest.swapHopOne.status !== SimulationStatus.Ok ||
+      simulationBest.swapHopTwo.status !== SimulationStatus.Ok
+
+    if (byAmountIn) {
+      if (
+        (simulation.totalAmountOut.gt(simulationBest.totalAmountOut) && isSwapSuccess) ||
+        (isSwapSuccess && isBestSwapFailed)
+      ) {
+        best = n
+      }
+
+      if (
+        !simulation.totalAmountOut.eq(new BN(0)) &&
+        simulation.totalAmountOut.gt(simulationBestFailed.totalAmountOut)
+      ) {
+        bestFailed = n
+      }
+    } else {
+      if (
+        (simulation.totalAmountOut.eq(amount) &&
+          simulation.totalAmountIn
+            .add(simulation.swapHopOne.accumulatedFee)
+            .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) &&
+          isSwapSuccess) ||
+        (isSwapSuccess && isBestSwapFailed)
+      ) {
+        best = n
+      }
+
+      if (
+        !simulation.totalAmountOut.eq(new BN(0)) &&
+        simulation.totalAmountIn
+          .add(simulation.swapHopOne.accumulatedFee)
+          .lt(
+            simulationBestFailed.totalAmountIn.add(simulationBestFailed.swapHopOne.accumulatedFee)
+          )
+      ) {
+        bestFailed = n
+      }
+    }
+  }
+
+  if (
+    simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
+    simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
+  ) {
+    return {
+      simulation: simulations[best][1],
+      route: routeCandidates[simulations[best][0]],
+      error: false
+    }
+  } else {
+    return {
+      simulation: simulations[bestFailed][1],
+      route: routeCandidates[simulations[bestFailed][0]],
+      error: true
+    }
   }
 }
 
