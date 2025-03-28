@@ -5,7 +5,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import icons from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { VariantType } from 'notistack'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { NetworkType } from '@store/consts/static'
 interface IProps {
   token: SwapToken | null
@@ -44,7 +44,7 @@ const SingleToken: React.FC<IProps> = ({ token, network, tokenPrice, copyTokenAd
 
   return (
     <Grid className={classes.token}>
-      <Grid container direction='row' justifyContent='flex-start' alignItems='center' wrap='nowrap'>
+      <Grid container className={classes.innerToken}>
         {token?.logoURI ? (
           <Box className={classes.imageContainer}>
             <img
@@ -76,7 +76,7 @@ const SingleToken: React.FC<IProps> = ({ token, network, tokenPrice, copyTokenAd
             </Typography>
 
             {token && (
-              <TooltipHover text='Token details'>
+              <TooltipHover title='Token details'>
                 <a
                   href={`https://eclipsescan.xyz/token/${token.assetAddress.toString()}${networkUrl}`}
                   target='_blank'
@@ -100,7 +100,7 @@ const SingleToken: React.FC<IProps> = ({ token, network, tokenPrice, copyTokenAd
         <Typography className={classes.price}>
           {token ? (tokenPrice ? '$' + formatNumberWithSuffix(tokenPrice) : 'No data') : '--'}
         </Typography>
-        <TooltipHover text='Copy'>
+        <TooltipHover title='Copy'>
           <Grid className={classes.tokenAddress} onClick={copyToClipboard}>
             <Typography>
               {token

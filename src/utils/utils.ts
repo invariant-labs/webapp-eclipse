@@ -1,11 +1,13 @@
 import {
   calculatePriceSqrt,
   DENOMINATOR,
+  FetcherRecords,
   getTokenProgramAddress,
   MAX_TICK,
   MIN_TICK,
   Pair,
-  PRICE_DENOMINATOR
+  PRICE_DENOMINATOR,
+  routingEssentials
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
@@ -26,7 +28,8 @@ import {
   parsePool,
   RawPoolStructure,
   parsePosition,
-  parseTick
+  parseTick,
+  RawTick
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import axios from 'axios'
 import {
@@ -897,17 +900,8 @@ export const createPlaceholderLiquidityPlot = (
 }
 
 export const getNetworkTokensList = (networkType: NetworkType): Record<string, Token> => {
-  // const obj: Record<string, Token> = {}
   switch (networkType) {
     case NetworkType.Mainnet:
-      // ;(mainnetList as any[]).forEach(token => {
-      //   obj[token.address] = {
-      //     ...token,
-      //     address: new PublicKey(token.address),
-      //     coingeckoId: token?.extensions?.coingeckoId
-      //   }
-      // })
-      // return obj
       return {
         [WETH_MAIN.address.toString()]: WETH_MAIN,
         [MOCKED_TOKEN_MAIN.address.toString()]: MOCKED_TOKEN_MAIN,
@@ -1138,7 +1132,7 @@ export const handleSimulate = async (
       }
     } else {
       errorMessage.push(`Ticks not available for pool ${pool.address.toString()}`)
-      continue // Move to the next pool
+      continue
     }
     const maxCrosses =
       pool.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
@@ -1201,8 +1195,11 @@ export const handleSimulate = async (
       if (swapSimulateResult.status !== SimulationStatus.Ok) {
         errorMessage.push(swapSimulateResult.status)
       }
-    } catch (err: any) {
-      errorMessage.push(err.toString())
+    } catch (e: unknown) {
+      const error = ensureError(e)
+      console.log(error)
+
+      errorMessage.push(error.message.toString())
     }
   }
   if (okChanges === 0 && failChanges === 0) {
@@ -1227,6 +1224,129 @@ export const handleSimulate = async (
   return {
     ...successData,
     error: []
+  }
+}
+
+export const handleSimulateWithHop = async (
+  market: Market,
+  tokenIn: PublicKey,
+  tokenOut: PublicKey,
+  amount: BN,
+  byAmountIn: boolean,
+  accounts: FetcherRecords
+) => {
+  const { routeCandidates } = routingEssentials(
+    tokenIn,
+    tokenOut,
+    market.program.programId,
+    market.network
+  )
+
+  for (let i = routeCandidates.length - 1; i >= 0; i--) {
+    const [pairIn, pairOut] = routeCandidates[i]
+
+    if (
+      !accounts.pools[pairIn.getAddress(market.program.programId).toBase58()] ||
+      !accounts.pools[pairOut.getAddress(market.program.programId).toBase58()]
+    ) {
+      const lastCandidate = routeCandidates.pop()!
+      if (i !== routeCandidates.length) {
+        routeCandidates[i] = lastCandidate
+      }
+    }
+  }
+
+  if (routeCandidates.length === 0) {
+    return { simulation: null, route: null, error: true }
+  }
+
+  const crossLimit =
+    tokenIn.toString() === WRAPPED_ETH_ADDRESS || tokenOut.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+
+  const simulations = await market.routeTwoHop(
+    tokenIn,
+    tokenOut,
+    amount,
+    byAmountIn,
+    routeCandidates,
+    accounts,
+    crossLimit
+  )
+
+  if (simulations.length === 0) {
+    return { simulation: null, route: null, error: true }
+  }
+
+  let best = 0
+  let bestFailed = 0
+  for (let n = 0; n < simulations.length; ++n) {
+    const [, simulation] = simulations[n]
+    const [, simulationBest] = simulations[best]
+    const [, simulationBestFailed] = simulations[bestFailed]
+    const isSwapSuccess =
+      simulation.swapHopOne.status === SimulationStatus.Ok &&
+      simulation.swapHopTwo.status === SimulationStatus.Ok
+
+    const isBestSwapFailed =
+      simulationBest.swapHopOne.status !== SimulationStatus.Ok ||
+      simulationBest.swapHopTwo.status !== SimulationStatus.Ok
+
+    if (byAmountIn) {
+      if (
+        (simulation.totalAmountOut.gt(simulationBest.totalAmountOut) && isSwapSuccess) ||
+        (isSwapSuccess && isBestSwapFailed)
+      ) {
+        best = n
+      }
+
+      if (
+        !simulation.totalAmountOut.eq(new BN(0)) &&
+        simulation.totalAmountOut.gt(simulationBestFailed.totalAmountOut)
+      ) {
+        bestFailed = n
+      }
+    } else {
+      if (
+        (simulation.totalAmountOut.eq(amount) &&
+          simulation.totalAmountIn
+            .add(simulation.swapHopOne.accumulatedFee)
+            .lt(simulationBest.totalAmountIn.add(simulationBest.swapHopOne.accumulatedFee)) &&
+          isSwapSuccess) ||
+        (isSwapSuccess && isBestSwapFailed)
+      ) {
+        best = n
+      }
+
+      if (
+        !simulation.totalAmountOut.eq(new BN(0)) &&
+        simulation.totalAmountIn
+          .add(simulation.swapHopOne.accumulatedFee)
+          .lt(
+            simulationBestFailed.totalAmountIn.add(simulationBestFailed.swapHopOne.accumulatedFee)
+          )
+      ) {
+        bestFailed = n
+      }
+    }
+  }
+
+  if (
+    simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
+    simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
+  ) {
+    return {
+      simulation: simulations[best][1],
+      route: routeCandidates[simulations[best][0]],
+      error: false
+    }
+  } else {
+    return {
+      simulation: simulations[bestFailed][1],
+      route: routeCandidates[simulations[bestFailed][0]],
+      error: true
+    }
   }
 }
 
@@ -1269,8 +1389,47 @@ export const getPoolsFromAddresses = async (
           address: addresses[index]
         }
       }) as PoolWithAddress[]
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
+
+    return []
+  }
+}
+
+export const getTickmapsFromPools = async (
+  pools: PoolWithAddress[],
+  marketProgram: Market
+): Promise<Record<string, Tickmap>> => {
+  {
+    try {
+      const addresses = pools.map(pool => pool.tickmap)
+      const tickmaps = (await marketProgram.program.account.tickmap.fetchMultiple(
+        addresses
+      )) as Array<Tickmap | null>
+
+      return tickmaps.reduce((acc, cur, idx) => {
+        if (cur) {
+          acc[addresses[idx].toBase58()] = cur
+        }
+        return acc
+      }, {})
+    } catch (e: unknown) {
+      const error = ensureError(e)
+      console.log(error)
+
+      return {}
+    }
+  }
+}
+
+export const getTicksFromAddresses = async (market: Market, addresses: PublicKey[]) => {
+  try {
+    return (await market.program.account.tick.fetchMultiple(addresses)) as Array<RawTick | null>
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     return []
   }
 }
@@ -1281,11 +1440,12 @@ export const getPools = async (
 ): Promise<PoolWithAddress[]> => {
   try {
     const addresses: PublicKey[] = await Promise.all(
-      pairs.map(async pair => await pair.getAddress(marketProgram.program.programId))
+      pairs.map(pair => pair.getAddress(marketProgram.program.programId))
     )
 
     return await getPoolsFromAddresses(addresses, marketProgram)
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
     return []
   }
@@ -1495,7 +1655,10 @@ export async function getTokenMetadata(
       logoURI: nft?.json?.image || irisTokenData?.image || '/unknownToken.svg',
       isUnknown: true
     }
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     return {
       tokenProgram,
       address: mintAddress,
@@ -1544,8 +1707,11 @@ export const stringToFixed = (
 
 export const tickerToAddress = (network: NetworkType, ticker: string): string | null => {
   try {
-    return getAddressTickerMap(network)[ticker].toString()
-  } catch (error) {
+    return getAddressTickerMap(network)[ticker] || ticker
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
     return ticker
   }
 }
@@ -1577,39 +1743,6 @@ export const parsePathFeeToFeeString = (pathFee: string): string => {
 export const randomNumberFromRange = (min: number, max: number) => {
   return Math.floor(Math.random() * (max - min + 1) + min)
 }
-
-// TODO: commented until eclipse staker sdk will be available
-// export const getUserStakesForFarm = async (
-//   stakerProgram: Staker,
-//   incentive: PublicKey,
-//   pool: PublicKey,
-//   ids: BN[],
-//   positionsAdresses: PublicKey[]
-// ) => {
-//   const promises = ids.map(async id => {
-//     const [userStakeAddress] = await stakerProgram.getUserStakeAddressAndBump(incentive, pool, id)
-
-//     return userStakeAddress
-//   })
-
-//   const addresses = await Promise.all(promises)
-
-//   const stakes = await stakerProgram.program.account.userStake.fetchMultiple(addresses)
-
-//   const fullStakes: ExtendedStake[] = []
-
-//   stakes.forEach((stake, index) => {
-//     if (stake !== null) {
-//       fullStakes.push({
-//         ...(stake as Stake),
-//         address: addresses[index],
-//         position: positionsAdresses[index]
-//       })
-//     }
-//   })
-
-//   return fullStakes
-// }
 
 export const getPositionsForPool = async (marketProgram: Market, pool: PublicKey) => {
   return (
@@ -1643,36 +1776,6 @@ export const getPositionsAddressesFromRange = async (
     data.map(({ positionAddress }) => positionAddress)
   )
 }
-
-// TODO: commented until eclipse bonds sdk will be available
-// export const calculateEstBondPriceForQuoteAmount = (bondSale: BondSaleStruct, amount: BN) => {
-//   let lowerBondAmount = new BN(0)
-//   let upperBondAmount = MAX_U64
-//   let price = calculateSellPrice(bondSale, upperBondAmount)
-
-//   while (upperBondAmount.sub(lowerBondAmount).abs().gt(new BN(1))) {
-//     const middleBondAmount = upperBondAmount.add(lowerBondAmount).div(new BN(2))
-//     price = calculateSellPrice(bondSale, middleBondAmount)
-//     const middleQuoteAmount = middleBondAmount.mul(price).div(new BN(10 ** DECIMAL))
-
-//     if (middleQuoteAmount.sub(amount).abs().lte(new BN(1))) {
-//       break
-//     }
-
-//     if (middleQuoteAmount.lt(amount)) {
-//       lowerBondAmount = middleBondAmount
-//     } else {
-//       upperBondAmount = middleBondAmount
-//     }
-//   }
-
-//   return price
-// }
-
-// export const calculateBondPrice = (bondSale: BondSaleStruct, amount: BN, byAmountBond: boolean) =>
-//   byAmountBond
-//     ? calculateSellPrice(bondSale, amount)
-//     : calculateEstBondPriceForQuoteAmount(bondSale, amount)
 
 export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
   {
@@ -1723,28 +1826,53 @@ export const getMockedTokenPrice = (symbol: string, network: NetworkType): Token
   }
 }
 
-export const getTokenPrice = async (addr: string): Promise<number | undefined> => {
+export const getTokenPrice = async (
+  addr: string,
+  network: NetworkType
+): Promise<number | undefined> => {
   const cachedLastQueryTimestamp = localStorage.getItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
   let lastQueryTimestamp = 0
   if (cachedLastQueryTimestamp) {
     lastQueryTimestamp = Number(cachedLastQueryTimestamp)
   }
 
-  const cachedPriceData = localStorage.getItem('TOKEN_PRICE_DATA')
+  const cachedPriceData =
+    network === NetworkType.Mainnet
+      ? localStorage.getItem('TOKEN_PRICE_DATA')
+      : localStorage.getItem('TOKEN_PRICE_DATA_TESTNET')
+
   let priceData: Record<string, { price: number }> | null = null
 
   if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
-      const { data } = await axios.get<IPriceData>(`https://price.invariant.app/eclipse-mainnet`)
+      const { data } = await axios.get<IPriceData>(
+        `https://price.invariant.app/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
+      )
       priceData = data.data
 
-      localStorage.setItem('TOKEN_PRICE_DATA', JSON.stringify(priceData))
-      localStorage.setItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP', String(Date.now()))
-    } catch (e) {
-      localStorage.removeItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
-      localStorage.removeItem('TOKEN_PRICE_LAST_QUERY_TIMESTAMP')
+      localStorage.setItem(
+        network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET',
+        JSON.stringify(priceData)
+      )
+      localStorage.setItem(
+        network === NetworkType.Mainnet
+          ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
+          : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET',
+        String(Date.now())
+      )
+    } catch (e: unknown) {
+      const error = ensureError(e)
+      console.log(error)
+
+      localStorage.removeItem(
+        network === NetworkType.Mainnet
+          ? 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP'
+          : 'TOKEN_PRICE_LAST_QUERY_TIMESTAMP_TESTNET'
+      )
+      localStorage.removeItem(
+        network === NetworkType.Mainnet ? 'TOKEN_PRICE_DATA' : 'TOKEN_PRICE_DATA_TESTNET'
+      )
       priceData = null
-      console.log(e)
     }
   } else {
     priceData = JSON.parse(cachedPriceData)
@@ -1777,7 +1905,9 @@ export const getPoolsAPY = async (name: string): Promise<Record<string, number>>
     )
 
     return data
-  } catch (_err) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
     return {}
   }
 }
@@ -1791,7 +1921,9 @@ export const getIncentivesRewardData = async (
     )
 
     return data
-  } catch (_err) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
     return {}
   }
 }
@@ -1803,7 +1935,9 @@ export const getPoolsVolumeRanges = async (name: string): Promise<Record<string,
     )
 
     return data
-  } catch (_err) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
     return {}
   }
 }
@@ -1824,7 +1958,7 @@ export const isValidPublicKey = (keyString?: string | null) => {
     }
     new PublicKey(keyString)
     return true
-  } catch (error) {
+  } catch {
     return false
   }
 }
@@ -1851,10 +1985,10 @@ export const trimDecimalZeros = (numStr: string): string => {
 
 const poolsToRecalculateAPY = [
   'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
-  '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM' //SOL_ETH 0.09%
+  '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%
+  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC' // USDC_SOL 0.09%
 ]
 
-//HOTFIX
 export const calculateAPYAndAPR = (
   apy: number,
   poolAddress?: string,
@@ -1930,6 +2064,10 @@ export const calculatePoints = (
 }
 
 export const getConcentrationIndex = (concentrationArray: number[], neededValue: number = 34) => {
+  if (neededValue > concentrationArray[concentrationArray.length - 1]) {
+    return concentrationArray.length - 1
+  }
+
   let concentrationIndex = 0
 
   for (let index = 0; index < concentrationArray.length; index++) {
@@ -1973,8 +2111,8 @@ export const generatePositionTableLoadingData = () => {
       return {
         id: `loading-${index}`,
         poolAddress: `pool-${index}`,
-        tokenXName: 'FOO',
-        tokenYName: 'BAR',
+        tokenXName: 'ETH',
+        tokenYName: 'USDC',
         tokenXIcon: undefined,
         tokenYIcon: undefined,
         currentPrice,
@@ -1988,7 +2126,8 @@ export const generatePositionTableLoadingData = () => {
         isActive: Math.random() > 0.5,
         tokenXLiq: getRandomNumber(100, 1000),
         tokenYLiq: getRandomNumber(10000, 100000),
-        network: 'mainnet'
+        network: NetworkType.Mainnet,
+        unclaimedFeesInUSD: { value: 0, loading: true }
       }
     })
 }
@@ -1998,4 +2137,42 @@ export const sciToString = (sciStr: string | number) => {
 
   const fullStr = number.toLocaleString('fullwide', { useGrouping: false })
   return BigInt(fullStr).toString()
+}
+
+export const ensureError = (value: unknown): Error => {
+  if (value instanceof Error) return value
+
+  let stringified = '[Unable to stringify the thrown value]'
+
+  stringified = JSON.stringify(value)
+
+  const error = new Error(stringified)
+  return error
+}
+
+export const ROUTES = {
+  ROOT: '/',
+  EXCHANGE: '/exchange',
+  EXCHANGE_WITH_PARAMS: '/exchange/:item1?/:item2?',
+  LIQUIDITY: '/liquidity',
+  STATISTICS: '/statistics',
+  NEW_POSITION: '/newPosition',
+  NEW_POSITION_WITH_PARAMS: '/newPosition/:item1?/:item2?/:item3?',
+  POSITION: '/position',
+  POSITION_WITH_ID: '/position/:id',
+  PORTFOLIO: '/portfolio',
+  CREATOR: '/creator',
+  POINTS: '/points',
+
+  getExchangeRoute: (item1?: string, item2?: string): string => {
+    const parts = [item1, item2].filter(Boolean)
+    return `${ROUTES.EXCHANGE}${parts.length ? '/' + parts.join('/') : ''}`
+  },
+
+  getNewPositionRoute: (item1?: string, item2?: string, item3?: string): string => {
+    const parts = [item1, item2, item3].filter(Boolean)
+    return `${ROUTES.NEW_POSITION}${parts.length ? '/' + parts.join('/') : ''}`
+  },
+
+  getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
 }

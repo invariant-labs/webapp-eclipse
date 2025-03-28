@@ -4,14 +4,19 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
+      flexDirection: 'column',
       width: 952,
       maxWidth: '100%'
     },
     headerContainer: {
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      marginBottom: theme.spacing(1),
       columnGap: 24
     },
     back: {
       height: 24,
+      alignItems: 'center',
       marginBottom: 18,
       width: 'fit-content',
       transition: 'filter 300ms',
@@ -44,6 +49,7 @@ const useStyles = makeStyles()(theme => {
     row: {
       minWidth: 464,
       minHeight: 540,
+      alignItems: 'stretch',
       position: 'relative',
       flexDirection: 'row',
 
@@ -85,7 +91,7 @@ const useStyles = makeStyles()(theme => {
       width: 20,
       height: 20,
       cursor: 'pointer',
-      transition: 'filter 100ms',
+      transition: 'filter 300ms',
       '&:hover': {
         filter: 'brightness(1.5)',
         '@media (hover: none)': {
@@ -95,6 +101,7 @@ const useStyles = makeStyles()(theme => {
     },
     options: {
       width: 'calc(50% - 12px)',
+      alignItems: 'center',
       height: 28,
       display: 'flex',
       flexWrap: 'nowrap',
@@ -105,7 +112,7 @@ const useStyles = makeStyles()(theme => {
       }
     },
     switch: {
-      transition: 'opacity 500ms',
+      transition: 'opacity 300ms',
       display: 'flex',
       justifyContent: 'flex-end'
     },

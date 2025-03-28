@@ -11,7 +11,6 @@ import { IPromotedPool } from '@store/sagas/leaderboard'
 
 const store = (s: AnyProps) => s[leaderboardSliceName] as ILeaderboardStore
 
-// Basic selectors
 export const {
   type,
   isLoading,
@@ -56,6 +55,10 @@ export const getPromotedPools = createSelector(
   (config: { refreshTime: number; pointsDecimal: number; promotedPools: IPromotedPool[] }) =>
     config.promotedPools
 )
+
+export const getContentProgramDates = createSelector(config, config => {
+  return { start: config.contentProgramDateStart, end: config.contentProgramDateEnd }
+})
 
 export const lastTimestamp = createSelector(config, config => config.lastSnapTimestamp)
 export const pointsPerUsd = createSelector(config, config => config.pointsPerUsd)

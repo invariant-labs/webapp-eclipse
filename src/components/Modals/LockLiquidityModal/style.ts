@@ -104,10 +104,8 @@ const useStyles = makeStyles()((theme: Theme) => {
     },
     lockWarning: {
       display: 'flex',
-      flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'flex-start',
-      gap: 12,
       paddingTop: 10,
       paddingBottom: 10,
       paddingRight: 12,
@@ -120,6 +118,19 @@ const useStyles = makeStyles()((theme: Theme) => {
       minHeight: 40,
       width: '100%',
       letterSpacing: -0.03
+    },
+    confirmInputContainer: {
+      border: `1px solid ${colors.invariant.light}`,
+      borderRadius: 8,
+      padding: 12,
+      background: colors.invariant.component,
+      '& p: first-of-type': {
+        ...typography.body2,
+        color: colors.invariant.textGrey
+      },
+      '& p: last-of-type': {
+        ...typography.body2
+      }
     },
     lockButton: {
       color: colors.invariant.black,
@@ -309,14 +320,82 @@ const useStyles = makeStyles()((theme: Theme) => {
       color: colors.invariant.green,
       ...typography.body1
     },
-    checkboxText: {
-      textWrap: 'wrap',
+    inputWrapper: {
+      position: 'relative',
+      display: 'inline-block',
+      height: 44,
+      marginTop: 12,
+      width: '100%'
+    },
+    placeholder: {
+      position: 'absolute',
+      height: '100%',
+      top: 0,
+      display: 'flex',
+      alignItems: 'center',
+      pointerEvents: 'none',
+      whiteSpace: 'pre',
+      ...typography.body2
+    },
+    visibleInput: {
+      width: '100%',
+      position: 'absolute',
+      height: '100%',
+      top: 0,
+      paddingLeft: 10,
+      display: 'flex',
+      alignItems: 'center',
+      pointerEvents: 'none',
+      whiteSpace: 'pre',
+      borderRadius: 6,
+      border: `1px solid ${colors.invariant.light}`,
+      backgroundColor: colors.invariant.newDark,
+      color: colors.white.main,
       ...typography.body2,
-      color: colors.invariant.Error,
-      width: 'auto',
-      '& span': {
-        ...typography.body2
+
+      '&:focus': {
+        outline: 'none'
       }
+    },
+    hiddenInput: {
+      width: '100%',
+      height: 44,
+      padding: 12,
+      borderRadius: 6,
+      border: `1px solid 'transparent'`,
+      backgroundColor: 'transparent',
+      caretColor: colors.white.main,
+      color: 'transparent',
+      ...typography.body2,
+
+      '&::disabled': {
+        color: colors.invariant.light,
+        ...typography.body2
+      },
+      '&::placeholder': {
+        color: colors.invariant.light,
+        ...typography.body2
+      },
+      '&:focus': {
+        outline: 'none'
+      }
+    },
+    innerInput: {
+      '&::disabled': {
+        color: colors.invariant.light,
+        ...typography.body2
+      },
+      '&::placeholder': {
+        color: colors.invariant.lightHover,
+        ...typography.body2
+      },
+      '&:focus': {
+        outline: 'none'
+      }
+    },
+    inputChar: {
+      display: 'inline-block',
+      whiteSpace: 'pre'
     }
   }
 })

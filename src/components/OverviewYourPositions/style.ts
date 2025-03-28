@@ -29,7 +29,11 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     padding: 10,
     paddingLeft: 16,
-    paddingRight: 16
+    paddingRight: 16,
+
+    [theme.breakpoints.down('sm')]: {
+      padding: '0px 8px'
+    }
   },
   overviewContainer: {
     display: 'flex',
@@ -93,7 +97,7 @@ export const useStyles = makeStyles()(() => ({
     '&:disabled': {
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
-      transition: 'all 0.2s',
+      transition: 'all 0.3s',
       '&:hover': {
         boxShadow: 'none',
         cursor: 'not-allowed',
@@ -123,7 +127,8 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    gap: 8
+    gap: 8,
+    marginLeft: 6
   },
   checkBoxLabel: {
     '.MuiFormControlLabel-label': {

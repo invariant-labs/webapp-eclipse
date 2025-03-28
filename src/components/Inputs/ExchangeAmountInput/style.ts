@@ -10,7 +10,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     ...typography.heading2,
     width: '100%',
     textAlign: 'right',
-    transition: 'all .4s',
+    transition: 'all .3s',
     '& ::placeholder': {
       textAlign: 'right'
     }
@@ -32,6 +32,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     marginLeft: 4,
     lineHeight: '14px',
     color: colors.invariant.componentBcg,
+    transition: '300ms',
 
     [theme.breakpoints.down('md')]: {
       width: 26,
@@ -110,6 +111,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.lightGrey
   },
   exchangeContainer: {
+    flexWrap: 'nowrap',
     height: 65,
     padding: `10px 15px 0 15px `,
     display: 'flex',
@@ -155,6 +157,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 12
   },
   percentages: {
+    alignItems: 'center',
+    flexWrap: 'nowrap',
     flexShrink: 0,
     width: 'fit-content',
     justifyContent: 'end',
@@ -187,7 +191,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     textOverflow: 'ellipsis'
   },
   bottom: {
-    paddingInline: 15
+    paddingInline: 15,
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
   },
   blur: {
     width: 120,

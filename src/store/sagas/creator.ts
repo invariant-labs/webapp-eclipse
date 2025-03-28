@@ -18,7 +18,7 @@ import {
   PROGRAM_ID
 } from '@metaplex-foundation/mpl-token-metadata'
 import * as spl18 from '@solana/spl-token'
-import { createLoaderKey } from '@utils/utils'
+import { createLoaderKey, ensureError } from '@utils/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { closeSnackbar } from 'notistack'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
@@ -87,8 +87,9 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
         })
 
         imageUri = `https://gateway.irys.xyz/${receipt.id}`
-      } catch (e) {
-        console.log('Error when uploading image', e)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        console.log('Error when uploading image', error)
         throw new Error('Error when uploading image')
       }
     }
@@ -130,8 +131,9 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
         { tags: metaDataTags }
       )
       metaDataUri = `https://gateway.irys.xyz/${receipt.id}`
-    } catch (e) {
-      console.log('Error when uploading metadata', e)
+    } catch (e: unknown) {
+      const error = ensureError(e)
+      console.log('Error when uploading metadata', error)
 
       throw new Error('Error when uploading metadata')
     }
@@ -231,7 +233,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
 
     transaction.partialSign(mintKeypair)
 
-    const signedTx = yield* call([wallet, wallet.signTransaction], transaction)
+    const signedTx = (yield* call([wallet, wallet.signTransaction], transaction)) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
@@ -262,7 +264,7 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
 
       yield put(
         snackbarsActions.add({
-          message: 'Token created successfully.',
+          message: 'Token created successfully',
           variant: 'success',
           persist: false,
           txid: signatureTx
@@ -272,7 +274,8 @@ export function* handleCreateToken(action: PayloadAction<CreateTokenPayload>) {
     }
     console.log('Failed to create a Token', false)
     yield put(actions.setCreateSuccess(false))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
     yield put(actions.setCreateSuccess(false))
 

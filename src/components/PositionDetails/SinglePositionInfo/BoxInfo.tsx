@@ -1,18 +1,21 @@
-import { Button, Grid, Tooltip, Typography } from '@mui/material'
-import loader from '@static/gif/loading2.gif'
-import SwapPosition from '@static/svg/swap-position.svg'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
+import loader from '@static/gif/loading.gif'
 import {
   formatNumberWithSuffix,
   formatNumberWithoutSuffix,
   formatNumbers,
-  showPrefix
+  showPrefix,
+  trimZeros
 } from '@utils/utils'
 import React from 'react'
 import loadingAnimation from '@static/gif/loading.gif'
 import { ILiquidityToken } from './consts'
 import useStyles from './style'
 import { FormatNumberThreshold, PrefixConfig } from '@store/consts/types'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { theme } from '@static/theme'
+import icons from '@static/icons'
+import { Button } from '@common/Button/Button'
 
 export interface BoxInfoToken extends Omit<ILiquidityToken, 'claimValue' | 'liqValue'> {
   value: number
@@ -80,14 +83,18 @@ export const BoxInfo: React.FC<{
   const tokenYPrintValue =
     Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal) ? 0 : Number(tokenB.value)
 
+  const isMd = useMediaQuery(theme.breakpoints.up('md'))
+
   return (
     <Grid className={classes.boxInfo}>
       <Grid container justifyContent='space-between'>
         <Typography className={classes.title}> {title}</Typography>
         {onClickButton ? (
           <Button
-            className={classes.violetButton}
-            variant='contained'
+            scheme='pink'
+            height={32}
+            padding='0 24px'
+            borderRadius={12}
             onClick={onClickButton}
             disabled={
               Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) &&
@@ -98,7 +105,7 @@ export const BoxInfo: React.FC<{
         ) : null}
       </Grid>
 
-      <Grid className={classes.tokenGrid} container direction='column'>
+      <Grid className={classes.tokenGrid} container>
         {showLoader ? (
           <Grid container className={classes.cover}>
             <img src={loader} className={classes.loader} alt='Loader' />
@@ -111,8 +118,10 @@ export const BoxInfo: React.FC<{
               <Typography className={classes.tokenName}>{tokenA.name}</Typography>
             </Grid>
             <Typography className={classes.tokenValue}>
-              {formatNumbers(thresholdsWithTokenDecimal(Number(tokenA.decimal)))(
-                `${tokenXPrintValue}`
+              {trimZeros(
+                formatNumbers(thresholdsWithTokenDecimal(Number(tokenA.decimal)))(
+                  `${tokenXPrintValue}`.toString()
+                )
               )}
             </Typography>
           </Grid>
@@ -128,40 +137,34 @@ export const BoxInfo: React.FC<{
                 {tokenA.name}
               </Typography>
               {typeof tokenA.usdValue !== 'undefined' && tokenA.price ? (
-                <Tooltip
-                  enterTouchDelay={0}
-                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+                <TooltipHover
                   title="Estimated USD Value of the Position's Tokens"
                   placement='bottom'
-                  classes={{
-                    tooltip: classes.tooltip
-                  }}>
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.tokenUSDValue}>
                     ~${formatNumberWithSuffix((tokenA.value * tokenA.price).toFixed(2))}
                   </Typography>
-                </Tooltip>
+                </TooltipHover>
               ) : (
-                <Tooltip
-                  enterTouchDelay={0}
-                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+                <TooltipHover
                   title='Cannot fetch price of token'
                   placement='bottom'
-                  classes={{
-                    tooltip: classes.tooltip
-                  }}>
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.noData}>
                     <span className={classes.noDataIcon}>?</span>No data
                   </Typography>
-                </Tooltip>
+                </TooltipHover>
               )}
             </Grid>
           ) : null}
         </Grid>
 
         {typeof swapHandler !== 'undefined' ? (
-          <TooltipHover text='Reverse tokens'>
+          <TooltipHover title='Reverse tokens'>
             <img
-              src={SwapPosition}
+              src={icons.SwapPosition}
               className={classes.arrowsIcon}
               onClick={swapHandler}
               alt='Exchange'
@@ -176,8 +179,10 @@ export const BoxInfo: React.FC<{
               <Typography className={classes.tokenName}>{tokenB.name}</Typography>
             </Grid>
             <Typography className={classes.tokenValue}>
-              {formatNumbers(thresholdsWithTokenDecimal(Number(tokenB.decimal)))(
-                `${tokenYPrintValue}`
+              {trimZeros(
+                formatNumbers(thresholdsWithTokenDecimal(Number(tokenB.decimal)))(
+                  `${tokenYPrintValue}`
+                )
               )}
               {showPrefix(tokenYPrintValue, prefixConfig)}
             </Typography>
@@ -194,31 +199,25 @@ export const BoxInfo: React.FC<{
                 {tokenB.name}
               </Typography>
               {typeof tokenB.usdValue !== 'undefined' && tokenB.price ? (
-                <Tooltip
-                  enterTouchDelay={0}
-                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+                <TooltipHover
                   title="Estimated USD Value of the Position's Tokens"
                   placement='bottom'
-                  classes={{
-                    tooltip: classes.tooltip
-                  }}>
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.tokenUSDValue}>
                     ~${formatNumberWithoutSuffix(tokenB.value * tokenB.price)}
                   </Typography>
-                </Tooltip>
+                </TooltipHover>
               ) : (
-                <Tooltip
-                  enterTouchDelay={0}
-                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+                <TooltipHover
                   title='Cannot fetch price of token'
                   placement='bottom'
-                  classes={{
-                    tooltip: classes.tooltip
-                  }}>
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.noData}>
                     <span className={classes.noDataIcon}>?</span>No data
                   </Typography>
-                </Tooltip>
+                </TooltipHover>
               )}
             </Grid>
           ) : null}

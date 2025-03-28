@@ -1,10 +1,9 @@
-import { Box, Button, Grid, Skeleton, Tooltip, Typography } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
+import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style/mobile'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
 import icons from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
@@ -16,7 +15,7 @@ import { InactivePoolsPopover } from '../../components/InactivePoolsPopover/Inac
 import { NetworkType } from '@store/consts/static'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { useSelector } from 'react-redux'
-import { useUnclaimedFee } from '@store/hooks/positionList/useUnclaimedFee'
+import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
 import { singlePositionData } from '@store/selectors/positions'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { blurContent, unblurContent } from '@utils/uiUtils'
@@ -25,6 +24,7 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { lockerState } from '@store/selectors/locker'
 import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
@@ -44,6 +44,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   max,
   position,
   id,
+  isFullRange,
   setAllowPropagation,
   poolData,
   isActive = false,
@@ -51,6 +52,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   tokenXLiq,
   tokenYLiq,
   network,
+  unclaimedFeesInUSD = { value: 0, loading: false },
   handleLockPosition,
   handleClosePosition,
   handleClaimFee
@@ -143,26 +145,9 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     if (isPromoted && isActive) {
       return (
         <>
-          <div
-            className={classes.actionButton}
-            onClick={event => {
-              event.stopPropagation()
-              setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-              setAllowPropagation(false)
-            }}>
-            <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
-          </div>
           <PromotedPoolPopover
             showEstPointsFirst
             isActive={isActive}
-            anchorEl={airdropIconRef.current}
-            open={isPromotedPoolPopoverOpen}
-            onClose={() => {
-              setIsPromotedPoolPopoverOpen(false)
-              setTimeout(() => {
-                setAllowPropagation(true)
-              }, 500)
-            }}
             headerText={
               <>
                 This position is currently <b>earning points</b>
@@ -170,54 +155,55 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             }
             pointsLabel={'Total points distributed across the pool per 24H:'}
             estPoints={estimated24hPoints}
-            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
-          />
+            points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+            <div
+              className={classes.actionButton}
+              onClick={event => {
+                event.stopPropagation()
+                setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                setAllowPropagation(false)
+              }}>
+              <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
+            </div>
+          </PromotedPoolPopover>
         </>
       )
     }
 
     return (
       <>
-        <InactivePoolsPopover
-          anchorEl={airdropIconRef.current}
-          open={isPromotedPoolInactive}
-          onClose={() => {
-            setIsPromotedPoolInactive(false)
-            handlePopoverState(false)
-          }}
-          isActive={isActive}
-          isPromoted={isPromoted}
-        />
-        <div
-          className={classes.actionButton}
-          onClick={event => {
-            event.stopPropagation()
-            const newState = !isPromotedPoolInactive
-            setIsPromotedPoolInactive(newState)
-            handlePopoverState(newState)
-          }}
-          onPointerEnter={() => {
-            if (window.matchMedia('(hover: hover)').matches) {
-              setIsPromotedPoolInactive(true)
-              handlePopoverState(true)
-            }
-          }}
-          onPointerLeave={() => {
-            if (window.matchMedia('(hover: hover)').matches) {
-              setIsPromotedPoolInactive(false)
-              handlePopoverState(false)
-            }
-          }}>
-          <img
-            src={icons.airdropRainbow}
-            alt={'Airdrop'}
-            style={{
-              height: '32px',
-              opacity: 0.3,
-              filter: 'grayscale(1)'
+        <InactivePoolsPopover isActive={isActive} isPromoted={isPromoted}>
+          <div
+            className={classes.actionButton}
+            onClick={event => {
+              event.stopPropagation()
+              const newState = !isPromotedPoolInactive
+              setIsPromotedPoolInactive(newState)
+              handlePopoverState(newState)
             }}
-          />
-        </div>
+            onPointerEnter={() => {
+              if (window.matchMedia('(hover: hover)').matches) {
+                setIsPromotedPoolInactive(true)
+                handlePopoverState(true)
+              }
+            }}
+            onPointerLeave={() => {
+              if (window.matchMedia('(hover: hover)').matches) {
+                setIsPromotedPoolInactive(false)
+                handlePopoverState(false)
+              }
+            }}>
+            <img
+              src={icons.airdropRainbow}
+              alt={'Airdrop'}
+              style={{
+                height: '32px',
+                opacity: 0.3,
+                filter: 'grayscale(1)'
+              }}
+            />
+          </div>
+        </InactivePoolsPopover>
       </>
     )
   }, [
@@ -250,25 +236,21 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     setActionPopoverOpen(false)
   }
 
-  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage, unclaimedFeesInUSD } =
-    useUnclaimedFee({
-      currentPrice,
-      id,
-      position,
-      tokenXLiq,
-      tokenYLiq,
-      positionSingleData,
-      xToY
-    })
+  const { tokenValueInUsd, tokenXPercentage, tokenYPercentage } = useTokenValues({
+    currentPrice,
+    id,
+    position,
+    tokenXLiq,
+    tokenYLiq,
+    positionSingleData,
+    xToY
+  })
 
   const topSection = useMemo(
     () => (
       <Grid container sx={{ width: '100%', marginBottom: 2 }}>
         <Grid item xs={5}>
-          <Tooltip
-            enterTouchDelay={0}
-            leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-            onClick={e => e.stopPropagation()}
+          <TooltipGradient
             title={
               isActive ? (
                 <>
@@ -281,7 +263,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               )
             }
             placement='top'
-            classes={{ tooltip: sharedClasses.tooltip }}>
+            top={1}
+            noGradient>
             <Grid
               container
               className={classNames(
@@ -289,7 +272,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 isActive ? sharedClasses.activeFee : undefined
               )}
               justifyContent='center'
-              alignItems='center'>
+              alignItems='center'
+              onClick={e => e.stopPropagation()}>
               <Typography
                 className={classNames(
                   sharedClasses.infoText,
@@ -298,7 +282,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 {fee}% fee
               </Typography>
             </Grid>
-          </Tooltip>
+          </TooltipGradient>
         </Grid>
 
         <Grid item xs={7} paddingLeft={'16px'}>
@@ -392,6 +376,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     () => (
       <Grid container justifyContent='center' margin={'0 auto'} width={'80%'}>
         <MinMaxChart
+          isFullRange={isFullRange}
           min={Number(xToY ? min : 1 / max)}
           max={Number(xToY ? max : 1 / min)}
           current={
@@ -451,31 +436,19 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         closePosition={() => handleClosePosition(positionSingleData?.positionIndex ?? 0)}
         onLockPosition={() => setIsLockPositionModalOpen(true)}
       />
-      <Grid
-        container
-        item
-        className={classes.mdTop}
-        direction='row'
-        wrap='nowrap'
-        sx={{ marginBottom: 2 }}>
-        <Grid
-          container
-          item
-          className={classes.iconsAndNames}
-          alignItems='center'
-          justifyContent={'space-between'}
-          wrap='nowrap'>
+      <Grid container item className={classes.mdTop}>
+        <Grid container item className={classes.iconsAndNames}>
           <Box display='flex' alignItems={'center'}>
-            <Grid container item className={sharedClasses.icons} alignItems='center' wrap='nowrap'>
+            <Grid container item className={sharedClasses.icons}>
               <img
                 className={sharedClasses.tokenIcon}
                 src={xToY ? tokenXIcon : tokenYIcon}
                 alt={xToY ? tokenXName : tokenYName}
               />
-              <TooltipHover text='Reverse tokens'>
+              <TooltipHover title='Reverse tokens'>
                 <img
                   className={sharedClasses.arrows}
-                  src={SwapList}
+                  src={icons.swapListIcon}
                   alt='Arrow'
                   onClick={e => {
                     e.stopPropagation()

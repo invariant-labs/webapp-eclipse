@@ -118,22 +118,6 @@ export interface PoolSnapshot {
   feeX: SnapshotValueData
   feeY: SnapshotValueData
 }
-// export interface Token {
-//   symbol: string
-//   address: PublicKey
-//   decimals: number
-//   name: string
-//   logoURI: string
-//   balance?: BN
-//   coingeckoId?: string
-//   isUnknown?: boolean
-// }
-
-export interface BestTier {
-  tokenX: PublicKey
-  tokenY: PublicKey
-  bestTierIndex: number
-}
 
 export interface ISelectChain {
   name: Chain
@@ -144,8 +128,7 @@ export enum Chain {
   Solana = 'Solana',
   AlephZero = 'Aleph Zero',
   Eclipse = 'Eclipse',
-  Vara = 'Vara',
-  Alephium = 'Alephium'
+  Vara = 'Vara'
 }
 
 export interface SnapshotValueData {

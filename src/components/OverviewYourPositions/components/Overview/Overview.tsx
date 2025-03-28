@@ -11,8 +11,8 @@ import {
   isLoadingPositionsList,
   positionsWithPoolsData,
   positionsList as list,
-  unclaimedFees,
-  PoolWithAddressAndIndex
+  PoolWithAddressAndIndex,
+  totalUnlaimedFees
 } from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
 import MobileOverview from '../MobileOverview/MobileOverview'
@@ -23,6 +23,7 @@ import icons from '@static/icons'
 import { actions, PositionWithAddress } from '@store/reducers/positions'
 import { LegendOverview } from '../LegendOverview/LegendOverview'
 import { SwapToken } from '@store/selectors/solanaWallet'
+import { network } from '@store/selectors/solanaConnection'
 
 interface OverviewProps {
   poolAssets: ProcessedPool[]
@@ -45,11 +46,11 @@ export const Overview: React.FC<OverviewProps> = () => {
   const isLoadingList = useSelector(isLoadingPositionsList)
   const { classes } = useStyles()
   const dispatch = useDispatch()
-
+  const currentNetwork = useSelector(network)
   const [prices, setPrices] = useState<Record<string, number>>({})
   const [logoColors, setLogoColors] = useState<Record<string, string>>({})
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
-  const { total: totalUnclaimedFee } = useSelector(unclaimedFees)
+  const { total: unclaimedFees, isLoading: unClaimedFeesLoading } = useSelector(totalUnlaimedFees)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
   const { positions } = useAgregatedPositions(positionList, prices)
 
@@ -114,7 +115,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       const priceResults = await Promise.all(
         tokenArray.map(async token => ({
           token,
-          price: await getTokenPrice(token)
+          price: await getTokenPrice(token, currentNetwork)
         }))
       )
 
@@ -130,7 +131,7 @@ export const Overview: React.FC<OverviewProps> = () => {
     }
 
     loadPrices()
-  }, [positionList])
+  }, [positionList.length])
 
   useEffect(() => {
     sortedPositions.forEach(position => {
@@ -161,21 +162,9 @@ export const Overview: React.FC<OverviewProps> = () => {
     })
   }, [sortedPositions, getAverageColor, logoColors, pendingColorLoads])
 
-  useEffect(() => {
-    if (Object.keys(prices).length > 0) {
-      dispatch(actions.calculateTotalUnclaimedFees())
-
-      const interval = setInterval(() => {
-        dispatch(actions.calculateTotalUnclaimedFees())
-      }, 60000)
-
-      return () => clearInterval(interval)
-    }
-  }, [dispatch, prices])
-
   const EmptyState = ({ classes }: { classes: EmptyStateClasses }) => (
     <Box className={classes.emptyState}>
-      <img src={icons.liquidityEmpty} alt='Empty portfolio' height={80} width={80} />
+      <img src={icons.liquidityEmpty} alt='Empty portfolio' height={64} width={80} />
       <Typography className={classes.emptyStateText}>No liquidity found</Typography>
     </Box>
   )
@@ -194,9 +183,9 @@ export const Overview: React.FC<OverviewProps> = () => {
     <Box className={classes.container}>
       <HeaderSection totalValue={totalAssets} loading={isLoadingList} />
       <UnclaimedSection
-        unclaimedTotal={totalUnclaimedFee}
+        unclaimedTotal={unclaimedFees}
         handleClaimAll={handleClaimAll}
-        loading={isLoadingList || isAllClaimFeesLoading}
+        loading={isLoadingList || isAllClaimFeesLoading || unClaimedFeesLoading}
       />
 
       {isLg ? (

@@ -20,6 +20,17 @@ const useStyles = makeStyles<StyleProps>()(theme => {
         padding: '20px 4px 20px 8px'
       }
     },
+    mainWrapper: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      overflow: 'hidden',
+      transition: 'height 0.3s ease-in-out, opacity 0.3s ease-in-out'
+    },
+    boxWrapper: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginBottom: theme.spacing(9)
+    },
     text: {
       color: colors.invariant.warning,
       display: 'flex',

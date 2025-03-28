@@ -6,9 +6,15 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     backgroundColor: colors.invariant.component,
     borderRadius: 24,
     padding: 24,
-    color: colors.invariant.text
+    color: colors.invariant.text,
+
+    [theme.breakpoints.down('sm')]: {
+      padding: '16px 8px'
+    }
   },
   innerWrapper: {
+    display: 'flex',
+    gap: theme.spacing(3),
     [theme.breakpoints.down('md')]: {
       flexDirection: 'column'
     }
@@ -19,6 +25,7 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     flex: 1,
     alignItems: 'left'
   },
+
   darkBackground: {
     marginTop: 8,
     marginBottom: 8,
@@ -32,23 +39,34 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     height: 24,
     background: colors.invariant.pinkGreenLinearGradient,
     borderRadius: 8,
-    transition: 'width 0.5s'
+    transition: 'width 0.3s'
+  },
+  infoPink: {
+    width: 14,
+    marginLeft: '-2px',
+    marginRight: '4px',
+    marginBottom: '-2px'
   },
   pointsLabel: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    flexWrap: 'nowrap',
     backgroundColor: colors.invariant.light,
     borderRadius: 8,
     padding: '8px 16px',
     gap: 4,
     minWidth: '120px',
     height: 32,
-    display: 'flex',
-    alignItems: 'center',
     fontWeight: 500,
-    justifyContent: 'center',
     '& p': {
       ...typography.caption2,
       fontSize: '1rem',
       fontWeight: 500
+    },
+    '& img': {
+      height: '16px',
+      marginLeft: '-8px'
     }
   },
   pinkText: {
@@ -77,9 +95,34 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
   leftHeaderItems: {
     flexDirection: 'column',
     alignItems: 'flex-start',
+
     gap: theme.spacing(1)
   },
-
+  warningWrapper: {
+    display: 'flex',
+    marginTop: '16px',
+    alignItems: 'center',
+    gap: theme.spacing(2),
+    [theme.breakpoints.down('sm')]: {
+      marginTop: '24px'
+    }
+  },
+  barWrapper: {
+    display: 'flex',
+    justifyContent: 'space-between',
+    marginTop: theme.spacing(1)
+  },
+  estimatedPointsLabel: {
+    whiteSpace: 'nowrap',
+    ...typography.heading4,
+    fontSize: '18px'
+  },
+  headerWrapper: {
+    display: 'flex',
+    gap: theme.spacing(1),
+    alignItems: 'center',
+    justifyContent: 'space-between'
+  },
   estimatedPoints: {
     ...typography.body1,
     [theme.breakpoints.down('sm')]: {
@@ -97,6 +140,7 @@ export const useStyles = makeStyles<{ percentage: number }>()((theme, { percenta
     }
   },
   sliderLabel: {
+    display: 'flex',
     ...typography.caption1,
     color: colors.invariant.textGrey
   }
@@ -110,6 +154,10 @@ export const useStylesPointsLabel = makeStyles()(() => ({
     position: 'absolute',
     top: 0,
     left: 0
+  },
+  infoCircle: {
+    width: '15px',
+    marginLeft: '5px'
   },
   wrapper: {
     display: 'flex',

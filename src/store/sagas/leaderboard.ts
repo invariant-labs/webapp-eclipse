@@ -4,6 +4,7 @@ import { handleRpcError } from './connection'
 import { actions, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
 import { getWallet } from './wallet'
 import { PayloadAction } from '@reduxjs/toolkit'
+import { ensureError } from '@utils/utils'
 
 export interface IPromotedPool {
   address: string
@@ -33,6 +34,8 @@ interface IConfigResponse {
   lastSnapTimestamp: string
   swapPairs: { tokenX: string; tokenY: string }[]
   swapMultiplier: string
+  contentProgramDateStart: string
+  contentProgramDateEnd: string
 }
 interface IFetchContentPointsResponse {
   startTimestamp: number
@@ -116,9 +119,11 @@ export function* getContentPoints(): Generator {
       wallet?.publicKey?.toString()
     )
     yield* put(actions.setContentPoints(contentPoints))
-  } catch (error) {
-    console.error(error)
-    yield* call(handleRpcError, (error as Error).message)
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* call(handleRpcError, error.message)
     yield* put(actions.setContentPoints(null))
   }
 }
@@ -159,10 +164,12 @@ export function* getLeaderboard(
     yield* put(actions.setTotalLeaderboardData(leaderboardTotalData))
 
     yield* put(actions.setLoadingState(false))
-  } catch (error) {
-    yield* put(actions.setLoadingState(false))
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
-    yield* call(handleRpcError, (error as Error).message)
+
+    yield* put(actions.setLoadingState(false))
+    yield* call(handleRpcError, error.message)
   }
 }
 
@@ -175,7 +182,9 @@ export function* getLeaderboardConfig(): Generator {
       lastSnapTimestamp,
       pointsPerUSD,
       swapPairs,
-      swapMultiplier
+      swapMultiplier,
+      contentProgramDateStart,
+      contentProgramDateEnd
     } = yield* call(fetchLeaderboardConfig)
 
     const priceFeeds = yield* call(fetchLeaderboardPriceFeed)
@@ -187,12 +196,15 @@ export function* getLeaderboardConfig(): Generator {
         lastSnapTimestamp,
         pointsPerUSD,
         swapPairs,
-        swapMultiplier
+        swapMultiplier,
+        contentProgramDateStart,
+        contentProgramDateEnd
       })
     )
 
     yield* put(actions.setLeaderboardPriceFeeds(priceFeeds))
-  } catch (error) {
+  } catch (e: unknown) {
+    const error = ensureError(e)
     console.log(error)
   }
 }

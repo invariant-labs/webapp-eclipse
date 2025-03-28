@@ -7,7 +7,6 @@ const useStyles = makeStyles()(() => ({
     width: '100%',
     padding: '11px 12px',
     boxSizing: 'border-box',
-    fontFamily: 'Mukta',
     fontSize: 16,
     outline: 'none',
     border: '1px solid transparent',
@@ -50,7 +49,6 @@ const useStyles = makeStyles()(() => ({
     }
   },
   headerTitle: {
-    fontFamily: 'Mukta',
     fontWeight: 700,
     fontSize: '20px',
     lineHeight: '24px',

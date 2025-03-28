@@ -4,12 +4,16 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
+      flexDirection: 'column',
       borderRadius: 24,
       backgroundColor: colors.invariant.component,
-      padding: '16px 24px 16px 24px',
+      padding: '16px 24px 6px 24px',
       flex: '1 1 0%',
-      [theme.breakpoints.down('sm')]: {
-        padding: '16px 8px  16px 8px'
+      minHeight: 615,
+
+      [theme.breakpoints.down('md')]: {
+        padding: '16px 8px  12px 8px ',
+        minHeight: 625
       }
     },
     header: {
@@ -63,6 +67,7 @@ const useStyles = makeStyles()(theme => {
       paddingInline: 8,
       backgroundColor: colors.invariant.light,
       borderRadius: 11,
+      transition: '300ms',
 
       '&:hover': {
         backgroundColor: colors.invariant.lightHover2,
@@ -79,11 +84,12 @@ const useStyles = makeStyles()(theme => {
     },
     buttons: {
       marginTop: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
       width: '100%',
       height: 70,
       flexDirection: 'row',
-      gap: 16,
-      alignItems: 'center'
+      gap: 16
     },
     infoWrapper: {
       borderRadius: 19,
@@ -100,8 +106,15 @@ const useStyles = makeStyles()(theme => {
     midPrice: {
       marginBottom: 8
     },
+    subheaderWrapper: {
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      minHeight: 36
+    },
     priceWrapper: {
       backgroundColor: colors.invariant.light,
+      justifyContent: 'space-between',
+      alignItems: 'center',
       paddingInline: 12,
       paddingBlock: 10,
       borderRadius: 13,
@@ -116,12 +129,12 @@ const useStyles = makeStyles()(theme => {
       color: colors.white.main
     },
     sliderWrapper: {
-      paddingTop: 24,
+      paddingTop: 22,
       paddingInline: 8,
       position: 'relative',
-
-      [theme.breakpoints.down('sm')]: {
-        paddingBottom: 24
+      [theme.breakpoints.down('md')]: {
+        paddingTop: 12,
+        paddingInline: 8
       }
     },
     rangeConcentration: {
