@@ -50,7 +50,6 @@ const PortfolioWrapper = () => {
   const tokensList = useSelector(swapTokens)
   const isBalanceLoading = useSelector(balanceLoading)
   const pricesData = useSelector(prices)
-  console.log(pricesData)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()

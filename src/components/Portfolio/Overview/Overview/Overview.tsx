@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
-import { useStyles } from './styles/styles'
+import { useStyles } from './styles'
 import { useDispatch, useSelector } from 'react-redux'
 import { theme } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
@@ -23,7 +23,7 @@ import { actions, PositionWithAddress } from '@store/reducers/positions'
 import { LegendOverview } from '../LegendOverview/LegendOverview'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
-import { IPositionItem } from '@components/Portfolio/types'
+import { IPositionItem } from '@store/consts/types'
 
 interface OverviewProps {
   poolAssets: IPositionItem[]

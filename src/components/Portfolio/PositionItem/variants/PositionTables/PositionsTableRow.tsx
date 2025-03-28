@@ -1,7 +1,6 @@
 import { Grid, TableRow, TableCell, Typography, useMediaQuery, Box, Skeleton } from '@mui/material'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
-import { IPositionItem } from '../../../types'
 import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
@@ -25,6 +24,7 @@ import { usePositionTableRowStyle } from './styles/positionTableRow'
 import { useSkeletonStyle } from './styles/skeletons'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { Button } from '@common/Button/Button'
+import { IPositionItem } from '@store/consts/types'
 
 interface ILoadingStates {
   pairName?: boolean
