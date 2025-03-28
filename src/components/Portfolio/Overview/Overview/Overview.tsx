@@ -3,7 +3,6 @@ import { Box, Typography, useMediaQuery } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles/styles'
-import { ProcessedPool } from '@store/types/userOverview'
 import { useDispatch, useSelector } from 'react-redux'
 import { theme } from '@static/theme'
 import ResponsivePieChart from '../OverviewPieChart/ResponsivePieChart'
@@ -24,9 +23,10 @@ import { actions, PositionWithAddress } from '@store/reducers/positions'
 import { LegendOverview } from '../LegendOverview/LegendOverview'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
+import { IPositionItem } from '@components/Portfolio/types'
 
 interface OverviewProps {
-  poolAssets: ProcessedPool[]
+  poolAssets: IPositionItem[]
 }
 
 export interface ISinglePositionData extends PositionWithAddress {

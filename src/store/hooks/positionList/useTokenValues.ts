@@ -1,9 +1,9 @@
-import { calculatePercentageRatio } from '@components/PositionsList/PositionItem/utils/calculations'
 import { useMemo, useState } from 'react'
 import { useLiquidity } from '../userOverview/useLiquidity'
 import { usePrices } from '../userOverview/usePrices'
-import { IPositionItem } from '@components/PositionsList/types'
 import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
+import { IPositionItem } from '@components/Portfolio/types'
+import { calculatePercentageRatio } from '@components/Portfolio/PositionItem/utils/calculations'
 
 interface TokenValuesHook extends IPositionItem {
   positionSingleData?: ISinglePositionData

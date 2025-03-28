@@ -9,7 +9,6 @@ import icons from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
-import { IPositionItem } from '@components/PositionsList/types'
 import { useSharedStyles } from './style/shared'
 import { InactivePoolsPopover } from '../../components/InactivePoolsPopover/InactivePoolsPopover'
 import { NetworkType } from '@store/consts/static'
@@ -23,8 +22,9 @@ import PositionViewActionPopover from '@components/Modals/PositionViewActionPopo
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { lockerState } from '@store/selectors/locker'
-import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { IPositionItem } from '@components/Portfolio/types'
+import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Overview'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>

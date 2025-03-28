@@ -1,5 +1,5 @@
 import { BN } from '@coral-xyz/anchor'
-import { Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { Position } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
