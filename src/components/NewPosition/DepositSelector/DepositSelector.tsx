@@ -2,7 +2,6 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
 import { Box, Grid, Typography } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
