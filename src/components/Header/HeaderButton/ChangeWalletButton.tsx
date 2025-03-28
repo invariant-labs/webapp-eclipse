@@ -15,6 +15,7 @@ export interface IProps {
   name: string
   onConnect: () => void
   connected: boolean
+  height?: number | string
   startIcon?: JSX.Element
   onDisconnect: () => void
   hideArrow?: boolean
@@ -28,6 +29,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   name,
   onConnect,
   connected,
+  height = 40,
   startIcon,
   hideArrow,
   onDisconnect,
@@ -98,6 +100,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   return (
     <>
       <Button
+        height={height}
         scheme={connected ? 'normal' : 'pink'}
         disabled={isDisabled}
         classes={{
