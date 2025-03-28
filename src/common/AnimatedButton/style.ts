@@ -38,7 +38,6 @@ const useStyles = makeStyles()(() => {
       height: 44,
       width: '100%',
       borderRadius: 16,
-      width: '100%',
       textAlign: 'center',
       textTransform: 'none',
       ...typography.body1,
