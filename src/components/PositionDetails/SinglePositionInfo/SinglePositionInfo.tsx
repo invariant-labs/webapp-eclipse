@@ -10,7 +10,8 @@ import { Separator } from '@common/Separator/Separator'
 import { PositionStats } from './PositionStats/PositionStats'
 import { colors } from '@static/theme'
 import { PoolDetails as PoolDetailsType } from '@containers/SinglePositionWrapper/SinglePositionWrapper'
-import { apyToApr } from '@utils/uiUtils'
+import { calculateAPYAndAPR } from '@utils/utils'
+import { PublicKey } from '@solana/web3.js'
 
 interface IProp {
   onClickClaimFee: () => void
@@ -25,6 +26,7 @@ interface IProp {
   showBalanceLoader?: boolean
   arePointsDistributed: boolean
   points24: number
+  poolAddress: PublicKey
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -39,7 +41,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   poolDetails,
   showBalanceLoader = false,
   arePointsDistributed,
-  points24
+  points24,
+  poolAddress
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -53,6 +56,13 @@ const SinglePositionInfo: React.FC<IProp> = ({
       }}
       className={classes.overlay}
     />
+  )
+  const { convertedApr } = calculateAPYAndAPR(
+    poolDetails?.apy ?? 0,
+    poolAddress.toString(),
+    poolDetails?.volume24 ?? 0,
+    poolDetails?.fee,
+    poolDetails?.tvl ?? 0
   )
 
   return (
@@ -68,7 +78,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             tokenX.claimValue * (tokenXPriceData?.price ?? 0) +
             tokenY.claimValue * (tokenYPriceData?.price ?? 0)
           }
-          poolApr={apyToApr(poolDetails?.apy ?? 0)}
+          poolApr={convertedApr}
           points24={points24}
           arePointsDistributed={arePointsDistributed}
           isLoading={showFeesLoader}

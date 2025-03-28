@@ -48,6 +48,7 @@ export type PoolDetails = {
   volume24: number
   fee24: number
   apy: number
+  fee: number
 }
 
 export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
@@ -393,7 +394,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       tvl: pool.tvl,
       volume24: pool.volume24,
       fee24: (pool.volume24 * pool.fee) / 100,
-      apy: pool.apy
+      apy: pool.apy,
+      fee: pool.fee
     }
   }, [poolsList])
 

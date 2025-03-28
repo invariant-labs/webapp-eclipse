@@ -270,6 +270,7 @@ const PositionDetails: React.FC<IProps> = ({
             showBalanceLoader={isBalanceLoading}
             arePointsDistributed={isActive && isPromoted}
             points24={points24}
+            poolAddress={poolAddress}
           />
         </Box>
         <Box className={classes.rightSide}>
