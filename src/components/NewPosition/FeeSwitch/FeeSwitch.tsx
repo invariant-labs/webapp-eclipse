@@ -93,8 +93,12 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                         promotedPoolTierIndex === index ||
                         bestTierIndex === index
                     })}>
-                    {feeTiersWithTvl[tier]
-                      ? `$${+formatNumberWithSuffix(feeTiersWithTvl[tier], true, 18) < 1000 ? (+formatNumberWithSuffix(feeTiersWithTvl[tier], true, 18)).toFixed(2) : formatNumberWithSuffix(feeTiersWithTvl[tier])}`
+                    {Object.prototype.hasOwnProperty.call(feeTiersWithTvl, tier)
+                      ? `$${
+                          +formatNumberWithSuffix(feeTiersWithTvl[tier], true, 18) < 1000
+                            ? (+formatNumberWithSuffix(feeTiersWithTvl[tier], true, 18)).toFixed(2)
+                            : formatNumberWithSuffix(feeTiersWithTvl[tier])
+                        }`
                       : 'Not created'}
                   </Typography>
                 )}
