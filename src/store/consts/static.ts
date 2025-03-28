@@ -554,6 +554,16 @@ export const autoSwapPools = [
       address: new PublicKey('86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM'),
       feeIndex: 3
     }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('CEBP3CqAbW4zdZA57H2wfaSG1QNdzQ72GiQEbQXyW9Tm')
+    },
+    swapPool: {
+      address: new PublicKey('HHHGD7BZ7H5fPLh3DNEPFezpLoYBJ16WsmbwRJXXEFSg'),
+      feeIndex: 0
+    }
   }
 ]
 export const promotedTiers = [

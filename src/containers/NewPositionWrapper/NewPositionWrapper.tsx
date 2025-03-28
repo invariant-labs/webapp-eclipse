@@ -336,10 +336,14 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     if (tokenAIndex === null || tokenBIndex === null) return null
     const net = networkTypetoProgramNetwork(currentNetwork)
     const marketAddress = new PublicKey(getMarketAddress(net))
-    return new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
-      fee,
-      tickSpacing
-    }).getAddress(marketAddress)
+    try {
+      return new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+        fee,
+        tickSpacing
+      }).getAddress(marketAddress)
+    } catch (e) {
+      return PublicKey.default
+    }
   }, [tokenAIndex, tokenBIndex, fee, tickSpacing, currentNetwork])
 
   const isWaitingForNewPool = useMemo(() => {
