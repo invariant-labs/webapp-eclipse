@@ -10,17 +10,18 @@ const useStyles = makeStyles()(() => {
       right: 0,
       bottom: 0,
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       pointerEvents: 'none',
-      zIndex: 1300
+      zIndex: 1300,
+      paddingTop: '25%'
     },
     popoverRoot: {
       position: 'fixed',
       width: '100%',
       height: '100%',
       display: 'flex',
-      alignItems: 'center',
+      alignItems: 'flex-start',
       justifyContent: 'center',
       overflow: 'auto'
     },
