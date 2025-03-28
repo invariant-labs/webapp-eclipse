@@ -94,6 +94,8 @@ import handleMax from '@static/svg/narrowChartMaxHandle.svg'
 import handleMin from '@static/svg/narrowChartMinHandle.svg'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
+import eyeYellow from './svg/eyeYellow.svg'
+import closeYellow from './svg/closeYellow.svg'
 
 const icons = {
   lockPosition,
@@ -192,7 +194,9 @@ const icons = {
   liquidityEmpty,
   assetsEmpty,
   settings3,
-  faucet
+  faucet,
+  eyeYellow,
+  closeYellow
 }
 
 export default icons

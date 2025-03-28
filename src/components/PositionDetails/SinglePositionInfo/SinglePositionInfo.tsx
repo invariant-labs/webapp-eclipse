@@ -39,6 +39,7 @@ interface IProp {
   isLocked: boolean
   onModalOpen: () => void
   ethBalance: BN
+  isPreview: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -58,7 +59,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   network,
   onModalOpen,
   isLocked,
-  ethBalance
+  ethBalance,
+  isPreview
 }) => {
   const navigate = useNavigate()
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -201,13 +203,15 @@ const SinglePositionInfo: React.FC<IProp> = ({
             </Grid>
             <TooltipHover
               title={
-                isLocked
-                  ? 'Closing positions is disabled when position is locked'
-                  : canClosePosition
-                    ? tokenX.claimValue > 0 || tokenY.claimValue > 0
-                      ? 'Unclaimed fees will be returned when closing the position'
-                      : ''
-                    : 'Insufficient ETH to close position'
+                isPreview
+                  ? "Can't close position in preview"
+                  : isLocked
+                    ? 'Closing positions is disabled when position is locked'
+                    : canClosePosition
+                      ? tokenX.claimValue > 0 || tokenY.claimValue > 0
+                        ? 'Unclaimed fees will be returned when closing the position'
+                        : ''
+                      : 'Insufficient ETH to close position'
               }>
               <Box>
                 <Button
@@ -215,7 +219,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                   height={36}
                   padding='0 6px'
                   borderRadius={14}
-                  disabled={isLocked || !canClosePosition}
+                  disabled={isLocked || !canClosePosition || isPreview}
                   onClick={() => {
                     if (!userHasStakes) {
                       closePosition()
@@ -224,15 +228,20 @@ const SinglePositionInfo: React.FC<IProp> = ({
                       blurContent()
                     }
                   }}>
-                  {canClosePosition ? 'Close position' : 'Lacking ETH'}
+                  {canClosePosition || isPreview ? 'Close position' : 'Lacking ETH'}
                 </Button>
               </Box>
             </TooltipHover>
             <Hidden mdUp>
               {!isLocked ? (
-                <TooltipHover title={'Lock liquidity'}>
+                <TooltipHover
+                  title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
                   <Box>
-                    <Button width={45} scheme='green' disabled={isLocked} onClick={onModalOpen}>
+                    <Button
+                      width={45}
+                      scheme='green'
+                      disabled={isLocked || isPreview}
+                      onClick={onModalOpen}>
                       <img src={icons.lockPosition} alt='Lock' />
                     </Button>
                   </Box>
@@ -277,6 +286,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             showBalance
             swapHandler={swapHandler}
             isBalanceLoading={isBalanceLoading}
+            isPreview={isPreview}
           />
           <BoxInfo
             title={'Unclaimed fees'}
@@ -293,6 +303,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             onClickButton={onClickClaimFee}
             showLoader={showFeesLoader}
             isBalanceLoading={isBalanceLoading}
+            isPreview={isPreview}
           />
         </Grid>
       </Grid>

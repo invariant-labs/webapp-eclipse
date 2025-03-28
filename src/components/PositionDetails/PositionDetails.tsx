@@ -3,7 +3,7 @@ import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/S
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import Refresher from '@common/Refresher/Refresher'
-import { Box, Grid, Hidden, Typography } from '@mui/material'
+import { Box, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import { NetworkType, REFRESHER_INTERVAL } from '@store/consts/static'
 import { PlotTickData } from '@store/reducers/positions'
 import { VariantType } from 'notistack'
@@ -28,6 +28,8 @@ import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Button } from '@common/Button/Button'
+import { Information } from '@components/Information/Information'
+import { theme } from '@static/theme'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -62,6 +64,7 @@ interface IProps {
   success: boolean
   inProgress: boolean
   ethBalance: BN
+  isPreview: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -96,9 +99,11 @@ const PositionDetails: React.FC<IProps> = ({
   isLocked,
   success,
   inProgress,
-  ethBalance
+  ethBalance,
+  isPreview
 }) => {
   const { classes } = useStyles()
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const navigate = useNavigate()
 
@@ -109,6 +114,9 @@ const PositionDetails: React.FC<IProps> = ({
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
   const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
+
+  const [showPreviewInfo, setShowPreviewInfo] = useState(false)
+  const [connectWalletDelay, setConnectWalletDelay] = useState(false)
 
   const isActive = midPrice.x >= min && midPrice.x <= max
 
@@ -163,163 +171,69 @@ const PositionDetails: React.FC<IProps> = ({
     }
   }, [min, max, currentPrice, tokenX, tokenY, xToY])
 
+  useEffect(() => {
+    const timeout = setTimeout(() => {
+      setConnectWalletDelay(true)
+    }, 1000)
+
+    return () => clearTimeout(timeout)
+  }, [])
+
+  useEffect(() => {
+    if (isPreview && connectWalletDelay) {
+      setShowPreviewInfo(true)
+    } else {
+      setShowPreviewInfo(false)
+    }
+  }, [isPreview, connectWalletDelay])
+
   return (
-    <Grid container className={classes.wrapperContainer}>
-      <LockLiquidityModal
-        open={isLockPositionModalOpen}
-        onClose={onLockPositionModalClose}
-        xToY={xToY}
-        tokenX={tokenX}
-        tokenY={tokenY}
-        onLock={lockPosition}
-        fee={`${+printBN(fee, DECIMAL - 2).toString()}% fee`}
-        minMax={`${formatNumberWithSuffix(min)}-${formatNumberWithSuffix(max)} ${tokenYLabel} per ${tokenXLabel}`}
-        value={value}
-        isActive={isActive}
-        swapHandler={() => setXToY(!xToY)}
-        success={success}
-        inProgress={inProgress}
-      />
-      <Grid className={classes.positionDetails} container item>
-        <Grid className={classes.backContainer} container>
-          <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none' }}>
-            <Grid className={classes.back} container item>
-              <img className={classes.backIcon} src={icons.backIcon} alt='Back' />
-              <Typography className={classes.backText}>Positions</Typography>
-            </Grid>
-          </Link>
-          <Grid container className={classes.marketIdWithRefresher}>
-            <Hidden mdUp>
-              <MarketIdLabel
-                marketId={poolAddress.toString()}
-                displayLength={5}
-                copyPoolAddressHandler={copyPoolAddressHandler}
-                style={{ paddingRight: 8 }}
-              />
-              {poolAddress.toString() && (
-                <TooltipHover title='Open pool in explorer'>
-                  <Grid height={'24px'} mr={'12px'}>
-                    <a
-                      href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
-                      target='_blank'
-                      rel='noopener noreferrer'
-                      onClick={event => {
-                        event.stopPropagation()
-                      }}
-                      className={classes.link}>
-                      <img width={14} height={14} src={icons.newTab} alt={'Token address'} />
-                    </a>
-                  </Grid>
-                </TooltipHover>
-              )}
-              <Grid flex={1} justifyItems={'flex-end'}>
-                <TooltipHover title='Refresh'>
-                  <Refresher
-                    currentIndex={refresherTime}
-                    maxIndex={REFRESHER_INTERVAL}
-                    onClick={() => {
-                      onRefresh()
-                      setRefresherTime(REFRESHER_INTERVAL)
-                    }}
-                  />
-                </TooltipHover>
-              </Grid>
-            </Hidden>
-          </Grid>
-        </Grid>
-        <SinglePositionInfo
-          fee={+printBN(fee, DECIMAL - 2)}
-          onClickClaimFee={onClickClaimFee}
-          closePosition={closePosition}
+    <>
+      <Information mb={3} transitionTimeout={300} shouldOpen={showPreviewInfo}>
+        <Box className={classes.information}>
+          <img src={icons.eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
+          {isSm
+            ? `Viewing someone else's position. Wallet actions unavailable.`
+            : `You are currently watching someone else's position. Connect your wallet or go to
+              portfolio to see your positions.`}
+        </Box>
+      </Information>
+
+      <Grid container className={classes.wrapperContainer} wrap='nowrap'>
+        <LockLiquidityModal
+          open={isLockPositionModalOpen}
+          onClose={onLockPositionModalClose}
+          xToY={xToY}
           tokenX={tokenX}
           tokenY={tokenY}
-          tokenXPriceData={tokenXPriceData}
-          tokenYPriceData={tokenYPriceData}
-          xToY={xToY}
-          swapHandler={() => setXToY(!xToY)}
-          showFeesLoader={showFeesLoader}
-          userHasStakes={userHasStakes}
-          isBalanceLoading={isBalanceLoading}
+          onLock={lockPosition}
+          fee={`${+printBN(fee, DECIMAL - 2).toString()}% fee`}
+          minMax={`${formatNumberWithSuffix(min)}-${formatNumberWithSuffix(max)} ${tokenYLabel} per ${tokenXLabel}`}
+          value={value}
           isActive={isActive}
-          network={network}
-          isLocked={isLocked}
-          onModalOpen={() => {
-            setIsLockPositionModalOpen(true)
-            blurContent()
-          }}
-          ethBalance={ethBalance}
+          swapHandler={() => setXToY(!xToY)}
+          success={success}
+          inProgress={inProgress}
         />
-      </Grid>
-      <Grid container item className={classes.right}>
-        <Grid className={classes.positionPlotWrapper}>
-          <Grid container item className={classes.rightHeaderWrapper}>
-            <Hidden mdDown>
-              {!isLocked ? (
-                <TooltipHover title={'Lock liquidity'}>
-                  <Button
-                    width={45}
-                    scheme='green'
-                    variant='contained'
-                    disabled={isLocked}
-                    onClick={() => {
-                      setIsLockPositionModalOpen(true)
-                      blurContent()
-                    }}>
-                    <img src={icons.lockPosition} alt='Lock' />
-                  </Button>
-                </TooltipHover>
-              ) : (
-                <TooltipHover title={'Unlocking liquidity is forbidden'}>
-                  <Button width={45} scheme='pink' disabled variant='contained' onClick={() => {}}>
-                    <img src={icons.unlockIcon} alt='unlock' />
-                  </Button>
-                </TooltipHover>
-              )}
-            </Hidden>
-            <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-              <Button
-                scheme='pink'
-                variant='contained'
-                onClick={() => {
-                  const parsedFee = parseFeeToPathFee(fee)
-                  const address1 = addressToTicker(network, tokenXAddress.toString())
-                  const address2 = addressToTicker(network, tokenYAddress.toString())
-
-                  const isXtoY = initialXtoY(
-                    tokenXAddress.toString() ?? '',
-                    tokenYAddress.toString() ?? ''
-                  )
-
-                  const tokenA = isXtoY ? address1 : address2
-                  const tokenB = isXtoY ? address2 : address1
-
-                  navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
-                }}>
-                <span className={classes.buttonText}>+ Add Position</span>
-              </Button>
-            </Box>
-            <Hidden mdDown>
-              <TooltipHover title='Refresh'>
-                <Grid display='flex' justifyContent='center'>
-                  <Refresher
-                    currentIndex={refresherTime}
-                    maxIndex={REFRESHER_INTERVAL}
-                    onClick={() => {
-                      onRefresh()
-                      setRefresherTime(REFRESHER_INTERVAL)
-                    }}
-                  />
-                </Grid>
-              </TooltipHover>
-              <Grid className={classes.marketIdWrapper}>
+        <Grid className={classes.positionDetails} container item direction='column'>
+          <Grid className={classes.backContainer} container>
+            <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none' }}>
+              <Grid className={classes.back} container item alignItems='center'>
+                <img className={classes.backIcon} src={icons.backIcon} alt='Back' />
+                <Typography className={classes.backText}>Positions</Typography>
+              </Grid>
+            </Link>
+            <Grid container width='auto' className={classes.marketIdWithRefresher}>
+              <Hidden mdUp>
                 <MarketIdLabel
                   marketId={poolAddress.toString()}
                   displayLength={5}
                   copyPoolAddressHandler={copyPoolAddressHandler}
+                  style={{ paddingRight: 8 }}
                 />
                 {poolAddress.toString() && (
                   <TooltipHover title='Open pool in explorer'>
-                    <Grid>
+                    <Grid height={'24px'} mr={'12px'}>
                       <a
                         href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
                         target='_blank'
@@ -328,50 +242,209 @@ const PositionDetails: React.FC<IProps> = ({
                           event.stopPropagation()
                         }}
                         className={classes.link}>
-                        <img
-                          width={14}
-                          height={14}
-                          src={icons.newTab}
-                          alt={'Token address'}
-                          style={{ transform: 'translateY(-2px)' }}
-                        />
+                        <img width={14} height={14} src={icons.newTab} alt={'Token address'} />
                       </a>
                     </Grid>
                   </TooltipHover>
                 )}
-              </Grid>
-            </Hidden>
+                <Grid flex={1} justifyItems={'flex-end'}>
+                  <TooltipHover title='Refresh'>
+                    <Refresher
+                      currentIndex={refresherTime}
+                      maxIndex={REFRESHER_INTERVAL}
+                      onClick={() => {
+                        onRefresh()
+                        setRefresherTime(REFRESHER_INTERVAL)
+                      }}
+                    />
+                  </TooltipHover>
+                </Grid>
+              </Hidden>
+            </Grid>
           </Grid>
-          <SinglePositionPlot
-            data={
-              detailsData.length
-                ? xToY
-                  ? detailsData
-                  : detailsData.map(tick => ({ ...tick, x: 1 / tick.x })).reverse()
-                : Array(100)
-                    .fill(1)
-                    .map((_e, index) => ({ x: index, y: index, index }))
-            }
-            leftRange={xToY ? leftRange : { ...rightRange, x: 1 / rightRange.x }}
-            rightRange={xToY ? rightRange : { ...leftRange, x: 1 / leftRange.x }}
-            midPrice={{
-              ...midPrice,
-              x: midPrice.x ** (xToY ? 1 : -1)
-            }}
-            currentPrice={currentPrice ** (xToY ? 1 : -1)}
-            tokenY={tokenY}
+          <SinglePositionInfo
+            fee={+printBN(fee, DECIMAL - 2)}
+            onClickClaimFee={onClickClaimFee}
+            closePosition={closePosition}
             tokenX={tokenX}
-            ticksLoading={ticksLoading}
-            tickSpacing={tickSpacing}
-            min={xToY ? min : 1 / max}
-            max={xToY ? max : 1 / min}
+            tokenY={tokenY}
+            tokenXPriceData={tokenXPriceData}
+            tokenYPriceData={tokenYPriceData}
             xToY={xToY}
-            hasTicksError={hasTicksError}
-            reloadHandler={reloadHandler}
+            swapHandler={() => setXToY(!xToY)}
+            showFeesLoader={showFeesLoader}
+            userHasStakes={userHasStakes}
+            isBalanceLoading={isBalanceLoading}
+            isActive={isActive}
+            network={network}
+            isLocked={isLocked}
+            onModalOpen={() => {
+              setIsLockPositionModalOpen(true)
+              blurContent()
+            }}
+            ethBalance={ethBalance}
+            isPreview={isPreview}
           />
         </Grid>
+        <Grid
+          container
+          item
+          direction='column'
+          alignItems='flex-end'
+          className={classes.right}
+          wrap='nowrap'>
+          <Grid className={classes.positionPlotWrapper}>
+            <Grid
+              container
+              item
+              direction='row'
+              alignItems='center'
+              flexDirection='row-reverse'
+              className={classes.rightHeaderWrapper}
+              mt='22px'
+              gap='8px'
+              wrap='nowrap'>
+              <Hidden mdDown>
+                {!isLocked ? (
+                  <TooltipHover
+                    title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
+                    <Box>
+                      <Button
+                        // width={45}
+                        scheme='green'
+                        variant='contained'
+                        disabled={isLocked || isPreview}
+                        padding={isPreview ? 2.5 : undefined}
+                        onClick={() => {
+                          if (isPreview) return
+                          setIsLockPositionModalOpen(true)
+                          blurContent()
+                        }}>
+                        {isPreview ? (
+                          <img src={icons.lockIcon} alt='Lock' width={40} />
+                        ) : (
+                          <img src={icons.lockPosition} alt='Lock' />
+                        )}
+                      </Button>
+                    </Box>
+                  </TooltipHover>
+                ) : (
+                  <TooltipHover title={'Unlocking liquidity is forbidden'}>
+                    <Button
+                      width={45}
+                      scheme='pink'
+                      disabled
+                      variant='contained'
+                      onClick={() => {}}>
+                      <img src={icons.unlockIcon} alt='unlock' />
+                    </Button>
+                  </TooltipHover>
+                )}
+              </Hidden>
+              <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
+                <Button
+                  scheme='pink'
+                  variant='contained'
+                  onClick={() => {
+                    const parsedFee = parseFeeToPathFee(fee)
+                    const address1 = addressToTicker(network, tokenXAddress.toString())
+                    const address2 = addressToTicker(network, tokenYAddress.toString())
+
+                    const isXtoY = initialXtoY(
+                      tokenXAddress.toString() ?? '',
+                      tokenYAddress.toString() ?? ''
+                    )
+
+                    const tokenA = isXtoY ? address1 : address2
+                    const tokenB = isXtoY ? address2 : address1
+
+                    navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
+                  }}>
+                  <span className={classes.buttonText}>+ Add Position</span>
+                </Button>
+              </Box>
+              <Hidden mdDown>
+                <TooltipHover title='Refresh'>
+                  <Grid display='flex' justifyContent='center'>
+                    <Refresher
+                      currentIndex={refresherTime}
+                      maxIndex={REFRESHER_INTERVAL}
+                      onClick={() => {
+                        onRefresh()
+                        setRefresherTime(REFRESHER_INTERVAL)
+                      }}
+                    />
+                  </Grid>
+                </TooltipHover>
+                <Grid
+                  display={'flex'}
+                  style={{
+                    padding: '8px 8px  0 0px',
+                    height: '24px',
+                    minWidth: '200px',
+                    marginRight: 'auto'
+                  }}>
+                  <MarketIdLabel
+                    marketId={poolAddress.toString()}
+                    displayLength={5}
+                    copyPoolAddressHandler={copyPoolAddressHandler}
+                  />
+                  {poolAddress.toString() && (
+                    <TooltipHover title='Open pool in explorer'>
+                      <Grid>
+                        <a
+                          href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
+                          target='_blank'
+                          rel='noopener noreferrer'
+                          onClick={event => {
+                            event.stopPropagation()
+                          }}
+                          className={classes.link}>
+                          <img
+                            width={14}
+                            height={14}
+                            src={icons.newTab}
+                            alt={'Token address'}
+                            style={{ transform: 'translateY(-2px)' }}
+                          />
+                        </a>
+                      </Grid>
+                    </TooltipHover>
+                  )}
+                </Grid>
+              </Hidden>
+            </Grid>
+            <SinglePositionPlot
+              data={
+                detailsData.length
+                  ? xToY
+                    ? detailsData
+                    : detailsData.map(tick => ({ ...tick, x: 1 / tick.x })).reverse()
+                  : Array(100)
+                      .fill(1)
+                      .map((_e, index) => ({ x: index, y: index, index }))
+              }
+              leftRange={xToY ? leftRange : { ...rightRange, x: 1 / rightRange.x }}
+              rightRange={xToY ? rightRange : { ...leftRange, x: 1 / leftRange.x }}
+              midPrice={{
+                ...midPrice,
+                x: midPrice.x ** (xToY ? 1 : -1)
+              }}
+              currentPrice={currentPrice ** (xToY ? 1 : -1)}
+              tokenY={tokenY}
+              tokenX={tokenX}
+              ticksLoading={ticksLoading}
+              tickSpacing={tickSpacing}
+              min={xToY ? min : 1 / max}
+              max={xToY ? max : 1 / min}
+              xToY={xToY}
+              hasTicksError={hasTicksError}
+              reloadHandler={reloadHandler}
+            />
+          </Grid>
+        </Grid>
       </Grid>
-    </Grid>
+    </>
   )
 }
 

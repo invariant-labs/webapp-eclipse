@@ -135,5 +135,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
         filter: 'none'
       }
     }
+  },
+  information: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
   }
 }))

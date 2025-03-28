@@ -1,4 +1,4 @@
-import { Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import loader from '@static/gif/loading.gif'
 import {
   formatNumberWithSuffix,
@@ -31,6 +31,7 @@ export const BoxInfo: React.FC<{
   swapHandler?: () => void
   showLoader?: boolean
   isBalanceLoading: boolean
+  isPreview: boolean
 }> = ({
   title,
   onClickButton,
@@ -39,7 +40,8 @@ export const BoxInfo: React.FC<{
   showBalance = false,
   swapHandler,
   showLoader = false,
-  isBalanceLoading
+  isBalanceLoading,
+  isPreview
 }) => {
   const { classes } = useStyles()
 
@@ -90,18 +92,23 @@ export const BoxInfo: React.FC<{
       <Grid container justifyContent='space-between'>
         <Typography className={classes.title}> {title}</Typography>
         {onClickButton ? (
-          <Button
-            scheme='pink'
-            height={32}
-            padding='0 24px'
-            borderRadius={12}
-            onClick={onClickButton}
-            disabled={
-              Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) &&
-              Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal)
-            }>
-            Claim fee
-          </Button>
+          <TooltipHover title={isPreview ? "Can't claim fee in preview" : ''}>
+            <Box>
+              <Button
+                scheme='pink'
+                height={32}
+                padding='0 24px'
+                borderRadius={12}
+                onClick={onClickButton}
+                disabled={
+                  (Math.abs(Number(tokenA.value)) < 10 ** Number(-tokenA.decimal) &&
+                    Math.abs(Number(tokenB.value)) < 10 ** Number(-tokenB.decimal)) ||
+                  isPreview
+                }>
+                Claim fee
+              </Button>
+            </Box>
+          </TooltipHover>
         ) : null}
       </Grid>
 
