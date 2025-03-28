@@ -27,6 +27,35 @@ export const useStyles = makeStyles()(theme => {
       maxWidth: 255,
       border: `1px solid ${colors.invariant.newDark}`
     },
+
+    autoButton: {
+      display: 'flex',
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: 0
+    },
+    autoText: {
+      marginRight: 3,
+      flex: '0 0 auto'
+    },
+    infoTooltip: {
+      marginLeft: 6,
+      marginRight: 6,
+      display: 'flex',
+      alignItems: 'center'
+    },
+    tooltipIconWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      width: 12,
+      height: 12,
+      minWidth: 12,
+      minHeight: 12,
+      flex: '0 0 auto',
+      marginRight: 3
+    },
     depositHeader: {
       width: '100%',
       flexDirection: 'column',
@@ -200,8 +229,9 @@ export const useStyles = makeStyles()(theme => {
         }
       },
       letterSpacing: '-0.03em',
-      width: 46,
+      width: 60,
       height: 26,
+      padding: 0,
       [theme.breakpoints.down('sm')]: {
         height: 32
       }

@@ -414,8 +414,23 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     }
 
     if (
-      ((!tokenAInputState.blocked && +tokenAInputState.value === 0) ||
-        (!tokenBInputState.blocked && +tokenBInputState.value === 0)) &&
+      ((tokenAInputState.blocked && !tokenBInputState.blocked) ||
+        (!tokenAInputState.blocked && tokenBInputState.blocked)) &&
+      alignment === DepositOptions.Auto
+    ) {
+      if (
+        (tokenAInputState.blocked && +tokenBInputState.value === 0) ||
+        (tokenBInputState.blocked && +tokenAInputState.value === 0)
+      ) {
+        return 'Enter token amount'
+      }
+    }
+
+    if (
+      !tokenAInputState.blocked &&
+      +tokenAInputState.value === 0 &&
+      !tokenBInputState.blocked &&
+      +tokenBInputState.value === 0 &&
       alignment === DepositOptions.Basic
     ) {
       return !tokenAInputState.blocked &&
@@ -567,13 +582,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const renderSwitcher = useCallback(
     () => (
       <>
-        <Tooltip
-          title={
-            'AutoSwap automatically adjusts tokens balances to match your chosen ratio, saving time and optimizing transactions. By default, it executes the most optimal swap, while the manual mode allows you to set parameters such as max price impact or minimum utilization.'
-          }
-          classes={{ tooltip: classes.tooltip }}>
-          <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
-        </Tooltip>
         <Box className={classes.switchDepositTypeContainer}>
           <Box
             className={classes.switchDepositTypeMarker}
@@ -603,11 +611,23 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               disableRipple
               className={classNames(
                 classes.switchDepositTypeButton,
+                classes.autoButton,
                 alignment === DepositOptions.Auto
                   ? classes.switchSelected
                   : classes.switchNotSelected
               )}>
-              Auto
+              <span className={classes.autoText}>Auto</span>
+              {isAutoSwapAvailable && (
+                <Tooltip
+                  title={
+                    'Autoswap automatically adjusts tokens balances to match your chosen ratio, saving time and optimizing transactions. By default, it executes the most optimal swap, while the manual mode allows you to set parameters such as max price impact or minimum utilization.'
+                  }
+                  classes={{ tooltip: classes.tooltip }}>
+                  <span className={classes.tooltipIconWrapper}>
+                    <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
+                  </span>
+                </Tooltip>
+              )}
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
@@ -638,7 +658,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return (
         <Box className={classes.unknownWarning}>
           <Tooltip
-            title={'You already have enough tokens to open position.'}
+            title={'You already have enough tokens to open position'}
             classes={{ tooltip: classes.tooltip }}>
             <img
               src={icons.infoCircle}
@@ -909,8 +929,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             <Tooltip
               title={
                 tokenACheckbox
-                  ? "Disabling this input means you don't need to provide the corresponding token."
-                  : 'Enable to provide this token.'
+                  ? "Disabling this input means you don't need to provide the corresponding token"
+                  : 'Enable to provide this token'
               }
               classes={{ tooltip: classes.tooltip }}>
               <Checkbox
@@ -978,8 +998,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             <Tooltip
               title={
                 tokenBCheckbox
-                  ? "Disabling this input means you don't need to provide the corresponding token."
-                  : 'Enable to provide this token.'
+                  ? "Disabling this input means you don't need to provide the corresponding token"
+                  : 'Enable to provide this token'
               }
               classes={{ tooltip: classes.tooltip }}>
               <Checkbox
@@ -1050,7 +1070,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         />
       ) : getButtonMessage() === 'Insufficient ETH' ? (
         <TooltipHover
-          title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+          title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction'
           top={-10}>
           <div>
             <AnimatedButton
