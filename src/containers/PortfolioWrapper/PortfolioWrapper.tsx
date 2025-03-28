@@ -1,4 +1,4 @@
-import { PositionsList } from '@components/PositionsList/PositionsList'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { POSITIONS_PER_PAGE } from '@store/consts/static'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
@@ -8,6 +8,7 @@ import {
   getMaxTick,
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions } from '@store/reducers/positions'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import {
@@ -18,17 +19,27 @@ import {
   positionsWithPoolsData,
   prices
 } from '@store/selectors/positions'
-import { address, status } from '@store/selectors/solanaWallet'
+import { address, balanceLoading, status, swapTokens } from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, printBN, ROUTES } from '@utils/utils'
-import { IPositionItem } from '@components/PositionsList/types'
 import { network } from '@store/selectors/solanaConnection'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
+import { Grid, useMediaQuery } from '@mui/material'
+import { theme } from '@static/theme'
+import useStyles from './styles'
+import Portfolio from '@components/Portfolio/Portfolio'
+import { VariantType } from 'notistack'
+import { IPositionItem } from '@store/consts/types'
 
-export const WrappedPositionsList: React.FC = () => {
+const PortfolioWrapper = () => {
+  const { classes } = useStyles()
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+
   const walletAddress = useSelector(address)
   const list = useSelector(positionsWithPoolsData)
   const lockedList = useSelector(lockedPositionsWithPoolsData)
@@ -36,9 +47,13 @@ export const WrappedPositionsList: React.FC = () => {
   const lastPage = useSelector(lastPageSelector)
   const walletStatus = useSelector(status)
   const currentNetwork = useSelector(network)
+  const tokensList = useSelector(swapTokens)
+  const isBalanceLoading = useSelector(balanceLoading)
+  const pricesData = useSelector(prices)
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const pricesData = useSelector(prices)
+  const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   const setLastPage = (page: number) => {
     dispatch(actions.setLastPage(page))
@@ -279,9 +294,24 @@ export const WrappedPositionsList: React.FC = () => {
       }),
     [lockedList, pricesData]
   )
+  const handleSnackbar = (message: string, variant: VariantType) => {
+    dispatch(
+      snackbarsActions.add({
+        message: message,
+        variant: variant,
+        persist: false
+      })
+    )
+  }
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [dispatch])
 
-  return (
-    <PositionsList
+  return isConnected ? (
+    <Portfolio
+      tokensList={tokensList}
+      isBalanceLoading={isBalanceLoading}
+      handleSnackbar={handleSnackbar}
       initialPage={lastPage}
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}
@@ -308,7 +338,21 @@ export const WrappedPositionsList: React.FC = () => {
       handleClosePosition={handleClosePosition}
       handleClaimFee={handleClaimFee}
     />
+  ) : (
+    <Grid className={classes.emptyContainer}>
+      <EmptyPlaceholder
+        newVersion
+        themeDark
+        style={isSm ? { paddingTop: 8 } : {}}
+        roundedCorners={true}
+        mainTitle='Wallet is not connected'
+        desc='No liquidity positions to show'
+        withButton={false}
+        connectButton={true}
+        onAction2={() => dispatch(walletActions.connect(false))}
+      />
+    </Grid>
   )
 }
 
-export default WrappedPositionsList
+export default PortfolioWrapper

@@ -24,16 +24,6 @@ const useStyles = makeStyles()(theme => {
         paddingInline: 8
       }
     },
-    emptyContainer: {
-      marginTop: 104,
-      [theme.breakpoints.down('sm')]: {
-        marginTop: 30
-      },
-      width: 1122,
-      display: 'flex',
-
-      maxWidth: '100%'
-    },
 
     button: {
       height: 40,

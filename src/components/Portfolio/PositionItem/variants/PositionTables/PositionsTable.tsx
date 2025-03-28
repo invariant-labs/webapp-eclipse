@@ -10,11 +10,11 @@ import {
   TableRow
 } from '@mui/material'
 import { PositionTableRow } from './PositionsTableRow'
-import { IPositionItem } from '../../../types'
 import { useNavigate } from 'react-router-dom'
 import { usePositionTableStyle } from './styles/positionTable'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { generatePositionTableLoadingData, ROUTES } from '@utils/utils'
+import { IPositionItem } from '@store/consts/types'
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>
