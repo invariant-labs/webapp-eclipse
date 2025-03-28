@@ -1,7 +1,7 @@
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
-import { Box, Grid, Typography } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
@@ -515,7 +515,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           onConnect={onConnectWallet}
           connected={false}
           onDisconnect={onDisconnectWallet}
-          className={classes.connectWalletButton}
         />
       ) : getButtonMessage() === 'Insufficient ETH' ? (
         <TooltipHover
