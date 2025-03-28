@@ -103,8 +103,6 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     <>
       <Button
         scheme={connected ? 'normal' : 'pink'}
-        height={'48px'}
-        margin={'30px 0'}
         disabled={isDisabled}
         margin={margin}
         height={height}
