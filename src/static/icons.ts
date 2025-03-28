@@ -94,6 +94,11 @@ import handleMax from '@static/svg/narrowChartMaxHandle.svg'
 import handleMin from '@static/svg/narrowChartMinHandle.svg'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
+import reverseTokens from './svg/reverse-tokens.svg'
+import backArrow from '@static/svg/back-arrow.svg'
+import lock from '@static/svg/lock.svg'
+import unlock from '@static/svg/unlock.svg'
+import boostPointsBold from '@static/svg/boostPointsBold.svg'
 
 const icons = {
   lockPosition,
@@ -192,7 +197,12 @@ const icons = {
   liquidityEmpty,
   assetsEmpty,
   settings3,
-  faucet
+  faucet,
+  reverseTokens,
+  backArrow,
+  lock,
+  unlock,
+  boostPointsBold
 }
 
 export default icons

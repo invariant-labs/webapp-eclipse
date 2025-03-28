@@ -1,4 +1,3 @@
-import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import useStyles from './style'
 import { Button, Grid, InputBase, Popover, Typography } from '@mui/material'
 import icons from '@static/icons'
@@ -8,6 +7,7 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '@static/theme'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { ILiquidityToken } from '@store/consts/types'
 
 const confirmText = 'Lock my liquidity permanently'
 export interface ILockLiquidityModal {
