@@ -23,8 +23,8 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { lockerState } from '@store/selectors/locker'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
-import { IPositionItem } from '@components/Portfolio/types'
 import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Overview'
+import { IPositionItem } from '@store/consts/types'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>

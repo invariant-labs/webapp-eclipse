@@ -25,7 +25,6 @@ import { ROUTES } from '@utils/utils'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-import { IPositionItem } from './types'
 import { PositionsTable } from './PositionItem/variants/PositionTables/PositionsTable'
 import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { PositionItemMobile } from './PositionItem/variants/PositionMobileCard/PositionItemMobile'
@@ -37,6 +36,7 @@ import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 import { Overview } from './Overview/Overview/Overview'
 import { YourWallet } from './Overview/YourWallet/YourWallet'
 import { VariantType } from 'notistack'
+import { IPositionItem } from '@store/consts/types'
 
 interface IProps {
   initialPage: number
