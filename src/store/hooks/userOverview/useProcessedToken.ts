@@ -1,6 +1,7 @@
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { printBN, getTokenPrice } from '@utils/utils'
+import { NetworkType } from '@store/consts/static'
+import { printBN, getTokenPrice, ensureError } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
 interface Token {
@@ -26,8 +27,13 @@ interface ProcessedPool {
   amount: number
 }
 
-export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolean) => {
+export const useProcessedTokens = (
+  tokensList: Token[],
+  isBalanceLoading: boolean,
+  network: NetworkType
+) => {
   const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([])
+  const [isProcesing, setIsProcesing] = useState<boolean>(true)
 
   useEffect(() => {
     const processTokens = async () => {
@@ -42,9 +48,10 @@ export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolea
 
           let price = 0
           try {
-            const priceData = await getTokenPrice(token.assetAddress.toString() ?? '')
+            const priceData = await getTokenPrice(token.assetAddress.toString() ?? '', network)
             price = priceData ?? 0
-          } catch (error) {
+          } catch (e: unknown) {
+            const error = ensureError(e)
             console.error(`Failed to fetch price for ${token.symbol}:`, error)
           }
           return {
@@ -60,6 +67,7 @@ export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolea
       )
 
       setProcessedPools(processed)
+      setIsProcesing(false)
     }
     if (isBalanceLoading) return
     if (tokensList?.length) {
@@ -67,5 +75,5 @@ export const useProcessedTokens = (tokensList: Token[], isBalanceLoading: boolea
     }
   }, [tokensList, isBalanceLoading])
 
-  return processedPools
+  return { processedPools, isProcesing }
 }

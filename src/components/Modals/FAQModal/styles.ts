@@ -15,6 +15,19 @@ const useStyles = makeStyles()(() => {
       pointerEvents: 'none',
       zIndex: 1300
     },
+    olWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      height: 'max-content',
+      flex: 1
+    },
+    contentWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+      minHeight: 300
+    },
     popoverRoot: {
       position: 'fixed',
       width: '100%',
@@ -122,7 +135,7 @@ const useStyles = makeStyles()(() => {
       paddingInline: 8,
       textAlign: 'center',
       verticalAlign: 'middle',
-      transition: 'transform 0.2s',
+      transition: 'transform 0.3s',
 
       '&:hover': {
         cursor: 'pointer',

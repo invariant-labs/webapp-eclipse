@@ -50,6 +50,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
           rows={1}>
           {pools.map(pool => (
             <Card
+              key={pool.addressFrom + pool.addressTo}
               poolAddress={pool.poolAddress}
               addressFrom={pool.addressFrom}
               addressTo={pool.addressTo}
@@ -67,7 +68,6 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
               isLoading={isLoading}
               network={network}
               showAPY={showAPY}
-              key={pool.poolAddress?.toString()}
             />
           ))}
         </Slider>

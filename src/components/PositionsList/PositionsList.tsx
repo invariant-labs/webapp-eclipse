@@ -1,33 +1,31 @@
-import { INoConnected, NoConnected } from '@components/NoConnected/NoConnected'
+import { INoConnected, NoConnected } from '@common/NoConnected/NoConnected'
 import {
   Box,
-  Button,
+  Button as MuiButton,
   Grid,
   ToggleButton,
   ToggleButtonGroup,
   Typography,
   useMediaQuery
 } from '@mui/material'
-import refreshIcon from '@static/svg/refresh.svg'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { useDispatch } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { PositionItemMobile } from './PositionItem/variants/PositionMobileCard/PositionItemMobile'
 import { IPositionItem } from './types'
 import { PositionsTable } from './PositionItem/variants/PositionTables/PositionsTable'
-import { EmptyPlaceholder } from '@components/EmptyPlaceholder/EmptyPlaceholder'
+import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
-import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
+import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { NetworkType } from '@store/consts/static'
 import { theme } from '@static/theme'
-
-export enum LiquidityPools {
-  Standard = 'Standard',
-  Locked = 'Locked'
-}
+import { Button } from '@common/Button/Button'
+import { ROUTES } from '@utils/utils'
+import icons from '@static/icons'
+import { LiquidityPools } from '@store/types/userOverview'
 
 interface IProps {
   initialPage: number
@@ -76,7 +74,7 @@ export const PositionsList: React.FC<IProps> = ({
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
+  const hidePlus = useMediaQuery(theme.breakpoints.down(350))
   const currentData = useMemo(() => {
     if (alignment === LiquidityPools.Standard) {
       return data
@@ -149,6 +147,8 @@ export const PositionsList: React.FC<IProps> = ({
       return (
         <EmptyPlaceholder
           newVersion
+          themeDark
+          roundedCorners
           desc={
             noInitialPositions
               ? 'Add your first position by pressing the button and start earning!'
@@ -164,7 +164,7 @@ export const PositionsList: React.FC<IProps> = ({
       <Grid
         onClick={() => {
           if (allowPropagation) {
-            navigate(`/position/${element.id}`)
+            navigate(ROUTES.getPositionRoute(element.id))
           }
         }}
         key={element.id}
@@ -184,16 +184,11 @@ export const PositionsList: React.FC<IProps> = ({
   return (
     <Grid container direction='column' className={classes.root}>
       {!isMd ? (
-        <Grid
-          className={classes.header}
-          container
-          direction='row'
-          justifyContent='space-between'
-          alignItems='center'>
+        <Grid className={classes.header} container>
           <Grid className={classes.searchRoot}>
             <Grid className={classes.titleBar}>
               <Typography className={classes.title}>Your Positions</Typography>
-              <TooltipHover text='Total number of your positions'>
+              <TooltipHover title='Total number of your positions'>
                 <Typography className={classes.positionsNumber}>
                   {String(filteredData.length)}
                 </Typography>
@@ -279,22 +274,18 @@ export const PositionsList: React.FC<IProps> = ({
                 )}
               </Grid>
 
-              <Grid
-                display='flex'
-                columnGap={2}
-                justifyContent='space-between'
-                className={classes.fullWidthWrapper}>
-                <TooltipHover text='Refresh'>
+              <Grid className={classes.fullWidthWrapper}>
+                <TooltipHover title='Refresh'>
                   <Grid display='flex' alignItems='center'>
-                    <Button
+                    <MuiButton
                       disabled={showNoConnected}
                       onClick={showNoConnected ? () => {} : handleRefresh}
                       className={classes.refreshIconBtn}>
-                      <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-                    </Button>
+                      <img src={icons.refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                    </MuiButton>
                   </Grid>
                 </TooltipHover>
-                <Button className={classes.button} variant='contained' onClick={onAddPositionClick}>
+                <Button scheme='pink' onClick={onAddPositionClick}>
                   <span className={classes.buttonText}>+ Add Position</span>
                 </Button>
               </Grid>
@@ -302,16 +293,11 @@ export const PositionsList: React.FC<IProps> = ({
           </Grid>
         </Grid>
       ) : (
-        <Grid
-          className={classes.header}
-          container
-          direction='row'
-          justifyContent='space-between'
-          alignItems='center'>
+        <Grid className={classes.header} container>
           <Grid className={classes.searchRoot}>
             <Grid className={classes.titleBar}>
               <Typography className={classes.title}>Your Positions</Typography>
-              <TooltipHover text='Total number of your positions'>
+              <TooltipHover title='Total number of your positions'>
                 <Typography className={classes.positionsNumber}>
                   {String(filteredData.length)}
                 </Typography>
@@ -353,26 +339,23 @@ export const PositionsList: React.FC<IProps> = ({
                   </ToggleButtonGroup>
                 </Box>
 
-                <Grid
-                  display='flex'
-                  columnGap={2}
-                  justifyContent='space-between'
-                  className={classes.fullWidthWrapper}>
-                  <TooltipHover text='Refresh'>
-                    <Grid display='flex' alignItems='center'>
-                      <Button
+                <Grid className={classes.fullWidthWrapper}>
+                  <TooltipHover title='Refresh'>
+                    <Grid width={26} display='flex' alignItems='center'>
+                      <MuiButton
                         disabled={showNoConnected}
                         onClick={showNoConnected ? () => {} : handleRefresh}
                         className={classes.refreshIconBtn}>
-                        <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-                      </Button>
+                        <img
+                          src={icons.refreshIcon}
+                          className={classes.refreshIcon}
+                          alt='Refresh'
+                        />
+                      </MuiButton>
                     </Grid>
                   </TooltipHover>
-                  <Button
-                    className={classes.button}
-                    variant='contained'
-                    onClick={onAddPositionClick}>
-                    <span className={classes.buttonText}>+ Add Position</span>
+                  <Button scheme='pink' onClick={onAddPositionClick}>
+                    <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
                   </Button>
                 </Grid>
               </Grid>
@@ -389,7 +372,7 @@ export const PositionsList: React.FC<IProps> = ({
           </Grid>
         </Grid>
       )}
-      <Grid container direction='column' className={classes.list} justifyContent='flex-start'>
+      <Grid container className={classes.list}>
         {renderContent()}
       </Grid>
     </Grid>

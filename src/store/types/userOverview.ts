@@ -59,3 +59,8 @@ export interface TokenPositionEntry {
   positionId: string
   logo?: string
 }
+
+export enum LiquidityPools {
+  Standard = 'Standard',
+  Locked = 'Locked'
+}

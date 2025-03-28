@@ -9,6 +9,7 @@ import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { formatLargeNumber } from '@utils/uiUtils'
+import useIsMobile from '@store/hooks/isMobile'
 
 interface StatsInterface {
   percentVolume: number | null
@@ -17,18 +18,6 @@ interface StatsInterface {
   className?: string
   isLoading: boolean
 }
-
-// const GRAPH_ENTRIES = 30
-
-// const generateMockData = () => {
-//   return Array.from({ length: GRAPH_ENTRIES }, (_, index) => ({
-//     timestamp:
-//       Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24) +
-//       1000 * 60 * 60 * 12 -
-//       (GRAPH_ENTRIES - index) * (1000 * 60 * 60 * 24),
-//     value: Math.random() * 10000
-//   }))
-// }
 
 const Volume: React.FC<StatsInterface> = ({
   percentVolume,
@@ -43,6 +32,7 @@ const Volume: React.FC<StatsInterface> = ({
   volume = volume ?? 0
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
+  const isMobile = useIsMobile()
 
   const Theme = {
     axis: {
@@ -116,7 +106,7 @@ const Volume: React.FC<StatsInterface> = ({
             tickRotation: 0,
             tickValues: 5,
             renderTick: ({ x, y, value }) => (
-              <g transform={`translate(${x - 30},${y + 4})`}>
+              <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
                 {' '}
                 <text
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}

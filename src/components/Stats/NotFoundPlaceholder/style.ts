@@ -1,27 +1,41 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles()(() => {
-  return {
-    title: {
-      ...typography.heading2,
-      color: colors.invariant.text
-    },
-    subtitle: {
-      ...typography.body3,
-      color: colors.invariant.textGrey,
-      marginTop: 24
-    },
+const useStyles = makeStyles<{ isStats?: boolean }>()((theme, { isStats }) => ({
+  root: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginTop: isStats ? 0 : theme.spacing(5),
+    marginBottom: isStats ? 0 : theme.spacing(5),
+    minHeight: isStats ? '690px' : '220px'
+  },
 
-    img: {
-      paddingBottom: 37,
-      paddingRight: 25
-    },
-    container: {
-      background: colors.invariant.component,
-      borderBottom: `1px solid ${colors.invariant.light}`
-    }
+  container: {
+    background:
+      'linear-gradient(360deg, rgba(32, 41, 70, 0.8) 0%, rgba(17, 25, 49, 0.8) 100%), ' +
+      'linear-gradient(180deg, #010514 0%, rgba(1, 5, 20, 0) 100%)',
+    borderBottom: `1px solid ${colors.invariant.light}`
+  },
+
+  img: {
+    paddingBottom: 25
+  },
+
+  title: {
+    ...typography.body2,
+    fontWeight: 500,
+    lineHeight: '20px',
+    color: colors.invariant.lightHover
+  },
+
+  subtitle: {
+    ...typography.body2,
+    fontWeight: 500,
+    lineHeight: '20px',
+    color: colors.invariant.lightHover
   }
-})
+}))
 
 export default useStyles

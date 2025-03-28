@@ -8,6 +8,7 @@ import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { formatLargeNumber } from '@utils/uiUtils'
+import useIsMobile from '@store/hooks/isMobile'
 
 interface LiquidityInterface {
   liquidityPercent: number | null
@@ -16,18 +17,6 @@ interface LiquidityInterface {
   className?: string
   isLoading: boolean
 }
-
-// const GRAPH_ENTRIES = 30
-
-// const generateMockData = () => {
-//   return Array.from({ length: GRAPH_ENTRIES }, (_, index) => ({
-//     timestamp:
-//       Math.floor(Date.now() / (1000 * 60 * 60 * 24)) * (1000 * 60 * 60 * 24) +
-//       1000 * 60 * 60 * 12 -
-//       (GRAPH_ENTRIES - index) * (1000 * 60 * 60 * 24),
-//     value: Math.random() * 10000
-//   }))
-// }
 
 const Liquidity: React.FC<LiquidityInterface> = ({
   liquidityPercent,
@@ -42,6 +31,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   liquidityVolume = liquidityVolume ?? 0
 
   const isLower = liquidityPercent < 0
+  const isMobile = useIsMobile()
   const percentage = isLoading ? Math.random() * 200 - 100 : liquidityPercent
 
   return (
@@ -82,7 +72,11 @@ const Liquidity: React.FC<LiquidityInterface> = ({
               }))
             }
           ]}
-          margin={{ top: 24, bottom: 24, left: 30, right: 24 }}
+          margin={
+            isMobile
+              ? { top: 24, bottom: 24, left: 30, right: 12 }
+              : { top: 24, bottom: 24, left: 30, right: 24 }
+          }
           xScale={{
             type: 'time',
             format: '%d/%m/%Y',
@@ -103,8 +97,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickRotation: 0,
             tickValues: 5,
             renderTick: ({ x, y, value }) => (
-              <g transform={`translate(${x - 30},${y + 4})`}>
-                {' '}
+              <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
                 <text
                   style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
                   textAnchor='start'

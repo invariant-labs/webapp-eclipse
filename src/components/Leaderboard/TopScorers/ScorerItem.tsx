@@ -3,12 +3,10 @@ import { BN } from '@coral-xyz/anchor'
 import { Box, Skeleton, Typography } from '@mui/material'
 import { shortenAddress } from '@utils/uiUtils'
 import { printBN, formatNumberWithCommas } from '@utils/utils'
-import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
-import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
-import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
 import { theme } from '@static/theme'
 import useStyles from './styles'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import icons from '@static/icons'
 
 interface IScorerItemProps {
   points: string
@@ -78,11 +76,11 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({
   const getIconByCupVariant = () => {
     switch (cupVariant) {
       case 'gold':
-        return leaderboardGolden
+        return icons.leaderboardGolden
       case 'silver':
-        return leaderboardSilver
+        return icons.leaderboardSilver
       case 'bronze':
-        return leaderboardBronze
+        return icons.leaderboardBronze
     }
   }
   return (
@@ -111,15 +109,7 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({
                 }}
               />
             </Box>
-            <Box
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                flexDirection: 'column',
-                width: '100%',
-                textWrap: 'nowrap'
-              }}>
+            <Box className={classes.headerWrapper}>
               <Typography className={classes.headerBigText}>
                 {formatNumberWithCommas(
                   Number(printBN(new BN(points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)

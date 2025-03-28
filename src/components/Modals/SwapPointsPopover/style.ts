@@ -11,6 +11,17 @@ const useStyles = makeStyles()((theme: Theme) => {
         width: '100%'
       }
     },
+    rightWrapper: {
+      width: '2px',
+      backgroundColor: colors.invariant.light,
+      alignSelf: 'stretch'
+    },
+    promotedPoolsWrapper: {
+      display: 'flex',
+      gap: '4px',
+      flexDirection: 'column',
+      padding: '4px'
+    },
     paper: {
       marginRight: '6px',
       marginLeft: '8px',
@@ -30,10 +41,6 @@ const useStyles = makeStyles()((theme: Theme) => {
     backgroundContainer: {
       background: colors.invariant.component,
       maxWidth: 519,
-      paddingTop: 16,
-      paddingBottom: 16,
-      paddingLeft: 20,
-      paddingRight: 20,
       display: 'flex',
       flexDirection: 'row',
       gap: 16,

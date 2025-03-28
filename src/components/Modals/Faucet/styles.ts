@@ -24,7 +24,10 @@ const useStyles = makeStyles()(() => {
       boxShadow: 'none'
     },
     lowerRow: {
-      marginBlock: 10
+      marginBlock: 10,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      flexWrap: 'nowrap'
     },
     input: {
       backgroundColor: colors.invariant.newDark,
@@ -77,7 +80,7 @@ const useStyles = makeStyles()(() => {
       width: 26,
       height: 21,
       cursor: 'pointer',
-      transition: 'filter 100ms',
+      transition: 'filter 300ms',
       '&:hover': {
         filter: 'brightness(1.5)'
       }

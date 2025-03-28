@@ -7,6 +7,7 @@ export const useStyles = makeStyles()(() => ({
     display: 'grid',
     gridTemplateColumns: '10% auto 30% 20% 10%',
     padding: '18px 18px',
+    height: 69,
     backgroundColor: colors.invariant.component,
     borderBottom: `1px solid ${colors.invariant.light}`,
     whiteSpace: 'nowrap',
@@ -38,6 +39,7 @@ export const useStyles = makeStyles()(() => ({
   totalContainer: {
     color: colors.white.main,
     display: 'grid',
+    height: 69,
     gridTemplateColumns: '10% auto 16.6% 16.6% 16.6% 10%',
     padding: '18px 18px',
     backgroundColor: colors.invariant.component,
@@ -65,8 +67,16 @@ export const useStyles = makeStyles()(() => ({
       '& p': {
         justifyContent: 'flex-start',
         ...typography.caption1
-      }
+      },
+
+      padding: '18px 8px'
     }
+  },
+  address: {
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis',
+    color: colors.invariant.text
   },
   iconContainer: {
     minWidth: 28,
@@ -81,6 +91,11 @@ export const useStyles = makeStyles()(() => ({
     height: 28,
     marginRight: 3,
     borderRadius: '50%'
+  },
+  copyWrapper: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'baseline'
   },
   clipboardIcon: {
     marginLeft: 4,
@@ -102,8 +117,11 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     '& p.MuiTypography-root': {
       color: colors.invariant.textGrey,
-      ...typography.body1,
-      fontWeight: 600
+      ...typography.heading4,
+      [theme.breakpoints.down('sm')]: {
+        justifyContent: 'flex-start',
+        ...typography.caption1
+      }
     }
   }
 }))
