@@ -44,7 +44,7 @@ const useStyles = makeStyles<StyleProps>()(
   (_theme, { scheme, height, width, borderRadius, padding }) => ({
     button: {
       height: height ?? 40,
-      width: width ?? 'auto',
+      width: width ?? '100%',
       minWidth: 0,
       padding: padding ?? '0 12px',
       background: getStyles(scheme).background,
