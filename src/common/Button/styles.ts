@@ -8,7 +8,6 @@ type StyleProps = {
   borderRadius?: string | number
   padding?: string | number
   margin?: string | number
-  margin?: string | number
 }
 
 const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
@@ -43,7 +42,6 @@ const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
 }
 
 const useStyles = makeStyles<StyleProps>()(
-  (_theme, { scheme, height, width, borderRadius, padding, margin }) => ({
   (_theme, { scheme, height, width, borderRadius, padding, margin }) => ({
     button: {
       height: height ?? 40,
