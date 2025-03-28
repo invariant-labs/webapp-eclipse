@@ -7,7 +7,7 @@ export const useStyles = makeStyles<{ initialDataLength: number }>()(
     container: {
       flexDirection: 'column',
       maxWidth: 1072,
-      height: 850
+      height: initialDataLength > 10 ? '850px' : 'auto'
     },
     pagination: {
       padding: '20px 24px 10px 0',
