@@ -161,7 +161,8 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
   },
   infoCenter: {
     flex: '1 1 0%',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
   dropdown: {
     background: colors.invariant.greenLinearGradient,
