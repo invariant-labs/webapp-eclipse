@@ -1,11 +1,11 @@
 import { Canvas } from '@common/Canvas/Canvas'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import refreshIcon from '@static/svg/refresh.svg'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import useStyles from './styles'
 import { randomNumberFromRange } from '@utils/utils'
 import { Button, Grid, Input, Popover, Typography } from '@mui/material'
+import icons from '@static/icons'
 
 export interface IProps {
   open: boolean
@@ -78,7 +78,7 @@ export const Faucet: React.FC<IProps> = ({ anchorEl, open, handleClose, onFaucet
             Please input the result of adding these two values:
           </Typography>
           <Button onClick={generateCaptcha} className={classes.refreshIconBtn}>
-            <img src={refreshIcon} className={classes.refreshIcon} />
+            <img src={icons.refreshIcon} className={classes.refreshIcon} />
           </Button>
         </Grid>
         <Canvas numbers={numbers} />

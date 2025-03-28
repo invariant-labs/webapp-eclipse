@@ -1,5 +1,5 @@
 import { BN } from '@coral-xyz/anchor'
-import { Position } from '@invariant-labs/sdk-eclipse/lib/market'
+import { Position, Tick } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
@@ -27,4 +27,5 @@ export interface IPositionItem {
   isLocked: boolean
   poolData: PoolWithAddressAndIndex
   liquidity: BN
+  unclaimedFeesInUSD: { value: number; loading: boolean }
 }

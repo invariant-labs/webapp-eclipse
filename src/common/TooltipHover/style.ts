@@ -58,6 +58,11 @@ const useStyles = makeStyles<{
     padding: '16px 24px',
     top: top ? top : -30,
     boxShadow: `0px 0px 4px ${colors.invariant.black}`
+  },
+  tooltipSpan: {
+    display: 'inline-flex',
+    margin: 0,
+    padding: 0
   }
 }))
 

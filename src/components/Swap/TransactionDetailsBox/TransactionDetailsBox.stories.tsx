@@ -29,10 +29,20 @@ export const Primary: Story = {
   args: {
     exchangeRate: { val: 123, symbol: 'ABC', decimal: 12 },
     slippage: 0.5,
-    priceImpact: new BN(1000000000),
-    fee: new BN(1000000000),
+    priceImpact: new BN(5000000000),
     open: true,
-    isLoadingRate: false
+    isLoadingRate: false,
+    simulationPath: {
+      tokenFrom: null,
+      tokenBetween: null,
+      tokenTo: null,
+      firstPair: null,
+      secondPair: null,
+      firstAmount: null,
+      secondAmount: null,
+      firstPriceImpact: null,
+      secondPriceImpact: null
+    }
   },
   render: args => {
     return <TransactionDetailsBox {...args} />
