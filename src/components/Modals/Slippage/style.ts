@@ -90,6 +90,7 @@ export const useStyles = makeStyles()(() => {
       padding: 0,
       width: 49,
       height: 28,
+      fontFamily: 'Mukta',
       cursor: 'pointer',
       marginLeft: 8,
       ...typography.body2,
