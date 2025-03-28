@@ -16,7 +16,7 @@ import { useStyles } from './style'
 import { ILiquidityToken, TokenPriceData } from '@store/consts/types'
 import { addressToTicker, formatNumberWithSuffix, initialXtoY, ROUTES } from '@utils/utils'
 import { printBN } from '@utils/utils'
-import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { DECIMAL, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
@@ -179,6 +179,12 @@ const PositionDetails: React.FC<IProps> = ({
 
   const [isModalOpen, setIsModalOpen] = useState(false)
 
+  const isFullRange = useMemo(
+    () =>
+      leftRange.index === getMinTick(tickSpacing) && rightRange.index === getMaxTick(tickSpacing),
+    [tickSpacing, leftRange, rightRange]
+  )
+
   return (
     <Box className={classes.mainContainer}>
       <ClosePositionWarning
@@ -300,6 +306,7 @@ const PositionDetails: React.FC<IProps> = ({
             xToY={xToY}
             hasTicksError={hasTicksError}
             reloadHandler={reloadHandler}
+            isFullRange={isFullRange}
           />
         </Box>
       </Box>

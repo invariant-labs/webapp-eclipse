@@ -2,7 +2,7 @@ import { Box } from '@mui/material'
 import { useStyles } from './style'
 
 type Props = {
-  name: React.ReactNode
+  name?: React.ReactNode
   value: React.ReactNode
   isHorizontal?: boolean
 }
@@ -12,7 +12,7 @@ export const Stat = ({ name, value, isHorizontal = false }: Props) => {
 
   return (
     <Box className={classes.container}>
-      <Box className={classes.name}>{name}</Box>
+      {name && <Box className={classes.name}>{name}</Box>}
       <Box className={classes.value}>{value}</Box>
     </Box>
   )

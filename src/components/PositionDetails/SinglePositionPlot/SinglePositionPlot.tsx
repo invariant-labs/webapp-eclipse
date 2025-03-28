@@ -35,6 +35,7 @@ export interface ISinglePositionPlot {
   xToY: boolean
   hasTicksError?: boolean
   reloadHandler: () => void
+  isFullRange: boolean
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -51,7 +52,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   max,
   xToY,
   hasTicksError,
-  reloadHandler
+  reloadHandler,
+  isFullRange
 }) => {
   const { classes } = useStyles()
 
@@ -237,32 +239,59 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
           />
         </Box>
         <Box className={classes.statsContainer}>
-          <Stat
-            name='MIN'
-            value={
-              <Box>
-                <Typography component='span' className={classes.value}>
-                  {formatNumberWithSuffix(min)}
-                </Typography>{' '}
-                {xToY ? truncateString(tokenY.name, 4) : truncateString(tokenX.name, 4)} {' / '}
-                {xToY ? truncateString(tokenX.name, 4) : truncateString(tokenY.name, 4)}
-              </Box>
-            }
-            isHorizontal
-          />
-          <Stat
-            name='MAX'
-            value={
-              <Box>
-                <Typography component='span' className={classes.value}>
-                  {formatNumberWithSuffix(max)}
-                </Typography>{' '}
-                {xToY ? truncateString(tokenY.name, 4) : truncateString(tokenX.name, 4)} {' / '}
-                {xToY ? truncateString(tokenX.name, 4) : truncateString(tokenY.name, 4)}
-              </Box>
-            }
-            isHorizontal
-          />
+          {isFullRange ? (
+            <Stat
+              value={
+                <Box>
+                  <Typography component='span' className={classes.value}>
+                    FULL RANGE
+                  </Typography>
+                </Box>
+              }
+              isHorizontal
+            />
+          ) : (
+            <>
+              <Stat
+                name='MIN'
+                value={
+                  <Box>
+                    <Typography component='span' className={classes.value}>
+                      {isFullRange ? 0 : formatNumberWithSuffix(min)}
+                    </Typography>{' '}
+                    {!isFullRange &&
+                      (xToY
+                        ? truncateString(tokenY.name, 4)
+                        : truncateString(tokenX.name, 4) + ' / ' + xToY
+                          ? truncateString(tokenX.name, 4)
+                          : truncateString(tokenY.name, 4))}
+                  </Box>
+                }
+                isHorizontal
+              />
+              <Stat
+                name='MAX'
+                value={
+                  <Box>
+                    <Typography component='span' className={classes.value}>
+                      {isFullRange ? (
+                        <span style={{ fontSize: '24px' }}>∞</span>
+                      ) : (
+                        formatNumberWithSuffix(max)
+                      )}
+                    </Typography>{' '}
+                    {!isFullRange &&
+                      (xToY
+                        ? truncateString(tokenY.name, 4)
+                        : truncateString(tokenX.name, 4) + ' / ' + xToY
+                          ? truncateString(tokenX.name, 4)
+                          : truncateString(tokenY.name, 4))}
+                  </Box>
+                }
+                isHorizontal
+              />
+            </>
+          )}
         </Box>
         <Box className={classes.statsContainer}>
           <Stat

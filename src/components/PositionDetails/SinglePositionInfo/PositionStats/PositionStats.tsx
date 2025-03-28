@@ -60,11 +60,15 @@ export const PositionStats = ({
             <>
               <Typography className={classes.statName}>Points 24H:</Typography>
               <Typography className={classes.statValue}>
-                {removeAdditionalDecimals(
+                {+removeAdditionalDecimals(
                   formatNumberWithCommas(printBN(points24, LEADERBOARD_DECIMAL)),
                   2
-                )}{' '}
-                Points
+                ) === 0
+                  ? '<0.01'
+                  : removeAdditionalDecimals(
+                      formatNumberWithCommas(printBN(points24, LEADERBOARD_DECIMAL)),
+                      2
+                    )}
               </Typography>
             </>
           ) : (
