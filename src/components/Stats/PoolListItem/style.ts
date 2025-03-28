@@ -88,6 +88,7 @@ export const useStyles = makeStyles()(() => ({
   },
 
   header: {
+    height: '69px',
     '& p.MuiTypography-root': {
       color: colors.invariant.textGrey,
       ...typography.heading4,
