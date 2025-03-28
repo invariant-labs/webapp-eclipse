@@ -10,8 +10,6 @@ import { getConnection, handleRpcError } from './connection'
 import {
   Keypair,
   PublicKey,
-  sendAndConfirmRawTransaction,
-  Transaction,
   TransactionExpiredTimeoutError,
   TransactionInstruction,
   VersionedTransaction
@@ -182,21 +180,28 @@ export function* handleSwapWithETH(): Generator {
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const initialSignedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as Transaction
+    const serializedMessage = swapTx.message.serialize()
+    const signatureUint8 = nacl.sign.detached(serializedMessage, wrappedEthAccount.secretKey)
+
+    swapTx.addSignature(wrappedEthAccount.publicKey, signatureUint8)
+
+    const initialSignedTx = (yield* call(
+      [wallet, wallet.signTransaction],
+      swapTx
+    )) as VersionedTransaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    initialSignedTx.partialSign(wrappedEthAccount)
-
     const initialTxid = yield* call(
-      sendAndConfirmRawTransaction,
-      connection,
+      [connection, connection.sendRawTransaction],
       initialSignedTx.serialize(),
       {
         skipPreflight: false
       }
     )
+
+    yield* call([connection, connection.confirmTransaction], initialTxid)
 
     if (!initialTxid.length) {
       yield put(swapActions.setSwapSuccess(false))
@@ -946,14 +951,16 @@ export function* handleSwap(): Generator {
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    const signedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as Transaction
+    const signedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as VersionedTransaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
 
-    const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+    const txid = yield* call([connection, connection.sendRawTransaction], signedTx.serialize(), {
       skipPreflight: false
     })
+
+    yield* call([connection, connection.confirmTransaction], txid)
 
     yield put(swapActions.setSwapSuccess(!!txid.length))
 
