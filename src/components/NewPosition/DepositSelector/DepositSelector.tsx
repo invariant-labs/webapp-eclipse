@@ -1,7 +1,7 @@
 import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
-import { Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
@@ -321,31 +321,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     onReverseTokens()
   }
 
-  // const ACTIONS_BUTTON_METHODS = {
-  //   max: (tokenIndex: number | null) => {
-  //     if (tokenIndex === null) {
-  //       return
-  //     }
-
-  //     if (tokens[tokenIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-  //       tokenAInputState.setValue(
-  //         trimDecimalZeros(
-  //           printBN(
-  //             tokens[tokenIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
-  //               ? tokens[tokenIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
-  //               : new BN(0),
-  //             tokens[tokenIndex].decimals
-  //           )
-  //         )
-  //       )
-
-  //       return
-  //     }
-
-  //     tokenAInputState.setValue(printBN(tokens[tokenIndex].balance, tokens[tokenIndex].decimals))
-  //   }
-  // }
-
   const actionsTokenA = createButtonActions({
     tokens,
     wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
@@ -434,9 +409,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -483,9 +456,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -525,51 +496,53 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           walletUninitialized={walletStatus !== Status.Initialized}
         />
       </Grid>
-      {walletStatus !== Status.Initialized ? (
-        <ChangeWalletButton
-          name='Connect wallet'
-          onConnect={onConnectWallet}
-          connected={false}
-          onDisconnect={onDisconnectWallet}
-          className={classes.connectWalletButton}
-        />
-      ) : getButtonMessage() === 'Insufficient ETH' ? (
-        <TooltipHover
-          text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
-          top={-10}>
-          <div>
-            <AnimatedButton
-              className={classNames(
-                classes.addButton,
-                progress === 'none' ? classes.hoverButton : undefined
-              )}
-              onClick={() => {
-                if (progress === 'none') {
-                  onAddLiquidity()
-                }
-              }}
-              disabled={getButtonMessage() !== 'Add Position'}
-              content={getButtonMessage()}
-              progress={progress}
-            />
-          </div>
-        </TooltipHover>
-      ) : (
-        <AnimatedButton
-          className={classNames(
-            classes.addButton,
-            progress === 'none' ? classes.hoverButton : undefined
-          )}
-          onClick={() => {
-            if (progress === 'none') {
-              onAddLiquidity()
-            }
-          }}
-          disabled={getButtonMessage() !== 'Add Position'}
-          content={getButtonMessage()}
-          progress={progress}
-        />
-      )}
+      <Box width={'100%'}>
+        {walletStatus !== Status.Initialized ? (
+          <ChangeWalletButton
+            name='Connect wallet'
+            onConnect={onConnectWallet}
+            connected={false}
+            onDisconnect={onDisconnectWallet}
+            className={classes.connectWalletButton}
+          />
+        ) : getButtonMessage() === 'Insufficient ETH' ? (
+          <TooltipHover
+            text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+            top={-10}>
+            <div>
+              <AnimatedButton
+                className={classNames(
+                  classes.addButton,
+                  progress === 'none' ? classes.hoverButton : undefined
+                )}
+                onClick={() => {
+                  if (progress === 'none') {
+                    onAddLiquidity()
+                  }
+                }}
+                disabled={getButtonMessage() !== 'Add Position'}
+                content={getButtonMessage()}
+                progress={progress}
+              />
+            </div>
+          </TooltipHover>
+        ) : (
+          <AnimatedButton
+            className={classNames(
+              classes.addButton,
+              progress === 'none' ? classes.hoverButton : undefined
+            )}
+            onClick={() => {
+              if (progress === 'none') {
+                onAddLiquidity()
+              }
+            }}
+            disabled={getButtonMessage() !== 'Add Position'}
+            content={getButtonMessage()}
+            progress={progress}
+          />
+        )}
+      </Box>
     </Grid>
   )
 }
