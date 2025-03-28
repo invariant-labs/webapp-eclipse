@@ -4,7 +4,8 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    maxWidth: 1072
+    maxWidth: 1072,
+    height: 850
   },
   pagination: {
     borderTop: `1px solid ${colors.invariant.light}`,
