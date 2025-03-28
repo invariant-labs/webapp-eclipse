@@ -5,6 +5,7 @@ import classNames from 'classnames'
 type Props = {
   scheme: 'normal' | 'green' | 'pink' | 'rainbow'
   disabled?: boolean
+  margin?: string | number
   height?: string | number
   width?: string | number
   borderRadius?: string | number
@@ -16,13 +17,14 @@ export const Button = ({
   scheme,
   disabled,
   height,
+  margin,
   width,
   borderRadius,
   padding,
   children,
   ...props
 }: Props) => {
-  const { classes } = useStyles({ scheme, height, width, borderRadius, padding })
+  const { classes } = useStyles({ scheme, height, width, borderRadius, padding, margin })
 
   return (
     <MuiButton

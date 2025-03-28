@@ -62,7 +62,7 @@ export const useStyles = makeStyles()(theme => {
     },
     addButton: {
       height: '48px',
-      width: '100%',
+      width: '100% !important',
       margin: '30px 0',
       cursor: 'default'
     },

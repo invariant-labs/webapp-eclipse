@@ -22,6 +22,9 @@ export interface IProps {
   onCopyAddress?: () => void
   textClassName?: string
   isDisabled?: boolean
+  margin?: string | number
+  width?: string | number
+  height?: string | number
   isSwap?: boolean
 }
 export const ChangeWalletButton: React.FC<IProps> = ({
@@ -29,6 +32,9 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   onConnect,
   connected,
   startIcon,
+  height,
+  width,
+  margin,
   hideArrow,
   onDisconnect,
   isDisabled = false,
@@ -98,6 +104,9 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   return (
     <>
       <Button
+        margin={margin}
+        height={height}
+        width={width}
         scheme={connected ? 'normal' : 'pink'}
         disabled={isDisabled}
         classes={{
