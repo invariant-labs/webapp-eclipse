@@ -722,10 +722,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingStats = useSelector(isLoading)
-  const pool = poolsList.filter(
-    pool => pool.poolAddress.toString() === 'Gn4yPYetNcWXDwabT7LCNnBH1krbtBsaiWzDJZLWer7i'
-  )
-  console.log(pool)
+
   useEffect(() => {
     dispatch(statsActions.getCurrentStats())
   }, [])
