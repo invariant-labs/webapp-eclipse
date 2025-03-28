@@ -18,6 +18,7 @@ import icons from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 import { ILiquidityToken } from '@store/consts/types'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { colors } from '@static/theme'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -268,7 +269,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
             name='% MIN'
             value={
               <Box>
-                <Typography component='span' className={classes.value}>
+                <Typography
+                  component='span'
+                  className={classes.value}
+                  style={{
+                    color: minPercentage < 0 ? colors.invariant.Error : colors.invariant.green
+                  }}>
                   {minPercentage > 0 && '+'}
                   {minPercentage.toFixed(2)}%
                 </Typography>
@@ -280,7 +286,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
             name='% MAX'
             value={
               <Box>
-                <Typography component='span' className={classes.value}>
+                <Typography
+                  component='span'
+                  className={classes.value}
+                  style={{
+                    color: maxPercentage < 0 ? colors.invariant.Error : colors.invariant.green
+                  }}>
                   {maxPercentage > 0 && '+'}
                   {maxPercentage.toFixed(2)}%
                 </Typography>
