@@ -33,8 +33,8 @@ import { Grid, useMediaQuery } from '@mui/material'
 import { theme } from '@static/theme'
 import useStyles from './styles'
 import Portfolio from '@components/Portfolio/Portfolio'
-import { IPositionItem } from '@components/Portfolio/types'
 import { VariantType } from 'notistack'
+import { IPositionItem } from '@store/consts/types'
 
 const PortfolioWrapper = () => {
   const { classes } = useStyles()
