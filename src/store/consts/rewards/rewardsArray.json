@@ -241,5 +241,33 @@
       "8gmh6prYK2j1DDo2VXDHGM1DhKMgunbrwVKQdY7ToLkH",
       "CJ9VRUYQhN8nsrpyZkh9pwY5yDi8vpSDgLY5XtPucgX4"
     ]
+  },
+  {
+    "name": "Celestial Mammoth",
+    "image": "celestial_mammoth",
+    "distributionDate": "2025-03-17",
+    "eligible": "Raffle",
+    "type": "NFT",
+    "addresses": [
+      "JDn5Ttup4ur8aeH2cs5vf6HBE2nqRgZwea9c3bbv75Dj",
+      "6gQ9Ktcea1r4dczHZYPZFauNKwSWjvt9aR7upHig7kgp",
+      "5zEaF6TWGxQuxfV1izcmppyphhbnEPqczAN9KySShQMe",
+      "3tbGxxPvfiuKoE9ryR8B6p86dRFhnYomjBrS9zrU2Ehg",
+      "FZRbJz7Hu2hq8GwMYK56tbbCtvCmkFzXa4QgWEMo5gmy",
+      "A85NVyAVzDWawNmRZWTzgJBkGe29G6LWBUBJdvX2nvBb",
+      "KwaPXHJ3bPjK34XTqUcjxkQDbCDMATeUijdqK6uHxYZ",
+      "8RG5U5HL3jDMpgGCnnbsKNr8a3wnJPLzpHmuK7sAiVS5",
+      "CToGcCL299Ad5XiBuUpECDw7YLJbSiNVnLNDWhzwP2hX",
+      "AuRBP38SvU74vbSWVEcDJBmNLgAXsuLYaZNP3oSoyHpM",
+      "69yLQyynv2SUBMHwNVm7FS3g7T9duo8aReiEnacymxD2"
+    ]
+  },
+  {
+    "name": "E-Lander",
+    "image": "e_lander",
+    "distributionDate": "2025-03-28",
+    "eligible": "Raffle",
+    "type": "NFT",
+    "addresses": []
   }
 ]
