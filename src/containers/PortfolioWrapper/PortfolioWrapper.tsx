@@ -8,6 +8,7 @@ import {
   getMaxTick,
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions } from '@store/reducers/positions'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import {
@@ -18,7 +19,7 @@ import {
   positionsWithPoolsData,
   prices
 } from '@store/selectors/positions'
-import { address, status } from '@store/selectors/solanaWallet'
+import { address, balanceLoading, status, swapTokens } from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -33,10 +34,12 @@ import { theme } from '@static/theme'
 import useStyles from './styles'
 import Portfolio from '@components/Portfolio/Portfolio'
 import { IPositionItem } from '@components/Portfolio/types'
+import { VariantType } from 'notistack'
 
 const PortfolioWrapper = () => {
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+
   const walletAddress = useSelector(address)
   const list = useSelector(positionsWithPoolsData)
   const lockedList = useSelector(lockedPositionsWithPoolsData)
@@ -44,9 +47,13 @@ const PortfolioWrapper = () => {
   const lastPage = useSelector(lastPageSelector)
   const walletStatus = useSelector(status)
   const currentNetwork = useSelector(network)
+  const tokensList = useSelector(swapTokens)
+  const isBalanceLoading = useSelector(balanceLoading)
+  const pricesData = useSelector(prices)
+  console.log(pricesData)
+
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const pricesData = useSelector(prices)
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   const setLastPage = (page: number) => {
@@ -288,13 +295,24 @@ const PortfolioWrapper = () => {
       }),
     [lockedList, pricesData]
   )
-
+  const handleSnackbar = (message: string, variant: VariantType) => {
+    dispatch(
+      snackbarsActions.add({
+        message: message,
+        variant: variant,
+        persist: false
+      })
+    )
+  }
   useEffect(() => {
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [dispatch])
 
   return isConnected ? (
     <Portfolio
+      tokensList={tokensList}
+      isBalanceLoading={isBalanceLoading}
+      handleSnackbar={handleSnackbar}
       initialPage={lastPage}
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}

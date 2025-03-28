@@ -30,14 +30,13 @@ import { PositionsTable } from './PositionItem/variants/PositionTables/Positions
 import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { PositionItemMobile } from './PositionItem/variants/PositionMobileCard/PositionItemMobile'
 import classNames from 'classnames'
-import { useDispatch, useSelector } from 'react-redux'
-import { balanceLoading, swapTokens } from '@store/selectors/solanaWallet'
-import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
-import { actions as snackbarsActions } from '@store/reducers/snackbars'
 
-import { VariantType } from 'notistack'
+import { SwapToken } from '@store/selectors/solanaWallet'
+import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
+
 import { Overview } from './Overview/Overview/Overview'
 import { YourWallet } from './Overview/YourWallet/YourWallet'
+import { VariantType } from 'notistack'
 
 interface IProps {
   initialPage: number
@@ -57,9 +56,14 @@ interface IProps {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  handleSnackbar: (message: string, variant: VariantType) => void
+  isBalanceLoading: boolean
+  tokensList: SwapToken[]
 }
 
 const Portfolio: React.FC<IProps> = ({
+  isBalanceLoading,
+  handleSnackbar,
   data,
   onAddPositionClick,
   loading = false,
@@ -71,18 +75,16 @@ const Portfolio: React.FC<IProps> = ({
   currentNetwork,
   handleLockPosition,
   handleClosePosition,
-  handleClaimFee
+  handleClaimFee,
+  tokensList
 }) => {
   const { classes } = useStyles()
-  const dispatch = useDispatch()
   const navigate = useNavigate()
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const tokensList = useSelector(swapTokens)
-  const isBalanceLoading = useSelector(balanceLoading)
   const { processedPools, isProcesing } = useProcessedTokens(
     tokensList,
     isBalanceLoading,
@@ -110,16 +112,6 @@ const Portfolio: React.FC<IProps> = ({
   const handleCheckbox = (e: React.ChangeEvent<HTMLInputElement>) => {
     setHideUnknownTokens(e.target.checked)
     setHideUnknownTokensValue(e.target.checked)
-  }
-
-  const handleSnackbar = (message: string, variant: VariantType) => {
-    dispatch(
-      snackbarsActions.add({
-        message: message,
-        variant: variant,
-        persist: false
-      })
-    )
   }
 
   const positionsDetails = useMemo(() => {
