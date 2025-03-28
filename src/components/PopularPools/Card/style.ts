@@ -17,7 +17,12 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center'
   },
-
+  skeleton: {
+    width: '220px',
+    height: '344px',
+    opacity: 0.7,
+    borderRadius: 24
+  },
   iconsWrapper: {
     display: 'flex',
     justifyContent: 'center',
@@ -67,8 +72,9 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     color: colors.invariant.black,
     textTransform: 'none',
+    zIndex: 1000000,
 
-    transition: 'filter 0.2s linear',
+    transition: 'filter 0.3s linear',
 
     '&:hover': {
       filter: 'brightness(1.2)',
@@ -79,6 +85,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   back: {
+    alignItems: 'center',
     width: 'fit-content',
     transition: 'filter 300ms',
     padding: '6px',
@@ -112,6 +119,7 @@ export const useStyles = makeStyles()(() => ({
     paddingLeft: 9,
     letterSpacing: -0.03,
     fontSize: 16,
+    transition: '300ms',
 
     '&:hover': {
       background: colors.invariant.pinkLinearGradient,
@@ -121,5 +129,15 @@ export const useStyles = makeStyles()(() => ({
         boxShadow: 'none'
       }
     }
+  },
+  cardWrapper: {
+    padding: '20px',
+    alignItems: 'center',
+    flexDirection: 'column'
+  },
+  footerWrapper: {
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 'auto'
   }
 }))

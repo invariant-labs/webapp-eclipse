@@ -2,20 +2,27 @@ import { PositionsList } from '@components/PositionsList/PositionsList'
 import { POSITIONS_PER_PAGE } from '@store/consts/static'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
-import { DECIMAL, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import {
+  calculateClaimAmount,
+  DECIMAL,
+  getMaxTick,
+  getMinTick
+} from '@invariant-labs/sdk-eclipse/lib/utils'
 import { actions } from '@store/reducers/positions'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import {
   isLoadingPositionsList,
   lastPageSelector,
   lockedPositionsWithPoolsData,
-  positionsWithPoolsData
+  PositionData,
+  positionsWithPoolsData,
+  prices
 } from '@store/selectors/positions'
 import { address, status } from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import { calcYPerXPriceBySqrtPrice, printBN } from '@utils/utils'
+import { calcYPerXPriceBySqrtPrice, printBN, ROUTES } from '@utils/utils'
 import { IPositionItem } from '@components/PositionsList/types'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as actionsStats } from '@store/reducers/stats'
@@ -31,6 +38,7 @@ export const WrappedPositionsList: React.FC = () => {
   const currentNetwork = useSelector(network)
   const navigate = useNavigate()
   const dispatch = useDispatch()
+  const pricesData = useSelector(prices)
 
   const setLastPage = (page: number) => {
     dispatch(actions.setLastPage(page))
@@ -63,7 +71,7 @@ export const WrappedPositionsList: React.FC = () => {
       actions.closePosition({
         positionIndex: index,
         onSuccess: () => {
-          navigate('/portfolio')
+          navigate(ROUTES.PORTFOLIO)
         }
       })
     )
@@ -71,6 +79,27 @@ export const WrappedPositionsList: React.FC = () => {
 
   const handleClaimFee = (index: number, isLocked: boolean) => {
     dispatch(actions.claimFee({ index, isLocked }))
+  }
+
+  const calculateUnclaimedFees = (position: PositionData) => {
+    const [bnX, bnY] = calculateClaimAmount({
+      position: position,
+      tickLower: position.lowerTick,
+      tickUpper: position.upperTick,
+      tickCurrent: position.poolData.currentTickIndex,
+      feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+      feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+    })
+
+    const xValue =
+      +printBN(bnX, position.tokenX.decimals) *
+      (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
+    const yValue =
+      +printBN(bnY, position.tokenY.decimals) *
+      (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
+
+    const unclaimedFeesInUSD = xValue + yValue
+    return unclaimedFeesInUSD
   }
 
   const data: IPositionItem[] = useMemo(
@@ -105,7 +134,7 @@ export const WrappedPositionsList: React.FC = () => {
             ),
             position.tokenX.decimals
           )
-        } catch (error) {
+        } catch {
           tokenXLiq = 0
         }
 
@@ -119,7 +148,7 @@ export const WrappedPositionsList: React.FC = () => {
             ),
             position.tokenY.decimals
           )
-        } catch (error) {
+        } catch {
           tokenYLiq = 0
         }
 
@@ -132,6 +161,7 @@ export const WrappedPositionsList: React.FC = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
+        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
@@ -154,10 +184,11 @@ export const WrappedPositionsList: React.FC = () => {
           tokenYLiq,
           network: currentNetwork,
           isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
-          isLocked: position.isLocked
+          isLocked: position.isLocked,
+          unclaimedFeesInUSD: { value: unclaimedFeesInUSD, loading: position.ticksLoading }
         }
       }),
-    [list]
+    [list, pricesData]
   )
 
   const lockedData: IPositionItem[] = useMemo(
@@ -192,7 +223,7 @@ export const WrappedPositionsList: React.FC = () => {
             ),
             position.tokenX.decimals
           )
-        } catch (error) {
+        } catch {
           tokenXLiq = 0
         }
 
@@ -206,7 +237,7 @@ export const WrappedPositionsList: React.FC = () => {
             ),
             position.tokenY.decimals
           )
-        } catch (error) {
+        } catch {
           tokenYLiq = 0
         }
 
@@ -219,6 +250,7 @@ export const WrappedPositionsList: React.FC = () => {
         const valueX = tokenXLiq + tokenYLiq / currentPrice
         const valueY = tokenYLiq + tokenXLiq * currentPrice
 
+        const unclaimedFeesInUSD = calculateUnclaimedFees(position)
         return {
           tokenXName: position.tokenX.symbol,
           tokenYName: position.tokenY.symbol,
@@ -241,17 +273,12 @@ export const WrappedPositionsList: React.FC = () => {
           tokenYLiq,
           network: currentNetwork,
           isFullRange: position.lowerTickIndex === minTick && position.upperTickIndex === maxTick,
-          isLocked: position.isLocked
+          isLocked: position.isLocked,
+          unclaimedFeesInUSD: { value: unclaimedFeesInUSD, loading: position.ticksLoading }
         }
       }),
-    [lockedList]
+    [lockedList, pricesData]
   )
-
-  // useEffect(() => {
-  //   if (walletStatus === Status.Initialized && walletAddress && !loadedPages[0] && !length) {
-  //     dispatch(actions.getPositionsListPage({ index: 0, refresh: false }))
-  //   }
-  // }, [walletStatus, loadedPages])
 
   return (
     <PositionsList
@@ -259,7 +286,7 @@ export const WrappedPositionsList: React.FC = () => {
       setLastPage={setLastPage}
       handleRefresh={handleRefresh}
       onAddPositionClick={() => {
-        navigate('/newPosition')
+        navigate(ROUTES.NEW_POSITION)
       }}
       currentNetwork={currentNetwork}
       data={data}

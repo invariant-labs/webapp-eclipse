@@ -121,33 +121,6 @@ export const swapTokensDict = createSelector(
   }
 )
 
-// export const canCreateNewPool = (network: NetworkType) =>
-//   createSelector(balance, ethBalance => {
-//     switch (network) {
-//       case NetworkType.Devnet:
-//         return ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
-//       case NetworkType.Testnet:
-//         return ethBalance.gte(WETH_POOL_INIT_LAMPORTS_TEST)
-//       case NetworkType.Mainnet:
-//         return ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
-//       default:
-//         return ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
-//     }
-//   })
-// export const canCreateNewPosition = (network: NetworkType) =>
-//   createSelector(balance, ethBalance => {
-//     switch (network) {
-//       case NetworkType.Devnet:
-//         return ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
-//       case NetworkType.Testnet:
-//         return ethBalance.gte(WETH_POOL_INIT_LAMPORTS_TEST)
-//       case NetworkType.Mainnet:
-//         return ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
-//       default:
-//         return ethBalance.gte(WETH_POOL_INIT_LAMPORTS)
-//     }
-//   })
-
 export type TokenAccounts = ITokenAccount & {
   symbol: string
   usdValue: BN

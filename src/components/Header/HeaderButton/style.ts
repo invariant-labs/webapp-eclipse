@@ -4,6 +4,12 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()((theme: Theme) => {
   return {
+    wrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      justifyContent: 'center',
+      height: '100%'
+    },
     headerButton: {
       background: 'transparent',
       color: colors.white.main,
@@ -38,7 +44,6 @@ const useStyles = makeStyles()((theme: Theme) => {
       background: colors.invariant.newDark,
       boxShadow: '0px 0px 5px 5px #2A365C',
       borderRadius: '14px',
-      fontFamily: 'Mukta',
       fontWeight: 700,
       fontSize: '16px',
       lineHeight: '20px',
@@ -47,19 +52,18 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      marginLeft: '12px',
-      marginRight: '12px',
       border: '2px solid transparent',
       backgroundImage: 'linear-gradient(#2A365C, #2A365C), linear-gradient(0deg, #2EE09A, #EF84F5)',
       backgroundOrigin: 'border-box',
       backgroundClip: 'padding-box, border-box',
-
       color: colors.invariant.text,
+      transition: '300ms',
 
-      [theme.breakpoints.down('sm')]: {
+      [theme.breakpoints.down(450)]: {
         padding: '0px 2px'
       },
-      [theme.breakpoints.between('sm', 'lg')]: {
+
+      [theme.breakpoints.up(450)]: {
         padding: '0px 20px'
       }
     },
@@ -74,6 +78,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       textTransform: 'none',
       ...typography.body1,
       height: 40,
+      transition: '300ms',
 
       '&:hover': {
         background: colors.blue.deep,
@@ -117,10 +122,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       ...typography.body1,
       height: 40,
       minWidth: 130,
+      transition: '300ms',
 
-      [theme.breakpoints.down('xs')]: {
+      [theme.breakpoints.down('sm')]: {
         minWidth: 100,
-        width: 130
+        width: 100
       },
 
       '&:hover': {
@@ -166,12 +172,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       boxShadow: 'none'
     },
     startIcon: {
-      marginLeft: 0,
-      marginBottom: 3
+      marginTop: 3
     },
     endIcon: {
-      minWidth: 20,
-      marginTop: 2
+      marginBottom: 3
     },
     innerEndIcon: {
       marginLeft: 0,
@@ -180,6 +184,22 @@ const useStyles = makeStyles()((theme: Theme) => {
     warningIcon: {
       height: 16,
       marginRight: 4
+    },
+    headerButtonContainer: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 4
+    },
+    childrenWrapper: {
+      color: colors.invariant.text,
+      lineHeight: '12px',
+      textAlign: 'left'
+    },
+    buttonLabel: {
+      color: colors.invariant.textGrey,
+      ...typography.caption4,
+      marginTop: '4px',
+      textAlign: 'left'
     }
   }
 })

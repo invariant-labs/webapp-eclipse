@@ -1,8 +1,7 @@
-import AnimatedButton, { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import Select from '@components/Inputs/Select/Select'
 import { Grid, Typography } from '@mui/material'
-import SwapList from '@static/svg/swap-list.svg'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
@@ -18,7 +17,7 @@ import FeeSwitch from '../FeeSwitch/FeeSwitch'
 import { useStyles } from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
@@ -32,6 +31,7 @@ import {
   trimDecimalZeros
 } from '@utils/utils'
 import { createButtonActions } from '@utils/uiUtils'
+import icons from '@static/icons'
 
 export interface InputState {
   value: string
@@ -61,7 +61,6 @@ export interface IDepositSelector {
   priceB?: number
   onReverseTokens: () => void
   poolIndex: number | null
-  bestTierIndex?: number
   handleAddToken: (address: string) => void
   commonTokens: PublicKey[]
   initialHideUnknownTokensValue: boolean
@@ -88,6 +87,9 @@ export interface IDepositSelector {
   canNavigate: boolean
   isCurrentPoolExisting: boolean
   promotedPoolTierIndex: number | undefined
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
+  isLoadingStats: boolean
 }
 
 export const DepositSelector: React.FC<IDepositSelector> = ({
@@ -106,7 +108,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   priceB,
   onReverseTokens,
   poolIndex,
-  bestTierIndex,
   promotedPoolTierIndex,
   handleAddToken,
   commonTokens,
@@ -128,7 +129,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   onDisconnectWallet,
   ethBalance,
   canNavigate,
-  isCurrentPoolExisting
+  isCurrentPoolExisting,
+  feeTiersWithTvl,
+  totalTvl,
+  isLoadingStats
 }) => {
   const { classes } = useStyles()
 
@@ -321,31 +325,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     onReverseTokens()
   }
 
-  // const ACTIONS_BUTTON_METHODS = {
-  //   max: (tokenIndex: number | null) => {
-  //     if (tokenIndex === null) {
-  //       return
-  //     }
-
-  //     if (tokens[tokenIndex].assetAddress.equals(new PublicKey(WRAPPED_ETH_ADDRESS))) {
-  //       tokenAInputState.setValue(
-  //         trimDecimalZeros(
-  //           printBN(
-  //             tokens[tokenIndex].balance.gt(WETH_MIN_FEE_LAMPORTS)
-  //               ? tokens[tokenIndex].balance.sub(WETH_MIN_FEE_LAMPORTS)
-  //               : new BN(0),
-  //             tokens[tokenIndex].decimals
-  //           )
-  //         )
-  //       )
-
-  //       return
-  //     }
-
-  //     tokenAInputState.setValue(printBN(tokens[tokenIndex].balance, tokens[tokenIndex].decimals))
-  //   }
-  // }
-
   const actionsTokenA = createButtonActions({
     tokens,
     wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
@@ -360,11 +339,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   })
 
   return (
-    <Grid container direction='column' className={classNames(classes.wrapper, className)}>
+    <Grid container className={classNames(classes.wrapper, className)}>
       <Typography className={classes.sectionTitle}>Tokens</Typography>
 
       <Grid container className={classes.sectionWrapper} style={{ marginBottom: 40 }}>
-        <Grid container className={classes.selects} direction='row' justifyContent='space-between'>
+        <Grid container className={classes.selects}>
           <Grid className={classes.selectWrapper}>
             <Select
               tokens={tokens}
@@ -388,8 +367,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             />
           </Grid>
 
-          <TooltipHover text='Reverse tokens'>
-            <img className={classes.arrows} src={SwapList} alt='Arrow' onClick={reverseTokens} />
+          <TooltipHover title='Reverse tokens'>
+            <img
+              className={classes.arrows}
+              src={icons.swapListIcon}
+              alt='Arrow'
+              onClick={reverseTokens}
+            />
           </TooltipHover>
 
           <Grid className={classes.selectWrapper}>
@@ -422,9 +406,11 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           }}
           feeTiers={feeTiers}
           showOnlyPercents
-          bestTierIndex={bestTierIndex}
           promotedPoolTierIndex={promotedPoolTierIndex}
           currentValue={feeTierIndex}
+          feeTiersWithTvl={feeTiersWithTvl}
+          totalTvl={totalTvl}
+          isLoadingStats={isLoadingStats}
         />
       </Grid>
 
@@ -434,9 +420,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceA}
           currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
           currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -483,9 +467,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           tokenPrice={priceB}
           currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
           currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
-          currencyIsUnknown={
-            tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
-          }
+          currencyIsUnknown={tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false}
           placeholder='0.0'
           actionButtons={[
             {
@@ -535,7 +517,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         />
       ) : getButtonMessage() === 'Insufficient ETH' ? (
         <TooltipHover
-          text='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+          title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
           top={-10}>
           <div>
             <AnimatedButton

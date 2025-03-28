@@ -1,11 +1,13 @@
-import { Box, Grid, Input, Tooltip, Typography } from '@mui/material'
+import { Box, Grid, Input, Typography, useMediaQuery } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumberWithSuffix, formatNumberWithoutSuffix, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import icons from '@static/icons'
 import { getButtonClassName } from '@utils/uiUtils'
-import { OutlinedButton } from '@components/OutlinedButton/OutlinedButton'
+import { OutlinedButton } from '@common/OutlinedButton/OutlinedButton'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { theme } from '@static/theme'
 
 interface ActionButton {
   label: string
@@ -59,6 +61,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
   const { classes } = useStyles({ isSelected: !!currency && !walletUninitialized })
 
   const inputRef = useRef<HTMLInputElement>(null)
+
+  const isMd = useMediaQuery(theme.breakpoints.up('md'))
 
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<HTMLInputElement> = e => {
     const regex = /^\d*\.?\d*$/
@@ -128,19 +132,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
   return (
     <Grid container className={classes.wrapper} style={style}>
       <div className={classes.root}>
-        <Grid
-          container
-          justifyContent='space-between'
-          alignItems='center'
-          direction='row'
-          wrap='nowrap'
-          className={classes.inputContainer}>
-          <Grid
-            className={classes.currency}
-            container
-            justifyContent='center'
-            alignItems='center'
-            wrap='nowrap'>
+        <Grid container className={classes.inputContainer}>
+          <Grid className={classes.currency} container>
             {currency !== null ? (
               <>
                 <Box className={classes.imageContainer}>
@@ -178,13 +171,8 @@ export const DepositAmountInput: React.FC<IProps> = ({
           />
         </Grid>
 
-        <Grid
-          container
-          justifyContent='space-between'
-          alignItems='center'
-          direction='row'
-          wrap='nowrap'>
-          <Grid className={classes.balance} container alignItems='center' wrap='nowrap'>
+        <Grid container className={classes.balanceWrapper}>
+          <Grid className={classes.balance} container>
             <Typography className={classes.caption2} onClick={() => actionButtons[0].onClick()}>
               Balance:{' '}
               {walletUninitialized ? (
@@ -206,36 +194,26 @@ export const DepositAmountInput: React.FC<IProps> = ({
               Max
             </Button> */}
           </Grid>
-          <Grid className={classes.percentages} container alignItems='center' wrap='nowrap'>
+          <Grid className={classes.percentages} container>
             {currency ? (
               priceLoading ? (
                 <img src={loadingAnimation} className={classes.loading} alt='loading' />
               ) : tokenPrice ? (
-                <Tooltip
-                  enterTouchDelay={0}
-                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
+                <TooltipHover
                   title='Estimated USD Value of the Entered Tokens'
                   placement='bottom'
-                  classes={{
-                    tooltip: classes.tooltip
-                  }}>
+                  top={1}
+                  left={isMd ? 'auto' : -90}>
                   <Typography className={classes.estimatedBalance}>
                     ~${formatNumberWithoutSuffix(usdBalance)}
                   </Typography>
-                </Tooltip>
+                </TooltipHover>
               ) : (
-                <Tooltip
-                  enterTouchDelay={0}
-                  leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-                  title='Cannot fetch price of token'
-                  placement='bottom'
-                  classes={{
-                    tooltip: classes.tooltip
-                  }}>
+                <TooltipHover title='Cannot fetch price of token' placement='bottom' top={1}>
                   <Typography className={classes.noData}>
                     <span className={classes.noDataIcon}>?</span>No data
                   </Typography>
-                </Tooltip>
+                </TooltipHover>
               )
             ) : null}
           </Grid>
@@ -244,11 +222,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
       {blocked && (
         <>
           <Grid container className={classes.blocker} />
-          <Grid
-            container
-            className={classes.blockedInfoWrapper}
-            justifyContent='center'
-            alignItems='center'>
+          <Grid container className={classes.blockedInfoWrapper}>
             <Typography className={classes.blockedInfo}>{blockerInfo}</Typography>
           </Grid>
         </>

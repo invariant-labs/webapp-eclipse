@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   wrapper: {
+    maxWidth: '100%',
     '&:nth-of-type(odd)': {
       background: `${colors.invariant.component}`
     },
@@ -26,6 +27,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '30% 22.5% 32.5% 15%',
+      padding: '18px 8px',
+
       '& p': {
         ...typography.caption1
       }
@@ -33,6 +36,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
 
   tokenList: {
+    alignItems: 'center',
     color: colors.white.main,
     '& p': {
       ...typography.heading4
@@ -121,7 +125,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     color: colors.invariant.black,
     textTransform: 'none',
 
-    transition: 'filter 0.2s linear',
+    transition: 'filter 0.3s linear',
 
     '&:hover': {
       filter: 'brightness(1.2)',

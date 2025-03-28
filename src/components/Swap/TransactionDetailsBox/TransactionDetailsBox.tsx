@@ -1,61 +1,81 @@
 import React from 'react'
-import { Grid, Typography } from '@mui/material'
-import loadingAnimation from '@static/gif/loading.gif'
-import { formatNumberWithSuffix, printBN } from '@utils/utils'
+import { Grid, Skeleton, Typography } from '@mui/material'
+import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { useStyles } from './styles'
 import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 
+import RouteBox from './RouteBox/RouteBox'
+import { SimulationPath } from '../Swap'
+import { DENOMINATOR } from '@invariant-labs/sdk-eclipse/src'
+
 interface IProps {
   open: boolean
-  fee: BN
   exchangeRate: { val: number; symbol: string; decimal: number }
   slippage: number
   priceImpact: BN
   isLoadingRate?: boolean
+  simulationPath: SimulationPath
 }
 
 const TransactionDetailsBox: React.FC<IProps> = ({
   open,
-  fee,
   exchangeRate,
   slippage,
   priceImpact,
-  isLoadingRate = false
+  isLoadingRate = false,
+  simulationPath
 }) => {
   const { classes } = useStyles({ open })
 
-  const feePercent = Number(printBN(fee, DECIMAL - 2))
-  const impact = +printBN(priceImpact, DECIMAL - 2)
+  const feePercent = Number(
+    printBN(
+      simulationPath.firstPair?.feeTier.fee.add(
+        DENOMINATOR.sub(simulationPath.firstPair?.feeTier.fee)
+          .mul(simulationPath.secondPair?.feeTier.fee ?? new BN(0))
+          .div(DENOMINATOR) ?? new BN(0)
+      ) ?? new BN(0),
+      DECIMAL - 2
+    )
+  )
 
   return (
     <Grid container className={classes.wrapper}>
+      <RouteBox simulationPath={simulationPath} isLoadingRate={isLoadingRate} />
       <Grid container direction='column' wrap='nowrap' className={classes.innerWrapper}>
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Exchange rate:</Typography>
           {isLoadingRate ? (
-            <img src={loadingAnimation} className={classes.loading} alt='Loading' />
+            <Skeleton width={80} height={20} variant='rounded' animation='wave' />
           ) : (
             <Typography className={classes.value}>
               {exchangeRate.val === Infinity
                 ? '-'
-                : `${formatNumberWithSuffix(exchangeRate.val.toFixed(exchangeRate.decimal)) === '0' ? '~0' : formatNumberWithSuffix(exchangeRate.val.toFixed(exchangeRate.decimal))} ${exchangeRate.symbol}`}
+                : `${formatNumberWithoutSuffix(exchangeRate.val.toFixed(exchangeRate.decimal)) === '0' ? '~0' : formatNumberWithoutSuffix(exchangeRate.val.toFixed(exchangeRate.decimal))} ${exchangeRate.symbol}`}
             </Typography>
           )}
         </Grid>
 
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid container className={classes.row}>
           <Typography className={classes.label}>Fee:</Typography>
-          <Typography className={classes.value}>{`${feePercent}%`}</Typography>
+          {isLoadingRate ? (
+            <Skeleton width={80} height={20} variant='rounded' animation='wave' />
+          ) : (
+            <Typography className={classes.value}>{`${feePercent.toFixed(2)}%`}</Typography>
+          )}
         </Grid>
 
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid container className={classes.row}>
           <Typography className={classes.label}>Price impact:</Typography>
-          <Typography className={classes.value}>
-            {impact < 0.01 ? '<0.01%' : `${impact.toFixed(2)}%`}
-          </Typography>
+          {isLoadingRate ? (
+            <Skeleton width={80} height={20} variant='rounded' animation='wave' />
+          ) : (
+            <Typography className={classes.value}>
+              {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}
+            </Typography>
+          )}
         </Grid>
-        <Grid container justifyContent='space-between' className={classes.row}>
+        <Grid container className={classes.row}>
           <Typography className={classes.label}>Slippage tolerance:</Typography>
           <Typography className={classes.value}>{slippage}%</Typography>
         </Grid>

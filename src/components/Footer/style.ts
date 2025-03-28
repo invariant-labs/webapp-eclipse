@@ -1,4 +1,4 @@
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles()(() => {
@@ -15,7 +15,12 @@ const useStyles = makeStyles()(() => {
     footerItem: {
       margin: '0 10px',
       opacity: '.5',
-      transition: '.2s all',
+
+      [theme.breakpoints.down(1200)]: {
+        opacity: '.25'
+      },
+
+      transition: '.3s all',
       '&:hover': {
         opacity: 1,
         transform: 'scale(1.1) rotate(10deg)',
@@ -28,7 +33,8 @@ const useStyles = makeStyles()(() => {
     footerLink: {
       width: '100%',
       display: 'flex',
-      alignItems: 'center'
+      alignItems: 'center',
+      transition: '300ms'
     },
     tooltip: {
       color: colors.invariant.textGrey,

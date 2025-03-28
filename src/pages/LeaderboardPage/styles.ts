@@ -16,7 +16,7 @@ const useStyles = makeStyles()(() => {
         paddingInline: 20
       },
       [theme.breakpoints.down('sm')]: {
-        paddingInline: 5
+        paddingInline: 8
       }
     }
   }

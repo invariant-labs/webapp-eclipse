@@ -16,7 +16,7 @@ import { ThankYouModal } from '@components/Modals/ThankYouModal/ThankYouModal'
 import { changeToNightlyAdapter, connectStaticWallet, getEclipseWallet } from '@utils/web3/wallet'
 import { sleep } from '@invariant-labs/sdk-eclipse'
 import { getLeaderboardQueryParams } from '@store/selectors/leaderboard'
-import { generateHash } from '@utils/utils'
+import { ensureError, generateHash, ROUTES } from '@utils/utils'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -36,8 +36,11 @@ export const HeaderWrapper: React.FC = () => {
 
   useEffect(() => {
     const reconnectStaticWallet = async (wallet: WalletType) => {
-      await connectStaticWallet(wallet)
-      dispatch(walletActions.connect(true))
+      const isConnected = await connectStaticWallet(wallet)
+      if (!isConnected) localStorage.setItem('WALLET_TYPE', '')
+      else {
+        dispatch(walletActions.connect(true))
+      }
       dispatch(
         leaderboardActions.getLeaderboardData({
           page: leaderboardQueryParams.page,
@@ -64,7 +67,8 @@ export const HeaderWrapper: React.FC = () => {
             itemsPerPage: leaderboardQueryParams.pageSize
           })
         )
-      } catch (error) {
+      } catch (e: unknown) {
+        const error = ensureError(e)
         console.error('Error during Nightly eager connection:', error)
       }
     }
@@ -78,10 +82,13 @@ export const HeaderWrapper: React.FC = () => {
       const walletType = localStorage.getItem('WALLET_TYPE') as WalletType | null
 
       if (walletType === WalletType.NIGHTLY) {
-        const canEagerConnect = await nightlyConnectAdapter.canEagerConnect().catch(error => {
-          console.error('Error checking eager connect:', error)
-          return false
-        })
+        const canEagerConnect = await nightlyConnectAdapter
+          .canEagerConnect()
+          .catch((e: unknown) => {
+            const error = ensureError(e)
+            console.error('Error checking eager connect:', error)
+            return false
+          })
         if (canEagerConnect) {
           await eagerConnectToNightly()
         }
@@ -110,7 +117,8 @@ export const HeaderWrapper: React.FC = () => {
       }
 
       return false
-    } catch (error) {
+    } catch (e: unknown) {
+      const error = ensureError(e)
       console.error('Error accessing localStorage:', error)
       return true
     }
@@ -194,7 +202,7 @@ export const HeaderWrapper: React.FC = () => {
       <Header
         address={walletAddress}
         onNetworkSelect={(network, rpcAddress) => {
-          if (rpcAddress !== currentRpc) {
+          if (rpcAddress && rpcAddress !== currentRpc) {
             localStorage.setItem(`INVARIANT_RPC_Eclipse_${network}`, rpcAddress)
             dispatch(actions.setRPCAddress(rpcAddress))
             dispatch(actions.setRpcStatus(RpcStatus.Uninitialized))
@@ -203,12 +211,12 @@ export const HeaderWrapper: React.FC = () => {
           }
 
           if (network !== currentNetwork) {
-            if (location.pathname.startsWith('/exchange')) {
-              navigate('/exchange')
+            if (location.pathname.startsWith(ROUTES.EXCHANGE)) {
+              navigate(ROUTES.EXCHANGE)
             }
 
-            if (location.pathname.startsWith('/newPosition')) {
-              navigate('/newPosition')
+            if (location.pathname.startsWith(ROUTES.NEW_POSITION)) {
+              navigate(ROUTES.NEW_POSITION)
             }
 
             dispatch(actions.setNetwork(network))
@@ -231,7 +239,7 @@ export const HeaderWrapper: React.FC = () => {
 
           dispatch(
             snackbarsActions.add({
-              message: 'Wallet address copied.',
+              message: 'Wallet address copied',
               variant: 'success',
               persist: false
             })

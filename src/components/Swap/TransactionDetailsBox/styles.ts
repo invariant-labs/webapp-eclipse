@@ -8,15 +8,18 @@ export const useStyles = makeStyles<{ open: boolean }>()((_theme, { open }) => (
     background: colors.invariant.newDark,
     overflow: 'hidden',
     transition: 'max-height 300ms',
-    maxHeight: open ? 160 : 0,
+    maxHeight: open ? 300 : 0,
     marginBottom: open ? 12 : 0,
     zIndex: 1
   },
   innerWrapper: {
+    flexDirection: 'column',
+    flexWrap: 'nowrap',
     padding: 16,
     minHeight: 132
   },
   row: {
+    justifyContent: 'space-between',
     '&:not(:last-child)': {
       marginBottom: 8
     }

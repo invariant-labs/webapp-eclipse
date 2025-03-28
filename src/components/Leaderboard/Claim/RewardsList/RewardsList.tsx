@@ -4,7 +4,7 @@ import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { PublicKey } from '@solana/web3.js'
 import { rewards } from '@store/consts/static'
 import RewardItem from './RewardItem'
-import { colors, theme, typography } from '@static/theme'
+import { theme } from '@static/theme'
 import Scrollbars from 'rc-scrollbars'
 
 export interface NFTsListInterface {
@@ -18,11 +18,9 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
 
   return (
     <div className={classes.container}>
-      <Typography mb={3} style={{ ...typography.heading3, color: colors.invariant.text }}>
-        History of Prizes
-      </Typography>
+      <Typography className={classes.historyLabel}>History of Prizes</Typography>
       {isMobile ? (
-        <Grid container justifyContent='center' alignItems='center' gap={3} mb={0}>
+        <Grid container className={classes.rewardWrapper}>
           {rewards.map((reward, index) => (
             <RewardItem
               key={index}
@@ -47,13 +45,7 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
           autoHeight
           hideTracksWhenNotNeeded
           autoHeightMax={1064}>
-          <Grid
-            container
-            justifyContent='center'
-            alignItems='center'
-            gap={3}
-            mb={isMobile ? 0 : 2}
-            className={classes.list}>
+          <Grid container className={classes.list}>
             {rewards.map((reward, index) => (
               <RewardItem
                 key={index}
