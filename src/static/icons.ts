@@ -53,6 +53,7 @@ import boostPoints from './svg/boostPoints.svg'
 import airdropGrey from './svg/airdropGrey.svg'
 import infoError from './svg/infoError.svg'
 import okxLogo from './svg/okx-logo.svg'
+import goldenInfoCircle from './svg/goldenInfoCircle.svg'
 import infoIcon from './svg/info.svg'
 import infoIconPink from './svg/infoIconPink.svg'
 import slider from './svg/slider.svg'
@@ -192,7 +193,9 @@ const icons = {
   liquidityEmpty,
   assetsEmpty,
   settings3,
-  faucet
+  faucet,
+  goldenInfoCircle,
+  settingCirc: settingIcon
 }
 
 export default icons
