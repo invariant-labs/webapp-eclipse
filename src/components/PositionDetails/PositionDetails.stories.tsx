@@ -58,7 +58,8 @@ const defaultArgs = {
     tvl: 0,
     volume24: 0,
     fee24: 0,
-    apy: 0
+    apy: 0,
+    fee: 0.01
   },
   isPromoted: true,
   showPoolDetailsLoader: true,

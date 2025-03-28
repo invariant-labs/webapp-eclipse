@@ -2,6 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react'
 import { fn } from '@storybook/test'
 import { MemoryRouter } from 'react-router-dom'
 import SinglePositionInfo from './SinglePositionInfo'
+import { PublicKey } from '@solana/web3.js'
 
 const meta = {
   title: 'Components/SinglePositionInfo',
@@ -43,10 +44,12 @@ export const Primary: Story = {
       tvl: 0,
       volume24: 0,
       fee24: 0,
-      apy: 0
+      apy: 0,
+      fee: 0.01
     },
     arePointsDistributed: true,
-    points24: 0
+    points24: 0,
+    poolAddress: new PublicKey('0123456789')
   },
   render: args => {
     return (
