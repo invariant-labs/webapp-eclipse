@@ -36,6 +36,7 @@ const useStyles = makeStyles()(() => {
   return {
     button: {
       height: 44,
+      width: '100%',
       borderRadius: 16,
       width: '100%',
       textAlign: 'center',
