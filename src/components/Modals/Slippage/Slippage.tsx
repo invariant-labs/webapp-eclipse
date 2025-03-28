@@ -29,7 +29,7 @@ const Slippage: React.FC<Props> = ({
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<
     HTMLInputElement | HTMLTextAreaElement
   > = e => {
-    const value = e.target.value
+    const value = e.target.value.replace(/,/g, '.')
 
     const regex = /^\d*\.?\d*$/
     if (value === '' || regex.test(value)) {
@@ -63,7 +63,7 @@ const Slippage: React.FC<Props> = ({
   }
 
   const checkSlippage: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement> = e => {
-    const value = e.target.value
+    const value = e.target.value.replace(/,/g, '.')
 
     if (Number(value) > 50) {
       setSlippTolerance('50.00')
