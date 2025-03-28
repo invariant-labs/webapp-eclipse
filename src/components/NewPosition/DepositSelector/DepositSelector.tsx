@@ -510,6 +510,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       {walletStatus !== Status.Initialized ? (
         <ChangeWalletButton
           name='Connect wallet'
+          margin={'30px 0'}
+          height={48}
           onConnect={onConnectWallet}
           connected={false}
           onDisconnect={onDisconnectWallet}
@@ -519,22 +521,21 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         <TooltipHover
           title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
           top={-10}>
-          <div>
-            <AnimatedButton
-              className={classNames(
-                classes.addButton,
-                progress === 'none' ? classes.hoverButton : undefined
-              )}
-              onClick={() => {
-                if (progress === 'none') {
-                  onAddLiquidity()
-                }
-              }}
-              disabled={getButtonMessage() !== 'Add Position'}
-              content={getButtonMessage()}
-              progress={progress}
-            />
-          </div>
+          <AnimatedButton
+            sx={{ width: '100%' }}
+            className={classNames(
+              classes.addButton,
+              progress === 'none' ? classes.hoverButton : undefined
+            )}
+            onClick={() => {
+              if (progress === 'none') {
+                onAddLiquidity()
+              }
+            }}
+            disabled={getButtonMessage() !== 'Add Position'}
+            content={getButtonMessage()}
+            progress={progress}
+          />
         </TooltipHover>
       ) : (
         <AnimatedButton

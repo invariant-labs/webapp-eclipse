@@ -9,6 +9,7 @@ type Props = {
   width?: string | number
   borderRadius?: string | number
   padding?: string | number
+  margin?: string | number
   children: React.ReactNode
 } & ButtonProps
 
@@ -17,12 +18,13 @@ export const Button = ({
   disabled,
   height,
   width,
+  margin,
   borderRadius,
   padding,
   children,
   ...props
 }: Props) => {
-  const { classes } = useStyles({ scheme, height, width, borderRadius, padding })
+  const { classes } = useStyles({ scheme, height, width, borderRadius, padding, margin })
 
   return (
     <MuiButton
