@@ -167,6 +167,10 @@ const useStyles = makeStyles()(() => {
     },
     linkContainer: {
       width: '100%',
+      minHeight: '32px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
       marginTop: 16
     }
   }
