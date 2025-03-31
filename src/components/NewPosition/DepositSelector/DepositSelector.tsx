@@ -331,10 +331,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [wasRunTokenA, wasRunTokenB, canNavigate, tokens.length])
 
   const getButtonMessage = useCallback(() => {
-    if (isLoadingTicksOrTickmap) {
-      return 'Loading data...'
-    }
-    if (throttle) {
+    // if (isLoadingTicksOrTickmap) {
+    //   return 'Loading data...'
+    // }
+    if (isLoadingTicksOrTickmap || throttle || isSimulating) {
       return 'Loading'
     }
 
@@ -456,9 +456,9 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Enter token amount'
     }
 
-    if (alignment === DepositOptions.Auto && !simulation) {
-      return 'Simulation error'
-    }
+    // if (alignment === DepositOptions.Auto && simulation === null && !throttle && !isSimulating) {
+    //   return 'Simulation error'
+    // }
 
     return 'Add Position'
   }, [
