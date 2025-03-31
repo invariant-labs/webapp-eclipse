@@ -221,14 +221,12 @@ export const Swap: React.FC<ISwap> = ({
         )
       : false
   )
-  // const [rateLoading, setRateLoading] = React.useState<boolean>(false)
+  const [rateLoading, setRateLoading] = React.useState<boolean>(false)
   const [refresherTime, setRefresherTime] = React.useState<number>(REFRESHER_INTERVAL)
   const [hideUnknownTokens, setHideUnknownTokens] = React.useState<boolean>(
     initialHideUnknownTokensValue
   )
   const [pointsForSwap, setPointsForSwap] = React.useState<BN>(new BN(0))
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
   const [simulateResult, setSimulateResult] = React.useState<{
     amountOut: BN
     poolIndex: number
@@ -551,7 +549,7 @@ export const Swap: React.FC<ISwap> = ({
           tokens[tokenToIndex].assetAddress.toString()
         )
       )
-      // setRateLoading(false)
+      setRateLoading(false)
     }
   }, [tokenFromIndex, tokenToIndex])
 
@@ -987,40 +985,8 @@ export const Swap: React.FC<ISwap> = ({
     (getStateMessage() === 'Loading' &&
       (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
 
-  const [isTransactionRouteModalOpen, setTransactionRouteModalOpen] = useState(false)
-  const [isRouteLoading, setRouteLoading] = useState(false)
-  const [route, setRoute] = useState<RouteTemplateProps | undefined>(undefined)
-
-  const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
-    let currentIndex = 0
-
-    const updateRoute = () => {
-      setRouteLoading(true)
-
-      setTimeout(() => {
-        setRoute(routes[currentIndex])
-
-        setTimeout(() => {
-          setRouteLoading(false)
-
-          setTimeout(() => {
-            currentIndex = (currentIndex + 1) % routes.length
-
-            updateRoute()
-          }, 3000)
-        }, intervalMs / 2)
-      }, intervalMs / 2)
-    }
-
-    updateRoute()
-  }
-
-  useEffect(() => {
-    simulateRouteLoading(routes, 3000)
-  }, [])
-
   return (
-    <Grid container className={classes.swapWrapper} alignItems='center' spacing={3}>
+    <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
         <Box className={classes.unwrapContainer}>
           You have wrapped ETH.{' '}
@@ -1029,13 +995,6 @@ export const Swap: React.FC<ISwap> = ({
           </u>
         </Box>
       )}
-
-      <Box>
-        {isMd && (
-          <Box className={classes.agregatorContainer}>
-            <InvariantAgregatorHeader />
-          </Box>
-        )}
 
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
@@ -1060,12 +1019,12 @@ export const Swap: React.FC<ISwap> = ({
           ) : null}
         </Box>
 
-          <Box className={classes.rightSection}>
-            <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
-              <p>
-                Slippage: <span className={classes.slippageAmount}>{slippTolerance}%</span>
-              </p>
-            </Button>
+        <Box className={classes.rightSection}>
+          <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
+            <p>
+              Slippage: <span className={classes.slippageAmount}>{slippTolerance}%</span>
+            </p>
+          </Button>
 
           <Box className={classes.swapControls}>
             <TooltipHover title='Refresh'>
@@ -1208,9 +1167,9 @@ export const Swap: React.FC<ISwap> = ({
                 setTimeout(() => {
                   const tmpAmount = amountTo
 
-                      const tmp = tokenFromIndex
-                      setTokenFromIndex(tokenToIndex)
-                      setTokenToIndex(tmp)
+                  const tmp = tokenFromIndex
+                  setTokenFromIndex(tokenToIndex)
+                  setTokenToIndex(tmp)
 
                   setInputRef(inputTarget.FROM)
                   setAmountFrom(tmpAmount)
