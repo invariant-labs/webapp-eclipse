@@ -29,6 +29,7 @@ const useStyles = makeStyles()(() => {
       position: 'relative',
       margin: 'auto',
       maxWidth: '90%',
+      marginTop: '10px',
       background: 'transparent',
       boxShadow: 'none',
       overflow: 'visible'
