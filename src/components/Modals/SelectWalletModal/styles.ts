@@ -25,12 +25,11 @@ const useStyles = makeStyles()(() => {
     },
     paper: {
       position: 'relative',
-      // width: '320px', // Set explicit width matching the root element
-      // maxWidth: 'calc(100% - 32px)', // Consistent margins on all screen sizes
-      // margin: '10px 16px', // Equal horizontal margins
+      width: '520px',
+      margin: '16px',
       background: 'transparent',
-      boxShadow: 'none'
-      // overflow: 'visible'
+      boxShadow: 'none',
+      overflow: 'visible'
     },
     root: {
       background: `
@@ -38,8 +37,6 @@ const useStyles = makeStyles()(() => {
         radial-gradient(50.2% 50.2% at 50% 0%, rgba(239, 132, 245, 0.25) 0%, rgba(239, 132, 245, 0) 75%),
         ${colors.invariant.component}
       `,
-      width: '100%', // Changed to 100% to fill the paper container
-      height: 'max-content',
       borderRadius: 24,
       padding: '20px 24px',
       boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
