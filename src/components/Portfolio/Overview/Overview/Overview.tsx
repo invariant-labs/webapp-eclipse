@@ -15,7 +15,6 @@ import {
 } from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
 import MobileOverview from '../MobileOverview/MobileOverview'
-import LegendSkeleton from './Skeletons/LegendSkeleton'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
 import { actions, PositionWithAddress } from '@store/reducers/positions'
@@ -24,6 +23,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
 import { IPositionItem } from '@store/consts/types'
 import { EmptyState } from './EmptyState/EmptyState'
+import LegendSkeleton from './skeletons/LegendSkeleton'
 
 interface OverviewProps {
   poolAssets: IPositionItem[]

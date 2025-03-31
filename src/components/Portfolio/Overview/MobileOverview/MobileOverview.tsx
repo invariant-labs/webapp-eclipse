@@ -5,9 +5,9 @@ import { TokenPositionEntry } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { isLoadingPositionsList } from '@store/selectors/positions'
 import { useSelector } from 'react-redux'
-import MobileOverviewSkeleton from '../Overview/Skeletons/MobileOverviewSkeleton'
 import SegmentFragmentTooltip from '../SegmentFragmentTooltip/SegmentFragmentTooltip'
 import { useStyles } from './styles'
+import MobileOverviewSkeleton from '../Overview/skeletons/MobileOverviewSkeleton'
 export interface ChartSegment {
   start: number
   width: number
