@@ -2,28 +2,16 @@ import { Box, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { TokenPool, StrategyConfig } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
-
-type MobileCardClasses = Record<
-  | 'mobileCard'
-  | 'mobileCardHeader'
-  | 'mobileTokenInfo'
-  | 'tokenIcon'
-  | 'tokenSymbol'
-  | 'mobileStatsContainer'
-  | 'mobileStatItem'
-  | 'mobileStatLabel'
-  | 'mobileStatValue'
-  | 'warningIcon'
-  | 'mobileActionsContainer',
-  string
->
+import { useStyles } from './styles'
+import { ActionButtons } from './ActionButtons/ActionButtons'
+import { NetworkType } from '@store/consts/static'
 
 export const MobileCard: React.FC<{
   pool: TokenPool
-  classes: MobileCardClasses
-  renderActions: (pool: TokenPool, strategy: StrategyConfig) => JSX.Element
   getStrategy: () => StrategyConfig
-}> = ({ pool, classes, renderActions, getStrategy }) => {
+  currentNetwork: NetworkType
+}> = ({ pool, getStrategy, currentNetwork }) => {
+  const { classes } = useStyles({})
   const strategy = getStrategy()
   return (
     <Box className={classes.mobileCard}>
@@ -34,7 +22,9 @@ export const MobileCard: React.FC<{
 
           <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
         </Box>
-        <Box className={classes.mobileActionsContainer}>{renderActions(pool, strategy)}</Box>
+        <Box className={classes.mobileActionsContainer}>
+          <ActionButtons pool={pool} strategy={strategy} currentNetwork={currentNetwork} />
+        </Box>
       </Box>
       <Box className={classes.mobileStatsContainer}>
         <Box className={classes.mobileStatItem}>

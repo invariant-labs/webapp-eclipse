@@ -2,21 +2,18 @@ import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { useMobileStyles } from './style/mobile'
+import { useMobileStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
 import icons from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
-import { useSharedStyles } from './style/shared'
-import { InactivePoolsPopover } from '../../components/InactivePoolsPopover/InactivePoolsPopover'
 import { NetworkType } from '@store/consts/static'
 import { network as currentNetwork } from '@store/selectors/solanaConnection'
 import { useSelector } from 'react-redux'
 import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
 import { singlePositionData } from '@store/selectors/positions'
-import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
@@ -25,6 +22,8 @@ import { lockerState } from '@store/selectors/locker'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Overview'
 import { IPositionItem } from '@store/consts/types'
+import { InactivePoolsPopover } from '../components/InactivePoolsPopover/InactivePoolsPopover'
+import { MinMaxChart } from '../components/MinMaxChart/MinMaxChart'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
@@ -58,7 +57,6 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   handleClaimFee
 }) => {
   const { classes } = useMobileStyles()
-  const { classes: sharedClasses } = useSharedStyles()
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
@@ -267,17 +265,14 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             noGradient>
             <Grid
               container
-              className={classNames(
-                sharedClasses.fee,
-                isActive ? sharedClasses.activeFee : undefined
-              )}
+              className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}
               justifyContent='center'
               alignItems='center'
               onClick={e => e.stopPropagation()}>
               <Typography
                 className={classNames(
-                  sharedClasses.infoText,
-                  isActive ? sharedClasses.activeInfoText : undefined
+                  classes.infoText,
+                  isActive ? classes.activeInfoText : undefined
                 )}>
                 {fee}% fee
               </Typography>
@@ -298,11 +293,11 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               container
               justifyContent='center'
               alignItems='center'
-              className={sharedClasses.fee}
+              className={classes.fee}
               sx={{ width: '100%' }}>
-              <Box className={sharedClasses.unclaimedFeeContainer}>
-                <Typography className={sharedClasses.infoText}>Unclaimed Fee</Typography>
-                <Typography className={sharedClasses.greenText}>
+              <Box className={classes.unclaimedFeeContainer}>
+                <Typography className={classes.infoText}>Unclaimed Fee</Typography>
+                <Typography className={classes.greenText}>
                   ${formatNumberWithSuffix(unclaimedFeesInUSD.value.toFixed(2))}
                 </Typography>
               </Box>
@@ -326,14 +321,10 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               sx={{ borderRadius: '10px' }}
             />
           ) : (
-            <Grid
-              container
-              className={sharedClasses.value}
-              alignItems='center'
-              justifyContent='center'>
+            <Grid container className={classes.value} alignItems='center' justifyContent='center'>
               <Box gap={'8px'} display={'flex'} alignItems={'center'}>
-                <Typography className={sharedClasses.infoText}>Value</Typography>
-                <Typography className={sharedClasses.greenText}>
+                <Typography className={classes.infoText}>Value</Typography>
+                <Typography className={classes.greenText}>
                   ${formatNumberWithSuffix(tokenValueInUsd.value)}
                 </Typography>
               </Box>
@@ -342,12 +333,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         </Grid>
 
         <Grid item xs={6}>
-          <Grid
-            container
-            alignItems='center'
-            className={sharedClasses.value}
-            justifyContent='center'>
-            <Typography className={sharedClasses.infoText}>
+          <Grid container alignItems='center' className={classes.value} justifyContent='center'>
+            <Typography className={classes.infoText}>
               {tokenXPercentage === 100 && (
                 <span>
                   {tokenXPercentage}% {xToY ? tokenXName : tokenYName}
@@ -439,15 +426,15 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
       <Grid container item className={classes.mdTop}>
         <Grid container item className={classes.iconsAndNames}>
           <Box display='flex' alignItems={'center'}>
-            <Grid container item className={sharedClasses.icons}>
+            <Grid container item className={classes.icons}>
               <img
-                className={sharedClasses.tokenIcon}
+                className={classes.tokenIcon}
                 src={xToY ? tokenXIcon : tokenYIcon}
                 alt={xToY ? tokenXName : tokenYName}
               />
               <TooltipHover title='Reverse tokens'>
                 <img
-                  className={sharedClasses.arrows}
+                  className={classes.arrows}
                   src={icons.swapListIcon}
                   alt='Arrow'
                   onClick={e => {
@@ -457,17 +444,17 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 />
               </TooltipHover>
               <img
-                className={sharedClasses.tokenIcon}
+                className={classes.tokenIcon}
                 src={xToY ? tokenYIcon : tokenXIcon}
                 alt={xToY ? tokenYName : tokenXName}
               />
             </Grid>
-            <Typography className={sharedClasses.names}>
+            <Typography className={classes.names}>
               {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
             </Typography>
           </Box>
 
-          <Box ref={airdropIconRef} className={sharedClasses.actionButtonContainer}>
+          <Box ref={airdropIconRef} className={classes.actionButtonContainer}>
             {networkSelector === NetworkType.Mainnet && <>{promotedIconFragment}</>}
             <Button
               className={classes.button}

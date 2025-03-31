@@ -2,7 +2,63 @@ import { Theme } from '@mui/material'
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useSharedStyles = makeStyles()((theme: Theme) => ({
+export const useMobileStyles = makeStyles()((theme: Theme) => ({
+  root: {
+    padding: 16,
+    height: '290px',
+    marginTop: '16px',
+    flexWrap: 'wrap',
+    [theme.breakpoints.down('sm')]: {
+      padding: 8
+    },
+    background: colors.invariant.component,
+    borderRadius: 24,
+    '&:not(:last-child)': {
+      marginBottom: 20
+    },
+    '&:hover': {
+      background: `${colors.invariant.component}B0`
+    },
+    transition: '300ms'
+  },
+  actionButton: {
+    display: 'flex',
+    justifyContent: 'center',
+    marginRight: '8px',
+    alignItems: 'center'
+  },
+
+  button: {
+    minWidth: '36px',
+    width: '36px',
+    height: '36px',
+    padding: 0,
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
+    borderRadius: '16px',
+    color: colors.invariant.dark,
+    transition: 'all 0.3s ease',
+    '&:hover': {
+      background: 'linear-gradient(180deg, #3FF2AB 0%, #25B487 100%)',
+      boxShadow: '0 4px 15px rgba(46, 224, 154, 0.35)'
+    }
+  },
+
+  mdTop: {
+    marginBottom: theme.spacing(2),
+    justifyContent: 'space-between',
+    width: '100%',
+    flexDirection: 'row',
+    flexWrap: 'nowrap'
+  },
+  iconsAndNames: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    flexWrap: 'nowrap'
+  },
   icons: {
     alignItems: 'center',
     flexWrap: 'nowrap',
@@ -19,23 +75,7 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
       width: 28
     }
   },
-  actionButton: {
-    background: 'none',
-    padding: 0,
-    margin: 0,
-    border: 'none',
-    position: 'relative',
-    color: colors.invariant.black,
-    textTransform: 'none',
-    transition: 'filter 0.3s linear',
-    '&:hover': {
-      filter: 'brightness(1.2)',
-      cursor: 'pointer',
-      '@media (hover: none)': {
-        filter: 'none'
-      }
-    }
-  },
+
   arrows: {
     width: 36,
     marginLeft: 4,
@@ -96,18 +136,8 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
       ...typography.caption1
     }
   },
-  liquidity: {
-    background: colors.invariant.light,
-    borderRadius: 11,
-    height: 36,
-    marginRight: 8,
-    lineHeight: 20,
-    paddingInline: 10,
-    [theme.breakpoints.down('lg')]: {
-      flex: '1 1 0%'
-    }
-  },
-  button: {
+
+  buttonShard: {
     ...typography.body1,
     display: 'flex',
     flexDirection: 'row',
@@ -159,40 +189,12 @@ export const useSharedStyles = makeStyles()((theme: Theme) => ({
   activeFee: {
     background: colors.invariant.greenLinearGradient
   },
-  infoCenter: {
-    flex: '1 1 0%',
-    justifyContent: 'center'
-  },
-  dropdown: {
-    background: colors.invariant.greenLinearGradient,
-    borderRadius: 11,
-    height: 36,
-    paddingInline: 10,
-    marginRight: 8
-  },
-  dropdownLocked: {
-    background: colors.invariant.lightHover
-  },
-  dropdownText: {
-    color: colors.invariant.black,
-    width: '100%'
-  },
+
   value: {
     background: colors.invariant.light,
     borderRadius: 11,
     height: 36,
     paddingInline: 12,
     marginRight: 8
-  },
-  label: {
-    marginRight: 2
-  },
-  tooltip: {
-    color: colors.invariant.textGrey,
-    ...typography.caption4,
-    lineHeight: '24px',
-    background: colors.black.full,
-    borderRadius: 12,
-    fontSize: 14
   }
 }))

@@ -1,7 +1,7 @@
 import { makeStyles } from 'tss-react/mui'
 import { colors, typography, theme } from '@static/theme'
 import { Theme } from '@mui/material'
-export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean }>()(
+export const useStyles = makeStyles<{ isLoading?: boolean; isScrollHide?: boolean }>()(
   (_theme: Theme, { isLoading, isScrollHide }) => ({
     container: {
       minWidth: '50%',

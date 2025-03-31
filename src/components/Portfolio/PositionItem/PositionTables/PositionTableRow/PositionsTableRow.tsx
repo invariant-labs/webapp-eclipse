@@ -9,7 +9,6 @@ import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
-import { useSharedStyles } from '../PositionMobileCard/style/shared'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import PositionStatusTooltip from '../../components/PositionStatusTooltip/PositionStatusTooltip'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
@@ -20,11 +19,12 @@ import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquid
 import { lockerState } from '@store/selectors/locker'
 import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
-import { usePositionTableRowStyle } from './styles/positionTableRow'
-import { useSkeletonStyle } from './styles/skeletons'
+
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { Button } from '@common/Button/Button'
 import { IPositionItem } from '@store/consts/types'
+import { useStyles } from './style'
+import { useSkeletonStyle } from '../skeletons/skeletons'
 
 interface ILoadingStates {
   pairName?: boolean
@@ -71,8 +71,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   handleLockPosition,
   handleClosePosition
 }) => {
-  const { classes } = usePositionTableRowStyle()
-  const { classes: sharedClasses } = useSharedStyles()
+  const { classes } = useStyles()
   const { classes: skeletonClasses } = useSkeletonStyle()
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
@@ -127,15 +126,15 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <Grid container item className={classes.iconsAndNames}>
-        <Grid container item className={sharedClasses.icons}>
+        <Grid container item className={classes.iconsShared}>
           <img
-            className={sharedClasses.tokenIcon}
+            className={classes.tokenIcon}
             src={xToY ? tokenXIcon : tokenYIcon}
             alt={xToY ? tokenXName : tokenYName}
           />
           <TooltipHover title='Reverse tokens'>
             <img
-              className={sharedClasses.arrows}
+              className={classes.arrowsShared}
               src={icons.swapListIcon}
               alt='Arrow'
               onClick={e => {
@@ -145,13 +144,13 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             />
           </TooltipHover>
           <img
-            className={sharedClasses.tokenIcon}
+            className={classes.tokenIcon}
             src={xToY ? tokenYIcon : tokenXIcon}
             alt={xToY ? tokenYName : tokenXName}
           />
         </Grid>
 
-        <Typography className={sharedClasses.names}>
+        <Typography className={classes.names}>
           {xToY ? tokenXName : tokenYName} - {xToY ? tokenYName : tokenXName}
         </Typography>
       </Grid>
@@ -184,12 +183,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           container
           item
           sx={{ width: 65 }}
-          className={classNames(sharedClasses.fee, isActive ? sharedClasses.activeFee : undefined)}>
+          className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}>
           <Typography
-            className={classNames(
-              sharedClasses.infoText,
-              isActive ? sharedClasses.activeInfoText : undefined
-            )}>
+            className={classNames(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
             {fee}%
           </Typography>
         </Grid>
@@ -204,7 +200,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
 
     return (
       <Typography
-        className={sharedClasses.infoText}
+        className={classes.infoText}
         style={{
           background: colors.invariant.light,
           padding: '8px 12px',
@@ -240,9 +236,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     }
 
     return (
-      <Grid container item className={`${sharedClasses.value} ${classes.itemCellContainer}`}>
-        <Grid className={sharedClasses.infoCenter} container item>
-          <Typography className={sharedClasses.greenText}>
+      <Grid container item className={`${classes.value} ${classes.itemCellContainer}`}>
+        <Grid className={classes.infoCenter} container item>
+          <Typography className={classes.greenText}>
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
         </Grid>
@@ -266,9 +262,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRectFullWidth36} />
     }
     return (
-      <Grid container item className={`${sharedClasses.value} ${classes.itemCellContainer}`}>
-        <Grid className={sharedClasses.infoCenter} container item>
-          <Typography className={sharedClasses.greenText}>
+      <Grid container item className={`${classes.value} ${classes.itemCellContainer}`}>
+        <Grid className={classes.infoCenter} container item>
+          <Typography className={classes.greenText}>
             ${formatNumberWithoutSuffix(unclaimedFeesInUSD.value, { twoDecimals: true })}
           </Typography>
         </Grid>

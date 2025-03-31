@@ -9,12 +9,12 @@ import {
   TableHead,
   TableRow
 } from '@mui/material'
-import { PositionTableRow } from './PositionsTableRow'
 import { useNavigate } from 'react-router-dom'
-import { usePositionTableStyle } from './styles/positionTable'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { generatePositionTableLoadingData, ROUTES } from '@utils/utils'
 import { IPositionItem } from '@store/consts/types'
+import { usePositionTableStyle } from './style'
+import { PositionTableRow } from '../PositionTableRow/PositionsTableRow'
 
 interface IPositionsTableProps {
   positions: Array<IPositionItem>

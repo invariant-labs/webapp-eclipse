@@ -25,9 +25,7 @@ import { ROUTES } from '@utils/utils'
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-import { PositionsTable } from './PositionItem/variants/PositionTables/PositionsTable'
-import PositionCardsSkeletonMobile from './PositionItem/variants/PositionTables/skeletons/PositionCardsSkeletonMobile'
-import { PositionItemMobile } from './PositionItem/variants/PositionMobileCard/PositionItemMobile'
+
 import classNames from 'classnames'
 
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -37,6 +35,9 @@ import { Overview } from './Overview/Overview/Overview'
 import { YourWallet } from './Overview/YourWallet/YourWallet'
 import { VariantType } from 'notistack'
 import { IPositionItem } from '@store/consts/types'
+import { PositionsTable } from './PositionItem/PositionTables/PositionTable.tsx/PositionsTable'
+import PositionCardsSkeletonMobile from './PositionItem/PositionTables/skeletons/PositionCardsSkeletonMobile'
+import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionItemMobile'
 
 interface IProps {
   initialPage: number

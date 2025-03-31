@@ -51,12 +51,7 @@ export const usePositionTableStyle = makeStyles<{ isScrollHide: boolean }>()(
       textAlign: 'left',
       padding: '14px 41px 14px 22px !important'
     },
-    pointsCell: {
-      width: '8%',
-      '& > div': {
-        justifyContent: 'center'
-      }
-    },
+
     feeTierCell: {
       width: '8%',
       '& > div': {

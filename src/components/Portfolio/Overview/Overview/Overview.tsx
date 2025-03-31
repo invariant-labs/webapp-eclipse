@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react'
-import { Box, Typography, useMediaQuery } from '@mui/material'
+import { Box, useMediaQuery } from '@mui/material'
 import { HeaderSection } from '../HeaderSection/HeaderSection'
 import { UnclaimedSection } from '../UnclaimedSection/UnclaimedSection'
 import { useStyles } from './styles'
@@ -15,15 +15,15 @@ import {
 } from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
 import MobileOverview from '../MobileOverview/MobileOverview'
-import LegendSkeleton from './skeletons/LegendSkeleton'
+import LegendSkeleton from './Skeletons/LegendSkeleton'
 import { useAverageLogoColor } from '@store/hooks/userOverview/useAverageLogoColor'
 import { useAgregatedPositions } from '@store/hooks/userOverview/useAgregatedPositions'
-import icons from '@static/icons'
 import { actions, PositionWithAddress } from '@store/reducers/positions'
 import { LegendOverview } from '../LegendOverview/LegendOverview'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { network } from '@store/selectors/solanaConnection'
 import { IPositionItem } from '@store/consts/types'
+import { EmptyState } from './EmptyState/EmptyState'
 
 interface OverviewProps {
   poolAssets: IPositionItem[]
@@ -36,8 +36,6 @@ export interface ISinglePositionData extends PositionWithAddress {
   positionIndex: number
   isLocked: boolean
 }
-
-export type EmptyStateClasses = Record<'emptyState' | 'emptyStateText', string>
 
 export const Overview: React.FC<OverviewProps> = () => {
   const positionList = useSelector(positionsWithPoolsData)
@@ -162,19 +160,12 @@ export const Overview: React.FC<OverviewProps> = () => {
     })
   }, [sortedPositions, getAverageColor, logoColors, pendingColorLoads])
 
-  const EmptyState = ({ classes }: { classes: EmptyStateClasses }) => (
-    <Box className={classes.emptyState}>
-      <img src={icons.liquidityEmpty} alt='Empty portfolio' height={64} width={80} />
-      <Typography className={classes.emptyStateText}>No liquidity found</Typography>
-    </Box>
-  )
-
   if (!isLoadingList && positions.length === 0) {
     return (
       <Box className={classes.container}>
         <HeaderSection totalValue={0} loading={false} />
         <UnclaimedSection unclaimedTotal={0} loading={false} handleClaimAll={undefined} />
-        <EmptyState classes={classes} />
+        <EmptyState />
       </Box>
     )
   }

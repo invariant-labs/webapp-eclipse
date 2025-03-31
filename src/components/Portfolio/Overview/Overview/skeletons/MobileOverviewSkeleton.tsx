@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Grid, Skeleton, Typography } from '@mui/material'
-import { useMobileSkeletonStyle } from './styles/useMobileSkeleton'
+import { useMobileSkeletonStyle } from './styles'
 const MobileOverviewSkeleton: React.FC = () => {
   const { classes } = useMobileSkeletonStyle()
   const segments = Array(3).fill(null)

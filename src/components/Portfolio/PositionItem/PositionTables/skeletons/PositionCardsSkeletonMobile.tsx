@@ -1,5 +1,5 @@
 import { Box, Grid, Skeleton } from '@mui/material'
-import { useMobileSkeletonStyles } from './styles/mobileSkeleton'
+import { useMobileSkeletonStyles } from './mobileSkeleton'
 
 const PositionCardsSkeletonMobile = () => {
   const { classes } = useMobileSkeletonStyles()

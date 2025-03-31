@@ -1,6 +1,6 @@
 import React from 'react'
 import { Box, Grid, Skeleton, Typography } from '@mui/material'
-import { useDesktopSkeleton } from './styles/useDesktopSkeleton'
+import { useDesktopSkeleton } from './styles'
 
 const LegendSkeleton: React.FC = () => {
   const { classes } = useDesktopSkeleton()
