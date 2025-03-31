@@ -18,8 +18,6 @@ const useStyles = makeStyles()(() => {
     },
     popoverRoot: {
       position: 'fixed',
-      width: '100%',
-      height: '100%',
       display: 'flex',
       alignItems: 'flex-start',
       justifyContent: 'center',
@@ -27,12 +25,12 @@ const useStyles = makeStyles()(() => {
     },
     paper: {
       position: 'relative',
-      margin: 'auto',
-      maxWidth: '90%',
-      marginTop: '10px',
+      // width: '320px', // Set explicit width matching the root element
+      // maxWidth: 'calc(100% - 32px)', // Consistent margins on all screen sizes
+      // margin: '10px 16px', // Equal horizontal margins
       background: 'transparent',
-      boxShadow: 'none',
-      overflow: 'visible'
+      boxShadow: 'none'
+      // overflow: 'visible'
     },
     root: {
       background: `
@@ -40,14 +38,12 @@ const useStyles = makeStyles()(() => {
         radial-gradient(50.2% 50.2% at 50% 0%, rgba(239, 132, 245, 0.25) 0%, rgba(239, 132, 245, 0) 75%),
         ${colors.invariant.component}
       `,
-      width: 490,
-      maxWidth: '100%',
+      width: '100%', // Changed to 100% to fill the paper container
       height: 'max-content',
       borderRadius: 24,
       padding: '20px 24px',
       boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
       [theme.breakpoints.down('sm')]: {
-        width: 'calc(100% - 32px)',
         padding: '16px 20px'
       }
     },
