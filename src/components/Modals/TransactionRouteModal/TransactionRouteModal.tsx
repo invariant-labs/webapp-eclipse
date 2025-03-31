@@ -16,8 +16,6 @@ export const TransactionRouteModal: React.FC<ISelectWalletModal> = ({
   handleClose,
   routeData,
   isLoading
-
-  // setIsOpenSelectWallet,
 }) => {
   const { classes } = useStyles()
 
@@ -25,7 +23,7 @@ export const TransactionRouteModal: React.FC<ISelectWalletModal> = ({
     <div className={classes.modalContainer}>
       <Popover
         open={open}
-        anchorReference='none'
+        marginThreshold={0}
         classes={{
           root: classes.popoverRoot,
           paper: classes.paper

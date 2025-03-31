@@ -11,6 +11,7 @@ const useStyles = makeStyles()(() => {
       bottom: 0,
       display: 'flex',
       alignItems: 'center',
+
       justifyContent: 'center',
       pointerEvents: 'none',
       zIndex: 1300
@@ -21,13 +22,14 @@ const useStyles = makeStyles()(() => {
       height: '100%',
       display: 'flex',
       alignItems: 'center',
+
       justifyContent: 'center',
       overflow: 'auto'
     },
     paper: {
       position: 'relative',
-      margin: 'auto',
-      maxWidth: '90%',
+      width: '520px',
+      margin: '16px',
       background: 'transparent',
       boxShadow: 'none',
       overflow: 'visible'
@@ -37,7 +39,6 @@ const useStyles = makeStyles()(() => {
       borderRadius: 24,
       padding: '20px 24px',
       [theme.breakpoints.down('sm')]: {
-        width: 'calc(100% - 32px)',
         padding: '16px 20px'
       }
     },
