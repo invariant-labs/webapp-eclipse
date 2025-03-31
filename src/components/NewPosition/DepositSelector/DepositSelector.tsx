@@ -1081,19 +1081,22 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           />
         </Box>
       </Grid>
-      {walletStatus !== Status.Initialized ? (
-        <ChangeWalletButton
-          name='Connect wallet'
-          onConnect={onConnectWallet}
-          connected={false}
-          onDisconnect={onDisconnectWallet}
-          className={classes.connectWalletButton}
-        />
-      ) : getButtonMessage() === 'Insufficient ETH' ? (
-        <TooltipHover
-          title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction'
-          top={-10}>
-          <div>
+      <Box width='100%'>
+        {walletStatus !== Status.Initialized ? (
+          <ChangeWalletButton
+            margin={'30px 0'}
+            width={'100%'}
+            height={48}
+            name='Connect wallet'
+            onConnect={onConnectWallet}
+            connected={false}
+            onDisconnect={onDisconnectWallet}
+          />
+        ) : getButtonMessage() === 'Insufficient ETH' ? (
+          <TooltipHover
+            fullSpan
+            title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+            top={-10}>
             <AnimatedButton
               className={classNames(
                 classes.addButton,
@@ -1108,70 +1111,70 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               content={getButtonMessage()}
               progress={progress}
             />
-          </div>
-        </TooltipHover>
-      ) : (
-        <AnimatedButton
-          className={classNames(
-            classes.addButton,
-            progress === 'none' ? classes.hoverButton : undefined
-          )}
-          onClick={() => {
-            if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
-              if (alignment === DepositOptions.Basic) {
-                onAddLiquidity()
-              } else if (
-                alignment === DepositOptions.Auto &&
-                simulation &&
-                !simulation.swapInput &&
-                !simulation.swapSimulation &&
-                simulation.position
-              ) {
-                onAddLiquidity()
-              } else {
-                if (
-                  (tokenACheckbox || tokenBCheckbox) &&
+          </TooltipHover>
+        ) : (
+          <AnimatedButton
+            className={classNames(
+              classes.addButton,
+              progress === 'none' ? classes.hoverButton : undefined
+            )}
+            onClick={() => {
+              if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
+                if (alignment === DepositOptions.Basic) {
+                  onAddLiquidity()
+                } else if (
+                  alignment === DepositOptions.Auto &&
                   simulation &&
-                  simulation.swapSimulation &&
-                  simulation.swapInput &&
-                  !!autoSwapPoolData
+                  !simulation.swapInput &&
+                  !simulation.swapSimulation &&
+                  simulation.position
                 ) {
-                  const userMinUtilization = toDecimal(+Number(utilization).toFixed(4), 2)
-                  const tokenADecimal = tokens[tokenAIndex].decimals
-                  const tokenBDecimal = tokens[tokenBIndex].decimals
-                  const tokenAValue = tokenACheckbox
-                    ? convertBalanceToBN(valueA, tokenADecimal)
-                    : new BN(0)
-                  const tokenBValue = tokenBCheckbox
-                    ? convertBalanceToBN(valueB, tokenBDecimal)
-                    : new BN(0)
-                  const amountX = autoSwapPoolData.tokenX.equals(tokens[tokenAIndex].assetAddress)
-                    ? tokenAValue
-                    : tokenBValue
-                  const amountY = autoSwapPoolData.tokenY.equals(tokens[tokenBIndex].assetAddress)
-                    ? tokenBValue
-                    : tokenAValue
-                  onSwapAndAddLiquidity(
-                    amountX,
-                    amountY,
-                    simulation.swapInput.swapAmount,
-                    simulation.swapInput.xToY,
-                    simulation.swapInput.byAmountIn,
-                    simulation.swapSimulation.priceAfterSwap,
-                    simulation.swapSimulation.crossedTicks,
-                    toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
-                    toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
-                    userMinUtilization
-                  )
+                  onAddLiquidity()
+                } else {
+                  if (
+                    (tokenACheckbox || tokenBCheckbox) &&
+                    simulation &&
+                    simulation.swapSimulation &&
+                    simulation.swapInput &&
+                    !!autoSwapPoolData
+                  ) {
+                    const userMinUtilization = toDecimal(+Number(utilization).toFixed(4), 2)
+                    const tokenADecimal = tokens[tokenAIndex].decimals
+                    const tokenBDecimal = tokens[tokenBIndex].decimals
+                    const tokenAValue = tokenACheckbox
+                      ? convertBalanceToBN(valueA, tokenADecimal)
+                      : new BN(0)
+                    const tokenBValue = tokenBCheckbox
+                      ? convertBalanceToBN(valueB, tokenBDecimal)
+                      : new BN(0)
+                    const amountX = autoSwapPoolData.tokenX.equals(tokens[tokenAIndex].assetAddress)
+                      ? tokenAValue
+                      : tokenBValue
+                    const amountY = autoSwapPoolData.tokenY.equals(tokens[tokenBIndex].assetAddress)
+                      ? tokenBValue
+                      : tokenAValue
+                    onSwapAndAddLiquidity(
+                      amountX,
+                      amountY,
+                      simulation.swapInput.swapAmount,
+                      simulation.swapInput.xToY,
+                      simulation.swapInput.byAmountIn,
+                      simulation.swapSimulation.priceAfterSwap,
+                      simulation.swapSimulation.crossedTicks,
+                      toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
+                      toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
+                      userMinUtilization
+                    )
+                  }
                 }
               }
-            }
-          }}
-          disabled={getButtonMessage() !== 'Add Position'}
-          content={getButtonMessage()}
-          progress={progress}
-        />
-      )}
+            }}
+            disabled={getButtonMessage() !== 'Add Position'}
+            content={getButtonMessage()}
+            progress={progress}
+          />
+        )}
+      </Box>
     </Grid>
   )
 }
