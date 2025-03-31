@@ -88,7 +88,7 @@ const TokenListItem: React.FC<IProps> = ({
         <Grid
           container
           classes={{ container: classes.container, root: classes.tokenList }}
-          style={hideBottomLine ? { border: 'none' } : undefined}>
+          style={hideBottomLine ? { borderBottom: `1px solid transparent` } : undefined}>
           {!isXs && !isSm && <Typography component='p'>{itemNumber}</Typography>}
           <Grid className={classes.tokenName}>
             <Box className={classes.imageContainer}>
@@ -118,7 +118,6 @@ const TokenListItem: React.FC<IProps> = ({
             </TooltipHover>
           </Grid>
           <Typography>{`~$${formatNumberWithSuffix(price)}`}</Typography>
-
           {/* {!hideName && (
             <Typography style={{ color: isNegative ? colors.invariant.Error : colors.green.main }}>
               {isNegative ? `${priceChange.toFixed(2)}%` : `+${priceChange.toFixed(2)}%`}
