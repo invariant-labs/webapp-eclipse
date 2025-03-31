@@ -142,6 +142,32 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
       footerDescription: '150 ICE every 24h',
       completed: userStats ? currentRanking <= 3000 : false
+    },
+    {
+      id: 'EDAS_official',
+      link: 'https://www.edas.ensofi.xyz/',
+      title: 'Reach TOP 1000',
+      img: icons.edas,
+      max: 1000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            DeFAI agents have arrived! Climb into the TOP 1000 and start earning points in the EDAS
+            Points Program every two weeks!
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: 'EDAS Points every 2 weeks',
+      completed: userStats ? currentRanking <= 1000 : false
     }
   ]
 

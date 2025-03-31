@@ -78,6 +78,7 @@ import navRight from '@static/svg/navRight.svg'
 import navLeft from '@static/svg/navLeft.svg'
 import check from '@static/svg/checkFill.svg'
 import celestialMammoth from '@static/svg/celestialMammoth.svg'
+import edas from '@static/svg/edas.svg'
 import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
 import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
 import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
@@ -120,6 +121,7 @@ const icons = {
   navLeft,
   check,
   celestialMammoth,
+  edas,
   SearchIcon,
   tokenCreator,
   statsIcon,
