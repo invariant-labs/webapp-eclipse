@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react'
-import { Box, Grid, Skeleton } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
@@ -7,7 +7,7 @@ import { PaginationList } from '@common/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
 import { Status } from '@store/reducers/solanaWallet'
 import { CurrentUser, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import LeaderboardSwapItem from './LeaderboardItem/LeaderboardSwapItem'
 import LeaderboardLpItem from './LeaderboardItem/LeaderboardLpItem'
 import LeaderboardTotalItem from './LeaderboardItem/LeaderboardTotalItem'
@@ -275,6 +275,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
   handlePageChange
 }) => {
   const { classes } = useStyles()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   const currentData = useMemo(() => {
     if (type === 'Liquidity') return lpData
@@ -290,6 +291,15 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
 
   const totalPages = useMemo(
     () => Math.ceil(totalItems / itemsPerPage),
+    [lpData, swapData, totalData, type]
+  )
+
+  const lowerBound = useMemo(
+    () => (currentPage - 1) * itemsPerPage + 1,
+    [currentPage, itemsPerPage, type]
+  )
+  const upperBound = useMemo(
+    () => Math.min(currentPage * itemsPerPage, totalItems),
     [lpData, swapData, totalData, type]
   )
 
@@ -335,13 +345,63 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
       </Grid>
 
       {totalPages >= 1 && (
-        <Box className={classes.pagination}>
-          <PaginationList
-            pages={totalPages}
-            defaultPage={currentPage}
-            handleChangePage={handlePageChange}
-            variant='flex-end'
-          />
+        <Box
+          sx={{
+            [theme.breakpoints.up('md')]: { paddingLeft: '24px', paddingRight: '24px' },
+            maxWidth: '100%',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center'
+          }}>
+          <Grid
+            container
+            sx={{
+              padding: '20px 0 10px 0',
+              maxWidth: '100%',
+              display: 'flex',
+              flexDirection: isMobile ? 'column' : 'row',
+              alignItems: 'center',
+              position: 'relative'
+            }}>
+            <Grid
+              item
+              sx={{
+                width: '100%',
+                display: 'flex',
+                justifyContent: 'center'
+              }}>
+              <Box sx={{ width: '80%', [theme.breakpoints.down('md')]: { width: '90%' } }}>
+                <PaginationList
+                  pages={totalPages}
+                  defaultPage={currentPage}
+                  handleChangePage={handlePageChange}
+                  variant='center'
+                />
+              </Box>
+            </Grid>
+
+            <Grid
+              item
+              sx={{
+                display: 'flex',
+                justifyContent: isMobile ? 'center' : 'flex-end',
+                width: '100%',
+                position: isMobile ? 'static' : 'absolute',
+                right: 0,
+                top: '55%',
+                pointerEvents: 'none',
+                transform: isMobile ? 'none' : 'translateY(-50%)'
+              }}>
+              <Typography
+                sx={{
+                  color: colors.invariant.textGrey,
+                  textWrap: 'nowrap',
+                  textAlign: isMobile ? 'center' : 'right'
+                }}>
+                Showing {lowerBound}-{upperBound} of {totalItems}
+              </Typography>
+            </Grid>
+          </Grid>
         </Box>
       )}
 
