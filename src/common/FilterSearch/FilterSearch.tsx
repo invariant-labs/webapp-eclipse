@@ -303,6 +303,17 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
         ListboxComponent={ListboxComponent}
         PopperComponent={CustomPopper}
         PaperComponent={PaperComponent}
+        filterOptions={(options, { inputValue }) => {
+          const trimmedInput = inputValue.trim().toLowerCase()
+          if (!trimmedInput) return options
+
+          return options.filter(
+            option =>
+              option.symbol.toLowerCase().includes(trimmedInput) ||
+              option.name.toLowerCase().includes(trimmedInput) ||
+              option.address.toLowerCase().includes(trimmedInput)
+          )
+        }}
         options={mappedTokens}
         classes={{ paper: classes.paper }}
         open={shouldOpenPopper}
