@@ -164,7 +164,7 @@ export function* handleSwapWithETH(): Generator {
         pool: swapPool,
         tickmap: tickmaps[swapPool.tickmap.toString()]
       },
-      { tickCrosses: MAX_CROSSES_IN_SINGLE_TX },
+      { tickCrosses: MAX_CROSSES_IN_SINGLE_TX - 1 },
       prependendIxs,
       appendedIxs
     )
