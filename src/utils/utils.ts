@@ -1306,7 +1306,7 @@ export const simulateAutoSwap = async (
         slippage: swapSlippage
       },
       { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
-      toDecimal(1, 2)
+      toDecimal(1, 3)
     )
     return simulateResult
   } catch (e) {
