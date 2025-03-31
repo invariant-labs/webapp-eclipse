@@ -218,7 +218,7 @@ const PoolList: React.FC<PoolListInterface> = ({
       <Grid
         className={classes.pagination}
         sx={{
-          height: 90,
+          height: pages > 1 ? 90 : 69,
           borderTop: `1px solid ${colors.invariant.light}`
         }}>
         {pages > 1 && (
