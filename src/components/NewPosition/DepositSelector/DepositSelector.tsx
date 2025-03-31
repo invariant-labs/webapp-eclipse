@@ -27,7 +27,7 @@ import {
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
 import classNames from 'classnames'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import FeeSwitch from '../FeeSwitch/FeeSwitch'
 import { useStyles } from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
@@ -238,6 +238,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const [tokenAIndex, setTokenAIndex] = useState<number | null>(null)
   const [tokenBIndex, setTokenBIndex] = useState<number | null>(null)
+  const [throttle, setThrottle] = useState<boolean>(false)
 
   const [simulation, setSimulation] = useState<SimulateSwapAndCreatePositionSimulation | null>(null)
 
@@ -333,6 +334,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (isLoadingTicksOrTickmap) {
       return 'Loading data...'
     }
+    if (throttle) {
+      return 'Loading'
+    }
+
     if (tokenAIndex === null || tokenBIndex === null) {
       return 'Select tokens'
     }
@@ -726,6 +731,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       </Box>
     )
   }, [isSimulating, simulation, alignment, tokenACheckbox, tokenBCheckbox])
+
   const simulateAutoSwapResult = async () => {
     setIsSimulating(true)
     if (
@@ -790,9 +796,24 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     setIsSimulating(false)
   }
 
+  const timeoutRef = useRef<number>(0)
+
+  const simulateWithTimeout = () => {
+    setThrottle(true)
+
+    clearTimeout(timeoutRef.current)
+    const timeout = setTimeout(() => {
+      simulateAutoSwapResult().finally(() => {
+        setThrottle(false)
+      })
+    }, 500)
+    timeoutRef.current = timeout as unknown as number
+  }
+
   useEffect(() => {
     if ((tokenACheckbox || tokenBCheckbox) && alignment === DepositOptions.Auto) {
-      simulateAutoSwapResult()
+      // simulateAutoSwapResult()
+      simulateWithTimeout()
     }
   }, [
     simulationParams,

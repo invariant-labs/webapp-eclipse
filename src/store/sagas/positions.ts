@@ -2292,7 +2292,7 @@ export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)
 }
 export function* swapAndInitPositionHandler(): Generator {
-  yield* takeEvery(actions.swapAndInitPosition, handleSwapAndInitPosition)
+  yield* takeLatest(actions.swapAndInitPosition, handleSwapAndInitPosition)
 }
 export function* getCurrentPlotTicksHandler(): Generator {
   yield* takeLatest(actions.getCurrentPlotTicks, handleGetCurrentPlotTicks)
