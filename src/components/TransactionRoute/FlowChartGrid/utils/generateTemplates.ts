@@ -56,7 +56,7 @@ export const generateOneHopTemplate = (data: RouteTemplateProps): GridDefinition
         arrowDirection: 'left',
         cornerPosition: CornerPosition.TopLeft,
         shape: 'rect',
-        connectors: [{ direction: 'left', withArrow: true, longerConnector: true }]
+        connectors: [{ direction: 'left', withArrow: true }]
       }
     ]
   ]

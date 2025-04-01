@@ -22,7 +22,7 @@ type ConnectorStyleProps = {
 }
 
 const getPositionAdjustment = (shape: Shape) => {
-  return shape === 'circle' ? { x: 0, y: -0.3 } : { x: 0, y: 0.3 }
+  return shape === 'circle' ? { x: 0, y: -0.3 } : { x: -0.6, y: 0.3 }
 }
 
 export const getConnectorStyles = ({
@@ -83,14 +83,14 @@ export const getConnectorStyles = ({
           bottom: longerConnector ? -LINE_LENGTH - 88 : -LINE_LENGTH - 10,
           left: '50%',
           transform: `translateX(calc(-50% + ${adjustment.x}px))`,
-          width: 1.5,
+          width: '0.5px',
           display: 'flex',
           flexDirection: 'column',
           alignItems: 'center'
         },
         line: {
           height: downLength,
-          width: 1.5,
+          width: '0.5px',
           backgroundColor: LINE_COLOR
         },
         arrow: withArrow ? createArrowStyle('down', LINE_COLOR) : undefined
@@ -103,14 +103,14 @@ export const getConnectorStyles = ({
           top: longerConnector ? -LINE_LENGTH - 52 : -LINE_LENGTH,
           left: '50%',
           transform: `translateX(calc(-50% + ${adjustment.x}px))`,
-          width: 1.5,
+          width: '0.5px',
           display: 'flex',
           flexDirection: 'column-reverse',
           alignItems: 'center'
         },
         line: {
           height: upLength,
-          width: 1.5,
+          width: '0.5px',
           backgroundColor: LINE_COLOR
         },
         arrow: withArrow ? createArrowStyle('up', LINE_COLOR) : undefined

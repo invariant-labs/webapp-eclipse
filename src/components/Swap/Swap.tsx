@@ -274,7 +274,7 @@ export const Swap: React.FC<ISwap> = ({
   const [isReversingTokens, setIsReversingTokens] = useState(false)
   const [isTransactionRouteModalOpen, setTransactionRouteModalOpen] = useState(false)
   const [isRouteLoading, setRouteLoading] = useState(false)
-  const [route, setRoute] = useState<RouteTemplateProps | undefined>(undefined)
+  const [route, setRoute] = useState<RouteTemplateProps | undefined>(routes[0])
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -631,18 +631,17 @@ export const Swap: React.FC<ISwap> = ({
     let currentIndex = 0
 
     const updateRoute = () => {
-      setRouteLoading(true)
+      // setRouteLoading(true)
 
       setTimeout(() => {
-        setRoute(routes[currentIndex])
+        // setRoute(routes[currentIndex])
 
         setTimeout(() => {
-          setRouteLoading(false)
+          // setRouteLoading(false)
 
           setTimeout(() => {
-            currentIndex = (currentIndex + 1) % routes.length
-
-            updateRoute()
+            // currentIndex = (currentIndex + 1) % routes.length
+            // updateRoute()
           }, 3000)
         }, intervalMs / 2)
       }, intervalMs / 2)
