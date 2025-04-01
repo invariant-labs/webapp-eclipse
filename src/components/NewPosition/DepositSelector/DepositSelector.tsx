@@ -651,7 +651,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   )
 
   const renderPriceImpactWarning = useCallback(() => {
-    if (isSimulating) {
+    if (isSimulating || throttle) {
       return <Skeleton variant='rectangular' className={classes.skeleton} />
     }
     if (
@@ -728,7 +728,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         %
       </Box>
     )
-  }, [isSimulating, simulation, alignment, tokenACheckbox, tokenBCheckbox])
+  }, [isSimulating, simulation, alignment, tokenACheckbox, tokenBCheckbox, throttle])
 
   const simulateAutoSwapResult = async () => {
     setIsSimulating(true)
