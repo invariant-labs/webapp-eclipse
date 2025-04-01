@@ -110,6 +110,7 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
+import { SwapRoutesResponse } from '@store/reducers/swap'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1909,6 +1910,30 @@ export const getPoolsAPY = async (name: string): Promise<Record<string, number>>
     const error = ensureError(e)
     console.log(error)
     return {}
+  }
+}
+
+export const getAgregatorSwapRoutesData = async ({
+  inputMint,
+  outputMint,
+  slippageBps,
+  amountIn
+}: {
+  inputMint: PublicKey
+  outputMint: PublicKey
+  slippageBps: number
+  amountIn: BN
+}): Promise<SwapRoutesResponse | null> => {
+  try {
+    const ROUTER_URL = ' https://agg.invariant.app'
+    const quoteUrl = `${ROUTER_URL}/quote?inputMint=${inputMint}&outputMint=${outputMint}&amount=${amountIn}&slippageBps=${slippageBps}`
+    const { data } = await axios.get<SwapRoutesResponse>(quoteUrl)
+
+    return data
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+    return null
   }
 }
 

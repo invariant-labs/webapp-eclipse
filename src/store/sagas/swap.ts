@@ -25,7 +25,7 @@ import {
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { createLoaderKey, ensureError } from '@utils/utils'
+import { createLoaderKey, ensureError, getAgregatorSwapRoutesData, printBN } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createNativeAtaInstructions,
@@ -41,6 +41,7 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
+import { BN } from '@coral-xyz/anchor'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -1029,6 +1030,48 @@ export function* handleSwap(): Generator {
   }
 }
 
+export function* handleFetchSwapRoute(
+  action: PayloadAction<{ amountIn: number; slippage: number }>
+): Generator {
+  try {
+    const swapState = yield* select(swap)
+    const { tokenFrom, tokenTo } = swapState
+    const { amountIn, slippage } = action.payload
+
+    if (
+      tokenFrom.equals(PublicKey.default) ||
+      tokenTo.equals(PublicKey.default) ||
+      amountIn === 0
+    ) {
+      return
+    }
+
+    yield put(swapActions.setSwapRouteLoading(true))
+
+    const slippageBps = slippage * 100
+
+    const routesData = yield* call(getAgregatorSwapRoutesData, {
+      inputMint: tokenFrom,
+      outputMint: tokenTo,
+      slippageBps,
+      amountIn
+    })
+
+    console.log(routesData)
+
+    if (routesData) {
+      yield put(swapActions.setSwapRouteResponse(routesData))
+    } else {
+      console.error('Failed to fetch swap routes')
+    }
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log('Error fetching swap routes:', error)
+  } finally {
+    yield put(swapActions.setSwapRouteLoading(false))
+  }
+}
+
 export function* handleGetTwoHopSwapData(
   action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>
 ): Generator {
@@ -1098,6 +1141,10 @@ export function* getTwoHopSwapDataHandler(): Generator {
   yield* takeLatest(swapActions.getTwoHopSwapData, handleGetTwoHopSwapData)
 }
 
+export function* fetchSwapRouteHandler(): Generator {
+  yield* takeEvery(swapActions.fetchSwapRoute, handleFetchSwapRoute)
+}
+
 export function* swapSaga(): Generator {
-  yield* all([swapHandler, getTwoHopSwapDataHandler].map(spawn))
+  yield* all([swapHandler, getTwoHopSwapDataHandler, fetchSwapRouteHandler].map(spawn))
 }

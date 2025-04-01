@@ -357,103 +357,105 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
   const swapIsLoading = useSelector(isLoading)
 
   return (
-    <Swap
-      isFetchingNewPool={isFetchingNewPool}
-      onRefresh={onRefresh}
-      onSwap={(
-        slippage,
-        estimatedPriceAfterSwap,
-        tokenFrom,
-        tokenBetween,
-        tokenTo,
-        firstPair,
-        secondPair,
-        amountIn,
-        amountOut,
-        byAmountIn
-      ) => {
-        setProgress('progress')
-        dispatch(
-          actions.swap({
-            slippage,
-            estimatedPriceAfterSwap,
-            firstPair,
-            secondPair,
-            tokenFrom,
-            tokenBetween,
-            tokenTo,
-            amountIn,
-            amountOut,
-            byAmountIn
-          })
-        )
-      }}
-      onSetPair={(tokenFrom, tokenTo) => {
-        setTokenFrom(tokenFrom)
-        setTokenTo(tokenTo)
-
-        if (tokenFrom !== null) {
-          localStorage.setItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`, tokenFrom.toString())
-        }
-
-        if (tokenTo !== null) {
-          localStorage.setItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`, tokenTo.toString())
-        }
-        if (tokenFrom !== null && tokenTo !== null && !tokenFrom.equals(tokenTo)) {
+    <>
+      <Swap
+        isFetchingNewPool={isFetchingNewPool}
+        onRefresh={onRefresh}
+        onSwap={(
+          slippage,
+          estimatedPriceAfterSwap,
+          tokenFrom,
+          tokenBetween,
+          tokenTo,
+          firstPair,
+          secondPair,
+          amountIn,
+          amountOut,
+          byAmountIn
+        ) => {
+          setProgress('progress')
           dispatch(
-            poolsActions.getAllPoolsForPairData({
-              first: tokenFrom,
-              second: tokenTo
+            actions.swap({
+              slippage,
+              estimatedPriceAfterSwap,
+              firstPair,
+              secondPair,
+              tokenFrom,
+              tokenBetween,
+              tokenTo,
+              amountIn,
+              amountOut,
+              byAmountIn
             })
           )
-        }
-      }}
-      onConnectWallet={() => {
-        dispatch(walletActions.connect(false))
-      }}
-      onDisconnectWallet={() => {
-        dispatch(walletActions.disconnect())
-      }}
-      walletStatus={walletStatus}
-      tokens={tokensList}
-      pools={allPools}
-      swapData={swap}
-      progress={progress}
-      poolTicks={poolTicksForSimulation}
-      isWaitingForNewPool={isFetchingNewPool}
-      tickmap={tickmap}
-      initialTokenFromIndex={initialTokenFromIndex === -1 ? null : initialTokenFromIndex}
-      initialTokenToIndex={initialTokenToIndex === -1 ? null : initialTokenToIndex}
-      handleAddToken={addTokenHandler}
-      commonTokens={commonTokensForNetworks[networkType]}
-      initialHideUnknownTokensValue={initialHideUnknownTokensValue}
-      onHideUnknownTokensChange={setHideUnknownTokensValue}
-      tokenFromPriceData={tokenFromPriceData}
-      tokenToPriceData={tokenToPriceData}
-      priceFromLoading={priceFromLoading || isBalanceLoading}
-      priceToLoading={priceToLoading || isBalanceLoading}
-      onSlippageChange={onSlippageChange}
-      initialSlippage={initialSlippage}
-      isBalanceLoading={isBalanceLoading}
-      copyTokenAddressHandler={copyTokenAddressHandler}
-      ethBalance={ethBalance}
-      network={networkType}
-      unwrapWETH={unwrapWETH}
-      wrappedETHAccountExist={wrappedETHAccountExist}
-      isTimeoutError={isTimeoutError}
-      deleteTimeoutError={() => {
-        dispatch(connectionActions.setTimeoutError(false))
-      }}
-      canNavigate={canNavigate}
-      pointsPerUsdFee={pointsPerUsdFee}
-      feeds={priceFeeds}
-      promotedSwapPairs={promotedSwapPairs}
-      swapMultiplier={multiplyer}
-      market={market}
-      tokensDict={tokensDict}
-      swapAccounts={swapAccounts}
-      swapIsLoading={swapIsLoading}
-    />
+        }}
+        onSetPair={(tokenFrom, tokenTo) => {
+          setTokenFrom(tokenFrom)
+          setTokenTo(tokenTo)
+
+          if (tokenFrom !== null) {
+            localStorage.setItem(`INVARIANT_LAST_TOKEN_FROM_${networkType}`, tokenFrom.toString())
+          }
+
+          if (tokenTo !== null) {
+            localStorage.setItem(`INVARIANT_LAST_TOKEN_TO_${networkType}`, tokenTo.toString())
+          }
+          if (tokenFrom !== null && tokenTo !== null && !tokenFrom.equals(tokenTo)) {
+            dispatch(
+              poolsActions.getAllPoolsForPairData({
+                first: tokenFrom,
+                second: tokenTo
+              })
+            )
+          }
+        }}
+        onConnectWallet={() => {
+          dispatch(walletActions.connect(false))
+        }}
+        onDisconnectWallet={() => {
+          dispatch(walletActions.disconnect())
+        }}
+        walletStatus={walletStatus}
+        tokens={tokensList}
+        pools={allPools}
+        swapData={swap}
+        progress={progress}
+        poolTicks={poolTicksForSimulation}
+        isWaitingForNewPool={isFetchingNewPool}
+        tickmap={tickmap}
+        initialTokenFromIndex={initialTokenFromIndex === -1 ? null : initialTokenFromIndex}
+        initialTokenToIndex={initialTokenToIndex === -1 ? null : initialTokenToIndex}
+        handleAddToken={addTokenHandler}
+        commonTokens={commonTokensForNetworks[networkType]}
+        initialHideUnknownTokensValue={initialHideUnknownTokensValue}
+        onHideUnknownTokensChange={setHideUnknownTokensValue}
+        tokenFromPriceData={tokenFromPriceData}
+        tokenToPriceData={tokenToPriceData}
+        priceFromLoading={priceFromLoading || isBalanceLoading}
+        priceToLoading={priceToLoading || isBalanceLoading}
+        onSlippageChange={onSlippageChange}
+        initialSlippage={initialSlippage}
+        isBalanceLoading={isBalanceLoading}
+        copyTokenAddressHandler={copyTokenAddressHandler}
+        ethBalance={ethBalance}
+        network={networkType}
+        unwrapWETH={unwrapWETH}
+        wrappedETHAccountExist={wrappedETHAccountExist}
+        isTimeoutError={isTimeoutError}
+        deleteTimeoutError={() => {
+          dispatch(connectionActions.setTimeoutError(false))
+        }}
+        canNavigate={canNavigate}
+        pointsPerUsdFee={pointsPerUsdFee}
+        feeds={priceFeeds}
+        promotedSwapPairs={promotedSwapPairs}
+        swapMultiplier={multiplyer}
+        market={market}
+        tokensDict={tokensDict}
+        swapAccounts={swapAccounts}
+        swapIsLoading={swapIsLoading}
+      />
+    </>
   )
 }
 

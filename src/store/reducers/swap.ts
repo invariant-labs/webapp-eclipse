@@ -23,6 +23,30 @@ export interface Swap {
   amountOut: BN
 }
 
+export interface SwapRoute {
+  percent: number
+  swapInfo: {
+    ammKey: PublicKey
+    feeAmount: number
+    feeMint: PublicKey
+    inAmount: BN
+    inputMint: PublicKey
+    label: string
+    outAmount: BN
+    outputMint: PublicKey
+  }
+}
+
+export interface SwapRoutesResponse {
+  inAmount: number
+  inputMint: PublicKey
+  outAmount: number
+  outputMint: PublicKey
+  platformFee: number | null
+  priceImpactPct: number
+  routePlan: SwapRoute[]
+}
+
 export interface Simulate {
   simulatePrice: BN
   fromToken: PublicKey
@@ -37,6 +61,10 @@ export interface ISwapStore {
   swap: Swap
   accounts: FetcherRecords
   isLoading: boolean
+  swapRoute: {
+    swapRouteLoading: boolean
+    swapRouteResponse?: SwapRoutesResponse
+  }
 }
 
 export const defaultState: ISwapStore = {
@@ -51,6 +79,10 @@ export const defaultState: ISwapStore = {
     amountIn: new BN(0),
     byAmountIn: false,
     amountOut: new BN(0)
+  },
+  swapRoute: {
+    swapRouteLoading: false,
+    swapRouteResponse: undefined
   },
   accounts: {
     pools: {},
@@ -84,6 +116,20 @@ const swapSlice = createSlice({
     },
     getTwoHopSwapData(state, _action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>) {
       state.isLoading = true
+      return state
+    },
+    setSwapRouteLoading(state, action: PayloadAction<boolean>) {
+      state.swapRoute.swapRouteLoading = action.payload
+      return state
+    },
+    setSwapRouteResponse(state, action: PayloadAction<SwapRoutesResponse>) {
+      console.log('zapisz', action.payload)
+      state.swapRoute.swapRouteResponse = action.payload
+      state.swapRoute.swapRouteLoading = false
+      return state
+    },
+
+    fetchSwapRoute(state, _action: PayloadAction<{ amountIn: number; slippage: number }>) {
       return state
     },
     updateSwapPool(state, action: PayloadAction<{ address: PublicKey; pool: PoolStructure }>) {

@@ -56,6 +56,8 @@ import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/Invar
 import { theme, typography } from '@static/theme'
 import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
 import { routes } from './routes'
+import { actions as swapActions } from '@store/reducers/swap'
+import { useDispatch } from 'react-redux'
 
 export interface Pools {
   tokenX: PublicKey
@@ -276,6 +278,7 @@ export const Swap: React.FC<ISwap> = ({
   const [isRouteLoading, setRouteLoading] = useState(false)
   const [route, setRoute] = useState<RouteTemplateProps | undefined>(routes[0])
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const dispatch = useDispatch()
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -1549,6 +1552,19 @@ export const Swap: React.FC<ISwap> = ({
                     progress={progress}
                   />
                 )}
+                <button
+                  onClick={() => {
+                    if (tokenFromIndex === null) return
+
+                    dispatch(
+                      swapActions.fetchSwapRoute({
+                        amountIn: +amountFrom,
+                        slippage: +slippTolerance
+                      })
+                    )
+                  }}>
+                  Test
+                </button>
                 <AnimatedWaves
                   wavePosition={'bottom'}
                   isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
