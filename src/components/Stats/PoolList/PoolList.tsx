@@ -12,6 +12,7 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
 import { colors } from '@static/theme'
+import { TableBoundsLabel } from '@components/TableBoundsLabel/TableBoundsLabel'
 
 export interface PoolListInterface {
   initialLength: number
@@ -144,6 +145,9 @@ const PoolList: React.FC<PoolListInterface> = ({
 
     return sortedData.slice(offest).slice(0, perPage)
   }
+  const totalItems = sortedData.length
+  const lowerBound = useMemo(() => (page - 1) * 10 + 1, [page])
+  const upperBound = useMemo(() => Math.min(page * 10, totalItems), [totalItems, page])
 
   const pages = Math.ceil(data.length / 10)
 
@@ -228,12 +232,19 @@ const PoolList: React.FC<PoolListInterface> = ({
             `
         }}>
         {pages > 1 && (
-          <PaginationList
-            pages={pages}
-            defaultPage={1}
-            handleChangePage={handleChangePagination}
-            variant='flex-end'
-          />
+          <TableBoundsLabel
+            lowerBound={lowerBound}
+            totalItems={totalItems}
+            upperBound={upperBound}
+            containerPadding={0}
+            containerHeight={90}>
+            <PaginationList
+              pages={pages}
+              defaultPage={1}
+              handleChangePage={handleChangePagination}
+              variant='center'
+            />
+          </TableBoundsLabel>
         )}
       </Grid>
     </Grid>
