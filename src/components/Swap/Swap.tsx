@@ -4,7 +4,7 @@ import ExchangeAmountInput from '@components/Inputs/ExchangeAmountInput/Exchange
 import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
 import { BN } from '@coral-xyz/anchor'
-import { Box, Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography, useMediaQuery } from '@mui/material'
 
 import {
   DEFAULT_TOKEN_DECIMAL,
@@ -50,6 +50,12 @@ import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
+import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
+import { RouteTemplateProps } from '@components/TransactionRoute/FlowChartGrid/types/types'
+import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
+import { theme, typography } from '@static/theme'
+import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
+import { routes } from './routes'
 
 export interface Pools {
   tokenX: PublicKey
@@ -266,7 +272,10 @@ export const Swap: React.FC<ISwap> = ({
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
-
+  const [isTransactionRouteModalOpen, setTransactionRouteModalOpen] = useState(false)
+  const [isRouteLoading, setRouteLoading] = useState(false)
+  const [route, setRoute] = useState<RouteTemplateProps | undefined>(undefined)
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -617,6 +626,34 @@ export const Swap: React.FC<ISwap> = ({
       setAddBlur(false)
     }
   }
+
+  const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
+    let currentIndex = 0
+
+    const updateRoute = () => {
+      setRouteLoading(true)
+
+      setTimeout(() => {
+        setRoute(routes[currentIndex])
+
+        setTimeout(() => {
+          setRouteLoading(false)
+
+          setTimeout(() => {
+            currentIndex = (currentIndex + 1) % routes.length
+
+            updateRoute()
+          }, 3000)
+        }, intervalMs / 2)
+      }, intervalMs / 2)
+    }
+
+    updateRoute()
+  }
+
+  useEffect(() => {
+    simulateRouteLoading(routes, 3000)
+  }, [])
 
   const updateSimulation = (
     simulateResult: {
@@ -996,476 +1033,547 @@ export const Swap: React.FC<ISwap> = ({
         </Box>
       )}
 
-      <Grid container className={classes.header}>
-        <Box className={classes.leftSection}>
-          <Typography component='h1'>Swap tokens</Typography>
-          {network === NetworkType.Mainnet ? (
-            <SwapPointsPopover
-              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
-              network={network}
-              promotedSwapPairs={promotedSwapPairs}>
-              <div>
-                <EstimatedPointsLabel
-                  isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
-                  decimalIndex={decimalIndex}
-                  pointsForSwap={pointsForSwap}
-                  swapMultiplier={swapMultiplier}
-                  isLessThanOne={isLessThanOne}
-                  stringPointsValue={stringPointsValue}
-                  isAnyBlurShowed={isAnyBlurShowed}
-                />
-              </div>
-            </SwapPointsPopover>
-          ) : null}
+      {isMd && (
+        <Box className={classes.agregatorContainer}>
+          <InvariantAgregatorHeader />
         </Box>
-
-        <Box className={classes.rightSection}>
-          <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
-            <p>
-              Slippage: <span className={classes.slippageAmount}>{slippTolerance}%</span>
-            </p>
-          </Button>
-
-          <Box className={classes.swapControls}>
-            <TooltipHover title='Refresh'>
-              <Grid className={classes.refreshIconContainer}>
-                <Button
-                  onClick={handleRefresh}
-                  className={classes.refreshIconBtn}
-                  disabled={
-                    priceFromLoading ||
-                    priceToLoading ||
-                    isBalanceLoading ||
-                    getStateMessage() === 'Loading' ||
-                    tokenFromIndex === null ||
-                    tokenToIndex === null ||
-                    tokenFromIndex === tokenToIndex
-                  }>
-                  <img src={icons.refreshIcon} className={classes.refreshIcon} alt='Refresh' />
-                </Button>
-              </Grid>
-            </TooltipHover>
-            <TooltipHover title='Settings'>
-              <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
-                <img src={icons.settingIcon} className={classes.settingsIcon} alt='Settings' />
-              </Button>
-            </TooltipHover>
-          </Box>
-        </Box>
-
-        <Grid className={classes.slippage}>
-          <Slippage
-            open={settings}
-            setSlippage={setSlippage}
-            handleClose={handleCloseSettings}
-            anchorEl={anchorEl}
-            initialSlippage={initialSlippage}
-          />
-        </Grid>
-      </Grid>
-
-      <Box
-        className={classNames(
-          classes.borderContainer,
-          (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
-            classes.gradientBorderForContainer
-        )}>
-        <Grid container className={classes.root} direction='column'>
-          <AnimatedWaves
-            wavePosition={'top'}
-            isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
-          />
-          <Typography
-            className={classNames(
-              classes.swapLabel,
-              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
-            )}>
-            Pay
-          </Typography>
-          <Box
-            className={classNames(
-              classes.exchangeRoot,
-              lockAnimation ? classes.amountInputDown : undefined,
-              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
-            )}>
-            <ExchangeAmountInput
-              value={amountFrom}
-              balance={
-                tokenFromIndex !== null && !!tokens[tokenFromIndex]
-                  ? printBN(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
-                  : '- -'
-              }
-              decimal={
-                tokenFromIndex !== null ? tokens[tokenFromIndex].decimals : DEFAULT_TOKEN_DECIMAL
-              }
-              className={classes.amountInput}
-              setValue={value => {
-                if (value.match(/^\d*\.?\d*$/)) {
-                  setAmountFrom(value)
-                  setInputRef(inputTarget.FROM)
-                }
-              }}
-              placeholder={`0.${'0'.repeat(6)}`}
-              actionButtons={[
-                {
-                  label: 'Max',
-                  variant: 'max',
-                  onClick: () => {
-                    actions.max(tokenFromIndex)
-                  }
-                },
-                {
-                  label: '50%',
-                  variant: 'half',
-                  onClick: () => {
-                    actions.half(tokenFromIndex)
-                  }
-                }
-              ]}
-              tokens={tokens}
-              current={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
-              onSelect={setTokenFromIndex}
-              disabled={tokenFromIndex === tokenToIndex || tokenFromIndex === null}
-              hideBalances={walletStatus !== Status.Initialized}
-              handleAddToken={handleAddToken}
-              commonTokens={commonTokens}
-              limit={1e14}
-              initialHideUnknownTokensValue={initialHideUnknownTokensValue}
-              onHideUnknownTokensChange={e => {
-                onHideUnknownTokensChange(e)
-                setHideUnknownTokens(e)
-              }}
-              tokenPrice={tokenFromPriceData?.price}
-              priceLoading={priceFromLoading}
-              isBalanceLoading={isBalanceLoading}
-              showMaxButton={true}
-              showBlur={
-                (inputRef === inputTarget.TO && addBlur) ||
-                lockAnimation ||
-                (getStateMessage() === 'Loading' &&
-                  (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
-              }
-              hiddenUnknownTokens={hideUnknownTokens}
-              network={network}
-              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
-            />
-          </Box>
-
-          <Box className={classes.tokenComponentTextContainer}>
-            <Box
-              className={classNames(
-                classes.swapArrowBox,
-                (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
-              )}
-              onClick={() => {
-                if (lockAnimation) return
-                setIsReversingTokens(true)
-                setRateLoading(true)
-                setLockAnimation(!lockAnimation)
-                setRotates(rotates + 1)
-                swap !== null ? setSwap(!swap) : setSwap(true)
-                setTimeout(() => {
-                  const tmpAmount = amountTo
-
-                  const tmp = tokenFromIndex
-                  setTokenFromIndex(tokenToIndex)
-                  setTokenToIndex(tmp)
-
-                  setInputRef(inputTarget.FROM)
-                  setAmountFrom(tmpAmount)
-                }, 50)
-              }}>
-              <Box
-                className={classNames(
-                  classes.swapImgRoot,
-                  (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
-                    classes.componentBackground
-                )}>
-                <img
-                  src={icons.swapArrows}
-                  style={{
-                    transform: `rotate(${-rotates * 180}deg)`
-                  }}
-                  className={classes.swapArrows}
-                  alt='Invert tokens'
-                />
+      )}
+      {isMd && (
+        <TransactionRouteModal
+          isLoading={isRouteLoading}
+          open={isTransactionRouteModalOpen}
+          handleClose={() => {
+            setTransactionRouteModalOpen(false)
+            unblurContent()
+          }}
+          routeData={route}
+        />
+      )}
+      <Box sx={{ display: 'flex' }}>
+        <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+          <Box>
+            <Grid container className={classes.header}>
+              <Box>
+                {!isMd && (
+                  <Box className={classes.agregatorContainer}>
+                    <InvariantAgregatorHeader />
+                  </Box>
+                )}
               </Box>
-            </Box>
-          </Box>
-          <Typography
-            className={classNames(
-              classes.swapLabel,
-              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
-            )}
-            mt={1.5}>
-            Receive
-          </Typography>
-          <Box
-            className={classNames(
-              classes.exchangeRoot,
-              classes.transactionBottom,
-              lockAnimation ? classes.amountInputUp : undefined,
-              (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
-            )}>
-            <ExchangeAmountInput
-              value={amountTo}
-              balance={
-                tokenToIndex !== null
-                  ? printBN(tokens[tokenToIndex].balance, tokens[tokenToIndex].decimals)
-                  : '- -'
-              }
-              className={classes.amountInput}
-              decimal={
-                tokenToIndex !== null ? tokens[tokenToIndex].decimals : DEFAULT_TOKEN_DECIMAL
-              }
-              setValue={value => {
-                if (value.match(/^\d*\.?\d*$/)) {
-                  setAmountTo(value)
-                  setInputRef(inputTarget.TO)
-                }
-              }}
-              placeholder={`0.${'0'.repeat(6)}`}
-              actionButtons={[
-                {
-                  label: 'Max',
-                  variant: 'max',
-                  onClick: () => {
-                    actions.max(tokenFromIndex)
-                  }
-                },
-                {
-                  label: '50%',
-                  variant: 'half',
-                  onClick: () => {
-                    actions.half(tokenFromIndex)
-                  }
-                }
-              ]}
-              tokens={tokens}
-              current={tokenToIndex !== null ? tokens[tokenToIndex] : null}
-              onSelect={setTokenToIndex}
-              disabled={tokenFromIndex === tokenToIndex || tokenToIndex === null}
-              hideBalances={walletStatus !== Status.Initialized}
-              handleAddToken={handleAddToken}
-              commonTokens={commonTokens}
-              limit={1e14}
-              initialHideUnknownTokensValue={initialHideUnknownTokensValue}
-              onHideUnknownTokensChange={e => {
-                onHideUnknownTokensChange(e)
-                setHideUnknownTokens(e)
-              }}
-              tokenPrice={tokenToPriceData?.price}
-              priceLoading={priceToLoading}
-              isBalanceLoading={isBalanceLoading}
-              showMaxButton={false}
-              showBlur={
-                (inputRef === inputTarget.FROM && addBlur) ||
-                lockAnimation ||
-                (getStateMessage() === 'Loading' &&
-                  (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
-              }
-              hiddenUnknownTokens={hideUnknownTokens}
-              network={network}
-              isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
-            />
-          </Box>
-          <Box
-            className={classes.unknownWarningContainer}
-            style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
-            {priceImpact > 5 && (
-              <TooltipHover title='Your trade size might be too large'>
-                <Box className={classes.unknownWarning}>
-                  High price impact: {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}!
-                  This swap will cause a significant price movement.
-                </Box>
-              </TooltipHover>
-            )}
-            {tokens[tokenFromIndex ?? '']?.isUnknown && (
-              <TooltipHover
-                title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
-                <Box className={classes.unknownWarning}>
-                  {tokens[tokenFromIndex ?? ''].symbol} is not verified
-                </Box>
-              </TooltipHover>
-            )}
-            {tokens[tokenToIndex ?? '']?.isUnknown && (
-              <TooltipHover
-                title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
-                <Box className={classes.unknownWarning}>
-                  {tokens[tokenToIndex ?? ''].symbol} is not verified
-                </Box>
-              </TooltipHover>
-            )}
-          </Box>
-          <Box className={classes.transactionDetails}>
-            <Box className={classes.transactionDetailsInner}>
-              <button
-                onClick={
-                  tokenFromIndex !== null &&
-                  tokenToIndex !== null &&
-                  hasShowRateMessage() &&
-                  amountFrom !== '' &&
-                  amountTo !== ''
-                    ? handleOpenTransactionDetails
-                    : undefined
-                }
-                className={classNames(
-                  tokenFromIndex !== null &&
-                    tokenToIndex !== null &&
-                    hasShowRateMessage() &&
-                    amountFrom !== '' &&
-                    amountTo !== ''
-                    ? classes.HiddenTransactionButton
-                    : classes.transactionDetailDisabled,
-                  classes.transactionDetailsButton
-                )}>
-                <Grid className={classes.transactionDetailsWrapper}>
-                  <Typography className={classes.transactionDetailsHeader}>
-                    {detailsOpen && canShowDetails ? 'Hide' : 'Show'} transaction details
-                  </Typography>
-                </Grid>
-              </button>
-              {tokenFromIndex !== null &&
-                tokenToIndex !== null &&
-                tokenFromIndex !== tokenToIndex && (
-                  <TooltipHover title='Refresh'>
-                    <Grid container className={classes.tooltipRefresh}>
-                      <Refresher
-                        currentIndex={refresherTime}
-                        maxIndex={REFRESHER_INTERVAL}
-                        onClick={handleRefresh}
+              <Box className={classes.leftSection}>
+                <Typography component='h1'>Swap tokens</Typography>
+                {network === NetworkType.Mainnet ? (
+                  <SwapPointsPopover
+                    isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                    network={network}
+                    promotedSwapPairs={promotedSwapPairs}>
+                    <div>
+                      <EstimatedPointsLabel
+                        isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                        decimalIndex={decimalIndex}
+                        pointsForSwap={pointsForSwap}
+                        swapMultiplier={swapMultiplier}
+                        isLessThanOne={isLessThanOne}
+                        stringPointsValue={stringPointsValue}
+                        isAnyBlurShowed={isAnyBlurShowed}
                       />
+                    </div>
+                  </SwapPointsPopover>
+                ) : null}
+              </Box>
+
+              <Box className={classes.rightSection}>
+                <Button className={classes.slippageButton} onClick={e => handleClickSettings(e)}>
+                  <p>
+                    Slippage: <span className={classes.slippageAmount}>{slippTolerance}%</span>
+                  </p>
+                </Button>
+
+                <Box className={classes.swapControls}>
+                  <TooltipHover title='Refresh'>
+                    <Grid className={classes.refreshIconContainer}>
+                      <Button
+                        onClick={handleRefresh}
+                        className={classes.refreshIconBtn}
+                        disabled={
+                          priceFromLoading ||
+                          priceToLoading ||
+                          isBalanceLoading ||
+                          getStateMessage() === 'Loading' ||
+                          tokenFromIndex === null ||
+                          tokenToIndex === null ||
+                          tokenFromIndex === tokenToIndex
+                        }>
+                        <img
+                          src={icons.refreshIcon}
+                          className={classes.refreshIcon}
+                          alt='Refresh'
+                        />
+                      </Button>
                     </Grid>
                   </TooltipHover>
-                )}
-            </Box>
-            {canShowDetails ? (
-              <Box
-                className={classNames(
-                  classes.exchangeRateWrapper,
-                  (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
-                )}>
-                <ExchangeRate
-                  onClick={() => setRateReversed(!rateReversed)}
-                  tokenFromSymbol={tokens[rateReversed ? tokenToIndex : tokenFromIndex].symbol}
-                  tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
-                  amount={rateReversed ? 1 / swapRate : swapRate}
-                  tokenToDecimals={tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals}
-                  loading={getStateMessage() === 'Loading' || rateLoading || addBlur}
-                />
+                  <TooltipHover title='Settings'>
+                    <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
+                      <img
+                        src={icons.settingIcon}
+                        className={classes.settingsIcon}
+                        alt='Settings'
+                      />
+                    </Button>
+                  </TooltipHover>
+                </Box>
               </Box>
-            ) : null}
+
+              <Grid className={classes.slippage}>
+                <Slippage
+                  open={settings}
+                  setSlippage={setSlippage}
+                  handleClose={handleCloseSettings}
+                  anchorEl={anchorEl}
+                  initialSlippage={initialSlippage}
+                />
+              </Grid>
+            </Grid>
+            <Box
+              className={classNames(
+                classes.borderContainer,
+                (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
+                  classes.gradientBorderForContainer
+              )}>
+              <Grid container className={classes.root}>
+                <AnimatedWaves
+                  wavePosition={'top'}
+                  isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                />
+                <Typography
+                  className={classNames(
+                    classes.swapLabel,
+                    (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
+                  )}>
+                  Pay
+                </Typography>
+                <Box
+                  className={classNames(
+                    classes.exchangeRoot,
+                    lockAnimation ? classes.amountInputDown : undefined,
+                    (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
+                  )}>
+                  <ExchangeAmountInput
+                    value={amountFrom}
+                    balance={
+                      tokenFromIndex !== null && !!tokens[tokenFromIndex]
+                        ? printBN(tokens[tokenFromIndex].balance, tokens[tokenFromIndex].decimals)
+                        : '- -'
+                    }
+                    decimal={
+                      tokenFromIndex !== null
+                        ? tokens[tokenFromIndex].decimals
+                        : DEFAULT_TOKEN_DECIMAL
+                    }
+                    className={classes.amountInput}
+                    setValue={value => {
+                      if (value.match(/^\d*\.?\d*$/)) {
+                        setAmountFrom(value)
+                        setInputRef(inputTarget.FROM)
+                      }
+                    }}
+                    placeholder={`0.${'0'.repeat(6)}`}
+                    actionButtons={[
+                      {
+                        label: 'Max',
+                        variant: 'max',
+                        onClick: () => {
+                          actions.max(tokenFromIndex)
+                        }
+                      },
+                      {
+                        label: '50%',
+                        variant: 'half',
+                        onClick: () => {
+                          actions.half(tokenFromIndex)
+                        }
+                      }
+                    ]}
+                    tokens={tokens}
+                    current={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
+                    onSelect={setTokenFromIndex}
+                    disabled={tokenFromIndex === tokenToIndex || tokenFromIndex === null}
+                    hideBalances={walletStatus !== Status.Initialized}
+                    handleAddToken={handleAddToken}
+                    commonTokens={commonTokens}
+                    limit={1e14}
+                    initialHideUnknownTokensValue={initialHideUnknownTokensValue}
+                    onHideUnknownTokensChange={e => {
+                      onHideUnknownTokensChange(e)
+                      setHideUnknownTokens(e)
+                    }}
+                    tokenPrice={tokenFromPriceData?.price}
+                    priceLoading={priceFromLoading}
+                    isBalanceLoading={isBalanceLoading}
+                    showMaxButton={true}
+                    showBlur={
+                      (inputRef === inputTarget.TO && addBlur) ||
+                      lockAnimation ||
+                      (getStateMessage() === 'Loading' &&
+                        (inputRef === inputTarget.TO || inputRef === inputTarget.DEFAULT))
+                    }
+                    hiddenUnknownTokens={hideUnknownTokens}
+                    network={network}
+                    isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                  />
+                </Box>
+
+                <Box className={classes.tokenComponentTextContainer}>
+                  <Box
+                    className={classNames(
+                      classes.swapArrowBox,
+                      (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
+                        classes.darkBackground
+                    )}
+                    onClick={() => {
+                      if (lockAnimation) return
+                      setIsReversingTokens(true)
+                      setRateLoading(true)
+                      setLockAnimation(!lockAnimation)
+                      setRotates(rotates + 1)
+                      swap !== null ? setSwap(!swap) : setSwap(true)
+                      setTimeout(() => {
+                        const tmpAmount = amountTo
+
+                        const tmp = tokenFromIndex
+                        setTokenFromIndex(tokenToIndex)
+                        setTokenToIndex(tmp)
+
+                        setInputRef(inputTarget.FROM)
+                        setAmountFrom(tmpAmount)
+                      }, 50)
+                    }}>
+                    <Box
+                      className={classNames(
+                        classes.swapImgRoot,
+                        (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
+                          classes.componentBackground
+                      )}>
+                      <img
+                        src={icons.swapArrows}
+                        style={{
+                          transform: `rotate(${-rotates * 180}deg)`
+                        }}
+                        className={classes.swapArrows}
+                        alt='Invert tokens'
+                      />
+                    </Box>
+                  </Box>
+                </Box>
+                <Typography
+                  className={classNames(
+                    classes.swapLabel,
+                    (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
+                  )}
+                  mt={1.5}>
+                  Receive
+                </Typography>
+                <Box
+                  className={classNames(
+                    classes.exchangeRoot,
+                    classes.transactionBottom,
+                    lockAnimation ? classes.amountInputUp : undefined,
+                    (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
+                  )}>
+                  <ExchangeAmountInput
+                    value={amountTo}
+                    balance={
+                      tokenToIndex !== null
+                        ? printBN(tokens[tokenToIndex].balance, tokens[tokenToIndex].decimals)
+                        : '- -'
+                    }
+                    className={classes.amountInput}
+                    decimal={
+                      tokenToIndex !== null ? tokens[tokenToIndex].decimals : DEFAULT_TOKEN_DECIMAL
+                    }
+                    setValue={value => {
+                      if (value.match(/^\d*\.?\d*$/)) {
+                        setAmountTo(value)
+                        setInputRef(inputTarget.TO)
+                      }
+                    }}
+                    placeholder={`0.${'0'.repeat(6)}`}
+                    actionButtons={[
+                      {
+                        label: 'Max',
+                        variant: 'max',
+                        onClick: () => {
+                          actions.max(tokenFromIndex)
+                        }
+                      },
+                      {
+                        label: '50%',
+                        variant: 'half',
+                        onClick: () => {
+                          actions.half(tokenFromIndex)
+                        }
+                      }
+                    ]}
+                    tokens={tokens}
+                    current={tokenToIndex !== null ? tokens[tokenToIndex] : null}
+                    onSelect={setTokenToIndex}
+                    disabled={tokenFromIndex === tokenToIndex || tokenToIndex === null}
+                    hideBalances={walletStatus !== Status.Initialized}
+                    handleAddToken={handleAddToken}
+                    commonTokens={commonTokens}
+                    limit={1e14}
+                    initialHideUnknownTokensValue={initialHideUnknownTokensValue}
+                    onHideUnknownTokensChange={e => {
+                      onHideUnknownTokensChange(e)
+                      setHideUnknownTokens(e)
+                    }}
+                    tokenPrice={tokenToPriceData?.price}
+                    priceLoading={priceToLoading}
+                    isBalanceLoading={isBalanceLoading}
+                    showMaxButton={false}
+                    showBlur={
+                      (inputRef === inputTarget.FROM && addBlur) ||
+                      lockAnimation ||
+                      (getStateMessage() === 'Loading' &&
+                        (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
+                    }
+                    hiddenUnknownTokens={hideUnknownTokens}
+                    network={network}
+                    isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                  />
+                </Box>
+                <Box
+                  className={classes.unknownWarningContainer}
+                  style={{ height: IS_ERROR_LABEL_SHOW ? '34px' : '0px' }}>
+                  {priceImpact > 5 && (
+                    <TooltipHover title='Your trade size might be too large'>
+                      <Box className={classes.unknownWarning}>
+                        High price impact:{' '}
+                        {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}! This swap
+                        will cause a significant price movement.
+                      </Box>
+                    </TooltipHover>
+                  )}
+                  {tokens[tokenFromIndex ?? '']?.isUnknown && (
+                    <TooltipHover
+                      title={`${tokens[tokenFromIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                      <Box className={classes.unknownWarning}>
+                        {tokens[tokenFromIndex ?? ''].symbol} is not verified
+                      </Box>
+                    </TooltipHover>
+                  )}
+                  {tokens[tokenToIndex ?? '']?.isUnknown && (
+                    <TooltipHover
+                      title={`${tokens[tokenToIndex ?? ''].symbol} is unknown, make sure address is correct before trading`}>
+                      <Box className={classes.unknownWarning}>
+                        {tokens[tokenToIndex ?? ''].symbol} is not verified
+                      </Box>
+                    </TooltipHover>
+                  )}
+                </Box>
+                <Box className={classes.transactionDetails}>
+                  <Box className={classes.transactionDetailsInner}>
+                    <button
+                      onClick={
+                        tokenFromIndex !== null &&
+                        tokenToIndex !== null &&
+                        hasShowRateMessage() &&
+                        amountFrom !== '' &&
+                        amountTo !== ''
+                          ? handleOpenTransactionDetails
+                          : undefined
+                      }
+                      className={classNames(
+                        tokenFromIndex !== null &&
+                          tokenToIndex !== null &&
+                          hasShowRateMessage() &&
+                          amountFrom !== '' &&
+                          amountTo !== ''
+                          ? classes.HiddenTransactionButton
+                          : classes.transactionDetailDisabled,
+                        classes.transactionDetailsButton
+                      )}>
+                      <Grid className={classes.transactionDetailsWrapper}>
+                        <Typography className={classes.transactionDetailsHeader}>
+                          {detailsOpen && canShowDetails ? 'Hide' : 'Show'} transaction details
+                        </Typography>
+                      </Grid>
+                    </button>
+                    {isMd && (
+                      <button
+                        onClick={() => {
+                          setTransactionRouteModalOpen(true)
+                          blurContent()
+                        }}
+                        className={classes.routeButton}>
+                        <Typography sx={{ ...typography.caption2 }}>Route</Typography>
+                      </button>
+                    )}
+                    {tokenFromIndex !== null &&
+                      tokenToIndex !== null &&
+                      tokenFromIndex !== tokenToIndex && (
+                        <TooltipHover title='Refresh'>
+                          <Grid container className={classes.tooltipRefresh}>
+                            <Refresher
+                              currentIndex={refresherTime}
+                              maxIndex={REFRESHER_INTERVAL}
+                              onClick={handleRefresh}
+                            />
+                          </Grid>
+                        </TooltipHover>
+                      )}
+                  </Box>
+                  {canShowDetails ? (
+                    <Box
+                      className={classNames(
+                        classes.exchangeRateWrapper,
+                        (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
+                          classes.darkBackground
+                      )}>
+                      <ExchangeRate
+                        onClick={() => setRateReversed(!rateReversed)}
+                        tokenFromSymbol={
+                          tokens[rateReversed ? tokenToIndex : tokenFromIndex].symbol
+                        }
+                        tokenToSymbol={tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol}
+                        amount={rateReversed ? 1 / swapRate : swapRate}
+                        tokenToDecimals={
+                          tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
+                        }
+                        loading={getStateMessage() === 'Loading' || rateLoading || addBlur}
+                      />
+                    </Box>
+                  ) : null}
+                </Box>
+                <TransactionDetailsBox
+                  open={detailsOpen && canShowDetails}
+                  exchangeRate={{
+                    val: rateReversed ? 1 / swapRate : swapRate,
+                    symbol: canShowDetails
+                      ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol
+                      : '',
+                    decimal: canShowDetails
+                      ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
+                      : 0
+                  }}
+                  slippage={+slippTolerance}
+                  priceImpact={priceImpact}
+                  isLoadingRate={getStateMessage() === 'Loading' || addBlur}
+                  simulationPath={simulationPath}
+                />
+                <TokensInfo
+                  tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
+                  tokenTo={tokenToIndex !== null ? tokens[tokenToIndex] : null}
+                  tokenToPrice={tokenToPriceData?.price}
+                  tokenFromPrice={tokenFromPriceData?.price}
+                  copyTokenAddressHandler={copyTokenAddressHandler}
+                  network={network}
+                  isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                />
+                {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
+                  <ChangeWalletButton
+                    name='Connect wallet'
+                    onConnect={onConnectWallet}
+                    connected={false}
+                    onDisconnect={onDisconnectWallet}
+                    className={classes.connectWalletButton}
+                    isSwap={true}
+                  />
+                ) : getStateMessage() === 'Insufficient Wrapped ETH' ? (
+                  <TooltipHover
+                    title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
+                    top={-45}>
+                    <AnimatedButton
+                      content={getStateMessage()}
+                      className={
+                        getStateMessage() === 'Connect a wallet'
+                          ? `${classes.swapButton}`
+                          : getStateMessage() === 'Exchange' && progress === 'none'
+                            ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                            : classes.swapButton
+                      }
+                      disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
+                      onClick={() => {
+                        if (tokenFromIndex === null || tokenToIndex === null) return
+
+                        onSwap(
+                          fromFee(new BN(Number(+slippTolerance * 1000))),
+                          simulateResult.estimatedPriceAfterSwap,
+                          simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
+                          simulationPath.tokenBetween?.assetAddress ?? null,
+                          simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
+                          simulationPath.firstPair,
+                          simulationPath.secondPair,
+                          convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                          convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                          inputRef === inputTarget.FROM
+                        )
+                      }}
+                      progress={progress}
+                    />
+                  </TooltipHover>
+                ) : (
+                  <AnimatedButton
+                    content={getStateMessage()}
+                    className={
+                      getStateMessage() === 'Connect a wallet'
+                        ? `${classes.swapButton}`
+                        : getStateMessage() === 'Exchange' && progress === 'none'
+                          ? `${classes.swapButton} ${classes.ButtonSwapActive}`
+                          : classes.swapButton
+                    }
+                    disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
+                    onClick={() => {
+                      if (tokenFromIndex === null || tokenToIndex === null) return
+
+                      onSwap(
+                        // fromFee(new BN(Number(+slippTolerance * 1000))),
+                        // simulateResult.estimatedPriceAfterSwap,
+                        // tokens[tokenFromIndex].assetAddress,
+                        // tokens[tokenToIndex].assetAddress,
+                        // simulateResult.poolIndex,
+                        // convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                        // convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                        // inputRef === inputTarget.FROM
+                        fromFee(new BN(Number(+slippTolerance * 1000))),
+                        simulateResult.estimatedPriceAfterSwap,
+                        simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
+                        simulationPath.tokenBetween?.assetAddress ?? null,
+                        simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
+                        simulationPath.firstPair,
+                        simulationPath.secondPair,
+                        convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                        convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                        inputRef === inputTarget.FROM
+                      )
+                    }}
+                    progress={progress}
+                  />
+                )}
+                <AnimatedWaves
+                  wavePosition={'bottom'}
+                  isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                />
+              </Grid>
+            </Box>
           </Box>
-          <TransactionDetailsBox
-            open={detailsOpen && canShowDetails}
-            exchangeRate={{
-              val: rateReversed ? 1 / swapRate : swapRate,
-              symbol: canShowDetails
-                ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].symbol
-                : '',
-              decimal: canShowDetails
-                ? tokens[rateReversed ? tokenFromIndex : tokenToIndex].decimals
-                : 0
-            }}
-            slippage={+slippTolerance}
-            priceImpact={priceImpact}
-            isLoadingRate={getStateMessage() === 'Loading' || addBlur}
-            simulationPath={simulationPath}
-          />
-          <TokensInfo
-            tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}
-            tokenTo={tokenToIndex !== null ? tokens[tokenToIndex] : null}
-            tokenToPrice={tokenToPriceData?.price}
-            tokenFromPrice={tokenFromPriceData?.price}
-            copyTokenAddressHandler={copyTokenAddressHandler}
-            network={network}
-            isPairGivingPoints={isFirstPairGivingPoints || isSecondPairGivingPoints}
-          />
-          {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
-            <ChangeWalletButton
-              name='Connect wallet'
-              onConnect={onConnectWallet}
-              connected={false}
-              onDisconnect={onDisconnectWallet}
-              className={classes.connectWalletButton}
-              isSwap={true}
-            />
-          ) : getStateMessage() === 'Insufficient Wrapped ETH' ? (
-            <TooltipHover
-              title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
-              top={-45}>
-              <AnimatedButton
-                content={getStateMessage()}
-                className={
-                  getStateMessage() === 'Connect a wallet'
-                    ? `${classes.swapButton}`
-                    : getStateMessage() === 'Exchange' && progress === 'none'
-                      ? `${classes.swapButton} ${classes.ButtonSwapActive}`
-                      : classes.swapButton
-                }
-                disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
-                onClick={() => {
-                  if (tokenFromIndex === null || tokenToIndex === null) return
-
-                  onSwap(
-                    fromFee(new BN(Number(+slippTolerance * 1000))),
-                    simulateResult.estimatedPriceAfterSwap,
-                    simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
-                    simulationPath.tokenBetween?.assetAddress ?? null,
-                    simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
-                    simulationPath.firstPair,
-                    simulationPath.secondPair,
-                    convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                    convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                    inputRef === inputTarget.FROM
-                  )
-                }}
-                progress={progress}
+          {!isMd && (
+            <Box
+              sx={{
+                height: '100%',
+                width: '350px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'flex-end'
+              }}>
+              <TransactionRoute
+                routeData={route}
+                showCloseButton={false}
+                isLoading={isRouteLoading}
               />
-            </TooltipHover>
-          ) : (
-            <AnimatedButton
-              content={getStateMessage()}
-              className={
-                getStateMessage() === 'Connect a wallet'
-                  ? `${classes.swapButton}`
-                  : getStateMessage() === 'Exchange' && progress === 'none'
-                    ? `${classes.swapButton} ${classes.ButtonSwapActive}`
-                    : classes.swapButton
-              }
-              disabled={getStateMessage() !== 'Exchange' || progress !== 'none'}
-              onClick={() => {
-                if (tokenFromIndex === null || tokenToIndex === null) return
-
-                onSwap(
-                  // fromFee(new BN(Number(+slippTolerance * 1000))),
-                  // simulateResult.estimatedPriceAfterSwap,
-                  // tokens[tokenFromIndex].assetAddress,
-                  // tokens[tokenToIndex].assetAddress,
-                  // simulateResult.poolIndex,
-                  // convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                  // convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                  // inputRef === inputTarget.FROM
-                  fromFee(new BN(Number(+slippTolerance * 1000))),
-                  simulateResult.estimatedPriceAfterSwap,
-                  simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
-                  simulationPath.tokenBetween?.assetAddress ?? null,
-                  simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
-                  simulationPath.firstPair,
-                  simulationPath.secondPair,
-                  convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                  convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                  inputRef === inputTarget.FROM
-                )
-              }}
-              progress={progress}
-            />
+            </Box>
           )}
-          <AnimatedWaves
-            wavePosition={'bottom'}
-            isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
-          />
-        </Grid>
+        </Box>
       </Box>
       <img src={icons.audit} alt='Audit' style={{ marginTop: '24px' }} width={180} />
     </Grid>

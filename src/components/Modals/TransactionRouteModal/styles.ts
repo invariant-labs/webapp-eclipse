@@ -36,6 +36,8 @@ const useStyles = makeStyles()(() => {
     },
     root: {
       height: 'max-content',
+      display: 'flex',
+      justifyContent: 'center',
       borderRadius: 24,
       padding: '20px 24px',
       [theme.breakpoints.down('sm')]: {
