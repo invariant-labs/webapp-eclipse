@@ -54,7 +54,7 @@ export const useStyles = makeStyles()(theme => {
       minWidth: 12,
       minHeight: 12,
       flex: '0 0 auto',
-      marginRight: 3
+      marginRight: 0
     },
     depositHeader: {
       width: '100%',

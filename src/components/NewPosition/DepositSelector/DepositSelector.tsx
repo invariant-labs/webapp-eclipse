@@ -622,17 +622,15 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                   : classes.switchNotSelected
               )}>
               <span className={classes.autoText}>Auto</span>
-              {isAutoSwapAvailable && (
-                <Tooltip
-                  title={
-                    'Autoswap automatically adjusts tokens balances to match your chosen ratio, saving time and optimizing transactions. By default, it executes the most optimal swap, while the manual mode allows you to set parameters such as max price impact or minimum utilization.'
-                  }
-                  classes={{ tooltip: classes.tooltip }}>
-                  <span className={classes.tooltipIconWrapper}>
-                    <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
-                  </span>
-                </Tooltip>
-              )}
+              <Tooltip
+                title={
+                  'Autoswap automatically adjusts tokens balances to match your chosen ratio, saving time and optimizing transactions. By default, it executes the most optimal swap, while the manual mode allows you to set parameters such as max price impact or minimum utilization.'
+                }
+                classes={{ tooltip: classes.tooltip }}>
+                <span className={classes.tooltipIconWrapper}>
+                  <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
+                </span>
+              </Tooltip>
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
