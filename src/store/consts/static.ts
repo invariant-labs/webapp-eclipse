@@ -547,7 +547,7 @@ export const WETH_MIN_FAUCET_FEE_TEST = new BN(45000)
 export const WETH_MIN_FAUCET_FEE_MAIN = new BN(25000)
 
 export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST = new BN(50000)
-export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN = new BN(25000)
+export const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN = new BN(0)
 
 export const WETH_POSITION_INIT_LAMPORTS_MAIN = new BN(700000)
 export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(700000)
@@ -722,7 +722,8 @@ export const PRICE_QUERY_COOLDOWN = 60 * 1000
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success'
 
-export const MAX_CROSSES_IN_SINGLE_TX = 11
+export const MAX_CROSSES_IN_SINGLE_TX = 10
+export const MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS = 36
 
 export const walletNames = {
   [WalletType.NIGHTLY_WALLET]: 'Nightly',

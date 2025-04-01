@@ -10,12 +10,15 @@ import { getConnection, handleRpcError } from './connection'
 import {
   Keypair,
   PublicKey,
+  sendAndConfirmRawTransaction,
+  Transaction,
   TransactionExpiredTimeoutError,
   TransactionInstruction,
   VersionedTransaction
 } from '@solana/web3.js'
 import {
   MAX_CROSSES_IN_SINGLE_TX,
+  MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   WRAPPED_ETH_ADDRESS
@@ -27,18 +30,21 @@ import { createLoaderKey, ensureError } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createNativeAtaInstructions,
-  createNativeAtaWithTransferInstructions
+  createNativeAtaWithTransferInstructions,
+  getLookupTableAddresses
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
+  MAX_CU,
   TICK_CROSSES_PER_IX,
   TwoHopSwap,
   TwoHopSwapCache
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
+import { computeUnitsInstruction } from '@invariant-labs/sdk-eclipse/src'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -144,64 +150,125 @@ export function* handleSwapWithETH(): Generator {
       toAddress = yield* call(createAccount, tokenTo)
     }
 
-    const swapTx = yield* call(
-      [marketProgram, marketProgram.versionedSwapTx],
-      {
-        pair: new Pair(tokenFrom, tokenTo, {
-          fee: swapPool.fee,
-          tickSpacing: swapPool.tickSpacing
-        }),
-        xToY: isXtoY,
-        amount: byAmountIn ? amountIn : amountOut,
-        estimatedPriceAfterSwap,
-        slippage: slippage,
-        accountX: isXtoY ? fromAddress : toAddress,
-        accountY: isXtoY ? toAddress : fromAddress,
-        byAmountIn: byAmountIn,
-        owner: wallet.publicKey
-      },
-      {
-        pool: swapPool,
-        tickmap: tickmaps[swapPool.tickmap.toString()]
-      },
-      { tickCrosses: MAX_CROSSES_IN_SINGLE_TX - 1 },
-      prependendIxs,
-      appendedIxs
+    const swapPair = new Pair(tokenFrom, tokenTo, {
+      fee: swapPool.fee,
+      tickSpacing: swapPool.tickSpacing
+    })
+    const tickIndexes = marketProgram.findTickIndexesForSwap(
+      swapPool,
+      tickmaps[swapPool.tickmap.toString()],
+      isXtoY,
+      MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS
     )
 
-    // const swapBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    // swapTx.recentBlockhash = swapBlockhash.blockhash
-    // swapTx.feePayer = wallet.publicKey
-
-    // const unwrapTx = new Transaction().add(unwrapIx)
-    // const unwrapBlockhash = yield* call([connection, connection.getRecentBlockhash])
-    // unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
-    // unwrapTx.feePayer = wallet.publicKey
-
-    yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
-
-    const serializedMessage = swapTx.message.serialize()
-    const signatureUint8 = nacl.sign.detached(serializedMessage, wrappedEthAccount.secretKey)
-
-    swapTx.addSignature(wrappedEthAccount.publicKey, signatureUint8)
-
-    const initialSignedTx = (yield* call(
-      [wallet, wallet.signTransaction],
-      swapTx
-    )) as VersionedTransaction
-
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
-
-    const initialTxid = yield* call(
-      [connection, connection.sendRawTransaction],
-      initialSignedTx.serialize(),
-      {
-        skipPreflight: false
-      }
+    const luts = getLookupTableAddresses(
+      marketProgram,
+      new Pair(tokenFrom, tokenTo, {
+        fee: swapPool.fee,
+        tickSpacing: swapPool.tickSpacing
+      }),
+      tickIndexes
     )
 
-    yield* call([connection, connection.confirmTransaction], initialTxid)
+    let initialTxid: string
+
+    if (luts.length !== 0) {
+      const swapTx = yield* call(
+        [marketProgram, marketProgram.versionedSwapTx],
+        {
+          pair: swapPair,
+          xToY: isXtoY,
+          amount: byAmountIn ? amountIn : amountOut,
+          estimatedPriceAfterSwap,
+          slippage: slippage,
+          accountX: isXtoY ? fromAddress : toAddress,
+          accountY: isXtoY ? toAddress : fromAddress,
+          byAmountIn: byAmountIn,
+          owner: wallet.publicKey
+        },
+        {
+          pool: swapPool,
+          tickmap: tickmaps[swapPool.tickmap.toString()],
+          tokenXProgram: allTokens[swapPool.tokenX.toString()].tokenProgram,
+          tokenYProgram: allTokens[swapPool.tokenY.toString()].tokenProgram
+        },
+        { tickIndexes },
+        prependendIxs,
+        appendedIxs,
+        luts
+      )
+
+      yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+      const serializedMessage = swapTx.message.serialize()
+      const signatureUint8 = nacl.sign.detached(serializedMessage, wrappedEthAccount.secretKey)
+
+      swapTx.addSignature(wrappedEthAccount.publicKey, signatureUint8)
+
+      const initialSignedTx = (yield* call(
+        [wallet, wallet.signTransaction],
+        swapTx
+      )) as VersionedTransaction
+
+      closeSnackbar(loaderSigningTx)
+      yield put(snackbarsActions.remove(loaderSigningTx))
+
+      initialTxid = yield* call(
+        [connection, connection.sendRawTransaction],
+        initialSignedTx.serialize(),
+        {
+          skipPreflight: false
+        }
+      )
+
+      yield* call([connection, connection.confirmTransaction], initialTxid)
+    } else {
+      const setCuIx = computeUnitsInstruction(MAX_CU, wallet.publicKey)
+      const swapIx = yield* call(
+        [marketProgram, marketProgram.swapIx],
+        {
+          pair: swapPair,
+          xToY: isXtoY,
+          amount: byAmountIn ? amountIn : amountOut,
+          estimatedPriceAfterSwap,
+          slippage: slippage,
+          accountX: isXtoY ? fromAddress : toAddress,
+          accountY: isXtoY ? toAddress : fromAddress,
+          byAmountIn: byAmountIn,
+          owner: wallet.publicKey
+        },
+        {
+          pool: swapPool,
+          tickmap: tickmaps[swapPool.tickmap.toString()],
+          tokenXProgram: allTokens[swapPool.tokenX.toString()].tokenProgram,
+          tokenYProgram: allTokens[swapPool.tokenY.toString()].tokenProgram
+        },
+        { tickCrosses: MAX_CROSSES_IN_SINGLE_TX }
+      )
+      const tx = new Transaction()
+        .add(setCuIx)
+        .add(...prependendIxs)
+        .add(swapIx)
+        .add(...appendedIxs)
+
+      yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+      const initialSignedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+
+      closeSnackbar(loaderSigningTx)
+      yield put(snackbarsActions.remove(loaderSigningTx))
+
+      initialSignedTx.partialSign(wrappedEthAccount)
+
+      initialTxid = yield* call(
+        sendAndConfirmRawTransaction,
+        connection,
+        initialSignedTx.serialize(),
+        {
+          skipPreflight: false
+        }
+      )
+    }
 
     if (!initialTxid.length) {
       yield put(swapActions.setSwapSuccess(false))
@@ -886,6 +953,8 @@ export function* handleSwap(): Generator {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+    const connection = yield* call(getConnection)
+
     const swapPool = allPools.find(
       pool =>
         (tokenFrom.equals(pool.tokenX) &&
@@ -924,43 +993,106 @@ export function* handleSwap(): Generator {
       toAddress = yield* call(createAccount, tokenTo)
     }
 
-    const swapTx = yield* call(
-      [marketProgram, marketProgram.versionedSwapTx],
-      {
-        pair: new Pair(tokenFrom, tokenTo, {
-          fee: swapPool.fee,
-          tickSpacing: swapPool.tickSpacing
-        }),
-        xToY: isXtoY,
-        amount: byAmountIn ? amountIn : amountOut,
-        estimatedPriceAfterSwap,
-        slippage: slippage,
-        accountX: isXtoY ? fromAddress : toAddress,
-        accountY: isXtoY ? toAddress : fromAddress,
-        byAmountIn: byAmountIn,
-        owner: wallet.publicKey
-      },
-      {
-        pool: swapPool,
-        tickmap: tickmaps[swapPool.tickmap.toString()],
-        tokenXProgram: allTokens[swapPool.tokenX.toString()].tokenProgram,
-        tokenYProgram: allTokens[swapPool.tokenY.toString()].tokenProgram
-      }
-    )
-    const connection = yield* call(getConnection)
-
-    yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
-
-    const signedTx = (yield* call([wallet, wallet.signTransaction], swapTx)) as VersionedTransaction
-
-    closeSnackbar(loaderSigningTx)
-    yield put(snackbarsActions.remove(loaderSigningTx))
-
-    const txid = yield* call([connection, connection.sendRawTransaction], signedTx.serialize(), {
-      skipPreflight: false
+    const swapPair = new Pair(tokenFrom, tokenTo, {
+      fee: swapPool.fee,
+      tickSpacing: swapPool.tickSpacing
     })
 
-    yield* call([connection, connection.confirmTransaction], txid)
+    const tickIndexes = marketProgram.findTickIndexesForSwap(
+      swapPool,
+      tickmaps[swapPool.tickmap.toString()],
+      isXtoY,
+      MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS
+    )
+
+    const luts = getLookupTableAddresses(
+      marketProgram,
+      new Pair(tokenFrom, tokenTo, {
+        fee: swapPool.fee,
+        tickSpacing: swapPool.tickSpacing
+      }),
+      tickIndexes
+    )
+
+    let txid: string
+
+    if (luts.length !== 0) {
+      const swapTx = yield* call(
+        [marketProgram, marketProgram.versionedSwapTx],
+        {
+          pair: swapPair,
+          xToY: isXtoY,
+          amount: byAmountIn ? amountIn : amountOut,
+          estimatedPriceAfterSwap,
+          slippage: slippage,
+          accountX: isXtoY ? fromAddress : toAddress,
+          accountY: isXtoY ? toAddress : fromAddress,
+          byAmountIn: byAmountIn,
+          owner: wallet.publicKey
+        },
+        {
+          pool: swapPool,
+          tickmap: tickmaps[swapPool.tickmap.toString()],
+          tokenXProgram: allTokens[swapPool.tokenX.toString()].tokenProgram,
+          tokenYProgram: allTokens[swapPool.tokenY.toString()].tokenProgram
+        },
+        { tickIndexes },
+        [],
+        [],
+        luts
+      )
+
+      yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+      const initialSignedTx = (yield* call(
+        [wallet, wallet.signTransaction],
+        swapTx
+      )) as VersionedTransaction
+
+      closeSnackbar(loaderSigningTx)
+      yield put(snackbarsActions.remove(loaderSigningTx))
+
+      txid = yield* call([connection, connection.sendRawTransaction], initialSignedTx.serialize(), {
+        skipPreflight: false
+      })
+
+      yield* call([connection, connection.confirmTransaction], txid)
+    } else {
+      const setCuIx = computeUnitsInstruction(MAX_CU, wallet.publicKey)
+      const swapIx = yield* call(
+        [marketProgram, marketProgram.swapIx],
+        {
+          pair: swapPair,
+          xToY: isXtoY,
+          amount: byAmountIn ? amountIn : amountOut,
+          estimatedPriceAfterSwap,
+          slippage: slippage,
+          accountX: isXtoY ? fromAddress : toAddress,
+          accountY: isXtoY ? toAddress : fromAddress,
+          byAmountIn: byAmountIn,
+          owner: wallet.publicKey
+        },
+        {
+          pool: swapPool,
+          tickmap: tickmaps[swapPool.tickmap.toString()],
+          tokenXProgram: allTokens[swapPool.tokenX.toString()].tokenProgram,
+          tokenYProgram: allTokens[swapPool.tokenY.toString()].tokenProgram
+        },
+        { tickCrosses: MAX_CROSSES_IN_SINGLE_TX }
+      )
+      const tx = new Transaction().add(setCuIx).add(swapIx)
+
+      yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+
+      const initialSignedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+
+      closeSnackbar(loaderSigningTx)
+      yield put(snackbarsActions.remove(loaderSigningTx))
+
+      txid = yield* call(sendAndConfirmRawTransaction, connection, initialSignedTx.serialize(), {
+        skipPreflight: false
+      })
+    }
 
     yield put(swapActions.setSwapSuccess(!!txid.length))
 
