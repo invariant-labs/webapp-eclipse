@@ -17,7 +17,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
     {
       title: 'Concentration Slider',
       content: (
-        <Grid display='flex' flexDirection='column' justifyContent='space-between' minHeight={300}>
+        <Grid className={classes.contentWrapper}>
           <Typography className={classes.text}>
             The rule is simple - the more concentrated your position is, the more points you earn.
             <br />
@@ -37,7 +37,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
     {
       title: 'What is Concentration?',
       content: (
-        <Grid display='flex' flexDirection='column' justifyContent='space-between' minHeight={300}>
+        <Grid className={classes.contentWrapper}>
           <Typography className={classes.text} mt={3}>
             Concentration refers to focusing liquidity within a specific price range.
           </Typography>
@@ -56,7 +56,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
     {
       title: 'How Does Concentration Impact Points?',
       content: (
-        <Grid display='flex' flexDirection='column' justifyContent='space-between' minHeight={300}>
+        <Grid className={classes.contentWrapper}>
           <Typography className={classes.text}>
             Concentration can significantly boost the points you earn. The scoring system rewards
             efficient positions, and higher concentration means your liquidity works more
@@ -88,15 +88,8 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
     {
       title: 'How to Use Concentration',
       content: (
-        <Grid display='flex' flexDirection='column' minHeight={300}>
-          <ol
-            style={{
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between',
-              height: 'max-content',
-              flex: 1
-            }}>
+        <Grid className={classes.contentWrapper} justifyContent='start'>
+          <ol className={classes.olWrapper}>
             <li className={classes.text}>
               <Typography className={classes.text}>
                 Start Small: Experiment by setting narrower ranges for your liquidity around the
@@ -152,12 +145,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
           root: classes.popoverRoot,
           paper: classes.paper
         }}
-        onClose={handleClose}
-        style={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center'
-        }}>
+        onClose={handleClose}>
         <Box className={classes.root}>
           <Grid container justifyContent='space-between' alignItems='center'>
             <div style={{ width: '16px', height: '16px' }} />

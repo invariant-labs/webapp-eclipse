@@ -6,7 +6,7 @@ import { theme } from '@static/theme'
 import { Reward } from '@store/consts/types'
 import rewardsImages from '@static/png/rewards/rewardsImages'
 import classNames from 'classnames'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 export interface RewardItemInterface {
   number: number
   reward: Reward
@@ -52,7 +52,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({
   }, [isConnected, rewardReceived])
 
   return (
-    <Grid className={classes.container} container alignItems='center'>
+    <Grid className={classes.container} container>
       {isMd ? (
         <>
           <div className={classes.mobileBackgroundTop} />
@@ -61,15 +61,10 @@ const RewardItem: React.FC<RewardItemInterface> = ({
       ) : (
         <div className={classes.background} />
       )}
-      <Grid
-        display='flex'
-        flex={1}
-        alignItems='center'
-        justifyContent='space-between'
-        className={classes.innerContainer}>
+      <Grid flex={1} className={classes.innerContainer}>
         <Grid className={classes.leftItems}>
           <Typography className={classes.number}>{number}</Typography>
-          <Grid display='flex' justifyContent='center' alignItems='center'>
+          <Grid className={classes.rewardWrapper}>
             <img
               src={rewardsImages[reward.image]}
               alt={reward.name}
@@ -79,15 +74,13 @@ const RewardItem: React.FC<RewardItemInterface> = ({
           {isMd && <div style={{ width: '36px' }} />}
         </Grid>
 
-        <Grid
-          display='flex'
-          gap={3}
-          flexDirection='column'
-          justifyContent='center'
-          alignItems='center'
-          m={6}>
-          <Grid display='flex' justifyContent='center' alignItems='center'>
-            <img src={icons.airdropGrey} alt='points' />
+        <Grid className={classes.centerWrapper}>
+          <Grid className={classes.pointsWrapper}>
+            <img
+              src={isEligible ? icons.airdropRainbow : icons.airdropGrey}
+              alt='points'
+              width={17}
+            />
             <Typography className={classes.subtitle}>{reward.name}</Typography>
           </Grid>
           <Typography className={classes.title}>
@@ -100,34 +93,16 @@ const RewardItem: React.FC<RewardItemInterface> = ({
             </Typography>
           </TooltipGradient>
         </Grid>
-        <Grid
-          container={isMd}
-          display='flex'
-          gap={isMd ? 2 : 3}
-          flexDirection='column'
-          justifyContent='center'
-          alignItems='center'>
-          <Grid
-            display='flex'
-            justifyContent='space-between'
-            alignItems='center'
-            className={classes.label}>
+        <Grid container={isMd} className={classes.infoWrapper}>
+          <Grid className={classes.label}>
             <Typography>Distribution date:</Typography>
             <span>{reward.distributionDate}</span>
           </Grid>
-          <Grid
-            display='flex'
-            justifyContent='space-between'
-            alignItems='center'
-            className={classes.label}>
+          <Grid className={classes.label}>
             <Typography>Type:</Typography>
             <span>{reward.type}</span>
           </Grid>
-          <Grid
-            display='flex'
-            justifyContent='space-between'
-            alignItems='center'
-            className={classes.label}>
+          <Grid className={classes.label}>
             <Typography>Eligible:</Typography>
             <span>{reward.eligible}</span>
           </Grid>

@@ -6,19 +6,14 @@ const useStyles = makeStyles()((theme: Theme) => {
   return {
     root: {
       margin: 'auto',
+      flexDirection: 'row',
+      alignItems: 'center',
+      flexWrap: 'nowrap',
       maxWidth: 1920,
-      paddingInline: 150,
       height: 70,
       display: 'flex',
       justifyContent: 'space-between',
-
-      [theme.breakpoints.down('xl')]: {
-        paddingInline: 32
-      },
-
-      [theme.breakpoints.down('lg')]: {
-        paddingInline: 24
-      },
+      paddingInline: 24,
 
       [theme.breakpoints.down('sm')]: {
         paddingInline: 8
@@ -27,6 +22,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     logo: {
       width: 150,
       height: 40,
+      flexShrink: 0,
 
       '&:hover': {
         cursor: 'pointer'
@@ -36,6 +32,12 @@ const useStyles = makeStyles()((theme: Theme) => {
       minWidth: 40,
       height: 30,
       marginRight: 8,
+      [theme.breakpoints.up(650)]: {
+        display: 'none'
+      },
+      [theme.breakpoints.down('sm')]: {
+        marginRight: 0
+      },
 
       '&:hover': {
         cursor: 'pointer'
@@ -44,6 +46,7 @@ const useStyles = makeStyles()((theme: Theme) => {
     routers: {
       backgroundColor: colors.invariant.black,
       borderRadius: '10px',
+      flexWrap: 'nowrap',
       transition: 'left 300ms',
       width: 'fit-content',
       margin: '0 10px 0 10px'
@@ -61,24 +64,22 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       width: 'auto',
       justifyContent: 'flex-end',
-      gap: 8,
+      gap: 12,
       flexWrap: 'nowrap',
       alignItems: 'center',
-
-      [theme.breakpoints.up('lg')]: {
-        minWidth: 500
-      },
-
-      [theme.breakpoints.only('md')]: {
-        minWidth: 300
+      [theme.breakpoints.up(1450)]: {
+        flex: '1 1 0%'
       },
 
       [theme.breakpoints.down('md')]: {
-        marginLeft: 0
+        marginLeft: 0,
+        width: '100%',
+        justifyContent: 'center'
       },
 
       [theme.breakpoints.down('sm')]: {
-        gap: 4
+        justifyContent: 'space-between',
+        gap: 0
       }
     },
     leftButtons: {
@@ -126,7 +127,15 @@ const useStyles = makeStyles()((theme: Theme) => {
       }
     },
     leftSide: {
-      width: 'auto'
+      width: 'auto',
+      justifyContent: 'flex-start',
+      [theme.breakpoints.down(650)]: {
+        display: 'none'
+      },
+
+      [theme.breakpoints.up(1450)]: {
+        flex: '1 1 0%'
+      }
     }
   }
 })

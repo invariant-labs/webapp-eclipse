@@ -1,6 +1,6 @@
 import icons from '@static/icons'
 import useStyles from './styles'
-import GradientBorder from '@components/GradientBorder/GradientBorder'
+import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors } from '@static/theme'
 import { Grid } from '@mui/material'
 import { useEffect, useRef, useState } from 'react'
@@ -47,16 +47,13 @@ export const WarningBanner = ({ onClose, isHiding, lastTimestamp }: INormalBanne
   return (
     <Grid
       container
-      alignItems='center'
-      justifyContent='center'
+      className={classes.mainWrapper}
       style={{
         height: isHiding ? 0 : `${contentRef.current ? height + 'px' : 'auto'}`,
-        opacity: isHiding ? 0 : 1,
-        overflow: 'hidden',
-        transition: 'height 0.3s ease-in-out, opacity 0.3s ease-in-out'
+        opacity: isHiding ? 0 : 1
       }}>
       <div ref={contentRef}>
-        <Grid container alignItems='center' justifyContent='center' mb={9}>
+        <Grid container className={classes.boxWrapper}>
           <GradientBorder
             borderColor={colors.invariant.warning}
             borderRadius={24}

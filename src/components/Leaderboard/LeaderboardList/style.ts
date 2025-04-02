@@ -1,5 +1,5 @@
 import { alpha } from '@mui/material'
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -18,6 +18,16 @@ export const useStyles = makeStyles()(() => ({
     position: 'relative',
     zIndex: 2,
     backgroundColor: `${colors.invariant.newDark} !important`
+  },
+  pagination: {
+    borderTop: `1px solid ${colors.invariant.light}`,
+    padding: '20px 24px 10px 0',
+    maxWidth: '100%',
+    borderBottomLeftRadius: '24px',
+    borderBottomRightRadius: '24px',
+    [theme.breakpoints.down('lg')]: {
+      padding: '20px 12px'
+    }
   },
 
   waveImage: {
@@ -75,6 +85,21 @@ export const useStyles = makeStyles()(() => ({
     animation: 'pulse 1.5s ease-in-out infinite',
     opacity: 0.7
   },
+  pagerWrapper: {
+    width: '100%',
+    position: 'relative',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: '20px 0 10px 0',
+    [theme.breakpoints.down('md')]: {
+      flexDirection: 'column'
+    },
+    '& span': {
+      color: colors.invariant.textGrey
+    }
+  },
   '@keyframes pulse': {
     '0%': {
       opacity: 0.7
@@ -84,6 +109,11 @@ export const useStyles = makeStyles()(() => ({
     },
     '100%': {
       opacity: 0.7
+    }
+  },
+  listContainer: {
+    '&:last-child': {
+      background: 'red'
     }
   }
 }))

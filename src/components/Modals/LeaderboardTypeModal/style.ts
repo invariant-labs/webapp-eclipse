@@ -8,22 +8,19 @@ const useStyles = makeStyles()(() => {
       width: 140,
       borderBottomLeftRadius: 16,
       borderBottomRightRadius: 16,
-      paddingLeft: 16,
-      paddingRight: 16,
+      padding: 16,
       display: 'flex',
       alignItems: 'flex-start',
       justifyContent: 'flex-start',
       flexDirection: 'column',
-      gap: 10,
-      paddingTop: 26,
-      paddingBottom: 10
+      gap: 10
     },
     paper: {
       background: 'transparent',
       boxShadow: 'none',
       borderRadius: '16px',
       boxSizing: 'border-box',
-      marginTop: '-16px'
+      marginTop: '8px'
     },
     optionButton: {
       width: '100%',

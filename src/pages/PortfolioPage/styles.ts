@@ -5,6 +5,7 @@ const useStyles = makeStyles()(theme => {
   return {
     container: {
       display: 'flex',
+      flexWrap: 'wrap',
       justifyContent: 'center',
       alignItems: 'flex-start',
       backgroundColor: 'transparent',
@@ -23,23 +24,17 @@ const useStyles = makeStyles()(theme => {
         paddingInline: 8
       }
     },
-    notConnectedPlaceholder: {
-      height: '400px',
-      width: '100%',
-      borderTopLeftRadius: '24px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-
-      [theme.breakpoints.down('md')]: {
-        justifyContent: 'flex-start',
-        paddingTop: '90px'
+    emptyContainer: {
+      marginTop: 104,
+      [theme.breakpoints.down('sm')]: {
+        marginTop: 30
       },
+      width: 1122,
+      display: 'flex',
 
-      flexDirection: 'column',
-      borderTopRightRadius: '24px',
-      background: 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)'
+      maxWidth: '100%'
     },
+
     button: {
       height: 40,
       width: 200,
@@ -62,10 +57,15 @@ const useStyles = makeStyles()(theme => {
     innerContainer: {
       maxWidth: 1210,
       minHeight: '70vh',
+      display: 'flex',
+      justifyContent: 'center',
 
       [theme.breakpoints.down('md')]: {
         width: '100%'
       }
+    },
+    changeWalletButtonContainer: {
+      marginTop: 16
     }
   }
 })

@@ -13,7 +13,7 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import LiquidityPoolList from '@components/LiquidityPoolList/LiquidityPoolList'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 
-import { FilterSearch, ISearchToken } from '@components/FilterSearch/FilterSearch'
+import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { theme } from '@static/theme'
 
 export const WrappedPoolList: React.FC = () => {
@@ -112,6 +112,7 @@ export const WrappedPoolList: React.FC = () => {
               ?.pointsPerSecond || '0',
           isPromoted: promotedPools.some(pool => pool.address === poolData.poolAddress.toString())
         }))}
+        initialLength={poolsList.length}
         network={currentNetwork}
         copyAddressHandler={copyAddressHandler}
         isLoading={isLoadingStats}

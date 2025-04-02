@@ -2,14 +2,11 @@ import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
-import { BestTier, Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
+import { Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
-import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
-import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
-import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
+
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
@@ -19,6 +16,11 @@ export enum NetworkType {
   Mainnet = 'Mainnet'
 }
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
+
+export enum SwapType {
+  Normal,
+  WithHop
+}
 
 export const WETH_ADDRESS = {
   [NetworkType.Mainnet]: new PublicKey('So11111111111111111111111111111111111111112'),
@@ -486,94 +488,6 @@ export const tokens: Record<NetworkType, Token[]> = {
   Local: []
 }
 
-const mainnetBestTiersCreator = () => {
-  // const stableTokens: Record<string, PublicKey> = {
-  // }
-
-  // const unstableTokens: Record<string, PublicKey> = {
-  // }
-
-  const bestTiers: BestTier[] = []
-
-  // for (let i = 0; i < 4; i++) {
-  //   const tokenX = Object.values(stableTokens)[i]
-  //   for (let j = i + 1; j < 4; j++) {
-  //     const tokenY = Object.values(stableTokens)[j]
-
-  //     bestTiers.push({
-  //       tokenX,
-  //       tokenY,
-  //       bestTierIndex: 0
-  //     })
-  //   }
-  // }
-
-  // for (let i = 0; i < 5; i++) {
-  //   const [symbolX, tokenX] = Object.entries(unstableTokens)[i]
-  //   for (let j = i + 1; j < 5; j++) {
-  //     const [symbolY, tokenY] = Object.entries(unstableTokens)[j]
-
-  //     if (symbolX.slice(-3) === 'ETH' && symbolY.slice(-3) === 'ETH') {
-  //       bestTiers.push({
-  //         tokenX,
-  //         tokenY,
-  //         bestTierIndex: 0
-  //       })
-  //     } else {
-  //       bestTiers.push({
-  //         tokenX,
-  //         tokenY,
-  //         bestTierIndex: 2
-  //       })
-  //     }
-  //   }
-  // }
-
-  // for (let i = 0; i < 4; i++) {
-  //   const tokenX = Object.values(stableTokens)[i]
-  //   for (let j = 0; j < 5; j++) {
-  //     const tokenY = Object.values(unstableTokens)[j]
-
-  //     bestTiers.push({
-  //       tokenX,
-  //       tokenY,
-  //       bestTierIndex: 2
-  //     })
-  //   }
-  // }
-
-  return bestTiers
-}
-
-export const bestTiers: Record<NetworkType, BestTier[]> = {
-  [NetworkType.Devnet]: [
-    {
-      tokenX: USDC_DEV.address,
-      tokenY: WETH_DEV.address,
-      bestTierIndex: 2
-    },
-    {
-      tokenX: USDC_DEV.address,
-      tokenY: BTC_DEV.address,
-      bestTierIndex: 2
-    }
-  ],
-  [NetworkType.Testnet]: [
-    {
-      tokenX: USDC_TEST.address,
-      tokenY: WETH_TEST.address,
-      bestTierIndex: 2
-    },
-    {
-      tokenX: USDC_TEST.address,
-      tokenY: BTC_TEST.address,
-      bestTierIndex: 2
-    }
-  ],
-  [NetworkType.Mainnet]: mainnetBestTiersCreator(),
-  [NetworkType.Local]: []
-}
-
 export const promotedTiers = [
   {
     tokenX: USDC_MAIN.address,
@@ -758,11 +672,14 @@ export const DEFAULT_SWAP_SLIPPAGE = '0.50'
 export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
 
 export const CHAINS = [
-  { name: Chain.Solana, address: 'https://invariant.app/swap' },
+  { name: Chain.Solana, address: 'https://invariant.app/swap', iconGlow: 'solanaGlow' },
   // { name: Chain.AlephZero, address: 'https://azero.invariant.app/exchange' },
-  { name: Chain.Eclipse, address: 'https://eclipse.invariant.app/exchange' },
+  {
+    name: Chain.Eclipse,
+    address: 'https://eclipse.invariant.app/exchange',
+    iconGlow: 'eclipseGlow'
+  }
   // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
-  { name: Chain.Alephium, address: 'https://alph.invariant.app/exchange' }
 ]
 
 export const enum SortTypePoolList {
@@ -815,7 +732,7 @@ export const walletNames = {
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
-export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
+export const defaultImages: string[] = [icons.dog1, icons.dog2, icons.cat1, icons.cat2]
 
 export const getPopularPools = (network: NetworkType) => {
   switch (network) {
@@ -864,3 +781,10 @@ export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
 export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
 export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
+
+export enum OverviewSwitcher {
+  Overview = 'Overview',
+  Wallet = 'Wallet'
+}
+
+export const STATS_CACHE_TIME = 30 * 60 * 1000

@@ -119,12 +119,6 @@ export interface PoolSnapshot {
   feeY: SnapshotValueData
 }
 
-export interface BestTier {
-  tokenX: PublicKey
-  tokenY: PublicKey
-  bestTierIndex: number
-}
-
 export interface ISelectChain {
   name: Chain
   address: string
@@ -134,8 +128,7 @@ export enum Chain {
   Solana = 'Solana',
   AlephZero = 'Aleph Zero',
   Eclipse = 'Eclipse',
-  Vara = 'Vara',
-  Alephium = 'Alephium'
+  Vara = 'Vara'
 }
 
 export interface SnapshotValueData {

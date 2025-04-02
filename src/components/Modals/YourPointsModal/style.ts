@@ -13,7 +13,11 @@ const useStyles = makeStyles()(() => {
       borderRadius: 5,
       marginTop: 7
     },
-
+    pinkLabel: {
+      color: `${colors.invariant.pink} !important`,
+      textAlign: 'center',
+      textShadow: `0 0 22px ${colors.invariant.pink}`
+    },
     listItem: {
       color: colors.invariant.textGrey,
       background: colors.invariant.component,
@@ -82,7 +86,18 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       flexDirection: 'column',
       justifyContent: 'center',
-      alignItems: 'center'
+      alignItems: 'center',
+      '& h1': {
+        color: colors.invariant.text,
+        textAlign: 'center',
+        marginTop: '16px'
+      },
+      '& h2': {
+        color: colors.invariant.textGrey,
+        ...typography.body2,
+        marginTop: '8px',
+        textAlign: 'center'
+      }
     },
     button: {
       display: 'flex',
@@ -95,8 +110,6 @@ const useStyles = makeStyles()(() => {
       height: '27px',
       background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
       borderRadius: '8px',
-      fontFamily: 'Mukta',
-      fontStyle: 'normal',
       fontWeight: 700,
       fontSize: '12px',
       lineHeight: '15px',
@@ -151,6 +164,14 @@ const useStyles = makeStyles()(() => {
       WebkitBackgroundClip: 'text',
       WebkitTextFillColor: 'transparent',
       textWrap: 'nowrap'
+    },
+    linkContainer: {
+      width: '100%',
+      minHeight: '32px',
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginTop: 16
     }
   }
 })

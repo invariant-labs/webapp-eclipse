@@ -69,6 +69,7 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       }
     },
     boxWrapper: {
+      position: 'relative',
       gap: '8px',
       alignItems: 'center',
       padding: '16px 24px',
@@ -86,6 +87,17 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
         background: 'transparent',
         border: 'none'
       }
+    },
+    valueWrapper: {
+      display: 'flex',
+      alignItems: 'center',
+      gap: '8px'
+    },
+    withButtonWrapper: {
+      display: 'grid',
+      gridTemplateColumns: 'auto 1fr auto',
+      gap: '8px',
+      alignItems: 'center'
     },
     section: {
       display: 'flex',
@@ -126,7 +138,6 @@ const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
       height: '24px',
       background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
       borderRadius: '8px',
-      fontStyle: 'normal',
       fontWeight: 700,
       fontSize: '12px',
       lineHeight: '15px',

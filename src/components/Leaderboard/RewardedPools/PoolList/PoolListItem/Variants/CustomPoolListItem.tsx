@@ -1,5 +1,5 @@
 import React from 'react'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { useMediaQuery, Grid, Typography, Box } from '@mui/material'
 import icons from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
@@ -14,7 +14,8 @@ import {
   formatNumberWithCommas,
   initialXtoY,
   parseFeeToPathFee,
-  printBN
+  printBN,
+  ROUTES
 } from '@utils/utils'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { IProps } from '../PoolListItem'
@@ -55,7 +56,11 @@ export const CustomPoolListItem: React.FC<IProps> = ({
       : addressToTicker(network, addressFrom ?? '')
 
     navigate(
-      `/newPosition/${tokenA}/${tokenB}/${parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))}`,
+      ROUTES.getNewPositionRoute(
+        tokenA,
+        tokenB,
+        parseFeeToPathFee(Math.round(fee * 10 ** (DECIMAL - 2)))
+      ),
       { state: { referer: 'stats' } }
     )
   }
@@ -100,12 +105,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
       }
 
   return (
-    <Grid
-      maxWidth='100%'
-      className={classes.wrapper}
-      style={{
-        border: hideBottomLine ? 'none' : undefined
-      }}>
+    <Grid maxWidth='100%' className={classes.wrapper}>
       {displayType === 'token' ? (
         <>
           <Grid
@@ -148,7 +148,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                     {shortenAddress(tokenAData.symbol ?? '')}/
                     {shortenAddress(tokenBData.symbol ?? '')}
                   </Typography>
-                  <TooltipHover text='Copy pool address'>
+                  <TooltipHover title='Copy pool address'>
                     <FileCopyOutlinedIcon
                       onClick={copyToClipboard}
                       classes={{ root: classes.clipboardIcon }}
@@ -160,20 +160,14 @@ export const CustomPoolListItem: React.FC<IProps> = ({
             </Grid>
 
             <Box className={classes.action}>
-              <TooltipHover text='Add position'>
+              <TooltipHover title='Add position'>
                 <button className={classes.actionButton} onClick={handleOpenPosition}>
                   <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
                 </button>
               </TooltipHover>
             </Box>
           </Grid>
-          <Grid
-            style={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              paddingTop: '24px',
-              paddingBottom: '24px'
-            }}>
+          <Grid className={classes.infoWrapper}>
             <Box>
               <Typography style={{ ...typography.body2, color: colors.invariant.textGrey }}>
                 Fee
@@ -184,45 +178,18 @@ export const CustomPoolListItem: React.FC<IProps> = ({
             </Box>
             <Box>
               <Box style={{ display: 'flex' }}>
-                <span
-                  style={{
-                    ...typography.body2,
-                    color: colors.invariant.textGrey,
-                    alignSelf: 'flex-end'
-                  }}>
-                  APY
-                </span>
-                <span
-                  style={{
-                    ...typography.tiny2,
-                    color: colors.invariant.textGrey,
-                    alignSelf: 'flex-end',
-                    marginLeft: '8px'
-                  }}>
-                  APR
-                </span>
+                <span className={classes.APYLabel}>APY</span>
+                <span className={classes.APRLabel}>APR</span>
               </Box>
               <Box style={{ display: 'flex' }}>
-                <span
-                  style={{
-                    ...typography.heading4,
-                    color: colors.invariant.text,
-                    alignSelf: 'flex-end'
-                  }}>
+                <span className={classes.APYValue}>
                   {convertedApy > 1000
                     ? '>1000%'
                     : convertedApy === 0
                       ? ''
                       : Math.abs(convertedApy).toFixed(2) + '%'}
                 </span>
-                <span
-                  style={{
-                    ...typography.tiny2,
-                    color: colors.invariant.text,
-                    alignSelf: 'flex-end',
-                    marginLeft: '8px',
-                    marginBottom: '2px'
-                  }}>
+                <span className={classes.APRValue}>
                   {convertedApr > 1000
                     ? '>1000%'
                     : convertedApr === 0

@@ -4,6 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()(theme => {
   return {
     wrapper: {
+      flexDirection: 'column',
       borderRadius: 24,
       backgroundColor: colors.invariant.component,
       padding: '16px 24px 6px 24px',
@@ -66,6 +67,7 @@ const useStyles = makeStyles()(theme => {
       paddingInline: 8,
       backgroundColor: colors.invariant.light,
       borderRadius: 11,
+      transition: '300ms',
 
       '&:hover': {
         backgroundColor: colors.invariant.lightHover2,
@@ -82,11 +84,12 @@ const useStyles = makeStyles()(theme => {
     },
     buttons: {
       marginTop: 4,
+      justifyContent: 'center',
+      alignItems: 'center',
       width: '100%',
       height: 70,
       flexDirection: 'row',
-      gap: 16,
-      alignItems: 'center'
+      gap: 16
     },
     infoWrapper: {
       borderRadius: 19,
@@ -103,8 +106,15 @@ const useStyles = makeStyles()(theme => {
     midPrice: {
       marginBottom: 8
     },
+    subheaderWrapper: {
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      minHeight: 36
+    },
     priceWrapper: {
       backgroundColor: colors.invariant.light,
+      justifyContent: 'space-between',
+      alignItems: 'center',
       paddingInline: 12,
       paddingBlock: 10,
       borderRadius: 13,
@@ -122,10 +132,9 @@ const useStyles = makeStyles()(theme => {
       paddingTop: 22,
       paddingInline: 8,
       position: 'relative',
-
       [theme.breakpoints.down('md')]: {
-        paddingInline: 20,
-        paddingTop: 15
+        paddingTop: 12,
+        paddingInline: 8
       }
     },
     rangeConcentration: {

@@ -21,16 +21,12 @@ import { ProcessedPool } from '@store/types/userOverview'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 import { useStyles } from './style'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-
 import { useMemo, useState } from 'react'
 import classNames from 'classnames'
 import { VariantType } from 'notistack'
 import { network } from '@store/selectors/solanaConnection'
+import { OverviewSwitcher } from '@store/consts/static'
 
-export enum CardSwitcher {
-  Overview = 'Overview',
-  Wallet = 'Wallet'
-}
 export const UserOverview = () => {
   const { classes } = useStyles()
   const tokensList = useSelector(swapTokens)
@@ -45,11 +41,11 @@ export const UserOverview = () => {
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isDownMd = useMediaQuery(theme.breakpoints.down('md'))
   const list = useSelector(positionsWithPoolsData)
-  const [activePanel, setActivePanel] = useState<CardSwitcher>(CardSwitcher.Overview)
+  const [activePanel, setActivePanel] = useState<OverviewSwitcher>(OverviewSwitcher.Overview)
   const dispatch = useDispatch()
   const handleSwitchPools = (
     _: React.MouseEvent<HTMLElement>,
-    newAlignment: CardSwitcher | null
+    newAlignment: OverviewSwitcher | null
   ) => {
     if (newAlignment !== null) {
       setActivePanel(newAlignment)
@@ -222,7 +218,7 @@ export const UserOverview = () => {
               <Box
                 className={classes.switchPoolsMarker}
                 sx={{
-                  left: activePanel === CardSwitcher.Overview ? 0 : '50%'
+                  left: activePanel === OverviewSwitcher.Overview ? 0 : '50%'
                 }}
               />
               <ToggleButtonGroup
@@ -231,18 +227,18 @@ export const UserOverview = () => {
                 onChange={handleSwitchPools}
                 className={classes.switchPoolsButtonsGroup}>
                 <ToggleButton
-                  value={CardSwitcher.Overview}
+                  value={OverviewSwitcher.Overview}
                   disableRipple
                   className={classes.switchPoolsButton}
-                  style={{ fontWeight: activePanel === CardSwitcher.Overview ? 700 : 400 }}>
+                  style={{ fontWeight: activePanel === OverviewSwitcher.Overview ? 700 : 400 }}>
                   Liquidity
                 </ToggleButton>
                 <ToggleButton
-                  value={CardSwitcher.Wallet}
+                  value={OverviewSwitcher.Wallet}
                   disableRipple
                   className={classes.switchPoolsButton}
                   classes={{ disabled: classes.disabledSwitchButton }}
-                  style={{ fontWeight: activePanel === CardSwitcher.Wallet ? 700 : 400 }}>
+                  style={{ fontWeight: activePanel === OverviewSwitcher.Wallet ? 700 : 400 }}>
                   Your Wallet
                 </ToggleButton>
               </ToggleButtonGroup>
@@ -250,7 +246,7 @@ export const UserOverview = () => {
           </Grid>
 
           <Box>
-            {activePanel === CardSwitcher.Overview && (
+            {activePanel === OverviewSwitcher.Overview && (
               <>
                 <Overview poolAssets={data} />
                 <Box className={classes.footer}>
@@ -258,7 +254,7 @@ export const UserOverview = () => {
                 </Box>
               </>
             )}
-            {activePanel === CardSwitcher.Wallet && (
+            {activePanel === OverviewSwitcher.Wallet && (
               <>
                 <YourWallet
                   handleSnackbar={handleSnackbar}

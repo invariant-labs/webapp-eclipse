@@ -1,8 +1,7 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
-import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
-import { Button, Grid, Tooltip, Typography } from '@mui/material'
+import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
+import { Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
-import activeLiquidity from '@static/svg/activeLiquidity.svg'
 import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
@@ -20,6 +19,7 @@ import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -419,9 +419,9 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }, [tokenASymbol, tokenBSymbol])
 
   return (
-    <Grid container className={classes.wrapper} direction='column'>
+    <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
-        <Grid className={classes.headerContainer} container justifyContent='space-between'>
+        <Grid className={classes.headerContainer} container>
           <Grid>
             <Typography className={classes.header}>Price range</Typography>
             {poolIndex !== null && (
@@ -430,9 +430,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
               </Typography>
             )}
           </Grid>
-          <Grid className={classes.activeLiquidityContainer} container direction='column'>
-            <Tooltip
-              enterTouchDelay={0}
+          <Grid className={classes.activeLiquidityContainer} container>
+            <TooltipGradient
               title={
                 <>
                   <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
@@ -440,18 +439,17 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                     While selecting the price range, note where active liquidity is located. Your
                     liquidity can be inactive and, as a consequence, not generate profits.
                   </Typography>
-                  <Grid
-                    container
-                    direction='row'
-                    wrap='nowrap'
-                    alignItems='center'
-                    style={{ marginBottom: 12 }}>
+                  <Grid container className={classes.liquidityDescWrapper}>
                     <Typography className={classes.liquidityDesc}>
                       The active liquidity range is represented by white, dashed lines in the
                       liquidity chart. Active liquidity is determined by the maximum price range
                       resulting from the statistical volume of exchanges for the last 7 days.
                     </Typography>
-                    <img className={classes.liquidityImg} src={activeLiquidity} alt='Liquidity' />
+                    <img
+                      className={classes.liquidityImg}
+                      src={icons.activeLiquidity}
+                      alt='Liquidity'
+                    />
                   </Grid>
                   <Typography className={classes.liquidityNote}>
                     Note: active liquidity borders are always aligned to the nearest initialized
@@ -460,13 +458,12 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 </>
               }
               placement='bottom'
-              classes={{
-                tooltip: classes.liquidityTooltip
-              }}>
+              top={1}
+              noGradient>
               <Typography className={classes.activeLiquidity}>
                 Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
               </Typography>
-            </Tooltip>
+            </TooltipGradient>
             <Grid>
               <Typography className={classes.currentPrice}>Current price ━━━</Typography>
             </Grid>
@@ -514,7 +511,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         /> */}
       </Grid>
       <Grid container className={classes.innerWrapper}>
-        <Grid container justifyContent='space-between' alignItems='center' minHeight={36}>
+        <Grid container className={classes.subheaderWrapper}>
           <Typography className={classes.subheader}>Set price range</Typography>
           {positionOpeningMethod === 'range' && (
             <Grid className={classes.rangeConcentration}>
@@ -632,7 +629,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             />
           </Grid>
         ) : (
-          <Grid container className={classes.buttons} justifyContent='center' alignItems='center'>
+          <Grid container className={classes.buttons}>
             <Button className={classes.button} onClick={resetPlot}>
               Reset range
             </Button>

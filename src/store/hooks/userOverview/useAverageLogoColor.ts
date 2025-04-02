@@ -1,3 +1,4 @@
+import { ensureError } from '@utils/utils'
 import { useCallback } from 'react'
 
 export interface TokenColorOverride {
@@ -81,8 +82,10 @@ export const useAverageLogoColor = () => {
         try {
           const decodedRef = Buffer.from(ref, 'hex').toString()
           return decodedRef
-        } catch (e) {
-          console.warn('Failed to decode Solscan URL:', e)
+        } catch (e: unknown) {
+          const error = ensureError(e)
+
+          console.warn('Failed to decode Solscan URL:', error)
         }
       }
     }
@@ -140,7 +143,10 @@ export const useAverageLogoColor = () => {
             const imageData = ctx.getImageData(0, 0, canvas.width, canvas.height).data
             const averageColor = calculateAverageColor(imageData)
             resolve(averageColor)
-          } catch (error) {
+          } catch (e: unknown) {
+            const error = ensureError(e)
+            console.log(error)
+
             const tempDiv = document.createElement('div')
             tempDiv.style.position = 'absolute'
             tempDiv.style.visibility = 'hidden'

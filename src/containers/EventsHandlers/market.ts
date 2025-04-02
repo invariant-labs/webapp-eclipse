@@ -3,21 +3,18 @@ import { useEffect, useState } from 'react'
 import { network, rpcAddress, status } from '@store/selectors/solanaConnection'
 import { Status, actions as solanaConnectionActions } from '@store/reducers/solanaConnection'
 import { actions } from '@store/reducers/pools'
-import { actions as positionsActions } from '@store/reducers/positions'
-import { poolsArraySortedByFees, poolTicks, tickMaps } from '@store/selectors/pools'
+import { actions as swapActions } from '@store/reducers/swap'
+import { poolsArraySortedByFees } from '@store/selectors/pools'
 import { swap } from '@store/selectors/swap'
-import { findTickmapChanges, IWallet, Pair } from '@invariant-labs/sdk-eclipse'
+import { IWallet, MAINNET_POOL_WHITELIST } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { getMarketProgramSync } from '@utils/web3/programs/amm'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
-import { getFullNewTokensData, getNetworkTokensList } from '@utils/utils'
+import { getFullNewTokensData, getNetworkTokensList, ROUTES } from '@utils/utils'
 import { getEclipseWallet } from '@utils/web3/wallet'
-import {
-  currentPositionData,
-  currentPositionId,
-  lockedPositionsWithPoolsData,
-  positionsWithPoolsData
-} from '@store/selectors/positions'
+import { currentPoolIndex } from '@store/selectors/positions'
+import { useLocation } from 'react-router-dom'
+import { parsePool } from '@invariant-labs/sdk-eclipse/lib/market'
 
 const MarketEvents = () => {
   const dispatch = useDispatch()
@@ -27,15 +24,18 @@ const MarketEvents = () => {
   const marketProgram = getMarketProgramSync(networkType, rpc, wallet as IWallet)
   const { tokenFrom, tokenTo } = useSelector(swap)
   const networkStatus = useSelector(status)
-  const tickmaps = useSelector(tickMaps)
   const allPools = useSelector(poolsArraySortedByFees)
-  const positionsList = useSelector(positionsWithPoolsData)
-  const lockedPositionsList = useSelector(lockedPositionsWithPoolsData)
-  const currentPositionIndex = useSelector(currentPositionId)
-  const currentPosition = useSelector(currentPositionData)
-  const poolTicksArray = useSelector(poolTicks)
-  const [subscribedTick, _setSubscribeTick] = useState<Set<string>>(new Set())
-  const [subscribedTickmap, _setSubscribedTickmap] = useState<Set<string>>(new Set())
+  const newPositionPoolIndex = useSelector(currentPoolIndex)
+  const [subscribedTwoHopSwapPools, _setSubscribedTwoHopSwapPools] = useState<Set<PublicKey>>(
+    new Set()
+  )
+  const [subscribedSwapPools, _setSubscribedSwapPools] = useState<Set<string>>(new Set())
+  const [newPositionSubscribedPool, setNewPositionSubscribedPool] = useState<PublicKey>(
+    PublicKey.default
+  )
+
+  const location = useLocation()
+
   useEffect(() => {
     const connection = getCurrentSolanaConnection()
     if (networkStatus !== Status.Initialized || !connection) {
@@ -86,88 +86,26 @@ const MarketEvents = () => {
     connectEvents()
   }, [dispatch, networkStatus])
 
+  // New position pool subscription
   useEffect(() => {
-    if (networkStatus !== Status.Initialized || !marketProgram) {
+    if (
+      networkStatus !== Status.Initialized ||
+      !marketProgram ||
+      !location.pathname.startsWith(ROUTES.NEW_POSITION)
+    ) {
       return
     }
 
-    const connectEvents = () => {
-      allPools.forEach(pool => {
-        const allPositions = [...positionsList, ...lockedPositionsList]
-
-        const positionsInPool = allPositions.filter(position => {
-          return position.poolData.address.toString() === pool.address.toString()
-        })
-
+    if (newPositionPoolIndex !== null && newPositionPoolIndex !== undefined) {
+      const pool = allPools[newPositionPoolIndex]
+      if (pool && !pool.address.equals(newPositionSubscribedPool)) {
+        marketProgram.program.account.pool.unsubscribe(newPositionSubscribedPool)
+        setNewPositionSubscribedPool(pool.address)
         marketProgram.onPoolChange(
           pool.tokenX,
           pool.tokenY,
           { fee: pool.fee, tickSpacing: pool.tickSpacing },
           poolStructure => {
-            // update position list
-            if (pool.currentTickIndex !== poolStructure.currentTickIndex) {
-              positionsInPool.map(position => {
-                if (
-                  (pool.currentTickIndex >= position?.lowerTickIndex &&
-                    poolStructure.currentTickIndex < position?.lowerTickIndex) ||
-                  (pool.currentTickIndex < position?.lowerTickIndex &&
-                    poolStructure.currentTickIndex >= position?.lowerTickIndex)
-                ) {
-                  dispatch(
-                    positionsActions.updatePositionTicksRange({
-                      positionId: position.id.toString() + '_' + position.pool.toString(),
-                      fetchTick: 'lower'
-                    })
-                  )
-                } else if (
-                  (pool.currentTickIndex < position?.upperTickIndex &&
-                    poolStructure.currentTickIndex >= position?.upperTickIndex) ||
-                  (pool.currentTickIndex >= position?.upperTickIndex &&
-                    poolStructure.currentTickIndex < position?.upperTickIndex)
-                ) {
-                  dispatch(
-                    positionsActions.updatePositionTicksRange({
-                      positionId: position.id.toString() + '_' + position.pool.toString(),
-                      fetchTick: 'upper'
-                    })
-                  )
-                }
-
-                //update current position details
-                if (
-                  currentPositionIndex ===
-                    position.id.toString() + '_' + position.pool.toString() &&
-                  currentPosition
-                ) {
-                  if (
-                    (pool.currentTickIndex >= currentPosition?.lowerTickIndex &&
-                      poolStructure.currentTickIndex < currentPosition?.lowerTickIndex) ||
-                    (pool.currentTickIndex < currentPosition?.lowerTickIndex &&
-                      poolStructure.currentTickIndex >= currentPosition?.lowerTickIndex)
-                  ) {
-                    dispatch(
-                      positionsActions.getCurrentPositionRangeTicks({
-                        id: currentPositionIndex,
-                        fetchTick: 'lower'
-                      })
-                    )
-                  } else if (
-                    (pool.currentTickIndex < currentPosition?.upperTickIndex &&
-                      poolStructure.currentTickIndex >= currentPosition?.upperTickIndex) ||
-                    (pool.currentTickIndex >= currentPosition?.upperTickIndex &&
-                      poolStructure.currentTickIndex < currentPosition?.upperTickIndex)
-                  ) {
-                    dispatch(
-                      positionsActions.getCurrentPositionRangeTicks({
-                        id: currentPositionIndex,
-                        fetchTick: 'upper'
-                      })
-                    )
-                  }
-                }
-              })
-            }
-
             dispatch(
               actions.updatePool({
                 address: pool.address,
@@ -176,121 +114,9 @@ const MarketEvents = () => {
             )
           }
         )
-      })
-    }
-
-    connectEvents()
-  }, [dispatch, allPools.length, networkStatus, marketProgram, currentPositionIndex])
-
-  useEffect(() => {
-    if (networkStatus !== Status.Initialized || !marketProgram || allPools.length === 0) {
-      return
-    }
-    const connectEvents = async () => {
-      if (tokenFrom && tokenTo) {
-        Object.keys(poolTicksArray).forEach(address => {
-          if (subscribedTick.has(address)) {
-            return
-          }
-          subscribedTick.add(address)
-          const pool = allPools.find(pool => {
-            return pool.address.toString() === address
-          })
-          if (typeof pool === 'undefined') {
-            return
-          }
-          poolTicksArray[address].forEach(singleTick => {
-            marketProgram.onTickChange(
-              new Pair(pool.tokenX, pool.tokenY, {
-                fee: pool.fee,
-                tickSpacing: pool.tickSpacing
-              }),
-              singleTick.index,
-              tickObject => {
-                dispatch(
-                  actions.updateTicks({
-                    address: address,
-                    index: singleTick.index,
-                    tick: tickObject
-                  })
-                )
-              }
-            )
-          })
-        })
       }
     }
-
-    connectEvents()
-  }, [networkStatus, marketProgram, Object.values(poolTicksArray).length])
-
-  useEffect(() => {
-    if (
-      networkStatus !== Status.Initialized ||
-      !marketProgram ||
-      Object.values(allPools).length === 0
-    ) {
-      return
-    }
-    const connectEvents = async () => {
-      if (tokenFrom && tokenTo) {
-        Object.keys(tickmaps).forEach(address => {
-          if (subscribedTickmap.has(address)) {
-            return
-          }
-          subscribedTickmap.add(address)
-          const pool = allPools.find(pool => {
-            return pool.tickmap.toString() === address
-          })
-          if (typeof pool === 'undefined') {
-            return
-          }
-          // trunk-ignore(eslint/@typescript-eslint/no-floating-promises)
-          marketProgram.onTickmapChange(new PublicKey(address), tickmap => {
-            const changes = findTickmapChanges(
-              tickmaps[address].bitmap,
-              tickmap.bitmap,
-              pool.tickSpacing
-            )
-
-            for (const [index, info] of Object.entries(changes)) {
-              if (info === 'added') {
-                try {
-                  // trunk-ignore(eslint/@typescript-eslint/no-floating-promises)
-                  marketProgram.onTickChange(
-                    new Pair(pool.tokenX, pool.tokenY, {
-                      fee: pool.fee,
-                      tickSpacing: pool.tickSpacing
-                    }),
-                    +index,
-                    tickObject => {
-                      dispatch(
-                        actions.updateTicks({
-                          address: pool.address.toString(),
-                          index: +index,
-                          tick: tickObject
-                        })
-                      )
-                    }
-                  )
-                } catch (err) {
-                  console.log(err)
-                }
-              }
-            }
-            dispatch(
-              actions.updateTickmap({
-                address: address,
-                bitmap: tickmap.bitmap
-              })
-            )
-          })
-        })
-      }
-    }
-
-    connectEvents()
-  }, [networkStatus, marketProgram, Object.values(tickmaps).length])
+  }, [dispatch, networkStatus, newPositionPoolIndex])
 
   useEffect(() => {
     window.addEventListener('unhandledrejection', e => {
@@ -300,12 +126,92 @@ const MarketEvents = () => {
     return () => {}
   }, [])
 
+  // Swap pool & tickmap and ticks query
   useEffect(() => {
     if (tokenFrom && tokenTo) {
       dispatch(actions.getNearestTicksForPair({ tokenFrom, tokenTo, allPools }))
       dispatch(actions.getTicksAndTickMaps({ tokenFrom, tokenTo, allPools }))
+
+      const pools = allPools.filter(
+        p =>
+          (p.tokenX.equals(tokenFrom) && p.tokenY.equals(tokenTo)) ||
+          (p.tokenX.equals(tokenTo) && p.tokenY.equals(tokenFrom))
+      )
+
+      for (const subscribedPool of Array.from(subscribedSwapPools)) {
+        if (pools.some(p => p.address.toString() === subscribedPool)) {
+          continue
+        } else {
+          marketProgram.program.account.pool.unsubscribe(new PublicKey(subscribedPool))
+          subscribedSwapPools.delete(subscribedPool)
+        }
+      }
+
+      if (subscribedTwoHopSwapPools.size === 0) {
+        for (const pool of MAINNET_POOL_WHITELIST) {
+          const address = pool.pair.getAddress(marketProgram.program.programId)
+          subscribedTwoHopSwapPools.add(address)
+          marketProgram.onPoolChange(
+            pool.pair.tokenX,
+            pool.pair.tokenY,
+            { fee: pool.pair.feeTier.fee, tickSpacing: pool.pair.feeTier.tickSpacing },
+            poolStructure => {
+              const parsedPool = parsePool(poolStructure)
+              dispatch(
+                swapActions.updateSwapPool({
+                  address,
+                  pool: parsedPool
+                })
+              )
+            }
+          )
+        }
+      }
+
+      if (pools) {
+        for (const pool of pools) {
+          subscribedSwapPools.add(pool.address.toString())
+
+          marketProgram.onPoolChange(
+            pool.tokenX,
+            pool.tokenY,
+            { fee: pool.fee, tickSpacing: pool.tickSpacing },
+            poolStructure => {
+              dispatch(
+                actions.updatePool({
+                  address: pool.address,
+                  poolStructure
+                })
+              )
+            }
+          )
+        }
+      }
     }
   }, [tokenFrom, tokenTo])
+
+  useEffect(() => {
+    // Unsubscribe from swap pools on different pages than swap
+    if (!location.pathname.startsWith(ROUTES.EXCHANGE)) {
+      for (const pool of Array.from(subscribedSwapPools)) {
+        marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
+        subscribedSwapPools.delete(pool)
+      }
+      for (const pool of Array.from(subscribedTwoHopSwapPools)) {
+        marketProgram.program.account.pool.unsubscribe(new PublicKey(pool))
+        subscribedTwoHopSwapPools.delete(pool)
+      }
+    }
+
+    // Unsubscribe from new position pool on different pages than new position
+    if (
+      !location.pathname.startsWith(ROUTES.NEW_POSITION) &&
+      !newPositionSubscribedPool.equals(PublicKey.default)
+    ) {
+      marketProgram.program.account.pool.unsubscribe(newPositionSubscribedPool)
+      setNewPositionSubscribedPool(PublicKey.default)
+    }
+  }, [location.pathname])
 
   return null
 }

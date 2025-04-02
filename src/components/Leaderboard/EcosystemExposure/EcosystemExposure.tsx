@@ -1,13 +1,7 @@
 import React from 'react'
 import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import Slider from 'react-slick'
-import allDomains from '@static/svg/allDomains.svg'
-import turboTap from '@static/svg/turboTap.svg'
-import nucleus from '@static/svg/nucleus.svg'
-import infoIcon from '@static/svg/info.svg'
-import navRight from '@static/svg/navRight.svg'
-import navLeft from '@static/svg/navLeft.svg'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { ExposureTooltipTitle } from './ExposureTooltipTitle/ExposureTooltipTitle'
 import useStyles from './styles'
 import { theme, typography } from '@static/theme'
@@ -15,8 +9,8 @@ import { ITotalEntry } from '@store/reducers/leaderboard'
 import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import check from '@static/svg/checkFill.svg'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
+import icons from '@static/icons'
 
 interface EcosystemExposureI {
   isLoading: boolean
@@ -40,11 +34,62 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
   const tasks = [
     {
+      id: 'EDAS_official',
+      link: 'https://www.edas.ensofi.xyz/',
+      title: 'Reach TOP 1000',
+      img: icons.edas,
+      max: 1000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            DeFAI agents have arrived! Climb into the TOP 1000 and start earning points in the EDAS
+            Points Program every two weeks!
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: 'EDAS Points every 2 weeks',
+      completed: userStats ? currentRanking <= 1000 : false
+    },
+    {
+      id: 'EnsoFi',
+      link: 'https://app.ensofi.xyz/',
+      title: 'Reach TOP 1000',
+      img: icons.ensofi,
+      max: 1000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            Make it to the TOP 1000 and enjoy rewards in the EnsoFi Points Program every two weeks.
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: 'EnsoFi Points every 2 weeks',
+      completed: userStats ? currentRanking <= 1000 : false
+    },
+    {
       id: 'AllDomains',
       link: 'https://eclipse.alldomains.id/',
-      title: 'Reach TOP2000',
+      title: 'Reach TOP 2000',
       a: 'AllDomains',
-      img: allDomains,
+      img: icons.allDomains,
       max: 2000,
       current: currentRanking,
       description:
@@ -57,7 +102,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       id: 'Turbo Tap',
       link: 'https://tap.eclipse.xyz/',
       title: 'Earn 25,000 points on Invariant',
-      img: turboTap,
+      img: icons.turboTap,
       max: 25000,
       current: +currentPoints >= 25000 ? 25000 : +currentPoints,
       description: (
@@ -73,7 +118,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       id: 'Nucleus',
       link: 'https://app.nucleusearn.io/dashboard',
       title: 'Keep an active tETH position',
-      img: nucleus,
+      img: icons.nucleus,
       max: 1,
       current: hasTETHPosition ? 1 : 0,
       description: (
@@ -97,6 +142,32 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
       footerDescription: 'Nucleus Points',
       completed: hasTETHPosition
+    },
+    {
+      id: 'CelestialMammoth',
+      link: 'https://linktr.ee/celestialmmammoth',
+      title: 'Reach TOP 3000',
+      img: icons.celestialMammoth,
+      max: 3000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            Will you unfreeze your mammoth? Reach the TOP 3000 and earn passive ICE daily in the
+            Frost Mammoth game!
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: '150 ICE every 24h',
+      completed: userStats ? currentRanking <= 3000 : false
     }
   ]
 
@@ -106,19 +177,19 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
   const { classes } = useStyles({ exposure })
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
-  if (isLoading) {
+  if (isLoading && isConnected) {
     return (
       <Grid className={classes.mainWrapper}>
         <Grid className={classes.boxWrapper}>
           <Grid className={classes.header}>
             <Typography>
-              Eclipse Ecosystem Exposure <img src={infoIcon} alt='info' />
+              Eclipse Ecosystem Exposure <img src={icons.infoIcon} alt='info' />
             </Typography>
           </Grid>
 
           <Grid className={classes.sliderWrapper} gap='20px' justifyContent='center'>
-            {Array.from({ length: 3 }).map(_ => (
-              <Skeleton variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
+            {Array.from({ length: isSm ? 3 : 4 }).map((_, index) => (
+              <Skeleton key={index} variant='rounded' animation='wave' sx={{ borderRadius: '8px' }}>
                 <Grid sx={{ width: 64, height: 64 }} />
               </Skeleton>
             ))}
@@ -127,7 +198,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             <Grid className={classes.skeletonExp}>
               <Typography component='h5'>Your Exposure:</Typography>
               <Skeleton variant='rounded' height={20} animation='wave' sx={{ borderRadius: '8px' }}>
-                <Typography component='span'>99.99%</Typography>
+                <Typography component='span'>1/5 (99.99%)</Typography>
               </Skeleton>
             </Grid>
 
@@ -162,7 +233,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                 </Typography>
               </Grid>
             }>
-            <img src={infoIcon} alt='info' />
+            <img src={icons.infoIcon} alt='info' />
           </TooltipGradient>
         </Grid>
 
@@ -171,14 +242,14 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             className={classes.slider}
             slidesToShow={isSm ? 3 : 4}
             infinite={false}
-            prevArrow={<img src={navLeft} alt='prev' />}
-            nextArrow={<img src={navRight} alt='next' />}>
+            prevArrow={<img src={icons.navLeft} alt='prev' />}
+            nextArrow={<img src={icons.navRight} alt='next' />}>
             {tasks.map(task => (
               <TooltipGradient
                 key={task.id}
                 top={1}
                 title={
-                  <Grid display='flex' flexDirection='column' gap='10px'>
+                  <Grid className={classes.exposureWrapper}>
                     <ExposureTooltipTitle
                       title={task.title}
                       img={task.img}
@@ -192,7 +263,12 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                     />
                   </Grid>
                 }>
-                <Grid sx={{ position: 'relative', width: 64, height: 64 }}>
+                <Grid
+                  sx={{
+                    position: 'relative',
+                    width: 64,
+                    height: 64
+                  }}>
                   <img
                     style={{
                       opacity: !task.completed ? 0.4 : 1
@@ -201,7 +277,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                     alt={task.title}
                   />
                   {task.completed && (
-                    <img src={check} alt='check icon' className={classes.checkIcon} />
+                    <img src={icons.check} alt='check icon' className={classes.checkIcon} />
                   )}
                 </Grid>
               </TooltipGradient>
@@ -210,7 +286,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
         </Grid>
         <Grid className={classes.expWrapper}>
           <Typography component='h5'>
-            Your Exposure: <Typography component='span'>{exposure}%</Typography>
+            Your Exposure:{' '}
+            <Typography component='span'>{` ${completedCount}/${tasks.length} (${exposure}%)`}</Typography>
           </Typography>
           <Grid className={classes.expLabel}>
             <Typography>0%</Typography>

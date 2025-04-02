@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import {
   contentPoints,
+  getContentProgramDates,
   getPromotedPools,
   lastTimestamp,
   leaderboardSelectors,
@@ -24,7 +25,7 @@ import {
 import { BN } from '@coral-xyz/anchor'
 import { PoolStructure, Position } from '@invariant-labs/sdk-eclipse/src/market'
 import { isLoadingPositionsList } from '@store/selectors/positions'
-import { checkDataDelay, hexToDate } from '@utils/utils'
+import { checkDataDelay, ensureError, hexToDate } from '@utils/utils'
 import {
   BANNER_HIDE_DURATION,
   BANNER_STORAGE_KEY,
@@ -53,6 +54,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   const promotedPools = useSelector(getPromotedPools)
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
+  const contentProgramDates = useSelector(getContentProgramDates)
   const walletStatus = useSelector(status)
   const userAddress = useSelector(address)
   const lpData = useSelector(topRankedLpUsers)
@@ -185,7 +187,8 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
             localStorage.removeItem(BANNER_STORAGE_KEY)
             setShowWarningBanner(true)
           }
-        } catch (error) {
+        } catch (e: unknown) {
+          const error = ensureError(e)
           console.error('Error parsing banner state:', error)
           localStorage.removeItem(BANNER_STORAGE_KEY)
         }
@@ -229,6 +232,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
       userAddress={userAddress}
       walletStatus={walletStatus}
       isLoadingLeaderboardList={isLoadingLeaderboardList}
+      contentProgramDates={contentProgramDates}
     />
   )
 }

@@ -1,9 +1,7 @@
-import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
-import Refresher from '@components/Refresher/Refresher'
+import Refresher from '@common/Refresher/Refresher'
 import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
-import backIcon from '@static/svg/back-arrow.svg'
-import settingIcon from '@static/svg/settings.svg'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
@@ -21,6 +19,7 @@ import {
   getConcentrationIndex,
   parseFeeToPathFee,
   printBN,
+  ROUTES,
   trimLeadingZeros,
   validConcentrationMidPriceTick
 } from '@utils/utils'
@@ -35,11 +34,11 @@ import MarketIdLabel from './MarketIdLabel/MarketIdLabel'
 import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
-import { BestTier, PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
+import { InitMidPrice } from '@common/PriceRangePlot/PriceRangePlot'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import {
@@ -97,7 +96,6 @@ export interface INewPosition {
   isWaitingForNewPool: boolean
   poolIndex: number | null
   currentPairReversed: boolean | null
-  bestTiers: BestTier[]
   currentPriceSqrt: BN
   handleAddToken: (address: string) => void
   commonTokens: PublicKey[]
@@ -134,6 +132,9 @@ export interface INewPosition {
     concentrationArray: number[]
   ) => { min: BN; middle: BN; max: BN }
   isPromotedPool: boolean
+  feeTiersWithTvl: Record<number, number>
+  totalTvl: number
+  isLoadingStats: boolean
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -161,7 +162,6 @@ export const NewPosition: React.FC<INewPosition> = ({
   isWaitingForNewPool,
   poolIndex,
   currentPairReversed,
-  bestTiers,
   handleAddToken,
   commonTokens,
   initialOpeningPositionMethod,
@@ -194,7 +194,10 @@ export const NewPosition: React.FC<INewPosition> = ({
   canNavigate,
   estimatedPointsPerDay,
   estimatedPointsForScale,
-  isPromotedPool
+  isPromotedPool,
+  feeTiersWithTvl,
+  totalTvl,
+  isLoadingStats
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -232,7 +235,10 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [tickSpacing, midPrice.index])
 
   const [concentrationIndex, setConcentrationIndex] = useState(
-    getConcentrationIndex(concentrationArray, initialConcentration ? +initialConcentration : 34)
+    getConcentrationIndex(
+      concentrationArray,
+      +initialConcentration < 2 ? 2 : initialConcentration ? +initialConcentration : 34
+    )
   )
 
   const rangeConcentrationArray = useMemo(() => {
@@ -300,7 +306,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? concentrationArray[concentrationIndex]
+        ? concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1]
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -410,27 +417,16 @@ export const NewPosition: React.FC<INewPosition> = ({
     }
   }
 
-  const bestTierIndex =
-    tokenAIndex === null || tokenBIndex === null
-      ? undefined
-      : (bestTiers.find(
-          tier =>
-            (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
-              tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
-            (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
-              tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.bestTierIndex ?? undefined)
-
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -542,7 +538,11 @@ export const NewPosition: React.FC<INewPosition> = ({
         urlUpdateTimeoutRef.current = setTimeout(
           () =>
             navigate(
-              `/newPosition/${token1Symbol}/${token2Symbol}/${parsedFee}${concParam}${rangeParam}`,
+              ROUTES.getNewPositionRoute(
+                token1Symbol,
+                token2Symbol,
+                parsedFee + concParam + rangeParam
+              ),
               {
                 replace: true
               }
@@ -552,18 +552,18 @@ export const NewPosition: React.FC<INewPosition> = ({
       } else if (index1 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index1].assetAddress.toString())
         urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          () => navigate(ROUTES.getNewPositionRoute(tokenSymbol, parsedFee), { replace: true }),
           500
         )
       } else if (index2 != null) {
         const tokenSymbol = addressToTicker(network, tokens[index2].assetAddress.toString())
         urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(`/newPosition/${tokenSymbol}/${parsedFee}`, { replace: true }),
+          () => navigate(ROUTES.getNewPositionRoute(tokenSymbol, parsedFee), { replace: true }),
           500
         )
       } else if (fee != null) {
         urlUpdateTimeoutRef.current = setTimeout(
-          () => navigate(`/newPosition/${parsedFee}`, { replace: true }),
+          () => navigate(ROUTES.getNewPositionRoute(parsedFee), { replace: true }),
           500
         )
       }
@@ -619,20 +619,15 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [network])
 
   return (
-    <Grid container className={classes.wrapper} direction='column'>
-      <Link to='/portfolio' style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
-        <Grid className={classes.back} container item alignItems='center'>
-          <img className={classes.backIcon} src={backIcon} alt='back' />
+    <Grid container className={classes.wrapper}>
+      <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
+        <Grid className={classes.back} container item>
+          <img className={classes.backIcon} src={icons.backIcon} alt='back' />
           <Typography className={classes.backText}>Positions</Typography>
         </Grid>
       </Link>
 
-      <Grid
-        container
-        justifyContent='space-between'
-        alignItems='center'
-        className={classes.headerContainer}
-        mb={1}>
+      <Grid container className={classes.headerContainer}>
         <Box className={classes.titleContainer}>
           <Typography className={classes.title}>Add new position</Typography>
 
@@ -676,7 +671,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             </Fade>
           )}
           {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
-            <TooltipHover text='Refresh'>
+            <TooltipHover title='Refresh'>
               <Box mr={2}>
                 <Refresher
                   currentIndex={refresherTime}
@@ -691,7 +686,7 @@ export const NewPosition: React.FC<INewPosition> = ({
           )}
         </Box>
         {tokenAIndex !== null && tokenBIndex !== null && (
-          <Grid container item alignItems='center' className={classes.options}>
+          <Grid container item className={classes.options}>
             {poolIndex !== null && poolAddress ? (
               <>
                 <MarketIdLabel
@@ -699,7 +694,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                   marketId={poolAddress}
                   copyPoolAddressHandler={copyPoolAddressHandler}
                 />
-                <TooltipHover text='Open pool in explorer'>
+                <TooltipHover title='Open pool in explorer'>
                   <Grid width={'12px'} height={'24px'}>
                     <a
                       href={`https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`}
@@ -749,7 +744,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                 )}
               </Hidden>
               {poolIndex !== null && tokenAIndex !== tokenBIndex && isMd && (
-                <TooltipHover text='Refresh'>
+                <TooltipHover title='Refresh'>
                   <Box>
                     <Refresher
                       currentIndex={refresherTime}
@@ -763,12 +758,12 @@ export const NewPosition: React.FC<INewPosition> = ({
                 </TooltipHover>
               )}
               {poolIndex !== null && (
-                <TooltipHover text='Settings'>
+                <TooltipHover title='Settings'>
                   <Button
                     onClick={handleClickSettings}
                     className={classes.settingsIconBtn}
                     disableRipple>
-                    <img src={settingIcon} className={classes.settingsIcon} alt='settings' />
+                    <img src={icons.settingIcon} className={classes.settingsIcon} alt='settings' />
                   </Button>
                 </TooltipHover>
               )}
@@ -789,7 +784,7 @@ export const NewPosition: React.FC<INewPosition> = ({
         />
       }
 
-      <Grid container className={classes.row} alignItems='stretch'>
+      <Grid container className={classes.row}>
         <DepositSelector
           tokenAIndex={tokenAIndex}
           tokenBIndex={tokenBIndex}
@@ -913,7 +908,6 @@ export const NewPosition: React.FC<INewPosition> = ({
             }
           }}
           poolIndex={poolIndex}
-          bestTierIndex={bestTierIndex}
           handleAddToken={handleAddToken}
           commonTokens={commonTokens}
           initialHideUnknownTokensValue={initialHideUnknownTokensValue}
@@ -938,6 +932,9 @@ export const NewPosition: React.FC<INewPosition> = ({
           canNavigate={canNavigate}
           isCurrentPoolExisting={isCurrentPoolExisting}
           promotedPoolTierIndex={promotedPoolTierIndex}
+          feeTiersWithTvl={feeTiersWithTvl}
+          totalTvl={totalTvl}
+          isLoadingStats={isLoadingStats}
         />
         <Hidden mdUp>
           <Grid container alignSelf='flex-end' mb={2} width='200px'>
@@ -1049,7 +1046,12 @@ export const NewPosition: React.FC<INewPosition> = ({
         )}
       </Grid>
 
-      <Fade in={isPromotedPool} timeout={250} style={{ width: '100%' }}>
+      <Fade
+        in={isPromotedPool}
+        timeout={250}
+        style={{ width: '100%' }}
+        unmountOnExit={isMd}
+        mountOnEnter={isMd}>
         <div>
           <EstimatedPoints
             handleClickFAQ={handleClickFAQ}
