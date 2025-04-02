@@ -133,6 +133,7 @@ const getContent = (
                   domain={element.domain}
                   copyAddressHandler={copyAddressHandler}
                   currentNetwork={currentNetwork}
+                  hideBottomLine={itemsPerPage === index + 1}
                 />
               ))}
               {new Array(itemsPerPage - lpData.length).fill('').map((_, index) => (
@@ -190,6 +191,7 @@ const getContent = (
                   domain={element.domain}
                   copyAddressHandler={copyAddressHandler}
                   currentNetwork={currentNetwork}
+                  hideBottomLine={itemsPerPage === index + 1}
                 />
               ))}
               {new Array(itemsPerPage - swapData.length).fill('').map((_, index) => (
@@ -247,6 +249,7 @@ const getContent = (
                 domain={element.domain}
                 copyAddressHandler={copyAddressHandler}
                 currentNetwork={currentNetwork}
+                hideBottomLine={itemsPerPage === index + 1}
               />
             ))}
             {new Array(itemsPerPage - totalData.length).fill('').map((_, index) => (
