@@ -76,7 +76,11 @@ const RewardItem: React.FC<RewardItemInterface> = ({
 
         <Grid className={classes.centerWrapper}>
           <Grid className={classes.pointsWrapper}>
-            <img src={icons.airdropGrey} alt='points' />
+            <img
+              src={isEligible ? icons.airdropRainbow : icons.airdropGrey}
+              alt='points'
+              width={17}
+            />
             <Typography className={classes.subtitle}>{reward.name}</Typography>
           </Grid>
           <Typography className={classes.title}>
