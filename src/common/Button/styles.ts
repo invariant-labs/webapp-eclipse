@@ -46,6 +46,7 @@ const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
 const useStyles = makeStyles<StyleProps>()(
   (_theme, { scheme, height, width, borderRadius, padding, margin, fontData }) => ({
     button: {
+      zIndex: 1,
       height: height ?? 40,
       width: width ?? 'auto',
       minWidth: 0,
