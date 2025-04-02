@@ -1,5 +1,10 @@
 import { PositionsList } from '@components/PositionsList/PositionsList'
-import { POSITIONS_PER_PAGE } from '@store/consts/static'
+import {
+  NetworkType,
+  POSITIONS_PER_PAGE,
+  WETH_CLOSE_POSITION_LAMPORTS_MAIN,
+  WETH_CLOSE_POSITION_LAMPORTS_TEST
+} from '@store/consts/static'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import {
@@ -18,7 +23,7 @@ import {
   positionsWithPoolsData,
   prices
 } from '@store/selectors/positions'
-import { address, status } from '@store/selectors/solanaWallet'
+import { address, balance, status } from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
@@ -27,6 +32,7 @@ import { IPositionItem } from '@components/PositionsList/types'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
+import { actions as snackbarActions } from '@store/reducers/snackbars'
 
 export const WrappedPositionsList: React.FC = () => {
   const walletAddress = useSelector(address)
@@ -39,6 +45,7 @@ export const WrappedPositionsList: React.FC = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const pricesData = useSelector(prices)
+  const ethBalance = useSelector(balance)
 
   const setLastPage = (page: number) => {
     dispatch(actions.setLastPage(page))
@@ -66,15 +73,31 @@ export const WrappedPositionsList: React.FC = () => {
     dispatch(lockerActions.lockPosition({ index, network: currentNetwork }))
   }
 
+  const canClosePosition = useMemo(() => {
+    if (currentNetwork === NetworkType.Testnet) {
+      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_TEST)
+    } else {
+      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_MAIN)
+    }
+  }, [ethBalance, network])
+
   const handleClosePosition = (index: number) => {
-    dispatch(
-      actions.closePosition({
-        positionIndex: index,
-        onSuccess: () => {
-          navigate(ROUTES.PORTFOLIO)
-        }
-      })
-    )
+    canClosePosition
+      ? dispatch(
+          actions.closePosition({
+            positionIndex: index,
+            onSuccess: () => {
+              navigate(ROUTES.PORTFOLIO)
+            }
+          })
+        )
+      : dispatch(
+          snackbarActions.add({
+            message: 'Not enough ETH balance to close position',
+            variant: 'error',
+            persist: false
+          })
+        )
   }
 
   const handleClaimFee = (index: number, isLocked: boolean) => {
