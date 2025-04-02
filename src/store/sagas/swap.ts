@@ -29,7 +29,6 @@ import {
   createLoaderKey,
   ensureError,
   getAgregatorSwapRoutesData,
-  printBN,
   transformRawSwapRoutesData
 } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'

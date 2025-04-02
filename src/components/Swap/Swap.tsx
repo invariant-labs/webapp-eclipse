@@ -53,7 +53,7 @@ import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sd
 import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
 import { RouteTemplateProps } from '@components/TransactionRoute/FlowChartGrid/types/types'
 import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
-import { theme, typography } from '@static/theme'
+import { theme } from '@static/theme'
 import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
 export interface Pools {
   tokenX: PublicKey

@@ -118,7 +118,6 @@ import UmbraLogo from '@static/png/InvariantAggregator/umbra.png'
 import InvariantLogo from '@static/png/InvariantAggregator/Invariant.png'
 import OrcaLogo from '@static/png/InvariantAggregator/Orca.png'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { actions as swapActions } from '@store/reducers/swap'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
