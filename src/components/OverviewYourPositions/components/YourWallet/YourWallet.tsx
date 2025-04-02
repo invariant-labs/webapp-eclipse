@@ -194,7 +194,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
   }, [network])
 
   const renderMobileLoading = () => (
-    <Box className={classes.mobileContainer} sx={{ marginTop: '16px' }}>
+    <Box className={classes.mobileContainer}>
       {Array(3)
         .fill(0)
         .map((_, index) => (

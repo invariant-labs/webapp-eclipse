@@ -11,7 +11,7 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     [theme.breakpoints.down('lg')]: {
       borderTopRightRadius: '24px',
       borderRight: `none`,
-      maxHeight: 'fit-content',
+      minHeight: '337px',
       width: 'auto',
       padding: '0px 16px 0px 16px'
     },
@@ -66,6 +66,7 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+    height: '125px',
     justifyContent: 'center',
     padding: '32px',
     gap: '16px',

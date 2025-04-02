@@ -286,6 +286,9 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
       border: 'none',
       background: colors.invariant.component,
       borderRadius: 24,
+      [theme.breakpoints.down('md')]: {
+        height: '273px'
+      },
       [theme.breakpoints.up('lg')]: {
         background:
           'linear-gradient(360deg, rgba(32, 41, 70, 0.8) 0%, rgba(17, 25, 49, 0.8) 100%), linear-gradient(180deg, #010514 0%, rgba(1, 5, 20, 0) 100%)',

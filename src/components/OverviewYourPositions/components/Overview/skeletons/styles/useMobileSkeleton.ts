@@ -4,7 +4,7 @@ import { colors, theme, typography } from '@static/theme'
 export const useMobileSkeletonStyle = makeStyles()(() => ({
   container: {
     width: '100%',
-    marginTop: theme.spacing(2)
+    height: '181px'
   },
   chartContainer: {
     height: '24px',
@@ -16,14 +16,11 @@ export const useMobileSkeletonStyle = makeStyles()(() => ({
   skeletonSegment: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)'
   },
-  tokenLabelContainer: {
-    height: '161px',
-    marginTop: theme.spacing(2)
-  },
+
   tokenTextSkeleton: {
-    marginBottom: theme.spacing(2),
     width: '60px',
-    height: '24px'
+    height: '24px',
+    marginBottom: '12px'
   },
   tokensHeaderLabel: {
     ...typography.body2,
@@ -31,7 +28,6 @@ export const useMobileSkeletonStyle = makeStyles()(() => ({
     color: colors.invariant.textGrey
   },
   gridContainer: {
-    marginTop: theme.spacing(1),
     width: '100% !important',
     maxHeight: '120px',
     marginLeft: '0 !important',
