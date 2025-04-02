@@ -402,7 +402,9 @@ export const YourWallet: React.FC<YourWalletProps> = ({
         ) : sortedPools.length === 0 ? (
           <EmptyState classes={classes} />
         ) : (
-          <Box className={classes.mobileCardContainer}>
+          <Box
+            sx={{ height: sortedPools.length >= 3 ? '337px' : 'auto' }}
+            className={classes.mobileCardContainer}>
             {sortedPools.map(pool => (
               <MobileCard
                 key={pool.id.toString()}

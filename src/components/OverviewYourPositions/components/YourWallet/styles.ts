@@ -112,7 +112,7 @@ export const useStyles = makeStyles<{ isLoading: boolean; isScrollHide: boolean 
       color: colors.invariant.text
     },
     mobileCardContainer: {
-      maxHeight: '345px',
+      maxHeight: '337px',
       overflowY: 'auto',
       paddingRight: '4px',
       [theme.breakpoints.down('lg')]: {

@@ -4,7 +4,7 @@ import { colors, theme, typography } from '@static/theme'
 export const useStyles = makeStyles()(() => ({
   container: {
     width: '100%',
-    marginTop: theme.spacing(1.5),
+    marginTop: theme.spacing(2),
     display: 'flex',
     flexDirection: 'column',
     justifyItems: 'center'
@@ -20,7 +20,7 @@ export const useStyles = makeStyles()(() => ({
     borderRadius: '8px',
     overflow: 'hidden',
     display: 'flex',
-    marginBottom: theme.spacing(2)
+    marginBottom: theme.spacing(1)
   },
   tokenSection: {
     marginTop: theme.spacing(2)
@@ -29,7 +29,7 @@ export const useStyles = makeStyles()(() => ({
     ...typography.body2,
     fontWeight: 600,
     color: colors.invariant.textGrey,
-    marginBottom: theme.spacing(2)
+    marginBottom: '12px'
   },
   tokenGrid: {
     marginTop: theme.spacing(1),
