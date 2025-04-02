@@ -15,7 +15,7 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { LeaderBoardType, NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import { EmptyRow } from './EmptyRow/EmptyRow'
-import { TableBoundsLabel } from '@components/TableBoundsLabel/TableBoundsLabel'
+import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 interface LeaderboardListProps {
   copyAddressHandler: (message: string, variant: VariantType) => void
@@ -347,14 +347,16 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
         {content}
       </Grid>
 
-      <TableBoundsLabel lowerBound={lowerBound} totalItems={totalItems} upperBound={upperBound}>
-        <PaginationList
-          pages={totalPages}
-          defaultPage={currentPage}
-          handleChangePage={handlePageChange}
-          variant='center'
-        />
-      </TableBoundsLabel>
+      {totalPages >= 1 && (
+        <TableBoundsLabel lowerBound={lowerBound} totalItems={totalItems} upperBound={upperBound}>
+          <PaginationList
+            pages={totalPages}
+            defaultPage={currentPage}
+            handleChangePage={handlePageChange}
+            variant='center'
+          />
+        </TableBoundsLabel>
+      )}
       {renderWaves('bottom', GreenWaves)}
     </div>
   )

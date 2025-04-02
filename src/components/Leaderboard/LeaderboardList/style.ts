@@ -19,16 +19,6 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 2,
     backgroundColor: `${colors.invariant.newDark} !important`
   },
-  pagination: {
-    borderTop: `1px solid ${colors.invariant.light}`,
-    padding: '20px 24px 10px 0',
-    maxWidth: '100%',
-    borderBottomLeftRadius: '24px',
-    borderBottomRightRadius: '24px',
-    [theme.breakpoints.down('lg')]: {
-      padding: '20px 12px'
-    }
-  },
 
   waveImage: {
     pointerEvents: 'none',

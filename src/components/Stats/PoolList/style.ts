@@ -6,14 +6,15 @@ export const useStyles = makeStyles<{ initialDataLength: number }>()(
   (_theme, { initialDataLength }) => ({
     container: {
       flexDirection: 'column',
-      maxWidth: 1072
+      maxWidth: 1072,
+      flexWrap: 'nowrap'
     },
     pagination: {
       maxWidth: '100%',
-      padding: 0,
       backgroundColor: colors.invariant.component,
       borderBottomLeftRadius: '24px',
-      borderBottomRightRadius: '24px'
+      borderBottomRightRadius: '24px',
+      padding: 0
     },
     emptyContainer: {
       background: colors.invariant.component
