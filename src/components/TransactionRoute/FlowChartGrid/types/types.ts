@@ -111,6 +111,7 @@ export interface RouteTemplateProps {
 export interface FlowChartProps {
   routeData?: RouteTemplateProps
   isLoading?: boolean
+  errorMessage?: string
   showCloseButton?: boolean
   handleClose?: () => void
 }

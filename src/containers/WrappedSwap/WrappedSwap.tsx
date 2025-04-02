@@ -28,7 +28,7 @@ import {
   balance,
   accounts as solanaAccounts
 } from '@store/selectors/solanaWallet'
-import { swap as swapPool, accounts, isLoading } from '@store/selectors/swap'
+import { swap as swapPool, accounts, isLoading, swapRoute } from '@store/selectors/swap'
 import { PublicKey } from '@solana/web3.js'
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
@@ -63,6 +63,7 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
   const walletStatus = useSelector(status)
   const swap = useSelector(swapPool)
+  const swapRouteChartData = useSelector(swapRoute)
   const tickmap = useSelector(tickMaps)
   const poolTicksForSimulation = useSelector(nearestPoolTicksForPair)
   const allPools = useSelector(poolsArraySortedByFees)
@@ -355,12 +356,21 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
 
   const swapAccounts = useSelector(accounts)
   const swapIsLoading = useSelector(isLoading)
-
   return (
     <>
       <Swap
         isFetchingNewPool={isFetchingNewPool}
         onRefresh={onRefresh}
+        swapRouteChartData={swapRouteChartData}
+        onRouteRefresh={(amountIn, slippage) => {
+          dispatch(
+            swapActions.fetchSwapRoute({
+              amountIn,
+              tokens: tokensList,
+              slippage
+            })
+          )
+        }}
         onSwap={(
           slippage,
           estimatedPriceAfterSwap,

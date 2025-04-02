@@ -109,8 +109,16 @@ import {
 } from '@store/consts/types'
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
-import { apyToApr } from './uiUtils'
+import { apyToApr, shortenAddress } from './uiUtils'
 import { SwapRoutesResponse } from '@store/reducers/swap'
+
+import SolarLogo from '@static/png/InvariantAggregator/solar.png'
+import LifinityLogo from '@static/png/InvariantAggregator/lifinity.png'
+import UmbraLogo from '@static/png/InvariantAggregator/umbra.png'
+import InvariantLogo from '@static/png/InvariantAggregator/Invariant.png'
+import OrcaLogo from '@static/png/InvariantAggregator/Orca.png'
+import { SwapToken } from '@store/selectors/solanaWallet'
+import { actions as swapActions } from '@store/reducers/swap'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1932,8 +1940,7 @@ export const getAgregatorSwapRoutesData = async ({
     return data
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
-    return null
+    throw error
   }
 }
 
@@ -2200,4 +2207,81 @@ export const ROUTES = {
   },
 
   getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
+}
+
+const reformatTicker = (ticker: string) => {
+  return ticker.length > 5 ? shortenAddress(ticker, 3) : ticker
+}
+
+export const transformRawSwapRoutesData = (
+  network: NetworkType,
+  data: SwapRoutesResponse,
+  tokens: SwapToken[]
+) => {
+  const exchangeMapping: Record<string, { name: string; logoUrl: any }> = {
+    Invariant: { name: 'Invariant', logoUrl: InvariantLogo },
+    Solar: { name: 'Solar', logoUrl: SolarLogo },
+    Umbra: { name: 'Umbra', logoUrl: UmbraLogo },
+    Orca: { name: 'Orca', logoUrl: OrcaLogo },
+    Lifinity: { name: 'Lifinity', logoUrl: LifinityLogo }
+  }
+
+  const inputToken = tokens.filter(
+    item => item.assetAddress.toString() === data.inputMint.toString()
+  )[0]
+  const outputToken = tokens.filter(
+    item => item.assetAddress.toString() === data.outputMint.toString()
+  )[0]
+
+  const inToken = {
+    inputAmount: inputToken ? printBN(data.inAmount, inputToken.decimals ?? 0) : 0,
+    inputTicker: reformatTicker(addressToTicker(network, data.inputMint.toString()))
+  }
+
+  const outToken = {
+    outputAmount: outputToken ? printBN(data.outAmount, outputToken.decimals) : 0,
+    outputTicker: reformatTicker(addressToTicker(network, data.outputMint.toString()))
+  }
+
+  const exchanges = data.routePlan.map((route, index) => {
+    const { label, outAmount, outputMint } = route.swapInfo
+
+    const exchange = exchangeMapping[label] || {
+      name: label,
+      logoUrl: null
+    }
+    const token = tokens.filter(item => item.assetAddress.toString() === outputMint.toString())[0]
+
+    const isLastSwap = index === data.routePlan.length - 1
+
+    const result: any = {
+      name: exchange.name,
+      logoUrl: exchange.logoUrl,
+      fee: '-'
+    }
+    console.log(outputMint, token)
+    if (!isLastSwap) {
+      result.toToken = {
+        symbol: reformatTicker(addressToTicker(network, outputMint.toString())),
+        logoUrl: token.logoURI,
+        amount: token && outAmount ? printBN(outAmount, token.decimals) : 0
+      }
+    }
+
+    return result
+  })
+
+  return {
+    sourceToken: {
+      symbol: inToken.inputTicker,
+      logoUrl: inputToken.logoURI,
+      amount: inToken.inputAmount
+    },
+    destinationToken: {
+      symbol: outToken.outputTicker,
+      logoUrl: outputToken.logoURI,
+      amount: outToken.outputAmount
+    },
+    exchanges
+  }
 }

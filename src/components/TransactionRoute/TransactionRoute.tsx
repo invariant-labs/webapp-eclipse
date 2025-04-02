@@ -11,6 +11,7 @@ import {
 import TransactionRouteLoader from './FlowChartGrid/components/TransactionRouteLoader/TransactionRouteLoader'
 import { FlowChartProps, GridDefinition, RouteTemplateProps } from './FlowChartGrid/types/types'
 import useStyles from './style'
+import TransactionRouteError from './FlowChartGrid/components/TransactionRouteError/TransactionRouteError'
 
 const getTemplateForHopCount = (hopCount: number, data: RouteTemplateProps): GridDefinition => {
   switch (hopCount) {
@@ -26,9 +27,11 @@ const getTemplateForHopCount = (hopCount: number, data: RouteTemplateProps): Gri
       return generateOneHopTemplate(data)
   }
 }
+
 const TransactionRoute: React.FC<FlowChartProps> = ({
   routeData,
   handleClose,
+  errorMessage,
   showCloseButton = true,
   isLoading = false
 }) => {
@@ -36,8 +39,27 @@ const TransactionRoute: React.FC<FlowChartProps> = ({
     isLoading,
     width: '280px'
   })
-  if (!routeData) return null
-  const gridDefinition = getTemplateForHopCount(routeData.exchanges.length, routeData)
+
+  const renderContent = () => {
+    if (isLoading) {
+      return <TransactionRouteLoader />
+    }
+
+    if (errorMessage && (!routeData || !routeData.exchanges || routeData.exchanges.length === 0)) {
+      return <TransactionRouteError error={errorMessage} />
+    }
+
+    if (routeData && routeData.exchanges && routeData.exchanges.length > 0) {
+      return (
+        <FlowChartGrid
+          gridDefinition={getTemplateForHopCount(routeData.exchanges.length, routeData)}
+          cellSize={80}
+        />
+      )
+    }
+
+    return <TransactionRouteError error='No route data available' />
+  }
 
   return (
     <Box className={classes.container}>
@@ -49,13 +71,7 @@ const TransactionRoute: React.FC<FlowChartProps> = ({
       <Box className={classes.graphContainer}>
         <Typography className={classes.routeTitle}>Transaction route</Typography>
 
-        <Box>
-          {isLoading ? (
-            <TransactionRouteLoader />
-          ) : (
-            <FlowChartGrid gridDefinition={gridDefinition} cellSize={80} />
-          )}
-        </Box>
+        <Box>{renderContent()}</Box>
       </Box>
     </Box>
   )

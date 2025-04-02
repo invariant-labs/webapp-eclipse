@@ -638,6 +638,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       tETH: TETH_MAIN.address.toString(),
       MCT: MOCKED_TOKEN_MAIN.address.toString(),
       USDC: USDC_MAIN.address.toString(),
+      USDT: USDT_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),

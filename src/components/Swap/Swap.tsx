@@ -27,7 +27,7 @@ import {
   ROUTES,
   trimLeadingZeros
 } from '@utils/utils'
-import { Swap as SwapData } from '@store/reducers/swap'
+import { Swap as SwapData, SwapRoutesResponse } from '@store/reducers/swap'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
@@ -56,9 +56,6 @@ import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/Invar
 import { theme, typography } from '@static/theme'
 import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
 import { routes } from './routes'
-import { actions as swapActions } from '@store/reducers/swap'
-import { useDispatch } from 'react-redux'
-
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -86,7 +83,13 @@ export interface ISwap {
   swapData: SwapData
   tokens: SwapToken[]
   pools: PoolWithAddress[]
+  swapRouteChartData: {
+    swapRouteLoading: boolean
+    swapRouteError?: string
+    swapRouteResponse?: RouteTemplateProps
+  }
   tickmap: { [x: string]: Tickmap }
+  onRouteRefresh: (amountIn: BN, slippage: number) => void
   onSwap: (
     slippage: BN,
     knownPrice: BN,
@@ -163,6 +166,7 @@ export const Swap: React.FC<ISwap> = ({
   pools,
   tickmap,
   onSwap,
+  onRouteRefresh,
   onSetPair,
   progress,
   poolTicks,
@@ -170,6 +174,7 @@ export const Swap: React.FC<ISwap> = ({
   onConnectWallet,
   onDisconnectWallet,
   initialTokenFromIndex,
+  swapRouteChartData,
   initialTokenToIndex,
   handleAddToken,
   commonTokens,
@@ -276,9 +281,8 @@ export const Swap: React.FC<ISwap> = ({
   const [isReversingTokens, setIsReversingTokens] = useState(false)
   const [isTransactionRouteModalOpen, setTransactionRouteModalOpen] = useState(false)
   const [isRouteLoading, setRouteLoading] = useState(false)
-  const [route, setRoute] = useState<RouteTemplateProps | undefined>(routes[0])
+  // const [route, setRoute] = useState<RouteTemplateProps | undefined>(routes[0])
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const dispatch = useDispatch()
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -630,32 +634,32 @@ export const Swap: React.FC<ISwap> = ({
     }
   }
 
-  const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
-    let currentIndex = 0
+  // const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
+  //   let currentIndex = 0
 
-    const updateRoute = () => {
-      // setRouteLoading(true)
+  //   const updateRoute = () => {
+  //     // setRouteLoading(true)
 
-      setTimeout(() => {
-        // setRoute(routes[currentIndex])
+  //     setTimeout(() => {
+  //       // setRoute(routes[currentIndex])
 
-        setTimeout(() => {
-          // setRouteLoading(false)
+  //       setTimeout(() => {
+  //         // setRouteLoading(false)
 
-          setTimeout(() => {
-            // currentIndex = (currentIndex + 1) % routes.length
-            // updateRoute()
-          }, 3000)
-        }, intervalMs / 2)
-      }, intervalMs / 2)
-    }
+  //         setTimeout(() => {
+  //           // currentIndex = (currentIndex + 1) % routes.length
+  //           // updateRoute()
+  //         }, 3000)
+  //       }, intervalMs / 2)
+  //     }, intervalMs / 2)
+  //   }
 
-    updateRoute()
-  }
+  //   updateRoute()
+  // }
 
-  useEffect(() => {
-    simulateRouteLoading(routes, 3000)
-  }, [])
+  // useEffect(() => {
+  //   simulateRouteLoading(routes, 3000)
+  // }, [])
 
   const updateSimulation = (
     simulateResult: {
@@ -879,7 +883,6 @@ export const Swap: React.FC<ISwap> = ({
       return 'RPC connection error'
     }
 
-    // Fallback error message
     if (swapType === SwapType.Normal && simulateResult.error.length !== 0) {
       console.warn('Errors not handled explictly', simulateResult.error)
       return 'Not enough liquidity'
@@ -1024,6 +1027,21 @@ export const Swap: React.FC<ISwap> = ({
     (getStateMessage() === 'Loading' &&
       (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
 
+  useEffect(() => {
+    if (tokenFromIndex === null || tokenToIndex === null || !amountFrom || !amountTo) {
+      return
+    }
+
+    const debounceTimeout = setTimeout(() => {
+      onRouteRefresh(
+        convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+        +slippTolerance
+      )
+    }, 500)
+
+    return () => clearTimeout(debounceTimeout)
+  }, [tokenFromIndex, tokenToIndex, amountFrom, amountTo, slippTolerance, tokens])
+
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
       {wrappedETHAccountExist && (
@@ -1042,13 +1060,13 @@ export const Swap: React.FC<ISwap> = ({
       )}
       {isMd && (
         <TransactionRouteModal
-          isLoading={isRouteLoading}
+          isLoading={swapRouteChartData.swapRouteLoading}
           open={isTransactionRouteModalOpen}
           handleClose={() => {
             setTransactionRouteModalOpen(false)
             unblurContent()
           }}
-          routeData={route}
+          routeData={undefined}
         />
       )}
       <Box sx={{ display: 'flex' }}>
@@ -1552,19 +1570,7 @@ export const Swap: React.FC<ISwap> = ({
                     progress={progress}
                   />
                 )}
-                <button
-                  onClick={() => {
-                    if (tokenFromIndex === null) return
 
-                    dispatch(
-                      swapActions.fetchSwapRoute({
-                        amountIn: convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                        slippage: +slippTolerance
-                      })
-                    )
-                  }}>
-                  Test
-                </button>
                 <AnimatedWaves
                   wavePosition={'bottom'}
                   isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
@@ -1572,22 +1578,26 @@ export const Swap: React.FC<ISwap> = ({
               </Grid>
             </Box>
           </Box>
-          {!isMd && (
-            <Box
-              sx={{
-                height: '100%',
-                width: '350px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'flex-end'
-              }}>
-              <TransactionRoute
-                routeData={route}
-                showCloseButton={false}
-                isLoading={isRouteLoading}
-              />
-            </Box>
-          )}
+          {!isMd &&
+            (swapRouteChartData.swapRouteResponse ||
+              swapRouteChartData.swapRouteError ||
+              swapRouteChartData.swapRouteLoading) && (
+              <Box
+                sx={{
+                  height: '100%',
+                  width: '350px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'flex-end'
+                }}>
+                <TransactionRoute
+                  routeData={swapRouteChartData.swapRouteResponse}
+                  showCloseButton={false}
+                  errorMessage={swapRouteChartData.swapRouteError}
+                  isLoading={swapRouteChartData.swapRouteLoading}
+                />
+              </Box>
+            )}
         </Box>
       </Box>
       <img src={icons.audit} alt='Audit' style={{ marginTop: '24px' }} width={180} />

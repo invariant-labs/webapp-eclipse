@@ -3,7 +3,7 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as swapActions } from '@store/reducers/swap'
 import { swap } from '@store/selectors/swap'
 import { poolsArraySortedByFees, tickMaps, tokens } from '@store/selectors/pools'
-import { accounts } from '@store/selectors/solanaWallet'
+import { accounts, SwapToken } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
 import { IWallet, Pair, routingEssentials } from '@invariant-labs/sdk-eclipse'
 import { getConnection, handleRpcError } from './connection'
@@ -25,7 +25,13 @@ import {
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { createLoaderKey, ensureError, getAgregatorSwapRoutesData, printBN } from '@utils/utils'
+import {
+  createLoaderKey,
+  ensureError,
+  getAgregatorSwapRoutesData,
+  printBN,
+  transformRawSwapRoutesData
+} from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createNativeAtaInstructions,
@@ -42,6 +48,7 @@ import {
 import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
 import { BN } from '@coral-xyz/anchor'
+import { AxiosError } from 'axios'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -1031,12 +1038,14 @@ export function* handleSwap(): Generator {
 }
 
 export function* handleFetchSwapRoute(
-  action: PayloadAction<{ amountIn: BN; slippage: number }>
+  action: PayloadAction<{ amountIn: BN; slippage: number; tokens: SwapToken[] }>
 ): Generator {
   try {
     const swapState = yield* select(swap)
+    const networkType = yield* select(network)
+
     const { tokenFrom, tokenTo } = swapState
-    const { amountIn, slippage } = action.payload
+    const { amountIn, slippage, tokens } = action.payload
 
     if (
       tokenFrom.equals(PublicKey.default) ||
@@ -1061,17 +1070,22 @@ export function* handleFetchSwapRoute(
 
     if (routesData) {
       const { ...data } = routesData
+      const transformedData = transformRawSwapRoutesData(networkType, data, tokens)
+
       yield put(
         swapActions.setSwapRouteResponse({
-          ...data
+          ...transformedData
         })
       )
+      yield put(swapActions.setSwapRouteError(undefined))
     } else {
       console.error('Failed to fetch swap routes')
     }
   } catch (e: unknown) {
-    const error = ensureError(e)
-    console.log('Error fetching swap routes:', error)
+    const error = ensureError(e) as AxiosError<{ message: string }>
+    swapActions.setSwapRouteResponse(undefined)
+    yield put(swapActions.setSwapRouteError(error.response?.data.message ?? ''))
+    console.log('Error fetching swap routes:', error.response?.data.message)
   } finally {
     yield put(swapActions.setSwapRouteLoading(false))
   }

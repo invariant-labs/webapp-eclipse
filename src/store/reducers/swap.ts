@@ -6,6 +6,8 @@ import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 import { FetcherRecords } from '@invariant-labs/sdk-eclipse'
 import { Pair } from '@invariant-labs/sdk-eclipse/src'
+import { RouteTemplateProps } from '@components/TransactionRoute/FlowChartGrid/types/types'
+import { SwapToken } from '@store/selectors/solanaWallet'
 
 export interface Swap {
   slippage: BN
@@ -63,7 +65,8 @@ export interface ISwapStore {
   isLoading: boolean
   swapRoute: {
     swapRouteLoading: boolean
-    swapRouteResponse?: SwapRoutesResponse
+    swapRouteError?: string
+    swapRouteResponse?: RouteTemplateProps
   }
 }
 
@@ -82,6 +85,7 @@ export const defaultState: ISwapStore = {
   },
   swapRoute: {
     swapRouteLoading: false,
+    swapRouteError: undefined,
     swapRouteResponse: undefined
   },
   accounts: {
@@ -122,14 +126,20 @@ const swapSlice = createSlice({
       state.swapRoute.swapRouteLoading = action.payload
       return state
     },
-    setSwapRouteResponse(state, action: PayloadAction<SwapRoutesResponse>) {
-      console.log('zapisz', action.payload)
+    setSwapRouteError(state, action: PayloadAction<string | undefined>) {
+      state.swapRoute.swapRouteError = action.payload
+      return state
+    },
+    setSwapRouteResponse(state, action: PayloadAction<RouteTemplateProps | undefined>) {
       state.swapRoute.swapRouteResponse = action.payload
       state.swapRoute.swapRouteLoading = false
       return state
     },
 
-    fetchSwapRoute(state, _action: PayloadAction<{ amountIn: BN; slippage: number }>) {
+    fetchSwapRoute(
+      state,
+      _action: PayloadAction<{ amountIn: BN; slippage: number; tokens: SwapToken[] }>
+    ) {
       return state
     },
     updateSwapPool(state, action: PayloadAction<{ address: PublicKey; pool: PoolStructure }>) {
