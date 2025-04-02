@@ -1418,16 +1418,6 @@ export const Swap: React.FC<ISwap> = ({
                         </Typography>
                       </Grid>
                     </button>
-                    {isMd && (
-                      <button
-                        onClick={() => {
-                          setTransactionRouteModalOpen(true)
-                          blurContent()
-                        }}
-                        className={classes.routeButton}>
-                        <Typography sx={{ ...typography.caption2 }}>Route</Typography>
-                      </button>
-                    )}
                     {tokenFromIndex !== null &&
                       tokenToIndex !== null &&
                       tokenFromIndex !== tokenToIndex && (
@@ -1491,11 +1481,11 @@ export const Swap: React.FC<ISwap> = ({
                 />
                 {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
                   <ChangeWalletButton
+                    height={48}
                     name='Connect wallet'
                     onConnect={onConnectWallet}
                     connected={false}
                     onDisconnect={onDisconnectWallet}
-                    className={classes.connectWalletButton}
                     isSwap={true}
                   />
                 ) : getStateMessage() === 'Insufficient Wrapped ETH' ? (
