@@ -27,7 +27,7 @@ import {
   ROUTES,
   trimLeadingZeros
 } from '@utils/utils'
-import { Swap as SwapData, SwapRoutesResponse } from '@store/reducers/swap'
+import { Swap as SwapData } from '@store/reducers/swap'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
@@ -55,7 +55,6 @@ import { RouteTemplateProps } from '@components/TransactionRoute/FlowChartGrid/t
 import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
 import { theme, typography } from '@static/theme'
 import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
-import { routes } from './routes'
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -280,8 +279,6 @@ export const Swap: React.FC<ISwap> = ({
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
   const [isTransactionRouteModalOpen, setTransactionRouteModalOpen] = useState(false)
-  const [isRouteLoading, setRouteLoading] = useState(false)
-  // const [route, setRoute] = useState<RouteTemplateProps | undefined>(routes[0])
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
@@ -1040,7 +1037,7 @@ export const Swap: React.FC<ISwap> = ({
     }, 500)
 
     return () => clearTimeout(debounceTimeout)
-  }, [tokenFromIndex, tokenToIndex, amountFrom, amountTo, slippTolerance, tokens])
+  }, [tokenFromIndex, tokenToIndex, amountFrom, amountTo, isAnyBlurShowed])
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>
@@ -1060,13 +1057,15 @@ export const Swap: React.FC<ISwap> = ({
       )}
       {isMd && (
         <TransactionRouteModal
+          routeData={swapRouteChartData.swapRouteResponse}
+          showCloseButton={false}
+          errorMessage={swapRouteChartData.swapRouteError}
           isLoading={swapRouteChartData.swapRouteLoading}
           open={isTransactionRouteModalOpen}
           handleClose={() => {
             setTransactionRouteModalOpen(false)
             unblurContent()
           }}
-          routeData={undefined}
         />
       )}
       <Box sx={{ display: 'flex' }}>

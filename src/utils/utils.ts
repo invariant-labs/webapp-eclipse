@@ -2259,7 +2259,6 @@ export const transformRawSwapRoutesData = (
       logoUrl: exchange.logoUrl,
       fee: '-'
     }
-    console.log(outputMint, token)
     if (!isLastSwap) {
       result.toToken = {
         symbol: reformatTicker(addressToTicker(network, outputMint.toString())),

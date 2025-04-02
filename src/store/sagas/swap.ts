@@ -1083,7 +1083,7 @@ export function* handleFetchSwapRoute(
     }
   } catch (e: unknown) {
     const error = ensureError(e) as AxiosError<{ message: string }>
-    swapActions.setSwapRouteResponse(undefined)
+    yield put(swapActions.setSwapRouteResponse(undefined))
     yield put(swapActions.setSwapRouteError(error.response?.data.message ?? ''))
     console.log('Error fetching swap routes:', error.response?.data.message)
   } finally {
