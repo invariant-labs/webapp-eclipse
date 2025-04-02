@@ -129,7 +129,7 @@ const swapSlice = createSlice({
       return state
     },
 
-    fetchSwapRoute(state, _action: PayloadAction<{ amountIn: number; slippage: number }>) {
+    fetchSwapRoute(state, _action: PayloadAction<{ amountIn: BN; slippage: number }>) {
       return state
     },
     updateSwapPool(state, action: PayloadAction<{ address: PublicKey; pool: PoolStructure }>) {

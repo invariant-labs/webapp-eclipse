@@ -1031,7 +1031,7 @@ export function* handleSwap(): Generator {
 }
 
 export function* handleFetchSwapRoute(
-  action: PayloadAction<{ amountIn: number; slippage: number }>
+  action: PayloadAction<{ amountIn: BN; slippage: number }>
 ): Generator {
   try {
     const swapState = yield* select(swap)
@@ -1041,10 +1041,12 @@ export function* handleFetchSwapRoute(
     if (
       tokenFrom.equals(PublicKey.default) ||
       tokenTo.equals(PublicKey.default) ||
-      amountIn === 0
+      amountIn.eq(new BN(0))
     ) {
       return
     }
+
+    console.log(amountIn)
 
     yield put(swapActions.setSwapRouteLoading(true))
 
@@ -1057,10 +1059,13 @@ export function* handleFetchSwapRoute(
       amountIn
     })
 
-    console.log(routesData)
-
     if (routesData) {
-      yield put(swapActions.setSwapRouteResponse(routesData))
+      const { ...data } = routesData
+      yield put(
+        swapActions.setSwapRouteResponse({
+          ...data
+        })
+      )
     } else {
       console.error('Failed to fetch swap routes')
     }

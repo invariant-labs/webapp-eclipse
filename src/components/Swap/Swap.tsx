@@ -1558,7 +1558,7 @@ export const Swap: React.FC<ISwap> = ({
 
                     dispatch(
                       swapActions.fetchSwapRoute({
-                        amountIn: +amountFrom,
+                        amountIn: convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
                         slippage: +slippTolerance
                       })
                     )
