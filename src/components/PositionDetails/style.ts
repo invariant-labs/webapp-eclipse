@@ -29,5 +29,10 @@ export const useStyles = makeStyles()(() => ({
   },
   rightSide: {
     flexGrow: 1
+  },
+  information: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 8
   }
 }))

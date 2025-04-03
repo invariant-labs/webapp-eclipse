@@ -2,6 +2,8 @@ import { ActionCreatorWithPayload } from '@reduxjs/toolkit'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from './static'
+import { Position } from '@invariant-labs/sdk-eclipse/lib/market'
+import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 
 declare global {
   interface Window {
@@ -249,6 +251,31 @@ export interface Reward {
   eligible: string
   type: string
   addresses: string[]
+}
+export interface IPositionItem {
+  tokenXName: string
+  tokenYName: string
+  tokenXIcon: string
+  tokenYIcon: string
+  tokenXLiq: number
+  poolAddress: PublicKey
+  position: Position
+  tokenYLiq: number
+  fee: number
+  min: number
+  max: number
+  valueX: number
+  valueY: number
+  id: string
+  address: string
+  isActive?: boolean
+  currentPrice: number
+  network: NetworkType
+  isFullRange: boolean
+  isLocked: boolean
+  poolData: PoolWithAddressAndIndex
+  liquidity: BN
+  unclaimedFeesInUSD: { value: number; loading: boolean }
 }
 
 export interface ILiquidityToken {
