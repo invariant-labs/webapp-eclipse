@@ -49,7 +49,8 @@ export const Primary: Story = {
       decimal: 12
     },
     xToY: true,
-    hasTicksError: false
+    hasTicksError: false,
+    isFullRange: false
   },
   render: args => {
     return (
