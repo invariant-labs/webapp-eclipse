@@ -128,8 +128,7 @@ export enum Chain {
   Solana = 'Solana',
   AlephZero = 'Aleph Zero',
   Eclipse = 'Eclipse',
-  Vara = 'Vara',
-  Alephium = 'Alephium'
+  Vara = 'Vara'
 }
 
 export interface SnapshotValueData {
@@ -250,4 +249,14 @@ export interface Reward {
   eligible: string
   type: string
   addresses: string[]
+}
+
+export interface ILiquidityToken {
+  name: string
+  icon: string
+  decimal: number
+  liqValue: number
+  claimValue: number
+  balance: number
+  usdValue?: number
 }

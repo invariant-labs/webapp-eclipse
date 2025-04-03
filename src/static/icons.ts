@@ -66,7 +66,6 @@ import testnetGlow from './svg/testnetGlow.svg'
 import active2 from './svg/active2.svg'
 import solanaGlow from './svg/solanaGlow.svg'
 import eclipseGlow from './svg/eclipseGlow.svg'
-import alephiumGlow from './svg/alephiumGlow.svg'
 import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
@@ -79,6 +78,7 @@ import navRight from '@static/svg/navRight.svg'
 import navLeft from '@static/svg/navLeft.svg'
 import check from '@static/svg/checkFill.svg'
 import celestialMammoth from '@static/svg/celestialMammoth.svg'
+import edas from '@static/svg/edas.svg'
 import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
 import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
 import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
@@ -95,6 +95,11 @@ import handleMax from '@static/svg/narrowChartMaxHandle.svg'
 import handleMin from '@static/svg/narrowChartMinHandle.svg'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
+import reverseTokens from './svg/reverse-tokens.svg'
+import backArrow from '@static/svg/back-arrow.svg'
+import lock from '@static/svg/lock.svg'
+import unlock from '@static/svg/unlock.svg'
+import boostPointsBold from '@static/svg/boostPointsBold.svg'
 import eyeYellow from './svg/eyeYellow.svg'
 import closeYellow from './svg/closeYellow.svg'
 
@@ -123,6 +128,7 @@ const icons = {
   navLeft,
   check,
   celestialMammoth,
+  edas,
   SearchIcon,
   tokenCreator,
   statsIcon,
@@ -191,11 +197,16 @@ const icons = {
   active2,
   solanaGlow,
   eclipseGlow,
-  alephiumGlow,
+
   liquidityEmpty,
   assetsEmpty,
   settings3,
   faucet,
+  reverseTokens,
+  backArrow,
+  lock,
+  unlock,
+  boostPointsBold,
   eyeYellow,
   closeYellow
 }

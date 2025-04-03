@@ -1,72 +1,52 @@
-import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
-import { Box, Grid, Hidden, Typography } from '@mui/material'
-import { blurContent, unblurContent } from '@utils/uiUtils'
-import classNames from 'classnames'
-import { useMemo, useRef, useState } from 'react'
-import { BoxInfo } from './BoxInfo'
-import { ILiquidityToken } from './consts'
+import { Box, Button } from '@mui/material'
+import { useState } from 'react'
 import useStyles from './style'
-import { useNavigate } from 'react-router-dom'
-import { TokenPriceData } from '@store/consts/types'
-
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import icons from '@static/icons'
-import { addressToTicker, ROUTES } from '@utils/utils'
-import {
-  NetworkType,
-  WETH_CLOSE_POSITION_LAMPORTS_MAIN,
-  WETH_CLOSE_POSITION_LAMPORTS_TEST
-} from '@store/consts/static'
-import { BN } from '@coral-xyz/anchor'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
-import { Button } from '@common/Button/Button'
+import { ILiquidityToken, TokenPriceData } from '@store/consts/types'
+import { Section } from './Section/Section'
+import { PoolDetails } from './PoolDetails/PoolDetails'
+import { UnclaimedFees } from './UnclaimedFees/UnclaimedFees'
+import { Liquidity } from './Liquidity/Liquidity'
+import { Separator } from '@common/Separator/Separator'
+import { PositionStats } from './PositionStats/PositionStats'
+import { colors } from '@static/theme'
+import { PoolDetails as PoolDetailsType } from '@containers/SinglePositionWrapper/SinglePositionWrapper'
+import { calculateAPYAndAPR } from '@utils/utils'
+import { PublicKey } from '@solana/web3.js'
 
 interface IProp {
-  fee: number
   onClickClaimFee: () => void
-  closePosition: (claimFarmRewards?: boolean) => void
   tokenX: ILiquidityToken
   tokenY: ILiquidityToken
   tokenXPriceData?: TokenPriceData
   tokenYPriceData?: TokenPriceData
   xToY: boolean
-  swapHandler: () => void
   showFeesLoader?: boolean
-  userHasStakes?: boolean
-  isBalanceLoading: boolean
-  isActive: boolean
-  network: NetworkType
-  isLocked: boolean
-  onModalOpen: () => void
-  ethBalance: BN
+  poolDetails: PoolDetailsType | null
+  showPoolDetailsLoader?: boolean
+  showBalanceLoader?: boolean
+  arePointsDistributed: boolean
+  points24: number
+  poolAddress: PublicKey
   isPreview: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
-  fee,
   onClickClaimFee,
-  closePosition,
   tokenX,
   tokenY,
   tokenXPriceData,
   tokenYPriceData,
   xToY,
-  swapHandler,
   showFeesLoader = false,
-  userHasStakes = false,
-  isBalanceLoading,
-  isActive,
-  network,
-  onModalOpen,
-  isLocked,
-  ethBalance,
+  showPoolDetailsLoader = false,
+  poolDetails,
+  showBalanceLoader = false,
+  arePointsDistributed,
+  points24,
+  poolAddress,
   isPreview
 }) => {
-  const navigate = useNavigate()
-  const [isModalOpen, setIsModalOpen] = useState(false)
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
-  const feeRef = useRef<HTMLDivElement>(null)
-
   const { classes } = useStyles()
 
   const Overlay = () => (
@@ -79,234 +59,131 @@ const SinglePositionInfo: React.FC<IProp> = ({
       className={classes.overlay}
     />
   )
-
-  const canClosePosition = useMemo(() => {
-    if (network === NetworkType.Testnet) {
-      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_TEST)
-    } else {
-      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_MAIN)
-    }
-  }, [ethBalance, network])
+  const { convertedApr } = calculateAPYAndAPR(
+    poolDetails?.apy ?? 0,
+    poolAddress.toString(),
+    poolDetails?.volume24 ?? 0,
+    poolDetails?.fee,
+    poolDetails?.tvl ?? 0
+  )
 
   return (
     <>
       {isFeeTooltipOpen && <Overlay />}
-      <Grid className={classes.root}>
-        <ClosePositionWarning
-          open={isModalOpen}
-          onCancel={() => {
-            setIsModalOpen(false)
-            unblurContent()
-          }}
-          onClose={() => {
-            closePosition()
-            setIsModalOpen(false)
-            unblurContent()
-          }}
-          onClaim={() => {
-            closePosition(true)
-            setIsModalOpen(false)
-            unblurContent()
-          }}
+      <Box className={classes.container}>
+        <PositionStats
+          value={
+            tokenX.liqValue * (tokenXPriceData?.price ?? 0) +
+            tokenY.liqValue * (tokenYPriceData?.price ?? 0)
+          }
+          pendingFees={
+            tokenX.claimValue * (tokenXPriceData?.price ?? 0) +
+            tokenY.claimValue * (tokenYPriceData?.price ?? 0)
+          }
+          poolApr={convertedApr}
+          points24={points24}
+          arePointsDistributed={arePointsDistributed}
+          isLoading={showFeesLoader}
         />
-
-        <Grid className={classes.header}>
-          <Grid className={classes.iconsGrid}>
-            <Grid className={classes.tickerContainer}>
-              <img
-                className={classes.icon}
-                src={xToY ? tokenX.icon : tokenY.icon}
-                alt={xToY ? tokenX.name : tokenY.name}
-              />
-              <TooltipHover title='Reverse tokens'>
-                <img
-                  className={classes.arrowIcon}
-                  src={icons.swapListIcon}
-                  alt='Reverse tokens'
-                  onClick={swapHandler}
-                />
-              </TooltipHover>
-              <img
-                className={classes.icon}
-                src={xToY ? tokenY.icon : tokenX.icon}
-                alt={xToY ? tokenY.name : tokenX.name}
-              />
-              <Grid className={classes.namesGrid}>
-                <Typography className={classes.name}>
-                  {xToY ? tokenX.name : tokenY.name} - {xToY ? tokenY.name : tokenX.name}{' '}
-                </Typography>
-              </Grid>
-            </Grid>
-            <Grid className={classes.rangeGrid} sx={{ display: { xs: 'flex', md: 'none' } }}>
-              <TooltipGradient
-                title={
-                  isActive ? (
-                    <>
-                      The position is <b>active</b> and currently <b>earning a fee</b> as long as
-                      the current price is <b>within</b> the position's price range.
-                    </>
-                  ) : (
-                    <>
-                      The position is <b>inactive</b> and <b>not earning a fee</b> as long as the
-                      current price is <b>outside</b> the position's price range.
-                    </>
-                  )
-                }
-                placement='top'
-                top={1}
-                noGradient>
-                <Typography
-                  ref={feeRef}
-                  onClick={e => {
-                    e.stopPropagation()
-                    setIsFeeTooltipOpen(prev => !prev)
-                  }}
-                  className={classNames(
-                    classes.text,
-                    classes.feeText,
-                    isActive ? classes.active : null
-                  )}>
-                  {fee.toString()}% fee
-                </Typography>
-              </TooltipGradient>
-            </Grid>
-          </Grid>
-
-          <Grid className={classes.headerButtons}>
-            <Grid className={classes.rangeGrid} sx={{ display: { xs: 'none', md: 'flex' } }}>
-              <TooltipGradient
-                title={
-                  isActive ? (
-                    <>
-                      The position is <b>active</b> and currently <b>earning a fee</b> as long as
-                      the current price is <b>within</b> the position's price range.
-                    </>
-                  ) : (
-                    <>
-                      The position is <b>inactive</b> and <b>not earning a fee</b> as long as the
-                      current price is <b>outside</b> the position's price range.
-                    </>
-                  )
-                }
-                placement='top'
-                top={1}
-                noGradient>
-                <Typography
-                  className={classNames(
-                    classes.text,
-                    classes.feeText,
-                    isActive ? classes.active : null
-                  )}>
-                  {fee.toString()}% fee
-                </Typography>
-              </TooltipGradient>
-            </Grid>
-            <TooltipHover
-              title={
-                isPreview
-                  ? "Can't close position in preview"
-                  : isLocked
-                    ? 'Closing positions is disabled when position is locked'
-                    : canClosePosition
-                      ? tokenX.claimValue > 0 || tokenY.claimValue > 0
-                        ? 'Unclaimed fees will be returned when closing the position'
-                        : ''
-                      : 'Insufficient ETH to close position'
-              }>
-              <Box>
-                <Button
-                  scheme='green'
-                  height={36}
-                  padding='0 6px'
-                  borderRadius={14}
-                  disabled={isLocked || !canClosePosition || isPreview}
-                  onClick={() => {
-                    if (!userHasStakes) {
-                      closePosition()
-                    } else {
-                      setIsModalOpen(true)
-                      blurContent()
-                    }
-                  }}>
-                  {canClosePosition || isPreview ? 'Close position' : 'Lacking ETH'}
-                </Button>
-              </Box>
-            </TooltipHover>
-            <Hidden mdUp>
-              {!isLocked ? (
-                <TooltipHover
-                  title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
-                  <Box>
-                    <Button
-                      width={45}
-                      scheme='green'
-                      disabled={isLocked || isPreview}
-                      onClick={onModalOpen}>
-                      <img src={icons.lockPosition} alt='Lock' />
-                    </Button>
-                  </Box>
-                </TooltipHover>
-              ) : (
-                <TooltipHover title={'Unlocking liquidity is forbidden'}>
-                  <Box>
-                    <Button width={45} scheme='green' disabled onClick={() => {}}>
-                      <img src={icons.unlockIcon} alt='Lock' />
-                    </Button>
-                  </Box>
-                </TooltipHover>
-              )}
-            </Hidden>
-            <Hidden smUp>
-              <Button
-                scheme='pink'
-                onClick={() => {
-                  const address1 = addressToTicker(network, tokenX.name)
-                  const address2 = addressToTicker(network, tokenY.name)
-
-                  navigate(ROUTES.getNewPositionRoute(address1, address2, fee.toString()))
-                }}>
-                <span className={classes.buttonText}>+ Add Position</span>
-              </Button>
-            </Hidden>
-          </Grid>
-        </Grid>
-        <Grid className={classes.bottomGrid}>
-          <BoxInfo
-            title={'Liquidity'}
+        <Separator size='100%' isHorizontal color={colors.invariant.light} />
+        <Section title='Liquidity'>
+          <Liquidity
             tokenA={
               xToY
-                ? { ...tokenX, value: tokenX.liqValue, price: tokenXPriceData?.price }
-                : { ...tokenY, value: tokenY.liqValue, price: tokenYPriceData?.price }
+                ? {
+                    icon: tokenX.icon,
+                    ticker: tokenX.name,
+                    amount: tokenX.liqValue,
+                    decimal: tokenX.decimal,
+                    price: tokenXPriceData?.price
+                  }
+                : {
+                    icon: tokenY.icon,
+                    ticker: tokenY.name,
+                    amount: tokenY.liqValue,
+                    decimal: tokenY.decimal,
+                    price: tokenYPriceData?.price
+                  }
             }
             tokenB={
               xToY
-                ? { ...tokenY, value: tokenY.liqValue, price: tokenYPriceData?.price }
-                : { ...tokenX, value: tokenX.liqValue, price: tokenXPriceData?.price }
+                ? {
+                    icon: tokenY.icon,
+                    ticker: tokenY.name,
+                    amount: tokenY.liqValue,
+                    decimal: tokenY.decimal,
+                    price: tokenYPriceData?.price
+                  }
+                : {
+                    icon: tokenX.icon,
+                    ticker: tokenX.name,
+                    amount: tokenX.liqValue,
+                    decimal: tokenX.decimal,
+                    price: tokenXPriceData?.price
+                  }
             }
-            showBalance
-            swapHandler={swapHandler}
-            isBalanceLoading={isBalanceLoading}
-            isPreview={isPreview}
+            isLoadingBalance={showBalanceLoader}
           />
-          <BoxInfo
-            title={'Unclaimed fees'}
+        </Section>
+        <Section
+          title='Unclaimed fees'
+          item={
+            <Button
+              className={classes.claimButton}
+              disabled={tokenX.claimValue + tokenY.claimValue === 0}
+              variant='contained'
+              onClick={() => onClickClaimFee()}>
+              Claim
+            </Button>
+          }>
+          <UnclaimedFees
             tokenA={
               xToY
-                ? { ...tokenX, value: tokenX.claimValue }
-                : { ...tokenY, value: tokenY.claimValue }
+                ? {
+                    icon: tokenX.icon,
+                    ticker: tokenX.name,
+                    amount: tokenX.claimValue,
+                    decimal: tokenX.decimal,
+                    price: tokenXPriceData?.price
+                  }
+                : {
+                    icon: tokenY.icon,
+                    ticker: tokenY.name,
+                    amount: tokenY.claimValue,
+                    decimal: tokenY.decimal,
+                    price: tokenYPriceData?.price
+                  }
             }
             tokenB={
               xToY
-                ? { ...tokenY, value: tokenY.claimValue }
-                : { ...tokenX, value: tokenX.claimValue }
+                ? {
+                    icon: tokenY.icon,
+                    ticker: tokenY.name,
+                    amount: tokenY.claimValue,
+                    decimal: tokenY.decimal,
+                    price: tokenYPriceData?.price
+                  }
+                : {
+                    icon: tokenX.icon,
+                    ticker: tokenX.name,
+                    amount: tokenX.claimValue,
+                    decimal: tokenX.decimal,
+                    price: tokenXPriceData?.price
+                  }
             }
-            onClickButton={onClickClaimFee}
-            showLoader={showFeesLoader}
-            isBalanceLoading={isBalanceLoading}
+            isLoading={showFeesLoader}
+          />
+        </Section>
+        <Section title='Pool details'>
+          <PoolDetails
+            tvl={poolDetails?.tvl ?? 0}
+            volume24={poolDetails?.volume24 ?? 0}
+            fee24={poolDetails?.fee24 ?? 0}
+            showPoolDetailsLoader={showPoolDetailsLoader}
             isPreview={isPreview}
           />
-        </Grid>
-      </Grid>
+        </Section>
+      </Box>
     </>
   )
 }

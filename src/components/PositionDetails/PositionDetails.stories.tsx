@@ -54,7 +54,18 @@ const defaultArgs = {
   poolAddress: new PublicKey('32'),
   isLocked: false,
   ethBalance: new BN(10000000),
-  isPreview: false
+  isPreview: false,
+  poolDetails: {
+    tvl: 0,
+    volume24: 0,
+    fee24: 0,
+    apy: 0,
+    fee: 0.01
+  },
+  isPromoted: true,
+  showPoolDetailsLoader: true,
+  onGoBackClick: () => {},
+  points24: 0
 }
 
 const meta = {

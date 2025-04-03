@@ -1,6 +1,7 @@
 import { BN } from '@coral-xyz/anchor'
 import { printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
+import { FormatNumberThreshold } from '@store/consts/types'
 
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
@@ -129,3 +130,32 @@ export const formatLargeNumber = (number: number) => {
 
   return `${trimZeros(scaledNumber.toFixed(1))}${suffixes[suffixIndex]}`
 }
+
+export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThreshold[] => [
+  {
+    value: 10,
+    decimals
+  },
+  {
+    value: 10000,
+    decimals: 6
+  },
+  {
+    value: 100000,
+    decimals: 4
+  },
+  {
+    value: 1000000,
+    decimals: 3
+  },
+  {
+    value: 1000000000,
+    decimals: 2,
+    divider: 1000000
+  },
+  {
+    value: Infinity,
+    decimals: 2,
+    divider: 1000000000
+  }
+]

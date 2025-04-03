@@ -1,12 +1,15 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
+import { FontData } from './Button'
 
 type StyleProps = {
   scheme: 'normal' | 'green' | 'pink' | 'rainbow'
   height?: string | number
   width?: string | number
+  fontData?: FontData
   borderRadius?: string | number
   padding?: string | number
+  margin?: string | number
 }
 
 const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
@@ -41,18 +44,19 @@ const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
 }
 
 const useStyles = makeStyles<StyleProps>()(
-  (_theme, { scheme, height, width, borderRadius, padding }) => ({
+  (_theme, { scheme, height, width, borderRadius, padding, margin, fontData }) => ({
     button: {
+      zIndex: 1,
       height: height ?? 40,
       width: width ?? 'auto',
       minWidth: 0,
+      margin: margin ?? '0',
       padding: padding ?? '0 12px',
       background: getStyles(scheme).background,
       color: getStyles(scheme).color,
       borderRadius: borderRadius ?? 14,
       textTransform: 'none',
-      ...typography.body1,
-
+      ...(fontData ? fontData : typography.body1),
       '&:hover': {
         boxShadow: `0 0 12px ${getStyles(scheme).boxShadow}`,
         ...(scheme === 'rainbow' ? {} : { background: getStyles(scheme).backgroundHover })

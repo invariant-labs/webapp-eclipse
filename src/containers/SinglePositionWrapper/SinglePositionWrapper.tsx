@@ -37,10 +37,25 @@ import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
 import { theme } from '@static/theme'
+import { actions as statsActions } from '@store/reducers/stats'
+import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { getPromotedPools } from '@store/selectors/leaderboard'
+import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
+import { BN } from '@coral-xyz/anchor'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { poolsArraySortedByFees } from '@store/selectors/pools'
 
 export interface IProps {
   id: string
+}
+
+export type PoolDetails = {
+  tvl: number
+  volume24: number
+  fee24: number
+  apy: number
+  fee: number
 }
 
 export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
@@ -57,6 +72,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const { loading: positionPreviewLoading } = useSelector(positionData)
   const { success, inProgress } = useSelector(lockerState)
   const poolsList = useSelector(poolsArraySortedByFees)
+  const statsPolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const {
     allData: ticksData,
@@ -76,6 +92,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [isLoadingListDelay, setIsLoadListDelay] = useState(isLoadingList)
 
   const [isClosingPosition, setIsClosingPosition] = useState(false)
+
+  const isLoadingStats = useSelector(isLoading)
 
   useEffect(() => {
     if (position?.id) {
@@ -377,6 +395,58 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
   }, [isLoadingList])
 
+  useEffect(() => {
+    dispatch(statsActions.getCurrentStats())
+  }, [])
+
+  const poolDetails = useMemo(() => {
+    if (!position) {
+      return null
+    }
+
+    const pool = statsPolsList.find(pool => pool.poolAddress.equals(position?.poolData.address))
+
+    if (!pool) {
+      return null
+    }
+
+    return {
+      tvl: pool.tvl,
+      volume24: pool.volume24,
+      fee24: (pool.volume24 * pool.fee) / 100,
+      apy: pool.apy,
+      fee: pool.fee
+    }
+  }, [poolsList])
+
+  useEffect(() => {
+    dispatch(leaderboardActions.getLeaderboardConfig())
+  }, [])
+
+  const promotedPools = useSelector(getPromotedPools)
+
+  const isPromoted = promotedPools.some(
+    pool => pool.address === position?.poolData.address.toString()
+  )
+
+  const calculatePoints24 = () => {
+    if (!position) {
+      return 0
+    }
+
+    const pointsPerSecond = promotedPools.find(
+      pool => pool.address === position?.poolData.address.toString()
+    )?.pointsPerSecond
+
+    return estimatePointsForUserPositions(
+      [position],
+      position.poolData,
+      new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+    )
+  }
+
+  const points24 = calculatePoints24()
+
   if (position) {
     return (
       <PositionDetails
@@ -462,6 +532,11 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         success={success}
         inProgress={inProgress}
         ethBalance={ethBalance}
+        poolDetails={poolDetails}
+        onGoBackClick={() => navigate(ROUTES.PORTFOLIO)}
+        showPoolDetailsLoader={isLoadingStats}
+        isPromoted={isPromoted}
+        points24={points24}
         isPreview={isPreview}
       />
     )

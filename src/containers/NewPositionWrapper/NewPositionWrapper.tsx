@@ -731,13 +731,15 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const feeTiersWithTvl: Record<number, number> = {}
     let totalTvl = 0
 
-    poolsList.map(pool => {
-      if (
-        (pool.tokenX.equals(tokens[tokenAIndex ?? 0].assetAddress) &&
-          pool.tokenY.equals(tokens[tokenBIndex ?? 0].assetAddress)) ||
-        (pool.tokenX.equals(tokens[tokenBIndex ?? 0].assetAddress) &&
-          pool.tokenY.equals(tokens[tokenAIndex ?? 0].assetAddress))
-      ) {
+    poolsList.forEach(pool => {
+      const xMatch =
+        pool.tokenX.equals(tokens[tokenAIndex ?? 0].assetAddress) &&
+        pool.tokenY.equals(tokens[tokenBIndex ?? 0].assetAddress)
+      const yMatch =
+        pool.tokenX.equals(tokens[tokenBIndex ?? 0].assetAddress) &&
+        pool.tokenY.equals(tokens[tokenAIndex ?? 0].assetAddress)
+
+      if (xMatch || yMatch) {
         feeTiersWithTvl[pool.fee] = pool.tvl
         totalTvl += pool.tvl
       }

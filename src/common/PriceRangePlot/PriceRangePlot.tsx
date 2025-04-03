@@ -361,6 +361,28 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     disabled
   )
 
+  const highlightLayer = ({ innerWidth, innerHeight }) => {
+    const unitLen = innerWidth / (plotMax - plotMin)
+
+    return (
+      <svg width='100%' height='100%'>
+        <defs>
+          <linearGradient id='gradient1' x1='0%' y1='20%' x2='0%' y2='100%'>
+            <stop offset='0%' style={{ stopColor: `rgba(46, 224, 154, 0)` }} />
+            <stop offset='100%' style={{ stopColor: 'rgba(46, 224, 154, 0.4)' }} />
+          </linearGradient>
+        </defs>
+        <rect
+          x={(leftRange.x - plotMin) * unitLen}
+          y={0}
+          width={(rightRange.x - leftRange.x) * unitLen}
+          height={innerHeight}
+          fill='url(#gradient1)'
+        />
+      </svg>
+    )
+  }
+
   const isNoPositions = data.every(tick => !(tick?.y > 0))
 
   const isMd = useMediaQuery(theme.breakpoints.up('md'))
@@ -386,11 +408,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           </Grid>
         </Grid>
       ) : null}
-      <Grid
-        container
-        item
-        className={classNames(classes.zoomButtonsWrapper, 'zoomBtns')}
-        justifyContent='space-between'>
+      <Grid className={classes.zoomButtonsWrapper}>
         <Button
           scheme='green'
           width={isMd ? 28 : 40}
@@ -484,7 +502,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           currentLayer,
           brushLayer,
           'axes',
-          'legends'
+          'legends',
+          highlightLayer
         ]}
         defs={[
           linearGradientDef('gradient', [

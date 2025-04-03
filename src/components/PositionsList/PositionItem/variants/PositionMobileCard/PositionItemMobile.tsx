@@ -21,10 +21,10 @@ import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
-import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { lockerState } from '@store/selectors/locker'
 import { ISinglePositionData } from '@components/OverviewYourPositions/components/Overview/Overview'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { ILiquidityToken } from '@store/consts/types'
 
 interface IPositionItemMobile extends IPositionItem {
   setAllowPropagation: React.Dispatch<React.SetStateAction<boolean>>
