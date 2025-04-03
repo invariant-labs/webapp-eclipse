@@ -149,7 +149,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
   })
 
   const totalValue = useMemo(() => {
-    const value = sortedPools.reduce((acc, position) => acc + position.value || 0, 0)
+    const value = sortedPools.reduce((acc, position) => acc + (position.value || 0), 0)
     const isPriceWarning = sortedPools.some(pool => pool.isPriceWarning)
 
     return { value, isPriceWarning }
