@@ -362,10 +362,12 @@ export const WrappedSwap = ({ initialTokenFrom, initialTokenTo }: Props) => {
         isFetchingNewPool={isFetchingNewPool}
         onRefresh={onRefresh}
         swapRouteChartData={swapRouteChartData}
-        onRouteRefresh={(amountIn, slippage) => {
+        onRouteRefresh={(amountIn, slippage, tokenFrom, tokenTo) => {
           dispatch(
             swapActions.fetchSwapRoute({
               amountIn,
+              tokenFrom,
+              tokenTo,
               tokens: tokensList,
               slippage
             })

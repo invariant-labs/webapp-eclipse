@@ -88,7 +88,7 @@ export interface ISwap {
     swapRouteResponse?: RouteTemplateProps
   }
   tickmap: { [x: string]: Tickmap }
-  onRouteRefresh: (amountIn: BN, slippage: number) => void
+  onRouteRefresh: (amountIn: BN, slippage: number, tokenFrom: PublicKey, tokenTo: PublicKey) => void
   onSwap: (
     slippage: BN,
     knownPrice: BN,
@@ -1016,6 +1016,13 @@ export const Swap: React.FC<ISwap> = ({
     return { decimalIndex, isLessThanOne }
   }, [stringPointsValue])
 
+  const prevParamsRef = useRef({
+    tokenFrom: '',
+    tokenTo: '',
+    amount: '',
+    slippage: 0
+  })
+
   const isAnyBlurShowed =
     lockAnimation ||
     (getStateMessage() === 'Loading' &&
@@ -1029,15 +1036,30 @@ export const Swap: React.FC<ISwap> = ({
       return
     }
 
-    const debounceTimeout = setTimeout(() => {
-      onRouteRefresh(
-        convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-        +slippTolerance
-      )
-    }, 500)
+    const currentAmount = convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals)
 
-    return () => clearTimeout(debounceTimeout)
-  }, [tokenFromIndex, tokenToIndex, amountFrom, amountTo, isAnyBlurShowed])
+    const hasParamsChanged =
+      tokens[tokenFromIndex].assetAddress.toString() !== prevParamsRef.current.tokenFrom ||
+      tokens[tokenToIndex].assetAddress.toString() !== prevParamsRef.current.tokenTo ||
+      !currentAmount.eq(new BN(prevParamsRef.current.amount)) ||
+      +slippTolerance !== prevParamsRef.current.slippage
+
+    if (hasParamsChanged) {
+      prevParamsRef.current = {
+        tokenFrom: tokens[tokenFromIndex].assetAddress.toString(),
+        tokenTo: tokens[tokenToIndex].assetAddress.toString(),
+        amount: currentAmount.toString(),
+        slippage: +slippTolerance
+      }
+
+      onRouteRefresh(
+        currentAmount,
+        +slippTolerance,
+        tokens[tokenFromIndex].assetAddress,
+        tokens[tokenToIndex].assetAddress
+      )
+    }
+  }, [tokenFromIndex, tokenToIndex, amountFrom, amountTo, slippTolerance, isAnyBlurShowed])
 
   return (
     <Grid container className={classes.swapWrapper} alignItems='center'>

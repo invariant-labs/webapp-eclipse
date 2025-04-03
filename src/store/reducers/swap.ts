@@ -138,7 +138,13 @@ const swapSlice = createSlice({
 
     fetchSwapRoute(
       state,
-      _action: PayloadAction<{ amountIn: BN; slippage: number; tokens: SwapToken[] }>
+      _action: PayloadAction<{
+        amountIn: BN
+        slippage: number
+        tokens: SwapToken[]
+        tokenFrom: PublicKey
+        tokenTo: PublicKey
+      }>
     ) {
       return state
     },

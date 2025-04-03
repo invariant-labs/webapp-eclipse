@@ -48,6 +48,7 @@ import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
 import { BN } from '@coral-xyz/anchor'
 import { AxiosError } from 'axios'
+import { delay } from 'redux-saga/effects'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -1035,16 +1036,19 @@ export function* handleSwap(): Generator {
     yield* call(handleRpcError, error.message)
   }
 }
-
 export function* handleFetchSwapRoute(
-  action: PayloadAction<{ amountIn: BN; slippage: number; tokens: SwapToken[] }>
+  action: PayloadAction<{
+    amountIn: BN
+    slippage: number
+    tokens: SwapToken[]
+    tokenFrom: PublicKey
+    tokenTo: PublicKey
+  }>
 ): Generator {
   try {
-    const swapState = yield* select(swap)
     const networkType = yield* select(network)
 
-    const { tokenFrom, tokenTo } = swapState
-    const { amountIn, slippage, tokens } = action.payload
+    const { amountIn, slippage, tokens, tokenFrom, tokenTo } = action.payload
 
     if (
       tokenFrom.equals(PublicKey.default) ||
@@ -1054,9 +1058,9 @@ export function* handleFetchSwapRoute(
       return
     }
 
-    console.log(amountIn)
-
     yield put(swapActions.setSwapRouteLoading(true))
+
+    yield delay(300)
 
     const slippageBps = slippage * 100
 
@@ -1078,13 +1082,15 @@ export function* handleFetchSwapRoute(
       )
       yield put(swapActions.setSwapRouteError(undefined))
     } else {
-      console.error('Failed to fetch swap routes')
+      yield put(swapActions.setSwapRouteResponse(undefined))
+      yield put(swapActions.setSwapRouteError('Failed to fetch swap routes'))
     }
   } catch (e: unknown) {
     const error = ensureError(e) as AxiosError<{ message: string }>
     yield put(swapActions.setSwapRouteResponse(undefined))
-    yield put(swapActions.setSwapRouteError(error.response?.data.message ?? ''))
-    console.log('Error fetching swap routes:', error.response?.data.message)
+    yield put(
+      swapActions.setSwapRouteError(error.response?.data.message ?? 'Error fetching routes')
+    )
   } finally {
     yield put(swapActions.setSwapRouteLoading(false))
   }
