@@ -12,6 +12,7 @@ import { colors } from '@static/theme'
 import { PoolDetails as PoolDetailsType } from '@containers/SinglePositionWrapper/SinglePositionWrapper'
 import { calculateAPYAndAPR } from '@utils/utils'
 import { PublicKey } from '@solana/web3.js'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProp {
   onClickClaimFee: () => void
@@ -128,13 +129,15 @@ const SinglePositionInfo: React.FC<IProp> = ({
         <Section
           title='Unclaimed fees'
           item={
-            <Button
-              className={classes.claimButton}
-              disabled={tokenX.claimValue + tokenY.claimValue === 0}
-              variant='contained'
-              onClick={() => onClickClaimFee()}>
-              Claim
-            </Button>
+            <TooltipHover title={isPreview ? "Can't claim fees in preview" : ''}>
+              <Button
+                className={classes.claimButton}
+                disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview}
+                variant='contained'
+                onClick={() => onClickClaimFee()}>
+                Claim
+              </Button>
+            </TooltipHover>
           }>
           <UnclaimedFees
             tokenA={
@@ -180,7 +183,6 @@ const SinglePositionInfo: React.FC<IProp> = ({
             volume24={poolDetails?.volume24 ?? 0}
             fee24={poolDetails?.fee24 ?? 0}
             showPoolDetailsLoader={showPoolDetailsLoader}
-            isPreview={isPreview}
           />
         </Section>
       </Box>
