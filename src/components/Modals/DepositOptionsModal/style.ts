@@ -287,7 +287,7 @@ export const useStyles = makeStyles()(() => {
         height: 48
       }
     },
-    switchSelected: { colort: colors.invariant.text, fontWeight: 700 },
+    switchSelected: { color: colors.invariant.text, fontWeight: 700 },
     switchNotSelected: { color: colors.invariant.text, fontWeight: 400 },
     defaultOptionsContainer: {
       gap: 9

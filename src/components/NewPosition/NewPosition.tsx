@@ -730,10 +730,121 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [leftRange, rightRange])
 
   useEffect(() => {
-    setTokenADeposit('0')
-    setTokenBDeposit('0')
+    if (tokenAIndex === null || tokenBIndex === null) return
+    if (alignment === DepositOptions.Auto) {
+      setTokenACheckbox(true)
+      setTokenBCheckbox(true)
+      return
+    }
+    if (
+      (!tokenACheckbox || Number(tokenADeposit) === 0) &&
+      (!tokenBCheckbox || Number(tokenBDeposit) === 0)
+    ) {
+      setTokenADeposit('0')
+      setTokenBDeposit('0')
+      setTokenACheckbox(true)
+      setTokenBCheckbox(true)
+      return
+    }
+    if (
+      (!tokenACheckbox || Number(tokenADeposit) === 0) &&
+      tokenBCheckbox &&
+      Number(tokenBDeposit) > 0
+    ) {
+      setTokenADeposit(
+        getOtherTokenAmount(
+          convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals),
+          leftRange,
+          rightRange,
+          false
+        )
+      )
+      setTokenACheckbox(true)
+      setTokenBCheckbox(true)
+      return
+    }
+    if (
+      (!tokenBCheckbox || Number(tokenBDeposit) === 0) &&
+      tokenACheckbox &&
+      Number(tokenADeposit) > 0
+    ) {
+      setTokenBDeposit(
+        getOtherTokenAmount(
+          convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals),
+          leftRange,
+          rightRange,
+          true
+        )
+      )
+      setTokenACheckbox(true)
+      setTokenBCheckbox(true)
+      return
+    }
     setTokenACheckbox(true)
     setTokenBCheckbox(true)
+
+    const { amount: secondValueBasedOnTokenA, liquidity: liquidityBasedOnTokenA } = calcAmount(
+      convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals),
+      leftRange,
+      rightRange,
+      tokens[tokenAIndex].assetAddress
+    )
+    const isBalanceEnoughForFirstCase =
+      secondValueBasedOnTokenA.lt(tokens[tokenBIndex].balance) &&
+      convertBalanceToBN(tokenADeposit, tokens[tokenAIndex].decimals).lt(
+        tokens[tokenAIndex].balance
+      )
+
+    const { amount: secondValueBasedOnTokenB, liquidity: liquidityBasedOnTokenB } = calcAmount(
+      convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals),
+      leftRange,
+      rightRange,
+      tokens[tokenBIndex].assetAddress
+    )
+    const isBalanceEnoughForSecondCase =
+      secondValueBasedOnTokenB.lt(tokens[tokenAIndex].balance) &&
+      convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals).lt(
+        tokens[tokenBIndex].balance
+      )
+    if (isBalanceEnoughForFirstCase && isBalanceEnoughForSecondCase) {
+      if (liquidityBasedOnTokenA.gt(liquidityBasedOnTokenB)) {
+        setTokenBDeposit(
+          trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
+        )
+        updateLiquidity(liquidityBasedOnTokenA)
+        return
+      }
+      setTokenADeposit(
+        trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
+      )
+      updateLiquidity(liquidityBasedOnTokenB)
+      return
+    }
+    if (!isBalanceEnoughForFirstCase && !isBalanceEnoughForSecondCase) {
+      if (liquidityBasedOnTokenA.gt(liquidityBasedOnTokenB)) {
+        setTokenADeposit(
+          trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
+        )
+        updateLiquidity(liquidityBasedOnTokenB)
+        return
+      }
+      setTokenBDeposit(
+        trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
+      )
+      updateLiquidity(liquidityBasedOnTokenA)
+      return
+    }
+    if (isBalanceEnoughForFirstCase) {
+      setTokenBDeposit(
+        trimLeadingZeros(printBN(secondValueBasedOnTokenA, tokens[tokenBIndex].decimals))
+      )
+      updateLiquidity(liquidityBasedOnTokenA)
+      return
+    }
+    setTokenADeposit(
+      trimLeadingZeros(printBN(secondValueBasedOnTokenB, tokens[tokenAIndex].decimals))
+    )
+    updateLiquidity(liquidityBasedOnTokenB)
   }, [alignment])
 
   return (

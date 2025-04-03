@@ -634,17 +634,27 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             </ToggleButton>
           </ToggleButtonGroup>
         </Box>
-        <Button
-          onClick={handleClickDepositOptions}
-          className={classes.optionsIconBtn}
-          disableRipple
-          disabled={!isAutoSwapAvailable}>
-          <img
-            src={icons.settingCirc}
-            className={!isAutoSwapAvailable ? classes.grayscaleIcon : classes.whiteIcon}
-            alt='options'
-          />
-        </Button>
+        <Tooltip
+          title={
+            alignment === DepositOptions.Basic
+              ? 'Autoswap related settings, accesable only when autoswap is turned on.'
+              : ''
+          }
+          classes={{ tooltip: classes.tooltip }}>
+          <Button
+            onClick={handleClickDepositOptions}
+            className={classes.optionsIconBtn}
+            disableRipple
+            disabled={alignment === DepositOptions.Basic}>
+            <img
+              src={icons.settingCirc}
+              className={
+                alignment === DepositOptions.Basic ? classes.grayscaleIcon : classes.whiteIcon
+              }
+              alt='options'
+            />
+          </Button>
+        </Tooltip>
       </>
     ),
     [isAutoSwapAvailable, alignment]
@@ -789,7 +799,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (result) {
       updateLiquidity(result.position.liquidity)
     }
-    console.log(result)
     setSimulation(result)
     setIsSimulating(false)
   }

@@ -236,7 +236,7 @@ export const useStyles = makeStyles()(theme => {
         height: 32
       }
     },
-    switchSelected: { colort: colors.invariant.text, fontWeight: 700 },
+    switchSelected: { color: colors.invariant.text, fontWeight: 700 },
     switchNotSelected: { color: colors.invariant.text, fontWeight: 400 },
     optionsIconBtn: {
       padding: 0,

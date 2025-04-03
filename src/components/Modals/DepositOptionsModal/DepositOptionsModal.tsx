@@ -330,7 +330,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
         <Grid container className={classes.detailsWrapper}>
           <Grid container>
             <Box className={classes.headerContainer}>
-              <Typography className={classes.headerText}>Deposit Settings</Typography>
+              <Typography className={classes.headerText}>Autoswap Settings</Typography>
               <Typography className={classes.info}>
                 These settings enable liquidity addition with any token ratio while ensuring safe
                 swaps. Adjusting these parameters is recommended for advanced users familiar with
