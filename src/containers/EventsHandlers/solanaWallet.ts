@@ -23,6 +23,7 @@ const SolanaWalletEvents = () => {
     }
     const connectEvents = () => {
       connection.onAccountChange(new PublicKey(publicKey), (accountInfo: AccountInfo<Buffer>) => {
+        console.log(accountInfo.lamports)
         dispatch(actions.setBalance(new BN(accountInfo.lamports)))
       })
     }
@@ -47,6 +48,7 @@ const SolanaWalletEvents = () => {
         }
         connection.onAccountChange(account.address, (accountInfo: AccountInfo<Buffer>) => {
           const parsedData = parseTokenAccountData(accountInfo.data)
+          console.log(accountInfo.lamports)
           dispatch(
             actions.setTokenBalance({
               address: account.address.toString(),

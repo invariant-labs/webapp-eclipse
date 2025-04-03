@@ -1592,30 +1592,35 @@ export const getFullNewTokensData = async (
   addresses: PublicKey[],
   connection: Connection
 ): Promise<Record<string, Token>> => {
-  const promises: Promise<[PublicKey, Mint]>[] = addresses.map(async address => {
-    const programId = await getTokenProgramId(connection, address)
+  const programIdResults = await Promise.allSettled(
+    addresses.map(address => getTokenProgramId(connection, address))
+  )
 
-    return [programId, await getMint(connection, address, undefined, programId)] as [
-      PublicKey,
-      Mint
-    ]
+  const mintResults = await Promise.allSettled(
+    addresses.map((address, index) => {
+      const programId =
+        programIdResults[index].status === 'fulfilled' ? programIdResults[index].value : undefined
+      return getMint(connection, address, undefined, programId)
+    })
+  )
+
+  const metadataPromises = addresses.map((address, index) => {
+    const programId =
+      programIdResults[index].status === 'fulfilled' ? programIdResults[index].value : undefined
+    const decimals =
+      mintResults[index].status === 'fulfilled' ? mintResults[index].value.decimals : 6
+
+    return getTokenMetadata(connection, address.toString(), decimals, programId)
   })
 
+  const metadataResults = await Promise.allSettled(metadataPromises)
+
   const tokens: Record<string, Token> = {}
-
-  const results = await Promise.allSettled(promises)
-
-  for (const [index, result] of results.entries()) {
-    const [programId, decimals] =
-      result.status === 'fulfilled' ? [result.value[0], result.value[1].decimals] : [undefined, 6]
-
-    tokens[addresses[index].toString()] = await getTokenMetadata(
-      connection,
-      addresses[index].toString(),
-      decimals,
-      programId
-    )
-  }
+  metadataResults.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      tokens[addresses[index].toString()] = result.value
+    }
+  })
 
   return tokens
 }
