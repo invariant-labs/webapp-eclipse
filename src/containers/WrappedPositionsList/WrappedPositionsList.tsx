@@ -79,8 +79,7 @@ export const WrappedPositionsList: React.FC = () => {
     } else {
       return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_MAIN)
     }
-  }, [ethBalance, network])
-
+  }, [ethBalance, currentNetwork])
   const handleClosePosition = (index: number) => {
     canClosePosition
       ? dispatch(
