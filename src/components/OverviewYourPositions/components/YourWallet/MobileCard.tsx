@@ -1,3 +1,4 @@
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Box, Typography } from '@mui/material'
 import icons from '@static/icons'
 import { TokenPool, StrategyConfig } from '@store/types/userOverview'
@@ -52,6 +53,11 @@ export const MobileCard: React.FC<{
           <Typography component='span' className={classes.mobileStatValue}>
             ${pool.value.toFixed(2).toLocaleString().replace(',', '.')}
           </Typography>
+          {pool.isPriceWarning && (
+            <TooltipHover title='The price might not be shown correctly.'>
+              <img src={icons.warning2} width={14} />
+            </TooltipHover>
+          )}
         </Box>
       </Box>
     </Box>

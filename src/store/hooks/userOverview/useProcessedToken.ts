@@ -25,6 +25,7 @@ interface ProcessedPool {
   isUnknown?: boolean
   decimal: number
   amount: number
+  isPriceWarning: boolean
 }
 
 export const useProcessedTokens = (
@@ -54,6 +55,7 @@ export const useProcessedTokens = (
             const error = ensureError(e)
             console.error(`Failed to fetch price for ${token.symbol}:`, error)
           }
+
           return {
             id: token.address,
             symbol: token.symbol,
@@ -61,7 +63,8 @@ export const useProcessedTokens = (
             isUnknown: token.isUnknown,
             decimal: token.decimals,
             amount: balance,
-            value: balance * price
+            value: balance * price,
+            isPriceWarning: price === 0 && +token.balance.toString() > 0
           }
         })
       )

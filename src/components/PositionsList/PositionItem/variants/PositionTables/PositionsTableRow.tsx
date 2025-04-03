@@ -245,6 +245,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           <Typography className={sharedClasses.greenText}>
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
+          {tokenValueInUsd.priceWarning && (
+            <TooltipHover title='The price might not be shown correctly.'>
+              <img src={icons.warning2} style={{ marginLeft: '4px' }} width={14} />
+            </TooltipHover>
+          )}
         </Grid>
       </Grid>
     )
