@@ -61,8 +61,8 @@
     "remeda": "^1.61.0",
     "slick-carousel": "^1.8.1",
     "tss-react": "^4.9.6",
-    "typed-redux-saga": "^1.5.0",
     "tweetnacl": "^1.0.3",
+    "typed-redux-saga": "^1.5.0",
     "vite-plugin-top-level-await": "^1.4.1",
     "vite-plugin-wasm": "^3.3.0"
   },
@@ -98,6 +98,7 @@
     "vite": "5.2.0",
     "vite-plugin-compression2": "^1.1.1",
     "vite-plugin-node-polyfills": "^0.22.0",
+    "vite-plugin-svgr": "^4.3.0",
     "vite-plugin-wasm": "^3.3.0",
     "vitest": "^1.5.0"
   },

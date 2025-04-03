@@ -70,7 +70,7 @@ import liquidityEmpty from './svg/liqudity_empty.svg'
 import assetsEmpty from './svg/assets_empty.svg'
 import settings3 from './svg/settings3.svg'
 import faucet from './svg/faucet.svg'
-import SearchIcon from './svg/lupaDark.svg'
+// import SearchIcon from './svg/lupaDark.svg'
 import allDomains from '@static/svg/allDomains.svg'
 import turboTap from '@static/svg/turboTap.svg'
 import nucleus from '@static/svg/nucleus.svg'
@@ -95,6 +95,9 @@ import handleMax from '@static/svg/narrowChartMaxHandle.svg'
 import handleMin from '@static/svg/narrowChartMinHandle.svg'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
+import { ReactComponent as SearchIcon } from '@static/svg/lupaDark.svg'
+
+export { SearchIcon }
 
 const icons = {
   lockPosition,

@@ -24,7 +24,7 @@ import { TokenChip } from './Helpers/TokenChip'
 import { TokenOption } from './Helpers/TokenOption'
 import { useSelector } from 'react-redux'
 import { swapTokens } from '@store/selectors/solanaWallet'
-import icons from '@static/icons'
+import icons, { SearchIcon } from '@static/icons'
 import { tokensStatsWithTokensDetails } from '@store/selectors/stats'
 import ListboxComponent from './Helpers/ListBoxComponent'
 import { BN } from '@coral-xyz/anchor'
@@ -258,7 +258,7 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
           },
           endAdornment: (
             <InputAdornment position='end'>
-              <img src={icons.SearchIcon} className={classes.searchIcon} alt='Search' />
+              <SearchIcon />
             </InputAdornment>
           ),
           inputProps: {
