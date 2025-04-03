@@ -5,6 +5,7 @@ import { WalletAdapter } from './adapters/types'
 export interface MergedWalletAdapter extends WalletAdapter {
   canEagerConnect: () => Promise<boolean>
 }
+
 export const nightlyConnectAdapter: MergedWalletAdapter = (await NightlyConnectAdapter.build(
   {
     appMetadata: {

@@ -66,6 +66,7 @@ const configureAppStore = (initialState = {}) => {
             'positions/closePosition',
             'pools/setTickMaps',
             'pools/getPoolData',
+            'pools/getAutoSwapPoolData',
             'solanaConnection/handleRpcError'
           ]
         }
