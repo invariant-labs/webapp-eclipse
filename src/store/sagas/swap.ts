@@ -25,7 +25,7 @@ import {
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { createLoaderKey, ensureError } from '@utils/utils'
+import { createLoaderKey, ensureError, printBN } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createNativeAtaInstructions,
@@ -41,6 +41,7 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
+import { BN } from '@coral-xyz/anchor'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -981,14 +982,69 @@ export function* handleSwap(): Generator {
         })
       )
     } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapped successfully',
-          variant: 'success',
-          persist: false,
-          txid
-        })
-      )
+      const txDetails = yield* call([connection, connection.getParsedTransaction], txid)
+      let showDefualtSnackbar = true
+      if (txDetails) {
+        const meta = txDetails.meta
+        if (meta?.preTokenBalances && meta.postTokenBalances) {
+          const accountXPredicate = entry =>
+            entry.mint === swapPool.tokenX.toString() && entry.owner === wallet.publicKey.toString()
+          const accountYPredicate = entry =>
+            entry.mint === swapPool.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+
+          const preAccountX = meta.preTokenBalances.find(accountXPredicate)
+          const postAccountX = meta.postTokenBalances.find(accountXPredicate)
+          const preAccountY = meta.preTokenBalances.find(accountYPredicate)
+          const postAccountY = meta.postTokenBalances.find(accountYPredicate)
+
+          if (preAccountX && postAccountX && preAccountY && postAccountY) {
+            const preAmountX = preAccountX.uiTokenAmount.amount
+            const preAmountY = preAccountY.uiTokenAmount.amount
+            const postAmountX = postAccountX.uiTokenAmount.amount
+            const postAmountY = postAccountY.uiTokenAmount.amount
+            const { amountIn, amountOut } = isXtoY
+              ? {
+                  amountIn: new BN(preAmountX).sub(new BN(postAmountX)),
+                  amountOut: new BN(postAmountY).sub(new BN(preAmountY))
+                }
+              : {
+                  amountIn: new BN(preAmountY).sub(new BN(postAmountY)),
+                  amountOut: new BN(postAmountX).sub(new BN(preAmountX))
+                }
+
+            try {
+              const tokenIn =
+                allTokens[isXtoY ? swapPool.tokenX.toString() : swapPool.tokenY.toString()]
+              const tokenOut =
+                allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
+
+              const message = `Sucessfully swapped ${printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+
+              yield put(
+                snackbarsActions.add({
+                  message,
+                  variant: 'success',
+                  persist: false,
+                  txid
+                })
+              )
+              showDefualtSnackbar = false
+            } catch {
+              // Show default snackbar
+            }
+          }
+        }
+      }
+      if (showDefualtSnackbar) {
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+      }
     }
 
     closeSnackbar(loaderSwappingTokens)
