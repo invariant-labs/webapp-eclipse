@@ -1,4 +1,4 @@
-import { Box, Button as MuiButton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import icons from '@static/icons'
@@ -8,11 +8,11 @@ import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
-import React, { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { truncateString } from '@utils/utils'
-import { Button } from '@common/Button/Button'
 import { LockButton } from './LockButton'
+import { Button } from '@common/Button/Button'
 
 type Props = {
   tokenA: {
@@ -100,24 +100,22 @@ export const PositionHeader = ({
 
   const closeButton = (
     <TooltipHover title={closeButtonTitle}>
-      <MuiButton
-        className={classes.closeButton}
+      <Button
+        height={36}
+        scheme='green'
         disabled={isLocked || !hasEnoughETH || isPreview}
         variant='contained'
         onClick={() => onClosePositionClick()}>
         Close position
-      </MuiButton>
+      </Button>
     </TooltipHover>
   )
 
   const addButton = (
     <TooltipHover title='Add more liquidity to this pool'>
-      <MuiButton
-        className={classes.addButton}
-        variant='contained'
-        onClick={() => onAddPositionClick()}>
+      <Button scheme='pink' variant='contained' onClick={() => onAddPositionClick()}>
         + Add position
-      </MuiButton>
+      </Button>
     </TooltipHover>
   )
 
