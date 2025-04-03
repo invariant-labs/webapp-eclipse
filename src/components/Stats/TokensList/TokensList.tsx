@@ -141,8 +141,7 @@ const TokensList: React.FC<ITokensList> = ({
   const upperBound = useMemo(() => Math.min(page * 10, totalItems), [totalItems, page])
 
   const pages = Math.ceil(data.length / 10)
-  const height = initialDataLength > 10 ? (page !== pages ? 'auto' : 'auto') : 69
-
+  const height = initialDataLength > 10 ? 'auto' : 69
   return (
     <Grid
       container
