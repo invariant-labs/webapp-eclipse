@@ -1864,7 +1864,11 @@ export function* handleGetSinglePosition(
 
 export function* handleGetPreviewPosition(action: PayloadAction<string>) {
   try {
-    const [id, poolAddress] = action.payload.split('_')
+    const parts = action.payload.split('_')
+    if (parts.length !== 2) {
+      throw new Error('Invalid position id')
+    }
+    const [id, poolAddress] = parts
 
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
