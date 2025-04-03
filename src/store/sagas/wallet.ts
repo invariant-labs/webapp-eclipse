@@ -102,16 +102,12 @@ export function* fetchTokensAccounts(): Generator {
     splTokensAccounts: call(
       [connection, connection.getParsedTokenAccountsByOwner],
       wallet.publicKey,
-      {
-        programId: TOKEN_PROGRAM_ID
-      }
+      { programId: TOKEN_PROGRAM_ID }
     ),
     token2022TokensAccounts: call(
       [connection, connection.getParsedTokenAccountsByOwner],
       wallet.publicKey,
-      {
-        programId: TOKEN_2022_PROGRAM_ID
-      }
+      { programId: TOKEN_2022_PROGRAM_ID }
     )
   })
 
@@ -122,7 +118,8 @@ export function* fetchTokensAccounts(): Generator {
 
   const allTokens = yield* select(tokens)
   const newAccounts: ITokenAccount[] = []
-  const unknownTokens: Record<string, StoreToken> = {}
+  const unknownTokenMints = new Set<string>()
+
   for (const account of mergedAccounts) {
     const info: IparsedTokenInfo = account.account.data.parsed.info
 
@@ -134,16 +131,34 @@ export function* fetchTokensAccounts(): Generator {
     })
 
     if (!allTokens[info.mint]) {
-      const programId = yield* call(getTokenProgramId, connection, new PublicKey(info.mint))
-
-      unknownTokens[info.mint] = yield* call(
-        getTokenMetadata,
-        connection,
-        info.mint,
-        info.tokenAmount.decimals,
-        programId
-      )
+      unknownTokenMints.add(info.mint)
     }
+  }
+
+  const unknownTokens: Record<string, StoreToken> = {}
+
+  if (unknownTokenMints.size > 0) {
+    const mintArray = Array.from(unknownTokenMints)
+
+    const programIdResults: PublicKey[] = yield* all(
+      mintArray.map(mint => call(getTokenProgramId, connection, new PublicKey(mint)))
+    )
+
+    const metadataResults: StoreToken[] = yield* all(
+      mintArray.map((mint, index) =>
+        call(
+          getTokenMetadata,
+          connection,
+          mint,
+          allTokens[mint]?.decimals || 0,
+          programIdResults[index]
+        )
+      )
+    )
+
+    mintArray.forEach((mint, index) => {
+      unknownTokens[mint] = metadataResults[index]
+    })
   }
 
   yield* put(actions.setTokenAccounts(newAccounts))
@@ -282,17 +297,13 @@ export function* handleAirdrop(): Generator {
 
 export function* setEmptyAccounts(collateralsAddresses: PublicKey[]): Generator {
   const tokensAccounts = yield* select(accounts)
-  const acc: PublicKey[] = []
-  for (const collateral of collateralsAddresses) {
-    const accountAddress = tokensAccounts[collateral.toString()]
-      ? tokensAccounts[collateral.toString()].address
-      : null
-    if (accountAddress == null) {
-      acc.push(collateral)
-    }
-  }
-  if (acc.length !== 0) {
-    yield* call(createMultipleAccounts, acc)
+
+  const missingAccounts = collateralsAddresses.filter(
+    collateral => !tokensAccounts[collateral.toString()]
+  )
+
+  if (missingAccounts.length > 0) {
+    yield* call(createMultipleAccounts, missingAccounts)
   }
 }
 
@@ -429,68 +440,74 @@ export function* createAccount(tokenAddress: PublicKey): SagaGenerator<PublicKey
   yield* call(sleep, 1000) // Give time to subscribe to new token
   return associatedAccount
 }
-
-export function* createMultipleAccounts(tokenAddress: PublicKey[]): SagaGenerator<PublicKey[]> {
+export function* createMultipleAccounts(tokenAddresses: PublicKey[]): SagaGenerator<PublicKey[]> {
   const wallet = yield* call(getWallet)
   const connection = yield* call(getConnection)
-  const ixs: TransactionInstruction[] = []
-  const associatedAccs: PublicKey[] = []
 
-  for (const address of tokenAddress) {
-    const programId = yield* call(getTokenProgramId, connection, address)
-    const associatedAccount = yield* call(
-      getAssociatedTokenAddress,
-      address,
+  const programIds: PublicKey[] = yield* all(
+    tokenAddresses.map(address => call(getTokenProgramId, connection, address))
+  )
+
+  const associatedAccs: PublicKey[] = yield* all(
+    tokenAddresses.map((address, index) =>
+      call(
+        getAssociatedTokenAddress,
+        address,
+        wallet.publicKey,
+        false,
+        programIds[index],
+        ASSOCIATED_TOKEN_PROGRAM_ID
+      )
+    )
+  )
+
+  const ixs: TransactionInstruction[] = tokenAddresses.map((address, index) =>
+    createAssociatedTokenAccountInstruction(
       wallet.publicKey,
-      false,
-      programId,
+      associatedAccs[index],
+      wallet.publicKey,
+      address,
+      programIds[index],
       ASSOCIATED_TOKEN_PROGRAM_ID
     )
-    associatedAccs.push(associatedAccount)
-    const ix = createAssociatedTokenAccountInstruction(
-      wallet.publicKey,
-      associatedAccount,
-      wallet.publicKey,
-      address,
-      programId,
-      ASSOCIATED_TOKEN_PROGRAM_ID
-    )
-    ixs.push(ix)
-  }
+  )
+
   yield* call(
     signAndSend,
     wallet,
     ixs.reduce((tx, ix) => tx.add(ix), new Transaction())
   )
+
   const allTokens = yield* select(tokens)
   const unknownTokens: Record<string, StoreToken> = {}
-  for (const [index, address] of tokenAddress.entries()) {
-    const token = yield* call(getTokenDetails, tokenAddress[index].toString())
-    yield* put(
-      actions.addTokenAccount({
-        programId: address,
-        balance: new BN(0),
-        address: associatedAccs[index],
-        decimals: token.decimals
-      })
-    )
-    // Give time to subscribe to new token
-    yield* call(sleep, 1000)
 
-    if (!allTokens[tokenAddress[index].toString()]) {
-      unknownTokens[tokenAddress[index].toString()] = {
-        name: tokenAddress[index].toString(),
-        symbol: `${tokenAddress[index].toString().slice(0, 4)}...${tokenAddress[index]
-          .toString()
-          .slice(-4)}`,
+  const tokenDetails: { decimals: number }[] = yield* all(
+    tokenAddresses.map(address => call(getTokenDetails, address.toString()))
+  )
+
+  const newTokenAccounts = tokenAddresses.map((address, index) => {
+    const token = tokenDetails[index]
+
+    if (!allTokens[address.toString()]) {
+      unknownTokens[address.toString()] = {
+        name: address.toString(),
+        symbol: `${address.toString().slice(0, 4)}...${address.toString().slice(-4)}`,
         decimals: token.decimals,
-        address: tokenAddress[index],
+        address,
         logoURI: '/unknownToken.svg',
         isUnknown: true
       }
     }
-  }
 
+    return {
+      programId: address,
+      balance: new BN(0),
+      address: associatedAccs[index],
+      decimals: token.decimals
+    }
+  })
+
+  yield* put(actions.addTokenAccounts(newTokenAccounts))
   yield* put(poolsActions.addTokens(unknownTokens))
 
   return associatedAccs
