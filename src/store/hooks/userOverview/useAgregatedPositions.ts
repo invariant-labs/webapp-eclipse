@@ -41,7 +41,7 @@ const calculateTokenValue = (
   position: TokenPosition,
   isTokenX: boolean,
   prices: Record<string, number>
-): number => {
+): { value: number; amountBN: number } => {
   const token = isTokenX ? position.tokenX : position.tokenY
   const getValue = isTokenX ? getX : getY
 
@@ -52,7 +52,10 @@ const calculateTokenValue = (
     calculatePriceSqrt(position.lowerTickIndex)
   )
 
-  return +printBN(amount, token.decimals) * prices[token.assetAddress.toString()]
+  return {
+    value: +printBN(amount, token.decimals) * prices[token.assetAddress.toString()],
+    amountBN: amount
+  }
 }
 
 const createPositionEntry = (
@@ -79,13 +82,14 @@ const updateOrCreatePosition = (
   prices: Record<string, number>
 ): TokenPositionEntry[] => {
   const token = isTokenX ? position.tokenX : position.tokenY
-  const value = calculateTokenValue(position, isTokenX, prices)
+  const { value, amountBN } = calculateTokenValue(position, isTokenX, prices)
 
   const existingPosition = positions.find(p => p.token === token.symbol)
 
   if (existingPosition) {
     existingPosition.value += value
-    existingPosition.isPriceWarning = !prices[token.assetAddress.toString()]
+    existingPosition.isPriceWarning =
+      !prices[token.assetAddress.toString()] && +amountBN.toString() > 0
     return positions
   }
 

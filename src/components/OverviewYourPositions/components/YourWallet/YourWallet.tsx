@@ -150,7 +150,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
 
   const totalValue = useMemo(() => {
     const value = sortedPools.reduce((acc, position) => acc + (position.value || 0), 0)
-    const isPriceWarning = sortedPools.some(pool => pool.isPriceWarning)
+    const isPriceWarning = sortedPools.some(pool => pool.isPriceWarning) && value > 0
 
     return { value, isPriceWarning }
   }, [sortedPools])
@@ -290,11 +290,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({
               <Typography className={classes.headerText}>
                 ${formatNumberWithoutSuffix(totalValue.value)}
               </Typography>
-              {totalValue.isPriceWarning && (
-                <TooltipHover title='The price might not be shown correctly.'>
-                  <img src={icons.warning2} width={18} />
-                </TooltipHover>
-              )}
             </Grid>
           )}
         </Box>

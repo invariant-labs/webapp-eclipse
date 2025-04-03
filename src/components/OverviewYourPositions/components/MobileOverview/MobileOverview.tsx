@@ -56,7 +56,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
         value: position.value,
         logo: position.logo,
         percentage: percentage.toFixed(2),
-        isPriceWarning: position.isPriceWarning
+        isPriceWarning: position.isPriceWarning && position.value > 0
       }
       currentPosition += percentage
       return segment
