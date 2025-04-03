@@ -78,6 +78,7 @@ import navRight from '@static/svg/navRight.svg'
 import navLeft from '@static/svg/navLeft.svg'
 import check from '@static/svg/checkFill.svg'
 import celestialMammoth from '@static/svg/celestialMammoth.svg'
+import edas from '@static/svg/edas.svg'
 import leaderboardGolden from '@static/svg/leaderboardGolden.svg'
 import leaderboardSilver from '@static/svg/leaderboardSilver.svg'
 import leaderboardBronze from '@static/svg/leaderboardBronze.svg'
@@ -94,6 +95,11 @@ import handleMax from '@static/svg/narrowChartMaxHandle.svg'
 import handleMin from '@static/svg/narrowChartMinHandle.svg'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
+import reverseTokens from './svg/reverse-tokens.svg'
+import backArrow from '@static/svg/back-arrow.svg'
+import lock from '@static/svg/lock.svg'
+import unlock from '@static/svg/unlock.svg'
+import boostPointsBold from '@static/svg/boostPointsBold.svg'
 
 const icons = {
   lockPosition,
@@ -120,6 +126,7 @@ const icons = {
   navLeft,
   check,
   celestialMammoth,
+  edas,
   SearchIcon,
   tokenCreator,
   statsIcon,
@@ -192,7 +199,12 @@ const icons = {
   liquidityEmpty,
   assetsEmpty,
   settings3,
-  faucet
+  faucet,
+  reverseTokens,
+  backArrow,
+  lock,
+  unlock,
+  boostPointsBold
 }
 
 export default icons

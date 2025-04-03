@@ -6,7 +6,8 @@ const useStyles = makeStyles<{
   left?: number | string
   right?: number | string
   bottom?: number | string
-}>()((_theme, { top, left, right, bottom }) => ({
+  fullSpan?: boolean
+}>()((_theme, { top, left, right, bottom, fullSpan }) => ({
   tooltip: {
     color: colors.invariant.textGrey,
     ...typography.caption4,
@@ -60,6 +61,7 @@ const useStyles = makeStyles<{
     boxShadow: `0px 0px 4px ${colors.invariant.black}`
   },
   tooltipSpan: {
+    width: fullSpan ? '100%' : 'auto',
     display: 'inline-flex',
     margin: 0,
     padding: 0
