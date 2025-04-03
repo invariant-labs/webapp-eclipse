@@ -39,7 +39,7 @@ import {
   PRICE_SCALE,
   Range
 } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
+import { PlotTickData, PositionWithAddress, PositionWithoutTicks } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   AI16Z_MAIN,
@@ -1791,21 +1791,16 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
     decimals
   },
   {
-    value: 100,
+    value: 10000,
+    decimals: 6
+  },
+  {
+    value: 100000,
     decimals: 4
   },
   {
-    value: 1000,
-    decimals: 2
-  },
-  {
-    value: 10000,
-    decimals: 1
-  },
-  {
     value: 1000000,
-    decimals: 2,
-    divider: 1000
+    decimals: 3
   },
   {
     value: 1000000000,
@@ -2181,6 +2176,40 @@ export const ensureError = (value: unknown): Error => {
   return error
 }
 
+export const getPositionByIdAndPoolAddress = async (
+  marketProgram: Market,
+  id: string,
+  poolAddress: string
+): Promise<PositionWithoutTicks | null> => {
+  const positions = await marketProgram.program.account.position.all([
+    {
+      memcmp: {
+        bytes: bs58.encode(new PublicKey(poolAddress).toBuffer()),
+        offset: 40
+      }
+    },
+    {
+      memcmp: {
+        bytes: bs58.encode(new BN(id).toBuffer('le', 16)),
+        offset: 72
+      }
+    }
+  ])
+
+  return positions[0]
+    ? {
+        ...positions[0].account,
+        feeGrowthInsideX: positions[0].account.feeGrowthInsideX.v,
+        feeGrowthInsideY: positions[0].account.feeGrowthInsideY.v,
+        liquidity: positions[0].account.liquidity.v,
+        secondsPerLiquidityInside: positions[0].account.secondsPerLiquidityInside.v,
+        tokensOwedX: positions[0].account.tokensOwedX.v,
+        tokensOwedY: positions[0].account.tokensOwedY.v,
+        address: positions[0].publicKey
+      }
+    : null
+}
+
 export const ROUTES = {
   ROOT: '/',
   EXCHANGE: '/exchange',
@@ -2206,6 +2235,33 @@ export const ROUTES = {
   },
 
   getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
+}
+
+export const truncateString = (str: string, maxLength: number): string => {
+  if (str.length <= maxLength + 1) {
+    return str
+  }
+
+  return str.slice(0, maxLength) + '...'
+}
+export const calculatePercentageRatio = (
+  tokenXLiq: number,
+  tokenYLiq: number,
+  currentPrice: number,
+  xToY: boolean
+) => {
+  const firstTokenPercentage =
+    ((tokenXLiq * currentPrice) / (tokenYLiq + tokenXLiq * currentPrice)) * 100
+  const tokenXPercentageFloat = xToY ? firstTokenPercentage : 100 - firstTokenPercentage
+  const tokenXPercentage =
+    tokenXPercentageFloat > 50
+      ? Math.floor(tokenXPercentageFloat)
+      : Math.ceil(tokenXPercentageFloat)
+
+  return {
+    tokenXPercentage,
+    tokenYPercentage: 100 - tokenXPercentage
+  }
 }
 
 const reformatTicker = (ticker: string) => {
