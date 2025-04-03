@@ -8,7 +8,7 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
     marginTop: '16px',
     flexWrap: 'wrap',
     [theme.breakpoints.down('sm')]: {
-      padding: '12px 8px '
+      padding: '12px 8px'
     },
     background: colors.invariant.component,
     borderRadius: 24,
