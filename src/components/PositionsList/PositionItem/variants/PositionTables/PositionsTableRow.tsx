@@ -19,12 +19,12 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import { singlePositionData } from '@store/selectors/positions'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { lockerState } from '@store/selectors/locker'
-import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
 import { usePositionTableRowStyle } from './styles/positionTableRow'
 import { useSkeletonStyle } from './styles/skeletons'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { Button } from '@common/Button/Button'
+import { ILiquidityToken } from '@store/consts/types'
 
 interface ILoadingStates {
   pairName?: boolean
