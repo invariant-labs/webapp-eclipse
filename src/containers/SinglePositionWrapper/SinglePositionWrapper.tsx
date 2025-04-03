@@ -65,10 +65,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const navigate = useNavigate()
 
   const currentNetwork = useSelector(network)
-  const positionPositionList = useSelector(singlePositionData(id))
+  const singlePosition = useSelector(singlePositionData(id))
   const positionPreview = useSelector(positionWithPoolData)
-  const position = positionPositionList ?? positionPreview ?? undefined
-  const isPreview = !positionPositionList
+  const position = singlePosition ?? positionPreview ?? undefined
+  const isPreview = !singlePosition
   const { loading: positionPreviewLoading } = useSelector(positionData)
   const { success, inProgress } = useSelector(lockerState)
   const poolsList = useSelector(poolsArraySortedByFees)
