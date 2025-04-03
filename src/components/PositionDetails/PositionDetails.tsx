@@ -295,7 +295,7 @@ const PositionDetails: React.FC<IProps> = ({
             blurContent()
           }}
           copyPoolAddressHandler={copyPoolAddressHandler}
-          isPreview={isPreview}
+          isPreview={showPreviewInfo}
         />
         <Box className={classes.container}>
           <Box className={classes.leftSide}>
@@ -313,7 +313,7 @@ const PositionDetails: React.FC<IProps> = ({
               arePointsDistributed={isActive && isPromoted}
               points24={points24}
               poolAddress={poolAddress}
-              isPreview={isPreview}
+              isPreview={showPreviewInfo}
             />
           </Box>
           <Box className={classes.rightSide}>
