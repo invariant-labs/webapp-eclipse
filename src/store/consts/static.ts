@@ -722,7 +722,8 @@ export const PRICE_QUERY_COOLDOWN = 60 * 1000
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success'
 
-export const MAX_CROSSES_IN_SINGLE_TX = 11
+export const MAX_CROSSES_IN_SINGLE_TX = 10
+export const MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS = 34
 
 export const walletNames = {
   [WalletType.NIGHTLY_WALLET]: 'Nightly',
