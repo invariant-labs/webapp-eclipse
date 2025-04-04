@@ -1017,12 +1017,6 @@ export function* handleSwap(): Generator {
       tickIndexes
     )
 
-    console.log(
-      tickIndexes,
-
-      'luts',
-      luts.length
-    )
     let txid: string
 
     if (luts.length !== 0) {
