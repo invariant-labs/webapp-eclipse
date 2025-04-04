@@ -49,7 +49,8 @@ export const Primary: Story = {
     },
     arePointsDistributed: true,
     points24: 0,
-    poolAddress: new PublicKey('0123456789')
+    poolAddress: new PublicKey('0123456789'),
+    isPreview: false
   },
   render: args => {
     return (

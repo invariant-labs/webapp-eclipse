@@ -18,7 +18,13 @@ import { actions as lockerActions } from '@store/reducers/locker'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
-import { isLoadingPositionsList, plotTicks, singlePositionData } from '@store/selectors/positions'
+import {
+  isLoadingPositionsList,
+  plotTicks,
+  positionData,
+  positionWithPoolData,
+  singlePositionData
+} from '@store/selectors/positions'
 import { balance, balanceLoading, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
 import { useEffect, useMemo, useState } from 'react'
@@ -38,6 +44,7 @@ import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { poolsArraySortedByFees } from '@store/selectors/pools'
 
 export interface IProps {
   id: string
@@ -58,9 +65,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const navigate = useNavigate()
 
   const currentNetwork = useSelector(network)
-  const position = useSelector(singlePositionData(id))
+  const singlePosition = useSelector(singlePositionData(id))
+  const positionPreview = useSelector(positionWithPoolData)
+  const position = singlePosition ?? positionPreview ?? undefined
+  const isPreview = !singlePosition
+  const { loading: positionPreviewLoading } = useSelector(positionData)
   const { success, inProgress } = useSelector(lockerState)
-
+  const poolsList = useSelector(poolsArraySortedByFees)
+  const statsPolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const {
     allData: ticksData,
@@ -80,6 +92,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [isLoadingListDelay, setIsLoadListDelay] = useState(isLoadingList)
 
   const [isClosingPosition, setIsClosingPosition] = useState(false)
+
+  const isLoadingStats = useSelector(isLoading)
 
   useEffect(() => {
     if (position?.id) {
@@ -336,9 +350,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
     setTriggerFetchPrice(!triggerFetchPrice)
     setShowFeesLoader(true)
-    dispatch(
-      actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
-    )
+
+    if (isPreview) {
+      dispatch(actions.getPreviewPosition(id))
+    } else {
+      dispatch(
+        actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
+      )
+    }
 
     if (position) {
       dispatch(
@@ -360,6 +379,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [isTimeoutError])
 
   useEffect(() => {
+    dispatch(actions.getPreviewPosition(id))
+  }, [poolsList.length])
+
+  useEffect(() => {
     if (!isLoadingList && isTimeoutError) {
       if (position?.positionIndex === undefined && isClosingPosition) {
         setIsClosingPosition(false)
@@ -372,9 +395,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
   }, [isLoadingList])
 
-  const isLoadingStats = useSelector(isLoading)
-  const poolsList = useSelector(poolsStatsWithTokensDetails)
-
   useEffect(() => {
     dispatch(statsActions.getCurrentStats())
   }, [])
@@ -384,7 +404,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return null
     }
 
-    const pool = poolsList.find(pool => pool.poolAddress.equals(position?.poolData.address))
+    const pool = statsPolsList.find(pool => pool.poolAddress.equals(position?.poolData.address))
 
     if (!pool) {
       return null
@@ -440,15 +460,19 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         rightRange={rightRange}
         currentPrice={current}
         onClickClaimFee={() => {
+          if (isPreview) return
+
           setShowFeesLoader(true)
           dispatch(actions.claimFee({ index: position.positionIndex, isLocked: position.isLocked }))
         }}
         lockPosition={() => {
+          if (isPreview) return
           dispatch(
             lockerActions.lockPosition({ index: position.positionIndex, network: currentNetwork })
           )
         }}
         closePosition={claimFarmRewards => {
+          if (isPreview) return
           setIsClosingPosition(true)
           dispatch(
             actions.closePosition({
@@ -491,7 +515,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         fee={position.poolData.fee}
         min={min}
         max={max}
-        showFeesLoader={showFeesLoader || position.ticksLoading}
+        showFeesLoader={showFeesLoader || positionPreviewLoading || position.ticksLoading}
         hasTicksError={hasTicksError}
         reloadHandler={() => {
           dispatch(
@@ -513,10 +537,15 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         showPoolDetailsLoader={isLoadingStats}
         isPromoted={isPromoted}
         points24={points24}
+        isPreview={isPreview}
       />
     )
   }
-  if ((isLoadingListDelay && walletStatus === Status.Initialized) || !isFinishedDelayRender) {
+  if (
+    (isLoadingListDelay && walletStatus === Status.Initialized) ||
+    !isFinishedDelayRender ||
+    positionPreviewLoading
+  ) {
     return (
       <Grid
         container

@@ -116,49 +116,7 @@ export const useStyles = makeStyles()(() => ({
     color: colors.invariant.green,
     border: `1px solid ${colors.invariant.green}`
   },
-  closeButton: {
-    background: colors.invariant.greenLinearGradientOpacity,
-    borderRadius: 12,
-    height: 36,
-    flexGrow: 1,
-    color: colors.invariant.dark,
-    textTransform: 'none',
-    padding: '0 8px',
-    ...typography.body1,
 
-    '&:disabled': {
-      pointerEvents: 'all',
-      background: colors.invariant.light,
-      color: colors.invariant.textGrey
-    }
-  },
-  addButton: {
-    background: colors.invariant.pinkLinearGradientOpacity,
-    borderRadius: 12,
-    height: 36,
-    flexGrow: 1,
-    color: colors.invariant.dark,
-    textTransform: 'none',
-    padding: '0 8px',
-    ...typography.body1
-  },
-  lockButton: {
-    background: colors.invariant.pinkLinearGradientOpacity,
-    borderRadius: 12,
-    height: 36,
-    width: 36,
-    color: colors.invariant.dark,
-    textTransform: 'none',
-    padding: 0,
-    minWidth: 0,
-    ...typography.body1,
-
-    '&:disabled': {
-      pointerEvents: 'all',
-      background: colors.invariant.light,
-      color: colors.invariant.textGrey
-    }
-  },
   airdropIcon: {
     height: 24
   },

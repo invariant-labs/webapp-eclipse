@@ -1,4 +1,4 @@
-import { Box, Button, Typography, useMediaQuery } from '@mui/material'
+import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import icons from '@static/icons'
@@ -8,9 +8,11 @@ import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { truncateString } from '@utils/utils'
+import { LockButton } from './LockButton'
+import { Button } from '@common/Button/Button'
 
 type Props = {
   tokenA: {
@@ -36,6 +38,7 @@ type Props = {
   onGoBackClick: () => void
   onLockClick: () => void
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
+  isPreview: boolean
 }
 
 export const PositionHeader = ({
@@ -55,7 +58,8 @@ export const PositionHeader = ({
   onRefreshClick,
   onGoBackClick,
   onLockClick,
-  copyPoolAddressHandler
+  copyPoolAddressHandler,
+  isPreview
 }: Props) => {
   const { classes } = useStyles()
 
@@ -78,20 +82,28 @@ export const PositionHeader = ({
     return () => clearTimeout(timeout)
   }, [refresherTime])
 
+  const closeButtonTitle = useMemo(() => {
+    if (isPreview) {
+      return 'Closing positions is disabled in preview'
+    }
+    if (isLocked) {
+      return 'Closing positions is disabled when position is locked'
+    }
+    if (!hasEnoughETH) {
+      return 'Insufficient ETH to close position'
+    }
+    if (hasFees) {
+      return 'Unclaimed fees will be returned when closing the position'
+    }
+    return ''
+  }, [isPreview, isLocked, hasEnoughETH, hasFees])
+
   const closeButton = (
-    <TooltipHover
-      title={
-        isLocked
-          ? 'Closing positions is disabled when position is locked'
-          : hasEnoughETH
-            ? hasFees
-              ? 'Unclaimed fees will be returned when closing the position'
-              : ''
-            : 'Insufficient ETH to close position'
-      }>
+    <TooltipHover title={closeButtonTitle}>
       <Button
-        className={classes.closeButton}
-        disabled={isLocked || !hasEnoughETH}
+        height={36}
+        scheme='green'
+        disabled={isLocked || !hasEnoughETH || isPreview}
         variant='contained'
         onClick={() => onClosePositionClick()}>
         Close position
@@ -101,10 +113,7 @@ export const PositionHeader = ({
 
   const addButton = (
     <TooltipHover title='Add more liquidity to this pool'>
-      <Button
-        className={classes.addButton}
-        variant='contained'
-        onClick={() => onAddPositionClick()}>
+      <Button scheme='pink' variant='contained' onClick={() => onAddPositionClick()}>
         + Add position
       </Button>
     </TooltipHover>
@@ -140,24 +149,6 @@ export const PositionHeader = ({
           }}
         />
       </Box>
-    </TooltipHover>
-  )
-
-  const lockButton = !isLocked ? (
-    <TooltipHover title='Lock liquidity'>
-      <Button
-        className={classes.lockButton}
-        disabled={isLocked}
-        variant='contained'
-        onClick={() => onLockClick()}>
-        <img src={icons.lock} alt='Lock' />
-      </Button>
-    </TooltipHover>
-  ) : (
-    <TooltipHover title='Unlocking liquidity is forbidden'>
-      <Button disabled className={classes.lockButton} variant='contained' onClick={() => {}}>
-        <img src={icons.unlock} alt='Unlock' />
-      </Button>
     </TooltipHover>
   )
 
@@ -235,7 +226,8 @@ export const PositionHeader = ({
             {!isSmDown && closeButton}
             {!isSmDown && isMdDown && (
               <>
-                {addButton} {lockButton}
+                {addButton}
+                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
               </>
             )}
           </Box>
@@ -246,14 +238,15 @@ export const PositionHeader = ({
               <>
                 {marketIdLabel}
                 <Box className={classes.wrapper}>
-                  {refresher} {addButton} {lockButton}
+                  {refresher} {addButton}{' '}
+                  <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
                 </Box>
               </>
             ) : (
               <>
                 {closeButton}
                 {addButton}
-                {lockButton}
+                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
               </>
             )}
           </Box>
