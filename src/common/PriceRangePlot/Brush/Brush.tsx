@@ -1,13 +1,6 @@
 import { CustomLayerProps } from '@nivo/line'
 import { colors } from '@static/theme'
-import React, {
-  useState,
-  useEffect,
-  useRef,
-  PointerEventHandler,
-  TouchEventHandler,
-  useCallback
-} from 'react'
+import React, { useState, useEffect, useRef, TouchEventHandler, useCallback } from 'react'
 import useStyles from './style'
 import { MaxHandle, MinHandle } from './svgHandles'
 
