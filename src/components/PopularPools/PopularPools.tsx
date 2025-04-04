@@ -19,6 +19,7 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
   const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
   const isSmDown = useMediaQuery('@media (max-width:700px)')
+  pools[0].symbolFrom = 'ES'
 
   const slidesNumber = useMemo(() => {
     if (isSmDown) return 1

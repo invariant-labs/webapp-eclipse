@@ -3,27 +3,33 @@ import { makeStyles } from 'tss-react/mui'
 
 interface StyleProps {
   page: 'overview' | 'points'
+  breakpoint: number
+  isHiding: boolean
 }
 
-export const useStyles = makeStyles<StyleProps>()((theme, { page }) => ({
+export const useStyles = makeStyles<StyleProps>()((theme, { page, breakpoint, isHiding }) => ({
   mainWrapper: {
     position: 'relative',
     display: 'flex',
-    maxWidth: page === 'points' ? 1072 : 1145,
+    maxWidth: page === 'points' ? 1072 : 1210,
     width: '100%',
-    height: 239,
+    height: isHiding ? 0 : 239,
+    overflow: 'hidden',
     borderRadius: 14,
-    padding: '16px 24px',
+    padding: isHiding ? 0 : '16px 24px',
     gap: 24,
     background: colors.invariant.dark,
-    marginBottom: 24,
-    border: `1px #A0FEA040 solid`,
+    marginBottom: isHiding ? 0 : 24,
+    border: isHiding ? 'none' : `1px #A0FEA040 solid`,
     alignItems: 'center',
-    [theme.breakpoints.down('lg')]: {
+    opacity: isHiding ? 0 : 1,
+    transition:
+      'height 0.4s ease-out, opacity 0.3s ease-out, padding 0.4s, margin 0.4s, border 0.4s',
+    [theme.breakpoints.down(breakpoint)]: {
       flexDirection: 'column',
-      height: 612,
+      height: isHiding ? 0 : 612,
       maxWidth: 524,
-      padding: '24px'
+      padding: isHiding ? 0 : '24px'
     },
     [theme.breakpoints.down('sm')]: {
       maxWidth: '100%'
@@ -38,7 +44,6 @@ export const useStyles = makeStyles<StyleProps>()((theme, { page }) => ({
     position: 'absolute',
     cursor: 'pointer'
   },
-
   leftWrapper: {
     display: 'flex',
     maxWidth: 310,
@@ -75,6 +80,8 @@ export const useStyles = makeStyles<StyleProps>()((theme, { page }) => ({
   },
   rightWrapper: {
     display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
     gap: 24
   },
   buttonSection: {
@@ -89,7 +96,7 @@ export const useStyles = makeStyles<StyleProps>()((theme, { page }) => ({
       textAlign: 'center',
       ...typography.caption2,
       color: colors.invariant.textGrey,
-      [theme.breakpoints.down('lg')]: {
+      [theme.breakpoints.down(breakpoint)]: {
         minWidth: 256
       }
     }
@@ -108,7 +115,7 @@ export const useStyles = makeStyles<StyleProps>()((theme, { page }) => ({
     right: 0,
 
     position: 'absolute',
-    [theme.breakpoints.down('lg')]: {
+    [theme.breakpoints.down(breakpoint)]: {
       left: '50%',
       transform: 'translateX(-50%)'
     }

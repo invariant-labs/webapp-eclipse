@@ -157,7 +157,7 @@ export const Leaderboard: React.FC<LeaderboardProps> = ({
         />
       )}
       <Box className={classes.leaderBoardWrapper}>
-        <ECBanner page='points' />
+        <ECBanner page='points' isCloseButton={false} />
         <Typography className={classes.leaderboardHeaderSectionTitle}>Your Progress</Typography>
 
         <Grid className={classes.progressWrapper}>

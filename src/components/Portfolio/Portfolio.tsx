@@ -38,6 +38,7 @@ import { IPositionItem } from '@store/consts/types'
 import { PositionsTable } from './PositionItem/PositionTables/PositionTable.tsx/PositionsTable'
 import PositionCardsSkeletonMobile from './PositionItem/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionItemMobile'
+import { ECBanner } from '@common/ECBanner/ECBanner'
 
 interface IProps {
   initialPage: number
@@ -60,10 +61,16 @@ interface IProps {
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
   tokensList: SwapToken[]
+  handleCloseBanner: () => void
+  isHiding: boolean
+  showBanner: boolean
 }
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  showBanner,
+  handleCloseBanner,
+  isHiding,
   handleSnackbar,
   data,
   onAddPositionClick,
@@ -267,6 +274,9 @@ const Portfolio: React.FC<IProps> = ({
 
   return (
     <>
+      {showBanner && (
+        <ECBanner handleCloseBanner={handleCloseBanner} isHiding={isHiding} page='overview' />
+      )}
       <Box className={classes.overviewContainer}>
         <Box>
           <Grid display={'flex'} marginBottom={isDownLg ? '12px' : '20px'}>

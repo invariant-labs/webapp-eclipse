@@ -11,14 +11,24 @@ import React from 'react'
 interface IECBanner {
   isCloseButton?: boolean
   page: 'overview' | 'points'
+  isHiding?: boolean
+  handleCloseBanner?: () => void
 }
 
-export const ECBanner: React.FC<IECBanner> = ({ isCloseButton = true, page }) => {
-  const changeDirection = useMediaQuery(theme.breakpoints.down('lg'))
-  const { classes } = useStyles({ page })
+export const ECBanner: React.FC<IECBanner> = ({
+  isCloseButton = true,
+  page,
+  isHiding = false,
+  handleCloseBanner = () => {}
+}) => {
+  const breakpoint = page === 'points' ? theme.breakpoints.values.lg : 1200
+  const changeDirection = useMediaQuery(theme.breakpoints.down(breakpoint))
+  const { classes } = useStyles({ page, breakpoint, isHiding })
   return (
     <Grid className={classes.mainWrapper}>
-      {isCloseButton && <img className={classes.closeIcon} src={icons.closeSmallIcon} />}{' '}
+      {isCloseButton && (
+        <img className={classes.closeIcon} src={icons.closeSmallIcon} onClick={handleCloseBanner} />
+      )}{' '}
       <Grid className={classes.leftWrapper}>
         <Typography className={classes.header}>
           Your Allocation <img src={icons.infoCircle} />

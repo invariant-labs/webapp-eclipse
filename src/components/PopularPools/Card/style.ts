@@ -2,7 +2,7 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
-  root: { width: '226px' },
+  root: { width: '226px', position: 'relative' },
   container: {
     position: 'relative',
     height: 340,
@@ -139,5 +139,11 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: 'auto'
+  },
+  horn: {
+    zIndex: 2,
+    position: 'absolute',
+    right: -30,
+    top: -30
   }
 }))
