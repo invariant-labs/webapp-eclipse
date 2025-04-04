@@ -43,6 +43,8 @@ interface IFetchContentPointsResponse {
   points: number
 }
 
+// const BASE_LEADERBOARD_URL = 'https://points.invariant.app'
+const BASE_LEADERBOARD_URL = 'https://api.invariant.app'
 async function fetchLpLeaderboardData(
   network: string,
   userWallet?: string,
@@ -51,7 +53,7 @@ async function fetchLpLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${BASE_LEADERBOARD_URL}/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -74,7 +76,7 @@ async function fetchSwapLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/swaps/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${BASE_LEADERBOARD_URL}/api/eclipse-${network}/swaps/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -89,7 +91,7 @@ async function fetchTotalLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/total/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${BASE_LEADERBOARD_URL}/api/eclipse-${network}/total/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -97,7 +99,7 @@ async function fetchTotalLeaderboardData(
   return response.json() as Promise<ITotalLeaderboardResponse>
 }
 async function fetchLeaderboardConfig() {
-  const response = await fetch(`https://points.invariant.app/api/config`)
+  const response = await fetch(`${BASE_LEADERBOARD_URL}/api/config`)
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }

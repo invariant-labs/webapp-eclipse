@@ -91,7 +91,6 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                       scheme='green'
                       width='100%'
                       height={32}
-                      borderRadius={8}
                       onClick={() => {
                         handleClose()
                         navigate(ROUTES.POINTS)
@@ -109,7 +108,7 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                   <Box className={classes.linkContainer}>
                     <Button
                       scheme='green'
-                      height={27}
+                      height={32}
                       onClick={() => {
                         handleClose()
                         navigate(ROUTES.POINTS)
