@@ -25,7 +25,7 @@ import {
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { createLoaderKey, ensureError, printBN } from '@utils/utils'
+import { createLoaderKey, ensureError, formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createNativeAtaInstructions,
@@ -291,7 +291,7 @@ export function* handleSwapWithETH(): Generator {
           const amountIn = nativeIn ? nativeAmount : splAmount
           const amountOut = nativeIn ? splAmount : nativeAmount
 
-          const message = `Sucessfully swapped ${+printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${+printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+          const message = `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}`
 
           yield put(
             snackbarsActions.add({
@@ -651,7 +651,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
           const amountIn = nativeIn ? nativeAmount : splAmount
           const amountOut = nativeIn ? splAmount : nativeAmount
 
-          const message = `Sucessfully swapped ${+printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${+printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+          const message = `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}`
 
           yield put(
             snackbarsActions.add({
@@ -949,7 +949,7 @@ export function* handleTwoHopSwap(): Generator {
               const tokenOut =
                 allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
 
-              const message = `Sucessfully swapped ${+printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${+printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+              const message = `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}`
 
               yield put(
                 snackbarsActions.add({
@@ -1178,7 +1178,7 @@ export function* handleSwap(): Generator {
               const tokenOut =
                 allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
 
-              const message = `Sucessfully swapped ${+printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${+printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+              const message = `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}`
 
               yield put(
                 snackbarsActions.add({
