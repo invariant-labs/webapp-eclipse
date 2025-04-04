@@ -53,15 +53,14 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       justifyContent: 'center',
       flexDirection: 'column',
-      width: 623,
-      maxWidth: '100%',
+      maxWidth: '623px',
+      margin: '16px',
       height: 'max-content',
       borderRadius: 24,
       padding: 24,
       boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
       gap: 24,
       [theme.breakpoints.down('sm')]: {
-        width: 'calc(100% - 32px)',
         padding: '16px 20px'
       },
 
