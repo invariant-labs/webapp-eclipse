@@ -17,6 +17,7 @@ import {
   VersionedTransaction
 } from '@solana/web3.js'
 import {
+  LEADERBOARD_DECIMAL,
   MAX_CROSSES_IN_SINGLE_TX,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
@@ -25,7 +26,13 @@ import {
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { createLoaderKey, ensureError, formatNumberWithoutSuffix, printBN } from '@utils/utils'
+import {
+  calculatePoints,
+  createLoaderKey,
+  ensureError,
+  formatNumberWithoutSuffix,
+  printBN
+} from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createNativeAtaInstructions,
@@ -44,6 +51,7 @@ import nacl from 'tweetnacl'
 import { BN } from '@coral-xyz/anchor'
 import { ParsedInstruction } from '@solana/web3.js'
 import { NATIVE_MINT } from '@solana/spl-token'
+import { config, priceFeeds } from '@store/selectors/leaderboard'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -69,6 +77,8 @@ export function* handleSwapWithETH(): Generator {
     const connection = yield* call(getConnection)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
 
     if (!firstPair) {
@@ -291,7 +301,37 @@ export function* handleSwapWithETH(): Generator {
           const amountIn = nativeIn ? nativeAmount : splAmount
           const amountOut = nativeIn ? splAmount : nativeAmount
 
-          const message = `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}`
+          let points = new BN(0)
+          try {
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
+                  new PublicKey(item.tokenY).equals(swapPool.tokenY)
+              )
+            ) {
+              const feed = feeds[tokenFrom.toString()]
+
+              if (feed && feed.price) {
+                points = calculatePoints(
+                  new BN(amountIn),
+                  tokenIn.decimals,
+                  swapPool.fee,
+                  feed.price,
+                  feed.priceDecimals,
+                  new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                ).muln(Number(leaderboardConfig.swapMultiplier))
+              }
+            }
+          } catch {
+            // Sanity check
+          }
+
+          const message =
+            `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}` +
+            (!points.eqn(0)
+              ? ` and earned ${formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))} points`
+              : '')
 
           yield put(
             snackbarsActions.add({
@@ -406,6 +446,8 @@ export function* handleTwoHopSwapWithETH(): Generator {
     const connection = yield* call(getConnection)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     let firstPool = allPools.find(
       pool =>
@@ -651,7 +693,72 @@ export function* handleTwoHopSwapWithETH(): Generator {
           const amountIn = nativeIn ? nativeAmount : splAmount
           const amountOut = nativeIn ? splAmount : nativeAmount
 
-          const message = `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}`
+          let points = new BN(0)
+
+          try {
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
+                  new PublicKey(item.tokenY).equals(firstPool.tokenY)
+              )
+            ) {
+              const feed = feeds[tokenFrom.toString()]
+
+              if (feed && feed.price) {
+                points = calculatePoints(
+                  new BN(amountIn),
+                  tokenIn.decimals,
+                  firstPool.fee,
+                  feed.price,
+                  feed.priceDecimals,
+                  new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                ).muln(Number(leaderboardConfig.swapMultiplier))
+              }
+            }
+
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
+                  new PublicKey(item.tokenY).equals(secondPool.tokenY)
+              )
+            ) {
+              const tokenBetween = secondXtoY
+                ? allTokens[secondPool.tokenX.toString()]
+                : allTokens[secondPool.tokenY.toString()]
+
+              const feed = feeds[tokenBetween.address.toString()]
+
+              const amountBetween = (
+                splTranfsers.find(
+                  ix =>
+                    (ix as ParsedInstruction).parsed.info.mint === tokenBetween.address.toString()
+                ) as ParsedInstruction
+              ).parsed.info.tokenAmount.amount
+
+              if (feed && feed.price) {
+                points = points.add(
+                  calculatePoints(
+                    new BN(amountBetween),
+                    tokenBetween.decimals,
+                    secondPool.fee,
+                    feed.price,
+                    feed.priceDecimals,
+                    new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                  ).muln(Number(leaderboardConfig.swapMultiplier))
+                )
+              }
+            }
+          } catch {
+            // Should never be triggered
+          }
+
+          const message =
+            `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}` +
+            (!points.eqn(0)
+              ? ` and earned ${formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))} points`
+              : '')
 
           yield put(
             snackbarsActions.add({
@@ -771,6 +878,8 @@ export function* handleTwoHopSwap(): Generator {
     const wallet = yield* call(getWallet)
     const tokensAccounts = yield* select(accounts)
     const networkType = yield* select(network)
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     let firstPool = allPools.find(
@@ -924,6 +1033,11 @@ export function* handleTwoHopSwap(): Generator {
             entry.mint === firstXtoY
               ? firstPool.tokenX.toString()
               : firstPool.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+          const accountBetweenPredicate = entry =>
+            entry.mint === firstXtoY
+              ? firstPool.tokenY.toString()
+              : firstPool.tokenX.toString() &&
+                entry.owner === marketProgram.programAuthority.address.toString()
           const accountOutPredicate = entry =>
             entry.mint === secondXtoY
               ? secondPool.tokenY.toString()
@@ -931,25 +1045,87 @@ export function* handleTwoHopSwap(): Generator {
 
           const preAccoutnIn = meta.preTokenBalances.find(accountInPredicate)
           const postAccountIn = meta.postTokenBalances.find(accountInPredicate)
+          const preAccountBetween = meta.preTokenBalances.find(accountBetweenPredicate)
+          const postAccountBetween = meta.postTokenBalances.find(accountBetweenPredicate)
           const preAccountOut = meta.preTokenBalances.find(accountOutPredicate)
           const postAccountOut = meta.postTokenBalances.find(accountOutPredicate)
 
           if (preAccoutnIn && postAccountIn && preAccountOut && postAccountOut) {
             const preAmountIn = preAccoutnIn.uiTokenAmount.amount
             const preAmountOut = preAccountOut.uiTokenAmount.amount
+            const betweenAmountPre = new BN(preAccountBetween.uiTokenAmount.amount)
+            const betweenAmountPost = new BN(postAccountBetween.uiTokenAmount.amount)
             const postAmountIn = postAccountIn.uiTokenAmount.amount
             const postAmountOut = postAccountOut.uiTokenAmount.amount
 
             const amountIn = new BN(preAmountIn).sub(new BN(postAmountIn))
+            const amountBetween = betweenAmountPost.gt(betweenAmountPre)
+              ? betweenAmountPost.sub(betweenAmountPre)
+              : betweenAmountPre.sub(betweenAmountPost)
             const amountOut = new BN(preAmountOut).sub(new BN(postAmountOut))
 
             try {
               const tokenIn =
                 allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
+              const tokenBetween =
+                allTokens[secondXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
               const tokenOut =
                 allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
 
-              const message = `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}`
+              let points = new BN(0)
+              try {
+                if (
+                  leaderboardConfig.swapPairs.some(
+                    item =>
+                      new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(firstPool.tokenY)
+                  )
+                ) {
+                  const feed = feeds[tokenFrom.toString()]
+
+                  if (feed && feed.price) {
+                    points = calculatePoints(
+                      amountIn,
+                      tokenIn.decimals,
+                      firstPool.fee,
+                      feed.price,
+                      feed.priceDecimals,
+                      new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                    ).muln(Number(leaderboardConfig.swapMultiplier))
+                  }
+                }
+
+                if (
+                  leaderboardConfig.swapPairs.some(
+                    item =>
+                      new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(secondPool.tokenY)
+                  )
+                ) {
+                  const feed = feeds[tokenBetween.toString()]
+
+                  if (feed && feed.price) {
+                    points = points.add(
+                      calculatePoints(
+                        amountBetween,
+                        tokenBetween.decimals,
+                        secondPool.fee,
+                        feed.price,
+                        feed.priceDecimals,
+                        new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                      ).muln(Number(leaderboardConfig.swapMultiplier))
+                    )
+                  }
+                }
+              } catch {
+                // Should never be triggered
+              }
+
+              const message =
+                `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}` +
+                (!points.eqn(0)
+                  ? ` and earned ${formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))} points`
+                  : '')
 
               yield put(
                 snackbarsActions.add({
@@ -1044,6 +1220,8 @@ export function* handleSwap(): Generator {
     const tokensAccounts = yield* select(accounts)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const swapPool = allPools.find(
       pool =>
@@ -1178,7 +1356,37 @@ export function* handleSwap(): Generator {
               const tokenOut =
                 allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
 
-              const message = `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}`
+              let points = new BN(0)
+              try {
+                if (
+                  leaderboardConfig.swapPairs.some(
+                    item =>
+                      new PublicKey(item.tokenX).equals(swapPool.tokenX) &&
+                      new PublicKey(item.tokenY).equals(swapPool.tokenY)
+                  )
+                ) {
+                  const feed = feeds[tokenFrom.toString()]
+
+                  if (feed && feed.price) {
+                    points = calculatePoints(
+                      amountIn,
+                      tokenIn.decimals,
+                      swapPool.fee,
+                      feed.price,
+                      feed.priceDecimals,
+                      new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                    ).muln(Number(leaderboardConfig.swapMultiplier))
+                  }
+                }
+              } catch {
+                // Sanity check in case some leaderboard config is missing
+              }
+
+              const message =
+                `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}` +
+                (!points.eqn(0)
+                  ? ` and earned ${formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))} points`
+                  : '')
 
               yield put(
                 snackbarsActions.add({
@@ -1187,7 +1395,9 @@ export function* handleSwap(): Generator {
                   persist: false
                 })
               )
-            } catch {}
+            } catch {
+              // Sanity wrapper, should never be triggered
+            }
           }
         }
       }
