@@ -169,13 +169,6 @@ export function* handleSwapWithETH(): Generator {
       tickIndexes
     )
 
-    console.log(
-      tickIndexes,
-
-      'luts',
-      luts.length
-    )
-
     let initialTxid: string
 
     if (luts.length !== 0) {
