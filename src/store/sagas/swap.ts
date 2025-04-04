@@ -42,6 +42,8 @@ import {
 import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
 import { BN } from '@coral-xyz/anchor'
+import { ParsedInstruction } from '@solana/web3.js'
+import { NATIVE_MINT } from '@solana/spl-token'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -256,6 +258,53 @@ export function* handleSwapWithETH(): Generator {
         txid: initialTxid
       })
     )
+
+    const txDetails = yield* call([connection, connection.getParsedTransaction], initialTxid)
+
+    if (txDetails) {
+      const meta = txDetails.meta
+      if (meta?.innerInstructions && meta.innerInstructions) {
+        try {
+          const nativeAmount = (
+            meta.innerInstructions[0].instructions.find(
+              ix => (ix as ParsedInstruction).parsed.info.amount
+            ) as ParsedInstruction
+          ).parsed.info.amount
+
+          const splAmount = (
+            meta.innerInstructions[0].instructions.find(
+              ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+            ) as ParsedInstruction
+          ).parsed.info.tokenAmount.amount
+
+          const tokenIn = isXtoY
+            ? allTokens[swapPool.tokenX.toString()]
+            : allTokens[swapPool.tokenY.toString()]
+          const tokenOut = isXtoY
+            ? allTokens[swapPool.tokenY.toString()]
+            : allTokens[swapPool.tokenX.toString()]
+
+          const nativeIn = isXtoY
+            ? swapPool.tokenX.equals(NATIVE_MINT)
+            : swapPool.tokenY.equals(NATIVE_MINT)
+
+          const amountIn = nativeIn ? nativeAmount : splAmount
+          const amountOut = nativeIn ? splAmount : nativeAmount
+
+          const message = `Sucessfully swapped ${+printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${+printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+
+          yield put(
+            snackbarsActions.add({
+              message,
+              variant: 'success',
+              persist: false
+            })
+          )
+        } catch {
+          // Should never be triggered
+        }
+      }
+    }
     // }
 
     // const unwrapTxid = yield* call(
@@ -514,7 +563,9 @@ export function* handleTwoHopSwapWithETH(): Generator {
       skipPreflight: false
     })
 
-    yield* call([connection, connection.confirmTransaction], txid)
+    yield* call([connection, connection.confirmTransaction], txid, {
+      maxSupportedTransactionVersion: 0
+    })
 
     if (!txid.length) {
       yield put(swapActions.setSwapSuccess(false))
@@ -563,6 +614,59 @@ export function* handleTwoHopSwapWithETH(): Generator {
       })
     )
     // }
+
+    const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
+      maxSupportedTransactionVersion: 0
+    })
+
+    if (txDetails) {
+      const meta = txDetails.meta
+      if (meta?.innerInstructions && meta.innerInstructions) {
+        try {
+          const nativeAmount = (
+            meta.innerInstructions[0].instructions.find(
+              ix => (ix as ParsedInstruction).parsed.info.amount
+            ) as ParsedInstruction
+          ).parsed.info.amount
+
+          const splTranfsers = meta.innerInstructions[0].instructions.filter(
+            ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+          )
+
+          const tokenIn = firstXtoY
+            ? allTokens[firstPool.tokenX.toString()]
+            : allTokens[firstPool.tokenY.toString()]
+          const tokenOut = secondXtoY
+            ? allTokens[secondPool.tokenY.toString()]
+            : allTokens[secondPool.tokenX.toString()]
+
+          const nativeIn = tokenIn.address.equals(NATIVE_MINT)
+
+          const splAmount = (
+            splTranfsers.find(ix =>
+              (ix as ParsedInstruction).parsed.info.mint === nativeIn
+                ? tokenOut.address.toString()
+                : tokenIn.address.toString()
+            ) as ParsedInstruction
+          ).parsed.info.tokenAmount.amount
+
+          const amountIn = nativeIn ? nativeAmount : splAmount
+          const amountOut = nativeIn ? splAmount : nativeAmount
+
+          const message = `Sucessfully swapped ${+printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${+printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+
+          yield put(
+            snackbarsActions.add({
+              message,
+              variant: 'success',
+              persist: false
+            })
+          )
+        } catch {
+          // Should never be triggered
+        }
+      }
+    }
 
     // const unwrapTxid = yield* call(
     //   sendAndConfirmRawTransaction,
@@ -691,7 +795,6 @@ export function* handleTwoHopSwap(): Generator {
           secondPair.feeTier.fee.eq(pool.fee))
     )
 
-    // if (!firstPool || !secondPool) {
     if (!firstPool) {
       const address = firstPair.getAddress(marketProgram.program.programId)
       const fetched = yield* call([marketProgram, marketProgram.getPool], firstPair)
@@ -790,7 +893,9 @@ export function* handleTwoHopSwap(): Generator {
       skipPreflight: false
     })
 
-    yield* call([connection, connection.confirmTransaction], txid)
+    yield* call([connection, connection.confirmTransaction], txid, {
+      maxSupportedTransactionVersion: 0
+    })
 
     yield put(swapActions.setSwapSuccess(!!txid.length))
 
@@ -812,6 +917,57 @@ export function* handleTwoHopSwap(): Generator {
           txid
         })
       )
+      const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
+        maxSupportedTransactionVersion: 0
+      })
+
+      if (txDetails) {
+        const meta = txDetails.meta
+        if (meta?.preTokenBalances && meta.postTokenBalances) {
+          const accountInPredicate = entry =>
+            entry.mint === firstXtoY
+              ? firstPool.tokenX.toString()
+              : firstPool.tokenY.toString() && entry.owner === wallet.publicKey.toString()
+          const accountOutPredicate = entry =>
+            entry.mint === secondXtoY
+              ? secondPool.tokenY.toString()
+              : secondPool.tokenX.toString() && entry.owner === wallet.publicKey.toString()
+
+          const preAccoutnIn = meta.preTokenBalances.find(accountInPredicate)
+          const postAccountIn = meta.postTokenBalances.find(accountInPredicate)
+          const preAccountOut = meta.preTokenBalances.find(accountOutPredicate)
+          const postAccountOut = meta.postTokenBalances.find(accountOutPredicate)
+
+          if (preAccoutnIn && postAccountIn && preAccountOut && postAccountOut) {
+            const preAmountIn = preAccoutnIn.uiTokenAmount.amount
+            const preAmountOut = preAccountOut.uiTokenAmount.amount
+            const postAmountIn = postAccountIn.uiTokenAmount.amount
+            const postAmountOut = postAccountOut.uiTokenAmount.amount
+
+            const amountIn = new BN(preAmountIn).sub(new BN(postAmountIn))
+            const amountOut = new BN(preAmountOut).sub(new BN(postAmountOut))
+
+            try {
+              const tokenIn =
+                allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
+              const tokenOut =
+                allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
+
+              const message = `Sucessfully swapped ${+printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${+printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+
+              yield put(
+                snackbarsActions.add({
+                  message,
+                  variant: 'success',
+                  persist: false
+                })
+              )
+            } catch {
+              // Sanity wrapper, should never be triggered
+            }
+          }
+        }
+      }
     }
 
     closeSnackbar(loaderSwappingTokens)
@@ -982,8 +1138,16 @@ export function* handleSwap(): Generator {
         })
       )
     } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid
+        })
+      )
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid)
-      let showDefualtSnackbar = true
+
       if (txDetails) {
         const meta = txDetails.meta
         if (meta?.preTokenBalances && meta.postTokenBalances) {
@@ -1018,32 +1182,18 @@ export function* handleSwap(): Generator {
               const tokenOut =
                 allTokens[isXtoY ? swapPool.tokenY.toString() : swapPool.tokenX.toString()]
 
-              const message = `Sucessfully swapped ${printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
+              const message = `Sucessfully swapped ${+printBN(amountIn, tokenIn.decimals)} ${tokenIn.symbol} for ${+printBN(amountOut, tokenOut.decimals)} ${tokenOut.symbol}`
 
               yield put(
                 snackbarsActions.add({
                   message,
                   variant: 'success',
-                  persist: false,
-                  txid
+                  persist: false
                 })
               )
-              showDefualtSnackbar = false
-            } catch {
-              // Show default snackbar
-            }
+            } catch {}
           }
         }
-      }
-      if (showDefualtSnackbar) {
-        yield put(
-          snackbarsActions.add({
-            message: 'Tokens swapped successfully',
-            variant: 'success',
-            persist: false,
-            txid
-          })
-        )
       }
     }
 
