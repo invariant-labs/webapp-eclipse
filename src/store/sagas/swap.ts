@@ -37,7 +37,6 @@ import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { actions as RPCAction, RpcStatus } from '@store/reducers/solanaConnection'
 import { PayloadAction } from '@reduxjs/toolkit'
 import {
-  MAX_CU,
   TICK_CROSSES_PER_IX,
   TwoHopSwap,
   TwoHopSwapCache
@@ -223,7 +222,7 @@ export function* handleSwapWithETH(): Generator {
 
       yield* call([connection, connection.confirmTransaction], initialTxid)
     } else {
-      const setCuIx = computeUnitsInstruction(MAX_CU, wallet.publicKey)
+      const setCuIx = computeUnitsInstruction(1_400_000, wallet.publicKey)
       const swapIx = yield* call(
         [marketProgram, marketProgram.swapIx],
         {
@@ -1062,7 +1061,7 @@ export function* handleSwap(): Generator {
 
       yield* call([connection, connection.confirmTransaction], txid)
     } else {
-      const setCuIx = computeUnitsInstruction(MAX_CU, wallet.publicKey)
+      const setCuIx = computeUnitsInstruction(1_400_000, wallet.publicKey)
       const swapIx = yield* call(
         [marketProgram, marketProgram.swapIx],
         {
