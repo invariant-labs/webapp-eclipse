@@ -99,7 +99,8 @@ async function fetchTotalLeaderboardData(
   return response.json() as Promise<ITotalLeaderboardResponse>
 }
 async function fetchLeaderboardConfig() {
-  const response = await fetch(`https://points.invariant.app/api/config`)
+  const response = await fetch(`${BASE_LEADERBOARD_URL}/api/config`)
+  console.log(response)
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }
