@@ -54,7 +54,7 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'center',
       flexDirection: 'column',
       maxWidth: '623px',
-      margin: '16px',
+      margin: 0,
       height: 'max-content',
       borderRadius: 24,
       padding: 24,
