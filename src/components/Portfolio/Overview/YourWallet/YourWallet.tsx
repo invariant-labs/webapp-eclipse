@@ -209,7 +209,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
 
       <Box className={classes.mobileContainer}>
         {isLoading ? (
-          <Box className={classes.mobileContainer} sx={{ marginTop: '16px' }}>
+          <Box className={classes.mobileContainer}>
             {Array(3)
               .fill(0)
               .map((_, index) => (
