@@ -7,6 +7,7 @@ import { colors, theme } from '@static/theme'
 import cardLarge from '@static/png/Eclipse-USDC.png'
 import cardSmall from '@static/png/Eclipse-USDC-small.png'
 import React from 'react'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 
 interface IECBanner {
   isCloseButton?: boolean
@@ -21,6 +22,23 @@ export const ECBanner: React.FC<IECBanner> = ({
   isHiding = false,
   handleCloseBanner = () => {}
 }) => {
+  const allocationTooltipTitle = (
+    <Grid>
+      <Typography>$ES Allocation</Typography>
+      <br />
+      Eclipse has officially launched its token! Check your eligibility and claim your allocation on
+      the official Eclipse claim site.
+    </Grid>
+  )
+  const earnTooltipTitle = (
+    <Grid>
+      <Typography>Put your $ES to work and keep earning!</Typography>
+      <br />
+      Believe in Eclipse and the long-term value of $ES? Don’t let your tokens sit idle in your
+      wallet. Provide liquidity to the ES-USDC pool and start earning trading fees, Invariant
+      Points, and exclusive benefits from projects across the entire ecosystem.
+    </Grid>
+  )
   const breakpoint = page === 'points' ? theme.breakpoints.values.lg : 1200
   const changeDirection = useMediaQuery(theme.breakpoints.down(breakpoint))
   const { classes } = useStyles({ page, breakpoint, isHiding })
@@ -28,10 +46,13 @@ export const ECBanner: React.FC<IECBanner> = ({
     <Grid className={classes.mainWrapper}>
       {isCloseButton && (
         <img className={classes.closeIcon} src={icons.closeSmallIcon} onClick={handleCloseBanner} />
-      )}{' '}
+      )}
       <Grid className={classes.leftWrapper}>
         <Typography className={classes.header}>
-          Your Allocation <img src={icons.infoCircle} />
+          Your Allocation{' '}
+          <TooltipGradient placement='top' top={1} title={allocationTooltipTitle}>
+            <img src={icons.infoCircle} />
+          </TooltipGradient>
         </Typography>
 
         <Typography component='span'>
@@ -50,12 +71,18 @@ export const ECBanner: React.FC<IECBanner> = ({
             <Grid>
               <Typography className={classes.header}>Use ECLS tokens to earn trading</Typography>{' '}
               <Typography className={classes.header}>
-                fees and points <img src={icons.infoCircle} />
+                fees and points{' '}
+                <TooltipGradient title={earnTooltipTitle} top={1}>
+                  <img src={icons.infoCircle} />
+                </TooltipGradient>
               </Typography>
             </Grid>
           ) : (
             <Typography className={classes.header}>
-              Use ECLS tokens to earn trading fees and points <img src={icons.infoCircle} />
+              Use ECLS tokens to earn trading fees and points{' '}
+              <TooltipGradient title={earnTooltipTitle} top={1}>
+                <img src={icons.infoCircle} />
+              </TooltipGradient>
             </Typography>
           )}
           <Typography component='span'>

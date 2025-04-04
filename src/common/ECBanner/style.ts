@@ -69,8 +69,8 @@ export const useStyles = makeStyles<StyleProps>()((theme, { page, breakpoint, is
 
     '& img': {
       display: 'flex',
-      cursor: 'pointer',
-      width: 14
+      width: 14,
+      zIndex: 2
     }
   },
 
