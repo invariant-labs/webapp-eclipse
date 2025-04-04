@@ -37,6 +37,7 @@ import {
   getMaxTick,
   getMinTick,
   PRICE_SCALE,
+  POOLS_WITH_LUTS,
   Range
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
@@ -94,7 +95,6 @@ import {
   EZSOL_MAIN,
   LEADERBOARD_DECIMAL,
   POSITIONS_PER_PAGE,
-  POOLS_WITH_LUTS,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'

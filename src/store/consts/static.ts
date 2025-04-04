@@ -789,10 +789,3 @@ export enum OverviewSwitcher {
 }
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000
-
-export const POOLS_WITH_LUTS: PublicKey[] = [
-  new PublicKey('HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce'),
-  new PublicKey('E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC'),
-  new PublicKey('86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM'),
-  new PublicKey('FvVsbwsbGVo6PVfimkkPhpcRfBrRitiV946nMNNuz7f9')
-]
