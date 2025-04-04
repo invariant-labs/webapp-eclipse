@@ -1,7 +1,6 @@
 import { CustomLayerProps } from '@nivo/line'
 import { colors } from '@static/theme'
 import React, { useState, useEffect, useRef, TouchEventHandler, useCallback } from 'react'
-import useStyles from './style'
 import { MaxHandle, MinHandle } from './svgHandles'
 
 export interface HandleProps {
@@ -27,7 +26,6 @@ export const Handle: React.FC<HandleProps> = ({
   onStart,
   disabled = false
 }) => {
-  const { classes } = useStyles()
   const [drag, setDrag] = useState(false)
   const [currentPosition, setCurrentPosition] = useState(position)
   const [offset, setOffset] = useState(0)
@@ -167,7 +165,6 @@ export const Handle: React.FC<HandleProps> = ({
         />
       )}
       <rect
-        className={!disabled ? classes.handle : undefined}
         ref={handleRef}
         x={clickableX}
         y={0}
@@ -178,7 +175,7 @@ export const Handle: React.FC<HandleProps> = ({
         onMouseEnter={() => setIsHovered(true)}
         onMouseOut={() => setIsHovered(false)}
         fill='transparent'
-        style={{ cursor: !disabled ? 'pointer' : 'default' }}
+        style={{ cursor: !disabled ? 'ew-resize' : 'default' }}
       />
     </>
   )
