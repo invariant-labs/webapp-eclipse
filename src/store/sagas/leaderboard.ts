@@ -100,7 +100,6 @@ async function fetchTotalLeaderboardData(
 }
 async function fetchLeaderboardConfig() {
   const response = await fetch(`${BASE_LEADERBOARD_URL}/api/config`)
-  console.log(response)
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }
