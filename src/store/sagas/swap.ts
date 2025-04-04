@@ -1117,68 +1117,78 @@ export function* handleTwoHopSwap(): Generator {
           if (preAccoutnIn && postAccountIn && preAccountOut && postAccountOut) {
             const preAmountIn = preAccoutnIn.uiTokenAmount.amount
             const preAmountOut = preAccountOut.uiTokenAmount.amount
-            const betweenAmountPre = new BN(preAccountBetween.uiTokenAmount.amount)
-            const betweenAmountPost = new BN(postAccountBetween.uiTokenAmount.amount)
+
             const postAmountIn = postAccountIn.uiTokenAmount.amount
             const postAmountOut = postAccountOut.uiTokenAmount.amount
 
             const amountIn = new BN(preAmountIn).sub(new BN(postAmountIn))
-            const amountBetween = betweenAmountPost.gt(betweenAmountPre)
-              ? betweenAmountPost.sub(betweenAmountPre)
-              : betweenAmountPre.sub(betweenAmountPost)
+
             const amountOut = new BN(preAmountOut).sub(new BN(postAmountOut))
 
             try {
               const tokenIn =
                 allTokens[firstXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
-              const tokenBetween =
-                allTokens[secondXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()]
+
               const tokenOut =
                 allTokens[secondXtoY ? secondPool.tokenY.toString() : secondPool.tokenX.toString()]
 
               let points = new BN(0)
               try {
-                if (
-                  leaderboardConfig.swapPairs.some(
-                    item =>
-                      new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
-                      new PublicKey(item.tokenY).equals(firstPool.tokenY)
-                  )
-                ) {
-                  const feed = feeds[tokenFrom.toString()]
+                if (preAccountBetween && postAccountBetween) {
+                  const betweenAmountPre = new BN(preAccountBetween.uiTokenAmount.amount)
+                  const betweenAmountPost = new BN(postAccountBetween.uiTokenAmount.amount)
 
-                  if (feed && feed.price) {
-                    points = calculatePoints(
-                      amountIn,
-                      tokenIn.decimals,
-                      firstPool.fee,
-                      feed.price,
-                      feed.priceDecimals,
-                      new BN(leaderboardConfig.pointsPerUsd, 'hex')
-                    ).muln(Number(leaderboardConfig.swapMultiplier))
-                  }
-                }
+                  const amountBetween = betweenAmountPost.gt(betweenAmountPre)
+                    ? betweenAmountPost.sub(betweenAmountPre)
+                    : betweenAmountPre.sub(betweenAmountPost)
 
-                if (
-                  leaderboardConfig.swapPairs.some(
-                    item =>
-                      new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
-                      new PublicKey(item.tokenY).equals(secondPool.tokenY)
-                  )
-                ) {
-                  const feed = feeds[tokenBetween.toString()]
+                  const tokenBetween =
+                    allTokens[
+                      secondXtoY ? firstPool.tokenX.toString() : firstPool.tokenY.toString()
+                    ]
 
-                  if (feed && feed.price) {
-                    points = points.add(
-                      calculatePoints(
-                        amountBetween,
-                        tokenBetween.decimals,
-                        secondPool.fee,
+                  if (
+                    leaderboardConfig.swapPairs.some(
+                      item =>
+                        new PublicKey(item.tokenX).equals(firstPool.tokenX) &&
+                        new PublicKey(item.tokenY).equals(firstPool.tokenY)
+                    )
+                  ) {
+                    const feed = feeds[tokenFrom.toString()]
+
+                    if (feed && feed.price) {
+                      points = calculatePoints(
+                        amountIn,
+                        tokenIn.decimals,
+                        firstPool.fee,
                         feed.price,
                         feed.priceDecimals,
                         new BN(leaderboardConfig.pointsPerUsd, 'hex')
                       ).muln(Number(leaderboardConfig.swapMultiplier))
+                    }
+                  }
+
+                  if (
+                    leaderboardConfig.swapPairs.some(
+                      item =>
+                        new PublicKey(item.tokenX).equals(secondPool.tokenX) &&
+                        new PublicKey(item.tokenY).equals(secondPool.tokenY)
                     )
+                  ) {
+                    const feed = feeds[tokenBetween.toString()]
+
+                    if (feed && feed.price) {
+                      points = points.add(
+                        calculatePoints(
+                          amountBetween,
+                          tokenBetween.decimals,
+                          secondPool.fee,
+                          feed.price,
+                          feed.priceDecimals,
+                          new BN(leaderboardConfig.pointsPerUsd, 'hex')
+                        ).muln(Number(leaderboardConfig.swapMultiplier))
+                      )
+                    }
                   }
                 }
               } catch {
