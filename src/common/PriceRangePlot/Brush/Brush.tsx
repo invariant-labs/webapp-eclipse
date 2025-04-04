@@ -113,9 +113,8 @@ export const Handle: React.FC<HandleProps> = ({
 
   const isReversed = () => (isStart ? currentPosition < 37 : plotWidth - currentPosition < 37)
 
-  // Calculate clickable area position and width
   const handleWidth = 42
-  const handlePadding = 10 // Add extra padding to make handle easier to click
+  const handlePadding = 10
 
   let clickableX: number
   let clickableWidth: number
@@ -125,11 +124,9 @@ export const Handle: React.FC<HandleProps> = ({
     clickableWidth = plotWidth
   } else {
     if ((isStart && !isReversed()) || (!isStart && isReversed())) {
-      // Make sure the clickable area doesn't go outside the plot bounds
       clickableX = Math.max(minPosition, currentPosition - 40 - handlePadding)
       clickableWidth = handleWidth + handlePadding * 2
     } else {
-      // Make sure the clickable area doesn't go outside the plot bounds
       clickableX = Math.max(minPosition, currentPosition - handlePadding)
       clickableWidth = Math.min(
         handleWidth + handlePadding * 2,
