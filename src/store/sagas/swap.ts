@@ -563,9 +563,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
       skipPreflight: false
     })
 
-    yield* call([connection, connection.confirmTransaction], txid, {
-      maxSupportedTransactionVersion: 0
-    })
+    yield* call([connection, connection.confirmTransaction], txid)
 
     if (!txid.length) {
       yield put(swapActions.setSwapSuccess(false))
@@ -893,9 +891,7 @@ export function* handleTwoHopSwap(): Generator {
       skipPreflight: false
     })
 
-    yield* call([connection, connection.confirmTransaction], txid, {
-      maxSupportedTransactionVersion: 0
-    })
+    yield* call([connection, connection.confirmTransaction], txid)
 
     yield put(swapActions.setSwapSuccess(!!txid.length))
 
