@@ -140,7 +140,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
     <div className={classes.modalContainer}>
       <Popover
         open={open}
-        anchorReference='none'
+        marginThreshold={0}
         classes={{
           root: classes.popoverRoot,
           paper: classes.paper
