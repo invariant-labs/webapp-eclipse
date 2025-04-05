@@ -627,7 +627,6 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       WETH: WETH_ADDRESS[network].toString(),
       BTC: BTC_ADDRESS[network].toString(),
       USDC: USDC_ADDRESS[network].toString(),
-      USDT: USDC_TEST.address.toString(),
       EBGR: 'EBGR1Nb8k3ihiwFuRvXXuxotSKbX7FQWwuzfJEVE9wx9',
       ETH: WETH_ADDRESS[network].toString(),
       MOON: 'JChWwuoqpXZZn6WjSCssjaozj4u65qNgvGFsV6eJ2g8S',
