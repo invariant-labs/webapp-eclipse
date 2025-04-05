@@ -45,6 +45,7 @@ import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { ROUTES } from '@utils/utils'
 import { colors } from '@static/theme'
+import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 const ITEMS_PER_PAGE = 10
 
@@ -144,7 +145,9 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
 
     return sortedData.slice(offest).slice(0, perPage)
   }
-
+  const totalItems = sortedData.length
+  const lowerBound = useMemo(() => (page - 1) * 10 + 1, [page])
+  const upperBound = useMemo(() => Math.min(page * 10, totalItems), [totalItems, page])
   const pages = Math.ceil(data.length / 10)
   const getEmptyRowsCount = () => {
     const displayedItems = paginator(page).length
@@ -224,18 +227,24 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         <Grid
           className={classes.pagination}
           sx={{
-            height: initialDataLength > 10 ? (page !== pages ? 101 : 101) : 69,
+            height: initialDataLength > 10 ? (page !== pages ? 'auto' : 'auto') : 69,
             borderTop: `
               ${pages > 1 ? (page !== pages ? 1 : 2) : 2}px solid ${colors.invariant.light}
             `
           }}>
           {pages > 1 && (
-            <PaginationList
-              pages={pages}
-              defaultPage={1}
-              handleChangePage={handleChangePagination}
-              variant='flex-end'
-            />
+            <TableBoundsLabel
+              borderTop={false}
+              lowerBound={lowerBound}
+              totalItems={totalItems}
+              upperBound={upperBound}>
+              <PaginationList
+                pages={pages}
+                defaultPage={1}
+                handleChangePage={handleChangePagination}
+                variant='center'
+              />
+            </TableBoundsLabel>
           )}
         </Grid>
       </Grid>
