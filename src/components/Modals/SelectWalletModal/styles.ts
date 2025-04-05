@@ -13,12 +13,11 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       justifyContent: 'center',
       pointerEvents: 'none',
-      zIndex: 1300
+      zIndex: 1300,
+      paddingTop: '25%'
     },
     popoverRoot: {
       position: 'fixed',
-      width: '100%',
-      height: '100%',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
@@ -26,8 +25,8 @@ const useStyles = makeStyles()(() => {
     },
     paper: {
       position: 'relative',
-      margin: 'auto',
-      maxWidth: '90%',
+      width: '520px',
+      margin: '16px',
       background: 'transparent',
       boxShadow: 'none',
       overflow: 'visible'
@@ -38,14 +37,10 @@ const useStyles = makeStyles()(() => {
         radial-gradient(50.2% 50.2% at 50% 0%, rgba(239, 132, 245, 0.25) 0%, rgba(239, 132, 245, 0) 75%),
         ${colors.invariant.component}
       `,
-      width: 490,
-      maxWidth: '100%',
-      height: 'max-content',
       borderRadius: 24,
       padding: '20px 24px',
       boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
       [theme.breakpoints.down('sm')]: {
-        width: 'calc(100% - 32px)',
         padding: '16px 20px'
       }
     },
