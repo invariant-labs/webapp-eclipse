@@ -27,7 +27,7 @@ import {
   ROUTES,
   trimLeadingZeros
 } from '@utils/utils'
-import { Swap as SwapData } from '@store/reducers/swap'
+import { Swap as SwapData, AgregatorSwapRoutes } from '@store/reducers/swap'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
@@ -51,7 +51,6 @@ import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabe
 import { useNavigate } from 'react-router-dom'
 import { FetcherRecords, Pair, SimulationTwoHopResult } from '@invariant-labs/sdk-eclipse'
 import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
-import { RouteTemplateProps } from '@components/TransactionRoute/FlowChartGrid/types/types'
 import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
 import { theme } from '@static/theme'
 import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
@@ -82,11 +81,7 @@ export interface ISwap {
   swapData: SwapData
   tokens: SwapToken[]
   pools: PoolWithAddress[]
-  swapRouteChartData: {
-    swapRouteLoading: boolean
-    swapRouteError?: string
-    swapRouteResponse?: RouteTemplateProps
-  }
+  swapRouteChartData: AgregatorSwapRoutes
   tickmap: { [x: string]: Tickmap }
   onRouteRefresh: (amountIn: BN, slippage: number, tokenFrom: PublicKey, tokenTo: PublicKey) => void
   onSwap: (
@@ -1477,6 +1472,7 @@ export const Swap: React.FC<ISwap> = ({
                   ) : null}
                 </Box>
                 <TransactionDetailsBox
+                  feePercent={swapRouteChartData.swapSimulateDetails?.feePercent}
                   open={detailsOpen && canShowDetails}
                   exchangeRate={{
                     val: rateReversed ? 1 / swapRate : swapRate,
@@ -1488,9 +1484,8 @@ export const Swap: React.FC<ISwap> = ({
                       : 0
                   }}
                   slippage={+slippTolerance}
-                  priceImpact={priceImpact}
+                  priceImpact={swapRouteChartData.swapSimulateDetails?.priceImpactPct}
                   isLoadingRate={getStateMessage() === 'Loading' || addBlur}
-                  simulationPath={simulationPath}
                 />
                 <TokensInfo
                   tokenFrom={tokenFromIndex !== null ? tokens[tokenFromIndex] : null}

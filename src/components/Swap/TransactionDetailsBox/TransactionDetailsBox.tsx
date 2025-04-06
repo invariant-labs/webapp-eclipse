@@ -1,47 +1,30 @@
 import React from 'react'
 import { Grid, Skeleton, Typography } from '@mui/material'
-import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { BN } from '@coral-xyz/anchor'
-import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
-
-import RouteBox from './RouteBox/RouteBox'
-import { SimulationPath } from '../Swap'
-import { DENOMINATOR } from '@invariant-labs/sdk-eclipse/src'
 
 interface IProps {
   open: boolean
   exchangeRate: { val: number; symbol: string; decimal: number }
   slippage: number
   priceImpact: BN
+  feePercent?: number
   isLoadingRate?: boolean
-  simulationPath: SimulationPath
 }
 
 const TransactionDetailsBox: React.FC<IProps> = ({
   open,
   exchangeRate,
   slippage,
+  feePercent,
   priceImpact,
-  isLoadingRate = false,
-  simulationPath
+  isLoadingRate = false
 }) => {
   const { classes } = useStyles({ open })
 
-  const feePercent = Number(
-    printBN(
-      simulationPath.firstPair?.feeTier.fee.add(
-        DENOMINATOR.sub(simulationPath.firstPair?.feeTier.fee)
-          .mul(simulationPath.secondPair?.feeTier.fee ?? new BN(0))
-          .div(DENOMINATOR) ?? new BN(0)
-      ) ?? new BN(0),
-      DECIMAL - 2
-    )
-  )
-
   return (
     <Grid container className={classes.wrapper}>
-      <RouteBox simulationPath={simulationPath} isLoadingRate={isLoadingRate} />
       <Grid container direction='column' wrap='nowrap' className={classes.innerWrapper}>
         <Grid container justifyContent='space-between' className={classes.row}>
           <Typography className={classes.label}>Exchange rate:</Typography>
@@ -61,7 +44,10 @@ const TransactionDetailsBox: React.FC<IProps> = ({
           {isLoadingRate ? (
             <Skeleton width={80} height={20} variant='rounded' animation='wave' />
           ) : (
-            <Typography className={classes.value}>{`${feePercent.toFixed(2)}%`}</Typography>
+            <Typography
+              className={
+                classes.value
+              }>{`${feePercent ? feePercent.toFixed(2) : '-'}%`}</Typography>
           )}
         </Grid>
 
@@ -71,7 +57,11 @@ const TransactionDetailsBox: React.FC<IProps> = ({
             <Skeleton width={80} height={20} variant='rounded' animation='wave' />
           ) : (
             <Typography className={classes.value}>
-              {priceImpact < 0.01 ? '<0.01%' : `${priceImpact.toFixed(2)}%`}
+              {priceImpact && typeof priceImpact === 'number' && priceImpact < 0.01
+                ? '<0.01%'
+                : typeof priceImpact === 'number'
+                  ? `${priceImpact.toFixed(2)}%`
+                  : '-'}
             </Typography>
           )}
         </Grid>

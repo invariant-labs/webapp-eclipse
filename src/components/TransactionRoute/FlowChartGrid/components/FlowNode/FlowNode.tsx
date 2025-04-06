@@ -3,7 +3,7 @@ import { Box, Typography } from '@mui/material'
 import { NodeConnector } from '../NodeConnector/NodeConnector'
 import { typography } from '@static/theme'
 import icons from '@static/icons'
-import { formatNumberWithSuffix } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 import { FlowNodeProps } from '../../types/types'
 import { renderFlexLines } from '../../utils/renderFlexLines'
 import { useStyles } from './style'
@@ -83,7 +83,7 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
         }}>
         <Typography className={classes.textA}>{textA ?? ''}</Typography>
         <Typography className={classes.textB}>
-          {(shape === 'circle' && textB && formatNumberWithSuffix(textB)) ?? ''} {textA ?? ''}
+          {(shape === 'circle' && textB && formatNumberWithoutSuffix(textB)) ?? ''} {textA ?? ''}
         </Typography>
       </Box>
     </Box>

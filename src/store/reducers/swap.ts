@@ -59,15 +59,23 @@ export interface Simulate {
   inProgress?: boolean
 }
 
+export interface AgregatorSimulateDetails {
+  priceImpactPct: number
+  feePercent?: number
+}
+
+export interface AgregatorSwapRoutes {
+  swapRouteLoading: boolean
+  swapRouteError?: string
+  swapSimulateDetails?: AgregatorSimulateDetails | undefined
+  swapRouteResponse?: RouteTemplateProps
+}
+
 export interface ISwapStore {
   swap: Swap
   accounts: FetcherRecords
   isLoading: boolean
-  swapRoute: {
-    swapRouteLoading: boolean
-    swapRouteError?: string
-    swapRouteResponse?: RouteTemplateProps
-  }
+  swapRoute: AgregatorSwapRoutes
 }
 
 export const defaultState: ISwapStore = {
@@ -85,7 +93,7 @@ export const defaultState: ISwapStore = {
   },
   swapRoute: {
     swapRouteLoading: false,
-    swapRouteError: undefined,
+    swapSimulateDetails: undefined,
     swapRouteResponse: undefined
   },
   accounts: {
@@ -135,7 +143,11 @@ const swapSlice = createSlice({
       state.swapRoute.swapRouteLoading = false
       return state
     },
-
+    setSwapSimulateDetails(state, action: PayloadAction<AgregatorSimulateDetails | undefined>) {
+      console.log('setSwapSimulateDetails', action.payload)
+      state.swapRoute.swapSimulateDetails = action.payload
+      return state
+    },
     fetchSwapRoute(
       state,
       _action: PayloadAction<{

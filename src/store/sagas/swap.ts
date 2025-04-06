@@ -1080,9 +1080,17 @@ export function* handleFetchSwapRoute(
           ...transformedData
         })
       )
+      yield put(
+        swapActions.setSwapSimulateDetails({
+          priceImpactPct: +routesData.priceImpactPct,
+          feePercent: undefined //temp
+        })
+      )
+
       yield put(swapActions.setSwapRouteError(undefined))
     } else {
       yield put(swapActions.setSwapRouteResponse(undefined))
+      yield put(swapActions.setSwapSimulateDetails(undefined))
       yield put(swapActions.setSwapRouteError('Failed to fetch swap routes'))
     }
   } catch (e: unknown) {

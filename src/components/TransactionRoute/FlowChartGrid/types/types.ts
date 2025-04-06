@@ -99,6 +99,7 @@ export interface FlowChartTokenNode {
 
 export interface RouteTemplateProps {
   sourceToken: FlowChartTokenNode
+
   exchanges: Array<{
     name: string
     logoUrl: string
