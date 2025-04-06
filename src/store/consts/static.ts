@@ -640,7 +640,6 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       USDC: USDC_MAIN.address.toString(),
       USDT: USDT_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
-      USDT: USDT_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
