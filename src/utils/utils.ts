@@ -37,6 +37,7 @@ import {
   getMaxTick,
   getMinTick,
   PRICE_SCALE,
+  POOLS_WITH_LUTS,
   Range
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress, PositionWithoutTicks } from '@store/reducers/positions'
@@ -93,7 +94,8 @@ import {
   KYSOL_MAIN,
   EZSOL_MAIN,
   LEADERBOARD_DECIMAL,
-  POSITIONS_PER_PAGE
+  POSITIONS_PER_PAGE,
+  MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -1073,6 +1075,8 @@ export const calcCurrentPriceOfPool = (
   return convertBalanceToBN(knownPrice.toString(), 0)
 }
 
+export const hasLuts = (pool: PublicKey) => POOLS_WITH_LUTS.some(p => p.equals(pool))
+
 export const handleSimulate = async (
   pools: PoolWithAddress[],
   poolTicks: { [key in string]: Tick[] },
@@ -1142,9 +1146,11 @@ export const handleSimulate = async (
       errorMessage.push(`Ticks not available for pool ${pool.address.toString()}`)
       continue
     }
-    const maxCrosses =
-      pool.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
-      pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+
+    const maxCrosses = hasLuts(pool.address)
+      ? MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS
+      : pool.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
+          pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
         ? MAX_CROSSES_IN_SINGLE_TX
         : TICK_CROSSES_PER_IX
 

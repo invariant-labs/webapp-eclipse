@@ -640,6 +640,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       USDC: USDC_MAIN.address.toString(),
       USDT: USDT_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
+      USDT: USDT_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
@@ -723,7 +724,8 @@ export const PRICE_QUERY_COOLDOWN = 60 * 1000
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success'
 
-export const MAX_CROSSES_IN_SINGLE_TX = 11
+export const MAX_CROSSES_IN_SINGLE_TX = 10
+export const MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS = 34
 
 export const walletNames = {
   [WalletType.NIGHTLY_WALLET]: 'Nightly',
