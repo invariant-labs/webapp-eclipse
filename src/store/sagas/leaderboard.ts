@@ -43,8 +43,8 @@ interface IFetchContentPointsResponse {
   points: number
 }
 
-// const BASE_LEADERBOARD_URL = 'https://points.invariant.app'
-const BASE_LEADERBOARD_URL = 'https://api.invariant.app'
+const BASE_LEADERBOARD_URL = 'https://points.invariant.app'
+// const BASE_LEADERBOARD_URL = 'https://api.invariant.app'
 async function fetchLpLeaderboardData(
   network: string,
   userWallet?: string,
