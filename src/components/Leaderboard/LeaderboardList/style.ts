@@ -20,7 +20,7 @@ export const useStyles = makeStyles()(() => ({
     backgroundColor: `${colors.invariant.newDark} !important`
   },
   pagination: {
-    padding: '20px 24px 10px 0',
+    padding: '20px 24px 10px 24px',
     maxWidth: '100%',
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',

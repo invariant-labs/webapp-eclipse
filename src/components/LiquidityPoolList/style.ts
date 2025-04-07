@@ -9,7 +9,7 @@ export const useStyles = makeStyles<{ initialDataLength: number }>()(
       borderRadius: '24px'
     },
     pagination: {
-      padding: '20px 24px 10px 0',
+      padding: '20px 24px 10px 24px',
       maxWidth: '100%',
       backgroundColor: colors.invariant.component,
       borderBottomLeftRadius: '24px',
