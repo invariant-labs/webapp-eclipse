@@ -15,7 +15,7 @@ import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
 import classNames from 'classnames'
-import { TableBoundsLabel } from '@components/TableBoundsLabel/TableBoundsLabel'
+import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 export interface ITokensListData {
   icon: string
@@ -141,7 +141,7 @@ const TokensList: React.FC<ITokensList> = ({
   const upperBound = useMemo(() => Math.min(page * 10, totalItems), [totalItems, page])
 
   const pages = Math.ceil(data.length / 10)
-
+  const height = initialDataLength > 10 ? 'auto' : 69
   return (
     <Grid
       container
@@ -188,7 +188,7 @@ const TokensList: React.FC<ITokensList> = ({
         <Grid
           className={classes.pagination}
           sx={{
-            height: initialDataLength > 10 ? (page !== pages ? 90 : 91) : 69,
+            height: height,
             borderTop: `
               ${pages > 1 ? (page !== pages ? 1 : 2) : 2}px solid ${colors.invariant.light}
             `
@@ -198,8 +198,7 @@ const TokensList: React.FC<ITokensList> = ({
               lowerBound={lowerBound}
               totalItems={totalItems}
               upperBound={upperBound}
-              containerHeight={90}
-              containerPadding={0}>
+              borderTop={false}>
               <PaginationList
                 pages={pages}
                 defaultPage={1}
