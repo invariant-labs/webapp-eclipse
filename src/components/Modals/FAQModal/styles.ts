@@ -38,7 +38,7 @@ const useStyles = makeStyles()(() => {
     paper: {
       position: 'static',
       margin: 0,
-      marginTop: 0,
+      marginTop: '64px',
       maxWidth: '90%',
       background: 'transparent',
       boxShadow: 'none',
