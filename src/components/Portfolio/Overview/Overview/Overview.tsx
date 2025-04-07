@@ -11,7 +11,8 @@ import {
   positionsWithPoolsData,
   positionsList as list,
   PoolWithAddressAndIndex,
-  totalUnlaimedFees
+  totalUnlaimedFees,
+  lockedPositionsWithPoolsData
 } from '@store/selectors/positions'
 import { getTokenPrice } from '@utils/utils'
 import MobileOverview from '../MobileOverview/MobileOverview'
@@ -43,6 +44,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   const { isAllClaimFeesLoading } = useSelector(list)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const { classes } = useStyles()
+  const lockedPositionList = useSelector(lockedPositionsWithPoolsData)
   const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
   const [prices, setPrices] = useState<Record<string, number>>({})
@@ -50,26 +52,27 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
   const { total: unclaimedFees, isLoading: unClaimedFeesLoading } = useSelector(totalUnlaimedFees)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
-  const { positions } = useAgregatedPositions(positionList, prices)
+  const totalPositionList = [...positionList, ...lockedPositionList]
+  const { positions } = useAgregatedPositions(totalPositionList, prices)
 
   const isColorsLoading = useMemo(() => pendingColorLoads.size > 0, [pendingColorLoads])
 
-  const sortedPositions = useMemo(() => {
-    return [...positions].sort((a, b) => b.value - a.value)
-  }, [positions])
+  const sortedTokens = useMemo(() => positions.sort((a, b) => b.value - a.value), [positions])
 
   const chartColors = useMemo(
     () =>
-      sortedPositions.map(position =>
+      sortedTokens.map(position =>
         getTokenColor(position.token, logoColors[position.logo ?? ''] ?? '', tokenColorOverrides)
       ),
-    [sortedPositions, logoColors, getTokenColor, tokenColorOverrides]
+    [sortedTokens, logoColors, getTokenColor, tokenColorOverrides]
   )
 
-  const totalAssets = useMemo(
-    () => positions.reduce((acc, position) => acc + position.value, 0),
-    [positions]
-  )
+  const totalAssets = useMemo(() => {
+    const value = positions.reduce((acc, position) => acc + position.value || 0, 0)
+    const isPriceWarning = positions.some(position => position.isPriceWarning)
+
+    return { value, isPriceWarning }
+  }, [positions])
 
   const handleClaimAll = () => {
     dispatch(actions.claimAllFee())
@@ -81,7 +84,7 @@ export const Overview: React.FC<OverviewProps> = () => {
     if (!isDataReady) return []
 
     const tokens: { label: string; value: number }[] = []
-    sortedPositions.forEach(position => {
+    sortedTokens.forEach(position => {
       const existingToken = tokens.find(token => token.label === position.token)
       if (existingToken) {
         existingToken.value += position.value
@@ -93,7 +96,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       }
     })
     return tokens
-  }, [sortedPositions, isDataReady])
+  }, [sortedTokens, isDataReady])
 
   useEffect(() => {
     if (Object.keys(prices).length > 0) {
@@ -132,7 +135,7 @@ export const Overview: React.FC<OverviewProps> = () => {
   }, [positionList.length])
 
   useEffect(() => {
-    sortedPositions.forEach(position => {
+    sortedTokens.forEach(position => {
       if (position.logo && !logoColors[position.logo] && !pendingColorLoads.has(position.logo)) {
         setPendingColorLoads(prev => new Set(prev).add(position.logo ?? ''))
 
@@ -158,14 +161,14 @@ export const Overview: React.FC<OverviewProps> = () => {
           })
       }
     })
-  }, [sortedPositions, getAverageColor, logoColors, pendingColorLoads])
+  }, [sortedTokens, getAverageColor, logoColors, pendingColorLoads])
 
   if (!isLoadingList && positions.length === 0) {
     return (
       <Box className={classes.container}>
-        <HeaderSection totalValue={0} loading={false} />
+        <HeaderSection totalValue={{ value: 0, isPriceWarning: false }} loading={false} />
         <UnclaimedSection unclaimedTotal={0} loading={false} handleClaimAll={undefined} />
-        <EmptyState />
+        <EmptyState classes={classes} />
       </Box>
     )
   }
@@ -181,7 +184,7 @@ export const Overview: React.FC<OverviewProps> = () => {
 
       {isLg ? (
         <MobileOverview
-          positions={sortedPositions}
+          sortedTokens={sortedTokens}
           totalAssets={totalAssets}
           chartColors={chartColors}
         />
@@ -193,7 +196,7 @@ export const Overview: React.FC<OverviewProps> = () => {
             ) : (
               <LegendOverview
                 logoColors={logoColors}
-                sortedPositions={sortedPositions}
+                sortedTokens={sortedTokens}
                 tokenColorOverrides={tokenColorOverrides}
               />
             )}

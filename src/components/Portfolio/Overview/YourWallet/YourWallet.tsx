@@ -8,7 +8,8 @@ import {
   TableCell,
   TableContainer,
   TableHead,
-  TableRow
+  TableRow,
+  Grid
 } from '@mui/material'
 import { TokenPool } from '@store/types/userOverview'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
@@ -45,10 +46,12 @@ export const YourWallet: React.FC<YourWalletProps> = ({
     isScrollHide: sortedPools.length < 5
   })
 
-  const totalValue = useMemo(
-    () => sortedPools.reduce((sum, pool) => sum + pool.value, 0),
-    [sortedPools]
-  )
+  const totalValue = useMemo(() => {
+    const value = sortedPools.reduce((acc, position) => acc + (position.value || 0), 0)
+    const isPriceWarning = sortedPools.some(pool => pool.isPriceWarning) && value > 0
+
+    return { value, isPriceWarning }
+  }, [sortedPools])
 
   const findStrategy = (poolAddress: string) => {
     const poolTicker = addressToTicker(currentNetwork, poolAddress)
@@ -86,9 +89,11 @@ export const YourWallet: React.FC<YourWalletProps> = ({
           {isLoading ? (
             <Skeleton variant='text' width={100} height={32} sx={{ marginRight: '16px' }} />
           ) : (
-            <Typography className={classes.headerText}>
-              ${formatNumberWithoutSuffix(totalValue)}
-            </Typography>
+            <Grid display={'flex'} gap={'8px'}>
+              <Typography className={classes.headerText}>
+                ${formatNumberWithoutSuffix(totalValue.value)}
+              </Typography>
+            </Grid>
           )}
         </Box>
 
@@ -179,6 +184,11 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                               twoDecimals: true
                             })}
                           </Typography>
+                          {pool.isPriceWarning && (
+                            <TooltipHover title='The price might not be shown correctly.'>
+                              <img src={icons.warning2} width={14} />
+                            </TooltipHover>
+                          )}
                         </Box>
                       </TableCell>
                       <TableCell className={classes.tableCell} align='right'>

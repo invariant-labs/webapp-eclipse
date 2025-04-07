@@ -321,14 +321,50 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               sx={{ borderRadius: '10px' }}
             />
           ) : (
-            <Grid container className={classes.value} alignItems='center' justifyContent='center'>
-              <Box gap={'8px'} display={'flex'} alignItems={'center'}>
-                <Typography className={classes.infoText}>Value</Typography>
-                <Typography className={classes.greenText}>
-                  ${formatNumberWithSuffix(tokenValueInUsd.value)}
-                </Typography>
-              </Box>
-            </Grid>
+            <div>
+              {tokenValueInUsd.priceWarning ? (
+                <TooltipHover title='The price might not be shown correctly.'>
+                  <Grid
+                    container
+                    className={classes.value}
+                    alignItems='center'
+                    justifyContent='center'
+                    onClick={event => event.stopPropagation()}>
+                    <Box
+                      gap={'8px'}
+                      display={'flex'}
+                      alignItems={'center'}
+                      onClick={event => event.stopPropagation()}>
+                      <Typography className={classes.infoText}>Value</Typography>
+
+                      <Typography className={classes.greenText}>
+                        ${formatNumberWithSuffix(tokenValueInUsd.value)}
+                      </Typography>
+
+                      <img src={icons.warning2} width={14} />
+                    </Box>
+                  </Grid>
+                </TooltipHover>
+              ) : (
+                <Grid
+                  container
+                  className={classes.value}
+                  alignItems='center'
+                  justifyContent='center'>
+                  <Box
+                    gap={'8px'}
+                    display={'flex'}
+                    alignItems={'center'}
+                    onClick={event => event.stopPropagation()}>
+                    <Typography className={classes.infoText}>Value</Typography>
+
+                    <Typography className={classes.greenText}>
+                      ${formatNumberWithSuffix(tokenValueInUsd.value)}
+                    </Typography>
+                  </Box>
+                </Grid>
+              )}
+            </div>
           )}
         </Grid>
 
