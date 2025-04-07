@@ -1,5 +1,10 @@
+import {
+  NetworkType,
+  POSITIONS_PER_PAGE,
+  WETH_CLOSE_POSITION_LAMPORTS_MAIN,
+  WETH_CLOSE_POSITION_LAMPORTS_TEST
+} from '@store/consts/static'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
-import { POSITIONS_PER_PAGE } from '@store/consts/static'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import {
@@ -19,16 +24,16 @@ import {
   positionsWithPoolsData,
   prices
 } from '@store/selectors/positions'
-import { address, balanceLoading, status, swapTokens } from '@store/selectors/solanaWallet'
+import { address, balanceLoading, status, swapTokens, balance } from '@store/selectors/solanaWallet'
 import { useEffect, useLayoutEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import { calcYPerXPriceBySqrtPrice, ensureError, printBN, ROUTES } from '@utils/utils'
 import { network } from '@store/selectors/solanaConnection'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
-
 import { actions as actionsStats } from '@store/reducers/stats'
 import { actions as lockerActions } from '@store/reducers/locker'
+import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { Grid, useMediaQuery } from '@mui/material'
 import { theme } from '@static/theme'
 import useStyles from './styles'
@@ -52,6 +57,7 @@ const PortfolioWrapper = () => {
   const tokensList = useSelector(swapTokens)
   const isBalanceLoading = useSelector(balanceLoading)
   const pricesData = useSelector(prices)
+  const ethBalance = useSelector(balance)
   const [isHiding, setIsHiding] = useState(false)
   const [showBanner, setShowBanner] = useState(() => {
     const storedData = localStorage.getItem(BANNER_STORAGE_KEY)
@@ -68,6 +74,7 @@ const PortfolioWrapper = () => {
   })
   const navigate = useNavigate()
   const dispatch = useDispatch()
+
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   const setLastPage = (page: number) => {
@@ -134,15 +141,30 @@ const PortfolioWrapper = () => {
     dispatch(lockerActions.lockPosition({ index, network: currentNetwork }))
   }
 
+  const canClosePosition = useMemo(() => {
+    if (currentNetwork === NetworkType.Testnet) {
+      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_TEST)
+    } else {
+      return ethBalance.gte(WETH_CLOSE_POSITION_LAMPORTS_MAIN)
+    }
+  }, [ethBalance, currentNetwork])
   const handleClosePosition = (index: number) => {
-    dispatch(
-      actions.closePosition({
-        positionIndex: index,
-        onSuccess: () => {
-          navigate(ROUTES.PORTFOLIO)
-        }
-      })
-    )
+    canClosePosition
+      ? dispatch(
+          actions.closePosition({
+            positionIndex: index,
+            onSuccess: () => {
+              navigate(ROUTES.PORTFOLIO)
+            }
+          })
+        )
+      : dispatch(
+          snackbarActions.add({
+            message: 'Not enough ETH balance to close position',
+            variant: 'error',
+            persist: false
+          })
+        )
   }
 
   const handleClaimFee = (index: number, isLocked: boolean) => {
