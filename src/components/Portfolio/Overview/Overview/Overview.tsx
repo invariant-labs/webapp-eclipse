@@ -95,7 +95,7 @@ export const Overview: React.FC<OverviewProps> = () => {
         })
       }
     })
-    console.log(tokens)
+
     return tokens
   }, [sortedTokens, isDataReady])
 
