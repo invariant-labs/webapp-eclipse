@@ -18,7 +18,7 @@ export const useStyles = makeStyles<{
     justifyContent: 'center',
     display: 'flex',
     borderTop: `${borderTop ? 1 : 0}px solid ${colors.invariant.light}`,
-    padding: '20px 24px 10px 0',
+    padding: '20px 24px 10px 24px',
     maxWidth: '100%',
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',
