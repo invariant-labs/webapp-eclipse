@@ -46,6 +46,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
 
   const segments: ChartSegment[] = useMemo(() => {
     let currentPosition = 0
+
     return sortedTokens.map((position, index) => {
       const percentage = (position.value / totalAssets.value) * 100
       const segment = {
@@ -53,7 +54,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
         width: percentage,
         color: sortedChartColors[index],
         token: position.token,
-        value: position.value,
+        value: position.value || 0,
         logo: position.logo,
         percentage: percentage.toFixed(2),
         isPriceWarning: position.isPriceWarning && position.value > 0

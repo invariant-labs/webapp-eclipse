@@ -2,6 +2,7 @@ import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Ove
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse'
 import { getX, getY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { PublicKey } from '@solana/web3.js'
+import { TokenPositionEntry } from '@store/types/userOverview'
 import { printBN } from '@utils/utils'
 import { useMemo } from 'react'
 interface TokenPosition {
@@ -28,15 +29,6 @@ interface TokenPosition {
   id: string
 }
 
-export interface TokenPositionEntry {
-  token: string
-  value: number
-  name: string
-  logo: string
-  positionId: string
-  isPriceWarning: boolean
-}
-
 const calculateTokenValue = (
   position: TokenPosition,
   isTokenX: boolean,
@@ -53,7 +45,7 @@ const calculateTokenValue = (
   )
 
   return {
-    value: +printBN(amount, token.decimals) * prices[token.assetAddress.toString()],
+    value: +printBN(amount, token.decimals) * prices[token.assetAddress.toString()] || 0,
     amountBN: amount
   }
 }

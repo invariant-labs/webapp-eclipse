@@ -91,10 +91,11 @@ export const Overview: React.FC<OverviewProps> = () => {
       } else {
         tokens.push({
           label: position.name,
-          value: position.value
+          value: position.value || 0
         })
       }
     })
+    console.log(tokens)
     return tokens
   }, [sortedTokens, isDataReady])
 
@@ -168,7 +169,7 @@ export const Overview: React.FC<OverviewProps> = () => {
       <Box className={classes.container}>
         <HeaderSection totalValue={{ value: 0, isPriceWarning: false }} loading={false} />
         <UnclaimedSection unclaimedTotal={0} loading={false} handleClaimAll={undefined} />
-        <EmptyState classes={classes} />
+        <EmptyState />
       </Box>
     )
   }

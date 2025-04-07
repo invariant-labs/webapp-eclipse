@@ -42,6 +42,7 @@ export const useProcessedTokens = (
             const error = ensureError(e)
             console.error(`Failed to fetch price for ${token.symbol}:`, error)
           }
+
           return {
             id: token.assetAddress,
             symbol: token.symbol,
