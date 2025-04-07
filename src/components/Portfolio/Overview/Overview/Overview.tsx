@@ -56,7 +56,7 @@ export const Overview: React.FC<OverviewProps> = () => {
 
   const sortedPositions = useMemo(() => {
     return [...positions].sort((a, b) => b.value - a.value)
-  }, [positions]).slice(0, 4)
+  }, [positions])
 
   const chartColors = useMemo(
     () =>
@@ -181,6 +181,7 @@ export const Overview: React.FC<OverviewProps> = () => {
 
       {isLg ? (
         <MobileOverview
+          isLoadingList={isLoadingList}
           positions={sortedPositions}
           totalAssets={totalAssets}
           chartColors={chartColors}

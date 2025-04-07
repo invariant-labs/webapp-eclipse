@@ -209,18 +209,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({
 
       <Box className={classes.mobileContainer}>
         {isLoading ? (
-          <Box className={classes.mobileContainer}>
-            {Array(3)
-              .fill(0)
-              .map((_, index) => (
-                <MobileSkeletonCard key={`skeleton-${index}`} />
-              ))}
-          </Box>
+          Array(3)
+            .fill(0)
+            .map((_, index) => <MobileSkeletonCard key={`skeleton-${index}`} />)
         ) : sortedPools.length === 0 ? (
           <EmptyState />
         ) : (
           <Box className={classes.mobileCardContainer}>
-            {sortedPools.map(pool => (
+            {sortedPools.slice(0, 3).map(pool => (
               <MobileCard
                 key={pool.id.toString()}
                 pool={pool}

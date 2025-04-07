@@ -3,8 +3,6 @@ import { Box, Grid, Typography } from '@mui/material'
 
 import { TokenPositionEntry } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
-import { isLoadingPositionsList } from '@store/selectors/positions'
-import { useSelector } from 'react-redux'
 import SegmentFragmentTooltip from '../SegmentFragmentTooltip/SegmentFragmentTooltip'
 import { useStyles } from './styles'
 import MobileOverviewSkeleton from '../Overview/skeletons/MobileOverviewSkeleton'
@@ -22,11 +20,16 @@ interface MobileOverviewProps {
   positions: TokenPositionEntry[]
   totalAssets: number
   chartColors: string[]
+  isLoadingList: boolean
 }
 
-const MobileOverview: React.FC<MobileOverviewProps> = ({ positions, totalAssets, chartColors }) => {
+const MobileOverview: React.FC<MobileOverviewProps> = ({
+  isLoadingList,
+  positions,
+  totalAssets,
+  chartColors
+}) => {
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null)
-  const isLoadingList = useSelector(isLoadingPositionsList)
   const { classes } = useStyles()
 
   const sortedPositions = useMemo(() => {

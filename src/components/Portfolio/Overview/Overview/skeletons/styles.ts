@@ -65,7 +65,7 @@ export const useMobileSkeletonStyle = makeStyles()(() => ({
     backgroundColor: 'rgba(255, 255, 255, 0.1)'
   },
   tokenLabelContainer: {
-    height: '136px',
+    height: '137px',
     marginTop: theme.spacing(2)
   },
   tokenTextSkeleton: {
