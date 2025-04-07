@@ -17,7 +17,7 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
     background: colors.invariant.component,
 
     [theme.breakpoints.down('sm')]: {
-      padding: '0 38px'
+      padding: '0 10px 24px 10px'
     }
   },
   slider: {
@@ -48,13 +48,15 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
     '& .slick-prev': {
       left: -40,
       [theme.breakpoints.down('sm')]: {
-        left: -35
+        left: -4,
+        zIndex: 3
       }
     },
     '& .slick-next': {
       right: -20,
       [theme.breakpoints.down('sm')]: {
-        right: -21
+        right: 9,
+        zIndex: 3
       }
     }
   },

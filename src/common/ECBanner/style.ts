@@ -20,11 +20,12 @@ export const useStyles = makeStyles<StyleProps>()((theme, { page, breakpoint, is
     gap: 24,
     background: colors.invariant.dark,
     marginBottom: isHiding ? 0 : 24,
-    border: isHiding ? 'none' : `1px #A0FEA040 solid`,
+    border: isHiding ? 'none' : `1px ${colors.invariant.esToken} solid`,
     alignItems: 'center',
     opacity: isHiding ? 0 : 1,
-    transition:
-      'height 0.4s ease-out, opacity 0.3s ease-out, padding 0.4s, margin 0.4s, border 0.4s',
+    transition: isHiding
+      ? 'height 0.4s ease-out, opacity 0.3s ease-out, padding 0.4s, margin 0.4s, border 0.4s'
+      : 'none',
     [theme.breakpoints.down(breakpoint)]: {
       flexDirection: 'column',
       height: isHiding ? 0 : 612,
