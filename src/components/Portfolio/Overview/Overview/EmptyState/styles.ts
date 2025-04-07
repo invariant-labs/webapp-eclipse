@@ -10,6 +10,7 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     justifyContent: 'center',
     padding: '32px',
     gap: '16px',
+    height: 112,
     backgroundColor: colors.invariant.component,
     marginBottom: 29,
     [theme.breakpoints.up('lg')]: {
