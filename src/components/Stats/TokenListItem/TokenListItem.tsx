@@ -9,7 +9,7 @@ import { NetworkType, SortTypeTokenList } from '@store/consts/static'
 import icons from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 interface IProps {
@@ -80,7 +80,7 @@ const TokenListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy token address to Clipboard', 'error')
       })
   }
-  const shouldShowText = icon === icons.unknownToken || !isSm
+  const shouldShowText = !isSm
 
   return (
     <Grid className={classes.wrapper}>
@@ -91,21 +91,19 @@ const TokenListItem: React.FC<IProps> = ({
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isXs && !isSm && <Typography component='p'>{itemNumber}</Typography>}
           <Grid className={classes.tokenName}>
-            <Box className={classes.imageContainer}>
-              <img
-                className={classes.tokenIcon}
-                src={icon}
-                alt='Token icon'
-                onError={e => {
-                  e.currentTarget.src = icons.unknownToken
-                }}
-              />
-              {isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
-            </Box>
+            <img
+              className={classes.tokenIcon}
+              src={icon}
+              alt='Token icon'
+              onError={e => {
+                e.currentTarget.src = icons.unknownToken
+              }}
+            />
+            {isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
             {shouldShowText && (
               <Typography>
-                {isXs ? shortenAddress(symbol) : name}
-                {!isXs && (
+                {isXs ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40)}
+                {!isXs && name.length < 25 && (
                   <span className={classes.tokenSymbol}>{` (${shortenAddress(symbol)})`}</span>
                 )}
               </Typography>

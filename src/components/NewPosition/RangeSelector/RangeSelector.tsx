@@ -1,8 +1,7 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
-import PriceRangePlot, { TickPlotPositionData } from '@components/PriceRangePlot/PriceRangePlot'
+import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
-import activeLiquidity from '@static/svg/activeLiquidity.svg'
 import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
@@ -20,7 +19,7 @@ import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import icons from '@static/icons'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -446,7 +445,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                       liquidity chart. Active liquidity is determined by the maximum price range
                       resulting from the statistical volume of exchanges for the last 7 days.
                     </Typography>
-                    <img className={classes.liquidityImg} src={activeLiquidity} alt='Liquidity' />
+                    <img
+                      className={classes.liquidityImg}
+                      src={icons.activeLiquidity}
+                      alt='Liquidity'
+                    />
                   </Grid>
                   <Typography className={classes.liquidityNote}>
                     Note: active liquidity borders are always aligned to the nearest initialized

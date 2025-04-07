@@ -24,40 +24,7 @@ const useStyles = makeStyles()(theme => {
         paddingInline: 8
       }
     },
-    notConnectedPlaceholder: {
-      marginTop: 65,
-      height: '400px',
-      width: '100%',
-      borderTopLeftRadius: '24px',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
 
-      [theme.breakpoints.down('md')]: {
-        justifyContent: 'flex-start',
-        paddingTop: '90px'
-      },
-      [theme.breakpoints.down('sm')]: {
-        marginTop: 30
-      },
-
-      flexDirection: 'column',
-      borderTopRightRadius: '24px',
-      background: 'linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0) 100%)',
-      '& h1': {
-        color: colors.invariant.text,
-        ...typography.heading2,
-        marginBottom: '8px'
-      },
-      '& h2': {
-        color: colors.invariant.textGrey,
-        ...typography.body2
-      },
-      '& img': {
-        height: 96,
-        width: 96
-      }
-    },
     button: {
       height: 40,
       width: 200,
@@ -80,10 +47,15 @@ const useStyles = makeStyles()(theme => {
     innerContainer: {
       maxWidth: 1210,
       minHeight: '70vh',
+      display: 'flex',
+      justifyContent: 'center',
 
       [theme.breakpoints.down('md')]: {
         width: '100%'
       }
+    },
+    changeWalletButtonContainer: {
+      marginTop: 16
     }
   }
 })

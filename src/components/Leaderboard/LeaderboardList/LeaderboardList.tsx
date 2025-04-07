@@ -3,7 +3,7 @@ import { Box, Grid, Skeleton } from '@mui/material'
 import { useStyles } from './style'
 import PurpleWaves from '@static/png/purple_waves.png'
 import GreenWaves from '@static/png/green_waves.png'
-import { PaginationList } from '@components/Pagination/Pagination'
+import { PaginationList } from '@common/Pagination/Pagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
 import { Status } from '@store/reducers/solanaWallet'
 import { CurrentUser, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
@@ -132,6 +132,7 @@ const getContent = (
                   domain={element.domain}
                   copyAddressHandler={copyAddressHandler}
                   currentNetwork={currentNetwork}
+                  hideBottomLine={itemsPerPage === index + 1}
                 />
               ))}
               {new Array(itemsPerPage - lpData.length).fill('').map((_, index) => (
@@ -189,6 +190,7 @@ const getContent = (
                   domain={element.domain}
                   copyAddressHandler={copyAddressHandler}
                   currentNetwork={currentNetwork}
+                  hideBottomLine={itemsPerPage === index + 1}
                 />
               ))}
               {new Array(itemsPerPage - swapData.length).fill('').map((_, index) => (
@@ -246,6 +248,7 @@ const getContent = (
                 domain={element.domain}
                 copyAddressHandler={copyAddressHandler}
                 currentNetwork={currentNetwork}
+                hideBottomLine={itemsPerPage === index + 1}
               />
             ))}
             {new Array(itemsPerPage - totalData.length).fill('').map((_, index) => (
@@ -315,8 +318,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
   )
 
   const renderWaves = (position: 'top' | 'bottom', imageSrc: string) =>
-    totalPages > 1 &&
-    currentData.length > 20 && (
+    totalPages > 1 && (
       <div
         className={`${classes.waveImage} ${classes[`${position}Wave`]}`}
         style={{ alignItems: position === 'top' ? 'flex-start' : 'flex-end' }}>

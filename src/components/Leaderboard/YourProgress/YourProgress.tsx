@@ -24,6 +24,7 @@ interface YourProgressProps {
     swap: number
     lp: number
   }
+  contentProgramDates: { start: string; end: string }
 }
 
 export const YourProgress: React.FC<YourProgressProps> = ({
@@ -32,7 +33,8 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   estimated24hPoints,
   isLoadingList,
   totalItems,
-  isConnected
+  isConnected,
+  contentProgramDates
 }) => {
   const { classes } = useStyles({})
   const [contentPointsOpen, setContentPointsOpen] = useState(false)
@@ -68,7 +70,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
   return (
     <Grid className={classes.mainWrapper}>
       <Grid className={classes.boxWrapper}>
-        {!isLoadingList && <BlurOverlay isConnected={isConnected} />}
+        {<BlurOverlay isConnected={isConnected} />}
 
         <Grid className={classes.header}>
           <Typography>Invariant's Points</Typography>
@@ -78,6 +80,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
           <Grid className={classes.pointsContainer}>
             <Grid className={classes.pointsColumn}>
               <ProgressItem
+                isConnected={isConnected}
                 bgImage={top}
                 label='Points Per Day'
                 isLoading={isLoadingList}
@@ -85,6 +88,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
               />
               <ProgressItem
                 bgImage={mid}
+                isConnected={isConnected}
                 isLoading={isLoadingList}
                 tooltip='Points amount refreshes roughly every 30 minutes.'
                 label='Total points'
@@ -104,6 +108,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
 
             <Grid className={classes.pointsColumn}>
               <ProgressItem
+                isConnected={isConnected}
                 bgImage={mid}
                 withButton={true}
                 tooltip={tooltipContentPoints}
@@ -115,6 +120,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
                 )}
               />
               <ProgressItem
+                isConnected={isConnected}
                 bgImage={bot}
                 isLoading={isLoadingList}
                 label='Global rank'
@@ -126,6 +132,7 @@ export const YourProgress: React.FC<YourProgressProps> = ({
         <ContentPointsModal
           userContentPoints={userContentPoints}
           open={contentPointsOpen}
+          contentProgramDates={contentProgramDates}
           handleClose={() => {
             setContentPointsOpen(false)
             unblurContent()

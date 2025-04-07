@@ -1,7 +1,7 @@
 import React from 'react'
 import useStyles from './style'
 import classNames from 'classnames'
-import { Button, Typography } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import ConnectWallet from '@components/Modals/ConnectWallet/ConnectWallet'
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
@@ -9,6 +9,7 @@ import SelectWalletModal from '@components/Modals/SelectWalletModal/SelectWallet
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
+import { Button } from '@common/Button/Button'
 
 export interface IProps {
   name: string
@@ -21,20 +22,24 @@ export interface IProps {
   onCopyAddress?: () => void
   textClassName?: string
   isDisabled?: boolean
+  margin?: string | number
+  width?: string | number
+  height?: string | number
   isSwap?: boolean
 }
 export const ChangeWalletButton: React.FC<IProps> = ({
   name,
   onConnect,
   connected,
+  height = 40,
   startIcon,
+  width,
+  margin,
   hideArrow,
   onDisconnect,
   isDisabled = false,
-  className,
   onCopyAddress = () => {},
-  textClassName,
-  isSwap
+  textClassName
 }) => {
   const { classes } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
@@ -99,29 +104,23 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   return (
     <>
       <Button
-        id='connect-wallet-button'
-        className={classNames(
-          connected ? classes.headerButtonConnected : classes.headerButtonConnect,
-          isDisabled && classes.disabled,
-          className,
-          isSwap && classes.swapChangeWallet
-        )}
-        variant={'contained'}
+        margin={margin}
+        height={height}
+        width={width}
+        scheme={connected ? 'normal' : 'pink'}
         disabled={isDisabled}
         classes={{
-          disabled: classes.disabled,
           startIcon: classes.startIcon,
           endIcon: classes.innerEndIcon
         }}
-        sx={{ '& .MuiButton-label': classes.label }}
-        onClick={handleClick}
-        startIcon={startIcon}
-        endIcon={
-          connected && !hideArrow ? <ExpandMoreIcon className={classes.endIcon} /> : undefined
-        }>
-        <Typography className={classNames(classes.headerButtonTextEllipsis, textClassName)}>
-          {name}
-        </Typography>
+        onClick={isDisabled ? () => {} : handleClick}>
+        <Box className={classes.headerButtonContainer}>
+          {startIcon && <Box className={classes.startIcon}>{startIcon}</Box>}
+          <Typography className={classNames(classes.headerButtonTextEllipsis, textClassName)}>
+            {name}
+          </Typography>
+          {connected && !hideArrow && <ExpandMoreIcon className={classes.endIcon} />}
+        </Box>
       </Button>
       <SelectWalletModal
         anchorEl={anchorEl}

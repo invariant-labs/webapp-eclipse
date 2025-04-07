@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react'
 import useStyles from './style'
-import { Box, Button, Divider, Grid, Popover, Typography } from '@mui/material'
+import { Box, Divider, Grid, Popover, Typography } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -12,6 +12,7 @@ import { BN } from '@coral-xyz/anchor'
 import { network } from '@store/selectors/solanaConnection'
 import { NetworkType } from '@store/consts/static'
 import { formatLargeNumber } from '@utils/uiUtils'
+import { Button } from '@common/Button/Button'
 
 export interface ISelectNetworkModal {
   open: boolean
@@ -85,16 +86,18 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                       {index < 1 && <Divider className={classes.divider} />}
                     </React.Fragment>
                   ))}
-
-                  <Button
-                    className={classes.button}
-                    style={{ marginTop: '16px' }}
-                    onClick={() => {
-                      handleClose()
-                      navigate(ROUTES.POINTS)
-                    }}>
-                    Go to Points Tab
-                  </Button>
+                  <Box className={classes.linkContainer}>
+                    <Button
+                      scheme='green'
+                      width='100%'
+                      height={32}
+                      onClick={() => {
+                        handleClose()
+                        navigate(ROUTES.POINTS)
+                      }}>
+                      Go to Points Tab
+                    </Button>
+                  </Box>
                 </>
               ) : (
                 <Box className={classes.counterItem}>
@@ -102,15 +105,17 @@ export const YourPointsModal: React.FC<ISelectNetworkModal> = ({ anchorEl, open,
                     Points Program is <span className={classes.pinkLabel}>live!</span>
                   </Typography>
                   <Typography component='h2'>Visit Points Tab to track your progress.</Typography>
-                  <Button
-                    style={{ marginTop: '16px' }}
-                    className={classes.button}
-                    onClick={() => {
-                      handleClose()
-                      navigate(ROUTES.POINTS)
-                    }}>
-                    Go to Points Tab
-                  </Button>
+                  <Box className={classes.linkContainer}>
+                    <Button
+                      scheme='green'
+                      height={32}
+                      onClick={() => {
+                        handleClose()
+                        navigate(ROUTES.POINTS)
+                      }}>
+                      Go to Points Tab
+                    </Button>
+                  </Box>
                 </Box>
               )}
             </>

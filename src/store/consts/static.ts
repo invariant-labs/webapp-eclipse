@@ -6,10 +6,7 @@ import { Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from '
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
 import icons from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
-import Dog1 from '@static/svg/SolanaCreator/Dog1.svg'
-import Dog2 from '@static/svg/SolanaCreator/Dog2.svg'
-import Cat1 from '@static/svg/SolanaCreator/Cat1.svg'
-import Cat2 from '@static/svg/SolanaCreator/Cat2.svg'
+
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
 
 export enum NetworkType {
@@ -19,6 +16,11 @@ export enum NetworkType {
   Mainnet = 'Mainnet'
 }
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
+
+export enum SwapType {
+  Normal,
+  WithHop
+}
 
 export const WETH_ADDRESS = {
   [NetworkType.Mainnet]: new PublicKey('So11111111111111111111111111111111111111112'),
@@ -637,6 +639,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       MCT: MOCKED_TOKEN_MAIN.address.toString(),
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
+      USDT: USDT_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
@@ -676,13 +679,8 @@ export const CHAINS = [
     name: Chain.Eclipse,
     address: 'https://eclipse.invariant.app/exchange',
     iconGlow: 'eclipseGlow'
-  },
-  // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
-  {
-    name: Chain.Alephium,
-    address: 'https://alph.invariant.app/exchange',
-    iconGlow: 'alephiumGlow'
   }
+  // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
 ]
 
 export const enum SortTypePoolList {
@@ -725,7 +723,8 @@ export const PRICE_QUERY_COOLDOWN = 60 * 1000
 export const TIMEOUT_ERROR_MESSAGE =
   'Transaction has timed out. Check the details to confirm success'
 
-export const MAX_CROSSES_IN_SINGLE_TX = 11
+export const MAX_CROSSES_IN_SINGLE_TX = 10
+export const MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS = 34
 
 export const walletNames = {
   [WalletType.NIGHTLY_WALLET]: 'Nightly',
@@ -735,7 +734,7 @@ export const walletNames = {
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
-export const defaultImages: string[] = [Dog1, Dog2, Cat1, Cat2]
+export const defaultImages: string[] = [icons.dog1, icons.dog2, icons.cat1, icons.cat2]
 
 export const getPopularPools = (network: NetworkType) => {
   switch (network) {
@@ -784,5 +783,10 @@ export type LeaderBoardType = 'Liquidity' | 'Swap' | 'Total'
 export const BANNER_STORAGE_KEY = 'invariant-warning-banner'
 export const BANNER_HIDE_DURATION = 1000 * 60 * 60 * 1 // 1 hour
 export const SNAP_TIME_DELAY = 60 * 4 // IN MINUTES (4 hours)
+
+export enum OverviewSwitcher {
+  Overview = 'Overview',
+  Wallet = 'Wallet'
+}
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000

@@ -6,7 +6,7 @@ import { theme } from '@static/theme'
 import { Reward } from '@store/consts/types'
 import rewardsImages from '@static/png/rewards/rewardsImages'
 import classNames from 'classnames'
-import { TooltipGradient } from '@components/TooltipHover/TooltipGradient'
+import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 export interface RewardItemInterface {
   number: number
   reward: Reward
@@ -76,7 +76,11 @@ const RewardItem: React.FC<RewardItemInterface> = ({
 
         <Grid className={classes.centerWrapper}>
           <Grid className={classes.pointsWrapper}>
-            <img src={icons.airdropGrey} alt='points' />
+            <img
+              src={isEligible ? icons.airdropRainbow : icons.airdropGrey}
+              alt='points'
+              width={17}
+            />
             <Typography className={classes.subtitle}>{reward.name}</Typography>
           </Grid>
           <Typography className={classes.title}>

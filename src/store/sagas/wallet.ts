@@ -69,6 +69,11 @@ export function* getBalance(pubKey: PublicKey): SagaGenerator<BN> {
 
 export function* handleBalance(): Generator {
   const wallet = yield* call(getWallet)
+
+  if (!wallet) {
+    return
+  }
+
   yield* put(actions.setAddress(wallet.publicKey))
   yield* call(getBalance, wallet.publicKey)
   yield* call(fetchTokensAccounts)
@@ -592,12 +597,8 @@ export function* handleDisconnect(): Generator {
     yield* call(disconnectWallet)
     yield* put(actions.resetState())
     yield* put(positionsActions.setPositionsList([[], { head: 0, bump: 0 }, false]))
-    yield* put(
-      positionsActions.setCurrentPositionRangeTicks({
-        lowerTick: undefined,
-        upperTick: undefined
-      })
-    )
+    yield* put(positionsActions.setLockedPositionsList([]))
+
     // yield* put(bondsActions.setUserVested({}))
   } catch (e: unknown) {
     const error = ensureError(e)

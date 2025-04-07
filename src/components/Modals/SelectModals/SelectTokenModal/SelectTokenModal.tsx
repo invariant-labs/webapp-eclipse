@@ -1,5 +1,4 @@
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline'
-import searchIcon from '@static/svg/lupa.svg'
 import { theme } from '@static/theme'
 import React, { forwardRef, memo, useEffect, useMemo, useRef, useState } from 'react'
 import { FixedSizeList as List, ListChildComponentProps } from 'react-window'
@@ -20,7 +19,7 @@ import { formatNumberWithSuffix, getTokenPrice, printBN } from '@utils/utils'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import Scrollbars from 'rc-scrollbars'
 import icons from '@static/icons'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import CustomScrollbar from './CustomScrollbar'
@@ -314,7 +313,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                   onChange={searchToken}
                   value={value}
                 />
-                <CardMedia image={searchIcon} className={classes.inputIcon} />
+                <CardMedia image={icons.SearchIcon} className={classes.inputIcon} />
               </Grid>
               <TooltipHover title='Add token'>
                 <AddCircleOutlineIcon

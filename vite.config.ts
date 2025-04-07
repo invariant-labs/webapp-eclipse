@@ -26,6 +26,7 @@ export default defineConfig({
   resolve: {
     alias: {
       '@components': '/src/components',
+      '@common': '/src/common',
       '@containers': '/src/containers',
       '@pages': '/src/pages',
       '@static': '/src/static',
@@ -41,9 +42,20 @@ export default defineConfig({
   },
   build: {
     target: 'es2020',
+    assetsInlineLimit: 0,
+    chunkSizeWarningLimit: 1000,
     rollupOptions: {
       external: ['fs/promises', 'path'],
-      plugins: [inject({ Buffer: ['buffer', 'Buffer'] })]
+      plugins: [inject({ Buffer: ['buffer', 'Buffer'] })],
+      output: {
+        manualChunks: {
+          vendor: ['react', 'react-dom'],
+          ui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          web3: ['@solana/web3.js'],
+          utils: ['axios'],
+          animations: ['react-spring']
+        }
+      }
     }
   },
   optimizeDeps: {

@@ -1,9 +1,7 @@
-import { ProgressState } from '@components/AnimatedButton/AnimatedButton'
+import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import Slippage from '@components/Modals/Slippage/Slippage'
-import Refresher from '@components/Refresher/Refresher'
+import Refresher from '@common/Refresher/Refresher'
 import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
-import backIcon from '@static/svg/back-arrow.svg'
-import settingIcon from '@static/svg/settings.svg'
 import {
   ALL_FEE_TIERS_DATA,
   NetworkType,
@@ -37,10 +35,10 @@ import PoolInit from './PoolInit/PoolInit'
 import RangeSelector from './RangeSelector/RangeSelector'
 import useStyles from './style'
 import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
-import { TooltipHover } from '@components/TooltipHover/TooltipHover'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import { InitMidPrice } from '@components/PriceRangePlot/PriceRangePlot'
+import { InitMidPrice } from '@common/PriceRangePlot/PriceRangePlot'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import {
@@ -308,8 +306,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? concentrationArray[concentrationIndex] ??
-            concentrationArray[concentrationArray.length - 1]
+        ? (concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1])
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -422,13 +420,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : promotedTiers.find(
+      : (promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined
+        )?.index ?? undefined)
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -624,7 +622,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     <Grid container className={classes.wrapper}>
       <Link to={ROUTES.PORTFOLIO} style={{ textDecoration: 'none', maxWidth: 'fit-content' }}>
         <Grid className={classes.back} container item>
-          <img className={classes.backIcon} src={backIcon} alt='back' />
+          <img className={classes.backIcon} src={icons.backIcon} alt='back' />
           <Typography className={classes.backText}>Positions</Typography>
         </Grid>
       </Link>
@@ -765,7 +763,7 @@ export const NewPosition: React.FC<INewPosition> = ({
                     onClick={handleClickSettings}
                     className={classes.settingsIconBtn}
                     disableRipple>
-                    <img src={settingIcon} className={classes.settingsIcon} alt='settings' />
+                    <img src={icons.settingIcon} className={classes.settingsIcon} alt='settings' />
                   </Button>
                 </TooltipHover>
               )}
