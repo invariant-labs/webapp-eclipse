@@ -33,12 +33,13 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      overflow: 'auto'
+      overflow: 'auto',
+      top: 0
     },
     paper: {
-      position: 'static',
-      margin: 0,
-      marginTop: '64px',
+      position: 'relative',
+      margin: 'auto',
+      marginTop: '32px',
       maxWidth: '90%',
       background: 'transparent',
       boxShadow: 'none',
@@ -53,6 +54,7 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       justifyContent: 'center',
       flexDirection: 'column',
+      marginTop: '8px',
       maxWidth: '623px',
       margin: 0,
       height: 'max-content',
