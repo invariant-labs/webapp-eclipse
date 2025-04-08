@@ -39,7 +39,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
   handleSnackbar,
   currentNetwork
 }) => {
-  const sortedPools = useMemo(() => [...pools].sort((a, b) => b.value - a.value), [pools])<SinglePositionWrapper
+  const sortedPools = useMemo(() => [...pools].sort((a, b) => b.value - a.value), [pools])
   const { classes } = useStyles({
     isLoading,
     isScrollHide: sortedPools.length < 5
