@@ -57,7 +57,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
         value: position.value || 0,
         logo: position.logo,
         percentage: percentage.toFixed(2),
-        isPriceWarning: position.isPriceWarning && position.value > 0
+        isPriceWarning: position.isPriceWarning
       }
       currentPosition += percentage
       return segment
@@ -98,13 +98,13 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
 
                     <Grid item xs={7}>
                       <Typography className={classes.tokenValue}>
-                        ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })}
+                        ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })}{' '}
+                        {segment.isPriceWarning && (
+                          <TooltipHover title='The price might not be shown correctly'>
+                            <img src={icons.warning2} width={14} />
+                          </TooltipHover>
+                        )}
                       </Typography>
-                      {segment.isPriceWarning && (
-                        <TooltipHover title='The price might not be shown correctly'>
-                          <img src={icons.warning2} width={14} />
-                        </TooltipHover>
-                      )}
                     </Grid>
                   </Grid>
                 ))}

@@ -32,7 +32,11 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
             </Typography>
 
             {totalValue.isPriceWarning && (
-              <Grid position={'relative'}>
+              <Grid
+                position={'relative'}
+                display={'flex'}
+                alignItems={'center'}
+                justifyContent={'center'}>
                 <TooltipHover
                   title='The total value of assets might not be shown correctly'
                   left={isMd ? -134 : 'auto'}
