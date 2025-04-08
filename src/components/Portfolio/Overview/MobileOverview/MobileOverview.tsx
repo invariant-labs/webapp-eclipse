@@ -101,7 +101,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
                         ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })}
                       </Typography>
                       {segment.isPriceWarning && (
-                        <TooltipHover title='The price might not be shown correctly.'>
+                        <TooltipHover title='The price might not be shown correctly'>
                           <img src={icons.warning2} width={14} />
                         </TooltipHover>
                       )}

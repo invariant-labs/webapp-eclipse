@@ -323,7 +323,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           ) : (
             <div>
               {tokenValueInUsd.priceWarning ? (
-                <TooltipHover title='The price might not be shown correctly.'>
+                <TooltipHover title='The price might not be shown correctly'>
                   <Grid
                     container
                     className={classes.value}

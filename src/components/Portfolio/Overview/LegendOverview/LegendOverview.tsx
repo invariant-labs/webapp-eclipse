@@ -65,7 +65,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
                   ${formatNumberWithoutSuffix(token.value, { twoDecimals: true })}
                 </Typography>
                 {token.isPriceWarning && (
-                  <TooltipHover title='The price might not be shown correctly.'>
+                  <TooltipHover title='The price might not be shown correctly'>
                     <img src={icons.warning2} width={14} />
                   </TooltipHover>
                 )}

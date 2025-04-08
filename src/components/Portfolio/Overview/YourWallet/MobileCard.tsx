@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import icons from '@static/icons'
-import { TokenPool, StrategyConfig } from '@store/types/userOverview'
+import { StrategyConfig, WalletToken } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { ActionButtons } from './ActionButtons/ActionButtons'
@@ -8,7 +8,7 @@ import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export const MobileCard: React.FC<{
-  pool: TokenPool
+  pool: WalletToken
   getStrategy: () => StrategyConfig
   currentNetwork: NetworkType
 }> = ({ pool, getStrategy, currentNetwork }) => {
@@ -44,7 +44,7 @@ export const MobileCard: React.FC<{
             ${pool.value.toFixed(2).toLocaleString().replace(',', '.')}
           </Typography>
           {pool.isPriceWarning && (
-            <TooltipHover title='The price might not be shown correctly.'>
+            <TooltipHover title='The price might not be shown correctly'>
               <img src={icons.warning2} width={14} />
             </TooltipHover>
           )}

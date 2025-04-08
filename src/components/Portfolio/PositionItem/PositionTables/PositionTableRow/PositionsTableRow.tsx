@@ -242,7 +242,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
           {tokenValueInUsd.priceWarning && (
-            <TooltipHover title='The price might not be shown correctly.'>
+            <TooltipHover title='The price might not be shown correctly'>
               <img src={icons.warning2} style={{ marginLeft: '4px' }} width={14} />
             </TooltipHover>
           )}

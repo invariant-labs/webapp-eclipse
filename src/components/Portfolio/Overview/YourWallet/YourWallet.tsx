@@ -185,7 +185,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                             })}
                           </Typography>
                           {pool.isPriceWarning && (
-                            <TooltipHover title='The price might not be shown correctly.'>
+                            <TooltipHover title='The price might not be shown correctly'>
                               <img src={icons.warning2} width={14} />
                             </TooltipHover>
                           )}
