@@ -30,16 +30,21 @@ const useStyles = makeStyles()(() => {
     },
     popoverRoot: {
       position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      overflow: 'auto',
-      top: 0
+      overflow: 'auto'
     },
     paper: {
       position: 'relative',
       margin: 'auto',
-      marginTop: '32px',
+      [theme.breakpoints.down('md')]: {
+        marginTop: '32px'
+      },
       maxWidth: '90%',
       background: 'transparent',
       boxShadow: 'none',
