@@ -46,14 +46,21 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
       }
     },
     '& .slick-prev': {
-      left: -40,
+      left: -50,
+      [theme.breakpoints.down('lg')]: {
+        left: -40
+      },
+
       [theme.breakpoints.down('sm')]: {
         left: -4,
         zIndex: 3
       }
     },
     '& .slick-next': {
-      right: -20,
+      right: -30,
+      [theme.breakpoints.down('lg')]: {
+        right: -20
+      },
       [theme.breakpoints.down('sm')]: {
         right: 9,
         zIndex: 3

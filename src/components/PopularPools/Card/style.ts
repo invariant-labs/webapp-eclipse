@@ -143,7 +143,7 @@ export const useStyles = makeStyles()(() => ({
   horn: {
     zIndex: 2,
     position: 'absolute',
-    right: -30,
+    right: -23,
     top: -30
   }
 }))
