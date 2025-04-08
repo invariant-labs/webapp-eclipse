@@ -9,7 +9,7 @@ export const useStyles = makeStyles<{
     position: isMobile ? 'relative' : 'absolute',
     ...(isMobile ? {} : { right: 24 }),
     color: colors.invariant.textGrey,
-    textWrap: 'nowrap',
+    whiteSpace: 'nowrap',
     textAlign: isMobile ? 'center' : 'right'
   },
   pagination: {
