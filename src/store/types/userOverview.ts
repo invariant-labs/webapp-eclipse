@@ -41,7 +41,7 @@ export interface WalletToken {
   isUnknown?: boolean
   value: number
   amount: number
-  isPriceWarning: boolean
+  isPriceWarning?: boolean
 }
 
 export interface ProcessedPool {

@@ -81,7 +81,7 @@ const updateOrCreatePosition = (
   if (existingPosition) {
     existingPosition.value += value
     existingPosition.isPriceWarning =
-      !prices[token.assetAddress.toString()] && +amountBN.toString() > 0
+      !prices?.[token.assetAddress.toString()] && +amountBN.toString() > 0
     return positions
   }
 
