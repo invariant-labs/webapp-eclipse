@@ -29,7 +29,8 @@ export const useStyles = makeStyles()(() => ({
   navigationSide: {
     display: 'flex',
     justifyContent: 'space-between',
-    gap: 8
+    gap: 8,
+    alignItems: 'center'
   },
   upperContainer: {
     display: 'flex',
@@ -139,6 +140,10 @@ export const useStyles = makeStyles()(() => ({
   },
   marketIdLabelContainer: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+
+    '& a': {
+      lineHeight: 0
+    }
   }
 }))
