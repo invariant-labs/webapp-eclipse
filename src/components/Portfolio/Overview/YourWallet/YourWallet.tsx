@@ -39,7 +39,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
   handleSnackbar,
   currentNetwork
 }) => {
-  const sortedPools = useMemo(() => [...pools].sort((a, b) => b.value - a.value), [pools])
+  const sortedPools = useMemo(() => [...pools].sort((a, b) => b.value - a.value), [pools])<SinglePositionWrapper
   const { classes } = useStyles({
     isLoading,
     isScrollHide: sortedPools.length < 5
@@ -216,7 +216,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
           <EmptyState />
         ) : (
           <Box className={classes.mobileCardContainer}>
-            {sortedPools.slice(0, 3).map(pool => (
+            {sortedPools.map(pool => (
               <MobileCard
                 key={pool.id.toString()}
                 pool={pool}
