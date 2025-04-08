@@ -34,7 +34,7 @@ export interface PoolAsset {
   unclaimedFee: number
 }
 
-export interface TokenPool {
+export interface WalletToken {
   id: PublicKey
   symbol: string
   icon: string

@@ -4,7 +4,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import { printBN, getTokenPrice, ensureError } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
-interface ProcessedPool {
+interface ProcessedToken {
   id: PublicKey
   symbol: string
   icon: string
@@ -20,7 +20,7 @@ export const useProcessedTokens = (
   isBalanceLoading: boolean,
   network: NetworkType
 ) => {
-  const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([])
+  const [processedTokens, setProcessedTokens] = useState<ProcessedToken[]>([])
   const [isProcesing, setIsProcesing] = useState<boolean>(true)
 
   useEffect(() => {
@@ -56,7 +56,7 @@ export const useProcessedTokens = (
         })
       )
 
-      setProcessedPools(processed)
+      setProcessedTokens(processed)
       setIsProcesing(false)
     }
     if (isBalanceLoading) return
@@ -65,5 +65,5 @@ export const useProcessedTokens = (
     }
   }, [tokensList, isBalanceLoading])
 
-  return { processedPools, isProcesing }
+  return { processedTokens, isProcesing }
 }
