@@ -15,6 +15,7 @@ import { Keypair, PublicKey } from '@solana/web3.js'
 import { LeaderBoardType, NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import { EmptyRow } from './EmptyRow/EmptyRow'
+import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 interface LeaderboardListProps {
   copyAddressHandler: (message: string, variant: VariantType) => void
@@ -296,6 +297,15 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
     [lpData, swapData, totalData, type]
   )
 
+  const lowerBound = useMemo(
+    () => (currentPage - 1) * itemsPerPage + 1,
+    [currentPage, itemsPerPage, type]
+  )
+  const upperBound = useMemo(
+    () => Math.min(currentPage * itemsPerPage, totalItems),
+    [lpData, swapData, totalData, type]
+  )
+
   const isConnected = useMemo(() => walletStatus === Status.Initialized, [walletStatus])
 
   const content = useMemo(
@@ -338,16 +348,15 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
       </Grid>
 
       {totalPages >= 1 && (
-        <Box className={classes.pagination}>
+        <TableBoundsLabel lowerBound={lowerBound} totalItems={totalItems} upperBound={upperBound}>
           <PaginationList
             pages={totalPages}
             defaultPage={currentPage}
             handleChangePage={handlePageChange}
-            variant='flex-end'
+            variant='center'
           />
-        </Box>
+        </TableBoundsLabel>
       )}
-
       {renderWaves('bottom', GreenWaves)}
     </div>
   )

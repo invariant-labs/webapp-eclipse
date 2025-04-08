@@ -1,5 +1,5 @@
 import { alpha } from '@mui/material'
-import { colors, theme } from '@static/theme'
+import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ initialDataLength: number }>()(
@@ -9,14 +9,11 @@ export const useStyles = makeStyles<{ initialDataLength: number }>()(
       borderRadius: '24px'
     },
     pagination: {
-      padding: '20px 24px 10px 0',
+      padding: '20px 24px 10px 24px',
       maxWidth: '100%',
       backgroundColor: colors.invariant.component,
       borderBottomLeftRadius: '24px',
-      borderBottomRightRadius: '24px',
-      [theme.breakpoints.down('lg')]: {
-        padding: '20px 12px'
-      }
+      borderBottomRightRadius: '24px'
     },
 
     loadingOverlay: {
