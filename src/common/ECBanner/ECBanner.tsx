@@ -8,6 +8,8 @@ import cardLarge from '@static/png/Eclipse-USDC.png'
 import cardSmall from '@static/png/Eclipse-USDC-small.png'
 import React from 'react'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { ROUTES } from '@utils/utils'
+import { useNavigate } from 'react-router-dom'
 
 interface IECBanner {
   isCloseButton?: boolean
@@ -22,6 +24,7 @@ export const ECBanner: React.FC<IECBanner> = ({
   isHiding = false,
   handleCloseBanner = () => {}
 }) => {
+  const navigate = useNavigate()
   const allocationTooltipTitle = (
     <Grid>
       <Typography>$ES Allocation</Typography>
@@ -89,7 +92,12 @@ export const ECBanner: React.FC<IECBanner> = ({
             Want to change your assets to actions? <br /> Click the button below to create your ES -
             USDC {changeDirection && <br />} position and enjoy your never ending fees!
           </Typography>
-          <Button scheme='pink' gap={8} width={200} height={36}>
+          <Button
+            onClick={() => navigate(ROUTES.getNewPositionRoute('ES', 'USDC', '0_09'))}
+            scheme='pink'
+            gap={8}
+            width={200}
+            height={36}>
             Provide liquidity
             <img className={classes.arrowRight} src={icons.arrowRight} />
           </Button>

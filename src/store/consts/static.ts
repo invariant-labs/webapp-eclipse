@@ -528,10 +528,9 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDC_MAIN.address,
     SOL_MAIN.address,
     USDT_MAIN.address,
-    DOGWIFHAT_MAIN.address,
+    ES_MAIN.address,
     LAIKA_MAIN.address,
-    TIA_MAIN.address,
-    ES_MAIN.address
+    TIA_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -666,7 +665,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
       KYSOL_MAIN: KYSOL_MAIN.address.toString(),
-      EZSOL_MAIN: EZSOL_MAIN.address.toString()
+      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
+      ES: ES_MAIN.address.toString()
     }
   }
 }
