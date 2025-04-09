@@ -2,66 +2,122 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 import fingerprintPink from '@static/png/fingerprintPink.png'
 import fingerprintGreen from '@static/png/fingerprintGreen.png'
+import { keyframes } from 'tss-react'
 
-export const useStylesList = makeStyles()(theme => ({
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    alignItems: 'center',
-    margin: '72px 40px 72px',
+const fadeAnimation1 = keyframes`
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+`
 
-    [theme.breakpoints.down('sm')]: {
-      marginInline: 8
-    }
-  },
+const fadeAnimation2 = keyframes`
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+`
+interface useStylesListProps {
+  displayAnimation: boolean
+  displayArrow: boolean
+}
+export const useStylesList = makeStyles<useStylesListProps>()(
+  (theme, { displayAnimation, displayArrow }) => ({
+    container: {
+      position: 'relative',
+      display: 'flex',
+      justifyContent: 'center',
+      flexDirection: 'column',
+      alignItems: 'center',
+      margin: '72px 40px 72px',
 
-  scrollbarThumb: {
-    backgroundColor: `${colors.invariant.pink} !important`,
-    borderRadius: 5,
-    width: 8
-  },
-  scrollbarTrack: {
-    background: `${colors.invariant.light} !important`,
-    borderRadius: 5,
-    width: '8px !important'
-  },
-  scrollbarView: {
-    overflowX: 'hidden !important' as any,
-
-    '&::-webkit-scrollbar': {
-      width: 6,
-      background: colors.invariant.component
+      [theme.breakpoints.down('sm')]: {
+        marginInline: 8
+      }
     },
-    '&::-webkit-scrollbar-thumb': {
-      background: colors.invariant.pink,
-      borderRadius: 6
-    }
-  },
-  list: {
-    paddingRight: 48,
 
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: theme.spacing(3),
-    marginBottom: theme.spacing(2),
-    [theme.breakpoints.down('lg')]: {
-      marginBottom: 0
+    scrollbarThumb: {
+      backgroundColor: `${colors.invariant.pink} !important`,
+      borderRadius: 5,
+      width: 8
+    },
+    scrollbarTrack: {
+      background: `${colors.invariant.light} !important`,
+      borderRadius: 5,
+      width: '8px !important'
+    },
+    scrollbarView: {
+      overflowX: 'hidden !important' as any,
+
+      '&::-webkit-scrollbar': {
+        width: 6,
+        background: colors.invariant.component
+      },
+      '&::-webkit-scrollbar-thumb': {
+        background: colors.invariant.pink,
+        borderRadius: 6
+      }
+    },
+    list: {
+      paddingRight: 48,
+
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: theme.spacing(3),
+      marginBottom: theme.spacing(2),
+      [theme.breakpoints.down('lg')]: {
+        marginBottom: 0
+      }
+    },
+    historyLabel: {
+      marginBottom: theme.spacing(3),
+      ...typography.heading3,
+      color: colors.invariant.text
+    },
+    rewardWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: theme.spacing(3),
+      marginBottom: theme.spacing(0)
+    },
+
+    arrowIcon: {
+      width: 52,
+      zIndex: 3,
+      animation: displayAnimation ? `${fadeAnimation1} 2s ease-in-out infinite` : 'none'
+    },
+    arrowIcon2: {
+      width: 52,
+      position: 'absolute',
+      opacity: displayAnimation ? 1 : 0,
+      transition: 'opacity 0.3s ease-in-out',
+      animation: displayAnimation ? `${fadeAnimation2} 2s ease-in-out infinite` : 'none',
+      bottom: 3
+    },
+    arrowIconWrapper: {
+      width: 1034,
+      bottom: -8,
+      zIndex: 2,
+      position: 'absolute',
+      flexDirection: 'column',
+      alignItems: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      height: 60,
+      marginRight: 40,
+      opacity: displayArrow ? 1 : 0,
+      transition: 'all 0.3s ease-in-out'
+    },
+    dropShadow: {
+      position: 'absolute',
+      bottom: 32,
+      background: `linear-gradient(180deg, rgba(0,0,0,0) 25%, ${colors.invariant.componentDark} 100%)`,
+      opacity: displayArrow ? 1 : 0,
+      borderBottomLeftRadius: 12,
+      borderBottomRightRadius: 12,
+      height: 50,
+      width: '100%'
     }
-  },
-  scrollbar: {},
-  historyLabel: {
-    marginBottom: theme.spacing(3),
-    ...typography.heading3,
-    color: colors.invariant.text
-  },
-  rewardWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: theme.spacing(3),
-    marginBottom: theme.spacing(0)
-  }
-}))
+  })
+)
 
 export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) => ({
   container: {

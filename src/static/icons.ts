@@ -102,8 +102,9 @@ import unlock from '@static/svg/unlock.svg'
 import boostPointsBold from '@static/svg/boostPointsBold.svg'
 import eyeYellow from './svg/eyeYellow.svg'
 import closeYellow from './svg/closeYellow.svg'
-
+import scrollArrow from './svg/scrollArrow.svg'
 const icons = {
+  scrollArrow,
   lockPosition,
   ensofi,
   ZoomInIcon,
