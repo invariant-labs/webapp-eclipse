@@ -508,7 +508,8 @@ export const promotedTiers = [
     tokenX: SOL_MAIN.address,
     tokenY: USDC_MAIN.address,
     index: 3
-  }
+  },
+  { tokenX: SOL_MAIN.address, tokenY: USDC_MAIN.address, index: 3 }
 ]
 
 export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
