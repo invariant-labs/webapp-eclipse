@@ -2291,7 +2291,7 @@ export const transformRawSwapRoutesData = (
       case 'Orca':
         return (parseFloat(feeData.fee_rate) / 1000000) * 100
       case 'Invariant':
-        return parseFloat(feeData.fee)
+        return parseFloat(feeData.fee) * 100
 
       default:
         return 0
