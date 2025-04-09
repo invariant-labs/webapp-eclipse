@@ -149,7 +149,6 @@ const swapSlice = createSlice({
       return state
     },
     setSwapSimulateDetails(state, action: PayloadAction<AgregatorSimulateDetails | undefined>) {
-      console.log('setSwapSimulateDetails', action.payload)
       state.swapRoute.swapSimulateDetails = action.payload
       return state
     },
