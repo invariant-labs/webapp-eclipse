@@ -2273,7 +2273,6 @@ export const calculatePercentageRatio = (
 const reformatTicker = (ticker: string) => {
   return ticker.length > 5 ? shortenAddress(ticker, 3) : ticker
 }
-
 export const transformRawSwapRoutesData = (
   network: NetworkType,
   data: SwapRoutesResponse,
@@ -2285,6 +2284,18 @@ export const transformRawSwapRoutesData = (
     Umbra: { name: 'Umbra', logoUrl: UmbraLogo },
     Orca: { name: 'Orca', logoUrl: OrcaLogo },
     Lifinity: { name: 'Lifinity', logoUrl: LifinityLogo }
+  }
+
+  const calculateFee = (dexName: string, feeData: any) => {
+    switch (dexName) {
+      case 'Orca':
+        return (parseFloat(feeData.fee_rate) / 1000000) * 100
+      case 'Invariant':
+        return parseFloat(feeData.fee)
+
+      default:
+        return 0
+    }
   }
 
   const inputToken = tokens.filter(
@@ -2305,7 +2316,7 @@ export const transformRawSwapRoutesData = (
   }
 
   const exchanges = data.routePlan.map((route, index) => {
-    const { label, outAmount, outputMint } = route.swapInfo
+    const { label, outAmount, outputMint, metadata } = route.swapInfo
 
     const exchange = exchangeMapping[label] || {
       name: label,
@@ -2315,10 +2326,12 @@ export const transformRawSwapRoutesData = (
 
     const isLastSwap = index === data.routePlan.length - 1
 
+    const fee = calculateFee(label, metadata)
+
     const result: any = {
       name: exchange.name,
       logoUrl: exchange.logoUrl,
-      fee: '-'
+      fee: fee
     }
     if (!isLastSwap) {
       result.toToken = {

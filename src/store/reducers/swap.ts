@@ -35,6 +35,11 @@ export interface SwapRoute {
     inputMint: PublicKey
     label: string
     outAmount: BN
+    metadata: {
+      fee_rate?: number
+      fee?: number
+      tick_spacing: number
+    }
     outputMint: PublicKey
   }
 }
