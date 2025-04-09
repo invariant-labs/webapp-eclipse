@@ -1266,19 +1266,13 @@ export const handleSimulateWithHop = async (
     return { simulation: null, route: null, error: true }
   }
 
-  const crossLimit =
-    tokenIn.toString() === WRAPPED_ETH_ADDRESS || tokenOut.toString() === WRAPPED_ETH_ADDRESS
-      ? MAX_CROSSES_IN_SINGLE_TX
-      : TICK_CROSSES_PER_IX
-
   const simulations = await market.routeTwoHop(
     tokenIn,
     tokenOut,
     amount,
     byAmountIn,
     routeCandidates,
-    accounts,
-    crossLimit
+    accounts
   )
 
   if (simulations.length === 0) {
@@ -1342,6 +1336,7 @@ export const handleSimulateWithHop = async (
     simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
     simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
   ) {
+    console.log(simulations[best][1], routeCandidates[simulations[best][0]])
     return {
       simulation: simulations[best][1],
       route: routeCandidates[simulations[best][0]],
