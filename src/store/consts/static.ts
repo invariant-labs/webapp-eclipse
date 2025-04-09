@@ -466,6 +466,15 @@ export const KYSOL_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const ES_MAIN: Token = {
+  symbol: 'ES',
+  address: new PublicKey('8jA7xMDqJucigQphWHvqBPQPAmk7VJKKsqLmgCkE7XzP'),
+  decimals: 9,
+  name: 'Eclipse',
+  logoURI: 'https://assets.coingecko.com/coins/images/54958/standard/image_%2832%29.png?1742979704',
+  coingeckoId: 'eclipse-3'
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -521,7 +530,8 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDT_MAIN.address,
     DOGWIFHAT_MAIN.address,
     LAIKA_MAIN.address,
-    TIA_MAIN.address
+    TIA_MAIN.address,
+    ES_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
   Local: []
@@ -741,23 +751,28 @@ export const getPopularPools = (network: NetworkType) => {
     case NetworkType.Mainnet:
       return [
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'So11111111111111111111111111111111111111112',
+          tokenX: ES_MAIN.address.toString(),
+          tokenY: USDC_MAIN.address.toString(),
           fee: '0.09'
         },
         {
-          tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          tokenY: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.09'
         },
         {
-          tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
-          tokenY: 'So11111111111111111111111111111111111111112',
+          tokenX: USDC_MAIN.address.toString(),
+          tokenY: SOL_MAIN.address.toString(),
           fee: '0.09'
         },
         {
-          tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
-          tokenY: 'So11111111111111111111111111111111111111112',
+          tokenX: SOL_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
+          fee: '0.09'
+        },
+        {
+          tokenX: TETH_MAIN.address.toString(),
+          tokenY: WETH_MAIN.address.toString(),
           fee: '0.01'
         }
       ]
