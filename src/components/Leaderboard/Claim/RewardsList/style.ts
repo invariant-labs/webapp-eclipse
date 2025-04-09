@@ -17,10 +17,11 @@ const fadeAnimation2 = keyframes`
 `
 interface useStylesListProps {
   displayAnimation: boolean
-  displayArrow: boolean
+  isTop: boolean
+  isBottom: boolean
 }
 export const useStylesList = makeStyles<useStylesListProps>()(
-  (theme, { displayAnimation, displayArrow }) => ({
+  (theme, { displayAnimation, isTop, isBottom }) => ({
     container: {
       position: 'relative',
       display: 'flex',
@@ -93,9 +94,8 @@ export const useStylesList = makeStyles<useStylesListProps>()(
       bottom: 3
     },
     arrowIconWrapper: {
-      width: 1034,
-      bottom: -8,
-      zIndex: 2,
+      cursor: 'pointer',
+      bottom: -60,
       position: 'absolute',
       flexDirection: 'column',
       alignItems: 'center',
@@ -103,18 +103,9 @@ export const useStylesList = makeStyles<useStylesListProps>()(
       justifyContent: 'center',
       height: 60,
       marginRight: 40,
-      opacity: displayArrow ? 1 : 0,
+      opacity: isBottom ? 0 : 1,
+      pointerEvents: isBottom ? 'none' : 'auto',
       transition: 'all 0.3s ease-in-out'
-    },
-    dropShadow: {
-      position: 'absolute',
-      bottom: 32,
-      background: `linear-gradient(180deg, rgba(0,0,0,0) 25%, ${colors.invariant.componentDark} 100%)`,
-      opacity: displayArrow ? 1 : 0,
-      borderBottomLeftRadius: 12,
-      borderBottomRightRadius: 12,
-      height: 50,
-      width: '100%'
     }
   })
 )

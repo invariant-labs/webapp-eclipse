@@ -16,13 +16,32 @@ export interface NFTsListInterface {
 const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => {
   const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
   const [displayAnimation, setDisplayAnimation] = useState(false)
-  const [displayArrow, setDisplayArrow] = useState(true)
-  const { classes } = useStylesList({ displayAnimation, displayArrow })
+  const [isTop, setIsTop] = useState(true)
+  const [isBottom, setIsBottom] = useState(false)
+  const { classes } = useStylesList({ displayAnimation, isTop, isBottom })
   const scrollRef = useRef<Scrollbars>(null)
+  const itemRefs = useRef<(HTMLDivElement | null)[]>([])
+
+  const scrollToNext = () => {
+    const currentIndex = itemRefs.current.findIndex(ref => {
+      if (!ref) return false
+      const rect = ref.getBoundingClientRect()
+      return rect.top >= 0 && rect.bottom <= window.innerHeight
+    })
+
+    const nextRef = itemRefs.current[currentIndex + 1]
+    if (nextRef) {
+      nextRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    }
+  }
 
   const handleScroll = () => {
     const scrollTop = scrollRef.current?.getScrollTop() ?? 0
-    setDisplayArrow(scrollTop <= 5)
+    const scrollHeight = scrollRef.current?.getScrollHeight() ?? 0
+    const clientHeight = scrollRef.current?.getClientHeight() ?? 0
+
+    setIsTop(scrollTop <= 5)
+    setIsBottom(scrollTop + clientHeight >= scrollHeight - 5)
   }
 
   useEffect(() => {
@@ -70,21 +89,24 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
             }}
             autoHeight
             hideTracksWhenNotNeeded
-            autoHeightMax={624}>
+            autoHeightMax={600}>
             <Grid container className={classes.list}>
               {rewards.map((reward, index) => (
-                <RewardItem
+                <div
+                  style={{ width: '100%' }}
                   key={index}
-                  number={index + 1}
-                  reward={reward}
-                  userAddress={userAddress.toString()}
-                  isConnected={isConnected}
-                />
+                  ref={el => (itemRefs.current[index] = el)}>
+                  <RewardItem
+                    number={index + 1}
+                    reward={reward}
+                    userAddress={userAddress.toString()}
+                    isConnected={isConnected}
+                  />
+                </div>
               ))}
             </Grid>
           </Scrollbars>
-          <Grid className={classes.arrowIconWrapper}>
-            <Grid className={classes.dropShadow} />
+          <Grid className={classes.arrowIconWrapper} onClick={scrollToNext}>
             <img className={classes.arrowIcon} src={icons.scrollArrow} />
             {displayAnimation && <img className={classes.arrowIcon2} src={icons.scrollArrow} />}
           </Grid>
