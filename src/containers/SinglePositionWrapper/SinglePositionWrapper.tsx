@@ -444,7 +444,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
     )
   }
-
   const points24 = calculatePoints24()
 
   if (position) {
