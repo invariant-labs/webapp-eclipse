@@ -214,7 +214,7 @@ const PositionDetails: React.FC<IProps> = ({
     <>
       <Information mb={3} transitionTimeout={300} shouldOpen={showPreviewInfo}>
         <Box className={classes.information}>
-          <img src={icons.eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
+          <img src={eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
           {isSm
             ? `Viewing someone else's position. Wallet actions unavailable.`
             : `You are currently watching someone else's position. Connect your wallet or go to

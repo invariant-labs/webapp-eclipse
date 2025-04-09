@@ -1,6 +1,6 @@
 import { Box, Collapse } from '@mui/material'
 import useStyles from './style'
-import icons from '@static/icons'
+import { closeYellowIcon } from '@static/icons'
 import { useEffect, useState } from 'react'
 
 type Props = {
@@ -26,7 +26,7 @@ export const Information = ({ children, transitionTimeout, shouldOpen, ...boxPro
         {children}
         <img
           className={classes.closeIcon}
-          src={icons.closeYellow}
+          src={closeYellowIcon}
           alt='Close'
           onClick={() => setIsOpen(false)}
         />

@@ -10,7 +10,18 @@ import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
-import icons from '@static/icons'
+import {
+  allDomainsIcon,
+  celestialMammothIcon,
+  checkIcon,
+  edasIcon,
+  ensofiIcon,
+  infoIcon,
+  navLeftIcon,
+  navRightIcon,
+  nucleusIcon,
+  turboTapIcon
+} from '@static/icons'
 
 interface EcosystemExposureI {
   isLoading: boolean
@@ -37,7 +48,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       id: 'EDAS_official',
       link: 'https://www.edas.ensofi.xyz/',
       title: 'Reach TOP 1000',
-      img: icons.edas,
+      img: edasIcon,
       max: 1000,
       current: currentRanking,
       description: (
@@ -63,7 +74,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       id: 'EnsoFi',
       link: 'https://app.ensofi.xyz/',
       title: 'Reach TOP 1000',
-      img: icons.ensofi,
+      img: ensofiIcon,
       max: 1000,
       current: currentRanking,
       description: (
@@ -89,7 +100,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       link: 'https://eclipse.alldomains.id/',
       title: 'Reach TOP 2000',
       a: 'AllDomains',
-      img: icons.allDomains,
+      img: allDomainsIcon,
       max: 2000,
       current: currentRanking,
       description:
@@ -102,7 +113,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       id: 'Turbo Tap',
       link: 'https://tap.eclipse.xyz/',
       title: 'Earn 25,000 points on Invariant',
-      img: icons.turboTap,
+      img: turboTapIcon,
       max: 25000,
       current: +currentPoints >= 25000 ? 25000 : +currentPoints,
       description: (
@@ -118,7 +129,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       id: 'Nucleus',
       link: 'https://app.nucleusearn.io/dashboard',
       title: 'Keep an active tETH position',
-      img: icons.nucleus,
+      img: nucleusIcon,
       max: 1,
       current: hasTETHPosition ? 1 : 0,
       description: (
@@ -147,7 +158,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       id: 'CelestialMammoth',
       link: 'https://linktr.ee/celestialmmammoth',
       title: 'Reach TOP 3000',
-      img: icons.celestialMammoth,
+      img: celestialMammothIcon,
       max: 3000,
       current: currentRanking,
       description: (
@@ -183,7 +194,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
         <Grid className={classes.boxWrapper}>
           <Grid className={classes.header}>
             <Typography>
-              Eclipse Ecosystem Exposure <img src={icons.infoIcon} alt='info' />
+              Eclipse Ecosystem Exposure <img src={infoIcon} alt='info' />
             </Typography>
           </Grid>
 
@@ -233,7 +244,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                 </Typography>
               </Grid>
             }>
-            <img src={icons.infoIcon} alt='info' />
+            <img src={infoIcon} alt='info' />
           </TooltipGradient>
         </Grid>
 
@@ -242,8 +253,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             className={classes.slider}
             slidesToShow={isSm ? 3 : 4}
             infinite={false}
-            prevArrow={<img src={icons.navLeft} alt='prev' />}
-            nextArrow={<img src={icons.navRight} alt='next' />}>
+            prevArrow={<img src={navLeftIcon} alt='prev' />}
+            nextArrow={<img src={navRightIcon} alt='next' />}>
             {tasks.map(task => (
               <TooltipGradient
                 key={task.id}
@@ -277,7 +288,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                     alt={task.title}
                   />
                   {task.completed && (
-                    <img src={icons.check} alt='check icon' className={classes.checkIcon} />
+                    <img src={checkIcon} alt='check icon' className={classes.checkIcon} />
                   )}
                 </Grid>
               </TooltipGradient>

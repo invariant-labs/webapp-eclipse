@@ -3,7 +3,7 @@ import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import icons from '@static/icons'
+import { plusIcon, unknownTokenIcon } from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
@@ -151,7 +151,7 @@ const PoolListItem: React.FC<IProps> = ({
                     src={tokenAData.icon}
                     alt='Token from'
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
                 </Box>
@@ -161,7 +161,7 @@ const PoolListItem: React.FC<IProps> = ({
                     src={tokenBData.icon}
                     alt='Token to'
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
                 </Box>
@@ -202,7 +202,7 @@ const PoolListItem: React.FC<IProps> = ({
             <Box className={classes.action}>
               <TooltipHover title='Add position'>
                 <button className={classes.actionButton} onClick={handleOpenPosition}>
-                  <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
+                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
                 </button>
               </TooltipHover>
             </Box>

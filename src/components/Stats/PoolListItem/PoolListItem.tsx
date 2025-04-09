@@ -5,7 +5,15 @@ import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useNavigate } from 'react-router-dom'
-import icons from '@static/icons'
+import {
+  airdropRainbowIcon,
+  horizontalSwapIcon,
+  lockIcon,
+  newTabBtnIcon,
+  plusIcon,
+  unknownTokenIcon,
+  warningIcon
+} from '@static/icons'
 import { NetworkType, SortTypePoolList } from '@store/consts/static'
 import {
   addressToTicker,
@@ -222,12 +230,10 @@ const PoolListItem: React.FC<IProps> = ({
                   src={tokenAData.icon}
                   alt='Token from'
                   onError={e => {
-                    e.currentTarget.src = icons.unknownToken
+                    e.currentTarget.src = unknownTokenIcon
                   }}
                 />
-                {tokenAData.isUnknown && (
-                  <img className={classes.warningIcon} src={icons.warningIcon} />
-                )}
+                {tokenAData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
               </Box>
               <Box className={classes.iconContainer}>
                 <img
@@ -235,12 +241,10 @@ const PoolListItem: React.FC<IProps> = ({
                   src={tokenBData.icon}
                   alt='Token to'
                   onError={e => {
-                    e.currentTarget.src = icons.unknownToken
+                    e.currentTarget.src = unknownTokenIcon
                   }}
                 />
-                {tokenBData.isUnknown && (
-                  <img className={classes.warningIcon} src={icons.warningIcon} />
-                )}
+                {tokenBData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
               </Box>
             </Box>
             <Grid className={classes.symbolsContainer}>
@@ -289,7 +293,7 @@ const PoolListItem: React.FC<IProps> = ({
                         }
                       }}
                       mr={3}>
-                      <img width={32} height={32} src={icons.airdropRainbow} alt={'Airdrop'} />
+                      <img width={32} height={32} src={airdropRainbowIcon} alt={'Airdrop'} />
                     </Box>
                   </PromotedPoolPopover>
                 </Box>
@@ -308,7 +312,7 @@ const PoolListItem: React.FC<IProps> = ({
                     ref={lockIconRef}
                     onPointerLeave={handlePointerLeave}
                     onPointerEnter={handlePointerEnter}>
-                    <img width={32} height={32} src={icons.lockIcon} alt={'Lock info'} />
+                    <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
                   </button>
                   <LockStatsPopover
                     anchorEl={lockIconRef.current}
@@ -328,12 +332,12 @@ const PoolListItem: React.FC<IProps> = ({
 
               <TooltipHover title='Exchange'>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
-                  <img width={32} height={32} src={icons.horizontalSwapIcon} alt={'Exchange'} />
+                  <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
               <TooltipHover title='Add position'>
                 <button className={classes.actionButton} onClick={handleOpenPosition}>
-                  <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
+                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
                 </button>
               </TooltipHover>
               <TooltipHover title='Open in explorer'>
@@ -346,7 +350,7 @@ const PoolListItem: React.FC<IProps> = ({
                       'noopener,noreferrer'
                     )
                   }>
-                  <img width={32} height={32} src={icons.newTabBtn} alt={'Exchange'} />
+                  <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
             </Box>

@@ -1,7 +1,7 @@
 import logoTitleIcon from './svg/Logo.svg'
 import logoShortIcon from './svg/LogoShort.svg'
 import arrowIcon from './svg/arrow.svg'
-import noConIcon from './svg/no-connected.svg'
+import noConnectedIcon from './svg/no-connected.svg'
 import githubIcon from './svg/githubCircle.svg'
 import telegramIcon from './svg/telegramCircle.svg'
 import mediumIcon from './svg/mediumCircle.svg'
@@ -95,19 +95,18 @@ import handleMaxIcon from '@static/svg/narrowChartMaxHandle.svg'
 import handleMinIcon from '@static/svg/narrowChartMinHandle.svg'
 import zoomInIcon from '@static/svg/zoom-in-icon.svg'
 import zoomOutIcon from '@static/svg/zoom-out-icon.svg'
-import reverseTokens from './svg/reverse-tokens.svg'
-import backArrow from '@static/svg/back-arrow.svg'
-import lock from '@static/svg/lock.svg'
-import unlock from '@static/svg/unlock.svg'
-import boostPointsBold from '@static/svg/boostPointsBold.svg'
-import eyeYellow from './svg/eyeYellow.svg'
-import closeYellow from './svg/closeYellow.svg'
+import reverseTokensIcon from './svg/reverse-tokens.svg'
+import backArrowIcon from '@static/svg/back-arrow.svg'
+import lockIcon2 from '@static/svg/lock.svg'
+import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
+import eyeYellowIcon from './svg/eyeYellow.svg'
+import closeYellowIcon from './svg/closeYellow.svg'
 
 export {
   logoTitleIcon,
   logoShortIcon,
   arrowIcon,
-  noConIcon,
+  noConnectedIcon,
   githubIcon,
   telegramIcon,
   mediumIcon,
@@ -175,13 +174,7 @@ export {
   liquidityEmptyIcon,
   assetsEmptyIcon,
   settings3Icon,
-  faucet,
-  reverseTokens,
-  backArrow,
-  lock,
-  unlock,
-  boostPointsBold,
-  eyeYellow,
+  faucetIcon,
   closeYellowIcon,
   searchIcon,
   allDomainsIcon,
@@ -207,5 +200,20 @@ export {
   handleMaxIcon,
   handleMinIcon,
   zoomInIcon,
-  zoomOutIcon
+  zoomOutIcon,
+  reverseTokensIcon,
+  backArrowIcon,
+  lockIcon2,
+  boostPointsBoldIcon,
+  eyeYellowIcon
+}
+
+export const chainIcons = {
+  eclipseGlow: eclipseGlowIcon,
+  solanaGlow: solanaGlowIcon
+}
+
+export const netowrkIcons = {
+  mainnetGlow: mainnetGlowIcon,
+  testnetGlow: testnetGlowIcon
 }
