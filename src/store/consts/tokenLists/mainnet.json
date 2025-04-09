@@ -11597,14 +11597,5 @@
     "logoURI": "https://raw.githubusercontent.com/LP-Finance-Inc/token-image/main/zSOL.png",
     "tags": ["community", "solana-fm"],
     "extensions": { "coingeckoId": "zsol" }
-  },
-  {
-    "address": "ESTOKEN1gk2a5j7v4x3q6z",
-    "chainId": 101,
-    "decimals": 9,
-    "name": "ES",
-    "symbol": "ES",
-    "logoURI": "https://raw.githubusercontent.com/LP-Finance-Inc/token-image/main/zSOL.png",
-    "tags": ["unknown"]
   }
 ]
