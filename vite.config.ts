@@ -5,7 +5,7 @@ import wasm from 'vite-plugin-wasm'
 import { compression } from 'vite-plugin-compression2'
 import inject from '@rollup/plugin-inject'
 import { nodePolyfills } from 'vite-plugin-node-polyfills'
-import svgr from 'vite-plugin-svgr'
+
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [
@@ -16,12 +16,7 @@ export default defineConfig({
     inject({
       assert: ['assert', 'default']
     }),
-    nodePolyfills(),
-    svgr({
-      svgrOptions: {
-        exportType: 'named'
-      }
-    })
+    nodePolyfills()
   ],
   define: {
     'process.env.NODE_DEBUG': 'false',

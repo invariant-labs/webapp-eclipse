@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import icons from '@static/icons'
+import { unknownToken } from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { useStyles } from './style'
@@ -20,10 +20,10 @@ export const TokenOption: React.FC<{
       <Box className={classes.leftSide}>
         <img
           width={isSmall ? 32 : 24}
-          src={option?.icon ?? icons.unknownToken}
+          src={option?.icon ?? unknownToken}
           onError={e => {
             e.currentTarget.onerror = null
-            e.currentTarget.src = icons.unknownToken
+            e.currentTarget.src = unknownToken
           }}
           alt={option.symbol}
           className={classes.searchResultIcon}

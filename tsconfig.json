@@ -29,9 +29,10 @@
       "@utils/*": ["src/utils/*"],
       "@/*": ["src/*"]
     },
-    "noImplicitAny": false
+    "noImplicitAny": false,
+    "types": ["vite/client"]
   },
-  "include": ["src"],
+  "include": ["src", "src/types"],
   "exclude": ["node_modules/**/*"],
   "references": [
     {
