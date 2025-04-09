@@ -95,6 +95,13 @@ import handleMaxIcon from '@static/svg/narrowChartMaxHandle.svg'
 import handleMinIcon from '@static/svg/narrowChartMinHandle.svg'
 import zoomInIcon from '@static/svg/zoom-in-icon.svg'
 import zoomOutIcon from '@static/svg/zoom-out-icon.svg'
+import reverseTokens from './svg/reverse-tokens.svg'
+import backArrow from '@static/svg/back-arrow.svg'
+import lock from '@static/svg/lock.svg'
+import unlock from '@static/svg/unlock.svg'
+import boostPointsBold from '@static/svg/boostPointsBold.svg'
+import eyeYellow from './svg/eyeYellow.svg'
+import closeYellow from './svg/closeYellow.svg'
 
 export {
   logoTitleIcon,
@@ -168,7 +175,14 @@ export {
   liquidityEmptyIcon,
   assetsEmptyIcon,
   settings3Icon,
-  faucetIcon,
+  faucet,
+  reverseTokens,
+  backArrow,
+  lock,
+  unlock,
+  boostPointsBold,
+  eyeYellow,
+  closeYellowIcon,
   searchIcon,
   allDomainsIcon,
   turboTapIcon,
