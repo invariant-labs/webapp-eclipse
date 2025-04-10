@@ -8,6 +8,7 @@ import { Grid } from '@mui/material'
 import { network } from '@store/selectors/solanaConnection'
 import { getPopularPools } from '@store/consts/static'
 import { PublicKey } from '@solana/web3.js'
+import { getNetworkTokensList } from '@utils/utils'
 
 export interface PopularPoolData {
   poolAddress?: PublicKey
@@ -82,15 +83,22 @@ export const PopularPoolsWrapper: React.FC = () => {
         })
       } else {
         data.push({
+          iconFrom: getNetworkTokensList(currentNetwork)[pool.tokenX].logoURI ?? icons.unknownToken,
+          iconTo: getNetworkTokensList(currentNetwork)[pool.tokenY].logoURI ?? icons.unknownToken,
+          symbolFrom: getNetworkTokensList(currentNetwork)[pool.tokenX].symbol ?? pool.tokenX,
+          symbolTo: getNetworkTokensList(currentNetwork)[pool.tokenY].symbol ?? pool.tokenY,
           addressFrom: pool.tokenX,
-          addressTo: pool.tokenY
+          addressTo: pool.tokenY,
+          TVL: 0,
+          fee: +pool.fee,
+          volume: 0,
+          apy: 0
         })
       }
     })
 
     return data
   }, [poolsList])
-
   const showAPY = useMemo(() => {
     return list.some(pool => pool.apy !== 0)
   }, [list])
