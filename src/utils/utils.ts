@@ -1244,7 +1244,8 @@ export const simulateAutoSwapOnTheSamePool = async (
   tickmap: Tickmap,
   swapSlippage: BN,
   lowerTick: number,
-  upperTick: number
+  upperTick: number,
+  minUtilization: BN
 ) => {
   const ticks: Map<number, Tick> = new Map<number, Tick>()
   for (const tick of poolTicks) {
@@ -1268,7 +1269,8 @@ export const simulateAutoSwapOnTheSamePool = async (
         maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
         maxCrosses
       },
-      { lowerTick, upperTick }
+      { lowerTick, upperTick },
+      minUtilization
     )
     return simulateResult
   } catch (e) {
@@ -1287,7 +1289,8 @@ export const simulateAutoSwap = async (
   positionSlippage: BN,
   lowerTick: number,
   upperTick: number,
-  knownPrice: BN
+  knownPrice: BN,
+  minUtilization: BN
 ) => {
   const ticks: Map<number, Tick> = new Map<number, Tick>()
   for (const tick of poolTicks) {
@@ -1298,7 +1301,7 @@ export const simulateAutoSwap = async (
     pool.tokenX.toString() === WRAPPED_ETH_ADDRESS || pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
       ? MAX_CROSSES_IN_SINGLE_TX
       : TICK_CROSSES_PER_IX
-
+  const precision = toDecimal(1, 3)
   try {
     const simulateResult = simulateSwapAndCreatePosition(
       amountX,
@@ -1312,7 +1315,8 @@ export const simulateAutoSwap = async (
         slippage: swapSlippage
       },
       { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
-      toDecimal(1, 3)
+      precision,
+      minUtilization
     )
     return simulateResult
   } catch (e) {

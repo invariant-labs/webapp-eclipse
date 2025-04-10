@@ -54,7 +54,7 @@ import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
   DECIMAL,
   SimulateSwapAndCreatePositionSimulation,
-  SimulationStatus,
+  SwapAndCreateSimulationStatus,
   toDecimal
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import DepoSitOptionsModal from '@components/Modals/DepositOptionsModal/DepositOptionsModal'
@@ -244,14 +244,16 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const [settings, setSettings] = useState<boolean>(false)
 
+  const isAutoswapOn = useMemo(() => alignment === DepositOptions.Auto, [alignment])
+
   const WETH_MIN_FEE_LAMPORTS = useMemo(() => {
     if (network === NetworkType.Testnet) {
-      if (alignment === DepositOptions.Auto) {
+      if (isAutoswapOn) {
         return WETH_SWAP_AND_POSITION_INIT_LAMPORTS_TEST
       }
       return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_TEST : WETH_POOL_INIT_LAMPORTS_TEST
     } else {
-      if (alignment === DepositOptions.Auto) {
+      if (isAutoswapOn) {
         return WETH_SWAP_AND_POSITION_INIT_LAMPORTS_MAIN
       }
       return isCurrentPoolExisting ? WETH_POSITION_INIT_LAMPORTS_MAIN : WETH_POOL_INIT_LAMPORTS_MAIN
@@ -331,9 +333,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }, [wasRunTokenA, wasRunTokenB, canNavigate, tokens.length])
 
   const getButtonMessage = useCallback(() => {
-    // if (isLoadingTicksOrTickmap) {
-    //   return 'Loading data...'
-    // }
     if (isLoadingTicksOrTickmap || throttle || isSimulating) {
       return 'Loading'
     }
@@ -346,33 +345,34 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Select different tokens'
     }
 
-    if (alignment === DepositOptions.Auto && isError(SimulationStatus.NoGainSwap)) {
-      return 'Insufficient Amount'
+    if (
+      isAutoswapOn &&
+      (isSimulationStatus(SwapAndCreateSimulationStatus.TickAccountMissing) ||
+        isSimulationStatus(SwapAndCreateSimulationStatus.InvalidSimulationParamsError))
+    ) {
+      return 'Invalid parameters'
     }
 
-    if (
-      alignment === DepositOptions.Auto &&
-      (isError(SimulationStatus.SwapStepLimitReached) ||
-        isError(SimulationStatus.PriceLimitReached) ||
-        isError(SimulationStatus.LimitReached))
-    ) {
+    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.SwapNotFound)) {
+      return 'Token amounts too high'
+    }
+
+    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
       return 'Insufficient Liquidity'
     }
 
-    if (
-      alignment === DepositOptions.Auto &&
-      simulation &&
-      simulation.swapSimulation &&
-      new BN(simulation.swapSimulation.priceImpact).gt(
-        toDecimal(+Number(priceImpact).toFixed(4), 2)
-      )
-    ) {
+    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.PriceLimitReached)) {
       return 'Price impact reached'
     }
 
-    if (isAutoSwapAvailable && !tokenACheckbox && !tokenBCheckbox) {
+    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.UtilizationTooLow)) {
+      return 'Minimal utilization not reached'
+    }
+
+    if (isAutoswapOn && !tokenACheckbox && !tokenBCheckbox) {
       return 'At least one checkbox needs to be marked'
     }
+
     if (positionOpeningMethod === 'concentration' && concentrationIndex < minimumSliderIndex) {
       return concentrationArray[minimumSliderIndex]
         ? `Set concentration to at least ${concentrationArray[minimumSliderIndex].toFixed(0)}x`
@@ -421,7 +421,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (
       ((tokenAInputState.blocked && !tokenBInputState.blocked) ||
         (!tokenAInputState.blocked && tokenBInputState.blocked)) &&
-      alignment === DepositOptions.Auto
+      isAutoswapOn
     ) {
       if (
         (tokenAInputState.blocked && +tokenBInputState.value === 0) ||
@@ -436,7 +436,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       +tokenAInputState.value === 0 &&
       !tokenBInputState.blocked &&
       +tokenBInputState.value === 0 &&
-      alignment === DepositOptions.Basic
+      !isAutoswapOn
     ) {
       return !tokenAInputState.blocked &&
         !tokenBInputState.blocked &&
@@ -451,14 +451,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       +tokenAInputState.value === 0 &&
       !tokenBInputState.blocked &&
       +tokenBInputState.value === 0 &&
-      alignment === DepositOptions.Auto
+      isAutoswapOn
     ) {
       return 'Enter token amount'
     }
-
-    // if (alignment === DepositOptions.Auto && simulation === null && !throttle && !isSimulating) {
-    //   return 'Simulation error'
-    // }
 
     return 'Add Position'
   }, [
@@ -530,7 +526,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return
     }
 
-    if (alignment === DepositOptions.Auto) {
+    if (isAutoswapOn) {
       const pom = tokenAInputState.value
       tokenAInputState.setValue(tokenBInputState.value)
       tokenBInputState.setValue(pom)
@@ -558,8 +554,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     if (newAlignment !== null) {
       if (newAlignment === DepositOptions.Basic) {
         setSimulation(null)
-        setTokenACheckbox(true)
-        setTokenBCheckbox(true)
       }
       setAlignment(newAlignment)
     }
@@ -578,12 +572,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     onAmountSet: tokenBInputState.setValue
   })
 
-  const isError = useCallback(
-    (value: SimulationStatus) => {
-      return simulation && simulation.swapSimulation && simulation.swapSimulation.status === value
+  const isSimulationStatus = useCallback(
+    (value: SwapAndCreateSimulationStatus) => {
+      return simulation && simulation.status === value
     },
     [simulation]
   )
+
   const renderSwitcher = useCallback(
     () => (
       <>
@@ -591,7 +586,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           <Box
             className={classes.switchDepositTypeMarker}
             sx={{
-              left: alignment === DepositOptions.Basic ? 0 : '50%'
+              left: !isAutoswapOn ? 0 : '50%'
             }}
           />
           <ToggleButtonGroup
@@ -604,9 +599,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               disableRipple
               className={classNames(
                 classes.switchDepositTypeButton,
-                alignment === DepositOptions.Basic
-                  ? classes.switchSelected
-                  : classes.switchNotSelected
+                !isAutoswapOn ? classes.switchSelected : classes.switchNotSelected
               )}>
               Basic
             </ToggleButton>
@@ -617,9 +610,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               className={classNames(
                 classes.switchDepositTypeButton,
                 classes.autoButton,
-                alignment === DepositOptions.Auto
-                  ? classes.switchSelected
-                  : classes.switchNotSelected
+                isAutoswapOn ? classes.switchSelected : classes.switchNotSelected
               )}>
               <span className={classes.autoText}>Auto</span>
               <Tooltip
@@ -636,7 +627,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         </Box>
         <Tooltip
           title={
-            alignment === DepositOptions.Basic
+            !isAutoswapOn
               ? 'Autoswap related settings, accesable only when autoswap is turned on.'
               : ''
           }
@@ -645,12 +636,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             onClick={handleClickDepositOptions}
             className={classes.optionsIconBtn}
             disableRipple
-            disabled={alignment === DepositOptions.Basic}>
+            disabled={!isAutoswapOn}>
             <img
               src={icons.settingCirc}
-              className={
-                alignment === DepositOptions.Basic ? classes.grayscaleIcon : classes.whiteIcon
-              }
+              className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
               alt='options'
             />
           </Button>
@@ -660,13 +649,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     [isAutoSwapAvailable, alignment]
   )
 
-  const renderPriceImpactWarning = useCallback(() => {
+  const renderWarning = useCallback(() => {
     if (isSimulating || throttle) {
       return <Skeleton variant='rectangular' className={classes.skeleton} />
     }
+    if (!simulation) {
+      return <></>
+    }
+
     if (
-      (!simulation?.swapSimulation && !simulation?.position?.liquidity.eqn(0)) ||
-      !simulation?.swapSimulation?.priceImpact
+      isSimulationStatus(SwapAndCreateSimulationStatus.InputAmountTooLow) ||
+      isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)
     ) {
       return (
         <Box className={classes.unknownWarning}>
@@ -685,22 +678,59 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         </Box>
       )
     }
+
+    if (isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
+      return (
+        <Box className={classes.errorWarning}>
+          <Tooltip
+            title={'There is not enough liquidity to perform the swap'}
+            classes={{ tooltip: classes.tooltip }}>
+            <img
+              src={icons.infoCircle}
+              alt=''
+              width='12px'
+              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+              className={classes.errorIcon}
+            />
+          </Tooltip>
+          Insufficient liquidity
+        </Box>
+      )
+    }
+
+    const invalidParameters =
+      isSimulationStatus(SwapAndCreateSimulationStatus.TickAccountMissing) ||
+      isSimulationStatus(SwapAndCreateSimulationStatus.InvalidSimulationParamsError) ||
+      isSimulationStatus(SwapAndCreateSimulationStatus.SwapNotFound)
+
+    if (invalidParameters) {
+      return (
+        <Box className={classes.errorWarning}>
+          <Tooltip
+            title={'Unable to perform autoswap and open a position'}
+            classes={{ tooltip: classes.tooltip }}>
+            <img
+              src={icons.infoCircle}
+              alt=''
+              width='12px'
+              style={{ marginRight: '4px', marginBottom: '-1.5px' }}
+              className={classes.errorIcon}
+            />
+          </Tooltip>
+          Invalid parameters
+        </Box>
+      )
+    }
+
+    const priceLimitReached = isSimulationStatus(SwapAndCreateSimulationStatus.PriceLimitReached)
+
     return (
-      <Box
-        className={
-          new BN(simulation?.swapSimulation?.priceImpact ?? 0).lt(
-            toDecimal(+Number(priceImpact).toFixed(4), 2)
-          )
-            ? classes.unknownWarning
-            : classes.errorWarning
-        }>
+      <Box className={priceLimitReached ? classes.errorWarning : classes.unknownWarning}>
         <Tooltip
           title={
             <>
               Impact on the price for token exchange.
-              {new BN(simulation?.swapSimulation?.priceImpact ?? 0).gt(
-                toDecimal(+Number(priceImpact).toFixed(4), 2)
-              ) ? (
+              {priceLimitReached ? (
                 <>
                   {' '}
                   In order to create position you have to either:
@@ -718,23 +748,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             alt=''
             width='12px'
             style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-            className={
-              new BN(simulation?.swapSimulation?.priceImpact ?? 0).lte(
-                toDecimal(+Number(priceImpact).toFixed(4), 2)
-              )
-                ? classes.grayscaleIcon
-                : classes.errorIcon
-            }
+            className={priceLimitReached ? classes.errorIcon : classes.grayscaleIcon}
           />
         </Tooltip>
         Price impact:{' '}
-        {!simulation || !simulation.swapSimulation
-          ? '0'
-          : simulation?.swapSimulation?.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
-            ? Number(printBN(new BN(simulation?.swapSimulation?.priceImpact), DECIMAL - 2)).toFixed(
-                2
-              )
-            : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
+        {simulation.swapSimulation!.priceImpact.gt(new BN(MINIMUM_PRICE_IMPACT))
+          ? Number(printBN(new BN(simulation.swapSimulation!.priceImpact), DECIMAL - 2)).toFixed(2)
+          : `<${Number(printBN(MINIMUM_PRICE_IMPACT, DECIMAL - 2)).toFixed(2)}`}
         %
       </Box>
     )
@@ -780,7 +800,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         autoSwapTickmap,
         toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
         simulationParams.lowerTickIndex,
-        simulationParams.upperTickIndex
+        simulationParams.upperTickIndex,
+        toDecimal(+Number(utilization).toFixed(4), 2)
       )
     } else {
       result = await simulateAutoSwap(
@@ -793,12 +814,14 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
-        simulationParams.actualPoolPrice
+        simulationParams.actualPoolPrice,
+        toDecimal(+Number(utilization).toFixed(4), 2)
       )
     }
     if (result) {
       updateLiquidity(result.position.liquidity)
     }
+
     setSimulation(result)
     setIsSimulating(false)
   }
@@ -818,8 +841,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   }
 
   useEffect(() => {
-    if ((tokenACheckbox || tokenBCheckbox) && alignment === DepositOptions.Auto) {
-      // simulateAutoSwapResult()
+    if ((tokenACheckbox || tokenBCheckbox) && isAutoswapOn) {
       simulateWithTimeout()
     }
   }, [
@@ -933,17 +955,17 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             {!breakpoint630Down &&
               !breakpointMdTo1000 &&
               !brekpoint1270to1350 &&
-              alignment === DepositOptions.Auto &&
+              isAutoswapOn &&
               isAutoSwapAvailable &&
               (tokenACheckbox || tokenBCheckbox) &&
-              renderPriceImpactWarning()}
+              renderWarning()}
             {renderSwitcher()}
           </Box>
         </Box>
         {(breakpoint630Down || breakpointMdTo1000 || brekpoint1270to1350) &&
-          alignment === DepositOptions.Auto &&
+          isAutoswapOn &&
           isAutoSwapAvailable && (
-            <Box className={classes.depositHeaderContainer}>{renderPriceImpactWarning()}</Box>
+            <Box className={classes.depositHeaderContainer}>{renderWarning()}</Box>
           )}
       </Grid>
       <Grid container className={classes.sectionWrapper}>
@@ -951,8 +973,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           <Box
             className={classes.checkboxWrapper}
             style={{
-              width: alignment === DepositOptions.Auto ? '31px' : '0px',
-              opacity: alignment === DepositOptions.Auto ? 1 : 0
+              width: isAutoswapOn ? '31px' : '0px',
+              opacity: isAutoswapOn ? 1 : 0
             }}>
             <Tooltip
               title={
@@ -1019,8 +1041,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           <Box
             className={classes.checkboxWrapper}
             style={{
-              width: alignment === DepositOptions.Auto ? '31px' : '0px',
-              opacity: alignment === DepositOptions.Auto ? 1 : 0
+              width: isAutoswapOn ? '31px' : '0px',
+              opacity: isAutoswapOn ? 1 : 0
             }}>
             {' '}
             <Tooltip
@@ -1127,14 +1149,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             )}
             onClick={() => {
               if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
-                if (alignment === DepositOptions.Basic) {
+                if (!isAutoswapOn) {
                   onAddLiquidity()
                 } else if (
-                  alignment === DepositOptions.Auto &&
-                  simulation &&
-                  !simulation.swapInput &&
-                  !simulation.swapSimulation &&
-                  simulation.position
+                  isAutoswapOn &&
+                  (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio) ||
+                    isSimulationStatus(SwapAndCreateSimulationStatus.InputAmountTooLow))
                 ) {
                   onAddLiquidity()
                 } else {
@@ -1143,6 +1163,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                     simulation &&
                     simulation.swapSimulation &&
                     simulation.swapInput &&
+                    isSimulationStatus(SwapAndCreateSimulationStatus.Ok) &&
                     !!autoSwapPoolData
                   ) {
                     const userMinUtilization = toDecimal(+Number(utilization).toFixed(4), 2)
