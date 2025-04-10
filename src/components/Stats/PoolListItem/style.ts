@@ -46,6 +46,7 @@ export const useStyles = makeStyles()(() => ({
     },
 
     [theme.breakpoints.down('sm')]: {
+      height: 69,
       gridTemplateColumns: 'auto 60px 60px 60px',
       padding: '24px 8px',
 
@@ -88,6 +89,7 @@ export const useStyles = makeStyles()(() => ({
   },
 
   header: {
+    height: '69px',
     '& p.MuiTypography-root': {
       color: colors.invariant.textGrey,
       ...typography.heading4,

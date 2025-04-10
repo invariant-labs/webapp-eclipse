@@ -63,6 +63,7 @@ export interface IPositionsStore {
   prices: {
     data: Record<string, number>
   }
+  showFeesLoader: boolean
   positionData: {
     position: PositionWithAddress | null
     loading: boolean
@@ -137,6 +138,7 @@ export const defaultState: IPositionsStore = {
   },
 
   shouldNotUpdateRange: false,
+  showFeesLoader: false,
   positionData: {
     position: null,
     loading: false
@@ -252,6 +254,11 @@ const positionsSlice = createSlice({
       return state
     },
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
+      state.showFeesLoader = true
+      return state
+    },
+    setFeesLoader(state, action: PayloadAction<boolean>) {
+      state.showFeesLoader = action.payload
       return state
     },
     claimAllFee(state) {

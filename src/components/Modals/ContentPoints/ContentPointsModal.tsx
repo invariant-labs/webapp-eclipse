@@ -1,8 +1,11 @@
 import React from 'react'
-import { Dialog, DialogContent, Box, Typography, Button } from '@mui/material'
+import { Dialog, DialogContent, Box, Typography, Button, useMediaQuery } from '@mui/material'
 import { FixedSizeList } from 'react-window'
 import useStyles from './style'
 import { formatDate, formatNumberWithSpaces } from '@utils/utils'
+import icons from '@static/icons'
+import { theme } from '@static/theme'
+import { shortenDate } from '@utils/uiUtils'
 
 export interface CurrentContentPointsEntry {
   startTimestamp: number
@@ -27,14 +30,16 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   const allocations = userContentPoints ?? []
   const isEmpty = allocations.length === 0
   const { classes } = useStyles({ isEmpty })
-
+  const hidePointsLabel = useMediaQuery(theme.breakpoints.down(375))
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
     const entry = allocations[index]
     return (
       <Box key={index} style={style} className={classes.row}>
         <Box className={classes.innerRow}>
           <Typography className={classes.dateLabel}>
-            {`${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
+            {hidePointsLabel
+              ? `${shortenDate(entry.startTimestamp)} - ${shortenDate(entry.endTimestamp)}`
+              : `${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
           </Typography>
           <Typography className={classes.pointsLabel}>
             + {formatNumberWithSpaces(entry.points.toString())} Points
@@ -46,9 +51,14 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
 
   return (
     <Dialog open={open} onClose={handleClose} PaperProps={{ className: classes.paper }} fullWidth>
+      <img
+        src={icons.closeSmallIcon}
+        className={classes.lockPositionClose}
+        onClick={handleClose}
+        aria-label='Close'
+      />
       <Box className={classes.lockPositionHeader}>
         <Typography component='h1'>Content Points Allocations</Typography>
-        <Button className={classes.lockPositionClose} onClick={handleClose} aria-label='Close' />
       </Box>
       <Box className={classes.description}>
         <Typography>
@@ -86,10 +96,13 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
                 <Box height={56} key={index} className={classes.staticRow}>
                   <Box className={classes.innerRow}>
                     <Typography className={classes.dateLabel}>
-                      {`${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
+                      {hidePointsLabel
+                        ? `${shortenDate(entry.startTimestamp)} - ${shortenDate(entry.endTimestamp)}`
+                        : `${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
                     </Typography>
                     <Typography className={classes.pointsLabel}>
-                      + {formatNumberWithSpaces(entry.points.toString())} Points
+                      + {formatNumberWithSpaces(entry.points.toString())}{' '}
+                      {!hidePointsLabel && 'Points'}
                     </Typography>
                   </Box>
                 </Box>
@@ -100,7 +113,9 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
           <Box className={classes.buttonRow}>
             <Box className={classes.innerRow}>
               <Typography className={classes.dateLabel}>
-                {contentProgramDates.start} - {contentProgramDates.end}
+                {hidePointsLabel
+                  ? `${shortenDate(contentProgramDates.start)} - ${shortenDate(contentProgramDates.end)}`
+                  : `${contentProgramDates.start} - ${contentProgramDates.end}`}
               </Typography>
               <Button
                 component='a'
@@ -108,7 +123,7 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
                 target='_blank'
                 rel='noopener noreferrer'
                 className={classes.button}>
-                Submit here
+                Submit {!hidePointsLabel && 'here'}
               </Button>
             </Box>
           </Box>
