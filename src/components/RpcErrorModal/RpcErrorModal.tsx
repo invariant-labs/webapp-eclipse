@@ -1,7 +1,7 @@
 import { Button, Typography } from '@mui/material'
 import useStyles from './style'
 import icons from '@static/icons'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 
 interface Props {
   rpcAddress: string
@@ -11,20 +11,12 @@ interface Props {
 
 export const RpcErrorModal: React.FC<Props> = ({ rpcAddress, useDefaultRpc, useCurrentRpc }) => {
   const [rpc] = useState(rpcAddress)
-  const [height, setHeight] = useState(document.body.scrollHeight)
-
-  useEffect(() => {
-    const handleResize = () => setHeight(document.body.scrollHeight)
-    window.addEventListener('resize', handleResize)
-
-    return () => window.removeEventListener('resize', handleResize)
-  }, [])
 
   const { classes } = useStyles()
 
   return (
     <>
-      <div className={classes.background} style={{ height: height }}></div>
+      <div className={classes.background} />
       <div className={classes.container}>
         <img className={classes.warningIcon} src={icons.warningIcon} alt='Warning icon' />
         <Typography className={classes.title}>RPC Connection Error</Typography>

@@ -3,7 +3,8 @@ import { colors, typography } from '@static/theme'
 
 const useStyles = makeStyles()(theme => ({
   background: {
-    position: 'absolute',
+    position: 'fixed',
+    height: '100vh',
     top: 0,
     left: 0,
     right: 0,
@@ -26,6 +27,7 @@ const useStyles = makeStyles()(theme => ({
     alignItems: 'center',
 
     [theme.breakpoints.down('sm')]: {
+      top: 50,
       width: 'calc(100% - 96px)',
       left: 16,
       right: 16,
