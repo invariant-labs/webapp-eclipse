@@ -293,20 +293,7 @@ const PositionDetails: React.FC<IProps> = ({
           onAddPositionClick={() => {
             const address1 = addressToTicker(network, tokenXAddress.toString())
             const address2 = addressToTicker(network, tokenYAddress.toString())
-            const feeTiers = ALL_FEE_TIERS_DATA.map(tier => ({
-              feeValue: tier.tier.fee
-            }))
-
-            const isPromotedIndex =
-              promotedTiers.find(
-                tier =>
-                  (tier.tokenX === tokenXAddress && tier.tokenY === tokenYAddress) ||
-                  (tier.tokenX === tokenYAddress && tier.tokenY === tokenXAddress)
-              )?.index ?? undefined
-
-            const parsedFee = parseFeeToPathFee(
-              isPromotedIndex ? feeTiers[isPromotedIndex].feeValue : fee
-            )
+            const parsedFee = parseFeeToPathFee(fee)
             const isXtoY = initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
             const tokenA = isXtoY ? address1 : address2
             const tokenB = isXtoY ? address2 : address1
