@@ -34,6 +34,9 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
       nextRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
     }
   }
+  const scrollUp = () => {
+    itemRefs.current[0]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
 
   const handleScroll = () => {
     const scrollTop = scrollRef.current?.getScrollTop() ?? 0
@@ -62,6 +65,7 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
   return (
     <div className={classes.container}>
       <Typography className={classes.historyLabel}>History of Prizes</Typography>
+
       {isMobile ? (
         <Grid container className={classes.rewardWrapper}>
           {rewards.map((reward, index) => (
@@ -76,6 +80,10 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
         </Grid>
       ) : (
         <>
+          <Grid className={classes.topArrowIconWrapper} onClick={scrollUp}>
+            <img className={classes.arrowTopIcon} src={icons.scrollArrow} />
+            <img className={classes.arrowTopIcon2} src={icons.scrollArrow} />
+          </Grid>
           <Scrollbars
             ref={scrollRef}
             onScroll={handleScroll}

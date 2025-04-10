@@ -71,7 +71,8 @@ export const useStylesList = makeStyles<useStylesListProps>()(
     historyLabel: {
       marginBottom: theme.spacing(3),
       ...typography.heading3,
-      color: colors.invariant.text
+      color: colors.invariant.text,
+      marginRight: 44
     },
     rewardWrapper: {
       justifyContent: 'center',
@@ -85,6 +86,12 @@ export const useStylesList = makeStyles<useStylesListProps>()(
       zIndex: 3,
       animation: displayAnimation ? `${fadeAnimation1} 2s ease-in-out infinite` : 'none'
     },
+    arrowTopIcon: {
+      transform: 'rotate(180deg)',
+      width: 52,
+      zIndex: 3,
+      animation: displayAnimation ? `${fadeAnimation1} 2s ease-in-out infinite` : 'none'
+    },
     arrowIcon2: {
       width: 52,
       position: 'absolute',
@@ -92,6 +99,28 @@ export const useStylesList = makeStyles<useStylesListProps>()(
       transition: 'opacity 0.3s ease-in-out',
       animation: displayAnimation ? `${fadeAnimation2} 2s ease-in-out infinite` : 'none',
       bottom: 3
+    },
+    arrowTopIcon2: {
+      transform: 'rotate(180deg)',
+      width: 52,
+      position: 'absolute',
+      opacity: displayAnimation ? 1 : 0,
+      transition: 'opacity 0.3s ease-in-out',
+      animation: displayAnimation ? `${fadeAnimation2} 2s ease-in-out infinite` : 'none',
+      top: 3
+    },
+    topArrowIconWrapper: {
+      position: 'relative',
+      cursor: 'pointer',
+      flexDirection: 'column',
+      alignItems: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      height: 60,
+      marginRight: 40,
+      opacity: isTop ? 0 : 1,
+      pointerEvents: isTop ? 'none' : 'auto',
+      transition: 'all 0.3s ease-in-out'
     },
     arrowIconWrapper: {
       cursor: 'pointer',
