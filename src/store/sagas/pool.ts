@@ -24,9 +24,11 @@ import {
   getPools,
   getPoolsFromAddresses,
   getTickmapsFromPools,
-  getTicksFromAddresses
+  getTicksFromAddresses,
+  hasLuts
 } from '@utils/utils'
 import { parseTick } from '@invariant-labs/sdk-eclipse/lib/market'
+import { MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS } from '@store/consts/static'
 
 export interface iTick {
   index: Tick[]
@@ -239,7 +241,7 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
         pool,
         tickmaps[pool.tickmap.toBase58()],
         isXtoY,
-        batchSize
+        hasLuts(pool.address) ? MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS + 1 : batchSize
       )
     })
 

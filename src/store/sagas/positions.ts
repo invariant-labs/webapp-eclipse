@@ -45,6 +45,7 @@ import {
   createPlaceholderLiquidityPlot,
   ensureError,
   getLiquidityTicksByPositionsList,
+  getPositionByIdAndPoolAddress,
   getPositionsAddressesFromRange,
   getTicksFromAddresses
 } from '@utils/utils'
@@ -1577,9 +1578,11 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
 
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
+    yield put(actions.setFeesLoader(false))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+    yield put(actions.setFeesLoader(false))
 
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
@@ -1745,10 +1748,11 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
 
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
+    yield put(actions.setFeesLoader(false))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
-
+    yield put(actions.setFeesLoader(false))
     closeSnackbar(loaderClaimFee)
     yield put(snackbarsActions.remove(loaderClaimFee))
     closeSnackbar(loaderSigningTx)
@@ -2288,6 +2292,52 @@ export function* handleGetSinglePosition(
   }
 }
 
+export function* handleGetPreviewPosition(action: PayloadAction<string>) {
+  try {
+    const parts = action.payload.split('_')
+    if (parts.length !== 2) {
+      throw new Error('Invalid position id')
+    }
+    const [id, poolAddress] = parts
+
+    const wallet = yield* call(getWallet)
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    const position = yield* call(getPositionByIdAndPoolAddress, marketProgram, id, poolAddress)
+
+    if (position) {
+      yield* put(
+        poolsActions.getPoolsDataForList({
+          addresses: [position.pool.toString()],
+          listType: ListType.POSITIONS
+        })
+      )
+    }
+    const poolsList = yield* select(poolsArraySortedByFees)
+
+    const pool = poolsList.find(pool => pool.address.toString() === poolAddress.toString())
+    if (!pool || !position) {
+      return
+    }
+
+    const pair = new Pair(pool.tokenX, pool.tokenY, {
+      fee: pool.fee,
+      tickSpacing: pool.tickSpacing
+    })
+
+    const { lowerTick, upperTick } = yield* all({
+      lowerTick: call([marketProgram, marketProgram.getTick], pair, position.lowerTickIndex),
+      upperTick: call([marketProgram, marketProgram.getTick], pair, position.upperTickIndex)
+    })
+
+    yield* put(actions.setPosition({ ...position, lowerTick, upperTick, ticksLoading: false }))
+  } catch {
+    yield* put(actions.setPosition(null))
+  }
+}
+
 export function* initPositionHandler(): Generator {
   yield* takeEvery(actions.initPosition, handleInitPosition)
 }
@@ -2314,6 +2364,9 @@ export function* closePositionHandler(): Generator {
 export function* getSinglePositionHandler(): Generator {
   yield* takeEvery(actions.getSinglePosition, handleGetSinglePosition)
 }
+export function* getPositionHandler(): Generator {
+  yield* takeEvery(actions.getPreviewPosition, handleGetPreviewPosition)
+}
 
 export function* positionsSaga(): Generator {
   yield all(
@@ -2325,7 +2378,8 @@ export function* positionsSaga(): Generator {
       claimFeeHandler,
       claimAllFeeHandler,
       closePositionHandler,
-      getSinglePositionHandler
+      getSinglePositionHandler,
+      getPositionHandler
     ].map(spawn)
   )
 }

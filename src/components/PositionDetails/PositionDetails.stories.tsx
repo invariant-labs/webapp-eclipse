@@ -54,6 +54,7 @@ const defaultArgs = {
   poolAddress: new PublicKey('32'),
   isLocked: false,
   ethBalance: new BN(10000000),
+  isPreview: false,
   poolDetails: {
     tvl: 0,
     volume24: 0,

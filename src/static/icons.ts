@@ -101,6 +101,8 @@ import backArrow from '@static/svg/back-arrow.svg'
 import lock from '@static/svg/lock.svg'
 import unlock from '@static/svg/unlock.svg'
 import boostPointsBold from '@static/svg/boostPointsBold.svg'
+import eyeYellow from './svg/eyeYellow.svg'
+import closeYellow from './svg/closeYellow.svg'
 
 const icons = {
   lockPosition,
@@ -207,7 +209,9 @@ const icons = {
   backArrow,
   lock,
   unlock,
-  boostPointsBold
+  boostPointsBold,
+  eyeYellow,
+  closeYellow
 }
 
 export default icons
