@@ -3,9 +3,7 @@ import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/S
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Box, useMediaQuery } from '@mui/material'
 import {
-  ALL_FEE_TIERS_DATA,
   NetworkType,
-  promotedTiers,
   REFRESHER_INTERVAL,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
   WETH_CLOSE_POSITION_LAMPORTS_TEST
