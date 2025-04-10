@@ -22,20 +22,50 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
   const scrollRef = useRef<Scrollbars>(null)
   const itemRefs = useRef<(HTMLDivElement | null)[]>([])
 
+  const smoothScrollTo = (target: number) => {
+    const scroll = scrollRef.current
+    if (!scroll) return
+
+    const start = scroll.getScrollTop()
+    const change = target - start
+    const duration = 300
+    let startTime: number | null = null
+
+    const animateScroll = (timestamp: number) => {
+      if (!startTime) startTime = timestamp
+      const progress = timestamp - startTime
+      const percent = Math.min(progress / duration, 1)
+      scroll.scrollTop(start + change * percent)
+
+      if (progress < duration) {
+        window.requestAnimationFrame(animateScroll)
+      }
+    }
+
+    window.requestAnimationFrame(animateScroll)
+  }
+
   const scrollToNext = () => {
-    const currentIndex = itemRefs.current.findIndex(ref => {
-      if (!ref) return false
+    const scroll = scrollRef.current
+    if (!scroll) return
+
+    const containerRect = scroll.container?.getBoundingClientRect()
+
+    const next = itemRefs.current.find(ref => {
+      if (!ref) return
       const rect = ref.getBoundingClientRect()
-      return rect.top >= 0 && rect.bottom <= window.innerHeight
+      if (!containerRect) return
+      return rect.top - containerRect.top > 10
     })
 
-    const nextRef = itemRefs.current[currentIndex + 1]
-    if (nextRef) {
-      nextRef.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    if (next) {
+      const offset = next.offsetTop
+      smoothScrollTo(offset)
     }
   }
+
   const scrollUp = () => {
-    itemRefs.current[0]?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+    itemRefs.current[0]?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
   }
 
   const handleScroll = () => {
@@ -97,7 +127,7 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
             }}
             autoHeight
             hideTracksWhenNotNeeded
-            autoHeightMax={600}>
+            autoHeightMax={912}>
             <Grid container className={classes.list}>
               {rewards.map((reward, index) => (
                 <div

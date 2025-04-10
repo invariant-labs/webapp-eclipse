@@ -31,7 +31,7 @@ export const useStylesList = makeStyles<useStylesListProps>()(
       margin: '72px 40px 72px',
 
       [theme.breakpoints.down('sm')]: {
-        marginInline: 8
+        marginInline: 16
       }
     },
 
@@ -72,7 +72,9 @@ export const useStylesList = makeStyles<useStylesListProps>()(
       marginBottom: theme.spacing(3),
       ...typography.heading3,
       color: colors.invariant.text,
-      marginRight: 44
+      [theme.breakpoints.up('lg')]: {
+        marginRight: 44
+      }
     },
     rewardWrapper: {
       justifyContent: 'center',
@@ -90,7 +92,7 @@ export const useStylesList = makeStyles<useStylesListProps>()(
       transform: 'rotate(180deg)',
       width: 52,
       zIndex: 3,
-      animation: displayAnimation ? `${fadeAnimation1} 2s ease-in-out infinite` : 'none'
+      animation: `${fadeAnimation1} 2s ease-in-out infinite`
     },
     arrowIcon2: {
       width: 52,
@@ -104,9 +106,8 @@ export const useStylesList = makeStyles<useStylesListProps>()(
       transform: 'rotate(180deg)',
       width: 52,
       position: 'absolute',
-      opacity: displayAnimation ? 1 : 0,
       transition: 'opacity 0.3s ease-in-out',
-      animation: displayAnimation ? `${fadeAnimation2} 2s ease-in-out infinite` : 'none',
+      animation: `${fadeAnimation2} 2s ease-in-out infinite`,
       top: 3
     },
     topArrowIconWrapper: {
@@ -232,8 +233,7 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
   subtitle: {
     ...typography.heading4,
     color: colors.invariant.textGrey,
-    textAlign: 'center',
-    marginLeft: 10
+    textAlign: 'center'
   },
   title: {
     ...typography.heading3,
@@ -245,7 +245,10 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     justifyContent: 'center',
     alignItems: 'center',
     height: 44,
-    width: 200,
+    maxWidth: 200,
+    width: '100%',
+    [theme.breakpoints.up('md')]: { width: 200 },
+
     background: colors.invariant.light,
     ...typography.body1,
     color: colors.invariant.textGrey,
@@ -267,9 +270,11 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     }
   },
   pointsWrapper: {
+    gap: 10,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '100%'
   },
   centerWrapper: {
     display: 'flex',
@@ -277,7 +282,10 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    margin: theme.spacing(6)
+    margin: theme.spacing(6),
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+    }
   },
   label: {
     backgroundColor: colors.invariant.light,
