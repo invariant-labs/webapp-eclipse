@@ -217,3 +217,5 @@ export const netowrkIcons = {
   mainnetGlow: mainnetGlowIcon,
   testnetGlow: testnetGlowIcon
 }
+
+export default {}
