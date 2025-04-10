@@ -23,7 +23,8 @@ import {
   plotTicks,
   positionData,
   positionWithPoolData,
-  singlePositionData
+  singlePositionData,
+  showFeesLoader as storeFeesLoader
 } from '@store/selectors/positions'
 import { balance, balanceLoading, status } from '@store/selectors/solanaWallet'
 import { VariantType } from 'notistack'
@@ -64,6 +65,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const dispatch = useDispatch()
   const navigate = useNavigate()
 
+  const isFeesLoading = useSelector(storeFeesLoader)
   const currentNetwork = useSelector(network)
   const singlePosition = useSelector(singlePositionData(id))
   const positionPreview = useSelector(positionWithPoolData)
@@ -79,6 +81,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     loading: ticksLoading,
     hasError: hasTicksError
   } = useSelector(plotTicks)
+  useEffect(() => {
+    setShowFeesLoader(isFeesLoading)
+  }, [isFeesLoading])
 
   const walletStatus = useSelector(status)
   const ethBalance = useSelector(balance)

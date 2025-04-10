@@ -220,7 +220,7 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{
             container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
           }}
-          style={hideBottomLine ? { border: 'none' } : undefined}>
+          style={hideBottomLine ? { borderBottom: `1px solid transparent` } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
             <Box className={classes.iconsWrapper}>

@@ -30,15 +30,21 @@ const useStyles = makeStyles()(() => {
     },
     popoverRoot: {
       position: 'fixed',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
       overflow: 'auto'
     },
     paper: {
-      position: 'static',
-      margin: 0,
-      marginTop: 0,
+      position: 'relative',
+      margin: 'auto',
+      [theme.breakpoints.down('md')]: {
+        marginTop: '32px'
+      },
       maxWidth: '90%',
       background: 'transparent',
       boxShadow: 'none',
@@ -53,15 +59,15 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       justifyContent: 'center',
       flexDirection: 'column',
-      width: 623,
-      maxWidth: '100%',
+      marginTop: '8px',
+      maxWidth: '623px',
+      margin: 0,
       height: 'max-content',
       borderRadius: 24,
       padding: 24,
       boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
       gap: 24,
       [theme.breakpoints.down('sm')]: {
-        width: 'calc(100% - 32px)',
         padding: '16px 20px'
       },
 
