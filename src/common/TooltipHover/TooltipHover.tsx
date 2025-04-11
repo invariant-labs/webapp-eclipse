@@ -1,6 +1,7 @@
-import { Tooltip, TooltipProps } from '@mui/material'
+import { Tooltip, TooltipProps, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import { TooltipTransition } from './TooltipTransition/TooltipTransition'
+import { theme } from '@static/theme'
 
 interface Props extends TooltipProps {
   top?: number | string
@@ -8,11 +9,27 @@ interface Props extends TooltipProps {
   right?: number | string
   bottom?: number | string
   fullSpan?: boolean
+  removeOnMobile?: boolean
   children: React.ReactElement<any, any>
 }
 
-export const TooltipHover = ({ top, left, right, bottom, fullSpan, children, ...props }: Props) => {
+export const TooltipHover = ({
+  top,
+  left,
+  right,
+  bottom,
+  fullSpan,
+  removeOnMobile = false,
+  children,
+  ...props
+}: Props) => {
   const { classes } = useStyles({ top, left, right, bottom, fullSpan })
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+
+  if (removeOnMobile && isMobile) {
+    return children
+  }
 
   return (
     <Tooltip

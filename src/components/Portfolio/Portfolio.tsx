@@ -591,16 +591,18 @@ const Portfolio: React.FC<IProps> = ({
 
                   <Grid className={classes.fullWidthWrapper}>
                     <Grid width={26} display='flex' alignItems='center'>
-                      <MuiButton
-                        disabled={showNoConnected}
-                        onClick={showNoConnected ? () => {} : handleRefresh}
-                        className={classes.refreshIconBtn}>
-                        <img
-                          src={icons.refreshIcon}
-                          className={classes.refreshIcon}
-                          alt='Refresh'
-                        />
-                      </MuiButton>
+                      <TooltipHover removeOnMobile title='Refresh'>
+                        <MuiButton
+                          disabled={showNoConnected}
+                          onClick={showNoConnected ? () => {} : handleRefresh}
+                          className={classes.refreshIconBtn}>
+                          <img
+                            src={icons.refreshIcon}
+                            className={classes.refreshIcon}
+                            alt='Refresh'
+                          />
+                        </MuiButton>
+                      </TooltipHover>
                     </Grid>
                     <Button scheme='pink' onClick={onAddPositionClick}>
                       <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
