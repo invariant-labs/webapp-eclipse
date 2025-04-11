@@ -353,8 +353,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Invalid parameters'
     }
 
-    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.SwapNotFound)) {
-      return 'Token amounts too high'
+    if (
+      isAutoswapOn &&
+      (isSimulationStatus(SwapAndCreateSimulationStatus.SwapNotFound) ||
+        isSimulationStatus(SwapAndCreateSimulationStatus.InputAmountTooLow))
+    ) {
+      return 'Token amounts are too low'
     }
 
     if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.LiquidityTooLow)) {
@@ -657,10 +661,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return <></>
     }
 
-    if (
-      isSimulationStatus(SwapAndCreateSimulationStatus.InputAmountTooLow) ||
-      isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)
-    ) {
+    if (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)) {
       return (
         <Box className={classes.unknownWarning}>
           <Tooltip
@@ -701,7 +702,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
     const invalidParameters =
       isSimulationStatus(SwapAndCreateSimulationStatus.TickAccountMissing) ||
       isSimulationStatus(SwapAndCreateSimulationStatus.InvalidSimulationParamsError) ||
-      isSimulationStatus(SwapAndCreateSimulationStatus.SwapNotFound)
+      isSimulationStatus(SwapAndCreateSimulationStatus.SwapNotFound) ||
+      isSimulationStatus(SwapAndCreateSimulationStatus.InputAmountTooLow)
 
     if (invalidParameters) {
       return (
@@ -1153,8 +1155,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                   onAddLiquidity()
                 } else if (
                   isAutoswapOn &&
-                  (isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio) ||
-                    isSimulationStatus(SwapAndCreateSimulationStatus.InputAmountTooLow))
+                  isSimulationStatus(SwapAndCreateSimulationStatus.PerfectRatio)
                 ) {
                   onAddLiquidity()
                 } else {

@@ -39,9 +39,9 @@ import {
   PRICE_SCALE,
   POOLS_WITH_LUTS,
   Range,
+  toDecimal,
   simulateSwapAndCreatePosition,
-  simulateSwapAndCreatePositionOnTheSamePool,
-  toDecimal
+  simulateSwapAndCreatePositionOnTheSamePool
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress, PositionWithoutTicks } from '@store/reducers/positions'
 import {
