@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { NetworkType, SortTypeTokenList } from '@store/consts/static'
-import icons from '@static/icons'
+import { newTabBtnIcon, unknownTokenIcon, warningIcon } from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -96,10 +96,10 @@ const TokenListItem: React.FC<IProps> = ({
               src={icon}
               alt='Token icon'
               onError={e => {
-                e.currentTarget.src = icons.unknownToken
+                e.currentTarget.src = unknownTokenIcon
               }}
             />
-            {isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
+            {isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
             {shouldShowText && (
               <Typography>
                 {isXs ? shortenAddress(symbol) : name.length < 25 ? name : name.slice(0, 40)}
@@ -135,7 +135,7 @@ const TokenListItem: React.FC<IProps> = ({
                       'noopener,noreferrer'
                     )
                   }>
-                  <img width={32} height={32} src={icons.newTabBtn} alt={'Exchange'} />
+                  <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
             </Box>

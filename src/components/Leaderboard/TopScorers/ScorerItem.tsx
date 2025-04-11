@@ -6,7 +6,7 @@ import { printBN, formatNumberWithCommas } from '@utils/utils'
 import { theme } from '@static/theme'
 import useStyles from './styles'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import icons from '@static/icons'
+import { leaderboardBronzeIcon, leaderboardGoldenIcon, leaderboardSilverIcon } from '@static/icons'
 
 interface IScorerItemProps {
   points: string
@@ -76,11 +76,11 @@ export const ScorerItem: React.FC<IScorerItemProps> = ({
   const getIconByCupVariant = () => {
     switch (cupVariant) {
       case 'gold':
-        return icons.leaderboardGolden
+        return leaderboardGoldenIcon
       case 'silver':
-        return icons.leaderboardSilver
+        return leaderboardSilverIcon
       case 'bronze':
-        return icons.leaderboardBronze
+        return leaderboardBronzeIcon
     }
   }
   return (

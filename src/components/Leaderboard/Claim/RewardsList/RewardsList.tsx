@@ -6,7 +6,7 @@ import { rewards } from '@store/consts/static'
 import RewardItem from './RewardItem'
 import { theme } from '@static/theme'
 import Scrollbars from 'rc-scrollbars'
-import icons from '@static/icons'
+import { scrollArrowIcon } from '@static/icons'
 
 export interface NFTsListInterface {
   userAddress: PublicKey
@@ -111,8 +111,8 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
       ) : (
         <>
           <Grid className={classes.topArrowIconWrapper} onClick={scrollUp}>
-            <img className={classes.arrowTopIcon} src={icons.scrollArrow} />
-            <img className={classes.arrowTopIcon2} src={icons.scrollArrow} />
+            <img className={classes.arrowTopIcon} src={scrollArrowIcon} />
+            <img className={classes.arrowTopIcon2} src={scrollArrowIcon} />
           </Grid>
           <Scrollbars
             ref={scrollRef}
@@ -145,8 +145,8 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
             </Grid>
           </Scrollbars>
           <Grid className={classes.arrowIconWrapper} onClick={scrollToNext}>
-            <img className={classes.arrowIcon} src={icons.scrollArrow} />
-            {displayAnimation && <img className={classes.arrowIcon2} src={icons.scrollArrow} />}
+            <img className={classes.arrowIcon} src={scrollArrowIcon} />
+            {displayAnimation && <img className={classes.arrowIcon2} src={scrollArrowIcon} />}
           </Grid>
         </>
       )}

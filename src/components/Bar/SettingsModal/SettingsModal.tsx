@@ -1,5 +1,5 @@
 import { useStyles } from './style'
-import icons from '@static/icons'
+import { settings3Icon } from '@static/icons'
 // import { Switch } from '@common/Switch/Switch'
 import { SelectNetworkAndRPC } from './SelectNetworkAndRPC/SelectNetworkAndRPC'
 import { NetworkType } from '@store/consts/static'
@@ -30,7 +30,7 @@ export const SettingsModal = ({
 
   return (
     <Modal
-      icon={<img className={classes.barButtonIcon} src={icons.settings3} alt='Settings icon' />}
+      icon={<img className={classes.barButtonIcon} src={settings3Icon} alt='Settings icon' />}
       title='Settings'
       showTitle
       open={open}

@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { useStyles } from './style'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
-import icons from '@static/icons'
+import { airdropGreyIcon, airdropRainbowIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import { Reward } from '@store/consts/types'
 import rewardsImages from '@static/png/rewards/rewardsImages'
@@ -76,11 +76,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({
 
         <Grid className={classes.centerWrapper}>
           <Grid className={classes.pointsWrapper}>
-            <img
-              src={isEligible ? icons.airdropRainbow : icons.airdropGrey}
-              alt='points'
-              width={17}
-            />
+            <img src={isEligible ? airdropRainbowIcon : airdropGreyIcon} alt='points' width={17} />
             <Typography className={classes.subtitle}>{reward.name}</Typography>
           </Grid>
           <Typography className={classes.title}>
