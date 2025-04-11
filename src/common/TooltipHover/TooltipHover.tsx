@@ -25,7 +25,7 @@ export const TooltipHover = ({
 }: Props) => {
   const { classes } = useStyles({ top, left, right, bottom, fullSpan })
 
-  const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
 
   if (removeOnMobile && isMobile) {
     return children
