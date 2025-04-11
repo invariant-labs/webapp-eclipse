@@ -49,12 +49,12 @@ import {
 } from '@utils/utils'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
+  calculateClaimAmount,
   createNativeAtaInstructions,
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { ClaimAllFee, parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
-
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
 
@@ -1368,54 +1368,67 @@ export function* handleClaimAllFees() {
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const lockedPosition = yield* select(lockedPositionsWithPoolsData)
-    const allPositionsData = yield* select(positionsWithPoolsData)
+    const positions = yield* select(positionsWithPoolsData)
+    const positionsData = [...positions, ...lockedPosition]
+    const allPositionsData = positionsData.filter(position => {
+      const [bnX, bnY] = calculateClaimAmount({
+        position: position,
+        tickLower: position.lowerTick,
+        tickUpper: position.upperTick,
+        tickCurrent: position.poolData.currentTickIndex,
+        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+      })
+      return !bnX.isZero() || !bnY.isZero()
+    })
+    console.log(allPositionsData)
 
-    console.log(lockedPosition)
-    // const tokensAccounts = yield* select(accounts)
+    const tokensAccounts = yield* select(accounts)
 
-    // if (allPositionsData.length === 0) {
-    //   return
-    // }
-    // if (allPositionsData.length === 1) {
-    //   const claimFeeAction = actions.claimFee({ index: 0, isLocked: false })
-    //   return yield* call(handleClaimFee, claimFeeAction)
-    // }
+    if (allPositionsData.length === 0) {
+      return
+    }
+    if (allPositionsData.length === 1) {
+      const claimFeeAction = actions.claimFee({ index: 0, isLocked: false })
+      return yield* call(handleClaimFee, claimFeeAction)
+    }
 
-    // yield* put(actions.setAllClaimLoader(true))
-    // yield put(
-    //   snackbarsActions.add({
-    //     message: 'Claiming all fees',
-    //     variant: 'pending',
-    //     persist: true,
-    //     key: loaderClaimAllFees
-    //   })
-    // )
+    yield* put(actions.setAllClaimLoader(true))
+    yield put(
+      snackbarsActions.add({
+        message: 'Claiming all fees',
+        variant: 'pending',
+        persist: true,
+        key: loaderClaimAllFees
+      })
+    )
 
-    // for (const position of allPositionsData) {
-    //   const pool = allPositionsData[position.positionIndex].poolData
+    for (const position of allPositionsData) {
+      const pool = allPositionsData[position.positionIndex].poolData
 
-    //   if (!tokensAccounts[pool.tokenX.toString()]) {
-    //     yield* call(createAccount, pool.tokenX)
-    //   }
-    //   if (!tokensAccounts[pool.tokenY.toString()]) {
-    //     yield* call(createAccount, pool.tokenY)
-    //   }
-    // }
+      if (!tokensAccounts[pool.tokenX.toString()]) {
+        yield* call(createAccount, pool.tokenX)
+      }
+      if (!tokensAccounts[pool.tokenY.toString()]) {
+        yield* call(createAccount, pool.tokenY)
+      }
+    }
 
-    // const formattedPositions = allPositionsData.map(position => ({
-    //   pair: new Pair(position.poolData.tokenX, position.poolData.tokenY, {
-    //     fee: position.poolData.fee,
-    //     tickSpacing: position.poolData.tickSpacing
-    //   }),
-    //   index: position.positionIndex,
-    //   lowerTickIndex: position.lowerTickIndex,
-    //   upperTickIndex: position.upperTickIndex
-    // }))
+    const formattedPositions = allPositionsData.map(position => ({
+      pair: new Pair(position.poolData.tokenX, position.poolData.tokenY, {
+        fee: position.poolData.fee,
+        tickSpacing: position.poolData.tickSpacing
+      }),
+      index: position.positionIndex,
+      lowerTickIndex: position.lowerTickIndex,
+      upperTickIndex: position.upperTickIndex,
+      isLocked: position.isLocked
+    }))
 
-    // const txs = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
-    //   owner: wallet.publicKey,
-    //   positions: formattedPositions
-    // } as ClaimAllFee)
+    const txs = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
+      owner: wallet.publicKey,
+      positions: formattedPositions
+    } as ClaimAllFee)
 
     // yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
@@ -1819,7 +1832,6 @@ export function* handleGetSinglePosition(
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
-
     const [lockerAuth] = lockerProgram.getUserLocksAddress(wallet.publicKey)
     const poolsList = yield* select(poolsArraySortedByFees)
 
