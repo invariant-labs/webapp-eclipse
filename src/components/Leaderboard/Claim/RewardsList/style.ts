@@ -2,66 +2,143 @@ import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 import fingerprintPink from '@static/png/fingerprintPink.png'
 import fingerprintGreen from '@static/png/fingerprintGreen.png'
+import { keyframes } from 'tss-react'
 
-export const useStylesList = makeStyles()(theme => ({
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    flexDirection: 'column',
-    alignItems: 'center',
-    margin: '72px 40px 72px',
+const fadeAnimation1 = keyframes`
+  0% { opacity: 1; }
+  50% { opacity: 0.5; }
+  100% { opacity: 1; }
+`
 
-    [theme.breakpoints.down('sm')]: {
-      marginInline: 8
-    }
-  },
+const fadeAnimation2 = keyframes`
+  0% { opacity: 0.5; }
+  50% { opacity: 1; }
+  100% { opacity: 0.5; }
+`
+interface useStylesListProps {
+  displayAnimation: boolean
+  isTop: boolean
+  isBottom: boolean
+}
+export const useStylesList = makeStyles<useStylesListProps>()(
+  (theme, { displayAnimation, isTop, isBottom }) => ({
+    container: {
+      position: 'relative',
+      display: 'flex',
+      justifyContent: 'center',
+      flexDirection: 'column',
+      alignItems: 'center',
+      margin: '72px 40px 72px',
 
-  scrollbarThumb: {
-    backgroundColor: `${colors.invariant.pink} !important`,
-    borderRadius: 5,
-    width: 8
-  },
-  scrollbarTrack: {
-    background: `${colors.invariant.light} !important`,
-    borderRadius: 5,
-    width: '8px !important'
-  },
-  scrollbarView: {
-    overflowX: 'hidden !important' as any,
-
-    '&::-webkit-scrollbar': {
-      width: 6,
-      background: colors.invariant.component
+      [theme.breakpoints.down('sm')]: {
+        marginInline: 16
+      }
     },
-    '&::-webkit-scrollbar-thumb': {
-      background: colors.invariant.pink,
-      borderRadius: 6
-    }
-  },
-  list: {
-    paddingRight: 48,
 
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: theme.spacing(3),
-    marginBottom: theme.spacing(2),
-    [theme.breakpoints.down('lg')]: {
-      marginBottom: 0
+    scrollbarThumb: {
+      backgroundColor: `${colors.invariant.pink} !important`,
+      borderRadius: 5,
+      width: 8
+    },
+    scrollbarTrack: {
+      background: `${colors.invariant.light} !important`,
+      borderRadius: 5,
+      width: '8px !important'
+    },
+    scrollbarView: {
+      overflowX: 'hidden !important' as any,
+
+      '&::-webkit-scrollbar': {
+        width: 6,
+        background: colors.invariant.component
+      },
+      '&::-webkit-scrollbar-thumb': {
+        background: colors.invariant.pink,
+        borderRadius: 6
+      }
+    },
+    list: {
+      paddingRight: 48,
+
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: theme.spacing(3),
+      marginBottom: theme.spacing(2),
+      [theme.breakpoints.down('lg')]: {
+        marginBottom: 0
+      }
+    },
+    historyLabel: {
+      marginBottom: theme.spacing(3),
+      ...typography.heading3,
+      color: colors.invariant.text,
+      [theme.breakpoints.up('lg')]: {
+        marginRight: 44
+      }
+    },
+    rewardWrapper: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      gap: theme.spacing(3),
+      marginBottom: theme.spacing(0)
+    },
+
+    arrowIcon: {
+      width: 52,
+      zIndex: 3,
+      animation: displayAnimation ? `${fadeAnimation1} 2s ease-in-out infinite` : 'none'
+    },
+    arrowTopIcon: {
+      transform: 'rotate(180deg)',
+      width: 52,
+      zIndex: 3,
+      animation: `${fadeAnimation1} 2s ease-in-out infinite`
+    },
+    arrowIcon2: {
+      width: 52,
+      position: 'absolute',
+      opacity: displayAnimation ? 1 : 0,
+      transition: 'opacity 0.3s ease-in-out',
+      animation: displayAnimation ? `${fadeAnimation2} 2s ease-in-out infinite` : 'none',
+      bottom: 3
+    },
+    arrowTopIcon2: {
+      transform: 'rotate(180deg)',
+      width: 52,
+      position: 'absolute',
+      transition: 'opacity 0.3s ease-in-out',
+      animation: `${fadeAnimation2} 2s ease-in-out infinite`,
+      top: 3
+    },
+    topArrowIconWrapper: {
+      position: 'relative',
+      cursor: 'pointer',
+      flexDirection: 'column',
+      alignItems: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      height: 60,
+      marginRight: 40,
+      opacity: isTop ? 0 : 1,
+      pointerEvents: isTop ? 'none' : 'auto',
+      transition: 'all 0.3s ease-in-out'
+    },
+    arrowIconWrapper: {
+      cursor: 'pointer',
+      bottom: -60,
+      position: 'absolute',
+      flexDirection: 'column',
+      alignItems: 'center',
+      display: 'flex',
+      justifyContent: 'center',
+      height: 60,
+      marginRight: 40,
+      opacity: isBottom ? 0 : 1,
+      pointerEvents: isBottom ? 'none' : 'auto',
+      transition: 'all 0.3s ease-in-out'
     }
-  },
-  scrollbar: {},
-  historyLabel: {
-    marginBottom: theme.spacing(3),
-    ...typography.heading3,
-    color: colors.invariant.text
-  },
-  rewardWrapper: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    gap: theme.spacing(3),
-    marginBottom: theme.spacing(0)
-  }
-}))
+  })
+)
 
 export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) => ({
   container: {
@@ -156,8 +233,7 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
   subtitle: {
     ...typography.heading4,
     color: colors.invariant.textGrey,
-    textAlign: 'center',
-    marginLeft: 10
+    textAlign: 'center'
   },
   title: {
     ...typography.heading3,
@@ -169,7 +245,10 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     justifyContent: 'center',
     alignItems: 'center',
     height: 44,
-    width: 200,
+    maxWidth: 200,
+    width: '100%',
+    [theme.breakpoints.up('md')]: { width: 200 },
+
     background: colors.invariant.light,
     ...typography.body1,
     color: colors.invariant.textGrey,
@@ -191,9 +270,11 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     }
   },
   pointsWrapper: {
+    gap: 10,
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '100%'
   },
   centerWrapper: {
     display: 'flex',
@@ -201,7 +282,10 @@ export const useStyles = makeStyles<{ isEven: boolean }>()((theme, { isEven }) =
     flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
-    margin: theme.spacing(6)
+    margin: theme.spacing(6),
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+    }
   },
   label: {
     backgroundColor: colors.invariant.light,

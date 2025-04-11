@@ -82,7 +82,11 @@ const RewardItem: React.FC<RewardItemInterface> = ({
           <Typography className={classes.title}>
             {isEligible ? 'Eligible' : 'Not eligible'}
           </Typography>
-          <TooltipGradient title={textInfo.tooltip} placement='bottom' top={3}>
+          <TooltipGradient
+            title={textInfo.tooltip}
+            placement='bottom'
+            top={3}
+            allowEnterTooltip={false}>
             <Typography
               className={classNames(classes.infoText, rewardReceived && classes.textGreen)}>
               {textInfo.text}
