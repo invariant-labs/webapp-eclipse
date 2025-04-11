@@ -87,7 +87,7 @@ const Portfolio: React.FC<IProps> = ({
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const { processedPools, isProcesing } = useProcessedTokens(
+  const { processedTokens, isProcesing } = useProcessedTokens(
     tokensList,
     isBalanceLoading,
     currentNetwork
@@ -126,10 +126,10 @@ const Portfolio: React.FC<IProps> = ({
 
   const finalTokens = useMemo(() => {
     if (hideUnknownTokens) {
-      return processedPools.filter(item => item.isUnknown !== true)
+      return processedTokens.filter(item => item.isUnknown !== true)
     }
-    return processedPools.filter(item => item.decimal > 0)
-  }, [processedPools, hideUnknownTokens])
+    return processedTokens.filter(item => item.decimal > 0)
+  }, [processedTokens, hideUnknownTokens])
 
   const renderPositionDetails = () => (
     <Box
@@ -287,7 +287,7 @@ const Portfolio: React.FC<IProps> = ({
               <YourWallet
                 currentNetwork={currentNetwork}
                 handleSnackbar={handleSnackbar}
-                pools={finalTokens}
+                tokens={finalTokens}
                 isLoading={loading || isBalanceLoading || isProcesing}
               />
               <Box className={classes.footer}>
@@ -362,7 +362,7 @@ const Portfolio: React.FC<IProps> = ({
                   <YourWallet
                     handleSnackbar={handleSnackbar}
                     currentNetwork={currentNetwork}
-                    pools={finalTokens}
+                    tokens={finalTokens}
                     isLoading={loading || isBalanceLoading || isProcesing}
                   />
                   <Box className={classes.footer}>
@@ -398,7 +398,7 @@ const Portfolio: React.FC<IProps> = ({
               <YourWallet
                 currentNetwork={currentNetwork}
                 handleSnackbar={handleSnackbar}
-                pools={finalTokens}
+                tokens={finalTokens}
                 isLoading={loading || isBalanceLoading || isProcesing}
               />
             </Box>

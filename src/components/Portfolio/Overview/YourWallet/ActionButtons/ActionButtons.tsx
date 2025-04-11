@@ -2,14 +2,14 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { Box } from '@mui/material'
 import { horizontalSwapIcon, newTabBtnIcon, plusIcon } from '@static/icons'
 import { NetworkType, USDC_MAIN, USDC_TEST, WETH_MAIN, WETH_TEST } from '@store/consts/static'
-import { StrategyConfig, TokenPool } from '@store/types/userOverview'
+import { StrategyConfig, WalletToken } from '@store/types/userOverview'
 import { addressToTicker, ROUTES } from '@utils/utils'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './styles'
 import { useMemo } from 'react'
 
 interface IActionButtons {
-  pool: TokenPool
+  pool: WalletToken
   strategy: StrategyConfig
   currentNetwork: NetworkType
 }

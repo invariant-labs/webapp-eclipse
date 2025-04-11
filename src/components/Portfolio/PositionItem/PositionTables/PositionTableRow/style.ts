@@ -212,7 +212,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   infoCenter: {
     flex: '1 1 0%',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    alignItems: 'center'
   },
 
   value: {

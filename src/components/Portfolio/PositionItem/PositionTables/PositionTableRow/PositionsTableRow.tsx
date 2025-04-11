@@ -4,7 +4,7 @@ import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { airdropRainbowIcon, swapListIcon } from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
@@ -241,6 +241,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           <Typography className={classes.greenText}>
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
+          {tokenValueInUsd.priceWarning && (
+            <TooltipHover title='The price might not be shown correctly'>
+              <img src={warning2Icon} style={{ marginLeft: '4px' }} width={14} />
+            </TooltipHover>
+          )}
         </Grid>
       </Grid>
     )
