@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux'
 import { closeIcon, newTabIcon } from '@static/icons'
 import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
+import SwapSnackbar from './variants/SwapSnackbar'
 
 const variantColors: Record<string, string> = {
   default: '#000000',
@@ -28,7 +29,20 @@ const variantColors: Record<string, string> = {
 }
 
 const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
-  ({ message, txid, variant = 'default', snackbarId, iconVariant, link, network }, ref) => {
+  (
+    {
+      message,
+      txid,
+      variant = 'default',
+      snackbarId,
+      iconVariant,
+      link,
+      network,
+      swap,
+      closePosition
+    },
+    ref
+  ) => {
     const { closeSnackbar } = useSnackbar()
     const dispatch = useDispatch()
     const { classes } = useStyles()
@@ -56,7 +70,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
       }
     }, [network])
 
-    const Content = () => {
+    const StandartContent = () => {
       return (
         <>
           <Grid className={classes.wrapper}>
@@ -111,14 +125,23 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
       )
     }
 
+    const RenderContent = () => {
+      if (variant === 'default') {
+        if (swap) {
+          return <SwapSnackbar {...swap} handleDismiss={handleDismiss} />
+        }
+      }
+      return <StandartContent />
+    }
+
     return (
       <StyledSnackbarContent ref={ref} role='alert'>
         <StyledBackground />
         <StyledHideContainer>
-          <Content />
+          <RenderContent />
         </StyledHideContainer>
         <StyledContainer>
-          <Content />
+          <RenderContent />
         </StyledContainer>
       </StyledSnackbarContent>
     )

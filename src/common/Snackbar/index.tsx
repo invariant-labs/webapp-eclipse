@@ -6,11 +6,18 @@ import CustomSnackbar from './CustomSnackbar/CustomSnackbar'
 import { NetworkType } from '@store/consts/static'
 import { Global } from '@emotion/react'
 
-type ExtraVariants = 'pending'
+type ExtraVariants = 'pending' | 'custom'
 
 export type SnackbarVariant = ExtraVariants
 
-interface CustomProps {
+export interface SwapSnackbarProps {
+  ikonFrom: string
+  ikonTo: string
+  amountIn: string
+  amountOut: string
+  earnedPoints?: string
+}
+export interface CustomProps {
   txid?: string
   snackbarId: string
   network?: NetworkType
@@ -18,6 +25,8 @@ interface CustomProps {
     label: string
     href: string
   }
+  swap?: SwapSnackbarProps
+  closePosition?: {}
 }
 
 export interface SnackbarSnackbarProps extends CustomContentProps, CustomProps {}
@@ -25,6 +34,7 @@ export interface SnackbarSnackbarProps extends CustomContentProps, CustomProps {
 declare module 'notistack' {
   interface VariantOverrides {
     pending: true
+    custom: true
   }
   interface OptionsObject extends CustomProps {}
 }
@@ -63,7 +73,9 @@ const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
           error: CustomSnackbar,
           info: CustomSnackbar,
           warning: CustomSnackbar,
-          pending: CustomSnackbar
+          pending: CustomSnackbar,
+          custom: CustomSnackbar,
+          default: CustomSnackbar
         }}>
         {children}
       </SnackbarProvider>

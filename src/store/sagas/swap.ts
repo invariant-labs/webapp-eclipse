@@ -391,16 +391,17 @@ export function* handleSwapWithETH(): Generator {
             // Sanity check
           }
 
-          const message =
-            `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}` +
-            (!points.eqn(0)
-              ? ` and earned ${formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))} points`
-              : '')
-
           yield put(
             snackbarsActions.add({
-              message,
-              variant: 'success',
+              swap: {
+                amountIn: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                amountOut: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                ikonFrom: tokenIn.logoURI,
+                ikonTo: tokenOut.logoURI,
+                earnedPoints: points.eqn(0)
+                  ? undefined
+                  : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+              },
               persist: false
             })
           )
@@ -818,16 +819,17 @@ export function* handleTwoHopSwapWithETH(): Generator {
             // Should never be triggered
           }
 
-          const message =
-            `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}` +
-            (!points.eqn(0)
-              ? ` and earned ${formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))} points`
-              : '')
-
           yield put(
             snackbarsActions.add({
-              message,
-              variant: 'success',
+              swap: {
+                amountIn: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                amountOut: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                ikonFrom: tokenIn.logoURI,
+                ikonTo: tokenOut.logoURI,
+                earnedPoints: points.eqn(0)
+                  ? undefined
+                  : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+              },
               persist: false
             })
           )
@@ -1195,16 +1197,17 @@ export function* handleTwoHopSwap(): Generator {
                 // Should never be triggered
               }
 
-              const message =
-                `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}` +
-                (!points.eqn(0)
-                  ? ` and earned ${formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))} points`
-                  : '')
-
               yield put(
                 snackbarsActions.add({
-                  message,
-                  variant: 'success',
+                  swap: {
+                    amountIn: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                    amountOut: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                    ikonFrom: tokenIn.logoURI,
+                    ikonTo: tokenOut.logoURI,
+                    earnedPoints: points.eqn(0)
+                      ? undefined
+                      : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                  },
                   persist: false
                 })
               )
@@ -1524,16 +1527,17 @@ export function* handleSwap(): Generator {
                 // Sanity check in case some leaderboard config is missing
               }
 
-              const message =
-                `Sucessfully swapped ${formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals))} ${tokenIn.symbol} for ${formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals))} ${tokenOut.symbol}` +
-                (!points.eqn(0)
-                  ? ` and earned ${formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))} points`
-                  : '')
-
               yield put(
                 snackbarsActions.add({
-                  message,
-                  variant: 'success',
+                  swap: {
+                    amountIn: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                    amountOut: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                    ikonFrom: tokenIn.logoURI,
+                    ikonTo: tokenOut.logoURI,
+                    earnedPoints: points.eqn(0)
+                      ? undefined
+                      : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                  },
                   persist: false
                 })
               )
