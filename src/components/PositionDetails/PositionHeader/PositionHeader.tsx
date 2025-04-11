@@ -62,11 +62,9 @@ export const PositionHeader = ({
   isPreview
 }: Props) => {
   const { classes } = useStyles()
-
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
   const isMdDown = useMediaQuery(theme.breakpoints.down(1040))
   const isMdUp = useMediaQuery(theme.breakpoints.up(1040))
-
   const [refresherTime, setRefresherTime] = useState(REFRESHER_INTERVAL)
 
   useEffect(() => {

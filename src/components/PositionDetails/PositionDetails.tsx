@@ -14,7 +14,13 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { ILiquidityToken, TokenPriceData } from '@store/consts/types'
-import { addressToTicker, formatNumberWithSuffix, initialXtoY, ROUTES } from '@utils/utils'
+import {
+  addressToTicker,
+  formatNumberWithSuffix,
+  initialXtoY,
+  parseFeeToPathFee,
+  ROUTES
+} from '@utils/utils'
 import { printBN } from '@utils/utils'
 import { DECIMAL, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PublicKey } from '@solana/web3.js'
@@ -256,13 +262,13 @@ const PositionDetails: React.FC<IProps> = ({
         <PositionHeader
           tokenA={
             xToY
-              ? { icon: tokenX.icon, ticker: tokenY.name }
-              : { icon: tokenY.icon, ticker: tokenX.name }
+              ? { icon: tokenX.icon, ticker: tokenX.name }
+              : { icon: tokenY.icon, ticker: tokenY.name }
           }
           tokenB={
             xToY
-              ? { icon: tokenY.icon, ticker: tokenX.name }
-              : { icon: tokenX.icon, ticker: tokenY.name }
+              ? { icon: tokenY.icon, ticker: tokenY.name }
+              : { icon: tokenX.icon, ticker: tokenX.name }
           }
           fee={+printBN(fee, DECIMAL - 2)}
           isPromoted={isPromoted}
@@ -282,10 +288,14 @@ const PositionDetails: React.FC<IProps> = ({
             }
           }}
           onAddPositionClick={() => {
-            const address1 = addressToTicker(network, tokenX.name)
-            const address2 = addressToTicker(network, tokenY.name)
+            const address1 = addressToTicker(network, tokenXAddress.toString())
+            const address2 = addressToTicker(network, tokenYAddress.toString())
+            const parsedFee = parseFeeToPathFee(fee)
+            const isXtoY = initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
+            const tokenA = isXtoY ? address1 : address2
+            const tokenB = isXtoY ? address2 : address1
 
-            navigate(ROUTES.getNewPositionRoute(address1, address2, fee.toString()))
+            navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
           }}
           onRefreshClick={() => onRefresh()}
           onGoBackClick={() => onGoBackClick()}
