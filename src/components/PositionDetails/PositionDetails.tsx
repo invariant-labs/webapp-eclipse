@@ -55,7 +55,6 @@ interface IProps {
   reloadHandler: () => void
   userHasStakes?: boolean
   onRefresh: () => void
-  isBalanceLoading: boolean
   network: NetworkType
   isLocked: boolean
   success: boolean
@@ -67,6 +66,7 @@ interface IProps {
   isPromoted: boolean
   points24: number
   isPreview: boolean
+  showPositionLoader?: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -106,7 +106,7 @@ const PositionDetails: React.FC<IProps> = ({
   poolDetails,
   showPoolDetailsLoader,
   isPromoted,
-  isBalanceLoading,
+  showPositionLoader = false,
   points24
 }) => {
   const { classes } = useStyles()
@@ -309,7 +309,7 @@ const PositionDetails: React.FC<IProps> = ({
               showFeesLoader={showFeesLoader}
               poolDetails={poolDetails}
               showPoolDetailsLoader={showPoolDetailsLoader}
-              showBalanceLoader={isBalanceLoading}
+              showPositionLoader={showPositionLoader}
               arePointsDistributed={isActive && isPromoted}
               points24={points24}
               poolAddress={poolAddress}
