@@ -1,5 +1,5 @@
 import { BN } from '@coral-xyz/anchor'
-import { printBN, trimDecimalZeros, trimZeros } from './utils'
+import { formatDate, printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
 import { FormatNumberThreshold } from '@store/consts/types'
 
@@ -159,3 +159,12 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
     divider: 1000000000
   }
 ]
+export const shortenDate = (timestamp: number | string): string => {
+  if (typeof timestamp === 'string') {
+    return timestamp.slice(0, 6) + timestamp.slice(-2)
+  } else {
+    const formatedDate = formatDate(timestamp)
+    const [day, month, year] = formatedDate.split('.')
+    return `${day}.${month}.${year.slice(-2)}`
+  }
+}

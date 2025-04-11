@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { WalletToken } from '@store/types/userOverview'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
-import icons from '@static/icons'
+import { unknownTokenIcon, warningIcon } from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
@@ -78,7 +78,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
   }
 
   const handleImageError = (e: React.SyntheticEvent<HTMLImageElement>) => {
-    e.currentTarget.src = icons.unknownToken
+    e.currentTarget.src = unknownTokenIcon
   }
 
   return (
@@ -145,7 +145,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                               alt={pool.symbol}
                             />
                             {pool.isUnknown && (
-                              <img className={classes.warningIcon} src={icons.warningIcon} />
+                              <img className={classes.warningIcon} src={warningIcon} />
                             )}
 
                             <Typography className={classes.tokenSymbol}>

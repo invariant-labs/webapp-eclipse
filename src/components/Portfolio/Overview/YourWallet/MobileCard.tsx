@@ -1,5 +1,5 @@
 import { Box, Typography } from '@mui/material'
-import icons from '@static/icons'
+import { warning2Icon, warningIcon } from '@static/icons'
 import { StrategyConfig, WalletToken } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
@@ -19,7 +19,7 @@ export const MobileCard: React.FC<{
       <Box className={classes.mobileCardHeader}>
         <Box className={classes.mobileTokenInfo} sx={{ position: 'relative' }}>
           <img src={pool.icon} className={classes.tokenIcon} alt={pool.symbol} />
-          {pool.isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
+          {pool.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
 
           <Typography className={classes.tokenSymbol}>{pool.symbol}</Typography>
         </Box>
@@ -45,7 +45,7 @@ export const MobileCard: React.FC<{
           </Typography>
           {pool.isPriceWarning && (
             <TooltipHover title='The price might not be shown correctly'>
-              <img src={icons.warning2} width={14} />
+              <img src={warning2Icon} width={14} />
             </TooltipHover>
           )}
         </Box>

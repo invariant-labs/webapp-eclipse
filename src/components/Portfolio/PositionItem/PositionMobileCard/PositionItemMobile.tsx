@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
-import icons from '@static/icons'
+import { airdropRainbowIcon, swapListIcon } from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
@@ -161,7 +161,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
                 setAllowPropagation(false)
               }}>
-              <img src={icons.airdropRainbow} alt={'Airdrop'} style={{ height: '32px' }} />
+              <img src={airdropRainbowIcon} alt={'Airdrop'} style={{ height: '32px' }} />
             </div>
           </PromotedPoolPopover>
         </>
@@ -192,7 +192,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               }
             }}>
             <img
-              src={icons.airdropRainbow}
+              src={airdropRainbowIcon}
               alt={'Airdrop'}
               style={{
                 height: '32px',
@@ -471,7 +471,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               <TooltipHover title='Reverse tokens'>
                 <img
                   className={classes.arrows}
-                  src={icons.swapListIcon}
+                  src={swapListIcon}
                   alt='Arrow'
                   onClick={e => {
                     e.stopPropagation()

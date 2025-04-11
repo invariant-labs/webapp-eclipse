@@ -4,7 +4,7 @@ import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import icons from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
@@ -135,7 +135,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           <TooltipHover title='Reverse tokens'>
             <img
               className={classes.arrowsShared}
-              src={icons.swapListIcon}
+              src={swapListIcon}
               alt='Arrow'
               onClick={e => {
                 e.stopPropagation()
@@ -243,7 +243,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           </Typography>
           {tokenValueInUsd.priceWarning && (
             <TooltipHover title='The price might not be shown correctly'>
-              <img src={icons.warning2} style={{ marginLeft: '4px' }} width={14} />
+              <img src={warning2Icon} style={{ marginLeft: '4px' }} width={14} />
             </TooltipHover>
           )}
         </Grid>
@@ -328,7 +328,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
             <div ref={airdropIconRef} className={classes.actionButton}>
               <img
-                src={icons.airdropRainbow}
+                src={airdropRainbowIcon}
                 alt={'Airdrop'}
                 style={{
                   height: '32px',
@@ -348,7 +348,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         top={1}
         noGradient>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
-          <img src={icons.airdropRainbow} alt={'Airdrop'} className={classes.airdropIcon} />
+          <img src={airdropRainbowIcon} alt={'Airdrop'} className={classes.airdropIcon} />
         </div>
       </TooltipGradient>
     )

@@ -1,74 +1,80 @@
 import { Grid, Typography } from '@mui/material'
 import useStyles from './styles'
 import GradientBorder from '@common/GradientBorder/GradientBorder'
-import icons from '@static/icons'
-interface ExposureTooltipTitleProps {
-  footerDescription?: string
-  description?: React.ReactNode
-  completed?: boolean
-  current?: number
+import { airdropRainbowIcon, checkIcon, newTabIcon } from '@static/icons'
+interface task {
+  footerDescription: string
+  description: React.ReactNode | string
+  completed: boolean
+  current: number
   title: string
+  max: number
+}
+
+interface ExposureTooltipTitleProps {
   link?: string
-  max?: number
   img: string
   id: string
+  tasks: task[]
 }
 
 export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
-  footerDescription,
-  description,
-  completed = false,
-  current,
-  title,
+  tasks,
   link,
   img,
-  max,
   id
 }) => {
-  const isComingSoon = !footerDescription && !description && !current
-  const { classes } = useStyles({ isFinished: completed })
+  const { classes } = useStyles()
 
-  return isComingSoon ? (
+  return (
     <Grid className={classes.tooltipWrapper}>
-      <Grid alignItems='center' className={classes.header}>
-        <img src={img} alt='project logo' />
-        <Grid className={classes.title}>
-          <Typography>{title}</Typography>
-        </Grid>
-      </Grid>
-    </Grid>
-  ) : (
-    <Grid className={classes.tooltipWrapper}>
-      <Grid className={classes.header}>
-        <img src={img} alt='project logo' />
-        <Grid className={classes.title}>
-          <Typography>{title}</Typography>
-          <Typography
-            component='a'
-            className={classes.link}
-            href={link}
-            target='_blank'
-            rel='noopener noreferrer'>
-            {id}
-            <img src={icons.newTab} className={classes.newTabIcon} />
-          </Typography>
-          <Grid className={classes.progressWrapper}>
-            <img src={icons.check} alt='check icon' />
-            <Typography>
-              {`${current === Infinity || current == null ? '- ' : current}/${max}`}
-            </Typography>
-          </Grid>
-        </Grid>
-      </Grid>
-      <Typography className={classes.description}>{description}</Typography>
-      <Grid width='fit-content'>
-        <GradientBorder borderWidth={1} borderRadius={8}>
-          <Grid className={classes.footer}>
-            <img src={icons.airdropRainbow} alt='airdrop icon' />
-            <Typography>{footerDescription}</Typography>
-          </Grid>
-        </GradientBorder>
-      </Grid>
+      {tasks.map((task, index) => {
+        return (
+          <>
+            <Grid className={classes.header}>
+              <img height={50} src={img} alt='project logo' />
+              <Grid className={classes.title}>
+                <Typography>{task.title}</Typography>
+                {index === 0 && (
+                  <Typography
+                    component='a'
+                    className={classes.link}
+                    href={link}
+                    target='_blank'
+                    rel='noopener noreferrer'>
+                    {id}
+                    <img src={newTabIcon} className={classes.newTabIcon} />
+                  </Typography>
+                )}
+                <Grid className={classes.progressWrapper}>
+                  <img
+                    style={{
+                      filter: !task.completed ? 'grayscale(100%)' : 'none',
+                      opacity: !task.completed ? 0.2 : 1
+                    }}
+                    src={checkIcon}
+                    alt='check icon'
+                  />
+                  <Typography>
+                    {`${task.current === Infinity || task.current == null ? '- ' : task.current}/${task.max}`}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </Grid>
+            <Typography className={classes.description}>{task.description}</Typography>
+            <Grid width='fit-content'>
+              <GradientBorder borderWidth={1} borderRadius={8}>
+                <Grid className={classes.footer}>
+                  <img src={airdropRainbowIcon} alt='airdrop icon' />
+                  <Typography>{task.footerDescription}</Typography>
+                </Grid>
+              </GradientBorder>
+            </Grid>
+
+            {tasks.length > 1 && index < tasks.length - 1 && <Grid className={classes.separator} />}
+          </>
+        )
+      })}
     </Grid>
   )
 }
