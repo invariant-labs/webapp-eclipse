@@ -4,7 +4,7 @@ import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
 import { Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
-import icons from '@static/icons'
+import { cat1Icon, cat2Icon, dog1Icon, dog2Icon } from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
@@ -137,7 +137,7 @@ export const MOCKED_TOKEN_MAIN: Token = {
   address: new PublicKey('82kkga2kBcQNyV4VKJhGvE7Z58fFavVyuh5NapMVo7Qs'),
   decimals: 9,
   name: 'Mocked Token',
-  logoURI: icons.dog1,
+  logoURI: dog1Icon,
   coingeckoId: ''
 }
 
@@ -639,6 +639,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       MCT: MOCKED_TOKEN_MAIN.address.toString(),
       USDC: USDC_MAIN.address.toString(),
       SOL: SOL_MAIN.address.toString(),
+      USDT: USDT_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
@@ -733,7 +734,7 @@ export const walletNames = {
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
-export const defaultImages: string[] = [icons.dog1, icons.dog2, icons.cat1, icons.cat2]
+export const defaultImages: string[] = [dog1Icon, dog2Icon, cat1Icon, cat2Icon]
 
 export const getPopularPools = (network: NetworkType) => {
   switch (network) {
