@@ -1,6 +1,6 @@
 import { Button, Typography } from '@mui/material'
 import useStyles from './style'
-import icons from '@static/icons'
+import { warningIcon } from '@static/icons'
 import { useState } from 'react'
 
 interface Props {
@@ -18,7 +18,7 @@ export const RpcErrorModal: React.FC<Props> = ({ rpcAddress, useDefaultRpc, useC
     <>
       <div className={classes.background} />
       <div className={classes.container}>
-        <img className={classes.warningIcon} src={icons.warningIcon} alt='Warning icon' />
+        <img className={classes.warningIcon} src={warningIcon} alt='Warning icon' />
         <Typography className={classes.title}>RPC Connection Error</Typography>
         <div className={classes.textContainer}>
           <Typography className={classes.rpcText}>

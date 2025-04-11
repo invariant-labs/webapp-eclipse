@@ -5,7 +5,13 @@ import { walletNames } from '@store/consts/static'
 import { WalletType } from '@store/consts/types'
 import { openWalletSelectorModal } from '@utils/web3/selector'
 import { changeToNightlyAdapter, connectStaticWallet } from '@utils/web3/wallet'
-import icons from '@static/icons'
+import {
+  backpackWalletIcon,
+  closeSmallIcon,
+  nightlyConnectIcon,
+  nightlyIcon,
+  okxLogoIcon
+} from '@static/icons'
 import salmonIcon from '@static/png/salmonLogo.png'
 
 export interface ISelectWalletModal {
@@ -61,7 +67,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
             onClick={() => {
               setIsOpenSelectWallet(false)
             }}>
-            <img width={16} src={icons.closeSmallIcon} alt='Close'></img>
+            <img width={16} src={closeSmallIcon} alt='Close'></img>
           </Grid>
           <Typography className={classes.title}>Connect your wallet</Typography>
           <Grid className={classes.buttonWrapper}>
@@ -89,7 +95,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                   <img
                     width={53}
                     rel='preload'
-                    src={icons.NightlyConnect}
+                    src={nightlyConnectIcon}
                     alt='nightly connect logo'></img>
                   {walletNames[WalletType.NIGHTLY]}
                 </Typography>
@@ -113,7 +119,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                     <img
                       width={45}
                       rel='preload'
-                      src={icons.BackpackWallet}
+                      src={backpackWalletIcon}
                       alt='backpack wallet icon'></img>
 
                     {walletNames[WalletType.BACKPACK]}
@@ -128,11 +134,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 }}>
                 <Grid className={classes.buttonContainer}>
                   <Typography className={classes.buttonName}>
-                    <img
-                      width={45}
-                      rel='preload'
-                      src={icons.nightly}
-                      alt='nightly wallet icon'></img>
+                    <img width={45} rel='preload' src={nightlyIcon} alt='nightly wallet icon'></img>
 
                     {walletNames[WalletType.NIGHTLY_WALLET]}
                   </Typography>
@@ -146,7 +148,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
                 }}>
                 <Grid className={classes.buttonContainer}>
                   <Typography className={classes.buttonName}>
-                    <img width={45} rel='preload' src={icons.okxLogo} alt='Close'></img>
+                    <img width={45} rel='preload' src={okxLogoIcon} alt='Close'></img>
                     {walletNames[WalletType.OKX]}
                   </Typography>
                 </Grid>

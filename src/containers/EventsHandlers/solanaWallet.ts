@@ -5,7 +5,6 @@ import { accounts, address, status as walletStatus } from '@store/selectors/sola
 import { status } from '@store/selectors/solanaConnection'
 import { actions } from '@store/reducers/solanaWallet'
 import { AccountInfo, PublicKey } from '@solana/web3.js'
-
 import { Status } from '@store/reducers/solanaConnection'
 import { BN } from '@coral-xyz/anchor'
 import { getCurrentSolanaConnection } from '@utils/web3/connection'
