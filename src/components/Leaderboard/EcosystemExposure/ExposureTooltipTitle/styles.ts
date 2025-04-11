@@ -1,7 +1,7 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-const useStyles = makeStyles<{ isFinished: boolean }>()((_theme, { isFinished }) => {
+const useStyles = makeStyles()(_theme => {
   return {
     tooltipWrapper: {
       display: 'flex',
@@ -10,12 +10,18 @@ const useStyles = makeStyles<{ isFinished: boolean }>()((_theme, { isFinished })
     },
     header: {
       display: 'flex',
+      alignItems: 'center',
       justifyContent: 'flex-start',
       gap: 8,
       '& img': {
         width: 50,
         borderRadius: '6px'
       }
+    },
+    separator: {
+      height: '2px',
+      width: '100%',
+      background: colors.invariant.light
     },
     newTabIcon: {
       width: 14,
@@ -49,22 +55,22 @@ const useStyles = makeStyles<{ isFinished: boolean }>()((_theme, { isFinished })
         color: colors.invariant.textGrey
       },
       '& img': {
-        width: 24,
-        filter: !isFinished ? 'grayscale(100%)' : 'none',
-        opacity: !isFinished ? 0.2 : 1
+        width: 24
       }
     },
     footer: {
       display: 'flex',
       alignItems: 'center',
-      gap: 6,
+
       padding: '4px 8px',
       '& p': {
         ...typography.body2,
         color: colors.invariant.text
       },
       '& img': {
-        width: 11
+        minWidth: 14,
+        minHeight: 20,
+        marginRight: 6
       }
     },
     description: {

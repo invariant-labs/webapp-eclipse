@@ -49,7 +49,7 @@ import {
   simulateAutoSwapOnTheSamePool
 } from '@utils/utils'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
-import icons from '@static/icons'
+import { swapListIcon } from '@static/icons'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
@@ -918,7 +918,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           <TooltipHover title='Reverse tokens'>
             <img
               className={classes.arrows}
-              src={icons.swapListIcon}
+              src={swapListIcon}
               alt='Arrow'
               onClick={reverseTokens}
             />

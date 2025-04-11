@@ -1,7 +1,7 @@
 import { Box, Grid, Typography } from '@mui/material'
 import { useStyles } from './styles'
 import LaunchIcon from '@mui/icons-material/Launch'
-import icons from '@static/icons'
+import { airdropIcon } from '@static/icons'
 import { useMemo } from 'react'
 import { Status } from '@store/reducers/solanaWallet'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
@@ -44,7 +44,7 @@ export const Claim: React.FC<ClaimProps> = ({
             </Typography>
             <Box sx={{ marginTop: '32px' }}>
               <Box className={classes.iconWrapper}>
-                <img src={icons.airdrop} style={{ height: '32px', marginRight: '16px' }} />
+                <img src={airdropIcon} style={{ height: '32px', marginRight: '16px' }} />
                 <Typography>You currently have:</Typography>
               </Box>
               <Box className={classes.pointsWrapper}>
