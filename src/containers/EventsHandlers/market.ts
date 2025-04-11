@@ -14,6 +14,8 @@ import { getFullNewTokensData, getNetworkTokensList, ROUTES } from '@utils/utils
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { currentPoolIndex } from '@store/selectors/positions'
 import { useLocation } from 'react-router-dom'
+import { autoSwapPools } from '@store/consts/static'
+import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { parsePool } from '@invariant-labs/sdk-eclipse/lib/market'
 
 const MarketEvents = () => {
@@ -33,6 +35,7 @@ const MarketEvents = () => {
   const [newPositionSubscribedPool, setNewPositionSubscribedPool] = useState<PublicKey>(
     PublicKey.default
   )
+  const [autoswapSubscribedPool, setAutoswapSubscribedPool] = useState<PublicKey>(PublicKey.default)
 
   const location = useLocation()
 
@@ -98,7 +101,37 @@ const MarketEvents = () => {
 
     if (newPositionPoolIndex !== null && newPositionPoolIndex !== undefined) {
       const pool = allPools[newPositionPoolIndex]
+
       if (pool && !pool.address.equals(newPositionSubscribedPool)) {
+        const autoswapPool = autoSwapPools.find(
+          autoswapPool =>
+            autoswapPool.pair.tokenX.equals(pool.tokenX) &&
+            autoswapPool.pair.tokenY.equals(pool.tokenY)
+        )
+
+        if (autoswapPool) {
+          if (!autoswapSubscribedPool.equals(autoswapPool.swapPool.address)) {
+            marketProgram.program.account.pool.unsubscribe(autoswapSubscribedPool)
+            setAutoswapSubscribedPool(autoswapPool.swapPool.address)
+            marketProgram.onPoolChange(
+              pool.tokenX,
+              pool.tokenY,
+              FEE_TIERS[autoswapPool.swapPool.feeIndex],
+              poolStructure => {
+                dispatch(
+                  actions.updatePool({
+                    address: pool.address,
+                    poolStructure
+                  })
+                )
+              }
+            )
+          }
+        } else {
+          marketProgram.program.account.pool.unsubscribe(autoswapSubscribedPool)
+          setAutoswapSubscribedPool(PublicKey.default)
+        }
+
         marketProgram.program.account.pool.unsubscribe(newPositionSubscribedPool)
         setNewPositionSubscribedPool(pool.address)
         marketProgram.onPoolChange(
@@ -210,6 +243,8 @@ const MarketEvents = () => {
     ) {
       marketProgram.program.account.pool.unsubscribe(newPositionSubscribedPool)
       setNewPositionSubscribedPool(PublicKey.default)
+      marketProgram.program.account.pool.unsubscribe(autoswapSubscribedPool)
+      setAutoswapSubscribedPool(PublicKey.default)
     }
   }, [location.pathname])
 

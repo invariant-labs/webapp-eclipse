@@ -10,6 +10,7 @@ import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   actions,
   FetchTicksAndTickMaps,
+  IFetchTicksAndTickMapForAutoSwap,
   ListPoolsRequest,
   PairTokens,
   PoolWithAddress
@@ -60,6 +61,29 @@ export function* fetchPoolData(action: PayloadAction<Pair>) {
     yield* put(actions.addPools([]))
 
     yield* call(handleRpcError, error.message)
+  }
+}
+
+export function* fetchAutoSwapPoolData(action: PayloadAction<Pair>) {
+  const networkType = yield* select(network)
+  const rpc = yield* select(rpcAddress)
+  const wallet = yield* call(getWallet)
+  const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+  try {
+    const poolData = yield* call([marketProgram, marketProgram.getPool], action.payload)
+    const address = action.payload.getAddress(marketProgram.program.programId)
+
+    yield* put(
+      actions.setAutoSwapPoolData({
+        ...poolData,
+        address
+      })
+    )
+    yield* put(actions.setIsLoadingAutoSwapPool(false))
+  } catch (error) {
+    yield* put(actions.setAutoSwapPoolData(null))
+    yield* put(actions.setIsLoadingAutoSwapPool(false))
+    yield* call(handleRpcError, (error as Error).message)
   }
 }
 
@@ -255,6 +279,43 @@ export function* fetchNearestTicksForPair(action: PayloadAction<FetchTicksAndTic
   }
 }
 
+export function* fetchTicksAndTickMapForAutoSwap(
+  action: PayloadAction<IFetchTicksAndTickMapForAutoSwap>
+) {
+  const { tokenFrom, tokenTo, autoSwapPool } = action.payload
+  try {
+    const networkType = yield* select(network)
+    const rpc = yield* select(rpcAddress)
+    const wallet = yield* call(getWallet)
+    const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
+
+    const pair = new Pair(tokenFrom, tokenTo, {
+      fee: autoSwapPool.fee,
+      tickSpacing: autoSwapPool.tickSpacing
+    })
+
+    const tickmap = yield call([marketProgram, marketProgram.getTickmap], pair)
+
+    const batchSize = TICK_CROSSES_PER_IX + 3
+
+    const tickAddresses: PublicKey[] = [
+      ...marketProgram.findTickAddressesForSwap(pair, autoSwapPool, tickmap, true, batchSize),
+      ...marketProgram.findTickAddressesForSwap(pair, autoSwapPool, tickmap, false, batchSize)
+    ]
+
+    const ticks = yield* call(getTicksFromAddresses, marketProgram, tickAddresses)
+
+    const parsedTicks = ticks.filter(t => !!t).map(t => parseTick(t))
+
+    yield* put(actions.setAutoSwapTicksAndTickMap({ ticks: parsedTicks, tickmap }))
+    yield* put(actions.setIsLoadingAutoSwapPoolTicksOrTickMap(false))
+  } catch (error) {
+    yield* put(actions.setIsLoadingAutoSwapPoolTicksOrTickMap(false))
+    console.log(error)
+    yield* call(handleRpcError, (error as Error).message)
+  }
+}
+
 export function* handleGetPathTokens(action: PayloadAction<string[]>) {
   const tokens = action.payload
 
@@ -276,6 +337,10 @@ export function* handleGetPathTokens(action: PayloadAction<string[]>) {
   }
 }
 
+export function* getTicksAndTickMapForAutoSwapHandler(): Generator {
+  yield* takeLatest(actions.getTicksAndTickMapForAutoSwap, fetchTicksAndTickMapForAutoSwap)
+}
+
 export function* getPoolsDataForListHandler(): Generator {
   yield* takeEvery(actions.getPoolsDataForList, fetchPoolsDataForList)
 }
@@ -286,6 +351,10 @@ export function* getAllPoolsForPairDataHandler(): Generator {
 
 export function* getPoolDataHandler(): Generator {
   yield* takeLatest(actions.getPoolData, fetchPoolData)
+}
+
+export function* getAutoSwapPoolDataHandler(): Generator {
+  yield* takeLatest(actions.getAutoSwapPoolData, fetchAutoSwapPoolData)
 }
 
 export function* getTicksAndTickMapsHandler(): Generator {
@@ -308,7 +377,9 @@ export function* poolsSaga(): Generator {
       getPoolsDataForListHandler,
       getTicksAndTickMapsHandler,
       getNearestTicksForPairHandler,
-      getPathTokensHandler
+      getPathTokensHandler,
+      getAutoSwapPoolDataHandler,
+      getTicksAndTickMapForAutoSwapHandler
     ].map(spawn)
   )
 }

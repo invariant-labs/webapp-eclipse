@@ -153,6 +153,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
               <Typography className={classes.noCurrencyText}>-</Typography>
             )}
           </Grid>
+
           <Input
             className={classes.input}
             classes={{ input: classes.innerInput }}
