@@ -7,6 +7,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     justifyContent: 'center',
     padding: '32px',
+
     gap: '16px',
     border: 'none',
     background: colors.invariant.component,
@@ -15,7 +16,8 @@ export const useStyles = makeStyles()(() => ({
       background:
         'linear-gradient(360deg, rgba(32, 41, 70, 0.8) 0%, rgba(17, 25, 49, 0.8) 100%), linear-gradient(180deg, #010514 0%, rgba(1, 5, 20, 0) 100%)',
       borderRadius: 0
-    }
+    },
+    [theme.breakpoints.down('md')]: { height: 281 }
   },
   emptyStateText: {
     ...typography.heading2,

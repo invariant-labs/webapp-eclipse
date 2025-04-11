@@ -29,13 +29,11 @@ const MobileOverviewSkeleton: React.FC = () => {
       </Box>
 
       <Box className={classes.tokenLabelContainer}>
-        <Typography className={`${classes.tokenTextSkeleton} ${classes.tokensHeaderLabel}`}>
-          Tokens
-        </Typography>
+        <Typography className={classes.tokenTextSkeleton}>Tokens</Typography>
 
         <Grid container spacing={1} className={classes.gridContainer}>
           {segments.map((_, index) => (
-            <Grid item container key={index} className={classes.gridItem}>
+            <Grid container key={index} className={classes.gridItem}>
               <Grid item xs={1} display='flex' alignItems='center'>
                 <Skeleton variant='circular' className={classes.logoSkeleton} />
               </Grid>

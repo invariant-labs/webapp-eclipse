@@ -20,8 +20,7 @@ export const useStyles = makeStyles()(() => ({
     borderRadius: '8px',
     overflow: 'hidden',
     display: 'flex',
-    marginTop: theme.spacing(2),
-    marginBottom: theme.spacing(3)
+    marginBottom: '12px'
   },
   tokenSection: {
     marginTop: theme.spacing(2)
@@ -34,10 +33,9 @@ export const useStyles = makeStyles()(() => ({
   },
   tokenGrid: {
     marginTop: theme.spacing(1),
-    width: '100% !important',
-    maxHeight: '120px',
     marginLeft: '0 !important',
     overflowY: 'auto',
+    height: 96,
     paddingRight: '8px',
     marginRight: '-4px',
     marginBottom: '5px',
@@ -56,6 +54,7 @@ export const useStyles = makeStyles()(() => ({
     paddingLeft: '0',
     marginLeft: '0',
     display: 'flex',
+    height: '24px',
     justifyContent: 'space-between',
     alignItems: 'center',
     marginBottom: theme.spacing(1)

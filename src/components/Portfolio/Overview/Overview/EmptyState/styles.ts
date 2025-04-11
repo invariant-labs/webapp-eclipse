@@ -10,8 +10,9 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     justifyContent: 'center',
     padding: '32px',
     gap: '16px',
+    height: 112,
     backgroundColor: colors.invariant.component,
-    marginBottom: 8,
+    marginBottom: 29,
     [theme.breakpoints.up('lg')]: {
       background:
         'linear-gradient(360deg, rgba(32, 41, 70, 0.8) 0%, rgba(17, 25, 49, 0.8) 100%), linear-gradient(180deg, #010514 0%, rgba(1, 5, 20, 0) 100%)'
