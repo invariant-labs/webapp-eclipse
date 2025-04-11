@@ -88,6 +88,7 @@ export interface IDepositSelector {
     byAmountIn: boolean,
     estimatedPriceAfterSwap: BN,
     crossedTicks: number[],
+    liquidity: BN,
     swapSlippage: BN,
     positionSlippage: BN,
     minUtilizationPercentage: BN
@@ -1202,6 +1203,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                       simulation.swapInput.byAmountIn,
                       simulation.swapSimulation.priceAfterSwap,
                       simulation.swapSimulation.crossedTicks,
+                      simulation.position.liquidity,
                       toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
                       toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
                       userMinUtilization

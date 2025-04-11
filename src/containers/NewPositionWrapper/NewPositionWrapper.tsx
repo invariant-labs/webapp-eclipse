@@ -930,6 +930,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         byAmountIn,
         estimatedPriceAfterSwap,
         crossedTicks,
+        liquidity,
         swapSlippage,
         positionSlippage,
         minUtilizationPercentage,
