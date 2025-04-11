@@ -15,6 +15,7 @@ import {
 } from '@mui/material'
 import {
   ALL_FEE_TIERS_DATA,
+  AutoswapCustomError,
   DepositOptions,
   MINIMUM_PRICE_IMPACT,
   NetworkType,
@@ -228,6 +229,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const { value: valueB } = tokenBInputState
   const [priceImpact, setPriceImpact] = useState<string>(initialMaxPriceImpact)
   const [isSimulating, setIsSimulating] = useState<boolean>(false)
+  const [autoswapCustomError, setAutoswapCustomError] = useState<AutoswapCustomError | null>(null)
   const [utilization, setUtilization] = useState<string>(initialMinUtilization)
   const [slippageToleranceSwap, setSlippageToleranceSwap] = useState<string>(
     initialMaxSlippageToleranceSwap
@@ -343,6 +345,10 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
     if (tokenAIndex === tokenBIndex) {
       return 'Select different tokens'
+    }
+
+    if (isAutoswapOn && autoswapCustomError === AutoswapCustomError.FetchError) {
+      return 'Fetch error'
     }
 
     if (
@@ -764,15 +770,21 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
   const simulateAutoSwapResult = async () => {
     setIsSimulating(true)
+    if (autoswapCustomError !== null) {
+      setAutoswapCustomError(null)
+    }
+    if (tokenAIndex === null || tokenBIndex === null || isLoadingTicksOrTickmap) {
+      setSimulation(null)
+      setIsSimulating(false)
+      return
+    }
     if (
       !autoSwapPoolData ||
       !autoSwapTicks ||
       !autoSwapTickmap ||
-      tokenAIndex === null ||
-      tokenBIndex === null ||
-      isLoadingTicksOrTickmap ||
       !simulationParams.actualPoolPrice
     ) {
+      setAutoswapCustomError(AutoswapCustomError.FetchError)
       setSimulation(null)
       setIsSimulating(false)
       return

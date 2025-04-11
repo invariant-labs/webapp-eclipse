@@ -877,3 +877,7 @@ export enum OverviewSwitcher {
 }
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000
+
+export enum AutoswapCustomError {
+  FetchError = 0
+}
