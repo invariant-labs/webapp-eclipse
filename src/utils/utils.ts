@@ -2307,11 +2307,13 @@ export const transformRawSwapRoutesData = (
 
   const inToken = {
     inputAmount: inputToken ? printBN(data.inAmount, inputToken.decimals ?? 0) : 0,
+    inputRawAmount: inputToken ? data.inAmount : new BN(0),
     inputTicker: reformatTicker(addressToTicker(network, data.inputMint.toString()))
   }
 
   const outToken = {
     outputAmount: outputToken ? printBN(data.outAmount, outputToken.decimals) : 0,
+    outputRawAmount: outputToken ? data.outAmount : new BN(0),
     outputTicker: reformatTicker(addressToTicker(network, data.outputMint.toString()))
   }
 
@@ -2347,11 +2349,13 @@ export const transformRawSwapRoutesData = (
   return {
     sourceToken: {
       symbol: inToken.inputTicker,
+      rawAmount: inToken.inputRawAmount,
       logoUrl: inputToken.logoURI,
       amount: inToken.inputAmount
     },
     destinationToken: {
       symbol: outToken.outputTicker,
+      rawAmount: outToken.outputRawAmount,
       logoUrl: outputToken.logoURI,
       amount: outToken.outputAmount
     },

@@ -48,6 +48,7 @@ export interface SwapRoutesResponse {
   inAmount: number
   inputMint: PublicKey
   outAmount: number
+  otherAmountThreshold: number
   outputMint: PublicKey
   platformFee: number | null
   priceImpactPct: number
@@ -66,6 +67,8 @@ export interface Simulate {
 
 export interface AgregatorSimulateDetails {
   priceImpactPct: number
+  otherAmountThreshold: number
+  amountOutWithFee: number
   feePercent?: number
 }
 

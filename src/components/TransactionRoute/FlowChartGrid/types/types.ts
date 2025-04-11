@@ -94,6 +94,7 @@ export interface TransactionRouteProps {
 export interface FlowChartTokenNode {
   symbol: string
   logoUrl: string
+  rawAmount: BN
   amount: BN
 }
 

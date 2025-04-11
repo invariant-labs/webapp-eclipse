@@ -54,6 +54,7 @@ import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
 import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
 import { theme } from '@static/theme'
 import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
+import { setInterval } from 'timers'
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -282,6 +283,13 @@ export const Swap: React.FC<ISwap> = ({
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN
     }
   }, [network])
+
+  const prevParamsRef = useRef({
+    tokenFrom: '',
+    tokenTo: '',
+    amount: '',
+    slippage: 0
+  })
 
   const priceImpact = Math.max(
     +printBN(+simulationPath.firstPriceImpact, DECIMAL - 2),
@@ -522,7 +530,7 @@ export const Swap: React.FC<ISwap> = ({
     }
 
     setAddBlur(false)
-  }, [bestAmount, simulateResult, simulateWithHopResult])
+  }, [bestAmount, swapRouteChartData])
 
   useEffect(() => {
     updateEstimatedAmount()
@@ -625,34 +633,6 @@ export const Swap: React.FC<ISwap> = ({
       setAddBlur(false)
     }
   }
-
-  // const simulateRouteLoading = (routes: RouteTemplateProps[], intervalMs: number = 2000) => {
-  //   let currentIndex = 0
-
-  //   const updateRoute = () => {
-  //     // setRouteLoading(true)
-
-  //     setTimeout(() => {
-  //       // setRoute(routes[currentIndex])
-
-  //       setTimeout(() => {
-  //         // setRouteLoading(false)
-
-  //         setTimeout(() => {
-  //           // currentIndex = (currentIndex + 1) % routes.length
-  //           // updateRoute()
-  //         }, 3000)
-  //       }, intervalMs / 2)
-  //     }, intervalMs / 2)
-  //   }
-
-  //   updateRoute()
-  // }
-
-  // useEffect(() => {
-  //   simulateRouteLoading(routes, 3000)
-  // }, [])
-
   const updateSimulation = (
     simulateResult: {
       amountOut: BN
@@ -702,57 +682,51 @@ export const Swap: React.FC<ISwap> = ({
       }
     }
 
-    if (useTwoHop && simulateWithHopResult.simulation && simulateWithHopResult.route) {
-      setSimulationPath({
-        tokenFrom: tokens[tokenFromIndex ?? 0],
-        tokenBetween:
-          tokensDict[
-            simulateWithHopResult.simulation.xToYHopOne
-              ? simulateWithHopResult.route[0].tokenY.toString()
-              : simulateWithHopResult.route[0].tokenX.toString()
-          ],
-        tokenTo: tokens[tokenToIndex ?? 0],
-        firstPair: simulateWithHopResult.route[0],
-        secondPair: simulateWithHopResult.route[1],
-        firstAmount: simulateWithHopResult.simulation.swapHopOne.accumulatedAmountIn.add(
-          simulateWithHopResult.simulation.swapHopOne.accumulatedFee
-        ),
-        secondAmount: simulateWithHopResult.simulation.swapHopTwo.accumulatedAmountIn.add(
-          simulateWithHopResult.simulation.swapHopTwo.accumulatedFee
-        ),
-        firstPriceImpact: simulateWithHopResult.simulation.swapHopOne.priceImpact,
-        secondPriceImpact: simulateWithHopResult.simulation.swapHopTwo.priceImpact
-      })
-      setBestAmount(
-        inputRef === inputTarget.FROM
-          ? simulateWithHopResult.simulation?.swapHopTwo.accumulatedAmountOut.toString()
-          : simulateWithHopResult.simulation?.swapHopOne.accumulatedAmountIn
-              .add(simulateWithHopResult.simulation.swapHopOne.accumulatedFee)
-              .toString()
-      )
-      setSwapType(SwapType.WithHop)
+    // Get amount from API response if available
+    const amountFromAPI = swapRouteChartData.swapRouteResponse?.destinationToken?.rawAmount
+
+    // Set best amount and immediately update the relevant input field
+    if (amountFromAPI) {
+      const bestAmountValue = new BN(amountFromAPI)
+      setBestAmount(bestAmountValue)
+
+      // Immediately update the input fields based on the best amount
+      if (tokenFromIndex !== null && tokenToIndex !== null) {
+        if (inputRef === inputTarget.FROM) {
+          const amount = printBN(bestAmountValue, tokens[tokenToIndex].decimals)
+          setAmountTo(+amount === 0 ? '' : trimLeadingZeros(amount))
+        } else if (inputRef === inputTarget.TO) {
+          const amount = printBN(bestAmountValue, tokens[tokenFromIndex].decimals)
+          setAmountFrom(+amount === 0 ? '' : trimLeadingZeros(amount))
+        }
+      }
     } else {
-      setSimulationPath({
-        tokenFrom: tokens[tokenFromIndex ?? 0],
-        tokenBetween: null,
-        tokenTo: tokens[tokenToIndex ?? 0],
-        firstPair: new Pair(
-          pools[simulateResult.poolIndex].tokenX,
-          pools[simulateResult.poolIndex].tokenY,
-          {
-            fee: pools[simulateResult.poolIndex].fee,
-            tickSpacing: pools[simulateResult.poolIndex].tickSpacing
-          }
-        ) ?? { fee: new BN(0) },
-        secondPair: null,
-        firstAmount: convertBalanceToBN(amountFrom, tokens[tokenFromIndex ?? 0].decimals),
-        secondAmount: null,
-        firstPriceImpact: simulateResult.priceImpact,
-        secondPriceImpact: null
-      })
-      setBestAmount(simulateResult.amountOut)
-      setSwapType(SwapType.Normal)
+      // Fallback to simulator results if API data isn't available
+      let bestAmountValue
+      if (useTwoHop && simulateWithHopResult.simulation) {
+        bestAmountValue =
+          inputRef === inputTarget.FROM
+            ? simulateWithHopResult.simulation.totalAmountOut
+            : simulateWithHopResult.simulation.totalAmountIn
+      } else {
+        bestAmountValue = simulateResult.amountOut
+      }
+
+      setBestAmount(bestAmountValue)
+
+      // Immediately update the input fields based on the best amount
+      if (tokenFromIndex !== null && tokenToIndex !== null) {
+        if (inputRef === inputTarget.FROM) {
+          const amount = printBN(bestAmountValue, tokens[tokenToIndex].decimals)
+          setAmountTo(+amount === 0 ? '' : trimLeadingZeros(amount))
+        } else if (inputRef === inputTarget.TO) {
+          const amount = printBN(bestAmountValue, tokens[tokenFromIndex].decimals)
+          setAmountFrom(+amount === 0 ? '' : trimLeadingZeros(amount))
+        }
+      }
     }
+
+    setSwapType(useTwoHop ? SwapType.WithHop : SwapType.Normal)
   }
 
   const getIsXToY = (fromToken: PublicKey, toToken: PublicKey) => {
@@ -973,7 +947,13 @@ export const Swap: React.FC<ISwap> = ({
         setIsReversingTokens(false)
       }
     }
-  }, [wasIsFetchingNewPoolRun, wasSwapIsLoadingRun, isFetchingNewPool, swapIsLoading])
+  }, [
+    wasIsFetchingNewPoolRun,
+    wasSwapIsLoadingRun,
+    isFetchingNewPool,
+    swapIsLoading,
+    prevParamsRef.current
+  ])
 
   useEffect(() => {
     setRefresherTime(REFRESHER_INTERVAL)
@@ -1011,13 +991,6 @@ export const Swap: React.FC<ISwap> = ({
     return { decimalIndex, isLessThanOne }
   }, [stringPointsValue])
 
-  const prevParamsRef = useRef({
-    tokenFrom: '',
-    tokenTo: '',
-    amount: '',
-    slippage: 0
-  })
-
   const isAnyBlurShowed =
     lockAnimation ||
     (getStateMessage() === 'Loading' &&
@@ -1027,7 +1000,7 @@ export const Swap: React.FC<ISwap> = ({
       (inputRef === inputTarget.FROM || inputRef === inputTarget.DEFAULT))
 
   useEffect(() => {
-    if (tokenFromIndex === null || tokenToIndex === null || !amountFrom || !amountTo) {
+    if (tokenFromIndex === null || tokenToIndex === null) {
       return
     }
 
@@ -1046,7 +1019,7 @@ export const Swap: React.FC<ISwap> = ({
         amount: currentAmount.toString(),
         slippage: +slippTolerance
       }
-
+      handleRefresh()
       onRouteRefresh(
         currentAmount,
         +slippTolerance,

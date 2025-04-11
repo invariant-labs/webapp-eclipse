@@ -1212,13 +1212,17 @@ export function* handleFetchSwapRoute(
           ...transformedData
         })
       )
+
       const totalFee = transformedData.exchanges.reduce((acc, route) => {
         const fee = route.fee ?? 0
         return acc + fee
       }, 0)
+      const amountOutWithFee = routesData.outAmount - totalFee
       yield put(
         swapActions.setSwapSimulateDetails({
           priceImpactPct: +routesData.priceImpactPct,
+          otherAmountThreshold: routesData.otherAmountThreshold,
+          amountOutWithFee,
           feePercent: totalFee
         })
       )
