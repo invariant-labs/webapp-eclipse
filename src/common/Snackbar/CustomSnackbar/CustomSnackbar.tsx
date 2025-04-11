@@ -29,20 +29,7 @@ const variantColors: Record<string, string> = {
 }
 
 const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
-  (
-    {
-      message,
-      txid,
-      variant = 'default',
-      snackbarId,
-      iconVariant,
-      link,
-      network,
-      swap,
-      closePosition
-    },
-    ref
-  ) => {
+  ({ message, txid, variant = 'default', snackbarId, iconVariant, link, network, swap }, ref) => {
     const { closeSnackbar } = useSnackbar()
     const dispatch = useDispatch()
     const { classes } = useStyles()
