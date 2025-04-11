@@ -1140,21 +1140,13 @@ export const Swap: React.FC<ISwap> = ({
                           tokenToIndex === null ||
                           tokenFromIndex === tokenToIndex
                         }>
-                        <img
-                          src={icons.refreshIcon}
-                          className={classes.refreshIcon}
-                          alt='Refresh'
-                        />
+                        <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                       </Button>
                     </Grid>
                   </TooltipHover>
                   <TooltipHover title='Settings'>
                     <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
-                      <img
-                        src={icons.settingIcon}
-                        className={classes.settingsIcon}
-                        alt='Settings'
-                      />
+                      <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
                     </Button>
                   </TooltipHover>
                 </Box>
@@ -1291,7 +1283,7 @@ export const Swap: React.FC<ISwap> = ({
                           classes.componentBackground
                       )}>
                       <img
-                        src={icons.swapArrows}
+                        src={swapArrowsIcon}
                         style={{
                           transform: `rotate(${-rotates * 180}deg)`
                         }}
@@ -1552,35 +1544,59 @@ export const Swap: React.FC<ISwap> = ({
                     onClick={() => {
                       if (tokenFromIndex === null || tokenToIndex === null) return
 
-                onSwap(
-                  // fromFee(new BN(Number(+slippTolerance * 1000))),
-                  // simulateResult.estimatedPriceAfterSwap,
-                  // tokens[tokenFromIndex].assetAddress,
-                  // tokens[tokenToIndex].assetAddress,
-                  // simulateResult.poolIndex,
-                  // convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                  // convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                  // inputRef === inputTarget.FROM
-                  fromFee(new BN(Number(+slippTolerance * 1000))),
-                  simulateResult.estimatedPriceAfterSwap,
-                  simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
-                  simulationPath.tokenBetween?.assetAddress ?? null,
-                  simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
-                  simulationPath.firstPair,
-                  simulationPath.secondPair,
-                  convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-                  convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-                  inputRef === inputTarget.FROM
-                )
-              }}
-              progress={progress}
-            />
-          )}
-          <AnimatedWaves
-            wavePosition={'bottom'}
-            isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
-          />
-        </Grid>
+                      onSwap(
+                        // fromFee(new BN(Number(+slippTolerance * 1000))),
+                        // simulateResult.estimatedPriceAfterSwap,
+                        // tokens[tokenFromIndex].assetAddress,
+                        // tokens[tokenToIndex].assetAddress,
+                        // simulateResult.poolIndex,
+                        // convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                        // convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                        // inputRef === inputTarget.FROM
+                        fromFee(new BN(Number(+slippTolerance * 1000))),
+                        simulateResult.estimatedPriceAfterSwap,
+                        simulationPath.tokenFrom?.assetAddress ?? PublicKey.default,
+                        simulationPath.tokenBetween?.assetAddress ?? null,
+                        simulationPath.tokenTo?.assetAddress ?? PublicKey.default,
+                        simulationPath.firstPair,
+                        simulationPath.secondPair,
+                        convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
+                        convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
+                        inputRef === inputTarget.FROM
+                      )
+                    }}
+                    progress={progress}
+                  />
+                )}
+
+                <AnimatedWaves
+                  wavePosition={'bottom'}
+                  isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
+                />
+              </Grid>
+            </Box>
+          </Box>
+          {!isMd &&
+            (swapRouteChartData.swapRouteResponse ||
+              swapRouteChartData.swapRouteError ||
+              swapRouteChartData.swapRouteLoading) && (
+              <Box
+                sx={{
+                  height: '100%',
+                  width: '350px',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'flex-end'
+                }}>
+                <TransactionRoute
+                  routeData={swapRouteChartData.swapRouteResponse}
+                  showCloseButton={false}
+                  errorMessage={swapRouteChartData.swapRouteError}
+                  isLoading={swapRouteChartData.swapRouteLoading}
+                />
+              </Box>
+            )}
+        </Box>
       </Box>
       <img src={auditIcon} alt='Audit' style={{ marginTop: '24px' }} width={180} />
     </Grid>
