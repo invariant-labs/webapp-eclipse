@@ -13,6 +13,16 @@ export const useStyles = makeStyles()(() => ({
     width: 'fix-content',
     flexWrap: 'nowrap'
   },
+  customSnackbarWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: theme.spacing(2),
+    marginRight: 8,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    width: '100%',
+    minHeight: 40
+  },
   transactionWrapper: {
     display: 'flex',
     marginInline: theme.spacing(1),
@@ -88,13 +98,13 @@ export const StyledContainer = styled('div')({
   }
 })
 
-export const StyledTitle = styled(Typography)({
+export const StyledTitle = styled(Typography)<{ color?: string }>(({ color }) => ({
   wordWrap: 'break-word',
   marginLeft: 8,
   width: `calc(100% - 8px)`,
-  color: colors.invariant.text,
+  color: color || colors.invariant.text,
   ...typography.body2
-})
+}))
 
 export const StyledCircularProgress = styled(CircularProgress)({
   color: colors.invariant.textGrey,
@@ -163,3 +173,9 @@ export const StyledDetails = styled('button')({
     width: 10
   }
 })
+
+export const StyledText = styled(Typography)<{ color?: string }>(({ color }) => ({
+  wordWrap: 'break-word',
+  color: color || colors.invariant.text,
+  ...typography.body2
+}))
