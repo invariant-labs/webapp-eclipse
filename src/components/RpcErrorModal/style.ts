@@ -13,7 +13,7 @@ const useStyles = makeStyles()(theme => ({
   },
   container: {
     position: 'absolute',
-    top: 300,
+    top: '50%',
     width: 480,
     left: '50%',
     transform: 'translate(-50%, -50%)',
