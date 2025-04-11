@@ -26,8 +26,7 @@ import { PositionHeader } from './PositionHeader/PositionHeader'
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
 import { Information } from '@components/Information/Information'
 import { theme } from '@static/theme'
-import icons from '@static/icons'
-
+import { eyeYellowIcon } from '@static/icons'
 interface IProps {
   tokenXAddress: PublicKey
   tokenYAddress: PublicKey
@@ -214,7 +213,7 @@ const PositionDetails: React.FC<IProps> = ({
     <>
       <Information mb={3} transitionTimeout={300} shouldOpen={showPreviewInfo}>
         <Box className={classes.information}>
-          <img src={icons.eyeYellow} alt='Eye' style={{ minWidth: 24 }} />
+          <img src={eyeYellowIcon} alt='Eye' style={{ minWidth: 24 }} />
           {isSm
             ? `Viewing someone else's position. Wallet actions unavailable.`
             : `You are currently watching someone else's position. Connect your wallet or go to

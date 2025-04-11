@@ -2,7 +2,7 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import { useRef, useState } from 'react'
 import { useStyles } from './style'
 import { Box, Popover, Typography } from '@mui/material'
-import icons from '@static/icons'
+import { closeSmallIcon } from '@static/icons'
 import { BarButton } from '@components/Bar/BarButton/BarButton'
 
 type Props = {
@@ -51,7 +51,7 @@ export const Modal = ({ icon, title, showTitle, children }: Props) => {
             <Box className={classes.popoverHeader}>
               <Typography className={classes.title}>{title}</Typography>
               <Box className={classes.closeIconContainer} onClick={() => handleClose()}>
-                <img className={classes.closeIcon} src={icons.closeSmallIcon} alt='Close icon' />
+                <img className={classes.closeIcon} src={closeSmallIcon} alt='Close icon' />
               </Box>
             </Box>
           )}

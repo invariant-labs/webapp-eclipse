@@ -1,7 +1,7 @@
 import NavbarButton from '@components/Navbar/NavbarButton'
 import DotIcon from '@mui/icons-material/FiberManualRecordRounded'
 import { CardMedia, Grid, useMediaQuery } from '@mui/material'
-import icons from '@static/icons'
+import { logoShortIcon, logoTitleIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import { RPC, NetworkType } from '@store/consts/static'
 import { useEffect, useState } from 'react'
@@ -131,7 +131,7 @@ export const Header: React.FC<IHeader> = ({
         <Grid container item className={classes.leftSide}>
           <CardMedia
             className={classes.logo}
-            image={icons.LogoTitle}
+            image={logoTitleIcon}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
                 navigate(ROUTES.EXCHANGE)
@@ -174,7 +174,7 @@ export const Header: React.FC<IHeader> = ({
         <Grid container item className={classes.buttons}>
           <CardMedia
             className={classes.logoShort}
-            image={icons.LogoShort}
+            image={logoShortIcon}
             onClick={() => {
               if (!activePath.startsWith('exchange')) {
                 navigate(ROUTES.EXCHANGE)

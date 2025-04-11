@@ -53,7 +53,7 @@ export default defineConfig({
           ui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
           web3: ['@solana/web3.js'],
           utils: ['axios'],
-          animations: ['react-spring']
+          animations: ['@react-spring/web']
         }
       }
     }

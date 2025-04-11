@@ -24,10 +24,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     padding: '18px 24px',
     borderBottom: `1px solid ${colors.invariant.light}`,
     whiteSpace: 'nowrap',
-
+    height: 69,
+    boxSizing: 'border-box',
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '30% 22.5% 32.5% 15%',
       padding: '18px 8px',
+      height: 69,
 
       '& p': {
         ...typography.caption1

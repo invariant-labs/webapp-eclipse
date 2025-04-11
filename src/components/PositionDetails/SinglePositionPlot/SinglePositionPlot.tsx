@@ -14,7 +14,7 @@ import React, { useEffect, useState } from 'react'
 import useStyles from './style'
 import { getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Stat } from './Stat/Stat'
-import icons from '@static/icons'
+import { activeLiquidityIcon, boostPointsBoldIcon } from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 import { ILiquidityToken } from '@store/consts/types'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
@@ -169,7 +169,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                     </Typography>
                     <img
                       className={classes.liquidityImg}
-                      src={icons.activeLiquidity}
+                      src={activeLiquidityIcon}
                       alt='Liquidity'
                     />
                   </Grid>
@@ -227,7 +227,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
           <Stat
             name={
               <Box className={classes.concentrationContainer}>
-                <img className={classes.concentrationIcon} src={icons.boostPointsBold} />
+                <img className={classes.concentrationIcon} src={boostPointsBoldIcon} />
                 CONCENTRATION
               </Box>
             }
