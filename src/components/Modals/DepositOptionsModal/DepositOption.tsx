@@ -2,7 +2,7 @@ import React, { useRef, useState } from 'react'
 import useStyles from './style'
 import { Box, Button, Divider, Grid, Input, Tooltip, Typography } from '@mui/material'
 import classNames from 'classnames'
-import icons from '@static/icons'
+import { goldenInfoIcon, infoIcon } from '@static/icons'
 
 interface Props {
   value: string
@@ -112,11 +112,7 @@ const DepositOption: React.FC<Props> = ({
               <Tooltip
                 title={
                   <Box className={classes.singleOptionTooltipContainer}>
-                    <img
-                      src={icons.goldenInfoCircle}
-                      alt=''
-                      className={classes.singleOptionTooltipIcon}
-                    />
+                    <img src={goldenInfoIcon} alt='' className={classes.singleOptionTooltipIcon} />
                     <Box className={classes.singleOptionMessageContainer}>{tier.message}</Box>
                   </Box>
                 }
@@ -125,7 +121,7 @@ const DepositOption: React.FC<Props> = ({
                   {tier.label}
                   {tier.message !== '' ? (
                     <img
-                      src={icons.infoCircle}
+                      src={infoIcon}
                       alt=''
                       className={classNames(classes.grayscaleIcon, classes.labelInfoItem)}
                     />

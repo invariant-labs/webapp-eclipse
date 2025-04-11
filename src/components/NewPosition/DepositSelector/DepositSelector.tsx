@@ -49,7 +49,7 @@ import {
   simulateAutoSwapOnTheSamePool
 } from '@utils/utils'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
-import { swapListIcon } from '@static/icons'
+import { infoIcon, settingIcon, swapListIcon } from '@static/icons'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { Tick, Tickmap } from '@invariant-labs/sdk-eclipse/lib/market'
 import {
@@ -629,7 +629,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                 }
                 classes={{ tooltip: classes.tooltip }}>
                 <span className={classes.tooltipIconWrapper}>
-                  <img src={icons.infoCircle} alt='' width={'12px'} height={'12px'} />
+                  <img src={infoIcon} alt='' width={'12px'} height={'12px'} />
                 </span>
               </Tooltip>
             </ToggleButton>
@@ -648,7 +648,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             disableRipple
             disabled={!isAutoswapOn}>
             <img
-              src={icons.settingCirc}
+              src={settingIcon}
               className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
               alt='options'
             />
@@ -674,7 +674,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             title={'You already have enough tokens to open position'}
             classes={{ tooltip: classes.tooltip }}>
             <img
-              src={icons.infoCircle}
+              src={infoIcon}
               alt=''
               width='12px'
               style={{ marginRight: '4px', marginBottom: '-1.5px' }}
@@ -693,7 +693,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             title={'There is not enough liquidity to perform the swap'}
             classes={{ tooltip: classes.tooltip }}>
             <img
-              src={icons.infoCircle}
+              src={infoIcon}
               alt=''
               width='12px'
               style={{ marginRight: '4px', marginBottom: '-1.5px' }}
@@ -718,7 +718,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             title={'Unable to perform autoswap and open a position'}
             classes={{ tooltip: classes.tooltip }}>
             <img
-              src={icons.infoCircle}
+              src={infoIcon}
               alt=''
               width='12px'
               style={{ marginRight: '4px', marginBottom: '-1.5px' }}
@@ -752,7 +752,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           }
           classes={{ tooltip: classes.tooltip }}>
           <img
-            src={icons.infoCircle}
+            src={infoIcon}
             alt=''
             width='12px'
             style={{ marginRight: '4px', marginBottom: '-1.5px' }}
