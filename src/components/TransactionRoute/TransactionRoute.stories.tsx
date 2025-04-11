@@ -36,17 +36,18 @@ const meta = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-//
 export const OneHop: Story = {
   args: {
     routeData: {
       sourceToken: {
+        rawAmount: 1,
         symbol: 'ETH',
         logoUrl:
           'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
         amount: 1
       },
       destinationToken: {
+        rawAmount: 1,
         symbol: 'MOON',
         logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
         amount: 1
@@ -69,11 +70,13 @@ export const TwoHops: Story = {
     routeData: {
       sourceToken: {
         symbol: 'ETH',
+        rawAmount: 1,
         logoUrl:
           'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
         amount: 1
       },
       destinationToken: {
+        rawAmount: 1,
         symbol: 'MOON',
         logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
         amount: 1
@@ -84,6 +87,7 @@ export const TwoHops: Story = {
           logoUrl: SolarLogo,
           fee: 0.01,
           toToken: {
+            rawAmount: 1,
             symbol: 'LAIKA',
             logoUrl:
               'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f736864772d64726976652e67656e65737973676f2e6e65742f387035714352796b774e767a463433484d6b31356243664c3678413934474b65365a526570696e6d576a44692f6c61696b612e706e67',
@@ -107,6 +111,7 @@ export const ThreeHops: Story = {
   args: {
     routeData: {
       sourceToken: {
+        rawAmount: 1,
         symbol: 'ETH',
         logoUrl:
           'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
@@ -115,13 +120,15 @@ export const ThreeHops: Story = {
       destinationToken: {
         symbol: 'MOON',
         logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
-        amount: 1
+        amount: 1,
+        rawAmount: 1
       },
       exchanges: [
         {
           name: 'Solar',
           logoUrl: SolarLogo,
           toToken: {
+            rawAmount: 1,
             symbol: 'MOON',
             logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
             amount: 1
@@ -133,6 +140,7 @@ export const ThreeHops: Story = {
           logoUrl: InvariantLogo,
           fee: 0.01,
           toToken: {
+            rawAmount: 1,
             symbol: 'MOON',
             logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
             amount: 1
@@ -155,12 +163,14 @@ export const FourHops: Story = {
   args: {
     routeData: {
       sourceToken: {
+        rawAmount: 1,
         symbol: 'ETH',
         logoUrl:
           'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
         amount: 1
       },
       destinationToken: {
+        rawAmount: 1,
         symbol: 'MOON',
         logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
         amount: 1
@@ -170,6 +180,7 @@ export const FourHops: Story = {
           name: 'Solar',
           logoUrl: SolarLogo,
           toToken: {
+            rawAmount: 1,
             symbol: 'LAIKA',
             logoUrl:
               'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f736864772d64726976652e67656e65737973676f2e6e65742f387035714352796b774e767a463433484d6b31356243664c3678413934474b65365a526570696e6d576a44692f6c61696b612e706e67',
@@ -181,6 +192,7 @@ export const FourHops: Story = {
           name: 'Invariant',
           logoUrl: InvariantLogo,
           toToken: {
+            rawAmount: 1,
             symbol: 'LAIKA',
             logoUrl:
               'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f736864772d64726976652e67656e65737973676f2e6e65742f387035714352796b774e767a463433484d6b31356243664c3678413934474b65365a526570696e6d576a44692f6c61696b612e706e67',
@@ -192,6 +204,7 @@ export const FourHops: Story = {
           name: 'Umbra',
           logoUrl: UmbraLogo,
           toToken: {
+            rawAmount: 1,
             symbol: 'SOL',
             logoUrl:
               'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f736864772d64726976652e67656e65737973676f2e6e65742f387035714352796b774e767a463433484d6b31356243664c3678413934474b65365a526570696e6d576a44692f6c61696b612e706e67',
@@ -203,6 +216,7 @@ export const FourHops: Story = {
           name: 'FooBar',
           logoUrl: UmbraLogo,
           toToken: {
+            rawAmount: 1,
             symbol: 'LAIKA',
             logoUrl:
               'https://statics.solscan.io/cdn/imgs/s60?ref=68747470733a2f2f736864772d64726976652e67656e65737973676f2e6e65742f387035714352796b774e767a463433484d6b31356243664c3678413934474b65365a526570696e6d576a44692f6c61696b612e706e67',
@@ -222,12 +236,14 @@ export const Loading: Story = {
   args: {
     routeData: {
       sourceToken: {
+        rawAmount: 1,
         symbol: 'ETH',
         logoUrl:
           'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
         amount: 1
       },
       destinationToken: {
+        rawAmount: 1,
         symbol: 'MOON',
         logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
         amount: 1
@@ -255,12 +271,14 @@ export const NoCloseButton: Story = {
   args: {
     routeData: {
       sourceToken: {
+        rawAmount: 1,
         symbol: 'ETH',
         logoUrl:
           'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/2FPyTwcZLUg1MDrwsyoP4D6s1tM7hAkHYRjkNb5w6Pxk/logo.png',
         amount: 1
       },
       destinationToken: {
+        rawAmount: 1,
         symbol: 'MOON',
         logoUrl: 'https://raw.githubusercontent.com/moon-meme/assets/main/Moon.png',
         amount: 1

@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Typography } from '@mui/material'
 import { NodeConnector } from '../NodeConnector/NodeConnector'
 import { typography } from '@static/theme'
-import icons from '@static/icons'
+import { newTabIcon, unknownTokenIcon } from '@static/icons'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { FlowNodeProps } from '../../types/types'
 import { renderFlexLines } from '../../utils/renderFlexLines'
@@ -34,7 +34,7 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
           height: shape === 'circle' ? CIRCLE_SIZE : RECT_HEIGHT,
           borderRadius: shape === 'circle' ? '50%' : '10px',
           border: cornerPosition ? 'none' : '1px solid #A9B6BF',
-          backgroundImage: shape === 'circle' && logoImg ? `url(${logoImg})` : icons.unknownToken
+          backgroundImage: shape === 'circle' && logoImg ? `url(${logoImg})` : unknownTokenIcon
         }}>
         {shape !== 'circle' && renderFlexLines(cornerPosition)}
 
@@ -54,7 +54,7 @@ export const FlowNode: React.FC<FlowNodeProps> = ({
                   <img
                     width={8}
                     height={8}
-                    src={icons.newTab}
+                    src={newTabIcon}
                     alt={'Exchange'}
                     style={{ marginLeft: '4px' }}
                   />

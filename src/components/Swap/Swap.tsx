@@ -54,7 +54,6 @@ import TransactionRoute from '@components/TransactionRoute/TransactionRoute'
 import InvariantAgregatorHeader from '@components/InvariantAgregatorHeader/InvariantAgregatorHeader'
 import { theme } from '@static/theme'
 import TransactionRouteModal from '@components/Modals/TransactionRouteModal/TransactionRouteModal'
-import { setInterval } from 'timers'
 export interface Pools {
   tokenX: PublicKey
   tokenY: PublicKey
@@ -195,7 +194,6 @@ export const Swap: React.FC<ISwap> = ({
   promotedSwapPairs,
   swapMultiplier,
   market,
-  tokensDict,
   swapAccounts,
   swapIsLoading
 }) => {
@@ -257,7 +255,7 @@ export const Swap: React.FC<ISwap> = ({
     route: [Pair, Pair] | null
     error: boolean
   }>({ simulation: null, route: null, error: false })
-  const [simulationPath, setSimulationPath] = useState<SimulationPath>({
+  const [simulationPath, _setSimulationPath] = useState<SimulationPath>({
     tokenFrom: null,
     tokenBetween: null,
     tokenTo: null,
@@ -682,15 +680,12 @@ export const Swap: React.FC<ISwap> = ({
       }
     }
 
-    // Get amount from API response if available
     const amountFromAPI = swapRouteChartData.swapRouteResponse?.destinationToken?.rawAmount
 
-    // Set best amount and immediately update the relevant input field
     if (amountFromAPI) {
       const bestAmountValue = new BN(amountFromAPI)
       setBestAmount(bestAmountValue)
 
-      // Immediately update the input fields based on the best amount
       if (tokenFromIndex !== null && tokenToIndex !== null) {
         if (inputRef === inputTarget.FROM) {
           const amount = printBN(bestAmountValue, tokens[tokenToIndex].decimals)
@@ -701,7 +696,6 @@ export const Swap: React.FC<ISwap> = ({
         }
       }
     } else {
-      // Fallback to simulator results if API data isn't available
       let bestAmountValue
       if (useTwoHop && simulateWithHopResult.simulation) {
         bestAmountValue =
@@ -714,7 +708,6 @@ export const Swap: React.FC<ISwap> = ({
 
       setBestAmount(bestAmountValue)
 
-      // Immediately update the input fields based on the best amount
       if (tokenFromIndex !== null && tokenToIndex !== null) {
         if (inputRef === inputTarget.FROM) {
           const amount = printBN(bestAmountValue, tokens[tokenToIndex].decimals)
