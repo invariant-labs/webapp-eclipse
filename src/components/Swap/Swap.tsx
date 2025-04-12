@@ -267,7 +267,6 @@ export const Swap: React.FC<ISwap> = ({
     secondPriceImpact: null
   })
   const [bestAmount, setBestAmount] = useState(new BN(0))
-  const [swapType, setSwapType] = useState(SwapType.Normal)
   const [addBlur, setAddBlur] = useState(false)
   const [wasIsFetchingNewPoolRun, setWasIsFetchingNewPoolRun] = useState(false)
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
@@ -317,50 +316,15 @@ export const Swap: React.FC<ISwap> = ({
     if (tokenFromIndex === null || tokenToIndex === null) return
     if (!tokens[tokenFromIndex] || !tokens[tokenToIndex]) return
 
-    if (swapType === SwapType.WithHop) {
-      const isFirstPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(
-            simulationPath.tokenFrom?.assetAddress ?? new PublicKey('')
-          ) &&
-            new PublicKey(item.tokenY).equals(
-              simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
-            )) ||
-          (new PublicKey(item.tokenX).equals(
-            simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
-          ) &&
-            new PublicKey(item.tokenY).equals(
-              simulationPath.tokenFrom?.assetAddress ?? new PublicKey('')
-            ))
-      )
-      const isSecondPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(
-            simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
-          ) &&
-            new PublicKey(item.tokenY).equals(
-              simulationPath.tokenTo?.assetAddress ?? new PublicKey('')
-            )) ||
-          (new PublicKey(item.tokenX).equals(
-            simulationPath.tokenTo?.assetAddress ?? new PublicKey('')
-          ) &&
-            new PublicKey(item.tokenY).equals(
-              simulationPath.tokenBetween?.assetAddress ?? new PublicKey('')
-            ))
-      )
-      setIsFirstPairGivingPoints(isFirstPoints)
-      setIsSecondPairGivingPoints(isSecondPoints)
-    } else {
-      const isPoints = promotedSwapPairs.some(
-        item =>
-          (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
-          (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
-            new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
-      )
-      setIsFirstPairGivingPoints(isPoints)
-      setIsSecondPairGivingPoints(false)
-    }
+    const isPoints = promotedSwapPairs.some(
+      item =>
+        (new PublicKey(item.tokenX).equals(tokens[tokenToIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenFromIndex].assetAddress)) ||
+        (new PublicKey(item.tokenX).equals(tokens[tokenFromIndex].assetAddress) &&
+          new PublicKey(item.tokenY).equals(tokens[tokenToIndex].assetAddress))
+    )
+    setIsFirstPairGivingPoints(isPoints)
+    setIsSecondPairGivingPoints(false)
 
     setPointsForSwap(new BN(0))
 
@@ -391,56 +355,33 @@ export const Swap: React.FC<ISwap> = ({
     if (simulateResult && (isFirstPairGivingPoints || isSecondPairGivingPoints)) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
 
-      if (swapType === SwapType.WithHop) {
-        const firstFeed = feeds[simulationPath.tokenFrom?.assetAddress.toString() ?? '']
-        const secondFeed = feeds[simulationPath.tokenBetween?.assetAddress.toString() ?? '']
-
-        const firstPoints = calculatePoints(
-          simulationPath.firstAmount ?? new BN(0),
-          simulationPath.tokenFrom?.decimals ?? 0,
-          simulationPath.firstPair.feeTier.fee ?? new BN(0),
-          firstFeed?.price ?? '0',
-          firstFeed?.priceDecimals ?? 0,
-          pointsPerUSD
-        )
-        const secondPoints = calculatePoints(
-          simulationPath.secondAmount ?? new BN(0),
-          simulationPath.tokenBetween?.decimals ?? 0,
-          simulationPath.secondPair.feeTier.fee ?? new BN(0),
-          secondFeed?.price ?? '0',
-          secondFeed?.priceDecimals ?? 0,
-          pointsPerUSD
-        )
-        setPointsForSwap(firstPoints.add(secondPoints))
+      const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
+      let desiredAmount: string
+      let desiredIndex: number | null
+      if (inputRef === inputTarget.FROM) {
+        desiredIndex = tokenFromIndex
+        desiredAmount = amountFrom
       } else {
-        const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
-        let desiredAmount: string
-        let desiredIndex: number | null
-        if (inputRef === inputTarget.FROM) {
-          desiredIndex = tokenFromIndex
-          desiredAmount = amountFrom
-        } else {
-          desiredIndex = tokenToIndex
-          desiredAmount = amountTo
-        }
-        const feed = feeds[tokens[desiredIndex!].assetAddress.toString()]
-        const amount = convertBalanceToBN(desiredAmount, tokens[desiredIndex!].decimals)
-
-        if (!feed || !feed.price || simulateResult.amountOut.eqn(0)) {
-          setPointsForSwap(new BN(0))
-          return
-        }
-
-        const points = calculatePoints(
-          amount,
-          tokens[desiredIndex!].decimals,
-          feePercentage,
-          feed.price,
-          feed.priceDecimals,
-          pointsPerUSD
-        )
-        setPointsForSwap(points)
+        desiredIndex = tokenToIndex
+        desiredAmount = amountTo
       }
+      const feed = feeds[tokens[desiredIndex!].assetAddress.toString()]
+      const amount = convertBalanceToBN(desiredAmount, tokens[desiredIndex!].decimals)
+
+      if (!feed || !feed.price || simulateResult.amountOut.eqn(0)) {
+        setPointsForSwap(new BN(0))
+        return
+      }
+
+      const points = calculatePoints(
+        amount,
+        tokens[desiredIndex!].decimals,
+        feePercentage,
+        feed.price,
+        feed.priceDecimals,
+        pointsPerUSD
+      )
+      setPointsForSwap(points)
     } else {
       setPointsForSwap(new BN(0))
     }
@@ -575,113 +516,23 @@ export const Swap: React.FC<ISwap> = ({
 
   const setSimulateAmount = async () => {
     setAddBlur(true)
-    if (tokenFromIndex !== null && tokenToIndex !== null && !swapIsLoading) {
-      if (inputRef === inputTarget.FROM) {
-        const [simulateValue, simulateWithHopValue] = await Promise.all([
-          handleSimulate(
-            pools,
-            poolTicks,
-            tickmap,
-            fromFee(new BN(Number(+slippTolerance * 1000))),
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-            true
-          ),
-          handleSimulateWithHop(
-            market,
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals),
-            true,
-            swapAccounts
-          )
-        ])
-
-        updateSimulation(simulateValue, simulateWithHopValue)
-        setSimulateResult(simulateValue)
-        setSimulateWithHopResult(simulateWithHopValue)
-      } else if (inputRef === inputTarget.TO) {
-        const [simulateValue, simulateWithHopValue] = await Promise.all([
-          handleSimulate(
-            pools,
-            poolTicks,
-            tickmap,
-            fromFee(new BN(Number(+slippTolerance * 1000))),
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-            false
-          ),
-          handleSimulateWithHop(
-            market,
-            tokens[tokenFromIndex].assetAddress,
-            tokens[tokenToIndex].assetAddress,
-            convertBalanceToBN(amountTo, tokens[tokenToIndex].decimals),
-            false,
-            swapAccounts
-          )
-        ])
-
-        updateSimulation(simulateValue, simulateWithHopValue)
-        setSimulateResult(simulateValue)
-        setSimulateWithHopResult(simulateWithHopValue)
-      }
+    if (
+      tokenFromIndex !== null &&
+      tokenToIndex !== null &&
+      !swapIsLoading &&
+      !swapRouteChartData.swapRouteLoading
+    ) {
+      // if (inputRef === inputTarget.FROM) {
+      updateSimulation()
+      // } else if (inputRef === inputTarget.TO) {
+      // }
     } else {
       setAddBlur(false)
     }
   }
-  const updateSimulation = (
-    simulateResult: {
-      amountOut: BN
-      poolIndex: number
-      AmountOutWithFee: BN
-      estimatedPriceAfterSwap: BN
-      minimumReceived: BN
-      priceImpact: BN
-      error: string[]
-    },
-    simulateWithHopResult: {
-      simulation: SimulationTwoHopResult | null
-      route: [Pair, Pair] | null
-      error: boolean
-    }
-  ) => {
-    let useTwoHop = false
-
-    const isSimulateError =
-      simulateResult.error.length > 0 || simulateResult.amountOut.eq(new BN(0))
-    const isSimulateWithHopError = simulateWithHopResult.error
-
-    if (isSimulateError && !isSimulateWithHopError) {
-      useTwoHop = true
-    }
-
-    if (
-      (isSimulateError && isSimulateWithHopError) ||
-      (!isSimulateError && !isSimulateWithHopError)
-    ) {
-      if (inputRef === inputTarget.FROM) {
-        if (
-          simulateWithHopResult?.simulation?.totalAmountOut.gte(simulateResult.amountOut) &&
-          !simulateWithHopResult.error
-        ) {
-          useTwoHop = true
-        }
-      } else {
-        if (
-          simulateWithHopResult?.simulation?.totalAmountIn
-            .add(simulateWithHopResult?.simulation?.swapHopOne.accumulatedFee)
-            .lte(simulateResult.amountOut) &&
-          !simulateWithHopResult.error
-        ) {
-          useTwoHop = true
-        }
-      }
-    }
-
+  const updateSimulation = () => {
     const amountFromAPI = swapRouteChartData.swapRouteResponse?.destinationToken?.rawAmount
-
+    console.log(amountFromAPI, 'amountFromAPI')
     if (amountFromAPI) {
       const bestAmountValue = new BN(amountFromAPI)
       setBestAmount(bestAmountValue)
@@ -689,37 +540,15 @@ export const Swap: React.FC<ISwap> = ({
       if (tokenFromIndex !== null && tokenToIndex !== null) {
         if (inputRef === inputTarget.FROM) {
           const amount = printBN(bestAmountValue, tokens[tokenToIndex].decimals)
+          console.log('UPDATE AMOUNT FROM', amount)
           setAmountTo(+amount === 0 ? '' : trimLeadingZeros(amount))
         } else if (inputRef === inputTarget.TO) {
           const amount = printBN(bestAmountValue, tokens[tokenFromIndex].decimals)
-          setAmountFrom(+amount === 0 ? '' : trimLeadingZeros(amount))
-        }
-      }
-    } else {
-      let bestAmountValue
-      if (useTwoHop && simulateWithHopResult.simulation) {
-        bestAmountValue =
-          inputRef === inputTarget.FROM
-            ? simulateWithHopResult.simulation.totalAmountOut
-            : simulateWithHopResult.simulation.totalAmountIn
-      } else {
-        bestAmountValue = simulateResult.amountOut
-      }
-
-      setBestAmount(bestAmountValue)
-
-      if (tokenFromIndex !== null && tokenToIndex !== null) {
-        if (inputRef === inputTarget.FROM) {
-          const amount = printBN(bestAmountValue, tokens[tokenToIndex].decimals)
-          setAmountTo(+amount === 0 ? '' : trimLeadingZeros(amount))
-        } else if (inputRef === inputTarget.TO) {
-          const amount = printBN(bestAmountValue, tokens[tokenFromIndex].decimals)
+          console.log('UPDATE AMOUNT TO', amount)
           setAmountFrom(+amount === 0 ? '' : trimLeadingZeros(amount))
         }
       }
     }
-
-    setSwapType(useTwoHop ? SwapType.WithHop : SwapType.Normal)
   }
 
   const getIsXToY = (fromToken: PublicKey, toToken: PublicKey) => {
@@ -739,7 +568,7 @@ export const Swap: React.FC<ISwap> = ({
   }
 
   const isError = (error: string) => {
-    return swapType === SwapType.Normal ? simulateResult.error.some(err => err === error) : false
+    return simulateResult.error.some(err => err === error)
   }
 
   const isEveryPoolEmpty = useMemo(() => {
@@ -842,7 +671,7 @@ export const Swap: React.FC<ISwap> = ({
       return 'RPC connection error'
     }
 
-    if (swapType === SwapType.Normal && simulateResult.error.length !== 0) {
+    if (simulateResult.error.length !== 0) {
       console.warn('Errors not handled explictly', simulateResult.error)
       return 'Not enough liquidity'
     }
@@ -913,8 +742,19 @@ export const Swap: React.FC<ISwap> = ({
     amountTo !== ''
 
   const handleRefresh = async () => {
+    if (tokenFromIndex === null || tokenToIndex === null) {
+      return
+    }
     onRefresh(tokenFromIndex, tokenToIndex)
     setRefresherTime(REFRESHER_INTERVAL)
+    const currentAmount = convertBalanceToBN(amountFrom, tokens[tokenFromIndex].decimals)
+
+    onRouteRefresh(
+      currentAmount,
+      +slippTolerance,
+      tokens[tokenFromIndex].assetAddress,
+      tokens[tokenToIndex].assetAddress
+    )
   }
 
   useEffect(() => {
@@ -932,7 +772,13 @@ export const Swap: React.FC<ISwap> = ({
   }, [swapIsLoading])
 
   useEffect(() => {
-    if (wasIsFetchingNewPoolRun && wasSwapIsLoadingRun && !isFetchingNewPool && !swapIsLoading) {
+    if (
+      wasIsFetchingNewPoolRun &&
+      wasSwapIsLoadingRun &&
+      !isFetchingNewPool &&
+      !swapIsLoading &&
+      !swapRouteChartData.swapRouteLoading
+    ) {
       void setSimulateAmount()
       setWasIsFetchingNewPoolRun(false)
       setWasSwapIsLoadingRun(false)
@@ -945,7 +791,7 @@ export const Swap: React.FC<ISwap> = ({
     wasSwapIsLoadingRun,
     isFetchingNewPool,
     swapIsLoading,
-    prevParamsRef.current
+    swapRouteChartData.swapSimulateDetails
   ])
 
   useEffect(() => {

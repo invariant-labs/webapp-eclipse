@@ -1207,12 +1207,6 @@ export function* handleFetchSwapRoute(
       const { ...data } = routesData
       const transformedData = transformRawSwapRoutesData(networkType, data, tokens)
 
-      yield put(
-        swapActions.setSwapRouteResponse({
-          ...transformedData
-        })
-      )
-
       const totalFee = transformedData.exchanges.reduce((acc, route) => {
         const fee = route.fee ?? 0
         return acc + fee
@@ -1224,6 +1218,12 @@ export function* handleFetchSwapRoute(
           otherAmountThreshold: routesData.otherAmountThreshold,
           amountOutWithFee,
           feePercent: totalFee
+        })
+      )
+
+      yield put(
+        swapActions.setSwapRouteResponse({
+          ...transformedData
         })
       )
 
