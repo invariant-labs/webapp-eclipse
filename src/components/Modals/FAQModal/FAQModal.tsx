@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Grid, Popover, Typography, Box, Fade } from '@mui/material'
 import useStyles from './styles'
-import icons from '@static/icons'
+import { arrowLeftIcon, arrowRightIcon, sliderIcon } from '@static/icons'
 
 export interface IFAQModal {
   open: boolean
@@ -26,7 +26,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
             multiplier, the more concentrated your liquidity becomes within a narrower range.
           </Typography>
           <Grid container justifyContent='center'>
-            <img src={icons.slider} alt='slider' />
+            <img src={sliderIcon} alt='slider' />
           </Grid>
           <Typography className={classes.text}>
             To help you use it effectively, let us explain how it works👉
@@ -157,11 +157,11 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
 
           <Grid className={classes.titleContainer}>
             <button className={classes.arrowBtn} onClick={handlePrevious}>
-              <img src={icons.arrowLeft} alt='arrow back' />
+              <img src={arrowLeftIcon} alt='arrow back' />
             </button>
             <Typography className={classes.title}>{faqArray[currentIndex].title}</Typography>
             <button className={classes.arrowBtn} onClick={handleNext}>
-              <img src={icons.arrowRight} alt='arrow forward' />
+              <img src={arrowRightIcon} alt='arrow forward' />
             </button>
           </Grid>
 

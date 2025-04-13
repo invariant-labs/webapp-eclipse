@@ -1,7 +1,7 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import icons from '@static/icons'
+import { airdropRainbowIcon, backArrowIcon, newTabIcon, reverseTokensIcon } from '@static/icons'
 import classNames from 'classnames'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
@@ -62,11 +62,9 @@ export const PositionHeader = ({
   isPreview
 }: Props) => {
   const { classes } = useStyles()
-
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
   const isMdDown = useMediaQuery(theme.breakpoints.down(1040))
   const isMdUp = useMediaQuery(theme.breakpoints.up(1040))
-
   const [refresherTime, setRefresherTime] = useState(REFRESHER_INTERVAL)
 
   useEffect(() => {
@@ -131,7 +129,7 @@ export const PositionHeader = ({
           href={`https://eclipsescan.xyz/account/${poolAddress.toString()}${networkUrl}`}
           target='_blank'
           rel='noopener noreferrer'>
-          <img className={classes.explorerLink} src={icons.newTab} alt='Explorer link' />
+          <img className={classes.explorerLink} src={newTabIcon} alt='Explorer link' />
         </a>
       </TooltipHover>
     </Box>
@@ -158,7 +156,7 @@ export const PositionHeader = ({
         <Box
           className={classNames(classes.wrapper, classes.backContainer)}
           onClick={() => onGoBackClick()}>
-          <img src={icons.backArrow} alt='Back arrow' />
+          <img src={backArrowIcon} alt='Back arrow' />
           <Typography className={classes.backText}>Back to portfolio</Typography>
         </Box>
         {isMdDown && (
@@ -175,7 +173,7 @@ export const PositionHeader = ({
               <TooltipHover title='Reverse tokens'>
                 <img
                   className={classes.reverseTokensIcon}
-                  src={icons.reverseTokens}
+                  src={reverseTokensIcon}
                   alt='Reverse tokens'
                   onClick={() => onReverseTokensClick()}
                 />
@@ -193,7 +191,7 @@ export const PositionHeader = ({
                 className={classNames(classes.airdropIcon, {
                   [classes.airdropIconInActive]: !isPromoted
                 })}
-                src={icons.airdropRainbow}
+                src={airdropRainbowIcon}
                 alt='Points'
               />
             </TooltipHover>

@@ -1,7 +1,7 @@
 import React from 'react'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { useMediaQuery, Grid, Typography, Box } from '@mui/material'
-import icons from '@static/icons'
+import { airdropRainbowIcon, plusIcon, unknownTokenIcon } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
 import { shortenAddress } from '@utils/uiUtils'
 import classNames from 'classnames'
@@ -127,7 +127,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                     src={tokenAData.icon}
                     alt='Token from'
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
                 </Box>
@@ -137,7 +137,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                     src={tokenBData.icon}
                     alt='Token to'
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
                 </Box>
@@ -154,7 +154,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
                       classes={{ root: classes.clipboardIcon }}
                     />
                   </TooltipHover>
-                  <img src={icons.airdropRainbow} height={20} style={{ marginLeft: '8px' }} />
+                  <img src={airdropRainbowIcon} height={20} style={{ marginLeft: '8px' }} />
                 </Grid>
               )}
             </Grid>
@@ -162,7 +162,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
             <Box className={classes.action}>
               <TooltipHover title='Add position'>
                 <button className={classes.actionButton} onClick={handleOpenPosition}>
-                  <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
+                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
                 </button>
               </TooltipHover>
             </Box>

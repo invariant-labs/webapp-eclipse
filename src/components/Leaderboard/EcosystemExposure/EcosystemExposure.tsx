@@ -10,7 +10,18 @@ import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
-import icons from '@static/icons'
+import {
+  allDomainsIcon,
+  celestialMammothIcon,
+  checkIcon,
+  edasIcon,
+  ensofiIcon,
+  infoIcon,
+  navLeftIcon,
+  navRightIcon,
+  nucleusIcon,
+  turboTapIcon
+} from '@static/icons'
 import cryptara from '@static/png/cryptara.png'
 
 interface EcosystemExposureI {
@@ -187,7 +198,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     {
       id: 'EDAS_official',
       link: 'https://www.edas.ensofi.xyz/',
-      img: icons.edas,
+      img: edasIcon,
       tasks: EDAS_TASKS,
       completedAll: EDAS_TASKS.every(task => task.completed)
     },
@@ -195,7 +206,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     {
       id: 'EnsoFi',
       link: 'https://app.ensofi.xyz/',
-      img: icons.ensofi,
+      img: ensofiIcon,
       tasks: ENSOFI_TASKS,
       completedAll: ENSOFI_TASKS.every(task => task.completed)
     },
@@ -203,7 +214,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     {
       id: 'AllDomains',
       link: 'https://eclipse.alldomains.id/',
-      img: icons.allDomains,
+      img: allDomainsIcon,
       tasks: ALLDOMAINS_TASKS,
       completedAll: ALLDOMAINS_TASKS.every(task => task.completed)
     },
@@ -211,7 +222,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     {
       id: 'Turbo Tap',
       link: 'https://tap.eclipse.xyz/',
-      img: icons.turboTap,
+      img: turboTapIcon,
       tasks: TURBOTAP_TASKS,
       completedAll: TURBOTAP_TASKS.every(task => task.completed)
     },
@@ -219,7 +230,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     {
       id: 'Nucleus',
       link: 'https://app.nucleusearn.io/dashboard',
-      img: icons.nucleus,
+      img: nucleusIcon,
       tasks: NUCLEUS_TASKS,
       completedAll: NUCLEUS_TASKS.every(task => task.completed)
     },
@@ -227,7 +238,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     {
       id: 'CelestialMammoth',
       link: 'https://linktr.ee/celestialmmammoth',
-      img: icons.celestialMammoth,
+      img: celestialMammothIcon,
       tasks: CELESTIAL_TASKS,
       completedAll: CELESTIAL_TASKS.every(task => task.completed)
     },
@@ -257,7 +268,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
         <Grid className={classes.boxWrapper}>
           <Grid className={classes.header}>
             <Typography>
-              Eclipse Ecosystem Exposure <img src={icons.infoIcon} alt='info' />
+              Eclipse Ecosystem Exposure <img src={infoIcon} alt='info' />
             </Typography>
           </Grid>
 
@@ -307,7 +318,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                 </Typography>
               </Grid>
             }>
-            <img src={icons.infoIcon} alt='info' />
+            <img src={infoIcon} alt='info' />
           </TooltipGradient>
         </Grid>
 
@@ -316,8 +327,8 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             className={classes.slider}
             slidesToShow={isSm ? 3 : 4}
             infinite={false}
-            prevArrow={<img src={icons.navLeft} alt='prev' />}
-            nextArrow={<img src={icons.navRight} alt='next' />}>
+            prevArrow={<img src={navLeftIcon} alt='prev' />}
+            nextArrow={<img src={navRightIcon} alt='next' />}>
             {projects.map(tasks => (
               <TooltipGradient
                 key={tasks.id}
@@ -349,7 +360,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                     alt={tasks.id}
                   />
                   {tasks.completedAll && (
-                    <img src={icons.check} alt='check icon' className={classes.checkIcon} />
+                    <img src={checkIcon} alt='check icon' className={classes.checkIcon} />
                   )}
                 </Grid>
               </TooltipGradient>

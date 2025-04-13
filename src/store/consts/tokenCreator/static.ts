@@ -1,4 +1,4 @@
-import icons from '@static/icons'
+import { cat1Icon, cat2Icon, dog1Icon, dog2Icon } from '@static/icons'
 import { ErrorMessage } from './types'
 
 export const MAX_VALUE = BigInt(2) ** BigInt(64) - BigInt(1)
@@ -18,4 +18,4 @@ export const errorMessages: Record<string, ErrorMessage> = {
   }
 }
 
-export const defaultImages: string[] = [icons.dog1, icons.dog2, icons.cat1, icons.cat2]
+export const defaultImages: string[] = [dog1Icon, dog2Icon, cat1Icon, cat2Icon]
