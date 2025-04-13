@@ -44,7 +44,7 @@ import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
-import icons from '@static/icons'
+import { auditIcon, refreshIcon, settingIcon, swapArrowsIcon } from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
@@ -1041,13 +1041,13 @@ export const Swap: React.FC<ISwap> = ({
                     tokenToIndex === null ||
                     tokenFromIndex === tokenToIndex
                   }>
-                  <img src={icons.refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                  <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                 </Button>
               </Grid>
             </TooltipHover>
             <TooltipHover title='Settings'>
               <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
-                <img src={icons.settingIcon} className={classes.settingsIcon} alt='Settings' />
+                <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
               </Button>
             </TooltipHover>
           </Box>
@@ -1182,7 +1182,7 @@ export const Swap: React.FC<ISwap> = ({
                     classes.componentBackground
                 )}>
                 <img
-                  src={icons.swapArrows}
+                  src={swapArrowsIcon}
                   style={{
                     transform: `rotate(${-rotates * 180}deg)`
                   }}
@@ -1467,7 +1467,7 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Grid>
       </Box>
-      <img src={icons.audit} alt='Audit' style={{ marginTop: '24px' }} width={180} />
+      <img src={auditIcon} alt='Audit' style={{ marginTop: '24px' }} width={180} />
     </Grid>
   )
 }

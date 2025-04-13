@@ -4,7 +4,7 @@ import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
 import { Chain, PrefixConfig, Reward, Token, TokenPriceData, WalletType } from './types'
 import { MAINNET_TOKENS } from '@invariant-labs/sdk-eclipse/lib/network'
-import icons from '@static/icons'
+import { cat1Icon, cat2Icon, dog1Icon, dog2Icon } from '@static/icons'
 import { TOKEN_2022_PROGRAM_ID, TOKEN_PROGRAM_ID } from '@solana/spl-token'
 
 import rewardsArray from '@store/consts/rewards/rewardsArray.json'
@@ -137,7 +137,7 @@ export const MOCKED_TOKEN_MAIN: Token = {
   address: new PublicKey('82kkga2kBcQNyV4VKJhGvE7Z58fFavVyuh5NapMVo7Qs'),
   decimals: 9,
   name: 'Mocked Token',
-  logoURI: icons.dog1,
+  logoURI: dog1Icon,
   coingeckoId: ''
 }
 
@@ -150,6 +150,16 @@ export const USDC_MAIN: Token = {
   logoURI:
     'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
   coingeckoId: 'usd-coin'
+}
+
+export const BITZ_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'BITZ',
+  address: new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF'),
+  decimals: 11,
+  name: 'BITZ',
+  logoURI: 'https://powpow.app/assets/icon.png',
+  coingeckoId: ''
 }
 
 export const USDT_MAIN: Token = {
@@ -519,7 +529,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDC_MAIN.address,
     SOL_MAIN.address,
     USDT_MAIN.address,
-    DOGWIFHAT_MAIN.address,
+    BITZ_MAIN.address,
     LAIKA_MAIN.address,
     TIA_MAIN.address
   ],
@@ -642,6 +652,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       USDT: USDT_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
+      BITZ: BITZ_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
       DARKMOON: DARKMOON_MAIN.address.toString(),
@@ -734,7 +745,7 @@ export const walletNames = {
   [WalletType.NIGHTLY]: 'Wallet Selector'
 }
 
-export const defaultImages: string[] = [icons.dog1, icons.dog2, icons.cat1, icons.cat2]
+export const defaultImages: string[] = [dog1Icon, dog2Icon, cat1Icon, cat2Icon]
 
 export const getPopularPools = (network: NetworkType) => {
   switch (network) {

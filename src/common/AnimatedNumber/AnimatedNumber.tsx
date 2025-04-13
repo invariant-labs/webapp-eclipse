@@ -1,6 +1,6 @@
 import { formatNumberWithSuffix } from '@utils/utils'
 import React from 'react'
-import { useSpring, animated } from 'react-spring'
+import { useSpring, animated } from '@react-spring/web'
 interface IProps {
   start: number
   finish: number

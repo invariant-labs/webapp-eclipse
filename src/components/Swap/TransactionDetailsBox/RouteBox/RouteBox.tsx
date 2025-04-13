@@ -8,7 +8,7 @@ import { BN } from '@coral-xyz/anchor'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { SimulationPath } from '@components/Swap/Swap'
-import icons from '@static/icons'
+import { selectTokenIcon } from '@static/icons'
 import loadingAnimation from '@static/gif/loading.gif'
 import classNames from 'classnames'
 
@@ -62,7 +62,7 @@ const RouteBox: React.FC<IProps> = ({
         <>
           <Box className={classNames(classes.loader, { [classes.isLoading]: isLoadingRate })}>
             <Box className={classes.tokenContainer}>
-              <img src={icons.selectToken} className={classes.tokenIcon} />
+              <img src={selectTokenIcon} className={classes.tokenIcon} />
               <Skeleton className={classes.tokenLabelSkeleton} />
             </Box>
             <img
@@ -70,7 +70,7 @@ const RouteBox: React.FC<IProps> = ({
               style={{ height: 25, width: 25, zIndex: 10 }}
               alt='loading'></img>
             <Box className={classes.tokenContainer}>
-              <img src={icons.selectToken} className={classes.tokenIcon} />
+              <img src={selectTokenIcon} className={classes.tokenIcon} />
               <Skeleton className={classes.tokenLabelSkeleton} />
             </Box>
           </Box>

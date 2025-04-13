@@ -3,7 +3,7 @@ import { Dialog, DialogContent, Box, Typography, Button, useMediaQuery } from '@
 import { FixedSizeList } from 'react-window'
 import useStyles from './style'
 import { formatDate, formatNumberWithSpaces } from '@utils/utils'
-import icons from '@static/icons'
+import { closeSmallIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import { shortenDate } from '@utils/uiUtils'
 
@@ -52,7 +52,7 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   return (
     <Dialog open={open} onClose={handleClose} PaperProps={{ className: classes.paper }} fullWidth>
       <img
-        src={icons.closeSmallIcon}
+        src={closeSmallIcon}
         className={classes.lockPositionClose}
         onClick={handleClose}
         aria-label='Close'

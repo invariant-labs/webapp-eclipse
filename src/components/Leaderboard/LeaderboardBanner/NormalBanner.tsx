@@ -1,5 +1,5 @@
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import icons from '@static/icons'
+import { airdropIcon, closeSmallGreenIcon, closeSmallIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 import useStyles from './styles'
@@ -17,7 +17,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
 
   const { classes } = useStyles({ isHiding })
 
-  const airdrop = <Box component='img' src={icons.airdrop} className={classes.airdrop} />
+  const airdrop = <Box component='img' src={airdropIcon} className={classes.airdrop} />
 
   const text = (
     <span>
@@ -59,7 +59,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
     <Box onClick={onClose}>
       <Box
         component='img'
-        src={isSmallDevice ? icons.closeSmallGreenIcon : icons.closeSmallIcon}
+        src={isSmallDevice ? closeSmallGreenIcon : closeSmallIcon}
         sx={{
           cursor: 'pointer',
           width: { xs: '16px', sm: '11px' },
