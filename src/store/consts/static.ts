@@ -156,7 +156,7 @@ export const BITZ_MAIN: Token = {
   tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'BITZ',
   address: new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF'),
-  decimals: 6,
+  decimals: 11,
   name: 'BITZ',
   logoURI: 'https://powpow.app/assets/icon.png',
   coingeckoId: ''
