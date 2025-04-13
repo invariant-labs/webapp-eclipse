@@ -10,7 +10,6 @@ import {
   DEFAULT_TOKEN_DECIMAL,
   NetworkType,
   REFRESHER_INTERVAL,
-  SwapType,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
   WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST,
   WRAPPED_ETH_ADDRESS
@@ -20,8 +19,6 @@ import {
   calculatePoints,
   convertBalanceToBN,
   findPairs,
-  handleSimulate,
-  handleSimulateWithHop,
   initialXtoY,
   printBN,
   ROUTES,
@@ -193,8 +190,6 @@ export const Swap: React.FC<ISwap> = ({
   feeds,
   promotedSwapPairs,
   swapMultiplier,
-  market,
-  swapAccounts,
   swapIsLoading
 }) => {
   const { classes } = useStyles()
@@ -219,6 +214,8 @@ export const Swap: React.FC<ISwap> = ({
   const [inputRef, setInputRef] = React.useState<string>(inputTarget.DEFAULT)
   const [isFirstPairGivingPoints, setIsFirstPairGivingPoints] = React.useState<boolean>(false)
   const [isSecondPairGivingPoints, setIsSecondPairGivingPoints] = React.useState<boolean>(false)
+  const [isSimulating, setIsSimulating] = useState(false)
+
   const [rateReversed, setRateReversed] = React.useState<boolean>(
     tokenFromIndex && tokenToIndex
       ? !initialXtoY(
@@ -233,7 +230,7 @@ export const Swap: React.FC<ISwap> = ({
     initialHideUnknownTokensValue
   )
   const [pointsForSwap, setPointsForSwap] = React.useState<BN>(new BN(0))
-  const [simulateResult, setSimulateResult] = React.useState<{
+  const [simulateResult, _setSimulateResult] = React.useState<{
     amountOut: BN
     poolIndex: number
     AmountOutWithFee: BN
@@ -250,7 +247,7 @@ export const Swap: React.FC<ISwap> = ({
     priceImpact: new BN(0),
     error: []
   })
-  const [simulateWithHopResult, setSimulateWithHopResult] = useState<{
+  const [simulateWithHopResult, _setSimulateWithHopResult] = useState<{
     simulation: SimulationTwoHopResult | null
     route: [Pair, Pair] | null
     error: boolean
@@ -340,19 +337,13 @@ export const Swap: React.FC<ISwap> = ({
     }, 500)
 
     return () => clearTimeout(urlUpdateTimeoutRef.current)
-  }, [
-    tokenFromIndex,
-    tokenToIndex,
-    tokens.length,
-    network,
-    promotedSwapPairs,
-    simulationPath.tokenFrom,
-    simulationPath.tokenBetween,
-    simulationPath.tokenTo
-  ])
+  }, [tokenFromIndex, tokenToIndex, tokens.length, network, promotedSwapPairs])
 
   useEffect(() => {
-    if (simulateResult && (isFirstPairGivingPoints || isSecondPairGivingPoints)) {
+    if (
+      swapRouteChartData.swapSimulateDetails &&
+      (isFirstPairGivingPoints || isSecondPairGivingPoints)
+    ) {
       const pointsPerUSD = new BN(pointsPerUsdFee, 'hex')
 
       const feePercentage = pools[simulateResult.poolIndex ?? 0]?.fee ?? new BN(0)
@@ -403,37 +394,25 @@ export const Swap: React.FC<ISwap> = ({
 
   useEffect(() => {
     if (
-      inputRef === inputTarget.FROM &&
+      inputRef === inputTarget.TO &&
       !isReversingTokens &&
-      !(amountFrom === '' && amountTo === '')
+      !(amountFrom === '' && amountTo === '') &&
+      !isSimulating
     ) {
       simulateWithTimeout()
     }
-  }, [
-    amountFrom,
-    // tokenToIndex,
-    // tokenFromIndex,
-    slippTolerance,
-    Object.keys(poolTicks).length,
-    Object.keys(tickmap).length
-  ])
+  }, [amountTo, slippTolerance, Object.keys(poolTicks).length, Object.keys(tickmap).length])
 
   useEffect(() => {
     if (
-      inputRef === inputTarget.TO &&
+      inputRef === inputTarget.FROM &&
       !isReversingTokens &&
-      !(amountFrom === '' && amountTo === '')
+      !(amountFrom === '' && amountTo === '') &&
+      !isSimulating
     ) {
       simulateWithTimeout()
     }
-  }, [
-    amountTo,
-    // tokenToIndex,
-    // tokenFromIndex,
-    slippTolerance,
-    Object.keys(poolTicks).length,
-    Object.keys(tickmap).length
-  ])
+  }, [amountFrom, slippTolerance, Object.keys(poolTicks).length, Object.keys(tickmap).length])
 
   useEffect(() => {
     if (progress === 'none' && !(amountFrom === '' && amountTo === '')) {
@@ -442,17 +421,20 @@ export const Swap: React.FC<ISwap> = ({
   }, [progress])
 
   const simulateWithTimeout = () => {
+    if (isSimulating) return
+
     setThrottle(true)
+    setIsSimulating(true)
 
     clearTimeout(timeoutRef.current)
     const timeout = setTimeout(() => {
       setSimulateAmount().finally(() => {
         setThrottle(false)
+        setIsSimulating(false)
       })
     }, 500)
     timeoutRef.current = timeout as unknown as number
   }
-
   useEffect(() => {
     if (tokenFromIndex !== null && tokenToIndex !== null) {
       if (inputRef === inputTarget.FROM) {
@@ -533,6 +515,7 @@ export const Swap: React.FC<ISwap> = ({
   const updateSimulation = () => {
     const amountFromAPI = swapRouteChartData.swapRouteResponse?.destinationToken?.rawAmount
     console.log(amountFromAPI, 'amountFromAPI')
+
     if (amountFromAPI) {
       const bestAmountValue = new BN(amountFromAPI)
       setBestAmount(bestAmountValue)
@@ -540,11 +523,11 @@ export const Swap: React.FC<ISwap> = ({
       if (tokenFromIndex !== null && tokenToIndex !== null) {
         if (inputRef === inputTarget.FROM) {
           const amount = printBN(bestAmountValue, tokens[tokenToIndex].decimals)
-          console.log('UPDATE AMOUNT FROM', amount)
+          console.log('UPDATE AMOUNT TO', amount)
           setAmountTo(+amount === 0 ? '' : trimLeadingZeros(amount))
         } else if (inputRef === inputTarget.TO) {
           const amount = printBN(bestAmountValue, tokens[tokenFromIndex].decimals)
-          console.log('UPDATE AMOUNT TO', amount)
+          console.log('UPDATE AMOUNT FROM', amount)
           setAmountFrom(+amount === 0 ? '' : trimLeadingZeros(amount))
         }
       }
@@ -858,7 +841,6 @@ export const Swap: React.FC<ISwap> = ({
         amount: currentAmount.toString(),
         slippage: +slippTolerance
       }
-      handleRefresh()
       onRouteRefresh(
         currentAmount,
         +slippTolerance,
