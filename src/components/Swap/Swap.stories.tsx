@@ -62,6 +62,12 @@ type Story = StoryObj<typeof meta>
 
 export const Primary: Story = {
   args: {
+    onRouteRefresh: fn(),
+    swapRouteChartData: {
+      swapRouteLoading: false,
+      swapRouteError: undefined,
+      swapRouteResponse: undefined
+    },
     swapMultiplier: '01',
     promotedSwapPairs: [],
     commonTokens: [

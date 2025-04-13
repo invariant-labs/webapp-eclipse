@@ -390,6 +390,15 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     paddingInline: 12,
     marginBottom: 16
   },
+  agregatorContainer: {
+    borderRadius: 8,
+    padding: 4,
+
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 16
+  },
   unwrapNowButton: {
     cursor: 'pointer'
   },
@@ -468,6 +477,45 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     left: 0,
     '& img': {
       borderBottomRightRadius: 24
+    }
+  },
+
+  routeButton: {
+    border: 'none',
+    background: colors.invariant.pinkLinearGradientOpacity,
+    color: colors.invariant.newDark,
+    paddingInline: 12,
+    borderRadius: 14,
+    textTransform: 'none',
+    ...typography.body1,
+    height: 34,
+    minWidth: 130,
+
+    [theme.breakpoints.down('sm')]: {
+      minWidth: 100,
+      width: 100
+    },
+
+    '&:hover': {
+      boxShadow: `0 0 15px ${colors.invariant.light}`,
+      backgroundColor: colors.invariant.light,
+      '@media (hover: none)': {
+        background: colors.invariant.pinkLinearGradientOpacity,
+        boxShadow: 'none'
+      }
+    },
+
+    '&.Mui-disabled': {
+      background: colors.invariant.componentBcg,
+      backgroundImage: 'none !important',
+      opacity: 0.5,
+      pointerEvents: 'auto',
+      color: `${colors.invariant.textGrey} !important`,
+      '&:hover': {
+        background: colors.invariant.componentBcg,
+        boxShadow: 'none',
+        cursor: 'not-allowed'
+      }
     }
   },
   gradientBorderForContainer: {

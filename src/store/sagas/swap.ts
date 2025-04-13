@@ -3,7 +3,7 @@ import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as swapActions } from '@store/reducers/swap'
 import { swap } from '@store/selectors/swap'
 import { poolsArraySortedByFees, tickMaps, tokens } from '@store/selectors/pools'
-import { accounts } from '@store/selectors/solanaWallet'
+import { accounts, SwapToken } from '@store/selectors/solanaWallet'
 import { createAccount, getWallet } from './wallet'
 import { IWallet, Pair, routingEssentials } from '@invariant-labs/sdk-eclipse'
 import { getConnection, handleRpcError } from './connection'
@@ -26,7 +26,12 @@ import {
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { createLoaderKey, ensureError } from '@utils/utils'
+import {
+  createLoaderKey,
+  ensureError,
+  getAgregatorSwapRoutesData,
+  transformRawSwapRoutesData
+} from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createNativeAtaInstructions,
@@ -44,6 +49,9 @@ import {
 import { PoolWithAddress } from '@store/reducers/pools'
 import nacl from 'tweetnacl'
 import { computeUnitsInstruction } from '@invariant-labs/sdk-eclipse/src'
+import { BN } from '@coral-xyz/anchor'
+import { AxiosError } from 'axios'
+import { delay } from 'redux-saga/effects'
 
 export function* handleSwapWithETH(): Generator {
   const loaderSwappingTokens = createLoaderKey()
@@ -1160,6 +1168,81 @@ export function* handleSwap(): Generator {
     yield* call(handleRpcError, error.message)
   }
 }
+export function* handleFetchSwapRoute(
+  action: PayloadAction<{
+    amountIn: BN
+    slippage: number
+    tokens: SwapToken[]
+    tokenFrom: PublicKey
+    tokenTo: PublicKey
+  }>
+): Generator {
+  try {
+    const networkType = yield* select(network)
+
+    const { amountIn, slippage, tokens, tokenFrom, tokenTo } = action.payload
+
+    if (
+      tokenFrom.equals(PublicKey.default) ||
+      tokenTo.equals(PublicKey.default) ||
+      amountIn.eq(new BN(0))
+    ) {
+      return
+    }
+
+    yield put(swapActions.setSwapRouteLoading(true))
+
+    yield delay(300)
+
+    const slippageBps = slippage * 100
+
+    const routesData = yield* call(getAgregatorSwapRoutesData, {
+      inputMint: tokenFrom,
+      outputMint: tokenTo,
+      slippageBps,
+      amountIn
+    })
+
+    if (routesData) {
+      const { ...data } = routesData
+      const transformedData = transformRawSwapRoutesData(networkType, data, tokens)
+
+      const totalFee = transformedData.exchanges.reduce((acc, route) => {
+        const fee = route.fee ?? 0
+        return acc + fee
+      }, 0)
+      const amountOutWithFee = routesData.outAmount - totalFee
+      yield put(
+        swapActions.setSwapSimulateDetails({
+          priceImpactPct: +routesData.priceImpactPct,
+          otherAmountThreshold: routesData.otherAmountThreshold,
+          amountOutWithFee,
+          feePercent: totalFee
+        })
+      )
+
+      yield put(
+        swapActions.setSwapRouteResponse({
+          ...transformedData
+        })
+      )
+
+      yield put(swapActions.setSwapRouteError(undefined))
+    } else {
+      yield put(swapActions.setSwapRouteResponse(undefined))
+      yield put(swapActions.setSwapSimulateDetails(undefined))
+      yield put(swapActions.setSwapRouteError('Failed to fetch swap routes'))
+    }
+  } catch (e: unknown) {
+    const error = ensureError(e) as AxiosError<{ message: string }>
+    yield put(swapActions.setSwapRouteResponse(undefined))
+    yield put(
+      swapActions.setSwapRouteError(error.response?.data.message ?? 'Error fetching routes')
+    )
+  } finally {
+    yield put(swapActions.setSwapRouteLoading(false))
+  }
+}
 
 export function* handleGetTwoHopSwapData(
   action: PayloadAction<{ tokenFrom: PublicKey; tokenTo: PublicKey }>
@@ -1230,6 +1313,10 @@ export function* getTwoHopSwapDataHandler(): Generator {
   yield* takeLatest(swapActions.getTwoHopSwapData, handleGetTwoHopSwapData)
 }
 
+export function* fetchSwapRouteHandler(): Generator {
+  yield* takeEvery(swapActions.fetchSwapRoute, handleFetchSwapRoute)
+}
+
 export function* swapSaga(): Generator {
-  yield* all([swapHandler, getTwoHopSwapDataHandler].map(spawn))
+  yield* all([swapHandler, getTwoHopSwapDataHandler, fetchSwapRouteHandler].map(spawn))
 }
