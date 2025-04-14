@@ -4,7 +4,7 @@ import React, { useMemo } from 'react'
 import PoolList from './PoolList/PoolList'
 import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
-import icons from '@static/icons'
+import { infoIcon, unknownTokenIcon } from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme } from '@static/theme'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
@@ -32,8 +32,8 @@ export const RewardedPools: React.FC<IProps> = ({
         return {
           symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
           symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
-          iconFrom: poolData.tokenXDetails?.logoURI ?? icons.unknownToken,
-          iconTo: poolData.tokenYDetails?.logoURI ?? icons.unknownToken,
+          iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
+          iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
           volume: poolData.volume24,
           TVL: poolData.tvl,
           fee: poolData.fee,
@@ -97,7 +97,7 @@ export const RewardedPools: React.FC<IProps> = ({
                   }
                   placement='bottom'
                   top={1}>
-                  <img src={icons.infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
+                  <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
                 </TooltipGradient>
               </Typography>
             </Box>
