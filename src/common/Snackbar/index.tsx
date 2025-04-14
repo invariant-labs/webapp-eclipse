@@ -10,11 +10,13 @@ type ExtraVariants = 'pending' | 'custom'
 
 export type SnackbarVariant = ExtraVariants
 
-export interface SwapSnackbarProps {
-  ikonFrom: string
-  ikonTo: string
-  amountIn: string
-  amountOut: string
+export type IkonType = 'swap' | 'deposit' | 'withdraw'
+export interface TokensDetailsProps {
+  ikonType: IkonType
+  tokenXAmount: string
+  tokenYAmount: string
+  tokenXIcon: string
+  tokenYIcon: string
   earnedPoints?: string
 }
 export interface CustomProps {
@@ -25,7 +27,7 @@ export interface CustomProps {
     label: string
     href: string
   }
-  swap?: SwapSnackbarProps
+  tokensDetails?: TokensDetailsProps
   closePosition?: {}
 }
 

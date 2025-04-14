@@ -18,7 +18,7 @@ import { useDispatch } from 'react-redux'
 import { closeIcon, newTabIcon } from '@static/icons'
 import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
-import SwapSnackbar from './variants/SwapSnackbar'
+import TokensDetailsSnackbar from './variants/TokensDetailsSnackbar'
 
 const variantColors: Record<string, string> = {
   default: '#000000',
@@ -29,7 +29,10 @@ const variantColors: Record<string, string> = {
 }
 
 const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
-  ({ message, txid, variant = 'default', snackbarId, iconVariant, link, network, swap }, ref) => {
+  (
+    { message, txid, variant = 'default', snackbarId, iconVariant, link, network, tokensDetails },
+    ref
+  ) => {
     const { closeSnackbar } = useSnackbar()
     const dispatch = useDispatch()
     const { classes } = useStyles()
@@ -114,8 +117,8 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
 
     const RenderContent = () => {
       if (variant === 'default') {
-        if (swap) {
-          return <SwapSnackbar {...swap} handleDismiss={handleDismiss} />
+        if (tokensDetails) {
+          return <TokensDetailsSnackbar {...tokensDetails} handleDismiss={handleDismiss} />
         }
       }
       return <StandartContent />

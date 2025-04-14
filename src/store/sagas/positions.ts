@@ -287,12 +287,15 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
             const amountX = nativeX ? nativeAmount : splAmount
             const amountY = nativeX ? splAmount : nativeAmount
 
-            const message = `Sucessfully opened position with ${formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals))} ${tokenX.symbol} and ${formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals))} ${tokenY.symbol}`
-
             yield put(
               snackbarsActions.add({
-                message,
-                variant: 'success',
+                tokensDetails: {
+                  ikonType: 'deposit',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI
+                },
                 persist: false
               })
             )
@@ -575,12 +578,15 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
             const amountX = nativeX ? nativeAmount : splAmount
             const amountY = nativeX ? splAmount : nativeAmount
 
-            const message = `Sucessfully opened position with ${formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals))} ${tokenX.symbol} and ${formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals))} ${tokenY.symbol}`
-
             yield put(
               snackbarsActions.add({
-                message,
-                variant: 'success',
+                tokensDetails: {
+                  ikonType: 'deposit',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI
+                },
                 persist: false
               })
             )
@@ -838,12 +844,16 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
             try {
               const tokenX = allTokens[pair.tokenX.toString()]
               const tokenY = allTokens[pair.tokenY.toString()]
-              const message = `Sucessfully opened position with ${formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals))} ${tokenX.symbol} and ${formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals))} ${tokenY.symbol}`
 
               yield put(
                 snackbarsActions.add({
-                  message,
-                  variant: 'success',
+                  tokensDetails: {
+                    ikonType: 'deposit',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                    tokenXIcon: tokenX.logoURI,
+                    tokenYIcon: tokenY.logoURI
+                  },
                   persist: false
                 })
               )
@@ -1298,12 +1308,15 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
             const amountX = nativeX ? nativeAmount : splAmount
             const amountY = nativeX ? splAmount : nativeAmount
 
-            const message = `Sucessfully claimed ${formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals))} ${tokenX.symbol} and ${formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals))} ${tokenY.symbol}`
-
             yield put(
               snackbarsActions.add({
-                message,
-                variant: 'success',
+                tokensDetails: {
+                  ikonType: 'withdraw',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI
+                },
                 persist: false
               })
             )
@@ -1505,12 +1518,16 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
             try {
               const tokenX = allTokens[pair.tokenX.toString()]
               const tokenY = allTokens[pair.tokenY.toString()]
-              const message = `Sucessfully claimed ${formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals))} ${tokenX.symbol} and ${formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals))} ${tokenY.symbol}`
 
               yield put(
                 snackbarsActions.add({
-                  message,
-                  variant: 'success',
+                  tokensDetails: {
+                    ikonType: 'withdraw',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                    tokenXIcon: tokenX.logoURI,
+                    tokenYIcon: tokenY.logoURI
+                  },
                   persist: false
                 })
               )
@@ -1896,12 +1913,15 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
             const amountX = nativeX ? nativeAmount : splAmount
             const amountY = nativeX ? splAmount : nativeAmount
 
-            const message = `Sucessfully closed position with ${formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals))} ${tokenX.symbol} and ${formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals))} ${tokenY.symbol}`
-
             yield put(
               snackbarsActions.add({
-                message,
-                variant: 'success',
+                tokensDetails: {
+                  ikonType: 'withdraw',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI
+                },
                 persist: false
               })
             )
@@ -2087,12 +2107,16 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
             try {
               const tokenX = allTokens[pair.tokenX.toString()]
               const tokenY = allTokens[pair.tokenY.toString()]
-              const message = `Sucessfully closed position with ${formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals))} ${tokenX.symbol} and ${formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals))} ${tokenY.symbol}`
 
               yield put(
                 snackbarsActions.add({
-                  message,
-                  variant: 'success',
+                  tokensDetails: {
+                    ikonType: 'withdraw',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                    tokenXIcon: tokenX.logoURI,
+                    tokenYIcon: tokenY.logoURI
+                  },
                   persist: false
                 })
               )

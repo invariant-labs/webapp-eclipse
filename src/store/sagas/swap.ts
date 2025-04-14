@@ -390,14 +390,16 @@ export function* handleSwapWithETH(): Generator {
           } catch {
             // Sanity check
           }
+          console.log('test')
 
           yield put(
             snackbarsActions.add({
-              swap: {
-                amountIn: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                amountOut: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-                ikonFrom: tokenIn.logoURI,
-                ikonTo: tokenOut.logoURI,
+              tokensDetails: {
+                ikonType: 'swap',
+                tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                tokenXIcon: tokenIn.logoURI,
+                tokenYIcon: tokenOut.logoURI,
                 earnedPoints: points.eqn(0)
                   ? undefined
                   : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -821,11 +823,12 @@ export function* handleTwoHopSwapWithETH(): Generator {
 
           yield put(
             snackbarsActions.add({
-              swap: {
-                amountIn: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                amountOut: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-                ikonFrom: tokenIn.logoURI,
-                ikonTo: tokenOut.logoURI,
+              tokensDetails: {
+                ikonType: 'swap',
+                tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                tokenXIcon: tokenIn.logoURI,
+                tokenYIcon: tokenOut.logoURI,
                 earnedPoints: points.eqn(0)
                   ? undefined
                   : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -1199,11 +1202,12 @@ export function* handleTwoHopSwap(): Generator {
 
               yield put(
                 snackbarsActions.add({
-                  swap: {
-                    amountIn: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                    amountOut: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-                    ikonFrom: tokenIn.logoURI,
-                    ikonTo: tokenOut.logoURI,
+                  tokensDetails: {
+                    ikonType: 'swap',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                    tokenXIcon: tokenIn.logoURI,
+                    tokenYIcon: tokenOut.logoURI,
                     earnedPoints: points.eqn(0)
                       ? undefined
                       : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -1529,11 +1533,12 @@ export function* handleSwap(): Generator {
 
               yield put(
                 snackbarsActions.add({
-                  swap: {
-                    amountIn: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
-                    amountOut: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
-                    ikonFrom: tokenIn.logoURI,
-                    ikonTo: tokenOut.logoURI,
+                  tokensDetails: {
+                    ikonType: 'swap',
+                    tokenXAmount: formatNumberWithoutSuffix(printBN(amountIn, tokenIn.decimals)),
+                    tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
+                    tokenXIcon: tokenIn.logoURI,
+                    tokenYIcon: tokenOut.logoURI,
                     earnedPoints: points.eqn(0)
                       ? undefined
                       : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))

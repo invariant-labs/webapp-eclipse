@@ -27,6 +27,12 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     marginInline: theme.spacing(1),
     minWidth: 'fit-content'
+  },
+  tokenIcon: {
+    width: 16,
+    height: 16,
+    marginBottom: 2,
+    borderRadius: '100%'
   }
 }))
 
