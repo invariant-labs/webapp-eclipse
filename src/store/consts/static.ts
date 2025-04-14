@@ -518,6 +518,11 @@ export const promotedTiers = [
     tokenX: SOL_MAIN.address,
     tokenY: USDC_MAIN.address,
     index: 3
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 6
   }
 ]
 

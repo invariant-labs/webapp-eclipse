@@ -21,7 +21,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
 
   const text = (
     <span>
-      {!isSmallDevice && `Invariant Points are live!`} SOL/USDC is now the next pool distributing
+      {!isSmallDevice && `Invariant Points are live!`} BITZ/ETH is now the next pool distributing
       points! Check it out
       <span
         className={classes.text}
