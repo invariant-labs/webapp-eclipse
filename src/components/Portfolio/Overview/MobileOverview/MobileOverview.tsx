@@ -8,7 +8,7 @@ import SegmentFragmentTooltip from '../SegmentFragmentTooltip/SegmentFragmentToo
 import { useStyles } from './styles'
 import MobileOverviewSkeleton from '../Overview/skeletons/MobileOverviewSkeleton'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import icons from '@static/icons'
+import { warning2Icon } from '@static/icons'
 export interface ChartSegment {
   start: number
   width: number
@@ -101,7 +101,7 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
                         ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })}{' '}
                         {segment.isPriceWarning && (
                           <TooltipHover title='The price might not be shown correctly'>
-                            <img src={icons.warning2} width={14} />
+                            <img src={warning2Icon} width={14} />
                           </TooltipHover>
                         )}
                       </Typography>

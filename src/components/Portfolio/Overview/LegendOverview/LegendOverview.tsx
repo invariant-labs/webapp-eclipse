@@ -8,7 +8,7 @@ import {
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import icons from '@static/icons'
+import { warning2Icon } from '@static/icons'
 import { TokenPositionEntry } from '@store/types/userOverview'
 
 interface LegendOverviewProps {
@@ -66,7 +66,7 @@ export const LegendOverview: React.FC<LegendOverviewProps> = ({
                 </Typography>
                 {token.isPriceWarning && (
                   <TooltipHover title='The price might not be shown correctly'>
-                    <img src={icons.warning2} width={14} />
+                    <img src={warning2Icon} width={14} />
                   </TooltipHover>
                 )}
               </Grid>

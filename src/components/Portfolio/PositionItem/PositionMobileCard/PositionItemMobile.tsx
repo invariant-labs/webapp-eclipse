@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
-import { airdropRainbowIcon, swapListIcon } from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
@@ -341,7 +341,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                         ${formatNumberWithSuffix(tokenValueInUsd.value)}
                       </Typography>
 
-                      <img src={icons.warning2} width={14} />
+                      <img src={warning2Icon} width={14} />
                     </Box>
                   </Grid>
                 </TooltipHover>

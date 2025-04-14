@@ -2,7 +2,7 @@ import { Typography, Box, Skeleton, Grid, useMediaQuery } from '@mui/material'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import icons from '@static/icons'
+import { warning2Icon } from '@static/icons'
 import { theme } from '@static/theme'
 
 interface HeaderSectionProps {
@@ -41,7 +41,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
                   title='The total value of assets might not be shown correctly'
                   left={isMd ? -134 : 'auto'}
                   top={-50}>
-                  <img src={icons.warning2} className={classes.warning} width={18} />
+                  <img src={warning2Icon} className={classes.warning} width={18} />
                 </TooltipHover>
               </Grid>
             )}

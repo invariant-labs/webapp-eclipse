@@ -13,7 +13,7 @@ import {
 } from '@mui/material'
 import { WalletToken } from '@store/types/userOverview'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
-import { unknownTokenIcon, warningIcon } from '@static/icons'
+import { unknownTokenIcon, warning2Icon, warningIcon } from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
@@ -186,7 +186,7 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                           </Typography>
                           {pool.isPriceWarning && (
                             <TooltipHover title='The price might not be shown correctly'>
-                              <img src={icons.warning2} width={14} />
+                              <img src={warning2Icon} width={14} />
                             </TooltipHover>
                           )}
                         </Box>
