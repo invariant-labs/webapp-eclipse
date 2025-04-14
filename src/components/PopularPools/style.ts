@@ -11,18 +11,20 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    padding: showSlider ? '24px 48px' : '24px 4px',
+    padding: showSlider ? '0 48px 24px 48px' : '0 4px 24px 4px',
     flexWrap: 'nowrap',
     borderRadius: 32,
     background: colors.invariant.component,
 
     [theme.breakpoints.down('sm')]: {
-      padding: '24px 38px'
+      padding: '0 10px 24px 10px'
     }
   },
   slider: {
     minWidth: '100%',
     '& .slick-track': {
+      paddingTop: 30,
+
       display: 'flex',
       justifyContent: 'space-between'
     },
@@ -30,6 +32,7 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
       display: 'flex',
       justifyContent: 'center'
     },
+
     '& .slick-arrow': {
       height: '40px',
       [theme.breakpoints.down('sm')]: {
@@ -43,18 +46,26 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
       }
     },
     '& .slick-prev': {
-      left: -40,
+      left: -50,
+      [theme.breakpoints.down('lg')]: {
+        left: -40
+      },
+
       [theme.breakpoints.down('sm')]: {
-        left: -35
+        left: -4,
+        zIndex: 3
       }
     },
     '& .slick-next': {
-      right: -20,
+      right: -30,
+      [theme.breakpoints.down('lg')]: {
+        right: -20
+      },
       [theme.breakpoints.down('sm')]: {
-        right: -21
+        right: 9,
+        zIndex: 3
       }
-    },
-    height: 344
+    }
   },
   dots: {
     position: 'absolute',
