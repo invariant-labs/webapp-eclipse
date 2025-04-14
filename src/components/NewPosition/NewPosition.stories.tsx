@@ -56,7 +56,6 @@ const tokens: SwapToken[] = [
 export const Primary: Story = {
   args: {
     updateLiquidity: fn(),
-    actualPoolPrice: new BN(0),
     onMaxSlippageToleranceSwapChange: fn(),
     initialMaxSlippageToleranceSwap: '',
     onMaxSlippageToleranceCreatePositionChange: fn(),
@@ -143,7 +142,6 @@ export const Primary: Story = {
         midPrice={{ x: 1234, index: 23, sqrtPrice: 123 }}
         currentPriceSqrt={123}
         tickSpacing={1}
-        actualPoolPrice={new BN(0)}
         xDecimal={9}
         yDecimal={12}
         commonTokens={[]}

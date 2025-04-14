@@ -94,7 +94,7 @@ export const Primary: Story = {
     initialMinUtilization: '',
     onMinUtilizationChange: fn(),
     simulationParams: {
-      actualPoolPrice: new BN(0),
+      price: new BN(0),
       lowerTickIndex: 0,
       upperTickIndex: 0
     },
