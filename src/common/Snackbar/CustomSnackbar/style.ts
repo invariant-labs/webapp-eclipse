@@ -60,16 +60,16 @@ export const StyledSnackbarContent = styled(SnackbarContent)(({ theme }) => ({
   }
 }))
 
-export const StyledBackground = styled('div')({
+export const StyledBackground = styled('div')<{ borderColor: string }>(({ borderColor }) => ({
   position: 'absolute',
   width: '100%',
   height: '100%',
   left: 0,
   top: 2,
   transition: 'opacity 0.3s ease-in',
-  background: `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.pink})`,
+  background: borderColor,
   borderRadius: 17
-})
+}))
 
 export const StyledHideContainer = styled('div')({
   visibility: 'hidden',

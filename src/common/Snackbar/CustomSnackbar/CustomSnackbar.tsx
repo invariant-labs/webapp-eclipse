@@ -19,6 +19,7 @@ import { closeIcon, newTabIcon } from '@static/icons'
 import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
 import TokensDetailsSnackbar from './variants/TokensDetailsSnackbar'
+import { BorderAll } from '@mui/icons-material'
 
 const variantColors: Record<string, string> = {
   default: '#000000',
@@ -59,6 +60,17 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
           return '?cluster=testnet'
       }
     }, [network])
+
+    const borderColor = useMemo(() => {
+      switch (variant) {
+        case 'error':
+          return colors.invariant.Error
+        case 'warning':
+          return colors.invariant.warning
+        default:
+          return `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.pink})`
+      }
+    }, [variant])
 
     const StandartContent = () => {
       return (
@@ -126,7 +138,7 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
 
     return (
       <StyledSnackbarContent ref={ref} role='alert'>
-        <StyledBackground />
+        <StyledBackground borderColor={borderColor} />
         <StyledHideContainer>
           <RenderContent />
         </StyledHideContainer>
