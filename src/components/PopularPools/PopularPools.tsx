@@ -39,11 +39,12 @@ const PopularPools: React.FC<IPopularPools> = ({ pools, isLoading, network, show
           dots={isLgDown}
           draggable={isLgDown}
           touchMove={isLgDown}
-          infinite={false}
           speed={500}
           slidesToShow={slidesNumber}
           slidesToScroll={1}
           arrows={true}
+          autoplay={true}
+          autoplaySpeed={10000}
           className={classes.slider}
           dotsClass={`slick-dots ${classes.dots}`}
           appendDots={dots => <ul>{dots}</ul>}
