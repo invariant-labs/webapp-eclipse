@@ -88,7 +88,6 @@ export interface IDepositSelector {
     byAmountIn: boolean,
     estimatedPriceAfterSwap: BN,
     crossedTicks: number[],
-    liquidity: BN,
     swapSlippage: BN,
     positionSlippage: BN,
     minUtilizationPercentage: BN
@@ -139,7 +138,7 @@ export interface IDepositSelector {
   simulationParams: {
     lowerTickIndex: number
     upperTickIndex: number
-    actualPoolPrice: BN | null
+    price: BN
   }
   initialMaxPriceImpact: string
   onMaxPriceImpactChange: (val: string) => void
@@ -779,12 +778,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       setIsSimulating(false)
       return
     }
-    if (
-      !autoSwapPoolData ||
-      !autoSwapTicks ||
-      !autoSwapTickmap ||
-      !simulationParams.actualPoolPrice
-    ) {
+    if (!autoSwapPoolData || !autoSwapTicks || !autoSwapTickmap || !simulationParams.price) {
       setAutoswapCustomError(AutoswapCustomError.FetchError)
       setSimulation(null)
       setIsSimulating(false)
@@ -829,14 +823,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
         simulationParams.lowerTickIndex,
         simulationParams.upperTickIndex,
-        simulationParams.actualPoolPrice,
+        simulationParams.price,
         toDecimal(+Number(utilization).toFixed(4), 2)
       )
     }
     if (result) {
       updateLiquidity(result.position.liquidity)
     }
-
     setSimulation(result)
     setIsSimulating(false)
   }
@@ -1203,7 +1196,6 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
                       simulation.swapInput.byAmountIn,
                       simulation.swapSimulation.priceAfterSwap,
                       simulation.swapSimulation.crossedTicks,
-                      simulation.position.liquidity,
                       toDecimal(+Number(slippageToleranceSwap).toFixed(4), 2),
                       toDecimal(+Number(slippageToleranceCreatePosition).toFixed(4), 2),
                       userMinUtilization

@@ -930,7 +930,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         byAmountIn,
         estimatedPriceAfterSwap,
         crossedTicks,
-        liquidity,
         swapSlippage,
         positionSlippage,
         minUtilizationPercentage,
@@ -957,6 +956,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
         const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
         const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
+
         dispatch(
           positionsActions.swapAndInitPosition({
             xAmount,
@@ -1085,7 +1085,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
       isLoadingStats={isLoadingStats}
-      actualPoolPrice={poolIndex !== null ? allPools[poolIndex].sqrtPrice : null}
       autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
       autoSwapTickmap={autoSwapTickMap}
       autoSwapTicks={autoSwapTicks}

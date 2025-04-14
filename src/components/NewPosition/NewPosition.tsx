@@ -83,7 +83,6 @@ export interface INewPosition {
     byAmountIn: boolean,
     estimatedPriceAfterSwap: BN,
     crossedTicks: number[],
-    liquidity: BN,
     swapSlippage: BN,
     positionSlippage: BN,
     minUtilizationPercentage: BN,
@@ -140,7 +139,6 @@ export interface INewPosition {
   network: NetworkType
   isLoadingTokens: boolean
   ethBalance: BN
-  actualPoolPrice: BN | null
   walletStatus: Status
   onConnectWallet: () => void
   onDisconnectWallet: () => void
@@ -241,8 +239,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   onMaxSlippageToleranceSwapChange,
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
-  initialMaxSlippageToleranceCreatePosition,
-  actualPoolPrice
+  initialMaxSlippageToleranceCreatePosition
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -567,16 +564,10 @@ export const NewPosition: React.FC<INewPosition> = ({
   }, [poolIndex, positionOpeningMethod, midPrice.index])
 
   useEffect(() => {
-    if (!isLoadingTicksOrTickmap && positionOpeningMethod === 'range') {
-      onChangeRange(leftRange, rightRange)
-    }
-  }, [midPrice.index, leftRange, rightRange])
-
-  useEffect(() => {
     if (positionOpeningMethod === 'range') {
       onChangeRange(leftRange, rightRange)
     }
-  }, [currentPriceSqrt])
+  }, [midPrice.index, leftRange, rightRange, currentPriceSqrt])
 
   const handleClickSettings = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -724,11 +715,11 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const simulationParams = useMemo(() => {
     return {
-      actualPoolPrice,
+      price: midPrice.sqrtPrice,
       lowerTickIndex: Math.min(leftRange, rightRange),
       upperTickIndex: Math.max(leftRange, rightRange)
     }
-  }, [leftRange, rightRange])
+  }, [leftRange, rightRange, midPrice])
 
   useEffect(() => {
     if (tokenAIndex === null || tokenBIndex === null) return
@@ -807,6 +798,7 @@ export const NewPosition: React.FC<INewPosition> = ({
       convertBalanceToBN(tokenBDeposit, tokens[tokenBIndex].decimals).lt(
         tokens[tokenBIndex].balance
       )
+
     if (isBalanceEnoughForFirstCase && isBalanceEnoughForSecondCase) {
       if (liquidityBasedOnTokenA.gt(liquidityBasedOnTokenB)) {
         setTokenBDeposit(
@@ -1060,7 +1052,6 @@ export const NewPosition: React.FC<INewPosition> = ({
             byAmountIn,
             estimatedPriceAfterSwap,
             crossedTicks,
-            liquidity,
             swapSlippage,
             positionSlippage,
             minUtilizationPercentage
@@ -1073,7 +1064,6 @@ export const NewPosition: React.FC<INewPosition> = ({
               byAmountIn,
               estimatedPriceAfterSwap,
               crossedTicks,
-              liquidity,
               swapSlippage,
               positionSlippage,
               minUtilizationPercentage,
