@@ -1,6 +1,6 @@
 import { Box } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import icons from '@static/icons'
+import { lockIcon2, unlockIcon } from '@static/icons'
 
 import { Button } from '@common/Button/Button'
 
@@ -16,7 +16,7 @@ export const LockButton = ({ isLocked, onLockClick, isPreview }: Props) => {
       <TooltipHover title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
         <Box>
           <Button width={45} scheme='pink' disabled onClick={() => {}}>
-            <img src={icons.lock} alt='Lock' />
+            <img src={lockIcon2} alt='Lock' />
           </Button>
         </Box>
       </TooltipHover>
@@ -26,7 +26,7 @@ export const LockButton = ({ isLocked, onLockClick, isPreview }: Props) => {
     return (
       <TooltipHover title='Lock liquidity'>
         <Button scheme='pink' disabled={isLocked} variant='contained' onClick={onLockClick}>
-          <img src={icons.lock} alt='Lock' />
+          <img src={lockIcon2} alt='Lock' />
         </Button>
       </TooltipHover>
     )
@@ -34,7 +34,7 @@ export const LockButton = ({ isLocked, onLockClick, isPreview }: Props) => {
     return (
       <TooltipHover title='Unlocking liquidity is forbidden'>
         <Button scheme='normal' disabled variant='contained' onClick={() => {}} width={46}>
-          <img src={icons.unlock} alt='Unlock' />
+          <img src={unlockIcon} alt='Unlock' />
         </Button>
       </TooltipHover>
     )

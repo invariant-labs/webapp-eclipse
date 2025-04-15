@@ -1,7 +1,7 @@
 import { Grid, Typography } from '@mui/material'
 import useStyles from './styles'
 import GradientBorder from '@common/GradientBorder/GradientBorder'
-import icons from '@static/icons'
+import { airdropRainbowIcon, checkIcon, newTabIcon } from '@static/icons'
 interface task {
   footerDescription: string
   description: React.ReactNode | string
@@ -43,7 +43,7 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
                     target='_blank'
                     rel='noopener noreferrer'>
                     {id}
-                    <img src={icons.newTab} className={classes.newTabIcon} />
+                    <img src={newTabIcon} className={classes.newTabIcon} />
                   </Typography>
                 )}
                 <Grid className={classes.progressWrapper}>
@@ -52,7 +52,7 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
                       filter: !task.completed ? 'grayscale(100%)' : 'none',
                       opacity: !task.completed ? 0.2 : 1
                     }}
-                    src={icons.check}
+                    src={checkIcon}
                     alt='check icon'
                   />
                   <Typography>
@@ -65,7 +65,7 @@ export const ExposureTooltipTitle: React.FC<ExposureTooltipTitleProps> = ({
             <Grid width='fit-content'>
               <GradientBorder borderWidth={1} borderRadius={8}>
                 <Grid className={classes.footer}>
-                  <img src={icons.airdropRainbow} alt='airdrop icon' />
+                  <img src={airdropRainbowIcon} alt='airdrop icon' />
                   <Typography>{task.footerDescription}</Typography>
                 </Grid>
               </GradientBorder>

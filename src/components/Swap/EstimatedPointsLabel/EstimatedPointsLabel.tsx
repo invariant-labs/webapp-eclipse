@@ -1,6 +1,6 @@
 import { BN } from '@coral-xyz/anchor'
 import { Box } from '@mui/material'
-import icons from '@static/icons'
+import { airdropRainbowIcon, boostPointsIcon, infoCircleIcon } from '@static/icons'
 import { formatNumberWithSuffix, removeAdditionalDecimals } from '@utils/utils'
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
@@ -51,7 +51,7 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
   return (
     <Box className={classes.pointsBox}>
       <div className={classes.contentWrapper} ref={contentRef}>
-        <img src={icons.airdropRainbow} alt='' />
+        <img src={airdropRainbowIcon} alt='' />
         Points:{' '}
         <span className={classes.pointsAmount}>
           <p className={classes.pointsValue}>
@@ -65,25 +65,25 @@ export const EstimatedPointsLabel: React.FC<IEstimatedPointsLabel> = ({
                 : formatNumberWithSuffix(displayedValue)}
           </p>
 
-          <img src={icons.infoCircle} alt='' className={classes.infoCircle} />
+          <img src={infoCircleIcon} alt='' className={classes.infoCircle} />
         </span>
         <span className={classes.boostWrapper}>
           {new BN(swapMultiplier, 'hex').gte(new BN(1)) &&
             `${new BN(swapMultiplier, 'hex').toNumber()}x`}
-          <img src={icons.boostPoints} alt='' className={classes.boostPoints} />
+          <img src={boostPointsIcon} alt='' className={classes.boostPoints} />
         </span>
       </div>
 
       <div className={classes.alternativeContent} ref={alternativeRef}>
         <img
-          src={icons.airdropRainbow}
+          src={airdropRainbowIcon}
           alt=''
           className={classes.grayscaleIcon}
           style={{ marginLeft: '2px', marginRight: '4px' }}
         />
         How to earn points?
         <img
-          src={icons.infoCircle}
+          src={infoCircleIcon}
           alt=''
           width='14px'
           style={{ marginTop: '-2px', marginLeft: '4px' }}

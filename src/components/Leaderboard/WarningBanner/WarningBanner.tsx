@@ -1,4 +1,4 @@
-import icons from '@static/icons'
+import { closeWarningIcon, warning2Icon } from '@static/icons'
 import useStyles from './styles'
 import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors } from '@static/theme'
@@ -61,7 +61,7 @@ export const WarningBanner = ({ onClose, isHiding, lastTimestamp }: INormalBanne
             borderWidth={2}
             opacity={1}>
             <span className={classes.text}>
-              <img src={icons.warning2} className={classes.icon} />
+              <img src={warning2Icon} className={classes.icon} />
               <span>
                 <span>
                   Last update of Invariants Points - <b>{dateDisplay(lastTimestamp)}</b>
@@ -78,7 +78,7 @@ export const WarningBanner = ({ onClose, isHiding, lastTimestamp }: INormalBanne
               className={classes.close}
               onClick={onClose}
               width={11}
-              src={icons.closeWarning}
+              src={closeWarningIcon}
               alt='Close'
             />
           </GradientBorder>

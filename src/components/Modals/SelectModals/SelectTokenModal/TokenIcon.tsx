@@ -1,4 +1,4 @@
-import icons from '@static/icons'
+import { unknownTokenIcon } from '@static/icons'
 import useStyles from './style'
 import { memo } from 'react'
 
@@ -18,7 +18,7 @@ export const TokenIcon = memo(({ icon, name }: Props) => {
       alt={name + 'logo'}
       onError={e => {
         e.currentTarget.onerror = null
-        e.currentTarget.src = icons.unknownToken
+        e.currentTarget.src = unknownTokenIcon
       }}
     />
   )
