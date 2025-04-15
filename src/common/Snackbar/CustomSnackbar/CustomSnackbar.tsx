@@ -19,7 +19,6 @@ import { closeIcon, newTabIcon } from '@static/icons'
 import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
 import TokensDetailsSnackbar from './variants/TokensDetailsSnackbar'
-import { BorderAll } from '@mui/icons-material'
 
 const variantColors: Record<string, string> = {
   default: '#000000',
