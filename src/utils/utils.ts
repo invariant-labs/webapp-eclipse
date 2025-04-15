@@ -98,7 +98,8 @@ import {
   EZSOL_MAIN,
   LEADERBOARD_DECIMAL,
   POSITIONS_PER_PAGE,
-  MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS
+  MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
+  BITZ_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -914,6 +915,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [USDC_MAIN.address.toString()]: USDC_MAIN,
         [USDT_MAIN.address.toString()]: USDT_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
+        [BITZ_MAIN.address.toString()]: BITZ_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,
@@ -1357,19 +1359,13 @@ export const handleSimulateWithHop = async (
     return { simulation: null, route: null, error: true }
   }
 
-  const crossLimit =
-    tokenIn.toString() === WRAPPED_ETH_ADDRESS || tokenOut.toString() === WRAPPED_ETH_ADDRESS
-      ? MAX_CROSSES_IN_SINGLE_TX
-      : TICK_CROSSES_PER_IX
-
   const simulations = await market.routeTwoHop(
     tokenIn,
     tokenOut,
     amount,
     byAmountIn,
     routeCandidates,
-    accounts,
-    crossLimit
+    accounts
   )
 
   if (simulations.length === 0) {
@@ -1433,6 +1429,7 @@ export const handleSimulateWithHop = async (
     simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
     simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
   ) {
+    console.log(simulations[best][1], routeCandidates[simulations[best][0]])
     return {
       simulation: simulations[best][1],
       route: routeCandidates[simulations[best][0]],

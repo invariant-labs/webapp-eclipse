@@ -158,6 +158,16 @@ export const USDC_MAIN: Token = {
   coingeckoId: 'usd-coin'
 }
 
+export const BITZ_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'BITZ',
+  address: new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF'),
+  decimals: 11,
+  name: 'BITZ',
+  logoURI: 'https://powpow.app/assets/icon.png',
+  coingeckoId: ''
+}
+
 export const USDT_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'USDT',
@@ -586,6 +596,11 @@ export const promotedTiers = [
     tokenX: SOL_MAIN.address,
     tokenY: USDC_MAIN.address,
     index: 3
+  },
+  {
+    tokenX: BITZ_MAIN.address,
+    tokenY: WETH_MAIN.address,
+    index: 6
   }
 ]
 
@@ -597,7 +612,7 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDC_MAIN.address,
     SOL_MAIN.address,
     USDT_MAIN.address,
-    DOGWIFHAT_MAIN.address,
+    BITZ_MAIN.address,
     LAIKA_MAIN.address,
     TIA_MAIN.address
   ],
@@ -725,6 +740,7 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       USDT: USDT_MAIN.address.toString(),
       WIF: DOGWIFHAT_MAIN.address.toString(),
       LAIKA: LAIKA_MAIN.address.toString(),
+      BITZ: BITZ_MAIN.address.toString(),
       MOON: MOON_MAIN.address.toString(),
       GSVM: GSVM_MAIN.address.toString(),
       DARKMOON: DARKMOON_MAIN.address.toString(),
@@ -841,6 +857,11 @@ export const getPopularPools = (network: NetworkType) => {
           tokenX: 'BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.09'
+        },
+        {
+          tokenX: '64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF',
+          tokenY: 'So11111111111111111111111111111111111111112',
+          fee: '1'
         },
         {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
