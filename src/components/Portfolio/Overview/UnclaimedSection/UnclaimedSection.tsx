@@ -1,5 +1,5 @@
 import { Box, Typography, Skeleton, useMediaQuery } from '@mui/material'
-// import { formatNumberWithoutSuffix } from '@utils/utils'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 import { theme } from '@static/theme'
 import loadingAnimation from '@static/gif/loading.gif'
 import { useStyles } from './styles'
@@ -52,7 +52,9 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
         {loading ? (
           <Skeleton variant='text' width={100} height={30} className={classes.unclaimedAmount} />
         ) : (
-          <Typography className={classes.unclaimedAmount}>{unclaimedTotal}</Typography>
+          <Typography className={classes.unclaimedAmount}>
+            ${formatNumberWithoutSuffix(unclaimedTotal, { twoDecimals: true })}
+          </Typography>
         )}
       </Box>
       {isLg && (

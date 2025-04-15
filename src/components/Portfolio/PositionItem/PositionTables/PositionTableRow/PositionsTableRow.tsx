@@ -264,7 +264,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     return (
       <Grid container item className={`${classes.value} ${classes.itemCellContainer}`}>
         <Grid className={classes.infoCenter} container item>
-          <Typography className={classes.greenText}>${unclaimedFeesInUSD.value}</Typography>
+          <Typography className={classes.greenText}>
+            ${formatNumberWithoutSuffix(unclaimedFeesInUSD.value, { twoDecimals: true })}
+          </Typography>
         </Grid>
       </Grid>
     )
