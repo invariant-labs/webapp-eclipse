@@ -1311,7 +1311,7 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
             yield put(
               snackbarsActions.add({
                 tokensDetails: {
-                  ikonType: 'withdraw',
+                  ikonType: 'claim',
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
@@ -1522,7 +1522,7 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
               yield put(
                 snackbarsActions.add({
                   tokensDetails: {
-                    ikonType: 'withdraw',
+                    ikonType: 'claim',
                     tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                     tokenXIcon: tokenX.logoURI,
@@ -1661,41 +1661,57 @@ export function* handleClaimAllFees() {
       if (txDetails) {
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
-          try {
-            console.log(meta.innerInstructions)
-            const nativeTransfer = meta.innerInstructions[0].instructions.find(
-              ix => (ix as ParsedInstruction).parsed.info.amount
-            ) as ParsedInstruction
+          for (const metaInstructions of meta.innerInstructions) {
+            try {
+              const nativeTransfer = metaInstructions.instructions.find(
+                ix => (ix as ParsedInstruction).parsed.info.amount
+              ) as ParsedInstruction
 
-            const nativeAmount = nativeTransfer ? nativeTransfer.parsed.info.amount : 0
+              const nativeAmount = nativeTransfer ? nativeTransfer.parsed.info.amount : 0
 
-            const splTransfers = meta.innerInstructions[0].instructions.filter(
-              ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
-            ) as ParsedInstruction[]
+              const splTransfers = metaInstructions.instructions.filter(
+                ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+              ) as ParsedInstruction[]
 
-            console.log(splTransfers)
+              let tokenXAmount = '0'
+              let tokenYAmount = '0'
+              let tokenXIcon = ''
+              let tokenYIcon = ''
 
-            let message = `Sucessfully claimed`
+              if (nativeTransfer) {
+                tokenXAmount = formatNumberWithoutSuffix(
+                  printBN(nativeAmount, allTokens[NATIVE_MINT.toString()].decimals)
+                )
+                tokenXIcon = allTokens[NATIVE_MINT.toString()].logoURI
+              }
 
-            if (nativeTransfer) {
-              message += ` ${formatNumberWithoutSuffix(printBN(nativeAmount, allTokens[NATIVE_MINT.toString()].decimals))} ${allTokens[NATIVE_MINT.toString()].symbol}`
-            }
-
-            splTransfers.map(transfer => {
-              const token = allTokens[transfer.parsed.info.mint]
-              const amount = transfer.parsed.info.tokenAmount.amount
-              message += ` ${formatNumberWithoutSuffix(printBN(amount, token.decimals))} ${token.symbol}`
-            })
-
-            yield put(
-              snackbarsActions.add({
-                message,
-                variant: 'success',
-                persist: false
+              splTransfers.map((transfer, index) => {
+                const token = allTokens[transfer.parsed.info.mint]
+                const amount = transfer.parsed.info.tokenAmount.amount
+                if (index === 0) {
+                  tokenYAmount = formatNumberWithoutSuffix(printBN(amount, token.decimals))
+                  tokenYIcon = token.logoURI
+                } else if (index === 1 && !nativeTransfer) {
+                  tokenXAmount = formatNumberWithoutSuffix(printBN(amount, token.decimals))
+                  tokenXIcon = token.logoURI
+                }
               })
-            )
-          } catch {
-            // Should never be triggered
+
+              yield put(
+                snackbarsActions.add({
+                  tokensDetails: {
+                    ikonType: 'claim',
+                    tokenXAmount: tokenXAmount,
+                    tokenYAmount: tokenYAmount,
+                    tokenXIcon: tokenXIcon,
+                    tokenYIcon: tokenYIcon
+                  },
+                  persist: false
+                })
+              )
+            } catch {
+              // Should never be triggered
+            }
           }
         }
       }

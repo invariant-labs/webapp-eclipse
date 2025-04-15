@@ -10,7 +10,7 @@ type ExtraVariants = 'pending' | 'custom'
 
 export type SnackbarVariant = ExtraVariants
 
-export type IkonType = 'swap' | 'deposit' | 'withdraw'
+export type IkonType = 'swap' | 'deposit' | 'withdraw' | 'claim'
 export interface TokensDetailsProps {
   ikonType: IkonType
   tokenXAmount: string

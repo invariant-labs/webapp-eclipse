@@ -21,7 +21,7 @@ export const useStyles = makeStyles()(() => ({
     flexDirection: 'row',
     flexWrap: 'nowrap',
     width: '100%',
-    minHeight: 40
+    minHeight: 30
   },
   transactionWrapper: {
     display: 'flex',

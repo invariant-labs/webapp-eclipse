@@ -3,6 +3,7 @@ import { StyledCloseButton, StyledText, useStyles } from '../style'
 import { TokensDetailsProps } from '@common/Snackbar'
 import {
   airdropRainbowIcon,
+  circleDolarIcon,
   closeIcon,
   depositIcon,
   snackbarSwapIcon,
@@ -34,6 +35,8 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
         return depositIcon
       case 'withdraw':
         return withdrawIcon
+      case 'claim':
+        return circleDolarIcon
       default:
         return ''
     }
@@ -44,9 +47,11 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
       case 'swap':
         return 'Swapped'
       case 'deposit':
-        return 'Deposit'
+        return 'Deposited'
       case 'withdraw':
-        return 'Withdraw'
+        return 'Withdrawn'
+      case 'claim':
+        return 'Claimed'
       default:
         return ''
     }
@@ -61,10 +66,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
               position='relative'
               display='flex'
               alignItems='center'
-              width={ikonType === 'swap' ? 18 : 22}>
+              width={ikonType === 'swap' || 'claim' ? 18 : 22}>
               <img
                 src={icon}
-                height={ikonType === 'swap' ? 15 : 18}
+                height={ikonType === 'swap' || 'claim' ? 15 : 18}
                 style={{ marginBottom: '2px' }}
               />
             </Grid>
