@@ -47,11 +47,12 @@ import {
   getMaxTick,
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { backIcon, newTabIcon, settingIcon } from '@static/icons'
+import { backIcon, newTabIcon, refreshIcon, settingIcon } from '@static/icons'
 import FAQModal from '@components/Modals/FAQModal/FAQModal'
 import EstimatedPoints from './EstimatedPoints/EstimatedPoints'
 import { theme } from '@static/theme'
 import PointsLabel from './EstimatedPoints/PointsLabel'
+import { Button as MuiButton } from '@mui/material'
 
 export interface INewPosition {
   initialTokenFrom: string
@@ -670,18 +671,30 @@ export const NewPosition: React.FC<INewPosition> = ({
               </div>
             </Fade>
           )}
-          {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
+          {tokenAIndex !== tokenBIndex && !isMd && (
             <TooltipHover title='Refresh'>
-              <Box mr={2}>
-                <Refresher
-                  currentIndex={refresherTime}
-                  maxIndex={REFRESHER_INTERVAL}
-                  onClick={() => {
-                    onRefresh()
-                    setRefresherTime(REFRESHER_INTERVAL)
-                  }}
-                />
-              </Box>
+              {isCurrentPoolExisting ? (
+                <Box
+                  mr={1}
+                  display='flex'
+                  alignItems='center'
+                  justifyContent='center'
+                  width={26}
+                  height={21}>
+                  <Refresher
+                    currentIndex={refresherTime}
+                    maxIndex={REFRESHER_INTERVAL}
+                    onClick={() => {
+                      onRefresh()
+                      setRefresherTime(REFRESHER_INTERVAL)
+                    }}
+                  />
+                </Box>
+              ) : (
+                <MuiButton onClick={onRefresh} className={classes.refreshIconBtn}>
+                  <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                </MuiButton>
+              )}
             </TooltipHover>
           )}
         </Box>
@@ -743,18 +756,24 @@ export const NewPosition: React.FC<INewPosition> = ({
                   />
                 )}
               </Hidden>
-              {poolIndex !== null && tokenAIndex !== tokenBIndex && isMd && (
+              {tokenAIndex !== tokenBIndex && isMd && (
                 <TooltipHover title='Refresh'>
-                  <Box>
-                    <Refresher
-                      currentIndex={refresherTime}
-                      maxIndex={REFRESHER_INTERVAL}
-                      onClick={() => {
-                        onRefresh()
-                        setRefresherTime(REFRESHER_INTERVAL)
-                      }}
-                    />
-                  </Box>
+                  {isCurrentPoolExisting ? (
+                    <Box>
+                      <Refresher
+                        currentIndex={refresherTime}
+                        maxIndex={REFRESHER_INTERVAL}
+                        onClick={() => {
+                          onRefresh()
+                          setRefresherTime(REFRESHER_INTERVAL)
+                        }}
+                      />
+                    </Box>
+                  ) : (
+                    <MuiButton onClick={onRefresh} className={classes.refreshIconBtn}>
+                      <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                    </MuiButton>
+                  )}
                 </TooltipHover>
               )}
               {poolIndex !== null && (
