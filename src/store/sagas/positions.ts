@@ -36,7 +36,7 @@ import {
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { getLockerProgram, getMarketProgram } from '@utils/web3/programs/amm'
+import { getLockerProgram, getLockerProgramLocal, getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createLiquidityPlot,
   createLoaderKey,
@@ -54,7 +54,11 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import { ClaimAllFee, parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
+import {
+  // ClaimAllFee,
+  parseTick,
+  Position
+} from '@invariant-labs/sdk-eclipse/lib/market'
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
 
@@ -1367,10 +1371,11 @@ export function* handleClaimAllFees() {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    const lockedPosition = yield* select(lockedPositionsWithPoolsData)
-    const positions = yield* select(positionsWithPoolsData)
-    const positionsData = [...positions, ...lockedPosition]
-    const allPositionsData = positionsData.filter(position => {
+    const lockerProgram = yield* call(getLockerProgramLocal, networkType, rpc, wallet as IWallet)
+    const positionsLocked = yield* select(lockedPositionsWithPoolsData)
+    // const positions = yield* select(positionsWithPoolsData)
+    // const positionsData = [...positions, ...lockedPosition]
+    const LockedPosition = positionsLocked.filter(position => {
       const [bnX, bnY] = calculateClaimAmount({
         position: position,
         tickLower: position.lowerTick,
@@ -1381,17 +1386,16 @@ export function* handleClaimAllFees() {
       })
       return !bnX.isZero() || !bnY.isZero()
     })
-    console.log(allPositionsData)
-
+    console.log(LockedPosition)
     const tokensAccounts = yield* select(accounts)
 
-    if (allPositionsData.length === 0) {
-      return
-    }
-    if (allPositionsData.length === 1) {
-      const claimFeeAction = actions.claimFee({ index: 0, isLocked: false })
-      return yield* call(handleClaimFee, claimFeeAction)
-    }
+    // if (allPositionsData.length === 0) {
+    //   return
+    // }
+    // if (allPositionsData.length === 1) {
+    //   const claimFeeAction = actions.claimFee({ index: 0, isLocked: false })
+    //   return yield* call(handleClaimFee, claimFeeAction)
+    // }
 
     yield* put(actions.setAllClaimLoader(true))
     yield put(
@@ -1403,9 +1407,8 @@ export function* handleClaimAllFees() {
       })
     )
 
-    for (const position of allPositionsData) {
-      const pool = allPositionsData[position.positionIndex].poolData
-
+    for (const position of LockedPosition) {
+      const pool = positionsLocked[position.positionIndex].poolData
       if (!tokensAccounts[pool.tokenX.toString()]) {
         yield* call(createAccount, pool.tokenX)
       }
@@ -1413,104 +1416,102 @@ export function* handleClaimAllFees() {
         yield* call(createAccount, pool.tokenY)
       }
     }
-
-    const formattedPositions = allPositionsData.map(position => ({
+    const formattedPositions = LockedPosition.map(position => ({
       pair: new Pair(position.poolData.tokenX, position.poolData.tokenY, {
         fee: position.poolData.fee,
         tickSpacing: position.poolData.tickSpacing
       }),
       index: position.positionIndex,
-      lowerTickIndex: position.lowerTickIndex,
-      upperTickIndex: position.upperTickIndex,
+      lowerTickIndex: position.lowerTick.index,
+      upperTickIndex: position.upperTick.index,
       isLocked: position.isLocked
     }))
-
-    const txs = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
+    const txs = yield* call([lockerProgram, lockerProgram.claimAllFeesTxs], {
       owner: wallet.publicKey,
-      positions: formattedPositions
-    } as ClaimAllFee)
+      positions: formattedPositions,
+      market: marketProgram
+    })
+    yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-    // yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+    for (const { tx, additionalSigner } of txs) {
+      const blockhash = yield* call([connection, connection.getLatestBlockhash])
+      tx.recentBlockhash = blockhash.blockhash
+      tx.feePayer = wallet.publicKey
 
-    // for (const { tx, additionalSigner } of txs) {
-    //   const blockhash = yield* call([connection, connection.getLatestBlockhash])
-    //   tx.recentBlockhash = blockhash.blockhash
-    //   tx.feePayer = wallet.publicKey
+      let signedTx: Transaction
+      if (additionalSigner) {
+        const partiallySignedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+        partiallySignedTx.partialSign(additionalSigner)
+        signedTx = partiallySignedTx
+      } else {
+        signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
+      }
 
-    //   let signedTx: Transaction
-    //   if (additionalSigner) {
-    //     const partiallySignedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
-    //     partiallySignedTx.partialSign(additionalSigner)
-    //     signedTx = partiallySignedTx
-    //   } else {
-    //     signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
-    //   }
+      const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
+        skipPreflight: false
+      })
 
-    //   const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
-    //     skipPreflight: false
-    //   })
+      if (!txid.length) {
+        yield put(
+          snackbarsActions.add({
+            message: 'Failed to claim some fees. Please try again.',
+            variant: 'error',
+            persist: false,
+            txid
+          })
+        )
+      }
+    }
 
-    //   if (!txid.length) {
-    //     yield put(
-    //       snackbarsActions.add({
-    //         message: 'Failed to claim some fees. Please try again.',
-    //         variant: 'error',
-    //         persist: false,
-    //         txid
-    //       })
-    //     )
-    //   }
-    // }
+    yield put(
+      snackbarsActions.add({
+        message: 'All fees claimed successfully.',
+        variant: 'success',
+        persist: false
+      })
+    )
 
-    // yield put(
-    //   snackbarsActions.add({
-    //     message: 'All fees claimed successfully.',
-    //     variant: 'success',
-    //     persist: false
-    //   })
-    // )
+    for (const position of formattedPositions) {
+      yield put(actions.getSinglePosition({ index: position.index, isLocked: true }))
+    }
 
-    // for (const position of formattedPositions) {
-    //   yield put(actions.getSinglePosition({ index: position.index, isLocked: false }))
-    // }
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+    closeSnackbar(loaderClaimAllFees)
+    yield put(snackbarsActions.remove(loaderClaimAllFees))
 
-    // closeSnackbar(loaderSigningTx)
-    // yield put(snackbarsActions.remove(loaderSigningTx))
-    // closeSnackbar(loaderClaimAllFees)
-    // yield put(snackbarsActions.remove(loaderClaimAllFees))
+    yield put(actions.getPositionsList())
 
-    // yield put(actions.getPositionsList())
-
-    // yield* put(actions.setAllClaimLoader(false))
+    yield* put(actions.setAllClaimLoader(false))
   } catch (e: unknown) {
-    // const error = ensureError(e)
-    // console.log(error)
-    // yield* put(actions.setAllClaimLoader(false))
-    // closeSnackbar(loaderClaimAllFees)
-    // yield put(snackbarsActions.remove(loaderClaimAllFees))
-    // closeSnackbar(loaderSigningTx)
-    // yield put(snackbarsActions.remove(loaderSigningTx))
-    // if (error instanceof TransactionExpiredTimeoutError) {
-    //   yield put(
-    //     snackbarsActions.add({
-    //       message: TIMEOUT_ERROR_MESSAGE,
-    //       variant: 'info',
-    //       persist: true,
-    //       txid: error.signature
-    //     })
-    //   )
-    //   yield put(connectionActions.setTimeoutError(true))
-    //   yield put(RPCAction.setRpcStatus(RpcStatus.Error))
-    // } else {
-    //   yield put(
-    //     snackbarsActions.add({
-    //       message: 'Failed to claim fees. Please try again.',
-    //       variant: 'error',
-    //       persist: false
-    //     })
-    //   )
-    // }
-    // yield* call(handleRpcError, error.message)
+    const error = ensureError(e)
+    console.log(error)
+    yield* put(actions.setAllClaimLoader(false))
+    closeSnackbar(loaderClaimAllFees)
+    yield put(snackbarsActions.remove(loaderClaimAllFees))
+    closeSnackbar(loaderSigningTx)
+    yield put(snackbarsActions.remove(loaderSigningTx))
+    if (error instanceof TransactionExpiredTimeoutError) {
+      yield put(
+        snackbarsActions.add({
+          message: TIMEOUT_ERROR_MESSAGE,
+          variant: 'info',
+          persist: true,
+          txid: error.signature
+        })
+      )
+      yield put(connectionActions.setTimeoutError(true))
+      yield put(RPCAction.setRpcStatus(RpcStatus.Error))
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Failed to claim fees. Please try again.',
+          variant: 'error',
+          persist: false
+        })
+      )
+    }
+    yield* call(handleRpcError, error.message)
   }
 }
 

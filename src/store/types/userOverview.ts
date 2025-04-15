@@ -1,4 +1,6 @@
 import { BN } from '@coral-xyz/anchor'
+import { Pair } from '@invariant-labs/sdk-eclipse'
+import { Market } from '@invariant-labs/sdk-eclipse/src'
 import { PublicKey } from '@solana/web3.js'
 import { PoolWithAddressAndIndex } from '@store/selectors/positions'
 
@@ -63,4 +65,15 @@ export interface TokenPositionEntry {
 export enum LiquidityPools {
   Standard = 'Standard',
   Locked = 'Locked'
+}
+export interface IClaimAllFee {
+  market: Market
+  positions: IClaimAllFeePosition[]
+  owner?: PublicKey
+}
+export interface IClaimAllFeePosition {
+  pair: Pair
+  authorityListIndex: number
+  lowerTickIndex: number
+  upperTickIndex: number
 }

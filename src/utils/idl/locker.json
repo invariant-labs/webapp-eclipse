@@ -1,0 +1,397 @@
+{
+  "version": "0.1.0",
+  "name": "locker",
+  "instructions": [
+    {
+      "name": "initializeUserLocks",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "locks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "lockPosition",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "locks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authorityList",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "invProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "INVARIANT"
+          ]
+        },
+        {
+          "name": "transferredPosition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "position",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lastPosition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "positionList",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "index",
+          "type": "u32"
+        },
+        {
+          "name": "lockDuration",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "unlockPosition",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "locks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authorityList",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "invProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "INVARIANT"
+          ]
+        },
+        {
+          "name": "positionList",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "position",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lastPosition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "transferredPosition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "index",
+          "type": "u32"
+        }
+      ]
+    },
+    {
+      "name": "claimFee",
+      "accounts": [
+        {
+          "name": "owner",
+          "isMut": true,
+          "isSigner": true
+        },
+        {
+          "name": "locks",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "authorityList",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "invProgram",
+          "isMut": false,
+          "isSigner": false,
+          "docs": [
+            "INVARIANT"
+          ]
+        },
+        {
+          "name": "invState",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "invProgramAuthority",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "positionList",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "position",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "transferredPosition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lastPosition",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "pool",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "lowerTick",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "upperTick",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenX",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenY",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "accountX",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "accountY",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "invReserveX",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "invReserveY",
+          "isMut": true,
+          "isSigner": false
+        },
+        {
+          "name": "tokenXProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "tokenYProgram",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "rent",
+          "isMut": false,
+          "isSigner": false
+        },
+        {
+          "name": "systemProgram",
+          "isMut": false,
+          "isSigner": false
+        }
+      ],
+      "args": [
+        {
+          "name": "index",
+          "type": "u32"
+        },
+        {
+          "name": "lowerTickIndex",
+          "type": "i32"
+        },
+        {
+          "name": "upperTickIndex",
+          "type": "i32"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Locks",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "positions",
+            "type": {
+              "vec": {
+                "defined": "LockedPosition"
+              }
+            }
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    }
+  ],
+  "types": [
+    {
+      "name": "LockedPosition",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "positionId",
+            "type": "u128"
+          },
+          {
+            "name": "endTimestamp",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Price",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "v",
+            "type": "u128"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Liquidity",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "v",
+            "type": "u128"
+          }
+        ]
+      }
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "InvalidLockDuration",
+      "msg": "Invalid lock duration"
+    },
+    {
+      "code": 6001,
+      "name": "LockNotExpired",
+      "msg": "Lock not expired"
+    },
+    {
+      "code": 6002,
+      "name": "ClockError",
+      "msg": "Couldnt retrieve current timestamp"
+    },
+    {
+      "code": 6003,
+      "name": "InvalidPosition",
+      "msg": "Invalid Position"
+    },
+    {
+      "code": 6004,
+      "name": "InvalidTokenProgram",
+      "msg": "Invalid token program"
+    },
+    {
+      "code": 6005,
+      "name": "LockNotFound",
+      "msg": "Lock not found"
+    },
+    {
+      "code": 6006,
+      "name": "ExceededLockLimit",
+      "msg": "Too many locks"
+    }
+  ]
+}
