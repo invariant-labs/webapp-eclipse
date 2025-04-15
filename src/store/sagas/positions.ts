@@ -36,7 +36,7 @@ import {
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { closeSnackbar } from 'notistack'
-import { getLockerProgram, getLockerProgramLocal, getMarketProgram } from '@utils/web3/programs/amm'
+import { getLockerProgram, getMarketProgram } from '@utils/web3/programs/amm'
 import {
   createLiquidityPlot,
   createLoaderKey,
@@ -55,6 +55,7 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { ClaimAllFee, parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
+import { IClaimAllFee } from '@invariant-labs/locker-eclipse-sdk'
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
 
@@ -1367,7 +1368,7 @@ export function* handleClaimAllFees() {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    const lockerProgram = yield* call(getLockerProgramLocal, networkType, rpc, wallet as IWallet)
+    const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
     const positionsLocked = yield* select(lockedPositionsWithPoolsData)
     const positions = yield* select(positionsWithPoolsData)
     const positionsData = [...positions, ...positionsLocked]
@@ -1421,16 +1422,13 @@ export function* handleClaimAllFees() {
       upperTickIndex: position.upperTickIndex,
       isLocked: position.isLocked
     }))
-    formattedPositions.map((pos, index) => {
-      console.log(
-        `Position ${index + 1} lowerTick: ${pos.lowerTickIndex} upperTick: ${pos.upperTickIndex} index: ${pos.index} islocked: ${pos.isLocked}`
-      )
-    })
+
     const txsLock = yield* call([lockerProgram, lockerProgram.claimAllFeesTxs], {
-      owner: wallet.publicKey,
+      market: marketProgram,
       positions: formattedPositions.filter(pos => pos.isLocked === true),
-      market: marketProgram
-    })
+      owner: wallet.publicKey
+    } as IClaimAllFee)
+
     const txsNotLocked = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
       owner: wallet.publicKey,
       positions: formattedPositions.filter(pos => pos.isLocked === false)

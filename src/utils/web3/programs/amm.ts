@@ -2,11 +2,9 @@ import { getMarketAddress, IWallet, Market } from '@invariant-labs/sdk-eclipse'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import { getSolanaConnection, networkTypetoProgramNetwork } from '../connection'
-import { Locker as LockerLocal } from '@utils/locker'
 import { Locker } from '@invariant-labs/locker-eclipse-sdk'
 let _market: Market
 let _locker: Locker
-let _lockerLocal: LockerLocal
 
 export const getCurrentMarketProgram = (): Market => {
   return _market
@@ -64,19 +62,4 @@ export const getLockerProgram = (
 
   _locker = Locker.build(net, solWallet, getSolanaConnection(rpcAddress))
   return _locker
-}
-
-export const getLockerProgramLocal = (
-  network: NetworkType,
-  rpcAddress: string,
-  solWallet: IWallet
-): LockerLocal => {
-  if (_lockerLocal) {
-    return _lockerLocal
-  }
-
-  const net = networkTypetoProgramNetwork(network)
-
-  _lockerLocal = LockerLocal.build(net, solWallet, getSolanaConnection(rpcAddress))
-  return _lockerLocal
 }
