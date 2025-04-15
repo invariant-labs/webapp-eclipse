@@ -608,6 +608,7 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   WETH_MAIN.address.toString(),
   TETH_MAIN.address.toString(),
   SOL_MAIN.address.toString(),
+  BITZ_MAIN.address.toString(),
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
   TIA_MAIN.address.toString()
