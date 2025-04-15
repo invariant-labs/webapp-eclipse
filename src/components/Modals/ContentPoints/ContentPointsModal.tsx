@@ -27,7 +27,9 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   contentProgramDates
 }) => {
   const itemSize = 56
-  const allocations = userContentPoints ?? []
+  const allocations = userContentPoints
+    ? userContentPoints.slice().sort((a, b) => b.startTimestamp - a.startTimestamp)
+    : []
   const isEmpty = allocations.length === 0
   const { classes } = useStyles({ isEmpty })
   const hidePointsLabel = useMediaQuery(theme.breakpoints.down(375))
