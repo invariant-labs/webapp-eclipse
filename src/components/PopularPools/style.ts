@@ -41,9 +41,14 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
     },
     '& .slick-arrow::before': {
       fontSize: '40px',
+      color: colors.invariant.textGrey,
+      transition: 'color 0.3s ease',
       [theme.breakpoints.down('sm')]: {
         fontSize: '34px'
       }
+    },
+    '& .slick-arrow:hover::before': {
+      color: colors.invariant.text
     },
     '& .slick-prev': {
       left: -50,
