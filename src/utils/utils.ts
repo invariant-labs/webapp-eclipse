@@ -1984,7 +1984,8 @@ export const trimDecimalZeros = (numStr: string): string => {
 const poolsToRecalculateAPY = [
   'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
   '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%
-  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC' // USDC_SOL 0.09%
+  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC', // USDC_SOL 0.09%
+  'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H' // ETH-BITZ 1%
 ]
 
 export const calculateAPYAndAPR = (
