@@ -246,7 +246,6 @@ export class Locker {
     market
   }: IClaimAllFee): Promise<{ tx: Transaction; additionalSigner?: Keypair }[]> {
     owner ??= this.wallet.publicKey
-
     const pools: Record<string, PoolStructure> = {}
     const ixs: TransactionInstruction[] = []
     const nativeIxs: TransactionInstruction[] = []
@@ -350,7 +349,6 @@ export class Locker {
     if (splPositions.length != 0) {
       for (const position of splPositions) {
         const { pair, index } = position
-
         const userTokenX = getAssociatedTokenAddressSync(
           pair.tokenX,
           owner,

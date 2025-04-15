@@ -54,11 +54,7 @@ import {
   createNativeAtaWithTransferInstructions
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
-import {
-  // ClaimAllFee,
-  parseTick,
-  Position
-} from '@invariant-labs/sdk-eclipse/lib/market'
+import { ClaimAllFee, parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
 
@@ -1373,9 +1369,9 @@ export function* handleClaimAllFees() {
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
     const lockerProgram = yield* call(getLockerProgramLocal, networkType, rpc, wallet as IWallet)
     const positionsLocked = yield* select(lockedPositionsWithPoolsData)
-    // const positions = yield* select(positionsWithPoolsData)
-    // const positionsData = [...positions, ...lockedPosition]
-    const LockedPosition = positionsLocked.filter(position => {
+    const positions = yield* select(positionsWithPoolsData)
+    const positionsData = [...positions, ...positionsLocked]
+    const filteredPositions = positionsData.filter(position => {
       const [bnX, bnY] = calculateClaimAmount({
         position: position,
         tickLower: position.lowerTick,
@@ -1384,18 +1380,18 @@ export function* handleClaimAllFees() {
         feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
         feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
       })
+
       return !bnX.isZero() || !bnY.isZero()
     })
-    console.log(LockedPosition)
     const tokensAccounts = yield* select(accounts)
 
-    // if (allPositionsData.length === 0) {
-    //   return
-    // }
-    // if (allPositionsData.length === 1) {
-    //   const claimFeeAction = actions.claimFee({ index: 0, isLocked: false })
-    //   return yield* call(handleClaimFee, claimFeeAction)
-    // }
+    if (filteredPositions.length === 0) {
+      return
+    }
+    if (filteredPositions.length === 1) {
+      const claimFeeAction = actions.claimFee({ index: 0, isLocked: filteredPositions[0].isLocked })
+      return yield* call(handleClaimFee, claimFeeAction)
+    }
 
     yield* put(actions.setAllClaimLoader(true))
     yield put(
@@ -1406,9 +1402,8 @@ export function* handleClaimAllFees() {
         key: loaderClaimAllFees
       })
     )
-
-    for (const position of LockedPosition) {
-      const pool = positionsLocked[position.positionIndex].poolData
+    for (const position of filteredPositions) {
+      const pool = positionsData[position.positionIndex].poolData
       if (!tokensAccounts[pool.tokenX.toString()]) {
         yield* call(createAccount, pool.tokenX)
       }
@@ -1416,21 +1411,32 @@ export function* handleClaimAllFees() {
         yield* call(createAccount, pool.tokenY)
       }
     }
-    const formattedPositions = LockedPosition.map(position => ({
+    const formattedPositions = filteredPositions.map(position => ({
       pair: new Pair(position.poolData.tokenX, position.poolData.tokenY, {
         fee: position.poolData.fee,
         tickSpacing: position.poolData.tickSpacing
       }),
       index: position.positionIndex,
-      lowerTickIndex: position.lowerTick.index,
-      upperTickIndex: position.upperTick.index,
+      lowerTickIndex: position.lowerTickIndex,
+      upperTickIndex: position.upperTickIndex,
       isLocked: position.isLocked
     }))
-    const txs = yield* call([lockerProgram, lockerProgram.claimAllFeesTxs], {
+    formattedPositions.map((pos, index) => {
+      console.log(
+        `Position ${index + 1} lowerTick: ${pos.lowerTickIndex} upperTick: ${pos.upperTickIndex} index: ${pos.index} islocked: ${pos.isLocked}`
+      )
+    })
+    const txsLock = yield* call([lockerProgram, lockerProgram.claimAllFeesTxs], {
       owner: wallet.publicKey,
-      positions: formattedPositions,
+      positions: formattedPositions.filter(pos => pos.isLocked === true),
       market: marketProgram
     })
+    const txsNotLocked = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
+      owner: wallet.publicKey,
+      positions: formattedPositions.filter(pos => pos.isLocked === false)
+    } as ClaimAllFee)
+
+    const txs = [...txsLock, ...txsNotLocked]
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     for (const { tx, additionalSigner } of txs) {
@@ -1471,8 +1477,10 @@ export function* handleClaimAllFees() {
       })
     )
 
-    for (const position of formattedPositions) {
-      yield put(actions.getSinglePosition({ index: position.index, isLocked: true }))
+    for (const position of positionsData) {
+      yield put(
+        actions.getSinglePosition({ index: position.positionIndex, isLocked: position.isLocked })
+      )
     }
 
     closeSnackbar(loaderSigningTx)
