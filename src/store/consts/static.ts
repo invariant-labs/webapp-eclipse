@@ -610,7 +610,8 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   SOL_MAIN.address.toString(),
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
-  TIA_MAIN.address.toString()
+  TIA_MAIN.address.toString(),
+  BITZ_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
