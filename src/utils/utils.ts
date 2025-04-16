@@ -1845,7 +1845,7 @@ export const getTokenPrice = async (
   if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
       const { data } = await axios.get<IPriceData>(
-        `${BASE_API_URL}/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
+        `${BASE_API_URL}/price/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
       )
       priceData = data.data
 
