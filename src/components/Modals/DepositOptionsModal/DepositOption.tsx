@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
 import { Box, Button, Divider, Grid, Input, Tooltip, Typography } from '@mui/material'
 import classNames from 'classnames'
@@ -89,7 +89,9 @@ const DepositOption: React.FC<Props> = ({
       }
     }
   }
-
+  useEffect(() => {
+    if (valueIndex !== -1 && temp !== '') setTemp('')
+  }, [value, valueIndex])
   return (
     <>
       {divider && <Divider className={classes.divider} />}
