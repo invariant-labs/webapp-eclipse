@@ -164,7 +164,8 @@ export const BITZ_MAIN: Token = {
   address: new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF'),
   decimals: 11,
   name: 'BITZ',
-  logoURI: 'https://powpow.app/assets/icon.png',
+  logoURI:
+    'https://www.geckoterminal.com/_next/image?url=https%3A%2F%2Fassets.geckoterminal.com%2Fpwhn8c5e9mxmannjvxi4yllnwk1d&w=64&q=75',
   coingeckoId: ''
 }
 
@@ -693,7 +694,8 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   SOL_MAIN.address.toString(),
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
-  TIA_MAIN.address.toString()
+  TIA_MAIN.address.toString(),
+  BITZ_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
