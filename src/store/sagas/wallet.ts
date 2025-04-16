@@ -77,6 +77,7 @@ export function* handleBalance(): Generator {
   yield* put(actions.setAddress(wallet.publicKey))
   yield* call(getBalance, wallet.publicKey)
   yield* call(fetchTokensAccounts)
+  yield* call(fetchUnkownTokensAccounts)
 }
 
 interface IparsedTokenInfo {
@@ -120,19 +121,52 @@ export function* fetchTokensAccounts(): Generator {
     ...token2022TokensAccounts.value
   ]
 
-  const allTokens = yield* select(tokens)
   const newAccounts: ITokenAccount[] = []
-  const unknownTokens: Record<string, StoreToken> = {}
   for (const account of mergedAccounts) {
     const info: IparsedTokenInfo = account.account.data.parsed.info
-
     newAccounts.push({
       programId: new PublicKey(info.mint),
       balance: new BN(info.tokenAmount.amount),
       address: account.pubkey,
       decimals: info.tokenAmount.decimals
     })
+  }
 
+  yield* put(actions.setTokenAccounts(newAccounts))
+  yield* put(actions.setIsTokenBalanceLoading(false))
+}
+
+export function* fetchUnkownTokensAccounts(): Generator {
+  const connection = yield* call(getConnection)
+  const wallet = yield* call(getWallet)
+  yield* put(actions.setIsUnkownBlanceLoading(true))
+  const { splTokensAccounts, token2022TokensAccounts } = yield* all({
+    splTokensAccounts: call(
+      [connection, connection.getParsedTokenAccountsByOwner],
+      wallet.publicKey,
+      {
+        programId: TOKEN_PROGRAM_ID
+      }
+    ),
+    token2022TokensAccounts: call(
+      [connection, connection.getParsedTokenAccountsByOwner],
+      wallet.publicKey,
+      {
+        programId: TOKEN_2022_PROGRAM_ID
+      }
+    )
+  })
+
+  const mergedAccounts: TokenAccountInfo[] = [
+    ...splTokensAccounts.value,
+    ...token2022TokensAccounts.value
+  ]
+
+  const allTokens = yield* select(tokens)
+  const unknownTokens: Record<string, StoreToken> = {}
+
+  for (const account of mergedAccounts) {
+    const info: IparsedTokenInfo = account.account.data.parsed.info
     if (!allTokens[info.mint]) {
       const programId = yield* call(getTokenProgramId, connection, new PublicKey(info.mint))
 
@@ -145,10 +179,8 @@ export function* fetchTokensAccounts(): Generator {
       )
     }
   }
-
-  yield* put(actions.setTokenAccounts(newAccounts))
   yield* put(poolsActions.addTokens(unknownTokens))
-  yield* put(actions.setIsTokenBalanceLoading(false))
+  yield* put(actions.setIsUnkownBlanceLoading(false))
 }
 
 export function* handleAirdrop(): Generator {
