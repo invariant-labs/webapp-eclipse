@@ -463,7 +463,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         ]}
         curve={isXtoY ? 'stepAfter' : 'stepBefore'}
         margin={{ top: isSmDown ? 55 : 25, bottom: 15 }}
-        colors={[colors.invariant.pink, colors.invariant.green, colors.invariant.pink]}
+        colors={[colors.invariant.textGrey, colors.invariant.green, colors.invariant.textGrey]}
         axisTop={null}
         axisRight={null}
         axisLeft={null}
