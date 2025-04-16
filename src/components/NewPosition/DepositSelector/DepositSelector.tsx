@@ -314,6 +314,14 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   const [wasRunTokenA, setWasRunTokenA] = useState(false)
   const [wasRunTokenB, setWasRunTokenB] = useState(false)
 
+  const isPriceImpact = useMemo(
+    () =>
+      simulation &&
+      simulation.swapSimulation &&
+      simulation.swapSimulation.priceImpact.gt(toDecimal(+Number(priceImpact).toFixed(4), 2)),
+    [simulation, priceImpact]
+  )
+
   useEffect(() => {
     if (canNavigate) {
       const tokenAIndex = tokens.findIndex(
@@ -371,8 +379,12 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       return 'Insufficient Liquidity'
     }
 
-    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.PriceLimitReached)) {
+    if (isAutoswapOn && isPriceImpact) {
       return 'Price impact reached'
+    }
+
+    if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.PriceLimitReached)) {
+      return 'Price limit reached'
     }
 
     if (isAutoswapOn && isSimulationStatus(SwapAndCreateSimulationStatus.UtilizationTooLow)) {
@@ -730,15 +742,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       )
     }
 
-    const priceLimitReached = isSimulationStatus(SwapAndCreateSimulationStatus.PriceLimitReached)
-
     return (
-      <Box className={priceLimitReached ? classes.errorWarning : classes.unknownWarning}>
+      <Box className={isPriceImpact ? classes.errorWarning : classes.unknownWarning}>
         <Tooltip
           title={
             <>
               Impact on the price for token exchange.
-              {priceLimitReached ? (
+              {isPriceImpact ? (
                 <>
                   {' '}
                   In order to create position you have to either:
@@ -756,7 +766,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             alt=''
             width='12px'
             style={{ marginRight: '4px', marginBottom: '-1.5px' }}
-            className={priceLimitReached ? classes.errorIcon : classes.grayscaleIcon}
+            className={isPriceImpact ? classes.errorIcon : classes.grayscaleIcon}
           />
         </Tooltip>
         Price impact:{' '}
@@ -766,7 +776,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         %
       </Box>
     )
-  }, [isSimulating, simulation, alignment, tokenACheckbox, tokenBCheckbox, throttle])
+  }, [isSimulating, simulation, alignment, tokenACheckbox, tokenBCheckbox, throttle, isPriceImpact])
 
   const simulateAutoSwapResult = async () => {
     setIsSimulating(true)
