@@ -1,7 +1,7 @@
+import React, { useEffect, useState } from 'react'
 import { Box, Tooltip, TooltipProps, useMediaQuery } from '@mui/material'
 import useStyles from './style'
 import { TooltipTransition } from './TooltipTransition/TooltipTransition'
-import React, { useEffect, useState } from 'react'
 import { theme } from '@static/theme'
 
 interface Props extends TooltipProps {
@@ -18,42 +18,63 @@ export const TooltipGradient = ({
   noGradient,
   title,
   allowEnterTooltip = true,
+  leaveDelay = 100,
   ...props
 }: Props) => {
   const { classes } = useStyles({ top })
   const [open, setOpen] = useState(false)
   const [childrenHover, setChildrenHover] = useState(false)
   const [titleHover, setTitleHover] = useState(false)
-  const [callback, setCallback] = useState<NodeJS.Timeout>()
+  const [callback, setCallback] = useState<NodeJS.Timeout | null>(null)
   const isClosingOnScroll = useMediaQuery(theme.breakpoints.down(1200))
+  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
+  // Handle scroll close
   useEffect(() => {
     const handleScroll = () => {
       setOpen(false)
+      setChildrenHover(false)
+      setTitleHover(false)
     }
 
-    if (!isClosingOnScroll) {
-      window.addEventListener('scroll', handleScroll, true)
-
-      return () => {
-        window.removeEventListener('scroll', handleScroll, true)
-      }
+    window.addEventListener('scroll', handleScroll, true)
+    return () => {
+      window.removeEventListener('scroll', handleScroll, true)
     }
-
-    return () => {}
   }, [isClosingOnScroll])
 
   useEffect(() => {
     if (titleHover || childrenHover) {
-      clearTimeout(callback)
+      if (callback) clearTimeout(callback)
       setOpen(true)
     } else {
       const timeout = setTimeout(() => {
         setOpen(false)
-      }, 200)
+        console.log('close')
+      }, leaveDelay)
       setCallback(timeout)
     }
-  }, [titleHover, childrenHover])
+
+    return () => {
+      if (callback) clearTimeout(callback)
+    }
+  }, [titleHover, childrenHover, leaveDelay])
+  console.log(open)
+
+  useEffect(() => {
+    if (isMd && open) {
+      if (callback) clearTimeout(callback)
+      const timeout = setTimeout(() => {
+        setOpen(false)
+        console.log('close')
+      }, 2000)
+      setCallback(timeout)
+    }
+
+    return () => {
+      if (callback) clearTimeout(callback)
+    }
+  }, [open, isMd])
 
   return (
     <Tooltip
@@ -62,19 +83,23 @@ export const TooltipGradient = ({
       TransitionComponent={TooltipTransition}
       enterTouchDelay={0}
       leaveTouchDelay={Number.MAX_SAFE_INTEGER}
-      onTouchStart={() => setOpen(true)}
-      onMouseEnter={() => setChildrenHover(true)}
-      onMouseLeave={() => setChildrenHover(false)}
+      leaveDelay={leaveDelay}
       open={open}
       title={
         <Box
-          onMouseEnter={allowEnterTooltip ? () => setTitleHover(true) : () => {}}
-          onMouseLeave={allowEnterTooltip ? () => setTitleHover(false) : () => {}}>
+          onMouseEnter={allowEnterTooltip ? () => setTitleHover(true) : undefined}
+          onMouseLeave={allowEnterTooltip ? () => setTitleHover(false) : undefined}>
           {title}
         </Box>
       }
       {...props}>
-      {children}
+      {React.cloneElement(children, {
+        onMouseEnter: () => setChildrenHover(true),
+        onMouseLeave: () => setChildrenHover(false),
+        onFocus: () => setChildrenHover(true),
+        onBlur: () => setChildrenHover(false),
+        onClick: () => setOpen(true)
+      })}
     </Tooltip>
   )
 }

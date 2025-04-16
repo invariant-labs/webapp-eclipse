@@ -197,11 +197,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
               priceLoading ? (
                 <img src={loadingAnimation} className={classes.loading} alt='loading' />
               ) : tokenPrice ? (
-                <TooltipHover
-                  title='Estimated USD Value of the Entered Tokens'
-                  placement='bottom'
-                  top={1}
-                  left={isMd ? 'auto' : -90}>
+                <TooltipHover title='Estimated USD Value of the Entered Tokens' placement='bottom'>
                   <Typography className={classes.estimatedBalance}>
                     ~${formatNumberWithoutSuffix(usdBalance)}
                   </Typography>
