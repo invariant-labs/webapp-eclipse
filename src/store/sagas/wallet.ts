@@ -77,7 +77,7 @@ export function* handleBalance(): Generator {
   yield* put(actions.setAddress(wallet.publicKey))
   yield* call(getBalance, wallet.publicKey)
   yield* call(fetchTokensAccounts)
-  yield* call(fetchUnkownTokensAccounts)
+  yield* call(fetchUnknownTokensAccounts)
 }
 
 interface IparsedTokenInfo {
@@ -136,24 +136,22 @@ export function* fetchTokensAccounts(): Generator {
   yield* put(actions.setIsTokenBalanceLoading(false))
 }
 
-export function* fetchUnkownTokensAccounts(): Generator {
+export function* fetchUnknownTokensAccounts(): Generator {
   const connection = yield* call(getConnection)
   const wallet = yield* call(getWallet)
-  yield* put(actions.setIsUnkownBlanceLoading(true))
+
+  yield put(actions.setIsUnkownBlanceLoading(true))
+
   const { splTokensAccounts, token2022TokensAccounts } = yield* all({
     splTokensAccounts: call(
       [connection, connection.getParsedTokenAccountsByOwner],
       wallet.publicKey,
-      {
-        programId: TOKEN_PROGRAM_ID
-      }
+      { programId: TOKEN_PROGRAM_ID }
     ),
     token2022TokensAccounts: call(
       [connection, connection.getParsedTokenAccountsByOwner],
       wallet.publicKey,
-      {
-        programId: TOKEN_2022_PROGRAM_ID
-      }
+      { programId: TOKEN_2022_PROGRAM_ID }
     )
   })
 
@@ -163,24 +161,36 @@ export function* fetchUnkownTokensAccounts(): Generator {
   ]
 
   const allTokens = yield* select(tokens)
-  const unknownTokens: Record<string, StoreToken> = {}
 
-  for (const account of mergedAccounts) {
+  const unknownAccounts = mergedAccounts.filter(account => {
     const info: IparsedTokenInfo = account.account.data.parsed.info
-    if (!allTokens[info.mint]) {
-      const programId = yield* call(getTokenProgramId, connection, new PublicKey(info.mint))
+    return !allTokens[info.mint]
+  })
 
-      unknownTokens[info.mint] = yield* call(
+  const calls = unknownAccounts.map(account => {
+    return call(function* () {
+      const info: IparsedTokenInfo = account.account.data.parsed.info
+      const programId = yield* call(getTokenProgramId, connection, new PublicKey(info.mint))
+      const metadata = yield* call(
         getTokenMetadata,
         connection,
         info.mint,
         info.tokenAmount.decimals,
         programId
       )
-    }
+      return { mint: info.mint, token: metadata }
+    })
+  })
+
+  const results: Array<{ mint: string; token: StoreToken }> = yield* all(calls)
+
+  const unknownTokens: Record<string, StoreToken> = {}
+  for (const { mint, token } of results) {
+    unknownTokens[mint] = token
   }
-  yield* put(poolsActions.addTokens(unknownTokens))
-  yield* put(actions.setIsUnkownBlanceLoading(false))
+
+  yield put(poolsActions.addTokens(unknownTokens))
+  yield put(actions.setIsUnkownBlanceLoading(false))
 }
 
 export function* handleAirdrop(): Generator {
