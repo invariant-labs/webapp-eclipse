@@ -37,10 +37,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
                 display={'flex'}
                 alignItems={'center'}
                 justifyContent={'center'}>
-                <TooltipHover
-                  title='The total value of assets might not be shown correctly'
-                  left={isMd ? -134 : 'auto'}
-                  top={-50}>
+                <TooltipHover title='The total value of assets might not be shown correctly'>
                   <img src={warning2Icon} className={classes.warning} width={18} />
                 </TooltipHover>
               </Grid>

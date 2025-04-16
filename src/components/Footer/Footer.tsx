@@ -3,11 +3,14 @@ import { discordIcon, docsIcon, githubIcon, mediumIcon, telegramIcon, xIcon } fr
 import useStyles from './style'
 import { Grid } from '@mui/material'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import FaucetButton from '@components/Header/HeaderButton/FaucetButton'
+import { NetworkType } from '@store/consts/static'
 
 export const Footer = () => {
   const { classes } = useStyles()
   return (
     <Grid className={classes.footer}>
+      <FaucetButton network={NetworkType.Mainnet} onFaucet={() => {}} walletBalance={null} />
       <Grid className={classes.footerItem}>
         <TooltipHover title='Github'>
           <a href={social.github} className={classes.footerLink} target='_blank'>

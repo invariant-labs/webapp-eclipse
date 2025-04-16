@@ -96,7 +96,8 @@ export const TooltipHover = ({
       title={
         <Box
           onMouseEnter={allowEnterTooltip ? () => setTitleHover(true) : undefined}
-          onMouseLeave={allowEnterTooltip ? () => setTitleHover(false) : undefined}>
+          onMouseLeave={allowEnterTooltip ? () => setTitleHover(false) : undefined}
+          textAlign='center'>
           {title}
         </Box>
       }

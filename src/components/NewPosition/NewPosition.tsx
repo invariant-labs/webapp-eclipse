@@ -671,7 +671,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             </Fade>
           )}
           {poolIndex !== null && tokenAIndex !== tokenBIndex && !isMd && (
-            <TooltipHover title='Refresh'>
+            <TooltipHover title='Refresh' right={8}>
               <Box mr={2}>
                 <Refresher
                   currentIndex={refresherTime}
