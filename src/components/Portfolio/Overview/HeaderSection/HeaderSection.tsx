@@ -1,9 +1,8 @@
-import { Typography, Box, Skeleton, Grid, useMediaQuery } from '@mui/material'
+import { Typography, Box, Skeleton, Grid } from '@mui/material'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { warning2Icon } from '@static/icons'
-import { theme } from '@static/theme'
 
 interface HeaderSectionProps {
   totalValue: { value: number; isPriceWarning: boolean }
@@ -12,7 +11,6 @@ interface HeaderSectionProps {
 
 export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loading }) => {
   const { classes } = useStyles()
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
     <>
