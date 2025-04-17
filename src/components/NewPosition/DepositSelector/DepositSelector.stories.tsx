@@ -8,7 +8,7 @@ import { MemoryRouter } from 'react-router-dom'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
-import { NetworkType } from '@store/consts/static'
+import { DepositOptions, NetworkType } from '@store/consts/static'
 import { Status } from '@store/reducers/solanaWallet'
 
 const tokens: SwapToken[] = [
@@ -76,6 +76,32 @@ const PrimaryComponent: React.FC<IDepositSelector> = args => {
 
 export const Primary: Story = {
   args: {
+    updateLiquidity: fn(),
+    tokenACheckbox: false,
+    setTokenACheckbox: fn(),
+    tokenBCheckbox: false,
+    setTokenBCheckbox: fn(),
+    alignment: DepositOptions.Basic,
+    setAlignment: fn(),
+    onMaxSlippageToleranceSwapChange: fn(),
+    initialMaxSlippageToleranceSwap: '',
+    onMaxSlippageToleranceCreatePositionChange: fn(),
+    initialMaxSlippageToleranceCreatePosition: '',
+    onSwapAndAddLiquidity: fn(),
+    isAutoSwapOnTheSamePool: false,
+    initialMaxPriceImpact: '',
+    onMaxPriceImpactChange: fn(),
+    initialMinUtilization: '',
+    onMinUtilizationChange: fn(),
+    simulationParams: {
+      price: new BN(0),
+      lowerTickIndex: 0,
+      upperTickIndex: 0
+    },
+    autoSwapPoolData: null,
+    autoSwapTickmap: null,
+    autoSwapTicks: null,
+    isAutoSwapAvailable: false,
     promotedPoolTierIndex: 0,
     commonTokens: [
       new PublicKey('So11111111111111111111111111111111111111112'),
@@ -118,7 +144,7 @@ export const Primary: Story = {
     priceB: 2222,
     isBalanceLoading: false,
     isGetLiquidityError: false,
-    ticksLoading: false,
+    isLoadingTicksOrTickmap: false,
     network: NetworkType.Testnet,
     ethBalance: 20000000000,
     walletStatus: Status.Initialized,
