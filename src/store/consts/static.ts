@@ -1,4 +1,4 @@
-import { FEE_TIERS } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { FEE_TIERS, toDecimal } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { ISnackbar } from '@store/reducers/snackbars'
@@ -15,6 +15,12 @@ export enum NetworkType {
   Devnet = 'Devnet',
   Mainnet = 'Mainnet'
 }
+
+export enum DepositOptions {
+  Basic = 'Basic',
+  Auto = 'Auto'
+}
+
 const emptyPublicKey = new PublicKey(new Uint8Array(32))
 
 export enum SwapType {
@@ -499,6 +505,78 @@ export const tokens: Record<NetworkType, Token[]> = {
   Local: []
 }
 
+export const autoSwapPools = [
+  {
+    pair: {
+      tokenX: new PublicKey('So11111111111111111111111111111111111111112'),
+      tokenY: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo')
+    },
+    swapPool: {
+      address: new PublicKey('F89YjPNUfP5Q6xxnk8ZSiV3tHzCYKH7TvgLE1Mc9s7H'),
+      feeIndex: 0
+    }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('5gFSyxjNsuQsZKn9g5L9Ky3cSUvJ6YXqWVuPzmSi8Trx'),
+      tokenY: new PublicKey('2F5TprcNBqj2hXVr9oTssabKdf8Zbsf9xStqWjPm8yLo')
+    },
+    swapPool: {
+      address: new PublicKey('2DqmbNPisbN7nbuAdVr85rs6pR6jpvMVw8iDia2vAXp7'),
+      feeIndex: 0
+    }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL')
+    },
+    swapPool: {
+      address: new PublicKey('E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC'),
+      feeIndex: 3
+    }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    swapPool: {
+      address: new PublicKey('HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce'),
+      feeIndex: 3
+    }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('So11111111111111111111111111111111111111112'),
+      tokenY: new PublicKey('GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn')
+    },
+    swapPool: {
+      address: new PublicKey('FvVsbwsbGVo6PVfimkkPhpcRfBrRitiV946nMNNuz7f9'),
+      feeIndex: 0
+    }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('BeRUj3h7BqkbdfFU7FBNYbodgf8GCHodzKvF9aVjNNfL'),
+      tokenY: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    swapPool: {
+      address: new PublicKey('86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM'),
+      feeIndex: 3
+    }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+      tokenY: new PublicKey('CEBP3CqAbW4zdZA57H2wfaSG1QNdzQ72GiQEbQXyW9Tm')
+    },
+    swapPool: {
+      address: new PublicKey('HHHGD7BZ7H5fPLh3DNEPFezpLoYBJ16WsmbwRJXXEFSg'),
+      feeIndex: 0
+    }
+  }
+]
 export const promotedTiers = [
   {
     tokenX: USDC_MAIN.address,
@@ -571,11 +649,16 @@ export const WETH_POSITION_INIT_LAMPORTS_TEST = new BN(700000)
 export const WETH_POOL_INIT_LAMPORTS_MAIN = new BN(1750000)
 export const WETH_POOL_INIT_LAMPORTS_TEST = new BN(1100000)
 
+export const WETH_SWAP_AND_POSITION_INIT_LAMPORTS_MAIN = new BN(100000)
+export const WETH_SWAP_AND_POSITION_INIT_LAMPORTS_TEST = new BN(100000)
+
 export const WETH_CREATE_TOKEN_LAMPORTS_MAIN = new BN(2000000)
 export const WETH_CREATE_TOKEN_LAMPORTS_TEST = new BN(10100000)
 
 export const WETH_CLOSE_POSITION_LAMPORTS_MAIN = new BN(30000)
 export const WETH_CLOSE_POSITION_LAMPORTS_TEST = new BN(30000)
+
+export const MINIMUM_PRICE_IMPACT = toDecimal(1, 4)
 
 export const getCreateTokenLamports = (network: NetworkType): BN => {
   switch (network) {
@@ -689,6 +772,10 @@ export const MINIMAL_POOL_INIT_PRICE = 0.00000001
 
 export const DEFAULT_SWAP_SLIPPAGE = '0.50'
 export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
+export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '0.30'
+export const DEFAULT_AUTOSWAP_MIN_UTILIZATION = '95.00'
+export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION = '2.50'
+export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP = '0.50'
 
 export const CHAINS = [
   { name: Chain.Solana, address: 'https://invariant.app/swap', iconGlow: 'solanaGlow' },
@@ -813,3 +900,7 @@ export enum OverviewSwitcher {
 }
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000
+
+export enum AutoswapCustomError {
+  FetchError = 0
+}

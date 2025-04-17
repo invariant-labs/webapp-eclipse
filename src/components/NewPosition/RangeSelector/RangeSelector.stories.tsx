@@ -56,7 +56,7 @@ export const Primary: Story = {
     poolIndex: 0,
     reloadHandler: fn(),
     setConcentrationIndex: fn(),
-    ticksLoading: false,
+    isLoadingTicksOrTickmap: false,
     tickSpacing: 1,
     tokenASymbol: 'SOL',
     tokenBSymbol: 'ETH',
