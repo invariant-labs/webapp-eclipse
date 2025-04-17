@@ -637,7 +637,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               <span className={classes.autoText}>Auto</span>
               <Tooltip
                 title={
-                  'Autoswap automatically adjusts tokens balances to match your chosen ratio, saving time and optimizing transactions. By default, it executes the most optimal swap, while the manual mode allows you to set parameters such as max price impact or minimum utilization.'
+                  'AutoSwap allows you to create a position using any token ratio. Simply choose the amount you currently hold in your wallet, and it will be automatically swapped in the most optimal way.'
                 }
                 classes={{ tooltip: classes.tooltip }}>
                 <span className={classes.tooltipIconWrapper}>
@@ -747,12 +747,13 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         <Tooltip
           title={
             <>
-              Impact on the price for token exchange.
+              The price impact resulting from a swap that rebalances the token ratio before a
+              position is opened.
               {isPriceImpact ? (
                 <>
                   {' '}
                   In order to create position you have to either:
-                  <p>1. Split the position into smaller ones to minimize prize impact.</p>
+                  <p>1. Open several smaller positions rather than a single large one.</p>
                   <p>2. Change swap price impact tolerance in the settings.</p>
                 </>
               ) : (
@@ -997,8 +998,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             <Tooltip
               title={
                 tokenACheckbox
-                  ? "Disabling this input means you don't need to provide the corresponding token"
-                  : 'Enable to provide this token'
+                  ? 'Unmark to exclude this token as liquidity available for use in the new position'
+                  : 'Mark to include this token as liquidity available for use in the new position'
               }
               classes={{ tooltip: classes.tooltip }}>
               <Checkbox
@@ -1014,7 +1015,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
             currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false
+              tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
             }
             placeholder='0.0'
             actionButtons={[
@@ -1066,8 +1067,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             <Tooltip
               title={
                 tokenBCheckbox
-                  ? "Disabling this input means you don't need to provide the corresponding token"
-                  : 'Enable to provide this token'
+                  ? 'Unmark to exclude this token as liquidity available for use in the new position'
+                  : 'Mark to include this token as liquidity available for use in the new position'
               }
               classes={{ tooltip: classes.tooltip }}>
               <Checkbox
@@ -1085,7 +1086,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
             currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false
+              tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
             }
             placeholder='0.0'
             actionButtons={[
