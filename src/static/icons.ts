@@ -53,6 +53,7 @@ import boostPointsIcon from './svg/boostPoints.svg'
 import airdropGreyIcon from './svg/airdropGrey.svg'
 import infoErrorIcon from './svg/infoError.svg'
 import okxLogoIcon from './svg/okx-logo.svg'
+import goldenInfoIcon from './svg/goldenInfoIcon.svg'
 import infoIcon from './svg/info.svg'
 import infoIconPinkIcon from './svg/infoIconPink.svg'
 import sliderIcon from './svg/slider.svg'
@@ -212,6 +213,7 @@ export {
   boostPointsBoldIcon,
   eyeYellowIcon,
   scrollArrowIcon,
+  goldenInfoIcon,
   snackbarSwapIcon,
   circleDolarIcon,
   depositIcon,

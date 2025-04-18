@@ -139,7 +139,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
               <Typography className={classes.estimatedPointsLabel}>
                 <span>Your Estimated Points: &nbsp;</span>
                 <span className={classes.pinkText}>
-                  {singleDepositWarning ? 0 : pointsPerDayFormat} Points/24h
+                  {singleDepositWarning || showWarning ? 0 : pointsPerDayFormat} Points/24h
                 </span>
               </Typography>
               <Grid container className={classes.barWrapper}>
