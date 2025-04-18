@@ -8,7 +8,7 @@ import { colors, theme } from '@static/theme'
 import { formatNumberWithSuffix, nearestTickIndex } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
 import classNames from 'classnames'
-import React, { useCallback, useMemo, useRef } from 'react'
+import React, { useCallback, useMemo, useRef, useState, useEffect } from 'react'
 import Brush from './Brush/Brush'
 import useStyles from './style'
 import { BN } from '@coral-xyz/anchor'
@@ -64,7 +64,23 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   reloadHandler
 }) => {
   const { classes } = useStyles()
+  const [pulseOpacity, setPulseOpacity] = useState(0.5)
 
+  useEffect(() => {
+    let animationFrameId: number
+    let startTime: number
+    const animate = (timestamp: number) => {
+      if (!startTime) startTime = timestamp
+      const elapsed = timestamp - startTime
+      const newOpacity = 0.6 + 0.3 * Math.sin((elapsed / 1500) * Math.PI)
+      setPulseOpacity(newOpacity)
+      animationFrameId = requestAnimationFrame(animate)
+    }
+    animationFrameId = requestAnimationFrame(animate)
+    return () => {
+      cancelAnimationFrame(animationFrameId)
+    }
+  }, [])
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
 
   const containerRef = useRef<HTMLDivElement>(null)
@@ -87,7 +103,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           index === 0 ||
           index === data.length - 1 ||
           (dataAfterOmit.length > 0 &&
-            ((tick.x - dataAfterOmit[dataAfterOmit.length - 1].x) / (plotMax - plotMin) >=
+            ((tick?.x - dataAfterOmit[dataAfterOmit.length - 1]?.x) / (plotMax - plotMin) >=
               minXDist ||
               Math.abs(tick?.y - dataAfterOmit[dataAfterOmit.length - 1]?.y) / maxVal >=
                 minYChange))
@@ -102,31 +118,27 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   )
 
   const currentLessThanRange = useMemo(() => {
-    if (disabled || leftRange.x < Math.max(plotMin, data[0].x)) {
-      return []
-    }
-
-    let rangeData: Array<{ x: number; y: number }> = data.filter(tick => tick.x <= leftRange.x)
+    let rangeData: Array<{ x: number; y: number }> = data.filter(tick => tick?.x <= leftRange?.x)
     const outData: Array<{ x: number; y: number }> = data.filter(
-      tick => tick.x < Math.max(plotMin, data[0].x)
+      tick => tick?.x < Math.max(plotMin, data[0]?.x)
     )
 
     if (!rangeData.length) {
       return []
     }
 
-    if (rangeData[rangeData.length - 1].x < leftRange.x) {
+    if (rangeData[rangeData.length - 1]?.x < leftRange?.x) {
       rangeData.push({
-        x: leftRange.x,
+        x: leftRange?.x,
         y: rangeData[rangeData.length - 1]?.y
       })
     }
 
     rangeData = rangeData.slice(outData.length, rangeData.length)
 
-    if (rangeData[0].x > Math.max(plotMin, data[0].x)) {
+    if (rangeData[0]?.x > Math.max(plotMin, data[0]?.x)) {
       rangeData.unshift({
-        x: Math.max(plotMin, data[0].x),
+        x: Math.max(plotMin, data[0]?.x),
         y: outData.length > 0 ? outData[outData.length - 1]?.y : 0
       })
     }
@@ -135,93 +147,64 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   }, [disabled, leftRange, data, plotMin, plotMax, pointsOmitter])
 
   const currentRange = useMemo(() => {
-    if (disabled) {
-      const outMinData: Array<{ x: number; y: number }> = data.filter(
-        tick => tick.x < Math.max(plotMin, data[0].x)
-      )
-      const outMaxData: Array<{ x: number; y: number }> = data.filter(
-        tick => tick.x > Math.min(plotMax, data[data.length - 1].x)
-      )
-      const rangeData: Array<{ x: number; y: number }> = data.slice(
-        outMinData.length,
-        data.length - outMaxData.length
-      )
-
-      if (!rangeData.length || rangeData[0].x > Math.max(plotMin, data[0].x)) {
-        rangeData.unshift({
-          x: Math.max(plotMin, data[0].x),
-          y: outMinData.length > 0 ? outMinData[outMinData.length - 1]?.y : 0
-        })
-      }
-
-      if (rangeData[rangeData.length - 1].x < Math.min(plotMax, data[data.length - 1].x)) {
-        rangeData.push({
-          x: Math.min(plotMax, data[data.length - 1].x),
-          y: rangeData[rangeData.length - 1]?.y
-        })
-      }
-
-      return pointsOmitter(rangeData)
-    }
-
-    if (leftRange.x > plotMax || rightRange.x < plotMin) {
+    if (leftRange?.x > plotMax || rightRange?.x < plotMin) {
       return []
     }
 
-    const lessThan = data.filter(tick => tick.x <= leftRange.x).length
+    const lessThan = data.filter(tick => tick?.x <= leftRange?.x).length
     let rangeData: Array<{ x: number; y: number }> = data.filter(
-      tick => tick.x >= leftRange.x && tick.x <= rightRange.x
+      tick => tick?.x >= leftRange?.x && tick?.x <= rightRange?.x
     )
 
     if (!rangeData.length) {
       rangeData.push({
-        x: Math.max(leftRange.x, plotMin),
+        x: Math.max(leftRange?.x, plotMin),
         y: data[lessThan - 1]?.y
       })
 
       rangeData.push({
-        x: Math.min(rightRange.x, plotMax),
+        x: Math.min(rightRange?.x, plotMax),
         y: data[lessThan - 1]?.y
       })
     } else {
-      if (rangeData[0].x > leftRange.x) {
+      if (rangeData[0]?.x > leftRange?.x) {
         rangeData.unshift({
-          x: leftRange.x,
+          x: leftRange?.x,
           y: rangeData[0]?.y
         })
       }
 
-      if (rangeData[rangeData.length - 1].x < rightRange.x) {
+      if (rangeData[rangeData.length - 1]?.x < rightRange?.x) {
         rangeData.push({
-          x: rightRange.x,
+          x: rightRange?.x,
           y: rangeData[rangeData.length - 1]?.y
         })
       }
 
       const outMinData: Array<{ x: number; y: number }> = rangeData.filter(
-        tick => tick.x < Math.max(plotMin, data[0].x)
+        tick => tick?.x < Math.max(plotMin, data[0]?.x)
       )
       const outMaxData: Array<{ x: number; y: number }> = rangeData.filter(
-        tick => tick.x > Math.min(plotMax, data[data.length - 1].x)
+        tick => tick?.x > Math.min(plotMax, data[data.length - 1]?.x)
       )
       const newRangeData: Array<{ x: number; y: number }> = rangeData.slice(
         outMinData.length,
         rangeData.length - outMaxData.length
       )
 
-      if (!newRangeData.length || newRangeData[0].x > Math.max(plotMin, rangeData[0].x)) {
+      if (!newRangeData.length || newRangeData[0]?.x > Math.max(plotMin, rangeData[0]?.x)) {
         newRangeData.unshift({
-          x: Math.max(plotMin, rangeData[0].x),
+          x: Math.max(plotMin, rangeData[0]?.x),
           y: outMinData.length > 0 ? outMinData[outMinData.length - 1]?.y : 0
         })
       }
 
       if (
-        newRangeData[newRangeData.length - 1].x <
-        Math.min(plotMax, rangeData[rangeData.length - 1].x)
+        newRangeData[newRangeData.length - 1]?.x <
+        Math.min(plotMax, rangeData[rangeData.length - 1]?.x)
       ) {
         newRangeData.push({
-          x: Math.min(plotMax, rangeData[rangeData.length - 1].x),
+          x: Math.min(plotMax, rangeData[rangeData.length - 1]?.x),
           y: newRangeData[newRangeData.length - 1]?.y
         })
       }
@@ -233,31 +216,27 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   }, [disabled, data, leftRange, rightRange, plotMin, plotMax, pointsOmitter])
 
   const currentGreaterThanRange = useMemo(() => {
-    if (disabled || rightRange.x > plotMax) {
-      return []
-    }
-
-    let rangeData: Array<{ x: number; y: number }> = data.filter(tick => tick.x >= rightRange.x)
+    let rangeData: Array<{ x: number; y: number }> = data.filter(tick => tick?.x >= rightRange?.x)
     const outData: Array<{ x: number; y: number }> = data.filter(
-      tick => tick.x > Math.min(plotMax, data[data.length - 1].x)
+      tick => tick?.x > Math.min(plotMax, data[data.length - 1]?.x)
     )
 
     if (!rangeData.length) {
       return []
     }
 
-    if (rangeData[0].x > rightRange.x) {
+    if (rangeData[0]?.x > rightRange?.x) {
       rangeData.unshift({
-        x: rightRange.x,
+        x: rightRange?.x,
         y: rangeData[0]?.y
       })
     }
 
     rangeData = rangeData.slice(0, rangeData.length - outData.length)
 
-    if (rangeData[rangeData.length - 1].x < Math.min(plotMax, data[data.length - 1].x)) {
+    if (rangeData[rangeData.length - 1]?.x < Math.min(plotMax, data[data.length - 1]?.x)) {
       rangeData.push({
-        x: Math.min(plotMax, data[data.length - 1].x),
+        x: Math.min(plotMax, data[data.length - 1]?.x),
         y: rangeData[rangeData.length - 1]?.y
       })
     }
@@ -272,7 +251,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
 
     const unitLen = innerWidth / (plotMax - plotMin)
     return (
-      <svg x={(midPrice.x - plotMin) * unitLen - 20} y={-20} width={40} height={innerHeight + 20}>
+      <svg x={(midPrice?.x - plotMin) * unitLen - 20} y={-20} width={40} height={innerHeight + 20}>
         <defs>
           <filter id='shadow-global-price' x='-10' y='-9' width='20' height={innerHeight}>
             <feGaussianBlur in='SourceGraphic' stdDeviation='8' />
@@ -324,8 +303,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   }
 
   const brushLayer = Brush(
-    leftRange.x,
-    rightRange.x,
+    leftRange?.x,
+    rightRange?.x,
     position => {
       const nearest = nearestTickIndex(
         plotMin + position * (plotMax - plotMin),
@@ -373,9 +352,9 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           </linearGradient>
         </defs>
         <rect
-          x={(leftRange.x - plotMin) * unitLen}
+          x={(leftRange?.x - plotMin) * unitLen}
           y={0}
-          width={(rightRange.x - leftRange.x) * unitLen}
+          width={(rightRange?.x - leftRange?.x) * unitLen}
           height={innerHeight}
           fill='url(#gradient1)'
         />
@@ -383,6 +362,113 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     )
   }
 
+  const pulsingOutOfRangeLayer: Layer = ({ innerWidth, innerHeight }) => {
+    const unitLen = innerWidth / (plotMax - plotMin)
+    const generateSteppedPath = (points, isStepAfter) => {
+      if (points.length === 0) return ''
+
+      let path = `M ${(points[0]?.x - plotMin) * unitLen},${innerHeight - (points[0].y / maxVal) * innerHeight}`
+
+      for (let i = 1; i < points.length; i++) {
+        const prevX = (points[i - 1]?.x - plotMin) * unitLen
+        const prevY = innerHeight - (points[i - 1].y / maxVal) * innerHeight
+        const currX = (points[i]?.x - plotMin) * unitLen
+        const currY = innerHeight - (points[i].y / maxVal) * innerHeight
+
+        if (isStepAfter) {
+          path += ` L ${currX},${prevY}`
+          path += ` L ${currX},${currY}`
+        } else {
+          path += ` L ${prevX},${currY}`
+          path += ` L ${currX},${currY}`
+        }
+      }
+
+      return path
+    }
+
+    const generateSteppedAreaPath = (points, isStepAfter) => {
+      if (points.length === 0) return ''
+
+      let path = generateSteppedPath(points, isStepAfter)
+
+      path += ` L ${(points[points.length - 1]?.x - plotMin) * unitLen},${innerHeight}`
+      path += ` L ${(points[0]?.x - plotMin) * unitLen},${innerHeight}`
+      path += ' Z'
+
+      return path
+    }
+
+    const leftGradientId = 'greyOutOfRangeGradientLeft'
+    const rightGradientId = 'greyOutOfRangeGradientRight'
+
+    return (
+      <svg
+        width='100%'
+        height='100%'
+        pointerEvents={'none'}
+        style={{ position: 'relative', zIndex: 1 }}>
+        <defs>
+          <linearGradient id={leftGradientId} x1='0%' y1='0%' x2='0%' y2='100%'>
+            <stop
+              offset='0%'
+              stopColor={colors.invariant.textGrey}
+              stopOpacity={0.5 * pulseOpacity}
+            />
+            <stop
+              offset='100%'
+              stopColor={colors.invariant.textGrey}
+              stopOpacity={0.05 * pulseOpacity}
+            />
+          </linearGradient>
+          <linearGradient id={rightGradientId} x1='0%' y1='0%' x2='0%' y2='100%'>
+            <stop
+              offset='0%'
+              stopColor={colors.invariant.textGrey}
+              stopOpacity={0.5 * pulseOpacity}
+            />
+            <stop
+              offset='100%'
+              stopColor={colors.invariant.textGrey}
+              stopOpacity={0.05 * pulseOpacity}
+            />
+          </linearGradient>
+        </defs>
+
+        {currentLessThanRange.length > 0 && (
+          <>
+            <path
+              d={generateSteppedAreaPath(currentLessThanRange, isXtoY)}
+              fill={`url(#${leftGradientId})`}
+            />
+            <path
+              d={generateSteppedPath(currentLessThanRange, isXtoY)}
+              stroke={colors.invariant.textGrey}
+              strokeWidth={2}
+              fill='none'
+              opacity={pulseOpacity}
+            />
+          </>
+        )}
+
+        {currentGreaterThanRange.length > 0 && (
+          <>
+            <path
+              d={generateSteppedAreaPath(currentGreaterThanRange, isXtoY)}
+              fill={`url(#${rightGradientId})`}
+            />
+            <path
+              d={generateSteppedPath(currentGreaterThanRange, isXtoY)}
+              stroke={colors.invariant.textGrey}
+              strokeWidth={2}
+              fill='none'
+              opacity={pulseOpacity}
+            />
+          </>
+        )}
+      </svg>
+    )
+  }
   const isNoPositions = data.every(tick => !(tick?.y > 0))
 
   const isMd = useMediaQuery(theme.breakpoints.up('md'))
@@ -463,7 +549,11 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         ]}
         curve={isXtoY ? 'stepAfter' : 'stepBefore'}
         margin={{ top: isSmDown ? 55 : 25, bottom: 15 }}
-        colors={[colors.invariant.textGrey, colors.invariant.green, colors.invariant.textGrey]}
+        colors={[
+          colors.invariant.transparentBcg,
+          colors.invariant.green,
+          colors.invariant.transparentBcg
+        ]}
         axisTop={null}
         axisRight={null}
         axisLeft={null}
@@ -499,6 +589,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           'areas',
           'lines',
           lazyLoadingLayer,
+          pulsingOutOfRangeLayer,
           currentLayer,
           brushLayer,
           'axes',
@@ -522,5 +613,4 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     </Grid>
   )
 }
-
 export default PriceRangePlot
