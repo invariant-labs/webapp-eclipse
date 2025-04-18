@@ -15,12 +15,7 @@ export const Stat = ({ isLoading = false, name, value, isHorizontal = false }: P
     <Box className={classes.container}>
       {name && <Box className={classes.name}>{name}</Box>}
       {isLoading ? (
-        <Skeleton
-          sx={{ alignSelf: 'center', margin: 'auto' }}
-          variant='rounded'
-          width={100}
-          height={27}
-        />
+        <Skeleton className={classes.skeleton} variant='rounded' />
       ) : (
         <Box className={classes.value}>{value}</Box>
       )}
