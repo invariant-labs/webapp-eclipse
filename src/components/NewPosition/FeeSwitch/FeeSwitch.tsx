@@ -63,7 +63,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
       requestAnimationFrame(checkBestTierVisibility)
     }
     container.addEventListener('scroll', handleScroll, { passive: false })
-    window.addEventListener('resize', handleScroll, { passive: true })
+    window.addEventListener('resize', handleScroll, { passive: false })
 
     checkBestTierVisibility()
 
