@@ -1,6 +1,6 @@
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
-import icons from '@static/icons'
+import { arrowRightIcon, closeSmallIcon, infoCircleIcon, newTabIcon } from '@static/icons'
 import { Button } from '@common/Button/Button'
 import { Separator } from '@common/Separator/Separator'
 import { colors, theme } from '@static/theme'
@@ -48,13 +48,13 @@ export const ECBanner: React.FC<IECBanner> = ({
   return (
     <Grid className={classes.mainWrapper}>
       {isCloseButton && (
-        <img className={classes.closeIcon} src={icons.closeSmallIcon} onClick={handleCloseBanner} />
+        <img className={classes.closeIcon} src={closeSmallIcon} onClick={handleCloseBanner} />
       )}
       <Grid className={classes.leftWrapper}>
         <Typography className={classes.header}>
           Your Allocation{' '}
           <TooltipGradient placement='top' top={1} title={allocationTooltipTitle}>
-            <img src={icons.infoCircle} />
+            <img src={infoCircleIcon} />
           </TooltipGradient>
         </Typography>
 
@@ -64,7 +64,7 @@ export const ECBanner: React.FC<IECBanner> = ({
         </Typography>
         <Button scheme='green' gap={8} width={200} height={36}>
           Claim
-          <img className={classes.newTab} src={icons.newTab} />
+          <img className={classes.newTab} src={newTabIcon} />
         </Button>
       </Grid>
       <Separator isHorizontal={changeDirection} size={'100%'} color={colors.invariant.light} />
@@ -76,7 +76,7 @@ export const ECBanner: React.FC<IECBanner> = ({
               <Typography className={classes.header}>
                 fees and points{' '}
                 <TooltipGradient title={earnTooltipTitle} top={1}>
-                  <img src={icons.infoCircle} />
+                  <img src={infoCircleIcon} />
                 </TooltipGradient>
               </Typography>
             </Grid>
@@ -84,7 +84,7 @@ export const ECBanner: React.FC<IECBanner> = ({
             <Typography className={classes.header}>
               Use ECLS tokens to earn trading fees and points{' '}
               <TooltipGradient title={earnTooltipTitle} top={1}>
-                <img src={icons.infoCircle} />
+                <img src={infoCircleIcon} />
               </TooltipGradient>
             </Typography>
           )}
@@ -99,7 +99,7 @@ export const ECBanner: React.FC<IECBanner> = ({
             width={200}
             height={36}>
             Provide liquidity
-            <img className={classes.arrowRight} src={icons.arrowRight} />
+            <img className={classes.arrowRight} src={arrowRightIcon} />
           </Button>
         </Grid>
         <img className={classes.card} src={changeDirection ? cardSmall : cardLarge} />

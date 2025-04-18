@@ -83,8 +83,8 @@ export const PopularPoolsWrapper: React.FC = () => {
         })
       } else {
         data.push({
-          iconFrom: getNetworkTokensList(currentNetwork)[pool.tokenX].logoURI ?? icons.unknownToken,
-          iconTo: getNetworkTokensList(currentNetwork)[pool.tokenY].logoURI ?? icons.unknownToken,
+          iconFrom: getNetworkTokensList(currentNetwork)[pool.tokenX].logoURI ?? unknownTokenIcon,
+          iconTo: getNetworkTokensList(currentNetwork)[pool.tokenY].logoURI ?? unknownTokenIcon,
           symbolFrom: getNetworkTokensList(currentNetwork)[pool.tokenX].symbol ?? pool.tokenX,
           symbolTo: getNetworkTokensList(currentNetwork)[pool.tokenY].symbol ?? pool.tokenY,
           addressFrom: pool.tokenX,
