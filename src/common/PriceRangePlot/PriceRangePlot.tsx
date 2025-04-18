@@ -72,7 +72,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     const animate = (timestamp: number) => {
       if (!startTime) startTime = timestamp
       const elapsed = timestamp - startTime
-      const newOpacity = 0.6 + 0.3 * Math.sin((elapsed / 1500) * Math.PI)
+      const newOpacity = 0.6 + 0.2 * Math.sin((elapsed / 1500) * Math.PI)
       setPulseOpacity(newOpacity)
       animationFrameId = requestAnimationFrame(animate)
     }
