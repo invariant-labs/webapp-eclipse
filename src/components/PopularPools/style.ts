@@ -24,7 +24,6 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
     minWidth: '100%',
     '& .slick-track': {
       paddingTop: 30,
-
       display: 'flex',
       justifyContent: 'space-between'
     },
@@ -50,12 +49,19 @@ export const useStyles = makeStyles<{ showSlider: boolean }>()((theme, { showSli
     '& .slick-arrow:hover::before': {
       color: colors.invariant.text
     },
+    '& .slick-arrow:focus::before, & .slick-arrow:active::before': {
+      color: colors.invariant.textGrey
+    },
+    '@media (hover: hover)': {
+      '& .slick-arrow:hover::before': {
+        color: colors.invariant.text
+      }
+    },
     '& .slick-prev': {
       left: -50,
       [theme.breakpoints.down('lg')]: {
         left: -40
       },
-
       [theme.breakpoints.down('sm')]: {
         left: -4,
         zIndex: 3
