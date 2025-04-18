@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite serve",
-    "build": "tsc && vite build",
+    "build": "export NODE_OPTIONS=--max-old-space-size=8192 && tsc && vite build",
     "watch": "vite build --watch",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "fix-lint": "eslint --fix src",
@@ -22,7 +22,7 @@
     "@emotion/styled": "^11.11.5",
     "@invariant-labs/locker-eclipse-sdk": "^0.0.20",
     "@invariant-labs/points-sdk": "^0.0.5",
-    "@invariant-labs/sdk-eclipse": "^0.0.116",
+    "@invariant-labs/sdk-eclipse": "^0.0.118",
     "@irys/web-upload": "*",
     "@irys/web-upload-solana": "^0.1.7",
     "@metaplex-foundation/js": "^0.20.1",
