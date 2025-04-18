@@ -58,6 +58,13 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   useLayoutEffect(() => {
     checkBestTierVisibility()
   }, [bestTierNode, feeTiers, promotedPoolTierIndex])
+  useLayoutEffect(() => {
+    window.addEventListener('resize', checkBestTierVisibility)
+
+    return () => {
+      window.removeEventListener('resize', checkBestTierVisibility)
+    }
+  }, [])
 
   const { classes: tabsClasses } = useTabsStyles({
     isBestTierHiddenOnLeft,
