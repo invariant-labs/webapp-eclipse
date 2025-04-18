@@ -22,6 +22,20 @@ export const Faq = () => {
 
    `
     },
+
+    {
+      question: 'What is Eclipse Ecosystem Exposure?',
+      answer: `
+      
+      It’s a <a href="https://docs.invariant.app/docs/invariant_points/ecosystem_exposure" style="color: #2EE09A" target="_blank">triple-yield opportunity</a> for providing liquidity on Invariant.
+      In addition to earning fees and Invariant Points, users unlock exclusive benefits from other projects in the Eclipse ecosystem, which are our official partners.
+      <br></br>
+      The higher your position on the leaderboard, the more perks you can access. 
+      <br></br>
+      You can earn points in Points Systems, receive boosts, and get discounts on products from our ecosystem partners.
+      
+      `
+    },
     {
       question: 'How do I earn points?',
       answer: `
@@ -42,6 +56,7 @@ export const Faq = () => {
        <li>ETH/USDC (<b>0.09%</b> fee tier)</li>
        <li>SOL/ETH (<b>0.09%</b> fee tier)</li>
        <li>tETH/ETH (<b>0.01%</b> fee tier)</li>
+       <li>SOL/USDC (<b>0.09%</b> fee tier)</li>
        </ul>
       <br></br>
        
@@ -70,6 +85,7 @@ The algorithm takes into account factors such as the size of the position (TVL),
       question: 'How long will points continue?',
       answer: 'Invariant Points will run through 2025, with no specific end date defined yet.'
     },
+
     {
       question: 'Do I get rewarded for being an early user?',
       answer: `

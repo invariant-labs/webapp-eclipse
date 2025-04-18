@@ -2,7 +2,7 @@ import React from 'react'
 import { Box, Button, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { theme } from '@static/theme'
-import icons from '@static/icons'
+import { arrowLeftIcon, arrowRightIcon, dropdownIcon, dropdownReverseIcon } from '@static/icons'
 import { LeaderBoardType } from '@store/consts/static'
 
 interface LeaderboardListProps {
@@ -34,9 +34,9 @@ const LeaderboardSwitcher: React.FC<LeaderboardListProps> = ({
           onClick={handleClick}>
           <Typography className={classes.leaderboardTypeText}>{selectedOption}</Typography>
           {!isMenuOpen ? (
-            <img src={icons.dropdown} alt='' />
+            <img src={dropdownIcon} alt='' />
           ) : (
-            <img src={icons.dropdownReverse} alt='' />
+            <img src={dropdownReverseIcon} alt='' />
           )}
         </Button>
       ) : (
@@ -52,7 +52,7 @@ const LeaderboardSwitcher: React.FC<LeaderboardListProps> = ({
                 return availableOptions[idx - 1]
               })
             }>
-            <img src={icons.arrowLeft} alt='' style={{ cursor: 'pointer' }} />
+            <img src={arrowLeftIcon} alt='' style={{ cursor: 'pointer' }} />
             <Typography className={classes.mobileTypeSwitcherSubtitle}>
               {availableOptions.findIndex(item => item === selectedOption)! - 1 < 0
                 ? availableOptions[availableOptions.length - 1]
@@ -81,7 +81,7 @@ const LeaderboardSwitcher: React.FC<LeaderboardListProps> = ({
                     availableOptions.findIndex(item => item === selectedOption)! + 1
                   ]}
             </Typography>
-            <img src={icons.arrowRight} alt='' style={{ cursor: 'pointer' }} />
+            <img src={arrowRightIcon} alt='' style={{ cursor: 'pointer' }} />
           </Box>
         </Box>
       )}

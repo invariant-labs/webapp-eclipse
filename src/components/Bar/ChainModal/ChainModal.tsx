@@ -1,5 +1,5 @@
 import { useStyles } from './style'
-import icons from '@static/icons'
+import { chainIcons, eclipseIcon } from '@static/icons'
 import { Box, Typography } from '@mui/material'
 import { CHAINS } from '@store/consts/static'
 import classNames from 'classnames'
@@ -18,7 +18,7 @@ export const ChainModal = ({ onChainChange }: Props) => {
 
   return (
     <Modal
-      icon={<img className={classes.barButtonIcon} src={icons.eclipse} alt='Chain icon' />}
+      icon={<img className={classes.barButtonIcon} src={eclipseIcon} alt='Chain icon' />}
       open={open}
       onOpen={handleOpen}
       onClose={handleClose}
@@ -38,7 +38,7 @@ export const ChainModal = ({ onChainChange }: Props) => {
               }}>
               <img
                 className={classes.icon}
-                src={icons[chain.iconGlow]}
+                src={chainIcons[chain.iconGlow]}
                 alt={`${chain.name} icon`}
               />
               <Typography className={classes.name}>{chain.name}</Typography>

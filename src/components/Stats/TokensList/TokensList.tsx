@@ -61,7 +61,7 @@ const TokensList: React.FC<ITokensList> = ({
   isLoading
 }) => {
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
-  const { classes } = useStyles({ initialDataLength })
+  const { classes } = useStyles()
   const [page, setPage] = useState(1)
   const [sortType, setSortType] = React.useState(SortTypeTokenList.VOLUME_DESC)
 
@@ -173,14 +173,11 @@ const TokensList: React.FC<ITokensList> = ({
               )
             })}
             {getEmptyRowsCount() > 0 &&
-              new Array(getEmptyRowsCount()).fill('').map((_, index) => (
-                <div
-                  key={`empty-row-${index}`}
-                  className={classNames(classes.emptyRow, {
-                    [classes.emptyRowBorder]: index === getEmptyRowsCount() - 1
-                  })}
-                />
-              ))}
+              new Array(getEmptyRowsCount())
+                .fill('')
+                .map((_, index) => (
+                  <div key={`empty-row-${index}`} className={classNames(classes.emptyRow)} />
+                ))}
           </>
         ) : (
           <NotFoundPlaceholder title='No tokens found...' isStats />
@@ -189,9 +186,7 @@ const TokensList: React.FC<ITokensList> = ({
           className={classes.pagination}
           sx={{
             height: height,
-            borderTop: `
-              ${pages > 1 ? (page !== pages ? 1 : 2) : 2}px solid ${colors.invariant.light}
-            `
+      borderTop: `1px solid ${colors.invariant.light}`
           }}>
           {pages > 1 && (
             <TableBoundsLabel

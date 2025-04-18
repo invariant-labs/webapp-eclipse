@@ -37,9 +37,13 @@ import {
   getMaxTick,
   getMinTick,
   PRICE_SCALE,
-  Range
+  POOLS_WITH_LUTS,
+  Range,
+  toDecimal,
+  simulateSwapAndCreatePosition,
+  simulateSwapAndCreatePositionOnTheSamePool
 } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { PlotTickData, PositionWithAddress } from '@store/reducers/positions'
+import { PlotTickData, PositionWithAddress, PositionWithoutTicks } from '@store/reducers/positions'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   AI16Z_MAIN,
@@ -93,7 +97,9 @@ import {
   KYSOL_MAIN,
   EZSOL_MAIN,
   LEADERBOARD_DECIMAL,
-  POSITIONS_PER_PAGE
+  POSITIONS_PER_PAGE,
+  MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
+  BITZ_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -909,6 +915,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [USDC_MAIN.address.toString()]: USDC_MAIN,
         [USDT_MAIN.address.toString()]: USDT_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
+        [BITZ_MAIN.address.toString()]: BITZ_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,
@@ -1065,6 +1072,8 @@ export const calcCurrentPriceOfPool = (
   return convertBalanceToBN(knownPrice.toString(), 0)
 }
 
+export const hasLuts = (pool: PublicKey) => POOLS_WITH_LUTS.some(p => p.equals(pool))
+
 export const handleSimulate = async (
   pools: PoolWithAddress[],
   poolTicks: { [key in string]: Tick[] },
@@ -1134,9 +1143,11 @@ export const handleSimulate = async (
       errorMessage.push(`Ticks not available for pool ${pool.address.toString()}`)
       continue
     }
-    const maxCrosses =
-      pool.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
-      pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+
+    const maxCrosses = hasLuts(pool.address)
+      ? MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS
+      : pool.tokenX.toString() === WRAPPED_ETH_ADDRESS ||
+          pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
         ? MAX_CROSSES_IN_SINGLE_TX
         : TICK_CROSSES_PER_IX
 
@@ -1227,6 +1238,94 @@ export const handleSimulate = async (
   }
 }
 
+export const simulateAutoSwapOnTheSamePool = async (
+  amountX: BN,
+  amountY: BN,
+  pool: PoolWithAddress,
+  poolTicks: Tick[],
+  tickmap: Tickmap,
+  swapSlippage: BN,
+  lowerTick: number,
+  upperTick: number,
+  minUtilization: BN
+) => {
+  const ticks: Map<number, Tick> = new Map<number, Tick>()
+  for (const tick of poolTicks) {
+    ticks.set(tick.index, tick)
+  }
+
+  const maxCrosses =
+    pool.tokenX.toString() === WRAPPED_ETH_ADDRESS || pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+
+  try {
+    const simulateResult = simulateSwapAndCreatePositionOnTheSamePool(
+      amountX,
+      amountY,
+      swapSlippage,
+      {
+        ticks,
+        tickmap,
+        pool,
+        maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
+        maxCrosses
+      },
+      { lowerTick, upperTick },
+      minUtilization
+    )
+    return simulateResult
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
+
+export const simulateAutoSwap = async (
+  amountX: BN,
+  amountY: BN,
+  pool: PoolWithAddress,
+  poolTicks: Tick[],
+  tickmap: Tickmap,
+  swapSlippage: BN,
+  positionSlippage: BN,
+  lowerTick: number,
+  upperTick: number,
+  knownPrice: BN,
+  minUtilization: BN
+) => {
+  const ticks: Map<number, Tick> = new Map<number, Tick>()
+  for (const tick of poolTicks) {
+    ticks.set(tick.index, tick)
+  }
+
+  const maxCrosses =
+    pool.tokenX.toString() === WRAPPED_ETH_ADDRESS || pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+  const precision = toDecimal(1, 3)
+  try {
+    const simulateResult = simulateSwapAndCreatePosition(
+      amountX,
+      amountY,
+      {
+        ticks,
+        tickmap,
+        pool,
+        maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
+        maxCrosses,
+        slippage: swapSlippage
+      },
+      { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
+      precision,
+      minUtilization
+    )
+    return simulateResult
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
 export const handleSimulateWithHop = async (
   market: Market,
   tokenIn: PublicKey,
@@ -1260,19 +1359,13 @@ export const handleSimulateWithHop = async (
     return { simulation: null, route: null, error: true }
   }
 
-  const crossLimit =
-    tokenIn.toString() === WRAPPED_ETH_ADDRESS || tokenOut.toString() === WRAPPED_ETH_ADDRESS
-      ? MAX_CROSSES_IN_SINGLE_TX
-      : TICK_CROSSES_PER_IX
-
   const simulations = await market.routeTwoHop(
     tokenIn,
     tokenOut,
     amount,
     byAmountIn,
     routeCandidates,
-    accounts,
-    crossLimit
+    accounts
   )
 
   if (simulations.length === 0) {
@@ -1336,6 +1429,7 @@ export const handleSimulateWithHop = async (
     simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
     simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
   ) {
+    console.log(simulations[best][1], routeCandidates[simulations[best][0]])
     return {
       simulation: simulations[best][1],
       route: routeCandidates[simulations[best][0]],
@@ -1783,21 +1877,16 @@ export const thresholdsWithTokenDecimal = (decimals: number): FormatNumberThresh
     decimals
   },
   {
-    value: 100,
+    value: 10000,
+    decimals: 6
+  },
+  {
+    value: 100000,
     decimals: 4
   },
   {
-    value: 1000,
-    decimals: 2
-  },
-  {
-    value: 10000,
-    decimals: 1
-  },
-  {
     value: 1000000,
-    decimals: 2,
-    divider: 1000
+    decimals: 3
   },
   {
     value: 1000000000,
@@ -1986,7 +2075,8 @@ export const trimDecimalZeros = (numStr: string): string => {
 const poolsToRecalculateAPY = [
   'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
   '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%
-  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC' // USDC_SOL 0.09%
+  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC', // USDC_SOL 0.09%
+  'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H' // ETH-BITZ 1%
 ]
 
 export const calculateAPYAndAPR = (
@@ -2150,6 +2240,40 @@ export const ensureError = (value: unknown): Error => {
   return error
 }
 
+export const getPositionByIdAndPoolAddress = async (
+  marketProgram: Market,
+  id: string,
+  poolAddress: string
+): Promise<PositionWithoutTicks | null> => {
+  const positions = await marketProgram.program.account.position.all([
+    {
+      memcmp: {
+        bytes: bs58.encode(new PublicKey(poolAddress).toBuffer()),
+        offset: 40
+      }
+    },
+    {
+      memcmp: {
+        bytes: bs58.encode(new BN(id).toBuffer('le', 16)),
+        offset: 72
+      }
+    }
+  ])
+
+  return positions[0]
+    ? {
+        ...positions[0].account,
+        feeGrowthInsideX: positions[0].account.feeGrowthInsideX.v,
+        feeGrowthInsideY: positions[0].account.feeGrowthInsideY.v,
+        liquidity: positions[0].account.liquidity.v,
+        secondsPerLiquidityInside: positions[0].account.secondsPerLiquidityInside.v,
+        tokensOwedX: positions[0].account.tokensOwedX.v,
+        tokensOwedY: positions[0].account.tokensOwedY.v,
+        address: positions[0].publicKey
+      }
+    : null
+}
+
 export const ROUTES = {
   ROOT: '/',
   EXCHANGE: '/exchange',
@@ -2175,4 +2299,31 @@ export const ROUTES = {
   },
 
   getPositionRoute: (id: string): string => `${ROUTES.POSITION}/${id}`
+}
+
+export const truncateString = (str: string, maxLength: number): string => {
+  if (str.length <= maxLength + 1) {
+    return str
+  }
+
+  return str.slice(0, maxLength) + '...'
+}
+export const calculatePercentageRatio = (
+  tokenXLiq: number,
+  tokenYLiq: number,
+  currentPrice: number,
+  xToY: boolean
+) => {
+  const firstTokenPercentage =
+    ((tokenXLiq * currentPrice) / (tokenYLiq + tokenXLiq * currentPrice)) * 100
+  const tokenXPercentageFloat = xToY ? firstTokenPercentage : 100 - firstTokenPercentage
+  const tokenXPercentage =
+    tokenXPercentageFloat > 50
+      ? Math.floor(tokenXPercentageFloat)
+      : Math.ceil(tokenXPercentageFloat)
+
+  return {
+    tokenXPercentage,
+    tokenYPercentage: 100 - tokenXPercentage
+  }
 }

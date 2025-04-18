@@ -18,12 +18,12 @@ import {
 import { formatNumberWithSuffix, getTokenPrice, printBN } from '@utils/utils'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import Scrollbars from 'rc-scrollbars'
-import icons from '@static/icons'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
 import CustomScrollbar from './CustomScrollbar'
 import { TokenIcon } from './TokenIcon'
+import { emptyIcon, newTabIcon, searchIcon, warningIcon } from '@static/icons'
 
 export interface ISelectTokenModal {
   tokens: SwapToken[]
@@ -88,7 +88,7 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
         }}>
         <Box className={classes.imageContainer}>
           <TokenIcon icon={token.logoURI} name={token.name} />
-          {token.isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
+          {token.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
         </Box>
         <Grid container className={classes.tokenContainer}>
           <Grid container className={classes.tokenHeaderWrapper}>
@@ -108,7 +108,7 @@ const RowItem: React.FC<ListChildComponentProps<RowItemData>> = React.memo(
                     '...' +
                     token.assetAddress.toString().slice(isXs ? -4 : -5, -1)}
                 </Typography>
-                <img width={8} height={8} src={icons.newTab} alt={'Token address'} />
+                <img width={8} height={8} src={newTabIcon} alt={'Token address'} />
               </a>
             </Grid>
           </Grid>
@@ -313,7 +313,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
                   onChange={searchToken}
                   value={value}
                 />
-                <CardMedia image={icons.SearchIcon} className={classes.inputIcon} />
+                <CardMedia image={searchIcon} className={classes.inputIcon} />
               </Grid>
               <TooltipHover title='Add token'>
                 <AddCircleOutlineIcon
@@ -361,7 +361,7 @@ export const SelectTokenModal: React.FC<ISelectTokenModal> = memo(
             <Box className={classes.tokenList}>
               {!filteredTokens.length && (
                 <Grid className={classes.noTokenFoundContainer}>
-                  <img className={classes.img} src={icons.empty} alt='Not connected' />
+                  <img className={classes.img} src={emptyIcon} alt='Not connected' />
                   <Typography className={classes.noTokenFoundPlaceholder}>
                     No token found...
                   </Typography>

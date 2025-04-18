@@ -10,9 +10,7 @@ const SinglePositionPage: React.FC = () => {
 
   return (
     <Grid className={classes.container}>
-      <Grid item>
-        <SinglePositionWrapper id={id ?? ''} />
-      </Grid>
+      <SinglePositionWrapper id={id ?? ''} />
     </Grid>
   )
 }

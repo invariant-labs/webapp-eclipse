@@ -2,8 +2,13 @@ import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import NewPosition from '@components/NewPosition/NewPosition'
 import {
   ALL_FEE_TIERS_DATA,
+  DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION,
+  DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
+  DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
   LEADERBOARD_DECIMAL,
+  autoSwapPools,
   commonTokensForNetworks
 } from '@store/consts/static'
 import { PositionOpeningMethod, TokenPriceData } from '@store/consts/types'
@@ -27,10 +32,10 @@ import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
-import {
+import poolsSelectors, {
+  autoSwapTicksAndTickMap,
   isLoadingLatestPoolsForTransaction,
   isLoadingPathTokens,
-  isLoadingTicksAndTickMaps,
   isLoadingTokens,
   poolsArraySortedByFees
 } from '@store/selectors/pools'
@@ -40,11 +45,11 @@ import { VariantType } from 'notistack'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { getCurrentSolanaConnection } from '@utils/web3/connection'
+import { getCurrentSolanaConnection, networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { PublicKey } from '@solana/web3.js'
 import { DECIMAL, feeToTickSpacing } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { InitMidPrice } from '@common/PriceRangePlot/PriceRangePlot'
-import { Pair } from '@invariant-labs/sdk-eclipse'
+import { getMarketAddress, Pair } from '@invariant-labs/sdk-eclipse'
 import { getLiquidityByX, getLiquidityByY } from '@invariant-labs/sdk-eclipse/lib/math'
 import { calculatePriceSqrt } from '@invariant-labs/sdk-eclipse/src'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
@@ -75,7 +80,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const tokens = useSelector(poolTokens)
   const walletStatus = useSelector(status)
   const allPools = useSelector(poolsArraySortedByFees)
-  const loadingTicksAndTickMaps = useSelector(isLoadingTicksAndTickMaps)
+  const autoSwapPoolData = useSelector(poolsSelectors.autoSwapPool)
+  const { ticks: autoSwapTicks, tickmap: autoSwapTickMap } = useSelector(autoSwapTicksAndTickMap)
+  const isLoadingAutoSwapPool = useSelector(poolsSelectors.isLoadingAutoSwapPool)
+  const isLoadingAutoSwapPoolTicksOrTickMap = useSelector(
+    poolsSelectors.isLoadingAutoSwapPoolTicksOrTickMap
+  )
   const isBalanceLoading = useSelector(balanceLoading)
   const shouldNotUpdatePriceRange = useSelector(shouldNotUpdateRange)
   const currentNetwork = useSelector(network)
@@ -86,6 +96,10 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const ticksData = allData
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
 
+  const isLoadingTicksOrTickmap = useMemo(
+    () => ticksLoading || isLoadingAutoSwapPoolTicksOrTickMap || isLoadingAutoSwapPool,
+    [ticksLoading, isLoadingAutoSwapPoolTicksOrTickMap, isLoadingAutoSwapPool]
+  )
   const [liquidity, setLiquidity] = useState<BN>(new BN(0))
 
   const [poolIndex, setPoolIndex] = useState<number | null>(null)
@@ -234,8 +248,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     }
   }, [])
 
-  const liquidityRef = useRef<BN>(new BN(0))
-
   useEffect(() => {
     setProgress('none')
   }, [poolIndex])
@@ -318,6 +330,20 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     x: 1,
     sqrtPrice: 0
   })
+
+  const currentPoolAddress = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return null
+    const net = networkTypetoProgramNetwork(currentNetwork)
+    const marketAddress = new PublicKey(getMarketAddress(net))
+    try {
+      return new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+        fee,
+        tickSpacing
+      }).getAddress(marketAddress)
+    } catch (e) {
+      return PublicKey.default
+    }
+  }, [tokenAIndex, tokenBIndex, fee, tickSpacing, currentNetwork])
 
   const isWaitingForNewPool = useMemo(() => {
     if (poolIndex !== null) {
@@ -533,9 +559,42 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     localStorage.setItem('INVARIANT_NEW_POSITION_SLIPPAGE', slippage)
   }
 
+  const initialMaxPriceImpact =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_PRICE_IMPACT') ?? DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT
+
+  const onMaxPriceImpactChange = (priceImpact: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MAX_PRICE_IMPACT', priceImpact)
+  }
+
+  const initialMinUtilization =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION') ?? DEFAULT_AUTOSWAP_MIN_UTILIZATION
+
+  const onMinUtilizationChange = (utilization: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MIN_UTILIZATION', utilization)
+  }
+
+  const initialMaxSlippageToleranceSwap =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP
+
+  const onMaxSlippageToleranceSwapChange = (slippageToleranceSwap: string) => {
+    localStorage.setItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP', slippageToleranceSwap)
+  }
+
+  const initialMaxSlippageToleranceCreatePosition =
+    localStorage.getItem('INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION') ??
+    DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION
+
+  const onMaxSlippageToleranceCreatePositionChange = (slippageToleranceCreatePosition: string) => {
+    localStorage.setItem(
+      'INVARIANT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION',
+      slippageToleranceCreatePosition
+    )
+  }
+
   const calcAmount = (amount: BN, left: number, right: number, tokenAddress: PublicKey) => {
     if (tokenAIndex === null || tokenBIndex === null || isNaN(left) || isNaN(right)) {
-      return new BN(0)
+      return { amount: new BN(0), liquidity: new BN(0) }
     }
 
     const byX = tokenAddress.equals(
@@ -553,13 +612,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
           true
         )
-
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
-        }
-
-        setLiquidity(result.liquidity)
-        return result.y
+        return { amount: result.y, liquidity: result.liquidity }
       } else {
         const result = getLiquidityByY(
           amount,
@@ -568,29 +621,11 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
           true
         )
-
-        if (isMountedRef.current) {
-          liquidityRef.current = result.liquidity
-        }
-
-        setLiquidity(result.liquidity)
-
-        return result.x
+        return { amount: result.x, liquidity: result.liquidity }
       }
     } catch {
-      const result = (byX ? getLiquidityByY : getLiquidityByX)(
-        amount,
-        lowerTick,
-        upperTick,
-        poolIndex !== null ? allPools[poolIndex].sqrtPrice : midPrice.sqrtPrice,
-        true
-      )
-      if (isMountedRef.current) {
-        liquidityRef.current = result.liquidity
-      }
+      return { amount: new BN(0), liquidity: new BN(0) }
     }
-
-    return new BN(0)
   }
 
   const unblockUpdatePriceRange = () => {
@@ -623,6 +658,16 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             isXtoY: allPools[poolIndex].tokenX.equals(
               tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress
             )
+          })
+        )
+      }
+      if (autoSwapPool) {
+        poolsActions.getAutoSwapPoolData(
+          new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+            fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
+            tickSpacing:
+              ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
+              feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
           })
         )
       }
@@ -731,13 +776,15 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     const feeTiersWithTvl: Record<number, number> = {}
     let totalTvl = 0
 
-    poolsList.map(pool => {
-      if (
-        (pool.tokenX.equals(tokens[tokenAIndex ?? 0].assetAddress) &&
-          pool.tokenY.equals(tokens[tokenBIndex ?? 0].assetAddress)) ||
-        (pool.tokenX.equals(tokens[tokenBIndex ?? 0].assetAddress) &&
-          pool.tokenY.equals(tokens[tokenAIndex ?? 0].assetAddress))
-      ) {
+    poolsList.forEach(pool => {
+      const xMatch =
+        pool.tokenX.equals(tokens[tokenAIndex ?? 0].assetAddress) &&
+        pool.tokenY.equals(tokens[tokenBIndex ?? 0].assetAddress)
+      const yMatch =
+        pool.tokenX.equals(tokens[tokenBIndex ?? 0].assetAddress) &&
+        pool.tokenY.equals(tokens[tokenAIndex ?? 0].assetAddress)
+
+      if (xMatch || yMatch) {
         feeTiersWithTvl[pool.fee] = pool.tvl
         totalTvl += pool.tvl
       }
@@ -745,6 +792,46 @@ export const NewPositionWrapper: React.FC<IProps> = ({
 
     return { feeTiersWithTvl, totalTvl }
   }, [poolsList, tokenAIndex, tokenBIndex])
+
+  const autoSwapPool = useMemo(
+    () =>
+      tokenAIndex !== null && tokenBIndex !== null
+        ? autoSwapPools.find(
+            item =>
+              (item.pair.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
+                item.pair.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
+              (item.pair.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
+                item.pair.tokenY.equals(tokens[tokenAIndex].assetAddress))
+          )
+        : undefined,
+    [tokenAIndex, tokenBIndex]
+  )
+
+  useEffect(() => {
+    if (tokenAIndex === null || tokenBIndex === null || !autoSwapPool) return
+    dispatch(
+      poolsActions.getAutoSwapPoolData(
+        new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+          fee: ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee,
+          tickSpacing:
+            ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.tickSpacing ??
+            feeToTickSpacing(ALL_FEE_TIERS_DATA[autoSwapPool.swapPool.feeIndex].tier.fee)
+        })
+      )
+    )
+  }, [autoSwapPool])
+
+  useEffect(() => {
+    if (autoSwapPoolData && tokenAIndex !== null && tokenBIndex !== null) {
+      dispatch(
+        poolsActions.getTicksAndTickMapForAutoSwap({
+          tokenFrom: tokens[tokenAIndex].assetAddress,
+          tokenTo: tokens[tokenBIndex].assetAddress,
+          autoSwapPool: autoSwapPoolData
+        })
+      )
+    }
+  }, [autoSwapPoolData])
 
   return (
     <NewPosition
@@ -832,7 +919,73 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiers={ALL_FEE_TIERS_DATA.map(tier => ({
         feeValue: +printBN(tier.tier.fee, DECIMAL - 2)
       }))}
-      isCurrentPoolExisting={poolIndex !== null && !!allPools[poolIndex]}
+      isCurrentPoolExisting={
+        currentPoolAddress ? allPools.some(pool => pool.address.equals(currentPoolAddress)) : false
+      }
+      swapAndAddLiquidityHandler={(
+        xAmount,
+        yAmount,
+        swapAmount,
+        xToY,
+        byAmountIn,
+        estimatedPriceAfterSwap,
+        crossedTicks,
+        swapSlippage,
+        positionSlippage,
+        minUtilizationPercentage,
+        leftTickIndex,
+        rightTickIndex
+      ) => {
+        if (
+          tokenAIndex === null ||
+          tokenBIndex === null ||
+          !autoSwapPoolData ||
+          poolIndex === null ||
+          !allPools[poolIndex] ||
+          !autoSwapTickMap ||
+          !autoSwapPool
+        ) {
+          return
+        }
+        if (poolIndex !== null) {
+          dispatch(positionsActions.setShouldNotUpdateRange(true))
+        }
+        if (progress === 'none') {
+          setProgress('progress')
+        }
+
+        const lowerTickIndex = Math.min(leftTickIndex, rightTickIndex)
+        const upperTickIndex = Math.max(leftTickIndex, rightTickIndex)
+
+        dispatch(
+          positionsActions.swapAndInitPosition({
+            xAmount,
+            yAmount,
+            tokenX: tokens[isXtoY ? tokenAIndex : tokenBIndex].assetAddress,
+            tokenY: tokens[isXtoY ? tokenBIndex : tokenAIndex].assetAddress,
+            swapAmount,
+            byAmountIn,
+            xToY,
+            swapPool: autoSwapPoolData,
+            swapPoolTickmap: autoSwapTickMap,
+            swapSlippage,
+            estimatedPriceAfterSwap,
+            crossedTicks,
+            positionPair: {
+              fee: allPools[poolIndex].fee,
+              tickSpacing: allPools[poolIndex].tickSpacing
+            },
+            positionPoolIndex: poolIndex,
+            positionPoolPrice: allPools[poolIndex].sqrtPrice,
+            positionSlippage,
+            lowerTick: lowerTickIndex,
+            upperTick: upperTickIndex,
+            liquidityDelta: liquidity,
+            minUtilizationPercentage,
+            isSamePool: allPools[poolIndex].address.equals(autoSwapPool.swapPool.address)
+          })
+        )
+      }}
       addLiquidityHandler={(leftTickIndex, rightTickIndex, xAmount, yAmount, slippage) => {
         if (tokenAIndex === null || tokenBIndex === null) {
           return
@@ -854,7 +1007,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             fee,
             lowerTick: lowerTickIndex,
             upperTick: upperTickIndex,
-            liquidityDelta: liquidityRef.current,
+            liquidityDelta: liquidity,
             initPool: poolIndex === null,
             initTick: poolIndex === null ? midPrice.index : undefined,
             xAmount: Math.floor(xAmount),
@@ -884,8 +1037,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
         dispatch(walletActions.disconnect())
       }}
       calcAmount={calcAmount}
-      ticksLoading={ticksLoading}
-      loadingTicksAndTickMaps={loadingTicksAndTickMaps}
+      isLoadingTicksOrTickmap={isLoadingTicksOrTickmap}
       progress={progress}
       isXtoY={isXtoY}
       tickSpacing={tickSpacing}
@@ -899,6 +1051,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
           ? allPools[poolIndex].sqrtPrice
           : calculatePriceSqrt(midPrice.index)
       }
+      updateLiquidity={(lq: BN) => setLiquidity(lq)}
       handleAddToken={addTokenHandler}
       commonTokens={commonTokensForNetworks[currentNetwork]}
       initialOpeningPositionMethod={initialOpeningPositionMethod}
@@ -932,6 +1085,17 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
       isLoadingStats={isLoadingStats}
+      autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
+      autoSwapTickmap={autoSwapTickMap}
+      autoSwapTicks={autoSwapTicks}
+      initialMaxPriceImpact={initialMaxPriceImpact}
+      onMaxPriceImpactChange={onMaxPriceImpactChange}
+      initialMinUtilization={initialMinUtilization}
+      onMinUtilizationChange={onMinUtilizationChange}
+      onMaxSlippageToleranceSwapChange={onMaxSlippageToleranceSwapChange}
+      initialMaxSlippageToleranceSwap={initialMaxSlippageToleranceSwap}
+      onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
+      initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
     />
   )
 }
