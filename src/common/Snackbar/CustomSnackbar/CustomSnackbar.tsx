@@ -15,7 +15,7 @@ import {
 } from './style'
 import { Grid } from '@mui/material'
 import { useDispatch } from 'react-redux'
-import icons from '@static/icons'
+import { closeIcon, newTabIcon } from '@static/icons'
 import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
 
@@ -79,10 +79,10 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
                   )
                 }}>
                 Details
-                <img alt='new tab' src={icons.newTab} />
+                <img alt='new tab' src={newTabIcon} />
               </StyledDetails>
               <StyledCloseButton onClick={handleDismiss}>
-                <img width={16} src={icons.closeIcon} alt='Close'></img>
+                <img width={16} src={closeIcon} alt='Close'></img>
               </StyledCloseButton>
             </Grid>
           )}
@@ -93,17 +93,17 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
                   window.open(link.href, '_blank')
                 }}>
                 {link.label}
-                <img alt='new tab' src={icons.newTab} />
+                <img alt='new tab' src={newTabIcon} />
               </StyledDetails>
               <StyledCloseButton onClick={handleDismiss}>
-                <img width={16} src={icons.closeIcon} alt='Close'></img>
+                <img width={16} src={closeIcon} alt='Close'></img>
               </StyledCloseButton>
             </Grid>
           )}
           {!link && !txid && (
             <Grid className={classes.transactionWrapper}>
               <StyledCloseButton onClick={handleDismiss}>
-                <img width={16} src={icons.closeIcon} alt='Close'></img>
+                <img width={16} src={closeIcon} alt='Close'></img>
               </StyledCloseButton>
             </Grid>
           )}

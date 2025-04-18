@@ -3,7 +3,7 @@ import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumberWithSuffix, formatNumberWithoutSuffix, getScaleFromString } from '@utils/utils'
 import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
-import icons from '@static/icons'
+import { unknownTokenIcon, warningIcon } from '@static/icons'
 import { getButtonClassName } from '@utils/uiUtils'
 import { OutlinedButton } from '@common/OutlinedButton/OutlinedButton'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -139,15 +139,13 @@ export const DepositAmountInput: React.FC<IProps> = ({
                 <Box className={classes.imageContainer}>
                   <img
                     alt='currency icon'
-                    src={currencyIconSrc ?? icons.unknownToken}
+                    src={currencyIconSrc ?? unknownTokenIcon}
                     className={classes.currencyIcon}
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
-                  {currencyIsUnknown && (
-                    <img className={classes.warningIcon} src={icons.warningIcon} />
-                  )}
+                  {currencyIsUnknown && <img className={classes.warningIcon} src={warningIcon} />}
                 </Box>
                 <Typography className={classes.currencySymbol}>{currency}</Typography>
               </>
@@ -155,6 +153,7 @@ export const DepositAmountInput: React.FC<IProps> = ({
               <Typography className={classes.noCurrencyText}>-</Typography>
             )}
           </Grid>
+
           <Input
             className={classes.input}
             classes={{ input: classes.innerInput }}

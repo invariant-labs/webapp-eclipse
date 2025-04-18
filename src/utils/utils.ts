@@ -38,7 +38,10 @@ import {
   getMinTick,
   PRICE_SCALE,
   POOLS_WITH_LUTS,
-  Range
+  Range,
+  toDecimal,
+  simulateSwapAndCreatePosition,
+  simulateSwapAndCreatePositionOnTheSamePool
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { PlotTickData, PositionWithAddress, PositionWithoutTicks } from '@store/reducers/positions'
 import {
@@ -96,7 +99,8 @@ import {
   LEADERBOARD_DECIMAL,
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
-  ES_MAIN
+  ES_MAIN,
+  BITZ_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -912,6 +916,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [USDC_MAIN.address.toString()]: USDC_MAIN,
         [USDT_MAIN.address.toString()]: USDT_MAIN,
         [SOL_MAIN.address.toString()]: SOL_MAIN,
+        [BITZ_MAIN.address.toString()]: BITZ_MAIN,
         [DOGWIFHAT_MAIN.address.toString()]: DOGWIFHAT_MAIN,
         [LAIKA_MAIN.address.toString()]: LAIKA_MAIN,
         [MOON_MAIN.address.toString()]: MOON_MAIN,
@@ -1235,6 +1240,94 @@ export const handleSimulate = async (
   }
 }
 
+export const simulateAutoSwapOnTheSamePool = async (
+  amountX: BN,
+  amountY: BN,
+  pool: PoolWithAddress,
+  poolTicks: Tick[],
+  tickmap: Tickmap,
+  swapSlippage: BN,
+  lowerTick: number,
+  upperTick: number,
+  minUtilization: BN
+) => {
+  const ticks: Map<number, Tick> = new Map<number, Tick>()
+  for (const tick of poolTicks) {
+    ticks.set(tick.index, tick)
+  }
+
+  const maxCrosses =
+    pool.tokenX.toString() === WRAPPED_ETH_ADDRESS || pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+
+  try {
+    const simulateResult = simulateSwapAndCreatePositionOnTheSamePool(
+      amountX,
+      amountY,
+      swapSlippage,
+      {
+        ticks,
+        tickmap,
+        pool,
+        maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
+        maxCrosses
+      },
+      { lowerTick, upperTick },
+      minUtilization
+    )
+    return simulateResult
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
+
+export const simulateAutoSwap = async (
+  amountX: BN,
+  amountY: BN,
+  pool: PoolWithAddress,
+  poolTicks: Tick[],
+  tickmap: Tickmap,
+  swapSlippage: BN,
+  positionSlippage: BN,
+  lowerTick: number,
+  upperTick: number,
+  knownPrice: BN,
+  minUtilization: BN
+) => {
+  const ticks: Map<number, Tick> = new Map<number, Tick>()
+  for (const tick of poolTicks) {
+    ticks.set(tick.index, tick)
+  }
+
+  const maxCrosses =
+    pool.tokenX.toString() === WRAPPED_ETH_ADDRESS || pool.tokenY.toString() === WRAPPED_ETH_ADDRESS
+      ? MAX_CROSSES_IN_SINGLE_TX
+      : TICK_CROSSES_PER_IX
+  const precision = toDecimal(1, 3)
+  try {
+    const simulateResult = simulateSwapAndCreatePosition(
+      amountX,
+      amountY,
+      {
+        ticks,
+        tickmap,
+        pool,
+        maxVirtualCrosses: TICK_VIRTUAL_CROSSES_PER_IX,
+        maxCrosses,
+        slippage: swapSlippage
+      },
+      { lowerTick, knownPrice, slippage: positionSlippage, upperTick },
+      precision,
+      minUtilization
+    )
+    return simulateResult
+  } catch (e) {
+    console.log(e)
+    return null
+  }
+}
 export const handleSimulateWithHop = async (
   market: Market,
   tokenIn: PublicKey,
@@ -1268,19 +1361,13 @@ export const handleSimulateWithHop = async (
     return { simulation: null, route: null, error: true }
   }
 
-  const crossLimit =
-    tokenIn.toString() === WRAPPED_ETH_ADDRESS || tokenOut.toString() === WRAPPED_ETH_ADDRESS
-      ? MAX_CROSSES_IN_SINGLE_TX
-      : TICK_CROSSES_PER_IX
-
   const simulations = await market.routeTwoHop(
     tokenIn,
     tokenOut,
     amount,
     byAmountIn,
     routeCandidates,
-    accounts,
-    crossLimit
+    accounts
   )
 
   if (simulations.length === 0) {
@@ -1344,6 +1431,7 @@ export const handleSimulateWithHop = async (
     simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
     simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
   ) {
+    console.log(simulations[best][1], routeCandidates[simulations[best][0]])
     return {
       simulation: simulations[best][1],
       route: routeCandidates[simulations[best][0]],
@@ -1989,7 +2077,8 @@ export const trimDecimalZeros = (numStr: string): string => {
 const poolsToRecalculateAPY = [
   'HRgVv1pyBLXdsAddq4ubSqo8xdQWRrYbvmXqEDtectce', // USDC_ETH 0.09%
   '86vPh8ctgeQnnn8qPADy5BkzrqoH5XjMCWvkd4tYhhmM', //SOL_ETH 0.09%
-  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC' // USDC_SOL 0.09%
+  'E2B7KUFwjxrsy9cC17hmadPsxWHD1NufZXTyrtuz8YxC', // USDC_SOL 0.09%
+  'HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H' // ETH-BITZ 1%
 ]
 
 export const calculateAPYAndAPR = (

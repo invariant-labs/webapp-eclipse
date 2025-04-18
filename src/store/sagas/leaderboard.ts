@@ -61,7 +61,7 @@ async function fetchLpLeaderboardData(
   return response.json() as Promise<ILpLeaderboardResponse>
 }
 async function fetchContentPoints(userWallet?: string) {
-  const response = await fetch(`https://points.invariant.app/api/content-program/${userWallet}`)
+  const response = await fetch(`${BASE_LEADERBOARD_URL}/api/content-program/${userWallet}`)
   if (!response.ok) {
     throw new Error('Failed to fetch content points')
   }
@@ -106,7 +106,7 @@ async function fetchLeaderboardConfig() {
   return response.json() as Promise<IConfigResponse>
 }
 async function fetchLeaderboardPriceFeed() {
-  const response = await fetch(`https://points.invariant.app/api/swap/price-feeds`)
+  const response = await fetch(`${BASE_LEADERBOARD_URL}/api/swap/price-feeds`)
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }

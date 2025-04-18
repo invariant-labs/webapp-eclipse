@@ -18,7 +18,7 @@ import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import icons from '@static/icons'
+import { activeLiquidityIcon, boostPointsIcon } from '@static/icons'
 import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
@@ -30,7 +30,7 @@ export interface IRangeSelector {
   onChangeRange: (leftIndex: number, rightIndex: number) => void
   blocked?: boolean
   blockerInfo?: string
-  ticksLoading: boolean
+  isLoadingTicksOrTickmap: boolean
   isXtoY: boolean
   xDecimal: number
   yDecimal: number
@@ -70,7 +70,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   onChangeRange,
   blocked = false,
   blockerInfo,
-  ticksLoading,
+  isLoadingTicksOrTickmap,
   isXtoY,
   xDecimal,
   yDecimal,
@@ -278,7 +278,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   useEffect(() => {
     if (
-      !ticksLoading &&
+      !isLoadingTicksOrTickmap &&
       isMountedRef.current &&
       poolIndex !== null &&
       currentMidPrice !== midPrice &&
@@ -299,7 +299,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
   useEffect(() => {
     if (
-      !ticksLoading &&
+      !isLoadingTicksOrTickmap &&
       isMountedRef.current &&
       poolIndex !== null &&
       currentMidPrice !== midPrice &&
@@ -311,7 +311,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
       unblockUpdatePriceRange()
     }
-  }, [ticksLoading, isMountedRef, midPrice.index, poolIndex])
+  }, [isLoadingTicksOrTickmap, isMountedRef, midPrice.index, poolIndex])
 
   const autoZoomHandler = (left: number, right: number, canZoomCloser: boolean = false) => {
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
@@ -363,7 +363,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }
 
   useEffect(() => {
-    if (positionOpeningMethod === 'concentration' && isMountedRef.current && !ticksLoading) {
+    if (
+      positionOpeningMethod === 'concentration' &&
+      isMountedRef.current &&
+      !isLoadingTicksOrTickmap
+    ) {
       const { leftRange, rightRange } = calculateConcentrationRange(
         tickSpacing,
         concentrationArray[concentrationIndex],
@@ -380,7 +384,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   }, [positionOpeningMethod])
 
   useEffect(() => {
-    if (positionOpeningMethod === 'concentration' && !ticksLoading && isMountedRef.current) {
+    if (
+      positionOpeningMethod === 'concentration' &&
+      !isLoadingTicksOrTickmap &&
+      isMountedRef.current
+    ) {
       const index =
         concentrationIndex > concentrationArray.length - 1
           ? concentrationArray.length - 1
@@ -447,7 +455,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                     </Typography>
                     <img
                       className={classes.liquidityImg}
-                      src={icons.activeLiquidity}
+                      src={activeLiquidityIcon}
                       alt='Liquidity'
                     />
                   </Grid>
@@ -486,7 +494,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           plotMax={plotMax}
           zoomMinus={zoomMinus}
           zoomPlus={zoomPlus}
-          loading={ticksLoading}
+          loading={isLoadingTicksOrTickmap}
           isXtoY={isXtoY}
           tickSpacing={tickSpacing}
           xDecimal={xDecimal}
@@ -515,7 +523,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           <Typography className={classes.subheader}>Set price range</Typography>
           {positionOpeningMethod === 'range' && (
             <Grid className={classes.rangeConcentration}>
-              <img src={icons.boostPoints} alt='Concentration' width='14px' />
+              <img src={boostPointsIcon} alt='Concentration' width='14px' />
               <Typography>Concentration </Typography>
               <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
             </Grid>

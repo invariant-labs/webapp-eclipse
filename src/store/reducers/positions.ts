@@ -1,8 +1,10 @@
 import {
   CreatePosition,
+  PoolStructure,
   Position,
   PositionList,
-  Tick
+  Tick,
+  Tickmap
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
@@ -63,6 +65,7 @@ export interface IPositionsStore {
   prices: {
     data: Record<string, number>
   }
+  showFeesLoader: boolean
   positionData: {
     position: PositionWithAddress | null
     loading: boolean
@@ -80,6 +83,32 @@ export interface InitPositionData
   initTick?: number
   xAmount: number
   yAmount: number
+}
+
+export interface SwapAndCreatePosition
+  extends Omit<
+    CreatePosition,
+    'pair' | 'liquidityDelta' | 'knownPrice' | 'userTokenX' | 'userTokenY' | 'slippage'
+  > {
+  xAmount: BN
+  yAmount: BN
+  tokenX: PublicKey
+  tokenY: PublicKey
+  swapAmount: BN
+  byAmountIn: boolean
+  xToY: boolean
+  swapPool: PoolStructure
+  swapPoolTickmap: Tickmap
+  swapSlippage: BN
+  estimatedPriceAfterSwap: BN
+  crossedTicks: number[]
+  positionPair: { fee: BN; tickSpacing: number }
+  positionPoolIndex: number
+  positionPoolPrice: BN
+  positionSlippage: BN
+  liquidityDelta: BN
+  minUtilizationPercentage: BN
+  isSamePool: boolean
 }
 
 export interface GetCurrentTicksData {
@@ -137,6 +166,7 @@ export const defaultState: IPositionsStore = {
   },
 
   shouldNotUpdateRange: false,
+  showFeesLoader: false,
   positionData: {
     position: null,
     loading: false
@@ -153,6 +183,10 @@ const positionsSlice = createSlice({
       return state
     },
     initPosition(state, _action: PayloadAction<InitPositionData>) {
+      state.initPosition.inProgress = true
+      return state
+    },
+    swapAndInitPosition(state, _action: PayloadAction<SwapAndCreatePosition>) {
       state.initPosition.inProgress = true
       return state
     },
@@ -252,6 +286,11 @@ const positionsSlice = createSlice({
       return state
     },
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
+      state.showFeesLoader = true
+      return state
+    },
+    setFeesLoader(state, action: PayloadAction<boolean>) {
+      state.showFeesLoader = action.payload
       return state
     },
     claimAllFee(state) {

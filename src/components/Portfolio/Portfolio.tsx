@@ -17,7 +17,7 @@ import {
   FormControlLabel,
   Checkbox
 } from '@mui/material'
-import icons from '@static/icons'
+
 import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
 import { LiquidityPools } from '@store/types/userOverview'
@@ -39,6 +39,7 @@ import { PositionsTable } from './PositionItem/PositionTables/PositionTable.tsx/
 import PositionCardsSkeletonMobile from './PositionItem/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionItemMobile'
 import { ECBanner } from '@common/ECBanner/ECBanner'
+import { refreshIcon } from '@static/icons'
 
 interface IProps {
   initialPage: number
@@ -537,11 +538,7 @@ const Portfolio: React.FC<IProps> = ({
                         disabled={showNoConnected}
                         onClick={showNoConnected ? () => {} : handleRefresh}
                         className={classes.refreshIconBtn}>
-                        <img
-                          src={icons.refreshIcon}
-                          className={classes.refreshIcon}
-                          alt='Refresh'
-                        />
+                        <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                       </MuiButton>
                     </Grid>
                   </TooltipHover>
@@ -606,11 +603,7 @@ const Portfolio: React.FC<IProps> = ({
                           disabled={showNoConnected}
                           onClick={showNoConnected ? () => {} : handleRefresh}
                           className={classes.refreshIconBtn}>
-                          <img
-                            src={icons.refreshIcon}
-                            className={classes.refreshIcon}
-                            alt='Refresh'
-                          />
+                          <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                         </MuiButton>
                       </Grid>
                     </TooltipHover>
