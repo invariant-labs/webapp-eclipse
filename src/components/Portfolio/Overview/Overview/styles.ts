@@ -66,6 +66,7 @@ export const useStyles = makeStyles()((_theme: Theme) => ({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
+
     justifyContent: 'center',
     padding: '32px',
     gap: '16px',

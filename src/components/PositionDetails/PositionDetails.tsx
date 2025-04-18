@@ -72,6 +72,7 @@ interface IProps {
   points24: number
   isPreview: boolean
   showPositionLoader?: boolean
+  isPromotedLoading: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -112,7 +113,8 @@ const PositionDetails: React.FC<IProps> = ({
   showPoolDetailsLoader,
   isPromoted,
   showPositionLoader = false,
-  points24
+  points24,
+  isPromotedLoading
 }) => {
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -323,6 +325,7 @@ const PositionDetails: React.FC<IProps> = ({
               points24={points24}
               poolAddress={poolAddress}
               isPreview={showPreviewInfo}
+              isPromotedLoading={isPromotedLoading}
             />
           </Box>
           <Box className={classes.rightSide}>

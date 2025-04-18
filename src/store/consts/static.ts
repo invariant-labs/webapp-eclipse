@@ -404,8 +404,7 @@ export const TURBO_AI_MAIN: Token = {
   address: new PublicKey('6G61dR9rbcGW4btoLFFFDtebUV8J8LmAobnvvzhdf4Vf'),
   decimals: 6,
   name: 'Turbo AI',
-  logoURI:
-    'https://statics.eclipsescan.xyz/cdn/imgs/s60?ref=68747470733a2f2f697066732e696f2f697066732f516d563739564a58697479344a456d454c72526e635254556f664648646a5032626650706a53586a79434b337853',
+  logoURI: 'https://ipfs.io/ipfs/QmV79VJXity4JEmELrRncRTUofFHdjP2bfPpjSXjyCK3xS',
   coingeckoId: ''
 }
 

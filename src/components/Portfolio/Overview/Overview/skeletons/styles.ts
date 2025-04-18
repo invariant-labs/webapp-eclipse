@@ -52,32 +52,29 @@ export const useDesktopSkeleton = makeStyles()(() => ({
 }))
 export const useMobileSkeletonStyle = makeStyles()(() => ({
   container: {
-    width: '100%',
-    marginTop: theme.spacing(2)
+    width: '100%'
   },
   chartContainer: {
     height: '24px',
     borderRadius: '8px',
     overflow: 'hidden',
     display: 'flex',
-    marginBottom: theme.spacing(3)
+    marginBottom: '28px'
   },
   skeletonSegment: {
     backgroundColor: 'rgba(255, 255, 255, 0.1)'
   },
   tokenLabelContainer: {
-    height: '161px',
+    height: '137px',
     marginTop: theme.spacing(2)
   },
   tokenTextSkeleton: {
-    marginBottom: theme.spacing(2),
+    marginBottom: '11px',
     width: '60px',
-    height: '24px'
-  },
-  tokensHeaderLabel: {
+    height: '24px',
     ...typography.body2,
-    fontWeight: 600,
-    color: colors.invariant.textGrey
+    color: colors.invariant.textGrey,
+    fontWeight: 600
   },
   gridContainer: {
     marginTop: theme.spacing(1),
@@ -105,7 +102,7 @@ export const useMobileSkeletonStyle = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: theme.spacing(1)
+    paddingBottom: theme.spacing(1)
   },
   logoSkeleton: {
     width: '24px',
