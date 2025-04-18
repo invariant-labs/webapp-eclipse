@@ -56,21 +56,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   }
 
   useLayoutEffect(() => {
-    const container = tabsContainerRef.current
-    if (!container) return
-
-    const handleScroll = () => {
-      requestAnimationFrame(checkBestTierVisibility)
-    }
-    container.addEventListener('scroll', handleScroll, { passive: false })
-    window.addEventListener('resize', handleScroll, { passive: false })
-
     checkBestTierVisibility()
-
-    return () => {
-      container.removeEventListener('scroll', handleScroll)
-      window.removeEventListener('resize', handleScroll)
-    }
   }, [bestTierNode, feeTiers, promotedPoolTierIndex])
 
   const { classes: tabsClasses } = useTabsStyles({
@@ -92,6 +78,8 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
     <Grid key={containerKey} className={classes.wrapper}>
       <Tabs
         ref={tabsContainerRef}
+        onScroll={checkBestTierVisibility}
+        onAnimationEnd={checkBestTierVisibility}
         value={currentValue}
         onChange={handleChange}
         variant='scrollable'
