@@ -16,6 +16,7 @@ interface Props extends TooltipProps {
   gradient?: boolean
   increasePadding?: boolean
   allowEnterTooltip?: boolean
+  textAlign?: 'left' | 'center' | 'right'
 }
 
 export const TooltipHover = ({
@@ -29,6 +30,7 @@ export const TooltipHover = ({
   increasePadding = false,
   allowEnterTooltip = true,
   title,
+  textAlign = 'left',
   ...props
 }: Props) => {
   const { classes } = useStyles({ top, left, right, bottom, fullSpan, increasePadding })
@@ -97,7 +99,7 @@ export const TooltipHover = ({
         <Box
           onMouseEnter={allowEnterTooltip ? () => setTitleHover(true) : undefined}
           onMouseLeave={allowEnterTooltip ? () => setTitleHover(false) : undefined}
-          textAlign='center'>
+          textAlign={textAlign}>
           {title}
         </Box>
       }

@@ -239,7 +239,8 @@ export const LockLiquidityModal = ({
                 ? ''
                 : 'Confirm that you understand the consequences by typing the text above'
             }
-            top={-40}>
+            top={-40}
+            textAlign='center'>
             <AnimatedButton
               content={'Lock Position'}
               className={classes.lockButton}
