@@ -3,9 +3,9 @@ import React from 'react'
 import useStyles from './styles'
 import { blurContent } from '@utils/uiUtils'
 import { theme } from '@static/theme'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { infoIcon } from '@static/icons'
 import { Button } from '@common/Button/Button'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProgressItemProps {
   onModalOpen?: (open: boolean) => void
@@ -36,9 +36,9 @@ export const ProgressItem: React.FC<IProgressItemProps> = ({
       <Grid className={classes.mobileWrapper}>
         <Typography className={classes.headerSmallText}>{label}</Typography>
         {tooltip && (
-          <TooltipGradient title={tooltip} placement='bottom' top={1}>
+          <TooltipHover title={tooltip} placement='bottom' increasePadding gradient>
             <img src={infoIcon} alt='i' width={14} />
-          </TooltipGradient>
+          </TooltipHover>
         )}
       </Grid>
       {isLoading && isConnected ? (

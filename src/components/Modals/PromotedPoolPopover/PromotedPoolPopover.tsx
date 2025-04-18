@@ -3,7 +3,7 @@ import useStyles from './style'
 import { Typography } from '@mui/material'
 import { formatNumberWithCommas, printBN, removeAdditionalDecimals } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 export interface IPromotedPoolPopover {
   isActive?: boolean
   apr?: BN
@@ -63,7 +63,7 @@ export const PromotedPoolPopover = ({
   ) : null
 
   return (
-    <TooltipGradient
+    <TooltipHover
       title={
         <div className={classes.container}>
           <Typography
@@ -105,9 +105,10 @@ export const PromotedPoolPopover = ({
         </div>
       }
       placement='bottom'
-      top={1}>
+      increasePadding
+      gradient>
       {children}
-    </TooltipGradient>
+    </TooltipHover>
   )
 }
 

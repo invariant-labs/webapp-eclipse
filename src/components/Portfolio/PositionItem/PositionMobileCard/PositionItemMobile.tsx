@@ -18,7 +18,6 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { lockerState } from '@store/selectors/locker'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { ILiquidityToken } from '@store/consts/types'
 import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Overview'
 import { IPositionItem } from '@store/consts/types'
@@ -248,7 +247,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     () => (
       <Grid container sx={{ width: '100%', marginBottom: 2 }}>
         <Grid item xs={5}>
-          <TooltipGradient
+          <TooltipHover
             title={
               isActive ? (
                 <>
@@ -261,8 +260,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               )
             }
             placement='top'
-            top={1}
-            noGradient>
+            increasePadding>
             <Grid
               container
               className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}
@@ -277,7 +275,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 {fee}% fee
               </Typography>
             </Grid>
-          </TooltipGradient>
+          </TooltipHover>
         </Grid>
 
         <Grid item xs={7} paddingLeft={'16px'}>

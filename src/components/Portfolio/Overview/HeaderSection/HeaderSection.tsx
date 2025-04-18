@@ -1,9 +1,8 @@
-import { Typography, Box, Skeleton, Grid, useMediaQuery } from '@mui/material'
+import { Typography, Box, Skeleton, Grid } from '@mui/material'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { warning2Icon } from '@static/icons'
-import { theme } from '@static/theme'
 
 interface HeaderSectionProps {
   totalValue: { value: number; isPriceWarning: boolean }
@@ -12,7 +11,6 @@ interface HeaderSectionProps {
 
 export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loading }) => {
   const { classes } = useStyles()
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   return (
     <>
@@ -37,10 +35,7 @@ export const HeaderSection: React.FC<HeaderSectionProps> = ({ totalValue, loadin
                 display={'flex'}
                 alignItems={'center'}
                 justifyContent={'center'}>
-                <TooltipHover
-                  title='The total value of assets might not be shown correctly'
-                  left={isMd ? -134 : 'auto'}
-                  top={-50}>
+                <TooltipHover title='The total value of assets might not be shown correctly'>
                   <img src={warning2Icon} className={classes.warning} width={18} />
                 </TooltipHover>
               </Grid>

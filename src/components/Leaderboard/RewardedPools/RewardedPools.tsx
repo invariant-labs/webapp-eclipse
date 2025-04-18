@@ -7,7 +7,7 @@ import { VariantType } from 'notistack'
 import { infoIcon, unknownTokenIcon } from '@static/icons'
 import { ExtendedPoolStatsData } from '@store/selectors/stats'
 import { colors, theme } from '@static/theme'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export interface ExtendedPoolStatsDataWithPoints extends ExtendedPoolStatsData {
   pointsPerSecond: string
@@ -76,7 +76,7 @@ export const RewardedPools: React.FC<IProps> = ({
             <Box className={classes.headerWrapper}>
               <Typography component='h2'>
                 Pools Distributing Points
-                <TooltipGradient
+                <TooltipHover
                   title={
                     <div style={{ maxWidth: 250 }} onClick={e => e.stopPropagation()}>
                       List of pools currently distributing points. Updates on new pools will be
@@ -96,9 +96,10 @@ export const RewardedPools: React.FC<IProps> = ({
                     </div>
                   }
                   placement='bottom'
-                  top={1}>
+                  increasePadding
+                  gradient>
                   <img src={infoIcon} alt='i' width={14} style={{ marginLeft: '8px' }} />
-                </TooltipGradient>
+                </TooltipHover>
               </Typography>
             </Box>
           )}

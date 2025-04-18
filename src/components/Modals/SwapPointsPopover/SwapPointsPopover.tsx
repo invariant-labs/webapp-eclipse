@@ -3,7 +3,8 @@ import { Typography, Box } from '@mui/material'
 import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
 import { addressToTicker } from '@utils/utils'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export interface ISwapPointsPopover {
   isPairGivingPoints: boolean
@@ -21,7 +22,7 @@ export const SwapPointsPopover = ({
   const { classes } = useStyles()
 
   return (
-    <TooltipGradient
+    <TooltipHover
       title={
         <div className={classes.backgroundContainer}>
           <div
@@ -80,11 +81,9 @@ export const SwapPointsPopover = ({
           </div>
         </div>
       }
-      placement='bottom'
-      top={1}
-      noGradient>
+      placement='bottom'>
       {children}
-    </TooltipGradient>
+    </TooltipHover>
   )
 }
 

@@ -17,8 +17,8 @@ import { Stat } from './Stat/Stat'
 import { activeLiquidityIcon, boostPointsBoldIcon } from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 import { ILiquidityToken } from '@store/consts/types'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { colors } from '@static/theme'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -153,7 +153,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         <Grid>
           <RangeIndicator inRange={min <= currentPrice && currentPrice <= max} />
           <Grid gap={1} mt={1} display='flex' flexDirection='column' alignItems='flex-end'>
-            <TooltipGradient
+            <TooltipHover
               title={
                 <>
                   <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
@@ -181,11 +181,11 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
               }
               placement='bottom'
               top={1}
-              noGradient>
+              increasePadding>
               <Typography className={classes.activeLiquidity}>
                 Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
               </Typography>
-            </TooltipGradient>
+            </TooltipHover>
             <Typography className={classes.currentPrice}>Current price ━━━</Typography>
           </Grid>
         </Grid>
