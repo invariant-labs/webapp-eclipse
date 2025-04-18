@@ -18,6 +18,7 @@ import { useDispatch } from 'react-redux'
 import { closeIcon, newTabIcon } from '@static/icons'
 import { colors } from '@static/theme'
 import { NetworkType } from '@store/consts/static'
+import TokensDetailsSnackbar from './variants/TokensDetailsSnackbar'
 
 const variantColors: Record<string, string> = {
   default: '#000000',
@@ -28,7 +29,10 @@ const variantColors: Record<string, string> = {
 }
 
 const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
-  ({ message, txid, variant = 'default', snackbarId, iconVariant, link, network }, ref) => {
+  (
+    { message, txid, variant = 'default', snackbarId, iconVariant, link, network, tokensDetails },
+    ref
+  ) => {
     const { closeSnackbar } = useSnackbar()
     const dispatch = useDispatch()
     const { classes } = useStyles()
@@ -56,7 +60,18 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
       }
     }, [network])
 
-    const Content = () => {
+    const borderColor = useMemo(() => {
+      switch (variant) {
+        case 'error':
+          return colors.invariant.Error
+        case 'warning':
+          return colors.invariant.warning
+        default:
+          return `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.pink})`
+      }
+    }, [variant])
+
+    const StandartContent = () => {
       return (
         <>
           <Grid className={classes.wrapper}>
@@ -111,14 +126,23 @@ const CustomSnackbar = React.forwardRef<HTMLDivElement, CustomContentProps>(
       )
     }
 
+    const RenderContent = () => {
+      if (variant === 'default') {
+        if (tokensDetails) {
+          return <TokensDetailsSnackbar {...tokensDetails} handleDismiss={handleDismiss} />
+        }
+      }
+      return <StandartContent />
+    }
+
     return (
       <StyledSnackbarContent ref={ref} role='alert'>
-        <StyledBackground />
+        <StyledBackground borderColor={borderColor} />
         <StyledHideContainer>
-          <Content />
+          <RenderContent />
         </StyledHideContainer>
         <StyledContainer>
-          <Content />
+          <RenderContent />
         </StyledContainer>
       </StyledSnackbarContent>
     )
