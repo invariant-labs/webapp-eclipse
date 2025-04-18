@@ -180,6 +180,12 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
+    combinedTransaction.partialSign(wrappedEthAccount)
+
+    if (createPoolSigners.length) {
+      createPoolTx.partialSign(...createPoolSigners)
+    }
+
     const [signedCombinedTransactionTx, createPoolSignedTx] = (yield* call(
       [wallet, wallet.signAllTransactions],
       // [initialTx, initPositionTx, unwrapTx, initPoolTx]
@@ -190,11 +196,6 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
     yield put(snackbarsActions.remove(loaderSigningTx))
 
     // initialSignedTx.partialSign(wrappedEthAccount)
-    ;(signedCombinedTransactionTx as Transaction).partialSign(wrappedEthAccount)
-
-    if (createPoolSigners.length) {
-      ;(createPoolSignedTx as Transaction).partialSign(...createPoolSigners)
-    }
 
     // const initialTxid = yield* call(
     //   sendAndConfirmRawTransaction,
@@ -464,6 +465,12 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
+    combinedTransaction.partialSign(wrappedEthAccount)
+
+    if (poolSigners.length) {
+      combinedTransaction.partialSign(...poolSigners)
+    }
+
     const signedTx = (yield* call(
       [wallet, wallet.signTransaction],
       combinedTransaction
@@ -471,11 +478,6 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
-    signedTx.partialSign(wrappedEthAccount)
-
-    if (poolSigners.length) {
-      signedTx.partialSign(...poolSigners)
-    }
 
     const txId = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
@@ -1542,11 +1544,12 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
+    tx.partialSign(wrappedEthAccount)
+
     const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
-    ;(signedTx as Transaction).partialSign(wrappedEthAccount)
 
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
@@ -1851,8 +1854,10 @@ export function* handleClaimAllFees() {
 
       let signedTx: Transaction
       if (additionalSigner) {
+        tx.partialSign(additionalSigner)
+
         const partiallySignedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
-        partiallySignedTx.partialSign(additionalSigner)
+
         signedTx = partiallySignedTx
       } else {
         signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
@@ -2018,11 +2023,12 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
+    tx.partialSign(wrappedEthAccount)
+
     const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
 
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
-    ;(signedTx as Transaction).partialSign(wrappedEthAccount)
 
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
