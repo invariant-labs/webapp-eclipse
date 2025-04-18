@@ -181,6 +181,7 @@ export const Overview: React.FC<OverviewProps> = () => {
 
       {isLg ? (
         <MobileOverview
+          isLoadingList={isLoadingList}
           positions={sortedPositions}
           totalAssets={totalAssets}
           chartColors={chartColors}

@@ -38,6 +38,7 @@ export interface ISolanaWallet {
   accounts: { [key in string]: ITokenAccount }
   ethBalanceLoading: boolean
   tokenBalanceLoading: boolean
+  unkownTokenBalanceLoading: boolean
   thankYouModalShown: boolean
 }
 
@@ -48,6 +49,7 @@ export const defaultState: ISolanaWallet = {
   accounts: {},
   ethBalanceLoading: false,
   tokenBalanceLoading: false,
+  unkownTokenBalanceLoading: false,
   thankYouModalShown: false
 }
 
@@ -111,6 +113,10 @@ const solanaWalletSlice = createSlice({
     },
     setIsTokenBalanceLoading(state, action: PayloadAction<boolean>) {
       state.tokenBalanceLoading = action.payload
+      return state
+    },
+    setIsUnkownBlanceLoading(state, action: PayloadAction<boolean>) {
+      state.unkownTokenBalanceLoading = action.payload
       return state
     },
     rescanTokens() {},
