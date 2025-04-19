@@ -1,5 +1,5 @@
 import { alpha } from '@mui/material'
-import { colors, theme } from '@static/theme'
+import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(_theme => ({
@@ -11,14 +11,11 @@ export const useStyles = makeStyles()(_theme => ({
     overflow: 'hidden'
   },
   pagination: {
-    padding: '20px 24px 10px 0',
+    padding: 0,
     maxWidth: '100%',
     backgroundColor: colors.invariant.component,
     borderBottomLeftRadius: '24px',
     borderBottomRightRadius: '24px',
-    [theme.breakpoints.down('lg')]: {
-      padding: '20px 8px'
-    }
   },
   emptyContainer: {
     background: colors.invariant.component
