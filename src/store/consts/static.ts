@@ -909,6 +909,8 @@ export enum OverviewSwitcher {
 }
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000
+// const BASE_LEADERBOARD_URL = 'https://points.invariant.app'
+export const BASE_API_URL = 'https://api.invariant.app'
 
 export enum AutoswapCustomError {
   FetchError = 0
