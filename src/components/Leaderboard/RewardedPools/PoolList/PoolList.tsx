@@ -5,7 +5,7 @@ import { Box, Grid, useMediaQuery } from '@mui/material'
 import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
 import classNames from 'classnames'
-import { CustomPoolListItem } from './PoolListItem/Variants/CustomPoolListItem'
+import { MobilePoolListItem } from './PoolListItem/Variants/MobilePoolListItem'
 import { theme } from '@static/theme'
 
 export interface PoolListInterface {
@@ -108,14 +108,14 @@ const PoolList: React.FC<PoolListInterface> = ({
             </>
           ) : (
             <>
-              <CustomPoolListItem
+              <MobilePoolListItem
                 displayType='header'
                 network={network}
                 showAPY={showAPY}
                 hideBottomLine
               />
               {paginator(page).map((element, index) => (
-                <CustomPoolListItem
+                <MobilePoolListItem
                   displayType='token'
                   tokenIndex={index + 1 + (page - 1) * 10}
                   symbolFrom={element.symbolTo}

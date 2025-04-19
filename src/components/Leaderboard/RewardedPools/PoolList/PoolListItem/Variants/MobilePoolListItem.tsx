@@ -21,7 +21,7 @@ import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { IProps } from '../PoolListItem'
 import { BN } from '@coral-xyz/anchor'
 
-export const CustomPoolListItem: React.FC<IProps> = ({
+export const MobilePoolListItem: React.FC<IProps> = ({
   fee = 0,
   displayType,
   symbolFrom,
@@ -114,9 +114,7 @@ export const CustomPoolListItem: React.FC<IProps> = ({
               container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
             }}
             style={{
-              border: hideBottomLine ? 'none' : undefined,
-              marginTop: '8px',
-              marginBottom: '24px'
+              border: hideBottomLine ? 'none' : undefined
             }}>
             <Typography>{tokenIndex}</Typography>
             <Grid className={classes.imageContainer}>
