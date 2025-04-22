@@ -23,7 +23,11 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
   tokenXIcon,
   tokenYIcon,
   earnedPoints,
-  handleDismiss
+  handleDismiss,
+  tokenXAmountAutoSwap,
+  tokenYAmountAutoSwap,
+  tokenXIconAutoSwap,
+  tokenYIconAutoSwap
 }) => {
   const { classes } = useStyles()
 
@@ -66,10 +70,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
               position='relative'
               display='flex'
               alignItems='center'
-              width={ikonType === 'swap' || 'claim' ? 18 : 22}>
+              width={ikonType === 'swap' || ikonType === 'claim' ? 18 : 22}>
               <img
                 src={icon}
-                height={ikonType === 'swap' || 'claim' ? 15 : 18}
+                height={ikonType === 'swap' || ikonType === 'claim' ? 15 : 18}
                 style={{ marginBottom: '2px' }}
               />
             </Grid>
@@ -82,6 +86,22 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
             <img src={tokenYIcon} className={classes.tokenIcon} />
           </Grid>
+          {tokenXIconAutoSwap && tokenYAmountAutoSwap && (
+            <Grid>
+              <Separator color={colors.invariant.light} isHorizontal margin='4px 8px 4px 20px' />
+              <Grid className={classes.wrapper} gap={0.5}>
+                <Grid position='relative' display='flex' alignItems='center' width={22}>
+                  <img src={snackbarSwapIcon} height={15} style={{ marginBottom: '2px' }} />
+                </Grid>
+                <StyledText>Swapped</StyledText>
+                <StyledText color={colors.invariant.green}>{tokenXAmountAutoSwap}</StyledText>
+                <img src={tokenXIconAutoSwap} className={classes.tokenIcon} />
+                <StyledText mb={0.5}>→</StyledText>
+                <StyledText color={colors.invariant.green}>{tokenYAmountAutoSwap}</StyledText>
+                <img src={tokenYIconAutoSwap} className={classes.tokenIcon} />
+              </Grid>
+            </Grid>
+          )}
           {earnedPoints && (
             <Grid>
               <Separator color={colors.invariant.light} isHorizontal margin='4px 8px 4px 20px' />

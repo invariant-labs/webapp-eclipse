@@ -26,6 +26,8 @@ import {
   ParsedInstruction
 } from '@solana/web3.js'
 import {
+  autoSwapPools,
+  LEADERBOARD_DECIMAL,
   SIGNING_SNACKBAR_CONFIG,
   TIMEOUT_ERROR_MESSAGE,
   WRAPPED_ETH_ADDRESS
@@ -41,6 +43,7 @@ import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { closeSnackbar } from 'notistack'
 import { getLockerProgram, getMarketProgram } from '@utils/web3/programs/amm'
 import {
+  calculatePoints,
   createLiquidityPlot,
   createLoaderKey,
   createPlaceholderLiquidityPlot,
@@ -55,7 +58,8 @@ import {
 import { actions as connectionActions } from '@store/reducers/solanaConnection'
 import {
   createNativeAtaInstructions,
-  createNativeAtaWithTransferInstructions
+  createNativeAtaWithTransferInstructions,
+  FEE_TIERS
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { ClaimAllFee } from '@invariant-labs/sdk-eclipse/lib/market'
@@ -63,6 +67,8 @@ import nacl from 'tweetnacl'
 import { BN } from '@coral-xyz/anchor'
 import { parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
 import { NATIVE_MINT } from '@solana/spl-token'
+import { unknownTokenIcon } from '@static/icons'
+import { config, priceFeeds } from '@store/selectors/leaderboard'
 
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
@@ -557,19 +563,20 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
         })
       )
       const txDetails = yield* call([connection, connection.getParsedTransaction], txId)
-
       if (txDetails) {
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
+            const targetInner = meta.innerInstructions[2] ?? meta.innerInstructions[0]
+
             const nativeAmount = (
-              meta.innerInstructions[0].instructions.find(
+              targetInner.instructions.find(
                 ix => (ix as ParsedInstruction).parsed.info.amount
               ) as ParsedInstruction
             ).parsed.info.amount
 
             const splAmount = (
-              meta.innerInstructions[0].instructions.find(
+              targetInner.instructions.find(
                 ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
               ) as ParsedInstruction
             ).parsed.info.tokenAmount.amount
@@ -661,6 +668,8 @@ export function* handleSwapAndInitPositionWithETH(
       })
     )
 
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
@@ -827,6 +836,110 @@ export function* handleSwapAndInitPositionWithETH(
           txid
         })
       )
+      const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
+        maxSupportedTransactionVersion: 0
+      })
+
+      if (txDetails) {
+        const meta = txDetails.meta
+        if (meta?.innerInstructions && meta.innerInstructions) {
+          try {
+            const targetInner = meta.innerInstructions[0]
+            const nativeAmountDeposit = (
+              targetInner.instructions
+                .slice(5)
+                .find(ix => (ix as ParsedInstruction).parsed.info.amount) as ParsedInstruction
+            ).parsed.info.amount
+
+            const splAmountDeposit = (
+              targetInner.instructions
+                .slice(5)
+                .find(
+                  ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+                ) as ParsedInstruction
+            ).parsed.info.tokenAmount.amount
+
+            const nativeAmountExchange = (
+              targetInner.instructions
+                .slice(1, 3)
+                .find(ix => (ix as ParsedInstruction).parsed.info.amount) as ParsedInstruction
+            ).parsed.info.amount
+
+            const splAmountExchange = (
+              targetInner.instructions
+                .slice(1, 3)
+                .find(
+                  ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+                ) as ParsedInstruction
+            ).parsed.info.tokenAmount.amount
+
+            const tokenX = allTokens[swapPair.tokenX.toString()]
+            const tokenY = allTokens[swapPair.tokenY.toString()]
+            const match = autoSwapPools.find(
+              ({ pair }) =>
+                (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
+                (pair.tokenX.equals(tokenY.address) && pair.tokenY.equals(tokenX.address))
+            )
+
+            const feeTier = match?.swapPool.feeIndex ?? null
+            const nativeX = swapPair.tokenX.equals(NATIVE_MINT)
+            const amountXExchange = nativeX ? nativeAmountExchange : splAmountExchange
+            const amountYExchange = nativeX ? splAmountExchange : nativeAmountExchange
+
+            const amountX = nativeX ? nativeAmountDeposit : splAmountDeposit
+            const amountY = nativeX ? splAmountDeposit : nativeAmountDeposit
+            let points = new BN(0)
+
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  (new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenY)) ||
+                  (new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenY))
+              )
+            ) {
+              const feed = feeds[tokenX.address.toString()]
+
+              points = calculatePoints(
+                new BN(amountX),
+                tokenX.decimals,
+                FEE_TIERS[feeTier ?? ''].fee,
+                feed.price,
+                feed.priceDecimals,
+                new BN(leaderboardConfig.pointsPerUsd, 'hex')
+              ).muln(Number(leaderboardConfig.swapMultiplier))
+            }
+
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'deposit',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXAmountAutoSwap: formatNumberWithoutSuffix(
+                    printBN(amountXExchange, tokenX.decimals)
+                  ),
+                  tokenYAmountAutoSwap: formatNumberWithoutSuffix(
+                    printBN(amountYExchange, tokenY.decimals)
+                  ),
+                  tokenXIconAutoSwap: tokenX.logoURI,
+                  tokenYIconAutoSwap: tokenY.logoURI,
+                  earnedPoints: points.eqn(0)
+                    ? undefined
+                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                },
+
+                persist: false
+              })
+            )
+          } catch {
+            // Should never be triggered
+          }
+        }
+      }
 
       yield put(actions.getPositionsList())
     }
@@ -896,6 +1009,8 @@ export function* handleSwapAndInitPosition(
     const connection = yield* call(getConnection)
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
+    const feeds = yield* select(priceFeeds)
+    const leaderboardConfig = yield* select(config)
     const rpc = yield* select(rpcAddress)
     const userPositionList = yield* select(positionsList)
     const allPools = yield* select(poolsArraySortedByFees)
@@ -1025,6 +1140,109 @@ export function* handleSwapAndInitPosition(
           txid
         })
       )
+
+      const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
+        maxSupportedTransactionVersion: 0
+      })
+      if (txDetails) {
+        const meta = txDetails.meta
+        if (meta?.innerInstructions && meta.innerInstructions) {
+          try {
+            const targetInner = meta.innerInstructions[2] ?? meta.innerInstructions[0]
+            const tokenXDeposit = targetInner.instructions
+              .slice(5)
+              .filter(
+                (ix): ix is ParsedInstruction =>
+                  (ix as ParsedInstruction).parsed?.info?.tokenAmount !== undefined
+              )[0].parsed?.info?.tokenAmount
+
+            const tokenYDeposit = targetInner.instructions
+              .slice(5)
+              .filter(
+                (ix): ix is ParsedInstruction =>
+                  (ix as ParsedInstruction).parsed?.info?.tokenAmount !== undefined
+              )[1].parsed?.info?.tokenAmount
+
+            const tokenXExchange = targetInner.instructions
+              .slice(1, 3)
+              .filter(
+                (ix): ix is ParsedInstruction =>
+                  (ix as ParsedInstruction).parsed.info?.tokenAmount !== undefined
+              )[1].parsed.info.tokenAmount.amount
+
+            const tokenYExchange = targetInner.instructions
+              .slice(1, 3)
+              .filter(
+                (ix): ix is ParsedInstruction =>
+                  (ix as ParsedInstruction).parsed.info?.tokenAmount !== undefined
+              )[0].parsed.info.tokenAmount.amount
+
+            const tokenX = allTokens[swapPair.tokenX.toString()]
+            const tokenY = allTokens[swapPair.tokenY.toString()]
+            const match = autoSwapPools.find(
+              ({ pair }) =>
+                (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
+                (pair.tokenX.equals(tokenY.address) && pair.tokenY.equals(tokenX.address))
+            )
+
+            const feeTier = match?.swapPool.feeIndex ?? null
+
+            const amountX = tokenXDeposit?.amount
+            const amountY = tokenYDeposit?.amount
+            const tokenXDecimal = tokenXDeposit?.decimals
+            const tokenYDecimal = tokenYDeposit?.decimals
+            let points = new BN(0)
+
+            if (
+              leaderboardConfig.swapPairs.some(
+                item =>
+                  (new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenY)) ||
+                  (new PublicKey(item.tokenY).equals(action.payload.swapPool.tokenX) &&
+                    new PublicKey(item.tokenX).equals(action.payload.swapPool.tokenY))
+              )
+            ) {
+              const feed = feeds[tokenX.address.toString()]
+
+              points = calculatePoints(
+                new BN(tokenXExchange),
+                tokenX.decimals,
+                FEE_TIERS[feeTier ?? ''].fee,
+                feed.price,
+                feed.priceDecimals,
+                new BN(leaderboardConfig.pointsPerUsd, 'hex')
+              ).muln(Number(leaderboardConfig.swapMultiplier))
+            }
+
+            yield put(
+              snackbarsActions.add({
+                tokensDetails: {
+                  ikonType: 'deposit',
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenXDecimal)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenYDecimal)),
+                  tokenXIcon: tokenX.logoURI,
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXAmountAutoSwap: formatNumberWithoutSuffix(
+                    printBN(tokenXExchange, tokenX.decimals)
+                  ),
+                  tokenYAmountAutoSwap: formatNumberWithoutSuffix(
+                    printBN(tokenYExchange, tokenY.decimals)
+                  ),
+                  tokenXIconAutoSwap: tokenX.logoURI,
+                  tokenYIconAutoSwap: tokenY.logoURI,
+                  earnedPoints: points.eqn(0)
+                    ? undefined
+                    : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
+                },
+
+                persist: false
+              })
+            )
+          } catch {
+            // Should never be triggered
+          }
+        }
+      }
 
       yield put(actions.getPositionsList())
     }
@@ -2101,8 +2319,8 @@ export function* handleClaimAllFees() {
 
               let tokenXAmount = '0'
               let tokenYAmount = '0'
-              let tokenXIcon = ''
-              let tokenYIcon = ''
+              let tokenXIcon = unknownTokenIcon
+              let tokenYIcon = unknownTokenIcon
 
               if (nativeTransfer) {
                 tokenXAmount = formatNumberWithoutSuffix(

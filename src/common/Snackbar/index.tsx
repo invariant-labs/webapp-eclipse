@@ -1,7 +1,7 @@
 import React from 'react'
 import { CustomContentProps, SnackbarProvider } from 'notistack'
 import { theme } from '@static/theme'
-import { useMediaQuery } from '@mui/material'
+import { Slide, SlideProps, useMediaQuery } from '@mui/material'
 import CustomSnackbar from './CustomSnackbar/CustomSnackbar'
 import { NetworkType } from '@store/consts/static'
 import { Global } from '@emotion/react'
@@ -18,6 +18,10 @@ export interface TokensDetailsProps {
   tokenXIcon: string
   tokenYIcon: string
   earnedPoints?: string
+  tokenXIconAutoSwap?: string
+  tokenYIconAutoSwap?: string
+  tokenXAmountAutoSwap?: string
+  tokenYAmountAutoSwap?: string
 }
 export interface CustomProps {
   txid?: string
@@ -28,7 +32,7 @@ export interface CustomProps {
     href: string
   }
   tokensDetails?: TokensDetailsProps
-  closePosition?: {}
+  closePosition?: object
 }
 
 export interface SnackbarSnackbarProps extends CustomContentProps, CustomProps {}
@@ -45,6 +49,8 @@ interface ISnackbarProps {
   children: React.ReactNode
   maxSnack?: number
 }
+
+const SlideUp = (props: SlideProps) => <Slide {...props} direction='right' />
 
 const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
   const isNavbarVisible = useMediaQuery(theme.breakpoints.down(1200))
@@ -64,6 +70,8 @@ const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
         />
       )}
       <SnackbarProvider
+        TransitionComponent={SlideUp}
+        transitionDuration={{ enter: 500, exit: 500 }}
         dense
         maxSnack={isExSmall ? 5 : maxSnack}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}

@@ -390,8 +390,6 @@ export function* handleSwapWithETH(): Generator {
           } catch {
             // Sanity check
           }
-          console.log('test')
-
           yield put(
             snackbarsActions.add({
               tokensDetails: {
@@ -1469,8 +1467,9 @@ export function* handleSwap(): Generator {
           txid
         })
       )
-      const txDetails = yield* call([connection, connection.getParsedTransaction], txid)
-
+      const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
+        maxSupportedTransactionVersion: 0
+      })
       if (txDetails) {
         const meta = txDetails.meta
         if (meta?.preTokenBalances && meta.postTokenBalances) {
