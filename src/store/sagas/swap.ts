@@ -269,12 +269,12 @@ export function* handleSwapWithETH(): Generator {
 
       yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
+      tx.partialSign(wrappedEthAccount)
+
       const initialSignedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
 
       closeSnackbar(loaderSigningTx)
       yield put(snackbarsActions.remove(loaderSigningTx))
-
-      initialSignedTx.partialSign(wrappedEthAccount)
 
       initialTxid = yield* call(
         sendAndConfirmRawTransaction,

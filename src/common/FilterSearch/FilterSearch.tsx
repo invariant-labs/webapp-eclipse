@@ -126,9 +126,11 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
           const tokenAddress = details?.address?.toString() ?? tokenData.address.toString()
           const tokenFromList = tokenListMap.get(tokenAddress)
           const tokenPrice = prices[tokenAddress]
-          const balanceUSD = tokenPrice
-            ? +printBN(tokenFromList?.balance, tokenData.tokenDetails?.decimals) * tokenPrice
-            : 0
+          const decimals = tokenData.tokenDetails?.decimals ?? tokenFromList?.decimals ?? 0
+          const balanceUSD =
+            tokenPrice && tokenFromList?.balance
+              ? +printBN(tokenFromList.balance, decimals) * tokenPrice
+              : 0
 
           return {
             icon: details?.logoURI ?? unknownTokenIcon,

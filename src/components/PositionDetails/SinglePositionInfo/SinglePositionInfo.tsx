@@ -29,6 +29,7 @@ interface IProp {
   poolAddress: PublicKey
   isPreview: boolean
   showPositionLoader?: boolean
+  isPromotedLoading: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -45,7 +46,8 @@ const SinglePositionInfo: React.FC<IProp> = ({
   poolAddress,
   isPreview,
   points24,
-  arePointsDistributed
+  arePointsDistributed,
+  isPromotedLoading
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -73,6 +75,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
       {isFeeTooltipOpen && <Overlay />}
       <Box className={classes.container}>
         <PositionStats
+          isPromotedLoading={isPromotedLoading}
           value={
             tokenX.liqValue * (tokenXPriceData?.price ?? 0) +
             tokenY.liqValue * (tokenYPriceData?.price ?? 0)
