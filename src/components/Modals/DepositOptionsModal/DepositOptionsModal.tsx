@@ -22,17 +22,17 @@ enum SettingsOptions {
 
 const priceImpactTiers = [
   {
-    value: '0.1',
+    value: '0.3',
     label: 'Low price impact',
     message: 'Best protection against unfavorable prices, but may fail with large positions'
   },
   {
-    value: '0.3',
+    value: '0.5',
     label: 'Default',
     message: 'Most balanced between price protection and execution success'
   },
   {
-    value: '0.5',
+    value: '1',
     label: 'High Tolerance',
     message: 'Higher risk of unfavorable prices; used for fast or guaranteed execution'
   }
