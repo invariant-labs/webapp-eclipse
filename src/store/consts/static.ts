@@ -624,7 +624,6 @@ export const commonTokensForNetworks: Record<NetworkType, PublicKey[]> = {
     USDT_MAIN.address,
     BITZ_MAIN.address,
     ES_MAIN.address,
-    LAIKA_MAIN.address,
     TIA_MAIN.address
   ],
   Testnet: [USDC_TEST.address, BTC_TEST.address, WETH_TEST.address],
