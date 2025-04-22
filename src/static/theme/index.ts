@@ -77,6 +77,7 @@ export const colors = {
     lightHover2: '#4B5983',
     black: '#010514',
     textGrey: '#A9B6BF',
+    chartDisabled: '#545a5e',
     lightGrey: '#bac7d1',
     text: '#FFFFFF',
     silver: '#C6C5C7',
