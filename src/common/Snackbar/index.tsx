@@ -71,7 +71,7 @@ const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
       )}
       <SnackbarProvider
         TransitionComponent={SlideUp}
-        transitionDuration={{ enter: 500, exit: 500 }}
+        transitionDuration={{ enter: 500, exit: 300 }}
         dense
         maxSnack={isExSmall ? 5 : maxSnack}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
