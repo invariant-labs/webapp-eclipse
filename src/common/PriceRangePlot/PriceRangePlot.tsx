@@ -1,4 +1,4 @@
-import { alpha, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { linearGradientDef } from '@nivo/core'
 import { Layer, ResponsiveLine } from '@nivo/line'
 import loader from '@static/gif/loader.gif'
