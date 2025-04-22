@@ -100,7 +100,8 @@ import {
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   ES_MAIN,
-  BITZ_MAIN
+  BITZ_MAIN,
+  PRICE_API_URL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -1937,7 +1938,7 @@ export const getTokenPrice = async (
   if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
       const { data } = await axios.get<IPriceData>(
-        `https://price.invariant.app/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
+        `${PRICE_API_URL}/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
       )
       priceData = data.data
 

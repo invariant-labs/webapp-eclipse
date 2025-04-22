@@ -404,8 +404,7 @@ export const TURBO_AI_MAIN: Token = {
   address: new PublicKey('6G61dR9rbcGW4btoLFFFDtebUV8J8LmAobnvvzhdf4Vf'),
   decimals: 6,
   name: 'Turbo AI',
-  logoURI:
-    'https://statics.eclipsescan.xyz/cdn/imgs/s60?ref=68747470733a2f2f697066732e696f2f697066732f516d563739564a58697479344a456d454c72526e635254556f664648646a5032626650706a53586a79434b337853',
+  logoURI: 'https://ipfs.io/ipfs/QmV79VJXity4JEmELrRncRTUofFHdjP2bfPpjSXjyCK3xS',
   coingeckoId: ''
 }
 
@@ -583,6 +582,16 @@ export const autoSwapPools = [
     swapPool: {
       address: new PublicKey('HHHGD7BZ7H5fPLh3DNEPFezpLoYBJ16WsmbwRJXXEFSg'),
       feeIndex: 0
+    }
+  },
+  {
+    pair: {
+      tokenX: new PublicKey('64mggk2nXg6vHC1qCdsZdEFzd5QGN4id54Vbho4PswCF'),
+      tokenY: new PublicKey('So11111111111111111111111111111111111111112')
+    },
+    swapPool: {
+      address: new PublicKey('HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H'),
+      feeIndex: 6
     }
   }
 ]
@@ -782,7 +791,7 @@ export const MINIMAL_POOL_INIT_PRICE = 0.00000001
 
 export const DEFAULT_SWAP_SLIPPAGE = '0.50'
 export const DEFAULT_NEW_POSITION_SLIPPAGE = '0.50'
-export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '0.30'
+export const DEFAULT_AUTOSWAP_MAX_PRICE_IMPACT = '0.50'
 export const DEFAULT_AUTOSWAP_MIN_UTILIZATION = '95.00'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION = '2.50'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP = '0.50'
@@ -915,6 +924,8 @@ export enum OverviewSwitcher {
 }
 
 export const STATS_CACHE_TIME = 30 * 60 * 1000
+export const LEADERBOARD_API_URL = 'https://api.invariant.app/api'
+export const PRICE_API_URL = 'https://api.invariant.app/price'
 
 export enum AutoswapCustomError {
   FetchError = 0
