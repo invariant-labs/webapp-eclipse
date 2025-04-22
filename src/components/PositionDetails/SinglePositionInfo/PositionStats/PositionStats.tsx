@@ -16,6 +16,7 @@ type Props = {
   points24: number
   arePointsDistributed: boolean
   isLoading: boolean
+  isPromotedLoading: boolean
 }
 
 export const PositionStats = ({
@@ -24,7 +25,8 @@ export const PositionStats = ({
   poolApr,
   points24,
   arePointsDistributed,
-  isLoading
+  isLoading,
+  isPromotedLoading
 }: Props) => {
   const { classes } = useStyles()
 
@@ -33,12 +35,16 @@ export const PositionStats = ({
       <Box className={classes.statWrapper}>
         <Box className={classes.statContainer}>
           <Typography className={classes.statName}>Value:</Typography>
-          <Typography className={classes.statValue}>
-            $
-            {+formatNumberWithSuffix(value, true, 18) < 1000
-              ? (+formatNumberWithSuffix(value, true, 18)).toFixed(2)
-              : formatNumberWithSuffix(value)}
-          </Typography>
+          {isLoading ? (
+            <Skeleton variant='rounded' width={38} height={17} />
+          ) : (
+            <Typography className={classes.statValue}>
+              $
+              {+formatNumberWithSuffix(value, true, 18) < 1000
+                ? (+formatNumberWithSuffix(value, true, 18)).toFixed(2)
+                : formatNumberWithSuffix(value)}
+            </Typography>
+          )}
         </Box>
         <Box className={classes.statContainer}>
           <Typography className={classes.statName}>Pending fees:</Typography>
@@ -56,7 +62,9 @@ export const PositionStats = ({
       </Box>
       <Box className={classes.statWrapper}>
         <Box className={classNames(classes.statContainer, classes.statCOntainerRainbow)}>
-          {arePointsDistributed ? (
+          {isLoading || isPromotedLoading ? (
+            <Skeleton height={20} width={140} variant='rounded' />
+          ) : arePointsDistributed ? (
             <>
               <Typography className={classes.statName}>Points 24H:</Typography>
               <Typography className={classes.statValue}>

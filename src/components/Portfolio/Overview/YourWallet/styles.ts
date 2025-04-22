@@ -111,14 +111,13 @@ export const useStyles = makeStyles<{ isLoading?: boolean; isScrollHide?: boolea
       color: colors.invariant.text
     },
     mobileCardContainer: {
+      display: 'flex',
+      flexDirection: 'column',
       maxHeight: '345px',
-      overflowY: 'auto',
+      overflow: 'auto',
       paddingRight: '4px',
-      [theme.breakpoints.down('lg')]: {
-        '&:not(:first-child)': {
-          marginTop: '20px'
-        }
-      },
+      gap: '9px',
+
       '&::-webkit-scrollbar': {
         width: '4px'
       },
@@ -214,17 +213,16 @@ export const useStyles = makeStyles<{ isLoading?: boolean; isScrollHide?: boolea
       display: 'none',
       [theme.breakpoints.down('md')]: {
         display: 'flex',
-        flexDirection: 'column'
+        flexDirection: 'column',
+        gap: '9px'
       }
     },
     mobileCard: {
       backgroundColor: colors.invariant.component,
+      flexShrink: 0,
       borderRadius: '16px',
-      maxHeight: '107px',
+      height: '77px',
       padding: '16px',
-      '&:not(:first-child)': {
-        marginTop: '8px'
-      },
 
       [theme.breakpoints.down('sm')]: {
         padding: '16px 8px'

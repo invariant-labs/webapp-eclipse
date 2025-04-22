@@ -1,10 +1,12 @@
 import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
-
 export const useMobileSkeletonStyles = makeStyles()(() => ({
   card: {
-    height: '290px',
+    height: '253px',
     flexDirection: 'column',
+    [theme.breakpoints.up('sm')]: {
+      height: '265px'
+    },
     [theme.breakpoints.between('sm', 'lg')]: {
       padding: '16px',
       paddingTop: '16px'
@@ -12,12 +14,17 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
     padding: '8px',
     background: colors.invariant.component,
     borderRadius: '24px',
-    '&:first-child': {
+    '&:first-of-type': {
       marginTop: '16px'
     },
     marginBottom: '16px'
   },
-  innerCard: {
+  skeletonText: {
+    width: 120,
+    height: 24,
+    marginLeft: '8px'
+  },
+  headerCard: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
@@ -27,13 +34,10 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
     alignItems: 'center',
     height: '36px'
   },
-
-  tokenIcons: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '8px'
+  basicSkeleton: {
+    borderRadius: '10px',
+    margin: '0 auto'
   },
-
   circularSkeleton: {
     width: '28px',
     height: '28px',
@@ -50,50 +54,37 @@ export const useMobileSkeletonStyles = makeStyles()(() => ({
       height: '30px'
     }
   },
-
-  textSkeleton: {
-    width: '120px',
-    height: '24px',
-    marginLeft: '8px'
-  },
-
-  skeletonRect36: {
+  skeleton36x100: {
     width: '100%',
-    height: '36px',
+    height: 36,
     borderRadius: '10px',
     margin: '0 auto'
   },
-  skeletonRect40: {
-    width: '100%',
-    height: '40px',
-    borderRadius: '12px',
-    marginTop: '18px'
-  },
-
-  marginTop16: {
+  wrapper: {
     justifyContent: 'space-between',
     alignItems: 'center',
     marginTop: '16px'
   },
-  marginTopBottom16: {
-    marginTop: '16px',
-    marginBottom: '16px'
+  tokenIcons: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: '8px'
   },
-  paddingLeft16PT0: {
-    paddingLeft: '16px',
-    '&': {
-      paddingTop: '0 !important'
-    }
-  },
-  paddingTop0Important: {
-    '&': {
-      paddingTop: '0 !important'
-    }
-  },
-
   chartContainer: {
-    justifyContent: 'center',
     width: '80%',
-    margin: '0 auto'
+    margin: '0 auto',
+    justifyContent: 'center'
+  },
+  skeleton36x36: {
+    width: 32,
+    height: 32,
+    marginLeft: '16px',
+    borderRadius: '12px'
+  },
+  skeleton40x100: {
+    width: '100%',
+    height: 40,
+    borderRadius: '12px',
+    marginTop: '18px'
   }
 }))

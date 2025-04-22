@@ -43,8 +43,6 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
     allocationSection: {
       display: 'flex',
       flexDirection: 'column',
-      crollbarWidth: 'none',
-      msOverflowStyle: 'none',
       '&::-webkit-scrollbar': {
         display: 'none'
       }
@@ -69,12 +67,9 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
     },
     row: {
       '&:first-child': {
-        borderTop: `1px solid ${colors.invariant.light}`,
-        borderRadius: '11px 11px 0 0'
+        borderTop: `1px solid ${colors.invariant.light}`
       },
-      '&:last-child': {
-        borderBottom: `0px solid ${colors.invariant.light}`
-      },
+
       '&:nth-of-type(odd)': {
         background: `#111931CC`
       },
@@ -139,18 +134,14 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
       '&:nth-of-type(even)': {
         background: `#11193180`
       },
-      borderBottom: `1px solid ${colors.invariant.light}`,
+      borderBottom: !isEmpty ? `0px` : `1px solid ${colors.invariant.light}`,
       borderTop: `1px solid ${colors.invariant.light}`,
-      borderRadius: `${isEmpty ? '11px' : '0 0 11px 11px'}`,
+      borderRadius: `${isEmpty ? '11px' : '11px 11px 0 0'}`,
       background: `#111931CC`
     },
     staticRow: {
-      '&:first-child': {
-        borderTop: `1px solid ${colors.invariant.light}`,
-        borderRadius: '11px 11px 0 0'
-      },
       '&:last-child': {
-        borderBottom: `0px solid ${colors.invariant.light}`
+        borderBottom: `1px solid ${colors.invariant.light}`
       },
       '&:nth-of-type(odd)': {
         background: `#111931CC`
@@ -159,6 +150,10 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
         background: `#11193180`
       },
       borderTop: `1px solid ${colors.invariant.light}`
+    },
+    contentSection: {
+      borderRadius: '0 0 11px 11px',
+      overflow: 'hidden'
     }
   }
 })

@@ -24,11 +24,12 @@ interface IProp {
   showFeesLoader?: boolean
   poolDetails: PoolDetailsType | null
   showPoolDetailsLoader?: boolean
-  showBalanceLoader?: boolean
   arePointsDistributed: boolean
   points24: number
   poolAddress: PublicKey
   isPreview: boolean
+  showPositionLoader?: boolean
+  isPromotedLoading: boolean
 }
 
 const SinglePositionInfo: React.FC<IProp> = ({
@@ -39,13 +40,14 @@ const SinglePositionInfo: React.FC<IProp> = ({
   tokenYPriceData,
   xToY,
   showFeesLoader = false,
+  showPositionLoader = false,
   showPoolDetailsLoader = false,
   poolDetails,
-  showBalanceLoader = false,
-  arePointsDistributed,
-  points24,
   poolAddress,
-  isPreview
+  isPreview,
+  points24,
+  arePointsDistributed,
+  isPromotedLoading
 }) => {
   const [isFeeTooltipOpen, setIsFeeTooltipOpen] = useState(false)
   const { classes } = useStyles()
@@ -73,6 +75,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
       {isFeeTooltipOpen && <Overlay />}
       <Box className={classes.container}>
         <PositionStats
+          isPromotedLoading={isPromotedLoading}
           value={
             tokenX.liqValue * (tokenXPriceData?.price ?? 0) +
             tokenY.liqValue * (tokenYPriceData?.price ?? 0)
@@ -84,7 +87,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
           poolApr={convertedApr}
           points24={points24}
           arePointsDistributed={arePointsDistributed}
-          isLoading={showFeesLoader}
+          isLoading={showPositionLoader}
         />
         <Separator size='100%' isHorizontal color={colors.invariant.light} />
         <Section title='Liquidity'>
@@ -123,7 +126,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                     price: tokenXPriceData?.price
                   }
             }
-            isLoadingBalance={showBalanceLoader}
+            isLoading={showPositionLoader}
           />
         </Section>
         <Section

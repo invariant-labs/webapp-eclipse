@@ -587,16 +587,16 @@ const Portfolio: React.FC<IProps> = ({
                   </Box>
 
                   <Grid className={classes.fullWidthWrapper}>
-                    <TooltipHover title='Refresh'>
-                      <Grid width={26} display='flex' alignItems='center'>
+                    <Grid width={26} display='flex' alignItems='center'>
+                      <TooltipHover removeOnMobile title='Refresh'>
                         <MuiButton
                           disabled={showNoConnected}
                           onClick={showNoConnected ? () => {} : handleRefresh}
                           className={classes.refreshIconBtn}>
                           <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                         </MuiButton>
-                      </Grid>
-                    </TooltipHover>
+                      </TooltipHover>
+                    </Grid>
                     <Button scheme='pink' onClick={onAddPositionClick}>
                       <span className={classes.buttonText}>{!hidePlus && '+ '}Add Position</span>
                     </Button>
