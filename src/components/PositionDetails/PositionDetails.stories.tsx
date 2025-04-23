@@ -64,6 +64,7 @@ const defaultArgs = {
   },
   isPromoted: true,
   showPoolDetailsLoader: true,
+  isPromotedLoading: false,
   onGoBackClick: () => {},
   points24: 0
 }

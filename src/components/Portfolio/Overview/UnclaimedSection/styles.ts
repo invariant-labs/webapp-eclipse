@@ -31,6 +31,7 @@ export const useStyles = makeStyles<{ isLoading: boolean }>()((_theme: Theme, { 
   },
 
   titleRow: {
+    height: 28,
     display: 'flex',
     alignItems: 'center',
     gap: '16px',
