@@ -168,7 +168,11 @@ export const Overview: React.FC<OverviewProps> = () => {
     return (
       <Box className={classes.container}>
         <HeaderSection totalValue={0} loading={false} />
-        <UnclaimedSection unclaimedTotal={0} loading={false} handleClaimAll={undefined} />
+        <UnclaimedSection
+          unclaimedTotal={{ totalLocked: 0, totalUnlocked: 0 }}
+          loading={false}
+          handleClaimAll={undefined}
+        />
         <EmptyState />
       </Box>
     )

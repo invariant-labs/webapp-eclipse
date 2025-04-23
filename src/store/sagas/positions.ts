@@ -55,7 +55,6 @@ import {
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { networkTypetoProgramNetwork } from '@utils/web3/connection'
 import { ClaimAllFee, parseTick, Position } from '@invariant-labs/sdk-eclipse/lib/market'
-import { IClaimAllFee } from '@invariant-labs/locker-eclipse-sdk'
 function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionData>): Generator {
   const data = action.payload
 
@@ -1368,10 +1367,7 @@ export function* handleClaimAllFees() {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    const lockerProgram = yield* call(getLockerProgram, networkType, rpc, wallet as IWallet)
-    const positionsLocked = yield* select(lockedPositionsWithPoolsData)
-    const positions = yield* select(positionsWithPoolsData)
-    const positionsData = [...positions, ...positionsLocked]
+    const positionsData = yield* select(positionsWithPoolsData)
     const filteredPositions = positionsData.filter(position => {
       const [bnX, bnY] = calculateClaimAmount({
         position: position,
@@ -1419,22 +1415,14 @@ export function* handleClaimAllFees() {
       }),
       index: position.positionIndex,
       lowerTickIndex: position.lowerTickIndex,
-      upperTickIndex: position.upperTickIndex,
-      isLocked: position.isLocked
+      upperTickIndex: position.upperTickIndex
     }))
 
-    const txsLock = yield* call([lockerProgram, lockerProgram.claimAllFeesTxs], {
-      market: marketProgram,
-      positions: formattedPositions.filter(pos => pos.isLocked === true),
-      owner: wallet.publicKey
-    } as IClaimAllFee)
-
-    const txsNotLocked = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
+    const txs = yield* call([marketProgram, marketProgram.claimAllFeesTxs], {
       owner: wallet.publicKey,
-      positions: formattedPositions.filter(pos => pos.isLocked === false)
+      positions: formattedPositions
     } as ClaimAllFee)
 
-    const txs = [...txsLock, ...txsNotLocked]
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     for (const { tx, additionalSigner } of txs) {
