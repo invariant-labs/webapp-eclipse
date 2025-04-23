@@ -78,7 +78,8 @@ const Portfolio: React.FC<IProps> = ({
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
-  tokensList
+  tokensList,
+  lockedLength
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -117,8 +118,10 @@ const Portfolio: React.FC<IProps> = ({
   }
 
   const positionsDetails = useMemo(() => {
-    const positionsAmount = data.length
-    const inRageAmount = data.reduce((count, item) => (item.isActive ? count + 1 : count), 0)
+    const positionsAmount = data.length + lockedLength
+    const inRageAmount =
+      data.reduce((count, item) => (item.isActive ? count + 1 : count), 0) +
+      lockedData.reduce((count, item) => (item.isActive ? count + 1 : count), 0)
 
     const outOfRangeAmount = positionsAmount - inRageAmount
     return { positionsAmount, inRageAmount, outOfRangeAmount }
