@@ -1,7 +1,7 @@
 import React from 'react'
 import { CustomContentProps, SnackbarProvider } from 'notistack'
 import { theme } from '@static/theme'
-import { Slide, SlideProps, useMediaQuery } from '@mui/material'
+import { Grow, GrowProps, useMediaQuery } from '@mui/material'
 import CustomSnackbar from './CustomSnackbar/CustomSnackbar'
 import { NetworkType } from '@store/consts/static'
 import { Global } from '@emotion/react'
@@ -50,7 +50,7 @@ interface ISnackbarProps {
   maxSnack?: number
 }
 
-const SlideUp = (props: SlideProps) => <Slide {...props} direction='right' />
+const Transition = (props: GrowProps) => <Grow {...props} />
 
 const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
   const isNavbarVisible = useMediaQuery(theme.breakpoints.down(1200))
@@ -70,7 +70,7 @@ const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
         />
       )}
       <SnackbarProvider
-        TransitionComponent={SlideUp}
+        TransitionComponent={Transition}
         transitionDuration={{ enter: 500, exit: 300 }}
         dense
         maxSnack={isExSmall ? 5 : maxSnack}

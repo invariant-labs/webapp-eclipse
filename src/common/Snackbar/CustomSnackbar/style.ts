@@ -20,10 +20,10 @@ export const useStyles = makeStyles()(() => ({
     marginRight: 8,
     flexDirection: 'row',
     flexWrap: 'nowrap',
-    width: '100%',
-    minHeight: 30
+    width: '100%'
   },
   transactionWrapper: {
+    minHeight: 40,
     display: 'flex',
     marginInline: theme.spacing(1),
     minWidth: 'fit-content'

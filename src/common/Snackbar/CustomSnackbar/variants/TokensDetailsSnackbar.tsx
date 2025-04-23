@@ -63,8 +63,10 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
 
   return (
     <>
-      <Box className={classes.customSnackbarWrapper}>
-        <Grid display='flex' flexDirection='column' flex={1} ml={1}>
+      <Box
+        className={classes.customSnackbarWrapper}
+        paddingTop={earnedPoints || tokenXAmountAutoSwap ? '8px' : '0'}>
+        <Grid display='flex' flexDirection='column' flex={1} ml={1} gap={0.7}>
           <Grid className={classes.wrapper} gap={0.5}>
             <Grid
               position='relative'
@@ -87,32 +89,37 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             <img src={tokenYIcon} className={classes.tokenIcon} />
           </Grid>
           {tokenXIconAutoSwap && tokenYAmountAutoSwap && (
-            <Grid>
-              <Separator color={colors.invariant.light} isHorizontal margin='4px 8px 4px 20px' />
-              <Grid className={classes.wrapper} gap={0.5}>
-                <Grid position='relative' display='flex' alignItems='center' width={22}>
-                  <img src={snackbarSwapIcon} height={15} style={{ marginBottom: '2px' }} />
+            <>
+              <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 20px' />
+              <Grid>
+                <Grid className={classes.wrapper} gap={0.5}>
+                  <Grid position='relative' display='flex' alignItems='center' width={22}>
+                    <img src={snackbarSwapIcon} height={15} style={{ marginBottom: '2px' }} />
+                  </Grid>
+                  <StyledText>Swapped</StyledText>
+                  <StyledText color={colors.invariant.green}>{tokenXAmountAutoSwap}</StyledText>
+                  <img src={tokenXIconAutoSwap} className={classes.tokenIcon} />
+                  <StyledText mb={0.5}>→</StyledText>
+                  <StyledText color={colors.invariant.green}>{tokenYAmountAutoSwap}</StyledText>
+                  <img src={tokenYIconAutoSwap} className={classes.tokenIcon} />
                 </Grid>
-                <StyledText>Swapped</StyledText>
-                <StyledText color={colors.invariant.green}>{tokenXAmountAutoSwap}</StyledText>
-                <img src={tokenXIconAutoSwap} className={classes.tokenIcon} />
-                <StyledText mb={0.5}>→</StyledText>
-                <StyledText color={colors.invariant.green}>{tokenYAmountAutoSwap}</StyledText>
-                <img src={tokenYIconAutoSwap} className={classes.tokenIcon} />
               </Grid>
-            </Grid>
+            </>
           )}
           {earnedPoints && (
-            <Grid>
-              <Separator color={colors.invariant.light} isHorizontal margin='4px 8px 4px 20px' />
-              <Grid className={classes.wrapper} gap={0.5}>
-                <Box width={18}>
-                  <img src={airdropRainbowIcon} />
-                </Box>
-                <StyledText>Earned Points:</StyledText>
-                <StyledText color={colors.invariant.pink}>{earnedPoints}</StyledText>
+            <>
+              <Separator color={colors.invariant.light} isHorizontal margin='0px 8px 0px 20px' />
+              <Grid>
+                <Grid className={classes.wrapper} gap={0.5}>
+                  <Box width={18}>
+                    <img src={airdropRainbowIcon} />
+                  </Box>
+                  <StyledText>Earned</StyledText>
+                  <StyledText color={colors.invariant.pink}>{earnedPoints}</StyledText>
+                  <StyledText>Points</StyledText>
+                </Grid>
               </Grid>
-            </Grid>
+            </>
           )}
         </Grid>
         <Grid className={classes.transactionWrapper}>
