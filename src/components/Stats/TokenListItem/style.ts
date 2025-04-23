@@ -11,8 +11,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     '&:nth-of-type(even)': {
       background: colors.invariant.componentDark
     },
-    '&:first-child': {
-      borderBottom: `1px solid ${colors.invariant.light}`,
+    '&:first-of-type': {
+      borderBottom: `2px solid ${colors.invariant.light}`,
       borderTopLeftRadius: 24,
       borderTopRightRadius: 24,
       background: colors.invariant.component
@@ -22,7 +22,6 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     display: 'grid',
     gridTemplateColumns: '5% 34% 17.5% auto 12.5% 60px',
     padding: '18px 24px',
-    borderBottom: `1px solid ${colors.invariant.light}`,
     whiteSpace: 'nowrap',
     height: 69,
     boxSizing: 'border-box',

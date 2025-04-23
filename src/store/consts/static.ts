@@ -829,7 +829,7 @@ export const RECOMMENDED_RPC_ADDRESS = {
   [NetworkType.Devnet]: RPC.DEV_EU,
   [NetworkType.Local]: ''
 }
-
+export const ITEMS_PER_PAGE = 10
 export const DEFAULT_TOKEN_DECIMAL = 6
 
 export const PRICE_QUERY_COOLDOWN = 60 * 1000
