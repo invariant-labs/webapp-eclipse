@@ -27,7 +27,9 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   contentProgramDates
 }) => {
   const itemSize = 56
-  const allocations = userContentPoints ?? []
+  const allocations = userContentPoints
+    ? userContentPoints.slice().sort((a, b) => b.startTimestamp - a.startTimestamp)
+    : []
   const isEmpty = allocations.length === 0
   const { classes } = useStyles({ isEmpty })
   const hidePointsLabel = useMediaQuery(theme.breakpoints.down(375))
@@ -78,12 +80,28 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
       </Box>
 
       <DialogContent sx={{ padding: 0 }}>
-        <Box>
+        <Box className={classes.contentSection}>
           <Typography className={classes.allocationText}>Your allocations</Typography>
-
+          <Box className={classes.buttonRow}>
+            <Box className={classes.innerRow}>
+              <Typography className={classes.dateLabel}>
+                {hidePointsLabel
+                  ? `${shortenDate(contentProgramDates.start)} - ${shortenDate(contentProgramDates.end)}`
+                  : `${contentProgramDates.start} - ${contentProgramDates.end}`}
+              </Typography>
+              <Button
+                component='a'
+                href='https://docs.invariant.app/docs/invariant_points/content'
+                target='_blank'
+                rel='noopener noreferrer'
+                className={classes.button}>
+                Submit {!hidePointsLabel && 'here'}
+              </Button>
+            </Box>
+          </Box>
           {allocations.length >= 4 ? (
             <FixedSizeList
-              height={itemSize * 3}
+              height={itemSize * 3 + 2}
               width='100%'
               itemSize={itemSize}
               itemCount={allocations.length}
@@ -109,24 +127,6 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
               ))}
             </Box>
           )}
-
-          <Box className={classes.buttonRow}>
-            <Box className={classes.innerRow}>
-              <Typography className={classes.dateLabel}>
-                {hidePointsLabel
-                  ? `${shortenDate(contentProgramDates.start)} - ${shortenDate(contentProgramDates.end)}`
-                  : `${contentProgramDates.start} - ${contentProgramDates.end}`}
-              </Typography>
-              <Button
-                component='a'
-                href='https://docs.invariant.app/docs/invariant_points/content'
-                target='_blank'
-                rel='noopener noreferrer'
-                className={classes.button}>
-                Submit {!hidePointsLabel && 'here'}
-              </Button>
-            </Box>
-          </Box>
         </Box>
       </DialogContent>
     </Dialog>

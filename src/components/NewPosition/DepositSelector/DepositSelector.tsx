@@ -864,6 +864,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       simulateWithTimeout()
     }
   }, [
+    alignment,
     simulationParams,
     tokenACheckbox,
     tokenBCheckbox,
@@ -955,6 +956,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
 
         <FeeSwitch
           containerKey={`${tokenAIndex}` + `${tokenBIndex}`}
+          showTVL={tokenAIndex !== null && tokenBIndex !== null}
           onSelect={fee => {
             setPositionTokens(tokenAIndex, tokenBIndex, fee)
           }}

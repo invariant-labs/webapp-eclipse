@@ -3,9 +3,9 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   wrapper: {
-    padding: '0 24px',
+    padding: 24,
     [theme.breakpoints.down('sm')]: {
-      padding: '0 8px'
+      padding: '24px 8px'
     },
     '&:nth-of-type(odd)': {
       background: `${colors.invariant.componentDark}`
@@ -44,8 +44,7 @@ export const useStyles = makeStyles()(() => ({
   infoWrapper: {
     display: 'flex',
     justifyContent: 'space-between',
-    paddingTop: '24px',
-    paddingBottom: '24px'
+    paddingTop: '24px'
   },
   container: {
     color: colors.white.main,

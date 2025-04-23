@@ -12,6 +12,8 @@ export interface IFeeSwitch {
   currentValue: number
   promotedPoolTierIndex: number | undefined
   feeTiersWithTvl: Record<number, number>
+  showTVL?: boolean
+
   totalTvl: number
   isLoadingStats: boolean
   containerKey?: string
@@ -22,6 +24,7 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
   showOnlyPercents = false,
   feeTiers,
   promotedPoolTierIndex,
+  showTVL,
   currentValue,
   feeTiersWithTvl,
   totalTvl,
@@ -100,8 +103,8 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
             ref={index === bestTierIndex ? setBestTierNode : undefined}
             label={
               <Box className={classes.tabContainer}>
-                {isLoadingStats ? (
-                  <Skeleton height={15} width={60} />
+                {isLoadingStats || !showTVL ? (
+                  <Skeleton animation={false} height={15} width={60} />
                 ) : (
                   <Typography
                     className={classNames(classes.tabTvl, {
@@ -118,8 +121,8 @@ export const FeeSwitch: React.FC<IFeeSwitch> = ({
                   </Typography>
                 )}
                 <Box>{showOnlyPercents ? `${tier}%` : `${tier}% fee`}</Box>
-                {isLoadingStats ? (
-                  <Skeleton height={15} width={60} />
+                {isLoadingStats || !showTVL ? (
+                  <Skeleton animation={false} height={15} width={60} />
                 ) : (
                   <Typography
                     className={classNames(classes.tabTvl, {

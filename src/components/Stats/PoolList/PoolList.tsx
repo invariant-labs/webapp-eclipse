@@ -12,6 +12,7 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
 import { colors } from '@static/theme'
+import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 export interface PoolListInterface {
   initialLength: number
@@ -144,8 +145,12 @@ const PoolList: React.FC<PoolListInterface> = ({
 
     return sortedData.slice(offest).slice(0, perPage)
   }
+  const totalItems = sortedData.length
+  const lowerBound = useMemo(() => (page - 1) * 10 + 1, [page])
+  const upperBound = useMemo(() => Math.min(page * 10, totalItems), [totalItems, page])
 
   const pages = Math.ceil(data.length / 10)
+  const height = initialDataLength > 10 ? 'auto' : 69
 
   return (
     <Grid
@@ -218,16 +223,22 @@ const PoolList: React.FC<PoolListInterface> = ({
       <Grid
         className={classes.pagination}
         sx={{
-          height: pages > 1 ? 90 : 69,
-          borderTop: `1px solid ${colors.invariant.light}`
+          height: height,
+       borderTop: `1px solid ${colors.invariant.light}`
         }}>
         {pages > 1 && (
-          <PaginationList
-            pages={Math.ceil(data.length / 10)}
-            defaultPage={1}
-            handleChangePage={handleChangePagination}
-            variant='flex-end'
-          />
+          <TableBoundsLabel
+            borderTop={false}
+            lowerBound={lowerBound}
+            totalItems={totalItems}
+            upperBound={upperBound}>
+            <PaginationList
+              pages={Math.ceil(data.length / 10)}
+              defaultPage={1}
+              handleChangePage={handleChangePagination}
+              variant='center'
+            />
+          </TableBoundsLabel>
         )}
       </Grid>
     </Grid>

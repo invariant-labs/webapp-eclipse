@@ -40,7 +40,7 @@ import { lockerState } from '@store/selectors/locker'
 import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
-import { getPromotedPools } from '@store/selectors/leaderboard'
+import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors/leaderboard'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { BN } from '@coral-xyz/anchor'
@@ -428,7 +428,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [])
 
   const promotedPools = useSelector(getPromotedPools)
-
+  const isPromotedLoading = useSelector(promotedLoading)
   const isPromoted = promotedPools.some(
     pool => pool.address === position?.poolData.address.toString()
   )
@@ -541,6 +541,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         points24={points24}
         isPreview={isPreview}
         showPositionLoader={position.ticksLoading}
+        isPromotedLoading={isPromotedLoading}
       />
     )
   }

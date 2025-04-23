@@ -4,6 +4,7 @@ import { theme } from '@static/theme'
 import { useNavigate } from 'react-router-dom'
 import useStyles from './styles'
 import { ROUTES } from '@utils/utils'
+import { BITZ_MAIN, WETH_MAIN } from '@store/consts/static'
 
 interface INormalBannerProps {
   onClose: () => void
@@ -26,7 +27,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
       <span
         className={classes.text}
         onClick={() => {
-          navigate(ROUTES.POINTS)
+          navigate(ROUTES.getNewPositionRoute(BITZ_MAIN.symbol, WETH_MAIN.symbol, '1_00'))
 
           if (isSmallDevice) {
             onClose()
