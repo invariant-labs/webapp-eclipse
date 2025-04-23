@@ -119,12 +119,12 @@ const Portfolio: React.FC<IProps> = ({
 
   const positionsDetails = useMemo(() => {
     const positionsAmount = data.length + lockedLength
-    const inRageAmount =
+    const inRangeAmount =
       data.reduce((count, item) => (item.isActive ? count + 1 : count), 0) +
       lockedData.reduce((count, item) => (item.isActive ? count + 1 : count), 0)
 
-    const outOfRangeAmount = positionsAmount - inRageAmount
-    return { positionsAmount, inRageAmount, outOfRangeAmount }
+    const outOfRangeAmount = positionsAmount - inRangeAmount
+    return { positionsAmount, inRangeAmount, outOfRangeAmount }
   }, [data])
 
   const finalTokens = useMemo(() => {
@@ -154,7 +154,7 @@ const Portfolio: React.FC<IProps> = ({
           </Typography>
           <Box gap={1} display={'flex'}>
             <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
-              Within Range: {positionsDetails.inRageAmount}
+              Within Range: {positionsDetails.inRangeAmount}
             </Typography>
             <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
               Outside Range: {positionsDetails.outOfRangeAmount}
