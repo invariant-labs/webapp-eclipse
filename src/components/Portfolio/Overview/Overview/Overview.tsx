@@ -39,7 +39,10 @@ export interface ISinglePositionData extends PositionWithAddress {
 }
 
 export const Overview: React.FC<OverviewProps> = () => {
-  const positionList = useSelector(positionsWithPoolsData)
+  const normalPositionList = useSelector(positionsWithPoolsData)
+  const lockedPositionList = useSelector(lockedPositionsWithPoolsData)
+  const positionList = [...normalPositionList, ...lockedPositionList]
+
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
   const { isAllClaimFeesLoading } = useSelector(list)
   const isLoadingList = useSelector(isLoadingPositionsList)
@@ -168,7 +171,11 @@ export const Overview: React.FC<OverviewProps> = () => {
     return (
       <Box className={classes.container}>
         <HeaderSection totalValue={{ value: 0, isPriceWarning: false }} loading={false} />
-        <UnclaimedSection unclaimedTotal={0} loading={false} handleClaimAll={undefined} />
+        <UnclaimedSection
+          unclaimedTotal={{ totalLocked: 0, totalUnlocked: 0 }}
+          loading={false}
+          handleClaimAll={undefined}
+        />
         <EmptyState />
       </Box>
     )

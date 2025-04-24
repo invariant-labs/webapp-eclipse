@@ -1,5 +1,5 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
@@ -14,7 +14,7 @@ import {
   unknownTokenIcon,
   warningIcon
 } from '@static/icons'
-import { NetworkType, SortTypePoolList } from '@store/consts/static'
+import { ITEMS_PER_PAGE, NetworkType, SortTypePoolList } from '@store/consts/static'
 import {
   addressToTicker,
   calculateAPYAndAPR,
@@ -45,7 +45,6 @@ interface IProps {
   tokenIndex?: number
   sortType?: SortTypePoolList
   onSort?: (type: SortTypePoolList) => void
-  hideBottomLine?: boolean
   addressFrom?: string
   addressTo?: string
   network: NetworkType
@@ -67,6 +66,7 @@ interface IProps {
   copyAddressHandler?: (message: string, variant: VariantType) => void
   showAPY: boolean
   points?: BN
+  itemNumber?: number
 }
 
 const PoolListItem: React.FC<IProps> = ({
@@ -85,7 +85,6 @@ const PoolListItem: React.FC<IProps> = ({
   tokenIndex,
   sortType,
   onSort,
-  hideBottomLine = false,
   addressFrom,
   addressTo,
   network,
@@ -97,7 +96,8 @@ const PoolListItem: React.FC<IProps> = ({
   poolAddress,
   copyAddressHandler,
   points,
-  showAPY
+  showAPY,
+  itemNumber = 0
 }) => {
   const { classes } = useStyles()
 
@@ -220,7 +220,12 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{
             container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
           }}
-          style={hideBottomLine ? { borderBottom: `1px solid transparent` } : undefined}>
+          sx={{
+            borderBottom:
+              itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
+                ? `1px solid ${colors.invariant.light}`
+                : `2px solid ${colors.invariant.light}`
+          }}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
             <Box className={classes.iconsWrapper}>
