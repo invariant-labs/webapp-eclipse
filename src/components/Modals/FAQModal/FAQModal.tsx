@@ -100,7 +100,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
               <Typography className={classes.text}>
                 Monitor Price Movement: Keep an eye on price changes. If the price moves out of your
                 range, your position stops earning points and fees. To resume, you&#39;ll need to
-                rebalance (link do docs) within the new price range.
+                rebalance within the new price range.
               </Typography>
             </li>
             <li className={classes.text}>
@@ -112,8 +112,23 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
           </ol>
 
           <Typography className={classes.text} mt={3}>
-            For detailed guides and tips, check out our docs(link) and join the Discord(link) for
-            support.
+            For detailed guides and tips, check out our{' '}
+            <a
+              className={classes.link}
+              href='https://docs.invariant.app/docs/'
+              target='_blank'
+              rel='noopener noreferrer'>
+              docs
+            </a>{' '}
+            and join the{' '}
+            <a
+              className={classes.link}
+              href='https://discord.gg/w6hTeWTJvG'
+              target='_blank'
+              rel='noopener noreferrer'>
+              Discord
+            </a>{' '}
+            for support.
           </Typography>
         </Grid>
       )
