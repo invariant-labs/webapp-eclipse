@@ -801,7 +801,13 @@ export function* handleSwapAndInitPositionWithETH(
       prependedIxs,
       [unwrapIx]
     )
-
+    const xToY = action.payload.xToY
+    const tokenX = xToY
+      ? allTokens[swapPair.tokenX.toString()]
+      : allTokens[swapPair.tokenY.toString()]
+    const tokenY = xToY
+      ? allTokens[swapPair.tokenY.toString()]
+      : allTokens[swapPair.tokenX.toString()]
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     const serializedMessage = tx.message.serialize()
@@ -846,37 +852,60 @@ export function* handleSwapAndInitPositionWithETH(
         const meta = txDetails.meta
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
-            const targetInner = meta.innerInstructions[0]
-            const nativeAmountDeposit = (
-              targetInner.instructions
-                .slice(5)
-                .find(ix => (ix as ParsedInstruction).parsed.info.amount) as ParsedInstruction
-            ).parsed.info.amount
+            const index = meta.innerInstructions.length
+            const targetInner = meta.innerInstructions[index - 1]
 
-            const splAmountDeposit = (
+            const tokenXDepositInner = (
               targetInner.instructions
                 .slice(5)
                 .find(
-                  ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+                  ix =>
+                    (ix as ParsedInstruction).parsed.info.mint ===
+                    (tokenX.address.equals(NATIVE_MINT) ? undefined : tokenX.address.toString())
                 ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            )?.parsed.info
 
-            const nativeAmountExchange = (
+            const tokenXDeposit =
+              tokenXDepositInner?.amount ?? tokenXDepositInner?.tokenAmount.amount
+
+            const tokenYDepositInner = (
               targetInner.instructions
-                .slice(1, 3)
-                .find(ix => (ix as ParsedInstruction).parsed.info.amount) as ParsedInstruction
-            ).parsed.info.amount
+                .slice(5)
+                .find(
+                  ix =>
+                    (ix as ParsedInstruction).parsed.info.mint ===
+                    (tokenY.address.equals(NATIVE_MINT) ? undefined : tokenY.address.toString())
+                ) as ParsedInstruction
+            )?.parsed.info
+            const tokenYDeposit =
+              tokenYDepositInner?.amount ?? tokenYDepositInner?.tokenAmount.amount
 
-            const splAmountExchange = (
+            const tokenXExchangeInner = (
               targetInner.instructions
                 .slice(1, 3)
                 .find(
-                  ix => (ix as ParsedInstruction).parsed.info.tokenAmount !== undefined
+                  ix =>
+                    (ix as ParsedInstruction).parsed.info.mint ===
+                    (tokenX.address.equals(NATIVE_MINT) ? undefined : tokenX.address.toString())
                 ) as ParsedInstruction
-            ).parsed.info.tokenAmount.amount
+            )?.parsed.info
 
-            const tokenX = allTokens[swapPair.tokenX.toString()]
-            const tokenY = allTokens[swapPair.tokenY.toString()]
+            const tokenXExchange =
+              tokenXExchangeInner?.amount ?? tokenXExchangeInner?.tokenAmount.amount
+
+            const tokenYExchangeInner = (
+              targetInner.instructions
+                .slice(1, 3)
+                .find(
+                  ix =>
+                    (ix as ParsedInstruction).parsed.info.mint ===
+                    (tokenY.address.equals(NATIVE_MINT) ? undefined : tokenY.address.toString())
+                ) as ParsedInstruction
+            )?.parsed.info
+
+            const tokenYExchange =
+              tokenYExchangeInner?.amount ?? tokenYExchangeInner?.tokenAmount.amount
+
             const match = autoSwapPools.find(
               ({ pair }) =>
                 (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
@@ -884,12 +913,7 @@ export function* handleSwapAndInitPositionWithETH(
             )
 
             const feeTier = match?.swapPool.feeIndex ?? null
-            const nativeX = swapPair.tokenX.equals(NATIVE_MINT)
-            const amountXExchange = nativeX ? nativeAmountExchange : splAmountExchange
-            const amountYExchange = nativeX ? splAmountExchange : nativeAmountExchange
 
-            const amountX = nativeX ? nativeAmountDeposit : splAmountDeposit
-            const amountY = nativeX ? splAmountDeposit : nativeAmountDeposit
             let points = new BN(0)
 
             if (
@@ -904,7 +928,7 @@ export function* handleSwapAndInitPositionWithETH(
               const feed = feeds[tokenX.address.toString()]
 
               points = calculatePoints(
-                new BN(amountX),
+                new BN(tokenXExchange),
                 tokenX.decimals,
                 FEE_TIERS[feeTier ?? ''].fee,
                 feed.price,
@@ -917,15 +941,15 @@ export function* handleSwapAndInitPositionWithETH(
               snackbarsActions.add({
                 tokensDetails: {
                   ikonType: 'deposit',
-                  tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
-                  tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
+                  tokenXAmount: formatNumberWithoutSuffix(printBN(tokenXDeposit, tokenX.decimals)),
+                  tokenYAmount: formatNumberWithoutSuffix(printBN(tokenYDeposit, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(amountXExchange, tokenX.decimals)
+                    printBN(tokenXExchange, tokenX.decimals)
                   ),
                   tokenYAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(amountYExchange, tokenY.decimals)
+                    printBN(tokenYExchange, tokenY.decimals)
                   ),
                   tokenXIconAutoSwap: tokenX.logoURI,
                   tokenYIconAutoSwap: tokenY.logoURI,
@@ -1111,6 +1135,7 @@ export function* handleSwapAndInitPosition(
       }
     )
 
+    const xToY = action.payload.xToY
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as VersionedTransaction
@@ -1148,39 +1173,45 @@ export function* handleSwapAndInitPosition(
       })
       if (txDetails) {
         const meta = txDetails.meta
+        const tokenX = xToY
+          ? allTokens[swapPair.tokenX.toString()]
+          : allTokens[swapPair.tokenY.toString()]
+        const tokenY = xToY
+          ? allTokens[swapPair.tokenY.toString()]
+          : allTokens[swapPair.tokenX.toString()]
+
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
             const targetInner = meta.innerInstructions[2] ?? meta.innerInstructions[0]
+            targetInner.instructions.slice(1, 3)
             const tokenXDeposit = targetInner.instructions
               .slice(5)
-              .filter(
+              .find(
                 (ix): ix is ParsedInstruction =>
-                  (ix as ParsedInstruction).parsed?.info?.tokenAmount !== undefined
-              )[0].parsed?.info?.tokenAmount
+                  (ix as ParsedInstruction).parsed?.info?.mint === tokenX.address.toString()
+              )?.parsed?.info?.tokenAmount
 
             const tokenYDeposit = targetInner.instructions
               .slice(5)
-              .filter(
+              .find(
                 (ix): ix is ParsedInstruction =>
-                  (ix as ParsedInstruction).parsed?.info?.tokenAmount !== undefined
-              )[1].parsed?.info?.tokenAmount
+                  (ix as ParsedInstruction).parsed?.info?.mint === tokenY.address.toString()
+              )?.parsed?.info?.tokenAmount
 
             const tokenXExchange = targetInner.instructions
               .slice(1, 3)
-              .filter(
+              .find(
                 (ix): ix is ParsedInstruction =>
-                  (ix as ParsedInstruction).parsed.info?.tokenAmount !== undefined
-              )[1].parsed.info.tokenAmount.amount
+                  (ix as ParsedInstruction).parsed.info?.mint === tokenX.address.toString()
+              )?.parsed.info.tokenAmount.amount
 
             const tokenYExchange = targetInner.instructions
               .slice(1, 3)
-              .filter(
+              .find(
                 (ix): ix is ParsedInstruction =>
-                  (ix as ParsedInstruction).parsed.info?.tokenAmount !== undefined
-              )[0].parsed.info.tokenAmount.amount
+                  (ix as ParsedInstruction).parsed.info?.mint === tokenY.address.toString()
+              )?.parsed.info.tokenAmount.amount
 
-            const tokenX = allTokens[swapPair.tokenX.toString()]
-            const tokenY = allTokens[swapPair.tokenY.toString()]
             const match = autoSwapPools.find(
               ({ pair }) =>
                 (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||
