@@ -88,7 +88,6 @@ import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
-import activeLiquidityIcon from '@static/svg/activeLiquidity.svg'
 import revertIcon from '@static/svg/revert.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import swapPositionIcon from '@static/svg/swap-position.svg'
@@ -195,7 +194,6 @@ export {
   refreshIcon,
   backIcon,
   settingIcon,
-  activeLiquidityIcon,
   revertIcon,
   unlockIcon,
   swapPositionIcon,
