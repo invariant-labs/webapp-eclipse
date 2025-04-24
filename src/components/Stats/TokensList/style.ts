@@ -15,8 +15,7 @@ export const useStyles = makeStyles()(_theme => ({
     maxWidth: '100%',
     backgroundColor: colors.invariant.component,
     borderBottomLeftRadius: '24px',
-    borderBottomRightRadius: '24px',
-
+    borderBottomRightRadius: '24px'
   },
   loadingOverlay: {
     position: 'relative',
@@ -31,6 +30,7 @@ export const useStyles = makeStyles()(_theme => ({
       borderRadius: '24px'
     }
   },
+
   emptyRow: {
     height: 69,
     background: colors.invariant.component,

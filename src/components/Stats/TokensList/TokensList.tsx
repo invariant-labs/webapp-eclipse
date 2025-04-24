@@ -5,6 +5,7 @@ import useStyles from './style'
 import { Grid, useMediaQuery } from '@mui/material'
 import {
   BTC_TEST,
+  ITEMS_PER_PAGE,
   NetworkType,
   SortTypeTokenList,
   USDC_TEST,
@@ -35,8 +36,6 @@ export interface ITokensList {
   copyAddressHandler: (message: string, variant: VariantType) => void
   isLoading: boolean
 }
-
-const ITEMS_PER_PAGE = 10
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
 
@@ -117,17 +116,16 @@ const TokensList: React.FC<ITokensList> = ({
 
   const getEmptyRowsCount = () => {
     const displayedItems = paginator(page).data.length
-    const rowNumber = initialDataLength < 10 ? initialDataLength : 10
+    const rowNumber = initialDataLength < ITEMS_PER_PAGE ? initialDataLength : ITEMS_PER_PAGE
 
     return Math.max(rowNumber - displayedItems, 0)
   }
 
   function paginator(currentPage: number) {
     const page = currentPage || 1
-    const perPage = 10
-    const offset = (page - 1) * perPage
-    const paginatedItems = sortedData.slice(offset).slice(0, 10)
-    const totalPages = Math.ceil(data.length / perPage)
+    const offset = (page - 1) * ITEMS_PER_PAGE
+    const paginatedItems = sortedData.slice(offset).slice(0, ITEMS_PER_PAGE)
+    const totalPages = Math.ceil(data.length / ITEMS_PER_PAGE)
 
     return {
       page: page,
@@ -137,11 +135,12 @@ const TokensList: React.FC<ITokensList> = ({
   }
 
   const totalItems = sortedData.length
-  const lowerBound = useMemo(() => (page - 1) * 10 + 1, [page])
-  const upperBound = useMemo(() => Math.min(page * 10, totalItems), [totalItems, page])
+  const lowerBound = useMemo(() => (page - 1) * ITEMS_PER_PAGE + 1, [page])
+  const upperBound = useMemo(() => Math.min(page * ITEMS_PER_PAGE, totalItems), [totalItems, page])
 
-  const pages = Math.ceil(data.length / 10)
-  const height = initialDataLength > 10 ? 'auto' : 69
+  const pages = Math.ceil(data.length / ITEMS_PER_PAGE)
+  const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
+  const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
   return (
     <Grid
       container
@@ -156,7 +155,7 @@ const TokensList: React.FC<ITokensList> = ({
                 <TokenListItem
                   key={index}
                   displayType='tokens'
-                  itemNumber={index + 1 + (page - 1) * 10}
+                  itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}
                   icon={token.icon}
                   name={token.name}
                   symbol={token.symbol}
@@ -164,7 +163,6 @@ const TokensList: React.FC<ITokensList> = ({
                   // priceChange={token.priceChange}
                   volume={token.volume}
                   TVL={token.TVL}
-                  hideBottomLine={pages === 1 && index + 1 === data.length}
                   address={token.address}
                   isUnknown={token.isUnknown}
                   network={network}
@@ -173,11 +171,18 @@ const TokensList: React.FC<ITokensList> = ({
               )
             })}
             {getEmptyRowsCount() > 0 &&
-              new Array(getEmptyRowsCount())
-                .fill('')
-                .map((_, index) => (
-                  <div key={`empty-row-${index}`} className={classNames(classes.emptyRow)} />
-                ))}
+              new Array(getEmptyRowsCount()).fill('').map((_, index) => (
+                <div
+                  key={`empty-row-${index}`}
+                  style={{
+                    borderBottom:
+                      getEmptyRowsCount() - 1 === index
+                        ? `2px solid ${colors.invariant.light}`
+                        : `0px solid ${colors.invariant.light}`
+                  }}
+                  className={classNames(classes.emptyRow)}
+                />
+              ))}
           </>
         ) : (
           <NotFoundPlaceholder title='No tokens found...' isStats />
@@ -185,8 +190,7 @@ const TokensList: React.FC<ITokensList> = ({
         <Grid
           className={classes.pagination}
           sx={{
-            height: height,
-      borderTop: `1px solid ${colors.invariant.light}`
+            height: height
           }}>
           {pages > 1 && (
             <TableBoundsLabel
