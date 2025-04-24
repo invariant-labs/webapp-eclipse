@@ -48,7 +48,6 @@ export const Token: Story = {
     fee: 0.3,
     volume: 1000000000,
     TVL: 500000000,
-    hideBottomLine: false,
     network: NetworkType.Mainnet,
     showAPY: true
   }
