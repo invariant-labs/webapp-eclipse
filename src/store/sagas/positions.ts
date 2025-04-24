@@ -802,12 +802,14 @@ export function* handleSwapAndInitPositionWithETH(
       [unwrapIx]
     )
     const xToY = action.payload.xToY
+
     const tokenX = xToY
       ? allTokens[swapPair.tokenX.toString()]
       : allTokens[swapPair.tokenY.toString()]
     const tokenY = xToY
       ? allTokens[swapPair.tokenY.toString()]
       : allTokens[swapPair.tokenX.toString()]
+
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
     const serializedMessage = tx.message.serialize()
@@ -850,61 +852,35 @@ export function* handleSwapAndInitPositionWithETH(
 
       if (txDetails) {
         const meta = txDetails.meta
+        console.log(txDetails)
         if (meta?.innerInstructions && meta.innerInstructions) {
           try {
             const index = meta.innerInstructions.length
             const targetInner = meta.innerInstructions[index - 1]
+            const depositInstructions = targetInner.instructions.slice(5)
 
-            const tokenXDepositInner = (
-              targetInner.instructions
-                .slice(5)
-                .find(
-                  ix =>
-                    (ix as ParsedInstruction).parsed.info.mint ===
-                    (tokenX.address.equals(NATIVE_MINT) ? undefined : tokenX.address.toString())
-                ) as ParsedInstruction
-            )?.parsed.info
+            const exchangeInstructions = targetInner.instructions.slice(1, 3)
+
+            const fromExchangeAmount =
+              (exchangeInstructions[1] as ParsedInstruction).parsed?.info?.amount ??
+              (exchangeInstructions[1] as ParsedInstruction).parsed?.info?.tokenAmount?.amount
+
+            const toExchangeAmount =
+              (exchangeInstructions[0] as ParsedInstruction).parsed?.info?.amount ??
+              (exchangeInstructions[0] as ParsedInstruction).parsed?.info?.tokenAmount?.amount
 
             const tokenXDeposit =
-              tokenXDepositInner?.amount ?? tokenXDepositInner?.tokenAmount.amount
+              (depositInstructions[xToY ? 0 : 1] as ParsedInstruction).parsed?.info?.amount ??
+              (depositInstructions[xToY ? 0 : 1] as ParsedInstruction).parsed?.info?.tokenAmount
+                ?.amount
 
-            const tokenYDepositInner = (
-              targetInner.instructions
-                .slice(5)
-                .find(
-                  ix =>
-                    (ix as ParsedInstruction).parsed.info.mint ===
-                    (tokenY.address.equals(NATIVE_MINT) ? undefined : tokenY.address.toString())
-                ) as ParsedInstruction
-            )?.parsed.info
             const tokenYDeposit =
-              tokenYDepositInner?.amount ?? tokenYDepositInner?.tokenAmount.amount
+              (depositInstructions[xToY ? 1 : 0] as ParsedInstruction).parsed?.info?.amount ??
+              (depositInstructions[xToY ? 1 : 0] as ParsedInstruction).parsed?.info?.tokenAmount
+                ?.amount
 
-            const tokenXExchangeInner = (
-              targetInner.instructions
-                .slice(1, 3)
-                .find(
-                  ix =>
-                    (ix as ParsedInstruction).parsed.info.mint ===
-                    (tokenX.address.equals(NATIVE_MINT) ? undefined : tokenX.address.toString())
-                ) as ParsedInstruction
-            )?.parsed.info
-
-            const tokenXExchange =
-              tokenXExchangeInner?.amount ?? tokenXExchangeInner?.tokenAmount.amount
-
-            const tokenYExchangeInner = (
-              targetInner.instructions
-                .slice(1, 3)
-                .find(
-                  ix =>
-                    (ix as ParsedInstruction).parsed.info.mint ===
-                    (tokenY.address.equals(NATIVE_MINT) ? undefined : tokenY.address.toString())
-                ) as ParsedInstruction
-            )?.parsed.info
-
-            const tokenYExchange =
-              tokenYExchangeInner?.amount ?? tokenYExchangeInner?.tokenAmount.amount
+            console.log(tokenXDeposit)
+            console.log(tokenYDeposit)
 
             const match = autoSwapPools.find(
               ({ pair }) =>
@@ -928,7 +904,7 @@ export function* handleSwapAndInitPositionWithETH(
               const feed = feeds[tokenX.address.toString()]
 
               points = calculatePoints(
-                new BN(tokenXExchange),
+                new BN(fromExchangeAmount),
                 tokenX.decimals,
                 FEE_TIERS[feeTier ?? ''].fee,
                 feed.price,
@@ -946,10 +922,10 @@ export function* handleSwapAndInitPositionWithETH(
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(tokenXExchange, tokenX.decimals)
+                    printBN(fromExchangeAmount, tokenX.decimals)
                   ),
                   tokenYAmountAutoSwap: formatNumberWithoutSuffix(
-                    printBN(tokenYExchange, tokenY.decimals)
+                    printBN(toExchangeAmount, tokenY.decimals)
                   ),
                   tokenXIconAutoSwap: tokenX.logoURI,
                   tokenYIconAutoSwap: tokenY.logoURI,
