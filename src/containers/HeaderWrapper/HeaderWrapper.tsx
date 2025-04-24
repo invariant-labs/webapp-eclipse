@@ -17,6 +17,7 @@ import { changeToNightlyAdapter, connectStaticWallet, getEclipseWallet } from '@
 import { sleep } from '@invariant-labs/sdk-eclipse'
 import { getLeaderboardQueryParams } from '@store/selectors/leaderboard'
 import { ensureError, generateHash, ROUTES } from '@utils/utils'
+import { unknownTokenIcon } from '@static/icons'
 
 export const HeaderWrapper: React.FC = () => {
   const dispatch = useDispatch()
@@ -242,6 +243,24 @@ export const HeaderWrapper: React.FC = () => {
               message: 'Wallet address copied',
               variant: 'success',
               persist: false
+            })
+          )
+          dispatch(
+            snackbarsActions.add({
+              tokensDetails: {
+                ikonType: 'swap',
+                tokenXAmount: '3222',
+                tokenYAmount: '4124',
+                tokenXIcon: unknownTokenIcon,
+                tokenYIcon: unknownTokenIcon,
+                tokenXAmountAutoSwap: '322',
+                tokenYAmountAutoSwap: '323',
+                tokenXIconAutoSwap: unknownTokenIcon,
+                tokenYIconAutoSwap: unknownTokenIcon,
+                earnedPoints: '322'
+              },
+
+              persist: true
             })
           )
         }}

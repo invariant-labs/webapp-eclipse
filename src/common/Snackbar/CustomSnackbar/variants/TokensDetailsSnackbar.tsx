@@ -77,7 +77,9 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
                   <StyledText>Swapped</StyledText>
                   <StyledText color={colors.invariant.green}>{tokenXAmountAutoSwap}</StyledText>
                   <img src={tokenXIconAutoSwap} className={classes.tokenIcon} />
-                  <StyledText mb={0.5}>→</StyledText>
+                  <StyledText mb={0.5}>
+                    <span style={{ fontSize: 30 }}>→</span>
+                  </StyledText>
                   <StyledText color={colors.invariant.green}>{tokenYAmountAutoSwap}</StyledText>
                   <img src={tokenYIconAutoSwap} className={classes.tokenIcon} />
                 </Grid>
@@ -101,7 +103,7 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
             <img src={tokenXIcon} className={classes.tokenIcon} />
             <StyledText mb={ikonType === 'swap' ? 0.5 : ''}>
-              {ikonType === 'swap' ? '→' : '+'}
+              {ikonType === 'swap' ? <span style={{ fontSize: 30 }}>→</span> : '+'}
             </StyledText>
             <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
             <img src={tokenYIcon} className={classes.tokenIcon} />
