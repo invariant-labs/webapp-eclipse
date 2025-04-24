@@ -131,32 +131,42 @@ const PoolList: React.FC<PoolListInterface> = ({
         return data.sort((a, b) => b.apy - a.apy)
     }
   }, [data, sortType])
+
   useEffect(() => {
     setInitialDataLength(initialLength)
   }, [initialLength])
-  useEffect(() => {
-    setPage(1)
-  }, [data])
+
   const getEmptyRowsCount = () => {
     const displayedItems = paginator(page).length
     const rowNumber = initialDataLength < ITEMS_PER_PAGE ? initialDataLength : ITEMS_PER_PAGE
 
     return Math.max(rowNumber - displayedItems, 0)
   }
+
   const handleChangePagination = (currentPage: number) => setPage(currentPage)
+
   const paginator = (currentPage: number) => {
     const page = currentPage || 1
     const offest = (page - 1) * ITEMS_PER_PAGE
 
     return sortedData.slice(offest).slice(0, ITEMS_PER_PAGE)
   }
-  const totalItems = sortedData.length
+
+  const totalItems = useMemo(() => sortedData.length, [sortedData])
   const lowerBound = useMemo(() => (page - 1) * ITEMS_PER_PAGE + 1, [page])
   const upperBound = useMemo(() => Math.min(page * ITEMS_PER_PAGE, totalItems), [totalItems, page])
 
-  const pages = Math.ceil(data.length / ITEMS_PER_PAGE)
+  const pages = useMemo(() => Math.ceil(data.length / ITEMS_PER_PAGE), [data])
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
-  const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
+  const height = useMemo(
+    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69),
+    [initialDataLength, isCenterAligment]
+  )
+
+  useEffect(() => {
+    setPage(1)
+  }, [data, pages])
+
   return (
     <Grid
       container
@@ -237,17 +247,18 @@ const PoolList: React.FC<PoolListInterface> = ({
         sx={{
           height: height
         }}>
-        {pages > 1 && (
+        {pages > 0 && (
           <TableBoundsLabel
             borderTop={false}
             lowerBound={lowerBound}
             totalItems={totalItems}
             upperBound={upperBound}>
             <PaginationList
-              pages={Math.ceil(data.length / ITEMS_PER_PAGE)}
+              pages={pages}
               defaultPage={1}
               handleChangePage={handleChangePagination}
               variant='center'
+              page={page}
             />
           </TableBoundsLabel>
         )}
