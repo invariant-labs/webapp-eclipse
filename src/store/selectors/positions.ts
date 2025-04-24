@@ -152,11 +152,11 @@ export const totalUnlaimedFees = createSelector(
   lockedPositionsWithPoolsData,
   prices,
   (positions, lockedPositions, pricesData) => {
-    const allPositions = [...positions, ...lockedPositions]
+    const isLoading =
+      positions.some(position => position.ticksLoading) ||
+      lockedPositions.some(position => position.ticksLoading)
 
-    const isLoading = allPositions.some(position => position.ticksLoading)
-
-    const total = allPositions.reduce((acc: number, position) => {
+    const totalUnlocked = positions.reduce((acc: number, position) => {
       const [bnX, bnY] = calculateClaimAmount({
         position,
         tickLower: position.lowerTick,
@@ -176,7 +176,33 @@ export const totalUnlaimedFees = createSelector(
       return acc + xValue + yValue
     }, 0)
 
-    return { total, isLoading }
+    const totalLocked = lockedPositions.reduce((acc: number, position) => {
+      const [bnX, bnY] = calculateClaimAmount({
+        position,
+        tickLower: position.lowerTick,
+        tickUpper: position.upperTick,
+        tickCurrent: position.poolData.currentTickIndex,
+        feeGrowthGlobalX: position.poolData.feeGrowthGlobalX,
+        feeGrowthGlobalY: position.poolData.feeGrowthGlobalY
+      })
+
+      const xValue =
+        +printBN(bnX, position.tokenX.decimals) *
+        (pricesData.data[position.tokenX.assetAddress.toString()] ?? 0)
+      const yValue =
+        +printBN(bnY, position.tokenY.decimals) *
+        (pricesData.data[position.tokenY.assetAddress.toString()] ?? 0)
+
+      return acc + xValue + yValue
+    }, 0)
+
+    return {
+      total: {
+        totalUnlocked,
+        totalLocked
+      },
+      isLoading
+    }
   }
 )
 
