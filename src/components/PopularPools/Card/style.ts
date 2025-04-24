@@ -50,9 +50,9 @@ export const useStyles = makeStyles()(() => ({
     right: -6
   },
   symbolsContainer: {
+    position: 'relative',
     color: colors.invariant.text,
     display: 'flex',
-    overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     ...typography.heading4,
