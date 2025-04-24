@@ -106,10 +106,6 @@ const TokensList: React.FC<ITokensList> = ({
     setInitialDataLength(initialLength)
   }, [initialLength])
 
-  useEffect(() => {
-    setPage(1)
-  }, [data])
-
   const handleChangePagination = (page: number): void => {
     setPage(page)
   }
@@ -134,13 +130,21 @@ const TokensList: React.FC<ITokensList> = ({
     }
   }
 
-  const totalItems = sortedData.length
+  const totalItems = useMemo(() => sortedData.length, [sortedData])
   const lowerBound = useMemo(() => (page - 1) * ITEMS_PER_PAGE + 1, [page])
   const upperBound = useMemo(() => Math.min(page * ITEMS_PER_PAGE, totalItems), [totalItems, page])
 
-  const pages = Math.ceil(data.length / ITEMS_PER_PAGE)
+  const pages = useMemo(() => Math.ceil(data.length / ITEMS_PER_PAGE), [data])
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
-  const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
+  const height = useMemo(
+    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69),
+    [initialDataLength, isCenterAligment]
+  )
+
+  useEffect(() => {
+    setPage(1)
+  }, [data, pages])
+
   return (
     <Grid
       container
@@ -192,7 +196,7 @@ const TokensList: React.FC<ITokensList> = ({
           sx={{
             height: height
           }}>
-          {pages > 1 && (
+          {pages > 0 && (
             <TableBoundsLabel
               lowerBound={lowerBound}
               totalItems={totalItems}
@@ -203,6 +207,7 @@ const TokensList: React.FC<ITokensList> = ({
                 defaultPage={1}
                 handleChangePage={handleChangePagination}
                 variant='center'
+                page={page}
               />
             </TableBoundsLabel>
           )}

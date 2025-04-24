@@ -133,10 +133,6 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
     setInitialDataLength(initialLength)
   }, [initialLength])
 
-  useEffect(() => {
-    setPage(1)
-  }, [data])
-
   const handleChangePagination = (currentPage: number) => setPage(currentPage)
 
   const paginator = (currentPage: number) => {
@@ -145,16 +141,22 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
 
     return sortedData.slice(offest).slice(0, ITEMS_PER_PAGE)
   }
-  const totalItems = sortedData.length
+  const totalItems = useMemo(() => sortedData.length, [sortedData])
   const lowerBound = useMemo(() => (page - 1) * ITEMS_PER_PAGE + 1, [page])
   const upperBound = useMemo(() => Math.min(page * ITEMS_PER_PAGE, totalItems), [totalItems, page])
-  const pages = Math.ceil(data.length / ITEMS_PER_PAGE)
+  const pages = useMemo(() => Math.ceil(data.length / ITEMS_PER_PAGE), [data])
+
   const getEmptyRowsCount = () => {
     const displayedItems = paginator(page).length
     const rowNumber = initialDataLength < ITEMS_PER_PAGE ? initialDataLength : ITEMS_PER_PAGE
 
     return Math.max(rowNumber - displayedItems, 0)
   }
+
+  useEffect(() => {
+    setPage(1)
+  }, [data, pages])
+
   return (
     <Grid
       container
@@ -237,7 +239,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         sx={{
           height: height
         }}>
-        {pages > 1 && (
+        {pages > 0 && (
           <TableBoundsLabel
             borderTop={false}
             lowerBound={lowerBound}
@@ -248,6 +250,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
               defaultPage={1}
               handleChangePage={handleChangePagination}
               variant='center'
+              page={page}
             />
           </TableBoundsLabel>
         )}
