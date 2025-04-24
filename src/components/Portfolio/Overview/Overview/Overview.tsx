@@ -47,7 +47,6 @@ export const Overview: React.FC<OverviewProps> = () => {
   const { isAllClaimFeesLoading } = useSelector(list)
   const isLoadingList = useSelector(isLoadingPositionsList)
   const { classes } = useStyles()
-  const lockedPositionList = useSelector(lockedPositionsWithPoolsData)
   const dispatch = useDispatch()
   const currentNetwork = useSelector(network)
   const [prices, setPrices] = useState<Record<string, number>>({})
