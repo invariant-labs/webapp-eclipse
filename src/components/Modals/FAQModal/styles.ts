@@ -159,6 +159,10 @@ const useStyles = makeStyles()(() => {
       ...typography.body3,
       letterSpacing: '-0.6px',
       color: colors.invariant.textGrey
+    },
+    link: {
+      textDecoration: 'none',
+      color: colors.invariant.green
     }
   }
 })
