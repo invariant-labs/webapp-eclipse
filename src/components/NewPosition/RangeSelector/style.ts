@@ -243,9 +243,12 @@ const useStyles = makeStyles()(theme => {
       alignItems: 'center',
       minHeight: 36
     },
-    activeLiquidityContainer: {
+    currentPriceContainer: {
       flexDirection: 'column',
-      width: 'auto'
+      gap: 2,
+      width: 'auto',
+      alignItems: 'flex-start',
+      justifyContent: 'flex-end'
     },
     rangeConcentration: {
       display: 'flex',

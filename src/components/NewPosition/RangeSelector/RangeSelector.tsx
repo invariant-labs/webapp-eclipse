@@ -429,7 +429,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
         <Grid className={classes.headerContainer} container>
-          <Grid>
+          <Grid className={classes.currentPriceContainer} container>
             <Typography className={classes.header}>Price range</Typography>
             {poolIndex !== null && (
               <Typography className={classes.currentPrice}>
@@ -437,7 +437,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
               </Typography>
             )}
           </Grid>
-          <Grid className={classes.activeLiquidityContainer} container>
+          <Grid className={classes.currentPriceContainer} container>
             <Typography className={classes.currentPrice}>Current price ━━━</Typography>
           </Grid>
         </Grid>
