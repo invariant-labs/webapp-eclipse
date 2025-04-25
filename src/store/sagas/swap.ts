@@ -448,6 +448,14 @@ export function* handleSwapWithETH(): Generator {
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+    try {
+      const errorCode = error.message.split('Error Number:')[1].split('.')[0].trim()
+      console.log('ERROR CODE FROM SIMULATION:', errorCode)
+    } catch (e: unknown) {
+      console.log("Couldn't parse error code from simulation, on", e)
+      const error = ensureError(e)
+      console.log('Should be approval denied:', error)
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -1467,10 +1475,24 @@ export function* handleSwap(): Generator {
           txid
         })
       )
-      const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
-        maxSupportedTransactionVersion: 0
-      })
+      const txDetails = yield* call(
+        [connection, connection.getParsedTransaction],
+        '34tn3TQREevaHnq7P9kezEUMfP6Cvvm5iqajE3qJYV7PdG9juZy5hGcL3D1SGPJdrhZX9NNWtpithUKhissueRsJ',
+        {
+          maxSupportedTransactionVersion: 0
+        }
+      )
+      console.log(txDetails)
+
       if (txDetails) {
+        if (txDetails.meta?.err) {
+          console.log('Error in transaction:', txDetails.meta.err)
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log => log.includes('Error Number:'))
+            const errorCode = errorLog?.split('Error Number:')[1].split('.')[0].trim()
+            console.log('ERROR CODE ONCHAIN:', errorCode)
+          }
+        }
         const meta = txDetails.meta
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           const accountXPredicate = entry =>
@@ -1557,7 +1579,14 @@ export function* handleSwap(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+    try {
+      const errorCode = error.message.split('Error Number:')[1].split('.')[0].trim()
+      console.log('ERROR CODE FROM SIMULATION:', errorCode)
+    } catch (e: unknown) {
+      console.log("Couldn't parse error code from simulation, on", e)
+      const error = ensureError(e)
+      console.log('Should be approval denied:', error)
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
