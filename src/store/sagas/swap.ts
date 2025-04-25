@@ -333,7 +333,9 @@ export function* handleSwapWithETH(): Generator {
       })
     )
 
-    const txDetails = yield* call([connection, connection.getParsedTransaction], initialTxid)
+    const txDetails = yield* call([connection, connection.getParsedTransaction], initialTxid, {
+      maxSupportedTransactionVersion: 0
+    })
 
     if (txDetails) {
       const meta = txDetails.meta
