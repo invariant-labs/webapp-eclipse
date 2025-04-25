@@ -429,7 +429,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
         <Grid className={classes.headerContainer} container>
-          <Grid className={classes.currentPriceContainer} container>
+          <Grid className={classes.priceRangeContainer} container>
             <Typography className={classes.header}>Price range</Typography>
             {poolIndex !== null && (
               <Typography className={classes.currentPrice}>

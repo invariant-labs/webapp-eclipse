@@ -243,10 +243,17 @@ const useStyles = makeStyles()(theme => {
       alignItems: 'center',
       minHeight: 36
     },
+    priceRangeContainer: {
+      flexDirection: 'column',
+      width: 'auto',
+      height: 43,
+      alignItems: 'flex-start',
+      justifyContent: 'space-between'
+    },
     currentPriceContainer: {
       flexDirection: 'column',
-      gap: 2,
       width: 'auto',
+      height: 43,
       alignItems: 'flex-start',
       justifyContent: 'flex-end'
     },
