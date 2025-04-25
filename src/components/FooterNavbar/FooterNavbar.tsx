@@ -82,6 +82,7 @@ export const FooterNavbar = () => {
 
   useEffect(() => {
     const resizeHandler = () => {
+      // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
       setDisplay(window.innerHeight < window.visualViewport!?.height * 1.1)
     }
 

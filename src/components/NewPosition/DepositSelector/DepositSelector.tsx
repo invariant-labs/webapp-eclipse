@@ -864,6 +864,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
       simulateWithTimeout()
     }
   }, [
+    alignment,
     simulationParams,
     tokenACheckbox,
     tokenBCheckbox,
@@ -954,6 +955,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         </Grid>
 
         <FeeSwitch
+          containerKey={`${tokenAIndex}` + `${tokenBIndex}`}
+          showTVL={tokenAIndex !== null && tokenBIndex !== null}
           onSelect={fee => {
             setPositionTokens(tokenAIndex, tokenBIndex, fee)
           }}
@@ -1015,7 +1018,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             currency={tokenAIndex !== null ? tokens[tokenAIndex].symbol : null}
             currencyIconSrc={tokenAIndex !== null ? tokens[tokenAIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenAIndex !== null ? (tokens[tokenAIndex].isUnknown ?? false) : false
+              tokenAIndex !== null ? tokens[tokenAIndex].isUnknown ?? false : false
             }
             placeholder='0.0'
             actionButtons={[
@@ -1086,7 +1089,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             currency={tokenBIndex !== null ? tokens[tokenBIndex].symbol : null}
             currencyIconSrc={tokenBIndex !== null ? tokens[tokenBIndex].logoURI : undefined}
             currencyIsUnknown={
-              tokenBIndex !== null ? (tokens[tokenBIndex].isUnknown ?? false) : false
+              tokenBIndex !== null ? tokens[tokenBIndex].isUnknown ?? false : false
             }
             placeholder='0.0'
             actionButtons={[

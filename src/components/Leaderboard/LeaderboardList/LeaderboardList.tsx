@@ -347,7 +347,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
         {content}
       </Grid>
 
-      {totalPages >= 1 && (
+      {totalPages > 0 && (
         <TableBoundsLabel lowerBound={lowerBound} totalItems={totalItems} upperBound={upperBound}>
           <PaginationList
             pages={totalPages}

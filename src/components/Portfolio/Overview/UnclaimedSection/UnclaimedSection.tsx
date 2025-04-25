@@ -5,8 +5,13 @@ import loadingAnimation from '@static/gif/loading.gif'
 import { useStyles } from './styles'
 import { Button } from '@common/Button/Button'
 
+interface IUnclaimed {
+  totalUnlocked: number
+  totalLocked: number
+}
+
 interface UnclaimedSectionProps {
-  unclaimedTotal: number
+  unclaimedTotal: IUnclaimed
   handleClaimAll?: () => void
   loading?: boolean
 }
@@ -16,7 +21,8 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
   handleClaimAll,
   loading = false
 }) => {
-  const { classes } = useStyles({ isLoading: loading || unclaimedTotal === 0 })
+  const total = unclaimedTotal.totalLocked + unclaimedTotal.totalUnlocked
+  const { classes } = useStyles({ isLoading: loading || unclaimedTotal.totalUnlocked === 0 })
   const isLg = useMediaQuery(theme.breakpoints.down('lg'))
 
   return (
@@ -32,7 +38,7 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
                 width={105}
                 padding='0 20px'
                 onClick={handleClaimAll}
-                disabled={loading || unclaimedTotal === 0}>
+                disabled={loading || unclaimedTotal.totalUnlocked === 0}>
                 {loading ? (
                   <>
                     <img
@@ -53,7 +59,7 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
           <Skeleton variant='text' width={100} height={30} className={classes.unclaimedAmount} />
         ) : (
           <Typography className={classes.unclaimedAmount}>
-            ${formatNumberWithoutSuffix(unclaimedTotal, { twoDecimals: true })}
+            ${formatNumberWithoutSuffix(total, { twoDecimals: true })}
           </Typography>
         )}
       </Box>
@@ -63,7 +69,7 @@ export const UnclaimedSection: React.FC<UnclaimedSectionProps> = ({
           height={32}
           width={'100%'}
           onClick={handleClaimAll}
-          disabled={loading || unclaimedTotal === 0}>
+          disabled={loading || unclaimedTotal.totalUnlocked === 0}>
           {loading ? (
             <>
               <img
