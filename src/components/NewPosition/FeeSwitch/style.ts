@@ -29,7 +29,15 @@ export const useStyles = makeStyles()(() => {
   }
 })
 
-export const useTabsStyles = makeStyles()(() => {
+export const useTabsStyles = makeStyles<{
+  isBestTierHiddenOnLeft: boolean
+  isBestTierHiddenOnRight: boolean
+  hasValidBestTier: boolean
+  isPromotedPool: boolean
+}>()((
+  _theme,
+  { isBestTierHiddenOnLeft, isBestTierHiddenOnRight, hasValidBestTier, isPromotedPool }
+) => {
   return {
     root: {
       overflow: 'visible',
@@ -49,8 +57,21 @@ export const useTabsStyles = makeStyles()(() => {
     },
     scrollButtons: {
       width: 24,
-      '& svg': {
-        fill: colors.invariant.text
+      '&:first-of-type svg': {
+        fill:
+          isPromotedPool && isBestTierHiddenOnLeft
+            ? colors.invariant.pink
+            : !isPromotedPool && hasValidBestTier && isBestTierHiddenOnLeft
+              ? colors.invariant.green
+              : colors.invariant.text
+      },
+      '&:last-of-type svg': {
+        fill:
+          isPromotedPool && isBestTierHiddenOnRight
+            ? colors.invariant.pink
+            : !isPromotedPool && hasValidBestTier && isBestTierHiddenOnRight
+              ? colors.invariant.green
+              : colors.invariant.text
       },
       '&:hover svg': {
         transition: '0.3s',
@@ -78,7 +99,6 @@ export const useSingleTabStyles = makeStyles()(() => {
       overflow: 'visible',
       transition: '300ms',
       borderRadius: 10,
-
       '&:hover': {
         color: colors.invariant.lightHover,
         backgroundColor: colors.invariant.light,
@@ -86,7 +106,6 @@ export const useSingleTabStyles = makeStyles()(() => {
           color: colors.invariant.light
         }
       },
-
       '&:last-of-type': {
         marginRight: 0
       }
@@ -95,7 +114,6 @@ export const useSingleTabStyles = makeStyles()(() => {
       color: colors.invariant.green,
       border: `2px solid ${colors.invariant.green}`,
       borderRadius: 10,
-
       '&:hover': {
         color: colors.invariant.green
       }
@@ -125,7 +143,6 @@ export const useSingleTabStyles = makeStyles()(() => {
       ...typography.heading4,
       color: colors.white.main + ' !important',
       transition: 'color 300ms',
-
       '&:hover': {
         color: colors.white.main
       }

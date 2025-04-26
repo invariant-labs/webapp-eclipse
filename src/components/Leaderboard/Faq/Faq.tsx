@@ -27,7 +27,7 @@ export const Faq = () => {
       question: 'What is Eclipse Ecosystem Exposure?',
       answer: `
       
-      It’s a <a href="https://docs.invariant.app/docs/invariant_points/ecosystem_exposure" style="color: #2EE09A" target="_blank">triple-yield opportunity</a> for providing liquidity on Invariant.
+      It’s a <a href="https://docs.invariant.app/docs/invariant_points/ecosystem_exposure" style="color: #2EE09A" target="_blank"><b>triple-yield opportunity</b></a> for providing liquidity on Invariant.
       In addition to earning fees and Invariant Points, users unlock exclusive benefits from other projects in the Eclipse ecosystem, which are our official partners.
       <br></br>
       The higher your position on the leaderboard, the more perks you can access. 
@@ -40,7 +40,7 @@ export const Faq = () => {
       question: 'How do I earn points?',
       answer: `
       
-      Currently, you can earn points by <a href="https://docs.invariant.app/docs/invariant_points/get_started" style="color: #2EE09A" target="_blank">providing liquidity in rewarded pools.</a>
+      Currently, you can earn points by <a href="https://docs.invariant.app/docs/invariant_points/get_started" style="color: #2EE09A" target="_blank"><b>providing liquidity in rewarded pools.</b></a>
       <br></br>
       The more efficient and concentrated your liquidity, the more points you’ll earn. 
       <br></br>
@@ -53,14 +53,16 @@ export const Faq = () => {
       answer: `
       Pools currently distributing points: <br></br>
        <ul>
-       <li>ETH/USDC (<b>0.09%</b> fee tier)</li>
-       <li>SOL/ETH (<b>0.09%</b> fee tier)</li>
-       <li>tETH/ETH (<b>0.01%</b> fee tier)</li>
-       <li>SOL/USDC (<b>0.09%</b> fee tier)</li>
+       <li><span style="color: #2EE09A; font-weight: bold;">ETH/USDC</span> (<b>0.09%</b> fee tier)</li>
+         <li><span style="color: #2EE09A; font-weight: bold;">BITZ/ETH</span> (<b>1%</b> fee tier)</li>
+         <li><span style="color: #2EE09A; font-weight: bold;">SOL/ETH</span> (<b>0.09%</b> fee tier)</li>
+         <li><span style="color: #2EE09A; font-weight: bold;">tETH/ETH</span> (<b>0.01%</b> fee tier)</li>
+         <li><span style="color: #2EE09A; font-weight: bold;">SOL/USDC</span> (<b>0.09%</b> fee tier)</li>
+
        </ul>
       <br></br>
        
-       All pools distributing points are listed in the <b>"Rewarded Pools"</b> list.
+       All pools distributing points are listed in the <b><span style="color: #2EE09A;">Rewarded Pools</span></b> list.
       
       `
     },
@@ -71,7 +73,16 @@ export const Faq = () => {
 Every second, a fixed amount of points is distributed and divided among all positions. Players compete for these points by creating the most efficient positions possible.</br></br>
 The algorithm takes into account factors such as the size of the position (TVL), the time it has been open, and the level of concentration (position range). A higher value in one factor can compensate for another. For example, having a higher level of concentration can allow you to accrue more points than someone with a higher TVL.</br></br>
 
-    In short: </br> <b><ul><li>The larger the position, the more points you earn.</li><li>The narrower the range of the position (higher concentration), the more points you earn.</li><li>The longer the position remains active, the more points you accumulate.</li><li>The wider the position, the more consistent your point earnings become.</li></ul>  <img src="${FAQ3}"/> </br>The exact formula for calculating points is explained in detail in our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" target="_blank" style="text-decoration-color: #2EE09A"><span style="color: #2EE09A" target="_blank">docs.<span></b></a>
+    In short: </br> <b>
+    
+   <ul>
+    <li><span style="color: #2EE09A; font-weight: bold;">The larger the position, the more points you earn.</span></li>
+    <li><span style="color: #2EE09A; font-weight: bold;">The narrower the range of the position (higher concentration), the more points you earn.</span></li>
+    <li><span style="color: #2EE09A; font-weight: bold;">The longer the position remains active, the more points you accumulate.</span></li>
+    <li><span style="color: #2EE09A; font-weight: bold;">The wider the position, the more consistent your point earnings become.</span></li>
+  </ul>
+    
+    <img src="${FAQ3}"/> </br>The exact formula for calculating points is explained in detail in our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" target="_blank" style="text-decoration-color: #2EE09A"><span style="color: #2EE09A" target="_blank">docs.<span></b></a>
      
   
     
@@ -79,7 +90,7 @@ The algorithm takes into account factors such as the size of the position (TVL),
     },
     {
       question: 'On which blockchain can I earn points?',
-      answer: 'Eclipse'
+      answer: '<b><span style="color: #2EE09A;">Eclipse</span></b>'
     },
     {
       question: 'How long will points continue?',
@@ -91,7 +102,7 @@ The algorithm takes into account factors such as the size of the position (TVL),
       answer: `
       Yes. 
       <br></br>
-      Our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" style="color: #2EE09A" target="_blank">point distribution system</a> is designed in such a way as to appreciate OG users. A constant number of points is distributed every second and shared across all positions.
+      Our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" style="color: #2EE09A" target="_blank"><b>point distribution system</b></a> is designed in such a way as to appreciate OG users. A constant number of points is distributed every second and shared across all positions.
       <br></br>
       As the number of positions increases, the number of points received by each one decreases, so it pays off to be early.
       <br></br>
@@ -121,13 +132,23 @@ The algorithm takes into account factors such as the size of the position (TVL),
       You create two positions in a <b>USDC/USDT</b> pool with a price of <b>1 USDC per USDT</b>.</br>
       (*Both positions contribute an equal amount of tokens to the pool.)
       <ul>
-      <li><b>Position 1:</b> Wider range (<b>0.9995 - 1.0005</b>).</li>
-      <li><b>Position 2:</b> Narrow range (<b>0.9999 - 1.0001</b>).</li>
+        <li>
+          <b><span style="color: #EF84F5;">Position 1:</span></b> Wider range (<b><span style="color: #EF84F5;">0.9995 - 1.0005</span></b>).
+        </li>
+        <li>
+          <b><span style="color: #2EE09A;">Position 2:</span></b> Narrow range (<b><span style="color: #2EE09A;">0.9999 - 1.0001</span></b>).
+        </li>
       </ul>
       When both positions are active:
       <ul>
-      <li><b>Position 1</b> receives only <b>⅙</b> (1000 points) of the distributed points due to its wider range.</li>
-      <li><b>Position 2</b> receives <b>⅚</b> (5000 points) of the distributed points due to its narrower range (higher concentration).</li>
+        <li>
+          <b><span style="color: #EF84F5;">Position 1</span></b> receives only 
+          <b><span style="color: #EF84F5;">⅙</span></b> (1000 points) of the distributed points due to its wider range.
+        </li>
+        <li>
+          <b><span style="color: #2EE09A;">Position 2</span></b> receives 
+          <b><span style="color: #2EE09A;">⅚</span></b> (5000 points) of the distributed points due to its narrower range (higher concentration).
+        </li>
       </ul>
 
       </br>
@@ -135,26 +156,35 @@ The algorithm takes into account factors such as the size of the position (TVL),
       Where do the values ⅙ and ⅚ come from? </br>
       Earning fees depends on the width of a position, assuming the same TVL.
       <ul>
-      <li><b>Position 1</b> spans 10 ticks (<b>0.9995 - 1.0005</b>).</li>
-      <li><b>Position 2</b> spans 2 ticks (<b>0.9999 - 1.0001</b>)</li>
+        <li>
+          <b><span style="color: #EF84F5;">Position 1</span></b> spans 10 ticks 
+          (<b><span style="color: #EF84F5;">0.9995 - 1.0005</span></b>).
+        </li>
+        <li>
+          <b><span style="color: #2EE09A;">Position 2</span></b> spans 2 ticks 
+          (<b><span style="color: #2EE09A;">0.9999 - 1.0001</span></b>).
+        </li>
       </ul>
       </br>
 
       Since Position 2 is narrower, it earns 5x more because</br>
-      <b> (1.0005−0.9995) / (1.0001−0.9999) = 5</b></br></br>
+      <b>(1.0005 − 0.9995) / (1.0001 − 0.9999) = 5</span></b><br>
+
       The narrower the range, the greater the concentration and the higher the potential earnings.</br></br>
 
       <img src="${FAQ1}" /></br>
 
-      If the price moves to <b>1.0002</b>:
+      If the price moves to <b><span style="color: #2EE09A;">1.0002</span></b>:
       <ul>
-      <li>
-      <b>Position 1</b> becomes the sole active position and collects all distributed points (6000 points) during this time.
-      </li>
-      <li><b>Position 2</b> is no longer active (falls out of range, not collecting fee and accruing points).</li>
+        <li>
+          <b><span style="color: #EF84F5;">Position 1</span></b> becomes the sole active position and collects all distributed points (6000 points) during this time.
+        </li>
+        <li>
+          <b><span style="color: #2EE09A;">Position 2</span></b> is no longer active (falls out of range, not collecting fee and accruing points).
+        </li>
       </ul>
       <img src="${FAQ2}" />
-      <br></br>
+      <br><br>
       Check out more details about points about <b><a href="https://docs.invariant.app/docs/invariant_points/mechanism" style="color: #2EE09A" target="_blank">point distribution system</a></b>.
     
     `
@@ -169,7 +199,7 @@ The algorithm takes into account factors such as the size of the position (TVL),
       answer: `
       It's a normal situation in concentrated liquidity. 
       <br></br>
-      You need to <a href="https://docs.invariant.app/docs/invariant_points/get_started" style="color: #2EE09A" target="_blank">rebalance</a> your position, which means closing it, adjusting the token ratio to match the ratio required for the new position, and then reopening it within the new price range.`
+      You need to <a href="https://docs.invariant.app/docs/invariant_points/get_started" style="color: #2EE09A" target="_blank"><b>rebalance</b></a> your position, which means closing it, adjusting the token ratio to match the ratio required for the new position, and then reopening it within the new price range.`
     },
     {
       question: `How to contact us?`,

@@ -103,6 +103,10 @@ import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
 import eyeYellowIcon from './svg/eyeYellow.svg'
 import closeYellowIcon from './svg/closeYellow.svg'
 import scrollArrowIcon from './svg/scrollArrow.svg'
+import snackbarSwapIcon from './svg/snackbarSwap.svg'
+import circleDolarIcon from './svg/circleDolar.svg'
+import depositIcon from './svg/depositIcon.svg'
+import withdrawIcon from './svg/withdrawIcon.svg'
 
 export {
   logoTitleIcon,
@@ -209,7 +213,11 @@ export {
   boostPointsBoldIcon,
   eyeYellowIcon,
   scrollArrowIcon,
-  goldenInfoIcon
+  goldenInfoIcon,
+  snackbarSwapIcon,
+  circleDolarIcon,
+  depositIcon,
+  withdrawIcon
 }
 
 export const chainIcons = {

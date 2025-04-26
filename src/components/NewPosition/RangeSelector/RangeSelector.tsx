@@ -19,7 +19,7 @@ import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { activeLiquidityIcon, boostPointsIcon } from '@static/icons'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -439,7 +439,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             )}
           </Grid>
           <Grid className={classes.activeLiquidityContainer} container>
-            <TooltipGradient
+            <TooltipHover
               title={
                 <>
                   <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
@@ -466,12 +466,11 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 </>
               }
               placement='bottom'
-              top={1}
-              noGradient>
+              increasePadding>
               <Typography className={classes.activeLiquidity}>
                 Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
               </Typography>
-            </TooltipGradient>
+            </TooltipHover>
             <Grid>
               <Typography className={classes.currentPrice}>Current price ━━━</Typography>
             </Grid>

@@ -11,11 +11,10 @@ export const useStyles = makeStyles()(_theme => ({
     overflow: 'hidden'
   },
   pagination: {
-    padding: 0,
     maxWidth: '100%',
     backgroundColor: colors.invariant.component,
     borderBottomLeftRadius: '24px',
-    borderBottomRightRadius: '24px',
+    borderBottomRightRadius: '24px'
   },
   emptyContainer: {
     background: colors.invariant.component

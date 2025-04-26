@@ -100,7 +100,7 @@ import {
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   BITZ_MAIN,
-  BASE_API_URL
+  PRICE_API_URL
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -122,6 +122,9 @@ export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
 }
 export const printBN = (amount: BN, decimals: number): string => {
+  if (!amount) {
+    return '0'
+  }
   const amountString = amount.toString()
   const isNegative = amountString.length > 0 && amountString[0] === '-'
 
@@ -1936,7 +1939,7 @@ export const getTokenPrice = async (
   if (!cachedPriceData || Number(lastQueryTimestamp) + PRICE_QUERY_COOLDOWN <= Date.now()) {
     try {
       const { data } = await axios.get<IPriceData>(
-        `${BASE_API_URL}/price/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
+        `${PRICE_API_URL}/${network === NetworkType.Mainnet ? 'eclipse-mainnet' : 'eclipse-testnet'}`
       )
       priceData = data.data
 

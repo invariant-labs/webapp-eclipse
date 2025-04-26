@@ -78,7 +78,8 @@ const Portfolio: React.FC<IProps> = ({
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
-  tokensList
+  tokensList,
+  lockedLength
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -87,7 +88,7 @@ const Portfolio: React.FC<IProps> = ({
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const { processedPools, isProcesing } = useProcessedTokens(
+  const { processedTokens, isProcesing } = useProcessedTokens(
     tokensList,
     isBalanceLoading,
     currentNetwork
@@ -117,19 +118,21 @@ const Portfolio: React.FC<IProps> = ({
   }
 
   const positionsDetails = useMemo(() => {
-    const positionsAmount = data.length
-    const inRageAmount = data.reduce((count, item) => (item.isActive ? count + 1 : count), 0)
+    const positionsAmount = data.length + lockedLength
+    const inRangeAmount =
+      data.reduce((count, item) => (item.isActive ? count + 1 : count), 0) +
+      lockedData.reduce((count, item) => (item.isActive ? count + 1 : count), 0)
 
-    const outOfRangeAmount = positionsAmount - inRageAmount
-    return { positionsAmount, inRageAmount, outOfRangeAmount }
+    const outOfRangeAmount = positionsAmount - inRangeAmount
+    return { positionsAmount, inRangeAmount, outOfRangeAmount }
   }, [data])
 
   const finalTokens = useMemo(() => {
     if (hideUnknownTokens) {
-      return processedPools.filter(item => item.isUnknown !== true)
+      return processedTokens.filter(item => item.isUnknown !== true)
     }
-    return processedPools.filter(item => item.decimal > 0)
-  }, [processedPools, hideUnknownTokens])
+    return processedTokens.filter(item => item.decimal > 0)
+  }, [processedTokens, hideUnknownTokens])
 
   const renderPositionDetails = () => (
     <Box
@@ -151,7 +154,7 @@ const Portfolio: React.FC<IProps> = ({
           </Typography>
           <Box gap={1} display={'flex'}>
             <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
-              Within Range: {positionsDetails.inRageAmount}
+              Within Range: {positionsDetails.inRangeAmount}
             </Typography>
             <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
               Outside Range: {positionsDetails.outOfRangeAmount}
@@ -287,7 +290,7 @@ const Portfolio: React.FC<IProps> = ({
               <YourWallet
                 currentNetwork={currentNetwork}
                 handleSnackbar={handleSnackbar}
-                pools={finalTokens}
+                tokens={finalTokens}
                 isLoading={loading || isBalanceLoading || isProcesing}
               />
               <Box className={classes.footer}>
@@ -362,7 +365,7 @@ const Portfolio: React.FC<IProps> = ({
                   <YourWallet
                     handleSnackbar={handleSnackbar}
                     currentNetwork={currentNetwork}
-                    pools={finalTokens}
+                    tokens={finalTokens}
                     isLoading={loading || isBalanceLoading || isProcesing}
                   />
                   <Box className={classes.footer}>
@@ -398,7 +401,7 @@ const Portfolio: React.FC<IProps> = ({
               <YourWallet
                 currentNetwork={currentNetwork}
                 handleSnackbar={handleSnackbar}
-                pools={finalTokens}
+                tokens={finalTokens}
                 isLoading={loading || isBalanceLoading || isProcesing}
               />
             </Box>
