@@ -9,7 +9,6 @@ import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useMemo, useState } from 'react'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { truncateString } from '@utils/utils'
 import { LockButton } from './LockButton'
 import { Button } from '@common/Button/Button'
@@ -197,7 +196,7 @@ export const PositionHeader = ({
             </TooltipHover>
           </Box>
           <Box className={classes.wrapper}>
-            <TooltipGradient
+            <TooltipHover
               title={
                 isActive ? (
                   <>
@@ -212,15 +211,14 @@ export const PositionHeader = ({
                 )
               }
               placement='top'
-              top={3}
-              noGradient>
+              increasePadding>
               <Box
                 className={classNames(classes.feeContainer, {
                   [classes.feeContainerIsActive]: isActive
                 })}>
                 {fee.toFixed(2)}%
               </Box>
-            </TooltipGradient>
+            </TooltipHover>
             {!isSmDown && closeButton}
             {!isSmDown && isMdDown && (
               <>

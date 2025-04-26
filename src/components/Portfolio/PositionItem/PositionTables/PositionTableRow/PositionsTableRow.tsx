@@ -4,7 +4,7 @@ import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { airdropRainbowIcon, swapListIcon } from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
 import classNames from 'classnames'
 import { useSelector } from 'react-redux'
@@ -18,8 +18,6 @@ import { singlePositionData } from '@store/selectors/positions'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { lockerState } from '@store/selectors/locker'
 import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
-
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { Button } from '@common/Button/Button'
 import { IPositionItem } from '@store/consts/types'
 import { useStyles } from './style'
@@ -162,7 +160,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect60x36} />
     }
     return (
-      <TooltipGradient
+      <TooltipHover
         title={
           isActive ? (
             <>
@@ -177,8 +175,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           )
         }
         placement='top'
-        top={1}
-        noGradient>
+        increasePadding>
         <Grid
           container
           item
@@ -189,7 +186,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
             {fee}%
           </Typography>
         </Grid>
-      </TooltipGradient>
+      </TooltipHover>
     )
   }, [fee, classes, isActive])
 
@@ -241,6 +238,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           <Typography className={classes.greenText}>
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
+          {tokenValueInUsd.priceWarning && (
+            <TooltipHover title='The price might not be shown correctly'>
+              <img src={warning2Icon} style={{ marginLeft: '4px' }} width={14} />
+            </TooltipHover>
+          )}
         </Grid>
       </Grid>
     )
@@ -337,15 +339,14 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     }
 
     return (
-      <TooltipGradient
+      <TooltipHover
         title={<PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />}
         placement='top'
-        top={1}
-        noGradient>
+        increasePadding>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <img src={airdropRainbowIcon} alt={'Airdrop'} className={classes.airdropIcon} />
         </div>
-      </TooltipGradient>
+      </TooltipHover>
     )
   }, [isPromoted, estimated24hPoints, pointsPerSecond])
 

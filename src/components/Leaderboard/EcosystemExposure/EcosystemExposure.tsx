@@ -1,7 +1,6 @@
 import React from 'react'
 import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import Slider from 'react-slick'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { ExposureTooltipTitle } from './ExposureTooltipTitle/ExposureTooltipTitle'
 import useStyles from './styles'
 import { theme, typography } from '@static/theme'
@@ -23,6 +22,7 @@ import {
   turboTapIcon
 } from '@static/icons'
 import cryptara from '@static/png/cryptara.png'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface EcosystemExposureI {
   isLoading: boolean
@@ -308,8 +308,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
         <BlurOverlay isConnected={isConnected} />
         <Grid className={classes.header}>
           <Typography>Eclipse Ecosystem Exposure</Typography>
-          <TooltipGradient
-            top={1}
+          <TooltipHover
             title={
               <Grid className={classes.tooltipTitle}>
                 <Typography>
@@ -317,9 +316,12 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                   Complete the challenges, and claim your rewards!
                 </Typography>
               </Grid>
-            }>
+            }
+            gradient
+            increasePadding
+            placement='bottom'>
             <img src={infoIcon} alt='info' />
-          </TooltipGradient>
+          </TooltipHover>
         </Grid>
 
         <Grid className={classes.sliderWrapper}>
@@ -330,9 +332,9 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             prevArrow={<img src={navLeftIcon} alt='prev' />}
             nextArrow={<img src={navRightIcon} alt='next' />}>
             {projects.map(tasks => (
-              <TooltipGradient
+              <TooltipHover
                 key={tasks.id}
-                top={1}
+                placement='bottom'
                 title={
                   <Grid className={classes.exposureWrapper}>
                     <ExposureTooltipTitle
@@ -342,7 +344,9 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                       link={tasks.link}
                     />
                   </Grid>
-                }>
+                }
+                gradient
+                increasePadding>
                 <Grid
                   sx={{
                     position: 'relative',
@@ -363,7 +367,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                     <img src={checkIcon} alt='check icon' className={classes.checkIcon} />
                   )}
                 </Grid>
-              </TooltipGradient>
+              </TooltipHover>
             ))}
           </Slider>
         </Grid>
