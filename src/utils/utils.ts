@@ -122,7 +122,7 @@ export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
 }
 export const printBN = (amount: BN, decimals: number): string => {
-  if (!amount || !decimals) {
+  if (!amount) {
     return '0'
   }
   const amountString = amount.toString()
