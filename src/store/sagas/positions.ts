@@ -2904,7 +2904,6 @@ export function* handleGetPreviewPosition(action: PayloadAction<string>) {
       throw new Error('Invalid position id')
     }
     const [id, poolAddress] = parts
-
     const wallet = yield* call(getWallet)
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
@@ -2924,6 +2923,7 @@ export function* handleGetPreviewPosition(action: PayloadAction<string>) {
 
     const pool = poolsList.find(pool => pool.address.toString() === poolAddress.toString())
     if (!pool || !position) {
+      yield* put(actions.setPosition(null))
       return
     }
 
