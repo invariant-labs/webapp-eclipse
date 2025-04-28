@@ -99,15 +99,15 @@ const PoolListItem: React.FC<IProps> = ({
   showAPY,
   itemNumber = 0
 }) => {
-  const { classes } = useStyles()
+  const [showInfo, setShowInfo] = useState(false)
+  const { classes } = useStyles({ showInfo })
 
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-  const isSmd = useMediaQuery('(max-width:780px)')
-  const isMd = useMediaQuery(theme.breakpoints.down('md'))
+  const isSmd = useMediaQuery('(max-width:850px)')
+  const isMd = useMediaQuery(theme.breakpoints.down(1060))
   const lockIconRef = useRef<HTMLButtonElement>(null)
   const airdropIconRef = useRef<HTMLDivElement>(null)
-
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
 
@@ -213,154 +213,191 @@ const PoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
 
   return (
-    <Grid className={classes.wrapper}>
+    <Grid
+      className={classes.wrapper}
+      sx={{
+        borderBottom:
+          itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
+            ? `1px solid ${colors.invariant.light}`
+            : `2px solid ${colors.invariant.light}`
+      }}>
       {displayType === 'token' ? (
-        <Grid
-          container
-          classes={{
-            container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
-          }}
-          sx={{
-            borderBottom:
-              itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
-                ? `1px solid ${colors.invariant.light}`
-                : `2px solid ${colors.invariant.light}`
-          }}>
-          {!isMd ? <Typography>{tokenIndex}</Typography> : null}
-          <Grid className={classes.imageContainer}>
-            <Box className={classes.iconsWrapper}>
-              <Box className={classes.iconContainer}>
-                <img
-                  className={classes.tokenIcon}
-                  src={tokenAData.icon}
-                  alt='Token from'
-                  onError={e => {
-                    e.currentTarget.src = unknownTokenIcon
-                  }}
-                />
-                {tokenAData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
-              </Box>
-              <Box className={classes.iconContainer}>
-                <img
-                  className={classes.tokenIcon}
-                  src={tokenBData.icon}
-                  alt='Token to'
-                  onError={e => {
-                    e.currentTarget.src = unknownTokenIcon
-                  }}
-                />
-                {tokenBData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
-              </Box>
-            </Box>
-            <Grid className={classes.symbolsContainer}>
-              {!isSm && (
-                <Typography>
-                  {shortenAddress(tokenAData.symbol ?? '')}/
-                  {shortenAddress(tokenBData.symbol ?? '')}
-                </Typography>
-              )}
-              <TooltipHover title='Copy pool address'>
-                <FileCopyOutlinedIcon
-                  onClick={copyToClipboard}
-                  classes={{ root: classes.clipboardIcon }}
-                />
-              </TooltipHover>
-            </Grid>
-          </Grid>
-          {!isSmd && showAPY ? (
-            <Grid className={classes.row} justifyContent='space-between'>
-              <Typography gap='4px'>
-                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-                <span
-                  className={
-                    classes.apy
-                  }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
-              </Typography>
-              {isPromoted && (
-                <Box mr={1}>
-                  <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
-                    <Box
-                      className={classes.actionButton}
-                      ref={airdropIconRef}
-                      onPointerEnter={() => {
-                        if (!isMobile) {
-                          setIsPromotedPoolPopoverOpen(true)
-                        }
-                      }}
-                      onPointerLeave={() => {
-                        if (!isMobile) {
-                          setIsPromotedPoolPopoverOpen(false)
-                        }
-                      }}
-                      onClick={() => {
-                        if (isMobile) {
-                          setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                        }
-                      }}
-                      mr={3}>
-                      <img width={32} height={32} src={airdropRainbowIcon} alt={'Airdrop'} />
-                    </Box>
-                  </PromotedPoolPopover>
-                </Box>
-              )}
-            </Grid>
-          ) : null}
-          <Typography>{fee}%</Typography>
-          <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
-          <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
-          {!isMd && (
-            <Box className={classes.action}>
-              {isLocked && (
-                <>
-                  <button
-                    className={classes.actionButton}
-                    ref={lockIconRef}
-                    onPointerLeave={handlePointerLeave}
-                    onPointerEnter={handlePointerEnter}>
-                    <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
-                  </button>
-                  <LockStatsPopover
-                    anchorEl={lockIconRef.current}
-                    open={isLockPopoverOpen}
-                    lockedX={tokenAData.locked}
-                    lockedY={tokenBData.locked}
-                    symbolX={shortenAddress(tokenAData.symbol ?? '')}
-                    symbolY={shortenAddress(tokenBData.symbol ?? '')}
-                    liquidityX={tokenAData.liquidity}
-                    liquidityY={tokenBData.liquidity}
-                    onClose={() => {
-                      setLockPopoverOpen(false)
+        <>
+          <Grid
+            container
+            classes={{
+              container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
+            }}>
+            {!isMd ? <Typography>{tokenIndex}</Typography> : null}
+            <Grid className={classes.imageContainer}>
+              <Box className={classes.iconsWrapper}>
+                <Box className={classes.iconContainer}>
+                  <img
+                    className={classes.tokenIcon}
+                    src={tokenAData.icon}
+                    alt='Token from'
+                    onError={e => {
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
-                </>
-              )}
+                  {tokenAData.isUnknown && (
+                    <img className={classes.warningIcon} src={warningIcon} />
+                  )}
+                </Box>
+                <Box className={classes.iconContainer}>
+                  <img
+                    className={classes.tokenIcon}
+                    src={tokenBData.icon}
+                    alt='Token to'
+                    onError={e => {
+                      e.currentTarget.src = unknownTokenIcon
+                    }}
+                  />
+                  {tokenBData.isUnknown && (
+                    <img className={classes.warningIcon} src={warningIcon} />
+                  )}
+                </Box>
+              </Box>
+              <Grid className={classes.symbolsContainer}>
+                {!isSm && (
+                  <Typography>
+                    {shortenAddress(tokenAData.symbol ?? '')}/
+                    {shortenAddress(tokenBData.symbol ?? '')}
+                  </Typography>
+                )}
+                <TooltipHover title='Copy pool address'>
+                  <FileCopyOutlinedIcon
+                    onClick={copyToClipboard}
+                    classes={{ root: classes.clipboardIcon }}
+                  />
+                </TooltipHover>
+              </Grid>
+            </Grid>
+            {!isSmd && showAPY ? (
+              <Grid className={classes.row} justifyContent='space-between'>
+                <Typography gap='4px'>
+                  {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                  <span
+                    className={
+                      classes.apy
+                    }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
+                </Typography>
+                {isPromoted && (
+                  <Box mr={1}>
+                    <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
+                      <Box
+                        className={classes.actionButton}
+                        ref={airdropIconRef}
+                        onPointerEnter={() => {
+                          if (!isMobile) {
+                            setIsPromotedPoolPopoverOpen(true)
+                          }
+                        }}
+                        onPointerLeave={() => {
+                          if (!isMobile) {
+                            setIsPromotedPoolPopoverOpen(false)
+                          }
+                        }}
+                        onClick={() => {
+                          if (isMobile) {
+                            setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                          }
+                        }}
+                        mr={3}>
+                        <img width={32} height={32} src={airdropRainbowIcon} alt={'Airdrop'} />
+                      </Box>
+                    </PromotedPoolPopover>
+                  </Box>
+                )}
+              </Grid>
+            ) : null}
+            <Typography>{fee}%</Typography>
+            {!isSmd && <Typography> ${formatNumberWithSuffix(fee * volume)}</Typography>}
+            <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
+            <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
+            {isSmd && (
+              <ArrowDropDownIcon
+                onClick={() => setShowInfo(prev => !prev)}
+                className={classes.extendedRowIcon}
+              />
+            )}
 
-              <TooltipHover title='Exchange'>
-                <button className={classes.actionButton} onClick={handleOpenSwap}>
-                  <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
-                </button>
-              </TooltipHover>
-              <TooltipHover title='Add position'>
-                <button className={classes.actionButton} onClick={handleOpenPosition}>
-                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
-                </button>
-              </TooltipHover>
-              <TooltipHover title='Open in explorer'>
-                <button
-                  className={classes.actionButton}
-                  onClick={() =>
-                    window.open(
-                      `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
-                      '_blank',
-                      'noopener,noreferrer'
-                    )
-                  }>
-                  <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
-                </button>
-              </TooltipHover>
-            </Box>
+            {!isMd && (
+              <Box className={classes.action}>
+                {isLocked && (
+                  <>
+                    <button
+                      className={classes.actionButton}
+                      ref={lockIconRef}
+                      onPointerLeave={handlePointerLeave}
+                      onPointerEnter={handlePointerEnter}>
+                      <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
+                    </button>
+                    <LockStatsPopover
+                      anchorEl={lockIconRef.current}
+                      open={isLockPopoverOpen}
+                      lockedX={tokenAData.locked}
+                      lockedY={tokenBData.locked}
+                      symbolX={shortenAddress(tokenAData.symbol ?? '')}
+                      symbolY={shortenAddress(tokenBData.symbol ?? '')}
+                      liquidityX={tokenAData.liquidity}
+                      liquidityY={tokenBData.liquidity}
+                      onClose={() => {
+                        setLockPopoverOpen(false)
+                      }}
+                    />
+                  </>
+                )}
+
+                <TooltipHover title='Exchange'>
+                  <button className={classes.actionButton} onClick={handleOpenSwap}>
+                    <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
+                  </button>
+                </TooltipHover>
+                <TooltipHover title='Add position'>
+                  <button className={classes.actionButton} onClick={handleOpenPosition}>
+                    <img width={32} height={32} src={plusIcon} alt={'Open'} />
+                  </button>
+                </TooltipHover>
+                <TooltipHover title='Open in explorer'>
+                  <button
+                    className={classes.actionButton}
+                    onClick={() =>
+                      window.open(
+                        `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
+                        '_blank',
+                        'noopener,noreferrer'
+                      )
+                    }>
+                    <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
+                  </button>
+                </TooltipHover>
+              </Box>
+            )}
+          </Grid>
+          {showInfo && isSmd && (
+            <Grid className={classes.extendedRow}>
+              <Typography component='h5' className={classes.extendedRowTitle}>
+                APY{' '}
+                <span className={classes.extendedRowContent}>
+                  {Math.abs(convertedApy).toFixed(2)}
+                </span>
+              </Typography>
+              <Typography component='h5' className={classes.extendedRowTitle}>
+                APR{' '}
+                <span className={classes.extendedRowContent}>
+                  {Math.abs(convertedApr).toFixed(2)}
+                </span>
+              </Typography>
+              <Typography component='h5' className={classes.extendedRowTitle}>
+                Fee (24h){' '}
+                <span className={classes.extendedRowContent}>
+                  ${formatNumberWithSuffix(fee * volume)}
+                </span>
+              </Typography>
+            </Grid>
           )}
-        </Grid>
+        </>
       ) : (
         <Grid
           container
@@ -424,6 +461,24 @@ const PoolListItem: React.FC<IProps> = ({
               <ArrowDropDownIcon className={classes.icon} />
             ) : null}
           </Typography>
+          {!isSmd && (
+            <Typography
+              style={{ cursor: 'pointer' }}
+              onClick={() => {
+                if (sortType === SortTypePoolList.FEE_24_DESC) {
+                  onSort?.(SortTypePoolList.FEE_24_ASC)
+                } else {
+                  onSort?.(SortTypePoolList.FEE_24_DESC)
+                }
+              }}>
+              Fee 24H
+              {sortType === SortTypePoolList.FEE_24_ASC ? (
+                <ArrowDropUpIcon className={classes.icon} />
+              ) : sortType === SortTypePoolList.FEE_24_DESC ? (
+                <ArrowDropDownIcon className={classes.icon} />
+              ) : null}
+            </Typography>
+          )}
           <Typography
             style={{ cursor: 'pointer' }}
             onClick={() => {
