@@ -18,7 +18,6 @@ import { boostPointsBoldIcon } from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 import { ILiquidityToken } from '@store/consts/types'
 import { colors } from '@static/theme'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
