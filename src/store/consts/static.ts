@@ -885,7 +885,9 @@ export const getPopularPools = (network: NetworkType) => {
   }
 }
 
-export const rewards = rewardsArray as Reward[]
+export const rewards = [...rewardsArray].sort(
+  (a, b) => new Date(b.distributionDate).getTime() - new Date(a.distributionDate).getTime()
+) as Reward[]
 
 export const LEADERBOARD_DECIMAL = 8
 

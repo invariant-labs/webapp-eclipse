@@ -894,7 +894,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             </Fade>
           )}
           {tokenAIndex !== tokenBIndex && !isMd && (
-            <TooltipHover title='Refresh'>
+            <TooltipHover title='Refresh' right={8}>
               {isCurrentPoolExisting ? (
                 <Box
                   mr={1}
