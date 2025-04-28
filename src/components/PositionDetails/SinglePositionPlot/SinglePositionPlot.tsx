@@ -4,6 +4,7 @@ import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
   calculateConcentration,
+  formatNumberWithoutSuffix,
   formatNumberWithSuffix,
   numberToString,
   spacingMultiplicityGte,
@@ -149,13 +150,20 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   return (
     <Box className={classes.container}>
       <Box className={classes.headerContainer}>
-        <Typography className={classes.header}>Price range</Typography>
+        <Grid>
+          <Typography className={classes.header}>Price range</Typography>
+
+          <Typography className={classes.currentPrice} mt={1.5}>
+            {formatNumberWithoutSuffix(midPrice.x)} {tokenX.name} per {tokenY.name}
+          </Typography>
+        </Grid>
         <Grid>
           <RangeIndicator
             isLoading={ticksLoading}
             inRange={min <= currentPrice && currentPrice <= max}
           />
           <Grid gap={1} mt={1} display='flex' flexDirection='column' alignItems='flex-end'>
+            <Typography className={classes.currentPrice}>Current price ━━━</Typography>
             <TooltipHover
               title={
                 <>
@@ -189,7 +197,6 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
               </Typography>
             </TooltipHover>
-            <Typography className={classes.currentPrice}>Current price ━━━</Typography>
           </Grid>
         </Grid>
       </Box>
