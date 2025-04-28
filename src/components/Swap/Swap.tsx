@@ -822,7 +822,7 @@ export const Swap: React.FC<ISwap> = ({
           )
         : ethBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
     ) {
-      return `Insufficient Wrapped ETH`
+      return `Insufficient ETH`
     }
 
     if (
@@ -860,7 +860,7 @@ export const Swap: React.FC<ISwap> = ({
       getStateMessage() === 'Connect a wallet' ||
       getStateMessage() === 'Insufficient liquidity' ||
       getStateMessage() === 'Not enough liquidity' ||
-      getStateMessage() === 'Insufficient Wrapped ETH'
+      getStateMessage() === 'Insufficient ETH'
     )
   }
   const setSlippage = (slippage: string): void => {
@@ -1390,7 +1390,7 @@ export const Swap: React.FC<ISwap> = ({
               onDisconnect={onDisconnectWallet}
               isSwap={true}
             />
-          ) : getStateMessage() === 'Insufficient Wrapped ETH' ? (
+          ) : getStateMessage() === 'Insufficient ETH' ? (
             <TooltipHover
               title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
               top={-45}>
