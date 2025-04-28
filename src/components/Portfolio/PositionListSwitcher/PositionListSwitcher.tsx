@@ -4,14 +4,12 @@ import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
 
 interface IPositionListSwitcher {
   alignment: LiquidityPools
-  setAlignment: (alignment: LiquidityPools) => void
   setLiquidityPoolsAlignment: (alignment: LiquidityPools) => void
   lockListDisabled: boolean
 }
 
 export const PositionListSwitcher: React.FC<IPositionListSwitcher> = ({
   alignment,
-  setAlignment,
   setLiquidityPoolsAlignment,
   lockListDisabled
 }) => {
@@ -30,7 +28,6 @@ export const PositionListSwitcher: React.FC<IPositionListSwitcher> = ({
         exclusive
         onChange={(_event, newAlignment) => {
           if (newAlignment !== null) {
-            setAlignment(newAlignment)
             setLiquidityPoolsAlignment(newAlignment)
           }
         }}

@@ -20,7 +20,7 @@ import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
 import { LiquidityPools } from '@store/types/userOverview'
 import { ROUTES } from '@utils/utils'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import classNames from 'classnames'
@@ -91,12 +91,20 @@ const Portfolio: React.FC<IProps> = ({
   )
 
   const setLiquidityPoolsAlignment = (val: LiquidityPools) => {
+    setAlignment(val)
     localStorage.setItem('LIQUIDITY_POOLS', val)
   }
 
   const [alignment, setAlignment] = useState<LiquidityPools>(() => {
     return (localStorage.getItem('LIQUIDITY_POOLS') as LiquidityPools) || LiquidityPools.Standard
   })
+
+  useEffect(() => {
+    if (lockedLength === 0 && !loading && alignment === LiquidityPools.Locked) {
+      setAlignment(LiquidityPools.Standard)
+      setLiquidityPoolsAlignment(LiquidityPools.Standard)
+    }
+  }, [lockedLength, loading])
 
   const [activePanel, setActivePanel] = useState<OverviewSwitcher>(OverviewSwitcher.Overview)
 
@@ -451,7 +459,6 @@ const Portfolio: React.FC<IProps> = ({
               {isMb && (
                 <PositionListSwitcher
                   alignment={alignment}
-                  setAlignment={setAlignment}
                   setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
                   lockListDisabled={lockedLength === 0}
                 />
@@ -469,7 +476,6 @@ const Portfolio: React.FC<IProps> = ({
                   {!isMb && (
                     <PositionListSwitcher
                       alignment={alignment}
-                      setAlignment={setAlignment}
                       setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
                       lockListDisabled={lockedLength === 0}
                     />
@@ -510,7 +516,6 @@ const Portfolio: React.FC<IProps> = ({
                 <Grid className={classes.filtersContainer}>
                   <PositionListSwitcher
                     alignment={alignment}
-                    setAlignment={setAlignment}
                     setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
                     lockListDisabled={lockedLength === 0}
                   />
