@@ -317,6 +317,7 @@ const PoolListItem: React.FC<IProps> = ({
             <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
             {isSmd && (
               <ArrowDropDownIcon
+                width={10}
                 onClick={() => setShowInfo(prev => !prev)}
                 className={classes.extendedRowIcon}
               />

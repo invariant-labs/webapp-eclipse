@@ -17,14 +17,11 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       background: colors.invariant.component,
       borderBottom: `2px solid ${colors.invariant.light}`
     },
-    [theme.breakpoints.down('md')]: {
-      height: showInfo ? 100 : 69
-    }
+    height: showInfo ? 102 : 69
   },
 
   container: {
     height: 69,
-
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
@@ -54,8 +51,9 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30% 15% 25% 20% 10%',
-      padding: '24px 8px',
+      gridTemplateColumns: '30% 15% 28% 17% 10%',
+      padding: 0,
+      paddingInline: 8,
 
       '& p': {
         justifyContent: 'flex-start',
@@ -262,6 +260,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     color: colors.invariant.textGrey
   },
   extendedRowIcon: {
+    justifySelf: 'end',
     alignSelf: 'center',
     cursor: 'pointer',
     fill: colors.invariant.green,
@@ -277,6 +276,11 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     color: colors.invariant.textGrey,
     [theme.breakpoints.down('sm')]: {
       ...typography.caption1
+    },
+    [theme.breakpoints.up('sm')]: {
+      ':last-of-type': {
+        justifySelf: 'end'
+      }
     }
   },
   extendedRowContent: {
@@ -291,12 +295,20 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   },
   extendedRow: {
     display: 'grid',
-    gridTemplateColumns: 'auto 100px 140px 80px 24px',
-    paddingInline: 18,
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30% 35%  40%',
+    gridTemplateColumns: 'auto 100px 244px ',
 
-      paddingInline: 8
+    paddingInline: 24,
+    [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '30% 43%  30%',
+
+      paddingInline: 8,
+      paddingBottom: 16
+    },
+    [theme.breakpoints.down(400)]: {
+      gridTemplateColumns: '30% 35%  35%',
+
+      paddingInline: 8,
+      paddingBottom: 16
     }
   }
 }))
