@@ -224,8 +224,7 @@ const useStyles = makeStyles()(theme => {
     currentPrice: {
       display: 'inline-block',
       color: colors.invariant.yellow,
-      ...typography.caption2,
-      textAlign: 'right'
+      ...typography.caption2
     },
     checkboxLabel: {
       color: colors.invariant.textGrey,

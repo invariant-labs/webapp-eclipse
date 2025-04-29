@@ -1,6 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import {
   calcPriceByTickIndex,
@@ -58,6 +58,10 @@ export interface IRangeSelector {
   unblockUpdatePriceRange: () => void
   onlyUserPositions: boolean
   setOnlyUserPositions: (onlyUserPositions: boolean) => void
+  usdcPrice: {
+    token: string
+    price?: number
+  } | null
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -88,9 +92,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   shouldReversePlot,
   setShouldReversePlot,
   shouldNotUpdatePriceRange,
-  unblockUpdatePriceRange
+  unblockUpdatePriceRange,
   // onlyUserPositions,
-  // setOnlyUserPositions
+  // setOnlyUserPositions,
+  usdcPrice
 }) => {
   const { classes } = useStyles()
 
@@ -430,12 +435,20 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
         <Grid className={classes.headerContainer} container>
-          <Grid>
+          <Grid display='flex' flexDirection='column' justifyContent='flex-start'>
             <Typography className={classes.header}>Price range</Typography>
+
             {poolIndex !== null && (
-              <Typography className={classes.currentPrice}>
+              <Typography className={classes.currentPrice} mt={0.5}>
                 {formatNumberWithoutSuffix(midPrice.x)} {tokenBSymbol} per {tokenASymbol}
               </Typography>
+            )}
+            {usdcPrice !== null && usdcPrice.price ? (
+              <Typography className={classes.currentPrice}>
+                {formatNumberWithoutSuffix(usdcPrice.price)} USDC per {usdcPrice.token}
+              </Typography>
+            ) : (
+              <Box minHeight={17} />
             )}
           </Grid>
           <Grid className={classes.activeLiquidityContainer} container>

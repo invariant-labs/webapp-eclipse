@@ -3,8 +3,10 @@ import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/S
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Box, useMediaQuery } from '@mui/material'
 import {
+  ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   NetworkType,
   REFRESHER_INTERVAL,
+  USDC_MAIN,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
   WETH_CLOSE_POSITION_LAMPORTS_TEST
 } from '@store/consts/static'
@@ -217,6 +219,33 @@ const PositionDetails: React.FC<IProps> = ({
     }
   }, [isPreview, connectWalletDelay])
 
+  const usdcPrice = useMemo(() => {
+    if (tokenX === null || tokenY === null) return null
+
+    const revertDenominator = initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
+
+    if (tokenXAddress.equals(USDC_MAIN.address) || tokenYAddress.equals(USDC_MAIN.address)) {
+      return null
+    }
+
+    const shouldDisplayPrice = ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(
+      tokenXAddress.toString() || tokenYAddress.toString()
+    )
+    if (!shouldDisplayPrice) {
+      return null
+    }
+
+    return revertDenominator
+      ? {
+          token: tokenX.name,
+          price: tokenXPriceData?.price
+        }
+      : {
+          token: tokenY.name,
+          price: tokenYPriceData?.price
+        }
+  }, [tokenXPriceData, tokenYPriceData])
+
   return (
     <>
       <Information mb={3} transitionTimeout={300} shouldOpen={showPreviewInfo}>
@@ -356,6 +385,7 @@ const PositionDetails: React.FC<IProps> = ({
               hasTicksError={hasTicksError}
               reloadHandler={reloadHandler}
               isFullRange={isFullRange}
+              usdcPrice={usdcPrice}
             />
           </Box>
         </Box>

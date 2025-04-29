@@ -37,6 +37,10 @@ export interface ISinglePositionPlot {
   hasTicksError?: boolean
   reloadHandler: () => void
   isFullRange: boolean
+  usdcPrice: {
+    token: string
+    price?: number
+  } | null
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -54,7 +58,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   xToY,
   hasTicksError,
   reloadHandler,
-  isFullRange
+  isFullRange,
+  usdcPrice
 }) => {
   const { classes } = useStyles()
 
@@ -150,12 +155,19 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   return (
     <Box className={classes.container}>
       <Box className={classes.headerContainer}>
-        <Grid>
+        <Grid display='flex' flexDirection='column' justifyContent='flex-start'>
           <Typography className={classes.header}>Price range</Typography>
 
           <Typography className={classes.currentPrice} mt={1.5}>
             {formatNumberWithoutSuffix(midPrice.x)} {tokenX.name} per {tokenY.name}
           </Typography>
+          {usdcPrice !== null && usdcPrice.price ? (
+            <Typography className={classes.currentPrice}>
+              {formatNumberWithoutSuffix(usdcPrice.price)} USDC per {usdcPrice.token}
+            </Typography>
+          ) : (
+            <Box minHeight={17} />
+          )}
         </Grid>
         <Grid>
           <RangeIndicator

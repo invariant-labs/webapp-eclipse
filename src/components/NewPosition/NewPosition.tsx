@@ -3,13 +3,15 @@ import Slippage from '@components/Modals/Slippage/Slippage'
 import Refresher from '@common/Refresher/Refresher'
 import { Box, Button, Fade, Grid, Hidden, Typography, useMediaQuery } from '@mui/material'
 import {
+  ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   ALL_FEE_TIERS_DATA,
   autoSwapPools,
   DepositOptions,
   NetworkType,
   PositionTokenBlock,
   promotedTiers,
-  REFRESHER_INTERVAL
+  REFRESHER_INTERVAL,
+  USDC_MAIN
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -19,6 +21,7 @@ import {
   convertBalanceToBN,
   determinePositionTokenBlock,
   getConcentrationIndex,
+  initialXtoY,
   parseFeeToPathFee,
   printBN,
   ROUTES,
@@ -400,8 +403,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? concentrationArray[concentrationIndex] ??
-            concentrationArray[concentrationArray.length - 1]
+        ? (concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1])
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -522,13 +525,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : promotedTiers.find(
+      : (promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined
+        )?.index ?? undefined)
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -840,6 +843,39 @@ export const NewPosition: React.FC<INewPosition> = ({
     )
     updateLiquidity(liquidityBasedOnTokenB)
   }, [alignment])
+
+  const usdcPrice = useMemo(() => {
+    if (tokenAIndex === null || tokenBIndex === null) return null
+
+    const revertDenominator = initialXtoY(
+      tokens[tokenAIndex].assetAddress.toString(),
+      tokens[tokenBIndex].assetAddress.toString()
+    )
+
+    if (
+      tokens[tokenAIndex].assetAddress.equals(USDC_MAIN.address) ||
+      tokens[tokenBIndex].assetAddress.equals(USDC_MAIN.address)
+    ) {
+      return null
+    }
+
+    const shouldDisplayPrice = ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(
+      tokens[tokenAIndex].assetAddress.toString() || tokens[tokenBIndex].assetAddress.toString()
+    )
+    if (!shouldDisplayPrice) {
+      return null
+    }
+
+    return revertDenominator
+      ? {
+          token: tokens[tokenAIndex].symbol,
+          price: tokenAPriceData?.price
+        }
+      : {
+          token: tokens[tokenBIndex].symbol,
+          price: tokenBPriceData?.price
+        }
+  }, [midPrice.index, tokenAPriceData, tokenBPriceData])
 
   return (
     <Grid container className={classes.wrapper}>
@@ -1316,6 +1352,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             unblockUpdatePriceRange={unblockUpdatePriceRange}
             onlyUserPositions={onlyUserPositions}
             setOnlyUserPositions={setOnlyUserPositions}
+            usdcPrice={usdcPrice}
           />
         ) : (
           <PoolInit
