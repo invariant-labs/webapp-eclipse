@@ -9,7 +9,6 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: 'transparent',
-    paddingInline: 94,
     maxWidth: '100%',
 
     [theme.breakpoints.down('lg')]: {

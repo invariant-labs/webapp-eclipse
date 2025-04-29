@@ -104,8 +104,8 @@ const PoolListItem: React.FC<IProps> = ({
 
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
-  const isSmd = useMediaQuery('(max-width:850px)')
-  const isMd = useMediaQuery(theme.breakpoints.down(1060))
+  const isSmd = useMediaQuery(theme.breakpoints.down('md'))
+  const isMd = useMediaQuery(theme.breakpoints.down(1160))
   const lockIconRef = useRef<HTMLButtonElement>(null)
   const airdropIconRef = useRef<HTMLDivElement>(null)
   const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
@@ -215,63 +215,65 @@ const PoolListItem: React.FC<IProps> = ({
   return (
     <Grid
       className={classes.wrapper}
-      sx={{
-        borderBottom:
-          itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
-            ? `1px solid ${colors.invariant.light}`
-            : `2px solid ${colors.invariant.light}`
-      }}>
+      sx={
+        isSmd
+          ? {
+              borderBottom:
+                itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
+                  ? `1px solid ${colors.invariant.light}`
+                  : `2px solid ${colors.invariant.light}`
+            }
+          : {}
+      }>
       {displayType === 'token' ? (
         <>
           <Grid
+            sx={
+              !isSmd
+                ? {
+                    borderBottom:
+                      itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
+                        ? `1px solid ${colors.invariant.light}`
+                        : `2px solid ${colors.invariant.light}`
+                  }
+                : {}
+            }
             container
             classes={{
               container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
             }}>
             {!isMd ? <Typography>{tokenIndex}</Typography> : null}
             <Grid className={classes.imageContainer}>
-              <Box className={classes.iconsWrapper}>
-                <Box className={classes.iconContainer}>
-                  <img
-                    className={classes.tokenIcon}
-                    src={tokenAData.icon}
-                    alt='Token from'
-                    onError={e => {
-                      e.currentTarget.src = unknownTokenIcon
-                    }}
-                  />
-                  {tokenAData.isUnknown && (
-                    <img className={classes.warningIcon} src={warningIcon} />
-                  )}
-                </Box>
-                <Box className={classes.iconContainer}>
-                  <img
-                    className={classes.tokenIcon}
-                    src={tokenBData.icon}
-                    alt='Token to'
-                    onError={e => {
-                      e.currentTarget.src = unknownTokenIcon
-                    }}
-                  />
-                  {tokenBData.isUnknown && (
-                    <img className={classes.warningIcon} src={warningIcon} />
-                  )}
-                </Box>
-              </Box>
-              <Grid className={classes.symbolsContainer}>
-                {!isSm && (
-                  <Typography>
-                    {shortenAddress(tokenAData.symbol ?? '')}/
-                    {shortenAddress(tokenBData.symbol ?? '')}
-                  </Typography>
-                )}
-                <TooltipHover title='Copy pool address'>
-                  <FileCopyOutlinedIcon
-                    onClick={copyToClipboard}
-                    classes={{ root: classes.clipboardIcon }}
-                  />
-                </TooltipHover>
-              </Grid>
+              <img
+                className={classes.tokenIcon}
+                src={tokenAData.icon}
+                alt='Token from'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+              {tokenAData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+              <img
+                className={classes.tokenIcon}
+                src={tokenBData.icon}
+                alt='Token to'
+                onError={e => {
+                  e.currentTarget.src = unknownTokenIcon
+                }}
+              />
+              {tokenBData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
+              {!isSm && (
+                <Typography>
+                  {shortenAddress(tokenAData.symbol ?? '')}/
+                  {shortenAddress(tokenBData.symbol ?? '')}
+                </Typography>
+              )}
+              <TooltipHover title='Copy pool address'>
+                <FileCopyOutlinedIcon
+                  onClick={copyToClipboard}
+                  classes={{ root: classes.clipboardIcon }}
+                />
+              </TooltipHover>
             </Grid>
             {!isSmd && showAPY ? (
               <Grid className={classes.row} justifyContent='space-between'>
@@ -283,31 +285,29 @@ const PoolListItem: React.FC<IProps> = ({
                     }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
                 </Typography>
                 {isPromoted && (
-                  <Box mr={1}>
-                    <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
-                      <Box
-                        className={classes.actionButton}
-                        ref={airdropIconRef}
-                        onPointerEnter={() => {
-                          if (!isMobile) {
-                            setIsPromotedPoolPopoverOpen(true)
-                          }
-                        }}
-                        onPointerLeave={() => {
-                          if (!isMobile) {
-                            setIsPromotedPoolPopoverOpen(false)
-                          }
-                        }}
-                        onClick={() => {
-                          if (isMobile) {
-                            setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                          }
-                        }}
-                        mr={3}>
-                        <img width={32} height={32} src={airdropRainbowIcon} alt={'Airdrop'} />
-                      </Box>
-                    </PromotedPoolPopover>
-                  </Box>
+                  <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
+                    <Box
+                      className={classes.actionButton}
+                      ref={airdropIconRef}
+                      onPointerEnter={() => {
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(true)
+                        }
+                      }}
+                      onPointerLeave={() => {
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(false)
+                        }
+                      }}
+                      onClick={() => {
+                        if (isMobile) {
+                          setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                        }
+                      }}
+                      mr={3}>
+                      <img width={24} height={32} src={airdropRainbowIcon} alt={'Airdrop'} />
+                    </Box>
+                  </PromotedPoolPopover>
                 )}
               </Grid>
             ) : null}

@@ -17,68 +17,66 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       background: colors.invariant.component,
       borderBottom: `2px solid ${colors.invariant.light}`
     },
-    [theme.breakpoints.down(850)]: {
-      height: showInfo ? 117 : 69
+    [theme.breakpoints.down('md')]: {
+      height: showInfo ? 100 : 69
     }
   },
 
   container: {
     height: 69,
+
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
-    gridTemplateColumns: '30px auto 150px 80px 100px 140px 100px 150px',
+    gridTemplateColumns: '30px auto 150px 120px 120px 140px 120px 150px',
     padding: '18px 24px',
     whiteSpace: 'nowrap',
     transition: 'all 0.3s ease',
+    boxSizing: 'border-box',
 
     '& p': {
       ...typography.heading4,
-      display: 'flex',
       justifyContent: 'flex-start',
       alignItems: 'center'
     },
-    [theme.breakpoints.up(851)]: {
+    [theme.breakpoints.up(1160)]: {
       '& p:last-child': {
         justifyContent: 'flex-end'
       }
     },
 
-    [theme.breakpoints.down(1060)]: {
-      gridTemplateColumns: 'auto 140px 100px 100px 80px 120px'
+    [theme.breakpoints.down(1160)]: {
+      gridTemplateColumns: 'auto 150px 100px 120px 140px 100px'
     },
 
-    '@media (max-width: 850px)': {
+    [theme.breakpoints.down('md')]: {
       gridTemplateColumns: 'auto 100px 140px 80px 24px'
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: 'auto 60px 70px 60px 24px',
+      gridTemplateColumns: '30% 15% 25% 20% 10%',
       padding: '24px 8px',
 
       '& p': {
         justifyContent: 'flex-start',
-        ...typography.caption1,
-        '&: last-child': {
-          justifyContent: 'flex-end'
-        }
+        ...typography.caption1
       }
     }
   },
 
   containerNoAPY: {
-    gridTemplateColumns: '30px auto 80px 140px 100px 160px',
+    gridTemplateColumns: '30px auto 120px 120px 140px 120px 150px',
 
-    [theme.breakpoints.down(1060)]: {
+    [theme.breakpoints.down(1160)]: {
       gridTemplateColumns: 'auto 100px 80px 120px'
     },
 
-    '@media (max-width: 850px)': {
-      gridTemplateColumns: 'auto 100px 140px 80px'
+    [theme.breakpoints.down('md')]: {
+      gridTemplateColumns: 'auto 100px 140px 80px 24px'
     },
 
     [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: 'auto 80px 80px 60px',
+      gridTemplateColumns: 'auto 60px 70px 60px 24px',
 
       '& p': {
         justifyContent: 'flex-start',
@@ -89,17 +87,30 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
 
   imageContainer: {
     display: 'flex',
-    alignItems: 'center'
+    alignItems: 'center',
+    width: '100%',
+    paddingRight: 12,
+
+    '& p': {
+      maxWidth: 'calc(100% - 80px);',
+
+      paddingRight: 12,
+      overflow: 'hidden',
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis'
+    }
   },
 
   iconsWrapper: {
     display: 'flex',
-    height: 28
+    marginRight: 8
   },
 
   header: {
     height: '69px',
     '& p.MuiTypography-root': {
+      display: 'flex',
+
       color: colors.invariant.textGrey,
       ...typography.heading4,
       fontWeight: 600,
@@ -205,7 +216,15 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     maxWidth: 24,
     height: 24,
     marginRight: 3,
-    borderRadius: '50%'
+    borderRadius: '50%',
+    ':last-of-type': {
+      marginRight: 8
+    },
+    [theme.breakpoints.down('sm')]: {
+      ':last-of-type': {
+        marginRight: 0
+      }
+    }
   },
   warningIcon: {
     position: 'absolute',
@@ -229,6 +248,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   },
   row: {
     display: 'flex',
+    alignItems: 'center',
     gap: 4,
     fontSize: 30,
     height: 32,
@@ -251,6 +271,8 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   extendedRowTitle: {
     ...typography.body3,
     display: 'flex',
+    flexWrap: 'nowrap',
+    textWrap: 'nowrap',
     gap: 6,
     color: colors.invariant.textGrey,
     [theme.breakpoints.down('sm')]: {
@@ -258,6 +280,8 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     }
   },
   extendedRowContent: {
+    flexWrap: 'nowrap',
+
     ...typography.body3,
     fontWeight: 700,
     color: colors.invariant.text,
@@ -266,11 +290,12 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     }
   },
   extendedRow: {
-    display: 'flex',
-    justifyContent: 'space-around',
-    paddingInline: 16,
-    paddingBottom: '24px',
+    display: 'grid',
+    gridTemplateColumns: 'auto 100px 140px 80px 24px',
+    paddingInline: 18,
     [theme.breakpoints.down('sm')]: {
+      gridTemplateColumns: '30% 35%  40%',
+
       paddingInline: 8
     }
   }

@@ -38,10 +38,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       alignItems: 'center',
       justifyContent: 'center',
       gap: '24px',
-      maxWidth: '1072px',
+      maxWidth: 1210,
 
       [theme.breakpoints.up('lg')]: {
-        width: '1072px'
+        width: 1210
       },
 
       [theme.breakpoints.between('md', 'lg')]: {

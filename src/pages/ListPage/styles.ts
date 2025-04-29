@@ -15,7 +15,7 @@ const useStyles = makeStyles()(theme => {
       }
     },
     innerContainer: {
-      maxWidth: 1072,
+      maxWidth: 1210,
 
       [theme.breakpoints.down('md')]: {
         width: '100%'
