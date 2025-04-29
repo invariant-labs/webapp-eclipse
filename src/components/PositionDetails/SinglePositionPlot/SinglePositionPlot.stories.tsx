@@ -50,7 +50,11 @@ export const Primary: Story = {
     },
     xToY: true,
     hasTicksError: false,
-    isFullRange: false
+    isFullRange: false,
+    usdcPrice: {
+      token: 'USDC',
+      price: 1
+    }
   },
   render: args => {
     return (

@@ -70,7 +70,11 @@ export const Primary: Story = {
     setOnlyUserPositions: fn(),
     initialConcentration: '40',
     updatePath: fn(),
-    positionOpeningMethod: 'range'
+    positionOpeningMethod: 'range',
+    usdcPrice: {
+      token: 'USDC',
+      price: 1
+    }
   },
   render: args => <PrimaryComponent {...args} />
 }
