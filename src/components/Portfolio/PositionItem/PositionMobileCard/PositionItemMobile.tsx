@@ -260,7 +260,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               )
             }
             placement='top'
-            increasePadding>
+            increasePadding
+            fullSpan>
             <Grid
               container
               className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}
