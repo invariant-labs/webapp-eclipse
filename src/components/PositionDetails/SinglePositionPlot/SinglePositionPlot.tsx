@@ -154,7 +154,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
             isLoading={ticksLoading}
             inRange={min <= currentPrice && currentPrice <= max}
           />
-          <Grid container mt={1} alignItems='flex-end'>
+          <Grid container mt={1} justifyContent='flex-end'>
             <Typography className={classes.currentPrice}>Current price ━━━</Typography>
           </Grid>
         </Grid>
