@@ -132,7 +132,17 @@ const SinglePositionInfo: React.FC<IProp> = ({
         <Section
           title='Unclaimed fees'
           item={
-            <TooltipHover title={isPreview ? "Can't claim fees in preview" : ''}>
+            isPreview ? (
+              <TooltipHover title={"Can't claim fees in preview"}>
+                <Button
+                  className={classes.claimButton}
+                  disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview}
+                  variant='contained'
+                  onClick={() => onClickClaimFee()}>
+                  Claim
+                </Button>
+              </TooltipHover>
+            ) : (
               <Button
                 className={classes.claimButton}
                 disabled={tokenX.claimValue + tokenY.claimValue === 0 || isPreview}
@@ -140,7 +150,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
                 onClick={() => onClickClaimFee()}>
                 Claim
               </Button>
-            </TooltipHover>
+            )
           }>
           <UnclaimedFees
             tokenA={
