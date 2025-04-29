@@ -19,7 +19,8 @@ export const {
   initPosition,
   shouldNotUpdateRange,
   positionData,
-  showFeesLoader
+  showFeesLoader,
+  positionListSwitcher
 } = keySelectors(store, [
   'lastPage',
   'positionsList',
@@ -30,7 +31,8 @@ export const {
   'initPosition',
   'shouldNotUpdateRange',
   'positionData',
-  'showFeesLoader'
+  'showFeesLoader',
+  'positionListSwitcher'
 ])
 
 export const lastPageSelector = lastPage

@@ -18,7 +18,6 @@ import {
 } from '@mui/material'
 import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
-import { LiquidityPools } from '@store/types/userOverview'
 import { ROUTES } from '@utils/utils'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -35,6 +34,7 @@ import PositionCardsSkeletonMobile from './PositionItem/PositionTables/skeletons
 import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionItemMobile'
 import { refreshIcon } from '@static/icons'
 import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
+import { LiquidityPools } from '@store/reducers/positions'
 
 interface IProps {
   initialPage: number
@@ -57,6 +57,8 @@ interface IProps {
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
   tokensList: SwapToken[]
+  positionListAlignment: LiquidityPools
+  setPositionListAlignment: (val: LiquidityPools) => void
 }
 
 const Portfolio: React.FC<IProps> = ({
@@ -75,7 +77,9 @@ const Portfolio: React.FC<IProps> = ({
   handleClosePosition,
   handleClaimFee,
   tokensList,
-  lockedLength
+  lockedLength,
+  positionListAlignment,
+  setPositionListAlignment
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -92,12 +96,10 @@ const Portfolio: React.FC<IProps> = ({
 
   const setLiquidityPoolsAlignment = (val: LiquidityPools) => {
     setAlignment(val)
-    localStorage.setItem('LIQUIDITY_POOLS', val)
+    setPositionListAlignment(val)
   }
 
-  const [alignment, setAlignment] = useState<LiquidityPools>(() => {
-    return (localStorage.getItem('LIQUIDITY_POOLS') as LiquidityPools) || LiquidityPools.Standard
-  })
+  const [alignment, setAlignment] = useState<LiquidityPools>(positionListAlignment)
 
   useEffect(() => {
     if (lockedLength === 0 && !loading && alignment === LiquidityPools.Locked) {

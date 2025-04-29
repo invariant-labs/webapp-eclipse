@@ -1,4 +1,4 @@
-import { LiquidityPools } from '@store/types/userOverview'
+import { LiquidityPools } from '@store/reducers/positions'
 import { useStyles } from './style'
 import { Box, ToggleButton, ToggleButtonGroup } from '@mui/material'
 
