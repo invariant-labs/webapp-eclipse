@@ -16,12 +16,11 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       borderTopRightRadius: 24,
       background: colors.invariant.component,
       borderBottom: `2px solid ${colors.invariant.light}`
-    },
-    height: showInfo ? 102 : 69
+    }
   },
 
   container: {
-    height: 69,
+    height: showInfo ? 100 : 69,
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
@@ -52,8 +51,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
 
     [theme.breakpoints.down('sm')]: {
       gridTemplateColumns: '30% 15% 28% 17% 10%',
-      padding: 0,
-      paddingInline: 8,
+      padding: '18px 8px',
 
       '& p': {
         justifyContent: 'flex-start',
@@ -291,24 +289,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     color: colors.invariant.text,
     [theme.breakpoints.down('sm')]: {
       ...typography.caption1
-    }
-  },
-  extendedRow: {
-    display: 'grid',
-    gridTemplateColumns: 'auto 100px 244px ',
-
-    paddingInline: 24,
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: '30% 43%  30%',
-
-      paddingInline: 8,
-      paddingBottom: 16
-    },
-    [theme.breakpoints.down(400)]: {
-      gridTemplateColumns: '30% 35%  35%',
-
-      paddingInline: 8,
-      paddingBottom: 16
     }
   }
 }))
