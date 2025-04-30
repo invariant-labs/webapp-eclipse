@@ -178,6 +178,44 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
   }
 
+  const moveLeft = () => {
+    const diff = plotMax - plotMin
+
+    const minPrice = isXtoY
+      ? calcPriceByTickIndex(getMinTick(tickSpacing), isXtoY, xDecimal, yDecimal)
+      : calcPriceByTickIndex(getMaxTick(tickSpacing), isXtoY, xDecimal, yDecimal)
+
+    const newLeft = plotMin - diff / 6
+    const newRight = plotMax - diff / 6
+
+    if (newLeft < minPrice - diff / 2) {
+      setPlotMin(minPrice - diff / 2)
+      setPlotMax(minPrice + diff / 2)
+    } else {
+      setPlotMin(newLeft)
+      setPlotMax(newRight)
+    }
+  }
+
+  const moveRight = () => {
+    const diff = plotMax - plotMin
+
+    const maxPrice = isXtoY
+      ? calcPriceByTickIndex(getMaxTick(tickSpacing), isXtoY, xDecimal, yDecimal)
+      : calcPriceByTickIndex(getMinTick(tickSpacing), isXtoY, xDecimal, yDecimal)
+
+    const newLeft = plotMin + diff / 6
+    const newRight = plotMax + diff / 6
+
+    if (newRight > maxPrice + diff / 2) {
+      setPlotMin(maxPrice - diff / 2)
+      setPlotMax(maxPrice + diff / 2)
+    } else {
+      setPlotMin(newLeft)
+      setPlotMax(newRight)
+    }
+  }
+
   const setLeftInputValues = (val: string) => {
     setLeftInput(val)
     setLeftInputRounded(toMaxNumericPlaces(+val, 5))
@@ -501,6 +539,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           disabled={positionOpeningMethod === 'concentration'}
           hasError={hasTicksError}
           reloadHandler={reloadHandler}
+          moveLeft={moveLeft}
+          moveRight={moveRight}
         />
         {/* <FormControlLabel
           control={

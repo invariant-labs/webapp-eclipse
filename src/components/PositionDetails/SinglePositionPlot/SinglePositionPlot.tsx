@@ -12,7 +12,7 @@ import {
 import { PlotTickData } from '@store/reducers/positions'
 import React, { useEffect, useState } from 'react'
 import useStyles from './style'
-import { getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Stat } from './Stat/Stat'
 import { activeLiquidityIcon, boostPointsBoldIcon } from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
@@ -142,6 +142,64 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     }
   }
 
+  const moveLeft = () => {
+    const diff = plotMax - plotMin
+
+    const minPrice = xToY
+      ? calcPriceByTickIndex(
+          getMinTick(tickSpacing),
+          xToY,
+          Number(tokenX.decimal),
+          Number(tokenY.decimal)
+        )
+      : calcPriceByTickIndex(
+          getMaxTick(tickSpacing),
+          xToY,
+          Number(tokenX.decimal),
+          Number(tokenY.decimal)
+        )
+
+    const newLeft = plotMin - diff / 6
+    const newRight = plotMax - diff / 6
+
+    if (newLeft < minPrice - diff / 2) {
+      setPlotMin(minPrice - diff / 2)
+      setPlotMax(minPrice + diff / 2)
+    } else {
+      setPlotMin(newLeft)
+      setPlotMax(newRight)
+    }
+  }
+
+  const moveRight = () => {
+    const diff = plotMax - plotMin
+
+    const maxPrice = xToY
+      ? calcPriceByTickIndex(
+          getMaxTick(tickSpacing),
+          xToY,
+          Number(tokenX.decimal),
+          Number(tokenY.decimal)
+        )
+      : calcPriceByTickIndex(
+          getMinTick(tickSpacing),
+          xToY,
+          Number(tokenX.decimal),
+          Number(tokenY.decimal)
+        )
+
+    const newLeft = plotMin + diff / 6
+    const newRight = plotMax + diff / 6
+
+    if (newRight > maxPrice + diff / 2) {
+      setPlotMin(maxPrice - diff / 2)
+      setPlotMax(maxPrice + diff / 2)
+    } else {
+      setPlotMin(newLeft)
+      setPlotMax(newRight)
+    }
+  }
+
   const minPercentage = (min / currentPrice - 1) * 100
   const maxPercentage = (max / currentPrice - 1) * 100
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
@@ -199,6 +257,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         plotMax={plotMax}
         zoomMinus={zoomMinus}
         zoomPlus={zoomPlus}
+        moveLeft={moveLeft}
+        moveRight={moveRight}
         disabled
         leftRange={leftRange}
         rightRange={rightRange}
