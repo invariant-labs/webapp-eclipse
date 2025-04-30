@@ -98,7 +98,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [isClosingPosition, setIsClosingPosition] = useState(false)
 
   const isLoadingStats = useSelector(isLoading)
-
   useEffect(() => {
     if (position?.id) {
       dispatch(actions.setCurrentPositionId(id))
@@ -453,6 +452,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   if (position) {
     return (
       <PositionDetails
+        positionIndex={position.positionIndex}
         tokenXAddress={position.tokenX.assetAddress}
         tokenYAddress={position.tokenY.assetAddress}
         poolAddress={position.poolData.address}

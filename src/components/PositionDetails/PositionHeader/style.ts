@@ -19,7 +19,7 @@ export const useStyles = makeStyles()(() => ({
   navigation: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'space-between',
+    justifyContent: 'start',
     gap: 8,
 
     [theme.breakpoints.up(432)]: {

@@ -33,6 +33,9 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Information } from '@components/Information/Information'
 import { theme } from '@static/theme'
 import { eyeYellowIcon } from '@static/icons'
+import { ArrowLeft, ArrowRight } from '@mui/icons-material'
+import { useSelector } from 'react-redux'
+import { lockedPositionsWithPoolsData, positionsWithPoolsData } from '@store/selectors/positions'
 interface IProps {
   tokenXAddress: PublicKey
   tokenYAddress: PublicKey
@@ -73,6 +76,7 @@ interface IProps {
   isPreview: boolean
   showPositionLoader?: boolean
   isPromotedLoading: boolean
+  positionIndex: number
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -114,7 +118,8 @@ const PositionDetails: React.FC<IProps> = ({
   isPromoted,
   showPositionLoader = false,
   points24,
-  isPromotedLoading
+  isPromotedLoading,
+  positionIndex
 }) => {
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -124,7 +129,8 @@ const PositionDetails: React.FC<IProps> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
-
+  const list = useSelector(positionsWithPoolsData)
+  const lockedList = useSelector(lockedPositionsWithPoolsData)
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
   const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
@@ -216,6 +222,25 @@ const PositionDetails: React.FC<IProps> = ({
       setShowPreviewInfo(false)
     }
   }, [isPreview, connectWalletDelay])
+  const handlePrevious = () => {
+    const navigationIndex = list.find(
+      position => position.positionIndex === positionIndex - 1
+    )?.positionIndex
+    const index = navigationIndex ?? list.length - 1
+    const nextPosId = list[index].id.toString() + '_' + list[index].pool.toString()
+
+    navigate(ROUTES.getPositionRoute(nextPosId))
+  }
+
+  const handleNext = () => {
+    const navigationIndex = list.find(
+      position => position.positionIndex === positionIndex + 1
+    )?.positionIndex
+    const index = navigationIndex ?? 0
+    const nextPosId = list[index].id.toString() + '_' + list[index].pool.toString()
+
+    navigate(ROUTES.getPositionRoute(nextPosId))
+  }
 
   return (
     <>
@@ -261,6 +286,8 @@ const PositionDetails: React.FC<IProps> = ({
           success={success}
           inProgress={inProgress}
         />
+        <ArrowLeft onClick={handlePrevious} className={classes.arrow} />
+        <ArrowRight onClick={handleNext} className={classes.arrow} />
         <PositionHeader
           tokenA={
             xToY

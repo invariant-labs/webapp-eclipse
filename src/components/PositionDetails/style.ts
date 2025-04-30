@@ -1,4 +1,4 @@
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -34,5 +34,10 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     gap: 8
+  },
+  arrow: {
+    color: 'white',
+    cursor: 'pointer',
+    fill: colors.white.main
   }
 }))
