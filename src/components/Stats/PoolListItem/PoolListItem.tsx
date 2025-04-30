@@ -358,7 +358,7 @@ const PoolListItem: React.FC<IProps> = ({
               </TooltipHover>
             </Box>
           )}
-          {showInfo && isSmd && (
+          {isSmd && (
             <>
               <Typography component='h5' className={classes.extendedRowTitle}>
                 Fee (24h){' '}

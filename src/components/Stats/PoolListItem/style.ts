@@ -3,7 +3,6 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInfo = false }) => ({
   wrapper: {
-    transition: 'height 0.3s ease',
     maxWidth: '100%',
     '&:nth-of-type(odd)': {
       background: `${colors.invariant.component}`
@@ -20,14 +19,15 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   },
 
   container: {
-    height: showInfo ? 100 : 69,
+    transition: 'all 0.3s',
+    height: !showInfo ? 61 : 90,
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
     gridTemplateColumns: '30px auto 150px 120px 120px 140px 120px 150px',
     padding: '18px 24px',
     whiteSpace: 'nowrap',
-    transition: 'all 0.3s ease',
+
     boxSizing: 'border-box',
 
     '& p': {
@@ -50,6 +50,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down('sm')]: {
+      rowGap: 12,
       gridTemplateColumns: '30% 15% 28% 17% 10%',
       padding: '18px 8px',
 
@@ -266,6 +267,8 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'
   },
   extendedRowTitle: {
+    visibility: showInfo ? 'visible' : 'hidden',
+
     ...typography.body3,
     display: 'flex',
     flexWrap: 'nowrap',
