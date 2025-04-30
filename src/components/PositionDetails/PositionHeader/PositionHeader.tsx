@@ -38,6 +38,7 @@ type Props = {
   onLockClick: () => void
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   isPreview: boolean
+  isClosing: boolean
 }
 
 export const PositionHeader = ({
@@ -58,7 +59,8 @@ export const PositionHeader = ({
   onGoBackClick,
   onLockClick,
   copyPoolAddressHandler,
-  isPreview
+  isPreview,
+  isClosing
 }: Props) => {
   const { classes } = useStyles()
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
@@ -100,7 +102,7 @@ export const PositionHeader = ({
       <Button
         height={36}
         scheme='green'
-        disabled={isLocked || !hasEnoughETH || isPreview}
+        disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
         variant='contained'
         onClick={() => onClosePositionClick()}>
         Close position
@@ -110,7 +112,7 @@ export const PositionHeader = ({
     <Button
       height={36}
       scheme='green'
-      disabled={isLocked || !hasEnoughETH || isPreview}
+      disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
       variant='contained'
       onClick={() => onClosePositionClick()}>
       Close position
@@ -232,7 +234,12 @@ export const PositionHeader = ({
             {!isSmDown && isMdDown && (
               <>
                 {addButton}
-                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                <LockButton
+                  isClosing={isClosing}
+                  isLocked={isLocked}
+                  isPreview={isPreview}
+                  onLockClick={onLockClick}
+                />
               </>
             )}
           </Box>
@@ -244,14 +251,24 @@ export const PositionHeader = ({
                 {marketIdLabel}
                 <Box className={classes.wrapper}>
                   {refresher} {addButton}{' '}
-                  <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                  <LockButton
+                    isLocked={isLocked}
+                    isClosing={isClosing}
+                    isPreview={isPreview}
+                    onLockClick={onLockClick}
+                  />
                 </Box>
               </>
             ) : (
               <>
                 {closeButton}
                 {addButton}
-                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                <LockButton
+                  isClosing={isClosing}
+                  isLocked={isLocked}
+                  isPreview={isPreview}
+                  onLockClick={onLockClick}
+                />
               </>
             )}
           </Box>

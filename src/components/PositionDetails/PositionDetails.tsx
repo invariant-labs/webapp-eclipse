@@ -73,10 +73,12 @@ interface IProps {
   isPreview: boolean
   showPositionLoader?: boolean
   isPromotedLoading: boolean
+  shouldDisable: boolean
 }
 
 const PositionDetails: React.FC<IProps> = ({
   tokenXAddress,
+  shouldDisable,
   tokenYAddress,
   poolAddress,
   copyPoolAddressHandler,
@@ -262,6 +264,7 @@ const PositionDetails: React.FC<IProps> = ({
           inProgress={inProgress}
         />
         <PositionHeader
+          isClosing={shouldDisable}
           tokenA={
             xToY
               ? { icon: tokenX.icon, ticker: tokenX.name }

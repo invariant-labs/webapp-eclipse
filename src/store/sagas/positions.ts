@@ -36,8 +36,7 @@ import {
   plotTicks,
   lockedPositionsWithPoolsData,
   positionsList,
-  positionsWithPoolsData,
-  shouldDisable
+  positionsWithPoolsData
 } from '@store/selectors/positions'
 import { GuardPredicate } from '@redux-saga/types'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
@@ -2474,9 +2473,6 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
 
     const wrappedEthAccount = Keypair.generate()
 
-    yield put(actions.setShouldDisable(true))
-    const disabe = yield* select(shouldDisable)
-    console.log('hello', disabe)
     const net = networkTypetoProgramNetwork(networkType)
 
     const { createIx, initIx, unwrapIx } = createNativeAtaInstructions(
@@ -2537,6 +2533,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     tx.feePayer = wallet.publicKey
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+    yield put(actions.setShouldDisable(true))
 
     tx.partialSign(wrappedEthAccount)
 
@@ -2672,6 +2669,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     ) {
       return yield* call(handleClosePositionWithETH, action.payload)
     }
+    yield put(actions.setShouldDisable(true))
 
     yield put(
       snackbarsActions.add({
@@ -2687,7 +2685,6 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-    yield put(actions.setShouldDisable(true))
     const tokensAccounts = yield* select(accounts)
 
     let userTokenX = tokensAccounts[poolForIndex.tokenX.toString()]
@@ -2811,7 +2808,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     yield* put(actions.getPositionsList())
 
     action.payload.onSuccess()
-    yield put(actions.setShouldDisable(true))
+    yield put(actions.setShouldDisable(false))
 
     closeSnackbar(loaderClosePosition)
     yield put(snackbarsActions.remove(loaderClosePosition))
@@ -2820,7 +2817,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     console.log(error)
 
     closeSnackbar(loaderClosePosition)
-    yield put(actions.setShouldDisable(true))
+    yield put(actions.setShouldDisable(false))
 
     yield put(snackbarsActions.remove(loaderClosePosition))
     closeSnackbar(loaderSigningTx)
