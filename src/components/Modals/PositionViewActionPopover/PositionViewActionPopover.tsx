@@ -12,6 +12,7 @@ export interface IPositionViewActionPopover {
   handleClose: () => void
   onLockPosition: () => void
   isLocked: boolean
+  shouldDisable: boolean
 }
 
 export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = ({
@@ -22,10 +23,10 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   claimFee,
   closePosition,
   onLockPosition,
-  unclaimedFeesInUSD
+  unclaimedFeesInUSD,
+  shouldDisable
 }) => {
   const { classes } = useStyles()
-
   return (
     <Popover
       open={open}
@@ -48,7 +49,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
       <Grid className={classes.root}>
         <Grid className={classes.list} container alignContent='space-around' direction='column'>
           <Button
-            disabled={unclaimedFeesInUSD <= 0}
+            disabled={unclaimedFeesInUSD <= 0 || shouldDisable}
             className={classNames(classes.listItem)}
             onClick={() => {
               claimFee()
@@ -58,7 +59,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           </Button>
           <Button
             className={classNames(classes.listItem)}
-            disabled={isLocked}
+            disabled={isLocked || shouldDisable}
             onClick={() => {
               closePosition()
               handleClose()
@@ -68,7 +69,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
         </Grid>
         <Button
           className={classNames(classes.listItem)}
-          disabled={isLocked}
+          disabled={isLocked || shouldDisable}
           onClick={() => {
             onLockPosition()
             handleClose()

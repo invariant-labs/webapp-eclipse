@@ -29,6 +29,7 @@ interface IPositionItemMobile extends IPositionItem {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  shouldDisable: boolean
 }
 
 export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
@@ -53,7 +54,8 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   unclaimedFeesInUSD = { value: 0, loading: false },
   handleLockPosition,
   handleClosePosition,
-  handleClaimFee
+  handleClaimFee,
+  shouldDisable
 }) => {
   const { classes } = useMobileStyles()
   const airdropIconRef = useRef<any>(null)
@@ -443,6 +445,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         inProgress={inProgress}
       />
       <PositionViewActionPopover
+        shouldDisable={shouldDisable}
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}

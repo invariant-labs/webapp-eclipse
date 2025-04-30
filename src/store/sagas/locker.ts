@@ -25,6 +25,7 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
     const rpc = yield* select(rpcAddress)
     const marketProgram = yield* call(getMarketProgram, network, rpc, wallet as IWallet)
     const locker = yield* call(getLockerProgram, network, rpc, wallet as IWallet)
+    yield put(positionsActions.setShouldDisable(true))
 
     if (wallet.publicKey.toBase58() === DEFAULT_PUBLICKEY.toBase58() || !connection) {
       yield put(
@@ -102,10 +103,12 @@ export function* handleLockPosition(action: PayloadAction<LockPositionPayload>) 
       return
     }
     yield put(actions.setLockSuccess(false))
+    yield put(positionsActions.setShouldDisable(false))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
 
+    yield put(positionsActions.setShouldDisable(false))
     yield put(actions.setLockSuccess(false))
     closeSnackbar(loaderLockPosition)
     yield put(snackbarsActions.remove(loaderLockPosition))
