@@ -138,6 +138,7 @@ export const useStyles = makeStyles()(() => ({
   footerWrapper: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 'auto'
+    marginTop: 'auto',
+    flexWrap: 'nowrap'
   }
 }))
