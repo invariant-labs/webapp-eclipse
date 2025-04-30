@@ -46,7 +46,8 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down('md')]: {
-      gridTemplateColumns: 'auto 100px 140px 80px 24px'
+      gridTemplateColumns: 'auto 100px 140px 80px 24px',
+      rowGap: 12
     },
 
     [theme.breakpoints.down('sm')]: {
