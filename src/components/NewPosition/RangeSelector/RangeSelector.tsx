@@ -313,6 +313,25 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
   }, [isLoadingTicksOrTickmap, isMountedRef, midPrice.index, poolIndex])
 
+  //Fix in case of reset chart not triggered correctly
+  useEffect(() => {
+    if (initReset === false) {
+      const timeoutId = setTimeout(() => {
+        if (
+          isXtoY
+            ? leftRange > midPrice.index || rightRange < midPrice.index
+            : leftRange < midPrice.index || rightRange > midPrice.index
+        ) {
+          resetPlot()
+        }
+      }, 100)
+
+      return () => {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [initReset])
+
   const autoZoomHandler = (left: number, right: number, canZoomCloser: boolean = false) => {
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
 
