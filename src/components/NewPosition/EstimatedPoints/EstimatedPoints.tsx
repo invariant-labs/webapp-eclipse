@@ -1,5 +1,4 @@
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import classNames from 'classnames'
 import React, { useMemo } from 'react'
 import { useStyles } from './style'
 import GradientBorder from '@common/GradientBorder/GradientBorder'
@@ -60,7 +59,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
         : +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(2),
     [concentrationIndex, concentrationArray, warningText.length]
   )
-  const { classes } = useStyles({ percentage })
+  const { classes, cx } = useStyles({ percentage })
 
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
@@ -126,9 +125,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                   concentration slider to see how many points your current position will accrue.{' '}
                   <button className={classes.questionButton} onClick={handleClickFAQ}>
                     <img src={infoIconPinkIcon} alt='i' className={classes.infoPink} />
-                    <Typography
-                      display='inline'
-                      className={classNames(classes.pinkText, classes.link)}>
+                    <Typography display='inline' className={cx(classes.pinkText, classes.link)}>
                       How to get more points?
                     </Typography>
                   </button>

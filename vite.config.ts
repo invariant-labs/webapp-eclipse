@@ -50,7 +50,7 @@ export default defineConfig({
       output: {
         manualChunks: {
           vendor: ['react', 'react-dom'],
-          ui: ['@mui/material', '@mui/icons-material', '@emotion/react', '@emotion/styled'],
+          ui: ['@mui/material', '@mui/icons-material'],
           web3: ['@solana/web3.js'],
           utils: ['axios'],
           animations: ['@react-spring/web']

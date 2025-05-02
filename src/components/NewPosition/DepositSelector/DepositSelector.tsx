@@ -27,7 +27,6 @@ import {
   WETH_SWAP_AND_POSITION_INIT_LAMPORTS_TEST,
   WRAPPED_ETH_ADDRESS
 } from '@store/consts/static'
-import classNames from 'classnames'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import FeeSwitch from '../FeeSwitch/FeeSwitch'
 import { useStyles } from './style'
@@ -221,7 +220,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   setAlignment,
   updateLiquidity
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const breakpoint630Down = useMediaQuery(theme.breakpoints.down(630))
   const brekpoint1270to1350 = useMediaQuery(theme.breakpoints.between(1270, 1350))
   const breakpointMdTo1000 = useMediaQuery(theme.breakpoints.between('md', 1000))
@@ -619,7 +618,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             <ToggleButton
               value={DepositOptions.Basic}
               disableRipple
-              className={classNames(
+              className={cx(
                 classes.switchDepositTypeButton,
                 !isAutoswapOn ? classes.switchSelected : classes.switchNotSelected
               )}>
@@ -629,7 +628,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               disabled={!isAutoSwapAvailable}
               value={DepositOptions.Auto}
               disableRipple
-              className={classNames(
+              className={cx(
                 classes.switchDepositTypeButton,
                 classes.autoButton,
                 isAutoswapOn ? classes.switchSelected : classes.switchNotSelected
@@ -881,7 +880,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
   ])
 
   return (
-    <Grid container className={classNames(classes.wrapper, className)}>
+    <Grid container className={cx(classes.wrapper, className)}>
       <DepoSitOptionsModal
         initialMaxPriceImpact={initialMaxPriceImpact}
         setMaxPriceImpact={setMaxPriceImpact}
@@ -991,7 +990,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           )}
       </Grid>
       <Grid container className={classes.sectionWrapper}>
-        <Box className={classNames(classes.inputWrapper, classes.inputFirst)}>
+        <Box className={cx(classes.inputWrapper, classes.inputFirst)}>
           <Box
             className={classes.checkboxWrapper}
             style={{
@@ -1059,7 +1058,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             walletUninitialized={walletStatus !== Status.Initialized}
           />
         </Box>
-        <Box className={classNames(classes.inputWrapper, classes.inputSecond)}>
+        <Box className={cx(classes.inputWrapper, classes.inputSecond)}>
           <Box
             className={classes.checkboxWrapper}
             style={{
@@ -1149,7 +1148,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
             top={-10}>
             <AnimatedButton
-              className={classNames(
+              className={cx(
                 classes.addButton,
                 progress === 'none' ? classes.hoverButton : undefined
               )}
@@ -1165,10 +1164,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
           </TooltipHover>
         ) : (
           <AnimatedButton
-            className={classNames(
-              classes.addButton,
-              progress === 'none' ? classes.hoverButton : undefined
-            )}
+            className={cx(classes.addButton, progress === 'none' ? classes.hoverButton : undefined)}
             onClick={() => {
               if (progress === 'none' && tokenAIndex !== null && tokenBIndex !== null) {
                 if (!isAutoswapOn) {

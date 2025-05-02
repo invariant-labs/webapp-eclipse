@@ -10,7 +10,6 @@ import { formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { SimulationPath } from '@components/Swap/Swap'
 import { selectTokenIcon } from '@static/icons'
 import loadingAnimation from '@static/gif/loading.gif'
-import classNames from 'classnames'
 
 interface IProps {
   simulationPath: SimulationPath
@@ -34,7 +33,7 @@ const RouteBox: React.FC<IProps> = ({
   const isSmallDevice = useMediaQuery(theme.breakpoints.down('sm'))
 
   const onePoolType = tokenBetween !== null
-  const { classes } = useStyles({ onePoolType })
+  const { classes, cx } = useStyles({ onePoolType })
   const firstFeePercent = Number(printBN(firstPair?.feeTier.fee ?? new BN(0), DECIMAL - 2))
   const secondFeePercent = Number(printBN(secondPair?.feeTier.fee ?? new BN(0), DECIMAL - 2))
 
@@ -46,7 +45,7 @@ const RouteBox: React.FC<IProps> = ({
       className={classes.swapFlowContainer}>
       {isSmallDevice ? (
         <>
-          <Box className={classNames(classes.loader, { [classes.isLoading]: isLoadingRate })}>
+          <Box className={cx(classes.loader, { [classes.isLoading]: isLoadingRate })}>
             <img
               src={loadingAnimation}
               style={{ height: 25, width: 25, zIndex: 10 }}
@@ -60,7 +59,7 @@ const RouteBox: React.FC<IProps> = ({
         </>
       ) : (
         <>
-          <Box className={classNames(classes.loader, { [classes.isLoading]: isLoadingRate })}>
+          <Box className={cx(classes.loader, { [classes.isLoading]: isLoadingRate })}>
             <Box className={classes.tokenContainer}>
               <img src={selectTokenIcon} className={classes.tokenIcon} />
               <Skeleton className={classes.tokenLabelSkeleton} />
