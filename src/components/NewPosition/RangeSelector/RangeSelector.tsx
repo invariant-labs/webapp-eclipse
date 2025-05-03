@@ -18,8 +18,7 @@ import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { activeLiquidityIcon, boostPointsIcon } from '@static/icons'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { boostPointsIcon } from '@static/icons'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -449,7 +448,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
         <Grid className={classes.headerContainer} container>
-          <Grid>
+          <Grid className={classes.priceRangeContainer} container>
             <Typography className={classes.header}>Price range</Typography>
             {poolIndex !== null && (
               <Typography className={classes.currentPrice}>
@@ -457,42 +456,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
               </Typography>
             )}
           </Grid>
-          <Grid className={classes.activeLiquidityContainer} container>
-            <TooltipHover
-              title={
-                <>
-                  <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
-                  <Typography className={classes.liquidityDesc} style={{ marginBottom: 12 }}>
-                    While selecting the price range, note where active liquidity is located. Your
-                    liquidity can be inactive and, as a consequence, not generate profits.
-                  </Typography>
-                  <Grid container className={classes.liquidityDescWrapper}>
-                    <Typography className={classes.liquidityDesc}>
-                      The active liquidity range is represented by white, dashed lines in the
-                      liquidity chart. Active liquidity is determined by the maximum price range
-                      resulting from the statistical volume of exchanges for the last 7 days.
-                    </Typography>
-                    <img
-                      className={classes.liquidityImg}
-                      src={activeLiquidityIcon}
-                      alt='Liquidity'
-                    />
-                  </Grid>
-                  <Typography className={classes.liquidityNote}>
-                    Note: active liquidity borders are always aligned to the nearest initialized
-                    ticks.
-                  </Typography>
-                </>
-              }
-              placement='bottom'
-              increasePadding>
-              <Typography className={classes.activeLiquidity}>
-                Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
-              </Typography>
-            </TooltipHover>
-            <Grid>
-              <Typography className={classes.currentPrice}>Current price ━━━</Typography>
-            </Grid>
+          <Grid className={classes.currentPriceContainer} container>
+            <Typography className={classes.currentPrice}>Current price ━━━</Typography>
           </Grid>
         </Grid>
         <PriceRangePlot
