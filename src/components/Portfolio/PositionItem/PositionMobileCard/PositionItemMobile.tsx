@@ -155,8 +155,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
             <div
               className={classes.actionButton}
-              onClick={event => {
-                event.stopPropagation()
+              onClick={() => {
                 setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
                 setAllowPropagation(false)
               }}>
@@ -172,8 +171,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         <InactivePoolsPopover isActive={isActive} isPromoted={isPromoted}>
           <div
             className={classes.actionButton}
-            onClick={event => {
-              event.stopPropagation()
+            onClick={() => {
               const newState = !isPromotedPoolInactive
               setIsPromotedPoolInactive(newState)
               handlePopoverState(newState)
@@ -260,13 +258,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               )
             }
             placement='top'
-            increasePadding>
+            increasePadding
+            fullSpan>
             <Grid
               container
               className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}
               justifyContent='center'
-              alignItems='center'
-              onClick={e => e.stopPropagation()}>
+              alignItems='center'>
               <Typography
                 className={classNames(
                   classes.infoText,
@@ -321,18 +319,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           ) : (
             <div>
               {tokenValueInUsd.priceWarning ? (
-                <TooltipHover title='The price might not be shown correctly'>
+                <TooltipHover title='The price might not be shown correctly' fullSpan>
                   <Grid
                     container
                     className={classes.value}
                     alignItems='center'
-                    justifyContent='center'
-                    onClick={event => event.stopPropagation()}>
-                    <Box
-                      gap={'8px'}
-                      display={'flex'}
-                      alignItems={'center'}
-                      onClick={event => event.stopPropagation()}>
+                    justifyContent='center'>
+                    <Box gap={'8px'} display={'flex'} alignItems={'center'}>
                       <Typography className={classes.infoText}>Value</Typography>
 
                       <Typography className={classes.greenText}>
@@ -349,11 +342,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                   className={classes.value}
                   alignItems='center'
                   justifyContent='center'>
-                  <Box
-                    gap={'8px'}
-                    display={'flex'}
-                    alignItems={'center'}
-                    onClick={event => event.stopPropagation()}>
+                  <Box gap={'8px'} display={'flex'} alignItems={'center'}>
                     <Typography className={classes.infoText}>Value</Typography>
 
                     <Typography className={classes.greenText}>
