@@ -118,8 +118,8 @@ export const PositionHeader = ({
   )
 
   const addButton = (
-    <TooltipHover title='Add more liquidity to this pool'>
-      <Button scheme='pink' variant='contained' onClick={() => onAddPositionClick()}>
+    <TooltipHover title='Add more liquidity to this pool' fullSpan={isSmDown}>
+      <Button scheme='pink' variant='contained' onClick={() => onAddPositionClick()} width='100%'>
         + Add position
       </Button>
     </TooltipHover>
@@ -243,14 +243,16 @@ export const PositionHeader = ({
               <>
                 {marketIdLabel}
                 <Box className={classes.wrapper}>
-                  {refresher} {addButton}{' '}
+                  {refresher} {addButton}
                   <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
                 </Box>
               </>
             ) : (
               <>
                 {closeButton}
-                {addButton}
+                <Box display={'flex'} flexGrow={1}>
+                  {addButton}
+                </Box>
                 <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
               </>
             )}
