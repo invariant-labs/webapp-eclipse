@@ -19,7 +19,8 @@ const useStyles = makeStyles()(theme => {
     },
     headerContainer: {
       justifyContent: 'space-between',
-      marginBottom: 12
+      marginBottom: 12,
+      flexDirection: 'row'
     },
     header: {
       ...typography.heading4,
@@ -243,9 +244,12 @@ const useStyles = makeStyles()(theme => {
       alignItems: 'center',
       minHeight: 36
     },
-    activeLiquidityContainer: {
+    priceRangeContainer: {
       flexDirection: 'column',
-      width: 'auto'
+      width: 'auto',
+      height: 43,
+      alignItems: 'flex-start',
+      justifyContent: 'space-between'
     },
     rangeConcentration: {
       display: 'flex',

@@ -14,13 +14,14 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { actions } from '@store/reducers/positions'
+import { actions, LiquidityPools } from '@store/reducers/positions'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import {
   isLoadingPositionsList,
   lastPageSelector,
   lockedPositionsWithPoolsData,
   PositionData,
+  positionListSwitcher,
   positionsWithPoolsData,
   prices
 } from '@store/selectors/positions'
@@ -56,6 +57,7 @@ const PortfolioWrapper = () => {
   const isBalanceLoading = useSelector(balanceLoading)
   const pricesData = useSelector(prices)
   const ethBalance = useSelector(balance)
+  const positionListAlignment = useSelector(positionListSwitcher)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -359,6 +361,10 @@ const PortfolioWrapper = () => {
       handleLockPosition={handleLockPosition}
       handleClosePosition={handleClosePosition}
       handleClaimFee={handleClaimFee}
+      positionListAlignment={positionListAlignment}
+      setPositionListAlignment={(positionType: LiquidityPools) =>
+        dispatch(actions.setPositionListSwitcher(positionType))
+      }
     />
   ) : (
     <Grid className={classes.emptyContainer}>

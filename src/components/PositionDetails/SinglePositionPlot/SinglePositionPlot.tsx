@@ -14,11 +14,10 @@ import React, { useEffect, useState } from 'react'
 import useStyles from './style'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Stat } from './Stat/Stat'
-import { activeLiquidityIcon, boostPointsBoldIcon } from '@static/icons'
+import { boostPointsBoldIcon } from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
 import { ILiquidityToken } from '@store/consts/types'
 import { colors } from '@static/theme'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export interface ISinglePositionPlot {
   data: PlotTickData[]
@@ -208,51 +207,16 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     <Box className={classes.container}>
       <Box className={classes.headerContainer}>
         <Typography className={classes.header}>Price range</Typography>
-        <Grid>
+        <Grid display='flex' flexDirection={'column'} gap={1}>
           <RangeIndicator
             isLoading={ticksLoading}
             inRange={min <= currentPrice && currentPrice <= max}
           />
-          <Grid gap={0.5} mt={1} display='flex' flexDirection='column' alignItems='flex-end'>
-            <TooltipHover
-              title={
-                <>
-                  <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
-                  <Typography className={classes.liquidityDesc} style={{ marginBottom: 12 }}>
-                    While selecting the price range, note where active liquidity is located. Your
-                    liquidity can be inactive and, as a consequence, not generate profits.
-                  </Typography>
-                  <Grid container className={classes.liqWrapper}>
-                    <Typography className={classes.liquidityDesc}>
-                      The active liquidity range is represented by white, dashed lines in the
-                      liquidity chart. Active liquidity is determined by the maximum price range
-                      resulting from the statistical volume of exchanges for the last 7 days.
-                    </Typography>
-                    <img
-                      className={classes.liquidityImg}
-                      src={activeLiquidityIcon}
-                      alt='Liquidity'
-                    />
-                  </Grid>
-                  <Typography className={classes.liquidityNote}>
-                    Note: active liquidity borders are always aligned to the nearest initialized
-                    ticks.
-                  </Typography>
-                </>
-              }
-              placement='bottom'
-              top={1}
-              increasePadding>
-              <Typography className={classes.activeLiquidity}>
-                Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
-              </Typography>
-            </TooltipHover>
-            <Grid container justifyContent='flex-end' alignItems='center'>
-              <Typography className={classes.currentPrice}>Current price</Typography>
-              <Typography className={classes.currentPrice} ml={0.5} mt={'3px'}>
-                ━━━
-              </Typography>
-            </Grid>
+          <Grid container justifyContent='flex-end' alignItems='center'>
+            <Typography className={classes.currentPrice}>Current price</Typography>
+            <Typography className={classes.currentPrice} ml={0.5} mt={'3px'}>
+              ━━━
+            </Typography>
           </Grid>
         </Grid>
       </Box>

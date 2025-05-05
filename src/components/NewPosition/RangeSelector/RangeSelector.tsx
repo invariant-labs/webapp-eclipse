@@ -1,6 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import {
   calcPriceByTickIndex,
@@ -18,8 +18,7 @@ import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { activeLiquidityIcon, boostPointsIcon } from '@static/icons'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { boostPointsIcon } from '@static/icons'
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -351,6 +350,25 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
   }, [isLoadingTicksOrTickmap, isMountedRef, midPrice.index, poolIndex])
 
+  //Fix in case of reset chart not triggered correctly
+  useEffect(() => {
+    if (initReset === false) {
+      const timeoutId = setTimeout(() => {
+        if (
+          isXtoY
+            ? leftRange > midPrice.index || rightRange < midPrice.index
+            : leftRange < midPrice.index || rightRange > midPrice.index
+        ) {
+          resetPlot()
+        }
+      }, 100)
+
+      return () => {
+        clearTimeout(timeoutId)
+      }
+    }
+  }, [initReset])
+
   const autoZoomHandler = (left: number, right: number, canZoomCloser: boolean = false) => {
     const { leftInRange, rightInRange } = getTicksInsideRange(left, right, isXtoY)
 
@@ -468,7 +486,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
         <Grid className={classes.headerContainer} container>
-          <Grid>
+          <Grid className={classes.priceRangeContainer} container>
             <Typography className={classes.header}>Price range</Typography>
             {poolIndex !== null && (
               <Typography className={classes.currentPrice}>
@@ -476,45 +494,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
               </Typography>
             )}
           </Grid>
-          <Grid className={classes.activeLiquidityContainer} container>
-            <TooltipHover
-              title={
-                <>
-                  <Typography className={classes.liquidityTitle}>Active liquidity</Typography>
-                  <Typography className={classes.liquidityDesc} style={{ marginBottom: 12 }}>
-                    While selecting the price range, note where active liquidity is located. Your
-                    liquidity can be inactive and, as a consequence, not generate profits.
-                  </Typography>
-                  <Grid container className={classes.liquidityDescWrapper}>
-                    <Typography className={classes.liquidityDesc}>
-                      The active liquidity range is represented by white, dashed lines in the
-                      liquidity chart. Active liquidity is determined by the maximum price range
-                      resulting from the statistical volume of exchanges for the last 7 days.
-                    </Typography>
-                    <img
-                      className={classes.liquidityImg}
-                      src={activeLiquidityIcon}
-                      alt='Liquidity'
-                    />
-                  </Grid>
-                  <Typography className={classes.liquidityNote}>
-                    Note: active liquidity borders are always aligned to the nearest initialized
-                    ticks.
-                  </Typography>
-                </>
-              }
-              placement='bottom'
-              increasePadding>
-              <Typography className={classes.activeLiquidity}>
-                Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
-              </Typography>
-            </TooltipHover>
-            <Grid container justifyContent='flex-end' alignItems='center' mt={'4px'}>
-              <Typography className={classes.currentPrice}>Current price</Typography>
-              <Typography className={classes.currentPrice} ml={0.5} mt={'3px'}>
-                ━━━
-              </Typography>
-            </Grid>
+          <Grid display='flex' flexDirection={'row'} alignItems={'center'} alignSelf={'flex-end'}>
+            <Typography className={classes.currentPrice} mb={0}>
+              Current price
+            </Typography>
+            <Typography className={classes.currentPrice} ml={0.5} mt={'4px'}>
+              ━━━
+            </Typography>
           </Grid>
         </Grid>
         <PriceRangePlot
