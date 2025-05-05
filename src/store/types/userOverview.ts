@@ -62,8 +62,3 @@ export interface TokenPositionEntry {
   positionId: string
   isPriceWarning: boolean
 }
-
-export enum LiquidityPools {
-  Standard = 'Standard',
-  Locked = 'Locked'
-}
