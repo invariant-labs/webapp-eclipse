@@ -1,7 +1,7 @@
 import { call, put, takeEvery, take, select, all, spawn, takeLatest } from 'typed-redux-saga'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import { actions as poolsActions, ListPoolsResponse, ListType } from '@store/reducers/pools'
-import { createAccount, getWallet, sleep } from './wallet'
+import { createAccount, getWallet } from './wallet'
 import { getConnection, handleRpcError } from './connection'
 import {
   actions,
@@ -2545,8 +2545,6 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
       skipPreflight: false
     })
 
-    yield* call(sleep, 3000)
-
     if (!txid.length) {
       yield put(
         snackbarsActions.add({
@@ -2739,8 +2737,6 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     const txid = yield* call(sendAndConfirmRawTransaction, connection, signedTx.serialize(), {
       skipPreflight: false
     })
-
-    yield* call(sleep, 3000)
 
     if (!txid.length) {
       yield put(
