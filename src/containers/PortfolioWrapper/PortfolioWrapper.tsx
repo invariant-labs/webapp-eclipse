@@ -72,7 +72,8 @@ const PortfolioWrapper = () => {
       }
     }
     return true
-  })  const positionListAlignment = useSelector(positionListSwitcher)
+  })
+  const positionListAlignment = useSelector(positionListSwitcher)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()

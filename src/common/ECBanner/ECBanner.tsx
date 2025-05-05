@@ -7,9 +7,9 @@ import { colors, theme } from '@static/theme'
 import cardLarge from '@static/png/Eclipse-USDC.png'
 import cardSmall from '@static/png/Eclipse-USDC-small.png'
 import React from 'react'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { ROUTES } from '@utils/utils'
 import { useNavigate } from 'react-router-dom'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IECBanner {
   isCloseButton?: boolean
@@ -29,17 +29,25 @@ export const ECBanner: React.FC<IECBanner> = ({
     <Grid>
       <Typography>$ES Allocation</Typography>
       <br />
-      Eclipse has officially launched its token! Check your eligibility and claim your allocation on
-      the official Eclipse claim site.
+      Eclipse has officially launched its token!
+      <br />
+      Check your eligibility and claim your
+      <br />
+      allocation on the official Eclipse claim site.
     </Grid>
   )
   const earnTooltipTitle = (
     <Grid>
       <Typography>Put your $ES to work and keep earning!</Typography>
       <br />
-      Believe in Eclipse and the long-term value of $ES? Don’t let your tokens sit idle in your
-      wallet. Provide liquidity to the ES-USDC pool and start earning trading fees, Invariant
-      Points, and exclusive benefits from projects across the entire ecosystem.
+      Believe in Eclipse and the long-term value of $ES? <br />
+      Don’t let your tokens sit idle in your wallet.
+      <br />
+      Provide liquidity to the ES-USDC pool and start
+      <br />
+      earning trading fees, Invariant Points, and exclusive
+      <br />
+      benefits from projects across the entire ecosystem.
     </Grid>
   )
   const breakpoint = page === 'points' ? theme.breakpoints.values.lg : 1200
@@ -53,16 +61,21 @@ export const ECBanner: React.FC<IECBanner> = ({
       <Grid className={classes.leftWrapper}>
         <Typography className={classes.header}>
           Your Allocation{' '}
-          <TooltipGradient placement='top' top={1} title={allocationTooltipTitle}>
+          <TooltipHover gradient placement='top' top={1} title={allocationTooltipTitle}>
             <img src={infoCircleIcon} />
-          </TooltipGradient>
+          </TooltipHover>
         </Typography>
 
         <Typography component='span'>
           Eclipse just launched their tokens! You can check your eligibility and claim tokens on
           official Eclipse claim site. You are just one click away from it!
         </Typography>
-        <Button scheme='green' gap={8} width={200} height={36}>
+        <Button
+          onClick={() => window.open('http://claim.eclipse.xyz/')}
+          scheme='green'
+          gap={8}
+          width={200}
+          height={36}>
           Claim
           <img className={classes.newTab} src={newTabIcon} />
         </Button>
@@ -75,17 +88,17 @@ export const ECBanner: React.FC<IECBanner> = ({
               <Typography className={classes.header}>Use ECLS tokens to earn trading</Typography>{' '}
               <Typography className={classes.header}>
                 fees and points{' '}
-                <TooltipGradient title={earnTooltipTitle} top={1}>
+                <TooltipHover gradient title={earnTooltipTitle} top={1}>
                   <img src={infoCircleIcon} />
-                </TooltipGradient>
+                </TooltipHover>
               </Typography>
             </Grid>
           ) : (
             <Typography className={classes.header}>
               Use ECLS tokens to earn trading fees and points{' '}
-              <TooltipGradient title={earnTooltipTitle} top={1}>
+              <TooltipHover gradient title={earnTooltipTitle} top={1}>
                 <img src={infoCircleIcon} />
-              </TooltipGradient>
+              </TooltipHover>
             </Typography>
           )}
           <Typography component='span'>

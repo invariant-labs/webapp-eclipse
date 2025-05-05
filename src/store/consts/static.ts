@@ -484,7 +484,7 @@ export const KYSOL_MAIN: Token = {
 
 export const ES_MAIN: Token = {
   symbol: 'ES',
-  address: new PublicKey('8jA7xMDqJucigQphWHvqBPQPAmk7VJKKsqLmgCkE7XzP'),
+  address: new PublicKey('GnBAskb2SQjrLgpTjtgatz4hEugUsYV7XrWU1idV3oqW'),
   decimals: 9,
   name: 'Eclipse',
   logoURI: 'https://assets.coingecko.com/coins/images/54958/standard/image_%2832%29.png?1742979704',
