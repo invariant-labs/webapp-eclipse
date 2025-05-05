@@ -226,6 +226,11 @@ const useStyles = makeStyles()(theme => {
       color: colors.invariant.yellow,
       ...typography.caption2
     },
+    usdcCurrentPrice: {
+      display: 'inline-block',
+      color: colors.invariant.text,
+      ...typography.caption2
+    },
     checkboxLabel: {
       color: colors.invariant.textGrey,
       fontSize: 14,

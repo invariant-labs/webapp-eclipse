@@ -443,9 +443,9 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 {formatNumberWithoutSuffix(midPrice.x)} {tokenBSymbol} per {tokenASymbol}
               </Typography>
             )}
-            {usdcPrice !== null && usdcPrice.price ? (
-              <Typography className={classes.currentPrice}>
-                {formatNumberWithoutSuffix(usdcPrice.price)} USDC per {usdcPrice.token}
+            {poolIndex !== null && usdcPrice !== null && usdcPrice.price ? (
+              <Typography className={classes.usdcCurrentPrice}>
+                {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
               </Typography>
             ) : (
               <Box minHeight={17} />

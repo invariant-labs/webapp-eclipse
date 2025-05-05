@@ -162,8 +162,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
             {formatNumberWithoutSuffix(midPrice.x)} {tokenX.name} per {tokenY.name}
           </Typography>
           {usdcPrice !== null && usdcPrice.price ? (
-            <Typography className={classes.currentPrice}>
-              {formatNumberWithoutSuffix(usdcPrice.price)} USDC per {usdcPrice.token}
+            <Typography className={classes.usdcCurrentPrice}>
+              {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
             </Typography>
           ) : (
             <Box minHeight={17} />

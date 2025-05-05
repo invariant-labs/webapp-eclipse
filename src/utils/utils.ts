@@ -1818,7 +1818,11 @@ export const addressToTicker = (network: NetworkType, address: string): string =
   return getReversedAddressTickerMap(network)[address] || address
 }
 
-export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: string | null) => {
+export const initialXtoY = (
+  tokenXAddress?: string | null,
+  tokenYAddress?: string | null,
+  revertOtherTokens?: boolean
+) => {
   if (!tokenXAddress || !tokenYAddress) {
     return true
   }
@@ -1826,7 +1830,17 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
   const tokenXIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenXAddress)
   const tokenYIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenYAddress)
 
-  return !(tokenXIndex < tokenYIndex)
+  if (tokenXIndex !== -1 && tokenYIndex !== -1) {
+    if (tokenXIndex < tokenYIndex) {
+      return false
+    } else {
+      return true
+    }
+  } else if (revertOtherTokens ? tokenXIndex > tokenYIndex : tokenXIndex < tokenYIndex) {
+    return false
+  } else {
+    return true
+  }
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {

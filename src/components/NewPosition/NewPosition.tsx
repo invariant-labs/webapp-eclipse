@@ -11,7 +11,8 @@ import {
   PositionTokenBlock,
   promotedTiers,
   REFRESHER_INTERVAL,
-  USDC_MAIN
+  USDC_MAIN,
+  USDT_MAIN
 } from '@store/consts/static'
 import {
   addressToTicker,
@@ -849,33 +850,39 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     const revertDenominator = initialXtoY(
       tokens[tokenAIndex].assetAddress.toString(),
-      tokens[tokenBIndex].assetAddress.toString()
+      tokens[tokenBIndex].assetAddress.toString(),
+      true
     )
 
     if (
       tokens[tokenAIndex].assetAddress.equals(USDC_MAIN.address) ||
-      tokens[tokenBIndex].assetAddress.equals(USDC_MAIN.address)
+      tokens[tokenBIndex].assetAddress.equals(USDC_MAIN.address) ||
+      tokens[tokenAIndex].assetAddress.equals(USDT_MAIN.address) ||
+      tokens[tokenBIndex].assetAddress.equals(USDT_MAIN.address)
     ) {
       return null
     }
 
-    const shouldDisplayPrice = ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(
-      tokens[tokenAIndex].assetAddress.toString() || tokens[tokenBIndex].assetAddress.toString()
-    )
+    const shouldDisplayPrice =
+      ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(tokens[tokenAIndex].assetAddress.toString()) ||
+      ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(tokens[tokenBIndex].assetAddress.toString())
+
     if (!shouldDisplayPrice) {
       return null
     }
 
-    return revertDenominator
-      ? {
-          token: tokens[tokenAIndex].symbol,
-          price: tokenAPriceData?.price
-        }
-      : {
-          token: tokens[tokenBIndex].symbol,
-          price: tokenBPriceData?.price
-        }
-  }, [midPrice.index, tokenAPriceData, tokenBPriceData])
+    const ratioToDenominator = revertDenominator ? midPrice.x : 1 / midPrice.x
+    const denominatorPrice = revertDenominator ? tokenBPriceData?.price : tokenAPriceData?.price
+
+    if (!denominatorPrice) {
+      return null
+    }
+
+    return {
+      token: revertDenominator ? tokens[tokenAIndex].symbol : tokens[tokenBIndex].symbol,
+      price: ratioToDenominator * denominatorPrice
+    }
+  }, [midPrice.x, priceALoading, priceBLoading])
 
   return (
     <Grid container className={classes.wrapper}>
