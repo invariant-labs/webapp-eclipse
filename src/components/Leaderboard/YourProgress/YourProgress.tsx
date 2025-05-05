@@ -90,7 +90,11 @@ export const YourProgress: React.FC<YourProgressProps> = ({
                 bgImage={mid}
                 isConnected={isConnected}
                 isLoading={isLoadingList}
-                tooltip='Points amount refreshes roughly every 30 minutes.'
+                tooltip={
+                  <>
+                    Points amount refreshes roughly <br /> up to 2 minutes.
+                  </>
+                }
                 label='Total points'
                 value={
                   userStats

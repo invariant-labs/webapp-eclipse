@@ -88,7 +88,6 @@ import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
-import activeLiquidityIcon from '@static/svg/activeLiquidity.svg'
 import revertIcon from '@static/svg/revert.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import swapPositionIcon from '@static/svg/swap-position.svg'
@@ -103,6 +102,10 @@ import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
 import eyeYellowIcon from './svg/eyeYellow.svg'
 import closeYellowIcon from './svg/closeYellow.svg'
 import scrollArrowIcon from './svg/scrollArrow.svg'
+import snackbarSwapIcon from './svg/snackbarSwap.svg'
+import circleDolarIcon from './svg/circleDolar.svg'
+import depositIcon from './svg/depositIcon.svg'
+import withdrawIcon from './svg/withdrawIcon.svg'
 
 export {
   logoTitleIcon,
@@ -195,7 +198,6 @@ export {
   refreshIcon,
   backIcon,
   settingIcon,
-  activeLiquidityIcon,
   revertIcon,
   unlockIcon,
   swapPositionIcon,
@@ -209,7 +211,11 @@ export {
   boostPointsBoldIcon,
   eyeYellowIcon,
   scrollArrowIcon,
-  goldenInfoIcon
+  goldenInfoIcon,
+  snackbarSwapIcon,
+  circleDolarIcon,
+  depositIcon,
+  withdrawIcon
 }
 
 export const chainIcons = {

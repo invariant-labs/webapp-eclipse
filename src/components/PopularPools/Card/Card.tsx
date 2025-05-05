@@ -217,7 +217,11 @@ const Card: React.FC<ICard> = ({
                           setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
                         }
                       }}>
-                      <img src={airdropRainbowIcon} alt={'Airdrop'} style={{ height: '24px' }} />
+                      <img
+                        src={airdropRainbowIcon}
+                        alt={'Airdrop'}
+                        style={{ height: '24px', position: 'absolute', right: -24 }}
+                      />
                     </div>
                   </PromotedPoolPopover>
                 </>

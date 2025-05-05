@@ -955,6 +955,8 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
         </Grid>
 
         <FeeSwitch
+          containerKey={`${tokenAIndex}` + `${tokenBIndex}`}
+          showTVL={tokenAIndex !== null && tokenBIndex !== null}
           onSelect={fee => {
             setPositionTokens(tokenAIndex, tokenBIndex, fee)
           }}

@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { initialXtoY, tickerToAddress } from '@utils/utils'
-import { airdropRainbowIcon, swapListIcon } from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
@@ -18,7 +18,6 @@ import { blurContent, unblurContent } from '@utils/uiUtils'
 import PositionViewActionPopover from '@components/Modals/PositionViewActionPopover/PositionViewActionPopover'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { lockerState } from '@store/selectors/locker'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { ILiquidityToken } from '@store/consts/types'
 import { ISinglePositionData } from '@components/Portfolio/Overview/Overview/Overview'
 import { IPositionItem } from '@store/consts/types'
@@ -156,8 +155,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
             <div
               className={classes.actionButton}
-              onClick={event => {
-                event.stopPropagation()
+              onClick={() => {
                 setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
                 setAllowPropagation(false)
               }}>
@@ -173,8 +171,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         <InactivePoolsPopover isActive={isActive} isPromoted={isPromoted}>
           <div
             className={classes.actionButton}
-            onClick={event => {
-              event.stopPropagation()
+            onClick={() => {
               const newState = !isPromotedPoolInactive
               setIsPromotedPoolInactive(newState)
               handlePopoverState(newState)
@@ -248,7 +245,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
     () => (
       <Grid container sx={{ width: '100%', marginBottom: 2 }}>
         <Grid item xs={5}>
-          <TooltipGradient
+          <TooltipHover
             title={
               isActive ? (
                 <>
@@ -261,14 +258,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               )
             }
             placement='top'
-            top={1}
-            noGradient>
+            increasePadding
+            fullSpan>
             <Grid
               container
               className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}
               justifyContent='center'
-              alignItems='center'
-              onClick={e => e.stopPropagation()}>
+              alignItems='center'>
               <Typography
                 className={classNames(
                   classes.infoText,
@@ -277,7 +273,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                 {fee}% fee
               </Typography>
             </Grid>
-          </TooltipGradient>
+          </TooltipHover>
         </Grid>
 
         <Grid item xs={7} paddingLeft={'16px'}>
@@ -321,14 +317,41 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               sx={{ borderRadius: '10px' }}
             />
           ) : (
-            <Grid container className={classes.value} alignItems='center' justifyContent='center'>
-              <Box gap={'8px'} display={'flex'} alignItems={'center'}>
-                <Typography className={classes.infoText}>Value</Typography>
-                <Typography className={classes.greenText}>
-                  ${formatNumberWithSuffix(tokenValueInUsd.value)}
-                </Typography>
-              </Box>
-            </Grid>
+            <div>
+              {tokenValueInUsd.priceWarning ? (
+                <TooltipHover title='The price might not be shown correctly' fullSpan>
+                  <Grid
+                    container
+                    className={classes.value}
+                    alignItems='center'
+                    justifyContent='center'>
+                    <Box gap={'8px'} display={'flex'} alignItems={'center'}>
+                      <Typography className={classes.infoText}>Value</Typography>
+
+                      <Typography className={classes.greenText}>
+                        ${formatNumberWithSuffix(tokenValueInUsd.value)}
+                      </Typography>
+
+                      <img src={warning2Icon} width={14} />
+                    </Box>
+                  </Grid>
+                </TooltipHover>
+              ) : (
+                <Grid
+                  container
+                  className={classes.value}
+                  alignItems='center'
+                  justifyContent='center'>
+                  <Box gap={'8px'} display={'flex'} alignItems={'center'}>
+                    <Typography className={classes.infoText}>Value</Typography>
+
+                    <Typography className={classes.greenText}>
+                      ${formatNumberWithSuffix(tokenValueInUsd.value)}
+                    </Typography>
+                  </Box>
+                </Grid>
+              )}
+            </div>
           )}
         </Grid>
 

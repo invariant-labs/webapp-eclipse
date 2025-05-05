@@ -3,7 +3,6 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { INoConnected, NoConnected } from '@common/NoConnected/NoConnected'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-
 import {
   Box,
   Grid,
@@ -17,20 +16,15 @@ import {
   FormControlLabel,
   Checkbox
 } from '@mui/material'
-
 import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
-import { LiquidityPools } from '@store/types/userOverview'
 import { ROUTES } from '@utils/utils'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-
 import classNames from 'classnames'
-
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
-
 import { Overview } from './Overview/Overview/Overview'
 import { YourWallet } from './Overview/YourWallet/YourWallet'
 import { VariantType } from 'notistack'
@@ -40,6 +34,8 @@ import PositionCardsSkeletonMobile from './PositionItem/PositionTables/skeletons
 import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionItemMobile'
 import { ECBanner } from '@common/ECBanner/ECBanner'
 import { refreshIcon } from '@static/icons'
+import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
+import { LiquidityPools } from '@store/reducers/positions'
 
 interface IProps {
   initialPage: number
@@ -65,6 +61,8 @@ interface IProps {
   handleCloseBanner: () => void
   isHiding: boolean
   showBanner: boolean
+  positionListAlignment: LiquidityPools
+  setPositionListAlignment: (val: LiquidityPools) => void
 }
 
 const Portfolio: React.FC<IProps> = ({
@@ -85,7 +83,10 @@ const Portfolio: React.FC<IProps> = ({
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
-  tokensList
+  tokensList,
+  lockedLength,
+  positionListAlignment,
+  setPositionListAlignment
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -94,12 +95,26 @@ const Portfolio: React.FC<IProps> = ({
   const isDownLg = useMediaQuery(theme.breakpoints.down('lg'))
   const isMb = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-  const { processedPools, isProcesing } = useProcessedTokens(
+  const { processedTokens, isProcesing } = useProcessedTokens(
     tokensList,
     isBalanceLoading,
     currentNetwork
   )
-  const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
+
+  const setLiquidityPoolsAlignment = (val: LiquidityPools) => {
+    setAlignment(val)
+    setPositionListAlignment(val)
+  }
+
+  const [alignment, setAlignment] = useState<LiquidityPools>(positionListAlignment)
+
+  useEffect(() => {
+    if (lockedLength === 0 && !loading && alignment === LiquidityPools.Locked) {
+      setAlignment(LiquidityPools.Standard)
+      setLiquidityPoolsAlignment(LiquidityPools.Standard)
+    }
+  }, [lockedLength, loading])
+
   const [activePanel, setActivePanel] = useState<OverviewSwitcher>(OverviewSwitcher.Overview)
 
   const handleToggleChange =
@@ -124,19 +139,21 @@ const Portfolio: React.FC<IProps> = ({
   }
 
   const positionsDetails = useMemo(() => {
-    const positionsAmount = data.length
-    const inRageAmount = data.reduce((count, item) => (item.isActive ? count + 1 : count), 0)
+    const positionsAmount = data.length + lockedLength
+    const inRangeAmount =
+      data.reduce((count, item) => (item.isActive ? count + 1 : count), 0) +
+      lockedData.reduce((count, item) => (item.isActive ? count + 1 : count), 0)
 
-    const outOfRangeAmount = positionsAmount - inRageAmount
-    return { positionsAmount, inRageAmount, outOfRangeAmount }
+    const outOfRangeAmount = positionsAmount - inRangeAmount
+    return { positionsAmount, inRangeAmount, outOfRangeAmount }
   }, [data])
 
   const finalTokens = useMemo(() => {
     if (hideUnknownTokens) {
-      return processedPools.filter(item => item.isUnknown !== true)
+      return processedTokens.filter(item => item.isUnknown !== true)
     }
-    return processedPools.filter(item => item.decimal > 0)
-  }, [processedPools, hideUnknownTokens])
+    return processedTokens.filter(item => item.decimal > 0)
+  }, [processedTokens, hideUnknownTokens])
 
   const renderPositionDetails = () => (
     <Box
@@ -158,7 +175,7 @@ const Portfolio: React.FC<IProps> = ({
           </Typography>
           <Box gap={1} display={'flex'}>
             <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
-              Within Range: {positionsDetails.inRageAmount}
+              Within Range: {positionsDetails.inRangeAmount}
             </Typography>
             <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
               Outside Range: {positionsDetails.outOfRangeAmount}
@@ -297,7 +314,7 @@ const Portfolio: React.FC<IProps> = ({
               <YourWallet
                 currentNetwork={currentNetwork}
                 handleSnackbar={handleSnackbar}
-                pools={finalTokens}
+                tokens={finalTokens}
                 isLoading={loading || isBalanceLoading || isProcesing}
               />
               <Box className={classes.footer}>
@@ -372,7 +389,7 @@ const Portfolio: React.FC<IProps> = ({
                   <YourWallet
                     handleSnackbar={handleSnackbar}
                     currentNetwork={currentNetwork}
-                    pools={finalTokens}
+                    tokens={finalTokens}
                     isLoading={loading || isBalanceLoading || isProcesing}
                   />
                   <Box className={classes.footer}>
@@ -408,7 +425,7 @@ const Portfolio: React.FC<IProps> = ({
               <YourWallet
                 currentNetwork={currentNetwork}
                 handleSnackbar={handleSnackbar}
-                pools={finalTokens}
+                tokens={finalTokens}
                 isLoading={loading || isBalanceLoading || isProcesing}
               />
             </Box>
@@ -452,38 +469,11 @@ const Portfolio: React.FC<IProps> = ({
                 </TooltipHover>
               </Grid>
               {isMb && (
-                <Box className={classes.switchPoolsContainer}>
-                  <Box
-                    className={classes.switchPoolsMarker}
-                    sx={{
-                      left: alignment === LiquidityPools.Standard ? 0 : '50%'
-                    }}
-                  />
-                  <ToggleButtonGroup
-                    value={alignment}
-                    exclusive
-                    onChange={handleToggleChange(setAlignment)}
-                    className={classes.switchPoolsButtonsGroup}>
-                    <ToggleButton
-                      sx={{ padding: 0 }}
-                      value={LiquidityPools.Standard}
-                      disableRipple
-                      className={classes.switchPoolsButton}
-                      style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
-                      Standard
-                    </ToggleButton>
-                    <ToggleButton
-                      sx={{ padding: 0 }}
-                      disabled={lockedData.length === 0}
-                      value={LiquidityPools.Locked}
-                      disableRipple
-                      className={classes.switchPoolsButton}
-                      classes={{ disabled: classes.disabledSwitchButton }}
-                      style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
-                      Locked
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                </Box>
+                <PositionListSwitcher
+                  alignment={alignment}
+                  setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
+                  lockListDisabled={lockedLength === 0}
+                />
               )}
               <Grid className={classes.searchWrapper}>
                 <Grid className={classes.filtersContainer}>
@@ -496,38 +486,11 @@ const Portfolio: React.FC<IProps> = ({
                     setSelectedFilters={setSelectedFilters}
                   />
                   {!isMb && (
-                    <Box className={classes.switchPoolsContainer}>
-                      <Box
-                        className={classes.switchPoolsMarker}
-                        sx={{
-                          left: alignment === LiquidityPools.Standard ? 0 : '50%'
-                        }}
-                      />
-                      <ToggleButtonGroup
-                        value={alignment}
-                        exclusive
-                        onChange={handleToggleChange(setAlignment)}
-                        className={classes.switchPoolsButtonsGroup}>
-                        <ToggleButton
-                          sx={{ padding: 0 }}
-                          value={LiquidityPools.Standard}
-                          disableRipple
-                          className={classes.switchPoolsButton}
-                          style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
-                          Standard
-                        </ToggleButton>
-                        <ToggleButton
-                          sx={{ padding: 0 }}
-                          disabled={lockedData.length === 0}
-                          value={LiquidityPools.Locked}
-                          disableRipple
-                          className={classes.switchPoolsButton}
-                          classes={{ disabled: classes.disabledSwitchButton }}
-                          style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
-                          Locked
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-                    </Box>
+                    <PositionListSwitcher
+                      alignment={alignment}
+                      setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
+                      lockListDisabled={lockedLength === 0}
+                    />
                   )}
                 </Grid>
 
@@ -563,38 +526,11 @@ const Portfolio: React.FC<IProps> = ({
 
               <Grid className={classes.searchWrapper}>
                 <Grid className={classes.filtersContainer}>
-                  <Box className={classes.switchPoolsContainer}>
-                    <Box
-                      className={classes.switchPoolsMarker}
-                      sx={{
-                        left: alignment === LiquidityPools.Standard ? 0 : '50%'
-                      }}
-                    />
-                    <ToggleButtonGroup
-                      value={alignment}
-                      exclusive
-                      onChange={handleToggleChange(setAlignment)}
-                      className={classes.switchPoolsButtonsGroup}>
-                      <ToggleButton
-                        sx={{ padding: 0 }}
-                        value={LiquidityPools.Standard}
-                        disableRipple
-                        className={classes.switchPoolsButton}
-                        style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
-                        Standard
-                      </ToggleButton>
-                      <ToggleButton
-                        sx={{ padding: 0 }}
-                        disabled={lockedData.length === 0}
-                        value={LiquidityPools.Locked}
-                        disableRipple
-                        className={classes.switchPoolsButton}
-                        classes={{ disabled: classes.disabledSwitchButton }}
-                        style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
-                        Locked
-                      </ToggleButton>
-                    </ToggleButtonGroup>
-                  </Box>
+                  <PositionListSwitcher
+                    alignment={alignment}
+                    setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
+                    lockListDisabled={lockedLength === 0}
+                  />
 
                   <Grid className={classes.fullWidthWrapper}>
                     <Grid width={26} display='flex' alignItems='center'>

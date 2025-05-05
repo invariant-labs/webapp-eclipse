@@ -16,7 +16,10 @@ export const useMobileStyles = makeStyles()((theme: Theme) => ({
       marginBottom: 20
     },
     '&:hover': {
-      background: `${colors.invariant.component}B0`
+      background: `${colors.invariant.component}B0`,
+      '@media (hover: none)': {
+        background: colors.invariant.component
+      }
     },
     transition: '300ms'
   },

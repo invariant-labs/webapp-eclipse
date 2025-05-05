@@ -5,7 +5,7 @@ import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
-import { NetworkType, SortTypeTokenList } from '@store/consts/static'
+import { ITEMS_PER_PAGE, NetworkType, SortTypeTokenList } from '@store/consts/static'
 import { newTabBtnIcon, unknownTokenIcon, warningIcon } from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
@@ -43,7 +43,6 @@ const TokenListItem: React.FC<IProps> = ({
   TVL = 0,
   sortType,
   onSort,
-  hideBottomLine = false,
   address,
   isUnknown,
   network,
@@ -88,7 +87,12 @@ const TokenListItem: React.FC<IProps> = ({
         <Grid
           container
           classes={{ container: classes.container, root: classes.tokenList }}
-          style={hideBottomLine ? { borderBottom: `1px solid transparent` } : undefined}>
+          sx={{
+            borderBottom:
+              itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
+                ? `1px solid ${colors.invariant.light}`
+                : `2px solid ${colors.invariant.light}`
+          }}>
           {!isXs && !isSm && <Typography component='p'>{itemNumber}</Typography>}
           <Grid className={classes.tokenName}>
             <img
@@ -145,6 +149,12 @@ const TokenListItem: React.FC<IProps> = ({
         <Grid
           container
           style={{ color: colors.invariant.textGrey, fontWeight: 400 }}
+          sx={{
+            borderBottom:
+              itemNumber !== 0 && itemNumber % 10
+                ? `1px solid ${colors.invariant.light}`
+                : `px solid ${colors.invariant.light}`
+          }}
           classes={{ container: classes.container, root: classes.header }}>
           {!isXs && !isSm && (
             <Typography style={{ lineHeight: '12px' }}>

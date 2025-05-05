@@ -5,7 +5,6 @@ export const useStyles = makeStyles()(() => ({
   root: { width: '226px', position: 'relative' },
   container: {
     position: 'relative',
-    height: 340,
     borderRadius: '24px',
     overflow: 'hidden'
   },
@@ -50,9 +49,9 @@ export const useStyles = makeStyles()(() => ({
     right: -6
   },
   symbolsContainer: {
+    position: 'relative',
     color: colors.invariant.text,
     display: 'flex',
-    overflow: 'hidden',
     whiteSpace: 'nowrap',
     textOverflow: 'ellipsis',
     ...typography.heading4,
@@ -138,7 +137,7 @@ export const useStyles = makeStyles()(() => ({
   footerWrapper: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 'auto'
+    marginTop: 12
   },
   horn: {
     zIndex: 2,

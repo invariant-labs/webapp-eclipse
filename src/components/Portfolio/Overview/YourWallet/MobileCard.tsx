@@ -1,13 +1,14 @@
 import { Box, Typography } from '@mui/material'
-import { warningIcon } from '@static/icons'
-import { TokenPool, StrategyConfig } from '@store/types/userOverview'
+import { warning2Icon, warningIcon } from '@static/icons'
+import { StrategyConfig, WalletToken } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { ActionButtons } from './ActionButtons/ActionButtons'
 import { NetworkType } from '@store/consts/static'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 export const MobileCard: React.FC<{
-  pool: TokenPool
+  pool: WalletToken
   getStrategy: () => StrategyConfig
   currentNetwork: NetworkType
 }> = ({ pool, getStrategy, currentNetwork }) => {
@@ -42,6 +43,11 @@ export const MobileCard: React.FC<{
           <Typography component='span' className={classes.mobileStatValue}>
             ${pool.value.toFixed(2).toLocaleString().replace(',', '.')}
           </Typography>
+          {pool.isPriceWarning && (
+            <TooltipHover title='The price might not be shown correctly'>
+              <img src={warning2Icon} width={14} />
+            </TooltipHover>
+          )}
         </Box>
       </Box>
     </Box>
