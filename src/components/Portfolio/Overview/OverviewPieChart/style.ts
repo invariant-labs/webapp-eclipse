@@ -11,5 +11,10 @@ export const useStyles = makeStyles()(() => ({
       color: colors.invariant.text,
       ...typography.caption2
     }
+  },
+  sliceShadow: {
+    '& path': {
+      filter: 'drop-shadow(0px 0px 6px rgba(255, 255, 255, 0.1))'
+    }
   }
 }))

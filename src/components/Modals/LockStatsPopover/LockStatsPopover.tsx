@@ -1,7 +1,7 @@
 import useStyles from './style'
 import { Popover, Typography, LinearProgress, Box } from '@mui/material'
 import { ResponsivePie } from '@nivo/pie'
-import { colors } from '@static/theme'
+import { colors, typography } from '@static/theme'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { useState, useEffect, useMemo } from 'react'
 
@@ -158,10 +158,10 @@ export const LockStatsPopover = ({
                 <ResponsivePie
                   data={data.filter(d => d.value > 0)}
                   colors={[colors.invariant.pink, colors.invariant.green]}
-                  margin={{ top: 10, right: 80, bottom: 10, left: 80 }}
+                  margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
                   startAngle={-45}
                   endAngle={315}
-                  borderWidth={2}
+                  borderWidth={1}
                   borderColor='white'
                   enableArcLabels={false}
                   enableArcLinkLabels={true}
@@ -173,6 +173,14 @@ export const LockStatsPopover = ({
                   arcLinkLabelsStraightLength={0}
                   arcLinkLabelsSkipAngle={1}
                   arcLinkLabel={d => `${d.label} (${d.value}%)`}
+                  theme={{
+                    labels: {
+                      text: {
+                        fontFamily: 'Mukta',
+                        ...typography.body2
+                      }
+                    }
+                  }}
                 />
               </div>
             </div>

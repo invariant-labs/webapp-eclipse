@@ -5,29 +5,33 @@ import { useStyles } from './style'
 
 const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
   const { classes } = useStyles()
-
   const total = data?.reduce((sum, item) => sum + item.value, 0) || 0
   const loadingData = [{ id: 'loading', value: 1, label: '' }]
 
-  const formatDataForNivo = inputData => {
-    return inputData.map((item, index) => ({
+  const formatDataForNivo = inputData =>
+    inputData.map((item, index) => ({
       id: item.label || `item-${index}`,
       label: item.label || '',
       value: item.value || 0,
       color: chartColors[index]
     }))
-  }
 
   const nivoData = data?.length ? formatDataForNivo(data) : loadingData
 
   return (
     <Box position='relative' height={200} width='100%'>
       <Fade in={!isLoading} timeout={{ enter: 0, exit: 400 }} unmountOnExit>
-        <Box position='absolute' top={0} left={0} right={0} bottom={0}>
+        <Box
+          className={classes.sliceShadow}
+          position='absolute'
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}>
           <ResponsivePie
             animate={false}
             data={nivoData}
-            margin={{ top: 30 }}
+            margin={{ top: 25, bottom: 20 }}
             innerRadius={0.6}
             colors={chartColors}
             arcLabelsSkipAngle={10}
@@ -55,16 +59,23 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
           />
         </Box>
       </Fade>
+
       <Fade
         in={isLoading}
         timeout={{ enter: 0, exit: 400 }}
         style={{ transitionDelay: isLoading ? '0ms' : '100ms' }}
         unmountOnExit>
-        <Box position='absolute' top={0} left={0} right={0} bottom={0}>
+        <Box
+          className={classes.sliceShadow}
+          position='absolute'
+          top={0}
+          left={0}
+          right={0}
+          bottom={0}>
           <ResponsivePie
             animate={false}
             data={loadingData}
-            margin={{ top: 30 }}
+            margin={{ top: 25, bottom: 20 }}
             innerRadius={0.6}
             colors={[colors.invariant.light]}
             enableArcLinkLabels={false}
