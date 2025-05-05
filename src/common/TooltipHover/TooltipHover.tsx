@@ -107,7 +107,12 @@ export const TooltipHover = ({
       {...props}>
       <span
         className={classes.tooltipSpan}
-        onClick={() => setOpen(true)}
+        onClick={e => {
+          if (isMobile) {
+            e.stopPropagation()
+            setOpen(true)
+          }
+        }}
         onMouseEnter={() => setChildrenHover(true)}
         onMouseLeave={() => setChildrenHover(false)}
         onFocus={() => setChildrenHover(true)}

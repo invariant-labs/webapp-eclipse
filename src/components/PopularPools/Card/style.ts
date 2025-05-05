@@ -5,7 +5,6 @@ export const useStyles = makeStyles()(() => ({
   root: { width: '226px' },
   container: {
     position: 'relative',
-    height: 340,
     borderRadius: '24px',
     overflow: 'hidden'
   },
@@ -138,7 +137,7 @@ export const useStyles = makeStyles()(() => ({
   footerWrapper: {
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 'auto',
+    marginTop: 12,
     flexWrap: 'nowrap'
   }
 }))
