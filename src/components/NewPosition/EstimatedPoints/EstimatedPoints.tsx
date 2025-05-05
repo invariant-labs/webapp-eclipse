@@ -35,7 +35,6 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
 }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
   const { minConc, middleConc, maxConc } = useMemo(
     () => ({
       minConc: concentrationArray[0].toFixed(0),
