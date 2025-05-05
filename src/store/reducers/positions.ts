@@ -71,6 +71,7 @@ export interface IPositionsStore {
     position: PositionWithAddress | null
     loading: boolean
   }
+  positionListSwitcher: LiquidityPools
 }
 
 export interface InitPositionData
@@ -139,6 +140,11 @@ export interface UpdatePositionRangeRicksData {
   fetchTick?: FetchTick
 }
 
+export enum LiquidityPools {
+  Standard = 'Standard',
+  Locked = 'Locked'
+}
+
 export const defaultState: IPositionsStore = {
   lastPage: 1,
   currentPoolIndex: null,
@@ -171,7 +177,8 @@ export const defaultState: IPositionsStore = {
   positionData: {
     position: null,
     loading: false
-  }
+  },
+  positionListSwitcher: LiquidityPools.Standard
 }
 
 export const positionsSliceName = 'positions'
@@ -312,6 +319,10 @@ const positionsSlice = createSlice({
     },
     setCurrentPositionId(state, action: PayloadAction<string>) {
       state.currentPositionId = action.payload
+      return state
+    },
+    setPositionListSwitcher(state, action: PayloadAction<LiquidityPools>) {
+      state.positionListSwitcher = action.payload
       return state
     }
   }
