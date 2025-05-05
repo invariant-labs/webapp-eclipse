@@ -213,7 +213,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
             isLoading={ticksLoading}
             inRange={min <= currentPrice && currentPrice <= max}
           />
-          <Grid gap={1} mt={1} display='flex' flexDirection='column' alignItems='flex-end'>
+          <Grid gap={0.5} mt={1} display='flex' flexDirection='column' alignItems='flex-end'>
             <TooltipHover
               title={
                 <>
@@ -247,7 +247,12 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 Active liquidity <span className={classes.activeLiquidityIcon}>i</span>
               </Typography>
             </TooltipHover>
-            <Typography className={classes.currentPrice}>Current price ━━━</Typography>
+            <Grid container justifyContent='flex-end' alignItems='center'>
+              <Typography className={classes.currentPrice}>Current price</Typography>
+              <Typography className={classes.currentPrice} ml={0.5} mt={'3px'}>
+                ━━━
+              </Typography>
+            </Grid>
           </Grid>
         </Grid>
       </Box>

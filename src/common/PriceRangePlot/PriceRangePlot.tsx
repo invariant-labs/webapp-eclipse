@@ -13,7 +13,8 @@ import Brush from './Brush/Brush'
 import useStyles from './style'
 import { BN } from '@coral-xyz/anchor'
 import { Button } from '@common/Button/Button'
-import { leftArrowIcon, rightArrowIcon } from '@static/icons'
+import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import ArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
@@ -405,7 +406,12 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           borderRadius={10}
           padding={0}
           onClick={moveLeft}>
-          <img src={leftArrowIcon} className={classes.zoomIcon} alt='Move left' />
+          <ArrowLeftIcon
+            sx={{
+              width: isMd ? 28 : 32,
+              height: isMd ? 28 : 32
+            }}
+          />
         </Button>
       </Grid>
       <Grid className={classes.rightArrow}>
@@ -416,7 +422,12 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           borderRadius={10}
           padding={0}
           onClick={moveRight}>
-          <img src={rightArrowIcon} className={classes.zoomIcon} alt='Move right' />
+          <ArrowRightIcon
+            sx={{
+              width: isMd ? 28 : 32,
+              height: isMd ? 28 : 32
+            }}
+          />
         </Button>
       </Grid>
 
