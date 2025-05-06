@@ -329,6 +329,7 @@ const PositionDetails: React.FC<IProps> = ({
               poolAddress={poolAddress}
               isPreview={showPreviewInfo}
               isPromotedLoading={isPromotedLoading}
+              isClosing={shouldDisable}
             />
           </Box>
           <Box className={classes.rightSide}>
