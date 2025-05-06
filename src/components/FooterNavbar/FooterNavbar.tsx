@@ -40,17 +40,17 @@ export const FooterNavbar = () => {
 
     typeOfNetwork === NetworkType.Testnet
       ? {
-          label: 'Creator',
-          icon: tokenCreatorIcon,
-          url: 'creator',
-          width: 33
-        }
+        label: 'Creator',
+        icon: tokenCreatorIcon,
+        url: 'creator',
+        width: 33
+      }
       : {
-          label: 'Points',
-          icon: airdropIcon,
-          url: 'points',
-          width: 26
-        },
+        label: 'Points',
+        icon: airdropIcon,
+        url: 'points',
+        width: 26
+      },
     {
       label: 'Stats',
       icon: statsIcon,
@@ -72,6 +72,7 @@ export const FooterNavbar = () => {
   const otherRoutesToHighlight: Record<string, RegExp[]> = {
     liquidity: [/^liquidity\/*/],
     exchange: [/^exchange\/*/],
+    sale: [/^sale\/*/],
     portfolio: [/^portfolio\/*/, /^newPosition\/*/, /^position\/*/],
 
     ...(typeOfNetwork === NetworkType.Mainnet ? { leaderboard: [/^points\/*/] } : {}),

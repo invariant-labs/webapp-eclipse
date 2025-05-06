@@ -34,6 +34,7 @@ interface IProps {
   disabled?: boolean
   priceLoading?: boolean
   isBalanceLoading: boolean
+  disableBackgroundColor?: boolean
   walletUninitialized: boolean
   actionButtons?: ActionButton[]
 }
@@ -49,15 +50,17 @@ export const DepositAmountInput: React.FC<IProps> = ({
   blockerInfo,
   onBlur,
   decimalsLimit,
+  percentageChange,
   tokenPrice,
   balanceValue,
   disabled = false,
   priceLoading = false,
+  disableBackgroundColor = false,
   isBalanceLoading,
   actionButtons = [],
   walletUninitialized
 }) => {
-  const { classes } = useStyles({ isSelected: !!currency && !walletUninitialized })
+  const { classes } = useStyles({ isSelected: !!currency && !walletUninitialized, disableBackgroundColor })
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -195,11 +198,17 @@ export const DepositAmountInput: React.FC<IProps> = ({
               priceLoading ? (
                 <img src={loadingAnimation} className={classes.loading} alt='loading' />
               ) : tokenPrice ? (
-                <TooltipHover title='Estimated USD Value of the Entered Tokens' placement='bottom'>
-                  <Typography className={classes.estimatedBalance}>
-                    ~${formatNumberWithoutSuffix(usdBalance)}
-                  </Typography>
-                </TooltipHover>
+                <Box sx={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                  {percentageChange && (
+
+                    <Box className={percentageChange > 0 ? classes.positiveDifference : classes.negativeDifference}>{percentageChange}%</Box>
+                  )}
+                  <TooltipHover title='Estimated USD Value of the Entered Tokens' placement='bottom'>
+                    <Typography className={classes.estimatedBalance}>
+                      ~${formatNumberWithoutSuffix(usdBalance)}
+                    </Typography>
+                  </TooltipHover>
+                </Box>
               ) : (
                 <TooltipHover title='Cannot fetch price of token' placement='bottom' top={1}>
                   <Typography className={classes.noData}>
