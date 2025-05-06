@@ -7,7 +7,7 @@ import { Button } from '@common/Button/Button'
 import React, { useState } from 'react'
 import { formatNumberWithCommas } from '@utils/utils'
 import classNames from 'classnames'
-import { Timer } from '../Timer/Timer'
+// import { Timer } from '../Timer/Timer'
 
 interface IProps {
     alertBoxText?: string
