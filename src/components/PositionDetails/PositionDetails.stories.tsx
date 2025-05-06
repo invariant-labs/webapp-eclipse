@@ -66,7 +66,8 @@ const defaultArgs = {
   showPoolDetailsLoader: true,
   isPromotedLoading: false,
   onGoBackClick: () => {},
-  points24: 0
+  points24: 0,
+  pricesLoading: false
 }
 
 const meta = {
