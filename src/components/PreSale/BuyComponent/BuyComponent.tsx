@@ -33,7 +33,7 @@ export const BuyComponent: React.FC<IProps> = ({ alertBoxText, raisedAmount, tot
                 <Box className={classes.alertBox}>
                     <Box className={classes.alertBoxContent}>
                         <img src={greenInfoIcon} alt='Info icon' />
-                        <Typography className={classes.alertBoxText}>You're whitelisted for Round 1</Typography>
+                        <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
                     </Box>
 
                     <Box className={classes.closeIconContainer} onClick={() => {
