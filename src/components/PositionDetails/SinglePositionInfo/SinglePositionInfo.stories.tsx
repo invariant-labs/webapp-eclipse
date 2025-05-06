@@ -51,7 +51,8 @@ export const Primary: Story = {
     points24: 0,
     poolAddress: new PublicKey('0123456789'),
     isPreview: false,
-    isPromotedLoading: false
+    isPromotedLoading: false,
+    isClosing: false
   },
   render: args => {
     return (
