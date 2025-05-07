@@ -13,7 +13,6 @@ import {
 } from '@mui/material'
 import DepositOption from './DepositOption'
 import { theme } from '@static/theme'
-import classNames from 'classnames'
 
 enum SettingsOptions {
   Basic = 'Basic',
@@ -145,7 +144,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
   handleClose,
   open
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const [alignment, setAlignment] = useState<SettingsOptions>(SettingsOptions.Basic)
 
@@ -350,7 +349,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 <ToggleButton
                   value={SettingsOptions.Basic}
                   disableRipple
-                  className={classNames(
+                  className={cx(
                     classes.switchSettingsTypeButton,
                     alignment === SettingsOptions.Basic
                       ? classes.switchSelected
@@ -361,7 +360,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
                 <ToggleButton
                   value={SettingsOptions.Advanced}
                   disableRipple
-                  className={classNames(
+                  className={cx(
                     classes.switchSettingsTypeButton,
                     alignment === SettingsOptions.Advanced
                       ? classes.switchSelected

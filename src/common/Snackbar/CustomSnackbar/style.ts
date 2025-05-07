@@ -5,6 +5,10 @@ import { SnackbarContent } from 'notistack'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
+  customSnackbarContainer: {
+    bottom: '90px !important',
+    zIndex: '100 !important'
+  },
   wrapper: {
     display: 'flex',
     alignItems: 'center',

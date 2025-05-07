@@ -3,10 +3,10 @@ import { Button, Grid, InputBase, Popover, Typography } from '@mui/material'
 import { infoErrorIcon, swapListIcon } from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '@static/theme'
 import { ILiquidityToken } from '@store/consts/types'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 
 const confirmText = 'Lock my liquidity permanently'
 export interface ILockLiquidityModal {
