@@ -10,6 +10,7 @@ type StyleProps = {
   borderRadius?: string | number
   padding?: string | number
   margin?: string | number
+  gap?: string | number
 }
 
 const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
@@ -44,7 +45,7 @@ const getStyles = (scheme: 'normal' | 'green' | 'pink' | 'rainbow') => {
 }
 
 const useStyles = makeStyles<StyleProps>()(
-  (_theme, { scheme, height, width, borderRadius, padding, margin, fontData }) => ({
+  (_theme, { scheme, height, width, borderRadius, padding, margin, fontData, gap }) => ({
     button: {
       zIndex: 1,
       height: height ?? 40,
@@ -64,7 +65,16 @@ const useStyles = makeStyles<StyleProps>()(
 
       '&.Mui-disabled': {
         pointerEvents: 'auto',
-        color: colors.invariant.textGrey,
+        color: colors.invariant.textGrey
+      },
+      gap: gap ?? 0
+    },
+    buttonDisabled: {
+      color: colors.invariant.textGrey,
+      background: colors.invariant.light,
+      cursor: 'not-allowed',
+
+      '&:hover': {
         boxShadow: 'none',
         background: colors.invariant.light,
         cursor: 'not-allowed'

@@ -15,6 +15,7 @@ type Props = {
   borderRadius?: string | number
   padding?: string | number
   children: React.ReactNode
+  gap?: string | number
 } & ButtonProps
 
 export const Button = ({
@@ -27,6 +28,7 @@ export const Button = ({
   borderRadius,
   padding,
   children,
+  gap,
   ...props
 }: Props) => {
   const { classes, cx } = useStyles({
@@ -36,7 +38,8 @@ export const Button = ({
     borderRadius,
     padding,
     margin,
-    fontData
+    fontData,
+    gap
   })
 
   return (

@@ -12,6 +12,9 @@ import {
   unknownTokenIcon,
   warningIcon
 } from '@static/icons'
+import cardESTop from '@static/png/ESWavesTop.png'
+import cardESBottom from '@static/png/ESWavesBottom.png'
+import Horn from '@static/png/turboHorn.png'
 import { shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import {
@@ -129,124 +132,132 @@ const Card: React.FC<ICard> = ({
       document.removeEventListener('click', handleDocumentClickCapture, true)
     }
   }, [isPromotedPoolPopoverOpen])
-
+  const ESToken = useMemo(() => {
+    if (symbolFrom === 'ES' || symbolTo === 'ES') return true
+  }, [symbolFrom, symbolTo])
   return (
     <Grid className={classes.root}>
+      {ESToken && <img className={classes.horn} src={Horn} />}
+
       {isLoading ? (
         <Skeleton variant='rounded' animation='wave' className={classes.skeleton} />
       ) : (
-        <Grid>
-          <GradientBorder
-            borderRadius={24}
-            borderWidth={2}
-            backgroundColor={colors.invariant.newDark}
-            innerClassName={classes.container}>
-            <img
-              src={cardBackgroundTop}
-              alt=''
-              className={classes.backgroundImage}
-              style={{ top: 0, zIndex: -1 }}
-            />
-            <img
-              src={cardBackgroundBottom}
-              alt=''
-              className={classes.backgroundImage}
-              style={{ bottom: 0, zIndex: -1 }}
-            />
-            <Grid container className={classes.cardWrapper}>
-              <Grid container className={classes.iconsWrapper}>
-                <Box className={classes.iconContainer}>
-                  <img
-                    className={classes.tokenIcon}
-                    src={iconFrom}
-                    alt='Token from'
-                    onError={e => {
-                      e.currentTarget.src = unknownTokenIcon
-                    }}
-                  />
-                  {isUnknownFrom && <img className={classes.warningIcon} src={warningIcon} />}
-                </Box>
-                <img className={classes.swapIcon} src={revertIcon} alt='Token from' />
-                <Box className={classes.iconContainer}>
-                  <img
-                    className={classes.tokenIcon}
-                    src={iconTo}
-                    alt='Token to'
-                    onError={e => {
-                      e.currentTarget.src = unknownTokenIcon
-                    }}
-                  />
-                  {isUnknownTo && <img className={classes.warningIcon} src={warningIcon} />}
-                </Box>
-              </Grid>
+        <GradientBorder
+          borderRadius={24}
+          borderWidth={2}
+          borderColor={
+            ESToken
+              ? colors.invariant.esToken
+              : `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`
+          }
+          backgroundColor={colors.invariant.newDark}
+          innerClassName={classes.container}>
+          <img
+            src={ESToken ? cardESTop : cardBackgroundTop}
+            alt=''
+            className={classes.backgroundImage}
+            style={{ top: 0, zIndex: -1 }}
+          />
+          <img
+            src={ESToken ? cardESBottom : cardBackgroundBottom}
+            alt=''
+            className={classes.backgroundImage}
+            style={{ bottom: 0, zIndex: -1 }}
+          />
 
-              <Box className={classes.symbolsContainer}>
-                {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}{' '}
-                {isPromoted && (
-                  <>
-                    <PromotedPoolPopover
-                      apr={convertedApr ?? 0}
-                      apy={convertedApy ?? 0}
-                      points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
-                      <div
-                        className={classes.actionButton}
-                        onPointerEnter={() => {
-                          if (!isMobile) {
-                            setIsPromotedPoolPopoverOpen(true)
-                          }
-                        }}
-                        onPointerLeave={() => {
-                          if (!isMobile) {
-                            setIsPromotedPoolPopoverOpen(false)
-                          }
-                        }}
-                        onClick={() => {
-                          if (isMobile) {
-                            setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
-                          }
-                        }}>
-                        <img
-                          src={airdropRainbowIcon}
-                          alt={'Airdrop'}
-                          style={{ height: '24px', position: 'absolute', right: -24 }}
-                        />
-                      </div>
-                    </PromotedPoolPopover>
-                  </>
-                )}
+          <Grid container className={classes.cardWrapper}>
+            <Grid container className={classes.iconsWrapper}>
+              <Box className={classes.iconContainer}>
+                <img
+                  className={classes.tokenIcon}
+                  src={iconFrom}
+                  alt='Token from'
+                  onError={e => {
+                    e.currentTarget.src = unknownTokenIcon
+                  }}
+                />
+                {isUnknownFrom && <img className={classes.warningIcon} src={warningIcon} />}
               </Box>
-              <Grid container gap='8px'>
-                {apy !== undefined && showAPY && (
-                  <StatsLabel
-                    title='APY'
-                    value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
-                  />
-                )}
-                <StatsLabel title='Fee' value={fee + '%'} />
-                {TVL !== undefined && (
-                  <StatsLabel title='TVL' value={`$${formatNumberWithSuffix(TVL)}`} />
-                )}
-                {volume !== undefined && (
-                  <StatsLabel title='Volume' value={`$${formatNumberWithSuffix(volume)}`} />
-                )}
-              </Grid>
-              <Grid container className={classes.footerWrapper}>
-                <Grid className={classes.back} container item onClick={handleOpenSwap}>
-                  <img className={classes.backIcon} src={backIcon} alt='Back' />
-                  <Typography className={classes.backText}>Swap</Typography>
-                </Grid>
-                <Button
-                  scheme='pink'
-                  height={32}
-                  borderRadius={8}
-                  padding='0 25px'
-                  onClick={handleOpenPosition}>
-                  Deposit
-                </Button>
-              </Grid>
+              <img className={classes.swapIcon} src={revertIcon} alt='Token from' />
+              <Box className={classes.iconContainer}>
+                <img
+                  className={classes.tokenIcon}
+                  src={iconTo}
+                  alt='Token to'
+                  onError={e => {
+                    e.currentTarget.src = unknownTokenIcon
+                  }}
+                />
+                {isUnknownTo && <img className={classes.warningIcon} src={warningIcon} />}
+              </Box>
             </Grid>
-          </GradientBorder>
-        </Grid>
+
+            <Box className={classes.symbolsContainer}>
+              {shortenAddress(symbolFrom ?? '')} - {shortenAddress(symbolTo ?? '')}{' '}
+              {isPromoted && (
+                <>
+                  <PromotedPoolPopover
+                    apr={convertedApr ?? 0}
+                    apy={convertedApy ?? 0}
+                    points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
+                    <div
+                      className={classes.actionButton}
+                      onPointerEnter={() => {
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(true)
+                        }
+                      }}
+                      onPointerLeave={() => {
+                        if (!isMobile) {
+                          setIsPromotedPoolPopoverOpen(false)
+                        }
+                      }}
+                      onClick={() => {
+                        if (isMobile) {
+                          setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
+                        }
+                      }}>
+                      <img
+                        src={airdropRainbowIcon}
+                        alt={'Airdrop'}
+                        style={{ height: '24px', position: 'absolute', right: -24 }}
+                      />
+                    </div>
+                  </PromotedPoolPopover>
+                </>
+              )}
+            </Box>
+            <Grid container gap='8px'>
+              {apy !== undefined && showAPY && (
+                <StatsLabel
+                  title='APY'
+                  value={`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                />
+              )}
+              <StatsLabel title='Fee' value={fee + '%'} />
+              {TVL !== undefined && (
+                <StatsLabel title='TVL' value={`$${formatNumberWithSuffix(TVL)}`} />
+              )}
+              {volume !== undefined && (
+                <StatsLabel title='Volume' value={`$${formatNumberWithSuffix(volume)}`} />
+              )}
+            </Grid>
+            <Grid container className={classes.footerWrapper}>
+              <Grid className={classes.back} container item onClick={handleOpenSwap}>
+                <img className={classes.backIcon} src={backIcon} alt='Back' />
+                <Typography className={classes.backText}>Swap</Typography>
+              </Grid>
+              <Button
+                scheme='pink'
+                height={32}
+                borderRadius={8}
+                padding='0 25px'
+                onClick={handleOpenPosition}>
+                Deposit
+              </Button>
+            </Grid>
+          </Grid>
+        </GradientBorder>
       )}
     </Grid>
   )
