@@ -4,7 +4,6 @@ import { Grid, Input, Typography, useMediaQuery } from '@mui/material'
 import loadingAnimation from '@static/gif/loading.gif'
 import { formatNumberWithoutSuffix, formatNumberWithSuffix, trimDecimalZeros } from '@utils/utils'
 import { SwapToken } from '@store/selectors/solanaWallet'
-import classNames from 'classnames'
 import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import { PublicKey } from '@solana/web3.js'
@@ -82,7 +81,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
   isPairGivingPoints
 }) => {
   const hideBalance = balance === '- -' || !balance || hideBalances
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
 
   const isMd = useMediaQuery(theme.breakpoints.up('md'))
@@ -175,7 +174,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
           <Input
             inputRef={inputRef}
             error={!!error}
-            className={classNames(
+            className={cx(
               classes.amountInput,
               className,
               isPairGivingPoints && classes.pointsPairBackground
@@ -200,7 +199,7 @@ export const ExchangeAmountInput: React.FC<IProps> = ({
 
       <Grid container className={classes.bottom}>
         <Grid
-          className={classNames(classes.balanceContainer, {
+          className={cx(classes.balanceContainer, {
             [classes.showMaxButton]: showMaxButton
           })}>
           <Typography
