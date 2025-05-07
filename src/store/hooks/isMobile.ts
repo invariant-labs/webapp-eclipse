@@ -1,18 +1,12 @@
 import { useState, useEffect } from 'react'
 
-const useIsMobile = (onlyMobileDevices?: boolean) => {
+const useIsMobile = (onlyMobileDevices: boolean) => {
   const [isMobile, setIsMobile] = useState(() => {
     const userAgent = navigator.userAgent.toLowerCase()
+    const isMobileUA = /android|iphone|ipad|ipod|blackberry|windows phone/i.test(userAgent)
+    const isTouchDevice = navigator.maxTouchPoints > 1
 
-    if (onlyMobileDevices) {
-      const isMobileUA = /android|iphone|ipad|ipod|blackberry|windows phone/i.test(userAgent)
-      // const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 1
-      const isDesktopPlatform = /mac|win|linux/.test(navigator.platform.toLowerCase())
-
-      return isMobileUA && !isDesktopPlatform
-    } else {
-      return /android|iphone|ipad|ipod|blackberry|windows phone/i.test(userAgent)
-    }
+    return onlyMobileDevices ? isMobileUA && isTouchDevice : isMobileUA
   })
 
   useEffect(() => {
