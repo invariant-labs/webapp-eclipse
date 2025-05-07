@@ -6,10 +6,10 @@ const useIsMobile = (onlyMobileDevices?: boolean) => {
 
     if (onlyMobileDevices) {
       const isMobileUA = /android|iphone|ipad|ipod|blackberry|windows phone/i.test(userAgent)
-      const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 1
+      // const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 1
       const isDesktopPlatform = /mac|win|linux/.test(navigator.platform.toLowerCase())
 
-      return isMobileUA && isTouchDevice && !isDesktopPlatform
+      return isMobileUA && !isDesktopPlatform
     } else {
       return /android|iphone|ipad|ipod|blackberry|windows phone/i.test(userAgent)
     }
