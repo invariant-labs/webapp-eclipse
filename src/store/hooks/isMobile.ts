@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 
-const useIsMobile = (onlyMobileDevices: boolean) => {
+const useIsMobile = (onlyMobileDevices?: boolean) => {
   const [isMobile, setIsMobile] = useState(() => {
     const userAgent = navigator.userAgent.toLowerCase()
     const isMobileUA = /android|iphone|ipad|ipod|blackberry|windows phone/i.test(userAgent)
