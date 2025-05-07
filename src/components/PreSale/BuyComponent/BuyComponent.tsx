@@ -8,7 +8,6 @@ import React, { useState } from 'react'
 import { formatNumberWithCommas } from '@utils/utils'
 import classNames from 'classnames'
 import { Timer } from '../Timer/Timer'
-// import { Timer } from '../Timer/Timer'
 
 interface IProps {
     isActive?: boolean
@@ -39,9 +38,7 @@ export const BuyComponent: React.FC<IProps> = ({ alertBoxText, raisedAmount, tot
                     </Box>
 
                     <Box className={classes.closeIconContainer} onClick={() => {
-
                         setAlertBoxShow(false)
-
                     }}>
                         <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
                     </Box>
@@ -50,7 +47,6 @@ export const BuyComponent: React.FC<IProps> = ({ alertBoxText, raisedAmount, tot
 
             <Box>
 
-                {/* <Timer hours='00' minutes='00' seconds='00' /> */}
                 <Box className={classes.headingContainer}>
                     <Typography className={classes.titleText}>
                         <Typography className={classes.pinkText}>INVARIANT</Typography>

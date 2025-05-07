@@ -11,12 +11,7 @@ interface SaleStepperProps {
     steps: StepItem[];
 }
 
-export const SaleStepper: React.FC<SaleStepperProps> = ({ steps = [
-    { id: 1, label: "$0.30" },
-    { id: 2, label: "$0.11" },
-    { id: 3, label: "$0.13" },
-    { id: 4, label: "$0.15" }
-] }) => {
+export const SaleStepper: React.FC<SaleStepperProps> = ({ steps }) => {
     const connectorHeight = Math.round(720 / steps.length - 40);
     const { classes } = useStyles({ connectorHeight });
 

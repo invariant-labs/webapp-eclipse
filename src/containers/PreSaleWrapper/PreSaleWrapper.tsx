@@ -12,7 +12,9 @@ export const PreSaleWrapper = () => {
                     <Grid className={classes.stepperContainer}>
                         <SaleStepper steps={[
                             { id: 1, label: "$0.30" },
-                            { id: 2, label: "$0.11" }
+                            { id: 2, label: "$0.11" },
+                            { id: 3, label: "$0.11" },
+                            { id: 4, label: "$0.11" }
 
                         ]} />
                         <Box className={classes.roundComponentContainer}>
