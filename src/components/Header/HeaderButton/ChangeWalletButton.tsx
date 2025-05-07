@@ -10,7 +10,7 @@ import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/leaderboard'
 import { leaderboardSelectors } from '@store/selectors/leaderboard'
 import { Button } from '@common/Button/Button'
-
+import { actions as saleActions } from '@store/reducers/sale'
 export interface IProps {
   name: string
   onConnect: () => void
@@ -69,6 +69,7 @@ export const ChangeWalletButton: React.FC<IProps> = ({
     setIsChangeWallet(false)
 
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
+    dispatch(saleActions.getUserStats())
   }
 
   const handleClose = () => {
