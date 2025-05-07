@@ -2533,6 +2533,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     tx.feePayer = wallet.publicKey
 
     yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
+    yield put(actions.setShouldDisable(true))
 
     tx.partialSign(wrappedEthAccount)
 
@@ -2610,6 +2611,7 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
     }
 
     yield put(actions.getPositionsList())
+    yield put(actions.setShouldDisable(false))
 
     data.onSuccess()
 
@@ -2618,6 +2620,8 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+
+    yield put(actions.setShouldDisable(false))
 
     closeSnackbar(loaderClosePosition)
     yield put(snackbarsActions.remove(loaderClosePosition))
@@ -2665,6 +2669,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     ) {
       return yield* call(handleClosePositionWithETH, action.payload)
     }
+    yield put(actions.setShouldDisable(true))
 
     yield put(
       snackbarsActions.add({
@@ -2680,7 +2685,6 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
     const marketProgram = yield* call(getMarketProgram, networkType, rpc, wallet as IWallet)
-
     const tokensAccounts = yield* select(accounts)
 
     let userTokenX = tokensAccounts[poolForIndex.tokenX.toString()]
@@ -2804,6 +2808,7 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     yield* put(actions.getPositionsList())
 
     action.payload.onSuccess()
+    yield put(actions.setShouldDisable(false))
 
     closeSnackbar(loaderClosePosition)
     yield put(snackbarsActions.remove(loaderClosePosition))
@@ -2812,6 +2817,8 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
     console.log(error)
 
     closeSnackbar(loaderClosePosition)
+    yield put(actions.setShouldDisable(false))
+
     yield put(snackbarsActions.remove(loaderClosePosition))
     closeSnackbar(loaderSigningTx)
     yield put(snackbarsActions.remove(loaderSigningTx))
