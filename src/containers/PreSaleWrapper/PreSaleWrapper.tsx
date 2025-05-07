@@ -17,10 +17,10 @@ export const PreSaleWrapper = () => {
                             { id: 4, label: "$0.15" }
                         ]} />
                         <Box className={classes.roundComponentContainer}>
-                            <RoundComponent amountBought={3} amountLeft={4} currentPrice={43} nextPrice={32} percentageFilled={43} purchasedTokens={54} remainingAllocation={355} roundNumber={1} currency='INV' />
+                            <RoundComponent isActive amountBought={3} amountLeft={4} currentPrice={43} nextPrice={32} percentageFilled={43} purchasedTokens={54} remainingAllocation={355} roundNumber={1} currency='INV' />
                         </Box>
                     </Grid>
-                    <BuyComponent raisedAmount={'55354'} totalAmount='344444' alertBoxText='Test message' />
+                    <BuyComponent isActive raisedAmount={'55354'} totalAmount='344444' alertBoxText='Test message' />
                 </Box>
             </Box>
         </Grid>
