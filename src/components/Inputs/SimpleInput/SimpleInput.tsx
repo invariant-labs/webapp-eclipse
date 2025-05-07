@@ -1,5 +1,4 @@
 import React, { CSSProperties, useRef } from 'react'
-import classNames from 'classnames'
 import useStyles from './style'
 import { Input } from '@mui/material'
 
@@ -24,7 +23,7 @@ export const SimpleInput: React.FC<IProps> = ({
   style,
   onBlur
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -70,7 +69,7 @@ export const SimpleInput: React.FC<IProps> = ({
     <Input
       inputRef={inputRef}
       error={!!error}
-      className={classNames(classes.amountInput, className)}
+      className={cx(classes.amountInput, className)}
       classes={{ input: classes.input }}
       style={style}
       value={value}
