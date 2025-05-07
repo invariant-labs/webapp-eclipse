@@ -4,7 +4,7 @@ import RemoveIcon from '@mui/icons-material/Remove'
 import useStyles from './style'
 import { colors } from '@static/theme'
 import { Button, Grid, Input, Typography } from '@mui/material'
-import { formatNumbers, showPrefix } from '@utils/utils'
+import { formatNumbers } from '@utils/utils'
 import AnimatedNumber from '@common/AnimatedNumber/AnimatedNumber'
 import { FormatNumberThreshold } from '@store/consts/types'
 
@@ -159,14 +159,11 @@ export const RangeInput: React.FC<IRangeInput> = ({
           }}>
           {percentDiff >= 0 ? '+' : ''}
           {percentDiff ? (
-            <>
-              <AnimatedNumber
-                start={animatedPercentDiff}
-                finish={percentDiff}
-                format={e => formatNumbers(percentageThresholds)(e.toString())}
-              />
-              {showPrefix(percentDiff)}
-            </>
+            <AnimatedNumber
+              value={percentDiff}
+              format={e => formatNumbers(percentageThresholds)(e.toString())}
+              duration={300}
+            />
           ) : (
             0
           )}

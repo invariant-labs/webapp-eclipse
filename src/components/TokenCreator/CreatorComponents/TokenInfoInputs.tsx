@@ -6,7 +6,6 @@ import InfoIcon from '@mui/icons-material/Info'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { BN } from '@coral-xyz/anchor'
-import classNames from 'classnames'
 import { getCreateTokenLamports, NetworkType } from '@store/consts/static'
 import { printBN, trimZeros } from '@utils/utils'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
@@ -33,7 +32,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
   currentNetwork,
   onConnectWallet
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const {
     control,
     watch,
@@ -157,7 +156,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
             type='submit'
             content={buttonText}
             disabled={!isValid}
-            className={classNames(
+            className={cx(
               classes.button,
               isValid && progress === 'none' ? classes.buttonActive : null
             )}
