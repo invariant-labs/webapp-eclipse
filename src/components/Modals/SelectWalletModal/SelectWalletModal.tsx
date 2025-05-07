@@ -35,10 +35,10 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
   onDisconnect
 }) => {
   const detectedWallet = useMemo(() => {
-    const nightly = (window as any).nightly
-    const backpack = (window as any).backpack
-    const okx = (window as any).okx
-    const salmon = (window as any).salmon
+    const nightly = (window as any)?.nightly
+    const backpack = (window as any)?.backpack
+    const okx = (window as any)?.okx
+    const salmon = (window as any)?.salmon
 
     if (nightly && !backpack && !okx && !salmon) {
       return WalletType.NIGHTLY
@@ -89,6 +89,13 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
         }}
         onClose={handleClose}>
         <Box className={classes.root}>
+          <Box>
+            detected wallet: {detectedWallet ? walletNames[detectedWallet] : 'null'}
+            <br />
+            isMobile: {isMobile ? 'true' : 'false'}
+            <br />
+          </Box>
+
           <Box
             display='flex'
             justifyContent='space-between'
