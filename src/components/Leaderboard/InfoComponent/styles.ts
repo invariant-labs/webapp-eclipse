@@ -6,7 +6,7 @@ export const useStyles = makeStyles()(() => ({
     width: '100vw',
     marginTop: '72px',
     minHeight: '264px',
-    padding: '25px max(15%, 20px)',
+    padding: '25px max(9%, 20px)',
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
@@ -17,6 +17,10 @@ export const useStyles = makeStyles()(() => ({
 
     [theme.breakpoints.down('md')]: {
       textAlign: 'center'
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      padding: '25px 8px'
     },
     '&>div': {
       maxWidth: 1072,
