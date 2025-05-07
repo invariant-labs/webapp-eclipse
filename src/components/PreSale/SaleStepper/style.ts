@@ -1,7 +1,7 @@
 import { makeStyles } from 'tss-react/mui'
 import { colors } from '@static/theme'
 
-const useStyles = makeStyles()(theme => ({
+const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorHeight }) => ({
   container: {
     display: 'flex',
     flexDirection: 'column',
@@ -40,7 +40,7 @@ const useStyles = makeStyles()(theme => ({
     left: '18px',
     top: '42px',
     width: '5px',
-    height: '120px',
+    height: `${connectorHeight}px`,
     background: colors.invariant.light,
     zIndex: 1
   }

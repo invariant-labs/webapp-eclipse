@@ -17,7 +17,8 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({ steps = [
     { id: 3, label: "$0.13" },
     { id: 4, label: "$0.15" }
 ] }) => {
-    const { classes } = useStyles();
+    const connectorHeight = Math.round(720 / steps.length - 40);
+    const { classes } = useStyles({ connectorHeight });
 
     return (
         <Box className={classes.container}>

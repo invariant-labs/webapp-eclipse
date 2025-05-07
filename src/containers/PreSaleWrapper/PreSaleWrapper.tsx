@@ -12,9 +12,8 @@ export const PreSaleWrapper = () => {
                     <Grid className={classes.stepperContainer}>
                         <SaleStepper steps={[
                             { id: 1, label: "$0.30" },
-                            { id: 2, label: "$0.11" },
-                            { id: 3, label: "$0.13" },
-                            { id: 4, label: "$0.15" }
+                            { id: 2, label: "$0.11" }
+
                         ]} />
                         <Box className={classes.roundComponentContainer}>
                             <RoundComponent isActive amountBought={3} amountLeft={4} currentPrice={43} nextPrice={32} percentageFilled={43} purchasedTokens={54} remainingAllocation={355} roundNumber={1} currency='INV' />
