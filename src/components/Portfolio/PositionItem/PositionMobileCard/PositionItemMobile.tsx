@@ -1,6 +1,5 @@
 import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
-import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -55,7 +54,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   handleClosePosition,
   handleClaimFee
 }) => {
-  const { classes } = useMobileStyles()
+  const { classes, cx } = useMobileStyles()
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
@@ -155,8 +154,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             points={new BN(pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}>
             <div
               className={classes.actionButton}
-              onClick={event => {
-                event.stopPropagation()
+              onClick={() => {
                 setIsPromotedPoolPopoverOpen(!isPromotedPoolPopoverOpen)
                 setAllowPropagation(false)
               }}>
@@ -172,8 +170,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         <InactivePoolsPopover isActive={isActive} isPromoted={isPromoted}>
           <div
             className={classes.actionButton}
-            onClick={event => {
-              event.stopPropagation()
+            onClick={() => {
               const newState = !isPromotedPoolInactive
               setIsPromotedPoolInactive(newState)
               handlePopoverState(newState)
@@ -260,18 +257,15 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
               )
             }
             placement='top'
-            increasePadding>
+            increasePadding
+            fullSpan>
             <Grid
               container
-              className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}
+              className={cx(classes.fee, isActive ? classes.activeFee : undefined)}
               justifyContent='center'
-              alignItems='center'
-              onClick={e => e.stopPropagation()}>
+              alignItems='center'>
               <Typography
-                className={classNames(
-                  classes.infoText,
-                  isActive ? classes.activeInfoText : undefined
-                )}>
+                className={cx(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
                 {fee}% fee
               </Typography>
             </Grid>
@@ -321,18 +315,13 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
           ) : (
             <div>
               {tokenValueInUsd.priceWarning ? (
-                <TooltipHover title='The price might not be shown correctly'>
+                <TooltipHover title='The price might not be shown correctly' fullSpan>
                   <Grid
                     container
                     className={classes.value}
                     alignItems='center'
-                    justifyContent='center'
-                    onClick={event => event.stopPropagation()}>
-                    <Box
-                      gap={'8px'}
-                      display={'flex'}
-                      alignItems={'center'}
-                      onClick={event => event.stopPropagation()}>
+                    justifyContent='center'>
+                    <Box gap={'8px'} display={'flex'} alignItems={'center'}>
                       <Typography className={classes.infoText}>Value</Typography>
 
                       <Typography className={classes.greenText}>
@@ -349,11 +338,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
                   className={classes.value}
                   alignItems='center'
                   justifyContent='center'>
-                  <Box
-                    gap={'8px'}
-                    display={'flex'}
-                    alignItems={'center'}
-                    onClick={event => event.stopPropagation()}>
+                  <Box gap={'8px'} display={'flex'} alignItems={'center'}>
                     <Typography className={classes.infoText}>Value</Typography>
 
                     <Typography className={classes.greenText}>

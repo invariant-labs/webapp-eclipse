@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import useStyles from './style'
 import { Box, Button, Divider, Grid, Input, Tooltip, Typography } from '@mui/material'
-import classNames from 'classnames'
 import { goldenInfoIcon, infoIcon } from '@static/icons'
 
 interface Props {
@@ -33,7 +32,7 @@ const DepositOption: React.FC<Props> = ({
   lowerValueTreshHold,
   divider
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const inputRef = useRef<HTMLInputElement>(null)
   const [temp, setTemp] = useState<string>(valueIndex === -1 ? value : '')
   const allowOnlyDigitsAndTrimUnnecessaryZeros: React.ChangeEventHandler<
@@ -99,7 +98,7 @@ const DepositOption: React.FC<Props> = ({
       <Grid container className={classes.defaultOptionsContainer}>
         {options.map((tier, index) => (
           <Button
-            className={classNames(
+            className={cx(
               classes.slippagePercentageButton,
               valueIndex === index && classes.slippagePercentageButtonActive
             )}
@@ -125,7 +124,7 @@ const DepositOption: React.FC<Props> = ({
                     <img
                       src={infoIcon}
                       alt=''
-                      className={classNames(classes.grayscaleIcon, classes.labelInfoItem)}
+                      className={cx(classes.grayscaleIcon, classes.labelInfoItem)}
                     />
                   ) : null}
                 </Typography>
@@ -137,10 +136,7 @@ const DepositOption: React.FC<Props> = ({
       <Input
         disableUnderline
         placeholder='0.00'
-        className={classNames(
-          classes.detailsInfoForm,
-          valueIndex === -1 && classes.customSlippageActive
-        )}
+        className={cx(classes.detailsInfoForm, valueIndex === -1 && classes.customSlippageActive)}
         type={'text'}
         value={temp}
         onChange={e => {
@@ -168,7 +164,7 @@ const DepositOption: React.FC<Props> = ({
         }}
       />
 
-      <Typography className={classNames(classes.info, classes.detailsInfoTextContainer)}>
+      <Typography className={cx(classes.info, classes.detailsInfoTextContainer)}>
         {description}
       </Typography>
     </>

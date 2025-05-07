@@ -328,7 +328,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [midPrice, setMidPrice] = useState<InitMidPrice>({
     index: 0,
     x: 1,
-    sqrtPrice: 0
+    sqrtPrice: new BN(0)
   })
 
   const currentPoolAddress = useMemo(() => {
@@ -1085,7 +1085,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
       isLoadingStats={isLoadingStats}
-      autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
+      autoSwapPoolData={!!autoSwapPoolData ? (autoSwapPoolData ?? null) : null}
       autoSwapTickmap={autoSwapTickMap}
       autoSwapTicks={autoSwapTicks}
       initialMaxPriceImpact={initialMaxPriceImpact}
