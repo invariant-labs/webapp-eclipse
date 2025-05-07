@@ -71,7 +71,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       alignItems: 'center',
       color: colors.invariant.text,
-      gap: '10px'
+      gap: '8px'
     },
     inputsWrapper: {
       display: 'flex',

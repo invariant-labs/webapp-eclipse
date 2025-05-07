@@ -83,6 +83,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontWeight: 400
   },
   icon: {
+    flexShrink: 0,
+    height: 5,
+    width: 10,
+    paddingInline: 7,
     [theme.breakpoints.down('sm')]: {
       marginLeft: -4
     }
@@ -138,11 +142,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     }
   },
   clipboardIcon: {
-    width: 18,
+    shrink: 0,
+    width: 20,
     cursor: 'pointer',
     color: colors.invariant.lightHover,
     '&:hover': {
-      color: colors.invariant.text,
+      filter: 'brightness(1.2)',
 
       '@media (hover: none)': {
         color: colors.invariant.lightHover

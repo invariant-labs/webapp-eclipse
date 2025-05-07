@@ -34,7 +34,7 @@ const useStyles = makeStyles()((theme: Theme) => ({
     marginBottom: theme.spacing(1)
   },
   placeholderIcon: {
-    fontSize: 48,
+    height: 37,
     color: colors.invariant.lightGrey
   },
   imageButton: {
@@ -90,7 +90,8 @@ const useStyles = makeStyles()((theme: Theme) => ({
     display: 'none'
   },
   uploadIcon: {
-    fontSize: 30,
+    padding: 5,
+    height: 20,
     color: lighten(colors.invariant.light, 0.5)
   },
   uploadButton: {

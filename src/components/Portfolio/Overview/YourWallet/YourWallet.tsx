@@ -13,13 +13,12 @@ import {
 } from '@mui/material'
 import { WalletToken } from '@store/types/userOverview'
 import { DEFAULT_FEE_TIER, STRATEGIES } from '@store/consts/userStrategies'
-import { unknownTokenIcon, warning2Icon, warningIcon } from '@static/icons'
+import { copyIcon, unknownTokenIcon, warning2Icon, warningIcon } from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { addressToTicker, formatNumberWithoutSuffix } from '@utils/utils'
 import { useStyles } from './styles'
 import { MobileCard } from './MobileCard'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { SkeletonRow } from './Skeletons/SekeletonRow'
@@ -154,13 +153,14 @@ export const YourWallet: React.FC<YourWalletProps> = ({
                                 : shortenAddress(pool.symbol, 2)}
                             </Typography>
                             <TooltipHover title='Copy token address'>
-                              <FileCopyOutlinedIcon
+                              <img
+                                src={copyIcon}
                                 onClick={() => {
                                   navigator.clipboard.writeText(poolAddress)
 
                                   handleSnackbar('Token address copied.', 'success')
                                 }}
-                                classes={{ root: classes.clipboardIcon }}
+                                className={classes.clipboardIcon}
                               />
                             </TooltipHover>
                           </Box>

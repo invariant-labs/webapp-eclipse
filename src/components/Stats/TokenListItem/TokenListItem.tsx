@@ -1,16 +1,13 @@
 import React, { useMemo } from 'react'
 import { colors, theme } from '@static/theme'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { ITEMS_PER_PAGE, NetworkType, SortTypeTokenList } from '@store/consts/static'
-import { newTabBtnIcon, unknownTokenIcon, warningIcon } from '@static/icons'
+import { chevronDown, copyIcon, newTabBtnIcon, unknownTokenIcon, warningIcon } from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
 interface IProps {
   displayType: string
@@ -113,10 +110,7 @@ const TokenListItem: React.FC<IProps> = ({
               </Typography>
             )}
             <TooltipHover title='Copy token address'>
-              <FileCopyOutlinedIcon
-                onClick={copyToClipboard}
-                classes={{ root: classes.clipboardIcon }}
-              />
+              <img src={copyIcon} onClick={copyToClipboard} className={classes.clipboardIcon} />
             </TooltipHover>
           </Grid>
           <Typography>{`~$${formatNumberWithSuffix(price)}`}</Typography>
@@ -172,9 +166,13 @@ const TokenListItem: React.FC<IProps> = ({
             }}>
             Name
             {sortType === SortTypeTokenList.NAME_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
+              <img
+                src={chevronDown}
+                style={{ transform: 'rotate(180deg)' }}
+                className={classes.icon}
+              />
             ) : sortType === SortTypeTokenList.NAME_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
+              <img src={chevronDown} className={classes.icon} />
             ) : null}
           </Typography>
           <Typography
@@ -188,9 +186,13 @@ const TokenListItem: React.FC<IProps> = ({
             }}>
             Price
             {sortType === SortTypeTokenList.PRICE_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
+              <img
+                src={chevronDown}
+                style={{ transform: 'rotate(180deg)' }}
+                className={classes.icon}
+              />
             ) : sortType === SortTypeTokenList.PRICE_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
+              <img src={chevronDown} className={classes.icon} />
             ) : null}
           </Typography>
           {/* {!hideName && (
@@ -222,9 +224,13 @@ const TokenListItem: React.FC<IProps> = ({
             }}>
             Volume 24H
             {sortType === SortTypeTokenList.VOLUME_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
+              <img
+                src={chevronDown}
+                style={{ transform: 'rotate(180deg)' }}
+                className={classes.icon}
+              />
             ) : sortType === SortTypeTokenList.VOLUME_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
+              <img src={chevronDown} className={classes.icon} />
             ) : null}
           </Typography>
           <Typography
@@ -238,9 +244,13 @@ const TokenListItem: React.FC<IProps> = ({
             }}>
             TVL
             {sortType === SortTypeTokenList.TVL_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
+              <img
+                src={chevronDown}
+                style={{ transform: 'rotate(180deg)' }}
+                className={classes.icon}
+              />
             ) : sortType === SortTypeTokenList.TVL_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
+              <img src={chevronDown} className={classes.icon} />
             ) : null}
           </Typography>
           {!isSm && <Typography align='right'>Action</Typography>}

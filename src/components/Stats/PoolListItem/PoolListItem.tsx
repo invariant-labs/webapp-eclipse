@@ -2,11 +2,12 @@ import React, { useMemo, useRef, useState } from 'react'
 import { colors, theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
-import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
+
 import { useNavigate } from 'react-router-dom'
 import {
   airdropRainbowIcon,
+  chevronDown,
+  copyIcon,
   horizontalSwapIcon,
   lockIcon,
   newTabBtnIcon,
@@ -26,7 +27,6 @@ import { formatNumberWithSuffix } from '@utils/utils'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
-import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
@@ -259,10 +259,7 @@ const PoolListItem: React.FC<IProps> = ({
                 </Typography>
               )}
               <TooltipHover title='Copy pool address'>
-                <FileCopyOutlinedIcon
-                  onClick={copyToClipboard}
-                  classes={{ root: classes.clipboardIcon }}
-                />
+                <img src={copyIcon} onClick={copyToClipboard} className={classes.clipboardIcon} />
               </TooltipHover>
             </Grid>
           </Grid>
@@ -383,9 +380,13 @@ const PoolListItem: React.FC<IProps> = ({
             }}>
             Name
             {sortType === SortTypePoolList.NAME_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
+              <img
+                src={chevronDown}
+                style={{ transform: 'rotate(180deg)' }}
+                className={classes.icon}
+              />
             ) : sortType === SortTypePoolList.NAME_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
+              <img src={chevronDown} className={classes.icon} />
             ) : null}
           </Typography>
           {!isSmd && showAPY ? (
@@ -401,9 +402,13 @@ const PoolListItem: React.FC<IProps> = ({
               }}>
               APR <span className={classes.apy}>APY</span>
               {sortType === SortTypePoolList.APY_ASC ? (
-                <ArrowDropUpIcon className={classes.icon} />
+                <img
+                  src={chevronDown}
+                  style={{ transform: 'rotate(180deg)' }}
+                  className={classes.icon}
+                />
               ) : sortType === SortTypePoolList.APY_DESC ? (
-                <ArrowDropDownIcon className={classes.icon} />
+                <img src={chevronDown} className={classes.icon} />
               ) : null}
             </Typography>
           ) : null}
@@ -418,9 +423,13 @@ const PoolListItem: React.FC<IProps> = ({
             }}>
             Fee
             {sortType === SortTypePoolList.FEE_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
+              <img
+                src={chevronDown}
+                style={{ transform: 'rotate(180deg)' }}
+                className={classes.icon}
+              />
             ) : sortType === SortTypePoolList.FEE_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
+              <img src={chevronDown} className={classes.icon} />
             ) : null}
           </Typography>
           <Typography
@@ -434,9 +443,13 @@ const PoolListItem: React.FC<IProps> = ({
             }}>
             Volume 24H
             {sortType === SortTypePoolList.VOLUME_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
+              <img
+                src={chevronDown}
+                style={{ transform: 'rotate(180deg)' }}
+                className={classes.icon}
+              />
             ) : sortType === SortTypePoolList.VOLUME_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
+              <img src={chevronDown} className={classes.icon} />
             ) : null}
           </Typography>
           <Typography
@@ -450,9 +463,13 @@ const PoolListItem: React.FC<IProps> = ({
             }}>
             TVL
             {sortType === SortTypePoolList.TVL_ASC ? (
-              <ArrowDropUpIcon className={classes.icon} />
+              <img
+                src={chevronDown}
+                style={{ transform: 'rotate(180deg)' }}
+                className={classes.icon}
+              />
             ) : sortType === SortTypePoolList.TVL_DESC ? (
-              <ArrowDropDownIcon className={classes.icon} />
+              <img src={chevronDown} className={classes.icon} />
             ) : null}
           </Typography>
           {!isMd && <Typography align='right'>Action</Typography>}

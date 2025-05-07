@@ -1,7 +1,7 @@
-import { Box, IconButton, Input, Tooltip, Typography } from '@mui/material'
+import { Box, Input, Tooltip, Typography } from '@mui/material'
 import useStyles from './styles'
 import React, { useRef, useState } from 'react'
-import InfoIcon from '@mui/icons-material/Info'
+import { infoIcon } from '@static/icons'
 
 interface INumericInput {
   label: string
@@ -106,9 +106,7 @@ export const NumericInput: React.FC<INumericInput> = ({
         <Box className={classes.errorMessageContainer}>
           {error && fullErrorMessage && (
             <Tooltip title={fullErrorMessage} arrow>
-              <IconButton size='small'>
-                <InfoIcon className={classes.infoIcon} />
-              </IconButton>
+              <img src={infoIcon} className={classes.infoIcon} />
             </Tooltip>
           )}
           <Typography className={`${classes.errorMessage}`}>{errorMessage}</Typography>

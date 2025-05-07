@@ -74,20 +74,23 @@ const useStyles = makeStyles()(() => ({
     }
   },
   infoIcon: {
+    height: 15,
     color: colors.invariant.Error,
-    fontSize: '18px'
+    filter:
+      'brightness(0) saturate(100%) invert(38%) sepia(90%) saturate(2350%) hue-rotate(350deg) brightness(92%) contrast(100%)',
+    cursor: 'pointer'
   },
   errorMessageContainer: {
     minHeight: '20px',
     display: 'flex',
+    gap: 4,
     width: '100%',
-    alignItems: 'flex-start',
+    alignItems: 'center',
     marginTop: '54px'
   },
   errorMessage: {
     color: colors.invariant.Error,
     fontSize: 13,
-    marginTop: 4,
     width: '100%'
   },
   errorIndicator: {

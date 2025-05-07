@@ -106,8 +106,16 @@ import snackbarSwapIcon from './svg/snackbarSwap.svg'
 import circleDolarIcon from './svg/circleDolar.svg'
 import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
+import ImageIcon from '@static/svg/ImageIcon.svg'
+import UploadIcon from '@static/svg/UploadIcon.svg'
+import chevronDown from '@static/svg/chevronDown.svg'
+import copyIcon from '@static/svg/copyIcon.svg'
 
 export {
+  copyIcon,
+  chevronDown,
+  UploadIcon,
+  ImageIcon,
   logoTitleIcon,
   logoShortIcon,
   arrowIcon,

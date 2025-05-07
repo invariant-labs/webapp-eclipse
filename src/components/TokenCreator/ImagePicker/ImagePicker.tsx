@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useState } from 'react'
 import { Controller } from 'react-hook-form'
-import { CloudUpload as UploadIcon, Image as ImageIcon } from '@mui/icons-material'
 import useStyles from './styles'
 import { Box, Button, Typography } from '@mui/material'
 import { defaultImages } from '@store/consts/static'
+import { ImageIcon, UploadIcon } from '@static/icons'
 
 interface ImagePickerProps {
   control: any
@@ -64,7 +64,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
               {customImage ? (
                 <img src={customImage} alt='Custom' className={classes.uploadedImage} />
               ) : (
-                <ImageIcon className={classes.placeholderIcon} />
+                <img src={ImageIcon} className={classes.placeholderIcon} />
               )}
               {customImage ? null : (
                 <input
@@ -77,7 +77,7 @@ export const ImagePicker: React.FC<ImagePickerProps> = ({ control }) => {
             </Button>
           </Box>
           <Button component='label' className={classes.uploadButton} disableRipple>
-            <UploadIcon className={classes.uploadIcon} />
+            <img src={UploadIcon} className={classes.uploadIcon} />
             <input
               accept='image/*'
               className={classes.hiddenInput}

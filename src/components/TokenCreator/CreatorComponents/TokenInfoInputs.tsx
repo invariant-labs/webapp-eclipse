@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from 'react'
 import { UseFormReturn } from 'react-hook-form'
 import { ControlledTextInput, ControlledNumericInput } from './ControlledInputs'
 import { Box, Typography } from '@mui/material'
-import InfoIcon from '@mui/icons-material/Info'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { BN } from '@coral-xyz/anchor'
@@ -12,6 +11,7 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 import useStyles from './styles'
 import { validateSupply } from '@utils/tokenCreatorUtils'
 import { FormData } from '@store/consts/tokenCreator/types'
+import { infoIcon } from '@static/icons'
 
 interface TokenInfoInputsProps {
   formMethods: UseFormReturn<FormData>
@@ -129,7 +129,7 @@ export const TokenInfoInputs: React.FC<TokenInfoInputsProps> = ({
         </Box>
       </Box>
       <Box className={classes.tokenCost}>
-        <InfoIcon />
+        <img src={infoIcon} height={16} />
         <Typography>
           Token cost: ~{trimZeros(printBN(getCreateTokenLamports(currentNetwork), 9))} ETH
         </Typography>
