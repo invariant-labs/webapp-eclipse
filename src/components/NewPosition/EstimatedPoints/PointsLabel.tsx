@@ -31,7 +31,6 @@ export const PointsLabel: React.FC<IPointsLabel> = ({
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
     return value.lt(minimalValue)
   }
-
   const pointsPerDayFormat: string | number = isLessThanMinimal(estimatedPointsPerDay)
     ? isConnected && !estimatedPointsPerDay.isZero()
       ? '<0.01'

@@ -916,20 +916,21 @@ export const NewPosition: React.FC<INewPosition> = ({
                   estimatedScalePoints={estimatedScalePoints}
                   isConnected={walletStatus === Status.Init}
                   showWarning={
-                    tokenADeposit === '' ||
-                    tokenBDeposit === '' ||
-                    +tokenADeposit === 0 ||
-                    +tokenBDeposit === 0
+                    (isAutoswapOn &&
+                      isDepositEmptyOrZero(tokenADeposit) &&
+                      isDepositEmptyOrZero(tokenBDeposit)) ||
+                    (!isAutoswapOn &&
+                      (isDepositEmptyOrZero(tokenADeposit) ||
+                        isDepositEmptyOrZero(tokenBDeposit))) ||
+                    (!tokenACheckbox && isDepositEmptyOrZero(tokenBDeposit)) ||
+                    (!tokenBCheckbox && isDepositEmptyOrZero(tokenADeposit)) ||
+                    (!tokenACheckbox && !tokenBCheckbox)
                   }
                   singleDepositWarning={
-                    (tokenAIndex !== null &&
-                      tokenBIndex !== null &&
-                      !isWaitingForNewPool &&
-                      blockedToken === PositionTokenBlock.A) ||
-                    (tokenAIndex !== null &&
-                      tokenBIndex !== null &&
-                      !isWaitingForNewPool &&
-                      blockedToken === PositionTokenBlock.B)
+                    tokenAIndex !== null &&
+                    tokenBIndex !== null &&
+                    !isWaitingForNewPool &&
+                    !!blockedToken
                   }
                   positionOpeningMethod={positionOpeningMethod}
                 />

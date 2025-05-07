@@ -6,7 +6,6 @@ import {
   printBN,
   removeAdditionalDecimals
 } from '@utils/utils'
-import classNames from 'classnames'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 
 type Props = {
@@ -28,7 +27,7 @@ export const PositionStats = ({
   isLoading,
   isPromotedLoading
 }: Props) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   return (
     <Box className={classes.container}>
@@ -61,7 +60,7 @@ export const PositionStats = ({
         </Box>
       </Box>
       <Box className={classes.statWrapper}>
-        <Box className={classNames(classes.statContainer, classes.statCOntainerRainbow)}>
+        <Box className={cx(classes.statContainer, classes.statCOntainerRainbow)}>
           {isLoading || isPromotedLoading ? (
             <Skeleton height={20} width={140} variant='rounded' />
           ) : arePointsDistributed ? (
@@ -83,9 +82,9 @@ export const PositionStats = ({
             <Typography className={classes.statName}>No points distribution</Typography>
           )}
         </Box>
-        <Box className={classNames(classes.statContainer, classes.statContainerHiglight)}>
+        <Box className={cx(classes.statContainer, classes.statContainerHiglight)}>
           <Typography className={classes.statName}>Pool APR:</Typography>
-          <Typography className={classNames(classes.statValue, classes.statValueHiglight)}>
+          <Typography className={cx(classes.statValue, classes.statValueHiglight)}>
             {poolApr.toFixed(2)}%
           </Typography>
         </Box>
