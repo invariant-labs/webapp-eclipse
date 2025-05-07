@@ -224,10 +224,6 @@ const PoolListItem: React.FC<IProps> = ({
               itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
                 ? `1px solid ${colors.invariant.light}`
                 : `2px solid ${colors.invariant.light}`
-          }}
-          container
-          classes={{
-            container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
           }}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
