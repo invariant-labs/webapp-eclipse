@@ -13,6 +13,7 @@ import { useCountdown } from '../Timer/useCountdown'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
+import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 
 interface IProps {
   isActive?: boolean
@@ -28,6 +29,8 @@ interface IProps {
   isBalanceLoading: boolean
   isLoading: boolean
   onBuyClick: (amount: BN) => void
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
 }
 
 enum PaymentMethod {
@@ -48,10 +51,11 @@ export const BuyComponent: React.FC<IProps> = ({
   isBalanceLoading,
   isLoading,
   progress,
-  onBuyClick
+  onBuyClick,
+  onConnectWallet,
+  onDisconnectWallet
 }) => {
   const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
-
   const { hours, minutes, seconds } = useCountdown({
     targetDate
   })
@@ -78,7 +82,7 @@ export const BuyComponent: React.FC<IProps> = ({
   }, [value, currentAmount, targetAmount])
 
   const getButtonMessage = useCallback(() => {
-    if (isBalanceLoading || isLoading) {
+    if (isLoading) {
       return 'Loading'
     }
 
@@ -95,7 +99,7 @@ export const BuyComponent: React.FC<IProps> = ({
     }
 
     return 'Buy $INV'
-  }, [tokenIndex, tokens, isBalanceLoading, isLoading, value])
+  }, [tokenIndex, tokens, isLoading, value])
   return (
     <Box className={classes.container}>
       {alertBoxText && alertBoxShow && isActive && (
@@ -217,18 +221,28 @@ export const BuyComponent: React.FC<IProps> = ({
           </Typography>
         </Box>
       </Box>
-
-      <AnimatedButton
-        className={classes.greenButton}
-        onClick={() => {
-          if (progress === 'none' && tokenIndex !== null) {
-            onBuyClick(convertBalanceToBN(value, mintDecimals))
-          }
-        }}
-        disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
-        content={getButtonMessage()}
-        progress={progress}
-      />
+      {walletStatus !== Status.Initialized ? (
+        <ChangeWalletButton
+          width={'100%'}
+          height={48}
+          name='Connect wallet'
+          onConnect={onConnectWallet}
+          connected={false}
+          onDisconnect={onDisconnectWallet}
+        />
+      ) : (
+        <AnimatedButton
+          className={classes.greenButton}
+          onClick={() => {
+            if (progress === 'none' && tokenIndex !== null) {
+              onBuyClick(convertBalanceToBN(value, mintDecimals))
+            }
+          }}
+          disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
+          content={getButtonMessage()}
+          progress={progress}
+        />
+      )}
     </Box>
   )
 }

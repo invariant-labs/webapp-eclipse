@@ -6,6 +6,7 @@ import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponen
 import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/sale'
+import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
@@ -85,13 +86,10 @@ export const PreSaleWrapper = () => {
             deposited: { amount: new BN(0), decimals: MINT_DECIMALS },
             received: { amount: new BN(0), decimals: MINT_DECIMALS }
           },
-    [userStats, isLoadingUserStats]
+    [userStats]
   )
 
-  const round = useMemo(
-    () => getRound(currentAmount, targetAmount),
-    [saleStats, isLoadingSaleStats, isLoadingUserStats]
-  )
+  const round = useMemo(() => getRound(currentAmount, targetAmount), [saleStats])
 
   const { remainingAmount, remainingAmountDecimals } = useMemo(
     () =>
@@ -101,15 +99,15 @@ export const PreSaleWrapper = () => {
             remainingAmountDecimals: deposited.decimals
           }
         : { remainingAmount: new BN(0), remainingAmountDecimals: 0 },
-    [deposited, whitelistWalletLimit, isLoadingSaleStats, isLoadingUserStats]
+    [deposited, whitelistWalletLimit]
   )
 
   const filledPercentage = useMemo(
     () =>
       !whitelistWalletLimit.isZero()
-        ? new BN(deposited.amount).muln(100).div(whitelistWalletLimit).toNumber()
+        ? new BN(currentAmount).muln(100).div(whitelistWalletLimit).toNumber()
         : 0,
-    [deposited, whitelistWalletLimit, isLoadingSaleStats, isLoadingUserStats]
+    [currentAmount, whitelistWalletLimit]
   )
 
   const amountTillPriceIncrease = useMemo(
@@ -117,14 +115,14 @@ export const PreSaleWrapper = () => {
       !targetAmount.isZero()
         ? getAmountTillNextPriceIncrease(currentAmount, targetAmount)
         : new BN(0),
-    [currentAmount, targetAmount, isLoadingSaleStats]
+    [currentAmount, targetAmount]
   )
 
   const { prices: tierPrices, decimals: tierDecimals } = useMemo(() => getTierPrices(), [])
 
   const currentPrice = useMemo(
     () => getPrice(currentAmount, targetAmount) ?? new BN(0),
-    [currentAmount, targetAmount, isLoadingSaleStats]
+    [currentAmount, targetAmount]
   )
   const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
 
@@ -180,6 +178,12 @@ export const PreSaleWrapper = () => {
             walletStatus={walletStatus}
             isBalanceLoading={isBalanceLoading}
             tokenIndex={tokenIndex}
+            onConnectWallet={() => {
+              dispatch(walletActions.connect(false))
+            }}
+            onDisconnectWallet={() => {
+              dispatch(walletActions.disconnect())
+            }}
             onBuyClick={amount => {
               if (tokenIndex === null) {
                 return
