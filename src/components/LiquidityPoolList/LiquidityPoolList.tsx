@@ -37,6 +37,7 @@ export interface PoolListInterface {
   copyAddressHandler: (message: string, variant: VariantType) => void
   isLoading: boolean
   showAPY: boolean
+  filteredTokens: ISearchToken[]
 }
 
 import { Keypair } from '@solana/web3.js'
@@ -45,6 +46,7 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
 import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 
 const ITEMS_PER_PAGE = 10
 
@@ -84,7 +86,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   initialLength,
   copyAddressHandler,
   isLoading,
-  showAPY
+  showAPY,
+  filteredTokens
 }) => {
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
@@ -92,6 +95,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
+  const filteredTokenX = filteredTokens[0]?.address ?? ''
+  const filteredTokenY = filteredTokens[1]?.address ?? ''
   const { classes, cx } = useStyles()
   const sortedData = useMemo(() => {
     if (isLoading) {
@@ -227,7 +232,9 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             buttonName='Create Pool'
-            onAction={() => navigate(ROUTES.NEW_POSITION)}
+            onAction={() =>
+              navigate(ROUTES.getNewPositionRoute(filteredTokenX, filteredTokenY, '0_01'))
+            }
             withButton={true}
             withImg={initialDataLength > 3}
           />
