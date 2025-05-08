@@ -11,19 +11,26 @@ import { getWallet } from './wallet'
 import { actions, IDepositSale, ISaleStats, IUserStats } from '@store/reducers/sale'
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getSaleProgram } from '@utils/web3/programs/sale'
-import { getProof } from '@invariant-labs/sale-sdk'
 import { getSolanaConnection } from '@utils/web3/connection'
 import { createLoaderKey, ensureError } from '@utils/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { SIGNING_SNACKBAR_CONFIG, TIMEOUT_ERROR_MESSAGE } from '@store/consts/static'
+import {
+  DEFAULT_PUBLICKEY,
+  SIGNING_SNACKBAR_CONFIG,
+  TIMEOUT_ERROR_MESSAGE
+} from '@store/consts/static'
 import { closeSnackbar } from 'notistack'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
+import { getProof } from '@invariant-labs/sale-sdk'
 
 export function* fetchUserStats() {
   try {
     const networkType = yield* select(network)
     const rpc = yield* select(rpcAddress)
     const wallet = yield* call(getWallet)
+    if (!wallet || !wallet.publicKey || wallet.publicKey.equals(DEFAULT_PUBLICKEY)) {
+      return
+    }
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
 
     const userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
@@ -91,7 +98,12 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
     const { amount, mint } = action.payload
     const proofOfInclusion = getProof(wallet.publicKey.toString())
-    const ix = yield* call(sale.depositIx, amount, mint, proofOfInclusion)
+
+    const ix = yield* call(
+      [sale, sale.depositIx],
+      { amount, mint, proofOfInclusion },
+      wallet.publicKey
+    )
     const tx = new Transaction().add(ix)
     const { blockhash, lastValidBlockHeight } = yield* call([
       connection,
@@ -137,6 +149,8 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
     closeSnackbar(loaderDepositSale)
     yield put(snackbarsActions.remove(loaderDepositSale))
   } catch (e) {
+    yield* put(actions.getSaleStats())
+    yield* put(actions.getUserStats())
     yield* put(actions.setDepositSuccess(false))
     const error = ensureError(e)
     closeSnackbar(loaderDepositSale)

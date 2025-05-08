@@ -3,21 +3,21 @@ import { useStyles } from './styles'
 import { BuyComponent } from '@components/PreSale/BuyComponent/BuyComponent'
 import { SaleStepper } from '@components/PreSale/SaleStepper/SaleStepper'
 import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponent'
-import { useEffect, useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/sale'
 import { saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBN } from '@utils/utils'
+import { getRound, getTierPrices, MINT_DECIMALS } from '@invariant-labs/sale-sdk'
+import { balanceLoading, status, poolTokens } from '@store/selectors/solanaWallet'
 import {
   getAmountTillNextPriceIncrease,
-  getRound,
-  getTierPrices,
-  MINT_DECIMALS
-} from '@invariant-labs/sale-sdk'
-
-import { getPrice } from '@invariant-labs/sale-sdk/lib/utils'
+  getPrice,
+  getTimestampSeconds
+} from '@invariant-labs/sale-sdk/lib/utils'
+import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 
 export const PreSaleWrapper = () => {
   const { classes } = useStyles()
@@ -26,33 +26,70 @@ export const PreSaleWrapper = () => {
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
   const saleStats = useSelector(saleSelectors.saleStats)
   const userStats = useSelector(saleSelectors.userStats)
+  const { success, inProgress } = useSelector(saleSelectors.deposit)
+  const tokens = useSelector(poolTokens)
+  const walletStatus = useSelector(status)
+  const isBalanceLoading = useSelector(balanceLoading)
+  const [progress, setProgress] = useState<ProgressState>('none')
+  const [tokenIndex, setTokenIndex] = useState<number | null>(null)
 
-  const { targetAmount, currentAmount, whitelistWalletLimit } = useMemo(
-    () =>
-      saleStats
-        ? saleStats
-        : {
-            targetAmount: new BN(0),
-            currentAmount: new BN(0),
-            whitelistWalletLimit: new BN(0),
-            mint: new PublicKey(0)
-          },
-    [saleStats]
-  )
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 500)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+        dispatch(actions.setDepositSuccess(false))
+      }, 1800)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
+
+  useEffect(() => {
+    const index = tokens.findIndex(token => token.assetAddress.equals(mint))
+    if (index !== -1) setTokenIndex(index)
+  }, [tokens])
+
+  const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
+    useMemo(
+      () =>
+        saleStats
+          ? saleStats
+          : {
+              targetAmount: new BN(0),
+              currentAmount: new BN(0),
+              whitelistWalletLimit: new BN(0),
+              startTimestamp: new BN(0),
+              duration: new BN(0),
+              mint: new PublicKey(0)
+            },
+      [saleStats]
+    )
 
   const { deposited } = useMemo(
     () =>
       userStats
         ? userStats
         : {
-            deposited: { amount: new BN(0), decimals: 0 },
-            received: { amount: new BN(0), decimals: 0 }
+            deposited: { amount: new BN(0), decimals: MINT_DECIMALS },
+            received: { amount: new BN(0), decimals: MINT_DECIMALS }
           },
     [userStats, isLoadingUserStats]
   )
 
   const round = useMemo(
-    () => (!targetAmount.isZero() ? getRound(currentAmount, targetAmount) ?? 0 : 0),
+    () => getRound(currentAmount, targetAmount),
     [saleStats, isLoadingSaleStats, isLoadingUserStats]
   )
 
@@ -89,6 +126,12 @@ export const PreSaleWrapper = () => {
     () => getPrice(currentAmount, targetAmount) ?? new BN(0),
     [currentAmount, targetAmount, isLoadingSaleStats]
   )
+  const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
+
+  const isActive = useMemo(() => {
+    const currentTimestamp = getTimestampSeconds()
+    return currentTimestamp.lt(endtimestamp) && currentTimestamp.gt(startTimestamp)
+  }, [endtimestamp])
 
   useEffect(() => {
     dispatch(actions.getSaleStats())
@@ -107,7 +150,7 @@ export const PreSaleWrapper = () => {
             />
             <Box className={classes.roundComponentContainer}>
               <RoundComponent
-                isActive
+                isActive={isActive}
                 tokensLeft=''
                 amountBought={printBN(currentAmount, MINT_DECIMALS)}
                 amountLeft={printBN(
@@ -118,16 +161,40 @@ export const PreSaleWrapper = () => {
                 nextPrice={printBN(currentPrice.nextPrice, currentPrice.decimals)}
                 percentageFilled={filledPercentage}
                 purchasedTokens={printBN(deposited.amount, deposited.decimals)}
-                remainingAllocation={printBN(remainingAmount.amount, remainingAmountDecimals)}
+                remainingAllocation={printBN(remainingAmount, remainingAmountDecimals)}
                 roundNumber={round}
-                currency='USDC'
+                currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
+                endtimestamp={endtimestamp}
               />
             </Box>
           </Grid>
           <BuyComponent
-            isActive
-            raisedAmount={printBN(currentAmount, MINT_DECIMALS)}
-            totalAmount={printBN(targetAmount, MINT_DECIMALS)}
+            isActive={isActive}
+            progress={progress}
+            isLoading={isLoadingSaleStats || isLoadingUserStats || isBalanceLoading}
+            targetAmount={targetAmount}
+            currentAmount={currentAmount}
+            mintDecimals={MINT_DECIMALS}
+            startTimestamp={startTimestamp}
+            tokens={tokens}
+            walletStatus={walletStatus}
+            isBalanceLoading={isBalanceLoading}
+            tokenIndex={tokenIndex}
+            onBuyClick={amount => {
+              if (tokenIndex === null) {
+                return
+              }
+              if (progress === 'none') {
+                setProgress('progress')
+              }
+
+              dispatch(
+                actions.depositSale({
+                  amount,
+                  mint
+                })
+              )
+            }}
             alertBoxText='Test message'
           />
         </Box>

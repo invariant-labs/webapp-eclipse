@@ -1,9 +1,10 @@
 import { Box, Grid, Typography } from '@mui/material'
-import React from 'react'
+import React, { useMemo } from 'react'
 import useStyles from './style'
 import { useCountdown } from '../Timer/useCountdown'
 import { colors, typography } from '@static/theme'
 import classNames from 'classnames'
+import { BN } from '@coral-xyz/anchor'
 
 interface RoundComponentProps {
   isActive: boolean
@@ -16,11 +17,12 @@ interface RoundComponentProps {
   nextPrice: string
   purchasedTokens: string
   remainingAllocation: string
-  currency: string
+  currency: string | null
+  endtimestamp: BN
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
-  isActive = false,
+  isActive,
   roundNumber,
   amountBought,
   amountLeft,
@@ -30,10 +32,16 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   nextPrice,
   purchasedTokens,
   remainingAllocation,
-  currency
+  currency,
+  endtimestamp
 }) => {
   const { classes } = useStyles({ percentage: percentageFilled, isActive })
-  const { hours, minutes, seconds } = useCountdown({ targetDate: '2025-05-07T23:59:59Z' })
+  const targetDate = useMemo(() => new Date(endtimestamp.toNumber() * 1000), [endtimestamp])
+
+  const { hours, minutes, seconds } = useCountdown({
+    targetDate
+  })
+
   return (
     <Box className={classes.container}>
       <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
@@ -54,7 +62,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
               </Box>
               <Grid container className={classes.barWrapper}>
                 <Typography className={classes.amountBought}>
-                  {amountBought.toLocaleString()} ${currency} bought
+                  {amountBought.toLocaleString()} ${currency} deposited
                 </Typography>
                 <Typography className={classes.amountLeft}>
                   {amountLeft.toLocaleString()} ${currency} left
@@ -71,7 +79,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           )}
         </Box>
         <Box className={classes.priceIncreaseBox}>
-          <Typography className={classes.priceIncreaseText}>UNTIL NEXT PRICE INCREASE:</Typography>
+          <Typography className={classes.priceIncreaseText}> PRESALE ENDS IN:</Typography>
           {isActive && (
             <Typography className={classes.priceIncreaseText} sx={{ width: '130px' }}>
               <Typography sx={{ ...typography.heading4, color: colors.invariant.text }}>
@@ -109,12 +117,12 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         )}
 
         <Box className={classes.infoRow}>
-          <Typography className={classes.secondaryLabel}>Your purchased {currency}: </Typography>
+          <Typography className={classes.secondaryLabel}>Your deposited {currency}: </Typography>
           <Typography className={classes.value}>{purchasedTokens.toLocaleString()}</Typography>
         </Box>
         <Box className={classes.infoRow}>
           <Typography className={classes.secondaryLabel}>
-            Your remaining {currency} allocation:{' '}
+            Your remaining {currency} to deposit:{' '}
           </Typography>
           <Typography className={classes.value}>{remainingAllocation.toLocaleString()}</Typography>
         </Box>
