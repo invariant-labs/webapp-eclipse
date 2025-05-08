@@ -1,5 +1,4 @@
 import React from 'react'
-import classNames from 'classnames'
 import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -24,7 +23,7 @@ const VolumeBar: React.FC<Iprops> = ({
   percentFees,
   isLoading
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   percentVolume = percentVolume ?? 0
   volume = volume ?? 0
@@ -43,7 +42,7 @@ const VolumeBar: React.FC<Iprops> = ({
     <Grid
       container
       classes={{ container: classes.container }}
-      className={classNames({ [classes.loadingOverlay]: isLoading })}>
+      className={cx({ [classes.loadingOverlay]: isLoading })}>
       <Box className={classes.tokenName}>
         <Typography className={classes.tokenHeader}>Volume 24H:</Typography>
 
@@ -52,7 +51,7 @@ const VolumeBar: React.FC<Iprops> = ({
         </Typography>
         {!isXDown && (
           <Typography
-            className={classNames(
+            className={cx(
               classes.tokenContent,
               volumePercentage < 0 ? classes.tokenLow : classes.tokenUp
             )}>
@@ -70,7 +69,7 @@ const VolumeBar: React.FC<Iprops> = ({
         </Typography>
         {!isXDown && (
           <Typography
-            className={classNames(
+            className={cx(
               classes.tokenContent,
               tvlPercentage < 0 ? classes.tokenLow : classes.tokenUp
             )}>
@@ -88,7 +87,7 @@ const VolumeBar: React.FC<Iprops> = ({
         </Typography>
         {!isXDown && (
           <Typography
-            className={classNames(
+            className={cx(
               classes.tokenContent,
               feesPercentage < 0 ? classes.tokenLow : classes.tokenUp
             )}>

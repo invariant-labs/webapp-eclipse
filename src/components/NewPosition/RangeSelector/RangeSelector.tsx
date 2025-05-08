@@ -434,7 +434,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
     const { leftRange, rightRange } = calculateConcentrationRange(
       tickSpacing,
-      concentrationArray[concentrationIndex],
+      concentrationArray[concentrationIndex] || 34,
       2,
       midPrice.index,
       isXtoY

@@ -8,10 +8,11 @@ type Props = {
   isLocked: boolean
   onLockClick: () => void
   isPreview: boolean
+  isClosing: boolean
 }
 
-export const LockButton = ({ isLocked, onLockClick, isPreview }: Props) => {
-  if (isPreview) {
+export const LockButton = ({ isLocked, onLockClick, isPreview, isClosing }: Props) => {
+  if (isPreview || isClosing) {
     return (
       <TooltipHover title={isPreview ? "Can't lock liquidity in preview" : 'Lock liquidity'}>
         <Box>

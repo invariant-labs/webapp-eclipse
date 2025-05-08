@@ -23,6 +23,7 @@ import {
   plotTicks,
   positionData,
   positionWithPoolData,
+  shouldDisable,
   singlePositionData,
   showFeesLoader as storeFeesLoader
 } from '@store/selectors/positions'
@@ -76,6 +77,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const poolsList = useSelector(poolsArraySortedByFees)
   const statsPolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
+  const disableButton = useSelector(shouldDisable)
   const {
     allData: ticksData,
     loading: ticksLoading,
@@ -453,6 +455,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   if (position) {
     return (
       <PositionDetails
+        shouldDisable={disableButton}
         tokenXAddress={position.tokenX.assetAddress}
         tokenYAddress={position.tokenY.assetAddress}
         poolAddress={position.poolData.address}

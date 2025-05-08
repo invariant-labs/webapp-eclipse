@@ -1,6 +1,5 @@
 import React from 'react'
 import { ResponsiveBar } from '@nivo/bar'
-import classNames from 'classnames'
 import { colors, theme, typography } from '@static/theme'
 import { linearGradientDef } from '@nivo/core'
 import { useStyles } from './style'
@@ -26,7 +25,7 @@ const Volume: React.FC<StatsInterface> = ({
   className,
   isLoading
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   percentVolume = percentVolume ?? 0
   volume = volume ?? 0
@@ -49,7 +48,7 @@ const Volume: React.FC<StatsInterface> = ({
 
   return (
     <Grid
-      className={classNames(classes.container, className, {
+      className={cx(classes.container, className, {
         [classes.loadingOverlay]: isLoading
       })}>
       <Box className={classes.volumeContainer}>
@@ -60,13 +59,13 @@ const Volume: React.FC<StatsInterface> = ({
           </Typography>
           <Box className={classes.volumeStatusContainer}>
             <Box
-              className={classNames(
+              className={cx(
                 classes.volumeStatusColor,
                 isLower ? classes.backgroundVolumeLow : classes.backgroundVolumeUp
               )}>
               <Typography
                 component='p'
-                className={classNames(
+                className={cx(
                   classes.volumeStatusHeader,
                   isLower ? classes.volumeLow : classes.volumeUp
                 )}>

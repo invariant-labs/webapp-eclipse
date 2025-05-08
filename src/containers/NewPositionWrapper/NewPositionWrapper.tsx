@@ -92,8 +92,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const { success, inProgress } = useSelector(initPosition)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
   // const [onlyUserPositions, setOnlyUserPositions] = useState(false)
-  const { allData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
-  const ticksData = allData
+  const {
+    allData: ticksData,
+    loading: ticksLoading,
+    hasError: hasTicksError
+  } = useSelector(plotTicks)
+
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
 
   const isLoadingTicksOrTickmap = useMemo(

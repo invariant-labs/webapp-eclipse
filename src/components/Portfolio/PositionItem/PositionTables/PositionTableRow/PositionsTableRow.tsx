@@ -6,7 +6,6 @@ import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/Promoted
 import { BN } from '@coral-xyz/anchor'
 import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
-import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -41,6 +40,7 @@ interface IPositionsTableRow extends IPositionItem {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  shouldDisable: boolean
 }
 
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
@@ -67,9 +67,10 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   unclaimedFeesInUSD = { value: 0, loading: false },
   handleClaimFee,
   handleLockPosition,
-  handleClosePosition
+  handleClosePosition,
+  shouldDisable
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const { classes: skeletonClasses } = useSkeletonStyle()
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
@@ -78,7 +79,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const airdropIconRef = useRef<any>(null)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
-
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
   useEffect(() => {
@@ -180,9 +180,9 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           container
           item
           sx={{ width: 65 }}
-          className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}>
+          className={cx(classes.fee, isActive ? classes.activeFee : undefined)}>
           <Typography
-            className={classNames(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
+            className={cx(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
             {fee}%
           </Typography>
         </Grid>
@@ -295,7 +295,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     if (isItemLoading('actions')) {
       return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect32x32} />
     }
-
     return (
       <Button
         scheme='green'
@@ -399,6 +398,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         inProgress={inProgress}
       />
       <PositionViewActionPopover
+        shouldDisable={shouldDisable}
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}
