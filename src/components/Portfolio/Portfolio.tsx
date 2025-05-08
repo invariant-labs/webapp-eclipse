@@ -57,12 +57,14 @@ interface IProps {
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
   tokensList: SwapToken[]
+  shouldDisable: boolean
   positionListAlignment: LiquidityPools
   setPositionListAlignment: (val: LiquidityPools) => void
 }
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  shouldDisable,
   handleSnackbar,
   data,
   onAddPositionClick,
@@ -82,6 +84,7 @@ const Portfolio: React.FC<IProps> = ({
   setPositionListAlignment
 }) => {
   const { classes, cx } = useStyles()
+
   const navigate = useNavigate()
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
@@ -223,7 +226,6 @@ const Portfolio: React.FC<IProps> = ({
   }, [currentData, selectedFilters])
 
   const [allowPropagation, setAllowPropagation] = useState(true)
-
   const renderContent = () => {
     if (showNoConnected) {
       return <NoConnected {...noConnectedBlockerProps} />
@@ -234,6 +236,7 @@ const Portfolio: React.FC<IProps> = ({
         <PositionsTable
           positions={filteredData}
           isLoading={loading}
+          shouldDisable={shouldDisable}
           noInitialPositions={noInitialPositions}
           onAddPositionClick={onAddPositionClick}
           handleLockPosition={handleLockPosition}
@@ -272,6 +275,7 @@ const Portfolio: React.FC<IProps> = ({
         key={element.id}
         className={classes.itemLink}>
         <PositionItemMobile
+          shouldDisable={shouldDisable}
           key={index}
           {...element}
           setAllowPropagation={setAllowPropagation}
