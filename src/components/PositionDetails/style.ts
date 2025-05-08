@@ -35,20 +35,29 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     gap: 8
   },
-
   arrow: {
     color: colors.invariant.green,
-    position: 'relative',
+    position: 'absolute',
     zIndex: 2,
     cursor: 'pointer',
     overflow: 'visible',
+    top: '50%',
+
+    '& path': {
+      transition: 'filter 0.3s'
+    },
     '&:hover': {
       '& path': {
-        filter: 'drop-shadow(0px 0px 6px rgba(0, 255, 55, 0.8))'
+        filter: 'drop-shadow(0px 0px 6px rgba(46, 224, 154, 0.8))'
       }
     }
   },
-  disableArrow: {
-    stroke: colors.invariant.lightGrey
+  leftArrow: {
+    transform: 'scale(-1)',
+    left: -88
+  },
+  rightArrow: {
+    left: 'unset',
+    right: -88
   }
 }))

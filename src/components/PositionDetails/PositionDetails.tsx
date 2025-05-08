@@ -232,141 +232,143 @@ const PositionDetails: React.FC<IProps> = ({
               portfolio to see your positions.`}
         </Box>
       </Information>
-      <Box className={classes.mainContainer}>
-        <ClosePositionWarning
-          open={isModalOpen}
-          onCancel={() => {
-            setIsModalOpen(false)
-            unblurContent()
-          }}
-          onClose={() => {
-            closePosition()
-            setIsModalOpen(false)
-            unblurContent()
-          }}
-          onClaim={() => {
-            closePosition(true)
-            setIsModalOpen(false)
-            unblurContent()
-          }}
-        />
-        <LockLiquidityModal
-          open={isLockPositionModalOpen}
-          onClose={onLockPositionModalClose}
-          xToY={xToY}
-          tokenX={tokenX}
-          tokenY={tokenY}
-          onLock={lockPosition}
-          fee={`${+printBN(fee, DECIMAL - 2).toString()}% fee`}
-          minMax={`${formatNumberWithSuffix(min)}-${formatNumberWithSuffix(max)} ${tokenYLabel} per ${tokenXLabel}`}
-          value={value}
-          isActive={isActive}
-          swapHandler={() => setXToY(!xToY)}
-          success={success}
-          inProgress={inProgress}
-        />
-        <PositionHeader
-          isClosing={shouldDisable}
-          tokenA={
-            xToY
-              ? { icon: tokenX.icon, ticker: tokenX.name }
-              : { icon: tokenY.icon, ticker: tokenY.name }
-          }
-          tokenB={
-            xToY
-              ? { icon: tokenY.icon, ticker: tokenY.name }
-              : { icon: tokenX.icon, ticker: tokenX.name }
-          }
-          fee={+printBN(fee, DECIMAL - 2)}
-          isPromoted={isPromoted}
-          poolAddress={poolAddress.toString()}
-          networkUrl={networkUrl}
-          isLocked={isLocked}
-          isActive={isActive}
-          hasEnoughETH={hasEnoughETH}
-          hasFees={tokenX.claimValue + tokenY.claimValue > 0}
-          onReverseTokensClick={() => setXToY(!xToY)}
-          onClosePositionClick={() => {
-            if (!userHasStakes) {
+      <Box position='relative'>
+        <RightArrowIcon className={cx(classes.arrow, classes.leftArrow)} />
+        <Box className={classes.mainContainer}>
+          <ClosePositionWarning
+            open={isModalOpen}
+            onCancel={() => {
+              setIsModalOpen(false)
+              unblurContent()
+            }}
+            onClose={() => {
               closePosition()
-            } else {
-              setIsModalOpen(true)
-              blurContent()
+              setIsModalOpen(false)
+              unblurContent()
+            }}
+            onClaim={() => {
+              closePosition(true)
+              setIsModalOpen(false)
+              unblurContent()
+            }}
+          />
+          <LockLiquidityModal
+            open={isLockPositionModalOpen}
+            onClose={onLockPositionModalClose}
+            xToY={xToY}
+            tokenX={tokenX}
+            tokenY={tokenY}
+            onLock={lockPosition}
+            fee={`${+printBN(fee, DECIMAL - 2).toString()}% fee`}
+            minMax={`${formatNumberWithSuffix(min)}-${formatNumberWithSuffix(max)} ${tokenYLabel} per ${tokenXLabel}`}
+            value={value}
+            isActive={isActive}
+            swapHandler={() => setXToY(!xToY)}
+            success={success}
+            inProgress={inProgress}
+          />
+          <PositionHeader
+            isClosing={shouldDisable}
+            tokenA={
+              xToY
+                ? { icon: tokenX.icon, ticker: tokenX.name }
+                : { icon: tokenY.icon, ticker: tokenY.name }
             }
-          }}
-          onAddPositionClick={() => {
-            const address1 = addressToTicker(network, tokenXAddress.toString())
-            const address2 = addressToTicker(network, tokenYAddress.toString())
-            const parsedFee = parseFeeToPathFee(fee)
-            const isXtoY = initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
-            const tokenA = isXtoY ? address1 : address2
-            const tokenB = isXtoY ? address2 : address1
-
-            navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
-          }}
-          onRefreshClick={() => onRefresh()}
-          onGoBackClick={() => onGoBackClick()}
-          onLockClick={() => {
-            setIsLockPositionModalOpen(true)
-            blurContent()
-          }}
-          copyPoolAddressHandler={copyPoolAddressHandler}
-          isPreview={showPreviewInfo}
-        />
-        <Box className={classes.container}>
-          <Box className={classes.leftSide}>
-            <SinglePositionInfo
-              onClickClaimFee={onClickClaimFee}
-              tokenX={tokenX}
-              tokenY={tokenY}
-              tokenXPriceData={tokenXPriceData}
-              tokenYPriceData={tokenYPriceData}
-              xToY={xToY}
-              showFeesLoader={showFeesLoader}
-              poolDetails={poolDetails}
-              showPoolDetailsLoader={showPoolDetailsLoader}
-              showPositionLoader={showPositionLoader}
-              arePointsDistributed={isActive && isPromoted}
-              points24={points24}
-              poolAddress={poolAddress}
-              isPreview={showPreviewInfo}
-              isPromotedLoading={isPromotedLoading}
-              isClosing={shouldDisable}
-            />
-          </Box>
-          <Box className={classes.rightSide}>
-            <SinglePositionPlot
-              data={
-                detailsData.length
-                  ? xToY
-                    ? detailsData
-                    : detailsData.map(tick => ({ ...tick, x: 1 / tick.x })).reverse()
-                  : Array(100)
-                      .fill(1)
-                      .map((_e, index) => ({ x: index, y: index, index }))
+            tokenB={
+              xToY
+                ? { icon: tokenY.icon, ticker: tokenY.name }
+                : { icon: tokenX.icon, ticker: tokenX.name }
+            }
+            fee={+printBN(fee, DECIMAL - 2)}
+            isPromoted={isPromoted}
+            poolAddress={poolAddress.toString()}
+            networkUrl={networkUrl}
+            isLocked={isLocked}
+            isActive={isActive}
+            hasEnoughETH={hasEnoughETH}
+            hasFees={tokenX.claimValue + tokenY.claimValue > 0}
+            onReverseTokensClick={() => setXToY(!xToY)}
+            onClosePositionClick={() => {
+              if (!userHasStakes) {
+                closePosition()
+              } else {
+                setIsModalOpen(true)
+                blurContent()
               }
-              leftRange={xToY ? leftRange : { ...rightRange, x: 1 / rightRange.x }}
-              rightRange={xToY ? rightRange : { ...leftRange, x: 1 / leftRange.x }}
-              midPrice={{
-                ...midPrice,
-                x: midPrice.x ** (xToY ? 1 : -1)
-              }}
-              currentPrice={currentPrice ** (xToY ? 1 : -1)}
-              tokenY={tokenY}
-              tokenX={tokenX}
-              ticksLoading={ticksLoading}
-              tickSpacing={tickSpacing}
-              min={xToY ? min : 1 / max}
-              max={xToY ? max : 1 / min}
-              xToY={xToY}
-              hasTicksError={hasTicksError}
-              reloadHandler={reloadHandler}
-              isFullRange={isFullRange}
-            />
+            }}
+            onAddPositionClick={() => {
+              const address1 = addressToTicker(network, tokenXAddress.toString())
+              const address2 = addressToTicker(network, tokenYAddress.toString())
+              const parsedFee = parseFeeToPathFee(fee)
+              const isXtoY = initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
+              const tokenA = isXtoY ? address1 : address2
+              const tokenB = isXtoY ? address2 : address1
+
+              navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
+            }}
+            onRefreshClick={() => onRefresh()}
+            onGoBackClick={() => onGoBackClick()}
+            onLockClick={() => {
+              setIsLockPositionModalOpen(true)
+              blurContent()
+            }}
+            copyPoolAddressHandler={copyPoolAddressHandler}
+            isPreview={showPreviewInfo}
+          />
+          <Box className={classes.container}>
+            <Box className={classes.leftSide}>
+              <SinglePositionInfo
+                onClickClaimFee={onClickClaimFee}
+                tokenX={tokenX}
+                tokenY={tokenY}
+                tokenXPriceData={tokenXPriceData}
+                tokenYPriceData={tokenYPriceData}
+                xToY={xToY}
+                showFeesLoader={showFeesLoader}
+                poolDetails={poolDetails}
+                showPoolDetailsLoader={showPoolDetailsLoader}
+                showPositionLoader={showPositionLoader}
+                arePointsDistributed={isActive && isPromoted}
+                points24={points24}
+                poolAddress={poolAddress}
+                isPreview={showPreviewInfo}
+                isPromotedLoading={isPromotedLoading}
+                isClosing={shouldDisable}
+              />
+            </Box>
+            <Box className={classes.rightSide}>
+              <SinglePositionPlot
+                data={
+                  detailsData.length
+                    ? xToY
+                      ? detailsData
+                      : detailsData.map(tick => ({ ...tick, x: 1 / tick.x })).reverse()
+                    : Array(100)
+                        .fill(1)
+                        .map((_e, index) => ({ x: index, y: index, index }))
+                }
+                leftRange={xToY ? leftRange : { ...rightRange, x: 1 / rightRange.x }}
+                rightRange={xToY ? rightRange : { ...leftRange, x: 1 / leftRange.x }}
+                midPrice={{
+                  ...midPrice,
+                  x: midPrice.x ** (xToY ? 1 : -1)
+                }}
+                currentPrice={currentPrice ** (xToY ? 1 : -1)}
+                tokenY={tokenY}
+                tokenX={tokenX}
+                ticksLoading={ticksLoading}
+                tickSpacing={tickSpacing}
+                min={xToY ? min : 1 / max}
+                max={xToY ? max : 1 / min}
+                xToY={xToY}
+                hasTicksError={hasTicksError}
+                reloadHandler={reloadHandler}
+                isFullRange={isFullRange}
+              />
+            </Box>
           </Box>
         </Box>
-
-        <RightArrowIcon className={classes.arrow} />
+        <RightArrowIcon className={cx(classes.arrow, classes.rightArrow)} />
       </Box>
     </>
   )
