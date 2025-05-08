@@ -6,35 +6,45 @@ export const useStyles = makeStyles()(() => ({
     width: '100vw',
     marginTop: '72px',
     minHeight: '264px',
-    padding: '25px max(15%, 20px)',
+    padding: '25px max(9%, 20px)',
     display: 'flex',
-    [theme.breakpoints.down('md')]: {
-      textAlign: 'center'
-    },
     justifyContent: 'center',
     alignItems: 'center',
     background:
       'linear-gradient(90deg, rgba(32, 41, 70, 0.2) 0%, #202946 40%, #202946 80%, rgba(32, 41, 70, 0.2) 100%)',
     boxSizing: 'border-box',
-    overflow: 'hidden'
+    overflow: 'hidden',
+
+    [theme.breakpoints.down('md')]: {
+      textAlign: 'center'
+    },
+
+    [theme.breakpoints.down('sm')]: {
+      padding: '25px 8px'
+    },
+    '&>div': {
+      maxWidth: 1072,
+      [theme.breakpoints.down('lg')]: {
+        maxWidth: 800
+      }
+    }
   },
   astronaut: {
     width: '100%',
     maxWidth: '276px',
-    height: 'auto',
     marginLeft: '56px',
     [theme.breakpoints.down('md')]: {
       display: 'none'
     }
   },
   description: {
+    display: 'inline-block',
     color: colors.invariant.textGrey,
     fontSize: '16px',
     fontWeight: '400',
     lineHeight: '20px',
     letterSpacing: '-0.03em',
-    marginTop: '32px',
-    maxWidth: '400px'
+    marginTop: '32px'
   },
   header: {
     [theme.breakpoints.down('md')]: {

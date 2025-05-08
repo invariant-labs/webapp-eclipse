@@ -165,7 +165,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
     if (isConnected) {
       dispatch(actions.getContentPointsRequest())
     }
-  }, [dispatch, isConnected])
+  }, [dispatch, isConnected, userAddress])
   useEffect(() => {
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.getLeaderboardConfig())

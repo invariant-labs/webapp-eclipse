@@ -40,7 +40,6 @@ export interface PoolListInterface {
 }
 
 import { Keypair } from '@solana/web3.js'
-import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { ROUTES } from '@utils/utils'
@@ -93,7 +92,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const sortedData = useMemo(() => {
     if (isLoading) {
       return generateMockData()
@@ -161,7 +160,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
     <Grid
       container
       classes={{ root: classes.container }}
-      className={classNames({ [classes.loadingOverlay]: isLoading })}>
+      className={cx({ [classes.loadingOverlay]: isLoading })}>
       <PoolListItem
         displayType='header'
         onSort={setSortType}
@@ -215,7 +214,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
                       }
                     : {}
                 }
-                className={classNames(classes.emptyRow)}
+                className={cx(classes.emptyRow)}
               />
             ))}
         </>
