@@ -33,6 +33,8 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Information } from '@components/Information/Information'
 import { theme } from '@static/theme'
 import { eyeYellowIcon } from '@static/icons'
+import { RightArrowIcon } from '@static/componentIcon/arrowIcon'
+
 interface IProps {
   tokenXAddress: PublicKey
   tokenYAddress: PublicKey
@@ -116,7 +118,7 @@ const PositionDetails: React.FC<IProps> = ({
   points24,
   isPromotedLoading
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const navigate = useNavigate()
@@ -359,7 +361,9 @@ const PositionDetails: React.FC<IProps> = ({
             />
           </Box>
         </Box>
-      </Box>{' '}
+
+        <RightArrowIcon className={classes.arrow} />
+      </Box>
     </>
   )
 }

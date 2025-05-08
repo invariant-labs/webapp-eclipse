@@ -1,4 +1,4 @@
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
@@ -34,5 +34,21 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     alignItems: 'center',
     gap: 8
+  },
+
+  arrow: {
+    color: colors.invariant.green,
+    position: 'relative',
+    zIndex: 2,
+    cursor: 'pointer',
+    overflow: 'visible',
+    '&:hover': {
+      '& path': {
+        filter: 'drop-shadow(0px 0px 6px rgba(0, 255, 55, 0.8))'
+      }
+    }
+  },
+  disableArrow: {
+    stroke: colors.invariant.lightGrey
   }
 }))
