@@ -100,7 +100,9 @@ import {
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   BITZ_MAIN,
-  PRICE_API_URL
+  PRICE_API_URL,
+  ERROR_CODE_TO_MESSAGE,
+  COMMON_ERROR_MESSAGE
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -2330,4 +2332,18 @@ export const calculatePercentageRatio = (
     tokenXPercentage,
     tokenYPercentage: 100 - tokenXPercentage
   }
+}
+
+export const extractErrorCode = (error: Error): number => {
+  const errorCode = error.message.split('Error Number:')[1].split('.')[0].trim()
+  return Number(errorCode)
+}
+export const ensureApprovalDenied = (error: Error): boolean => {
+  return (
+    error.message.includes('Approval Denied') ||
+    error.message.includes("Cannot read properties of undefined (reading 'split')")
+  )
+}
+export const mapErrorCodeToMessage = (errorNumber: number): string => {
+  return ERROR_CODE_TO_MESSAGE[errorNumber] || COMMON_ERROR_MESSAGE
 }

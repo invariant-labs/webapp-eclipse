@@ -917,3 +917,10 @@ export const PRICE_API_URL = 'https://api.invariant.app/price'
 export enum AutoswapCustomError {
   FetchError = 0
 }
+
+export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
+  6008: 'Try increasing slippage tolerance.'
+}
+
+export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
+export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected.'

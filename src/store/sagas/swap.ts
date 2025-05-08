@@ -17,6 +17,8 @@ import {
   VersionedTransaction
 } from '@solana/web3.js'
 import {
+  APPROVAL_DENIED_MESSAGE,
+  COMMON_ERROR_MESSAGE,
   LEADERBOARD_DECIMAL,
   MAX_CROSSES_IN_SINGLE_TX,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
@@ -30,8 +32,11 @@ import { closeSnackbar } from 'notistack'
 import {
   calculatePoints,
   createLoaderKey,
+  ensureApprovalDenied,
   ensureError,
+  extractErrorCode,
   formatNumberWithoutSuffix,
+  mapErrorCodeToMessage,
   printBN
 } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
@@ -449,14 +454,17 @@ export function* handleSwapWithETH(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+    let msg: string = ''
     try {
-      const errorCode = error.message.split('Error Number:')[1].split('.')[0].trim()
+      const errorCode = extractErrorCode(error)
       console.log('ERROR CODE FROM SIMULATION:', errorCode)
+      msg = mapErrorCodeToMessage(errorCode)
     } catch (e: unknown) {
       console.log("Couldn't parse error code from simulation, on", e)
       const error = ensureError(e)
       console.log('Should be approval denied:', error)
+      console.log(error.message, ensureApprovalDenied(error))
+      msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
     }
 
     yield put(swapActions.setSwapSuccess(false))
@@ -480,7 +488,7 @@ export function* handleSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -885,7 +893,19 @@ export function* handleTwoHopSwapWithETH(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+
+    let msg: string = ''
+    try {
+      const errorCode = extractErrorCode(error)
+      console.log('ERROR CODE FROM SIMULATION:', errorCode)
+      msg = mapErrorCodeToMessage(errorCode)
+    } catch (e: unknown) {
+      console.log("Couldn't parse error code from simulation, on", e)
+      const error = ensureError(e)
+      console.log('Should be approval denied:', error)
+      console.log(error.message, ensureApprovalDenied(error))
+      msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -908,7 +928,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1235,7 +1255,18 @@ export function* handleTwoHopSwap(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+    let msg: string = ''
+    try {
+      const errorCode = extractErrorCode(error)
+      console.log('ERROR CODE FROM SIMULATION:', errorCode)
+      msg = mapErrorCodeToMessage(errorCode)
+    } catch (e: unknown) {
+      console.log("Couldn't parse error code from simulation, on", e)
+      const error = ensureError(e)
+      console.log('Should be approval denied:', error)
+      console.log(error.message, ensureApprovalDenied(error))
+      msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -1258,7 +1289,7 @@ export function* handleTwoHopSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1477,14 +1508,9 @@ export function* handleSwap(): Generator {
           txid
         })
       )
-      const txDetails = yield* call(
-        [connection, connection.getParsedTransaction],
-        '34tn3TQREevaHnq7P9kezEUMfP6Cvvm5iqajE3qJYV7PdG9juZy5hGcL3D1SGPJdrhZX9NNWtpithUKhissueRsJ',
-        {
-          maxSupportedTransactionVersion: 0
-        }
-      )
-      console.log(txDetails)
+      const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
+        maxSupportedTransactionVersion: 0
+      })
 
       if (txDetails) {
         if (txDetails.meta?.err) {
@@ -1581,13 +1607,17 @@ export function* handleSwap(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
+    let msg: string = ''
     try {
-      const errorCode = error.message.split('Error Number:')[1].split('.')[0].trim()
+      const errorCode = extractErrorCode(error)
       console.log('ERROR CODE FROM SIMULATION:', errorCode)
+      msg = mapErrorCodeToMessage(errorCode)
     } catch (e: unknown) {
       console.log("Couldn't parse error code from simulation, on", e)
       const error = ensureError(e)
       console.log('Should be approval denied:', error)
+      console.log(error.message, ensureApprovalDenied(error))
+      msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
     }
 
     yield put(swapActions.setSwapSuccess(false))
@@ -1611,7 +1641,7 @@ export function* handleSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
