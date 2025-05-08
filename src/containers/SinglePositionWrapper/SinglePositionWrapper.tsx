@@ -116,7 +116,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     const currentIndex = data.findIndex(position => position.id.toString() === id)
 
     return data[currentIndex - 1] ?? data[data.length - 1]
-  }, [position?.id.toString()])
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
 
   const nextPosition = useMemo(() => {
     const data = position?.isLocked ? lockedNavigationData : navigationData
@@ -580,6 +580,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         isPromotedLoading={isPromotedLoading}
         previousPosition={previousPosition}
         nextPosition={nextPosition}
+        positionId={id}
       />
     )
   }
@@ -605,10 +606,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           themeDark
           style={isMobile ? { paddingTop: 8 } : {}}
           roundedCorners={true}
-          mainTitle='Wallet is not connected
-'
-          desc='No liquidity positions to show
-'
+          mainTitle='Wallet is not connected'
+          desc='No liquidity positions to show'
           withButton={false}
           connectButton={true}
           onAction2={() => dispatch(walletActions.connect(false))}
