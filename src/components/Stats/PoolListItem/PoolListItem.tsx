@@ -1,4 +1,4 @@
-import React, { useMemo, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import { colors, theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
@@ -207,14 +207,78 @@ const PoolListItem: React.FC<IProps> = ({
   const handlePointerLeave = () => {
     setLockPopoverOpen(false)
   }
-
+  useEffect(() => {
+    if (!isSmd) {
+      setShowInfo(false)
+    }
+  }, [isSmd])
   //HOTFIX
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
+  const ActionsButtons = (
+    <Box className={classes.action}>
+      {isLocked && (
+        <>
+          <button
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            className={classes.actionButton}
+            ref={lockIconRef}
+            onPointerLeave={handlePointerLeave}
+            onPointerEnter={handlePointerEnter}>
+            <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
+          </button>
+          <LockStatsPopover
+            anchorEl={lockIconRef.current}
+            open={isLockPopoverOpen}
+            lockedX={tokenAData.locked}
+            lockedY={tokenBData.locked}
+            symbolX={shortenAddress(tokenAData.symbol ?? '')}
+            symbolY={shortenAddress(tokenBData.symbol ?? '')}
+            liquidityX={tokenAData.liquidity}
+            liquidityY={tokenBData.liquidity}
+            onClose={() => {
+              setLockPopoverOpen(false)
+            }}
+          />
+        </>
+      )}
 
+      <button
+        className={classes.actionButton}
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation()
+          handleOpenSwap
+        }}>
+        <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
+      </button>
+      <button
+        className={classes.actionButton}
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation()
+          handleOpenPosition
+        }}>
+        <img width={32} height={32} src={plusIcon} alt={'Open'} />
+      </button>
+      <button
+        className={classes.actionButton}
+        onClick={(e: React.MouseEvent) => {
+          e.stopPropagation()
+          window.open(
+            `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
+            '_blank',
+            'noopener,noreferrer'
+          )
+        }}>
+        <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
+      </button>
+    </Box>
+  )
   return (
     <Grid className={classes.wrapper}>
       {displayType === 'token' ? (
         <Grid
+          onClick={() => {
+            if (isSmd) setShowInfo(prev => !prev)
+          }}
           container
           classes={{
             container: cx(classes.container, { [classes.containerNoAPY]: !showAPY })
@@ -252,20 +316,23 @@ const PoolListItem: React.FC<IProps> = ({
             )}
             <TooltipHover title='Copy pool address'>
               <FileCopyOutlinedIcon
-                onClick={copyToClipboard}
+                onClick={(e: React.MouseEvent) => {
+                  e.stopPropagation()
+                  copyToClipboard()
+                }}
                 classes={{ root: classes.clipboardIcon }}
               />
             </TooltipHover>
           </Grid>
           {!isSmd && showAPY ? (
-            <Grid className={classes.row} justifyContent='space-between'>
-              <Typography gap='4px'>
+            <Grid className={classes.row}>
+              <Typography>
                 {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-                <span
-                  className={
-                    classes.apy
-                  }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</span>
-              </Typography>
+              </Typography>{' '}
+              <Typography
+                className={
+                  classes.apyLabel
+                }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</Typography>
               {isPromoted && (
                 <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
                   <Box
@@ -294,16 +361,12 @@ const PoolListItem: React.FC<IProps> = ({
             </Grid>
           ) : null}
           <Typography>{fee}%</Typography>
-          {!isSmd && <Typography> ${formatNumberWithSuffix(fee * volume)}</Typography>}
+          {!isSmd && (
+            <Typography> ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}</Typography>
+          )}
           <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
           <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
-          {isSmd && (
-            <ArrowDropDownIcon
-              width={10}
-              onClick={() => setShowInfo(prev => !prev)}
-              className={classes.extendedRowIcon}
-            />
-          )}
+          {isSmd && <ArrowDropDownIcon width={10} className={classes.extendedRowIcon} />}
 
           {!isMd && (
             <Box className={classes.action}>
@@ -359,26 +422,44 @@ const PoolListItem: React.FC<IProps> = ({
           )}
           {isSmd && (
             <>
-              <Typography component='h5' className={classes.extendedRowTitle}>
-                Fee (24h){' '}
-                <span className={classes.extendedRowContent}>
-                  ${formatNumberWithSuffix(fee * volume)}
-                </span>
-              </Typography>
+              {isSm && (
+                <>
+                  <Typography
+                    component='h5'
+                    className={classes.extendedRowTitle}
+                    sx={{ visibility: showInfo ? 'visible' : 'hidden' }}>
+                    {shortenAddress(tokenAData.symbol ?? '')}/
+                    {shortenAddress(tokenBData.symbol ?? '')}
+                  </Typography>
+                  <Typography>{''}</Typography>
+                  {ActionsButtons}
+                  <Typography className={classes.extendedRowPlaceholder}>{''}</Typography>
+                  <Typography className={classes.extendedRowPlaceholder}>{''}</Typography>
+                </>
+              )}
+              <>
+                <Typography component='h5' className={classes.extendedRowTitle}>
+                  Fee (24h){' '}
+                  <span className={classes.extendedRowContent}>
+                    ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}
+                  </span>
+                </Typography>
 
-              <Typography>{''}</Typography>
-              <Typography component='h5' className={classes.extendedRowTitle}>
-                APY{' '}
-                <span className={classes.extendedRowContent}>
-                  {Math.abs(convertedApy).toFixed(2)}
-                </span>
-              </Typography>
-              <Typography component='h5' className={classes.extendedRowTitle}>
-                APR{' '}
-                <span className={classes.extendedRowContent}>
-                  {Math.abs(convertedApr).toFixed(2)}
-                </span>
-              </Typography>
+                <Typography>{''}</Typography>
+                <Typography component='h5' className={classes.extendedRowTitle}>
+                  APY{' '}
+                  <span className={classes.extendedRowContent}>
+                    {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
+                  </span>
+                </Typography>
+                <Typography component='h5' className={classes.extendedRowTitle}>
+                  APR{' '}
+                  <span className={classes.extendedRowContent}>
+                    {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                  </span>
+                </Typography>
+                <Typography>{''}</Typography>
+              </>
             </>
           )}
         </Grid>

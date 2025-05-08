@@ -20,12 +20,12 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
 
   container: {
     transition: 'all 0.3s',
-    height: !showInfo ? 61 : 90,
+    height: !showInfo ? 69 : 150,
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
-    gridTemplateColumns: '30px auto 150px 120px 120px 140px 120px 150px',
-    padding: '18px 24px',
+    gridTemplateColumns: '30px auto 180px 120px 120px 140px 120px 150px',
+    padding: '22px 24px 14px 24px',
     whiteSpace: 'nowrap',
 
     boxSizing: 'border-box',
@@ -42,12 +42,13 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down(1160)]: {
-      gridTemplateColumns: 'auto 150px 100px 120px 140px 100px'
+      gridTemplateColumns: 'auto 200px 100px 120px 140px 100px'
     },
 
     [theme.breakpoints.down('md')]: {
       gridTemplateColumns: 'auto 100px 140px 80px 24px',
-      rowGap: 12
+      rowGap: 12,
+      cursor: 'pointer'
     },
 
     [theme.breakpoints.down('sm')]: {
@@ -80,7 +81,8 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
         justifyContent: 'flex-start',
         ...typography.caption1
       }
-    }
+    },
+    cursor: 'pointer'
   },
 
   imageContainer: {
@@ -179,7 +181,13 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     display: 'flex',
     justifyContent: 'flex-end',
     alignItems: 'center',
-    gap: 8
+    minWidth: 'max-content',
+    gap: 8,
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'flex-start',
+
+      visibility: showInfo ? 'visible' : 'hidden'
+    }
   },
   actionButton: {
     height: 32,
@@ -259,6 +267,12 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     alignSelf: 'flex-end',
     color: colors.invariant.textGrey
   },
+  apyLabel: {
+    color: colors.invariant.textGrey,
+    marginTop: 4,
+    marginRight: 4,
+    fontSize: '15px !important'
+  },
   extendedRowIcon: {
     justifySelf: 'end',
     alignSelf: 'center',
@@ -267,14 +281,20 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     transition: 'all 0.3s ease',
     transform: showInfo ? 'rotate(180deg)' : 'rotate(0deg)'
   },
+  extendedRowPlaceholder: {
+    flex: '0 0 0',
+    width: 0,
+    height: 0
+  },
   extendedRowTitle: {
     visibility: showInfo ? 'visible' : 'hidden',
-
+    flex: '0 0 auto',
     ...typography.body3,
     display: 'flex',
     flexWrap: 'nowrap',
     textWrap: 'nowrap',
     gap: 6,
+
     color: colors.invariant.textGrey,
     [theme.breakpoints.down('sm')]: {
       ...typography.caption1

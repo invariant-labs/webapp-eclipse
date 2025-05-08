@@ -8,7 +8,7 @@ const useStyles = makeStyles()(() => {
       backgroundColor: 'transparent',
       justifyContent: 'center',
       alignItems: 'center',
-      paddingInline: 200,
+      paddingInline: 185,
       [theme.breakpoints.down('lg')]: {
         paddingInline: 40
       },

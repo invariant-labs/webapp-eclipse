@@ -13,7 +13,7 @@ export const InfoComponent = () => {
 
   return (
     <Box className={classes.infoContainer}>
-      <Box display='flex' alignItems='center'>
+      <Box display='flex' alignItems='center' justifyContent='space-between'>
         <Box flex={1} flexDirection='column'>
           <Typography className={classes.header}>What are Invariant Points?</Typography>
 

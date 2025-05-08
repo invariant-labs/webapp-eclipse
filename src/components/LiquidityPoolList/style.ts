@@ -30,7 +30,7 @@ export const useStyles = makeStyles()(_theme => ({
     }
   },
   emptyRow: {
-    height: 70.4,
+    height: 69,
     background: colors.invariant.component
   },
 
