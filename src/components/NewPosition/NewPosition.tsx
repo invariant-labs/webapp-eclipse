@@ -278,10 +278,13 @@ export const NewPosition: React.FC<INewPosition> = ({
 
   const [shouldReversePlot, setShouldReversePlot] = useState(false)
 
-  const concentrationArray = useMemo(() => {
+  const concentrationArray: number[] = useMemo(() => {
     const validatedMidPrice = validConcentrationMidPriceTick(midPrice.index, isXtoY, tickSpacing)
 
-    return getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
+    const array = getConcentrationArray(tickSpacing, 2, validatedMidPrice).sort((a, b) => a - b)
+    const maxConcentrationArray = [...array, calculateConcentration(0, tickSpacing)]
+
+    return maxConcentrationArray
   }, [tickSpacing, midPrice.index])
 
   const [concentrationIndex, setConcentrationIndex] = useState(
