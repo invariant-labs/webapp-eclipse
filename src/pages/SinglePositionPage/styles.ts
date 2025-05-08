@@ -12,7 +12,7 @@ const useStyles = makeStyles()((theme: Theme) => {
       justifyContent: 'center',
 
       [theme.breakpoints.up('sm')]: {
-        paddingInline: 40
+        paddingInline: 80
       }
     }
   }
