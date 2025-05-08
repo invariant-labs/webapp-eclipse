@@ -918,6 +918,14 @@ export enum AutoswapCustomError {
   FetchError = 0
 }
 
+export enum ErrorCodeExtractionKeys {
+  ErrorNumber = 'Error Number:',
+  Custom = 'Custom":',
+  ApprovalDenied = 'Approval Denied',
+  UndefinedOnSplit = "Cannot read properties of undefined (reading 'split')",
+  RightBracket = '}',
+  Dot = '.'
+}
 export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
   6008: 'Try increasing slippage tolerance.'
 }
