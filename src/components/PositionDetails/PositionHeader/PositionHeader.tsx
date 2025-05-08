@@ -2,14 +2,12 @@ import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { airdropRainbowIcon, backArrowIcon, newTabIcon, reverseTokensIcon } from '@static/icons'
-import classNames from 'classnames'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useMemo, useState } from 'react'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { truncateString } from '@utils/utils'
 import { LockButton } from './LockButton'
 import { Button } from '@common/Button/Button'
@@ -39,6 +37,7 @@ type Props = {
   onLockClick: () => void
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   isPreview: boolean
+  isClosing: boolean
 }
 
 export const PositionHeader = ({
@@ -59,9 +58,10 @@ export const PositionHeader = ({
   onGoBackClick,
   onLockClick,
   copyPoolAddressHandler,
-  isPreview
+  isPreview,
+  isClosing
 }: Props) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
   const isMdDown = useMediaQuery(theme.breakpoints.down(1040))
   const isMdUp = useMediaQuery(theme.breakpoints.up(1040))
@@ -96,17 +96,26 @@ export const PositionHeader = ({
     return ''
   }, [isPreview, isLocked, hasEnoughETH, hasFees])
 
-  const closeButton = (
+  const closeButton = closeButtonTitle ? (
     <TooltipHover title={closeButtonTitle}>
       <Button
         height={36}
         scheme='green'
-        disabled={isLocked || !hasEnoughETH || isPreview}
+        disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
         variant='contained'
         onClick={() => onClosePositionClick()}>
         Close position
       </Button>
     </TooltipHover>
+  ) : (
+    <Button
+      height={36}
+      scheme='green'
+      disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
+      variant='contained'
+      onClick={() => onClosePositionClick()}>
+      Close position
+    </Button>
   )
 
   const addButton = (
@@ -153,9 +162,7 @@ export const PositionHeader = ({
   return (
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
-        <Box
-          className={classNames(classes.wrapper, classes.backContainer)}
-          onClick={() => onGoBackClick()}>
+        <Box className={cx(classes.wrapper, classes.backContainer)} onClick={() => onGoBackClick()}>
           <img src={backArrowIcon} alt='Back arrow' />
           <Typography className={classes.backText}>Back to portfolio</Typography>
         </Box>
@@ -188,7 +195,7 @@ export const PositionHeader = ({
                 isPromoted ? 'This pool distributes points' : "This pool doesn't distribute points"
               }>
               <img
-                className={classNames(classes.airdropIcon, {
+                className={cx(classes.airdropIcon, {
                   [classes.airdropIconInActive]: !isPromoted
                 })}
                 src={airdropRainbowIcon}
@@ -197,7 +204,7 @@ export const PositionHeader = ({
             </TooltipHover>
           </Box>
           <Box className={classes.wrapper}>
-            <TooltipGradient
+            <TooltipHover
               title={
                 isActive ? (
                   <>
@@ -212,20 +219,24 @@ export const PositionHeader = ({
                 )
               }
               placement='top'
-              top={3}
-              noGradient>
+              increasePadding>
               <Box
-                className={classNames(classes.feeContainer, {
+                className={cx(classes.feeContainer, {
                   [classes.feeContainerIsActive]: isActive
                 })}>
                 {fee.toFixed(2)}%
               </Box>
-            </TooltipGradient>
+            </TooltipHover>
             {!isSmDown && closeButton}
             {!isSmDown && isMdDown && (
               <>
                 {addButton}
-                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                <LockButton
+                  isClosing={isClosing}
+                  isLocked={isLocked}
+                  isPreview={isPreview}
+                  onLockClick={onLockClick}
+                />
               </>
             )}
           </Box>
@@ -237,14 +248,24 @@ export const PositionHeader = ({
                 {marketIdLabel}
                 <Box className={classes.wrapper}>
                   {refresher} {addButton}{' '}
-                  <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                  <LockButton
+                    isLocked={isLocked}
+                    isClosing={isClosing}
+                    isPreview={isPreview}
+                    onLockClick={onLockClick}
+                  />
                 </Box>
               </>
             ) : (
               <>
                 {closeButton}
                 {addButton}
-                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                <LockButton
+                  isClosing={isClosing}
+                  isLocked={isLocked}
+                  isPreview={isPreview}
+                  onLockClick={onLockClick}
+                />
               </>
             )}
           </Box>

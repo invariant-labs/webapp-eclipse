@@ -268,8 +268,12 @@ export function* handleSwapWithETH(): Generator {
         .add(swapIx)
         .add(...appendedIxs)
 
-      const blockhash = yield* call([connection, connection.getLatestBlockhash])
-      tx.recentBlockhash = blockhash.blockhash
+      const { blockhash, lastValidBlockHeight } = yield* call([
+        connection,
+        connection.getLatestBlockhash
+      ])
+      tx.recentBlockhash = blockhash
+      tx.lastValidBlockHeight = lastValidBlockHeight
       tx.feePayer = wallet.publicKey
 
       yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
@@ -1474,8 +1478,12 @@ export function* handleSwap(): Generator {
 
       yield put(snackbarsActions.add({ ...SIGNING_SNACKBAR_CONFIG, key: loaderSigningTx }))
 
-      const blockhash = yield* call([connection, connection.getLatestBlockhash])
-      tx.recentBlockhash = blockhash.blockhash
+      const { blockhash, lastValidBlockHeight } = yield* call([
+        connection,
+        connection.getLatestBlockhash
+      ])
+      tx.recentBlockhash = blockhash
+      tx.lastValidBlockHeight = lastValidBlockHeight
       tx.feePayer = wallet.publicKey
 
       const initialSignedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction

@@ -15,7 +15,6 @@ import { PaginationList } from '@common/Pagination/Pagination'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
-import classNames from 'classnames'
 import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 export interface ITokensListData {
@@ -60,7 +59,7 @@ const TokensList: React.FC<ITokensList> = ({
   isLoading
 }) => {
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const [page, setPage] = useState(1)
   const [sortType, setSortType] = React.useState(SortTypeTokenList.VOLUME_DESC)
 
@@ -149,7 +148,7 @@ const TokensList: React.FC<ITokensList> = ({
     <Grid
       container
       classes={{ root: classes.container }}
-      className={classNames({ [classes.loadingOverlay]: isLoading })}>
+      className={cx({ [classes.loadingOverlay]: isLoading })}>
       <>
         <TokenListItem displayType='header' onSort={setSortType} sortType={sortType} />
         {data.length > 0 || isLoading ? (
@@ -184,7 +183,7 @@ const TokensList: React.FC<ITokensList> = ({
                         ? `2px solid ${colors.invariant.light}`
                         : `0px solid ${colors.invariant.light}`
                   }}
-                  className={classNames(classes.emptyRow)}
+                  className={cx(classes.emptyRow)}
                 />
               ))}
           </>

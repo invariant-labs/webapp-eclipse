@@ -14,15 +14,17 @@ import {
   getMinTick
 } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
-import { actions } from '@store/reducers/positions'
+import { actions, LiquidityPools } from '@store/reducers/positions'
 import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import {
   isLoadingPositionsList,
   lastPageSelector,
   lockedPositionsWithPoolsData,
   PositionData,
+  positionListSwitcher,
   positionsWithPoolsData,
-  prices
+  prices,
+  shouldDisable
 } from '@store/selectors/positions'
 import { address, balanceLoading, status, swapTokens, balance } from '@store/selectors/solanaWallet'
 import { useEffect, useMemo } from 'react'
@@ -56,6 +58,8 @@ const PortfolioWrapper = () => {
   const isBalanceLoading = useSelector(balanceLoading)
   const pricesData = useSelector(prices)
   const ethBalance = useSelector(balance)
+  const disabledButton = useSelector(shouldDisable)
+  const positionListAlignment = useSelector(positionListSwitcher)
 
   const navigate = useNavigate()
   const dispatch = useDispatch()
@@ -331,6 +335,7 @@ const PortfolioWrapper = () => {
 
   return isConnected ? (
     <Portfolio
+      shouldDisable={disabledButton}
       tokensList={tokensList}
       isBalanceLoading={isBalanceLoading}
       handleSnackbar={handleSnackbar}
@@ -359,6 +364,10 @@ const PortfolioWrapper = () => {
       handleLockPosition={handleLockPosition}
       handleClosePosition={handleClosePosition}
       handleClaimFee={handleClaimFee}
+      positionListAlignment={positionListAlignment}
+      setPositionListAlignment={(positionType: LiquidityPools) =>
+        dispatch(actions.setPositionListSwitcher(positionType))
+      }
     />
   ) : (
     <Grid className={classes.emptyContainer}>

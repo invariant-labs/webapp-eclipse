@@ -92,8 +92,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const { success, inProgress } = useSelector(initPosition)
   const { promotedPools } = useSelector(leaderboardSelectors.config)
   // const [onlyUserPositions, setOnlyUserPositions] = useState(false)
-  const { allData, loading: ticksLoading, hasError: hasTicksError } = useSelector(plotTicks)
-  const ticksData = allData
+  const {
+    allData: ticksData,
+    loading: ticksLoading,
+    hasError: hasTicksError
+  } = useSelector(plotTicks)
+
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
 
   const isLoadingTicksOrTickmap = useMemo(
@@ -328,7 +332,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const [midPrice, setMidPrice] = useState<InitMidPrice>({
     index: 0,
     x: 1,
-    sqrtPrice: 0
+    sqrtPrice: new BN(0)
   })
 
   const currentPoolAddress = useMemo(() => {
@@ -1085,7 +1089,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
       isLoadingStats={isLoadingStats}
-      autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
+      autoSwapPoolData={!!autoSwapPoolData ? (autoSwapPoolData ?? null) : null}
       autoSwapTickmap={autoSwapTickMap}
       autoSwapTicks={autoSwapTicks}
       initialMaxPriceImpact={initialMaxPriceImpact}

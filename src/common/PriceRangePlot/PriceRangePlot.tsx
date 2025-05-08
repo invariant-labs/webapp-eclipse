@@ -7,7 +7,6 @@ import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
 import { colors, theme } from '@static/theme'
 import { formatNumberWithSuffix, nearestTickIndex } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import classNames from 'classnames'
 import React, { useCallback, useMemo, useRef } from 'react'
 import Brush from './Brush/Brush'
 import useStyles from './style'
@@ -63,7 +62,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   hasError = false,
   reloadHandler
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -351,11 +350,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   const isMd = useMediaQuery(theme.breakpoints.up('md'))
 
   return (
-    <Grid
-      container
-      className={classNames(classes.container, className)}
-      style={style}
-      ref={containerRef}>
+    <Grid container className={cx(classes.container, className)} style={style} ref={containerRef}>
       {loading && coverOnLoading ? (
         <Grid container className={classes.cover}>
           <img src={loader} className={classes.loader} alt='Loader' />

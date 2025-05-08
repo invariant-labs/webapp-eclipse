@@ -1,11 +1,12 @@
 import React, { useMemo, useState } from 'react'
 import { Box, Grid, Typography } from '@mui/material'
-
 import { TokenPositionEntry } from '@store/types/userOverview'
 import { formatNumberWithoutSuffix } from '@utils/utils'
 import SegmentFragmentTooltip from '../SegmentFragmentTooltip/SegmentFragmentTooltip'
 import { useStyles } from './styles'
 import MobileOverviewSkeleton from '../Overview/skeletons/MobileOverviewSkeleton'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { warning2Icon } from '@static/icons'
 export interface ChartSegment {
   start: number
   width: number
@@ -14,54 +15,53 @@ export interface ChartSegment {
   value: number
   logo: string | undefined
   percentage: string
+  isPriceWarning: boolean
 }
 
 interface MobileOverviewProps {
-  positions: TokenPositionEntry[]
-  totalAssets: number
+  sortedTokens: TokenPositionEntry[]
+  totalAssets: { value: number; isPriceWarning: boolean }
   chartColors: string[]
   isLoadingList: boolean
 }
 
 const MobileOverview: React.FC<MobileOverviewProps> = ({
-  isLoadingList,
-  positions,
+  sortedTokens,
   totalAssets,
-  chartColors
+  chartColors,
+  isLoadingList
 }) => {
   const [selectedSegment, setSelectedSegment] = useState<number | null>(null)
   const { classes } = useStyles()
 
-  const sortedPositions = useMemo(() => {
-    return [...positions].sort((a, b) => b.value - a.value)
-  }, [positions])
-
   const sortedChartColors = useMemo(() => {
-    const colorMap = positions.reduce((map, position, index) => {
+    const colorMap = sortedTokens.reduce((map, position, index) => {
       map.set(position.token, chartColors[index])
       return map
     }, new Map<string, string>())
 
-    return sortedPositions.map(position => colorMap.get(position.token) ?? '')
-  }, [positions, sortedPositions, chartColors])
+    return sortedTokens.map(position => colorMap.get(position.token) ?? '')
+  }, [sortedTokens, chartColors])
 
   const segments: ChartSegment[] = useMemo(() => {
     let currentPosition = 0
-    return sortedPositions.map((position, index) => {
-      const percentage = (position.value / totalAssets) * 100
+
+    return sortedTokens.map((position, index) => {
+      const percentage = (position.value / totalAssets.value) * 100
       const segment = {
         start: currentPosition,
         width: percentage,
         color: sortedChartColors[index],
         token: position.token,
-        value: position.value,
+        value: position.value || 0,
         logo: position.logo,
-        percentage: percentage.toFixed(2)
+        percentage: percentage.toFixed(2),
+        isPriceWarning: position.isPriceWarning
       }
       currentPosition += percentage
       return segment
     })
-  }, [sortedPositions, totalAssets, sortedChartColors])
+  }, [sortedTokens, totalAssets, sortedChartColors])
 
   return (
     <Box className={classes.container}>
@@ -97,7 +97,12 @@ const MobileOverview: React.FC<MobileOverviewProps> = ({
 
                     <Grid item xs={7}>
                       <Typography className={classes.tokenValue}>
-                        ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })}
+                        ${formatNumberWithoutSuffix(segment.value, { twoDecimals: true })}{' '}
+                        {segment.isPriceWarning && (
+                          <TooltipHover title='The price might not be shown correctly'>
+                            <img src={warning2Icon} width={14} />
+                          </TooltipHover>
+                        )}
                       </Typography>
                     </Grid>
                   </Grid>

@@ -4,9 +4,8 @@ import { MinMaxChart } from '../../components/MinMaxChart/MinMaxChart'
 import { colors, theme } from '@static/theme'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-import { airdropRainbowIcon, swapListIcon } from '@static/icons'
+import { airdropRainbowIcon, swapListIcon, warning2Icon } from '@static/icons'
 import { initialXtoY, tickerToAddress, formatNumberWithoutSuffix } from '@utils/utils'
-import classNames from 'classnames'
 import { useSelector } from 'react-redux'
 import { usePromotedPool } from '@store/hooks/positionList/usePromotedPool'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -18,8 +17,6 @@ import { singlePositionData } from '@store/selectors/positions'
 import LockLiquidityModal from '@components/Modals/LockLiquidityModal/LockLiquidityModal'
 import { lockerState } from '@store/selectors/locker'
 import { useTokenValues } from '@store/hooks/positionList/useTokenValues'
-
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { Button } from '@common/Button/Button'
 import { IPositionItem } from '@store/consts/types'
 import { useStyles } from './style'
@@ -43,6 +40,7 @@ interface IPositionsTableRow extends IPositionItem {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  shouldDisable: boolean
 }
 
 export const PositionTableRow: React.FC<IPositionsTableRow> = ({
@@ -69,9 +67,10 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   unclaimedFeesInUSD = { value: 0, loading: false },
   handleClaimFee,
   handleLockPosition,
-  handleClosePosition
+  handleClosePosition,
+  shouldDisable
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const { classes: skeletonClasses } = useSkeletonStyle()
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tickerToAddress(network, tokenXName), tickerToAddress(network, tokenYName))
@@ -80,7 +79,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
   const airdropIconRef = useRef<any>(null)
   const isXs = useMediaQuery(theme.breakpoints.down('xs'))
   const isDesktop = useMediaQuery(theme.breakpoints.up('lg'))
-
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
   useEffect(() => {
@@ -162,7 +160,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
       return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect60x36} />
     }
     return (
-      <TooltipGradient
+      <TooltipHover
         title={
           isActive ? (
             <>
@@ -177,19 +175,18 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           )
         }
         placement='top'
-        top={1}
-        noGradient>
+        increasePadding>
         <Grid
           container
           item
           sx={{ width: 65 }}
-          className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}>
+          className={cx(classes.fee, isActive ? classes.activeFee : undefined)}>
           <Typography
-            className={classNames(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
+            className={cx(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
             {fee}%
           </Typography>
         </Grid>
-      </TooltipGradient>
+      </TooltipHover>
     )
   }, [fee, classes, isActive])
 
@@ -241,6 +238,11 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
           <Typography className={classes.greenText}>
             {`$${formatNumberWithoutSuffix(tokenValueInUsd.value, { twoDecimals: true })}`}
           </Typography>
+          {tokenValueInUsd.priceWarning && (
+            <TooltipHover title='The price might not be shown correctly'>
+              <img src={warning2Icon} style={{ marginLeft: '4px' }} width={14} />
+            </TooltipHover>
+          )}
         </Grid>
       </Grid>
     )
@@ -293,7 +295,6 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     if (isItemLoading('actions')) {
       return <Skeleton variant='rectangular' className={skeletonClasses.skeletonRect32x32} />
     }
-
     return (
       <Button
         scheme='green'
@@ -337,15 +338,14 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
     }
 
     return (
-      <TooltipGradient
+      <TooltipHover
         title={<PositionStatusTooltip isActive={isActive} isPromoted={isPromoted} />}
         placement='top'
-        top={1}
-        noGradient>
+        increasePadding>
         <div style={{ display: 'flex', justifyContent: 'center' }}>
           <img src={airdropRainbowIcon} alt={'Airdrop'} className={classes.airdropIcon} />
         </div>
-      </TooltipGradient>
+      </TooltipHover>
     )
   }, [isPromoted, estimated24hPoints, pointsPerSecond])
 
@@ -398,6 +398,7 @@ export const PositionTableRow: React.FC<IPositionsTableRow> = ({
         inProgress={inProgress}
       />
       <PositionViewActionPopover
+        shouldDisable={shouldDisable}
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}

@@ -5,8 +5,7 @@ import { airdropGreyIcon, airdropRainbowIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import { Reward } from '@store/consts/types'
 import rewardsImages from '@static/png/rewards/rewardsImages'
-import classNames from 'classnames'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 export interface RewardItemInterface {
   number: number
   reward: Reward
@@ -20,7 +19,7 @@ const RewardItem: React.FC<RewardItemInterface> = ({
   userAddress,
   isConnected
 }) => {
-  const { classes } = useStyles({ isEven: number % 2 === 0 })
+  const { classes, cx } = useStyles({ isEven: number % 2 === 0 })
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
   const isEligible = useMemo(() => {
@@ -82,16 +81,16 @@ const RewardItem: React.FC<RewardItemInterface> = ({
           <Typography className={classes.title}>
             {isEligible ? 'Eligible' : 'Not eligible'}
           </Typography>
-          <TooltipGradient
+          <TooltipHover
             title={textInfo.tooltip}
             placement='bottom'
-            top={3}
-            allowEnterTooltip={false}>
-            <Typography
-              className={classNames(classes.infoText, rewardReceived && classes.textGreen)}>
+            increasePadding
+            allowEnterTooltip={false}
+            gradient>
+            <Typography className={cx(classes.infoText, rewardReceived && classes.textGreen)}>
               {textInfo.text}
             </Typography>
-          </TooltipGradient>
+          </TooltipHover>
         </Grid>
         <Grid container={isMd} className={classes.infoWrapper}>
           <Grid className={classes.label}>
