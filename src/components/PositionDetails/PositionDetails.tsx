@@ -1,7 +1,7 @@
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Box, useMediaQuery } from '@mui/material'
+import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import {
   NetworkType,
   REFRESHER_INTERVAL,
@@ -13,7 +13,7 @@ import { VariantType } from 'notistack'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-import { ILiquidityToken, TokenPriceData } from '@store/consts/types'
+import { ILiquidityToken, INavigatePosition, TokenPriceData } from '@store/consts/types'
 import {
   addressToTicker,
   formatNumberWithSuffix,
@@ -31,9 +31,10 @@ import { PoolDetails } from '@containers/SinglePositionWrapper/SinglePositionWra
 import { PositionHeader } from './PositionHeader/PositionHeader'
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
 import { Information } from '@components/Information/Information'
-import { theme } from '@static/theme'
-import { eyeYellowIcon } from '@static/icons'
-import { RightArrowIcon } from '@static/componentIcon/arrowIcon'
+import { colors, theme, typography } from '@static/theme'
+import { eyeYellowIcon, swapListIcon } from '@static/icons'
+import { ArrowIcon } from '@static/componentIcon/arrowIcon'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -76,6 +77,8 @@ interface IProps {
   showPositionLoader?: boolean
   isPromotedLoading: boolean
   shouldDisable: boolean
+  previousPosition: INavigatePosition | null
+  nextPosition: INavigatePosition | null
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -118,7 +121,9 @@ const PositionDetails: React.FC<IProps> = ({
   isPromoted,
   showPositionLoader = false,
   points24,
-  isPromotedLoading
+  isPromotedLoading,
+  previousPosition,
+  nextPosition
 }) => {
   const { classes, cx } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -233,7 +238,54 @@ const PositionDetails: React.FC<IProps> = ({
         </Box>
       </Information>
       <Box position='relative'>
-        <RightArrowIcon className={cx(classes.arrow, classes.leftArrow)} />
+        {previousPosition && (
+          <Box className={classes.leftArrowWrapper}>
+            <TooltipHover
+              title={
+                <Box display='flex' flexDirection='column' alignItems='center' width={129}>
+                  <Typography color={colors.invariant.textGrey} style={typography.body2} mb={'4px'}>
+                    Next position
+                  </Typography>
+                  <Grid container item className={classes.iconsShared} mb={'4px'}>
+                    <img
+                      className={classes.tokenIcon}
+                      src={previousPosition.tokenXIcon}
+                      alt={previousPosition.tokenXName}
+                      width={24}
+                      height={24}
+                    />
+
+                    <img src={swapListIcon} alt='Arrow' width={24} />
+
+                    <img
+                      className={classes.tokenIcon}
+                      src={previousPosition.tokenYIcon}
+                      alt={previousPosition.tokenYName}
+                      width={24}
+                      height={24}
+                    />
+                  </Grid>
+
+                  <Typography color={colors.invariant.text} style={typography.body1}>
+                    {previousPosition.tokenXName + ' - ' + previousPosition.tokenYName}
+                  </Typography>
+                  <Typography color={colors.invariant.textGrey} style={typography.body1}>
+                    {previousPosition.fee + '% fee'}
+                  </Typography>
+                </Box>
+              }
+              top={'50%'}
+              increasePadding>
+              <ArrowIcon
+                className={cx(classes.arrow)}
+                onClick={() => {
+                  console.log('nextPosition', previousPosition.id)
+                  navigate(ROUTES.getPositionRoute(previousPosition.id))
+                }}
+              />
+            </TooltipHover>
+          </Box>
+        )}
         <Box className={classes.mainContainer}>
           <ClosePositionWarning
             open={isModalOpen}
@@ -368,7 +420,54 @@ const PositionDetails: React.FC<IProps> = ({
             </Box>
           </Box>
         </Box>
-        <RightArrowIcon className={cx(classes.arrow, classes.rightArrow)} />
+        {nextPosition && (
+          <Box className={classes.rightArrowWrapper}>
+            <TooltipHover
+              title={
+                <Box display='flex' flexDirection='column' alignItems='center' width={129}>
+                  <Typography color={colors.invariant.textGrey} style={typography.body2} mb={'4px'}>
+                    Next position
+                  </Typography>
+                  <Grid container item className={classes.iconsShared} mb={'4px'}>
+                    <img
+                      className={classes.tokenIcon}
+                      src={nextPosition.tokenXIcon}
+                      alt={nextPosition.tokenXName}
+                      width={24}
+                      height={24}
+                    />
+
+                    <img src={swapListIcon} alt='Arrow' width={24} />
+
+                    <img
+                      className={classes.tokenIcon}
+                      src={nextPosition.tokenYIcon}
+                      alt={nextPosition.tokenYName}
+                      width={24}
+                      height={24}
+                    />
+                  </Grid>
+
+                  <Typography color={colors.invariant.text} style={typography.body1}>
+                    {nextPosition.tokenXName + ' - ' + nextPosition.tokenYName}
+                  </Typography>
+                  <Typography color={colors.invariant.textGrey} style={typography.body1}>
+                    {nextPosition.fee + '% fee'}
+                  </Typography>
+                </Box>
+              }
+              top={'50%'}
+              increasePadding>
+              <ArrowIcon
+                className={cx(classes.arrow)}
+                onClick={() => {
+                  console.log('nextPosition', nextPosition.id)
+                  navigate(ROUTES.getPositionRoute(nextPosition.id))
+                }}
+              />
+            </TooltipHover>
+          </Box>
+        )}
       </Box>
     </>
   )

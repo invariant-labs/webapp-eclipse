@@ -37,11 +37,11 @@ export const useStyles = makeStyles()(() => ({
   },
   arrow: {
     color: colors.invariant.green,
-    position: 'absolute',
     zIndex: 2,
     cursor: 'pointer',
     overflow: 'visible',
     top: '50%',
+    padding: 16,
 
     '& path': {
       transition: 'filter 0.3s'
@@ -52,12 +52,31 @@ export const useStyles = makeStyles()(() => ({
       }
     }
   },
-  leftArrow: {
+  leftArrowWrapper: {
+    position: 'absolute',
+    top: '50%',
     transform: 'scale(-1)',
     left: -88
   },
-  rightArrow: {
-    left: 'unset',
+  rightArrowWrapper: {
+    position: 'absolute',
+    top: '50%',
     right: -88
+  },
+  tokenIcon: {
+    width: 24,
+    borderRadius: '100%',
+    [theme.breakpoints.down('sm')]: {
+      width: 28
+    }
+  },
+  iconsShared: {
+    alignItems: 'center',
+    flexWrap: 'nowrap',
+
+    width: 'fit-content',
+    [theme.breakpoints.down('lg')]: {
+      marginRight: 12
+    }
   }
 }))
