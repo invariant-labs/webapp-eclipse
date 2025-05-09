@@ -3,7 +3,6 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { INoConnected, NoConnected } from '@common/NoConnected/NoConnected'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-
 import {
   Box,
   Grid,
@@ -17,20 +16,15 @@ import {
   FormControlLabel,
   Checkbox
 } from '@mui/material'
-
 import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
-import { LiquidityPools } from '@store/types/userOverview'
 import { ROUTES } from '@utils/utils'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 
-import classNames from 'classnames'
-
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
-
 import { Overview } from './Overview/Overview/Overview'
 import { YourWallet } from './Overview/YourWallet/YourWallet'
 import { VariantType } from 'notistack'
@@ -39,6 +33,8 @@ import { PositionsTable } from './PositionItem/PositionTables/PositionTable.tsx/
 import PositionCardsSkeletonMobile from './PositionItem/PositionTables/skeletons/PositionCardsSkeletonMobile'
 import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionItemMobile'
 import { refreshIcon } from '@static/icons'
+import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
+import { LiquidityPools } from '@store/reducers/positions'
 
 interface IProps {
   initialPage: number
@@ -61,10 +57,14 @@ interface IProps {
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
   tokensList: SwapToken[]
+  shouldDisable: boolean
+  positionListAlignment: LiquidityPools
+  setPositionListAlignment: (val: LiquidityPools) => void
 }
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  shouldDisable,
   handleSnackbar,
   data,
   onAddPositionClick,
@@ -79,9 +79,12 @@ const Portfolio: React.FC<IProps> = ({
   handleClosePosition,
   handleClaimFee,
   tokensList,
-  lockedLength
+  lockedLength,
+  positionListAlignment,
+  setPositionListAlignment
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
+
   const navigate = useNavigate()
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
@@ -93,7 +96,21 @@ const Portfolio: React.FC<IProps> = ({
     isBalanceLoading,
     currentNetwork
   )
-  const [alignment, setAlignment] = useState<string>(LiquidityPools.Standard)
+
+  const setLiquidityPoolsAlignment = (val: LiquidityPools) => {
+    setAlignment(val)
+    setPositionListAlignment(val)
+  }
+
+  const [alignment, setAlignment] = useState<LiquidityPools>(positionListAlignment)
+
+  useEffect(() => {
+    if (lockedLength === 0 && !loading && alignment === LiquidityPools.Locked) {
+      setAlignment(LiquidityPools.Standard)
+      setLiquidityPoolsAlignment(LiquidityPools.Standard)
+    }
+  }, [lockedLength, loading])
+
   const [activePanel, setActivePanel] = useState<OverviewSwitcher>(OverviewSwitcher.Overview)
 
   const handleToggleChange =
@@ -149,14 +166,14 @@ const Portfolio: React.FC<IProps> = ({
         </>
       ) : (
         <>
-          <Typography className={classNames(classes.greyText, classes.footerPositionDetails)}>
+          <Typography className={cx(classes.greyText, classes.footerPositionDetails)}>
             All Positions: {positionsDetails.positionsAmount}
           </Typography>
           <Box gap={1} display={'flex'}>
-            <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
+            <Typography className={cx(classes.greenText, classes.footerPositionDetails)}>
               Within Range: {positionsDetails.inRangeAmount}
             </Typography>
-            <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
+            <Typography className={cx(classes.pinkText, classes.footerPositionDetails)}>
               Outside Range: {positionsDetails.outOfRangeAmount}
             </Typography>
           </Box>
@@ -166,7 +183,7 @@ const Portfolio: React.FC<IProps> = ({
   )
 
   const renderTokensFound = () => (
-    <Typography className={classNames(classes.footerText, classes.greyText)}>
+    <Typography className={cx(classes.footerText, classes.greyText)}>
       {isBalanceLoading || loading ? (
         <Skeleton width={150} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
       ) : (
@@ -209,7 +226,6 @@ const Portfolio: React.FC<IProps> = ({
   }, [currentData, selectedFilters])
 
   const [allowPropagation, setAllowPropagation] = useState(true)
-
   const renderContent = () => {
     if (showNoConnected) {
       return <NoConnected {...noConnectedBlockerProps} />
@@ -220,6 +236,7 @@ const Portfolio: React.FC<IProps> = ({
         <PositionsTable
           positions={filteredData}
           isLoading={loading}
+          shouldDisable={shouldDisable}
           noInitialPositions={noInitialPositions}
           onAddPositionClick={onAddPositionClick}
           handleLockPosition={handleLockPosition}
@@ -258,6 +275,7 @@ const Portfolio: React.FC<IProps> = ({
         key={element.id}
         className={classes.itemLink}>
         <PositionItemMobile
+          shouldDisable={shouldDisable}
           key={index}
           {...element}
           setAllowPropagation={setAllowPropagation}
@@ -445,38 +463,11 @@ const Portfolio: React.FC<IProps> = ({
                 </TooltipHover>
               </Grid>
               {isMb && (
-                <Box className={classes.switchPoolsContainer}>
-                  <Box
-                    className={classes.switchPoolsMarker}
-                    sx={{
-                      left: alignment === LiquidityPools.Standard ? 0 : '50%'
-                    }}
-                  />
-                  <ToggleButtonGroup
-                    value={alignment}
-                    exclusive
-                    onChange={handleToggleChange(setAlignment)}
-                    className={classes.switchPoolsButtonsGroup}>
-                    <ToggleButton
-                      sx={{ padding: 0 }}
-                      value={LiquidityPools.Standard}
-                      disableRipple
-                      className={classes.switchPoolsButton}
-                      style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
-                      Standard
-                    </ToggleButton>
-                    <ToggleButton
-                      sx={{ padding: 0 }}
-                      disabled={lockedData.length === 0}
-                      value={LiquidityPools.Locked}
-                      disableRipple
-                      className={classes.switchPoolsButton}
-                      classes={{ disabled: classes.disabledSwitchButton }}
-                      style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
-                      Locked
-                    </ToggleButton>
-                  </ToggleButtonGroup>
-                </Box>
+                <PositionListSwitcher
+                  alignment={alignment}
+                  setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
+                  lockListDisabled={lockedLength === 0}
+                />
               )}
               <Grid className={classes.searchWrapper}>
                 <Grid className={classes.filtersContainer}>
@@ -489,38 +480,11 @@ const Portfolio: React.FC<IProps> = ({
                     setSelectedFilters={setSelectedFilters}
                   />
                   {!isMb && (
-                    <Box className={classes.switchPoolsContainer}>
-                      <Box
-                        className={classes.switchPoolsMarker}
-                        sx={{
-                          left: alignment === LiquidityPools.Standard ? 0 : '50%'
-                        }}
-                      />
-                      <ToggleButtonGroup
-                        value={alignment}
-                        exclusive
-                        onChange={handleToggleChange(setAlignment)}
-                        className={classes.switchPoolsButtonsGroup}>
-                        <ToggleButton
-                          sx={{ padding: 0 }}
-                          value={LiquidityPools.Standard}
-                          disableRipple
-                          className={classes.switchPoolsButton}
-                          style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
-                          Standard
-                        </ToggleButton>
-                        <ToggleButton
-                          sx={{ padding: 0 }}
-                          disabled={lockedData.length === 0}
-                          value={LiquidityPools.Locked}
-                          disableRipple
-                          className={classes.switchPoolsButton}
-                          classes={{ disabled: classes.disabledSwitchButton }}
-                          style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
-                          Locked
-                        </ToggleButton>
-                      </ToggleButtonGroup>
-                    </Box>
+                    <PositionListSwitcher
+                      alignment={alignment}
+                      setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
+                      lockListDisabled={lockedLength === 0}
+                    />
                   )}
                 </Grid>
 
@@ -556,38 +520,11 @@ const Portfolio: React.FC<IProps> = ({
 
               <Grid className={classes.searchWrapper}>
                 <Grid className={classes.filtersContainer}>
-                  <Box className={classes.switchPoolsContainer}>
-                    <Box
-                      className={classes.switchPoolsMarker}
-                      sx={{
-                        left: alignment === LiquidityPools.Standard ? 0 : '50%'
-                      }}
-                    />
-                    <ToggleButtonGroup
-                      value={alignment}
-                      exclusive
-                      onChange={handleToggleChange(setAlignment)}
-                      className={classes.switchPoolsButtonsGroup}>
-                      <ToggleButton
-                        sx={{ padding: 0 }}
-                        value={LiquidityPools.Standard}
-                        disableRipple
-                        className={classes.switchPoolsButton}
-                        style={{ fontWeight: alignment === LiquidityPools.Standard ? 700 : 400 }}>
-                        Standard
-                      </ToggleButton>
-                      <ToggleButton
-                        sx={{ padding: 0 }}
-                        disabled={lockedData.length === 0}
-                        value={LiquidityPools.Locked}
-                        disableRipple
-                        className={classes.switchPoolsButton}
-                        classes={{ disabled: classes.disabledSwitchButton }}
-                        style={{ fontWeight: alignment === LiquidityPools.Locked ? 700 : 400 }}>
-                        Locked
-                      </ToggleButton>
-                    </ToggleButtonGroup>
-                  </Box>
+                  <PositionListSwitcher
+                    alignment={alignment}
+                    setLiquidityPoolsAlignment={setLiquidityPoolsAlignment}
+                    lockListDisabled={lockedLength === 0}
+                  />
 
                   <Grid className={classes.fullWidthWrapper}>
                     <Grid width={26} display='flex' alignItems='center'>

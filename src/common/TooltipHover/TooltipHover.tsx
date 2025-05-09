@@ -98,6 +98,7 @@ export const TooltipHover = ({
       open={open}
       title={
         <Box
+          maxWidth={300}
           onMouseEnter={allowEnterTooltip ? () => setTitleHover(true) : undefined}
           onMouseLeave={allowEnterTooltip ? () => setTitleHover(false) : undefined}
           textAlign={textAlign}>
@@ -107,7 +108,12 @@ export const TooltipHover = ({
       {...props}>
       <span
         className={classes.tooltipSpan}
-        onClick={() => setOpen(true)}
+        onClick={e => {
+          if (isMobile) {
+            e.stopPropagation()
+            setOpen(true)
+          }
+        }}
         onMouseEnter={() => setChildrenHover(true)}
         onMouseLeave={() => setChildrenHover(false)}
         onFocus={() => setChildrenHover(true)}

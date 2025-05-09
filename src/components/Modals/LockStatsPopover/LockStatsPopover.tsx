@@ -1,7 +1,7 @@
 import useStyles from './style'
 import { Popover, Typography, LinearProgress, Box } from '@mui/material'
-import { PieChart } from '@mui/x-charts'
-import { colors } from '@static/theme'
+import { ResponsivePie } from '@nivo/pie'
+import { colors, typography } from '@static/theme'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { useState, useEffect, useMemo } from 'react'
 
@@ -154,28 +154,35 @@ export const LockStatsPopover = ({
                 }}>
                 Percentage breakdown of total locked liquidity between token pair in the pool.
               </Typography>
-              <PieChart
-                series={[
-                  {
-                    data: data,
-                    outerRadius: 40,
-                    startAngle: -45,
-                    endAngle: 315,
-                    cx: 122.5,
-                    cy: 77.5,
-                    arcLabel: item => {
-                      return `${item.label} (${item.value}%)`
-                    },
-                    arcLabelRadius: 85
-                  }
-                ]}
-                colors={[colors.invariant.pink, colors.invariant.green]}
-                slotProps={{
-                  legend: { hidden: true }
-                }}
-                width={255}
-                height={155}
-              />
+              <div style={{ width: 300, height: 130, overflow: 'visible' }}>
+                <ResponsivePie
+                  data={data.filter(d => d.value > 0)}
+                  colors={[colors.invariant.pink, colors.invariant.green]}
+                  margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
+                  startAngle={-45}
+                  endAngle={315}
+                  borderWidth={1}
+                  borderColor='white'
+                  enableArcLabels={false}
+                  enableArcLinkLabels={true}
+                  arcLinkLabelsTextColor='#ffffff'
+                  arcLinkLabelsThickness={1}
+                  arcLinkLabelsColor={{ from: 'color' }}
+                  arcLinkLabelsOffset={3}
+                  arcLinkLabelsDiagonalLength={0}
+                  arcLinkLabelsStraightLength={0}
+                  arcLinkLabelsSkipAngle={1}
+                  arcLinkLabel={d => `${d.label} (${d.value}%)`}
+                  theme={{
+                    labels: {
+                      text: {
+                        fontFamily: 'Mukta',
+                        ...typography.body2
+                      }
+                    }
+                  }}
+                />
+              </div>
             </div>
           </div>
 
