@@ -58,7 +58,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
     (window as any).salmon
   ])
 
-  const isMobile = useIsMobile()
+  const isMobile = useIsMobile(true)
   const { classes } = useStyles({ isMobile: isMobile && detectedWallet !== null })
 
   const setWallet = (wallet: WalletType) => {
@@ -66,7 +66,6 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
   }
 
   const handleConnectStaticWallet = async (wallet: WalletType) => {
-    console.log(wallet)
     setIsOpenSelectWallet(false)
     setTimeout(async () => {
       if (isChangeWallet) {
@@ -106,7 +105,6 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
               <img width={16} src={closeSmallIcon} alt='Close'></img>
             </Grid>
           </Box>
-          <span> detected wallet: {detectedWallet}</span>
           {detectedWallet && isMobile ? (
             <>
               <Typography className={classes.mobileSubtitle}>
