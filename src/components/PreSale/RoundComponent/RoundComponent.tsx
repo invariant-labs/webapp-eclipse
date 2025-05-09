@@ -1,10 +1,11 @@
 import { Box, Grid, Typography } from '@mui/material'
-import React, { useMemo } from 'react'
+import React, { useMemo }, { useState } from 'react'
 import useStyles from './style'
 import { useCountdown } from '../Timer/useCountdown'
 import { colors, typography } from '@static/theme'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
+import { closeSmallGreenIcon, greenInfoIcon } from '@static/icons'
 
 interface RoundComponentProps {
   isActive: boolean
@@ -19,6 +20,7 @@ interface RoundComponentProps {
   remainingAllocation: string
   currency: string | null
   endtimestamp: BN
+    alertBoxText?: string;
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -33,9 +35,12 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   purchasedTokens,
   remainingAllocation,
   currency,
-  endtimestamp
+  endtimestamp,
+    alertBoxText,
 }) => {
   const { classes } = useStyles({ percentage: percentageFilled, isActive })
+    const [alertBoxShow, setAlertBoxShow] = useState(true)
+
   const targetDate = useMemo(() => new Date(endtimestamp.toNumber() * 1000), [endtimestamp])
 
   const { hours, minutes, seconds } = useCountdown({
@@ -45,6 +50,22 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   return (
     <Box className={classes.container}>
       <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
+
+            {alertBoxText && alertBoxShow && isActive && (
+
+                <Box className={classes.alertBox}>
+                    <Box className={classes.alertBoxContent}>
+                        <img src={greenInfoIcon} alt='Info icon' />
+                        <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
+                    </Box>
+
+                    <Box className={classes.closeIconContainer} onClick={() => {
+                        setAlertBoxShow(false)
+                    }}>
+                        <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
+                    </Box>
+                </Box>
+            )}
       {!isActive && (
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
           <Typography className={classes.infoLabelBigger}>Current price: </Typography>

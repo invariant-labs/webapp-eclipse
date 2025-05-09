@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
-import { closeSmallGreenIcon, greenInfoIcon, virtualCardIcon } from '@static/icons'
+import { virtualCardIcon } from '@static/icons'
 import { USDC_MAIN } from '@store/consts/static'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
