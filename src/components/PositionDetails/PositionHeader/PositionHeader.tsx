@@ -99,7 +99,7 @@ export const PositionHeader = ({
   const closeButton = closeButtonTitle ? (
     <TooltipHover title={closeButtonTitle}>
       <Button
-        height={36}
+        height={40}
         scheme='green'
         disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
         variant='contained'
@@ -109,7 +109,7 @@ export const PositionHeader = ({
     </TooltipHover>
   ) : (
     <Button
-      height={36}
+      height={40}
       scheme='green'
       disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
       variant='contained'
