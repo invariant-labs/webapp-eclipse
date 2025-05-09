@@ -106,6 +106,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
               <img width={16} src={closeSmallIcon} alt='Close'></img>
             </Grid>
           </Box>
+          {(window as any)?.nightly && (window as any)?.nightly.solana.toString()}
           {detectedWallet && isMobile ? (
             <>
               <Typography className={classes.mobileSubtitle}>
