@@ -34,8 +34,8 @@ export const useStyles = makeStyles()(() => ({
       display: 'none'
     },
     '&.Mui-expanded': {
-      marginTop: '20px !important',
-      marginBottom: '20px !important',
+      marginTop: '8px !important',
+      marginBottom: '8px !important',
       '&::after': {
         content: '""',
         position: 'absolute',
@@ -60,7 +60,8 @@ export const useStyles = makeStyles()(() => ({
     display: 'grid',
     gridTemplateColumns: '1fr 40px',
     alignItems: 'center',
-    padding: '16px 2px',
+    padding: '8px 2px',
+
     '& .MuiAccordionSummary-content': {
       margin: 0
     },
@@ -72,12 +73,14 @@ export const useStyles = makeStyles()(() => ({
     },
     '& p': {
       color: colors.invariant.text,
-      fontSize: '16px',
-      fontWeight: 500
+      ...typography.heading3
     }
   },
   item: {
     zIndex: 5,
+    fontWeight: 400,
+    color: colors.invariant.textGrey,
+    fontSize: '20px',
     '& a': {
       color: '#2EE09A',
       textDecoration: 'none',
