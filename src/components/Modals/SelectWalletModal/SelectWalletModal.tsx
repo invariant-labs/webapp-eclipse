@@ -105,6 +105,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
               <img width={16} src={closeSmallIcon} alt='Close'></img>
             </Grid>
           </Box>
+          <span> detected wallet: {detectedWallet}</span>
           {detectedWallet && isMobile ? (
             <>
               <Typography className={classes.mobileSubtitle}>
