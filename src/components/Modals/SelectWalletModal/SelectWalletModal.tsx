@@ -41,7 +41,8 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
     const salmon = (window as any)?.salmon
 
     if (nightly && !backpack && !okx && !salmon) {
-      return WalletType.NIGHTLY_WALLET
+      // return WalletType.NIGHTLY_WALLET
+      return null
     } else if (backpack && !nightly && !okx && !salmon) {
       return WalletType.BACKPACK
     } else if (okx && !nightly && !backpack && !salmon) {
