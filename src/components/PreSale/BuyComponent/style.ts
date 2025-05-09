@@ -3,6 +3,12 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
   (theme, { percentage, isActive }) => ({
+    greenButton: {
+      background: colors.invariant.greenLinearGradient,
+      color: colors.invariant.newDark,
+      backgroundHover: colors.invariant.greenLinearGradient,
+      boxShadow: 'rgba(46, 224, 154, 0.5)'
+    },
     container: {
       backgroundColor: colors.invariant.component,
       borderRadius: '20px',

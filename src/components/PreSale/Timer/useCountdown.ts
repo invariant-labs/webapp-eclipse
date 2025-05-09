@@ -19,7 +19,6 @@ export const useCountdown = ({ targetDate, onExpire }: UseCountdownProps): Count
     seconds: '00',
     isExpired: false
   })
-
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date().getTime()
