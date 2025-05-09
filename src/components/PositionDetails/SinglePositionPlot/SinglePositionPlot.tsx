@@ -5,7 +5,6 @@ import {
   calcTicksAmountInRange,
   calculateConcentration,
   formatNumberWithoutSuffix,
-  formatNumberWithSuffix,
   numberToString,
   spacingMultiplicityGte,
   truncateString
@@ -245,7 +244,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 value={
                   <Box>
                     <Typography component='span' className={classes.value}>
-                      {isFullRange ? 0 : formatNumberWithSuffix(min)}
+                      {isFullRange ? 0 : formatNumberWithoutSuffix(min)}
                     </Typography>{' '}
                     {!isFullRange &&
                       (xToY
@@ -265,7 +264,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                       {isFullRange ? (
                         <span style={{ fontSize: '24px' }}>∞</span>
                       ) : (
-                        formatNumberWithSuffix(max)
+                        formatNumberWithoutSuffix(max)
                       )}
                     </Typography>{' '}
                     {!isFullRange &&
