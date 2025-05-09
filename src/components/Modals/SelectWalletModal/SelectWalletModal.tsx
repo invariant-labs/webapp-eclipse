@@ -41,7 +41,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
     const salmon = (window as any)?.salmon
 
     if (nightly && !backpack && !okx && !salmon) {
-      return WalletType.NIGHTLY
+      return WalletType.NIGHTLY_WALLET
     } else if (backpack && !nightly && !okx && !salmon) {
       return WalletType.BACKPACK
     } else if (okx && !nightly && !backpack && !salmon) {
@@ -58,7 +58,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
     (window as any).salmon
   ])
 
-  const isMobile = useIsMobile(true)
+  const isMobile = useIsMobile()
   const { classes } = useStyles({ isMobile: isMobile && detectedWallet !== null })
 
   const setWallet = (wallet: WalletType) => {
@@ -66,6 +66,7 @@ export const SelectWalletModal: React.FC<ISelectWalletModal> = ({
   }
 
   const handleConnectStaticWallet = async (wallet: WalletType) => {
+    console.log(wallet)
     setIsOpenSelectWallet(false)
     setTimeout(async () => {
       if (isChangeWallet) {
