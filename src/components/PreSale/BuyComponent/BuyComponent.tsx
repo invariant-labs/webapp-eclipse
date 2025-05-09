@@ -17,7 +17,6 @@ import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButt
 
 interface IProps {
   isActive?: boolean
-  alertBoxText?: string
   targetAmount: BN
   currentAmount: BN
   mintDecimals: number
@@ -39,7 +38,6 @@ enum PaymentMethod {
 }
 
 export const BuyComponent: React.FC<IProps> = ({
-  alertBoxText,
   targetAmount,
   currentAmount,
   mintDecimals,
@@ -70,7 +68,6 @@ export const BuyComponent: React.FC<IProps> = ({
   }, [currentAmount, targetAmount, mintDecimals])
 
   const { classes } = useStyles({ percentage: (+raisedAmount / +totalAmount) * 100, isActive })
-  const [alertBoxShow, setAlertBoxShow] = useState(true)
   const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | undefined>(
     undefined
   )
@@ -102,23 +99,6 @@ export const BuyComponent: React.FC<IProps> = ({
   }, [tokenIndex, tokens, isLoading, value])
   return (
     <Box className={classes.container}>
-      {alertBoxText && alertBoxShow && isActive && (
-        <Box className={classes.alertBox}>
-          <Box className={classes.alertBoxContent}>
-            <img src={greenInfoIcon} alt='Info icon' />
-            <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
-          </Box>
-
-          <Box
-            className={classes.closeIconContainer}
-            onClick={() => {
-              setAlertBoxShow(false)
-            }}>
-            <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
-          </Box>
-        </Box>
-      )}
-
       <Box>
         <Box className={classes.headingContainer}>
           <Typography className={classes.titleText}>

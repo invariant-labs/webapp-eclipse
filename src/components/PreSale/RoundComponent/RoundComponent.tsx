@@ -1,5 +1,5 @@
 import { Box, Grid, Typography } from '@mui/material'
-import React, { useMemo }, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import useStyles from './style'
 import { useCountdown } from '../Timer/useCountdown'
 import { colors, typography } from '@static/theme'
@@ -20,7 +20,7 @@ interface RoundComponentProps {
   remainingAllocation: string
   currency: string | null
   endtimestamp: BN
-    alertBoxText?: string;
+  alertBoxText?: string
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -36,10 +36,10 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   remainingAllocation,
   currency,
   endtimestamp,
-    alertBoxText,
+  alertBoxText
 }) => {
   const { classes } = useStyles({ percentage: percentageFilled, isActive })
-    const [alertBoxShow, setAlertBoxShow] = useState(true)
+  const [alertBoxShow, setAlertBoxShow] = useState(true)
 
   const targetDate = useMemo(() => new Date(endtimestamp.toNumber() * 1000), [endtimestamp])
 
@@ -51,21 +51,22 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     <Box className={classes.container}>
       <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
 
-            {alertBoxText && alertBoxShow && isActive && (
+      {alertBoxText && alertBoxShow && isActive && (
+        <Box className={classes.alertBox}>
+          <Box className={classes.alertBoxContent}>
+            <img src={greenInfoIcon} alt='Info icon' />
+            <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
+          </Box>
 
-                <Box className={classes.alertBox}>
-                    <Box className={classes.alertBoxContent}>
-                        <img src={greenInfoIcon} alt='Info icon' />
-                        <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
-                    </Box>
-
-                    <Box className={classes.closeIconContainer} onClick={() => {
-                        setAlertBoxShow(false)
-                    }}>
-                        <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
-                    </Box>
-                </Box>
-            )}
+          <Box
+            className={classes.closeIconContainer}
+            onClick={() => {
+              setAlertBoxShow(false)
+            }}>
+            <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
+          </Box>
+        </Box>
+      )}
       {!isActive && (
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
           <Typography className={classes.infoLabelBigger}>Current price: </Typography>
