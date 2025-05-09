@@ -33,7 +33,7 @@ import ClosePositionWarning from '@components/Modals/ClosePositionWarning/CloseP
 import { Information } from '@components/Information/Information'
 import { colors, theme, typography } from '@static/theme'
 import { eyeYellowIcon, swapListIcon } from '@static/icons'
-import { ArrowIcon } from '@static/componentIcon/arrowIcon'
+import { ArrowIcon } from '@static/componentIcon/ArrowIcon'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProps {
@@ -246,7 +246,7 @@ const PositionDetails: React.FC<IProps> = ({
               title={
                 <Box display='flex' flexDirection='column' alignItems='center' width={129}>
                   <Typography color={colors.invariant.textGrey} style={typography.body2} mb={'4px'}>
-                    Next position
+                    Previous position
                   </Typography>
                   <Grid container item className={classes.iconsShared} mb={'4px'}>
                     <img
@@ -368,6 +368,8 @@ const PositionDetails: React.FC<IProps> = ({
             }}
             copyPoolAddressHandler={copyPoolAddressHandler}
             isPreview={showPreviewInfo}
+            nextPosition={nextPosition}
+            previousPosition={previousPosition}
           />
           <Box className={classes.container}>
             <Box className={classes.leftSide}>

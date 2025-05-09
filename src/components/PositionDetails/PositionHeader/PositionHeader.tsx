@@ -1,16 +1,27 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { airdropRainbowIcon, backArrowIcon, newTabIcon, reverseTokensIcon } from '@static/icons'
-import { theme } from '@static/theme'
+import {
+  airdropRainbowIcon,
+  arrowLeftIcon,
+  backArrowIcon,
+  newTabIcon,
+  reverseTokensIcon
+} from '@static/icons'
+import { colors, theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
 import { REFRESHER_INTERVAL } from '@store/consts/static'
 import { useEffect, useMemo, useState } from 'react'
-import { truncateString } from '@utils/utils'
+import { ROUTES, truncateString } from '@utils/utils'
 import { LockButton } from './LockButton'
 import { Button } from '@common/Button/Button'
+import { INavigatePosition } from '@store/consts/types'
+import { ArrowIcon2 } from '@static/componentIcon/ArrowIcon2'
+import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
+import { MobileNavigation } from '../Navigation/MobileNavigation/MobileNavigation'
+import { useNavigate } from 'react-router-dom'
 
 type Props = {
   tokenA: {
@@ -38,6 +49,8 @@ type Props = {
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   isPreview: boolean
   isClosing: boolean
+  previousPosition: INavigatePosition | null
+  nextPosition: INavigatePosition | null
 }
 
 export const PositionHeader = ({
@@ -59,13 +72,18 @@ export const PositionHeader = ({
   onLockClick,
   copyPoolAddressHandler,
   isPreview,
-  isClosing
+  isClosing,
+  previousPosition,
+  nextPosition
 }: Props) => {
   const { classes, cx } = useStyles()
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
   const isMdDown = useMediaQuery(theme.breakpoints.down(1040))
-  const isMdUp = useMediaQuery(theme.breakpoints.up(1040))
+  // const isMdUp = useMediaQuery(theme.breakpoints.up(1040))
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const [refresherTime, setRefresherTime] = useState(REFRESHER_INTERVAL)
+
+  const navigate = useNavigate()
 
   useEffect(() => {
     const timeout = setTimeout(() => {
@@ -171,7 +189,43 @@ export const PositionHeader = ({
             {marketIdLabel} {refresher}
           </Box>
         )}
+        {!isMdDown && isLgDown && previousPosition && nextPosition && (
+          <Box className={classes.tabletNavigation}>
+            <MobileNavigation
+              position={previousPosition}
+              direction='left'
+              onClick={() => {
+                navigate(ROUTES.getPositionRoute(previousPosition.id))
+              }}
+            />
+            <MobileNavigation
+              position={nextPosition}
+              direction='right'
+              onClick={() => {
+                navigate(ROUTES.getPositionRoute(nextPosition.id))
+              }}
+            />
+          </Box>
+        )}
       </Box>
+      {isMdDown && previousPosition && nextPosition && (
+        <Box display='flex' gap={1}>
+          <MobileNavigation
+            position={previousPosition}
+            direction='left'
+            onClick={() => {
+              navigate(ROUTES.getPositionRoute(previousPosition.id))
+            }}
+          />
+          <MobileNavigation
+            position={nextPosition}
+            direction='right'
+            onClick={() => {
+              navigate(ROUTES.getPositionRoute(nextPosition.id))
+            }}
+          />
+        </Box>
+      )}
       <Box className={classes.container}>
         <Box className={classes.upperContainer}>
           <Box className={classes.wrapper}>
@@ -241,7 +295,7 @@ export const PositionHeader = ({
             )}
           </Box>
         </Box>
-        {(isSmDown || isMdUp) && (
+        {(isSmDown || !isMdDown) && (
           <Box className={classes.lowerContainer}>
             {!isMdDown ? (
               <>
