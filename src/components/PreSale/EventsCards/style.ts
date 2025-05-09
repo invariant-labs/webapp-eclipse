@@ -6,7 +6,7 @@ interface StyleProps {
   isImportant: boolean
 }
 
-const useStyles = makeStyles<StyleProps>()((theme, { borderColor, isImportant }) => {
+const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant }) => {
   const getBorderColor = () => {
     switch (borderColor) {
       case 'green':
@@ -21,8 +21,8 @@ const useStyles = makeStyles<StyleProps>()((theme, { borderColor, isImportant })
 
   return {
     container: {
-      width: '293px', // 341px - 48px (24px padding on each side)
-      height: '372px', // 420px - 48px (24px padding on each side)
+      width: '293px',
+      height: '372px',
       position: 'relative',
       background: colors.invariant.component,
       display: 'flex',
@@ -32,7 +32,7 @@ const useStyles = makeStyles<StyleProps>()((theme, { borderColor, isImportant })
       borderRadius: '24px',
       padding: '24px',
       overflow: 'hidden',
-      boxSizing: 'content-box' // Ensures padding is added to width/height
+      boxSizing: 'content-box'
     },
     backgroundImage: {
       width: '100%',

@@ -1,4 +1,3 @@
-import { alpha } from '@mui/material'
 import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
