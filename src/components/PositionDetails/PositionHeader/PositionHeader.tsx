@@ -1,7 +1,7 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { airdropRainbowIcon, backArrowIcon, newTabIcon, reverseTokensIcon } from '@static/icons'
+import { airdropRainbowIcon, backArrowIcon, newTabIcon } from '@static/icons'
 import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
@@ -14,6 +14,7 @@ import { Button } from '@common/Button/Button'
 import { INavigatePosition } from '@store/consts/types'
 import { MobileNavigation } from '../Navigation/MobileNavigation/MobileNavigation'
 import { useNavigate } from 'react-router-dom'
+import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
 
 type Props = {
   tokenA: {
@@ -224,10 +225,8 @@ export const PositionHeader = ({
             <Box className={classes.iconContainer}>
               <img className={classes.icon} src={tokenA.icon} alt={tokenA.ticker} />
               <TooltipHover title='Reverse tokens'>
-                <img
+                <ReverseTokensIcon
                   className={classes.reverseTokensIcon}
-                  src={reverseTokensIcon}
-                  alt='Reverse tokens'
                   onClick={() => onReverseTokensClick()}
                 />
               </TooltipHover>

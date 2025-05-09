@@ -84,7 +84,7 @@ export const useStyles = makeStyles()(() => ({
   },
   reverseTokensIcon: {
     cursor: 'pointer',
-
+    color: colors.invariant.lightGrey,
     '&:hover': {
       filter: 'brightness(1.4)',
       '@media (hover: none)': {

@@ -114,6 +114,10 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
     const currentIndex = data.findIndex(position => position.id.toString() === id)
 
+    if (currentIndex === -1) {
+      return null
+    }
+
     return data[currentIndex - 1] ?? data[data.length - 1]
   }, [position?.isLocked, lockedNavigationData, navigationData, id])
 
