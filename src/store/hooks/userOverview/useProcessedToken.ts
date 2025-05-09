@@ -1,23 +1,10 @@
-import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { NetworkType } from '@store/consts/static'
+import { SwapToken } from '@store/selectors/solanaWallet'
 import { printBN, getTokenPrice, ensureError } from '@utils/utils'
 import { useEffect, useState } from 'react'
 
-interface Token {
-  assetAddress: PublicKey
-  balance: BN
-  tokenProgram?: PublicKey
-  symbol: string
-  address: PublicKey
-  decimals: number
-  name: string
-  logoURI: string
-  coingeckoId?: string
-  isUnknown?: boolean
-}
-
-interface ProcessedPool {
+interface ProcessedToken {
   id: PublicKey
   symbol: string
   icon: string
@@ -28,11 +15,11 @@ interface ProcessedPool {
 }
 
 export const useProcessedTokens = (
-  tokensList: Token[],
+  tokensList: SwapToken[],
   isBalanceLoading: boolean,
   network: NetworkType
 ) => {
-  const [processedPools, setProcessedPools] = useState<ProcessedPool[]>([])
+  const [processedTokens, setProcessedTokens] = useState<ProcessedToken[]>([])
   const [isProcesing, setIsProcesing] = useState<boolean>(true)
 
   useEffect(() => {
@@ -54,8 +41,9 @@ export const useProcessedTokens = (
             const error = ensureError(e)
             console.error(`Failed to fetch price for ${token.symbol}:`, error)
           }
+
           return {
-            id: token.address,
+            id: token.assetAddress,
             symbol: token.symbol,
             icon: token.logoURI,
             isUnknown: token.isUnknown,
@@ -66,7 +54,7 @@ export const useProcessedTokens = (
         })
       )
 
-      setProcessedPools(processed)
+      setProcessedTokens(processed)
       setIsProcesing(false)
     }
     if (isBalanceLoading) return
@@ -75,5 +63,5 @@ export const useProcessedTokens = (
     }
   }, [tokensList, isBalanceLoading])
 
-  return { processedPools, isProcesing }
+  return { processedTokens, isProcesing }
 }

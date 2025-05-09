@@ -5,6 +5,10 @@ import { SnackbarContent } from 'notistack'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
+  customSnackbarContainer: {
+    bottom: '90px !important',
+    zIndex: '100 !important'
+  },
   wrapper: {
     display: 'flex',
     alignItems: 'center',
@@ -13,10 +17,26 @@ export const useStyles = makeStyles()(() => ({
     width: 'fix-content',
     flexWrap: 'nowrap'
   },
+  customSnackbarWrapper: {
+    display: 'flex',
+    alignItems: 'center',
+    marginLeft: theme.spacing(2),
+    marginRight: 8,
+    flexDirection: 'row',
+    flexWrap: 'nowrap',
+    width: '100%'
+  },
   transactionWrapper: {
+    minHeight: 40,
     display: 'flex',
     marginInline: theme.spacing(1),
     minWidth: 'fit-content'
+  },
+  tokenIcon: {
+    width: 16,
+    height: 16,
+    marginBottom: 2,
+    borderRadius: '100%'
   }
 }))
 
@@ -44,16 +64,16 @@ export const StyledSnackbarContent = styled(SnackbarContent)(({ theme }) => ({
   }
 }))
 
-export const StyledBackground = styled('div')({
+export const StyledBackground = styled('div')<{ borderColor: string }>(({ borderColor }) => ({
   position: 'absolute',
   width: '100%',
   height: '100%',
   left: 0,
   top: 2,
   transition: 'opacity 0.3s ease-in',
-  background: `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.pink})`,
+  background: borderColor,
   borderRadius: 17
-})
+}))
 
 export const StyledHideContainer = styled('div')({
   visibility: 'hidden',
@@ -88,13 +108,13 @@ export const StyledContainer = styled('div')({
   }
 })
 
-export const StyledTitle = styled(Typography)({
+export const StyledTitle = styled(Typography)<{ color?: string }>(({ color }) => ({
   wordWrap: 'break-word',
   marginLeft: 8,
   width: `calc(100% - 8px)`,
-  color: colors.invariant.text,
+  color: color || colors.invariant.text,
   ...typography.body2
-})
+}))
 
 export const StyledCircularProgress = styled(CircularProgress)({
   color: colors.invariant.textGrey,
@@ -163,3 +183,9 @@ export const StyledDetails = styled('button')({
     width: 10
   }
 })
+
+export const StyledText = styled(Typography)<{ color?: string }>(({ color }) => ({
+  wordWrap: 'break-word',
+  color: color || colors.invariant.text,
+  ...typography.body2
+}))

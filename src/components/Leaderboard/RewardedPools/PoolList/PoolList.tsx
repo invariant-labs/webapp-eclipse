@@ -4,8 +4,7 @@ import { useStyles } from './style'
 import { Box, Grid, useMediaQuery } from '@mui/material'
 import { NetworkType } from '@store/consts/static'
 import { VariantType } from 'notistack'
-import classNames from 'classnames'
-import { CustomPoolListItem } from './PoolListItem/Variants/CustomPoolListItem'
+import { MobilePoolListItem } from './PoolListItem/Variants/MobilePoolListItem'
 import { theme } from '@static/theme'
 
 export interface PoolListInterface {
@@ -43,7 +42,7 @@ const PoolList: React.FC<PoolListInterface> = ({
   showAPY,
   disableBackground = false
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const [page, setPage] = React.useState(1)
 
   useEffect(() => {
@@ -63,7 +62,7 @@ const PoolList: React.FC<PoolListInterface> = ({
 
   return (
     <div
-      className={classNames({ [classes.loadingOverlay]: isLoading })}
+      className={cx({ [classes.loadingOverlay]: isLoading })}
       style={{
         width: '100%'
       }}>
@@ -71,10 +70,7 @@ const PoolList: React.FC<PoolListInterface> = ({
         container
         direction='column'
         classes={{
-          root: classNames(
-            classes.container,
-            disableBackground ? classes.transparent : classes.background
-          )
+          root: cx(classes.container, disableBackground ? classes.transparent : classes.background)
         }}>
         <>
           {!isMd ? (
@@ -108,14 +104,14 @@ const PoolList: React.FC<PoolListInterface> = ({
             </>
           ) : (
             <>
-              <CustomPoolListItem
+              <MobilePoolListItem
                 displayType='header'
                 network={network}
                 showAPY={showAPY}
                 hideBottomLine
               />
               {paginator(page).map((element, index) => (
-                <CustomPoolListItem
+                <MobilePoolListItem
                   displayType='token'
                   tokenIndex={index + 1 + (page - 1) * 10}
                   symbolFrom={element.symbolTo}

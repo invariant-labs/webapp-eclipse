@@ -1,10 +1,9 @@
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
-import classNames from 'classnames'
 import React, { useMemo } from 'react'
 import { useStyles } from './style'
 import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { theme, typography } from '@static/theme'
-import icons from '@static/icons'
+import { airdropRainbowIcon, infoIconPinkIcon, warning2Icon } from '@static/icons'
 import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithSuffix, printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
@@ -35,7 +34,6 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
 }) => {
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
-
   const { minConc, middleConc, maxConc } = useMemo(
     () => ({
       minConc: concentrationArray[0].toFixed(0),
@@ -60,7 +58,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
         : +((concentrationIndex * 100) / (concentrationArray.length - 1)).toFixed(2),
     [concentrationIndex, concentrationArray, warningText.length]
   )
-  const { classes } = useStyles({ percentage })
+  const { classes, cx } = useStyles({ percentage })
 
   const isLessThanMinimal = (value: BN) => {
     const minimalValue = new BN(1).mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL - 2)))
@@ -112,7 +110,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                       Estimated Points
                     </Typography>
                     <Grid className={classes.pointsLabel}>
-                      <img src={icons.airdropRainbow} alt='Airdrop' />
+                      <img src={airdropRainbowIcon} alt='Airdrop' />
                       <Typography noWrap>
                         Points: <span className={classes.pinkText}>{pointsPerDayFormat}</span>
                       </Typography>
@@ -125,10 +123,8 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
                   Points you accrue depend on the concentration of your position. Adjust the
                   concentration slider to see how many points your current position will accrue.{' '}
                   <button className={classes.questionButton} onClick={handleClickFAQ}>
-                    <img src={icons.infoIconPink} alt='i' className={classes.infoPink} />
-                    <Typography
-                      display='inline'
-                      className={classNames(classes.pinkText, classes.link)}>
+                    <img src={infoIconPinkIcon} alt='i' className={classes.infoPink} />
+                    <Typography display='inline' className={cx(classes.pinkText, classes.link)}>
                       How to get more points?
                     </Typography>
                   </button>
@@ -139,7 +135,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
               <Typography className={classes.estimatedPointsLabel}>
                 <span>Your Estimated Points: &nbsp;</span>
                 <span className={classes.pinkText}>
-                  {singleDepositWarning ? 0 : pointsPerDayFormat} Points/24h
+                  {singleDepositWarning || showWarning ? 0 : pointsPerDayFormat} Points/24h
                 </span>
               </Typography>
               <Grid container className={classes.barWrapper}>
@@ -179,12 +175,7 @@ export const EstimatedPoints: React.FC<IEstimatedPoints> = ({
           </Grid>
           {warningText ? (
             <Typography className={classes.warningWrapper}>
-              <img
-                width={20}
-                src={icons.warning2}
-                alt='Warning icon'
-                style={{ minWidth: '20px' }}
-              />
+              <img width={20} src={warning2Icon} alt='Warning icon' style={{ minWidth: '20px' }} />
               <span className={classes.warningText}>{warningText}</span>
             </Typography>
           ) : (

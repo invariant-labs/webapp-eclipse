@@ -77,6 +77,7 @@ export function* handleBalance(): Generator {
   yield* put(actions.setAddress(wallet.publicKey))
   yield* call(getBalance, wallet.publicKey)
   yield* call(fetchTokensAccounts)
+  yield* call(fetchUnknownTokensAccounts)
 }
 
 interface IparsedTokenInfo {
@@ -120,35 +121,76 @@ export function* fetchTokensAccounts(): Generator {
     ...token2022TokensAccounts.value
   ]
 
-  const allTokens = yield* select(tokens)
   const newAccounts: ITokenAccount[] = []
-  const unknownTokens: Record<string, StoreToken> = {}
   for (const account of mergedAccounts) {
     const info: IparsedTokenInfo = account.account.data.parsed.info
-
     newAccounts.push({
       programId: new PublicKey(info.mint),
       balance: new BN(info.tokenAmount.amount),
       address: account.pubkey,
       decimals: info.tokenAmount.decimals
     })
+  }
 
-    if (!allTokens[info.mint]) {
+  yield* put(actions.setTokenAccounts(newAccounts))
+  yield* put(actions.setIsTokenBalanceLoading(false))
+}
+
+export function* fetchUnknownTokensAccounts(): Generator {
+  const connection = yield* call(getConnection)
+  const wallet = yield* call(getWallet)
+
+  yield put(actions.setIsUnkownBlanceLoading(true))
+
+  const { splTokensAccounts, token2022TokensAccounts } = yield* all({
+    splTokensAccounts: call(
+      [connection, connection.getParsedTokenAccountsByOwner],
+      wallet.publicKey,
+      { programId: TOKEN_PROGRAM_ID }
+    ),
+    token2022TokensAccounts: call(
+      [connection, connection.getParsedTokenAccountsByOwner],
+      wallet.publicKey,
+      { programId: TOKEN_2022_PROGRAM_ID }
+    )
+  })
+
+  const mergedAccounts: TokenAccountInfo[] = [
+    ...splTokensAccounts.value,
+    ...token2022TokensAccounts.value
+  ]
+
+  const allTokens = yield* select(tokens)
+
+  const unknownAccounts = mergedAccounts.filter(account => {
+    const info: IparsedTokenInfo = account.account.data.parsed.info
+    return !allTokens[info.mint]
+  })
+
+  const calls = unknownAccounts.map(account => {
+    return call(function* () {
+      const info: IparsedTokenInfo = account.account.data.parsed.info
       const programId = yield* call(getTokenProgramId, connection, new PublicKey(info.mint))
-
-      unknownTokens[info.mint] = yield* call(
+      const metadata = yield* call(
         getTokenMetadata,
         connection,
         info.mint,
         info.tokenAmount.decimals,
         programId
       )
-    }
+      return { mint: info.mint, token: metadata }
+    })
+  })
+
+  const results: Array<{ mint: string; token: StoreToken }> = yield* all(calls)
+
+  const unknownTokens: Record<string, StoreToken> = {}
+  for (const { mint, token } of results) {
+    unknownTokens[mint] = token
   }
 
-  yield* put(actions.setTokenAccounts(newAccounts))
-  yield* put(poolsActions.addTokens(unknownTokens))
-  yield* put(actions.setIsTokenBalanceLoading(false))
+  yield put(poolsActions.addTokens(unknownTokens))
+  yield put(actions.setIsUnkownBlanceLoading(false))
 }
 
 export function* handleAirdrop(): Generator {
@@ -306,10 +348,13 @@ export function* transferAirdropSOL(): Generator {
     })
   )
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = airdropAdmin.publicKey
-  tx.recentBlockhash = blockhash.blockhash
-  tx.setSigners(airdropAdmin.publicKey)
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   tx.partialSign(airdropAdmin as Signer)
 
   const txid = yield* call(sendAndConfirmRawTransaction, connection, tx.serialize(), {
@@ -359,9 +404,13 @@ export function* getCollateralTokenAirdrop(
   }
   const tx = instructions.reduce((tx, ix) => tx.add(ix), new Transaction())
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = wallet.publicKey
-  tx.recentBlockhash = blockhash.blockhash
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   tx.partialSign(airdropAdmin)
 
   const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
@@ -373,9 +422,13 @@ export function* getCollateralTokenAirdrop(
 
 export function* signAndSend(wallet: WalletAdapter, tx: Transaction): SagaGenerator<string> {
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = wallet.publicKey
-  tx.recentBlockhash = blockhash.blockhash
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
   const signature = yield* call([connection, connection.sendRawTransaction], signedTx.serialize())
   return signature
@@ -597,6 +650,7 @@ export function* handleDisconnect(): Generator {
     yield* call(disconnectWallet)
     yield* put(actions.resetState())
     yield* put(positionsActions.setPositionsList([[], { head: 0, bump: 0 }, false]))
+    yield* put(positionsActions.setLockedPositionsList([]))
 
     // yield* put(bondsActions.setUserVested({}))
   } catch (e: unknown) {
@@ -652,8 +706,12 @@ export function* handleUnwrapWETH(): Generator {
       unwrapTx.add(unwrapIx)
     })
 
-    const unwrapBlockhash = yield* call([connection, connection.getLatestBlockhash])
-    unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
+    const { blockhash, lastValidBlockHeight } = yield* call([
+      connection,
+      connection.getLatestBlockhash
+    ])
+    unwrapTx.recentBlockhash = blockhash
+    unwrapTx.lastValidBlockHeight = lastValidBlockHeight
     unwrapTx.feePayer = wallet.publicKey
 
     const unwrapSignedTx = (yield* call([wallet, wallet.signTransaction], unwrapTx)) as Transaction

@@ -23,7 +23,7 @@ import AnimatedNumber from '@common/AnimatedNumber/AnimatedNumber'
 import { calculateTickDelta, getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { BN } from '@coral-xyz/anchor'
 import { priceToTickInRange } from '@invariant-labs/sdk-eclipse/src/tick'
-import icons from '@static/icons'
+import { boostPointsIcon } from '@static/icons'
 
 export interface IPoolInit {
   updatePath: (concIndex: number) => void
@@ -300,14 +300,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
     [midPriceInput, isXtoY, xDecimal, yDecimal]
   )
 
-  const [animatedStartingPrice, setAnimatedStartingPrice] = useState(price)
-
-  useEffect(() => {
-    if (formatNumberWithSuffix(price) !== formatNumberWithSuffix(animatedStartingPrice)) {
-      setAnimatedStartingPrice(price)
-    }
-  }, [price])
-
   return (
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
@@ -334,7 +326,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
           <Typography className={classes.priceLabel}>{tokenASymbol} starting price: </Typography>
           <Typography className={classes.priceValue}>
             <span>~</span>
-            <AnimatedNumber start={animatedStartingPrice} finish={price} />
+            <AnimatedNumber value={price} format={formatNumberWithSuffix} />
             <span> </span>
             {tokenBSymbol}
           </Typography>
@@ -345,7 +337,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
           <Typography className={classes.subheader}>Set price range</Typography>
           {positionOpeningMethod === 'range' && (
             <Grid className={classes.rangeConcentration}>
-              <img src={icons.boostPoints} alt='Concentration' width='14px' />
+              <img src={boostPointsIcon} alt='Concentration' width='14px' />
               <Typography>Concentration </Typography>
               <Typography>{calculateConcentration(leftRange, rightRange).toFixed(2)}x</Typography>
             </Grid>

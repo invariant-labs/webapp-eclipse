@@ -1,8 +1,11 @@
 import React from 'react'
-import { Dialog, DialogContent, Box, Typography, Button } from '@mui/material'
+import { Dialog, DialogContent, Box, Typography, Button, useMediaQuery } from '@mui/material'
 import { FixedSizeList } from 'react-window'
 import useStyles from './style'
 import { formatDate, formatNumberWithSpaces } from '@utils/utils'
+import { closeSmallIcon } from '@static/icons'
+import { theme } from '@static/theme'
+import { shortenDate } from '@utils/uiUtils'
 
 export interface CurrentContentPointsEntry {
   startTimestamp: number
@@ -24,17 +27,21 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
   contentProgramDates
 }) => {
   const itemSize = 56
-  const allocations = userContentPoints ?? []
+  const allocations = userContentPoints
+    ? userContentPoints.slice().sort((a, b) => b.startTimestamp - a.startTimestamp)
+    : []
   const isEmpty = allocations.length === 0
   const { classes } = useStyles({ isEmpty })
-
+  const hidePointsLabel = useMediaQuery(theme.breakpoints.down(375))
   const Row = ({ index, style }: { index: number; style: React.CSSProperties }) => {
     const entry = allocations[index]
     return (
       <Box key={index} style={style} className={classes.row}>
         <Box className={classes.innerRow}>
           <Typography className={classes.dateLabel}>
-            {`${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
+            {hidePointsLabel
+              ? `${shortenDate(entry.startTimestamp)} - ${shortenDate(entry.endTimestamp)}`
+              : `${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
           </Typography>
           <Typography className={classes.pointsLabel}>
             + {formatNumberWithSpaces(entry.points.toString())} Points
@@ -46,9 +53,14 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
 
   return (
     <Dialog open={open} onClose={handleClose} PaperProps={{ className: classes.paper }} fullWidth>
+      <img
+        src={closeSmallIcon}
+        className={classes.lockPositionClose}
+        onClick={handleClose}
+        aria-label='Close'
+      />
       <Box className={classes.lockPositionHeader}>
         <Typography component='h1'>Content Points Allocations</Typography>
-        <Button className={classes.lockPositionClose} onClick={handleClose} aria-label='Close' />
       </Box>
       <Box className={classes.description}>
         <Typography>
@@ -68,12 +80,28 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
       </Box>
 
       <DialogContent sx={{ padding: 0 }}>
-        <Box>
+        <Box className={classes.contentSection}>
           <Typography className={classes.allocationText}>Your allocations</Typography>
-
+          <Box className={classes.buttonRow}>
+            <Box className={classes.innerRow}>
+              <Typography className={classes.dateLabel}>
+                {hidePointsLabel
+                  ? `${shortenDate(contentProgramDates.start)} - ${shortenDate(contentProgramDates.end)}`
+                  : `${contentProgramDates.start} - ${contentProgramDates.end}`}
+              </Typography>
+              <Button
+                component='a'
+                href='https://docs.invariant.app/docs/invariant_points/content'
+                target='_blank'
+                rel='noopener noreferrer'
+                className={classes.button}>
+                Submit {!hidePointsLabel && 'here'}
+              </Button>
+            </Box>
+          </Box>
           {allocations.length >= 4 ? (
             <FixedSizeList
-              height={itemSize * 3}
+              height={itemSize * 3 + 2}
               width='100%'
               itemSize={itemSize}
               itemCount={allocations.length}
@@ -86,32 +114,19 @@ export const ContentPointsModal: React.FC<IContentPointsModal> = ({
                 <Box height={56} key={index} className={classes.staticRow}>
                   <Box className={classes.innerRow}>
                     <Typography className={classes.dateLabel}>
-                      {`${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
+                      {hidePointsLabel
+                        ? `${shortenDate(entry.startTimestamp)} - ${shortenDate(entry.endTimestamp)}`
+                        : `${formatDate(entry.startTimestamp)} - ${formatDate(entry.endTimestamp)}`}
                     </Typography>
                     <Typography className={classes.pointsLabel}>
-                      + {formatNumberWithSpaces(entry.points.toString())} Points
+                      + {formatNumberWithSpaces(entry.points.toString())}{' '}
+                      {!hidePointsLabel && 'Points'}
                     </Typography>
                   </Box>
                 </Box>
               ))}
             </Box>
           )}
-
-          <Box className={classes.buttonRow}>
-            <Box className={classes.innerRow}>
-              <Typography className={classes.dateLabel}>
-                {contentProgramDates.start} - {contentProgramDates.end}
-              </Typography>
-              <Button
-                component='a'
-                href='https://docs.invariant.app/docs/invariant_points/content'
-                target='_blank'
-                rel='noopener noreferrer'
-                className={classes.button}>
-                Submit here
-              </Button>
-            </Box>
-          </Box>
         </Box>
       </DialogContent>
     </Dialog>

@@ -1,7 +1,6 @@
 import React from 'react'
 import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import Slider from 'react-slick'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
 import { ExposureTooltipTitle } from './ExposureTooltipTitle/ExposureTooltipTitle'
 import useStyles from './styles'
 import { theme, typography } from '@static/theme'
@@ -10,7 +9,20 @@ import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
-import icons from '@static/icons'
+import {
+  allDomainsIcon,
+  celestialMammothIcon,
+  checkIcon,
+  edasIcon,
+  ensofiIcon,
+  infoIcon,
+  navLeftIcon,
+  navRightIcon,
+  nucleusIcon,
+  turboTapIcon
+} from '@static/icons'
+import cryptara from '@static/png/cryptara.png'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface EcosystemExposureI {
   isLoading: boolean
@@ -32,12 +44,35 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
     ? Number(printBN(new BN(userStats.points, 'hex'), LEADERBOARD_DECIMAL)).toFixed(2)
     : 0
 
-  const tasks = [
+  const EDAS_TASKS = [
     {
-      id: 'EnsoFi',
-      link: 'https://app.ensofi.xyz/',
       title: 'Reach TOP 1000',
-      img: icons.ensofi,
+      max: 1000,
+      current: currentRanking,
+      description: (
+        <Grid
+          sx={{
+            '& p': {
+              ...typography.body2
+            }
+          }}
+          container
+          direction='column'>
+          <Typography>
+            DeFAI agents have arrived! Climb into the TOP 1000 and start earning points in the EDAS
+            Points Program every two weeks!
+          </Typography>
+        </Grid>
+      ),
+
+      footerDescription: 'EDAS Points every 2 weeks',
+      completed: userStats ? currentRanking <= 1000 : false
+    }
+  ]
+
+  const ENSOFI_TASKS = [
+    {
+      title: 'Reach TOP 1000',
       max: 1000,
       current: currentRanking,
       description: (
@@ -57,26 +92,23 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
       footerDescription: 'EnsoFi Points every 2 weeks',
       completed: userStats ? currentRanking <= 1000 : false
-    },
+    }
+  ]
+
+  const ALLDOMAINS_TASKS = [
     {
-      id: 'AllDomains',
-      link: 'https://eclipse.alldomains.id/',
       title: 'Reach TOP 2000',
-      a: 'AllDomains',
-      img: icons.allDomains,
       max: 2000,
       current: currentRanking,
       description:
         'The biggest domain service on Eclipse is here! Join the TOP 2000 and earn AllDomains Points every 2 weeks!',
       footerDescription: '210 AllDomains Points every 2 weeks',
       completed: userStats ? currentRanking <= 2000 : false
-    },
-
+    }
+  ]
+  const TURBOTAP_TASKS = [
     {
-      id: 'Turbo Tap',
-      link: 'https://tap.eclipse.xyz/',
       title: 'Earn 25,000 points on Invariant',
-      img: icons.turboTap,
       max: 25000,
       current: +currentPoints >= 25000 ? 25000 : +currentPoints,
       description: (
@@ -87,12 +119,11 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       ),
       footerDescription: '+10% Passive Grass permanent',
       completed: +currentPoints >= 25000
-    },
+    }
+  ]
+  const NUCLEUS_TASKS = [
     {
-      id: 'Nucleus',
-      link: 'https://app.nucleusearn.io/dashboard',
       title: 'Keep an active tETH position',
-      img: icons.nucleus,
       max: 1,
       current: hasTETHPosition ? 1 : 0,
       description: (
@@ -116,12 +147,11 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
 
       footerDescription: 'Nucleus Points',
       completed: hasTETHPosition
-    },
+    }
+  ]
+  const CELESTIAL_TASKS = [
     {
-      id: 'CelestialMammoth',
-      link: 'https://linktr.ee/celestialmmammoth',
       title: 'Reach TOP 3000',
-      img: icons.celestialMammoth,
       max: 3000,
       current: currentRanking,
       description: (
@@ -144,9 +174,90 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
       completed: userStats ? currentRanking <= 3000 : false
     }
   ]
+  const CRYPTARA_TASKS = [
+    {
+      title: 'Reach TOP 1000',
+      max: 1000,
+      current: currentRanking,
+      description:
+        'Survived the dungeon? Reach the TOP 1000 to unlock legendary boosts in Cryptara Conquest!',
+      footerDescription: '10% discount, 10% speed boosts \n and 10% health boosts',
+      completed: userStats ? currentRanking <= 1000 : false
+    },
+    {
+      title: 'Reach TOP 3000',
+      max: 3000,
+      current: currentRanking,
+      description:
+        'Enter the Dungeons! Reach the TOP 3000 to unlock master-level boosts in Cryptara Conquest!',
+      footerDescription: '6.9% discount, 6.9% speed boosts and 6.9% health boosts',
+      completed: userStats ? currentRanking <= 3000 : false
+    }
+  ]
+  const projects = [
+    {
+      id: 'EDAS_official',
+      link: 'https://www.edas.ensofi.xyz/',
+      img: edasIcon,
+      tasks: EDAS_TASKS,
+      completedAll: EDAS_TASKS.every(task => task.completed)
+    },
 
-  const completedCount = tasks.filter(task => task.completed).length
-  const exposure = Number(((completedCount / tasks.length) * 100).toFixed(2))
+    {
+      id: 'EnsoFi',
+      link: 'https://app.ensofi.xyz/',
+      img: ensofiIcon,
+      tasks: ENSOFI_TASKS,
+      completedAll: ENSOFI_TASKS.every(task => task.completed)
+    },
+
+    {
+      id: 'AllDomains',
+      link: 'https://eclipse.alldomains.id/',
+      img: allDomainsIcon,
+      tasks: ALLDOMAINS_TASKS,
+      completedAll: ALLDOMAINS_TASKS.every(task => task.completed)
+    },
+
+    {
+      id: 'Turbo Tap',
+      link: 'https://tap.eclipse.xyz/',
+      img: turboTapIcon,
+      tasks: TURBOTAP_TASKS,
+      completedAll: TURBOTAP_TASKS.every(task => task.completed)
+    },
+
+    {
+      id: 'Nucleus',
+      link: 'https://app.nucleusearn.io/dashboard',
+      img: nucleusIcon,
+      tasks: NUCLEUS_TASKS,
+      completedAll: NUCLEUS_TASKS.every(task => task.completed)
+    },
+
+    {
+      id: 'CelestialMammoth',
+      link: 'https://linktr.ee/celestialmmammoth',
+      img: celestialMammothIcon,
+      tasks: CELESTIAL_TASKS,
+      completedAll: CELESTIAL_TASKS.every(task => task.completed)
+    },
+
+    {
+      id: 'Cryptara Conquest',
+      link: 'https://x.com/CryptaraConq',
+      img: cryptara,
+      tasks: CRYPTARA_TASKS,
+      completedAll: CRYPTARA_TASKS.every(task => task.completed)
+    }
+  ]
+
+  const totalTasks = projects.reduce((acc, project) => acc + project.tasks.length, 0)
+  const completedTasks = projects.reduce((acc, project) => {
+    return acc + project.tasks.filter(task => task.completed).length
+  }, 0)
+
+  const exposure = (completedTasks / totalTasks) * 100
 
   const { classes } = useStyles({ exposure })
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -157,7 +268,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
         <Grid className={classes.boxWrapper}>
           <Grid className={classes.header}>
             <Typography>
-              Eclipse Ecosystem Exposure <img src={icons.infoIcon} alt='info' />
+              Eclipse Ecosystem Exposure <img src={infoIcon} alt='info' />
             </Typography>
           </Grid>
 
@@ -197,8 +308,7 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
         <BlurOverlay isConnected={isConnected} />
         <Grid className={classes.header}>
           <Typography>Eclipse Ecosystem Exposure</Typography>
-          <TooltipGradient
-            top={1}
+          <TooltipHover
             title={
               <Grid className={classes.tooltipTitle}>
                 <Typography>
@@ -206,9 +316,12 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
                   Complete the challenges, and claim your rewards!
                 </Typography>
               </Grid>
-            }>
-            <img src={icons.infoIcon} alt='info' />
-          </TooltipGradient>
+            }
+            gradient
+            increasePadding
+            placement='bottom'>
+            <img src={infoIcon} alt='info' />
+          </TooltipHover>
         </Grid>
 
         <Grid className={classes.sliderWrapper}>
@@ -216,47 +329,52 @@ export const EcosystemExposure: React.FC<EcosystemExposureI> = ({
             className={classes.slider}
             slidesToShow={isSm ? 3 : 4}
             infinite={false}
-            prevArrow={<img src={icons.navLeft} alt='prev' />}
-            nextArrow={<img src={icons.navRight} alt='next' />}>
-            {tasks.map(task => (
-              <TooltipGradient
-                key={task.id}
-                top={1}
+            prevArrow={<img src={navLeftIcon} alt='prev' />}
+            nextArrow={<img src={navRightIcon} alt='next' />}>
+            {projects.map(tasks => (
+              <TooltipHover
+                key={tasks.id}
+                placement='bottom'
                 title={
                   <Grid className={classes.exposureWrapper}>
                     <ExposureTooltipTitle
-                      title={task.title}
-                      img={task.img}
-                      max={task.max}
-                      current={task.current}
-                      description={task.description}
-                      footerDescription={task.footerDescription}
-                      completed={task.completed}
-                      id={task.id}
-                      link={task.link}
+                      img={tasks.img}
+                      tasks={tasks.tasks}
+                      id={tasks.id}
+                      link={tasks.link}
                     />
                   </Grid>
-                }>
-                <Grid sx={{ position: 'relative', width: 64, height: 64 }}>
+                }
+                gradient
+                increasePadding>
+                <Grid
+                  sx={{
+                    position: 'relative',
+                    width: 64,
+                    height: 64
+                  }}>
                   <img
                     style={{
-                      opacity: !task.completed ? 0.4 : 1
+                      opacity: !tasks.completedAll ? 0.4 : 1,
+                      width: 64,
+                      height: 64,
+                      borderRadius: '6px'
                     }}
-                    src={task.img}
-                    alt={task.title}
+                    src={tasks.img}
+                    alt={tasks.id}
                   />
-                  {task.completed && (
-                    <img src={icons.check} alt='check icon' className={classes.checkIcon} />
+                  {tasks.completedAll && (
+                    <img src={checkIcon} alt='check icon' className={classes.checkIcon} />
                   )}
                 </Grid>
-              </TooltipGradient>
+              </TooltipHover>
             ))}
           </Slider>
         </Grid>
         <Grid className={classes.expWrapper}>
           <Typography component='h5'>
             Your Exposure:{' '}
-            <Typography component='span'>{` ${completedCount}/${tasks.length} (${exposure}%)`}</Typography>
+            <Typography component='span'>{` ${completedTasks}/${totalTasks} (${exposure}%)`}</Typography>
           </Typography>
           <Grid className={classes.expLabel}>
             <Typography>0%</Typography>

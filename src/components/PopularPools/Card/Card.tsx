@@ -5,8 +5,13 @@ import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
-import icons from '@static/icons'
-
+import {
+  airdropRainbowIcon,
+  backIcon,
+  revertIcon,
+  unknownTokenIcon,
+  warningIcon
+} from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import {
@@ -156,22 +161,22 @@ const Card: React.FC<ICard> = ({
                     src={iconFrom}
                     alt='Token from'
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
-                  {isUnknownFrom && <img className={classes.warningIcon} src={icons.warningIcon} />}
+                  {isUnknownFrom && <img className={classes.warningIcon} src={warningIcon} />}
                 </Box>
-                <img className={classes.swapIcon} src={icons.RevertIcon} alt='Token from' />
+                <img className={classes.swapIcon} src={revertIcon} alt='Token from' />
                 <Box className={classes.iconContainer}>
                   <img
                     className={classes.tokenIcon}
                     src={iconTo}
                     alt='Token to'
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
-                  {isUnknownTo && <img className={classes.warningIcon} src={icons.warningIcon} />}
+                  {isUnknownTo && <img className={classes.warningIcon} src={warningIcon} />}
                 </Box>
               </Grid>
 
@@ -201,9 +206,9 @@ const Card: React.FC<ICard> = ({
                           }
                         }}>
                         <img
-                          src={icons.airdropRainbow}
+                          src={airdropRainbowIcon}
                           alt={'Airdrop'}
-                          style={{ height: '24px' }}
+                          style={{ height: '24px', position: 'absolute', right: -24 }}
                         />
                       </div>
                     </PromotedPoolPopover>
@@ -227,7 +232,7 @@ const Card: React.FC<ICard> = ({
               </Grid>
               <Grid container className={classes.footerWrapper}>
                 <Grid className={classes.back} container item onClick={handleOpenSwap}>
-                  <img className={classes.backIcon} src={icons.backIcon} alt='Back' />
+                  <img className={classes.backIcon} src={backIcon} alt='Back' />
                   <Typography className={classes.backText}>Swap</Typography>
                 </Grid>
                 <Button

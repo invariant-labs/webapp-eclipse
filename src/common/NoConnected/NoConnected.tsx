@@ -1,6 +1,5 @@
 import { Button, Grid, Typography } from '@mui/material'
-import icons from '@static/icons'
-import classNames from 'classnames'
+import { noConnectedIcon } from '@static/icons'
 import { useStyles } from './style'
 import { useNavigate } from 'react-router-dom'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
@@ -13,17 +12,17 @@ export interface INoConnected {
 }
 
 export const NoConnected: React.FC<INoConnected> = ({ onConnect, title, descCustomText }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const navigate = useNavigate()
 
   return (
     <>
-      <Grid className={classNames(classes.blur, 'blurLayer')} />
-      <Grid className={classNames(classes.container, 'blurLayer')}>
-        <Grid className={classNames(classes.root, 'blurInfo')}>
+      <Grid className={cx(classes.blur, 'blurLayer')} />
+      <Grid className={cx(classes.container, 'blurLayer')}>
+        <Grid className={cx(classes.root, 'blurInfo')}>
           <Grid height={104}>
-            <img className={classes.img} src={icons.NoConnected} alt='Not connected' />
+            <img className={classes.img} src={noConnectedIcon} alt='Not connected' />
           </Grid>
           {!!title && <Typography className={classes.desc}>{title}</Typography>}
 

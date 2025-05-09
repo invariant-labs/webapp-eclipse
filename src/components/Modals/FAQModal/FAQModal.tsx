@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Grid, Popover, Typography, Box, Fade } from '@mui/material'
 import useStyles from './styles'
-import icons from '@static/icons'
+import { arrowLeftIcon, arrowRightIcon, sliderIcon } from '@static/icons'
 
 export interface IFAQModal {
   open: boolean
@@ -26,7 +26,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
             multiplier, the more concentrated your liquidity becomes within a narrower range.
           </Typography>
           <Grid container justifyContent='center'>
-            <img src={icons.slider} alt='slider' />
+            <img src={sliderIcon} alt='slider' />
           </Grid>
           <Typography className={classes.text}>
             To help you use it effectively, let us explain how it works👉
@@ -100,7 +100,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
               <Typography className={classes.text}>
                 Monitor Price Movement: Keep an eye on price changes. If the price moves out of your
                 range, your position stops earning points and fees. To resume, you&#39;ll need to
-                rebalance (link do docs) within the new price range.
+                rebalance within the new price range.
               </Typography>
             </li>
             <li className={classes.text}>
@@ -112,8 +112,23 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
           </ol>
 
           <Typography className={classes.text} mt={3}>
-            For detailed guides and tips, check out our docs(link) and join the Discord(link) for
-            support.
+            For detailed guides and tips, check out our{' '}
+            <a
+              className={classes.link}
+              href='https://docs.invariant.app/docs/'
+              target='_blank'
+              rel='noopener noreferrer'>
+              docs
+            </a>{' '}
+            and join the{' '}
+            <a
+              className={classes.link}
+              href='https://discord.gg/w6hTeWTJvG'
+              target='_blank'
+              rel='noopener noreferrer'>
+              Discord
+            </a>{' '}
+            for support.
           </Typography>
         </Grid>
       )
@@ -140,7 +155,7 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
     <div className={classes.modalContainer}>
       <Popover
         open={open}
-        anchorReference='none'
+        marginThreshold={0}
         classes={{
           root: classes.popoverRoot,
           paper: classes.paper
@@ -157,11 +172,11 @@ export const FAQModal: React.FC<IFAQModal> = ({ open, handleClose }) => {
 
           <Grid className={classes.titleContainer}>
             <button className={classes.arrowBtn} onClick={handlePrevious}>
-              <img src={icons.arrowLeft} alt='arrow back' />
+              <img src={arrowLeftIcon} alt='arrow back' />
             </button>
             <Typography className={classes.title}>{faqArray[currentIndex].title}</Typography>
             <button className={classes.arrowBtn} onClick={handleNext}>
-              <img src={icons.arrowRight} alt='arrow forward' />
+              <img src={arrowRightIcon} alt='arrow forward' />
             </button>
           </Grid>
 

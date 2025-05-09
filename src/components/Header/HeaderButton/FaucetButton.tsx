@@ -10,7 +10,6 @@ import {
   WETH_MIN_FAUCET_FEE_MAIN,
   WETH_MIN_FAUCET_FEE_TEST
 } from '@store/consts/static'
-import classNames from 'classnames'
 
 export interface IProps {
   onFaucet: () => void
@@ -27,7 +26,7 @@ export const FaucetButton: React.FC<IProps> = ({
   network,
   walletBalance
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [openFaucet, setOpenFaucet] = React.useState<boolean>(false)
 
@@ -67,10 +66,10 @@ export const FaucetButton: React.FC<IProps> = ({
 
   return (
     <>
-      <TooltipHover title={getTooltipText()} top={50}>
+      <TooltipHover title={getTooltipText()} placement='bottom'>
         <div>
           <Button
-            className={classNames(classes.headerButton, { [classes.disabled]: isDisabled })}
+            className={cx(classes.headerButton, { [classes.disabled]: isDisabled })}
             variant='contained'
             onClick={isDisabled ? () => {} : handleClick}>
             <Box className={classes.wrapper}>

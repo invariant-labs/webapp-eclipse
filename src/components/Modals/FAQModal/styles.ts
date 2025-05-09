@@ -10,7 +10,7 @@ const useStyles = makeStyles()(() => {
       right: 0,
       bottom: 0,
       display: 'flex',
-      alignItems: 'flex-start',
+      alignItems: 'center',
       justifyContent: 'center',
       pointerEvents: 'none',
       zIndex: 1300
@@ -30,18 +30,21 @@ const useStyles = makeStyles()(() => {
     },
     popoverRoot: {
       position: 'fixed',
-      width: '100%',
-      height: '100%',
+      top: 0,
+      left: 0,
+      right: 0,
+      bottom: 0,
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      overflow: 'auto',
-      top: 0
+      overflow: 'auto'
     },
     paper: {
       position: 'relative',
       margin: 'auto',
-      marginTop: 100,
+      [theme.breakpoints.down('md')]: {
+        marginTop: '32px'
+      },
       maxWidth: '90%',
       background: 'transparent',
       boxShadow: 'none',
@@ -56,15 +59,15 @@ const useStyles = makeStyles()(() => {
       display: 'flex',
       justifyContent: 'center',
       flexDirection: 'column',
-      width: 623,
-      maxWidth: '100%',
+      marginTop: '8px',
+      maxWidth: '623px',
+      margin: 0,
       height: 'max-content',
       borderRadius: 24,
       padding: 24,
       boxShadow: '0px 4px 4px rgba(0, 0, 0, 0.5)',
       gap: 24,
       [theme.breakpoints.down('sm')]: {
-        width: 'calc(100% - 32px)',
         padding: '16px 20px'
       },
 
@@ -156,6 +159,10 @@ const useStyles = makeStyles()(() => {
       ...typography.body3,
       letterSpacing: '-0.6px',
       color: colors.invariant.textGrey
+    },
+    link: {
+      textDecoration: 'none',
+      color: colors.invariant.green
     }
   }
 })

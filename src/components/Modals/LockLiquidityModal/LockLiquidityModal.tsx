@@ -1,13 +1,12 @@
-import { ILiquidityToken } from '@components/PositionDetails/SinglePositionInfo/consts'
 import useStyles from './style'
 import { Button, Grid, InputBase, Popover, Typography } from '@mui/material'
-import icons from '@static/icons'
+import { infoErrorIcon, swapListIcon } from '@static/icons'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { useEffect, useMemo, useState } from 'react'
 import { colors } from '@static/theme'
-import { TooltipGradient } from '@common/TooltipHover/TooltipGradient'
+import { ILiquidityToken } from '@store/consts/types'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 
 const confirmText = 'Lock my liquidity permanently'
 export interface ILockLiquidityModal {
@@ -130,7 +129,7 @@ export const LockLiquidityModal = ({
                 <TooltipHover title='Reverse tokens'>
                   <img
                     className={classes.arrowIcon}
-                    src={icons.swapListIcon}
+                    src={swapListIcon}
                     alt='to'
                     onClick={swapHandler}
                   />
@@ -148,7 +147,7 @@ export const LockLiquidityModal = ({
             <Grid item className={classes.pairDetails}>
               <Grid item container className={classes.pairValues}>
                 <Grid item className={classes.pairFee}>
-                  <TooltipGradient
+                  <TooltipHover
                     title={
                       isActive ? (
                         <>
@@ -163,10 +162,9 @@ export const LockLiquidityModal = ({
                       )
                     }
                     placement='top'
-                    top={1}
-                    noGradient>
+                    increasePadding>
                     <Typography>{fee}</Typography>
-                  </TooltipGradient>
+                  </TooltipHover>
                 </Grid>
                 <Grid item className={classes.pairRange}>
                   <Typography className={classes.normalText}>
@@ -188,7 +186,7 @@ export const LockLiquidityModal = ({
           </Grid>
           <Grid>
             <Grid className={classes.lockWarning}>
-              <img src={icons.infoError} alt='info' style={{ minWidth: 20, marginRight: 12 }} />
+              <img src={infoErrorIcon} alt='info' style={{ minWidth: 20, marginRight: 12 }} />
               <Typography className={classes.lockWarningText}>
                 Once locked, the position cannot be closed, and the tokens cannot be withdrawn.
                 Please ensure you fully understand the consequences before proceeding.
@@ -241,7 +239,8 @@ export const LockLiquidityModal = ({
                 ? ''
                 : 'Confirm that you understand the consequences by typing the text above'
             }
-            top={-40}>
+            top={-40}
+            textAlign='center'>
             <AnimatedButton
               content={'Lock Position'}
               className={classes.lockButton}

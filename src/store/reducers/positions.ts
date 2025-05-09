@@ -1,8 +1,10 @@
 import {
   CreatePosition,
+  PoolStructure,
   Position,
   PositionList,
-  Tick
+  Tick,
+  Tickmap
 } from '@invariant-labs/sdk-eclipse/lib/market'
 import { BN } from '@coral-xyz/anchor'
 import { PayloadAction, createSlice } from '@reduxjs/toolkit'
@@ -17,6 +19,10 @@ export interface PositionWithTicks extends Position {
   ticksLoading: boolean
 }
 export interface PositionWithAddress extends PositionWithTicks {
+  address: PublicKey
+}
+
+export interface PositionWithoutTicks extends Position {
   address: PublicKey
 }
 export interface PositionsListStore {
@@ -59,6 +65,13 @@ export interface IPositionsStore {
   prices: {
     data: Record<string, number>
   }
+  showFeesLoader: boolean
+  shouldDisable: boolean
+  positionData: {
+    position: PositionWithAddress | null
+    loading: boolean
+  }
+  positionListSwitcher: LiquidityPools
 }
 
 export interface InitPositionData
@@ -72,6 +85,32 @@ export interface InitPositionData
   initTick?: number
   xAmount: number
   yAmount: number
+}
+
+export interface SwapAndCreatePosition
+  extends Omit<
+    CreatePosition,
+    'pair' | 'liquidityDelta' | 'knownPrice' | 'userTokenX' | 'userTokenY' | 'slippage'
+  > {
+  xAmount: BN
+  yAmount: BN
+  tokenX: PublicKey
+  tokenY: PublicKey
+  swapAmount: BN
+  byAmountIn: boolean
+  xToY: boolean
+  swapPool: PoolStructure
+  swapPoolTickmap: Tickmap
+  swapSlippage: BN
+  estimatedPriceAfterSwap: BN
+  crossedTicks: number[]
+  positionPair: { fee: BN; tickSpacing: number }
+  positionPoolIndex: number
+  positionPoolPrice: BN
+  positionSlippage: BN
+  liquidityDelta: BN
+  minUtilizationPercentage: BN
+  isSamePool: boolean
 }
 
 export interface GetCurrentTicksData {
@@ -101,6 +140,11 @@ export interface UpdatePositionRangeRicksData {
   fetchTick?: FetchTick
 }
 
+export enum LiquidityPools {
+  Standard = 'Standard',
+  Locked = 'Locked'
+}
+
 export const defaultState: IPositionsStore = {
   lastPage: 1,
   currentPoolIndex: null,
@@ -127,8 +171,14 @@ export const defaultState: IPositionsStore = {
   prices: {
     data: {}
   },
-
-  shouldNotUpdateRange: false
+  shouldDisable: false,
+  shouldNotUpdateRange: false,
+  showFeesLoader: false,
+  positionData: {
+    position: null,
+    loading: false
+  },
+  positionListSwitcher: LiquidityPools.Standard
 }
 
 export const positionsSliceName = 'positions'
@@ -141,6 +191,10 @@ const positionsSlice = createSlice({
       return state
     },
     initPosition(state, _action: PayloadAction<InitPositionData>) {
+      state.initPosition.inProgress = true
+      return state
+    },
+    swapAndInitPosition(state, _action: PayloadAction<SwapAndCreatePosition>) {
       state.initPosition.inProgress = true
       return state
     },
@@ -174,6 +228,9 @@ const positionsSlice = createSlice({
     setAllClaimLoader(state, action: PayloadAction<boolean>) {
       state.positionsList.isAllClaimFeesLoading = action.payload
     },
+    setShouldDisable(state, action: PayloadAction<boolean>) {
+      state.shouldDisable = action.payload
+    },
     setPrices(state, action: PayloadAction<Record<string, number>>) {
       state.prices = {
         data: action.payload
@@ -193,12 +250,21 @@ const positionsSlice = createSlice({
       state.positionsList.loading = false
       return state
     },
+    setPosition(state, action: PayloadAction<PositionWithAddress | null>) {
+      state.positionData.position = action.payload
+      state.positionData.loading = false
+      return state
+    },
     setLockedPositionsList(state, action: PayloadAction<PositionWithAddress[]>) {
       state.positionsList.lockedList = action.payload
       return state
     },
     getPositionsList(state) {
       state.positionsList.loading = true
+      return state
+    },
+    getPreviewPosition(state, _action: PayloadAction<string>) {
+      state.positionData.loading = true
       return state
     },
     getSinglePosition(state, action: PayloadAction<{ index: number; isLocked: boolean }>) {
@@ -231,6 +297,11 @@ const positionsSlice = createSlice({
       return state
     },
     claimFee(state, _action: PayloadAction<{ index: number; isLocked: boolean }>) {
+      state.showFeesLoader = true
+      return state
+    },
+    setFeesLoader(state, action: PayloadAction<boolean>) {
+      state.showFeesLoader = action.payload
       return state
     },
     claimAllFee(state) {
@@ -248,6 +319,10 @@ const positionsSlice = createSlice({
     },
     setCurrentPositionId(state, action: PayloadAction<string>) {
       state.currentPositionId = action.payload
+      return state
+    },
+    setPositionListSwitcher(state, action: PayloadAction<LiquidityPools>) {
+      state.positionListSwitcher = action.payload
       return state
     }
   }

@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
-import icons from '@static/icons'
-import classNames from 'classnames'
+import { unknownTokenIcon, warningIcon } from '@static/icons'
 import useStyles from './style'
 import { blurContent, unblurContent } from '@utils/uiUtils'
 import { Box, Button } from '@mui/material'
@@ -43,7 +42,7 @@ export const Select: React.FC<ISelectModal> = ({
   hiddenUnknownTokens,
   network
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(null)
   const [open, setOpen] = React.useState<boolean>(false)
 
@@ -69,7 +68,7 @@ export const Select: React.FC<ISelectModal> = ({
   return (
     <>
       <Button
-        className={classNames(classes.button, className)}
+        className={cx(classes.button, className)}
         color='primary'
         variant='contained'
         onClick={handleClick}
@@ -78,15 +77,15 @@ export const Select: React.FC<ISelectModal> = ({
             <Box className={classes.imageContainer}>
               <img
                 className={classes.icon}
-                src={current.logoURI ?? icons.unknownToken}
+                src={current.logoURI ?? unknownTokenIcon}
                 alt={current.name + 'logo'}
                 width='20'
                 height='20'
                 onError={e => {
-                  e.currentTarget.src = icons.unknownToken
+                  e.currentTarget.src = unknownTokenIcon
                 }}
               />
-              {current.isUnknown && <img className={classes.warningIcon} src={icons.warningIcon} />}
+              {current.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
             </Box>
           )
         }

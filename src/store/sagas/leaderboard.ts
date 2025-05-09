@@ -5,6 +5,7 @@ import { actions, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/lead
 import { getWallet } from './wallet'
 import { PayloadAction } from '@reduxjs/toolkit'
 import { ensureError } from '@utils/utils'
+import { LEADERBOARD_API_URL } from '@store/consts/static'
 
 export interface IPromotedPool {
   address: string
@@ -51,7 +52,7 @@ async function fetchLpLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${LEADERBOARD_API_URL}/eclipse-${network}/lp/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -59,7 +60,7 @@ async function fetchLpLeaderboardData(
   return response.json() as Promise<ILpLeaderboardResponse>
 }
 async function fetchContentPoints(userWallet?: string) {
-  const response = await fetch(`https://points.invariant.app/api/content-program/${userWallet}`)
+  const response = await fetch(`${LEADERBOARD_API_URL}/content-program/${userWallet}`)
   if (!response.ok) {
     throw new Error('Failed to fetch content points')
   }
@@ -74,7 +75,7 @@ async function fetchSwapLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/swaps/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${LEADERBOARD_API_URL}/eclipse-${network}/swaps/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -89,7 +90,7 @@ async function fetchTotalLeaderboardData(
 ) {
   const offset = (page - 1) * itemsPerPage
   const response = await fetch(
-    `https://points.invariant.app/api/eclipse-${network}/total/${userWallet}?offset=${offset}&size=${itemsPerPage}`
+    `${LEADERBOARD_API_URL}/eclipse-${network}/total/${userWallet}?offset=${offset}&size=${itemsPerPage}`
   )
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
@@ -97,14 +98,14 @@ async function fetchTotalLeaderboardData(
   return response.json() as Promise<ITotalLeaderboardResponse>
 }
 async function fetchLeaderboardConfig() {
-  const response = await fetch(`https://points.invariant.app/api/config`)
+  const response = await fetch(`${LEADERBOARD_API_URL}/config`)
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }
   return response.json() as Promise<IConfigResponse>
 }
 async function fetchLeaderboardPriceFeed() {
-  const response = await fetch(`https://points.invariant.app/api/swap/price-feeds`)
+  const response = await fetch(`${LEADERBOARD_API_URL}/swap/price-feeds`)
   if (!response.ok) {
     throw new Error('Failed to fetch leaderboard data')
   }

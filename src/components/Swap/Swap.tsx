@@ -31,7 +31,6 @@ import { Swap as SwapData } from '@store/reducers/swap'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { blurContent, createButtonActions, unblurContent } from '@utils/uiUtils'
-import classNames from 'classnames'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ExchangeRate from './ExchangeRate/ExchangeRate'
 import TransactionDetailsBox from './TransactionDetailsBox/TransactionDetailsBox'
@@ -44,7 +43,7 @@ import { DECIMAL, fromFee, SimulationStatus } from '@invariant-labs/sdk-eclipse/
 import { PoolWithAddress } from '@store/reducers/pools'
 import { PublicKey } from '@solana/web3.js'
 import { Tick, Tickmap, Market } from '@invariant-labs/sdk-eclipse/lib/market'
-import icons from '@static/icons'
+import { auditIcon, refreshIcon, settingIcon, swapArrowsIcon } from '@static/icons'
 import SwapPointsPopover from '@components/Modals/SwapPointsPopover/SwapPointsPopover'
 import AnimatedWaves from './AnimatedWaves/AnimatedWaves'
 import { EstimatedPointsLabel } from './EstimatedPointsLabel/EstimatedPointsLabel'
@@ -191,7 +190,7 @@ export const Swap: React.FC<ISwap> = ({
   swapAccounts,
   swapIsLoading
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   enum inputTarget {
     DEFAULT = 'default',
     FROM = 'from',
@@ -822,7 +821,7 @@ export const Swap: React.FC<ISwap> = ({
           )
         : ethBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT)
     ) {
-      return `Insufficient Wrapped ETH`
+      return `Insufficient ETH`
     }
 
     if (
@@ -860,7 +859,7 @@ export const Swap: React.FC<ISwap> = ({
       getStateMessage() === 'Connect a wallet' ||
       getStateMessage() === 'Insufficient liquidity' ||
       getStateMessage() === 'Not enough liquidity' ||
-      getStateMessage() === 'Insufficient Wrapped ETH'
+      getStateMessage() === 'Insufficient ETH'
     )
   }
   const setSlippage = (slippage: string): void => {
@@ -1041,13 +1040,13 @@ export const Swap: React.FC<ISwap> = ({
                     tokenToIndex === null ||
                     tokenFromIndex === tokenToIndex
                   }>
-                  <img src={icons.refreshIcon} className={classes.refreshIcon} alt='Refresh' />
+                  <img src={refreshIcon} className={classes.refreshIcon} alt='Refresh' />
                 </Button>
               </Grid>
             </TooltipHover>
             <TooltipHover title='Settings'>
               <Button onClick={handleClickSettings} className={classes.settingsIconBtn}>
-                <img src={icons.settingIcon} className={classes.settingsIcon} alt='Settings' />
+                <img src={settingIcon} className={classes.settingsIcon} alt='Settings' />
               </Button>
             </TooltipHover>
           </Box>
@@ -1065,7 +1064,7 @@ export const Swap: React.FC<ISwap> = ({
       </Grid>
 
       <Box
-        className={classNames(
+        className={cx(
           classes.borderContainer,
           (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
             classes.gradientBorderForContainer
@@ -1076,14 +1075,14 @@ export const Swap: React.FC<ISwap> = ({
             isAnimating={isFirstPairGivingPoints || isSecondPairGivingPoints}
           />
           <Typography
-            className={classNames(
+            className={cx(
               classes.swapLabel,
               (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
             )}>
             Pay
           </Typography>
           <Box
-            className={classNames(
+            className={cx(
               classes.exchangeRoot,
               lockAnimation ? classes.amountInputDown : undefined,
               (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
@@ -1153,7 +1152,7 @@ export const Swap: React.FC<ISwap> = ({
 
           <Box className={classes.tokenComponentTextContainer}>
             <Box
-              className={classNames(
+              className={cx(
                 classes.swapArrowBox,
                 (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
               )}
@@ -1176,13 +1175,13 @@ export const Swap: React.FC<ISwap> = ({
                 }, 50)
               }}>
               <Box
-                className={classNames(
+                className={cx(
                   classes.swapImgRoot,
                   (isFirstPairGivingPoints || isSecondPairGivingPoints) &&
                     classes.componentBackground
                 )}>
                 <img
-                  src={icons.swapArrows}
+                  src={swapArrowsIcon}
                   style={{
                     transform: `rotate(${-rotates * 180}deg)`
                   }}
@@ -1193,7 +1192,7 @@ export const Swap: React.FC<ISwap> = ({
             </Box>
           </Box>
           <Typography
-            className={classNames(
+            className={cx(
               classes.swapLabel,
               (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.textShadowLabel
             )}
@@ -1201,7 +1200,7 @@ export const Swap: React.FC<ISwap> = ({
             Receive
           </Typography>
           <Box
-            className={classNames(
+            className={cx(
               classes.exchangeRoot,
               classes.transactionBottom,
               lockAnimation ? classes.amountInputUp : undefined,
@@ -1309,7 +1308,7 @@ export const Swap: React.FC<ISwap> = ({
                     ? handleOpenTransactionDetails
                     : undefined
                 }
-                className={classNames(
+                className={cx(
                   tokenFromIndex !== null &&
                     tokenToIndex !== null &&
                     hasShowRateMessage() &&
@@ -1341,7 +1340,7 @@ export const Swap: React.FC<ISwap> = ({
             </Box>
             {canShowDetails ? (
               <Box
-                className={classNames(
+                className={cx(
                   classes.exchangeRateWrapper,
                   (isFirstPairGivingPoints || isSecondPairGivingPoints) && classes.darkBackground
                 )}>
@@ -1383,14 +1382,14 @@ export const Swap: React.FC<ISwap> = ({
           />
           {walletStatus !== Status.Initialized && getStateMessage() !== 'Loading' ? (
             <ChangeWalletButton
+              height={48}
               name='Connect wallet'
               onConnect={onConnectWallet}
               connected={false}
               onDisconnect={onDisconnectWallet}
-              className={classes.connectWalletButton}
               isSwap={true}
             />
-          ) : getStateMessage() === 'Insufficient Wrapped ETH' ? (
+          ) : getStateMessage() === 'Insufficient ETH' ? (
             <TooltipHover
               title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
               top={-45}>
@@ -1467,7 +1466,7 @@ export const Swap: React.FC<ISwap> = ({
           />
         </Grid>
       </Box>
-      <img src={icons.audit} alt='Audit' style={{ marginTop: '24px' }} width={180} />
+      <img src={auditIcon} alt='Audit' style={{ marginTop: '24px' }} width={180} />
     </Grid>
   )
 }

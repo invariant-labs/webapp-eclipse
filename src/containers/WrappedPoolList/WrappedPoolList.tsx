@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
 import useStyles from './styles'
-import icons from '@static/icons'
+import { unknownTokenIcon } from '@static/icons'
 import { VariantType } from 'notistack'
 import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { network } from '@store/selectors/solanaConnection'
@@ -87,8 +87,8 @@ export const WrappedPoolList: React.FC = () => {
         data={filteredPoolsList.map(poolData => ({
           symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
           symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
-          iconFrom: poolData.tokenXDetails?.logoURI ?? icons.unknownToken,
-          iconTo: poolData.tokenYDetails?.logoURI ?? icons.unknownToken,
+          iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
+          iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
           volume: poolData.volume24,
           TVL: poolData.tvl,
           fee: poolData.fee,

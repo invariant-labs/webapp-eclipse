@@ -4,26 +4,8 @@ import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }) => {
   return {
-    header: {
-      width: '100%',
-      position: 'relative',
-      display: 'flex',
-      justifyContent: 'center',
-      '& p': {
-        textAlign: 'center',
-        ...typography.heading2,
-        color: colors.invariant.text
-      },
-      '& img': {
-        position: 'absolute',
-        top: '12px',
-        right: '12px',
-        width: 12,
-        cursor: 'pointer'
-      }
-    },
-
     paper: {
+      position: 'relative',
       background: `
       radial-gradient(49.85% 49.85% at 50% 100%, rgba(46, 224, 154, 0.25) 0%, rgba(46, 224, 154, 0) 75%),
       radial-gradient(50.2% 50.2% at 50% 0%, rgba(239, 132, 245, 0.25) 0%, rgba(239, 132, 245, 0) 75%),
@@ -61,8 +43,6 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
     allocationSection: {
       display: 'flex',
       flexDirection: 'column',
-      crollbarWidth: 'none',
-      msOverflowStyle: 'none',
       '&::-webkit-scrollbar': {
         display: 'none'
       }
@@ -87,12 +67,9 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
     },
     row: {
       '&:first-child': {
-        borderTop: `1px solid ${colors.invariant.light}`,
-        borderRadius: '11px 11px 0 0'
+        borderTop: `1px solid ${colors.invariant.light}`
       },
-      '&:last-child': {
-        borderBottom: `0px solid ${colors.invariant.light}`
-      },
+
       '&:nth-of-type(odd)': {
         background: `#111931CC`
       },
@@ -112,12 +89,15 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
     },
     button: {
       marginRight: '16px',
-      minWidth: '134px',
-      maxWidth: '134px',
+      width: '134px',
+
       height: '36px',
       background: 'linear-gradient(180deg, #2EE09A 0%, #21A47C 100%)',
       borderRadius: '8px',
 
+      [theme.breakpoints.down(375)]: {
+        width: 94
+      },
       textTransform: 'none',
       color: colors.invariant.dark,
       ...typography.heading4,
@@ -127,25 +107,16 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
     },
     lockPositionClose: {
       position: 'absolute',
-      right: 0,
-      minWidth: 0,
-      height: 20,
-      '&:after': {
-        content: '"\u2715"',
-        fontSize: 22,
-        position: 'absolute',
-        color: 'white',
-        top: '50%',
-        right: '0%',
-        transform: 'translateY(-50%)'
-      }
+      right: 20,
+      top: 20,
+      height: 15,
+      cursor: 'pointer'
     },
     lockPositionHeader: {
       width: '100%',
       display: 'flex',
       alignItems: 'center',
       justifyContent: 'center',
-      position: 'relative',
       '& h1': {
         ...typography.heading2,
         flex: 1,
@@ -163,18 +134,14 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
       '&:nth-of-type(even)': {
         background: `#11193180`
       },
-      borderBottom: `1px solid ${colors.invariant.light}`,
+      borderBottom: !isEmpty ? `0px` : `1px solid ${colors.invariant.light}`,
       borderTop: `1px solid ${colors.invariant.light}`,
-      borderRadius: `${isEmpty ? '11px' : '0 0 11px 11px'}`,
+      borderRadius: `${isEmpty ? '11px' : '11px 11px 0 0'}`,
       background: `#111931CC`
     },
     staticRow: {
-      '&:first-child': {
-        borderTop: `1px solid ${colors.invariant.light}`,
-        borderRadius: '11px 11px 0 0'
-      },
       '&:last-child': {
-        borderBottom: `0px solid ${colors.invariant.light}`
+        borderBottom: `1px solid ${colors.invariant.light}`
       },
       '&:nth-of-type(odd)': {
         background: `#111931CC`
@@ -183,6 +150,10 @@ const useStyles = makeStyles<{ isEmpty: boolean }>()((_theme: Theme, { isEmpty }
         background: `#11193180`
       },
       borderTop: `1px solid ${colors.invariant.light}`
+    },
+    contentSection: {
+      borderRadius: '0 0 11px 11px',
+      overflow: 'hidden'
     }
   }
 })

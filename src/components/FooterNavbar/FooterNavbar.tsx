@@ -2,7 +2,14 @@ import { Box, Typography } from '@mui/material'
 import useStyles from './style'
 import { Link, useLocation } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import icons from '@static/icons'
+import {
+  airdropIcon,
+  liquidityIcon,
+  statsIcon,
+  swapArrowsIcon,
+  tokenCreatorIcon,
+  walletIcon
+} from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { useSelector } from 'react-redux'
 import { network } from '@store/selectors/solanaConnection'
@@ -14,19 +21,19 @@ export const FooterNavbar = () => {
   const links = [
     {
       label: 'Swap',
-      icon: icons.swapArrows,
+      icon: swapArrowsIcon,
       url: 'exchange',
       width: 33
     },
     {
       label: 'Liquidity',
-      icon: icons.liquidityIcon,
+      icon: liquidityIcon,
       url: 'liquidity',
       width: 20
     },
     {
       label: 'Portfolio',
-      icon: icons.walletIcon,
+      icon: walletIcon,
       url: 'portfolio',
       width: 26
     },
@@ -34,19 +41,19 @@ export const FooterNavbar = () => {
     typeOfNetwork === NetworkType.Testnet
       ? {
           label: 'Creator',
-          icon: icons.tokenCreator,
+          icon: tokenCreatorIcon,
           url: 'creator',
           width: 33
         }
       : {
           label: 'Points',
-          icon: icons.airdrop,
+          icon: airdropIcon,
           url: 'points',
           width: 26
         },
     {
       label: 'Stats',
-      icon: icons.statsIcon,
+      icon: statsIcon,
       url: 'statistics',
       width: 30
     }
@@ -75,6 +82,7 @@ export const FooterNavbar = () => {
 
   useEffect(() => {
     const resizeHandler = () => {
+      // eslint-disable-next-line @typescript-eslint/no-extra-non-null-assertion
       setDisplay(window.innerHeight < window.visualViewport!?.height * 1.1)
     }
 

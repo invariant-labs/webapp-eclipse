@@ -1,8 +1,7 @@
 import { Box, Button, Input, Typography } from '@mui/material'
-import icons from '@static/icons'
+import { active2Icon, netowrkIcons } from '@static/icons'
 import { NetworkType, RECOMMENDED_RPC_ADDRESS } from '@store/consts/static'
 import { useStyles } from './style'
-import classNames from 'classnames'
 import { useRef, useState } from 'react'
 import { ISelectNetwork } from '@store/consts/types'
 import { Separator } from '@common/Separator/Separator'
@@ -15,7 +14,7 @@ type Props = {
 }
 
 export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkChange }: Props) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const inputRef = useRef<HTMLInputElement>(null)
   const [isInputFocused, setIsInputFocused] = useState(false)
@@ -35,7 +34,7 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
         <Box className={classes.networkContainer}>
           {networks.map(network => (
             <Box
-              className={classNames(classes.network, {
+              className={cx(classes.network, {
                 [classes.networkActive]: network === activeNetwork
               })}
               key={network}
@@ -43,7 +42,7 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
                 setCustomAddress('')
                 onNetworkChange(network, '')
               }}>
-              <img src={icons[`${network.toLowerCase()}Glow`]} alt={`${network} icon`} />
+              <img src={netowrkIcons[`${network.toLowerCase()}Glow`]} alt={`${network} icon`} />
               <Typography className={classes.name}>{network}</Typography>
             </Box>
           ))}
@@ -59,7 +58,7 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
             .filter(({ networkType }) => networkType === activeNetwork)
             .map(({ rpc, rpcName }) => (
               <Box
-                className={classNames(classes.network, {
+                className={cx(classes.network, {
                   [classes.networkActive]:
                     rpc === activeRPC && !isInputFocused && customAddress == ''
                 })}
@@ -74,22 +73,20 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
                     {RECOMMENDED_RPC_ADDRESS[activeNetwork] === rpc && 'RECOMMENDED'}
                   </Typography>
                   <Box className={classes.activeIconContainer}>
-                    {rpc === activeRPC && <img src={icons.active2} alt='Active icon' />}
+                    {rpc === activeRPC && <img src={active2Icon} alt='Active icon' />}
                   </Box>
                 </Box>
               </Box>
             ))}
           <Box
-            className={classNames(classes.network, {
+            className={cx(classes.network, {
               [classes.networkActive]: isInputFocused || isCustomRPC || customAddress !== ''
             })}
             onClick={() => inputRef.current?.focus()}>
             <Typography className={classes.name}>Custom RPC</Typography>
             <Box className={classes.activeContainer}>
               <Box className={classes.activeIconContainer}>
-                {isCustomRPC && customAddress !== '' && (
-                  <img src={icons.active2} alt='Active icon' />
-                )}
+                {isCustomRPC && customAddress !== '' && <img src={active2Icon} alt='Active icon' />}
               </Box>
             </Box>
           </Box>

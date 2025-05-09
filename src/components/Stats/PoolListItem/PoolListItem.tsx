@@ -1,12 +1,20 @@
 import React, { useMemo, useRef, useState } from 'react'
-import { theme } from '@static/theme'
+import { colors, theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown'
 import ArrowDropUpIcon from '@mui/icons-material/ArrowDropUp'
 import { useNavigate } from 'react-router-dom'
-import icons from '@static/icons'
-import { NetworkType, SortTypePoolList } from '@store/consts/static'
+import {
+  airdropRainbowIcon,
+  horizontalSwapIcon,
+  lockIcon,
+  newTabBtnIcon,
+  plusIcon,
+  unknownTokenIcon,
+  warningIcon
+} from '@static/icons'
+import { ITEMS_PER_PAGE, NetworkType, SortTypePoolList } from '@store/consts/static'
 import {
   addressToTicker,
   calculateAPYAndAPR,
@@ -20,7 +28,6 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { shortenAddress } from '@utils/uiUtils'
-import classNames from 'classnames'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
@@ -37,7 +44,6 @@ interface IProps {
   tokenIndex?: number
   sortType?: SortTypePoolList
   onSort?: (type: SortTypePoolList) => void
-  hideBottomLine?: boolean
   addressFrom?: string
   addressTo?: string
   network: NetworkType
@@ -59,6 +65,7 @@ interface IProps {
   copyAddressHandler?: (message: string, variant: VariantType) => void
   showAPY: boolean
   points?: BN
+  itemNumber?: number
 }
 
 const PoolListItem: React.FC<IProps> = ({
@@ -77,7 +84,6 @@ const PoolListItem: React.FC<IProps> = ({
   tokenIndex,
   sortType,
   onSort,
-  hideBottomLine = false,
   addressFrom,
   addressTo,
   network,
@@ -89,9 +95,10 @@ const PoolListItem: React.FC<IProps> = ({
   poolAddress,
   copyAddressHandler,
   points,
-  showAPY
+  showAPY,
+  itemNumber = 0
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -210,9 +217,14 @@ const PoolListItem: React.FC<IProps> = ({
         <Grid
           container
           classes={{
-            container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
+            container: cx(classes.container, { [classes.containerNoAPY]: !showAPY })
           }}
-          style={hideBottomLine ? { border: 'none' } : undefined}>
+          sx={{
+            borderBottom:
+              itemNumber !== 0 && itemNumber % ITEMS_PER_PAGE
+                ? `1px solid ${colors.invariant.light}`
+                : `2px solid ${colors.invariant.light}`
+          }}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
           <Grid className={classes.imageContainer}>
             <Box className={classes.iconsWrapper}>
@@ -222,12 +234,10 @@ const PoolListItem: React.FC<IProps> = ({
                   src={tokenAData.icon}
                   alt='Token from'
                   onError={e => {
-                    e.currentTarget.src = icons.unknownToken
+                    e.currentTarget.src = unknownTokenIcon
                   }}
                 />
-                {tokenAData.isUnknown && (
-                  <img className={classes.warningIcon} src={icons.warningIcon} />
-                )}
+                {tokenAData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
               </Box>
               <Box className={classes.iconContainer}>
                 <img
@@ -235,12 +245,10 @@ const PoolListItem: React.FC<IProps> = ({
                   src={tokenBData.icon}
                   alt='Token to'
                   onError={e => {
-                    e.currentTarget.src = icons.unknownToken
+                    e.currentTarget.src = unknownTokenIcon
                   }}
                 />
-                {tokenBData.isUnknown && (
-                  <img className={classes.warningIcon} src={icons.warningIcon} />
-                )}
+                {tokenBData.isUnknown && <img className={classes.warningIcon} src={warningIcon} />}
               </Box>
             </Box>
             <Grid className={classes.symbolsContainer}>
@@ -289,7 +297,7 @@ const PoolListItem: React.FC<IProps> = ({
                         }
                       }}
                       mr={3}>
-                      <img width={32} height={32} src={icons.airdropRainbow} alt={'Airdrop'} />
+                      <img width={32} height={32} src={airdropRainbowIcon} alt={'Airdrop'} />
                     </Box>
                   </PromotedPoolPopover>
                 </Box>
@@ -308,7 +316,7 @@ const PoolListItem: React.FC<IProps> = ({
                     ref={lockIconRef}
                     onPointerLeave={handlePointerLeave}
                     onPointerEnter={handlePointerEnter}>
-                    <img width={32} height={32} src={icons.lockIcon} alt={'Lock info'} />
+                    <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
                   </button>
                   <LockStatsPopover
                     anchorEl={lockIconRef.current}
@@ -328,12 +336,12 @@ const PoolListItem: React.FC<IProps> = ({
 
               <TooltipHover title='Exchange'>
                 <button className={classes.actionButton} onClick={handleOpenSwap}>
-                  <img width={32} height={32} src={icons.horizontalSwapIcon} alt={'Exchange'} />
+                  <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
               <TooltipHover title='Add position'>
                 <button className={classes.actionButton} onClick={handleOpenPosition}>
-                  <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
+                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
                 </button>
               </TooltipHover>
               <TooltipHover title='Open in explorer'>
@@ -346,7 +354,7 @@ const PoolListItem: React.FC<IProps> = ({
                       'noopener,noreferrer'
                     )
                   }>
-                  <img width={32} height={32} src={icons.newTabBtn} alt={'Exchange'} />
+                  <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
                 </button>
               </TooltipHover>
             </Box>
@@ -358,7 +366,7 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{
             root: classes.header
           }}
-          className={classNames(classes.container, { [classes.containerNoAPY]: !showAPY })}>
+          className={cx(classes.container, { [classes.containerNoAPY]: !showAPY })}>
           {!isMd && (
             <Typography style={{ lineHeight: '11px' }}>
               N<sup>o</sup>

@@ -3,7 +3,7 @@ import { theme } from '@static/theme'
 import { useStyles } from './style'
 import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
 import { useNavigate } from 'react-router-dom'
-import icons from '@static/icons'
+import { plusIcon, unknownTokenIcon } from '@static/icons'
 import { NetworkType } from '@store/consts/static'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import {
@@ -20,7 +20,6 @@ import { shortenAddress } from '@utils/uiUtils'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 
-import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 
 export interface IProps {
@@ -69,7 +68,7 @@ const PoolListItem: React.FC<IProps> = ({
   apy = 0,
   showAPY
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
@@ -138,7 +137,7 @@ const PoolListItem: React.FC<IProps> = ({
         <Grid
           container
           classes={{
-            container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
+            container: cx(classes.container, { [classes.containerNoAPY]: !showAPY })
           }}
           style={hideBottomLine ? { border: 'none' } : undefined}>
           {!isMd ? <Typography>{tokenIndex}</Typography> : null}
@@ -151,7 +150,7 @@ const PoolListItem: React.FC<IProps> = ({
                     src={tokenAData.icon}
                     alt='Token from'
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
                 </Box>
@@ -161,7 +160,7 @@ const PoolListItem: React.FC<IProps> = ({
                     src={tokenBData.icon}
                     alt='Token to'
                     onError={e => {
-                      e.currentTarget.src = icons.unknownToken
+                      e.currentTarget.src = unknownTokenIcon
                     }}
                   />
                 </Box>
@@ -202,7 +201,7 @@ const PoolListItem: React.FC<IProps> = ({
             <Box className={classes.action}>
               <TooltipHover title='Add position'>
                 <button className={classes.actionButton} onClick={handleOpenPosition}>
-                  <img width={32} height={32} src={icons.plusIcon} alt={'Open'} />
+                  <img width={32} height={32} src={plusIcon} alt={'Open'} />
                 </button>
               </TooltipHover>
             </Box>
@@ -212,7 +211,7 @@ const PoolListItem: React.FC<IProps> = ({
         <Grid
           container
           classes={{
-            container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY }),
+            container: cx(classes.container, { [classes.containerNoAPY]: !showAPY }),
             root: classes.header
           }}>
           {!isMd && (
