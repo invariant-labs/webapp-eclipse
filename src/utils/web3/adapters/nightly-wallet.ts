@@ -69,9 +69,9 @@ export class NightlyAdapter implements WalletAdapter {
   }
 
   connect = async () => {
-    if (this._nightlyProvider) {
-      return
-    }
+    // if (this._nightlyProvider) {
+    //   return
+    // }
     let provider: NightlyProvider
     if ((window as any)?.nightly) {
       provider = (window as any).nightly.solana
@@ -79,9 +79,10 @@ export class NightlyAdapter implements WalletAdapter {
       window.open('https://nightly.app/', '_blank')
       return
     }
-    if (!provider.isConnected) {
-      await provider.connect()
-    }
+    await provider.connect()
+    // if (!provider.isConnected) {
+    //   await provider.connect()
+    // }
     this._nightlyProvider = provider
   }
   disconnect = async () => {
