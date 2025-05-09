@@ -35,14 +35,8 @@ export function* fetchUserStats() {
 
     const userBalance = yield* call([sale, sale.getUserBalance], wallet.publicKey)
     const userStats: IUserStats = {
-      deposited: {
-        amount: userBalance.deposited.amount,
-        decimals: Number(userBalance.deposited.decimals)
-      },
-      received: {
-        amount: userBalance.received.amount,
-        decimals: Number(userBalance.received.decimals)
-      }
+      deposited: userBalance.deposited,
+      received: userBalance.received
     }
 
     yield* put(actions.setUserStats({ ...userStats }))

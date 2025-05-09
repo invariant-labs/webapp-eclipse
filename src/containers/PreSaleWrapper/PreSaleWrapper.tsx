@@ -11,7 +11,7 @@ import { saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
 import { printBN } from '@utils/utils'
-import { getRound, getTierPrices, MINT_DECIMALS } from '@invariant-labs/sale-sdk'
+import { getRound, getTierPrices } from '@invariant-labs/sale-sdk'
 import { balanceLoading, status, poolTokens } from '@store/selectors/solanaWallet'
 import {
   getAmountTillNextPriceIncrease,
@@ -57,11 +57,6 @@ export const PreSaleWrapper = () => {
     }
   }, [success, inProgress])
 
-  useEffect(() => {
-    const index = tokens.findIndex(token => token.assetAddress.equals(mint))
-    if (index !== -1) setTokenIndex(index)
-  }, [tokens])
-
   const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
     useMemo(
       () =>
@@ -78,27 +73,26 @@ export const PreSaleWrapper = () => {
       [saleStats]
     )
 
+  useEffect(() => {
+    const index = tokens.findIndex(token => token.assetAddress.equals(mint))
+    if (index !== -1) setTokenIndex(index)
+  }, [tokens, mint])
+
   const { deposited } = useMemo(
     () =>
       userStats
         ? userStats
         : {
-            deposited: { amount: new BN(0), decimals: MINT_DECIMALS },
-            received: { amount: new BN(0), decimals: MINT_DECIMALS }
+            deposited: new BN(0),
+            received: new BN(0)
           },
     [userStats]
   )
 
   const round = useMemo(() => getRound(currentAmount, targetAmount), [saleStats])
 
-  const { remainingAmount, remainingAmountDecimals } = useMemo(
-    () =>
-      !whitelistWalletLimit.isZero()
-        ? {
-            remainingAmount: whitelistWalletLimit.sub(deposited.amount),
-            remainingAmountDecimals: deposited.decimals
-          }
-        : { remainingAmount: new BN(0), remainingAmountDecimals: 0 },
+  const remainingAmount = useMemo(
+    () => (!whitelistWalletLimit.isZero() ? whitelistWalletLimit.sub(deposited) : new BN(0)),
     [deposited, whitelistWalletLimit]
   )
 
@@ -118,11 +112,16 @@ export const PreSaleWrapper = () => {
     [currentAmount, targetAmount]
   )
 
-  const { prices: tierPrices, decimals: tierDecimals } = useMemo(() => getTierPrices(), [])
+  const mintDecimals = useMemo(
+    () => (tokenIndex !== null ? tokens[tokenIndex].decimals : 0),
+    [tokenIndex, tokens]
+  )
+
+  const tierPrices = useMemo(() => getTierPrices(mintDecimals), [mintDecimals])
 
   const currentPrice = useMemo(
-    () => getPrice(currentAmount, targetAmount) ?? new BN(0),
-    [currentAmount, targetAmount]
+    () => getPrice(currentAmount, targetAmount, mintDecimals),
+    [currentAmount, targetAmount, mintDecimals]
   )
   const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
 
@@ -143,23 +142,20 @@ export const PreSaleWrapper = () => {
           <Grid className={classes.stepperContainer}>
             <SaleStepper
               steps={tierPrices.map((price, idx) => {
-                return { id: idx + 1, label: `$${printBN(price, tierDecimals)}` }
+                return { id: idx + 1, label: `$${printBN(price, mintDecimals)}` }
               })}
             />
             <Box className={classes.roundComponentContainer}>
               <RoundComponent
                 isActive={isActive}
                 tokensLeft=''
-                amountBought={printBN(currentAmount, MINT_DECIMALS)}
-                amountLeft={printBN(
-                  amountTillPriceIncrease.amountTillNextPriceIncrease,
-                  amountTillPriceIncrease.decimals
-                )}
-                currentPrice={printBN(currentPrice.price, currentPrice.decimals)}
-                nextPrice={printBN(currentPrice.nextPrice, currentPrice.decimals)}
+                amountBought={printBN(currentAmount, mintDecimals)}
+                amountLeft={printBN(amountTillPriceIncrease, mintDecimals)}
+                currentPrice={printBN(currentPrice.price, mintDecimals)}
+                nextPrice={printBN(currentPrice.nextPrice, mintDecimals)}
                 percentageFilled={filledPercentage}
-                purchasedTokens={printBN(deposited.amount, deposited.decimals)}
-                remainingAllocation={printBN(remainingAmount, remainingAmountDecimals)}
+                purchasedTokens={printBN(deposited, mintDecimals)}
+                remainingAllocation={printBN(remainingAmount, mintDecimals)}
                 roundNumber={round}
                 currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
                 endtimestamp={endtimestamp}
@@ -172,7 +168,7 @@ export const PreSaleWrapper = () => {
             isLoading={isLoadingSaleStats || isLoadingUserStats || isBalanceLoading}
             targetAmount={targetAmount}
             currentAmount={currentAmount}
-            mintDecimals={MINT_DECIMALS}
+            mintDecimals={mintDecimals}
             startTimestamp={startTimestamp}
             tokens={tokens}
             walletStatus={walletStatus}

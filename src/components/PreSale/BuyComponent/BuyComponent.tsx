@@ -8,7 +8,7 @@ import { convertBalanceToBN, formatNumberWithCommas, printBN } from '@utils/util
 import classNames from 'classnames'
 import { Timer } from '../Timer/Timer'
 import { BN } from '@coral-xyz/anchor'
-import { getPurchaseAmount, MINT_DECIMALS, REWARD_SCALE } from '@invariant-labs/sale-sdk'
+import { getPurchaseAmount, REWARD_SCALE } from '@invariant-labs/sale-sdk'
 import { useCountdown } from '../Timer/useCountdown'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
@@ -67,7 +67,7 @@ export const BuyComponent: React.FC<IProps> = ({
       raisedAmount: printBN(currentAmount, mintDecimals),
       totalAmount: printBN(targetAmount, mintDecimals)
     }
-  }, [currentAmount, targetAmount])
+  }, [currentAmount, targetAmount, mintDecimals])
 
   const { classes } = useStyles({ percentage: (+raisedAmount / +totalAmount) * 100, isActive })
   const [alertBoxShow, setAlertBoxShow] = useState(true)
@@ -77,9 +77,9 @@ export const BuyComponent: React.FC<IProps> = ({
 
   useEffect(() => {
     const amount = convertBalanceToBN(value, mintDecimals)
-    const purchaseAmount = getPurchaseAmount(currentAmount, targetAmount, amount)
+    const purchaseAmount = getPurchaseAmount(currentAmount, targetAmount, amount, mintDecimals)
     setReceive(purchaseAmount)
-  }, [value, currentAmount, targetAmount])
+  }, [value, currentAmount, targetAmount, mintDecimals])
 
   const getButtonMessage = useCallback(() => {
     if (isLoading) {
@@ -190,7 +190,7 @@ export const BuyComponent: React.FC<IProps> = ({
           <DepositAmountInput
             tokenPrice={1}
             setValue={value => setValue(value)}
-            decimalsLimit={MINT_DECIMALS}
+            decimalsLimit={mintDecimals}
             currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
             currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
             currencyIsUnknown={tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false}

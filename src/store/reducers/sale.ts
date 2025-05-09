@@ -3,14 +3,9 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
 import { PayloadType } from '@store/consts/types'
 
-export interface ISaleAsset {
-  amount: BN
-  decimals: number
-}
-
 export interface IUserStats {
-  deposited: ISaleAsset
-  received: ISaleAsset
+  deposited: BN
+  received: BN
 }
 
 export interface ISaleStats {
@@ -58,8 +53,8 @@ const saleSlice = createSlice({
     setUserStats(
       state,
       action: PayloadAction<{
-        deposited: ISaleAsset
-        received: ISaleAsset
+        deposited: BN
+        received: BN
       } | null>
     ) {
       if (!action.payload) {
