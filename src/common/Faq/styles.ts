@@ -8,6 +8,7 @@ export const useStyles = makeStyles()(() => ({
     maxHeight: 'fit-content',
     position: 'relative',
     zIndex: 2,
+
     backgroundColor: `${colors.invariant.component} !important`,
     padding: '24px 32px',
     [theme.breakpoints.down('sm')]: {
@@ -33,7 +34,9 @@ export const useStyles = makeStyles()(() => ({
       display: 'none'
     },
     '&.Mui-expanded': {
-      margin: '0px !important',
+      marginTop: '20px !important',
+      marginBottom: '20px !important',
+      // // margin: '20px 0px !important',
       '&::after': {
         content: '""',
         position: 'absolute',
@@ -41,7 +44,6 @@ export const useStyles = makeStyles()(() => ({
         top: 0,
         pointerEvents: 'none',
         height: '100%',
-        padding: '0px 10px',
         transiton: 'all 0.3s ease-in-out',
         width: '100%',
         borderRadius: '24px',
@@ -50,7 +52,9 @@ export const useStyles = makeStyles()(() => ({
           'linear-gradient(90deg, rgba(46, 224, 154, 0.15) 0%, rgba(46, 224, 154, 0) 50%), linear-gradient(90deg, rgba(239, 132, 245, 0) 50%, rgba(239, 132, 245, 0.15) 100%), #202946;',
         opacity: 0.5
       }
-    },
+    }
+  },
+  separator: {
     '&:not(:last-child)': {
       borderBottom: `1px solid ${colors.invariant.light}`
     }
