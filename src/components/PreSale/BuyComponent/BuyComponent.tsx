@@ -1,6 +1,6 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
-import { closeSmallGreenIcon, greenInfoIcon, virtualCardIcon } from '@static/icons'
+import { virtualCardIcon } from '@static/icons'
 import { USDC_MAIN } from '@store/consts/static'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import { Button } from '@common/Button/Button'
@@ -11,7 +11,6 @@ import { Timer } from '../Timer/Timer'
 
 interface IProps {
     isActive?: boolean
-    alertBoxText?: string
     raisedAmount: string
     totalAmount: string
     onBuyClick?: () => void
@@ -23,28 +22,11 @@ enum PaymentMethod {
 }
 
 
-export const BuyComponent: React.FC<IProps> = ({ alertBoxText, raisedAmount, totalAmount, isActive, onBuyClick }) => {
+export const BuyComponent: React.FC<IProps> = ({ raisedAmount, totalAmount, isActive, onBuyClick }) => {
     const { classes } = useStyles({ percentage: (+raisedAmount / +totalAmount) * 100, isActive })
-    const [alertBoxShow, setAlertBoxShow] = useState(true)
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | undefined>(undefined)
     return (
         <Box className={classes.container}>
-            {alertBoxText && alertBoxShow && isActive && (
-
-                <Box className={classes.alertBox}>
-                    <Box className={classes.alertBoxContent}>
-                        <img src={greenInfoIcon} alt='Info icon' />
-                        <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
-                    </Box>
-
-                    <Box className={classes.closeIconContainer} onClick={() => {
-                        setAlertBoxShow(false)
-                    }}>
-                        <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
-                    </Box>
-                </Box>
-            )}
-
             <Box>
 
                 <Box className={classes.headingContainer}>

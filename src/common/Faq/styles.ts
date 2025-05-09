@@ -45,8 +45,11 @@ export const useStyles = makeStyles()(() => ({
         padding: '0px 10px',
         transiton: 'all 0.3s ease-in-out',
         width: '100%',
-        background: `linear-gradient(to right, ${alpha(colors.invariant.light, 0.2)} , transparent)`,
-        opacity: 1
+        borderRadius: '24px',
+        zIndex: 1,
+        background:
+          'linear-gradient(90deg, rgba(46, 224, 154, 0.15) 0%, rgba(46, 224, 154, 0) 50%), linear-gradient(90deg, rgba(239, 132, 245, 0) 50%, rgba(239, 132, 245, 0.15) 100%), #202946;',
+        opacity: 0.5
       }
     },
     '&:not(:last-child)': {
@@ -73,6 +76,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   item: {
+    zIndex: 5,
     '& a': {
       color: '#2EE09A',
       textDecoration: 'none',

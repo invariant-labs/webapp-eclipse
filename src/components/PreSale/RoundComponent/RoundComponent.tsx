@@ -1,9 +1,10 @@
 import { Box, Grid, Typography } from '@mui/material'
-import React from 'react'
+import React, { useState } from 'react'
 import useStyles from './style'
 import { useCountdown } from '../Timer/useCountdown';
 import { colors, typography } from '@static/theme';
 import classNames from 'classnames';
+import { closeSmallGreenIcon, greenInfoIcon } from '@static/icons'
 
 interface RoundComponentProps {
     isActive?: boolean;
@@ -17,6 +18,7 @@ interface RoundComponentProps {
     purchasedTokens: number;
     remainingAllocation: number;
     currency?: string;
+    alertBoxText?: string;
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -30,13 +32,32 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     nextPrice = 0.192,
     purchasedTokens = 17283.201,
     remainingAllocation = 20000,
-    currency = 'INV'
+    currency = 'INV',
+    alertBoxText,
 }) => {
     const { classes } = useStyles({ percentage: percentageFilled, isActive })
+    const [alertBoxShow, setAlertBoxShow] = useState(true)
+
     const { hours, minutes, seconds } = useCountdown({ targetDate: '2025-05-07T23:59:59Z' })
     return (
         <Box className={classes.container}>
             <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
+
+            {alertBoxText && alertBoxShow && isActive && (
+
+                <Box className={classes.alertBox}>
+                    <Box className={classes.alertBoxContent}>
+                        <img src={greenInfoIcon} alt='Info icon' />
+                        <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
+                    </Box>
+
+                    <Box className={classes.closeIconContainer} onClick={() => {
+                        setAlertBoxShow(false)
+                    }}>
+                        <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
+                    </Box>
+                </Box>
+            )}
             {!isActive && (
                 <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
                     <Typography className={classes.infoLabelBigger}>Current price: </Typography>

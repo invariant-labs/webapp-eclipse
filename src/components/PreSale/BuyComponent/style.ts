@@ -23,29 +23,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     paymentSelected: {
       border: `2px solid ${colors.invariant.green}`
     },
-    alertBoxContent: {
-      display: 'flex',
-      width: '100%',
-      gap: '8px',
-      alignItems: 'center',
-      justifyContent: 'center'
-    },
-    alertBoxText: {
-      color: colors.invariant.green,
-      ...typography.body2
-    },
-    closeIconContainer: {
-      height: 24,
-      width: 24,
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      cursor: 'pointer'
-    },
-    closeIcon: {
-      height: 12,
-      width: 12
-    },
+
     headingContainer: {
       display: 'flex',
       justifyContent: 'space-between',

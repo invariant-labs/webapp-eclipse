@@ -124,6 +124,39 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
       display: 'flex',
       ...typography.caption1,
       color: colors.invariant.textGrey
+    },
+    alertBox: {
+      border: `2px solid ${colors.invariant.green}`,
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderRadius: '12px',
+      marginTop: '24px',
+      padding: '10px',
+      backgroundColor: '#2EE09A33'
+    },
+    alertBoxContent: {
+      display: 'flex',
+      width: '100%',
+      gap: '8px',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    alertBoxText: {
+      color: colors.invariant.green,
+      ...typography.body2
+    },
+    closeIconContainer: {
+      height: 24,
+      width: 24,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      cursor: 'pointer'
+    },
+    closeIcon: {
+      height: 12,
+      width: 12
     }
   })
 )
