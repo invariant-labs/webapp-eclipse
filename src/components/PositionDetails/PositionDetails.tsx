@@ -248,7 +248,6 @@ const PositionDetails: React.FC<IProps> = ({
             }}
           />
         )}
-        ;
         <Box className={classes.mainContainer}>
           <ClosePositionWarning
             open={isModalOpen}
