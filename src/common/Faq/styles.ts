@@ -60,7 +60,7 @@ export const useStyles = makeStyles()(() => ({
     display: 'grid',
     gridTemplateColumns: '1fr 40px',
     alignItems: 'center',
-    padding: '8px 2px',
+    padding: '8px',
 
     '& .MuiAccordionSummary-content': {
       margin: 0

@@ -27,13 +27,10 @@ export const Faq: React.FC<FaqProps> = ({ faqData }) => {
               expandIcon={<ExpandMoreIcon sx={{ color: colors.invariant.text }} />}
               className={classes.summary}>
               <Typography sx={{
-                zIndex: 5, padding: '16px'
+                zIndex: 5, padding: '8px'
               }}>{item.question}</Typography>
             </AccordionSummary>
             <AccordionDetails
-              sx={{
-                padding: '16px'
-              }}
               className={classes.item}>
               <Typography dangerouslySetInnerHTML={{ __html: item.answer }} sx={{ zIndex: 5, position: 'relative' }} />
             </AccordionDetails>
