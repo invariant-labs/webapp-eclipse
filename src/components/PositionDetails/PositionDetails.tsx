@@ -145,6 +145,10 @@ const PositionDetails: React.FC<IProps> = ({
   const isActive = midPrice.x >= min && midPrice.x <= max
 
   useEffect(() => {
+    setXToY(initialXtoY(tokenXAddress.toString(), tokenYAddress.toString()))
+  }, [tokenXAddress.toString(), tokenYAddress.toString()])
+
+  useEffect(() => {
     const timeout = setTimeout(() => {
       if (refresherTime > 0) {
         setRefresherTime(refresherTime - 1)
