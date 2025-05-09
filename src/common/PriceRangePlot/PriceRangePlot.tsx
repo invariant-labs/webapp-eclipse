@@ -12,6 +12,8 @@ import Brush from './Brush/Brush'
 import useStyles from './style'
 import { BN } from '@coral-xyz/anchor'
 import { Button } from '@common/Button/Button'
+import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import ArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
@@ -30,6 +32,8 @@ export interface IPriceRangePlot {
   plotMax: number
   zoomMinus: () => void
   zoomPlus: () => void
+  moveLeft: () => void
+  moveRight: () => void
   loading?: boolean
   isXtoY: boolean
   xDecimal: number
@@ -53,6 +57,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   plotMax,
   zoomMinus,
   zoomPlus,
+  moveLeft,
+  moveRight,
   loading,
   isXtoY,
   xDecimal,
@@ -369,8 +375,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
       <Grid className={classes.zoomButtonsWrapper}>
         <Button
           scheme='green'
-          width={isMd ? 28 : 40}
-          height={isMd ? 28 : 40}
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
           borderRadius={10}
           padding={0}
           onClick={zoomPlus}>
@@ -378,14 +384,48 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         </Button>
         <Button
           scheme='green'
-          width={isMd ? 28 : 40}
-          height={isMd ? 28 : 40}
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
           borderRadius={10}
           padding={0}
           onClick={zoomMinus}>
           <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
         </Button>
       </Grid>
+
+      <Grid className={classes.leftArrow}>
+        <Button
+          scheme='pink'
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
+          borderRadius={10}
+          padding={0}
+          onClick={moveLeft}>
+          <ArrowLeftIcon
+            sx={{
+              width: isMd ? 28 : 32,
+              height: isMd ? 28 : 32
+            }}
+          />
+        </Button>
+      </Grid>
+      <Grid className={classes.rightArrow}>
+        <Button
+          scheme='pink'
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
+          borderRadius={10}
+          padding={0}
+          onClick={moveRight}>
+          <ArrowRightIcon
+            sx={{
+              width: isMd ? 28 : 32,
+              height: isMd ? 28 : 32
+            }}
+          />
+        </Button>
+      </Grid>
+
       <ResponsiveLine
         sliceTooltip={() => <></>}
         tooltip={() => <></>}
