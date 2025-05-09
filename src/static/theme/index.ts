@@ -99,6 +99,8 @@ export const colors = {
     bodyBackground: '#141b2d',
     warningTransparent: 'rgba(239, 208, 99, 0.2)',
     pinkGreenLinearGradient: 'linear-gradient(90deg, #EF84F5 0%, #2EE09A 100%)',
+    pinkGreenLinearGradientOpacity:
+      'linear-gradient(90deg, rgba(46, 224, 154, 0.15) 0%, rgba(46, 224, 154, 0) 50%), linear-gradient(90deg, rgba(239, 132, 245, 0) 50%, rgba(239, 132, 245, 0.15) 100%), #202946;',
     darkPinkGradient:
       'linear-gradient(180deg, rgba(239, 132, 245, 0.00) 0%, rgba(239, 132, 245, 0.10) 100%), #111931',
     darkGreenGradient:
