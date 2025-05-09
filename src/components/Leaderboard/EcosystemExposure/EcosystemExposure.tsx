@@ -9,20 +9,15 @@ import { BN } from '@coral-xyz/anchor'
 import { printBN } from '@utils/utils'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { BlurOverlay } from '../YourProgress/BlurOverlay'
-import {
-  allDomainsIcon,
-  celestialMammothIcon,
-  checkIcon,
-  edasIcon,
-  ensofiIcon,
-  infoIcon,
-  navLeftIcon,
-  navRightIcon,
-  nucleusIcon,
-  turboTapIcon
-} from '@static/icons'
-import cryptara from '@static/png/cryptara.png'
+import { checkIcon, infoIcon, navLeftIcon, navRightIcon } from '@static/icons'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import cryptara from '@static/png/exposure/cryptara.webp'
+import celestialMammothIcon from '@static/png/exposure/celestialMammoth.webp'
+import edasIcon from '@static/png/exposure/edas.webp'
+import turboTapIcon from '@static/png/exposure/turboTap.webp'
+import ensofiIcon from '@static/png/exposure/ensofi.webp'
+import allDomainsIcon from '@static/png/exposure/allDomains.webp'
+import nucleusIcon from '@static/png/exposure/nucleus.webp'
 
 interface EcosystemExposureI {
   isLoading: boolean

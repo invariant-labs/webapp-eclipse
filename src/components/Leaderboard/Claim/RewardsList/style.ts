@@ -1,7 +1,7 @@
 import { colors, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
-import fingerprintPink from '@static/png/fingerprintPink.png'
-import fingerprintGreen from '@static/png/fingerprintGreen.png'
+import fingerprintPink from '@static/png/fingerprintPink.webp'
+import fingerprintGreen from '@static/png/fingerprintGreen.webp'
 import { keyframes } from 'tss-react'
 
 const fadeAnimation1 = keyframes`

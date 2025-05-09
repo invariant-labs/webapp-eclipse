@@ -1,7 +1,7 @@
 import { makeStyles } from 'tss-react/mui'
 import React from 'react'
-import GreenWaves from '@static/png/greenWavesFromTop.png'
-import PurpleWaves from '@static/png/purpleWavesFromBottom.png'
+import GreenWaves from '@static/png/greenWavesFromTop.webp'
+import PurpleWaves from '@static/png/purpleWavesFromBottom.webp'
 
 const useStyles = makeStyles<{ isVisible: boolean }>()((_theme, { isVisible }) => ({
   waveImage: {
