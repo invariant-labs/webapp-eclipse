@@ -1,8 +1,4 @@
 import { Box } from '@mui/material'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import { lockIcon2, unlockIcon } from '@static/icons'
-
-import { Button } from '@common/Button/Button'
 import { INavigatePosition } from '@store/consts/types'
 import { ArrowIcon2 } from '@static/componentIcon/ArrowIcon2'
 import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'

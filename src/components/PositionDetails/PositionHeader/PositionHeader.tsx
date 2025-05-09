@@ -1,14 +1,8 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
-import {
-  airdropRainbowIcon,
-  arrowLeftIcon,
-  backArrowIcon,
-  newTabIcon,
-  reverseTokensIcon
-} from '@static/icons'
-import { colors, theme } from '@static/theme'
+import { airdropRainbowIcon, backArrowIcon, newTabIcon, reverseTokensIcon } from '@static/icons'
+import { theme } from '@static/theme'
 import MarketIdLabel from '@components/NewPosition/MarketIdLabel/MarketIdLabel'
 import { VariantType } from 'notistack'
 import Refresher from '@common/Refresher/Refresher'
@@ -18,8 +12,6 @@ import { ROUTES, truncateString } from '@utils/utils'
 import { LockButton } from './LockButton'
 import { Button } from '@common/Button/Button'
 import { INavigatePosition } from '@store/consts/types'
-import { ArrowIcon2 } from '@static/componentIcon/ArrowIcon2'
-import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
 import { MobileNavigation } from '../Navigation/MobileNavigation/MobileNavigation'
 import { useNavigate } from 'react-router-dom'
 

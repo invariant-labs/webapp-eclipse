@@ -62,7 +62,6 @@ export type PoolDetails = {
   fee: number
 }
 
-export type INavigationPositionItem = {}
 export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const { classes } = useStyles()
 

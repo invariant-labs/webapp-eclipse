@@ -1,7 +1,7 @@
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Box, Grid, Typography, useMediaQuery } from '@mui/material'
+import { Box, useMediaQuery } from '@mui/material'
 import {
   NetworkType,
   REFRESHER_INTERVAL,
@@ -31,10 +31,9 @@ import { PoolDetails } from '@containers/SinglePositionWrapper/SinglePositionWra
 import { PositionHeader } from './PositionHeader/PositionHeader'
 import ClosePositionWarning from '@components/Modals/ClosePositionWarning/ClosePositionWarning'
 import { Information } from '@components/Information/Information'
-import { colors, theme, typography } from '@static/theme'
-import { eyeYellowIcon, swapListIcon } from '@static/icons'
-import { ArrowIcon } from '@static/componentIcon/ArrowIcon'
-import { TooltipHover } from '@common/TooltipHover/TooltipHover'
+import { theme } from '@static/theme'
+import { eyeYellowIcon } from '@static/icons'
+import { DesktopNavigation } from './Navigation/DesktopNavigation/DesktopNavigation'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -241,51 +240,13 @@ const PositionDetails: React.FC<IProps> = ({
       </Information>
       <Box position='relative'>
         {previousPosition && !isMd && (
-          <Box className={classes.leftArrowWrapper}>
-            <TooltipHover
-              title={
-                <Box display='flex' flexDirection='column' alignItems='center' width={129}>
-                  <Typography color={colors.invariant.textGrey} style={typography.body2} mb={'4px'}>
-                    Previous position
-                  </Typography>
-                  <Grid container item className={classes.iconsShared} mb={'4px'}>
-                    <img
-                      className={classes.tokenIcon}
-                      src={previousPosition.tokenXIcon}
-                      alt={previousPosition.tokenXName}
-                      width={24}
-                      height={24}
-                    />
-
-                    <img src={swapListIcon} alt='Arrow' width={24} />
-
-                    <img
-                      className={classes.tokenIcon}
-                      src={previousPosition.tokenYIcon}
-                      alt={previousPosition.tokenYName}
-                      width={24}
-                      height={24}
-                    />
-                  </Grid>
-
-                  <Typography color={colors.invariant.text} style={typography.body1}>
-                    {previousPosition.tokenXName + ' - ' + previousPosition.tokenYName}
-                  </Typography>
-                  <Typography color={colors.invariant.textGrey} style={typography.body1}>
-                    {previousPosition.fee + '% fee'}
-                  </Typography>
-                </Box>
-              }
-              top={'50%'}
-              increasePadding>
-              <ArrowIcon
-                className={classes.arrow}
-                onClick={() => {
-                  navigate(ROUTES.getPositionRoute(previousPosition.id))
-                }}
-              />
-            </TooltipHover>
-          </Box>
+          <DesktopNavigation
+            position={previousPosition}
+            direction='left'
+            onClick={() => {
+              navigate(ROUTES.getPositionRoute(previousPosition.id))
+            }}
+          />
         )}
         ;
         <Box className={classes.mainContainer}>
@@ -426,51 +387,13 @@ const PositionDetails: React.FC<IProps> = ({
           </Box>
         </Box>
         {nextPosition && !isMd && (
-          <Box className={classes.rightArrowWrapper}>
-            <TooltipHover
-              title={
-                <Box display='flex' flexDirection='column' alignItems='center' width={129}>
-                  <Typography color={colors.invariant.textGrey} style={typography.body2} mb={'4px'}>
-                    Next position
-                  </Typography>
-                  <Grid container item className={classes.iconsShared} mb={'4px'}>
-                    <img
-                      className={classes.tokenIcon}
-                      src={nextPosition.tokenXIcon}
-                      alt={nextPosition.tokenXName}
-                      width={24}
-                      height={24}
-                    />
-
-                    <img src={swapListIcon} alt='Arrow' width={24} />
-
-                    <img
-                      className={classes.tokenIcon}
-                      src={nextPosition.tokenYIcon}
-                      alt={nextPosition.tokenYName}
-                      width={24}
-                      height={24}
-                    />
-                  </Grid>
-
-                  <Typography color={colors.invariant.text} style={typography.body1}>
-                    {nextPosition.tokenXName + ' - ' + nextPosition.tokenYName}
-                  </Typography>
-                  <Typography color={colors.invariant.textGrey} style={typography.body1}>
-                    {nextPosition.fee + '% fee'}
-                  </Typography>
-                </Box>
-              }
-              top={'50%'}
-              increasePadding>
-              <ArrowIcon
-                className={classes.arrow}
-                onClick={() => {
-                  navigate(ROUTES.getPositionRoute(nextPosition.id))
-                }}
-              />
-            </TooltipHover>
-          </Box>
+          <DesktopNavigation
+            position={nextPosition}
+            direction='right'
+            onClick={() => {
+              navigate(ROUTES.getPositionRoute(nextPosition.id))
+            }}
+          />
         )}
       </Box>
     </>
