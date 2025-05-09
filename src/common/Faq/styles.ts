@@ -47,9 +47,7 @@ export const useStyles = makeStyles()(() => ({
         width: '100%',
         borderRadius: '24px',
         zIndex: 1,
-        background:
-          'linear-gradient(90deg, rgba(46, 224, 154, 0.15) 0%, rgba(46, 224, 154, 0) 50%), linear-gradient(90deg, rgba(239, 132, 245, 0) 50%, rgba(239, 132, 245, 0.15) 100%), #202946;',
-        opacity: 0.5
+        background: colors.invariant.pinkGreenLinearGradientOpacity
       }
     }
   },
@@ -69,6 +67,7 @@ export const useStyles = makeStyles()(() => ({
     '& .MuiAccordionSummary-expandIconWrapper': {
       display: 'flex',
       justifyContent: 'center',
+      zIndex: 5,
       alignItems: 'center'
     },
     '& p': {
