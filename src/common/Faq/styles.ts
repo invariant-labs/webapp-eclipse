@@ -36,7 +36,6 @@ export const useStyles = makeStyles()(() => ({
     '&.Mui-expanded': {
       marginTop: '20px !important',
       marginBottom: '20px !important',
-      // // margin: '20px 0px !important',
       '&::after': {
         content: '""',
         position: 'absolute',
