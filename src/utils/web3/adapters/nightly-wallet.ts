@@ -16,6 +16,7 @@ interface NightlyProvider {
   sendMessage: (message: Uint8Array) => Promise<any>
   connect: () => Promise<void>
   disconnect: () => Promise<void>
+  features: any
 }
 export class NightlyAdapter implements WalletAdapter {
   _nightlyProvider: NightlyProvider | undefined
@@ -80,7 +81,7 @@ export class NightlyAdapter implements WalletAdapter {
       return
     }
     if (!provider.isConnected) {
-      await provider.connect()
+      await provider?.features['standard:connect'].connect()
     }
     this._nightlyProvider = provider
   }
