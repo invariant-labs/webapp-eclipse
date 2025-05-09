@@ -35,6 +35,7 @@ export interface ISinglePositionPlot {
   hasTicksError?: boolean
   reloadHandler: () => void
   isFullRange: boolean
+  positionId: string
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -52,7 +53,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   xToY,
   hasTicksError,
   reloadHandler,
-  isFullRange
+  isFullRange,
+  positionId
 }) => {
   const { classes } = useStyles()
 
@@ -73,6 +75,10 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
 
   //Proportion between middle of price range and right range in ratio to middle of price range and plotMax
   const [zoomScale, setZoomScale] = useState(0.7)
+
+  useEffect(() => {
+    if (!isInitialLoad) setIsInitialLoad(true)
+  }, [positionId])
 
   useEffect(() => {
     const initSideDist = Math.abs(

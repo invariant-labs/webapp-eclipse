@@ -20,8 +20,10 @@ import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { network, timeoutError } from '@store/selectors/solanaConnection'
 import {
   isLoadingPositionsList,
+  lockedPositionsNavigationData,
   plotTicks,
   positionData,
+  positionsNavigationData,
   positionWithPoolData,
   shouldDisable,
   singlePositionData,
@@ -90,6 +92,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const walletStatus = useSelector(status)
   const ethBalance = useSelector(balance)
 
+  const navigationData = useSelector(positionsNavigationData)
+  const lockedNavigationData = useSelector(lockedPositionsNavigationData)
   const isTimeoutError = useSelector(timeoutError)
 
   const [showFeesLoader, setShowFeesLoader] = useState(true)
@@ -100,6 +104,38 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [isClosingPosition, setIsClosingPosition] = useState(false)
 
   const isLoadingStats = useSelector(isLoading)
+
+  const previousPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+
+    if (currentIndex === -1) {
+      return null
+    }
+
+    return data[currentIndex - 1] ?? data[data.length - 1]
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const nextPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+
+    if (currentIndex === -1) {
+      return null
+    }
+
+    return data[currentIndex + 1] ?? data[0]
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
 
   useEffect(() => {
     if (position?.id) {
@@ -187,7 +223,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position?.lowerTickIndex]
+    [position?.lowerTickIndex, position?.id.toString()]
   )
   const max = useMemo(
     () =>
@@ -198,7 +234,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position?.upperTickIndex]
+    [position?.upperTickIndex, position?.id.toString()]
   )
   const current = useMemo(
     () =>
@@ -210,7 +246,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             position.tokenY.decimals
           )
         : 0,
-    [position]
+    [position, position?.id.toString()]
   )
 
   const tokenXLiquidity = useMemo(() => {
@@ -289,7 +325,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     return ticksData
-  }, [ticksData, ticksLoading, position?.id])
+  }, [ticksData, ticksLoading, position?.id.toString()])
 
   const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
 
@@ -545,6 +581,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         isPreview={isPreview}
         showPositionLoader={position.ticksLoading}
         isPromotedLoading={isPromotedLoading}
+        previousPosition={previousPosition}
+        nextPosition={nextPosition}
+        positionId={id}
       />
     )
   }
@@ -570,10 +609,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
           themeDark
           style={isMobile ? { paddingTop: 8 } : {}}
           roundedCorners={true}
-          mainTitle='Wallet is not connected
-'
-          desc='No liquidity positions to show
-'
+          mainTitle='Wallet is not connected'
+          desc='No liquidity positions to show'
           withButton={false}
           connectButton={true}
           onAction2={() => dispatch(walletActions.connect(false))}
