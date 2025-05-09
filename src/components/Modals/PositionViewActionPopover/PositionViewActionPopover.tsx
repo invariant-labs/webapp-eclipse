@@ -1,5 +1,4 @@
 import React from 'react'
-import classNames from 'classnames'
 import useStyles from './style'
 import { Button, Grid, Popover, Typography } from '@mui/material'
 
@@ -12,6 +11,7 @@ export interface IPositionViewActionPopover {
   handleClose: () => void
   onLockPosition: () => void
   isLocked: boolean
+  shouldDisable: boolean
 }
 
 export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = ({
@@ -22,10 +22,10 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   claimFee,
   closePosition,
   onLockPosition,
-  unclaimedFeesInUSD
+  unclaimedFeesInUSD,
+  shouldDisable
 }) => {
-  const { classes } = useStyles()
-
+  const { classes, cx } = useStyles()
   return (
     <Popover
       open={open}
@@ -48,8 +48,8 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
       <Grid className={classes.root}>
         <Grid className={classes.list} container alignContent='space-around' direction='column'>
           <Button
-            disabled={unclaimedFeesInUSD <= 0}
-            className={classNames(classes.listItem)}
+            disabled={unclaimedFeesInUSD <= 0 || shouldDisable}
+            className={cx(classes.listItem)}
             onClick={() => {
               claimFee()
               handleClose()
@@ -57,8 +57,8 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             <Typography className={classes.name}>Claim fee</Typography>
           </Button>
           <Button
-            className={classNames(classes.listItem)}
-            disabled={isLocked}
+            className={cx(classes.listItem)}
+            disabled={isLocked || shouldDisable}
             onClick={() => {
               closePosition()
               handleClose()
@@ -67,8 +67,8 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
           </Button>
         </Grid>
         <Button
-          className={classNames(classes.listItem)}
-          disabled={isLocked}
+          className={cx(classes.listItem)}
+          disabled={isLocked || shouldDisable}
           onClick={() => {
             onLockPosition()
             handleClose()

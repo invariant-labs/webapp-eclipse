@@ -4,7 +4,6 @@ import { useMediaQuery, Grid, Typography, Box } from '@mui/material'
 import { airdropRainbowIcon, plusIcon, unknownTokenIcon } from '@static/icons'
 import { colors, theme, typography } from '@static/theme'
 import { shortenAddress } from '@utils/uiUtils'
-import classNames from 'classnames'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
 import { DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
@@ -41,7 +40,7 @@ export const MobilePoolListItem: React.FC<IProps> = ({
   volume,
   TVL
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
   const navigate = useNavigate()
   const isMd = useMediaQuery(theme.breakpoints.down('md'))
 
@@ -111,7 +110,7 @@ export const MobilePoolListItem: React.FC<IProps> = ({
           <Grid
             container
             classes={{
-              container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
+              container: cx(classes.container, { [classes.containerNoAPY]: !showAPY })
             }}
             style={{
               border: hideBottomLine ? 'none' : undefined
@@ -213,7 +212,7 @@ export const MobilePoolListItem: React.FC<IProps> = ({
         <Grid
           container
           classes={{
-            container: classNames(classes.container),
+            container: cx(classes.container),
             root: classes.header
           }}>
           <Typography style={{ lineHeight: '11px' }}>

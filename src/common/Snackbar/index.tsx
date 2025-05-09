@@ -4,7 +4,7 @@ import { theme } from '@static/theme'
 import { Grow, GrowProps, useMediaQuery } from '@mui/material'
 import CustomSnackbar from './CustomSnackbar/CustomSnackbar'
 import { NetworkType } from '@store/consts/static'
-import { Global } from '@emotion/react'
+import { useStyles } from './CustomSnackbar/style'
 
 type ExtraVariants = 'pending' | 'custom'
 
@@ -55,42 +55,29 @@ const Transition = (props: GrowProps) => <Grow {...props} />
 const Snackbar: React.FC<ISnackbarProps> = ({ maxSnack = 3, children }) => {
   const isNavbarVisible = useMediaQuery(theme.breakpoints.down(1200))
   const isExSmall = useMediaQuery(theme.breakpoints.down('sm'))
+  const { classes } = useStyles()
 
   return (
-    <>
-      {isNavbarVisible && (
-        <Global
-          styles={`
-          .custom-snackbar-container {
-            bottom: 90px !important;
-            z-index: 100 !important; 
-
-          }
-        `}
-        />
-      )}
-      <SnackbarProvider
-        TransitionComponent={Transition}
-        transitionDuration={{ enter: 500, exit: 300 }}
-        dense
-        maxSnack={isExSmall ? 5 : maxSnack}
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        classes={
-          isNavbarVisible ? { containerAnchorOriginBottomLeft: 'custom-snackbar-container' } : {}
-        }
-        Components={{
-          success: CustomSnackbar,
-          error: CustomSnackbar,
-          info: CustomSnackbar,
-          warning: CustomSnackbar,
-          pending: CustomSnackbar,
-          custom: CustomSnackbar,
-          default: CustomSnackbar
-        }}>
-        {children}
-      </SnackbarProvider>
-    </>
+    <SnackbarProvider
+      TransitionComponent={Transition}
+      transitionDuration={{ enter: 500, exit: 300 }}
+      dense
+      maxSnack={isExSmall ? 5 : maxSnack}
+      anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+      classes={
+        isNavbarVisible ? { containerAnchorOriginBottomLeft: classes.customSnackbarContainer } : {}
+      }
+      Components={{
+        success: CustomSnackbar,
+        error: CustomSnackbar,
+        info: CustomSnackbar,
+        warning: CustomSnackbar,
+        pending: CustomSnackbar,
+        custom: CustomSnackbar,
+        default: CustomSnackbar
+      }}>
+      {children}
+    </SnackbarProvider>
   )
 }
-
 export default Snackbar

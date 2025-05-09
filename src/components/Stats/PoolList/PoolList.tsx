@@ -13,7 +13,6 @@ import {
 import { PaginationList } from '@common/Pagination/Pagination'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
-import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { useNavigate } from 'react-router-dom'
@@ -94,7 +93,7 @@ const PoolList: React.FC<PoolListInterface> = ({
   const navigate = useNavigate()
 
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
@@ -171,7 +170,7 @@ const PoolList: React.FC<PoolListInterface> = ({
     <Grid
       container
       classes={{ root: classes.container }}
-      className={classNames({ [classes.loadingOverlay]: isLoading })}>
+      className={cx({ [classes.loadingOverlay]: isLoading })}>
       <PoolListItem
         displayType='header'
         onSort={setSortType}
@@ -223,7 +222,7 @@ const PoolList: React.FC<PoolListInterface> = ({
                       ? `2px solid ${colors.invariant.light}`
                       : `0px solid ${colors.invariant.light}`
                 }}
-                className={classNames(classes.emptyRow)}
+                className={cx(classes.emptyRow)}
               />
             ))}
         </>

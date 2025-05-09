@@ -66,6 +66,7 @@ export interface IPositionsStore {
     data: Record<string, number>
   }
   showFeesLoader: boolean
+  shouldDisable: boolean
   positionData: {
     position: PositionWithAddress | null
     loading: boolean
@@ -170,7 +171,7 @@ export const defaultState: IPositionsStore = {
   prices: {
     data: {}
   },
-
+  shouldDisable: false,
   shouldNotUpdateRange: false,
   showFeesLoader: false,
   positionData: {
@@ -226,6 +227,9 @@ const positionsSlice = createSlice({
     },
     setAllClaimLoader(state, action: PayloadAction<boolean>) {
       state.positionsList.isAllClaimFeesLoading = action.payload
+    },
+    setShouldDisable(state, action: PayloadAction<boolean>) {
+      state.shouldDisable = action.payload
     },
     setPrices(state, action: PayloadAction<Record<string, number>>) {
       state.prices = {
