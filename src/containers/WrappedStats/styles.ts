@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()((theme: Theme) => ({
   wrapper: {
-    maxWidth: 1072,
+    maxWidth: 1210,
     minHeight: '100%',
     flexDirection: 'column'
   },
@@ -36,7 +36,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     margin: 'auto'
   },
   plot: {
-    width: 524,
+    width: 605,
 
     '&:first-child': {
       marginRight: 24

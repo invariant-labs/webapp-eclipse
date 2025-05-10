@@ -4,7 +4,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles<{ bgImage?: string }>()((_theme, { bgImage }) => {
   return {
     mainWrapper: {
-      maxWidth: '524px',
+      maxWidth: 605,
       width: '100%',
       [theme.breakpoints.down('sm')]: {
         maxWidth: '100%'

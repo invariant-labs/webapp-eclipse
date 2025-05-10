@@ -5,11 +5,7 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles()((theme: Theme) => {
   return {
     popover: {
-      pointerEvents: 'none',
-      [theme.breakpoints.down('sm')]: {
-        width: '100%',
-        padding: '16px'
-      }
+      pointerEvents: 'none'
     },
     chart: {
       height: '100px',
@@ -18,14 +14,19 @@ const useStyles = makeStyles()((theme: Theme) => {
     backgroundContainer: {
       background: colors.invariant.component,
       width: 652,
-      [theme.breakpoints.down(671)]: {
-        maxWidth: '100vw'
+      display: 'flex',
+      alignItems: 'center',
+      [theme.breakpoints.down('sm')]: {
+        width: 300
       }
     },
     leftWrapper: {
       display: 'flex',
       width: '38%',
-      gap: '16px'
+      gap: '16px',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
+      }
     },
     leftInnerWrapper: {
       display: 'flex',
@@ -40,7 +41,9 @@ const useStyles = makeStyles()((theme: Theme) => {
       gap: '16px',
 
       [theme.breakpoints.down(671)]: {
-        flexDirection: 'column'
+        width: 400,
+        flexDirection: 'column',
+        alignItems: 'center'
       }
     },
     paper: {
@@ -91,7 +94,10 @@ const useStyles = makeStyles()((theme: Theme) => {
       display: 'flex',
       flexDirection: 'column',
       gap: '10px',
-      width: '50%'
+      width: '50%',
+      [theme.breakpoints.down('sm')]: {
+        width: '100%'
+      }
     },
     chartsWrapper: {
       display: 'flex',
