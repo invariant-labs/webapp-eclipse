@@ -201,6 +201,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         <Box className={classes.statsContainer}>
           <Stat
             name='CURRENT PRICE'
+            isLoading={ticksLoading}
             value={
               <Box>
                 <Typography component='span' className={classes.value}>
