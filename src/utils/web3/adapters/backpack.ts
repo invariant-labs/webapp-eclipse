@@ -1,6 +1,6 @@
 import { PublicKey, Transaction, VersionedTransaction } from '@solana/web3.js'
 import { WalletAdapter } from './types'
-import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+import { DEFAULT_PUBLICKEY, ECLIPSE_MAINNET_GENESIS_HASH } from '@store/consts/static'
 import { ensureError } from '@utils/utils'
 
 interface BackpackProvider {
@@ -14,8 +14,13 @@ interface BackpackProvider {
   ) => Promise<Transaction[] | VersionedTransaction[]>
   signMessage: (message: Uint8Array) => Promise<any>
   sendMessage: (message: Uint8Array) => Promise<any>
-  connect: () => Promise<void>
+  connect: (options?: {
+    chainGenesisHash?: string
+    reconnect?: boolean
+    onlyIfTrusted?: boolean
+  }) => Promise<void>
   disconnect: () => Promise<void>
+  connection: any
 }
 export class BackpackWalletAdapter implements WalletAdapter {
   _backpackProvider: BackpackProvider | undefined
@@ -79,8 +84,12 @@ export class BackpackWalletAdapter implements WalletAdapter {
       window.open('https://backpack.app/', '_blank')
       return
     }
+
     if (!provider.isConnected) {
-      await provider.connect()
+      await provider.connect({
+        chainGenesisHash: ECLIPSE_MAINNET_GENESIS_HASH,
+        reconnect: true
+      })
     }
     this._backpackProvider = provider
   }
