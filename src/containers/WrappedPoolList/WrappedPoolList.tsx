@@ -28,7 +28,6 @@ export const WrappedPoolList: React.FC = () => {
 
   const { classes } = useStyles({ isXs })
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
-
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
       const isTokenXSelected = selectedFilters.some(
@@ -117,6 +116,7 @@ export const WrappedPoolList: React.FC = () => {
         copyAddressHandler={copyAddressHandler}
         isLoading={isLoadingStats}
         showAPY={showAPY}
+        filteredTokens={selectedFilters}
       />
     </div>
   )
