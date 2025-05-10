@@ -7,7 +7,6 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
   const { classes } = useStyles()
   const total = data?.reduce((sum, item) => sum + item.value, 0) || 0
   const loadingData = [{ id: 'loading', value: 1, label: '' }]
-
   const formatDataForNivo = inputData =>
     inputData.map((item, index) => ({
       id: item.label || `item-${index}`,
@@ -15,12 +14,13 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
       value: item.value || 0,
       color: chartColors[index]
     }))
+  const hasPositiveValue = data?.some(item => item.value > 0)
 
-  const nivoData = data?.length ? formatDataForNivo(data) : loadingData
-
+  const nivoData = hasPositiveValue ? formatDataForNivo(data) : loadingData
+  const showPlaceholder = isLoading || !hasPositiveValue
   return (
     <Box position='relative' height={200} width='100%'>
-      <Fade in={!isLoading} timeout={{ enter: 0, exit: 400 }} unmountOnExit>
+      <Fade in={!showPlaceholder} timeout={{ enter: 0, exit: 400 }} unmountOnExit>
         <Box
           className={classes.sliceShadow}
           position='absolute'
@@ -61,7 +61,7 @@ const ResponsivePieChart = ({ data, chartColors, isLoading = true }) => {
       </Fade>
 
       <Fade
-        in={isLoading}
+        in={showPlaceholder}
         timeout={{ enter: 0, exit: 400 }}
         style={{ transitionDelay: isLoading ? '0ms' : '100ms' }}
         unmountOnExit>
