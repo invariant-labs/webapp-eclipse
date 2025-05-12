@@ -62,7 +62,7 @@ export const useStyles = makeStyles()(() => ({
     alignItems: 'center',
     padding: '24px',
     '&.Mui-expanded': {
-      paddingBottom: '4px'
+      paddingBottom: '16px'
     },
 
     '& .MuiAccordionSummary-content': {
@@ -86,7 +86,7 @@ export const useStyles = makeStyles()(() => ({
     fontSize: '20px',
     padding: '0px 24px 24px',
     '& a': {
-      color: '#2EE09A',
+      color: colors.invariant.green,
       textDecoration: 'none',
       '&:hover': {
         textDecoration: 'underline'
