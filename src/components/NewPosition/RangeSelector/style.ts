@@ -249,8 +249,8 @@ const useStyles = makeStyles()(theme => {
       minHeight: 36
     },
     priceRangeContainer: {
+      display: 'flex',
       flexDirection: 'column',
-      width: 'auto',
       alignItems: 'flex-start',
       justifyContent: 'space-between'
     },
