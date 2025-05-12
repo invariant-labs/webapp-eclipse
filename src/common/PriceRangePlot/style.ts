@@ -35,12 +35,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     gap: 10,
     display: 'flex',
     alignItems: 'flex-end',
-    flexDirection: 'column',
-
-    [theme.breakpoints.down('md')]: {
-      bottom: 20,
-      top: 'auto'
-    }
+    flexDirection: 'column'
   },
   leftArrow: {
     position: 'absolute',
@@ -52,11 +47,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'absolute',
     bottom: 20,
     right: 8,
-    zIndex: 10,
-
-    [theme.breakpoints.down('md')]: {
-      right: 54
-    }
+    zIndex: 10
   },
   loadingText: {
     fill: colors.invariant.black,

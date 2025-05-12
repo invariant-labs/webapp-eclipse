@@ -99,13 +99,16 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
 
       setPlotMax(plotMax)
       setPlotMin(plotMin)
+
       setCurrentXtoY(xToY)
     }
 
     if (isInitialLoad) {
+      const rangeDiff = Math.abs(rightRange.x - leftRange.x)
+
       setIsInitialLoad(false)
-      setPlotMin(leftRange.x - initSideDist)
-      setPlotMax(rightRange.x + initSideDist)
+      setPlotMin(leftRange.x - rangeDiff / 5)
+      setPlotMax(rightRange.x + rangeDiff / 5)
 
       setZoomScale(calcZoomScale(rightRange.x + initSideDist))
     }
