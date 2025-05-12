@@ -34,8 +34,14 @@ export const useStyles = makeStyles()(() => ({
       display: 'none'
     },
     '&.Mui-expanded': {
-      marginTop: '8px !important',
+      '&:last-child': {
+        marginBottom: '0px !important'
+      },
+      '&:first-child': {
+        marginTop: '0px !important'
+      },
       marginBottom: '8px !important',
+      marginTop: '8px !important',
       '&::after': {
         content: '""',
         position: 'absolute',
