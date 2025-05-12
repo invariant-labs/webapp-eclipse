@@ -19,7 +19,8 @@ const useStyles = makeStyles()(theme => {
     },
     headerContainer: {
       justifyContent: 'space-between',
-      marginBottom: 12
+      marginBottom: 12,
+      flexDirection: 'row'
     },
     header: {
       ...typography.heading4,
@@ -38,7 +39,11 @@ const useStyles = makeStyles()(theme => {
     },
     plot: {
       width: '100%',
-      height: 185
+      height: 185,
+      [theme.breakpoints.down('md')]: {
+        height: 253,
+        marginBottom: 24
+      }
     },
     subheader: {
       ...typography.heading4,
@@ -248,17 +253,10 @@ const useStyles = makeStyles()(theme => {
       minHeight: 36
     },
     priceRangeContainer: {
+      display: 'flex',
       flexDirection: 'column',
-      width: 'auto',
       alignItems: 'flex-start',
       justifyContent: 'space-between'
-    },
-    currentPriceContainer: {
-      flexDirection: 'column',
-      width: 'auto',
-      height: 43,
-      alignItems: 'flex-start',
-      justifyContent: 'flex-end'
     },
     rangeConcentration: {
       display: 'flex',
