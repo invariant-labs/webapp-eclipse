@@ -204,6 +204,13 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     }
   }
 
+  const centerChart = () => {
+    const diff = plotMax - plotMin
+
+    setPlotMin(midPrice.x - diff / 2)
+    setPlotMax(midPrice.x + diff / 2)
+  }
+
   const minPercentage = (min / currentPrice - 1) * 100
   const maxPercentage = (max / currentPrice - 1) * 100
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
@@ -246,6 +253,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         zoomPlus={zoomPlus}
         moveLeft={moveLeft}
         moveRight={moveRight}
+        centerChart={centerChart}
         disabled
         leftRange={leftRange}
         rightRange={rightRange}
