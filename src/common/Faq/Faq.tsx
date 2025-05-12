@@ -21,22 +21,24 @@ export const Faq: React.FC<FaqProps> = ({ faqData }) => {
   return (
     <div className={classes.container}>
       {faqData.map((item, index) => (
-        <Accordion disableGutters key={index} className={classes.accordion}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: colors.invariant.text }} />}
-            className={classes.summary}>
-            <Typography sx={{
-              zIndex: 5, padding: '16px'
-            }}>{item.question}</Typography>
-          </AccordionSummary>
-          <AccordionDetails
-            sx={{
-              padding: '16px'
-            }}
-            className={classes.item}>
-            <Typography dangerouslySetInnerHTML={{ __html: item.answer }} sx={{ zIndex: 5, position: 'relative' }} />
-          </AccordionDetails>
-        </Accordion>
+        <>
+          <Accordion disableGutters key={index} className={classes.accordion}>
+            <AccordionSummary
+              expandIcon={<ExpandMoreIcon sx={{ color: colors.invariant.text }} />}
+              className={classes.summary}>
+              <Typography sx={{
+                zIndex: 5
+              }}>{item.question}</Typography>
+            </AccordionSummary>
+            <AccordionDetails
+              className={classes.item}>
+              <Typography dangerouslySetInnerHTML={{ __html: item.answer }} sx={{ zIndex: 5, position: 'relative' }} />
+            </AccordionDetails>
+          </Accordion>
+          {index !== faqData.length - 1 && (
+            <div className={classes.separator} />
+          )}
+        </>
       ))}
     </div>
   )
