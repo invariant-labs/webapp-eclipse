@@ -10,7 +10,7 @@ export const useStyles = makeStyles()(() => ({
     zIndex: 2,
 
     backgroundColor: `${colors.invariant.component} !important`,
-    padding: '24px 32px',
+    padding: '24px',
     [theme.breakpoints.down('sm')]: {
       padding: '24px 12px'
     },
@@ -60,7 +60,7 @@ export const useStyles = makeStyles()(() => ({
     display: 'grid',
     gridTemplateColumns: '1fr 40px',
     alignItems: 'center',
-    padding: '8px',
+    padding: '24px',
 
     '& .MuiAccordionSummary-content': {
       margin: 0
@@ -77,10 +77,11 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   item: {
-    zIndex: 5,
+    ...typography.body2,
     fontWeight: 400,
     color: colors.invariant.textGrey,
     fontSize: '20px',
+    padding: '16px 24px 24px',
     '& a': {
       color: '#2EE09A',
       textDecoration: 'none',
@@ -104,10 +105,9 @@ export const useStyles = makeStyles()(() => ({
     },
     '& p': {
       color: colors.invariant.textGrey,
-      ...typography.body2,
       fontWeight: 400,
-      lineHeight: '20px',
-      fontSize: '16px',
+      lineHeight: '24px',
+      fontSize: '20px',
       opacity: 0.8
     }
   }
