@@ -23,6 +23,7 @@ import {
   plotTicks,
   positionData,
   positionWithPoolData,
+  shouldDisable,
   singlePositionData,
   showFeesLoader as storeFeesLoader
 } from '@store/selectors/positions'
@@ -76,6 +77,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const poolsList = useSelector(poolsArraySortedByFees)
   const statsPolsList = useSelector(poolsStatsWithTokensDetails)
   const isLoadingList = useSelector(isLoadingPositionsList)
+  const disableButton = useSelector(shouldDisable)
   const {
     allData: ticksData,
     loading: ticksLoading,
@@ -292,22 +294,30 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   const [triggerFetchPrice, setTriggerFetchPrice] = useState(false)
 
   const [tokenXPriceData, setTokenXPriceData] = useState<TokenPriceData | undefined>(undefined)
+  const [pricesLoading, setPricesLoading] = useState(false)
+
   const [tokenYPriceData, setTokenYPriceData] = useState<TokenPriceData | undefined>(undefined)
 
   useEffect(() => {
     if (!position) {
       return
     }
-
+    setPricesLoading(true)
     const xAddr = position.tokenX.assetAddress.toString()
     getTokenPrice(xAddr, currentNetwork)
       .then(data => setTokenXPriceData({ price: data ?? 0 }))
       .catch(() => setTokenXPriceData(getMockedTokenPrice(position.tokenX.symbol, currentNetwork)))
+      .finally(() => {
+        setPricesLoading(false)
+      })
 
     const yAddr = position.tokenY.assetAddress.toString()
     getTokenPrice(yAddr, currentNetwork)
       .then(data => setTokenYPriceData({ price: data ?? 0 }))
       .catch(() => setTokenYPriceData(getMockedTokenPrice(position.tokenY.symbol, currentNetwork)))
+      .finally(() => {
+        setPricesLoading(false)
+      })
   }, [position?.id, triggerFetchPrice])
 
   const copyPoolAddressHandler = (message: string, variant: VariantType) => {
@@ -453,6 +463,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   if (position) {
     return (
       <PositionDetails
+        shouldDisable={disableButton}
         tokenXAddress={position.tokenX.assetAddress}
         tokenYAddress={position.tokenY.assetAddress}
         poolAddress={position.poolData.address}
@@ -542,6 +553,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         isPreview={isPreview}
         showPositionLoader={position.ticksLoading}
         isPromotedLoading={isPromotedLoading}
+        pricesLoading={pricesLoading}
       />
     )
   }
