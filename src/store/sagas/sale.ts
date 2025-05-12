@@ -21,7 +21,6 @@ import {
 } from '@store/consts/static'
 import { closeSnackbar } from 'notistack'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
-import { getProof } from '@invariant-labs/sale-sdk'
 
 export function* fetchUserStats() {
   try {
@@ -90,8 +89,7 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
     const connection = getSolanaConnection(rpc)
     const wallet = yield* call(getWallet)
     const sale = yield* call(getSaleProgram, networkType, rpc, wallet as IWallet)
-    const { amount, mint } = action.payload
-    const proofOfInclusion = getProof(wallet.publicKey.toString())
+    const { amount, mint, proofOfInclusion } = action.payload
 
     const ix = yield* call(
       [sale, sale.depositIx],

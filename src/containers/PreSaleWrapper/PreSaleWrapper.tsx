@@ -5,16 +5,23 @@ import { SaleStepper } from '@components/PreSale/SaleStepper/SaleStepper'
 import { RoundComponent } from '@components/PreSale/RoundComponent/RoundComponent'
 import { useDispatch, useSelector } from 'react-redux'
 import { actions } from '@store/reducers/sale'
-import { actions as walletActions } from '@store/reducers/solanaWallet'
+import { Status, actions as walletActions } from '@store/reducers/solanaWallet'
 import { saleSelectors } from '@store/selectors/sale'
 import { BN } from '@coral-xyz/anchor'
 import { PublicKey } from '@solana/web3.js'
-import { printBN } from '@utils/utils'
-import { getRound, getTierPrices } from '@invariant-labs/sale-sdk'
-import { balanceLoading, status, poolTokens } from '@store/selectors/solanaWallet'
+import { printBNandTrimZeros } from '@utils/utils'
+import {
+  EFFECTIVE_TARGET_MULTIPLIER,
+  getRound,
+  getTierPrices,
+  getCurrentTierLimit,
+  PERCENTAGE_DENOMINATOR
+} from '@invariant-labs/sale-sdk'
+import { balanceLoading, status, poolTokens, balance } from '@store/selectors/solanaWallet'
 import {
   getAmountTillNextPriceIncrease,
   getPrice,
+  getProof,
   getTimestampSeconds
 } from '@invariant-labs/sale-sdk/lib/utils'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
@@ -32,8 +39,10 @@ import 'slick-carousel/slick/slick.css'
 import 'slick-carousel/slick/slick-theme.css'
 import ArrowLeft from '@static/png/presale/arrow_left.png'
 import ArrowRight from '@static/png/presale/arrow_right.png'
-import { useEffect, useState, useRef, useMemo } from 'react'
+import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
+import { getEclipseWallet } from '@utils/web3/wallet'
+import { DEFAULT_PUBLICKEY } from '@store/consts/static'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -166,33 +175,12 @@ export const PreSaleWrapper = () => {
   const userStats = useSelector(saleSelectors.userStats)
   const { success, inProgress } = useSelector(saleSelectors.deposit)
   const tokens = useSelector(poolTokens)
+  const nativeBalance = useSelector(balance)
   const walletStatus = useSelector(status)
   const isBalanceLoading = useSelector(balanceLoading)
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenIndex, setTokenIndex] = useState<number | null>(null)
-
-  useEffect(() => {
-    let timeoutId1: NodeJS.Timeout
-    let timeoutId2: NodeJS.Timeout
-
-    if (!inProgress && progress === 'progress') {
-      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
-
-      timeoutId1 = setTimeout(() => {
-        setProgress(success ? 'success' : 'failed')
-      }, 500)
-
-      timeoutId2 = setTimeout(() => {
-        setProgress('none')
-        dispatch(actions.setDepositSuccess(false))
-      }, 1800)
-    }
-
-    return () => {
-      clearTimeout(timeoutId1)
-      clearTimeout(timeoutId2)
-    }
-  }, [success, inProgress])
+  const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
 
   const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
     useMemo(
@@ -236,16 +224,18 @@ export const PreSaleWrapper = () => {
   const filledPercentage = useMemo(
     () =>
       !whitelistWalletLimit.isZero()
-        ? new BN(currentAmount).muln(100).div(whitelistWalletLimit).toNumber()
+        ? currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(whitelistWalletLimit)
         : 0,
     [currentAmount, whitelistWalletLimit]
   )
 
-  const amountTillPriceIncrease = useMemo(
-    () =>
-      !targetAmount.isZero()
-        ? getAmountTillNextPriceIncrease(currentAmount, targetAmount)
-        : new BN(0),
+  const amountNeeded = useMemo(
+    () => getCurrentTierLimit(currentAmount, targetAmount),
+    [currentAmount, targetAmount]
+  )
+
+  const amountLeft = useMemo(
+    () => getAmountTillNextPriceIncrease(currentAmount, targetAmount),
     [currentAmount, targetAmount]
   )
 
@@ -256,22 +246,91 @@ export const PreSaleWrapper = () => {
 
   const tierPrices = useMemo(() => getTierPrices(mintDecimals), [mintDecimals])
 
-  const currentPrice = useMemo(
+  const { price, nextPrice } = useMemo(
     () => getPrice(currentAmount, targetAmount, mintDecimals),
     [currentAmount, targetAmount, mintDecimals]
   )
   const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
 
+  const saleSoldOut = useMemo(
+    () => currentAmount.eq(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER)),
+    [targetAmount, currentAmount]
+  )
+
+  const saleEnded = useMemo(() => {
+    return currentTimestamp.gt(endtimestamp)
+  }, [endtimestamp, currentTimestamp])
+
+  const saleDidNotStart = useMemo(() => {
+    return currentTimestamp.lt(startTimestamp)
+  }, [startTimestamp, currentTimestamp])
+
   const isActive = useMemo(() => {
-    const currentTimestamp = getTimestampSeconds()
-    return currentTimestamp.lt(endtimestamp) && currentTimestamp.gt(startTimestamp)
-  }, [endtimestamp])
+    return !saleDidNotStart && !saleEnded && !saleSoldOut
+  }, [saleDidNotStart, saleEnded, saleSoldOut])
+
+  const isPublic = useMemo(() => round === 4, [round])
+
+  const proofOfInclusion = useMemo(() => {
+    const wallet = getEclipseWallet()
+    if (
+      wallet &&
+      walletStatus === Status.Initialized &&
+      wallet.publicKey &&
+      !wallet.publicKey.equals(DEFAULT_PUBLICKEY)
+    )
+      return getProof(wallet.publicKey.toString())
+  }, [walletStatus, isPublic, nativeBalance])
+
+  const getAlertBoxText = useCallback(() => {
+    if (!isPublic && !!proofOfInclusion) {
+      return 'You are eligible for this round of sale'
+    }
+    if (!isPublic && !proofOfInclusion) {
+      return 'You are not eligible for this round of sale'
+    }
+    if (isPublic) {
+      return 'Sale is currently in public state'
+    }
+    if (!isActive) {
+      return 'Sale not active'
+    }
+  }, [isPublic, proofOfInclusion])
 
   useEffect(() => {
     dispatch(actions.getSaleStats())
     dispatch(actions.getUserStats())
   }, [dispatch])
 
+  useEffect(() => {
+    const intervalId = setInterval(() => setCurrentTimestamp(getTimestampSeconds()), 1000)
+    return () => {
+      clearInterval(intervalId)
+    }
+  }, [])
+
+  useEffect(() => {
+    let timeoutId1: NodeJS.Timeout
+    let timeoutId2: NodeJS.Timeout
+
+    if (!inProgress && progress === 'progress') {
+      setProgress(success ? 'approvedWithSuccess' : 'approvedWithFail')
+
+      timeoutId1 = setTimeout(() => {
+        setProgress(success ? 'success' : 'failed')
+      }, 500)
+
+      timeoutId2 = setTimeout(() => {
+        setProgress('none')
+        dispatch(actions.setDepositSuccess(false))
+      }, 1800)
+    }
+
+    return () => {
+      clearTimeout(timeoutId1)
+      clearTimeout(timeoutId2)
+    }
+  }, [success, inProgress])
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Box className={classes.infoContainer}>
@@ -279,28 +338,37 @@ export const PreSaleWrapper = () => {
           <Grid className={classes.stepperContainer}>
             <SaleStepper
               steps={tierPrices.map((price, idx) => {
-                return { id: idx + 1, label: `$${printBN(price, mintDecimals)}` }
+                return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 3)}` }
               })}
             />
             <Box className={classes.roundComponentContainer}>
               <RoundComponent
                 isActive={isActive}
-                tokensLeft=''
-                amountBought={printBN(currentAmount, mintDecimals)}
-                amountLeft={printBN(amountTillPriceIncrease, mintDecimals)}
-                currentPrice={printBN(currentPrice.price, mintDecimals)}
-                nextPrice={printBN(currentPrice.nextPrice, mintDecimals)}
+                saleDidNotStart={saleDidNotStart}
+                targetAmount={targetAmount}
+                amountDeposited={currentAmount}
+                amountNeeded={amountNeeded}
+                amountLeft={amountLeft}
+                currentPrice={price}
+                nextPrice={nextPrice}
                 percentageFilled={filledPercentage}
-                purchasedTokens={printBN(deposited, mintDecimals)}
-                remainingAllocation={printBN(remainingAmount, mintDecimals)}
+                userDepositedAmount={deposited}
+                userRemainingAllocation={remainingAmount}
+                mintDecimals={mintDecimals}
                 roundNumber={round}
-                currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
-                endtimestamp={endtimestamp}
-                alertBoxText='Test message'
+                alertBoxText={getAlertBoxText()}
               />
             </Box>
           </Grid>
           <BuyComponent
+            nativeBalance={nativeBalance}
+            isPublic={isPublic}
+            saleDidNotStart={saleDidNotStart}
+            saleEnded={saleEnded}
+            saleSoldOut={saleSoldOut}
+            isEligible={!!proofOfInclusion}
+            whitelistWalletLimit={whitelistWalletLimit}
+            userDepositedAmount={deposited}
             isActive={isActive}
             progress={progress}
             isLoading={isLoadingSaleStats || isLoadingUserStats || isBalanceLoading}
@@ -329,7 +397,8 @@ export const PreSaleWrapper = () => {
               dispatch(
                 actions.depositSale({
                   amount,
-                  mint
+                  mint,
+                  proofOfInclusion
                 })
               )
             }}

@@ -1,22 +1,33 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
-import { virtualCardIcon } from '@static/icons'
-import { USDC_MAIN } from '@store/consts/static'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { convertBalanceToBN, formatNumberWithCommas, printBN } from '@utils/utils'
-import classNames from 'classnames'
+import { convertBalanceToBN, printBNandTrimZeros } from '@utils/utils'
 import { Timer } from '../Timer/Timer'
 import { BN } from '@coral-xyz/anchor'
-import { getPurchaseAmount, REWARD_SCALE } from '@invariant-labs/sale-sdk'
+import {
+  getPurchaseAmount,
+  PERCENTAGE_DENOMINATOR,
+  PERCENTAGE_SCALE,
+  REWARD_SCALE
+} from '@invariant-labs/sale-sdk'
 import { useCountdown } from '../Timer/useCountdown'
 import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
+import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN } from '@store/consts/static'
 
 interface IProps {
-  isActive?: boolean
+  nativeBalance: BN
+  isEligible: boolean
+  saleDidNotStart: boolean
+  saleEnded: boolean
+  saleSoldOut: boolean
+  isPublic: Boolean
+  userDepositedAmount: BN
+  whitelistWalletLimit: BN
+  isActive: boolean
   targetAmount: BN
   currentAmount: BN
   mintDecimals: number
@@ -32,12 +43,15 @@ interface IProps {
   onDisconnectWallet: () => void
 }
 
-enum PaymentMethod {
-  VIRTUAL_CARD = 'VIRTUAL_CARD',
-  CRYPTO_USDC = 'CRYPTO_USDC'
-}
-
 export const BuyComponent: React.FC<IProps> = ({
+  nativeBalance,
+  isEligible,
+  isPublic,
+  saleDidNotStart,
+  saleEnded,
+  saleSoldOut,
+  userDepositedAmount,
+  whitelistWalletLimit,
   targetAmount,
   currentAmount,
   mintDecimals,
@@ -60,17 +74,15 @@ export const BuyComponent: React.FC<IProps> = ({
 
   const [value, setValue] = useState<string>('0')
   const [receive, setReceive] = useState<BN>(new BN(0))
-  const { raisedAmount, totalAmount } = useMemo(() => {
-    return {
-      raisedAmount: printBN(currentAmount, mintDecimals),
-      totalAmount: printBN(targetAmount, mintDecimals)
+  const filledPercentage = useMemo(() => {
+    if (targetAmount.isZero()) {
+      return 0
     }
-  }, [currentAmount, targetAmount, mintDecimals])
+    const filledPercentageBN = currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(targetAmount)
+    return Number(printBNandTrimZeros(filledPercentageBN, PERCENTAGE_SCALE, 3))
+  }, [currentAmount, targetAmount])
 
-  const { classes } = useStyles({ percentage: (+raisedAmount / +totalAmount) * 100, isActive })
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | undefined>(
-    undefined
-  )
+  const { classes } = useStyles({ percentage: filledPercentage, isActive })
 
   useEffect(() => {
     const amount = convertBalanceToBN(value, mintDecimals)
@@ -83,12 +95,39 @@ export const BuyComponent: React.FC<IProps> = ({
       return 'Loading'
     }
 
+    if (saleDidNotStart) {
+      return 'Sale did not start'
+    }
+
+    if (saleSoldOut) {
+      return 'Sale sold out'
+    }
+
+    if (saleEnded) {
+      return 'Sale ended'
+    }
+
     if (tokenIndex === null) {
       return 'Fetch error'
     }
 
+    if (!isEligible && !isPublic) {
+      return 'You are not eligible'
+    }
+
+    if (
+      convertBalanceToBN(value, mintDecimals).add(userDepositedAmount).gte(whitelistWalletLimit) &&
+      !isPublic
+    ) {
+      return 'Your deposit exceed limit'
+    }
+
     if (convertBalanceToBN(value, tokens[tokenIndex].decimals).gt(tokens[tokenIndex].balance)) {
       return `Not enough ${tokens[tokenIndex].symbol}`
+    }
+
+    if (nativeBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN)) {
+      return `Insufficient ETH`
     }
 
     if (Number(value) === 0) {
@@ -97,6 +136,7 @@ export const BuyComponent: React.FC<IProps> = ({
 
     return 'Buy $INV'
   }, [tokenIndex, tokens, isLoading, value])
+
   return (
     <Box className={classes.container}>
       <Box>
@@ -110,59 +150,32 @@ export const BuyComponent: React.FC<IProps> = ({
             <Typography className={classes.raisedInfo}>
               <Typography className={classes.greyText}>Raised:</Typography>
               <Typography className={classes.greenBodyText}>
-                ${formatNumberWithCommas(raisedAmount)}
+                ${printBNandTrimZeros(currentAmount, mintDecimals, 3)}
               </Typography>{' '}
-              / ${formatNumberWithCommas(totalAmount)}
+              / ${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
             </Typography>
           )}
         </Box>
-        {isActive ? (
+        {isActive && (
           <>
             <Box className={classes.darkBackground}>
               <Box className={classes.gradientProgress} />
             </Box>
             <Grid container className={classes.barWrapper}>
-              <Typography className={classes.sliderLabel}>0%</Typography>
+              <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
               <Typography className={classes.sliderLabel}>100%</Typography>
             </Grid>
           </>
-        ) : (
-          <Box sx={{ marginTop: '16px' }}>
+        )}
+        {saleDidNotStart && (
+          <Box
+            sx={{
+              marginTop: '16px',
+              width: '467px'
+            }}>
             <Timer hours={hours} minutes={minutes} seconds={seconds} />
           </Box>
         )}
-      </Box>
-
-      <Box className={classes.sectionDivider}>
-        <Typography className={classes.sectionHeading}>Pay with</Typography>
-        <Box className={classes.paymentOptions}>
-          <Box
-            className={classNames(
-              classes.paymentOption,
-              selectedPaymentMethod === PaymentMethod.VIRTUAL_CARD ? classes.paymentSelected : ''
-            )}
-            onClick={() =>
-              isActive ? setSelectedPaymentMethod(PaymentMethod.VIRTUAL_CARD) : undefined
-            }>
-            <img
-              src={virtualCardIcon}
-              alt='Virtual Card Icon'
-              className={classes.paymentOptionIcon}
-            />
-            <Typography className={classes.paymentOptionText}>Virtual Card</Typography>
-          </Box>
-          <Box
-            className={classNames(
-              classes.paymentOption,
-              selectedPaymentMethod === PaymentMethod.CRYPTO_USDC ? classes.paymentSelected : ''
-            )}
-            onClick={() =>
-              isActive ? setSelectedPaymentMethod(PaymentMethod.CRYPTO_USDC) : undefined
-            }>
-            <img src={USDC_MAIN.logoURI} alt='USDC Icon' className={classes.tokenIcon} />
-            <Typography className={classes.paymentOptionText}>Crypto USDC</Typography>
-          </Box>
-        </Box>
       </Box>
 
       <Box>
@@ -185,7 +198,7 @@ export const BuyComponent: React.FC<IProps> = ({
             ]}
             balanceValue={
               tokenIndex !== null
-                ? printBN(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
+                ? printBNandTrimZeros(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
                 : ''
             }
             onBlur={() => {}}
@@ -197,7 +210,7 @@ export const BuyComponent: React.FC<IProps> = ({
         <Box className={classes.receiveBox}>
           <Typography className={classes.receiveLabel}>You'll receive</Typography>
           <Typography className={classes.tokenAmount}>
-            {printBN(receive, REWARD_SCALE)} $INV
+            {printBNandTrimZeros(receive, REWARD_SCALE)} $INV
           </Typography>
         </Box>
       </Box>
