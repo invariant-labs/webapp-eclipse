@@ -112,8 +112,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   currentPrice: {
     color: colors.invariant.yellow,
-    ...typography.caption2,
-    textAlign: 'right'
+    ...typography.caption2
+  },
+  usdcCurrentPrice: {
+    display: 'inline-block',
+    color: colors.invariant.text,
+    ...typography.body2
   },
   activeLiquidity: {
     color: colors.invariant.text,

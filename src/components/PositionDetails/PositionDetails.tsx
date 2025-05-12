@@ -3,8 +3,11 @@ import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/S
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Box, useMediaQuery } from '@mui/material'
 import {
+  ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   NetworkType,
   REFRESHER_INTERVAL,
+  USDC_MAIN,
+  USDT_MAIN,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
   WETH_CLOSE_POSITION_LAMPORTS_TEST
 } from '@store/consts/static'
@@ -76,6 +79,7 @@ interface IProps {
   showPositionLoader?: boolean
   isPromotedLoading: boolean
   shouldDisable: boolean
+  pricesLoading: boolean
   previousPosition: INavigatePosition | null
   nextPosition: INavigatePosition | null
   positionId: string
@@ -122,6 +126,7 @@ const PositionDetails: React.FC<IProps> = ({
   showPositionLoader = false,
   points24,
   isPromotedLoading,
+  pricesLoading,
   previousPosition,
   nextPosition,
   positionId
@@ -230,6 +235,40 @@ const PositionDetails: React.FC<IProps> = ({
       setShowPreviewInfo(false)
     }
   }, [isPreview, connectWalletDelay])
+
+  const usdcPrice = useMemo(() => {
+    if (tokenX === null || tokenY === null) return null
+
+    const revertDenominator = initialXtoY(tokenXAddress.toString(), tokenYAddress.toString(), true)
+
+    if (
+      tokenXAddress.equals(USDC_MAIN.address) ||
+      tokenYAddress.equals(USDC_MAIN.address) ||
+      tokenXAddress.equals(USDT_MAIN.address) ||
+      tokenYAddress.equals(USDT_MAIN.address)
+    ) {
+      return null
+    }
+
+    const shouldDisplayPrice =
+      ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(tokenXAddress.toString()) ||
+      ADDRESSES_TO_REVERT_TOKEN_PAIRS.includes(tokenYAddress.toString())
+    if (!shouldDisplayPrice) {
+      return null
+    }
+
+    const ratioToDenominator = revertDenominator ? midPrice.x : 1 / midPrice.x
+    const denominatorPrice = revertDenominator ? tokenYPriceData?.price : tokenXPriceData?.price
+
+    if (!denominatorPrice) {
+      return null
+    }
+
+    return {
+      token: revertDenominator ? tokenX.name : tokenY.name,
+      price: ratioToDenominator * denominatorPrice
+    }
+  }, [midPrice.x, pricesLoading])
 
   return (
     <>
@@ -384,6 +423,7 @@ const PositionDetails: React.FC<IProps> = ({
                 hasTicksError={hasTicksError}
                 reloadHandler={reloadHandler}
                 isFullRange={isFullRange}
+              usdcPrice={usdcPrice}
                 positionId={positionId}
               />
             </Box>

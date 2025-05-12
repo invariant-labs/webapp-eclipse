@@ -1,6 +1,6 @@
 import { Box, Typography } from '@mui/material'
 import { useStyles } from './styles'
-import Jupi from '@static/png/jupi.png'
+import Jupi from '@static/png/jupi.webp'
 import './animation.css'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { Link } from 'react-router-dom'
