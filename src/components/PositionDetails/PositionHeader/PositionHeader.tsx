@@ -37,6 +37,7 @@ type Props = {
   onLockClick: () => void
   copyPoolAddressHandler: (message: string, variant: VariantType) => void
   isPreview: boolean
+  isClosing: boolean
 }
 
 export const PositionHeader = ({
@@ -57,7 +58,8 @@ export const PositionHeader = ({
   onGoBackClick,
   onLockClick,
   copyPoolAddressHandler,
-  isPreview
+  isPreview,
+  isClosing
 }: Props) => {
   const { classes, cx } = useStyles()
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
@@ -97,9 +99,9 @@ export const PositionHeader = ({
   const closeButton = closeButtonTitle ? (
     <TooltipHover title={closeButtonTitle}>
       <Button
-        height={36}
+        height={40}
         scheme='green'
-        disabled={isLocked || !hasEnoughETH || isPreview}
+        disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
         variant='contained'
         onClick={() => onClosePositionClick()}>
         Close position
@@ -107,9 +109,9 @@ export const PositionHeader = ({
     </TooltipHover>
   ) : (
     <Button
-      height={36}
+      height={40}
       scheme='green'
-      disabled={isLocked || !hasEnoughETH || isPreview}
+      disabled={isLocked || !hasEnoughETH || isPreview || isClosing}
       variant='contained'
       onClick={() => onClosePositionClick()}>
       Close position
@@ -117,8 +119,8 @@ export const PositionHeader = ({
   )
 
   const addButton = (
-    <TooltipHover title='Add more liquidity to this pool'>
-      <Button scheme='pink' variant='contained' onClick={() => onAddPositionClick()}>
+    <TooltipHover title='Add more liquidity to this pool' fullSpan={isSmDown}>
+      <Button scheme='pink' variant='contained' onClick={() => onAddPositionClick()} width='100%'>
         + Add position
       </Button>
     </TooltipHover>
@@ -229,7 +231,12 @@ export const PositionHeader = ({
             {!isSmDown && isMdDown && (
               <>
                 {addButton}
-                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                <LockButton
+                  isClosing={isClosing}
+                  isLocked={isLocked}
+                  isPreview={isPreview}
+                  onLockClick={onLockClick}
+                />
               </>
             )}
           </Box>
@@ -240,15 +247,27 @@ export const PositionHeader = ({
               <>
                 {marketIdLabel}
                 <Box className={classes.wrapper}>
-                  {refresher} {addButton}{' '}
-                  <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                  {refresher} {addButton}
+                  <LockButton
+                    isLocked={isLocked}
+                    isClosing={isClosing}
+                    isPreview={isPreview}
+                    onLockClick={onLockClick}
+                  />
                 </Box>
               </>
             ) : (
               <>
                 {closeButton}
-                {addButton}
-                <LockButton isLocked={isLocked} isPreview={isPreview} onLockClick={onLockClick} />
+                <Box display={'flex'} flexGrow={1}>
+                  {addButton}
+                </Box>
+                <LockButton
+                  isClosing={isClosing}
+                  isLocked={isLocked}
+                  isPreview={isPreview}
+                  onLockClick={onLockClick}
+                />
               </>
             )}
           </Box>

@@ -4,7 +4,7 @@ import {
   calcPriceByTickIndex,
   calcTicksAmountInRange,
   calculateConcentration,
-  formatNumberWithSuffix,
+  formatNumberWithoutSuffix,
   numberToString,
   spacingMultiplicityGte,
   truncateString
@@ -35,6 +35,10 @@ export interface ISinglePositionPlot {
   hasTicksError?: boolean
   reloadHandler: () => void
   isFullRange: boolean
+  usdcPrice: {
+    token: string
+    price?: number
+  } | null
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -52,7 +56,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   xToY,
   hasTicksError,
   reloadHandler,
-  isFullRange
+  isFullRange,
+  usdcPrice
 }) => {
   const { classes } = useStyles()
 
@@ -148,7 +153,20 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   return (
     <Box className={classes.container}>
       <Box className={classes.headerContainer}>
-        <Typography className={classes.header}>Price range</Typography>
+        <Grid display='flex' flexDirection='column' justifyContent='flex-start'>
+          <Typography className={classes.header}>Price range</Typography>
+
+          <Typography className={classes.currentPrice} mt={1.5}>
+            {formatNumberWithoutSuffix(midPrice.x)} {tokenX.name} per {tokenY.name}
+          </Typography>
+          {usdcPrice !== null && usdcPrice.price ? (
+            <Typography className={classes.usdcCurrentPrice}>
+              {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
+            </Typography>
+          ) : (
+            <Box minHeight={17} />
+          )}
+        </Grid>
         <Grid>
           <RangeIndicator
             isLoading={ticksLoading}
@@ -183,6 +201,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         <Box className={classes.statsContainer}>
           <Stat
             name='CURRENT PRICE'
+            isLoading={ticksLoading}
             value={
               <Box>
                 <Typography component='span' className={classes.value}>
@@ -226,7 +245,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                 value={
                   <Box>
                     <Typography component='span' className={classes.value}>
-                      {isFullRange ? 0 : formatNumberWithSuffix(min)}
+                      {isFullRange ? 0 : formatNumberWithoutSuffix(min)}
                     </Typography>{' '}
                     {!isFullRange &&
                       (xToY
@@ -246,7 +265,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
                       {isFullRange ? (
                         <span style={{ fontSize: '24px' }}>∞</span>
                       ) : (
-                        formatNumberWithSuffix(max)
+                        formatNumberWithoutSuffix(max)
                       )}
                     </Typography>{' '}
                     {!isFullRange &&

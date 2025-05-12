@@ -87,7 +87,7 @@ export const TooltipHover = ({
       if (callback) clearTimeout(callback)
     }
   }, [open, isMobile])
-
+  if (!title) return children
   return (
     <Tooltip
       classes={{ tooltip: gradient ? classes.tooltipGradient : classes.tooltipNoGradient }}
@@ -98,6 +98,7 @@ export const TooltipHover = ({
       open={open}
       title={
         <Box
+          maxWidth={300}
           onMouseEnter={allowEnterTooltip ? () => setTitleHover(true) : undefined}
           onMouseLeave={allowEnterTooltip ? () => setTitleHover(false) : undefined}
           textAlign={textAlign}>

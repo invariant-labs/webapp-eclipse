@@ -1,6 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import {
   calcPriceByTickIndex,
@@ -57,6 +57,10 @@ export interface IRangeSelector {
   unblockUpdatePriceRange: () => void
   onlyUserPositions: boolean
   setOnlyUserPositions: (onlyUserPositions: boolean) => void
+  usdcPrice: {
+    token: string
+    price?: number
+  } | null
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -87,9 +91,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   shouldReversePlot,
   setShouldReversePlot,
   shouldNotUpdatePriceRange,
-  unblockUpdatePriceRange
+  unblockUpdatePriceRange,
   // onlyUserPositions,
-  // setOnlyUserPositions
+  // setOnlyUserPositions,
+  usdcPrice
 }) => {
   const { classes } = useStyles()
 
@@ -434,7 +439,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
 
     const { leftRange, rightRange } = calculateConcentrationRange(
       tickSpacing,
-      concentrationArray[concentrationIndex],
+      concentrationArray[concentrationIndex] || 34,
       2,
       midPrice.index,
       isXtoY
@@ -450,10 +455,18 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         <Grid className={classes.headerContainer} container>
           <Grid className={classes.priceRangeContainer} container>
             <Typography className={classes.header}>Price range</Typography>
+
             {poolIndex !== null && (
-              <Typography className={classes.currentPrice}>
+              <Typography className={classes.currentPrice} mt={0.5}>
                 {formatNumberWithoutSuffix(midPrice.x)} {tokenBSymbol} per {tokenASymbol}
               </Typography>
+            )}
+            {poolIndex !== null && usdcPrice !== null && usdcPrice.price ? (
+              <Typography className={classes.usdcCurrentPrice}>
+                {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
+              </Typography>
+            ) : (
+              <Box minHeight={17} />
             )}
           </Grid>
           <Grid className={classes.currentPriceContainer} container>

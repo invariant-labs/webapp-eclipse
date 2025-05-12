@@ -11,7 +11,6 @@ import {
 } from '@invariant-labs/sdk-eclipse'
 import { PoolStructure, Tick } from '@invariant-labs/sdk-eclipse/src/market'
 import {
-  calculateTickDelta,
   DECIMAL,
   parseLiquidityOnTicks,
   simulateSwap,
@@ -117,6 +116,7 @@ import {
 import { sqrt } from '@invariant-labs/sdk-eclipse/lib/math'
 import { Metaplex } from '@metaplex-foundation/js'
 import { apyToApr } from './uiUtils'
+import { alignTickToSpacing } from '@invariant-labs/sdk-eclipse/src/tick'
 
 export const transformBN = (amount: BN): string => {
   return (amount.div(new BN(1e2)).toNumber() / 1e4).toString()
@@ -1610,6 +1610,25 @@ export const trimLeadingZeros = (amount: string): string => {
   return `${amountParts[0]}.${trimmed}`
 }
 
+export const calculateTickDelta = (
+  tickSpacing: number,
+  minimumRange: number,
+  concentration: number
+) => {
+  const targetValue = 1 / (concentration * CONCENTRATION_FACTOR)
+
+  const base = 1.0001
+  const inner = 1 - targetValue
+  const powered = Math.pow(inner, 4)
+  const tickDiff = -Math.log(powered) / Math.log(base)
+
+  const parsedTickDelta = tickDiff / tickSpacing - minimumRange / 2
+
+  const tickDelta = Math.round(parsedTickDelta + 1)
+
+  return tickDelta
+}
+
 export const calculateConcentrationRange = (
   tickSpacing: number,
   concentration: number,
@@ -1619,10 +1638,12 @@ export const calculateConcentrationRange = (
 ) => {
   const tickDelta = calculateTickDelta(tickSpacing, minimumRange, concentration)
 
-  const parsedTickDelta = Math.abs(tickDelta) === 0 ? 0 : Math.abs(tickDelta) - 1
-
-  const lowerTick = currentTick - (minimumRange / 2 + parsedTickDelta) * tickSpacing
-  const upperTick = currentTick + (minimumRange / 2 + parsedTickDelta) * tickSpacing
+  const lowerTick =
+    tickDelta === 1
+      ? currentTick - alignTickToSpacing((tickDelta * tickSpacing) / 2, tickSpacing)
+      : currentTick - alignTickToSpacing((tickDelta * tickSpacing) / 2, tickSpacing) + tickSpacing
+  const upperTick =
+    currentTick + alignTickToSpacing((tickDelta * tickSpacing) / 2, tickSpacing) + tickSpacing
 
   return {
     leftRange: isXToY ? lowerTick : upperTick,
@@ -1818,7 +1839,11 @@ export const addressToTicker = (network: NetworkType, address: string): string =
   return getReversedAddressTickerMap(network)[address] || address
 }
 
-export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: string | null) => {
+export const initialXtoY = (
+  tokenXAddress?: string | null,
+  tokenYAddress?: string | null,
+  revertOtherTokens?: boolean
+) => {
   if (!tokenXAddress || !tokenYAddress) {
     return true
   }
@@ -1826,7 +1851,17 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
   const tokenXIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenXAddress)
   const tokenYIndex = ADDRESSES_TO_REVERT_TOKEN_PAIRS.findIndex(token => token === tokenYAddress)
 
-  return !(tokenXIndex < tokenYIndex)
+  if (tokenXIndex !== -1 && tokenYIndex !== -1) {
+    if (tokenXIndex < tokenYIndex) {
+      return false
+    } else {
+      return true
+    }
+  } else if (revertOtherTokens ? tokenXIndex > tokenYIndex : tokenXIndex < tokenYIndex) {
+    return false
+  } else {
+    return true
+  }
 }
 
 export const parseFeeToPathFee = (fee: BN): string => {

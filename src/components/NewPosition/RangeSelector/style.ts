@@ -224,8 +224,12 @@ const useStyles = makeStyles()(theme => {
     currentPrice: {
       display: 'inline-block',
       color: colors.invariant.yellow,
-      ...typography.caption2,
-      textAlign: 'right'
+      ...typography.caption2
+    },
+    usdcCurrentPrice: {
+      display: 'inline-block',
+      color: colors.invariant.text,
+      ...typography.body2
     },
     checkboxLabel: {
       color: colors.invariant.textGrey,
@@ -246,7 +250,6 @@ const useStyles = makeStyles()(theme => {
     priceRangeContainer: {
       flexDirection: 'column',
       width: 'auto',
-      height: 43,
       alignItems: 'flex-start',
       justifyContent: 'space-between'
     },
