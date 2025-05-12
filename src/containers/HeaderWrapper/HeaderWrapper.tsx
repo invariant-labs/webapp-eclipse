@@ -9,6 +9,7 @@ import React, { useEffect, useMemo } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
+import { actions as saleActions } from '@store/reducers/sale'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { Chain, WalletType } from '@store/consts/types'
 import { RpcErrorModal } from '@components/RpcErrorModal/RpcErrorModal'
@@ -47,6 +48,7 @@ export const HeaderWrapper: React.FC = () => {
           itemsPerPage: leaderboardQueryParams.pageSize
         })
       )
+      dispatch(saleActions.getUserStats())
     }
 
     const eagerConnectToNightly = async () => {
@@ -67,6 +69,7 @@ export const HeaderWrapper: React.FC = () => {
             itemsPerPage: leaderboardQueryParams.pageSize
           })
         )
+        dispatch(saleActions.getUserStats())
       } catch (e: unknown) {
         const error = ensureError(e)
         console.error('Error during Nightly eager connection:', error)

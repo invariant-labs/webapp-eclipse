@@ -13,6 +13,7 @@ import { status } from '@store/selectors/solanaWallet'
 import { Status as WalletStatus } from '@store/reducers/solanaWallet'
 import { actions as walletActions } from '@store/reducers/solanaWallet'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
+import { actions as saleActions } from '@store/reducers/sale'
 import { actions } from '@store/reducers/positions'
 import { DEFAULT_PUBLICKEY, NetworkType } from '@store/consts/static'
 import { network } from '@store/selectors/solanaConnection'
@@ -103,6 +104,7 @@ const RootPage: React.FC = memo(() => {
         dispatch(walletActions.changeWalletInExtension())
         dispatch(leaderboardActions.getLeaderboardData({ page: 1, itemsPerPage }))
         dispatch(actions.getPositionsList())
+        dispatch(saleActions.getUserStats())
       }
 
       if (

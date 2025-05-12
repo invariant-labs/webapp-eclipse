@@ -100,7 +100,8 @@ import {
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   BITZ_MAIN,
-  PRICE_API_URL
+  PRICE_API_URL,
+  SALE_TEST
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -954,6 +955,7 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
       }
     case NetworkType.Testnet:
       return {
+        [SALE_TEST.address.toString()]: SALE_TEST,
         [USDC_TEST.address.toString()]: USDC_TEST,
         [BTC_TEST.address.toString()]: BTC_TEST,
         [WETH_TEST.address.toString()]: WETH_TEST,
