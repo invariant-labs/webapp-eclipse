@@ -1,7 +1,6 @@
 import React from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { linearGradientDef } from '@nivo/core'
-import classNames from 'classnames'
 import { colors, typography } from '@static/theme'
 import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
@@ -25,7 +24,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   className,
   isLoading
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   liquidityPercent = liquidityPercent ?? 0
   liquidityVolume = liquidityVolume ?? 0
@@ -35,8 +34,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   const percentage = isLoading ? Math.random() * 200 - 100 : liquidityPercent
 
   return (
-    <Grid
-      className={classNames(classes.container, className, { [classes.loadingOverlay]: isLoading })}>
+    <Grid className={cx(classes.container, className, { [classes.loadingOverlay]: isLoading })}>
       <Grid className={classes.liquidityContainer}>
         <Typography className={classes.liquidityHeader}>Liquidity</Typography>
         <Grid className={classes.volumePercentHeader}>
@@ -45,13 +43,13 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           </Typography>
           <Grid className={classes.volumeStatusContainer}>
             <Grid
-              className={classNames(
+              className={cx(
                 classes.volumeStatusColor,
                 isLower ? classes.backgroundVolumeLow : classes.backgroundVolumeUp
               )}>
               <Typography
                 component='p'
-                className={classNames(
+                className={cx(
                   classes.volumeStatusHeader,
                   isLower ? classes.volumeLow : classes.volumeUp
                 )}>

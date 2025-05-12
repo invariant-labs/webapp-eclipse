@@ -20,6 +20,7 @@ export const {
   shouldNotUpdateRange,
   positionData,
   showFeesLoader,
+  shouldDisable,
   positionListSwitcher
 } = keySelectors(store, [
   'lastPage',
@@ -32,6 +33,7 @@ export const {
   'shouldNotUpdateRange',
   'positionData',
   'showFeesLoader',
+  'shouldDisable',
   'positionListSwitcher'
 ])
 

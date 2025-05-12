@@ -7,12 +7,14 @@ import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
 import { colors, theme } from '@static/theme'
 import { formatNumberWithSuffix, nearestTickIndex } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import classNames from 'classnames'
 import React, { useCallback, useMemo, useRef } from 'react'
 import Brush from './Brush/Brush'
 import useStyles from './style'
 import { BN } from '@coral-xyz/anchor'
 import { Button } from '@common/Button/Button'
+import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
+import ArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+import VerticalAlignCenterIcon from '@mui/icons-material/VerticalAlignCenter'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
@@ -31,6 +33,9 @@ export interface IPriceRangePlot {
   plotMax: number
   zoomMinus: () => void
   zoomPlus: () => void
+  moveLeft: () => void
+  moveRight: () => void
+  centerChart: () => void
   loading?: boolean
   isXtoY: boolean
   xDecimal: number
@@ -54,6 +59,9 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   plotMax,
   zoomMinus,
   zoomPlus,
+  moveLeft,
+  moveRight,
+  centerChart,
   loading,
   isXtoY,
   xDecimal,
@@ -63,7 +71,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   hasError = false,
   reloadHandler
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
 
@@ -351,11 +359,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   const isMd = useMediaQuery(theme.breakpoints.up('md'))
 
   return (
-    <Grid
-      container
-      className={classNames(classes.container, className)}
-      style={style}
-      ref={containerRef}>
+    <Grid container className={cx(classes.container, className)} style={style} ref={containerRef}>
       {loading && coverOnLoading ? (
         <Grid container className={classes.cover}>
           <img src={loader} className={classes.loader} alt='Loader' />
@@ -374,8 +378,8 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
       <Grid className={classes.zoomButtonsWrapper}>
         <Button
           scheme='green'
-          width={isMd ? 28 : 40}
-          height={isMd ? 28 : 40}
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
           borderRadius={10}
           padding={0}
           onClick={zoomPlus}>
@@ -383,14 +387,63 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
         </Button>
         <Button
           scheme='green'
-          width={isMd ? 28 : 40}
-          height={isMd ? 28 : 40}
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
           borderRadius={10}
           padding={0}
           onClick={zoomMinus}>
           <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
         </Button>
+        <Button
+          scheme='pink'
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
+          borderRadius={10}
+          padding={0}
+          onClick={centerChart}>
+          <VerticalAlignCenterIcon
+            sx={{
+              width: isMd ? 28 : 32,
+              height: isMd ? 28 : 32,
+              transform: 'rotate(90deg)'
+            }}
+          />
+        </Button>
       </Grid>
+
+      <Grid className={classes.leftArrow}>
+        <Button
+          scheme='pink'
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
+          borderRadius={10}
+          padding={0}
+          onClick={moveLeft}>
+          <ArrowLeftIcon
+            sx={{
+              width: isMd ? 28 : 32,
+              height: isMd ? 28 : 32
+            }}
+          />
+        </Button>
+      </Grid>
+      <Grid className={classes.rightArrow}>
+        <Button
+          scheme='pink'
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
+          borderRadius={10}
+          padding={0}
+          onClick={moveRight}>
+          <ArrowRightIcon
+            sx={{
+              width: isMd ? 28 : 32,
+              height: isMd ? 28 : 32
+            }}
+          />
+        </Button>
+      </Grid>
+
       <ResponsiveLine
         sliceTooltip={() => <></>}
         tooltip={() => <></>}
