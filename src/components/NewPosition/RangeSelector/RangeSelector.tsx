@@ -220,6 +220,13 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     }
   }
 
+  const centerChart = () => {
+    const diff = plotMax - plotMin
+
+    setPlotMin(midPrice.x - diff / 2)
+    setPlotMax(midPrice.x + diff / 2)
+  }
+
   const setLeftInputValues = (val: string) => {
     setLeftInput(val)
     setLeftInputRounded(toMaxNumericPlaces(+val, 5))
@@ -548,6 +555,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           reloadHandler={reloadHandler}
           moveLeft={moveLeft}
           moveRight={moveRight}
+          centerChart={centerChart}
         />
         {/* <FormControlLabel
           control={

@@ -14,6 +14,7 @@ import { BN } from '@coral-xyz/anchor'
 import { Button } from '@common/Button/Button'
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import ArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
+import VerticalAlignCenterIcon from '@mui/icons-material/VerticalAlignCenter'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
@@ -34,6 +35,7 @@ export interface IPriceRangePlot {
   zoomPlus: () => void
   moveLeft: () => void
   moveRight: () => void
+  centerChart: () => void
   loading?: boolean
   isXtoY: boolean
   xDecimal: number
@@ -59,6 +61,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   zoomPlus,
   moveLeft,
   moveRight,
+  centerChart,
   loading,
   isXtoY,
   xDecimal,
@@ -390,6 +393,21 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           padding={0}
           onClick={zoomMinus}>
           <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
+        </Button>
+        <Button
+          scheme='pink'
+          width={isMd ? 28 : 36}
+          height={isMd ? 28 : 36}
+          borderRadius={10}
+          padding={0}
+          onClick={centerChart}>
+          <VerticalAlignCenterIcon
+            sx={{
+              width: isMd ? 28 : 32,
+              height: isMd ? 28 : 32,
+              transform: 'rotate(90deg)'
+            }}
+          />
         </Button>
       </Grid>
 
