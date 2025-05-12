@@ -105,9 +105,7 @@ export const useStyles = makeStyles()(() => ({
     },
     '& p': {
       color: colors.invariant.textGrey,
-      fontWeight: 400,
-      lineHeight: '24px',
-      fontSize: '20px',
+      ...typography.body3,
       opacity: 0.8
     }
   }
