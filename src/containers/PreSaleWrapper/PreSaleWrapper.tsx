@@ -104,12 +104,14 @@ const useIntersectionObserver = (options = {}) => {
 const AnimatedPreSaleCard = ({
   title,
   subtitle,
+  subtitleColorVariant,
   imageSrc,
   imageDirection,
   delay,
   imageSize
 }: {
   title: string
+  subtitleColorVariant?: 'white' | 'pink' | 'green'
   imageSize?: { width: number; height: number }
   subtitle: string
   imageSrc?: string
@@ -151,6 +153,7 @@ const AnimatedPreSaleCard = ({
           <PreSaleCard
             title={title}
             subtitle={subtitle}
+            titleColorVariant={subtitleColorVariant}
             imageSize={imageSize}
             imageSrc={imageSrc ?? null}
             imagePosition={imageDirection}
@@ -188,13 +191,13 @@ export const PreSaleWrapper = () => {
         saleStats
           ? saleStats
           : {
-              targetAmount: new BN(0),
-              currentAmount: new BN(0),
-              whitelistWalletLimit: new BN(0),
-              startTimestamp: new BN(0),
-              duration: new BN(0),
-              mint: new PublicKey(0)
-            },
+            targetAmount: new BN(0),
+            currentAmount: new BN(0),
+            whitelistWalletLimit: new BN(0),
+            startTimestamp: new BN(0),
+            duration: new BN(0),
+            mint: new PublicKey(0)
+          },
       [saleStats]
     )
 
@@ -208,9 +211,9 @@ export const PreSaleWrapper = () => {
       userStats
         ? userStats
         : {
-            deposited: new BN(0),
-            received: new BN(0)
-          },
+          deposited: new BN(0),
+          received: new BN(0)
+        },
     [userStats]
   )
 
@@ -265,9 +268,7 @@ export const PreSaleWrapper = () => {
     return currentTimestamp.lt(startTimestamp)
   }, [startTimestamp, currentTimestamp])
 
-  const isActive = useMemo(() => {
-    return !saleDidNotStart && !saleEnded && !saleSoldOut
-  }, [saleDidNotStart, saleEnded, saleSoldOut])
+  const isActive = true
 
   const isPublic = useMemo(() => round === 4, [round])
 
@@ -337,6 +338,7 @@ export const PreSaleWrapper = () => {
         <Box className={classes.contentWrapper}>
           <Grid className={classes.stepperContainer}>
             <SaleStepper
+              currentStep={round}
               steps={tierPrices.map((price, idx) => {
                 return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 3)}` }
               })}
@@ -356,7 +358,6 @@ export const PreSaleWrapper = () => {
                 userRemainingAllocation={remainingAmount}
                 mintDecimals={mintDecimals}
                 roundNumber={round}
-                alertBoxText={getAlertBoxText()}
               />
             </Box>
           </Grid>
@@ -378,6 +379,7 @@ export const PreSaleWrapper = () => {
             startTimestamp={startTimestamp}
             tokens={tokens}
             walletStatus={walletStatus}
+            alertBoxText={getAlertBoxText()}
             isBalanceLoading={isBalanceLoading}
             tokenIndex={tokenIndex}
             onConnectWallet={() => {
@@ -407,7 +409,7 @@ export const PreSaleWrapper = () => {
         <OverlayWrapper />
       </Box>
 
-      <Box>
+      <Box sx={{ marginTop: '72px' }}>
         <Typography
           sx={{ ...typography.heading4, textAlign: 'center', color: colors.invariant.text }}>
           Learn more about $INV
@@ -429,15 +431,15 @@ export const PreSaleWrapper = () => {
             <Grid item xs={12} sm={5}>
               <AnimatedPreSaleCard
                 title='~1M Users'
+                subtitleColorVariant='green'
                 subtitle='who have ever interacted with Invariant'
-                imageSrc={CardLogoGreen}
-                imageSize={{ width: 110, height: 120 }}
                 delay={100}
               />
             </Grid>
             <Grid item xs={12} sm={5}>
               <AnimatedPreSaleCard
                 title='~$5 Billions'
+                subtitleColorVariant='pink'
                 subtitle='in cumulative swap volume'
                 delay={300}
               />
@@ -453,8 +455,9 @@ export const PreSaleWrapper = () => {
               <AnimatedPreSaleCard
                 title=' $200K+'
                 imageDirection='left'
+                subtitleColorVariant='green'
+
                 subtitle='earned in hackathon prizes'
-                imageSrc={CardLogoPink}
                 delay={700}
               />
             </Grid>
@@ -462,7 +465,7 @@ export const PreSaleWrapper = () => {
         </Grid>
       </Box>
 
-      <Box>
+      <Box sx={{ marginTop: '72px' }}>
         <Typography
           sx={{ ...typography.heading4, textAlign: 'center', color: colors.invariant.text }}>
           Chronological cards
@@ -562,7 +565,7 @@ export const PreSaleWrapper = () => {
         </Box>
       </Box>
 
-      <Box sx={{ width: '1072px' }}>
+      <Box sx={{ width: '1072px', marginTop: '72px' }}>
         <Typography
           sx={{
             ...typography.heading4,

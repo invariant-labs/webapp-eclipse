@@ -18,13 +18,38 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       gap: '24px'
     },
     alertBox: {
+      width: '100%',
       border: `2px solid ${colors.invariant.green}`,
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
       borderRadius: '12px',
-      padding: '13px',
+      marginBottom: '16px',
+      padding: '10px',
       backgroundColor: '#2EE09A33'
+    },
+    alertBoxContent: {
+      display: 'flex',
+      width: '100%',
+      gap: '8px',
+      alignItems: 'center',
+      justifyContent: 'center'
+    },
+    alertBoxText: {
+      color: colors.invariant.green,
+      ...typography.body2
+    },
+    closeIconContainer: {
+      height: 24,
+      width: 24,
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      cursor: 'pointer'
+    },
+    closeIcon: {
+      height: 12,
+      width: 12
     },
     paymentSelected: {
       border: `2px solid ${colors.invariant.green}`
@@ -94,9 +119,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       marginTop: theme.spacing(1)
     },
     sectionDivider: {
-      borderTop: `1px solid ${colors.invariant.light}`,
-      borderBottom: `1px solid ${colors.invariant.light}`,
-      padding: '12px 0px'
+      borderTop: `1px solid ${colors.invariant.light}`
     },
     sectionHeading: {
       ...typography.heading4,

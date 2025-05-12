@@ -67,9 +67,6 @@ export const useStyles = makeStyles()(() => ({
     gridTemplateColumns: '1fr 40px',
     alignItems: 'center',
     padding: '24px',
-    '&.Mui-expanded': {
-      paddingBottom: '16px'
-    },
 
     '& .MuiAccordionSummary-content': {
       margin: 0

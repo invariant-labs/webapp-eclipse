@@ -17,6 +17,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN } from '@store/consts/static'
+import { closeSmallGreenIcon, greenInfoIcon } from '@static/icons'
 
 interface IProps {
   nativeBalance: BN
@@ -38,6 +39,7 @@ interface IProps {
   progress: ProgressState
   isBalanceLoading: boolean
   isLoading: boolean
+  alertBoxText?: string
   onBuyClick: (amount: BN) => void
   onConnectWallet: () => void
   onDisconnectWallet: () => void
@@ -65,7 +67,8 @@ export const BuyComponent: React.FC<IProps> = ({
   progress,
   onBuyClick,
   onConnectWallet,
-  onDisconnectWallet
+  onDisconnectWallet,
+  alertBoxText,
 }) => {
   const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
   const { hours, minutes, seconds } = useCountdown({
@@ -137,10 +140,38 @@ export const BuyComponent: React.FC<IProps> = ({
     return 'Buy $INV'
   }, [tokenIndex, tokens, isLoading, value])
 
+  const [alertBoxShow, setAlertBoxShow] = useState(false)
+
+  useEffect(() => {
+    const showBanner = localStorage.getItem('INVARIANT_SALE_SHOW_BANNER')
+    if (!showBanner) {
+      setAlertBoxShow(true)
+      return
+    }
+    setAlertBoxShow(showBanner === 'true')
+  }, [])
+
   return (
     <Box className={classes.container}>
       <Box>
         <Box className={classes.headingContainer}>
+          {alertBoxText && alertBoxShow && isActive && (
+            <Box className={classes.alertBox}>
+              <Box className={classes.alertBoxContent}>
+                <img src={greenInfoIcon} alt='Info icon' />
+                <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
+              </Box>
+
+              <Box
+                className={classes.closeIconContainer}
+                onClick={() => {
+                  localStorage.setItem('INVARIANT_SALE_SHOW_BANNER', 'false')
+                  setAlertBoxShow(false)
+                }}>
+                <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
+              </Box>
+            </Box>
+          )}
           <Typography className={classes.titleText}>
             <Typography className={classes.pinkText}>INVARIANT</Typography>
             <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
@@ -167,6 +198,7 @@ export const BuyComponent: React.FC<IProps> = ({
             </Grid>
           </>
         )}
+
         {saleDidNotStart && (
           <Box
             sx={{
@@ -177,6 +209,7 @@ export const BuyComponent: React.FC<IProps> = ({
           </Box>
         )}
       </Box>
+      <Box className={classes.sectionDivider} />
 
       <Box>
         <Box className={classes.inputContainer}>
@@ -192,7 +225,7 @@ export const BuyComponent: React.FC<IProps> = ({
             actionButtons={[
               {
                 label: 'Max',
-                onClick: () => {},
+                onClick: () => { },
                 variant: 'max'
               }
             ]}
@@ -201,7 +234,7 @@ export const BuyComponent: React.FC<IProps> = ({
                 ? printBNandTrimZeros(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
                 : ''
             }
-            onBlur={() => {}}
+            onBlur={() => { }}
             value={value}
             isBalanceLoading={isBalanceLoading}
             walletUninitialized={walletStatus !== Status.Initialized}

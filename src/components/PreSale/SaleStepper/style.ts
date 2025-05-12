@@ -31,6 +31,9 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     zIndex: 2,
     color: colors.invariant.text
   },
+  activeNode: {
+    background: colors.invariant.light
+  },
   stepLabel: {
     marginLeft: theme.spacing(2),
     color: colors.invariant.text
@@ -43,6 +46,61 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     height: `${connectorHeight}px`,
     background: colors.invariant.light,
     zIndex: 1
+  },
+  connectorGreenPink: {
+    position: 'absolute',
+    left: '18px',
+    top: '42px',
+    width: '5px',
+    height: `${connectorHeight}px`,
+    background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
+    zIndex: 1
+  },
+  connectorGreenGray: {
+    position: 'absolute',
+    left: '18px',
+    top: '42px',
+    width: '5px',
+    height: `${connectorHeight}px`,
+    background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.light})`,
+    zIndex: 1
+  },
+  connectorGreenGrayPink: {
+    position: 'absolute',
+    left: '18px',
+    top: '42px',
+    width: '5px',
+    height: `${connectorHeight}px`,
+    background: `linear-gradient(to bottom, ${colors.invariant.textGrey}, ${colors.invariant.pink})`,
+    zIndex: 1
+  },
+  connectorGray: {
+    position: 'absolute',
+    left: '18px',
+    top: '42px',
+    width: '5px',
+    height: `${connectorHeight}px`,
+    background: colors.invariant.textGrey,
+    zIndex: 1
+  },
+  endStepNode: {
+    borderColor: colors.invariant.pink
+  },
+  startStepNode: {
+    borderColor: colors.invariant.green
+  },
+  middleStepNode: {
+    borderColor: colors.invariant.textGrey
+  },
+
+  currentStepLabel: {
+    color: colors.invariant.pink
+  },
+  pendingStepLabel: {
+    color: colors.invariant.textGrey
+  },
+  startStepLabel: {
+    color: colors.invariant.green
   }
 }))
 

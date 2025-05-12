@@ -3,7 +3,6 @@ import React, { useEffect, useState } from 'react'
 import useStyles from './style'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
-import { closeSmallGreenIcon, greenInfoIcon } from '@static/icons'
 import { printBNandTrimZeros } from '@utils/utils'
 import { EFFECTIVE_TARGET_MULTIPLIER, PERCENTAGE_SCALE } from '@invariant-labs/sale-sdk'
 
@@ -21,7 +20,6 @@ interface RoundComponentProps {
   userRemainingAllocation: BN
   mintDecimals: number
   roundNumber: number
-  alertBoxText: string | undefined
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -38,44 +36,18 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   userRemainingAllocation,
   mintDecimals,
   roundNumber,
-  alertBoxText
 }) => {
   const { classes } = useStyles({
     percentage: Number(printBNandTrimZeros(percentageFilled, PERCENTAGE_SCALE, 3)),
     isActive
   })
-  const [alertBoxShow, setAlertBoxShow] = useState(false)
 
-  useEffect(() => {
-    const showBanner = localStorage.getItem('INVARIANT_SALE_SHOW_BANNER')
-    if (!showBanner) {
-      setAlertBoxShow(true)
-      return
-    }
-    setAlertBoxShow(showBanner === 'true')
-  }, [])
 
   return (
     <Box className={classes.container}>
       <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
 
-      {alertBoxText && alertBoxShow && isActive && (
-        <Box className={classes.alertBox}>
-          <Box className={classes.alertBoxContent}>
-            <img src={greenInfoIcon} alt='Info icon' />
-            <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
-          </Box>
 
-          <Box
-            className={classes.closeIconContainer}
-            onClick={() => {
-              localStorage.setItem('INVARIANT_SALE_SHOW_BANNER', 'false')
-              setAlertBoxShow(false)
-            }}>
-            <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
-          </Box>
-        </Box>
-      )}
       {!isActive && (
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
           <Typography className={classes.infoLabelBigger}>Current price: </Typography>

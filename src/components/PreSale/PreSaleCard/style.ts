@@ -16,6 +16,15 @@ const useStyles = makeStyles<{
     borderRadius: '24px',
     padding: '24px 0px 24px 24px'
   },
+  titleWhite: {
+    color: colors.invariant.text
+  },
+  titlePink: {
+    color: colors.invariant.pink
+  },
+  titleGreen: {
+    color: colors.invariant.green
+  },
   contentContainer: {
     display: 'flex',
     justifyContent: 'center',
