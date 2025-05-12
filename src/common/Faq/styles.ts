@@ -90,7 +90,7 @@ export const useStyles = makeStyles()(() => ({
       }
     },
     '& ul': {
-      paddingLeft: theme.spacing(2),
+      paddingLeft: '32px',
       marginTop: theme.spacing(1),
       marginBottom: theme.spacing(1)
     },
