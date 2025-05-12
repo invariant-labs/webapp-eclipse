@@ -10,7 +10,10 @@ export const useStyles = makeStyles()(() => ({
     background: colors.invariant.light,
     padding: 4,
     borderRadius: 8,
-    flex: 1
+    flex: 1,
+    '&:hover': {
+      cursor: 'pointer'
+    }
   },
   iconContainer: { display: 'flex', alignItems: 'center', gap: 3 },
   icon: {

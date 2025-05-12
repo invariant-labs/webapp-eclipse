@@ -170,7 +170,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
               {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
             </Typography>
           ) : (
-            <Box minHeight={17} />
+            <Box minHeight={20} />
           )}
         </Grid>
         <Grid>

@@ -466,7 +466,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
               </Typography>
             ) : (
-              <Box minHeight={17} />
+              <Box minHeight={20} />
             )}
           </Grid>
           <Grid className={classes.currentPriceContainer} container>

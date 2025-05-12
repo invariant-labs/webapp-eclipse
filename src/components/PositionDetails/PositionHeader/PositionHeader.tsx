@@ -72,7 +72,6 @@ export const PositionHeader = ({
   const { classes, cx } = useStyles()
   const isSmDown = useMediaQuery(theme.breakpoints.down(688))
   const isMdDown = useMediaQuery(theme.breakpoints.down(1040))
-  // const isMdUp = useMediaQuery(theme.breakpoints.up(1040))
   const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
   const [refresherTime, setRefresherTime] = useState(REFRESHER_INTERVAL)
 
@@ -232,9 +231,16 @@ export const PositionHeader = ({
               </TooltipHover>
               <img className={classes.icon} src={tokenB.icon} alt={tokenB.ticker} />
             </Box>
-            <Typography className={classes.tickerContainer}>
-              {truncateString(tokenA.ticker, 4)} - {truncateString(tokenB.ticker, 4)}
-            </Typography>
+            <TooltipHover
+              title={
+                tokenA.ticker.length > 4 || tokenB.ticker.length > 4
+                  ? tokenA.ticker + ' - ' + tokenB.ticker
+                  : ''
+              }>
+              <Typography className={classes.tickerContainer}>
+                {truncateString(tokenA.ticker, 3)} - {truncateString(tokenB.ticker, 3)}
+              </Typography>
+            </TooltipHover>
             <TooltipHover
               title={
                 isPromoted ? 'This pool distributes points' : "This pool doesn't distribute points"
