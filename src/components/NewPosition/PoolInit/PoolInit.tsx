@@ -44,6 +44,8 @@ export interface IPoolInit {
   concentrationArray: number[]
   minimumSliderIndex: number
   currentFeeIndex: number
+  wasRefreshed: boolean
+  setWasRefreshed: (wasRefreshed: boolean) => void
 }
 
 export const PoolInit: React.FC<IPoolInit> = ({
@@ -64,7 +66,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
   concentrationIndex,
   concentrationArray,
   minimumSliderIndex,
-  currentFeeIndex
+  currentFeeIndex,
+  wasRefreshed,
+  setWasRefreshed
 }) => {
   const minTick = getMinTick(tickSpacing)
   const maxTick = getMaxTick(tickSpacing)
@@ -153,20 +157,26 @@ export const PoolInit: React.FC<IPoolInit> = ({
   }
 
   useEffect(() => {
-    const midPriceInConcentrationMode = validConcentrationMidPrice(midPriceInput)
+    if (!wasRefreshed) {
+      const midPriceInConcentrationMode = validConcentrationMidPrice(midPriceInput)
 
-    const sqrtPrice = calculateSqrtPriceFromBalance(
-      positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
-      tickSpacing,
-      isXtoY,
-      xDecimal,
-      yDecimal
-    )
+      const sqrtPrice = calculateSqrtPriceFromBalance(
+        positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
+        tickSpacing,
+        isXtoY,
+        xDecimal,
+        yDecimal
+      )
 
-    const priceTickIndex = priceToTickInRange(sqrtPrice, minTick, maxTick, tickSpacing)
+      const priceTickIndex = priceToTickInRange(sqrtPrice, minTick, maxTick, tickSpacing)
 
-    onChangeMidPrice(priceTickIndex, sqrtPrice)
-  }, [midPriceInput])
+      onChangeMidPrice(priceTickIndex, sqrtPrice)
+    } else {
+      setTimeout(() => {
+        setWasRefreshed(false)
+      }, 1000)
+    }
+  }, [midPriceInput, wasRefreshed])
 
   const setLeftInputValues = (val: string) => {
     setLeftInput(val)

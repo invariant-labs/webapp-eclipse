@@ -461,6 +461,16 @@ export const calcYPerXPriceBySqrtPrice = (
   return proportion / 10 ** (yDecimal - xDecimal)
 }
 
+export const calcYPerXPriceBySqrtPrice2 = (
+  sqrtPrice: BN,
+  xDecimal: number,
+  yDecimal: number
+): number => {
+  const proportion = sqrtPrice.mul(sqrtPrice)
+
+  return proportion / 10 ** (yDecimal - xDecimal)
+}
+
 export const calcPriceBySqrtPrice = (
   sqrtPrice: BN,
   isXtoY: boolean,
@@ -468,7 +478,9 @@ export const calcPriceBySqrtPrice = (
   yDecimal: number
 ): number => {
   const price = calcYPerXPriceBySqrtPrice(sqrtPrice, xDecimal, yDecimal) ** (isXtoY ? 1 : -1)
+  const price2 = calcYPerXPriceBySqrtPrice2(sqrtPrice, xDecimal, yDecimal) ** (isXtoY ? 1 : -1)
 
+  console.log('price', price, 'price2', price2)
   return price
 }
 
