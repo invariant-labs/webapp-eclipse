@@ -28,7 +28,6 @@ import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 import { VariantType } from 'notistack'
 import FileCopyOutlinedIcon from '@mui/icons-material/FileCopyOutlined'
 import { shortenAddress } from '@utils/uiUtils'
-import classNames from 'classnames'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
@@ -99,7 +98,7 @@ const PoolListItem: React.FC<IProps> = ({
   showAPY,
   itemNumber = 0
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const navigate = useNavigate()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -218,7 +217,7 @@ const PoolListItem: React.FC<IProps> = ({
         <Grid
           container
           classes={{
-            container: classNames(classes.container, { [classes.containerNoAPY]: !showAPY })
+            container: cx(classes.container, { [classes.containerNoAPY]: !showAPY })
           }}
           sx={{
             borderBottom:
@@ -367,7 +366,7 @@ const PoolListItem: React.FC<IProps> = ({
           classes={{
             root: classes.header
           }}
-          className={classNames(classes.container, { [classes.containerNoAPY]: !showAPY })}>
+          className={cx(classes.container, { [classes.containerNoAPY]: !showAPY })}>
           {!isMd && (
             <Typography style={{ lineHeight: '11px' }}>
               N<sup>o</sup>

@@ -1,6 +1,5 @@
 import { Box, Button, Grid, Skeleton, Typography } from '@mui/material'
 import { formatNumberWithSuffix } from '@utils/utils'
-import classNames from 'classnames'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useMobileStyles } from './style'
 import { TooltipHover } from '@common/TooltipHover/TooltipHover'
@@ -29,6 +28,7 @@ interface IPositionItemMobile extends IPositionItem {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  shouldDisable: boolean
 }
 
 export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
@@ -53,9 +53,10 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
   unclaimedFeesInUSD = { value: 0, loading: false },
   handleLockPosition,
   handleClosePosition,
-  handleClaimFee
+  handleClaimFee,
+  shouldDisable
 }) => {
-  const { classes } = useMobileStyles()
+  const { classes, cx } = useMobileStyles()
   const airdropIconRef = useRef<any>(null)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const [isPromotedPoolInactive, setIsPromotedPoolInactive] = useState(false)
@@ -262,14 +263,11 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
             fullSpan>
             <Grid
               container
-              className={classNames(classes.fee, isActive ? classes.activeFee : undefined)}
+              className={cx(classes.fee, isActive ? classes.activeFee : undefined)}
               justifyContent='center'
               alignItems='center'>
               <Typography
-                className={classNames(
-                  classes.infoText,
-                  isActive ? classes.activeInfoText : undefined
-                )}>
+                className={cx(classes.infoText, isActive ? classes.activeInfoText : undefined)}>
                 {fee}% fee
               </Typography>
             </Grid>
@@ -432,6 +430,7 @@ export const PositionItemMobile: React.FC<IPositionItemMobile> = ({
         inProgress={inProgress}
       />
       <PositionViewActionPopover
+        shouldDisable={shouldDisable}
         anchorEl={anchorEl}
         handleClose={handleClose}
         open={isActionPopoverOpen}

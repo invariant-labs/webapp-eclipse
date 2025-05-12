@@ -348,10 +348,13 @@ export function* transferAirdropSOL(): Generator {
     })
   )
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = airdropAdmin.publicKey
-  tx.recentBlockhash = blockhash.blockhash
-  tx.setSigners(airdropAdmin.publicKey)
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   tx.partialSign(airdropAdmin as Signer)
 
   const txid = yield* call(sendAndConfirmRawTransaction, connection, tx.serialize(), {
@@ -401,9 +404,13 @@ export function* getCollateralTokenAirdrop(
   }
   const tx = instructions.reduce((tx, ix) => tx.add(ix), new Transaction())
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = wallet.publicKey
-  tx.recentBlockhash = blockhash.blockhash
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   tx.partialSign(airdropAdmin)
 
   const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
@@ -415,9 +422,13 @@ export function* getCollateralTokenAirdrop(
 
 export function* signAndSend(wallet: WalletAdapter, tx: Transaction): SagaGenerator<string> {
   const connection = yield* call(getConnection)
-  const blockhash = yield* call([connection, connection.getLatestBlockhash])
+  const { blockhash, lastValidBlockHeight } = yield* call([
+    connection,
+    connection.getLatestBlockhash
+  ])
   tx.feePayer = wallet.publicKey
-  tx.recentBlockhash = blockhash.blockhash
+  tx.recentBlockhash = blockhash
+  tx.lastValidBlockHeight = lastValidBlockHeight
   const signedTx = (yield* call([wallet, wallet.signTransaction], tx)) as Transaction
   const signature = yield* call([connection, connection.sendRawTransaction], signedTx.serialize())
   return signature
@@ -695,8 +706,12 @@ export function* handleUnwrapWETH(): Generator {
       unwrapTx.add(unwrapIx)
     })
 
-    const unwrapBlockhash = yield* call([connection, connection.getLatestBlockhash])
-    unwrapTx.recentBlockhash = unwrapBlockhash.blockhash
+    const { blockhash, lastValidBlockHeight } = yield* call([
+      connection,
+      connection.getLatestBlockhash
+    ])
+    unwrapTx.recentBlockhash = blockhash
+    unwrapTx.lastValidBlockHeight = lastValidBlockHeight
     unwrapTx.feePayer = wallet.publicKey
 
     const unwrapSignedTx = (yield* call([wallet, wallet.signTransaction], unwrapTx)) as Transaction

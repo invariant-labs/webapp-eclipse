@@ -21,7 +21,12 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
       background: colors.invariant.light,
       padding: '12px',
       borderTopLeftRadius: '12px',
-      borderTopRightRadius: '12px'
+      borderTopRightRadius: '12px',
+      ...(!isActive
+        ? {
+            borderRadius: 12
+          }
+        : {})
     },
 
     darkBackground: {

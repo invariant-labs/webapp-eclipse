@@ -39,8 +39,9 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     backgroundColor: colors.invariant.component,
     borderRadius: 10,
 
-    [theme.breakpoints.down('sm')]: {
-      height: 253
+    [theme.breakpoints.down('md')]: {
+      height: 253,
+      marginBottom: 16
     }
   },
   statsWrapper: {
@@ -112,8 +113,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   },
   currentPrice: {
     color: colors.invariant.yellow,
-    ...typography.caption2,
-    textAlign: 'right'
+    ...typography.caption2
+  },
+  usdcCurrentPrice: {
+    display: 'inline-block',
+    color: colors.invariant.text,
+    ...typography.body2
   },
   activeLiquidity: {
     color: colors.invariant.text,

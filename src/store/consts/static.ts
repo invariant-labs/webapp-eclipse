@@ -84,6 +84,17 @@ export const WETH_DEV: Token = {
   coingeckoId: 'bridged-wrapped-ether-eclipse'
 }
 
+export const SALE_TEST: Token = {
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
+  symbol: 'USDC',
+  address: new PublicKey('HqVpi4A8pXFV2kY7338mrczetd3LMQVJ5YSMfjVX5hak'),
+  decimals: 6,
+  name: 'USD Coin',
+  logoURI:
+    'https://raw.githubusercontent.com/solana-labs/token-list/main/assets/mainnet/EPjFWdd5AufqSSqeM2qN1xzybapC8G4wEGGkZwyTDt1v/logo.png',
+  coingeckoId: 'usd-coin'
+}
+
 export const USDC_TEST: Token = {
   tokenProgram: TOKEN_PROGRAM_ID,
   symbol: 'USDC',
@@ -703,8 +714,7 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   SOL_MAIN.address.toString(),
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
-  TIA_MAIN.address.toString(),
-  BITZ_MAIN.address.toString()
+  TIA_MAIN.address.toString()
 ]
 
 export const FormatConfig = {

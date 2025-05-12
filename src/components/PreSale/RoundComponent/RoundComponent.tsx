@@ -1,125 +1,179 @@
 import { Box, Grid, Typography } from '@mui/material'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import useStyles from './style'
-import { useCountdown } from '../Timer/useCountdown';
-import { colors, typography } from '@static/theme';
-import classNames from 'classnames';
+import classNames from 'classnames'
+import { BN } from '@coral-xyz/anchor'
 import { closeSmallGreenIcon, greenInfoIcon } from '@static/icons'
+import { printBNandTrimZeros } from '@utils/utils'
+import { EFFECTIVE_TARGET_MULTIPLIER, PERCENTAGE_SCALE } from '@invariant-labs/sale-sdk'
 
 interface RoundComponentProps {
-    isActive?: boolean;
-    roundNumber: number;
-    amountBought: number;
-    amountLeft: number;
-    percentageFilled: number;
-    tokensLeft?: number;
-    currentPrice: number;
-    nextPrice: number;
-    purchasedTokens: number;
-    remainingAllocation: number;
-    currency?: string;
-    alertBoxText?: string;
+  isActive: boolean
+  saleDidNotStart: boolean
+  targetAmount: BN
+  amountDeposited: BN
+  amountNeeded: BN
+  amountLeft: BN
+  currentPrice: BN
+  nextPrice: BN
+  percentageFilled: BN
+  userDepositedAmount: BN
+  userRemainingAllocation: BN
+  mintDecimals: number
+  roundNumber: number
+  alertBoxText: string | undefined
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
-    isActive = false,
-    roundNumber = 1,
-    amountBought = 12129392.32,
-    amountLeft = 18239.1233,
-    percentageFilled = 50,
-    currentPrice = 0.192,
-    tokensLeft = 0,
-    nextPrice = 0.192,
-    purchasedTokens = 17283.201,
-    remainingAllocation = 20000,
-    currency = 'INV',
-    alertBoxText,
+  isActive,
+  saleDidNotStart,
+  targetAmount,
+  amountDeposited,
+  amountNeeded,
+  amountLeft,
+  currentPrice,
+  nextPrice,
+  percentageFilled,
+  userDepositedAmount,
+  userRemainingAllocation,
+  mintDecimals,
+  roundNumber,
+  alertBoxText
 }) => {
-    const { classes } = useStyles({ percentage: percentageFilled, isActive })
-    const [alertBoxShow, setAlertBoxShow] = useState(true)
+  const { classes } = useStyles({
+    percentage: Number(printBNandTrimZeros(percentageFilled, PERCENTAGE_SCALE, 3)),
+    isActive
+  })
+  const [alertBoxShow, setAlertBoxShow] = useState(false)
 
-    const { hours, minutes, seconds } = useCountdown({ targetDate: '2025-05-07T23:59:59Z' })
-    return (
-        <Box className={classes.container}>
-            <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
+  useEffect(() => {
+    const showBanner = localStorage.getItem('INVARIANT_SALE_SHOW_BANNER')
+    if (!showBanner) {
+      setAlertBoxShow(true)
+      return
+    }
+    setAlertBoxShow(showBanner === 'true')
+  }, [])
 
-            {alertBoxText && alertBoxShow && isActive && (
+  return (
+    <Box className={classes.container}>
+      <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
 
-                <Box className={classes.alertBox}>
-                    <Box className={classes.alertBoxContent}>
-                        <img src={greenInfoIcon} alt='Info icon' />
-                        <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
-                    </Box>
+      {alertBoxText && alertBoxShow && isActive && (
+        <Box className={classes.alertBox}>
+          <Box className={classes.alertBoxContent}>
+            <img src={greenInfoIcon} alt='Info icon' />
+            <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
+          </Box>
 
-                    <Box className={classes.closeIconContainer} onClick={() => {
-                        setAlertBoxShow(false)
-                    }}>
-                        <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
-                    </Box>
-                </Box>
-            )}
-            {!isActive && (
-                <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
-                    <Typography className={classes.infoLabelBigger}>Current price: </Typography>
-                    <Typography className={classes.currentPriceBigger}>${currentPrice.toFixed(3)}</Typography>
-                </Box>
-            )}
-            <Box className={classes.progressCard}>
-                <Box className={classes.progressHeader}>
-                    {isActive ? (
-                        <>
-                            <Box className={classes.darkBackground}>
-                                <Box className={classes.gradientProgress} />
-                            </Box>
-                            <Grid container className={classes.barWrapper}>
-                                <Typography className={classes.amountBought}>{amountBought.toLocaleString()} ${currency} bought</Typography>
-                                <Typography className={classes.amountLeft}>{amountLeft.toLocaleString()} ${currency} left</Typography>
-                            </Grid>
-                        </>
-                    ) : <>
-                        <Box className={classes.infoRow}>
-                            <Typography className={classes.infoLabel}>Tokens left: </Typography>
-                            <Typography className={classes.currentPrice}>{tokensLeft}</Typography>
-                        </Box>
-                    </>}
-                </Box>
-                <Box className={classes.priceIncreaseBox}>
-                    <Typography className={classes.priceIncreaseText}>UNTIL NEXT PRICE INCREASE:</Typography>
-                    {isActive && (
-                        <Typography className={classes.priceIncreaseText} sx={{ width: '130px' }}><Typography sx={{ ...typography.heading4, color: colors.invariant.text }}>{hours}H</Typography>:<Typography sx={{ ...typography.heading4, color: colors.invariant.text }}>{minutes}M</Typography>:<Typography sx={{ ...typography.heading4, color: colors.invariant.text }}>{seconds}S</Typography></Typography>
-                    )}
-                    {/* <Timer hours={hours} minutes={minutes} seconds={seconds} /> */}
-                </Box>
-            </Box>
-
-            <Box className={classes.infoCard}>
-                {isActive && (
-                    <>
-                        <Box className={classes.infoRow}>
-                            <Typography className={classes.infoLabel}>Current price: </Typography>
-                            <Typography className={classes.currentPrice}>${currentPrice.toFixed(3)}</Typography>
-                        </Box>
-                        <Box className={classes.infoRow}>
-                            <Typography className={classes.infoLabel}>Next price: </Typography>
-                            <Typography className={classes.nextPrice}>${nextPrice.toFixed(3)}</Typography>
-                        </Box>
-                        <Box className={classes.divider} />
-                    </>
-                )}
-
-                <Box className={classes.infoRow}>
-                    <Typography className={classes.secondaryLabel}>Your purchased {currency}: </Typography>
-                    <Typography className={classes.value}>{purchasedTokens.toLocaleString()}</Typography>
-                </Box>
-                <Box className={classes.infoRow}>
-                    <Typography className={classes.secondaryLabel}>Your remaining {currency} allocation: </Typography>
-                    <Typography className={classes.value}>{remainingAllocation.toLocaleString()}</Typography>
-                </Box>
-            </Box>
+          <Box
+            className={classes.closeIconContainer}
+            onClick={() => {
+              localStorage.setItem('INVARIANT_SALE_SHOW_BANNER', 'false')
+              setAlertBoxShow(false)
+            }}>
+            <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
+          </Box>
         </Box>
-    )
+      )}
+      {!isActive && (
+        <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
+          <Typography className={classes.infoLabelBigger}>Current price: </Typography>
+          <Typography className={classes.currentPriceBigger}>
+            ${printBNandTrimZeros(currentPrice, mintDecimals, 3)}
+          </Typography>
+        </Box>
+      )}
+      <Box className={classes.progressCard}>
+        <Box className={classes.progressHeader}>
+          {isActive ? (
+            <>
+              <Box className={classes.darkBackground}>
+                <Box className={classes.gradientProgress} />
+              </Box>
+              <Grid container className={classes.barWrapper}>
+                <Typography className={classes.amountBought}>
+                  ${printBNandTrimZeros(amountDeposited, mintDecimals, 3)}
+                </Typography>
+                <Typography className={classes.amountLeft}>
+                  ${printBNandTrimZeros(amountNeeded, mintDecimals, 3)}
+                </Typography>
+              </Grid>
+            </>
+          ) : (
+            <>
+              <Box className={classes.infoRow}>
+                <Typography className={classes.infoLabel}>
+                  Deposited: ${printBNandTrimZeros(amountDeposited, mintDecimals, 3)}
+                </Typography>
+              </Box>
+              <Box className={classes.infoRow}>
+                <Typography className={classes.infoLabel}>
+                  Target deposit: ${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
+                </Typography>
+              </Box>
+              <Box className={classes.infoRow}>
+                <Typography className={classes.infoLabel}>
+                  Maximal deposit: $
+                  {printBNandTrimZeros(
+                    targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
+                    mintDecimals,
+                    3
+                  )}
+                </Typography>
+              </Box>
+            </>
+          )}
+        </Box>
+        {isActive && (
+          <Box className={classes.priceIncreaseBox}>
+            <Typography className={classes.priceIncreaseText}>
+              AMOUNT TILL PRICE INCREASE: ${printBNandTrimZeros(amountLeft, mintDecimals, 3)}
+            </Typography>
+          </Box>
+        )}
+      </Box>
+
+      <Box className={classes.infoCard}>
+        {isActive && (
+          <>
+            <Box className={classes.infoRow}>
+              <Typography className={classes.infoLabel}>Current price: </Typography>
+              <Typography className={classes.currentPrice}>
+                ${printBNandTrimZeros(currentPrice, mintDecimals, 3)}
+              </Typography>
+            </Box>
+            <Box className={classes.infoRow}>
+              <Typography className={classes.infoLabel}>Next price: </Typography>
+              <Typography className={classes.nextPrice}>
+                ${printBNandTrimZeros(nextPrice, mintDecimals, 3)}
+              </Typography>
+            </Box>
+            <Box className={classes.divider} />
+          </>
+        )}
+
+        {!saleDidNotStart && (
+          <Box className={classes.infoRow}>
+            <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
+            <Typography className={classes.value}>
+              ${printBNandTrimZeros(userDepositedAmount, mintDecimals, 3)}
+            </Typography>
+          </Box>
+        )}
+        {isActive && (
+          <Box className={classes.infoRow}>
+            <Typography className={classes.secondaryLabel}>Your remaining allocation: </Typography>
+            <Typography className={classes.value}>
+              ${printBNandTrimZeros(userRemainingAllocation, mintDecimals, 3)}
+            </Typography>
+          </Box>
+        )}
+      </Box>
+    </Box>
+  )
 }
 
 export interface StyleProps {
-    percentage: number;
+  percentage: number
 }

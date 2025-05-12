@@ -22,7 +22,7 @@ import { ROUTES } from '@utils/utils'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
-import classNames from 'classnames'
+
 import { SwapToken } from '@store/selectors/solanaWallet'
 import { useProcessedTokens } from '@store/hooks/userOverview/useProcessedToken'
 import { Overview } from './Overview/Overview/Overview'
@@ -57,12 +57,14 @@ interface IProps {
   handleSnackbar: (message: string, variant: VariantType) => void
   isBalanceLoading: boolean
   tokensList: SwapToken[]
+  shouldDisable: boolean
   positionListAlignment: LiquidityPools
   setPositionListAlignment: (val: LiquidityPools) => void
 }
 
 const Portfolio: React.FC<IProps> = ({
   isBalanceLoading,
+  shouldDisable,
   handleSnackbar,
   data,
   onAddPositionClick,
@@ -81,7 +83,8 @@ const Portfolio: React.FC<IProps> = ({
   positionListAlignment,
   setPositionListAlignment
 }) => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
+
   const navigate = useNavigate()
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const isLg = useMediaQuery('@media (max-width: 1360px)')
@@ -163,14 +166,14 @@ const Portfolio: React.FC<IProps> = ({
         </>
       ) : (
         <>
-          <Typography className={classNames(classes.greyText, classes.footerPositionDetails)}>
+          <Typography className={cx(classes.greyText, classes.footerPositionDetails)}>
             All Positions: {positionsDetails.positionsAmount}
           </Typography>
           <Box gap={1} display={'flex'}>
-            <Typography className={classNames(classes.greenText, classes.footerPositionDetails)}>
+            <Typography className={cx(classes.greenText, classes.footerPositionDetails)}>
               Within Range: {positionsDetails.inRangeAmount}
             </Typography>
-            <Typography className={classNames(classes.pinkText, classes.footerPositionDetails)}>
+            <Typography className={cx(classes.pinkText, classes.footerPositionDetails)}>
               Outside Range: {positionsDetails.outOfRangeAmount}
             </Typography>
           </Box>
@@ -180,7 +183,7 @@ const Portfolio: React.FC<IProps> = ({
   )
 
   const renderTokensFound = () => (
-    <Typography className={classNames(classes.footerText, classes.greyText)}>
+    <Typography className={cx(classes.footerText, classes.greyText)}>
       {isBalanceLoading || loading ? (
         <Skeleton width={150} height={24} sx={{ bgcolor: 'rgba(255, 255, 255, 0.1)' }} />
       ) : (
@@ -223,7 +226,6 @@ const Portfolio: React.FC<IProps> = ({
   }, [currentData, selectedFilters])
 
   const [allowPropagation, setAllowPropagation] = useState(true)
-
   const renderContent = () => {
     if (showNoConnected) {
       return <NoConnected {...noConnectedBlockerProps} />
@@ -234,6 +236,7 @@ const Portfolio: React.FC<IProps> = ({
         <PositionsTable
           positions={filteredData}
           isLoading={loading}
+          shouldDisable={shouldDisable}
           noInitialPositions={noInitialPositions}
           onAddPositionClick={onAddPositionClick}
           handleLockPosition={handleLockPosition}
@@ -272,6 +275,7 @@ const Portfolio: React.FC<IProps> = ({
         key={element.id}
         className={classes.itemLink}>
         <PositionItemMobile
+          shouldDisable={shouldDisable}
           key={index}
           {...element}
           setAllowPropagation={setAllowPropagation}

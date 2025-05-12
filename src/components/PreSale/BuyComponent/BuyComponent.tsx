@@ -1,115 +1,241 @@
 import { Box, Grid, Typography } from '@mui/material'
 import useStyles from './style'
-import { virtualCardIcon } from '@static/icons'
-import { USDC_MAIN } from '@store/consts/static'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
-import { Button } from '@common/Button/Button'
-import React, { useState } from 'react'
-import { formatNumberWithCommas } from '@utils/utils'
-import classNames from 'classnames'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { convertBalanceToBN, printBNandTrimZeros } from '@utils/utils'
 import { Timer } from '../Timer/Timer'
+import { BN } from '@coral-xyz/anchor'
+import {
+  getPurchaseAmount,
+  PERCENTAGE_DENOMINATOR,
+  PERCENTAGE_SCALE,
+  REWARD_SCALE
+} from '@invariant-labs/sale-sdk'
+import { useCountdown } from '../Timer/useCountdown'
+import { Status } from '@store/reducers/solanaWallet'
+import { SwapToken } from '@store/selectors/solanaWallet'
+import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
+import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
+import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN } from '@store/consts/static'
 
 interface IProps {
-    isActive?: boolean
-    raisedAmount: string
-    totalAmount: string
-    onBuyClick?: () => void
+  nativeBalance: BN
+  isEligible: boolean
+  saleDidNotStart: boolean
+  saleEnded: boolean
+  saleSoldOut: boolean
+  isPublic: Boolean
+  userDepositedAmount: BN
+  whitelistWalletLimit: BN
+  isActive: boolean
+  targetAmount: BN
+  currentAmount: BN
+  mintDecimals: number
+  startTimestamp: BN
+  tokens: SwapToken[]
+  tokenIndex: number | null
+  walletStatus: Status
+  progress: ProgressState
+  isBalanceLoading: boolean
+  isLoading: boolean
+  onBuyClick: (amount: BN) => void
+  onConnectWallet: () => void
+  onDisconnectWallet: () => void
 }
 
-enum PaymentMethod {
-    VIRTUAL_CARD = 'VIRTUAL_CARD',
-    CRYPTO_USDC = 'CRYPTO_USDC'
-}
+export const BuyComponent: React.FC<IProps> = ({
+  nativeBalance,
+  isEligible,
+  isPublic,
+  saleDidNotStart,
+  saleEnded,
+  saleSoldOut,
+  userDepositedAmount,
+  whitelistWalletLimit,
+  targetAmount,
+  currentAmount,
+  mintDecimals,
+  isActive,
+  startTimestamp,
+  tokens,
+  tokenIndex,
+  walletStatus,
+  isBalanceLoading,
+  isLoading,
+  progress,
+  onBuyClick,
+  onConnectWallet,
+  onDisconnectWallet
+}) => {
+  const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
+  const { hours, minutes, seconds } = useCountdown({
+    targetDate
+  })
 
+  const [value, setValue] = useState<string>('0')
+  const [receive, setReceive] = useState<BN>(new BN(0))
+  const filledPercentage = useMemo(() => {
+    if (targetAmount.isZero()) {
+      return 0
+    }
+    const filledPercentageBN = currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(targetAmount)
+    return Number(printBNandTrimZeros(filledPercentageBN, PERCENTAGE_SCALE, 3))
+  }, [currentAmount, targetAmount])
 
-export const BuyComponent: React.FC<IProps> = ({ raisedAmount, totalAmount, isActive, onBuyClick }) => {
-    const { classes } = useStyles({ percentage: (+raisedAmount / +totalAmount) * 100, isActive })
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<PaymentMethod | undefined>(undefined)
-    return (
-        <Box className={classes.container}>
-            <Box>
+  const { classes } = useStyles({ percentage: filledPercentage, isActive })
 
-                <Box className={classes.headingContainer}>
-                    <Typography className={classes.titleText}>
-                        <Typography className={classes.pinkText}>INVARIANT</Typography>
-                        <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
-                        <Typography className={classes.greenText}>$INV</Typography>
-                    </Typography>
-                    {isActive && (
-                        <Typography className={classes.raisedInfo}>
-                            <Typography className={classes.greyText}>Raised:</Typography>
-                            <Typography className={classes.greenBodyText}>${formatNumberWithCommas(raisedAmount)}</Typography> / ${formatNumberWithCommas(totalAmount)}
-                        </Typography>
-                    )}
-                </Box>
-                {isActive ? (
-                    <>
-                        <Box className={classes.darkBackground}>
-                            <Box className={classes.gradientProgress} />
-                        </Box>
-                        <Grid container className={classes.barWrapper}>
-                            <Typography className={classes.sliderLabel}>0%</Typography>
-                            <Typography className={classes.sliderLabel}>100%</Typography>
-                        </Grid>
-                    </>
+  useEffect(() => {
+    const amount = convertBalanceToBN(value, mintDecimals)
+    const purchaseAmount = getPurchaseAmount(currentAmount, targetAmount, amount, mintDecimals)
+    setReceive(purchaseAmount)
+  }, [value, currentAmount, targetAmount, mintDecimals])
 
-                ) : (
-                    <Box sx={{ marginTop: '16px' }}>
-                        <Timer hours='00' minutes='00' seconds='00' />
-                    </Box>
-                )}
-            </Box>
+  const getButtonMessage = useCallback(() => {
+    if (isLoading) {
+      return 'Loading'
+    }
 
-            <Box className={classes.sectionDivider}>
-                <Typography className={classes.sectionHeading}>Pay with</Typography>
-                <Box className={classes.paymentOptions}>
-                    <Box className={classNames(classes.paymentOption, selectedPaymentMethod === PaymentMethod.VIRTUAL_CARD ? classes.paymentSelected : '')} onClick={() => isActive ? setSelectedPaymentMethod(PaymentMethod.VIRTUAL_CARD) : undefined}>
-                        <img src={virtualCardIcon} alt='Virtual Card Icon' className={classes.paymentOptionIcon} />
-                        <Typography className={classes.paymentOptionText}>Virtual Card</Typography>
-                    </Box>
-                    <Box className={classNames(classes.paymentOption, selectedPaymentMethod === PaymentMethod.CRYPTO_USDC ? classes.paymentSelected : '')} onClick={() => isActive ? setSelectedPaymentMethod(PaymentMethod.CRYPTO_USDC) : undefined}>
-                        <img src={USDC_MAIN.logoURI} alt='USDC Icon' className={classes.tokenIcon} />
-                        <Typography className={classes.paymentOptionText}>Crypto USDC</Typography>
-                    </Box>
-                </Box>
-            </Box>
+    if (saleDidNotStart) {
+      return 'Sale did not start'
+    }
 
-            <Box>
-                <Box className={classes.inputContainer}>
-                    <DepositAmountInput
-                        tokenPrice={0.1}
-                        setValue={() => { }}
-                        decimalsLimit={2}
-                        currency={'USDC'}
-                        disableBackgroundColor
-                        percentageChange={-4.32}
-                        currencyIconSrc={USDC_MAIN.logoURI}
-                        currencyIsUnknown={false}
-                        placeholder='0.0'
-                        actionButtons={[
-                            {
-                                label: 'Max',
-                                onClick: () => { },
-                                variant: 'max'
-                            },
-                        ]}
-                        balanceValue={'0'}
-                        onBlur={() => { }}
-                        value={'0'}
-                        priceLoading={false}
-                        isBalanceLoading={false}
-                        walletUninitialized={false}
-                    />
-                </Box>
-                <Box className={classes.receiveBox}>
-                    <Typography className={classes.receiveLabel}>You'll receive</Typography>
-                    <Typography className={classes.tokenAmount}>6,456 $INV</Typography>
-                </Box>
-            </Box>
+    if (saleSoldOut) {
+      return 'Sale sold out'
+    }
 
-            <Button scheme='green' padding='0 42px' height='44px' disabled={!isActive} onClick={onBuyClick}>
-                Buy $INV
-            </Button>
+    if (saleEnded) {
+      return 'Sale ended'
+    }
+
+    if (tokenIndex === null) {
+      return 'Fetch error'
+    }
+
+    if (!isEligible && !isPublic) {
+      return 'You are not eligible'
+    }
+
+    if (
+      convertBalanceToBN(value, mintDecimals).add(userDepositedAmount).gte(whitelistWalletLimit) &&
+      !isPublic
+    ) {
+      return 'Your deposit exceed limit'
+    }
+
+    if (convertBalanceToBN(value, tokens[tokenIndex].decimals).gt(tokens[tokenIndex].balance)) {
+      return `Not enough ${tokens[tokenIndex].symbol}`
+    }
+
+    if (nativeBalance.lt(WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN)) {
+      return `Insufficient ETH`
+    }
+
+    if (Number(value) === 0) {
+      return 'Enter token amount'
+    }
+
+    return 'Buy $INV'
+  }, [tokenIndex, tokens, isLoading, value])
+
+  return (
+    <Box className={classes.container}>
+      <Box>
+        <Box className={classes.headingContainer}>
+          <Typography className={classes.titleText}>
+            <Typography className={classes.pinkText}>INVARIANT</Typography>
+            <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
+            <Typography className={classes.greenText}>$INV</Typography>
+          </Typography>
+          {isActive && (
+            <Typography className={classes.raisedInfo}>
+              <Typography className={classes.greyText}>Raised:</Typography>
+              <Typography className={classes.greenBodyText}>
+                ${printBNandTrimZeros(currentAmount, mintDecimals, 3)}
+              </Typography>{' '}
+              / ${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
+            </Typography>
+          )}
         </Box>
-    )
+        {isActive && (
+          <>
+            <Box className={classes.darkBackground}>
+              <Box className={classes.gradientProgress} />
+            </Box>
+            <Grid container className={classes.barWrapper}>
+              <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
+              <Typography className={classes.sliderLabel}>100%</Typography>
+            </Grid>
+          </>
+        )}
+        {saleDidNotStart && (
+          <Box
+            sx={{
+              marginTop: '16px',
+              width: '467px'
+            }}>
+            <Timer hours={hours} minutes={minutes} seconds={seconds} />
+          </Box>
+        )}
+      </Box>
+
+      <Box>
+        <Box className={classes.inputContainer}>
+          <DepositAmountInput
+            tokenPrice={1}
+            setValue={value => setValue(value)}
+            decimalsLimit={mintDecimals}
+            currency={tokenIndex !== null ? tokens[tokenIndex].symbol : null}
+            currencyIconSrc={tokenIndex !== null ? tokens[tokenIndex].logoURI : undefined}
+            currencyIsUnknown={tokenIndex !== null ? tokens[tokenIndex].isUnknown ?? false : false}
+            disableBackgroundColor
+            placeholder='0.0'
+            actionButtons={[
+              {
+                label: 'Max',
+                onClick: () => {},
+                variant: 'max'
+              }
+            ]}
+            balanceValue={
+              tokenIndex !== null
+                ? printBNandTrimZeros(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
+                : ''
+            }
+            onBlur={() => {}}
+            value={value}
+            isBalanceLoading={isBalanceLoading}
+            walletUninitialized={walletStatus !== Status.Initialized}
+          />
+        </Box>
+        <Box className={classes.receiveBox}>
+          <Typography className={classes.receiveLabel}>You'll receive</Typography>
+          <Typography className={classes.tokenAmount}>
+            {printBNandTrimZeros(receive, REWARD_SCALE)} $INV
+          </Typography>
+        </Box>
+      </Box>
+      {walletStatus !== Status.Initialized ? (
+        <ChangeWalletButton
+          width={'100%'}
+          height={48}
+          name='Connect wallet'
+          onConnect={onConnectWallet}
+          connected={false}
+          onDisconnect={onDisconnectWallet}
+        />
+      ) : (
+        <AnimatedButton
+          className={classes.greenButton}
+          onClick={() => {
+            if (progress === 'none' && tokenIndex !== null) {
+              onBuyClick(convertBalanceToBN(value, mintDecimals))
+            }
+          }}
+          disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
+          content={getButtonMessage()}
+          progress={progress}
+        />
+      )}
+    </Box>
+  )
 }
