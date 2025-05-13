@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import { useStyles } from './style'
-import { useEffect, useLayoutEffect, useRef, useState } from 'react'
+import { useLayoutEffect, useState } from 'react'
 
 export interface IPaginationList {
   pages: number
