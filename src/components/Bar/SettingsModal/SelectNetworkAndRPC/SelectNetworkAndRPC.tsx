@@ -29,9 +29,9 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
 
   return (
     <>
-      <Box className={classes.container}>
-        {process.env.NODE_ENV === 'development' && (
-          <>
+      {process.env.NODE_ENV === 'development' && (
+        <>
+          <Box className={classes.container}>
             <Typography className={classes.title}>Select a network</Typography>
             <Box className={classes.networkContainer}>
               {networks.map(network => (
@@ -49,10 +49,10 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
                 </Box>
               ))}
             </Box>
-          </>
-        )}
-      </Box>
-      <Separator isHorizontal />
+          </Box>
+          <Separator isHorizontal />
+        </>
+      )}
       <Box className={classes.container}>
         <Typography className={classes.title}>
           Select a {activeNetwork.toLowerCase()} RPC to use
