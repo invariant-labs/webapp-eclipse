@@ -12,6 +12,9 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     container: {
       backgroundColor: colors.invariant.component,
       borderRadius: '20px',
+      [theme.breakpoints.down('lg')]: {
+        width: 'calc(100% - 48px)'
+      },
       padding: '24px',
       display: 'flex',
       flexDirection: 'column',

@@ -4,7 +4,10 @@ import { makeStyles } from 'tss-react/mui'
 const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
   (theme, { percentage, isActive }) => ({
     container: {
-      minWidth: '380px'
+      [theme.breakpoints.up('lg')]: {
+        minWidth: '380px'
+      },
+      width: '100%'
     },
 
     roundTitle: {

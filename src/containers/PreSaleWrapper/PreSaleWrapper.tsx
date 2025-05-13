@@ -1,4 +1,4 @@
-import { Grid, Box, Typography, Grow } from '@mui/material'
+import { Grid, Box, Typography, Grow, useMediaQuery, Hidden } from '@mui/material'
 import { useStyles } from './styles'
 import { BuyComponent } from '@components/PreSale/BuyComponent/BuyComponent'
 import { SaleStepper } from '@components/PreSale/SaleStepper/SaleStepper'
@@ -26,7 +26,7 @@ import {
 } from '@invariant-labs/sale-sdk/lib/utils'
 import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 
-import { colors, typography } from '@static/theme'
+import { colors, typography, theme } from '@static/theme'
 import { Faq } from '@common/Faq/Faq'
 import { PreSaleCard } from '@components/PreSale/PreSaleCard/PreSaleCard'
 import CardHeroLogoPodium from '@static/png/presale/podium.png'
@@ -52,8 +52,10 @@ function SampleNextArrow(props) {
       style={{
         ...style,
         display: 'block',
+
         backgroundImage: `url(${ArrowRight})`,
-        backgroundSize: 'cover'
+        backgroundSize: 'cover',
+        zIndex: 3,
       }}
       onClick={onClick}
     />
@@ -68,9 +70,10 @@ function SamplePrevArrow(props) {
       style={{
         ...style,
         display: 'block',
-        left: -25,
         backgroundImage: `url(${ArrowLeft})`,
-        backgroundSize: 'cover'
+        backgroundSize: 'cover',
+        zIndex: 3,
+
       }}
       onClick={onClick}
     />
@@ -137,9 +140,10 @@ const AnimatedPreSaleCard = ({
   }, [isCardVisible, delay])
 
   return (
-    <div ref={cardRef}>
+    <div ref={cardRef} style={{ width: '100%' }}>
       <Grow
         in={visible}
+
         style={{ transformOrigin: '0 0 0' }}
         timeout={{
           enter: 1000
@@ -166,6 +170,10 @@ const AnimatedPreSaleCard = ({
 
 export const PreSaleWrapper = () => {
   const { classes } = useStyles()
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'))
+  const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const isDesk = useMediaQuery(theme.breakpoints.up('lg'))
+  const isTablet = useMediaQuery(theme.breakpoints.up('md'))
 
   const { ref: cardsGridRef } = useIntersectionObserver({
     threshold: 0.1,
@@ -184,6 +192,13 @@ export const PreSaleWrapper = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenIndex, setTokenIndex] = useState<number | null>(null)
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
+
+  const slidesToShow = useMemo(() => {
+    if (isSmallMobile) return 1;
+    if (isMobile) return 1;
+    if (isTablet) return 2;
+    return 3;
+  }, [isMobile, isSmallMobile]);
 
   const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
     useMemo(
@@ -332,12 +347,26 @@ export const PreSaleWrapper = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
+
+  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
+  const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
+  const isSmDown = useMediaQuery('@media (max-width:700px)')
+
+  const slidesNumber = useMemo(() => {
+    if (isSmDown) return 1
+    if (isMdDown) return 2
+    if (isLgDown) return 3
+    return 3
+  }, [isMdDown, isLgDown, isSmDown])
+
+
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Box className={classes.infoContainer}>
         <Box className={classes.contentWrapper}>
           <Grid className={classes.stepperContainer}>
             <SaleStepper
+              isLoading={true}
               currentStep={round}
               steps={tierPrices.map((price, idx) => {
                 return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 3)}` }
@@ -358,6 +387,7 @@ export const PreSaleWrapper = () => {
                 userRemainingAllocation={remainingAmount}
                 mintDecimals={mintDecimals}
                 roundNumber={round}
+                isLoading={true}
               />
             </Box>
           </Grid>
@@ -406,78 +436,84 @@ export const PreSaleWrapper = () => {
             }}
           />
         </Box>
-        <OverlayWrapper />
+        <Hidden lgDown>
+          <OverlayWrapper />
+        </Hidden>
       </Box>
 
-      <Box sx={{ marginTop: '72px' }}>
+      <Box className={classes.sectionTitle}>
         <Typography
           sx={{ ...typography.heading4, textAlign: 'center', color: colors.invariant.text }}>
-          Learn more about $INV
+          Invariant by the Numbers
         </Typography>
 
-        <Grid
-          ref={cardsGridRef}
-          container
-          spacing={1}
-          sx={{
-            display: 'flex',
-            width: '1280px',
-            justifyContent: 'center',
-            marginTop: '24px',
-            position: 'relative',
-            zIndex: 1
-          }}>
-          <>
-            <Grid item xs={12} sm={5}>
-              <AnimatedPreSaleCard
-                title='~1M Users'
-                subtitleColorVariant='green'
-                subtitle='who have ever interacted with Invariant'
-                delay={100}
-              />
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <AnimatedPreSaleCard
-                title='~$5 Billions'
-                subtitleColorVariant='pink'
-                subtitle='in cumulative swap volume'
-                delay={300}
-              />
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <AnimatedPreSaleCard
-                title='4 Hackatons'
-                subtitle='won by Invariant team'
-                delay={500}
-              />
-            </Grid>
-            <Grid item xs={12} sm={5}>
-              <AnimatedPreSaleCard
-                title=' $200K+'
-                imageDirection='left'
-                subtitleColorVariant='green'
+        <Box className={classes.animatedCardsContainer}>
+          <Grid
+            container
+            spacing={{ xs: 2, md: 3 }}
+            sx={{
+              display: 'flex',
+              justifyContent: 'center',
+              marginTop: '24px',
+              position: 'relative',
+              zIndex: 1
+            }}>
+            <Box className={classes.animatedCardWrapper}>
 
-                subtitle='earned in hackathon prizes'
-                delay={700}
-              />
-            </Grid>
-          </>
-        </Grid>
-      </Box>
+              <Grid item xs={12} className={classes.animatedCardItem}>
+                <AnimatedPreSaleCard
+                  title='~1M Users'
+                  subtitleColorVariant='green'
+                  subtitle='who have ever interacted with Invariant'
+                  delay={100}
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.animatedCardItem}>
+                <AnimatedPreSaleCard
+                  title='~$5 Billions'
+                  subtitleColorVariant='pink'
+                  subtitle='in cumulative swap volume'
+                  delay={300}
+                />
+              </Grid>
+            </Box>
+            <Box className={classes.animatedCardWrapper}>
 
-      <Box sx={{ marginTop: '72px' }}>
+              <Grid item xs={12} className={classes.animatedCardItem}>
+                <AnimatedPreSaleCard
+                  title='4 Hackatons'
+                  subtitle='won by Invariant team'
+                  delay={500}
+                />
+              </Grid>
+              <Grid item xs={12} className={classes.animatedCardItem}>
+                <AnimatedPreSaleCard
+                  title=' $200K+'
+                  imageDirection='left'
+                  subtitleColorVariant='green'
+                  subtitle='earned in hackathon prizes'
+                  delay={700}
+                />
+              </Grid>
+            </Box>
+          </Grid>
+        </Box >
+      </Box >
+
+      <Box className={classes.sectionTitle}>
         <Typography
           sx={{ ...typography.heading4, textAlign: 'center', color: colors.invariant.text }}>
-          Chronological cards
+          The Invariant Journey
         </Typography>
 
         <Box className={classes.cardsContainer}>
           <Slider
             speed={500}
-            slidesToShow={3}
+            slidesToShow={slidesToShow}
             slidesToScroll={1}
             arrows={true}
             draggable={true}
+            centerMode={true}
             className={classes.slider}
             autoplay={true}
             autoplaySpeed={10000}
@@ -563,9 +599,10 @@ export const PreSaleWrapper = () => {
             />
           </Slider>
         </Box>
-      </Box>
+      </Box >
 
-      <Box sx={{ width: '1072px', marginTop: '72px' }}>
+      {/* Sekcja "FAQ" */}
+      < Box className={classes.faqContainer} >
         <Typography
           sx={{
             ...typography.heading4,
@@ -597,7 +634,7 @@ export const PreSaleWrapper = () => {
             ]}
           />
         </Box>
-      </Box>
-    </Grid>
+      </Box >
+    </Grid >
   )
 }

@@ -1,5 +1,5 @@
 import Overlay from '@static/png/presale/Overlay.png'
-import { Box, useMediaQuery } from '@mui/material'
+import { Box } from '@mui/material'
 import { useEffect, useState } from 'react'
 
 export const OverlayWrapper = () => {
@@ -32,7 +32,8 @@ export const OverlayWrapper = () => {
                 top: '18%',
                 transform: 'translate(-50%,-50%)',
                 left: `${calculateLeftPosition()}%`,
-                zIndex: 1
+                zIndex: 1,
+                'md': { display: 'block' }, 'sm': { display: 'none' }
             }}
         >
             <img src={Overlay} alt="Invariant Logo" style={{ width: '50%', height: '50%' }} />

@@ -1,6 +1,6 @@
 import { makeStyles } from 'tss-react/mui'
-import { colors, typography } from '@static/theme'
-
+import { colors, theme, typography } from '@static/theme'
+//events cards style
 interface StyleProps {
   borderColor: 'textGrey' | 'green' | 'pink'
   isImportant: boolean
@@ -23,6 +23,10 @@ const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant }
     container: {
       width: '293px',
       height: '372px',
+      [theme.breakpoints.down('sm')]: {
+        width: '253px',
+        height: '372px'
+      },
       position: 'relative',
       background: colors.invariant.component,
       display: 'flex',

@@ -1,5 +1,5 @@
-import { Box, Grid, Typography } from '@mui/material'
-import React, { useEffect, useState } from 'react'
+import { Box, Grid, Skeleton, Typography } from '@mui/material'
+import React from 'react'
 import useStyles from './style'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
@@ -20,6 +20,7 @@ interface RoundComponentProps {
   userRemainingAllocation: BN
   mintDecimals: number
   roundNumber: number
+  isLoading?: boolean
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -36,12 +37,82 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   userRemainingAllocation,
   mintDecimals,
   roundNumber,
+  isLoading = false
+
 }) => {
   const { classes } = useStyles({
     percentage: Number(printBNandTrimZeros(percentageFilled, PERCENTAGE_SCALE, 3)),
     isActive
   })
 
+
+  if (isLoading) {
+    return (
+      <Box className={classes.container}>
+        <Skeleton variant="text" sx={{ justifySelf: 'center' }} width={150} height={40} />
+
+        <Box className={classes.progressCard}>
+          <Box className={classes.progressHeader}>
+            {isActive ? (
+              <>
+                <Box className={classes.darkBackground}>
+                  <Box className={classes.gradientProgress} />
+                </Box>
+                <Grid container className={classes.barWrapper}>
+                  <Typography className={classes.amountBought}>
+                    <Skeleton variant="text" width={20} />
+
+                  </Typography>
+                  <Typography className={classes.amountLeft}>
+                    <Skeleton variant="text" width={20} />
+
+                  </Typography>
+                </Grid>
+              </>
+            ) : (
+              <>
+                <Box className={classes.infoRow}>
+                  <Skeleton variant="text" width={200} />
+                </Box>
+                <Box className={classes.infoRow}>
+                  <Skeleton variant="text" width={200} />
+                </Box>
+                <Box className={classes.infoRow}>
+                  <Skeleton variant="text" width={200} />
+                </Box>
+              </>
+            )}
+          </Box>
+        </Box>
+
+        <Box className={classes.infoCard}>
+          {isActive && (
+            <>
+              <Box className={classes.infoRow}>
+                <Skeleton variant="text" width={180} />
+              </Box>
+              <Box className={classes.infoRow}>
+                <Skeleton variant="text" width={180} />
+              </Box>
+              <Box className={classes.divider} />
+            </>
+          )}
+
+          {!saleDidNotStart && (
+            <Box className={classes.infoRow}>
+              <Skeleton variant="text" width={200} />
+            </Box>
+          )}
+
+          {isActive && (
+            <Box className={classes.infoRow}>
+              <Skeleton variant="text" width={200} />
+            </Box>
+          )}
+        </Box>
+      </Box>
+    )
+  }
 
   return (
     <Box className={classes.container}>

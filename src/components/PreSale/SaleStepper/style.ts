@@ -1,5 +1,5 @@
 import { makeStyles } from 'tss-react/mui'
-import { colors } from '@static/theme'
+import { colors, typography } from '@static/theme'
 
 const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorHeight }) => ({
   container: {
@@ -8,16 +8,42 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     justifyContent: 'space-around',
     alignItems: 'flex-start',
     minHeight: '440px',
-    padding: theme.spacing(2.5)
+    padding: theme.spacing(2.5),
+    [theme.breakpoints.down('lg')]: {
+      flexDirection: 'row',
+      minHeight: 'unset',
+      alignItems: 'center',
+      width: '100%',
+      overflowX: 'auto',
+      padding: theme.spacing(2, 1)
+    }
+  },
+  stepContent: {
+    [theme.breakpoints.up('lg')]: {
+      display: 'flex',
+      alignItems: 'center',
+      justifyContent: 'center'
+    }
   },
   stepContainer: {
     display: 'flex',
-    alignItems: 'center',
-    position: 'relative'
+
+    position: 'relative',
+
+    [theme.breakpoints.down('lg')]: {
+      alignItems: 'center',
+      minWidth: '60px'
+    }
   },
+
   stepMargin: {
-    marginBottom: theme.spacing(5)
+    marginBottom: theme.spacing(5),
+    [theme.breakpoints.down('lg')]: {
+      marginBottom: 0,
+      width: '100%'
+    }
   },
+
   stepCircle: {
     width: '32px',
     height: '32px',
@@ -27,16 +53,45 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     borderColor: colors.invariant.light,
     display: 'flex',
     justifyContent: 'center',
+    position: 'relative',
     alignItems: 'center',
     zIndex: 2,
-    color: colors.invariant.text
+    color: colors.invariant.text,
+    boxSizing: 'content-box',
+
+    [theme.breakpoints.down('lg')]: {
+      marginBottom: theme.spacing(1),
+      width: '28px',
+      height: '28px'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '24px',
+      height: '24px'
+    }
   },
+
   activeNode: {
     background: colors.invariant.light
   },
+
   stepLabel: {
     marginLeft: theme.spacing(2),
-    color: colors.invariant.text
+    color: colors.invariant.text,
+    ...typography.body1,
+
+    [theme.breakpoints.down('lg')]: {
+      marginLeft: 0,
+      textAlign: 'center',
+      whiteSpace: 'nowrap'
+    }
+  },
+  labelSkeleton: {
+    marginLeft: '16px',
+    [theme.breakpoints.down('lg')]: {
+      marginTop: '16px',
+      marginLeft: '2px',
+      textAlign: 'center'
+    }
   },
   connector: {
     position: 'absolute',
@@ -45,8 +100,86 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     width: '5px',
     height: `${connectorHeight}px`,
     background: colors.invariant.light,
-    zIndex: 1
+    zIndex: 1,
+
+    [theme.breakpoints.down('lg')]: {
+      display: 'none'
+    }
   },
+
+  horizontalConnector: {
+    display: 'none',
+
+    [theme.breakpoints.down('lg')]: {
+      display: 'block',
+      marginBottom: theme.spacing(3.5),
+      top: '26%',
+      left: '100%',
+      height: '4px',
+      width: `100%`,
+      background: colors.invariant.light,
+      zIndex: 1
+    }
+  },
+
+  horizontalConnectorGreenPink: {
+    display: 'none',
+    [theme.breakpoints.down('lg')]: {
+      display: 'block',
+      marginBottom: theme.spacing(3),
+
+      top: '26%',
+      left: '100%',
+      transform: 'translateY(-50%)',
+      height: '4px',
+      width: '100%',
+      background: `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.textGrey})`,
+      zIndex: 1
+    }
+  },
+
+  horizontalConnectorGreenGray: {
+    display: 'none',
+    [theme.breakpoints.down('lg')]: {
+      display: 'block',
+      marginBottom: theme.spacing(3),
+      top: '26%',
+      left: '100%',
+      height: '4px',
+      width: '100%',
+      background: `linear-gradient(to right, ${colors.invariant.green}, ${colors.invariant.light})`,
+      zIndex: 1
+    }
+  },
+
+  horizontalConnectorGreenGrayPink: {
+    display: 'none',
+    [theme.breakpoints.down('lg')]: {
+      display: 'block',
+      marginBottom: theme.spacing(3.5),
+
+      top: '26%',
+      left: '100%',
+      height: '4px',
+      width: `100%`,
+      background: `linear-gradient(to right, ${colors.invariant.textGrey}, ${colors.invariant.pink})`,
+      zIndex: 1
+    }
+  },
+
+  horizontalConnectorGray: {
+    display: 'none',
+    [theme.breakpoints.down('lg')]: {
+      display: 'block',
+      top: '26%',
+      left: '100%',
+      width: '100%',
+      height: '4px',
+      background: colors.invariant.textGrey,
+      zIndex: 1
+    }
+  },
+
   connectorGreenPink: {
     position: 'absolute',
     left: '18px',
@@ -54,8 +187,12 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     width: '5px',
     height: `${connectorHeight}px`,
     background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.pink})`,
-    zIndex: 1
+    zIndex: 1,
+    [theme.breakpoints.down('lg')]: {
+      display: 'none'
+    }
   },
+
   connectorGreenGray: {
     position: 'absolute',
     left: '18px',
@@ -63,8 +200,12 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     width: '5px',
     height: `${connectorHeight}px`,
     background: `linear-gradient(to bottom, ${colors.invariant.green}, ${colors.invariant.light})`,
-    zIndex: 1
+    zIndex: 1,
+    [theme.breakpoints.down('lg')]: {
+      display: 'none'
+    }
   },
+
   connectorGreenGrayPink: {
     position: 'absolute',
     left: '18px',
@@ -72,8 +213,12 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     width: '5px',
     height: `${connectorHeight}px`,
     background: `linear-gradient(to bottom, ${colors.invariant.textGrey}, ${colors.invariant.pink})`,
-    zIndex: 1
+    zIndex: 1,
+    [theme.breakpoints.down('lg')]: {
+      display: 'none'
+    }
   },
+
   connectorGray: {
     position: 'absolute',
     left: '18px',
@@ -81,14 +226,20 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     width: '5px',
     height: `${connectorHeight}px`,
     background: colors.invariant.textGrey,
-    zIndex: 1
+    zIndex: 1,
+    [theme.breakpoints.down('lg')]: {
+      display: 'none'
+    }
   },
+
   endStepNode: {
     borderColor: colors.invariant.pink
   },
+
   startStepNode: {
     borderColor: colors.invariant.green
   },
+
   middleStepNode: {
     borderColor: colors.invariant.textGrey
   },
@@ -96,9 +247,11 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
   currentStepLabel: {
     color: colors.invariant.pink
   },
+
   pendingStepLabel: {
     color: colors.invariant.textGrey
   },
+
   startStepLabel: {
     color: colors.invariant.green
   }

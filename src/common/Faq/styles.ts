@@ -79,6 +79,9 @@ export const useStyles = makeStyles()(() => ({
     },
     '& p': {
       color: colors.invariant.text,
+      [theme.breakpoints.down('sm')]: {
+        ...typography.heading4
+      },
       ...typography.heading3
     }
   },

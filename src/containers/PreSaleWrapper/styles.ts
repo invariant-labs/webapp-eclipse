@@ -8,7 +8,12 @@ export const useStyles = makeStyles()(() => ({
     justifyContent: 'center',
     alignItems: 'center',
     width: '100%',
-    gap: 24
+    gap: 24,
+    padding: '0 16px',
+    boxSizing: 'border-box',
+    [theme.breakpoints.down('md')]: {
+      gap: 16
+    }
   },
   infoContainer: {
     width: '100vw',
@@ -21,55 +26,117 @@ export const useStyles = makeStyles()(() => ({
     background:
       'linear-gradient(90deg, rgba(17, 25, 49, 0.1) 0%, #111931 29.21%, #111931 71%, rgba(17, 25, 49, 0.1) 100%);',
     boxSizing: 'border-box',
-    overflowX: 'hidden'
+    overflowX: 'hidden',
+    [theme.breakpoints.down('md')]: {
+      padding: '24px 16px',
+      minHeight: 'auto'
+    },
+    [theme.breakpoints.down('sm')]: {
+      padding: '16px 8px'
+    }
   },
   contentWrapper: {
-    display: 'flex'
+    display: 'flex',
+    [theme.breakpoints.down('lg')]: {
+      flexDirection: 'column-reverse',
+      width: '100%',
+      alignItems: 'center',
+      gap: 32
+    }
   },
   stepperContainer: {
     display: 'flex',
     marginRight: '24px',
-    minWidth: '440px'
+    minWidth: '440px',
+    [theme.breakpoints.down('lg')]: {
+      minWidth: 'unset',
+      width: '100%',
+      marginRight: 0,
+      flexDirection: 'column',
+      alignItems: 'center'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '100%'
+    }
   },
   roundComponentContainer: {
     height: '100%',
     marginLeft: '55px',
     display: 'flex',
     justifyContent: 'center',
-    alignItems: 'center'
+    alignItems: 'center',
+    [theme.breakpoints.down('lg')]: {
+      marginLeft: 0,
+      marginTop: '24px',
+      width: '100%'
+    }
   },
-  cardsContainer: {
-    maxWidth: '1072px',
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'nowrap',
-    borderRadius: 32,
-    marginTop: '24px'
-  },
+
   animatedPreSaleCardsWrapper: {
     display: 'flex',
     width: '1280px',
     justifyContent: 'center',
     marginTop: '24px',
     position: 'relative',
-    zIndex: 1
+    zIndex: 1,
+    [theme.breakpoints.down('lg')]: {
+      width: '100%'
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '100%',
+      flexDirection: 'column'
+    }
+  },
+  animatedCardsContainer: {
+    width: '100%',
+    marginTop: '24px',
+
+    [theme.breakpoints.down('md')]: {
+      marginTop: '16px'
+    }
+  },
+  animatedCardWrapper: {
+    width: '50%',
+    [theme.breakpoints.down('md')]: {
+      width: '100%'
+    }
+  },
+  animatedCardItem: {
+    padding: '12px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    maxWidth: '100%',
+    [theme.breakpoints.down('md')]: {
+      padding: '8px',
+      width: '100%',
+      marginBottom: '8px'
+    }
   },
   slider: {
     minWidth: '100%',
+    gap: '46px',
     '& .slick-track': {
       display: 'flex',
       justifyContent: 'space-between'
     },
+    '& .slick-list': {
+      [theme.breakpoints.down('sm')]: {
+        margin: '0 -207px'
+      },
+      margin: '0 -90px'
+    },
+    '& .slick-slide > div': { padding: '0 30px' },
+
     '& .slick-slide': {
       display: 'flex',
+      [theme.breakpoints.down('sm')]: {
+        margin: '0'
+      },
       justifyContent: 'center'
     },
-
     '& .slick-arrow': {
-      height: '40px',
-      [theme.breakpoints.down('sm')]: {
-        height: '30px'
-      }
+      height: '40px'
     },
     '& .slick-arrow::before': {
       fontSize: '40px',
@@ -97,10 +164,13 @@ export const useStyles = makeStyles()(() => ({
     '& .slick-prev': {
       left: -50,
       [theme.breakpoints.down('lg')]: {
-        left: -80
+        left: -40
+      },
+      [theme.breakpoints.down('md')]: {
+        left: -20
       },
       [theme.breakpoints.down('sm')]: {
-        left: -4,
+        left: -30,
         zIndex: 3
       }
     },
@@ -109,10 +179,70 @@ export const useStyles = makeStyles()(() => ({
       [theme.breakpoints.down('lg')]: {
         right: -20
       },
+      [theme.breakpoints.down('md')]: {
+        right: -10
+      },
       [theme.breakpoints.down('sm')]: {
-        right: 9,
+        right: -30,
         zIndex: 3
       }
+    },
+    [theme.breakpoints.down('lg')]: {
+      '& .slick-list': {
+        padding: '0 16px'
+      }
+    },
+    [theme.breakpoints.down('sm')]: {
+      '& .slick-list': {
+        padding: '0 8px'
+      },
+      '& .slick-track': {
+        margin: '0 auto'
+      }
+    }
+  },
+  cardsContainer: {
+    display: 'flex',
+    marginTop: '24px',
+    [theme.breakpoints.down('lg')]: {
+      width: '800px'
+    },
+    [theme.breakpoints.down('md')]: {
+      width: '500px'
+    },
+    [theme.breakpoints.down('sm')]: {
+      width: '300px'
+    },
+    width: '900px'
+  },
+
+  sliderItem: {
+    width: 64,
+    height: 64,
+    borderRadius: '6px'
+  },
+  faqContainer: {
+    width: '100%',
+    maxWidth: '1072px',
+    marginTop: '72px',
+    padding: '0 16px',
+    boxSizing: 'border-box',
+    [theme.breakpoints.down('md')]: {
+      marginTop: '48px'
+    }
+  },
+  sectionTitle: {
+    marginTop: '72px',
+    width: '100%',
+    maxWidth: '1280px',
+    padding: '0 16px',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'column',
+    boxSizing: 'border-box',
+    [theme.breakpoints.down('md')]: {
+      marginTop: '48px'
     }
   }
 }))

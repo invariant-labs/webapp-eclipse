@@ -1,4 +1,4 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import useStyles from './style'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -151,6 +151,8 @@ export const BuyComponent: React.FC<IProps> = ({
     setAlertBoxShow(showBanner === 'true')
   }, [])
 
+
+
   return (
     <Box className={classes.container}>
       <Box>
@@ -180,35 +182,46 @@ export const BuyComponent: React.FC<IProps> = ({
           {isActive && (
             <Typography className={classes.raisedInfo}>
               <Typography className={classes.greyText}>Raised:</Typography>
-              <Typography className={classes.greenBodyText}>
-                ${printBNandTrimZeros(currentAmount, mintDecimals, 3)}
-              </Typography>{' '}
-              / ${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
+              {isLoading ? (
+                <Skeleton variant="rounded" width={200} height={24} sx={{ ml: 1 }} />
+              ) : (
+                <>
+                  <Typography className={classes.greenBodyText}>
+                    ${printBNandTrimZeros(currentAmount, mintDecimals, 3)}
+                  </Typography>
+                  {' / '}
+                  ${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
+                </>
+              )}
             </Typography>
           )}
         </Box>
-        {isActive && (
-          <>
-            <Box className={classes.darkBackground}>
-              <Box className={classes.gradientProgress} />
-            </Box>
-            <Grid container className={classes.barWrapper}>
-              <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
-              <Typography className={classes.sliderLabel}>100%</Typography>
-            </Grid>
-          </>
-        )}
+        {
+          isActive && (
+            <>
+              <Box className={classes.darkBackground}>
+                <Box className={classes.gradientProgress} />
+              </Box>
+              <Grid container className={classes.barWrapper}>
+                <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
+                <Typography className={classes.sliderLabel}>100%</Typography>
+              </Grid>
+            </>
+          )
+        }
 
-        {saleDidNotStart && (
-          <Box
-            sx={{
-              marginTop: '16px',
-              width: '467px'
-            }}>
-            <Timer hours={hours} minutes={minutes} seconds={seconds} />
-          </Box>
-        )}
-      </Box>
+        {
+          saleDidNotStart && (
+            <Box
+              sx={{
+                marginTop: '16px',
+                width: '467px'
+              }}>
+              <Timer hours={hours} minutes={minutes} seconds={seconds} />
+            </Box>
+          )
+        }
+      </Box >
       <Box className={classes.sectionDivider} />
 
       <Box>
@@ -242,33 +255,40 @@ export const BuyComponent: React.FC<IProps> = ({
         </Box>
         <Box className={classes.receiveBox}>
           <Typography className={classes.receiveLabel}>You'll receive</Typography>
-          <Typography className={classes.tokenAmount}>
-            {printBNandTrimZeros(receive, REWARD_SCALE)} $INV
-          </Typography>
+          {isLoading ? (
+            <Skeleton variant="rounded" width={200} height={24} sx={{ ml: 1 }} />
+          ) : (
+            <Typography className={classes.tokenAmount}>
+              {printBNandTrimZeros(receive, REWARD_SCALE)} $INV
+            </Typography>
+          )}
+
         </Box>
       </Box>
-      {walletStatus !== Status.Initialized ? (
-        <ChangeWalletButton
-          width={'100%'}
-          height={48}
-          name='Connect wallet'
-          onConnect={onConnectWallet}
-          connected={false}
-          onDisconnect={onDisconnectWallet}
-        />
-      ) : (
-        <AnimatedButton
-          className={classes.greenButton}
-          onClick={() => {
-            if (progress === 'none' && tokenIndex !== null) {
-              onBuyClick(convertBalanceToBN(value, mintDecimals))
-            }
-          }}
-          disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
-          content={getButtonMessage()}
-          progress={progress}
-        />
-      )}
-    </Box>
+      {
+        walletStatus !== Status.Initialized ? (
+          <ChangeWalletButton
+            width={'100%'}
+            height={48}
+            name='Connect wallet'
+            onConnect={onConnectWallet}
+            connected={false}
+            onDisconnect={onDisconnectWallet}
+          />
+        ) : (
+          <AnimatedButton
+            className={classes.greenButton}
+            onClick={() => {
+              if (progress === 'none' && tokenIndex !== null) {
+                onBuyClick(convertBalanceToBN(value, mintDecimals))
+              }
+            }}
+            disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
+            content={getButtonMessage()}
+            progress={progress}
+          />
+        )
+      }
+    </Box >
   )
 }
