@@ -1383,6 +1383,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             tokenASymbol={tokenAIndex !== null ? tokens[tokenAIndex].symbol : 'ABC'}
             tokenBSymbol={tokenBIndex !== null ? tokens[tokenBIndex].symbol : 'XYZ'}
             midPriceIndex={midPrice.index}
+            midPriceSqrtPrice={midPrice.sqrtPrice}
             onChangeMidPrice={onChangeMidPrice}
             currentPairReversed={currentPairReversed}
             positionOpeningMethod={positionOpeningMethod}

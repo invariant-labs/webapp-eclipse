@@ -2,6 +2,7 @@ import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import SimpleInput from '@components/Inputs/SimpleInput/SimpleInput'
 import { Button, Grid, Typography } from '@mui/material'
 import {
+  calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   calculateConcentration,
   calculateConcentrationRange,
@@ -36,6 +37,7 @@ export interface IPoolInit {
   yDecimal: number
   tickSpacing: number
   midPriceIndex: number
+  midPriceSqrtPrice: BN
   onChangeMidPrice: (tickIndex: number, sqrtPrice: BN) => void
   currentPairReversed: boolean | null
   positionOpeningMethod?: PositionOpeningMethod
@@ -59,6 +61,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   yDecimal,
   tickSpacing,
   midPriceIndex,
+  midPriceSqrtPrice,
   onChangeMidPrice,
   currentPairReversed,
   positionOpeningMethod,
@@ -89,7 +92,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   const [rightInputRounded, setRightInputRounded] = useState((+rightInput).toFixed(12))
 
   const [midPriceInput, setMidPriceInput] = useState(
-    calcPriceByTickIndex(midPriceIndex, isXtoY, xDecimal, yDecimal).toFixed(8)
+    calcPriceBySqrtPrice(midPriceSqrtPrice, isXtoY, xDecimal, yDecimal).toFixed(8)
   )
 
   const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
@@ -174,9 +177,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
     } else {
       setTimeout(() => {
         setWasRefreshed(false)
-      }, 1000)
+      }, 1)
     }
-  }, [midPriceInput, wasRefreshed])
+  }, [midPriceInput])
 
   const setLeftInputValues = (val: string) => {
     setLeftInput(val)
