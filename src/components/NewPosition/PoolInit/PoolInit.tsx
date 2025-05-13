@@ -81,8 +81,6 @@ export const PoolInit: React.FC<IPoolInit> = ({
     calcPriceByTickIndex(rightRange, isXtoY, xDecimal, yDecimal).toString()
   )
 
-  console.log(process.env.NODE_ENV)
-
   const [leftInputRounded, setLeftInputRounded] = useState((+leftInput).toFixed(12))
   const [rightInputRounded, setRightInputRounded] = useState((+rightInput).toFixed(12))
 
