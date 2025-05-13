@@ -266,6 +266,10 @@ export const Swap: React.FC<ISwap> = ({
   const [wasSwapIsLoadingRun, setWasSwapIsLoadingRun] = useState(false)
   const [isReversingTokens, setIsReversingTokens] = useState(false)
 
+  const walletdebug = (window as any).nightly.solana._activeAccount
+
+  const walletdebug2 = (window as any).nightly.solana?.features['standard:connect']?.connect
+  console.log('walletdebug2', walletdebug2)
   const WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT = useMemo(() => {
     if (network === NetworkType.Testnet) {
       return WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_TEST
@@ -994,6 +998,9 @@ export const Swap: React.FC<ISwap> = ({
           </u>
         </Box>
       )}
+      <Typography color={'white'}>{'address' + walletdebug?.address}</Typography>
+      <Typography color={'white'}>{'features' + walletdebug?.features}</Typography>
+      <Typography color={'white'}>{'features2' + walletdebug2}</Typography>
 
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
