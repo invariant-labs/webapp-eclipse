@@ -119,7 +119,7 @@ export const BuyComponent: React.FC<IProps> = ({
     }
 
     if (
-      convertBalanceToBN(value, mintDecimals).add(userDepositedAmount).gte(whitelistWalletLimit) &&
+      convertBalanceToBN(value, mintDecimals).add(userDepositedAmount).gt(whitelistWalletLimit) &&
       !isPublic
     ) {
       return 'Your deposit exceed limit'

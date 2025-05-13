@@ -239,17 +239,17 @@ export const PreSaleWrapper = () => {
     [deposited, whitelistWalletLimit]
   )
 
-  const filledPercentage = useMemo(
-    () =>
-      !whitelistWalletLimit.isZero()
-        ? currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(whitelistWalletLimit)
-        : 0,
-    [currentAmount, whitelistWalletLimit]
-  )
-
   const amountNeeded = useMemo(
     () => getCurrentTierLimit(currentAmount, targetAmount),
     [currentAmount, targetAmount]
+  )
+
+  const filledPercentage = useMemo(
+    () =>
+      !amountNeeded.isZero()
+        ? currentAmount.muln(100).mul(PERCENTAGE_DENOMINATOR).div(amountNeeded)
+        : 0,
+    [currentAmount, amountNeeded]
   )
 
   const amountLeft = useMemo(
