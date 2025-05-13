@@ -21,8 +21,7 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({ steps, currentStep, is
     const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
     const connectorHeight = Math.round(720 / steps.length - 60);
-    const connectorWidth = Math.round(850 / steps.length);
-    const { classes } = useStyles({ connectorHeight, connectorWidth });
+    const { classes } = useStyles({ connectorHeight });
 
     const getVerticalConnectorClass = (index: number, steps: StepItem[], currentStep: number): string => {
         const isLast = index === steps.length - 1;

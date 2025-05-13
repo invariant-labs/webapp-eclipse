@@ -31,8 +31,6 @@ import { Faq } from '@common/Faq/Faq'
 import { PreSaleCard } from '@components/PreSale/PreSaleCard/PreSaleCard'
 import CardHeroLogoPodium from '@static/png/presale/podium.png'
 import CardHeroLogoEclipse from '@static/png/presale/inv_eclipse.png'
-import CardLogoPink from '@static/png/presale/pink_card_logo.png'
-import CardLogoGreen from '@static/png/presale/green_card_logo.png'
 import { EventsCard } from '@components/PreSale/EventsCards/EventsCard'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
@@ -172,13 +170,9 @@ export const PreSaleWrapper = () => {
   const { classes } = useStyles()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const isDesk = useMediaQuery(theme.breakpoints.up('lg'))
   const isTablet = useMediaQuery(theme.breakpoints.up('md'))
 
-  const { ref: cardsGridRef } = useIntersectionObserver({
-    threshold: 0.1,
-    rootMargin: '0px 0px -20px 0px'
-  })
+
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
@@ -347,17 +341,6 @@ export const PreSaleWrapper = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
-
-  const isLgDown = useMediaQuery(theme.breakpoints.down('lg'))
-  const isMdDown = useMediaQuery(theme.breakpoints.down('md'))
-  const isSmDown = useMediaQuery('@media (max-width:700px)')
-
-  const slidesNumber = useMemo(() => {
-    if (isSmDown) return 1
-    if (isMdDown) return 2
-    if (isLgDown) return 3
-    return 3
-  }, [isMdDown, isLgDown, isSmDown])
 
 
   return (
