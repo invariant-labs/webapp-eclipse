@@ -1,6 +1,6 @@
 import { Button } from '@mui/material'
 import { useStyles } from './style'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 
 export interface IPaginationList {
   pages: number
@@ -20,10 +20,7 @@ export const PaginationList: React.FC<IPaginationList> = ({
 
   const [currentPage, setCurrentPage] = useState(defaultPage)
 
-  const [inputWidth, setInputWidth] = useState(16)
-
-  const inputRef = useRef<HTMLInputElement>(null)
-  const spanRef = useRef<HTMLSpanElement>(null)
+  const [inputWidth, setInputWidth] = useState(0)
 
   const changePage = (page: number) => {
     if (page < 1) {
@@ -42,17 +39,14 @@ export const PaginationList: React.FC<IPaginationList> = ({
     handleChangePage(page)
   }
 
-  useEffect(() => {
-    if (spanRef.current && (inputRef.current?.value ? +inputRef.current?.value : 0) < pages) {
-      setInputWidth(spanRef.current.offsetWidth + 16)
+  useLayoutEffect(() => {
+    if (currentPage) {
+      setInputWidth(currentPage.toString().length * 12 + 16)
     }
-  }, [inputRef.current?.value])
+  }, [currentPage])
 
   return (
     <>
-      <span className={classes.hiddenSpan} ref={spanRef}>
-        {inputRef.current?.value}
-      </span>
       <div className={classes.pagination}>
         <Button
           className={classes.controlButton}
@@ -69,7 +63,6 @@ export const PaginationList: React.FC<IPaginationList> = ({
           value={currentPage}
           onChange={e => changePage(+e.target.value)}
           type='number'
-          ref={inputRef}
         />
         of {pages}
         <Button
