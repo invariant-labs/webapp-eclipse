@@ -15,8 +15,11 @@ export const SwapPage: React.FC = () => {
       {/* <WrappedSwap initialTokenFrom={initialTokenFrom} initialTokenTo={initialTokenTo} /> */}
       <div>
         <Typography color={'white'} maxWidth={'100%'}>
-          {'solana provider -----' + (window as any).nightly?.solana
-            ? JSON.stringify((window as any).nightly?.solana, null, 1)
+          solana provider -----
+        </Typography>
+        <Typography color={'white'} maxWidth={'100%'}>
+          {(window as any).nightly?.solana
+            ? JSON.stringify((window as any).nightly?.solana, null, 2)
             : 'solana not found'}
         </Typography>
         {/* <br />
@@ -25,8 +28,11 @@ export const SwapPage: React.FC = () => {
     </Typography> */}
         <br />
         <Typography color={'white'} maxWidth={'100%'}>
-          {'_activeAccount    ---- ' + (window as any).nightly?.solana?._activeAccount
-            ? JSON.stringify((window as any).nightly?.solana?._activeAccount, null, 1)
+          _activeAccount ----
+        </Typography>
+        <Typography color={'white'} maxWidth={'100%'}>
+          {(window as any).nightly?.solana?._activeAccount
+            ? JSON.stringify((window as any).nightly?.solana?._activeAccount, null, 2)
             : 'solana account not found'}
         </Typography>
       </div>
