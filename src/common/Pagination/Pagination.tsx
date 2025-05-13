@@ -1,5 +1,4 @@
-import { Button, Pagination, useMediaQuery } from '@mui/material'
-import { theme } from '@static/theme'
+import { Button } from '@mui/material'
 import { useStyles } from './style'
 import { useEffect, useRef, useState } from 'react'
 
@@ -15,14 +14,9 @@ export interface IPaginationList {
 export const PaginationList: React.FC<IPaginationList> = ({
   pages,
   defaultPage,
-  handleChangePage,
-  variant,
-  squeeze = false,
-  page
+  handleChangePage
 }) => {
   const { classes } = useStyles()
-  const position = useMediaQuery(theme.breakpoints.down('sm'))
-  const matches = useMediaQuery(theme.breakpoints.down('lg'))
 
   const [currentPage, setCurrentPage] = useState(defaultPage)
 
