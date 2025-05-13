@@ -998,10 +998,22 @@ export const Swap: React.FC<ISwap> = ({
           </u>
         </Box>
       )}
-      <Typography color={'white'}>{'address' + walletdebug?.address}</Typography>
+      {/* <Typography color={'white'}>{'address' + walletdebug?.address}</Typography>
       <Typography color={'white'}>{'features' + walletdebug?.features}</Typography>
       <Typography color={'white'}>{'features2' + walletdebug2}</Typography>
+      <Typography color={'white'}>{'features3' +   (window as any).nightly.solana}</Typography> */}
+      <Typography color={'white'} maxWidth={'100%'}>
+        {JSON.stringify((window as any).nightly.solana, null, 1)}
+      </Typography>
 
+      <br />
+      <Typography color={'white'} maxWidth={'100%'}>
+        {JSON.stringify((window as any).nightly.solana?.features, null, 1)}
+      </Typography>
+      <br />
+      <Typography color={'white'} maxWidth={'100%'}>
+        {JSON.stringify((window as any).nightly.solana?._activeAccount, null, 1)}
+      </Typography>
       <Grid container className={classes.header}>
         <Box className={classes.leftSection}>
           <Typography component='h1'>Swap tokens</Typography>
