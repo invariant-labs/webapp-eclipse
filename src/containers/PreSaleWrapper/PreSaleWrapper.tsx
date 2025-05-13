@@ -349,7 +349,7 @@ export const PreSaleWrapper = () => {
         <Box className={classes.contentWrapper}>
           <Grid className={classes.stepperContainer}>
             <SaleStepper
-              isLoading={true}
+              isLoading={isLoadingSaleStats}
               currentStep={round}
               steps={tierPrices.map((price, idx) => {
                 return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 3)}` }
@@ -370,7 +370,7 @@ export const PreSaleWrapper = () => {
                 userRemainingAllocation={remainingAmount}
                 mintDecimals={mintDecimals}
                 roundNumber={round}
-                isLoading={true}
+                isLoading={isLoadingSaleStats || isLoadingUserStats}
               />
             </Box>
           </Grid>
