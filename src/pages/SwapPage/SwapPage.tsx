@@ -22,10 +22,6 @@ export const SwapPage: React.FC = () => {
             ? JSON.stringify((window as any).nightly?.solana, null, 2)
             : 'solana not found'}
         </Typography>
-        {/* <br />
-    <Typography color={'white'} maxWidth={'100%'}>
-      {'features  -----' + JSON.stringify((window as any).nightly?.solana?.features, null, 1)}
-    </Typography> */}
         <br />
         <Typography color={'white'} maxWidth={'100%'}>
           _activeAccount ----
@@ -34,6 +30,15 @@ export const SwapPage: React.FC = () => {
           {(window as any).nightly?.solana?._activeAccount
             ? JSON.stringify((window as any).nightly?.solana?._activeAccount, null, 2)
             : 'solana account not found'}
+        </Typography>
+
+        <Typography color={'white'} maxWidth={'100%'}>
+          features
+        </Typography>
+        <Typography color={'white'} maxWidth={'100%'}>
+          {(window as any).nightly?.solana?._activeAccount
+            ? JSON.stringify((window as any).nightly?.solana?.features, null, 2)
+            : 'features not found'}
         </Typography>
       </div>
     </Grid>
