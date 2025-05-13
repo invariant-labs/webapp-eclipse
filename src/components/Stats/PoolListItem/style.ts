@@ -20,11 +20,12 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
 
   container: {
     transition: 'all 0.3s',
-    height: !showInfo ? 69 : 150,
+    height: !showInfo ? 69 : 135,
+
     color: colors.white.main,
     display: 'grid',
     alignItems: 'center',
-    gridTemplateColumns: '30px auto 180px 120px 120px 140px 120px 150px',
+    gridTemplateColumns: '30px auto 190px 120px 120px 140px 120px 150px',
     padding: '22px 24px 14px 24px',
     whiteSpace: 'nowrap',
 
@@ -46,12 +47,16 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down('md')]: {
+      height: !showInfo ? 69 : 104,
+
       gridTemplateColumns: 'auto 100px 140px 80px 24px',
-      rowGap: 12,
+      rowGap: 25,
       cursor: 'pointer'
     },
 
     [theme.breakpoints.down('sm')]: {
+      height: !showInfo ? 69 : 135,
+
       rowGap: 12,
       gridTemplateColumns: '30% 15% 28% 17% 10%',
       padding: '18px 8px',
@@ -185,7 +190,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     gap: 8,
     [theme.breakpoints.down('sm')]: {
       justifyContent: 'flex-start',
-
       visibility: showInfo ? 'visible' : 'hidden'
     }
   },
@@ -196,10 +200,8 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     padding: 0,
     margin: 0,
     border: 'none',
-
     color: colors.invariant.black,
     textTransform: 'none',
-
     transition: 'filter 0.3s linear',
 
     '&:hover': {
@@ -208,6 +210,12 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       '@media (hover: none)': {
         filter: 'none'
       }
+    }
+  },
+  airdropIcon: {
+    marginRight: 15,
+    [theme.breakpoints.down(1160)]: {
+      marginRight: 25
     }
   },
   iconContainer: {

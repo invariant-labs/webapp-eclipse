@@ -224,7 +224,7 @@ const PoolListItem: React.FC<IProps> = ({
             ref={lockIconRef}
             onPointerLeave={handlePointerLeave}
             onPointerEnter={handlePointerEnter}>
-            <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
+            <img width={28} src={lockIcon} alt={'Lock info'} />
           </button>
           <LockStatsPopover
             anchorEl={lockIconRef.current}
@@ -248,7 +248,7 @@ const PoolListItem: React.FC<IProps> = ({
           e.stopPropagation()
           handleOpenSwap
         }}>
-        <img width={32} height={32} src={horizontalSwapIcon} alt={'Exchange'} />
+        <img width={28} src={horizontalSwapIcon} alt={'Exchange'} />
       </button>
       <button
         className={classes.actionButton}
@@ -256,7 +256,7 @@ const PoolListItem: React.FC<IProps> = ({
           e.stopPropagation()
           handleOpenPosition
         }}>
-        <img width={32} height={32} src={plusIcon} alt={'Open'} />
+        <img width={28} src={plusIcon} alt={'Open'} />
       </button>
       <button
         className={classes.actionButton}
@@ -268,7 +268,7 @@ const PoolListItem: React.FC<IProps> = ({
             'noopener,noreferrer'
           )
         }}>
-        <img width={32} height={32} src={newTabBtnIcon} alt={'Exchange'} />
+        <img width={28} src={newTabBtnIcon} alt={'Exchange'} />
       </button>
     </Box>
   )
@@ -325,18 +325,20 @@ const PoolListItem: React.FC<IProps> = ({
             </TooltipHover>
           </Grid>
           {!isSmd && showAPY ? (
-            <Grid className={classes.row}>
-              <Typography>
-                {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
-              </Typography>{' '}
-              <Typography
-                className={
-                  classes.apyLabel
-                }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</Typography>
+            <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
+              <Grid sx={{ display: 'flex', gap: '4px' }}>
+                <Typography>
+                  {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                </Typography>{' '}
+                <Typography
+                  className={
+                    classes.apyLabel
+                  }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</Typography>
+              </Grid>
               {isPromoted && (
                 <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
                   <Box
-                    className={classes.actionButton}
+                    className={cx(classes.actionButton, classes.airdropIcon)}
                     ref={airdropIconRef}
                     onPointerEnter={() => {
                       if (!isMobile) {
@@ -422,21 +424,6 @@ const PoolListItem: React.FC<IProps> = ({
           )}
           {isSmd && (
             <>
-              {isSm && (
-                <>
-                  <Typography
-                    component='h5'
-                    className={classes.extendedRowTitle}
-                    sx={{ visibility: showInfo ? 'visible' : 'hidden' }}>
-                    {shortenAddress(tokenAData.symbol ?? '')}/
-                    {shortenAddress(tokenBData.symbol ?? '')}
-                  </Typography>
-                  <Typography>{''}</Typography>
-                  {ActionsButtons}
-                  <Typography className={classes.extendedRowPlaceholder}>{''}</Typography>
-                  <Typography className={classes.extendedRowPlaceholder}>{''}</Typography>
-                </>
-              )}
               <>
                 <Typography component='h5' className={classes.extendedRowTitle}>
                   Fee (24h){' '}
@@ -460,6 +447,21 @@ const PoolListItem: React.FC<IProps> = ({
                 </Typography>
                 <Typography>{''}</Typography>
               </>
+              {isSm && (
+                <>
+                  <Typography
+                    component='h5'
+                    className={classes.extendedRowTitle}
+                    sx={{ visibility: showInfo ? 'visible' : 'hidden' }}>
+                    {shortenAddress(tokenAData.symbol ?? '')}/
+                    {shortenAddress(tokenBData.symbol ?? '')}
+                  </Typography>
+                  <Typography>{''}</Typography>
+                  {ActionsButtons}
+                  <Typography className={classes.extendedRowPlaceholder}>{''}</Typography>
+                  <Typography className={classes.extendedRowPlaceholder}>{''}</Typography>
+                </>
+              )}
             </>
           )}
         </Grid>
