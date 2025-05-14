@@ -36,7 +36,22 @@ const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant }
       borderRadius: '24px',
       padding: '24px',
       overflow: 'hidden',
-      boxSizing: 'content-box'
+      boxSizing: 'content-box',
+      '&::before': {
+        content: '""',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+        zIndex: 5,
+        borderRadius: '24px',
+        padding: '2px',
+        background: colors.invariant.pinkGreenLinearGradient,
+        mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+        maskComposite: 'exclude',
+        pointerEvents: 'none'
+      }
     },
     backgroundImage: {
       width: '100%',

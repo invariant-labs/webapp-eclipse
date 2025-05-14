@@ -43,8 +43,10 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
     gradientProgress: {
       width: `${percentage}%`,
       height: '16px',
-      background: colors.invariant.pinkGreenLinearGradient,
+
+      background: `linear-gradient(270deg, #2EE09A 0%, rgba(46, 224, 154, 0.75) 55%)`,
       borderRadius: 8,
+      boxShadow: `0px 0px 20px 0px ${colors.invariant.green}55`,
       transition: 'width 0.3s'
     },
     barWrapper: {

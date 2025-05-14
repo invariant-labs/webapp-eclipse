@@ -41,6 +41,7 @@ import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
+import { auditByLogoIcon } from '@static/icons'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -105,17 +106,20 @@ const useIntersectionObserver = (options = {}) => {
 const AnimatedPreSaleCard = ({
   title,
   subtitle,
-  subtitleColorVariant,
-  imageSrc,
-  imageDirection,
+  gradientPrimaryColor,
+  gradientDirection = 'to top',
   delay,
-  imageSize
 }: {
   title: string
-  subtitleColorVariant?: 'white' | 'pink' | 'green'
   imageSize?: { width: number; height: number }
   subtitle: string
   imageSrc?: string
+  gradientDirection?:
+  | 'to right'
+  | 'to left'
+  | 'to top'
+  | 'to bottom',
+  gradientPrimaryColor?: string
   imageDirection?: 'left' | 'right'
   delay: number
 }) => {
@@ -155,10 +159,8 @@ const AnimatedPreSaleCard = ({
           <PreSaleCard
             title={title}
             subtitle={subtitle}
-            titleColorVariant={subtitleColorVariant}
-            imageSize={imageSize}
-            imageSrc={imageSrc ?? null}
-            imagePosition={imageDirection}
+            gradientDirection={gradientDirection}
+            gradientPrimaryColor={gradientPrimaryColor}
           />
         </Box>
       </Grow>
@@ -170,7 +172,7 @@ export const PreSaleWrapper = () => {
   const { classes } = useStyles()
   const isMobile = useMediaQuery(theme.breakpoints.down('md'))
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
-  const isTablet = useMediaQuery(theme.breakpoints.up('md'))
+  const isTablet = useMediaQuery(theme.breakpoints.down('lg'))
 
 
   const dispatch = useDispatch()
@@ -192,7 +194,8 @@ export const PreSaleWrapper = () => {
     if (isMobile) return 1;
     if (isTablet) return 2;
     return 3;
-  }, [isMobile, isSmallMobile]);
+
+  }, [isMobile, isTablet, isSmallMobile]);
 
   const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
     useMemo(
@@ -353,7 +356,7 @@ export const PreSaleWrapper = () => {
           <Grid className={classes.stepperContainer}>
             <SaleStepper
               isLoading={isLoadingSaleStats}
-              currentStep={round}
+              currentStep={round - 1}
               steps={tierPrices.map((price, idx) => {
                 return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 3)}` }
               })}
@@ -368,6 +371,7 @@ export const PreSaleWrapper = () => {
                 amountLeft={amountLeft}
                 currentPrice={price}
                 nextPrice={nextPrice}
+                proofOfInclusion={proofOfInclusion}
                 percentageFilled={filledPercentage}
                 userDepositedAmount={deposited}
                 userRemainingAllocation={remainingAmount}
@@ -429,7 +433,7 @@ export const PreSaleWrapper = () => {
 
       <Box className={classes.sectionTitle}>
         <Typography
-          sx={{ ...typography.heading4, textAlign: 'center', color: colors.invariant.text }}>
+          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
           Invariant by the Numbers
         </Typography>
 
@@ -449,7 +453,7 @@ export const PreSaleWrapper = () => {
               <Grid item xs={12} className={classes.animatedCardItem}>
                 <AnimatedPreSaleCard
                   title='~1M Users'
-                  subtitleColorVariant='green'
+                  gradientPrimaryColor={`${colors.invariant.green}`}
                   subtitle='who have ever interacted with Invariant'
                   delay={100}
                 />
@@ -457,7 +461,7 @@ export const PreSaleWrapper = () => {
               <Grid item xs={12} className={classes.animatedCardItem}>
                 <AnimatedPreSaleCard
                   title='~$5 Billions'
-                  subtitleColorVariant='pink'
+                  gradientDirection='to bottom'
                   subtitle='in cumulative swap volume'
                   delay={300}
                 />
@@ -475,8 +479,8 @@ export const PreSaleWrapper = () => {
               <Grid item xs={12} className={classes.animatedCardItem}>
                 <AnimatedPreSaleCard
                   title=' $200K+'
-                  imageDirection='left'
-                  subtitleColorVariant='green'
+                  gradientPrimaryColor={`${colors.invariant.green}`}
+                  gradientDirection='to bottom'
                   subtitle='earned in hackathon prizes'
                   delay={700}
                 />
@@ -488,7 +492,7 @@ export const PreSaleWrapper = () => {
 
       <Box className={classes.sectionTitle}>
         <Typography
-          sx={{ ...typography.heading4, textAlign: 'center', color: colors.invariant.text }}>
+          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
           The Invariant Journey
         </Typography>
 
@@ -587,36 +591,57 @@ export const PreSaleWrapper = () => {
         </Box>
       </Box >
 
+      <Box className={classes.sectionTitle}>
+        <Typography
+          sx={{ ...typography.heading1, textAlign: 'center', color: colors.invariant.text }}>
+          Audited By
+        </Typography>
+        <img src={auditByLogoIcon} alt='Audit' style={{ marginTop: '24px' }} width={289} />
+
+      </Box>
+
       {/* Sekcja "FAQ" */}
       < Box className={classes.faqContainer} >
         <Typography
           sx={{
-            ...typography.heading4,
+            ...typography.heading1,
             textAlign: 'center',
             color: colors.invariant.text,
             marginBottom: '32px'
           }}>
-          FAQ
+          Frequently Asked Questions
         </Typography>
 
         <Box>
           <Faq
             faqData={[
               {
-                question: 'What is the minimum investment amount?',
-                answer: 'The minimum investment amount is $100.'
+                question: '1. How can I participate in the public sale?',
+                answer: 'To participate, simply scroll up to the presale section, connect your crypto wallet, enter the amount you’d like to invest, and click Buy Now. Tokens will be transferred after purchase.'
               },
               {
-                question: 'What is the maximum investment amount?',
-                answer: 'The maximum investment amount is $10,000.'
+                question: '2. What is the initial token price?',
+                answer: 'The initial price is set at <span style="color: #2EE09A; font-weight: bold;">0.10$</span> during Round 1, with a gradual increase in each subsequent round.'
               },
-              { question: 'What is the token price?', answer: 'The token price is $0.10.' },
               {
-                question: 'What is the total supply of tokens?',
-                answer: 'The total supply of tokens is 1,000,000,000.'
+                question: '3. When can I claim my tokens?', answer: `
+                  Purchased tokens will be available to claim during the <span style="color: #2EE09A; font-weight: bold;">Token Generation Event (TGE)</span>.
+                `},
+              {
+                question: '4. When is the TGE?',
+                answer: 'The TGE will take place shortly after the public sale ends. We’ll announce the exact date on our official social media channels.'
               },
-              { question: 'What is the soft cap?', answer: 'The soft cap is $1,000,000.' },
-              { question: 'What is the hard cap?', answer: 'The hard cap is $10,000,000.' }
+              {
+                question: '5. How do I know if I’m whitelisted?', answer: `You can check your whitelist status and the round you're eligible for using the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> at the top of the page. </br>
+                
+                If you're not whitelisted, don't worry — you’ll be able to participate in <span style="color: #2EE09A; font-weight: bold;">Round 4</span>, which is open to everyone.
+                `
+              },
+              {
+                question: `6. How can I contact the Invariant team?`,
+                answer: `Feel free to reach out to us on Discord or through any of our official channels: <b> </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p> </b>`
+
+              }
             ]}
           />
         </Box>

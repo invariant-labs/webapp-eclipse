@@ -42,6 +42,7 @@ import airdropIcon from './svg/airdrop.svg'
 import nightlyIcon from './svg/nightly.svg'
 import airdropRainbowIcon from './svg/airdropRainbow.svg'
 import auditIcon from './svg/audit.svg'
+import auditByLogoIcon from './svg/auditbylogo.svg'
 import warning2Icon from './svg/warning2.svg'
 import closeWarningIcon from './svg/closeWarning.svg'
 import dropdownIcon from './svg/dropdown.svg'
@@ -207,6 +208,7 @@ export {
   depositIcon,
   virtualCardIcon,
   withdrawIcon,
+  auditByLogoIcon,
   greenInfoIcon
 }
 

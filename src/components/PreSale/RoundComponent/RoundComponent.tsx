@@ -20,6 +20,7 @@ interface RoundComponentProps {
   userRemainingAllocation: BN
   mintDecimals: number
   roundNumber: number
+  proofOfInclusion?: Uint8Array<ArrayBufferLike>
   isLoading?: boolean
 }
 
@@ -36,6 +37,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   userDepositedAmount,
   userRemainingAllocation,
   mintDecimals,
+  proofOfInclusion = false,
   roundNumber,
   isLoading = false
 
@@ -204,7 +206,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             </Typography>
           </Box>
         )}
-        {isActive && (
+        {isActive && !(roundNumber >= 4 || (roundNumber < 4 && !proofOfInclusion)) && (
           <Box className={classes.infoRow}>
             <Typography className={classes.secondaryLabel}>Your remaining allocation: </Typography>
             <Typography className={classes.value}>

@@ -22,6 +22,7 @@ export interface IProps {
   textClassName?: string
   isDisabled?: boolean
   margin?: string | number
+  defaultVariant?: 'green' | 'pink'
   width?: string | number
   height?: string | number
   isSwap?: boolean
@@ -34,10 +35,11 @@ export const ChangeWalletButton: React.FC<IProps> = ({
   startIcon,
   width,
   margin,
+  defaultVariant = 'pink',
   hideArrow,
   onDisconnect,
   isDisabled = false,
-  onCopyAddress = () => {},
+  onCopyAddress = () => { },
   textClassName
 }) => {
   const { classes, cx } = useStyles()
@@ -108,13 +110,13 @@ export const ChangeWalletButton: React.FC<IProps> = ({
         margin={margin}
         height={height}
         width={width}
-        scheme={connected ? 'normal' : 'pink'}
+        scheme={connected ? 'normal' : defaultVariant === 'pink' ? 'pink' : 'green'}
         disabled={isDisabled}
         classes={{
           startIcon: classes.startIcon,
           endIcon: classes.innerEndIcon
         }}
-        onClick={isDisabled ? () => {} : handleClick}>
+        onClick={isDisabled ? () => { } : handleClick}>
         <Box className={classes.headerButtonContainer}>
           {startIcon && <Box className={classes.startIcon}>{startIcon}</Box>}
           <Typography className={cx(classes.headerButtonTextEllipsis, textClassName)}>

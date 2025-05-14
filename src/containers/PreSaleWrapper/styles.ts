@@ -88,6 +88,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   animatedCardsContainer: {
+    maxWidth: '1072px',
     width: '100%',
     marginTop: '24px',
 
@@ -115,18 +116,26 @@ export const useStyles = makeStyles()(() => ({
   },
   slider: {
     minWidth: '100%',
+    zIndex: 5,
     gap: '46px',
     '& .slick-track': {
       display: 'flex',
       justifyContent: 'space-between'
     },
     '& .slick-list': {
-      [theme.breakpoints.down('sm')]: {
-        margin: '0 -207px'
+      margin: '0 -250px',
+      [theme.breakpoints.up('sm')]: {
+        margin: '0 -50px'
       },
-      margin: '0 -90px'
+      [theme.breakpoints.up('md')]: {
+        margin: '0 -100px'
+      },
+
+      [theme.breakpoints.up('lg')]: {
+        margin: '0 -190px'
+      }
     },
-    '& .slick-slide > div': { padding: '0 30px' },
+    '& .slick-slide > div': { padding: '0' },
 
     '& .slick-slide': {
       display: 'flex',
@@ -162,7 +171,7 @@ export const useStyles = makeStyles()(() => ({
       }
     },
     '& .slick-prev': {
-      left: -50,
+      left: -150,
       [theme.breakpoints.down('lg')]: {
         left: -40
       },
@@ -175,9 +184,9 @@ export const useStyles = makeStyles()(() => ({
       }
     },
     '& .slick-next': {
-      right: -30,
+      right: -150,
       [theme.breakpoints.down('lg')]: {
-        right: -20
+        right: -40
       },
       [theme.breakpoints.down('md')]: {
         right: -10
@@ -203,6 +212,7 @@ export const useStyles = makeStyles()(() => ({
   },
   cardsContainer: {
     display: 'flex',
+    maxWidth: '1072px',
     marginTop: '24px',
     [theme.breakpoints.down('lg')]: {
       width: '800px'
