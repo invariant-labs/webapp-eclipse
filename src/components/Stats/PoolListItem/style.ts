@@ -58,8 +58,8 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       height: !showInfo ? 69 : 143,
 
       rowGap: 20,
-      gridTemplateColumns: '27% 16% 22% 25% 10%',
-      padding: '20px 8px 16px 8px',
+      gridTemplateColumns: '27% 15% 22% 29% 7%',
+      padding: '20px 4px 16px 8px',
 
       '& p': {
         justifyContent: 'flex-start',
@@ -289,6 +289,11 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   extendedRowIcon: {
     justifySelf: 'end',
     alignSelf: 'center',
+    display: 'flex',
+    height: 24,
+    padding: 0,
+    width: 20,
+    fontSize: 10,
     cursor: 'pointer',
     fill: colors.invariant.green,
     transition: 'all 0.3s ease',

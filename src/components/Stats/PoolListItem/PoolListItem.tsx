@@ -31,7 +31,6 @@ import { shortenAddress } from '@utils/uiUtils'
 import LockStatsPopover from '@components/Modals/LockStatsPopover/LockStatsPopover'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { BN } from '@coral-xyz/anchor'
-
 interface IProps {
   TVL?: number
   volume?: number
@@ -367,7 +366,9 @@ const PoolListItem: React.FC<IProps> = ({
           )}
           <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
           <Typography className={classes.selfEnd}>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
-          {isSmd && <ArrowDropDownIcon width={10} className={classes.extendedRowIcon} />}
+          {isSmd && (
+            <ArrowDropDownIcon preserveAspectRatio='none' className={classes.extendedRowIcon} />
+          )}
 
           {!isMd && (
             <Box className={classes.action}>
