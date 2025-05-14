@@ -492,7 +492,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           tickPadding: 0,
           tickRotation: 0,
           tickValues: 5,
-          format: value => formatNumberWithSuffix(value.toString())
+          format: value => (value < 0 ? '' : formatNumberWithSuffix(value.toString()))
         }}
         xScale={{
           type: 'linear',
