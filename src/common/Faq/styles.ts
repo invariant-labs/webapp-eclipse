@@ -79,7 +79,7 @@ export const useStyles = makeStyles()(() => ({
     },
     '& p': {
       color: colors.invariant.text,
-      ...typography.heading3
+      ...typography.heading4
     }
   },
   item: {
@@ -111,7 +111,7 @@ export const useStyles = makeStyles()(() => ({
     },
     '& p': {
       color: colors.invariant.textGrey,
-      ...typography.body3,
+      ...typography.body2,
       opacity: 0.8
     }
   }
