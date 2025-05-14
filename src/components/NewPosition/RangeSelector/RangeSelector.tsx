@@ -1,6 +1,6 @@
 import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import PriceRangePlot, { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Button, Grid, Typography } from '@mui/material'
+import { Box, Button, Grid, Typography } from '@mui/material'
 import loader from '@static/gif/loader.gif'
 import {
   calcPriceByTickIndex,
@@ -57,6 +57,10 @@ export interface IRangeSelector {
   unblockUpdatePriceRange: () => void
   onlyUserPositions: boolean
   setOnlyUserPositions: (onlyUserPositions: boolean) => void
+  usdcPrice: {
+    token: string
+    price?: number
+  } | null
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -87,9 +91,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   shouldReversePlot,
   setShouldReversePlot,
   shouldNotUpdatePriceRange,
-  unblockUpdatePriceRange
+  unblockUpdatePriceRange,
   // onlyUserPositions,
-  // setOnlyUserPositions
+  // setOnlyUserPositions,
+  usdcPrice
 }) => {
   const { classes } = useStyles()
 
@@ -175,6 +180,51 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
       setPlotMin(newMin)
       setPlotMax(newMax)
     }
+  }
+
+  const moveLeft = () => {
+    const diff = plotMax - plotMin
+
+    const minPrice = isXtoY
+      ? calcPriceByTickIndex(getMinTick(tickSpacing), isXtoY, xDecimal, yDecimal)
+      : calcPriceByTickIndex(getMaxTick(tickSpacing), isXtoY, xDecimal, yDecimal)
+
+    const newLeft = plotMin - diff / 6
+    const newRight = plotMax - diff / 6
+
+    if (newLeft < minPrice - diff / 2) {
+      setPlotMin(minPrice - diff / 2)
+      setPlotMax(minPrice + diff / 2)
+    } else {
+      setPlotMin(newLeft)
+      setPlotMax(newRight)
+    }
+  }
+
+  const moveRight = () => {
+    const diff = plotMax - plotMin
+
+    const maxPrice = isXtoY
+      ? calcPriceByTickIndex(getMaxTick(tickSpacing), isXtoY, xDecimal, yDecimal)
+      : calcPriceByTickIndex(getMinTick(tickSpacing), isXtoY, xDecimal, yDecimal)
+
+    const newLeft = plotMin + diff / 6
+    const newRight = plotMax + diff / 6
+
+    if (newRight > maxPrice + diff / 2) {
+      setPlotMin(maxPrice - diff / 2)
+      setPlotMax(maxPrice + diff / 2)
+    } else {
+      setPlotMin(newLeft)
+      setPlotMax(newRight)
+    }
+  }
+
+  const centerChart = () => {
+    const diff = plotMax - plotMin
+
+    setPlotMin(midPrice.x - diff / 2)
+    setPlotMax(midPrice.x + diff / 2)
   }
 
   const setLeftInputValues = (val: string) => {
@@ -448,16 +498,34 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
         <Grid className={classes.headerContainer} container>
-          <Grid className={classes.priceRangeContainer} container>
+          <Grid className={classes.priceRangeContainer}>
             <Typography className={classes.header}>Price range</Typography>
+
             {poolIndex !== null && (
-              <Typography className={classes.currentPrice}>
+              <Typography className={classes.currentPrice} mt={0.5}>
                 {formatNumberWithoutSuffix(midPrice.x)} {tokenBSymbol} per {tokenASymbol}
               </Typography>
             )}
+            {poolIndex !== null && usdcPrice !== null && usdcPrice.price ? (
+              <Typography className={classes.usdcCurrentPrice}>
+                {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
+              </Typography>
+            ) : (
+              <Box minHeight={17} />
+            )}
           </Grid>
-          <Grid className={classes.currentPriceContainer} container>
-            <Typography className={classes.currentPrice}>Current price ━━━</Typography>
+          <Grid
+            display='flex'
+            flexDirection={'row'}
+            alignItems={'center'}
+            alignSelf={'flex-end'}
+            mb={'18px'}>
+            <Typography className={classes.currentPrice} mb={0}>
+              Current price
+            </Typography>
+            <Typography className={classes.currentPrice} ml={0.5} mt={'4px'}>
+              ━━━
+            </Typography>
           </Grid>
         </Grid>
         <PriceRangePlot
@@ -485,6 +553,9 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           disabled={positionOpeningMethod === 'concentration'}
           hasError={hasTicksError}
           reloadHandler={reloadHandler}
+          moveLeft={moveLeft}
+          moveRight={moveRight}
+          centerChart={centerChart}
         />
         {/* <FormControlLabel
           control={

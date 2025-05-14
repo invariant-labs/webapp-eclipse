@@ -146,8 +146,61 @@ export const WrappedStats: React.FC = () => {
           </Grid>
           <Grid className={classes.rowContainer}>
             <Typography className={classes.subheader} mb={2}>
+              Top pools
+            </Typography>
+            <FilterSearch
+              networkType={currentNetwork}
+              setSelectedFilters={setSearchPoolsValue}
+              selectedFilters={searchPoolsValue}
+              filtersAmount={2}
+            />
+          </Grid>
+          <Grid container className={classes.row}>
+            <PoolList
+              initialLength={poolsList.length}
+              data={filteredPoolsList.map(poolData => ({
+                symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
+                symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
+                iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
+                iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
+                volume: poolData.volume24,
+                TVL: poolData.tvl,
+                fee: poolData.fee,
+                addressFrom: poolData.tokenX.toString(),
+                addressTo: poolData.tokenY.toString(),
+                apy: poolData.apy,
+                lockedX: poolData.lockedX,
+                lockedY: poolData.lockedY,
+                liquidityX: poolData.liquidityX,
+                liquidityY: poolData.liquidityY,
+                apyData: {
+                  fees: poolData.apy,
+                  accumulatedFarmsSingleTick: 0,
+                  accumulatedFarmsAvg: 0
+                },
+
+                isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
+                isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
+                poolAddress: poolData.poolAddress.toString(),
+                pointsPerSecond:
+                  promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
+                    ?.pointsPerSecond || '0',
+                isPromoted: promotedPools.some(
+                  pool => pool.address === poolData.poolAddress.toString()
+                )
+              }))}
+              network={currentNetwork}
+              copyAddressHandler={copyAddressHandler}
+              isLoading={isLoadingStats}
+              showAPY={showAPY}
+              filteredTokens={searchPoolsValue}
+            />
+          </Grid>
+          <Grid className={classes.rowContainer}>
+            <Typography className={classes.subheader} mb={2}>
               Top tokens
             </Typography>
+
             <FilterSearch
               networkType={currentNetwork}
               selectedFilters={searchTokensValue}
@@ -156,75 +209,22 @@ export const WrappedStats: React.FC = () => {
               closeOnSelect={true}
             />
           </Grid>
-          <Grid container className={classes.row}>
-            <TokensList
-              initialLength={tokensList.length}
-              data={filteredTokenList.map(tokenData => ({
-                icon: tokenData.tokenDetails?.logoURI ?? unknownTokenIcon,
-                name: tokenData.tokenDetails?.name ?? tokenData.address.toString(),
-                symbol: tokenData.tokenDetails?.symbol ?? tokenData.address.toString(),
-                price: tokenData.price,
-                // priceChange: tokenData.priceChange,
-                volume: tokenData.volume24,
-                TVL: tokenData.tvl,
-                address: tokenData.address.toString(),
-                isUnknown: tokenData.tokenDetails?.isUnknown ?? false
-              }))}
-              network={currentNetwork}
-              copyAddressHandler={copyAddressHandler}
-              isLoading={isLoadingStats}
-            />
-          </Grid>
-          <Grid className={classes.rowContainer}>
-            <Typography className={classes.subheader} mb={2}>
-              Top pools
-            </Typography>
-
-            <FilterSearch
-              networkType={currentNetwork}
-              setSelectedFilters={setSearchPoolsValue}
-              selectedFilters={searchPoolsValue}
-              filtersAmount={2}
-            />
-          </Grid>
-          <PoolList
-            initialLength={poolsList.length}
-            data={filteredPoolsList.map(poolData => ({
-              symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
-              symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
-              iconFrom: poolData.tokenXDetails?.logoURI ?? unknownTokenIcon,
-              iconTo: poolData.tokenYDetails?.logoURI ?? unknownTokenIcon,
-              volume: poolData.volume24,
-              TVL: poolData.tvl,
-              fee: poolData.fee,
-              addressFrom: poolData.tokenX.toString(),
-              addressTo: poolData.tokenY.toString(),
-              apy: poolData.apy,
-              lockedX: poolData.lockedX,
-              lockedY: poolData.lockedY,
-              liquidityX: poolData.liquidityX,
-              liquidityY: poolData.liquidityY,
-              apyData: {
-                fees: poolData.apy,
-                accumulatedFarmsSingleTick: 0,
-                accumulatedFarmsAvg: 0
-              },
-
-              isUnknownFrom: poolData.tokenXDetails?.isUnknown ?? false,
-              isUnknownTo: poolData.tokenYDetails?.isUnknown ?? false,
-              poolAddress: poolData.poolAddress.toString(),
-              pointsPerSecond:
-                promotedPools.find(pool => pool.address === poolData.poolAddress.toString())
-                  ?.pointsPerSecond || '0',
-              isPromoted: promotedPools.some(
-                pool => pool.address === poolData.poolAddress.toString()
-              )
+          <TokensList
+            initialLength={tokensList.length}
+            data={filteredTokenList.map(tokenData => ({
+              icon: tokenData.tokenDetails?.logoURI ?? unknownTokenIcon,
+              name: tokenData.tokenDetails?.name ?? tokenData.address.toString(),
+              symbol: tokenData.tokenDetails?.symbol ?? tokenData.address.toString(),
+              price: tokenData.price,
+              // priceChange: tokenData.priceChange,
+              volume: tokenData.volume24,
+              TVL: tokenData.tvl,
+              address: tokenData.address.toString(),
+              isUnknown: tokenData.tokenDetails?.isUnknown ?? false
             }))}
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}
             isLoading={isLoadingStats}
-            showAPY={showAPY}
-            filteredTokens={searchPoolsValue}
           />
         </>
       )}
