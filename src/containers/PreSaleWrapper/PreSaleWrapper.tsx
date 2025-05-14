@@ -277,7 +277,10 @@ export const PreSaleWrapper = () => {
     return currentTimestamp.lt(startTimestamp)
   }, [startTimestamp, currentTimestamp])
 
-  const isActive = true
+  const isActive = useMemo(() => {
+    return !saleDidNotStart && !saleEnded && !saleSoldOut
+  }, [saleDidNotStart, saleEnded, saleSoldOut])
+
 
   const isPublic = useMemo(() => round === 4, [round])
 
