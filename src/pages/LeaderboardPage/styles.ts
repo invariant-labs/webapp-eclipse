@@ -12,9 +12,7 @@ const useStyles = makeStyles()(() => {
       [theme.breakpoints.down('lg')]: {
         paddingInline: 40
       },
-      [theme.breakpoints.down('md')]: {
-        paddingInline: 20
-      },
+
       [theme.breakpoints.down('sm')]: {
         paddingInline: 8
       }

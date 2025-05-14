@@ -12,10 +12,6 @@ export const useStyles = makeStyles()(() => ({
     maxWidth: '100%',
 
     [theme.breakpoints.down('lg')]: {
-      paddingInline: 36
-    },
-
-    [theme.breakpoints.down('md')]: {
       paddingInline: 40
     },
 

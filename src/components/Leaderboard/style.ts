@@ -45,11 +45,11 @@ const useStyles = makeStyles()((theme: Theme) => {
       },
 
       [theme.breakpoints.between('md', 'lg')]: {
-        width: '800px'
+        width: '100%'
       },
 
       [theme.breakpoints.down('md')]: {
-        width: '85vw'
+        width: '100%'
       },
       [theme.breakpoints.down('sm')]: {
         width: '100%'
