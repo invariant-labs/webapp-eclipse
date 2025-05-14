@@ -55,10 +55,10 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     },
 
     [theme.breakpoints.down('sm')]: {
-      height: !showInfo ? 69 : 135,
+      height: !showInfo ? 69 : 143,
 
-      rowGap: 12,
-      gridTemplateColumns: '30% 15% 28% 17% 10%',
+      rowGap: 20,
+      gridTemplateColumns: '30% 15% 28% 15% 10%',
       padding: '20px 8px 16px 8px',
 
       '& p': {
@@ -79,14 +79,6 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       gridTemplateColumns: 'auto 100px 140px 80px 24px'
     },
 
-    [theme.breakpoints.down('sm')]: {
-      gridTemplateColumns: 'auto 60px 70px 60px 24px',
-
-      '& p': {
-        justifyContent: 'flex-start',
-        ...typography.caption1
-      }
-    },
     cursor: 'pointer'
   },
 
@@ -189,8 +181,9 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     minWidth: 'max-content',
     gap: 8,
     [theme.breakpoints.down('sm')]: {
-      justifyContent: 'flex-start',
-      visibility: showInfo ? 'visible' : 'hidden'
+      justifyContent: 'flex-end',
+      visibility: showInfo ? 'visible' : 'hidden',
+      gridColumn: 'span 3'
     }
   },
   actionButton: {

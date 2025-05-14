@@ -455,10 +455,7 @@ const PoolListItem: React.FC<IProps> = ({
                     {shortenAddress(tokenAData.symbol ?? '')}/
                     {shortenAddress(tokenBData.symbol ?? '')}
                   </Typography>
-                  <Typography>{''}</Typography>
                   {ActionsButtons}
-                  <Typography className={classes.extendedRowPlaceholder}>{''}</Typography>
-                  <Typography className={classes.extendedRowPlaceholder}>{''}</Typography>
                 </>
               )}
             </>
