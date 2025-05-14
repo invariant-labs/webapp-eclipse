@@ -57,6 +57,32 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     paymentSelected: {
       border: `2px solid ${colors.invariant.green}`
     },
+    egibilityCheckerWrapper: {
+      display: 'flex',
+      flexDirection: 'column',
+      width: '100%',
+      paddingBottom: '8px',
+      marginBottom: '16px',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      borderBottom: `1px solid ${colors.invariant.light}`
+    },
+    egibilityChecker: {
+      display: 'flex',
+      gap: '8px',
+      alignItems: 'center'
+    },
+    egibilityCheckerText: {
+      color: colors.invariant.text,
+      ...typography.body2,
+      whiteSpace: 'nowrap',
+      marginRight: '16px',
+      width: '70%',
+      [theme.breakpoints.down('md')]: {
+        marginRight: '0px',
+        whiteSpace: 'normal'
+      }
+    },
 
     headingContainer: {
       display: 'flex',

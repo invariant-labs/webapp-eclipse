@@ -370,6 +370,7 @@ export const PreSaleWrapper = () => {
                 amountNeeded={amountNeeded}
                 amountLeft={amountLeft}
                 currentPrice={price}
+                walletStatus={walletStatus}
                 nextPrice={nextPrice}
                 proofOfInclusion={proofOfInclusion}
                 percentageFilled={filledPercentage}

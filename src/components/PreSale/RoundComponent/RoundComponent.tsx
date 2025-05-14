@@ -5,6 +5,7 @@ import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
 import { printBNandTrimZeros } from '@utils/utils'
 import { EFFECTIVE_TARGET_MULTIPLIER, PERCENTAGE_SCALE } from '@invariant-labs/sale-sdk'
+import { Status } from '@store/reducers/solanaWallet'
 
 interface RoundComponentProps {
   isActive: boolean
@@ -22,6 +23,7 @@ interface RoundComponentProps {
   roundNumber: number
   proofOfInclusion?: Uint8Array<ArrayBufferLike>
   isLoading?: boolean
+  walletStatus?: Status
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -31,6 +33,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   amountDeposited,
   amountNeeded,
   amountLeft,
+  walletStatus,
   currentPrice,
   nextPrice,
   percentageFilled,
@@ -134,7 +137,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           {isActive ? (
             <>
               <Box className={classes.darkBackground}>
-                <Box className={classes.gradientProgress} />
+                <Box className={classNames(classes.gradientProgress, walletStatus === Status.Initialized ? classes.activeProgress : classes.inactiveProgress)} />
               </Box>
               <Grid container className={classes.barWrapper}>
                 <Typography className={classes.amountBought}>
@@ -198,7 +201,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           </>
         )}
 
-        {!saleDidNotStart && (
+        {!saleDidNotStart && walletStatus === Status.Initialized && (
           <Box className={classes.infoRow}>
             <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
             <Typography className={classes.value}>

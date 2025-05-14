@@ -18,7 +18,6 @@ import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedBu
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN } from '@store/consts/static'
 import { closeSmallGreenIcon, greenInfoIcon } from '@static/icons'
-import { colors, typography } from '@static/theme'
 
 interface IProps {
   nativeBalance: BN
@@ -174,10 +173,10 @@ export const BuyComponent: React.FC<IProps> = ({
                 <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
               </Box>
             </Box>
-          ) : <Box sx={{ display: 'flex', flexDirection: 'column', width: '100%', paddingBottom: '8px', marginBottom: '16px', justifyContent: 'space-between', alignItems: 'center', borderBottom: `1px solid ${colors.invariant.light}` }}>
+          ) : <Box className={classes.egibilityCheckerWrapper}>
 
-            <Box sx={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
-              <Typography style={{ ...typography.body2, width: '70%', color: colors.invariant.text }}>To participate in sale, check your eligibility</Typography>
+            <Box className={classes.egibilityChecker}>
+              <Typography className={classes.egibilityCheckerText}>To participate in sale, check your eligibility</Typography>
               <ChangeWalletButton
                 width={'40%'}
                 height={48}
