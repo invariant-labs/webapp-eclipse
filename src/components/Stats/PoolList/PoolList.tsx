@@ -240,7 +240,7 @@ const PoolList: React.FC<PoolListInterface> = ({
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             onAction={() =>
-              navigate(ROUTES.getNewPositionRoute(filteredTokenX, filteredTokenY, '0_01'), {
+              navigate(ROUTES.getNewPositionRoute(filteredTokenX, filteredTokenY, '0_10'), {
                 state: { referer: 'stats' }
               })
             }

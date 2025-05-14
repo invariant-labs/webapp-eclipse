@@ -233,7 +233,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             buttonName='Create Pool'
             onAction={() =>
-              navigate(ROUTES.getNewPositionRoute(filteredTokenX, filteredTokenY, '0_01'), {
+              navigate(ROUTES.getNewPositionRoute(filteredTokenX, filteredTokenY, '0_10'), {
                 state: { referer: 'stats' }
               })
             }
