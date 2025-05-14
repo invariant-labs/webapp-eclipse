@@ -18,10 +18,10 @@ export const InfoComponent = () => {
           <Typography className={classes.header}>What are Invariant Points?</Typography>
 
           <Typography className={classes.description}>
-            The Invariant Points Program rewards liquidity providers and active community members.
-            Earn points by adding liquidity, swapping, and creating content about Invariant. Watch for
-            pool boosts to earn even more. Develop your strategy, climb the leaderboard, and unlock
-            access to exclusive future rewards.
+            The Invariant Points Program provides incentives for liquidity providers and active
+            community members. Earn points by adding liquidity, swapping, and creating content about
+            Invariant. Look out for pool boosts to maximize your earnings. Develop your strategy,
+            climb the leaderboard, and unlock access to exclusive benefits.
           </Typography>
 
           <Box className={classes.linkButtonContainer}>
