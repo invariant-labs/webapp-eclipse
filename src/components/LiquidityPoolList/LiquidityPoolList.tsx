@@ -47,6 +47,7 @@ import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
 import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { shortenAddress } from '@utils/uiUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -95,8 +96,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
-  const filteredTokenX = filteredTokens[0]?.address ?? ''
-  const filteredTokenY = filteredTokens[1]?.address ?? ''
+  const filteredTokenX = filteredTokens[0] ?? ''
+  const filteredTokenY = filteredTokens[1] ?? ''
   const { classes, cx } = useStyles()
   const sortedData = useMemo(() => {
     if (isLoading) {
@@ -228,14 +229,17 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
           <EmptyPlaceholder
             height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 690}
             newVersion
-            mainTitle='Pool not found...'
+            mainTitle={`The ${shortenAddress(filteredTokenX.symbol)}/${shortenAddress(filteredTokenY.symbol)} pool was not found...`}
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             buttonName='Create Pool'
             onAction={() =>
-              navigate(ROUTES.getNewPositionRoute(filteredTokenX, filteredTokenY, '0_10'), {
-                state: { referer: 'stats' }
-              })
+              navigate(
+                ROUTES.getNewPositionRoute(filteredTokenX.address, filteredTokenY.address, '0_10'),
+                {
+                  state: { referer: 'stats' }
+                }
+              )
             }
             withButton={true}
             withImg={initialDataLength > 3}
