@@ -18,7 +18,7 @@ export const useStyles = makeStyles()(() => ({
     }
   },
   suggestedPriceText: {
-    width: 128,
+    width: 148,
     fontSize: 14,
     lineHeight: 0.8
   }

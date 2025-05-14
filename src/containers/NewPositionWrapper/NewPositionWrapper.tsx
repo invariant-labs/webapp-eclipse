@@ -876,7 +876,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     return poolIndex !== -1
       ? calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal)
       : 0
-  }, [allPools, isFetchingNewPool])
+  }, [tokenAIndex, tokenBIndex, allPools, isFetchingNewPool, currentPairReversed])
 
   return (
     <NewPosition
