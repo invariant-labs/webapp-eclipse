@@ -1,6 +1,8 @@
 import React, { CSSProperties, useRef } from 'react'
 import useStyles from './style'
 import { Input } from '@mui/material'
+import { Button } from '@common/Button/Button'
+import { formatNumberWithoutSuffix } from '@utils/utils'
 
 interface IProps {
   setValue: (value: string) => void
@@ -11,6 +13,7 @@ interface IProps {
   placeholder?: string
   style?: CSSProperties
   onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>
+  suggestedPrice: number
 }
 
 export const SimpleInput: React.FC<IProps> = ({
@@ -21,7 +24,8 @@ export const SimpleInput: React.FC<IProps> = ({
   decimal,
   placeholder,
   style,
-  onBlur
+  onBlur,
+  suggestedPrice
 }) => {
   const { classes, cx } = useStyles()
 
@@ -80,6 +84,14 @@ export const SimpleInput: React.FC<IProps> = ({
       inputProps={{
         inputMode: 'decimal'
       }}
+      endAdornment={
+        <Button
+          scheme='green'
+          height={40}
+          onClick={() => setValue(formatNumberWithoutSuffix(suggestedPrice))}>
+          <p className={classes.suggestedPriceText}>Use suggested price</p>
+        </Button>
+      }
     />
   )
 }

@@ -44,6 +44,7 @@ export interface IPoolInit {
   concentrationArray: number[]
   minimumSliderIndex: number
   currentFeeIndex: number
+  suggestedPrice: number
 }
 
 export const PoolInit: React.FC<IPoolInit> = ({
@@ -64,7 +65,8 @@ export const PoolInit: React.FC<IPoolInit> = ({
   concentrationIndex,
   concentrationArray,
   minimumSliderIndex,
-  currentFeeIndex
+  currentFeeIndex,
+  suggestedPrice
 }) => {
   const minTick = getMinTick(tickSpacing)
   const maxTick = getMaxTick(tickSpacing)
@@ -320,6 +322,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
           onBlur={e => {
             setMidPriceInput(validateMidPriceInput(e.target.value || '0'))
           }}
+          suggestedPrice={suggestedPrice}
         />
 
         <Grid className={classes.priceWrapper} container>
