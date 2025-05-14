@@ -1,7 +1,7 @@
 import useStyles from './style'
-import { Popover, Typography, LinearProgress, Box } from '@mui/material'
+import { Popover, Typography, LinearProgress, Box, useMediaQuery } from '@mui/material'
 import { ResponsivePie } from '@nivo/pie'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { useState, useEffect, useMemo } from 'react'
 
@@ -29,6 +29,7 @@ export const LockStatsPopover = ({
   symbolY
 }: ILockStatsPopover) => {
   const { classes } = useStyles()
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
   const [animationTriggered, setAnimationTriggered] = useState(false)
   const percentagesAndValues = useMemo(() => {
     const totalLocked = lockedX + lockedY
@@ -218,27 +219,29 @@ export const LockStatsPopover = ({
                     %)
                   </span>
                 </Typography>
-                <Box className={classes.barWrapper}>
-                  <LinearProgress
-                    variant='determinate'
-                    value={animationTriggered ? +percentagesAndValues.xStandard : 0}
-                    sx={{
-                      ...progressStyles,
-                      width: '100%',
-                      ml: 0,
-                      '& .MuiLinearProgress-bar': {
-                        backgroundColor: colors.invariant.pink
-                      }
-                    }}
-                  />
-                  <Box
-                    className={classes.progress}
-                    sx={{
-                      width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%',
-                      boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
-                    }}
-                  />
-                </Box>
+                {!isSm && (
+                  <Box className={classes.barWrapper}>
+                    <LinearProgress
+                      variant='determinate'
+                      value={animationTriggered ? +percentagesAndValues.xStandard : 0}
+                      sx={{
+                        ...progressStyles,
+                        width: '100%',
+                        ml: 0,
+                        '& .MuiLinearProgress-bar': {
+                          backgroundColor: colors.invariant.pink
+                        }
+                      }}
+                    />
+                    <Box
+                      className={classes.progress}
+                      sx={{
+                        width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%',
+                        boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
+                      }}
+                    />
+                  </Box>
+                )}
               </div>
 
               <div className={classes.chartWrapper}>
@@ -261,28 +264,30 @@ export const LockStatsPopover = ({
                   </span>
                 </Typography>
 
-                <Box className={classes.barWrapper}>
-                  <LinearProgress
-                    variant='determinate'
-                    value={animationTriggered ? +percentagesAndValues.yStandard : 0}
-                    sx={{
-                      ...progressStyles,
-                      width: '100%',
-                      ml: 0,
-                      '& .MuiLinearProgress-bar': {
-                        backgroundColor: colors.invariant.green
-                      }
-                    }}
-                  />
-                  <Box
-                    className={classes.progress}
-                    sx={{
-                      width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
+                {!isSm && (
+                  <Box className={classes.barWrapper}>
+                    <LinearProgress
+                      variant='determinate'
+                      value={animationTriggered ? +percentagesAndValues.yStandard : 0}
+                      sx={{
+                        ...progressStyles,
+                        width: '100%',
+                        ml: 0,
+                        '& .MuiLinearProgress-bar': {
+                          backgroundColor: colors.invariant.green
+                        }
+                      }}
+                    />
+                    <Box
+                      className={classes.progress}
+                      sx={{
+                        width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
 
-                      boxShadow: `0 0 6px 1px ${colors.invariant.green}`
-                    }}
-                  />
-                </Box>
+                        boxShadow: `0 0 6px 1px ${colors.invariant.green}`
+                      }}
+                    />
+                  </Box>
+                )}
               </div>
             </div>
             <Typography className={classes.description}>

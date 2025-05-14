@@ -26,7 +26,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     display: 'grid',
     alignItems: 'center',
     gridTemplateColumns: '30px auto 190px 120px 120px 140px 120px 150px',
-    padding: '22px 24px 14px 24px',
+    padding: '20px 26px 14px 24px',
     whiteSpace: 'nowrap',
 
     boxSizing: 'border-box',
@@ -59,7 +59,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
 
       rowGap: 12,
       gridTemplateColumns: '30% 15% 28% 17% 10%',
-      padding: '18px 8px',
+      padding: '20px 8px 16px 8px',
 
       '& p': {
         justifyContent: 'flex-start',
@@ -304,6 +304,7 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     gap: 6,
 
     color: colors.invariant.textGrey,
+
     [theme.breakpoints.down('sm')]: {
       ...typography.caption1
     },

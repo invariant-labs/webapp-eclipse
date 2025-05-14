@@ -216,32 +216,6 @@ const PoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
   const ActionsButtons = (
     <Box className={classes.action}>
-      {isLocked && (
-        <>
-          <button
-            onClick={(e: React.MouseEvent) => e.stopPropagation()}
-            className={classes.actionButton}
-            ref={lockIconRef}
-            onPointerLeave={handlePointerLeave}
-            onPointerEnter={handlePointerEnter}>
-            <img width={28} src={lockIcon} alt={'Lock info'} />
-          </button>
-          <LockStatsPopover
-            anchorEl={lockIconRef.current}
-            open={isLockPopoverOpen}
-            lockedX={tokenAData.locked}
-            lockedY={tokenBData.locked}
-            symbolX={shortenAddress(tokenAData.symbol ?? '')}
-            symbolY={shortenAddress(tokenBData.symbol ?? '')}
-            liquidityX={tokenAData.liquidity}
-            liquidityY={tokenBData.liquidity}
-            onClose={() => {
-              setLockPopoverOpen(false)
-            }}
-          />
-        </>
-      )}
-
       <button
         className={classes.actionButton}
         onClick={(e: React.MouseEvent) => {
@@ -270,6 +244,31 @@ const PoolListItem: React.FC<IProps> = ({
         }}>
         <img width={28} src={newTabBtnIcon} alt={'Exchange'} />
       </button>
+      {isLocked && (
+        <>
+          <button
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            className={classes.actionButton}
+            ref={lockIconRef}
+            onPointerLeave={handlePointerLeave}
+            onPointerEnter={handlePointerEnter}>
+            <img width={28} src={lockIcon} alt={'Lock info'} />
+          </button>
+          <LockStatsPopover
+            anchorEl={lockIconRef.current}
+            open={isLockPopoverOpen}
+            lockedX={tokenAData.locked}
+            lockedY={tokenBData.locked}
+            symbolX={shortenAddress(tokenAData.symbol ?? '')}
+            symbolY={shortenAddress(tokenBData.symbol ?? '')}
+            liquidityX={tokenAData.liquidity}
+            liquidityY={tokenBData.liquidity}
+            onClose={() => {
+              setLockPopoverOpen(false)
+            }}
+          />
+        </>
+      )}
     </Box>
   )
   return (
