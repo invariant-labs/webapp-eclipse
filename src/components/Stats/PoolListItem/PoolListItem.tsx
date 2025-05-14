@@ -366,7 +366,7 @@ const PoolListItem: React.FC<IProps> = ({
             <Typography> ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}</Typography>
           )}
           <Typography>{`$${formatNumberWithSuffix(volume)}`}</Typography>
-          <Typography>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
+          <Typography className={classes.selfEnd}>{`$${formatNumberWithSuffix(TVL)}`}</Typography>
           {isSmd && <ArrowDropDownIcon width={10} className={classes.extendedRowIcon} />}
 
           {!isMd && (
@@ -430,15 +430,17 @@ const PoolListItem: React.FC<IProps> = ({
                     ${formatNumberWithSuffix((fee * 0.01 * volume).toFixed(2))}
                   </span>
                 </Typography>
-
                 <Typography>{''}</Typography>
+
                 <Typography component='h5' className={classes.extendedRowTitle}>
                   APY{' '}
                   <span className={classes.extendedRowContent}>
                     {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '-' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                   </span>
                 </Typography>
-                <Typography component='h5' className={classes.extendedRowTitle}>
+                <Typography
+                  component='h5'
+                  className={cx(classes.extendedRowTitle, classes.selfEnd)}>
                   APR{' '}
                   <span className={classes.extendedRowContent}>
                     {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}

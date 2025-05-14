@@ -58,12 +58,15 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       height: !showInfo ? 69 : 143,
 
       rowGap: 20,
-      gridTemplateColumns: '30% 15% 28% 15% 10%',
+      gridTemplateColumns: '27% 16% 22% 25% 10%',
       padding: '20px 8px 16px 8px',
 
       '& p': {
         justifyContent: 'flex-start',
         ...typography.caption1
+      },
+      '& > p:nth-of-type(4)': {
+        justifyContent: 'flex-end'
       }
     }
   },
@@ -102,7 +105,12 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
     display: 'flex',
     marginRight: 8
   },
-
+  selfEnd: {
+    [theme.breakpoints.down('sm')]: {
+      justifyContent: 'flex-end',
+      textAlign: 'end'
+    }
+  },
   header: {
     height: '69px',
     '& p.MuiTypography-root': {
@@ -188,8 +196,8 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
   },
   actionButton: {
     height: 32,
-    background: 'none',
     width: 32,
+    background: 'none',
     padding: 0,
     margin: 0,
     border: 'none',
@@ -203,6 +211,10 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       '@media (hover: none)': {
         filter: 'none'
       }
+    },
+    [theme.breakpoints.down('sm')]: {
+      height: 28,
+      width: 28
     }
   },
   airdropIcon: {
@@ -307,6 +319,10 @@ export const useStyles = makeStyles<{ showInfo?: boolean }>()((_theme, { showInf
       }
     }
   },
+  extendedAPY: {
+    gridColumn: 'span 2'
+  },
+
   extendedRowContent: {
     flexWrap: 'nowrap',
 
