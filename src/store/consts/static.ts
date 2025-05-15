@@ -926,12 +926,12 @@ export enum ErrorCodeExtractionKeys {
   Dot = '.'
 }
 export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
-  0x1778: 'Try increasing the slippage tolerance',
-  0x1795: 'The amount is lower than the minimum acceptable output',
-  0x1796: 'The amount is higher than the maximum acceptable input',
-  0x1775: 'Insufficient position utilization',
-  0x1773: 'The Price limit is on wrong side of current price',
-  0x1785: 'The swap output amount is zero'
+  0x1778: 'Price moved too much – increase slippage',
+  0x1773: 'Price moved too much – increase slippage',
+  0x1795: 'Output too low – adjust amount or slippage settings',
+  0x1796: 'Input too high – reduce the amount to proceed',
+  0x1775: 'Position not opened – minimum utilization not met',
+  0x1785: 'Swap failed – output amount is zero'
 }
 
 export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
