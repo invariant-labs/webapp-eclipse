@@ -1374,6 +1374,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             onlyUserPositions={onlyUserPositions}
             setOnlyUserPositions={setOnlyUserPositions}
             usdcPrice={usdcPrice}
+            suggestedPrice={suggestedPrice}
           />
         ) : (
           <PoolInit

@@ -226,10 +226,22 @@ const useStyles = makeStyles()(theme => {
       height: 60,
       marginLeft: 16
     },
+    currentPriceContainer: {
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'flex-end',
+      marginTop: 23
+    },
     currentPrice: {
       display: 'inline-block',
       color: colors.invariant.yellow,
       ...typography.caption2
+    },
+    priceWarning: {
+      display: 'inline-block',
+      color: colors.invariant.Error,
+      ...typography.body2,
+      marginLeft: 8
     },
     usdcCurrentPrice: {
       display: 'inline-block',

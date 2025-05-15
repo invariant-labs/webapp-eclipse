@@ -13,7 +13,7 @@ import {
   toMaxNumericPlaces
 } from '@utils/utils'
 import { PlotTickData } from '@store/reducers/positions'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useMemo, useRef, useState } from 'react'
 import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
@@ -61,6 +61,7 @@ export interface IRangeSelector {
     token: string
     price?: number
   } | null
+  suggestedPrice: number
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -94,7 +95,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   unblockUpdatePriceRange,
   // onlyUserPositions,
   // setOnlyUserPositions,
-  usdcPrice
+  usdcPrice,
+  suggestedPrice
 }) => {
   const { classes } = useStyles()
 
@@ -494,6 +496,12 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
     autoZoomHandler(leftRange, rightRange, true)
   }, [tokenASymbol, tokenBSymbol])
 
+  const showPriceWarning = useMemo(() => {
+    const lowerBound = midPrice.x * 0.9
+    const upperBound = midPrice.x * 1.1
+    return suggestedPrice < lowerBound || suggestedPrice > upperBound
+  }, [suggestedPrice, midPrice.x])
+
   return (
     <Grid container className={classes.wrapper}>
       <Grid className={classes.topInnerWrapper}>
@@ -514,18 +522,20 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
               <Box minHeight={17} />
             )}
           </Grid>
-          <Grid
-            display='flex'
-            flexDirection={'row'}
-            alignItems={'center'}
-            alignSelf={'flex-end'}
-            mb={'18px'}>
-            <Typography className={classes.currentPrice} mb={0}>
-              Current price
-            </Typography>
-            <Typography className={classes.currentPrice} ml={0.5} mt={'4px'}>
-              ━━━
-            </Typography>
+          <Grid className={classes.currentPriceContainer}>
+            <Grid>
+              <Typography className={classes.currentPrice} mb={0}>
+                Current price
+              </Typography>
+              <Typography className={classes.currentPrice} ml={0.5} mt={'4px'}>
+                ━━━
+              </Typography>
+            </Grid>
+            {showPriceWarning && (
+              <Typography className={classes.priceWarning}>
+                WARNING! Price might be wrong
+              </Typography>
+            )}
           </Grid>
         </Grid>
         <PriceRangePlot
