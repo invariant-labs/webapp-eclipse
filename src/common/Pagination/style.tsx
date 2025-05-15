@@ -120,7 +120,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     alignItems: 'center',
     borderRadius: 4,
     cursor: 'pointer',
-    opacity: 0.8,
+    opacity: 1,
     transition: 'opacity 300ms ease-in-out',
     padding: 0,
 
