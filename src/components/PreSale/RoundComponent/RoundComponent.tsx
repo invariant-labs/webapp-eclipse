@@ -21,9 +21,10 @@ interface RoundComponentProps {
   userRemainingAllocation: BN
   mintDecimals: number
   roundNumber: number
-  proofOfInclusion?: Uint8Array<ArrayBufferLike>
-  isLoading?: boolean
-  walletStatus?: Status
+  proofOfInclusion: Uint8Array<ArrayBufferLike> | undefined
+  isLoadingUserStats: boolean
+  isLoadingSaleStats: boolean
+  walletStatus: Status
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -40,21 +41,20 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   userDepositedAmount,
   userRemainingAllocation,
   mintDecimals,
-  proofOfInclusion = false,
+  proofOfInclusion,
   roundNumber,
-  isLoading = false
-
+  isLoadingSaleStats,
+  isLoadingUserStats
 }) => {
   const { classes } = useStyles({
     percentage: Number(printBNandTrimZeros(percentageFilled, PERCENTAGE_SCALE, 3)),
     isActive
   })
 
-
-  if (isLoading) {
+  if (isLoadingSaleStats) {
     return (
       <Box className={classes.container}>
-        <Skeleton variant="text" sx={{ justifySelf: 'center' }} width={150} height={40} />
+        <Skeleton variant='text' sx={{ justifySelf: 'center' }} width={150} height={40} />
 
         <Box className={classes.progressCard}>
           <Box className={classes.progressHeader}>
@@ -65,25 +65,23 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                 </Box>
                 <Grid container className={classes.barWrapper}>
                   <Typography className={classes.amountBought}>
-                    <Skeleton variant="text" width={20} />
-
+                    <Skeleton variant='text' width={20} />
                   </Typography>
                   <Typography className={classes.amountLeft}>
-                    <Skeleton variant="text" width={20} />
-
+                    <Skeleton variant='text' width={20} />
                   </Typography>
                 </Grid>
               </>
             ) : (
               <>
                 <Box className={classes.infoRow}>
-                  <Skeleton variant="text" width={200} />
+                  <Skeleton variant='text' width={200} />
                 </Box>
                 <Box className={classes.infoRow}>
-                  <Skeleton variant="text" width={200} />
+                  <Skeleton variant='text' width={200} />
                 </Box>
                 <Box className={classes.infoRow}>
-                  <Skeleton variant="text" width={200} />
+                  <Skeleton variant='text' width={200} />
                 </Box>
               </>
             )}
@@ -94,10 +92,10 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           {isActive && (
             <>
               <Box className={classes.infoRow}>
-                <Skeleton variant="text" width={180} />
+                <Skeleton variant='text' width={180} />
               </Box>
               <Box className={classes.infoRow}>
-                <Skeleton variant="text" width={180} />
+                <Skeleton variant='text' width={180} />
               </Box>
               <Box className={classes.divider} />
             </>
@@ -105,13 +103,13 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
           {!saleDidNotStart && (
             <Box className={classes.infoRow}>
-              <Skeleton variant="text" width={200} />
+              <Skeleton variant='text' width={200} />
             </Box>
           )}
 
           {isActive && (
             <Box className={classes.infoRow}>
-              <Skeleton variant="text" width={200} />
+              <Skeleton variant='text' width={200} />
             </Box>
           )}
         </Box>
@@ -123,12 +121,11 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     <Box className={classes.container}>
       <Typography className={classes.roundTitle}>ROUND {roundNumber}</Typography>
 
-
       {!isActive && (
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
           <Typography className={classes.infoLabelBigger}>Current price: </Typography>
           <Typography className={classes.currentPriceBigger}>
-            ${printBNandTrimZeros(currentPrice, mintDecimals, 3)}
+            ${printBNandTrimZeros(currentPrice, mintDecimals, 4)}
           </Typography>
         </Box>
       )}
@@ -137,7 +134,14 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           {isActive ? (
             <>
               <Box className={classes.darkBackground}>
-                <Box className={classNames(classes.gradientProgress, walletStatus === Status.Initialized ? classes.activeProgress : classes.inactiveProgress)} />
+                <Box
+                  className={classNames(
+                    classes.gradientProgress,
+                    walletStatus === Status.Initialized
+                      ? classes.activeProgress
+                      : classes.inactiveProgress
+                  )}
+                />
               </Box>
               <Grid container className={classes.barWrapper}>
                 <Typography className={classes.amountBought}>
@@ -201,7 +205,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           </>
         )}
 
-        {!saleDidNotStart && walletStatus === Status.Initialized && (
+        {!isLoadingUserStats && !saleDidNotStart && walletStatus === Status.Initialized && (
           <Box className={classes.infoRow}>
             <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
             <Typography className={classes.value}>
@@ -209,14 +213,18 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             </Typography>
           </Box>
         )}
-        {isActive && !(roundNumber >= 4 || (roundNumber < 4 && !proofOfInclusion)) && (
-          <Box className={classes.infoRow}>
-            <Typography className={classes.secondaryLabel}>Your remaining allocation: </Typography>
-            <Typography className={classes.value}>
-              ${printBNandTrimZeros(userRemainingAllocation, mintDecimals, 3)}
-            </Typography>
-          </Box>
-        )}
+        {!isLoadingUserStats &&
+          isActive &&
+          !(roundNumber === 4 || (roundNumber < 4 && !proofOfInclusion)) && (
+            <Box className={classes.infoRow}>
+              <Typography className={classes.secondaryLabel}>
+                Your remaining allocation:{' '}
+              </Typography>
+              <Typography className={classes.value}>
+                ${printBNandTrimZeros(userRemainingAllocation, mintDecimals, 3)}
+              </Typography>
+            </Box>
+          )}
       </Box>
     </Box>
   )

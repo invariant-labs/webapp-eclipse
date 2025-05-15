@@ -54,7 +54,7 @@ function SampleNextArrow(props) {
 
         backgroundImage: `url(${ArrowRight})`,
         backgroundSize: 'cover',
-        zIndex: 3,
+        zIndex: 3
       }}
       onClick={onClick}
     />
@@ -71,8 +71,7 @@ function SamplePrevArrow(props) {
         display: 'block',
         backgroundImage: `url(${ArrowLeft})`,
         backgroundSize: 'cover',
-        zIndex: 3,
-
+        zIndex: 3
       }}
       onClick={onClick}
     />
@@ -108,17 +107,13 @@ const AnimatedPreSaleCard = ({
   subtitle,
   gradientPrimaryColor,
   gradientDirection = 'to top',
-  delay,
+  delay
 }: {
   title: string
   imageSize?: { width: number; height: number }
   subtitle: string
   imageSrc?: string
-  gradientDirection?:
-  | 'to right'
-  | 'to left'
-  | 'to top'
-  | 'to bottom',
+  gradientDirection?: 'to right' | 'to left' | 'to top' | 'to bottom'
   gradientPrimaryColor?: string
   imageDirection?: 'left' | 'right'
   delay: number
@@ -145,7 +140,6 @@ const AnimatedPreSaleCard = ({
     <div ref={cardRef} style={{ width: '100%' }}>
       <Grow
         in={visible}
-
         style={{ transformOrigin: '0 0 0' }}
         timeout={{
           enter: 1000
@@ -174,7 +168,6 @@ export const PreSaleWrapper = () => {
   const isSmallMobile = useMediaQuery(theme.breakpoints.down('sm'))
   const isTablet = useMediaQuery(theme.breakpoints.down('lg'))
 
-
   const dispatch = useDispatch()
   const isLoadingSaleStats = useSelector(saleSelectors.isLoadingSaleStats)
   const isLoadingUserStats = useSelector(saleSelectors.isLoadingUserStats)
@@ -190,12 +183,11 @@ export const PreSaleWrapper = () => {
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
 
   const slidesToShow = useMemo(() => {
-    if (isSmallMobile) return 1;
-    if (isMobile) return 1;
-    if (isTablet) return 2;
-    return 3;
-
-  }, [isMobile, isTablet, isSmallMobile]);
+    if (isSmallMobile) return 1
+    if (isMobile) return 1
+    if (isTablet) return 2
+    return 3
+  }, [isMobile, isTablet, isSmallMobile])
 
   const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
     useMemo(
@@ -203,13 +195,13 @@ export const PreSaleWrapper = () => {
         saleStats
           ? saleStats
           : {
-            targetAmount: new BN(0),
-            currentAmount: new BN(0),
-            whitelistWalletLimit: new BN(0),
-            startTimestamp: new BN(0),
-            duration: new BN(0),
-            mint: new PublicKey(0)
-          },
+              targetAmount: new BN(0),
+              currentAmount: new BN(0),
+              whitelistWalletLimit: new BN(0),
+              startTimestamp: new BN(0),
+              duration: new BN(0),
+              mint: new PublicKey(0)
+            },
       [saleStats]
     )
 
@@ -223,9 +215,9 @@ export const PreSaleWrapper = () => {
       userStats
         ? userStats
         : {
-          deposited: new BN(0),
-          received: new BN(0)
-        },
+            deposited: new BN(0),
+            received: new BN(0)
+          },
     [userStats]
   )
 
@@ -283,7 +275,6 @@ export const PreSaleWrapper = () => {
   const isActive = useMemo(() => {
     return !saleDidNotStart && !saleEnded && !saleSoldOut
   }, [saleDidNotStart, saleEnded, saleSoldOut])
-
 
   const isPublic = useMemo(() => round === 4, [round])
 
@@ -348,7 +339,6 @@ export const PreSaleWrapper = () => {
     }
   }, [success, inProgress])
 
-
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Box className={classes.infoContainer}>
@@ -358,7 +348,7 @@ export const PreSaleWrapper = () => {
               isLoading={isLoadingSaleStats}
               currentStep={round - 1}
               steps={tierPrices.map((price, idx) => {
-                return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 3)}` }
+                return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 4)}` }
               })}
             />
             <Box className={classes.roundComponentContainer}>
@@ -378,7 +368,8 @@ export const PreSaleWrapper = () => {
                 userRemainingAllocation={remainingAmount}
                 mintDecimals={mintDecimals}
                 roundNumber={round}
-                isLoading={isLoadingSaleStats || isLoadingUserStats}
+                isLoadingSaleStats={isLoadingSaleStats}
+                isLoadingUserStats={isLoadingUserStats}
               />
             </Box>
           </Grid>
@@ -393,7 +384,7 @@ export const PreSaleWrapper = () => {
             userDepositedAmount={deposited}
             isActive={isActive}
             progress={progress}
-            isLoading={isLoadingSaleStats || isLoadingUserStats || isBalanceLoading}
+            isLoading={isLoadingSaleStats}
             targetAmount={targetAmount}
             currentAmount={currentAmount}
             mintDecimals={mintDecimals}
@@ -450,7 +441,6 @@ export const PreSaleWrapper = () => {
               zIndex: 1
             }}>
             <Box className={classes.animatedCardWrapper}>
-
               <Grid item xs={12} className={classes.animatedCardItem}>
                 <AnimatedPreSaleCard
                   title='~1M Users'
@@ -469,7 +459,6 @@ export const PreSaleWrapper = () => {
               </Grid>
             </Box>
             <Box className={classes.animatedCardWrapper}>
-
               <Grid item xs={12} className={classes.animatedCardItem}>
                 <AnimatedPreSaleCard
                   title='4 Hackatons'
@@ -488,8 +477,8 @@ export const PreSaleWrapper = () => {
               </Grid>
             </Box>
           </Grid>
-        </Box >
-      </Box >
+        </Box>
+      </Box>
 
       <Box className={classes.sectionTitle}>
         <Typography
@@ -590,7 +579,7 @@ export const PreSaleWrapper = () => {
             />
           </Slider>
         </Box>
-      </Box >
+      </Box>
 
       <Box className={classes.sectionTitle}>
         <Typography
@@ -598,11 +587,10 @@ export const PreSaleWrapper = () => {
           Audited By
         </Typography>
         <img src={auditByLogoIcon} alt='Audit' style={{ marginTop: '24px' }} width={289} />
-
       </Box>
 
       {/* Sekcja "FAQ" */}
-      < Box className={classes.faqContainer} >
+      <Box className={classes.faqContainer}>
         <Typography
           sx={{
             ...typography.heading1,
@@ -618,22 +606,28 @@ export const PreSaleWrapper = () => {
             faqData={[
               {
                 question: '1. How can I participate in the public sale?',
-                answer: 'To participate, simply scroll up to the presale section, connect your crypto wallet, enter the amount you’d like to invest, and click Buy Now. Tokens will be transferred after purchase.'
+                answer:
+                  'To participate, simply scroll up to the presale section, connect your crypto wallet, enter the amount you’d like to invest, and click Buy Now. Tokens will be transferred after purchase.'
               },
               {
                 question: '2. What is the initial token price?',
-                answer: 'The initial price is set at <span style="color: #2EE09A; font-weight: bold;">0.10$</span> during Round 1, with a gradual increase in each subsequent round.'
+                answer:
+                  'The initial price is set at <span style="color: #2EE09A; font-weight: bold;">0.10$</span> during Round 1, with a gradual increase in each subsequent round.'
               },
               {
-                question: '3. When can I claim my tokens?', answer: `
+                question: '3. When can I claim my tokens?',
+                answer: `
                   Purchased tokens will be available to claim during the <span style="color: #2EE09A; font-weight: bold;">Token Generation Event (TGE)</span>.
-                `},
+                `
+              },
               {
                 question: '4. When is the TGE?',
-                answer: 'The TGE will take place shortly after the public sale ends. We’ll announce the exact date on our official social media channels.'
+                answer:
+                  'The TGE will take place shortly after the public sale ends. We’ll announce the exact date on our official social media channels.'
               },
               {
-                question: '5. How do I know if I’m whitelisted?', answer: `You can check your whitelist status and the round you're eligible for using the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> at the top of the page. </br>
+                question: '5. How do I know if I’m whitelisted?',
+                answer: `You can check your whitelist status and the round you're eligible for using the <span style="color: #2EE09A; font-weight: bold;">Whitelist Checker</span> at the top of the page. </br>
                 
                 If you're not whitelisted, don't worry — you’ll be able to participate in <span style="color: #2EE09A; font-weight: bold;">Round 4</span>, which is open to everyone.
                 `
@@ -641,12 +635,11 @@ export const PreSaleWrapper = () => {
               {
                 question: `6. How can I contact the Invariant team?`,
                 answer: `Feel free to reach out to us on Discord or through any of our official channels: <b> </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p> </b>`
-
               }
             ]}
           />
         </Box>
-      </Box >
-    </Grid >
+      </Box>
+    </Grid>
   )
 }

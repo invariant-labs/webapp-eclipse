@@ -68,7 +68,7 @@ export const BuyComponent: React.FC<IProps> = ({
   onBuyClick,
   onConnectWallet,
   onDisconnectWallet,
-  alertBoxText,
+  alertBoxText
 }) => {
   const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
   const { hours, minutes, seconds } = useCountdown({
@@ -151,8 +151,6 @@ export const BuyComponent: React.FC<IProps> = ({
     setAlertBoxShow(showBanner === 'true')
   }, [])
 
-
-
   return (
     <Box className={classes.container}>
       <Box>
@@ -173,23 +171,24 @@ export const BuyComponent: React.FC<IProps> = ({
                 <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
               </Box>
             </Box>
-          ) : <Box className={classes.egibilityCheckerWrapper}>
-
-            <Box className={classes.egibilityChecker}>
-              <Typography className={classes.egibilityCheckerText}>To participate in sale, check your eligibility</Typography>
-              <ChangeWalletButton
-                width={'40%'}
-                height={48}
-                name='Check eligibility'
-                onConnect={onConnectWallet}
-                connected={false}
-                onDisconnect={onDisconnectWallet}
-              />
+          ) : (
+            <Box className={classes.egibilityCheckerWrapper}>
+              <Box className={classes.egibilityChecker}>
+                <Typography className={classes.egibilityCheckerText}>
+                  To participate in sale, check your eligibility
+                </Typography>
+                <ChangeWalletButton
+                  width={'40%'}
+                  height={48}
+                  name='Check eligibility'
+                  onConnect={onConnectWallet}
+                  connected={false}
+                  onDisconnect={onDisconnectWallet}
+                />
+              </Box>
+              <Box className={classes.sectionDivider} />
             </Box>
-            <Box className={classes.sectionDivider} />
-
-
-          </Box>}
+          )}
           <Typography className={classes.titleText}>
             <Typography className={classes.pinkText}>INVARIANT</Typography>
             <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
@@ -199,45 +198,40 @@ export const BuyComponent: React.FC<IProps> = ({
             <Typography className={classes.raisedInfo}>
               <Typography className={classes.greyText}>Raised:</Typography>
               {isLoading ? (
-                <Skeleton variant="rounded" width={200} height={24} sx={{ ml: 1 }} />
+                <Skeleton variant='rounded' width={200} height={24} sx={{ ml: 1 }} />
               ) : (
                 <>
                   <Typography className={classes.greenBodyText}>
                     ${printBNandTrimZeros(currentAmount, mintDecimals, 3)}
                   </Typography>
-                  {' / '}
-                  ${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
+                  {' / '}${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
                 </>
               )}
             </Typography>
           )}
         </Box>
-        {
-          isActive && (
-            <>
-              <Box className={classes.darkBackground}>
-                <Box className={classes.gradientProgress} />
-              </Box>
-              <Grid container className={classes.barWrapper}>
-                <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
-                <Typography className={classes.sliderLabel}>100%</Typography>
-              </Grid>
-            </>
-          )
-        }
-
-        {
-          saleDidNotStart && (
-            <Box
-              sx={{
-                marginTop: '16px',
-                width: '467px'
-              }}>
-              <Timer hours={hours} minutes={minutes} seconds={seconds} />
+        {isActive && (
+          <>
+            <Box className={classes.darkBackground}>
+              <Box className={classes.gradientProgress} />
             </Box>
-          )
-        }
-      </Box >
+            <Grid container className={classes.barWrapper}>
+              <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
+              <Typography className={classes.sliderLabel}>100%</Typography>
+            </Grid>
+          </>
+        )}
+
+        {saleDidNotStart && (
+          <Box
+            sx={{
+              marginTop: '16px',
+              width: '467px'
+            }}>
+            <Timer hours={hours} minutes={minutes} seconds={seconds} />
+          </Box>
+        )}
+      </Box>
       <Box className={classes.sectionDivider} />
 
       <Box>
@@ -254,7 +248,7 @@ export const BuyComponent: React.FC<IProps> = ({
             actionButtons={[
               {
                 label: 'Max',
-                onClick: () => { },
+                onClick: () => {},
                 variant: 'max'
               }
             ]}
@@ -263,7 +257,7 @@ export const BuyComponent: React.FC<IProps> = ({
                 ? printBNandTrimZeros(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
                 : ''
             }
-            onBlur={() => { }}
+            onBlur={() => {}}
             value={value}
             isBalanceLoading={isBalanceLoading}
             walletUninitialized={walletStatus !== Status.Initialized}
@@ -272,41 +266,37 @@ export const BuyComponent: React.FC<IProps> = ({
         <Box className={classes.receiveBox}>
           <Typography className={classes.receiveLabel}>You'll receive</Typography>
           {isLoading ? (
-            <Skeleton variant="rounded" width={200} height={24} sx={{ ml: 1 }} />
+            <Skeleton variant='rounded' width={200} height={24} sx={{ ml: 1 }} />
           ) : (
             <Typography className={classes.tokenAmount}>
               {printBNandTrimZeros(receive, REWARD_SCALE)} $INV
             </Typography>
           )}
-
         </Box>
       </Box>
-      {
-        walletStatus !== Status.Initialized ? (
-          <ChangeWalletButton
-            width={'100%'}
-            height={48}
-            name='Buy $INV'
-            defaultVariant='green'
-
-            onConnect={onConnectWallet}
-            connected={false}
-            onDisconnect={onDisconnectWallet}
-          />
-        ) : (
-          <AnimatedButton
-            className={classes.greenButton}
-            onClick={() => {
-              if (progress === 'none' && tokenIndex !== null) {
-                onBuyClick(convertBalanceToBN(value, mintDecimals))
-              }
-            }}
-            disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
-            content={getButtonMessage()}
-            progress={progress}
-          />
-        )
-      }
-    </Box >
+      {walletStatus !== Status.Initialized ? (
+        <ChangeWalletButton
+          width={'100%'}
+          height={48}
+          name='Connect wallet'
+          defaultVariant='green'
+          onConnect={onConnectWallet}
+          connected={false}
+          onDisconnect={onDisconnectWallet}
+        />
+      ) : (
+        <AnimatedButton
+          className={classes.greenButton}
+          onClick={() => {
+            if (progress === 'none' && tokenIndex !== null) {
+              onBuyClick(convertBalanceToBN(value, mintDecimals))
+            }
+          }}
+          disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
+          content={getButtonMessage()}
+          progress={progress}
+        />
+      )}
+    </Box>
   )
 }
