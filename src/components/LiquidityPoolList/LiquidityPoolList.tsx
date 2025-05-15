@@ -229,7 +229,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
           <EmptyPlaceholder
             height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 690}
             newVersion
-            mainTitle={`The ${shortenAddress(filteredTokenX.symbol)}/${shortenAddress(filteredTokenY.symbol)} pool was not found...`}
+            mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             buttonName='Create Pool'
