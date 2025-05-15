@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "vite",
     "serve": "vite serve",
-    "build": "export NODE_OPTIONS=--max-old-space-size=8192 && tsc && vite build",
+    "build": "export NODE_OPTIONS=--max-old-space-size=4096 && tsc && vite build",
     "watch": "vite build --watch",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
     "fix-lint": "eslint --fix src",

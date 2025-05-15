@@ -54,8 +54,8 @@ export const Overview: React.FC<OverviewProps> = () => {
   const [pendingColorLoads, setPendingColorLoads] = useState<Set<string>>(new Set())
   const { total: unclaimedFees, isLoading: unClaimedFeesLoading } = useSelector(totalUnlaimedFees)
   const { getAverageColor, getTokenColor, tokenColorOverrides } = useAverageLogoColor()
-  const totalPositionList = [...positionList, ...lockedPositionList]
-  const { positions } = useAgregatedPositions(totalPositionList, prices)
+
+  const { positions } = useAgregatedPositions(positionList, prices)
 
   const isColorsLoading = useMemo(() => pendingColorLoads.size > 0, [pendingColorLoads])
 

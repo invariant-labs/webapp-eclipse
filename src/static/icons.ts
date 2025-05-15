@@ -72,18 +72,12 @@ import assetsEmptyIcon from './svg/assets_empty.svg'
 import settings3Icon from './svg/settings3.svg'
 import faucetIcon from './svg/faucet.svg'
 import searchIcon from './svg/lupaDark.svg'
-import allDomainsIcon from '@static/svg/allDomains.svg'
-import turboTapIcon from '@static/svg/turboTap.svg'
-import nucleusIcon from '@static/svg/nucleus.svg'
 import navRightIcon from '@static/svg/navRight.svg'
 import navLeftIcon from '@static/svg/navLeft.svg'
 import checkIcon from '@static/svg/checkFill.svg'
-import celestialMammothIcon from '@static/svg/celestialMammoth.svg'
-import edasIcon from '@static/svg/edas.svg'
 import leaderboardGoldenIcon from '@static/svg/leaderboardGolden.svg'
 import leaderboardSilverIcon from '@static/svg/leaderboardSilver.svg'
 import leaderboardBronzeIcon from '@static/svg/leaderboardBronze.svg'
-import ensofiIcon from '@static/svg/ensofi.svg'
 import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
@@ -182,18 +176,12 @@ export {
   faucetIcon,
   closeYellowIcon,
   searchIcon,
-  allDomainsIcon,
-  turboTapIcon,
-  nucleusIcon,
   navRightIcon,
   navLeftIcon,
   checkIcon,
-  celestialMammothIcon,
-  edasIcon,
   leaderboardGoldenIcon,
   leaderboardSilverIcon,
   leaderboardBronzeIcon,
-  ensofiIcon,
   disconnectIcon,
   refreshIcon,
   backIcon,
