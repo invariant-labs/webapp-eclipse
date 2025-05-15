@@ -267,7 +267,6 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         tickSpacing={tickSpacing}
         xDecimal={tokenX.decimal}
         yDecimal={tokenY.decimal}
-        coverOnLoading
         hasError={hasTicksError}
         reloadHandler={reloadHandler}
       />

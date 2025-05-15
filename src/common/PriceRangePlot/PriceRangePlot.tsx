@@ -41,7 +41,6 @@ export interface IPriceRangePlot {
   xDecimal: number
   yDecimal: number
   tickSpacing: number
-  coverOnLoading?: boolean
   hasError?: boolean
   reloadHandler: () => void
 }
@@ -67,7 +66,6 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   xDecimal,
   yDecimal,
   tickSpacing,
-  coverOnLoading = false,
   hasError = false,
   reloadHandler
 }) => {
@@ -267,33 +265,6 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     return <rect x={0} y={bottomLine} width={innerWidth} height={1} fill={colors.invariant.light} />
   }
 
-  const lazyLoadingLayer: Layer = ({ innerWidth, innerHeight }) => {
-    if (!loading || coverOnLoading) {
-      return null
-    }
-
-    return (
-      <svg
-        width={innerWidth}
-        height={innerHeight + 5}
-        viewBox={`0 0 ${innerWidth} ${innerHeight + 5}`}
-        fill='none'
-        xmlns='http://www.w3.org/2000/svg'
-        x={0}
-        y={-5}>
-        <rect x={0} y={0} width='100%' height='100%' fill={`${colors.white.main}10`} />
-        <text
-          x='50%'
-          y='50%'
-          dominantBaseline='middle'
-          textAnchor='middle'
-          className={classes.loadingText}>
-          Loading liquidity data...
-        </text>
-      </svg>
-    )
-  }
-
   const brushLayer = Brush(
     leftRange?.x,
     rightRange?.x,
@@ -360,7 +331,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
 
   return (
     <Grid container className={cx(classes.container, className)} style={style} ref={containerRef}>
-      {loading && coverOnLoading ? (
+      {loading ? (
         <Grid container className={classes.cover}>
           <img src={loader} className={classes.loader} alt='Loader' />
         </Grid>
@@ -518,7 +489,6 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           'markers',
           'areas',
           'lines',
-          lazyLoadingLayer,
           currentLayer,
           brushLayer,
           'axes',
