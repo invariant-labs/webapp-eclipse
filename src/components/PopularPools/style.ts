@@ -11,7 +11,7 @@ export const useStyles = makeStyles()(theme => ({
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
-    padding: '0 48px 24px 48px',
+    padding: '0 51px 24px 51px',
     flexWrap: 'nowrap',
     borderRadius: 32,
     background: colors.invariant.component,
@@ -58,7 +58,7 @@ export const useStyles = makeStyles()(theme => ({
       }
     },
     '& .slick-prev': {
-      left: -42,
+      left: -38,
       [theme.breakpoints.down('lg')]: {
         left: -40
       },
@@ -68,6 +68,7 @@ export const useStyles = makeStyles()(theme => ({
       }
     },
     '& .slick-next': {
+      right: -18,
       [theme.breakpoints.down('lg')]: {
         right: -20
       },
