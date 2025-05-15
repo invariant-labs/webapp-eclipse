@@ -227,9 +227,6 @@ const useStyles = makeStyles()(theme => {
       marginLeft: 16
     },
     currentPriceContainer: {
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'flex-end',
       marginTop: 23
     },
     currentPrice: {
@@ -241,7 +238,17 @@ const useStyles = makeStyles()(theme => {
       display: 'inline-block',
       color: colors.invariant.Error,
       ...typography.body2,
-      marginLeft: 8
+      marginLeft: 4,
+      marginTop: 2,
+      fontSize: 14
+    },
+    priceWarningIcon: {
+      width: 16,
+      height: 16
+    },
+    priceWarningContainer: {
+      display: 'flex',
+      alignItems: 'center'
     },
     usdcCurrentPrice: {
       display: 'inline-block',

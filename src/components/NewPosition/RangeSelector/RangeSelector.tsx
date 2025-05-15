@@ -18,7 +18,8 @@ import ConcentrationSlider from '../ConcentrationSlider/ConcentrationSlider'
 import useStyles from './style'
 import { PositionOpeningMethod } from '@store/consts/types'
 import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { boostPointsIcon } from '@static/icons'
+import { boostPointsIcon, warning3 } from '@static/icons'
+
 export interface IRangeSelector {
   updatePath: (concIndex: number) => void
   initialConcentration: string
@@ -521,21 +522,22 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             ) : (
               <Box minHeight={17} />
             )}
+            {showPriceWarning && (
+              <Box className={classes.priceWarningContainer}>
+                <img className={classes.priceWarningIcon} src={warning3} alt='warning icon' />
+                <Typography className={classes.priceWarning}>
+                  Price might differ from actual price
+                </Typography>
+              </Box>
+            )}
           </Grid>
           <Grid className={classes.currentPriceContainer}>
-            <Grid>
-              <Typography className={classes.currentPrice} mb={0}>
-                Current price
-              </Typography>
-              <Typography className={classes.currentPrice} ml={0.5} mt={'4px'}>
-                ━━━
-              </Typography>
-            </Grid>
-            {showPriceWarning && (
-              <Typography className={classes.priceWarning}>
-                WARNING! Price might be wrong
-              </Typography>
-            )}
+            <Typography className={classes.currentPrice} mb={0}>
+              Current price
+            </Typography>
+            <Typography className={classes.currentPrice} ml={0.5} mt={'4px'}>
+              ━━━
+            </Typography>
           </Grid>
         </Grid>
         <PriceRangePlot
