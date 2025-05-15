@@ -16,7 +16,6 @@ import { TopScorers } from './TopScorers/TopScorers'
 import { Switcher } from './Switcher/Switcher'
 import LeaderboardList from './LeaderboardList/LeaderboardList'
 import { InfoComponent } from './InfoComponent/InfoComponent'
-import { Faq } from '../../common/Faq/Faq'
 import { Claim } from './Claim/Claim'
 import {
   CurrentContentPointsEntry,
@@ -32,6 +31,7 @@ import { Status } from '@store/reducers/solanaWallet'
 import { PublicKey } from '@solana/web3.js'
 import { EcosystemExposure } from './EcosystemExposure/EcosystemExposure'
 import { faqData } from './faq'
+import { Faq } from '@common/Faq/Faq'
 
 interface LeaderboardProps {
   userContentPoints: CurrentContentPointsEntry[] | null
