@@ -130,7 +130,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
 
     [theme.breakpoints.down('lg')]: {
       display: 'block',
-      marginBottom: '12px',
+      marginBottom: '9px',
       top: '26%',
       left: '100%',
       height: '4px',
