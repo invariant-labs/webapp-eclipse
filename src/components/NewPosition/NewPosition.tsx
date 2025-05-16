@@ -407,8 +407,8 @@ export const NewPosition: React.FC<INewPosition> = ({
   const estimatedScalePoints = useMemo(() => {
     return estimatedPointsForScale(
       positionOpeningMethod === 'concentration'
-        ? (concentrationArray[concentrationIndex] ??
-            concentrationArray[concentrationArray.length - 1])
+        ? concentrationArray[concentrationIndex] ??
+            concentrationArray[concentrationArray.length - 1]
         : calculateConcentration(leftRange, rightRange),
       positionOpeningMethod === 'concentration' ? concentrationArray : rangeConcentrationArray
     )
@@ -529,13 +529,13 @@ export const NewPosition: React.FC<INewPosition> = ({
   const promotedPoolTierIndex =
     tokenAIndex === null || tokenBIndex === null
       ? undefined
-      : (promotedTiers.find(
+      : promotedTiers.find(
           tier =>
             (tier.tokenX.equals(tokens[tokenAIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenBIndex].assetAddress)) ||
             (tier.tokenX.equals(tokens[tokenBIndex].assetAddress) &&
               tier.tokenY.equals(tokens[tokenAIndex].assetAddress))
-        )?.index ?? undefined)
+        )?.index ?? undefined
 
   const getMinSliderIndex = () => {
     let minimumSliderIndex = 0
@@ -847,6 +847,14 @@ export const NewPosition: React.FC<INewPosition> = ({
     )
     updateLiquidity(liquidityBasedOnTokenB)
   }, [alignment])
+
+  const [wasRefreshed, setWasRefreshed] = useState(false)
+
+  useEffect(() => {
+    if (isWaitingForNewPool) {
+      setWasRefreshed(true)
+    }
+  }, [isWaitingForNewPool])
 
   const usdcPrice = useMemo(() => {
     if (tokenAIndex === null || tokenBIndex === null) return null
@@ -1375,6 +1383,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             tokenASymbol={tokenAIndex !== null ? tokens[tokenAIndex].symbol : 'ABC'}
             tokenBSymbol={tokenBIndex !== null ? tokens[tokenBIndex].symbol : 'XYZ'}
             midPriceIndex={midPrice.index}
+            midPriceSqrtPrice={midPrice.sqrtPrice}
             onChangeMidPrice={onChangeMidPrice}
             currentPairReversed={currentPairReversed}
             positionOpeningMethod={positionOpeningMethod}
@@ -1393,6 +1402,8 @@ export const NewPosition: React.FC<INewPosition> = ({
               )
             }
             currentFeeIndex={currentFeeIndex}
+            wasRefreshed={wasRefreshed}
+            setWasRefreshed={setWasRefreshed}
           />
         )}
       </Grid>
