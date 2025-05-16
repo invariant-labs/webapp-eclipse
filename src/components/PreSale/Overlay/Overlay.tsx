@@ -1,5 +1,4 @@
 import { Box } from '@mui/material'
-import { useEffect, useState, useRef } from 'react'
 import Overlay from '@static/png/presale/Overlay.png'
 import PageOverlay from '@static/png/presale/page_overlay.png'
 
