@@ -28,11 +28,11 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
         color: colors.invariant.green
       }
     },
-    alertBoxRed: {
-      border: `2px solid ${colors.invariant.Error}`,
-      backgroundColor: '#FF4D4D33',
+    alertBoxYellow: {
+      border: `2px solid ${colors.invariant.yellow}`,
+      backgroundColor: '#EFD06333',
       '& p': {
-        color: colors.invariant.Error
+        color: colors.invariant.yellow
       }
     },
 

@@ -11,6 +11,7 @@ import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
 import closeSmallGreenIcon from './svg/closeSmallGreen.svg'
 import closeSmallRedIcon from './svg/closeSmallRed.svg'
+import closeSmallYellowIcon from './svg/closeSmallYellow.svg'
 import successIcon from './svg/successIcon.svg'
 import xIcon from './svg/xCircle.svg'
 import unknownTokenIcon from './svg/unknownToken.svg'
@@ -117,8 +118,9 @@ export {
   closeIcon,
   docsIcon,
   closeSmallIcon,
-  closeSmallGreenIcon,
   closeSmallRedIcon,
+  closeSmallGreenIcon,
+  closeSmallYellowIcon,
   successIcon,
   xIcon,
   unknownTokenIcon,

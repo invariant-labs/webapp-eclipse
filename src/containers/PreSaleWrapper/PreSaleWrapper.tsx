@@ -304,7 +304,7 @@ export const PreSaleWrapper = () => {
     }
     if (!isPublic && !proofOfInclusion) {
       return {
-        text: 'You are not eligible for this round of sale', variant: 'error'
+        text: 'You are not eligible for this round of sale', variant: 'warning'
       }
     }
     if (isPublic) {

@@ -17,7 +17,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
-import { closeSmallGreenIcon, closeSmallRedIcon } from '@static/icons'
+import { closeSmallGreenIcon, closeSmallRedIcon, closeSmallYellowIcon } from '@static/icons'
 import { createButtonActions } from '@utils/uiUtils'
 
 interface IProps {
@@ -164,8 +164,8 @@ export const BuyComponent: React.FC<IProps> = ({
   })
   const getAlerBoxColorVariant = useCallback(() => {
 
-    if (alertBox?.variant === 'error') {
-      return classes.alertBoxRed
+    if (alertBox?.variant === 'warning') {
+      return classes.alertBoxYellow
     }
     return classes.alerBoxGreen
   }, [alertBox])
@@ -189,7 +189,7 @@ export const BuyComponent: React.FC<IProps> = ({
               >
                 <img
                   className={classes.closeIcon}
-                  src={alertBox?.variant === 'error' ? closeSmallRedIcon : closeSmallGreenIcon}
+                  src={alertBox?.variant === 'warning' ? closeSmallYellowIcon : closeSmallGreenIcon}
                   alt='Close icon'
                 />
               </Box>
