@@ -19,6 +19,8 @@ import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
 import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { shortenAddress } from '@utils/uiUtils'
 
 export interface PoolListInterface {
   initialLength: number
@@ -50,6 +52,7 @@ export interface PoolListInterface {
   copyAddressHandler: (message: string, variant: VariantType) => void
   isLoading: boolean
   showAPY: boolean
+  filteredTokens: ISearchToken[]
 }
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
@@ -88,12 +91,15 @@ const PoolList: React.FC<PoolListInterface> = ({
   copyAddressHandler,
   isLoading,
   showAPY,
-  initialLength
+  initialLength,
+  filteredTokens
 }) => {
   const navigate = useNavigate()
 
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
+  const filteredTokenX = filteredTokens[0] ?? ''
+  const filteredTokenY = filteredTokens[1] ?? ''
 
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
@@ -235,10 +241,17 @@ const PoolList: React.FC<PoolListInterface> = ({
           <EmptyPlaceholder
             newVersion
             height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 690}
-            mainTitle='Pool not found...'
+            mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
-            onAction={() => navigate(ROUTES.NEW_POSITION)}
+            onAction={() =>
+              navigate(
+                ROUTES.getNewPositionRoute(filteredTokenX.address, filteredTokenY.address, '0_10'),
+                {
+                  state: { referer: 'stats' }
+                }
+              )
+            }
             buttonName='Create Pool'
             withButton={true}
             withImg={initialDataLength > 3}
