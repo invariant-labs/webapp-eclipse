@@ -5,13 +5,7 @@ import GradientBorder from '@common/GradientBorder/GradientBorder'
 import { colors, theme } from '@static/theme'
 import cardBackgroundBottom from '@static/png/cardBackground1.png'
 import cardBackgroundTop from '@static/png/cardBackground2.png'
-import {
-  airdropRainbowIcon,
-  backIcon,
-  revertIcon,
-  unknownTokenIcon,
-  warningIcon
-} from '@static/icons'
+import { airdropRainbowIcon, backIcon, unknownTokenIcon, warningIcon } from '@static/icons'
 import { shortenAddress } from '@utils/uiUtils'
 import StatsLabel from './StatsLabel/StatsLabel'
 import {
@@ -31,6 +25,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import { BN } from '@coral-xyz/anchor'
 import PromotedPoolPopover from '@components/Modals/PromotedPoolPopover/PromotedPoolPopover'
 import { Button } from '@common/Button/Button'
+import { ReverseTokensIcon } from '@static/componentIcon/ReverseTokensIcon'
 
 export interface ICard extends PopularPoolData {
   isLoading: boolean
@@ -166,7 +161,7 @@ const Card: React.FC<ICard> = ({
                   />
                   {isUnknownFrom && <img className={classes.warningIcon} src={warningIcon} />}
                 </Box>
-                <img className={classes.swapIcon} src={revertIcon} alt='Token from' />
+                <ReverseTokensIcon className={classes.swapIcon} />
                 <Box className={classes.iconContainer}>
                   <img
                     className={classes.tokenIcon}

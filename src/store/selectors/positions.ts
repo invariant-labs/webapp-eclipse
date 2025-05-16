@@ -4,8 +4,8 @@ import { AnyProps, keySelectors } from './helpers'
 import { poolsArraySortedByFees } from './pools'
 import { SwapToken, swapTokensDict } from './solanaWallet'
 import { PoolWithAddress } from '@store/reducers/pools'
-import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
-import { printBN } from '@utils/utils'
+import { calculateClaimAmount, DECIMAL } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { initialXtoY, printBN } from '@utils/utils'
 
 const store = (s: AnyProps) => s[positionsSliceName] as IPositionsStore
 
@@ -102,6 +102,23 @@ export const positionWithPoolData = createSelector(
       : null
   }
 )
+export const positionsNavigationData = createSelector(positionsWithPoolsData, positions => {
+  return positions.map(position => {
+    const xToY = initialXtoY(
+      position.tokenX.assetAddress.toString(),
+      position.tokenY.assetAddress.toString()
+    )
+
+    return {
+      tokenXName: xToY ? position.tokenX.symbol : position.tokenY.symbol,
+      tokenYName: xToY ? position.tokenY.symbol : position.tokenX.symbol,
+      tokenXIcon: xToY ? position.tokenX.logoURI : position.tokenY.logoURI,
+      tokenYIcon: xToY ? position.tokenY.logoURI : position.tokenX.logoURI,
+      fee: +printBN(position.poolData.fee, DECIMAL - 2),
+      id: position.id.toString() + '_' + position.pool.toString()
+    }
+  })
+})
 
 export const lockedPositionsWithPoolsData = createSelector(
   poolsArraySortedByFees,
@@ -123,6 +140,26 @@ export const lockedPositionsWithPoolsData = createSelector(
       positionIndex: index,
       isLocked: true
     }))
+  }
+)
+
+export const lockedPositionsNavigationData = createSelector(
+  lockedPositionsWithPoolsData,
+  lockedPositions => {
+    return lockedPositions.map(position => {
+      const xToY = initialXtoY(
+        position.tokenX.assetAddress.toString(),
+        position.tokenY.assetAddress.toString()
+      )
+      return {
+        tokenXName: xToY ? position.tokenX.symbol : position.tokenY.symbol,
+        tokenYName: xToY ? position.tokenY.symbol : position.tokenX.symbol,
+        tokenXIcon: xToY ? position.tokenX.logoURI : position.tokenY.logoURI,
+        tokenYIcon: xToY ? position.tokenY.logoURI : position.tokenX.logoURI,
+        fee: +printBN(position.poolData.fee, DECIMAL - 2),
+        id: position.id.toString() + '_' + position.pool.toString()
+      }
+    })
   }
 )
 

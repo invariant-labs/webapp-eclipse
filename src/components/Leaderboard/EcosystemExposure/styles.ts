@@ -13,7 +13,7 @@ const useStyles = makeStyles<{ exposure: number }>()((_theme, { exposure }) => {
     },
 
     mainWrapper: {
-      maxWidth: '524px',
+      maxWidth: 605,
       width: '100%',
       [theme.breakpoints.down('sm')]: {
         maxWidth: '100%'
