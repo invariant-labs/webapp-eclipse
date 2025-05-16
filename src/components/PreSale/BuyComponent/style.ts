@@ -122,6 +122,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     },
     raisedInfo: {
       display: 'flex',
+      height: '24px',
       marginTop: '16px',
       gap: '6px',
       ...typography.body2,
@@ -207,6 +208,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     receiveBox: {
       display: 'flex',
       marginTop: '12px',
+      height: '32px',
       justifyContent: 'space-between',
       padding: '13px',
       alignItems: 'center',

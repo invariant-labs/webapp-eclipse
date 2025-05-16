@@ -62,7 +62,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     if (isLoading) {
       return <Skeleton variant="text" width={width} height={24} />
     }
-    return <>{prefix}{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))}</>
+    return <Typography className={classes.infoLabel}>{prefix}{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))}</Typography>
   }
 
   return (
@@ -127,8 +127,9 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         {isActive && (
           <Box className={classes.priceIncreaseBox}>
             <Typography className={classes.priceIncreaseText}>
-              AMOUNT TILL PRICE INCREASE: {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, "$", "120px")}
+              AMOUNT TILL PRICE INCREASE:
             </Typography>
+            {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, "$", "120px")}
           </Box>
         )}
       </Box>

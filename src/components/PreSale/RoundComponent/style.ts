@@ -25,6 +25,7 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
     progressHeader: {
       background: colors.invariant.light,
       padding: '12px',
+      height: isActive ? '56px' : 'auto',
       borderTopLeftRadius: '12px',
       borderTopRightRadius: '12px',
       ...(!isActive
@@ -76,6 +77,7 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
       alignItems: 'center',
       background: colors.invariant.component,
       padding: '12px',
+      height: '20px',
       borderBottomLeftRadius: '12px',
       borderBottomRightRadius: '12px'
     },

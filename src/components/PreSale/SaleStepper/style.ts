@@ -6,6 +6,8 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-around',
+    position: 'relative',
+    overflow: 'hidden',
     alignItems: 'flex-start',
     minHeight: '440px',
     width: '120px',
@@ -20,9 +22,15 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     }
   },
   stepContent: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    position: 'relative',
+    flexDirection: 'column',
     [theme.breakpoints.up('lg')]: {
       display: 'flex',
       alignItems: 'center',
+      flexDirection: 'row',
       justifyContent: 'center'
     }
   },
@@ -76,21 +84,30 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
   },
 
   stepLabel: {
-    marginLeft: theme.spacing(2),
     color: colors.invariant.text,
     ...typography.body1,
-
+    position: 'static',
+    marginLeft: '16px',
     [theme.breakpoints.down('lg')]: {
       marginLeft: 0,
       textAlign: 'center',
-      whiteSpace: 'nowrap'
+      whiteSpace: 'nowrap',
+      position: 'absolute',
+      top: '110%',
+      transform: 'translate(-50%,-50%)',
+      left: '49%'
     }
   },
   labelSkeleton: {
     marginLeft: '16px',
     [theme.breakpoints.down('lg')]: {
+      maxHeight: '16px',
       marginTop: '16px',
       marginLeft: '2px',
+      position: 'absolute',
+      top: '80%',
+      transform: 'translate(-50%,-50%)',
+      left: '49%',
       textAlign: 'center'
     }
   },
@@ -113,7 +130,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
 
     [theme.breakpoints.down('lg')]: {
       display: 'block',
-      marginBottom: theme.spacing(3.5),
+      marginBottom: '12px',
       top: '26%',
       left: '100%',
       height: '4px',
@@ -127,7 +144,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     display: 'none',
     [theme.breakpoints.down('lg')]: {
       display: 'block',
-      marginBottom: theme.spacing(3),
+      marginBottom: '6px',
 
       top: '26%',
       left: '100%',
@@ -143,7 +160,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     display: 'none',
     [theme.breakpoints.down('lg')]: {
       display: 'block',
-      marginBottom: theme.spacing(3),
+      marginBottom: '10px',
       top: '26%',
       left: '100%',
       height: '4px',
@@ -157,7 +174,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     display: 'none',
     [theme.breakpoints.down('lg')]: {
       display: 'block',
-      marginBottom: theme.spacing(3.5),
+      marginBottom: '10px',
 
       top: '26%',
       left: '100%',
@@ -174,6 +191,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       display: 'block',
       top: '26%',
       left: '100%',
+      marginBottom: '10px',
       width: '100%',
       height: '4px',
       background: colors.invariant.textGrey,

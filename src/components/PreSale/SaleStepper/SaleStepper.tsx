@@ -129,7 +129,7 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({ steps, currentStep, is
                             {isLoading ? (
                                 <Skeleton
                                     variant="text"
-                                    width={80}
+                                    width={40}
                                     height={24}
                                     className={classes.labelSkeleton}
                                 />
