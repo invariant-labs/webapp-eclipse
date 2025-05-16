@@ -29,6 +29,7 @@ interface IProps {
   isPublic: Boolean
   userDepositedAmount: BN
   whitelistWalletLimit: BN
+  currentRound: number
   isActive: boolean
   targetAmount: BN
   currentAmount: BN
@@ -58,6 +59,7 @@ export const BuyComponent: React.FC<IProps> = ({
   targetAmount,
   currentAmount,
   mintDecimals,
+  currentRound,
   isActive,
   startTimestamp,
   tokens,
@@ -273,7 +275,7 @@ export const BuyComponent: React.FC<IProps> = ({
               {
                 label: 'Max',
                 onClick: () => {
-                  actions.max(tokenIndex)
+                  actions.maxSale(tokenIndex, currentRound, userDepositedAmount, whitelistWalletLimit, currentAmount, targetAmount)
 
                 },
                 variant: 'max'

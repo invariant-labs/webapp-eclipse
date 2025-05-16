@@ -2,6 +2,8 @@ import { BN } from '@coral-xyz/anchor'
 import { formatDate, printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
 import { FormatNumberThreshold } from '@store/consts/types'
+import { EFFECTIVE_TARGET_MULTIPLIER } from '@invariant-labs/sale-sdk'
+import { token } from '@metaplex-foundation/js'
 
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
@@ -84,6 +86,46 @@ export const createButtonActions = (config: MaxButtonConfig) => {
       config.onSelectInput?.()
       const amount = calculateAmount(tokenIndex)
       config.onAmountSet(trimDecimalZeros(printBN(amount, config.tokens[tokenIndex].decimals)))
+    },
+
+    maxSale: (
+      tokenIndex: number | null,
+      currentRound: number,
+      deposited: number,
+      whitelistWalletLimit: BN,
+      currentAmount?: BN,
+      targetAmount?: BN
+    ) => {
+      console.log({
+        tokenIndex,
+        currentRound,
+        deposited,
+        whitelistWalletLimit,
+        currentAmount,
+        targetAmount
+      })
+      if (currentRound <= 3) {
+        if (currentRound === undefined || tokenIndex === null || currentRound === null) {
+          return
+        }
+        config.onAmountSet(
+          trimDecimalZeros(
+            printBN(whitelistWalletLimit.sub(deposited), config.tokens[tokenIndex].decimals)
+          )
+        )
+      } else if (currentRound > 3) {
+        if (currentRound === undefined || tokenIndex === null || currentRound === null) {
+          return
+        }
+        config.onAmountSet(
+          trimDecimalZeros(
+            printBN(
+              targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER).sub(currentAmount),
+              config.tokens[tokenIndex].decimals
+            )
+          )
+        )
+      }
     },
 
     half: (tokenIndex: number | null) => {

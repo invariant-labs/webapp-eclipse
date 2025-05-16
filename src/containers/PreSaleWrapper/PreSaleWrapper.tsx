@@ -389,6 +389,7 @@ export const PreSaleWrapper = () => {
           <BuyComponent
             nativeBalance={nativeBalance}
             isPublic={isPublic}
+            currentRound={round}
             saleDidNotStart={saleDidNotStart}
             saleEnded={saleEnded}
             saleSoldOut={saleSoldOut}
@@ -462,7 +463,7 @@ export const PreSaleWrapper = () => {
               </Grid>
               <Grid item xs={12} className={classes.animatedCardItem}>
                 <AnimatedPreSaleCard
-                  title='~$5 Billions'
+                  title='~$5 Billion'
                   gradientDirection='to bottom'
                   subtitle='in cumulative swap volume'
                   delay={300}
