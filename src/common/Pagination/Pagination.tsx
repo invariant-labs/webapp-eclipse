@@ -1,6 +1,6 @@
-import { Pagination, useMediaQuery } from '@mui/material'
-import { theme } from '@static/theme'
+import { Button } from '@mui/material'
 import { useStyles } from './style'
+import { useLayoutEffect, useState } from 'react'
 
 export interface IPaginationList {
   pages: number
@@ -14,27 +14,66 @@ export interface IPaginationList {
 export const PaginationList: React.FC<IPaginationList> = ({
   pages,
   defaultPage,
-  handleChangePage,
-  variant,
-  squeeze = false,
-  page
+  handleChangePage
 }) => {
   const { classes } = useStyles()
-  const position = useMediaQuery(theme.breakpoints.down('sm'))
-  const matches = useMediaQuery(theme.breakpoints.down('lg'))
+
+  const [currentPage, setCurrentPage] = useState(defaultPage)
+
+  const [inputWidth, setInputWidth] = useState(0)
+
+  const changePage = (page: number) => {
+    if (page < 1) {
+      setCurrentPage(1)
+      handleChangePage(1)
+      return
+    }
+
+    if (page > pages) {
+      setCurrentPage(pages)
+      handleChangePage(pages)
+      return
+    }
+
+    setCurrentPage(page)
+    handleChangePage(page)
+  }
+
+  useLayoutEffect(() => {
+    if (currentPage) {
+      setInputWidth(currentPage.toString().length * 12 + 16)
+    }
+  }, [currentPage])
 
   return (
-    <Pagination
-      style={{
-        justifyContent: position ? 'center' : `${variant}`
-      }}
-      className={classes.root}
-      count={pages}
-      shape='rounded'
-      defaultPage={defaultPage}
-      onChange={(_e, page) => handleChangePage(page)}
-      siblingCount={squeeze ? 0 : matches ? 0 : 1}
-      page={page}
-    />
+    <>
+      <div className={classes.pagination}>
+        <Button
+          className={classes.controlButton}
+          onClick={() => changePage(currentPage - 1)}
+          disabled={currentPage === 1}>
+          <svg viewBox='0 0 24 24' width='44' height='44'>
+            <path d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'></path>
+          </svg>
+        </Button>
+        Page
+        <input
+          className={classes.input}
+          style={{ width: inputWidth }}
+          value={currentPage}
+          onChange={e => changePage(+e.target.value)}
+          type='number'
+        />
+        of {pages}
+        <Button
+          className={classes.controlButton}
+          onClick={() => changePage(currentPage + 1)}
+          disabled={currentPage === pages}>
+          <svg viewBox='0 0 24 24' width='44' height='44'>
+            <path d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z'></path>
+          </svg>
+        </Button>
+      </div>
+    </>
   )
 }
