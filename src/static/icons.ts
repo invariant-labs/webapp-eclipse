@@ -105,6 +105,7 @@ import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
 import virtualCardIcon from './svg/virtualCard.svg'
 import greenInfoIcon from './svg/greenInfo.svg'
+import saleIcon from './svg/saleIcon.svg'
 
 export {
   logoTitleIcon,
@@ -119,6 +120,7 @@ export {
   docsIcon,
   closeSmallIcon,
   closeSmallRedIcon,
+  saleIcon,
   closeSmallGreenIcon,
   closeSmallYellowIcon,
   successIcon,

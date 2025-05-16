@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react'
 import {
   airdropIcon,
   liquidityIcon,
+  saleIcon,
   statsIcon,
   swapArrowsIcon,
   tokenCreatorIcon,
@@ -51,6 +52,13 @@ export const FooterNavbar = () => {
         url: 'points',
         width: 26
       },
+
+    {
+      label: 'Sale',
+      icon: saleIcon,
+      url: 'sale',
+      width: 95
+    },
     {
       label: 'Stats',
       icon: statsIcon,
