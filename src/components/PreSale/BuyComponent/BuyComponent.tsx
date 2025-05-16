@@ -17,7 +17,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
-import { closeSmallGreenIcon, closeSmallRedIcon, closeSmallYellowIcon } from '@static/icons'
+import { closeSmallGreenIcon, closeSmallYellowIcon } from '@static/icons'
 import { createButtonActions } from '@utils/uiUtils'
 
 interface IProps {
