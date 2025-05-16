@@ -37,6 +37,7 @@ export interface PoolListInterface {
   copyAddressHandler: (message: string, variant: VariantType) => void
   isLoading: boolean
   showAPY: boolean
+  filteredTokens: ISearchToken[]
 }
 
 import { Keypair } from '@solana/web3.js'
@@ -45,6 +46,8 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
 import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
+import { ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { shortenAddress } from '@utils/uiUtils'
 
 const ITEMS_PER_PAGE = 10
 
@@ -84,7 +87,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   initialLength,
   copyAddressHandler,
   isLoading,
-  showAPY
+  showAPY,
+  filteredTokens
 }) => {
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
@@ -92,6 +96,8 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69
+  const filteredTokenX = filteredTokens[0] ?? ''
+  const filteredTokenY = filteredTokens[1] ?? ''
   const { classes, cx } = useStyles()
   const sortedData = useMemo(() => {
     if (isLoading) {
@@ -111,6 +117,10 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         return data.sort((a, b) => a.fee - b.fee)
       case SortTypePoolList.FEE_DESC:
         return data.sort((a, b) => b.fee - a.fee)
+      case SortTypePoolList.FEE_24_ASC:
+        return data.sort((a, b) => a.fee * a.volume - b.fee * b.volume)
+      case SortTypePoolList.FEE_24_DESC:
+        return data.sort((a, b) => b.fee * b.volume - a.fee * a.volume)
       case SortTypePoolList.VOLUME_ASC:
         return data.sort((a, b) => (a.volume === b.volume ? a.TVL - b.TVL : a.volume - b.volume))
       case SortTypePoolList.VOLUME_DESC:
@@ -223,11 +233,18 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
           <EmptyPlaceholder
             height={initialDataLength < ITEMS_PER_PAGE ? initialDataLength * 69 : 690}
             newVersion
-            mainTitle='Pool not found...'
+            mainTitle={`The ${shortenAddress(filteredTokenX.symbol ?? '')}/${shortenAddress(filteredTokenY.symbol ?? '')} pool was not found...`}
             desc={initialDataLength < 3 ? '' : 'You can create it yourself!'}
             desc2={initialDataLength < 5 ? '' : 'Or try adjusting your search criteria!'}
             buttonName='Create Pool'
-            onAction={() => navigate(ROUTES.NEW_POSITION)}
+            onAction={() =>
+              navigate(
+                ROUTES.getNewPositionRoute(filteredTokenX.address, filteredTokenY.address, '0_10'),
+                {
+                  state: { referer: 'stats' }
+                }
+              )
+            }
             withButton={true}
             withImg={initialDataLength > 3}
           />
