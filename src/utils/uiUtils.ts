@@ -3,7 +3,6 @@ import { formatDate, printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
 import { FormatNumberThreshold } from '@store/consts/types'
 import { EFFECTIVE_TARGET_MULTIPLIER } from '@invariant-labs/sale-sdk'
-import { token } from '@metaplex-foundation/js'
 
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
