@@ -786,11 +786,11 @@ export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_CREATE_POSITION = '2.50'
 export const DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP = '0.50'
 
 export const CHAINS = [
-  { name: Chain.Solana, address: 'https://invariant.app/swap', iconGlow: 'solanaGlow' },
+  { name: Chain.Solana, address: 'https://solana.invariant.app/swap', iconGlow: 'solanaGlow' },
   // { name: Chain.AlephZero, address: 'https://azero.invariant.app/exchange' },
   {
     name: Chain.Eclipse,
-    address: 'https://eclipse.invariant.app/exchange',
+    address: 'https://invariant.app/exchange',
     iconGlow: 'eclipseGlow'
   }
   // { name: Chain.Vara, address: 'https://vara.invariant.app/exchange' },
