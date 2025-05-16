@@ -6,31 +6,37 @@ import { useStyles } from './style'
 import { colors } from '@static/theme'
 
 type Props = {
-  position: INavigatePosition
+  position: INavigatePosition | null
   direction: 'left' | 'right'
   onClick: () => void
 }
 
 export const MobileNavigation = ({ position, direction, onClick }: Props) => {
-  const { classes } = useStyles()
+  const { classes } = useStyles({ disabled: !position })
 
   return (
     <Box
       className={classes.wrapper}
       flexDirection={direction === 'left' ? 'row' : 'row-reverse'}
       onClick={onClick}>
-      <ArrowIcon2
-        color={colors.invariant.text}
-        width={16}
-        style={direction === 'right' ? { transform: 'scale(-1)' } : {}}
-      />
-      <Box className={classes.iconContainer}>
-        <img className={classes.icon} src={position.tokenXIcon} alt={position.tokenXName} />
+      {position ? (
+        <>
+          <ArrowIcon2
+            color={colors.invariant.text}
+            width={16}
+            style={direction === 'right' ? { transform: 'scale(-1)' } : {}}
+          />
+          <Box className={classes.iconContainer}>
+            <img className={classes.icon} src={position.tokenXIcon} alt={position.tokenXName} />
 
-        <ReverseTokensIcon color={colors.invariant.text} width={16} />
+            <ReverseTokensIcon color={colors.invariant.text} width={16} />
 
-        <img className={classes.icon} src={position.tokenYIcon} alt={position.tokenYName} />
-      </Box>
+            <img className={classes.icon} src={position.tokenYIcon} alt={position.tokenYName} />
+          </Box>
+        </>
+      ) : (
+        <Box width={62} />
+      )}
     </Box>
   )
 }

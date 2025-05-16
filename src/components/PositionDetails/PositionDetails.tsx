@@ -37,6 +37,7 @@ import { Information } from '@components/Information/Information'
 import { theme } from '@static/theme'
 import { eyeYellowIcon } from '@static/icons'
 import { DesktopNavigation } from './Navigation/DesktopNavigation/DesktopNavigation'
+import { PaginationList } from '@common/Pagination/Pagination'
 
 interface IProps {
   tokenXAddress: PublicKey
@@ -83,6 +84,11 @@ interface IProps {
   previousPosition: INavigatePosition | null
   nextPosition: INavigatePosition | null
   positionId: string
+  paginationData: {
+    totalPages: number
+    currentPage: number
+  }
+  handleChangePagination: (page: number) => void
 }
 
 const PositionDetails: React.FC<IProps> = ({
@@ -129,7 +135,9 @@ const PositionDetails: React.FC<IProps> = ({
   pricesLoading,
   previousPosition,
   nextPosition,
-  positionId
+  positionId,
+  paginationData,
+  handleChangePagination
 }) => {
   const { classes } = useStyles()
   const isSm = useMediaQuery(theme.breakpoints.down('sm'))
@@ -139,7 +147,7 @@ const PositionDetails: React.FC<IProps> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
-
+  console.log(positionId)
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
   const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)
@@ -271,7 +279,7 @@ const PositionDetails: React.FC<IProps> = ({
   }, [midPrice.x, pricesLoading])
 
   return (
-    <>
+    <Box display='flex' flexDirection={'column'} flex={1}>
       <Information mb={3} transitionTimeout={300} shouldOpen={showPreviewInfo}>
         <Box className={classes.information}>
           <img src={eyeYellowIcon} alt='Eye' style={{ minWidth: 24 }} />
@@ -282,13 +290,15 @@ const PositionDetails: React.FC<IProps> = ({
         </Box>
       </Information>
       <Box position='relative'>
-        {previousPosition && !isMd && (
+        {(previousPosition || nextPosition) && !isMd && (
           <DesktopNavigation
             position={previousPosition}
             direction='left'
             onClick={() => {
+              if (!previousPosition) return
               navigate(ROUTES.getPositionRoute(previousPosition.id))
             }}
+            disabled={!previousPosition}
           />
         )}
         <Box className={classes.mainContainer}>
@@ -423,23 +433,36 @@ const PositionDetails: React.FC<IProps> = ({
                 hasTicksError={hasTicksError}
                 reloadHandler={reloadHandler}
                 isFullRange={isFullRange}
-              usdcPrice={usdcPrice}
+                usdcPrice={usdcPrice}
                 positionId={positionId}
               />
             </Box>
           </Box>
         </Box>
-        {nextPosition && !isMd && (
+        {(nextPosition || previousPosition) && !isMd && (
           <DesktopNavigation
             position={nextPosition}
             direction='right'
             onClick={() => {
+              if (!nextPosition) return
               navigate(ROUTES.getPositionRoute(nextPosition.id))
             }}
+            disabled={!nextPosition}
           />
         )}
       </Box>
-    </>
+      {(previousPosition || nextPosition) && (
+        <Box className={classes.paginationWrapper}>
+          <PaginationList
+            pages={paginationData.totalPages}
+            defaultPage={paginationData.currentPage + 1}
+            handleChangePage={handleChangePagination}
+            variant='center'
+            page={paginationData.currentPage}
+          />
+        </Box>
+      )}
+    </Box>
   )
 }
 

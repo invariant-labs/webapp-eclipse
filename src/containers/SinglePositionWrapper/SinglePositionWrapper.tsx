@@ -45,10 +45,10 @@ import { actions as statsActions } from '@store/reducers/stats'
 import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors/leaderboard'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
-import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 import { BN } from '@coral-xyz/anchor'
 import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { poolsArraySortedByFees } from '@store/selectors/pools'
+import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 
 export interface IProps {
   id: string
@@ -118,9 +118,9 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return null
     }
 
-    return data[currentIndex - 1] ?? data[data.length - 1]
+    return data[currentIndex - 1] ?? null
   }, [position?.isLocked, lockedNavigationData, navigationData, id])
-
+  console.log(previousPosition)
   const nextPosition = useMemo(() => {
     const data = position?.isLocked ? lockedNavigationData : navigationData
 
@@ -134,8 +134,24 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       return null
     }
 
-    return data[currentIndex + 1] ?? data[0]
+    return data[currentIndex + 1] ?? null
   }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const paginationData = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    const currentIndex = data.findIndex(position => position.id.toString() === id)
+    return {
+      totalPages: data.length,
+      currentPage: currentIndex + 1
+    }
+  }, [position?.isLocked, lockedNavigationData, navigationData])
+
+  const handleChangePagination = (currentIndex: number) => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+    const navigateToData = data[currentIndex - 1]
+    navigate(ROUTES.getPositionRoute(navigateToData.id))
+  }
 
   useEffect(() => {
     if (position?.id) {
@@ -488,11 +504,15 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       pool => pool.address === position?.poolData.address.toString()
     )?.pointsPerSecond
 
-    return estimatePointsForUserPositions(
-      [position],
-      position.poolData,
-      new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
-    )
+    try {
+      return estimatePointsForUserPositions(
+        [position],
+        position.poolData,
+        new BN(pointsPerSecond, 'hex').mul(new BN(10).pow(new BN(LEADERBOARD_DECIMAL)))
+      )
+    } catch {
+      return 0
+    }
   }
   const points24 = calculatePoints24()
 
@@ -593,6 +613,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         previousPosition={previousPosition}
         nextPosition={nextPosition}
         positionId={id}
+        paginationData={paginationData}
+        handleChangePagination={handleChangePagination}
       />
     )
   }

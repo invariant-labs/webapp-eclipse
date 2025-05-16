@@ -168,9 +168,10 @@ export const PositionHeader = ({
       </Box>
     </TooltipHover>
   )
-
+  console.log(!isMdDown && isLgDown && (previousPosition || nextPosition))
   return (
     <Box className={classes.headerContainer}>
+      ;
       <Box className={classes.navigation}>
         <Box className={cx(classes.wrapper, classes.backContainer)} onClick={() => onGoBackClick()}>
           <img src={backArrowIcon} alt='Back arrow' />
@@ -181,39 +182,47 @@ export const PositionHeader = ({
             {marketIdLabel} {refresher}
           </Box>
         )}
-        {!isMdDown && isLgDown && previousPosition && nextPosition && (
+        {!isMdDown && isLgDown && (previousPosition || nextPosition) && (
           <Box className={classes.tabletNavigation}>
             <MobileNavigation
               position={previousPosition}
               direction='left'
               onClick={() => {
-                navigate(ROUTES.getPositionRoute(previousPosition.id))
+                if (previousPosition) {
+                  navigate(ROUTES.getPositionRoute(previousPosition.id))
+                }
               }}
             />
             <MobileNavigation
               position={nextPosition}
               direction='right'
               onClick={() => {
-                navigate(ROUTES.getPositionRoute(nextPosition.id))
+                if (nextPosition) {
+                  navigate(ROUTES.getPositionRoute(nextPosition.id))
+                }
               }}
             />
           </Box>
         )}
       </Box>
-      {isMdDown && previousPosition && nextPosition && (
+      {isMdDown && (previousPosition || nextPosition) && (
         <Box display='flex' gap={1}>
           <MobileNavigation
             position={previousPosition}
             direction='left'
             onClick={() => {
-              navigate(ROUTES.getPositionRoute(previousPosition.id))
+              if (previousPosition) {
+                navigate(ROUTES.getPositionRoute(previousPosition.id))
+              }
             }}
           />
           <MobileNavigation
             position={nextPosition}
             direction='right'
             onClick={() => {
-              navigate(ROUTES.getPositionRoute(nextPosition.id))
+              if (nextPosition) {
+                navigate(ROUTES.getPositionRoute(nextPosition.id))
+              }
             }}
           />
         </Box>
