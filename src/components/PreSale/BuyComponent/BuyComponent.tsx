@@ -12,7 +12,7 @@ import {
   REWARD_SCALE
 } from '@invariant-labs/sale-sdk'
 import { useCountdown } from '../Timer/useCountdown'
-import { actions, Status } from '@store/reducers/solanaWallet'
+import { Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
@@ -78,7 +78,6 @@ export const BuyComponent: React.FC<IProps> = ({
 
   const [value, setValue] = useState<string>('0')
 
-  const [WETH_MIN_FEE_LAMPORTS, setMinFeeLamports] = useState<any | undefined>(undefined);
 
   const [receive, setReceive] = useState<BN>(new BN(0))
   const filledPercentage = useMemo(() => {
