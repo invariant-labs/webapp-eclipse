@@ -227,7 +227,7 @@ const PositionDetails: React.FC<IProps> = ({
   const usdcPrice = useMemo(() => {
     if (tokenX === null || tokenY === null) return null
 
-    const revertDenominator = initialXtoY(tokenXAddress.toString(), tokenYAddress.toString(), true)
+    const revertDenominator = initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
 
     if (
       tokenXAddress.equals(USDC_MAIN.address) ||
