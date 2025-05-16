@@ -16,6 +16,21 @@ interface NightlyProvider {
   sendMessage: (message: Uint8Array) => Promise<any>
   connect: () => Promise<void>
   disconnect: () => Promise<void>
+  features: {
+    'standard:connect': { version: string; connect: () => Promise<void> }
+    'standard:disconnect': { version: string; disconnect: () => Promise<void> }
+    'standard:events': { version: string; on: (event: string, callback: () => void) => void }
+    'solana:signAndSendTransaction': {
+      version: string
+      signAndSendTransaction: (transaction: any) => Promise<any>
+    }
+    'solana:signTransaction': {
+      version: string
+      signTransaction: (transaction: any) => Promise<any>
+    }
+    'solana:signMessage': { version: string; signMessage: (message: any) => Promise<any> }
+  }
+  _activeAccount: any
 }
 export class NightlyAdapter implements WalletAdapter {
   _nightlyProvider: NightlyProvider | undefined
@@ -23,9 +38,13 @@ export class NightlyAdapter implements WalletAdapter {
     this.connect = this.connect.bind(this)
   }
   get connected() {
-    return this._nightlyProvider?.isConnected || false
+    return this._nightlyProvider?._activeAccount?.address || false
   }
-
+  get publicKey() {
+    return this._nightlyProvider?._activeAccount.publicKey
+      ? new PublicKey(this._nightlyProvider?._activeAccount?.address?.toString())
+      : DEFAULT_PUBLICKEY
+  }
   signAllTransactions = async (
     transactions: Transaction[] | VersionedTransaction[]
   ): Promise<Transaction[] | VersionedTransaction[]> => {
@@ -33,11 +52,6 @@ export class NightlyAdapter implements WalletAdapter {
       return transactions
     }
     return await this._nightlyProvider.signAllTransactions(transactions)
-  }
-  get publicKey() {
-    return this._nightlyProvider?.publicKey
-      ? new PublicKey(this._nightlyProvider?.publicKey?.toString())
-      : DEFAULT_PUBLICKEY
   }
 
   signTransaction = async (transaction: Transaction | VersionedTransaction) => {
@@ -79,15 +93,16 @@ export class NightlyAdapter implements WalletAdapter {
       window.open('https://nightly.app/', '_blank')
       return
     }
-    if (!provider.isConnected) {
-      await provider.connect()
+    if (!provider?._activeAccount?.address) {
+      await provider?.features['standard:connect'].connect()
     }
     this._nightlyProvider = provider
   }
   disconnect = async () => {
     if (this._nightlyProvider) {
       try {
-        await this._nightlyProvider.disconnect()
+        await this._nightlyProvider?.features['standard:disconnect'].disconnect()
+
         this._nightlyProvider = undefined
       } catch (e: unknown) {
         const error = ensureError(e)
