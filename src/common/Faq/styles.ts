@@ -3,7 +3,7 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    maxWidth: 1072,
+    maxWidth: 1210,
     borderRadius: '24px',
     maxHeight: 'fit-content',
     position: 'relative',
