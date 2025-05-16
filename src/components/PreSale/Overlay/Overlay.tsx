@@ -21,7 +21,7 @@ export const OverlayWrapper = () => {
                 sx={{
                     position: 'absolute',
                     top: '0px',
-                    left: 'calc(50% - 700px)',
+                    left: 'calc(50% - 600px)',
                     width: '900px',
                     height: '700px',
                     zIndex: 10,

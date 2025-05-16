@@ -300,16 +300,18 @@ export const PreSaleWrapper = () => {
 
   const getAlertBoxText = useCallback(() => {
     if (!isPublic && !!proofOfInclusion) {
-      return 'You are eligible for this round of sale'
+      return { text: 'You are eligible for this round of sale' }
     }
     if (!isPublic && !proofOfInclusion) {
-      return 'You are not eligible for this round of sale'
+      return {
+        text: 'You are not eligible for this round of sale', variant: 'error'
+      }
     }
     if (isPublic) {
-      return 'Sale is currently in public state'
+      return { text: 'Sale is currently in public state' }
     }
     if (!isActive) {
-      return 'Sale not active'
+      return { text: 'Sale not active' }
     }
   }, [isPublic, proofOfInclusion])
 
@@ -347,7 +349,7 @@ export const PreSaleWrapper = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
-
+  const loading = true
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>
@@ -403,7 +405,7 @@ export const PreSaleWrapper = () => {
             startTimestamp={startTimestamp}
             tokens={tokens}
             walletStatus={walletStatus}
-            alertBoxText={getAlertBoxText()}
+            alertBox={getAlertBoxText()}
             isBalanceLoading={isBalanceLoading}
             tokenIndex={tokenIndex}
             onConnectWallet={() => {

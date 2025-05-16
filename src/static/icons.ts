@@ -10,6 +10,7 @@ import closeIcon from './svg/closeIcon.svg'
 import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
 import closeSmallGreenIcon from './svg/closeSmallGreen.svg'
+import closeSmallRedIcon from './svg/closeSmallRed.svg'
 import successIcon from './svg/successIcon.svg'
 import xIcon from './svg/xCircle.svg'
 import unknownTokenIcon from './svg/unknownToken.svg'
@@ -117,6 +118,7 @@ export {
   docsIcon,
   closeSmallIcon,
   closeSmallGreenIcon,
+  closeSmallRedIcon,
   successIcon,
   xIcon,
   unknownTokenIcon,

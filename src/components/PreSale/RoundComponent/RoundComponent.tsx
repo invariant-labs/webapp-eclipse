@@ -1,9 +1,9 @@
-import { Box, Grid, Typography } from '@mui/material'
+import { Box, Grid, Typography, Skeleton } from '@mui/material'
 import React from 'react'
 import useStyles from './style'
 import classNames from 'classnames'
 import { BN } from '@coral-xyz/anchor'
-import { printBNandTrimZeros } from '@utils/utils'
+import { formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
 import { EFFECTIVE_TARGET_MULTIPLIER, PERCENTAGE_SCALE } from '@invariant-labs/sale-sdk'
 import { Status } from '@store/reducers/solanaWallet'
 
@@ -43,7 +43,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   mintDecimals,
   proofOfInclusion,
   roundNumber,
-  // isLoadingSaleStats,
+  isLoadingSaleStats,
   isLoadingUserStats
 }) => {
   const { classes } = useStyles({
@@ -51,71 +51,19 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     isActive
   })
 
-  // if (isLoadingSaleStats) {
-  //   return (
-  //     <Box className={classes.container}>
-  //       <Skeleton variant='text' sx={{ justifySelf: 'center' }} width={150} height={40} />
+  const renderPriceWithSkeleton = (amount, decimals, prefix = "$", width = "80px", isLoading = isLoadingSaleStats) => {
+    if (isLoading) {
+      return <Skeleton variant="text" width={width} height={24} />
+    }
+    return <>{prefix}{printBNandTrimZeros(amount, decimals, 3)}</>
+  }
 
-  //       <Box className={classes.progressCard}>
-  //         <Box className={classes.progressHeader}>
-  //           {isActive ? (
-  //             <>
-  //               <Box className={classes.darkBackground}>
-  //                 <Box className={classes.gradientProgress} />
-  //               </Box>
-  //               <Grid container className={classes.barWrapper}>
-  //                 <Typography className={classes.amountBought}>
-  //                   <Skeleton variant='text' width={20} />
-  //                 </Typography>
-  //                 <Typography className={classes.amountLeft}>
-  //                   <Skeleton variant='text' width={20} />
-  //                 </Typography>
-  //               </Grid>
-  //             </>
-  //           ) : (
-  //             <>
-  //               <Box className={classes.infoRow}>
-  //                 <Skeleton variant='text' width={200} />
-  //               </Box>
-  //               <Box className={classes.infoRow}>
-  //                 <Skeleton variant='text' width={200} />
-  //               </Box>
-  //               <Box className={classes.infoRow}>
-  //                 <Skeleton variant='text' width={200} />
-  //               </Box>
-  //             </>
-  //           )}
-  //         </Box>
-  //       </Box>
-
-  //       <Box className={classes.infoCard}>
-  //         {isActive && (
-  //           <>
-  //             <Box className={classes.infoRow}>
-  //               <Skeleton variant='text' width={180} />
-  //             </Box>
-  //             <Box className={classes.infoRow}>
-  //               <Skeleton variant='text' width={180} />
-  //             </Box>
-  //             <Box className={classes.divider} />
-  //           </>
-  //         )}
-
-  //         {!saleDidNotStart && (
-  //           <Box className={classes.infoRow}>
-  //             <Skeleton variant='text' width={200} />
-  //           </Box>
-  //         )}
-
-  //         {isActive && (
-  //           <Box className={classes.infoRow}>
-  //             <Skeleton variant='text' width={200} />
-  //           </Box>
-  //         )}
-  //       </Box>
-  //     </Box>
-  //   )
-  // }
+  const renderFormattedNumberWithSkeleton = (amount, decimals, prefix = "$", width = "100px", isLoading = isLoadingSaleStats) => {
+    if (isLoading) {
+      return <Skeleton variant="text" width={width} height={24} />
+    }
+    return <>{prefix}{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))}</>
+  }
 
   return (
     <Box className={classes.container}>
@@ -125,7 +73,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
           <Typography className={classes.infoLabelBigger}>Current price: </Typography>
           <Typography className={classes.currentPriceBigger}>
-            ${printBNandTrimZeros(currentPrice, mintDecimals, 4)}
+            {renderPriceWithSkeleton(currentPrice, mintDecimals, "$", "80px")}
           </Typography>
         </Box>
       )}
@@ -145,10 +93,10 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
               </Box>
               <Grid container className={classes.barWrapper}>
                 <Typography className={classes.amountBought}>
-                  ${printBNandTrimZeros(amountDeposited, mintDecimals, 3)}
+                  {renderFormattedNumberWithSkeleton(amountDeposited, mintDecimals, "$", "80px")}
                 </Typography>
                 <Typography className={classes.amountLeft}>
-                  ${printBNandTrimZeros(amountNeeded, mintDecimals, 3)}
+                  {renderFormattedNumberWithSkeleton(amountNeeded, mintDecimals, "$", "80px")}
                 </Typography>
               </Grid>
             </>
@@ -156,23 +104,22 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <>
               <Box className={classes.infoRow}>
                 <Typography className={classes.infoLabel}>
-                  Deposited: ${printBNandTrimZeros(amountDeposited, mintDecimals, 3)}
+                  Deposited:
                 </Typography>
+                {renderFormattedNumberWithSkeleton(amountDeposited, mintDecimals, "$", "100px")}
               </Box>
               <Box className={classes.infoRow}>
                 <Typography className={classes.infoLabel}>
-                  Target deposit: ${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
+                  Target deposit:
                 </Typography>
+                {renderFormattedNumberWithSkeleton(targetAmount, mintDecimals, "$", "100px")}
               </Box>
               <Box className={classes.infoRow}>
                 <Typography className={classes.infoLabel}>
-                  Maximal deposit: $
-                  {printBNandTrimZeros(
-                    targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER),
-                    mintDecimals,
-                    3
-                  )}
+                  Maximal deposit:
+
                 </Typography>
+                {renderFormattedNumberWithSkeleton(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER), mintDecimals, "$", "100px")}
               </Box>
             </>
           )}
@@ -180,7 +127,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         {isActive && (
           <Box className={classes.priceIncreaseBox}>
             <Typography className={classes.priceIncreaseText}>
-              AMOUNT TILL PRICE INCREASE: ${printBNandTrimZeros(amountLeft, mintDecimals, 3)}
+              AMOUNT TILL PRICE INCREASE: {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, "$", "120px")}
             </Typography>
           </Box>
         )}
@@ -192,13 +139,13 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <Box className={classes.infoRow}>
               <Typography className={classes.infoLabel}>Current price: </Typography>
               <Typography className={classes.currentPrice}>
-                ${printBNandTrimZeros(currentPrice, mintDecimals, 3)}
+                {renderPriceWithSkeleton(currentPrice, mintDecimals, "$", "80px")}
               </Typography>
             </Box>
             <Box className={classes.infoRow}>
               <Typography className={classes.infoLabel}>Next price: </Typography>
               <Typography className={classes.nextPrice}>
-                ${printBNandTrimZeros(nextPrice, mintDecimals, 3)}
+                {renderPriceWithSkeleton(nextPrice, mintDecimals, "$", "80px")}
               </Typography>
             </Box>
             <Box className={classes.divider} />
@@ -209,7 +156,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
           <Box className={classes.infoRow}>
             <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
             <Typography className={classes.value}>
-              ${printBNandTrimZeros(userDepositedAmount, mintDecimals, 3)}
+              {renderPriceWithSkeleton(userDepositedAmount, mintDecimals, "$", "80px", isLoadingUserStats)}
             </Typography>
           </Box>
         )}
@@ -221,7 +168,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
                 Your remaining allocation:{' '}
               </Typography>
               <Typography className={classes.value}>
-                ${printBNandTrimZeros(userRemainingAllocation, mintDecimals, 3)}
+                {renderPriceWithSkeleton(userRemainingAllocation, mintDecimals, "$", "80px", isLoadingUserStats)}
               </Typography>
             </Box>
           )}

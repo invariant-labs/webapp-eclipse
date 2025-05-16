@@ -17,7 +17,7 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
-import { closeSmallGreenIcon, greenInfoIcon } from '@static/icons'
+import { closeSmallGreenIcon, closeSmallRedIcon } from '@static/icons'
 import { createButtonActions } from '@utils/uiUtils'
 
 interface IProps {
@@ -40,7 +40,7 @@ interface IProps {
   progress: ProgressState
   isBalanceLoading: boolean
   isLoading: boolean
-  alertBoxText?: string
+  alertBox?: { variant?: string, text: string }
   onBuyClick: (amount: BN) => void
   onConnectWallet: () => void
   onDisconnectWallet: () => void
@@ -69,7 +69,7 @@ export const BuyComponent: React.FC<IProps> = ({
   onBuyClick,
   onConnectWallet,
   onDisconnectWallet,
-  alertBoxText = "test"
+  alertBox
 }) => {
   const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
   const { hours, minutes, seconds } = useCountdown({
@@ -162,17 +162,22 @@ export const BuyComponent: React.FC<IProps> = ({
     minAmount: WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
     onAmountSet: setValue
   })
+  const getAlerBoxColorVariant = useCallback(() => {
 
+    if (alertBox?.variant === 'error') {
+      return classes.alertBoxRed
+    }
+    return classes.alerBoxGreen
+  }, [alertBox])
 
   return (
     <Box className={classes.container}>
       <Box>
         <Box className={classes.headingContainer}>
-          {(alertBoxText && alertBoxShow && isActive) ? (
-            <Box className={classes.alertBox}>
+          {(alertBox && alertBoxShow && isActive) ? (
+            <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
               <Box className={classes.alertBoxContent}>
-                <img src={greenInfoIcon} alt='Info icon' />
-                <Typography className={classes.alertBoxText}>{alertBoxText}</Typography>
+                <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
               </Box>
 
               <Box
@@ -184,7 +189,7 @@ export const BuyComponent: React.FC<IProps> = ({
               >
                 <img
                   className={classes.closeIcon}
-                  src={closeSmallGreenIcon}
+                  src={alertBox?.variant === 'error' ? closeSmallRedIcon : closeSmallGreenIcon}
                   alt='Close icon'
                 />
               </Box>

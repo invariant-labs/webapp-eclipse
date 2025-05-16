@@ -8,6 +8,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     justifyContent: 'space-around',
     alignItems: 'flex-start',
     minHeight: '440px',
+    width: '120px',
     padding: theme.spacing(2.5),
     [theme.breakpoints.down('lg')]: {
       flexDirection: 'row',

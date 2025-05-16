@@ -20,16 +20,30 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       flexDirection: 'column',
       gap: '24px'
     },
+
+    alerBoxGreen: {
+      border: `2px solid ${colors.invariant.green}`,
+      backgroundColor: '#2EE09A33',
+      '& p': {
+        color: colors.invariant.green
+      }
+    },
+    alertBoxRed: {
+      border: `2px solid ${colors.invariant.Error}`,
+      backgroundColor: '#FF4D4D33',
+      '& p': {
+        color: colors.invariant.Error
+      }
+    },
+
     alertBox: {
       width: '100%',
-      border: `2px solid ${colors.invariant.green}`,
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
       borderRadius: '12px',
       marginBottom: '16px',
-      padding: '10px',
-      backgroundColor: '#2EE09A33'
+      padding: '10px'
     },
     alertBoxContent: {
       display: 'flex',
@@ -39,7 +53,6 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       justifyContent: 'center'
     },
     alertBoxText: {
-      color: colors.invariant.green,
       ...typography.body2
     },
     closeIconContainer: {
