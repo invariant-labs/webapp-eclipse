@@ -20,6 +20,8 @@ export const useStyles = makeStyles()(() => ({
     minHeight: '445px',
     padding: '32px 24px',
     display: 'flex',
+    position: 'relative',
+    zIndex: 5,
     textAlign: 'center',
     justifyContent: 'center',
     alignItems: 'center',

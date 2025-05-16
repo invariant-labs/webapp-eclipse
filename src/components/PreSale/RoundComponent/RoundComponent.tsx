@@ -1,4 +1,4 @@
-import { Box, Grid, Skeleton, Typography } from '@mui/material'
+import { Box, Grid, Typography } from '@mui/material'
 import React from 'react'
 import useStyles from './style'
 import classNames from 'classnames'
@@ -43,7 +43,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   mintDecimals,
   proofOfInclusion,
   roundNumber,
-  isLoadingSaleStats,
+  // isLoadingSaleStats,
   isLoadingUserStats
 }) => {
   const { classes } = useStyles({
@@ -51,71 +51,71 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     isActive
   })
 
-  if (isLoadingSaleStats) {
-    return (
-      <Box className={classes.container}>
-        <Skeleton variant='text' sx={{ justifySelf: 'center' }} width={150} height={40} />
+  // if (isLoadingSaleStats) {
+  //   return (
+  //     <Box className={classes.container}>
+  //       <Skeleton variant='text' sx={{ justifySelf: 'center' }} width={150} height={40} />
 
-        <Box className={classes.progressCard}>
-          <Box className={classes.progressHeader}>
-            {isActive ? (
-              <>
-                <Box className={classes.darkBackground}>
-                  <Box className={classes.gradientProgress} />
-                </Box>
-                <Grid container className={classes.barWrapper}>
-                  <Typography className={classes.amountBought}>
-                    <Skeleton variant='text' width={20} />
-                  </Typography>
-                  <Typography className={classes.amountLeft}>
-                    <Skeleton variant='text' width={20} />
-                  </Typography>
-                </Grid>
-              </>
-            ) : (
-              <>
-                <Box className={classes.infoRow}>
-                  <Skeleton variant='text' width={200} />
-                </Box>
-                <Box className={classes.infoRow}>
-                  <Skeleton variant='text' width={200} />
-                </Box>
-                <Box className={classes.infoRow}>
-                  <Skeleton variant='text' width={200} />
-                </Box>
-              </>
-            )}
-          </Box>
-        </Box>
+  //       <Box className={classes.progressCard}>
+  //         <Box className={classes.progressHeader}>
+  //           {isActive ? (
+  //             <>
+  //               <Box className={classes.darkBackground}>
+  //                 <Box className={classes.gradientProgress} />
+  //               </Box>
+  //               <Grid container className={classes.barWrapper}>
+  //                 <Typography className={classes.amountBought}>
+  //                   <Skeleton variant='text' width={20} />
+  //                 </Typography>
+  //                 <Typography className={classes.amountLeft}>
+  //                   <Skeleton variant='text' width={20} />
+  //                 </Typography>
+  //               </Grid>
+  //             </>
+  //           ) : (
+  //             <>
+  //               <Box className={classes.infoRow}>
+  //                 <Skeleton variant='text' width={200} />
+  //               </Box>
+  //               <Box className={classes.infoRow}>
+  //                 <Skeleton variant='text' width={200} />
+  //               </Box>
+  //               <Box className={classes.infoRow}>
+  //                 <Skeleton variant='text' width={200} />
+  //               </Box>
+  //             </>
+  //           )}
+  //         </Box>
+  //       </Box>
 
-        <Box className={classes.infoCard}>
-          {isActive && (
-            <>
-              <Box className={classes.infoRow}>
-                <Skeleton variant='text' width={180} />
-              </Box>
-              <Box className={classes.infoRow}>
-                <Skeleton variant='text' width={180} />
-              </Box>
-              <Box className={classes.divider} />
-            </>
-          )}
+  //       <Box className={classes.infoCard}>
+  //         {isActive && (
+  //           <>
+  //             <Box className={classes.infoRow}>
+  //               <Skeleton variant='text' width={180} />
+  //             </Box>
+  //             <Box className={classes.infoRow}>
+  //               <Skeleton variant='text' width={180} />
+  //             </Box>
+  //             <Box className={classes.divider} />
+  //           </>
+  //         )}
 
-          {!saleDidNotStart && (
-            <Box className={classes.infoRow}>
-              <Skeleton variant='text' width={200} />
-            </Box>
-          )}
+  //         {!saleDidNotStart && (
+  //           <Box className={classes.infoRow}>
+  //             <Skeleton variant='text' width={200} />
+  //           </Box>
+  //         )}
 
-          {isActive && (
-            <Box className={classes.infoRow}>
-              <Skeleton variant='text' width={200} />
-            </Box>
-          )}
-        </Box>
-      </Box>
-    )
-  }
+  //         {isActive && (
+  //           <Box className={classes.infoRow}>
+  //             <Skeleton variant='text' width={200} />
+  //           </Box>
+  //         )}
+  //       </Box>
+  //     </Box>
+  //   )
+  // }
 
   return (
     <Box className={classes.container}>

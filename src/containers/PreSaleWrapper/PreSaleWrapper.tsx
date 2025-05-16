@@ -29,8 +29,17 @@ import { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import { colors, typography, theme } from '@static/theme'
 import { Faq } from '@common/Faq/Faq'
 import { PreSaleCard } from '@components/PreSale/PreSaleCard/PreSaleCard'
-import CardHeroLogoPodium from '@static/png/presale/podium.png'
-import CardHeroLogoEclipse from '@static/png/presale/inv_eclipse.png'
+import SolanaHackatonHero from '@static/png/presale/cards/SolanaHackaton.png'
+import SolanaMainNetHero from '@static/png/presale/cards/SolanaLaunch.png'
+import AlphHackatonHero from '@static/png/presale/cards/AlphHackaton.png'
+import EclipseHackatonHero from '@static/png/presale/cards/EclipseHackaton.png'
+import EclipseMainNetHero from '@static/png/presale/cards/EclipseLaunch.png'
+import TVLHero from '@static/png/presale/cards/TVL.png'
+import UsersHero from '@static/png/presale/cards/Users.png'
+import SonicHacktonHero from '@static/png/presale/cards/SonicHackaton.png'
+import AutoswapHero from '@static/png/presale/cards/Autoswap.png'
+import PubliSaleHero from '@static/png/presale/cards/SaleBegins.png'
+
 import { EventsCard } from '@components/PreSale/EventsCards/EventsCard'
 import Slider from 'react-slick'
 import 'slick-carousel/slick/slick.css'
@@ -195,13 +204,13 @@ export const PreSaleWrapper = () => {
         saleStats
           ? saleStats
           : {
-              targetAmount: new BN(0),
-              currentAmount: new BN(0),
-              whitelistWalletLimit: new BN(0),
-              startTimestamp: new BN(0),
-              duration: new BN(0),
-              mint: new PublicKey(0)
-            },
+            targetAmount: new BN(0),
+            currentAmount: new BN(0),
+            whitelistWalletLimit: new BN(0),
+            startTimestamp: new BN(0),
+            duration: new BN(0),
+            mint: new PublicKey(0)
+          },
       [saleStats]
     )
 
@@ -215,9 +224,9 @@ export const PreSaleWrapper = () => {
       userStats
         ? userStats
         : {
-            deposited: new BN(0),
-            received: new BN(0)
-          },
+          deposited: new BN(0),
+          received: new BN(0)
+        },
     [userStats]
   )
 
@@ -341,6 +350,9 @@ export const PreSaleWrapper = () => {
 
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
+      <Hidden lgDown>
+        <OverlayWrapper />
+      </Hidden>
       <Box className={classes.infoContainer}>
         <Box className={classes.contentWrapper}>
           <Grid className={classes.stepperContainer}>
@@ -418,9 +430,7 @@ export const PreSaleWrapper = () => {
             }}
           />
         </Box>
-        <Hidden lgDown>
-          <OverlayWrapper />
-        </Hidden>
+
       </Box>
 
       <Box className={classes.sectionTitle}>
@@ -505,78 +515,100 @@ export const PreSaleWrapper = () => {
               description={
                 'First win comes at a major hackathon. Invariant celebrates its first big success.'
               }
-              heroImage={CardHeroLogoPodium}
+              heroImage={SolanaHackatonHero}
             />
             <EventsCard
+              title={'Solana Mainnet Launch'}
+              borderColor='green'
+              link='https://medium.com/@invariant_labs/what-is-invariant-introduction-351b17296136'
+              description={
+                'Invariant says hello to the world. The first transaction on Solana Mainnet is now complete.'
+              }
+              heroImage={SolanaMainNetHero}
+            />
+            <EventsCard
+              title={'Alephium Hackathon'}
+              link='https://medium.com/@alephium/hackathon-winners-announced-68d55711b99d'
+              description={
+                'Second hackathon win on Alephium. Invariant secures $15k and proves its skills once again.'
+              }
+              heroImage={AlphHackatonHero}
+            />
+            <EventsCard
+              title={'Eclipse Hackathon Win'}
+              link="https://x.com/invariant_labs/status/1839676182884663721"
+              description={`Third time's the charm. Invariant wins the opening hackathon on Eclipse, earns $15k, and steps into the spotlight.`}
+              heroImage={EclipseHackatonHero}
+            />
+
+            <EventsCard
               title={'Eclipse Mainnet Launch'}
+              link="https://x.com/invariant_labs/status/1849106452259991654"
               borderColor={'pink'}
               description={
                 'Invariant expands to new SVMs. After being the first app on Eclipse testnet and tested by thousands, Invariant launches on mainnet.'
               }
-              heroImage={CardHeroLogoEclipse}
+              heroImage={EclipseMainNetHero}
             />
+
+
             <EventsCard
-              title={'Sonic Mobius Hackaton'}
+              title={'$8MLN TVL'}
+              link="https://x.com/invariant_labs/status/1890092960815149087"
               borderColor={'green'}
-              description={
-                'Invariant wins the Sonic hackathon with its breakthrough AutoSwap feature. A new era of liquidity provision begins.'
-              }
-              heroImage={CardHeroLogoPodium}
-            />
-            <EventsCard
-              title={'Alephium Hackathon'}
-              description={
-                'Second hackathon win on Alephium. Invariant secures $15k and proves its skills once again.'
-              }
-              heroImage={CardHeroLogoPodium}
+              description={'In just four months, TVL on Eclipse surpasses 8 million dollars.'}
+              heroImage={TVLHero}
             />
 
             <EventsCard
               title={'250k+ users on Eclipse'}
+              link='https://x.com/invariant_labs/status/1912589859811913986'
               description={
                 'After six months on Eclipse mainnet, Invariant surpasses a massive milestone of 250,000 users.'
               }
-              heroImage={CardHeroLogoEclipse}
+              heroImage={UsersHero}
             />
 
             <EventsCard
-              title={'$8MLN TVL'}
+              title={'Sonic Mobius Hackaton'}
+              link="https://x.com/SonicSVM/status/1910590750024147382"
               borderColor={'green'}
-              description={'In just four months, TVL on Eclipse surpasses 8 million dollars.'}
-              heroImage={CardHeroLogoPodium}
+              description={
+                'Invariant wins the Sonic hackathon with its breakthrough AutoSwap feature. A new era of liquidity provision begins.'
+              }
+              heroImage={SonicHacktonHero}
             />
+
 
             <EventsCard
               title={'AutoSwap Launch'}
+              link="https://x.com/invariant_labs/status/1912894700614271377"
               description={
                 'AutoSwap launches on Eclipse. In its first week, it improves the experience for countless users who create thousands of positions with its help.'
               }
-              heroImage={CardHeroLogoPodium}
+              heroImage={AutoswapHero}
             />
-
             <EventsCard
               title={'Public Sale Begins'}
               borderColor={'pink'}
               description={
                 'Invariant launches on Solana mainnet. The first AMM with AutoSwap goes live.'
               }
-              heroImage={CardHeroLogoEclipse}
+              heroImage={PubliSaleHero}
             />
 
-            <EventsCard
-              title={'Solana Mainnet Launch'}
-              borderColor='green'
-              description={
-                'Invariant says hello to the world. The first transaction on Solana Mainnet is now complete.'
-              }
-              heroImage={CardHeroLogoPodium}
-            />
 
-            <EventsCard
-              title={'Eclipse Hackathon Win'}
-              description={`Third time's the charm. Invariant wins the opening hackathon on Eclipse, earns $15k, and steps into the spotlight.`}
-              heroImage={CardHeroLogoPodium}
-            />
+
+
+
+
+
+
+
+
+
+
+
           </Slider>
         </Box>
       </Box>

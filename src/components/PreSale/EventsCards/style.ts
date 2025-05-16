@@ -4,9 +4,10 @@ import { colors, theme, typography } from '@static/theme'
 interface StyleProps {
   borderColor: 'textGrey' | 'green' | 'pink'
   isImportant: boolean
+  link?: string
 }
 
-const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant }) => {
+const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant, link }) => {
   const getBorderColor = () => {
     switch (borderColor) {
       case 'green':
@@ -37,6 +38,9 @@ const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant }
       padding: '24px',
       overflow: 'hidden',
       boxSizing: 'content-box',
+      '&:hover': {
+        cursor: link ? 'pointer' : 'default'
+      },
       '&::before': {
         content: '""',
         position: 'absolute',

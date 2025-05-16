@@ -2,7 +2,7 @@ import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import useStyles from './style'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { convertBalanceToBN, printBNandTrimZeros } from '@utils/utils'
+import { convertBalanceToBN, formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
 import { Timer } from '../Timer/Timer'
 import { BN } from '@coral-xyz/anchor'
 import {
@@ -12,12 +12,13 @@ import {
   REWARD_SCALE
 } from '@invariant-labs/sale-sdk'
 import { useCountdown } from '../Timer/useCountdown'
-import { Status } from '@store/reducers/solanaWallet'
+import { actions, Status } from '@store/reducers/solanaWallet'
 import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
-import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN } from '@store/consts/static'
+import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
 import { closeSmallGreenIcon, greenInfoIcon } from '@static/icons'
+import { createButtonActions } from '@utils/uiUtils'
 
 interface IProps {
   nativeBalance: BN
@@ -68,7 +69,7 @@ export const BuyComponent: React.FC<IProps> = ({
   onBuyClick,
   onConnectWallet,
   onDisconnectWallet,
-  alertBoxText
+  alertBoxText = "test"
 }) => {
   const targetDate = useMemo(() => new Date(startTimestamp.toNumber() * 1000), [startTimestamp])
   const { hours, minutes, seconds } = useCountdown({
@@ -76,6 +77,9 @@ export const BuyComponent: React.FC<IProps> = ({
   })
 
   const [value, setValue] = useState<string>('0')
+
+  const [WETH_MIN_FEE_LAMPORTS, setMinFeeLamports] = useState<any | undefined>(undefined);
+
   const [receive, setReceive] = useState<BN>(new BN(0))
   const filledPercentage = useMemo(() => {
     if (targetAmount.isZero()) {
@@ -151,11 +155,21 @@ export const BuyComponent: React.FC<IProps> = ({
     setAlertBoxShow(showBanner === 'true')
   }, [])
 
+
+
+  const actions = createButtonActions({
+    tokens,
+    wrappedTokenAddress: WRAPPED_ETH_ADDRESS,
+    minAmount: WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN,
+    onAmountSet: setValue
+  })
+
+
   return (
     <Box className={classes.container}>
       <Box>
         <Box className={classes.headingContainer}>
-          {(alertBoxText && alertBoxShow && isActive) || walletStatus === Status.Initialized ? (
+          {(alertBoxText && alertBoxShow && isActive) ? (
             <Box className={classes.alertBox}>
               <Box className={classes.alertBoxContent}>
                 <img src={greenInfoIcon} alt='Info icon' />
@@ -167,11 +181,16 @@ export const BuyComponent: React.FC<IProps> = ({
                 onClick={() => {
                   localStorage.setItem('INVARIANT_SALE_SHOW_BANNER', 'false')
                   setAlertBoxShow(false)
-                }}>
-                <img className={classes.closeIcon} src={closeSmallGreenIcon} alt='Close icon' />
+                }}
+              >
+                <img
+                  className={classes.closeIcon}
+                  src={closeSmallGreenIcon}
+                  alt='Close icon'
+                />
               </Box>
             </Box>
-          ) : (
+          ) : walletStatus !== Status.Initialized ? (
             <Box className={classes.egibilityCheckerWrapper}>
               <Box className={classes.egibilityChecker}>
                 <Typography className={classes.egibilityCheckerText}>
@@ -188,7 +207,7 @@ export const BuyComponent: React.FC<IProps> = ({
               </Box>
               <Box className={classes.sectionDivider} />
             </Box>
-          )}
+          ) : null}
           <Typography className={classes.titleText}>
             <Typography className={classes.pinkText}>INVARIANT</Typography>
             <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
@@ -202,9 +221,9 @@ export const BuyComponent: React.FC<IProps> = ({
               ) : (
                 <>
                   <Typography className={classes.greenBodyText}>
-                    ${printBNandTrimZeros(currentAmount, mintDecimals, 3)}
+                    ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 3))}
                   </Typography>
-                  {' / '}${printBNandTrimZeros(targetAmount, mintDecimals, 3)}
+                  {' / '}${formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 3))}
                 </>
               )}
             </Typography>
@@ -216,6 +235,7 @@ export const BuyComponent: React.FC<IProps> = ({
               <Box className={classes.gradientProgress} />
             </Box>
             <Grid container className={classes.barWrapper}>
+              <Typography className={classes.sliderLabel}>0%</Typography>
               <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
               <Typography className={classes.sliderLabel}>100%</Typography>
             </Grid>
@@ -248,7 +268,10 @@ export const BuyComponent: React.FC<IProps> = ({
             actionButtons={[
               {
                 label: 'Max',
-                onClick: () => {},
+                onClick: () => {
+                  actions.max(tokenIndex)
+
+                },
                 variant: 'max'
               }
             ]}
@@ -257,7 +280,7 @@ export const BuyComponent: React.FC<IProps> = ({
                 ? printBNandTrimZeros(tokens[tokenIndex].balance, tokens[tokenIndex].decimals)
                 : ''
             }
-            onBlur={() => {}}
+            onBlur={() => { }}
             value={value}
             isBalanceLoading={isBalanceLoading}
             walletUninitialized={walletStatus !== Status.Initialized}
