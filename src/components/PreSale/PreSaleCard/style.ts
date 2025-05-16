@@ -2,29 +2,13 @@ import { colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 const useStyles = makeStyles<{ gradientDirection?: string; gradientPrimaryColor?: string }>()(
-  (theme, { gradientDirection, gradientPrimaryColor }) => ({
+  theme => ({
     container: {
       display: 'flex',
       position: 'relative',
       overflow: 'hidden',
       width: '100%',
       height: '130px',
-      background: `linear-gradient(${gradientDirection}, #ef84f500 0%, ${gradientPrimaryColor}40 100%), #202946`,
-
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        borderRadius: '24px',
-        padding: '2px',
-        background: `linear-gradient(${gradientDirection} ,#A9B6BF26, ${gradientPrimaryColor})`,
-        mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-        maskComposite: 'exclude',
-        pointerEvents: 'none'
-      },
 
       borderRadius: '24px',
       padding: '24px',
@@ -46,7 +30,6 @@ const useStyles = makeStyles<{ gradientDirection?: string; gradientPrimaryColor?
         minHeight: '80px',
         padding: '12px',
         borderRadius: '16px',
-        // Update border radius in pseudo-element for smaller screens
         '&::before': {
           borderRadius: '16px'
         }
@@ -67,7 +50,7 @@ const useStyles = makeStyles<{ gradientDirection?: string; gradientPrimaryColor?
       alignItems: 'center',
       flexDirection: 'column',
       width: '100%',
-      position: 'relative', // Ensure content stays above border
+      position: 'relative',
       zIndex: 1
     },
     title: {

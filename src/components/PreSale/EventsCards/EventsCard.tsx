@@ -1,7 +1,9 @@
 import { Box, Typography } from '@mui/material'
 import React from 'react'
 import EventCard from '@static/png/presale/event-card-bg.png'
-import useStyles from './style'
+import { useStyles } from './style'
+import GradientBorder from '@common/GradientBorder/GradientBorder';
+import { colors } from '@static/theme';
 
 interface EventsCardProps {
     title?: string;
@@ -28,11 +30,13 @@ export const EventsCard: React.FC<EventsCardProps> = ({
     const { classes } = useStyles({ borderColor, isImportant, link });
 
     return (
-        <Box className={classes.container} onClick={() =>
-            link ? window.open(link, '_blank') : null
-        }>
+        <GradientBorder borderRadius={24} borderWidth={2} backgroundColor={colors.invariant.component} innerClassName={classes.container}>
+
             <Box
                 className={classes.backgroundImage}
+                onClick={() =>
+                    link ? window.open(link, '_blank') : null
+                }
                 sx={{ backgroundImage: `url(${EventCard})` }}
             />
             <Box className={classes.contentWrapper}>
@@ -46,6 +50,6 @@ export const EventsCard: React.FC<EventsCardProps> = ({
                     {description}
                 </Typography>
             </Box>
-        </Box>
+        </GradientBorder>
     )
 }

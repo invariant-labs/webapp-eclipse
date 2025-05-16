@@ -7,7 +7,7 @@ interface StyleProps {
   link?: string
 }
 
-const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant, link }) => {
+export const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant, link }) => {
   const getBorderColor = () => {
     switch (borderColor) {
       case 'green':
@@ -29,7 +29,6 @@ const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant, 
         height: '372px'
       },
       position: 'relative',
-      background: colors.invariant.component,
       display: 'flex',
       justifyContent: 'center',
       flexDirection: 'column',
@@ -40,22 +39,22 @@ const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant, 
       boxSizing: 'content-box',
       '&:hover': {
         cursor: link ? 'pointer' : 'default'
-      },
-      '&::before': {
-        content: '""',
-        position: 'absolute',
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        zIndex: 5,
-        borderRadius: '24px',
-        padding: '2px',
-        background: colors.invariant.pinkGreenLinearGradient,
-        mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
-        maskComposite: 'exclude',
-        pointerEvents: 'none'
       }
+      // '&::before': {
+      //   content: '""',
+      //   position: 'absolute',
+      //   top: 0,
+      //   left: 0,
+      //   right: 0,
+      //   bottom: 0,
+      //   zIndex: 5,
+      //   borderRadius: '24px',
+      //   padding: '2px',
+      //   background: colors.invariant.pinkGreenLinearGradient,
+      //   mask: 'linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0)',
+      //   maskComposite: 'exclude',
+      //   pointerEvents: 'none'
+      // }
     },
     backgroundImage: {
       width: '100%',
@@ -87,5 +86,3 @@ const useStyles = makeStyles<StyleProps>()((_theme, { borderColor, isImportant, 
     }
   }
 })
-
-export default useStyles
