@@ -349,7 +349,6 @@ export const PreSaleWrapper = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
-  const loading = true
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>

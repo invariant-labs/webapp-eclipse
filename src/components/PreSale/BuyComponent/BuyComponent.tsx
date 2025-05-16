@@ -174,10 +174,10 @@ export const BuyComponent: React.FC<IProps> = ({
     <Box className={classes.container}>
       <Box>
         <Box className={classes.headingContainer}>
-          {(alertBox && alertBoxShow && isActive) ? (
+          {(alertBox && alertBoxShow && isActive && walletStatus !== Status.Uninitialized) ? (
             <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
               <Box className={classes.alertBoxContent}>
-                <Typography className={classes.alertBoxText}>{alertBox.text}</Typography>
+                <Typography className={classes.alertBoxText}>{alertBox && alertBox.text}</Typography>
               </Box>
 
               <Box
