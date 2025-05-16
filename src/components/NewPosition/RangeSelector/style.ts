@@ -20,7 +20,8 @@ const useStyles = makeStyles()(theme => {
     headerContainer: {
       justifyContent: 'space-between',
       marginBottom: 12,
-      flexDirection: 'row'
+      flexDirection: 'row',
+      minHeight: 65
     },
     header: {
       ...typography.heading4,
