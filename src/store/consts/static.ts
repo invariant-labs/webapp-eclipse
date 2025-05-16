@@ -918,3 +918,23 @@ export const PRICE_API_URL = 'https://api.invariant.app/price'
 export enum AutoswapCustomError {
   FetchError = 0
 }
+
+export enum ErrorCodeExtractionKeys {
+  ErrorNumber = 'Error Number:',
+  Custom = 'Custom":',
+  ApprovalDenied = 'Approval Denied',
+  UndefinedOnSplit = "Cannot read properties of undefined (reading 'split')",
+  RightBracket = '}',
+  Dot = '.'
+}
+export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
+  0x1778: 'Price moved too much – increase slippage',
+  0x1773: 'Price moved too much – increase slippage',
+  0x1795: 'Output too low – adjust amount or slippage settings',
+  0x1796: 'Input too high – reduce the amount to proceed',
+  0x1775: 'Position not opened – minimum utilization not met',
+  0x1785: 'Swap failed – output amount is zero'
+}
+
+export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
+export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected.'
