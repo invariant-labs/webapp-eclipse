@@ -54,6 +54,7 @@ const RootPage: React.FC = memo(() => {
     [ROUTES.LIQUIDITY, 'Invariant | Liquidity'],
     [ROUTES.PORTFOLIO, 'Invariant | Portfolio'],
     [ROUTES.NEW_POSITION, 'Invariant | New Position'],
+    [ROUTES.SALE, 'Invariant | Sale'],
     [ROUTES.POSITION, 'Invariant | Position Details'],
     [ROUTES.POINTS, 'Invariant | Points'],
     [ROUTES.STATISTICS, 'Invariant | Statistics'],
