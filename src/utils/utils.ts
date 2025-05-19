@@ -1850,17 +1850,13 @@ export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: strin
 
   if (tokenXIndex !== -1 && tokenYIndex !== -1) {
     if (tokenXIndex < tokenYIndex) {
-      console.log('revert other tokens')
       return false
     } else {
-      console.log('revert other tokens')
       return true
     }
   } else if (tokenXIndex > tokenYIndex) {
-    console.log('revert other tokens')
     return false
   } else {
-    console.log('revert other tokens')
     return true
   }
 }
