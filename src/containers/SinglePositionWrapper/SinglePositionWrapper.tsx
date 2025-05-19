@@ -453,7 +453,14 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
       if (position?.positionIndex === undefined && isClosingPosition) {
         setIsClosingPosition(false)
         dispatch(connectionActions.setTimeoutError(false))
-        navigate(ROUTES.PORTFOLIO)
+
+        if (nextPosition) {
+          navigate(ROUTES.getPositionRoute(nextPosition.id))
+        } else if (previousPosition) {
+          navigate(ROUTES.getPositionRoute(previousPosition.id))
+        } else {
+          navigate(ROUTES.PORTFOLIO)
+        }
       } else {
         dispatch(connectionActions.setTimeoutError(false))
         onRefresh()
@@ -548,7 +555,13 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             actions.closePosition({
               positionIndex: position.positionIndex,
               onSuccess: () => {
-                navigate(ROUTES.PORTFOLIO)
+                if (nextPosition) {
+                  navigate(ROUTES.getPositionRoute(nextPosition.id))
+                } else if (previousPosition) {
+                  navigate(ROUTES.getPositionRoute(previousPosition.id))
+                } else {
+                  navigate(ROUTES.PORTFOLIO)
+                }
               },
               claimFarmRewards
             })
