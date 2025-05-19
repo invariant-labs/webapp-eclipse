@@ -1,19 +1,12 @@
-import { Accordion, AccordionSummary, AccordionDetails, Typography } from '@mui/material'
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore'
-import { useStyles } from './styles'
-import { colors } from '@static/theme'
 import FAQ1 from '@static/png/faq-1.png'
 import FAQ2 from '@static/png/faq-2.png'
 import FAQ3 from '@static/png/faq-3.png'
 import FAQ4 from '@static/png/faq-4.png'
 
-export const Faq = () => {
-  const { classes } = useStyles()
-
-  const faqData = [
-    {
-      question: 'What is Invariant Points?',
-      answer: `
+export const faqData = [
+  {
+    question: 'What is Invariant Points?',
+    answer: `
         Invariant Points is a program designed to incentivize Invariant liquidity providers. 
         <br></br>
         Users can earn points that can be redeemed for future exclusive benefits.
@@ -21,11 +14,11 @@ export const Faq = () => {
         
 
    `
-    },
+  },
 
-    {
-      question: 'What is Eclipse Ecosystem Exposure?',
-      answer: `
+  {
+    question: 'What is Eclipse Ecosystem Exposure?',
+    answer: `
       
       It’s a <a href="https://docs.invariant.app/docs/invariant_points/ecosystem_exposure" style="color: #2EE09A" target="_blank"><b>triple-yield opportunity</b></a> for providing liquidity on Invariant.
       In addition to earning fees and Invariant Points, users unlock exclusive benefits from other projects in the Eclipse ecosystem, which are our official partners.
@@ -35,10 +28,10 @@ export const Faq = () => {
       You can earn points in Points Systems, receive boosts, and get discounts on products from our ecosystem partners.
       
       `
-    },
-    {
-      question: 'How do I earn points?',
-      answer: `
+  },
+  {
+    question: 'How do I earn points?',
+    answer: `
       
       Currently, you can earn points by <a href="https://docs.invariant.app/docs/invariant_points/get_started" style="color: #2EE09A" target="_blank"><b>providing liquidity in rewarded pools.</b></a>
       <br></br>
@@ -47,10 +40,10 @@ export const Faq = () => {
       In the future, we plan to introduce even more ways to earn points.
       
       `
-    },
-    {
-      question: `Which pool should I add liquidity to?`,
-      answer: `
+  },
+  {
+    question: `Which pool should I add liquidity to?`,
+    answer: `
       Pools currently distributing points: <br></br>
        <ul>
        <li><span style="color: #2EE09A; font-weight: bold;">ETH/USDC</span> (<b>0.09%</b> fee tier)</li>
@@ -65,10 +58,10 @@ export const Faq = () => {
        All pools distributing points are listed in the <b><span style="color: #2EE09A;">Rewarded Pools</span></b> list.
       
       `
-    },
-    {
-      question: 'How are points calculated?',
-      answer: `
+  },
+  {
+    question: 'How are points calculated?',
+    answer: `
     The algorithm we have created is unique in the entire DeFi space.</br></br>
 Every second, a fixed amount of points is distributed and divided among all positions. Players compete for these points by creating the most efficient positions possible.</br></br>
 The algorithm takes into account factors such as the size of the position (TVL), the time it has been open, and the level of concentration (position range). A higher value in one factor can compensate for another. For example, having a higher level of concentration can allow you to accrue more points than someone with a higher TVL.</br></br>
@@ -87,19 +80,19 @@ The algorithm takes into account factors such as the size of the position (TVL),
   
     
     `
-    },
-    {
-      question: 'On which blockchain can I earn points?',
-      answer: '<b><span style="color: #2EE09A;">Eclipse</span></b>'
-    },
-    {
-      question: 'How long will points continue?',
-      answer: 'Invariant Points will run through 2025, with no specific end date defined yet.'
-    },
+  },
+  {
+    question: 'On which blockchain can I earn points?',
+    answer: '<b><span style="color: #2EE09A;">Eclipse</span></b>'
+  },
+  {
+    question: 'How long will points continue?',
+    answer: 'Invariant Points will run through 2025, with no specific end date defined yet.'
+  },
 
-    {
-      question: 'Do I get rewarded for being an early user?',
-      answer: `
+  {
+    question: 'Do I get rewarded for being an early user?',
+    answer: `
       Yes. 
       <br></br>
       Our <a href="https://docs.invariant.app/docs/invariant_points/mechanism" style="color: #2EE09A" target="_blank"><b>point distribution system</b></a> is designed in such a way as to appreciate OG users. A constant number of points is distributed every second and shared across all positions.
@@ -107,10 +100,10 @@ The algorithm takes into account factors such as the size of the position (TVL),
       As the number of positions increases, the number of points received by each one decreases, so it pays off to be early.
       <br></br>
       One dollar in a position now might be worth as much as 30 dollars in the future.`
-    },
-    {
-      question: `If I'm not a whale, do I still have a chance at being competitive points? `,
-      answer: `
+  },
+  {
+    question: `If I'm not a whale, do I still have a chance at being competitive points? `,
+    answer: `
         Yes.
         <br></br>
         Invariant Points is the fairest point system ever created.
@@ -123,11 +116,11 @@ The algorithm takes into account factors such as the size of the position (TVL),
         
        
         `
-    },
+  },
 
-    {
-      question: `I don't understand how the points distribution works. Could you explain it to me?`,
-      answer: `    
+  {
+    question: `I don't understand how the points distribution works. Could you explain it to me?`,
+    answer: `    
       Sure! Here is the explanation with a graphic example.</br></br>
       You create two positions in a <b>USDC/USDT</b> pool with a price of <b>1 USDC per USDT</b>.</br>
       (*Both positions contribute an equal amount of tokens to the pool.)
@@ -188,43 +181,21 @@ The algorithm takes into account factors such as the size of the position (TVL),
       Check out more details about points about <b><a href="https://docs.invariant.app/docs/invariant_points/mechanism" style="color: #2EE09A" target="_blank">point distribution system</a></b>.
     
     `
-    },
-    {
-      question: `I'm new to providing liquidity, how can I learn how to do it correctly?`,
-      answer:
-        'No worries, everyone started somewhere. You can start by reading our docs about concentrated liquidity provision <b> <a href="https://docs.invariant.app/docs/tutorial/get_started" style="color: #2EE09A" target="_blank">here.</a> </b>'
-    },
-    {
-      question: `My position is out of range and isn’t earning points. What should I do?`,
-      answer: `
+  },
+  {
+    question: `I'm new to providing liquidity, how can I learn how to do it correctly?`,
+    answer:
+      'No worries, everyone started somewhere. You can start by reading our docs about concentrated liquidity provision <b> <a href="https://docs.invariant.app/docs/tutorial/get_started" style="color: #2EE09A" target="_blank">here.</a> </b>'
+  },
+  {
+    question: `My position is out of range and isn’t earning points. What should I do?`,
+    answer: `
       It's a normal situation in concentrated liquidity. 
       <br></br>
       You need to <a href="https://docs.invariant.app/docs/invariant_points/get_started" style="color: #2EE09A" target="_blank"><b>rebalance</b></a> your position, which means closing it, adjusting the token ratio to match the ratio required for the new position, and then reopening it within the new price range.`
-    },
-    {
-      question: `How to contact us?`,
-      answer: `You can contact us via: <b> </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p> </b>`
-    }
-  ]
-
-  return (
-    <div className={classes.container}>
-      {faqData.map((item, index) => (
-        <Accordion disableGutters key={index} className={classes.accordion}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon sx={{ color: colors.invariant.text }} />}
-            className={classes.summary}>
-            <Typography>{item.question}</Typography>
-          </AccordionSummary>
-          <AccordionDetails
-            sx={{
-              padding: '16px'
-            }}
-            className={classes.item}>
-            <Typography dangerouslySetInnerHTML={{ __html: item.answer }} />
-          </AccordionDetails>
-        </Accordion>
-      ))}
-    </div>
-  )
-}
+  },
+  {
+    question: `How to contact us?`,
+    answer: `You can contact us via: <b> </br> <ul><li><a href="https://discord.com/invite/w6hTeWTJvG" style="color: #2EE09A" target="_blank">Discord</a></li><li><a href="mailto:contact@invariant.app" style="color: #2EE09A">Email</a></li><li><a href="https://x.com/invariant_labs" style="color: #2EE09A" target="_blank">X</a></li></ul><p>The Terms and Conditions of the Invariant Points Program are available <a href="https://docs.invariant.app/docs/points_terms" style="color: #2EE09A" target="_blank">here.</a></p> </b>`
+  }
+]

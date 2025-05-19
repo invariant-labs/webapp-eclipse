@@ -22,7 +22,8 @@ export const useStyles = makeStyles<Props>()((_theme, { isHorizontal }) => ({
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center',
-    padding: isHorizontal ? '0 14px' : 0
+    padding: isHorizontal ? '0 14px' : 0,
+    textWrap: 'nowrap'
   },
   value: {
     flexGrow: 1,
