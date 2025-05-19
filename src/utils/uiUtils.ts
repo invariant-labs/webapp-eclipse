@@ -95,28 +95,22 @@ export const createButtonActions = (config: MaxButtonConfig) => {
       currentAmount?: BN,
       targetAmount?: BN
     ) => {
-      if (
-        tokenIndex === null ||
-        currentRound === undefined ||
-        tokenIndex === null ||
-        currentRound === null
-      ) {
+      if (tokenIndex === null || currentRound === undefined || currentRound === null) {
         return
       }
+
       const amount = calculateAmount(tokenIndex)
       const tokenDecimals = config.tokens[tokenIndex].decimals
+      let maxAllowedAmount: BN
+
       if (currentRound <= 3) {
-        config.onAmountSet(
-          trimDecimalZeros(printBN(whitelistWalletLimit.sub(deposited), tokenDecimals))
-        )
-      } else if (currentRound > 3) {
-        const remainingTarget = targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER).sub(currentAmount)
-        if (amount > remainingTarget) {
-          config.onAmountSet(trimDecimalZeros(printBN(remainingTarget, tokenDecimals)))
-        } else {
-          config.onAmountSet(trimDecimalZeros(printBN(amount, tokenDecimals)))
-        }
+        maxAllowedAmount = whitelistWalletLimit.sub(new BN(deposited))
+      } else {
+        maxAllowedAmount = targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER).sub(currentAmount)
       }
+
+      const finalAmount = BN.min(amount, maxAllowedAmount)
+      config.onAmountSet(trimDecimalZeros(printBN(finalAmount, tokenDecimals)))
     },
 
     half: (tokenIndex: number | null) => {
