@@ -72,7 +72,7 @@ export const TooltipHover = ({
     return () => {
       if (callback) clearTimeout(callback)
     }
-  }, [titleHover, childrenHover, 100])
+  }, [titleHover, childrenHover])
 
   useEffect(() => {
     if (isMobile && open) {
@@ -87,6 +87,12 @@ export const TooltipHover = ({
       if (callback) clearTimeout(callback)
     }
   }, [open, isMobile])
+  useEffect(() => {
+    if (!allowEnterTooltip) {
+      setOpen(false)
+    }
+  }, [allowEnterTooltip])
+
   if (!title) return children
   return (
     <Tooltip
@@ -114,9 +120,16 @@ export const TooltipHover = ({
             setOpen(true)
           }
         }}
-        onMouseEnter={() => setChildrenHover(true)}
+        onMouseEnter={
+          allowEnterTooltip
+            ? () => {
+                setChildrenHover(true)
+                setOpen(true)
+              }
+            : undefined
+        }
         onMouseLeave={() => setChildrenHover(false)}
-        onFocus={() => setChildrenHover(true)}
+        onFocus={allowEnterTooltip ? () => setChildrenHover(true) : undefined}
         onBlur={() => setChildrenHover(false)}>
         {children}
       </span>
