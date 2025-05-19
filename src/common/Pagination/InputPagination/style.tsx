@@ -130,6 +130,7 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     },
 
     '&:disabled': {
+      zIndex: 1,
       background: colors.invariant.light,
       color: colors.invariant.componentBcg,
       pointerEvents: 'auto',
