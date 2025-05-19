@@ -85,10 +85,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     borderRadius: 10,
     backdropFilter: 'blur(16px)'
   },
-  loader: {
-    height: 100,
-    width: 100,
-    margin: 'auto'
+  skeleton: {
+    zIndex: 111,
+    borderRadius: 10,
+    width: '100%',
+    height: '100%'
   }
 }))
 
