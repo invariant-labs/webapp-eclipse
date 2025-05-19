@@ -58,8 +58,6 @@ export function* fetchPoolData(action: PayloadAction<Pair>) {
     const error = ensureError(e)
     console.log(error)
 
-    yield* put(actions.addPools([]))
-
     yield* call(handleRpcError, error.message)
   }
 }
