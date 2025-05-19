@@ -12,7 +12,7 @@ import {
 import { PlotTickData } from '@store/reducers/positions'
 import React, { useEffect, useState } from 'react'
 import useStyles from './style'
-import { getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
+import { getMaxTick, getMinTick } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { Stat } from './Stat/Stat'
 import { boostPointsBoldIcon } from '@static/icons'
 import { RangeIndicator } from './RangeIndicator/RangeIndicator'
@@ -39,6 +39,7 @@ export interface ISinglePositionPlot {
     token: string
     price?: number
   } | null
+  positionId: string
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -57,7 +58,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   hasTicksError,
   reloadHandler,
   isFullRange,
-  usdcPrice
+  usdcPrice,
+  positionId
 }) => {
   const { classes } = useStyles()
 
@@ -80,6 +82,10 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   const [zoomScale, setZoomScale] = useState(0.7)
 
   useEffect(() => {
+    if (!isInitialLoad) setIsInitialLoad(true)
+  }, [positionId])
+
+  useEffect(() => {
     const initSideDist = Math.abs(
       leftRange.x -
         calcPriceByTickIndex(
@@ -99,13 +105,16 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
 
       setPlotMax(plotMax)
       setPlotMin(plotMin)
+
       setCurrentXtoY(xToY)
     }
 
     if (isInitialLoad) {
+      const rangeDiff = Math.abs(rightRange.x - leftRange.x)
+
       setIsInitialLoad(false)
-      setPlotMin(leftRange.x - initSideDist)
-      setPlotMax(rightRange.x + initSideDist)
+      setPlotMin(leftRange.x - rangeDiff / 5)
+      setPlotMax(rightRange.x + rangeDiff / 5)
 
       setZoomScale(calcZoomScale(rightRange.x + initSideDist))
     }
@@ -146,6 +155,71 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     }
   }
 
+  const moveLeft = () => {
+    const diff = plotMax - plotMin
+
+    const minPrice = xToY
+      ? calcPriceByTickIndex(
+          getMinTick(tickSpacing),
+          xToY,
+          Number(tokenX.decimal),
+          Number(tokenY.decimal)
+        )
+      : calcPriceByTickIndex(
+          getMaxTick(tickSpacing),
+          xToY,
+          Number(tokenX.decimal),
+          Number(tokenY.decimal)
+        )
+
+    const newLeft = plotMin - diff / 6
+    const newRight = plotMax - diff / 6
+
+    if (newLeft < minPrice - diff / 2) {
+      setPlotMin(minPrice - diff / 2)
+      setPlotMax(minPrice + diff / 2)
+    } else {
+      setPlotMin(newLeft)
+      setPlotMax(newRight)
+    }
+  }
+
+  const moveRight = () => {
+    const diff = plotMax - plotMin
+
+    const maxPrice = xToY
+      ? calcPriceByTickIndex(
+          getMaxTick(tickSpacing),
+          xToY,
+          Number(tokenX.decimal),
+          Number(tokenY.decimal)
+        )
+      : calcPriceByTickIndex(
+          getMinTick(tickSpacing),
+          xToY,
+          Number(tokenX.decimal),
+          Number(tokenY.decimal)
+        )
+
+    const newLeft = plotMin + diff / 6
+    const newRight = plotMax + diff / 6
+
+    if (newRight > maxPrice + diff / 2) {
+      setPlotMin(maxPrice - diff / 2)
+      setPlotMax(maxPrice + diff / 2)
+    } else {
+      setPlotMin(newLeft)
+      setPlotMax(newRight)
+    }
+  }
+
+  const centerChart = () => {
+    const diff = plotMax - plotMin
+
+    setPlotMin(midPrice.x - diff / 2)
+    setPlotMax(midPrice.x + diff / 2)
+  }
+
   const minPercentage = (min / currentPrice - 1) * 100
   const maxPercentage = (max / currentPrice - 1) * 100
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
@@ -164,16 +238,19 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
               {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
             </Typography>
           ) : (
-            <Box minHeight={17} />
+            <Box minHeight={20} />
           )}
         </Grid>
-        <Grid>
+        <Grid display='flex' flexDirection={'column'} gap={1}>
           <RangeIndicator
             isLoading={ticksLoading}
             inRange={min <= currentPrice && currentPrice <= max}
           />
-          <Grid container mt={1} justifyContent='flex-end'>
-            <Typography className={classes.currentPrice}>Current price ━━━</Typography>
+          <Grid container justifyContent='flex-end' alignItems='center'>
+            <Typography className={classes.currentPrice}>Current price</Typography>
+            <Typography className={classes.currentPrice} ml={0.5} mt={'3px'}>
+              ━━━
+            </Typography>
           </Grid>
         </Grid>
       </Box>
@@ -183,6 +260,9 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         plotMax={plotMax}
         zoomMinus={zoomMinus}
         zoomPlus={zoomPlus}
+        moveLeft={moveLeft}
+        moveRight={moveRight}
+        centerChart={centerChart}
         disabled
         leftRange={leftRange}
         rightRange={rightRange}

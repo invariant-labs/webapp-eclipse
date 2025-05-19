@@ -2,6 +2,7 @@ import RangeInput from '@components/Inputs/RangeInput/RangeInput'
 import SimpleInput from '@components/Inputs/SimpleInput/SimpleInput'
 import { Button, Grid, Typography } from '@mui/material'
 import {
+  calcPriceBySqrtPrice,
   calcPriceByTickIndex,
   calculateConcentration,
   calculateConcentrationRange,
@@ -36,6 +37,7 @@ export interface IPoolInit {
   yDecimal: number
   tickSpacing: number
   midPriceIndex: number
+  midPriceSqrtPrice: BN
   onChangeMidPrice: (tickIndex: number, sqrtPrice: BN) => void
   currentPairReversed: boolean | null
   positionOpeningMethod?: PositionOpeningMethod
@@ -44,6 +46,8 @@ export interface IPoolInit {
   concentrationArray: number[]
   minimumSliderIndex: number
   currentFeeIndex: number
+  wasRefreshed: boolean
+  setWasRefreshed: (wasRefreshed: boolean) => void
 }
 
 export const PoolInit: React.FC<IPoolInit> = ({
@@ -57,6 +61,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   yDecimal,
   tickSpacing,
   midPriceIndex,
+  midPriceSqrtPrice,
   onChangeMidPrice,
   currentPairReversed,
   positionOpeningMethod,
@@ -64,7 +69,9 @@ export const PoolInit: React.FC<IPoolInit> = ({
   concentrationIndex,
   concentrationArray,
   minimumSliderIndex,
-  currentFeeIndex
+  currentFeeIndex,
+  wasRefreshed,
+  setWasRefreshed
 }) => {
   const minTick = getMinTick(tickSpacing)
   const maxTick = getMaxTick(tickSpacing)
@@ -85,7 +92,7 @@ export const PoolInit: React.FC<IPoolInit> = ({
   const [rightInputRounded, setRightInputRounded] = useState((+rightInput).toFixed(12))
 
   const [midPriceInput, setMidPriceInput] = useState(
-    calcPriceByTickIndex(midPriceIndex, isXtoY, xDecimal, yDecimal).toFixed(8)
+    calcPriceBySqrtPrice(midPriceSqrtPrice, isXtoY, xDecimal, yDecimal).toFixed(8)
   )
 
   const handleUpdateConcentrationFromURL = (concentrationValue: number) => {
@@ -153,19 +160,25 @@ export const PoolInit: React.FC<IPoolInit> = ({
   }
 
   useEffect(() => {
-    const midPriceInConcentrationMode = validConcentrationMidPrice(midPriceInput)
+    if (!wasRefreshed) {
+      const midPriceInConcentrationMode = validConcentrationMidPrice(midPriceInput)
 
-    const sqrtPrice = calculateSqrtPriceFromBalance(
-      positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
-      tickSpacing,
-      isXtoY,
-      xDecimal,
-      yDecimal
-    )
+      const sqrtPrice = calculateSqrtPriceFromBalance(
+        positionOpeningMethod === 'range' ? +midPriceInput : midPriceInConcentrationMode,
+        tickSpacing,
+        isXtoY,
+        xDecimal,
+        yDecimal
+      )
 
-    const priceTickIndex = priceToTickInRange(sqrtPrice, minTick, maxTick, tickSpacing)
+      const priceTickIndex = priceToTickInRange(sqrtPrice, minTick, maxTick, tickSpacing)
 
-    onChangeMidPrice(priceTickIndex, sqrtPrice)
+      onChangeMidPrice(priceTickIndex, sqrtPrice)
+    } else {
+      setTimeout(() => {
+        setWasRefreshed(false)
+      }, 1)
+    }
   }, [midPriceInput])
 
   const setLeftInputValues = (val: string) => {

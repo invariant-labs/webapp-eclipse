@@ -801,6 +801,8 @@ export const enum SortTypePoolList {
   NAME_DESC,
   FEE_ASC,
   FEE_DESC,
+  FEE_24_ASC,
+  FEE_24_DESC,
   VOLUME_ASC,
   VOLUME_DESC,
   TVL_ASC,
@@ -936,3 +938,6 @@ export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
 
 export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
 export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected.'
+
+export const ECLIPSE_MAINNET_GENESIS_HASH = 'EAQLJCV2mh23BsK2P9oYpV5CHVLDNHTxYss3URrNmg3s'
+export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'
