@@ -18,7 +18,7 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
       alignItems: 'center',
       width: '100%',
       overflowX: 'auto',
-      padding: theme.spacing(2, 1)
+      padding: '16px 8px 20px 30px'
     }
   },
   stepContent: {
