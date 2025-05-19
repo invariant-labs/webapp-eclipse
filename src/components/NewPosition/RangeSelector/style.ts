@@ -275,7 +275,7 @@ const useStyles = makeStyles()(theme => {
       display: 'flex',
       flexDirection: 'column',
       alignItems: 'flex-start',
-      justifyContent: 'space-between'
+      minHeight: 87
     },
     rangeConcentration: {
       display: 'flex',
