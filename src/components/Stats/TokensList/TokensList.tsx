@@ -11,7 +11,7 @@ import {
   USDC_TEST,
   WETH_TEST
 } from '@store/consts/static'
-import { PaginationList } from '@common/Pagination/Pagination'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
@@ -201,7 +201,7 @@ const TokensList: React.FC<ITokensList> = ({
               totalItems={totalItems}
               upperBound={upperBound}
               borderTop={false}>
-              <PaginationList
+              <InputPagination
                 pages={pages}
                 defaultPage={1}
                 handleChangePage={handleChangePagination}

@@ -3,7 +3,7 @@ import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
 import { useStyles } from './style'
 import { Grid, useMediaQuery } from '@mui/material'
 import { BTC_TEST, NetworkType, SortTypePoolList, USDC_TEST, WETH_TEST } from '@store/consts/static'
-import { PaginationList } from '@common/Pagination/Pagination'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
 import { useNavigate } from 'react-router-dom'
 
@@ -244,7 +244,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
             lowerBound={lowerBound}
             totalItems={totalItems}
             upperBound={upperBound}>
-            <PaginationList
+            <InputPagination
               pages={pages}
               defaultPage={1}
               handleChangePage={handleChangePagination}

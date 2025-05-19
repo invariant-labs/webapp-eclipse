@@ -11,7 +11,7 @@ export interface IPaginationList {
   page?: number
 }
 
-export const PaginationList: React.FC<IPaginationList> = ({
+export const InputPagination: React.FC<IPaginationList> = ({
   pages,
   defaultPage,
   handleChangePage

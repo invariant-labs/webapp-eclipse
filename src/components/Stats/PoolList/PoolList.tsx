@@ -10,7 +10,7 @@ import {
   USDC_TEST,
   WETH_TEST
 } from '@store/consts/static'
-import { PaginationList } from '@common/Pagination/Pagination'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
@@ -252,7 +252,7 @@ const PoolList: React.FC<PoolListInterface> = ({
             lowerBound={lowerBound}
             totalItems={totalItems}
             upperBound={upperBound}>
-            <PaginationList
+            <InputPagination
               pages={pages}
               defaultPage={1}
               handleChangePage={handleChangePagination}

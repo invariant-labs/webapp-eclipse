@@ -3,7 +3,7 @@ import { Box, Grid, Skeleton } from '@mui/material'
 import { useStyles } from './style'
 import PurpleWaves from '@static/png/purple_waves.webp'
 import GreenWaves from '@static/png/green_waves.webp'
-import { PaginationList } from '@common/Pagination/Pagination'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import NotFoundPlaceholder from '@components/Stats/NotFoundPlaceholder/NotFoundPlaceholder'
 import { Status } from '@store/reducers/solanaWallet'
 import { CurrentUser, ILpEntry, ISwapEntry, ITotalEntry } from '@store/reducers/leaderboard'
@@ -349,7 +349,7 @@ const LeaderboardList: React.FC<LeaderboardListProps> = ({
 
       {totalPages > 0 && (
         <TableBoundsLabel lowerBound={lowerBound} totalItems={totalItems} upperBound={upperBound}>
-          <PaginationList
+          <InputPagination
             pages={totalPages}
             defaultPage={currentPage}
             handleChangePage={handlePageChange}
