@@ -251,7 +251,8 @@ const useStyles = makeStyles()(theme => {
     subheaderWrapper: {
       justifyContent: 'space-between',
       alignItems: 'center',
-      minHeight: 36
+      minHeight: 36,
+      rowGap: 16
     },
     priceRangeContainer: {
       display: 'flex',
