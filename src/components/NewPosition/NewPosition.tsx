@@ -861,8 +861,7 @@ export const NewPosition: React.FC<INewPosition> = ({
 
     const revertDenominator = initialXtoY(
       tokens[tokenAIndex].assetAddress.toString(),
-      tokens[tokenBIndex].assetAddress.toString(),
-      true
+      tokens[tokenBIndex].assetAddress.toString()
     )
 
     if (
