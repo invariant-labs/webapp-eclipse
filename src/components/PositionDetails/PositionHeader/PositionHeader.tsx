@@ -168,10 +168,9 @@ export const PositionHeader = ({
       </Box>
     </TooltipHover>
   )
-  console.log(!isMdDown && isLgDown && (previousPosition || nextPosition))
+
   return (
     <Box className={classes.headerContainer}>
-      ;
       <Box className={classes.navigation}>
         <Box className={cx(classes.wrapper, classes.backContainer)} onClick={() => onGoBackClick()}>
           <img src={backArrowIcon} alt='Back arrow' />
