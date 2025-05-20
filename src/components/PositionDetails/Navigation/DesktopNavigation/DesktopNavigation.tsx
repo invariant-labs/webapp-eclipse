@@ -15,7 +15,6 @@ type Props = {
 
 export const DesktopNavigation = ({ position, direction, onClick, disabled }: Props) => {
   const { classes } = useStyles({ direction, disabled })
-  console.log('position', position)
   return (
     <Box className={classes.wrapper}>
       <TooltipHover

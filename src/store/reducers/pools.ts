@@ -21,6 +21,7 @@ export interface PoolWithAddress extends PoolStructure {
 export interface IPoolsStore {
   tokens: Record<string, Token>
   pools: { [key in string]: PoolWithAddress }
+  getPoolsError: boolean
   autoSwapPool: PoolWithAddress | null
   autoSwapTicks: Tick[]
   autoSwapTickMap: Tickmap | null
@@ -87,6 +88,7 @@ const network =
 export const defaultState: IPoolsStore = {
   tokens: { ...getNetworkTokensList(network) },
   pools: {},
+  getPoolsError: false,
   autoSwapPool: null,
   autoSwapTicks: [],
   autoSwapTickMap: null,
@@ -190,12 +192,17 @@ const poolsSlice = createSlice({
       state.pools = R.merge(state.pools, newData)
       return state
     },
+    setAddPoolsError(state, action: PayloadAction<boolean>) {
+      state.getPoolsError = action.payload
+      return state
+    },
     updateTicks(state, action: PayloadAction<UpdateTicks>) {
       state.poolTicks[action.payload.address][
         state.poolTicks[action.payload.address].findIndex(e => e.index === action.payload.index)
       ] = action.payload.tick
     },
     getPoolData(state, _action: PayloadAction<Pair>) {
+      state.getPoolsError = false
       state.isLoadingLatestPoolsForTransaction = true
 
       return state
@@ -213,6 +220,7 @@ const poolsSlice = createSlice({
       return state
     },
     getAllPoolsForPairData(state, _action: PayloadAction<PairTokens>) {
+      state.getPoolsError = false
       state.isLoadingLatestPoolsForTransaction = true
 
       return state

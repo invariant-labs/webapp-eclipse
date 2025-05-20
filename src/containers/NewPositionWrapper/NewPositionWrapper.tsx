@@ -97,6 +97,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     loading: ticksLoading,
     hasError: hasTicksError
   } = useSelector(plotTicks)
+  const getPoolsError = useSelector(poolsSelectors.getPoolsError)
 
   const isFetchingNewPool = useSelector(isLoadingLatestPoolsForTransaction)
 
@@ -1109,15 +1110,26 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       priceBLoading={priceBLoading}
       hasTicksError={hasTicksError}
       reloadHandler={() => {
-        if (poolIndex !== null && tokenAIndex !== null && tokenBIndex !== null) {
+        if (tokenAIndex !== null && tokenBIndex !== null) {
           dispatch(
-            actions.getCurrentPlotTicks({
-              poolIndex,
-              isXtoY: allPools[poolIndex].tokenX.equals(
-                tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress
-              )
-            })
+            poolsActions.getPoolData(
+              new Pair(tokens[tokenAIndex].assetAddress, tokens[tokenBIndex].assetAddress, {
+                fee,
+                tickSpacing
+              })
+            )
           )
+
+          if (poolIndex !== null) {
+            dispatch(
+              actions.getCurrentPlotTicks({
+                poolIndex,
+                isXtoY: allPools[poolIndex].tokenX.equals(
+                  tokens[currentPairReversed === true ? tokenBIndex : tokenAIndex].assetAddress
+                )
+              })
+            )
+          }
         }
       }}
       currentFeeIndex={feeIndex}
@@ -1142,6 +1154,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       onMaxSlippageToleranceCreatePositionChange={onMaxSlippageToleranceCreatePositionChange}
       initialMaxSlippageToleranceCreatePosition={initialMaxSlippageToleranceCreatePosition}
       suggestedPrice={suggestedPrice}
+      getPoolsError={getPoolsError}
     />
   )
 }

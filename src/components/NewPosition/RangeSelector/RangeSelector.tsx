@@ -63,6 +63,7 @@ export interface IRangeSelector {
     price?: number
   } | null
   suggestedPrice: number
+  getPoolsError: boolean
 }
 
 export const RangeSelector: React.FC<IRangeSelector> = ({
@@ -97,7 +98,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
   // onlyUserPositions,
   // setOnlyUserPositions,
   usdcPrice,
-  suggestedPrice
+  suggestedPrice,
+  getPoolsError
 }) => {
   const { classes } = useStyles()
 
@@ -561,7 +563,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
           xDecimal={xDecimal}
           yDecimal={yDecimal}
           disabled={positionOpeningMethod === 'concentration'}
-          hasError={hasTicksError}
+          hasError={hasTicksError || getPoolsError}
           reloadHandler={reloadHandler}
           moveLeft={moveLeft}
           moveRight={moveRight}
@@ -719,7 +721,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
         )}
       </Grid>
 
-      {blocked && (
+      {blocked && !getPoolsError && (
         <Grid className={classes.blocker}>
           {blockerInfo === 'Loading pool info...' ? (
             <Grid container style={{ height: '100%' }}>
