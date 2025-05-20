@@ -6,7 +6,7 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
-import { formatLargeNumber } from '@utils/uiUtils'
+import { formatLargeNumber, formatPlotDataLabels, mapIntervalToPrecision } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import Intervals from '../Intervals/Intervals'
@@ -17,7 +17,7 @@ interface LiquidityInterface {
   data: TimeData[]
   className?: string
   isLoading: boolean
-  interval: string
+  interval: IntervalsKeys
   setInterval: (interval: IntervalsKeys) => void
 }
 
@@ -73,6 +73,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           data={[
             {
               id: 'liquidity',
+              // data: data as Array<{ timestamp: number; value: number }>
               data: data.map(({ timestamp, value }) => ({
                 x: new Date(timestamp).toLocaleDateString('en-GB'),
                 y: value
@@ -94,9 +95,8 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            tickValues:
-              data.length >= 24 ? 'every 4 days' : data.length >= 8 ? 'every 2 days' : 'every day',
-            format: '%d/%m'
+            format: time => formatPlotDataLabels(time, data.length, interval),
+            tickValues: mapIntervalToPrecision(interval)
           }}
           axisLeft={{
             tickSize: 0,

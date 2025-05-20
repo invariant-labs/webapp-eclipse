@@ -7,7 +7,7 @@ import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
-import { formatLargeNumber } from '@utils/uiUtils'
+import { formatLargeNumber, formatPlotDataLabels } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
 import Intervals from '../Intervals/Intervals'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
@@ -18,7 +18,7 @@ interface StatsInterface {
   data: TimeData[]
   className?: string
   isLoading: boolean
-  interval: string
+  interval: IntervalsKeys
   setInterval: (interval: IntervalsKeys) => void
 }
 
@@ -94,19 +94,7 @@ const Volume: React.FC<StatsInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            format: time => {
-              const date = new Date(time)
-              const day = date.getDate()
-              const month = date.getMonth() + 1
-
-              const dayMod =
-                Math.floor(time / (1000 * 60 * 60 * 24)) %
-                (data.length >= 24 ? 4 : data.length >= 8 ? 2 : 1)
-
-              return dayMod === 0
-                ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}`
-                : ''
-            }
+            format: time => formatPlotDataLabels(time, data.length, interval)
           }}
           axisLeft={{
             tickSize: 0,

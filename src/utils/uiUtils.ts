@@ -2,6 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { formatDate, printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
 import { FormatNumberThreshold } from '@store/consts/types'
+import { Intervals } from '@store/consts/static'
 
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
@@ -166,5 +167,76 @@ export const shortenDate = (timestamp: number | string): string => {
     const formatedDate = formatDate(timestamp)
     const [day, month, year] = formatedDate.split('.')
     return `${day}.${month}.${year.slice(-2)}`
+  }
+}
+
+export const mapIntervalToPrecision = (interval: Intervals): string => {
+  switch (interval) {
+    case Intervals.Daily:
+      return 'every 1 day'
+    case Intervals.Weekly:
+      return 'every 1 week'
+    case Intervals.Monthly:
+      return 'every 1 month'
+    case Intervals.Yearly:
+      return 'every 1 year'
+  }
+}
+
+export const mapIntervalToString = (interval: Intervals): string => {
+  switch (interval) {
+    case Intervals.Daily:
+      return '1D'
+    case Intervals.Weekly:
+      return '1W'
+    case Intervals.Monthly:
+      return '1M'
+    case Intervals.Yearly:
+      return '1Y'
+  }
+}
+
+export const formatPlotDataLabels = (
+  time: number,
+  entries: number,
+  interval: Intervals
+): string => {
+  const date = new Date(time)
+  const day = date.getDate()
+  const month = date.getMonth() + 1
+
+  switch (interval) {
+    case Intervals.Monthly: {
+      const monthNames = [
+        'Jan',
+        'Feb',
+        'Mar',
+        'Apr',
+        'May',
+        'Jun',
+        'Jul',
+        'Aug',
+        'Sep',
+        'Oct',
+        'Nov',
+        'Dec'
+      ]
+      const monthName = monthNames[month - 1]
+      return monthName
+    }
+    case Intervals.Yearly: {
+      const year = date.getFullYear()
+      return `${year}`
+    }
+    case Intervals.Daily: {
+      const dayMod = Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? 2 : 1)
+
+      return dayMod === 0 ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}` : ''
+    }
+    case Intervals.Weekly: {
+      const dayMod = Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? 2 : 1)
+
+      return dayMod === 0 ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}` : ''
+    }
   }
 }
