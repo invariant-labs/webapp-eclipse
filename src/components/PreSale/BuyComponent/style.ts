@@ -100,6 +100,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
 
     headingContainer: {
       display: 'flex',
+      // minHeight: '40px',
       justifyContent: 'space-between',
       alignItems: 'center',
       flexDirection: 'column',

@@ -161,7 +161,7 @@ export const BuyComponent: React.FC<IProps> = ({
 
   return (
     <Box className={classes.container}>
-      <Box>
+      <Box sx={{ minHeight: '206px' }}>
         <Box className={classes.headingContainer}>
           <Box sx={{ height: '60px', width: '100%' }}>
 
@@ -199,34 +199,37 @@ export const BuyComponent: React.FC<IProps> = ({
             <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
             <Typography className={classes.greenText}>$INV</Typography>
           </Typography>
-          {isActive && (
-            <Typography className={classes.raisedInfo}>
-              <Typography className={classes.greyText}>Raised:</Typography>
-              {isLoading ? (
-                <Skeleton variant='rounded' width={150} height={24} sx={{ ml: 1 }} />
-              ) : (
-                <>
-                  <Typography className={classes.greenBodyText}>
-                    ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 3))}
-                  </Typography>
-                  {' / '}${formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 3))}
-                </>
-              )}
-            </Typography>
-          )}
+          <Typography className={classes.raisedInfo}>
+            <Typography className={classes.greyText}>Raised:</Typography>
+            {isLoading ? (
+              <Skeleton variant='rounded' width={150} height={24} sx={{ ml: 1 }} />
+            ) : (
+              <>
+                <Typography className={classes.greenBodyText}>
+                  ${formatNumberWithCommas(printBNandTrimZeros(currentAmount, mintDecimals, 3))}
+                </Typography>
+                {' / '}${formatNumberWithCommas(printBNandTrimZeros(targetAmount, mintDecimals, 3))}
+              </>
+            )}
+          </Typography>
         </Box>
-        {isActive && (
+        <Box>
+
           <>
-            <Box className={classes.darkBackground}>
-              <Box className={classes.gradientProgress} />
-            </Box>
+            {isLoading ? (
+              <Skeleton variant='rounded' width={'100%'} height={20} sx={{ marginTop: '16px' }} />
+            ) : (
+              <Box className={classes.darkBackground}>
+                <Box className={classes.gradientProgress} />
+              </Box>
+            )}
             <Grid container className={classes.barWrapper}>
               <Typography className={classes.sliderLabel}>0%</Typography>
               <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
               <Typography className={classes.sliderLabel}>100%</Typography>
             </Grid>
           </>
-        )}
+        </Box>
 
         {saleDidNotStart && (
           <Box
