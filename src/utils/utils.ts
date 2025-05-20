@@ -1839,12 +1839,9 @@ export const addressToTicker = (network: NetworkType, address: string): string =
   return getReversedAddressTickerMap(network)[address] || address
 }
 
-export const initialXtoY = (
-  tokenXAddress?: string | null,
-  tokenYAddress?: string | null,
-  revertOtherTokens?: boolean
-) => {
+export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: string | null) => {
   if (!tokenXAddress || !tokenYAddress) {
+    console.log('revert other tokens')
     return true
   }
 
@@ -1857,7 +1854,7 @@ export const initialXtoY = (
     } else {
       return true
     }
-  } else if (revertOtherTokens ? tokenXIndex > tokenYIndex : tokenXIndex < tokenYIndex) {
+  } else if (tokenXIndex > tokenYIndex) {
     return false
   } else {
     return true
