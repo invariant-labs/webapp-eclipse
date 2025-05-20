@@ -108,9 +108,13 @@ const TokensDetailsSnackbar: React.FC<ITokensDetailsSnackbar> = ({
             <StyledText>{title}</StyledText>
             <StyledText color={colors.invariant.green}>{tokenXAmount}</StyledText>
             <img src={tokenXIcon} className={classes.tokenIcon} />
-            {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
-            <StyledText color={colors.invariant.green}>{tokenYAmount}</StyledText>
-            <img src={tokenYIcon} className={classes.tokenIcon} />
+            {tokenYAmount && tokenYIcon && (
+              <>
+                {ikonType === 'swap' ? arrow : <StyledText>+</StyledText>}
+                <StyledText color={colors.invariant.green}> {tokenYAmount}</StyledText>
+                <img src={tokenYIcon} className={classes.tokenIcon} />
+              </>
+            )}
           </Grid>
 
           {earnedPoints && (

@@ -12,12 +12,13 @@ import { actions, IDepositSale, ISaleStats, IUserStats } from '@store/reducers/s
 import { network, rpcAddress } from '@store/selectors/solanaConnection'
 import { getSaleProgram } from '@utils/web3/programs/sale'
 import { getSolanaConnection } from '@utils/web3/connection'
-import { createLoaderKey, ensureError } from '@utils/utils'
+import { createLoaderKey, ensureError, formatNumberWithoutSuffix, printBN } from '@utils/utils'
 import { actions as snackbarsActions } from '@store/reducers/snackbars'
 import {
   DEFAULT_PUBLICKEY,
   SIGNING_SNACKBAR_CONFIG,
-  TIMEOUT_ERROR_MESSAGE
+  TIMEOUT_ERROR_MESSAGE,
+  USDC_MAIN
 } from '@store/consts/static'
 import { closeSnackbar } from 'notistack'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
@@ -128,8 +129,11 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Deposited successfully to sale',
-          variant: 'success',
+          tokensDetails: {
+            ikonType: 'deposit',
+            tokenXAmount: formatNumberWithoutSuffix(printBN(amount, 6)),
+            tokenXIcon: USDC_MAIN.logoURI
+          },
           persist: false,
           txid
         })
