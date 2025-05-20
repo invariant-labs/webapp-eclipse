@@ -22,6 +22,7 @@ import {
 } from '@store/consts/static'
 import { closeSnackbar } from 'notistack'
 import { actions as connectionActions, RpcStatus } from '@store/reducers/solanaConnection'
+import { REWARD_SCALE } from '@invariant-labs/sale-sdk'
 
 export function* fetchUserStats() {
   try {
@@ -131,7 +132,7 @@ export function* depositSale(action: PayloadAction<IDepositSale>) {
         snackbarsActions.add({
           tokensDetails: {
             ikonType: 'deposit',
-            tokenXAmount: formatNumberWithoutSuffix(printBN(amount, 6)),
+            tokenXAmount: formatNumberWithoutSuffix(printBN(amount, REWARD_SCALE)),
             tokenXIcon: USDC_MAIN.logoURI
           },
           persist: false,
