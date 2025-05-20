@@ -1,8 +1,8 @@
-import { Box, Collapse, Fade, Grid, Skeleton, Slide, Typography } from '@mui/material'
+import { Box, Grid, Skeleton, Typography } from '@mui/material'
 import useStyles from './style'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { convertBalanceToBN, formatNumberWithCommas, printBN, printBNandTrimZeros } from '@utils/utils'
+import { convertBalanceToBN, formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
 import { Timer } from '../Timer/Timer'
 import { BN } from '@coral-xyz/anchor'
 import {
@@ -17,7 +17,6 @@ import { SwapToken } from '@store/selectors/solanaWallet'
 import AnimatedButton, { ProgressState } from '@common/AnimatedButton/AnimatedButton'
 import ChangeWalletButton from '@components/Header/HeaderButton/ChangeWalletButton'
 import { WETH_MIN_DEPOSIT_SWAP_FROM_AMOUNT_MAIN, WRAPPED_ETH_ADDRESS } from '@store/consts/static'
-import { closeSmallGreenIcon, closeSmallYellowIcon } from '@static/icons'
 import { createButtonActions } from '@utils/uiUtils'
 
 interface IProps {

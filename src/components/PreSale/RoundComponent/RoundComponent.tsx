@@ -6,7 +6,6 @@ import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
 import { EFFECTIVE_TARGET_MULTIPLIER, PERCENTAGE_SCALE } from '@invariant-labs/sale-sdk'
 import { Status } from '@store/reducers/solanaWallet'
-import { colors } from '@static/theme'
 
 interface RoundComponentProps {
   isActive: boolean
