@@ -117,7 +117,7 @@ const NFTsList: React.FC<NFTsListInterface> = ({ userAddress, isConnected }) => 
           <Scrollbars
             ref={scrollRef}
             onScroll={handleScroll}
-            style={{ maxWidth: 1072, overflowX: 'hidden' }}
+            style={{ maxWidth: 1210, overflowX: 'hidden' }}
             autoHide
             universal
             classes={{

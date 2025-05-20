@@ -85,14 +85,12 @@ import disconnectIcon from '@static/svg/disconnect.svg'
 import refreshIcon from '@static/svg/refresh.svg'
 import backIcon from '@static/svg/back-arrow.svg'
 import settingIcon from '@static/svg/settings.svg'
-import revertIcon from '@static/svg/revert.svg'
 import unlockIcon from '@static/svg/unlock.svg'
 import swapPositionIcon from '@static/svg/swap-position.svg'
 import handleMaxIcon from '@static/svg/narrowChartMaxHandle.svg'
 import handleMinIcon from '@static/svg/narrowChartMinHandle.svg'
 import zoomInIcon from '@static/svg/zoom-in-icon.svg'
 import zoomOutIcon from '@static/svg/zoom-out-icon.svg'
-import reverseTokensIcon from './svg/reverse-tokens.svg'
 import backArrowIcon from '@static/svg/back-arrow.svg'
 import lockIcon2 from '@static/svg/lock.svg'
 import boostPointsBoldIcon from '@static/svg/boostPointsBold.svg'
@@ -103,6 +101,7 @@ import snackbarSwapIcon from './svg/snackbarSwap.svg'
 import circleDolarIcon from './svg/circleDolar.svg'
 import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
+import centerToRangeIcon from './svg/centerToRange.svg'
 import virtualCardIcon from './svg/virtualCard.svg'
 import greenInfoIcon from './svg/greenInfo.svg'
 import saleIcon from './svg/saleIcon.svg'
@@ -195,14 +194,12 @@ export {
   refreshIcon,
   backIcon,
   settingIcon,
-  revertIcon,
   unlockIcon,
   swapPositionIcon,
   handleMaxIcon,
   handleMinIcon,
   zoomInIcon,
   zoomOutIcon,
-  reverseTokensIcon,
   backArrowIcon,
   lockIcon2,
   boostPointsBoldIcon,
@@ -214,6 +211,7 @@ export {
   depositIcon,
   virtualCardIcon,
   withdrawIcon,
+  centerToRangeIcon,
   auditByLogoIcon,
   greenInfoIcon
 }

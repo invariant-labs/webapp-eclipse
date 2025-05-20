@@ -39,6 +39,7 @@ export interface ISinglePositionPlot {
     token: string
     price?: number
   } | null
+  positionId: string
 }
 
 const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
@@ -57,7 +58,8 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
   hasTicksError,
   reloadHandler,
   isFullRange,
-  usdcPrice
+  usdcPrice,
+  positionId
 }) => {
   const { classes } = useStyles()
 
@@ -78,6 +80,10 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
 
   //Proportion between middle of price range and right range in ratio to middle of price range and plotMax
   const [zoomScale, setZoomScale] = useState(0.7)
+
+  useEffect(() => {
+    if (!isInitialLoad) setIsInitialLoad(true)
+  }, [positionId])
 
   useEffect(() => {
     const initSideDist = Math.abs(
@@ -214,6 +220,14 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     setPlotMax(midPrice.x + diff / 2)
   }
 
+  const centerToRange = () => {
+    const diff = plotMax - plotMin
+    const rangeCenter = (leftRange.x + rightRange.x) / 2
+
+    setPlotMin(rangeCenter - diff / 2)
+    setPlotMax(rangeCenter + diff / 2)
+  }
+
   const minPercentage = (min / currentPrice - 1) * 100
   const maxPercentage = (max / currentPrice - 1) * 100
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
@@ -232,7 +246,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
               {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
             </Typography>
           ) : (
-            <Box minHeight={17} />
+            <Box minHeight={20} />
           )}
         </Grid>
         <Grid display='flex' flexDirection={'column'} gap={1}>
@@ -257,6 +271,7 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         moveLeft={moveLeft}
         moveRight={moveRight}
         centerChart={centerChart}
+        centerToRange={centerToRange}
         disabled
         leftRange={leftRange}
         rightRange={rightRange}
