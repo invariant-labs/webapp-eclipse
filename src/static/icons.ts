@@ -98,6 +98,7 @@ import snackbarSwapIcon from './svg/snackbarSwap.svg'
 import circleDolarIcon from './svg/circleDolar.svg'
 import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
+import centerToRangeIcon from './svg/centerToRange.svg'
 
 export {
   logoTitleIcon,
@@ -199,7 +200,8 @@ export {
   snackbarSwapIcon,
   circleDolarIcon,
   depositIcon,
-  withdrawIcon
+  withdrawIcon,
+  centerToRangeIcon
 }
 
 export const chainIcons = {
