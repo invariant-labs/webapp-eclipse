@@ -120,7 +120,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
     return data[currentIndex - 1] ?? null
   }, [position?.isLocked, lockedNavigationData, navigationData, id])
-  console.log(previousPosition)
+
   const nextPosition = useMemo(() => {
     const data = position?.isLocked ? lockedNavigationData : navigationData
 
@@ -135,6 +135,16 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
     }
 
     return data[currentIndex + 1] ?? null
+  }, [position?.isLocked, lockedNavigationData, navigationData, id])
+
+  const lastPosition = useMemo(() => {
+    const data = position?.isLocked ? lockedNavigationData : navigationData
+
+    if (data.length < 2) {
+      return null
+    }
+
+    return data[data.length - 1]
   }, [position?.isLocked, lockedNavigationData, navigationData, id])
 
   const paginationData = useMemo(() => {
@@ -555,8 +565,8 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
             actions.closePosition({
               positionIndex: position.positionIndex,
               onSuccess: () => {
-                if (nextPosition) {
-                  navigate(ROUTES.getPositionRoute(nextPosition.id))
+                if (lastPosition && nextPosition) {
+                  navigate(ROUTES.getPositionRoute(lastPosition.id))
                 } else if (previousPosition) {
                   navigate(ROUTES.getPositionRoute(previousPosition.id))
                 } else {
