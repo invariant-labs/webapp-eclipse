@@ -1,10 +1,10 @@
 import { actions } from '@store/reducers/stats'
-import { call, put, select, takeEvery, takeLeading } from 'typed-redux-saga'
+import { call, put, select, takeLatest, takeLeading } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
 import { handleRpcError } from './connection'
 import { ensureError, getFullSnap, getIntervalsFullSnap } from '@utils/utils'
-import { lastTimestamp } from '@store/selectors/stats'
+import { lastInterval, lastTimestamp } from '@store/selectors/stats'
 import { Intervals, STATS_CACHE_TIME } from '@store/consts/static'
 import { PayloadAction } from '@reduxjs/toolkit'
 
@@ -34,7 +34,7 @@ export function* getStats(): Generator {
     }
 
     // @ts-expect-error FIXME: Interface missmatch.
-    yield* put(actions.setCurrentStats(parsedFullSnap))
+    yield* put(actions.setCurrentStats(parsedFullSnap, Intervals.Daily))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
@@ -47,11 +47,15 @@ export function* getStats(): Generator {
 
 export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>): Generator {
   try {
-    // const lastFetchTimestamp = yield* select(lastTimestamp)
+    const lastFetchTimestamp = yield* select(lastTimestamp)
+    const lastFetchInterval = yield* select(lastInterval)
 
-    // if (+Date.now() < lastFetchTimestamp + STATS_CACHE_TIME) {
-    //   return yield* put(actions.setLoadingStats(false))
-    // }
+    if (
+      +Date.now() < lastFetchTimestamp + STATS_CACHE_TIME &&
+      lastFetchInterval === action.payload.interval
+    ) {
+      return yield* put(actions.setLoadingStats(false))
+    }
 
     const currentNetwork = yield* select(network)
 
@@ -87,7 +91,7 @@ export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>
     }
 
     // @ts-expect-error FIXME: Interface missmatch.
-    yield* put(actions.setCurrentStats(parsedFullSnap))
+    yield* put(actions.setCurrentStats(parsedFullSnap, action.payload.interval))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
@@ -103,5 +107,5 @@ export function* statsHandler(): Generator {
 }
 
 export function* intervalStatsHandler(): Generator {
-  yield* takeEvery(actions.getCurrentIntervalStats, getIntervalStats)
+  yield* takeLatest(actions.getCurrentIntervalStats, getIntervalStats)
 }

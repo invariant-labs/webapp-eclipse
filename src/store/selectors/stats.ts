@@ -15,7 +15,8 @@ export const {
   tokensData,
   poolsData,
   isLoading,
-  lastTimestamp
+  lastTimestamp,
+  lastInterval
 } = keySelectors(store, [
   'volumePlot',
   'liquidityPlot',
@@ -25,7 +26,8 @@ export const {
   'tokensData',
   'poolsData',
   'isLoading',
-  'lastTimestamp'
+  'lastTimestamp',
+  'lastInterval'
 ])
 
 export interface ExtendedPoolStatsData extends PoolStatsData {

@@ -45,6 +45,7 @@ export interface IStatsStore {
   poolsData: PoolStatsData[]
   isLoading: boolean
   lastTimestamp: number
+  lastInterval: Intervals | null
 }
 
 export const defaultState: IStatsStore = {
@@ -65,7 +66,8 @@ export const defaultState: IStatsStore = {
   tokensData: [],
   poolsData: [],
   isLoading: false,
-  lastTimestamp: 0
+  lastTimestamp: 0,
+  lastInterval: null
 }
 
 export const statsSliceName = 'stats'
@@ -73,7 +75,10 @@ const statsSlice = createSlice({
   name: statsSliceName,
   initialState: defaultState,
   reducers: {
-    setCurrentStats(state, action: PayloadAction<Omit<IStatsStore, 'isLoading'>>) {
+    setCurrentStats(
+      state,
+      action: PayloadAction<Omit<IStatsStore, 'isLoading'> & { lastInterval: Intervals }>
+    ) {
       state = {
         ...action.payload,
         isLoading: false,
