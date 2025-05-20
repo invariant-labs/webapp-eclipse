@@ -12,6 +12,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     container: {
       backgroundColor: colors.invariant.component,
       borderRadius: '20px',
+      width: '520px',
       [theme.breakpoints.down('lg')]: {
         width: 'calc(100% - 48px)'
       },
@@ -37,7 +38,6 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     },
 
     alertBox: {
-      width: '100%',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -77,16 +77,17 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
       paddingBottom: '8px',
       marginBottom: '16px',
       justifyContent: 'space-between',
-      alignItems: 'center',
-      borderBottom: `1px solid ${colors.invariant.light}`
+      alignItems: 'center'
     },
     egibilityChecker: {
       display: 'flex',
+      width: '100%',
       gap: '8px',
       alignItems: 'center'
     },
     egibilityCheckerText: {
       color: colors.invariant.text,
+      textAlign: 'left',
       ...typography.body2,
       whiteSpace: 'nowrap',
       marginRight: '16px',
@@ -107,6 +108,7 @@ const useStyles = makeStyles<{ percentage: number; isActive?: boolean }>()(
     titleText: {
       display: 'flex',
       gap: '6px',
+      marginTop: '16px',
       color: colors.invariant.text
     },
     pinkText: {

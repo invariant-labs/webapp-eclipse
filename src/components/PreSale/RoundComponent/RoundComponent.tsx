@@ -6,6 +6,7 @@ import { BN } from '@coral-xyz/anchor'
 import { formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
 import { EFFECTIVE_TARGET_MULTIPLIER, PERCENTAGE_SCALE } from '@invariant-labs/sale-sdk'
 import { Status } from '@store/reducers/solanaWallet'
+import { colors } from '@static/theme'
 
 interface RoundComponentProps {
   isActive: boolean
@@ -62,7 +63,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
     if (isLoading) {
       return <Skeleton variant="text" width={width} height={24} />
     }
-    return <Typography className={classes.infoLabel}>{prefix}{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))}</Typography>
+    return <Typography>{prefix}{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))}</Typography>
   }
 
   return (
@@ -129,7 +130,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <Typography className={classes.priceIncreaseText}>
               AMOUNT TILL PRICE INCREASE:
             </Typography>
-            {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, "$", "120px")}
+            {renderFormattedNumberWithSkeleton(amountLeft, mintDecimals, "$", "100px")}
           </Box>
         )}
       </Box>
@@ -140,39 +141,46 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <Box className={classes.infoRow}>
               <Typography className={classes.infoLabel}>Current price: </Typography>
               <Typography className={classes.currentPrice}>
-                {renderPriceWithSkeleton(currentPrice, mintDecimals, "$", "80px")}
+                {renderFormattedNumberWithSkeleton(currentPrice, mintDecimals, "$", "80px")}
               </Typography>
             </Box>
             <Box className={classes.infoRow}>
               <Typography className={classes.infoLabel}>Next price: </Typography>
               <Typography className={classes.nextPrice}>
-                {renderPriceWithSkeleton(nextPrice, mintDecimals, "$", "80px")}
+                {renderFormattedNumberWithSkeleton(nextPrice, mintDecimals, "$", "80px")}
               </Typography>
             </Box>
             <Box className={classes.divider} />
           </>
         )}
 
-        {!isLoadingUserStats && !saleDidNotStart && walletStatus === Status.Initialized && (
-          <Box className={classes.infoRow}>
-            <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
+        <Box className={classes.infoRow}>
+          <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
+          {!isLoadingUserStats && !saleDidNotStart && walletStatus === Status.Initialized ? (
             <Typography className={classes.value}>
-              {renderPriceWithSkeleton(userDepositedAmount, mintDecimals, "$", "80px", isLoadingUserStats)}
+              {renderFormattedNumberWithSkeleton(userDepositedAmount, mintDecimals, "$", "80px", isLoadingUserStats)}
             </Typography>
-          </Box>
-        )}
-        {!isLoadingUserStats &&
-          isActive &&
-          !(roundNumber === 4 || (roundNumber < 4 && !proofOfInclusion)) && (
-            <Box className={classes.infoRow}>
-              <Typography className={classes.secondaryLabel}>
-                Your remaining allocation:{' '}
-              </Typography>
-              <Typography className={classes.value}>
-                {renderPriceWithSkeleton(userRemainingAllocation, mintDecimals, "$", "80px", isLoadingUserStats)}
-              </Typography>
-            </Box>
+          ) : isLoadingUserStats ? (
+            <Skeleton variant="text" width="80px" height={24} />
+          ) : (
+            <Typography className={classes.value}>-</Typography>
           )}
+        </Box>
+
+        <Box className={classes.infoRow}>
+          <Typography className={classes.secondaryLabel}>
+            Your remaining allocation:{' '}
+          </Typography>
+          {!isLoadingUserStats && isActive && !(roundNumber === 4 || (roundNumber < 4 && !proofOfInclusion)) ? (
+            <Typography className={classes.value}>
+              {renderFormattedNumberWithSkeleton(userRemainingAllocation, mintDecimals, "$", "80px", isLoadingUserStats)}
+            </Typography>
+          ) : isLoadingUserStats ? (
+            <Skeleton variant="text" width="80px" height={24} />
+          ) : (
+            <Typography className={classes.value}>-</Typography>
+          )}
+        </Box>
       </Box>
     </Box>
   )

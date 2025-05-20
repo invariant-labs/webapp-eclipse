@@ -73,6 +73,7 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
 
     priceIncreaseBox: {
       display: 'flex',
+      color: colors.invariant.text,
       justifyContent: 'space-between',
       alignItems: 'center',
       background: colors.invariant.component,
@@ -91,11 +92,12 @@ const useStyles = makeStyles<{ percentage: number; isActive: boolean }>()(
     infoCard: {
       background: isActive ? colors.invariant.component : 'transparent',
       padding: '12px',
-      height: isActive ? '153px' : 'auto',
+      height: isActive ? '129px' : 'auto',
       borderRadius: '12px',
       marginTop: '24px'
     },
     infoRow: {
+      height: '24px',
       display: 'flex',
       justifyContent: 'space-between',
       alignItems: 'center'

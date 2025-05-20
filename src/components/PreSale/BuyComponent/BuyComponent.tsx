@@ -1,8 +1,8 @@
-import { Box, Grid, Skeleton, Typography } from '@mui/material'
+import { Box, Collapse, Fade, Grid, Skeleton, Slide, Typography } from '@mui/material'
 import useStyles from './style'
 import DepositAmountInput from '@components/Inputs/DepositAmountInput/DepositAmountInput'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { convertBalanceToBN, formatNumberWithCommas, printBNandTrimZeros } from '@utils/utils'
+import { convertBalanceToBN, formatNumberWithCommas, printBN, printBNandTrimZeros } from '@utils/utils'
 import { Timer } from '../Timer/Timer'
 import { BN } from '@coral-xyz/anchor'
 import {
@@ -90,7 +90,7 @@ export const BuyComponent: React.FC<IProps> = ({
     return Number(printBNandTrimZeros(filledPercentageBN, PERCENTAGE_SCALE, 3))
   }, [currentAmount, targetAmount])
 
-  const { classes } = useStyles({ percentage: filledPercentage, isActive })
+  const { classes } = useStyles({ percentage: Math.floor(filledPercentage), isActive })
 
   useEffect(() => {
     const amount = convertBalanceToBN(value, mintDecimals)
@@ -145,18 +145,6 @@ export const BuyComponent: React.FC<IProps> = ({
     return 'Buy $INV'
   }, [tokenIndex, tokens, isLoading, value])
 
-  const [alertBoxShow, setAlertBoxShow] = useState(false)
-
-  useEffect(() => {
-    const showBanner = localStorage.getItem('INVARIANT_SALE_SHOW_BANNER')
-    if (!showBanner) {
-      setAlertBoxShow(true)
-      return
-    }
-    setAlertBoxShow(showBanner === 'true')
-  }, [])
-
-
 
   const actions = createButtonActions({
     tokens,
@@ -176,44 +164,37 @@ export const BuyComponent: React.FC<IProps> = ({
     <Box className={classes.container}>
       <Box>
         <Box className={classes.headingContainer}>
-          {(alertBox && alertBoxShow && isActive && walletStatus !== Status.Uninitialized) ? (
-            <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
-              <Box className={classes.alertBoxContent}>
-                <Typography className={classes.alertBoxText}>{alertBox && alertBox.text}</Typography>
-              </Box>
+          <Box sx={{ height: '60px', width: '100%' }}>
 
-              <Box
-                className={classes.closeIconContainer}
-                onClick={() => {
-                  localStorage.setItem('INVARIANT_SALE_SHOW_BANNER', 'false')
-                  setAlertBoxShow(false)
-                }}
-              >
-                <img
-                  className={classes.closeIcon}
-                  src={alertBox?.variant === 'warning' ? closeSmallYellowIcon : closeSmallGreenIcon}
-                  alt='Close icon'
-                />
+            {(alertBox && isActive && walletStatus !== Status.Uninitialized) ? (
+
+              <Box className={`${classes.alertBox} ${getAlerBoxColorVariant()}`}>
+                <Box className={classes.alertBoxContent}>
+                  <Typography className={classes.alertBoxText}>{alertBox && alertBox.text}</Typography>
+                </Box>
               </Box>
-            </Box>
-          ) : walletStatus !== Status.Initialized ? (
-            <Box className={classes.egibilityCheckerWrapper}>
-              <Box className={classes.egibilityChecker}>
-                <Typography className={classes.egibilityCheckerText}>
-                  To participate in sale, check your eligibility
-                </Typography>
-                <ChangeWalletButton
-                  width={'40%'}
-                  height={48}
-                  name='Check eligibility'
-                  onConnect={onConnectWallet}
-                  connected={false}
-                  onDisconnect={onDisconnectWallet}
-                />
+            ) : walletStatus !== Status.Initialized ? (
+              <Box className={classes.egibilityCheckerWrapper}>
+                <Box className={classes.egibilityChecker}>
+                  <Typography className={classes.egibilityCheckerText}>
+                    To participate in sale, check your eligibility
+                  </Typography>
+                  <ChangeWalletButton
+                    width={'40%'}
+                    height={48}
+                    name='Check eligibility'
+                    onConnect={onConnectWallet}
+                    connected={false}
+                    onDisconnect={onDisconnectWallet}
+                  />
+                </Box>
+
               </Box>
-              <Box className={classes.sectionDivider} />
-            </Box>
-          ) : null}
+            ) : null}
+          </Box>
+          <Box sx={{ height: '1px', width: '100%' }}>
+            <Box className={classes.sectionDivider} />
+          </Box>
           <Typography className={classes.titleText}>
             <Typography className={classes.pinkText}>INVARIANT</Typography>
             <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
@@ -223,7 +204,7 @@ export const BuyComponent: React.FC<IProps> = ({
             <Typography className={classes.raisedInfo}>
               <Typography className={classes.greyText}>Raised:</Typography>
               {isLoading ? (
-                <Skeleton variant='rounded' width={200} height={24} sx={{ ml: 1 }} />
+                <Skeleton variant='rounded' width={150} height={24} sx={{ ml: 1 }} />
               ) : (
                 <>
                   <Typography className={classes.greenBodyText}>
@@ -295,7 +276,7 @@ export const BuyComponent: React.FC<IProps> = ({
         <Box className={classes.receiveBox}>
           <Typography className={classes.receiveLabel}>You'll receive</Typography>
           {isLoading ? (
-            <Skeleton variant='rounded' width={200} height={24} sx={{ ml: 1 }} />
+            <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
           ) : (
             <Typography className={classes.tokenAmount}>
               {printBNandTrimZeros(receive, REWARD_SCALE)} $INV
@@ -303,29 +284,31 @@ export const BuyComponent: React.FC<IProps> = ({
           )}
         </Box>
       </Box>
-      {walletStatus !== Status.Initialized ? (
-        <ChangeWalletButton
-          width={'100%'}
-          height={48}
-          name='Connect wallet'
-          defaultVariant='green'
-          onConnect={onConnectWallet}
-          connected={false}
-          onDisconnect={onDisconnectWallet}
-        />
-      ) : (
-        <AnimatedButton
-          className={classes.greenButton}
-          onClick={() => {
-            if (progress === 'none' && tokenIndex !== null) {
-              onBuyClick(convertBalanceToBN(value, mintDecimals))
-            }
-          }}
-          disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
-          content={getButtonMessage()}
-          progress={progress}
-        />
-      )}
-    </Box>
+      {
+        walletStatus !== Status.Initialized ? (
+          <ChangeWalletButton
+            width={'100%'}
+            height={48}
+            name='Connect wallet'
+            defaultVariant='green'
+            onConnect={onConnectWallet}
+            connected={false}
+            onDisconnect={onDisconnectWallet}
+          />
+        ) : (
+          <AnimatedButton
+            className={classes.greenButton}
+            onClick={() => {
+              if (progress === 'none' && tokenIndex !== null) {
+                onBuyClick(convertBalanceToBN(value, mintDecimals))
+              }
+            }}
+            disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
+            content={getButtonMessage()}
+            progress={progress}
+          />
+        )
+      }
+    </Box >
   )
 }
