@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 import { PublicKey } from '@solana/web3.js'
+import { Intervals } from '@store/consts/static'
 import { PayloadType } from '@store/consts/types'
 
 export interface TimeData {
@@ -83,6 +84,10 @@ const statsSlice = createSlice({
     getCurrentStats(state) {
       state.isLoading = true
 
+      return state
+    },
+    getCurrentIntervalStats(state, _action: PayloadAction<{ interval: Intervals }>) {
+      state.isLoading = true
       return state
     },
     setLoadingStats(state, action: PayloadAction<boolean>) {

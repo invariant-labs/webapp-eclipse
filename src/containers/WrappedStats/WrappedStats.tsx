@@ -26,6 +26,7 @@ import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -42,13 +43,18 @@ export const WrappedStats: React.FC = () => {
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
+  const [interval, setInterval] = useState<IntervalsKeys>(IntervalsKeys.Daily)
   const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>([])
   const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>([])
 
   useEffect(() => {
-    dispatch(actions.getCurrentStats())
+    dispatch(actions.getCurrentIntervalStats({ interval }))
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
+
+  useEffect(() => {
+    dispatch(actions.getCurrentIntervalStats({ interval }))
+  }, [interval])
 
   const filteredTokenList = useMemo(() => {
     if (searchTokensValue.length === 0) {
@@ -124,6 +130,8 @@ export const WrappedStats: React.FC = () => {
               data={volumePlotData}
               className={classes.plot}
               isLoading={isLoadingStats}
+              interval={interval}
+              setInterval={setInterval}
             />
             <Liquidity
               liquidityVolume={tvl24h.value}
@@ -131,6 +139,8 @@ export const WrappedStats: React.FC = () => {
               data={liquidityPlotData}
               className={classes.plot}
               isLoading={isLoadingStats}
+              interval={interval}
+              setInterval={setInterval}
             />
           </Grid>
           <Grid className={classes.row}>

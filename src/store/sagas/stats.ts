@@ -1,11 +1,12 @@
 import { actions } from '@store/reducers/stats'
-import { call, put, select, takeLeading } from 'typed-redux-saga'
+import { call, put, select, takeEvery, takeLeading } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
 import { handleRpcError } from './connection'
-import { ensureError, getFullSnap } from '@utils/utils'
+import { ensureError, getFullSnap, getIntervalsFullSnap } from '@utils/utils'
 import { lastTimestamp } from '@store/selectors/stats'
-import { STATS_CACHE_TIME } from '@store/consts/static'
+import { Intervals, STATS_CACHE_TIME } from '@store/consts/static'
+import { PayloadAction } from '@reduxjs/toolkit'
 
 export function* getStats(): Generator {
   try {
@@ -44,6 +45,63 @@ export function* getStats(): Generator {
   }
 }
 
+export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>): Generator {
+  try {
+    // const lastFetchTimestamp = yield* select(lastTimestamp)
+
+    // if (+Date.now() < lastFetchTimestamp + STATS_CACHE_TIME) {
+    //   return yield* put(actions.setLoadingStats(false))
+    // }
+
+    const currentNetwork = yield* select(network)
+
+    const fullSnap = yield* call(
+      getIntervalsFullSnap,
+      currentNetwork.toLowerCase(),
+      action.payload.interval
+    )
+
+    const parsedFullSnap = {
+      // @ts-expect-error FIXME: Interface missmatch.
+      volume24: fullSnap.volume,
+      // @ts-expect-error FIXME: Interface missmatch.
+      tvl24: fullSnap.tvl,
+      //@ts-expect-error FIXME: Interface missmatch.
+      fees24: fullSnap.fees,
+      volumePlot: fullSnap.volumePlot.reverse(),
+      liquidityPlot: fullSnap.liquidityPlot.reverse(),
+      tokensData: fullSnap.tokensData.map(token => ({
+        ...token,
+        address: new PublicKey(token.address),
+        //@ts-expect-error FIXME: Interface missmatch.
+        volume24: token.volume
+      })),
+      poolsData: fullSnap.poolsData.map(pool => ({
+        ...pool,
+        poolAddress: new PublicKey(pool.poolAddress),
+        tokenX: new PublicKey(pool.tokenX),
+        tokenY: new PublicKey(pool.tokenY),
+        //@ts-expect-error FIXME: Interface missmatch.
+        volume24: pool.volume
+      }))
+    }
+
+    // @ts-expect-error FIXME: Interface missmatch.
+    yield* put(actions.setCurrentStats(parsedFullSnap))
+  } catch (e: unknown) {
+    const error = ensureError(e)
+    console.log(error)
+
+    yield* put(actions.setLoadingStats(false))
+
+    yield* call(handleRpcError, error.message)
+  }
+}
+
 export function* statsHandler(): Generator {
   yield* takeLeading(actions.getCurrentStats, getStats)
+}
+
+export function* intervalStatsHandler(): Generator {
+  yield* takeEvery(actions.getCurrentIntervalStats, getIntervalStats)
 }

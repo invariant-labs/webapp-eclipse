@@ -8,6 +8,8 @@ import { Grid, Typography } from '@mui/material'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { formatLargeNumber } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
+import Intervals from '../Intervals/Intervals'
 
 interface LiquidityInterface {
   liquidityPercent: number | null
@@ -15,6 +17,8 @@ interface LiquidityInterface {
   data: TimeData[]
   className?: string
   isLoading: boolean
+  interval: string
+  setInterval: (interval: IntervalsKeys) => void
 }
 
 const Liquidity: React.FC<LiquidityInterface> = ({
@@ -22,7 +26,9 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   liquidityVolume,
   data,
   className,
-  isLoading
+  isLoading,
+  interval,
+  setInterval
 }) => {
   const { classes, cx } = useStyles()
 
@@ -36,7 +42,10 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   return (
     <Grid className={cx(classes.container, className, { [classes.loadingOverlay]: isLoading })}>
       <Grid className={classes.liquidityContainer}>
-        <Typography className={classes.liquidityHeader}>Liquidity</Typography>
+        <Grid container justifyContent={'space-between'} alignItems='center'>
+          <Typography className={classes.liquidityHeader}>Liquidity</Typography>
+          <Intervals interval={interval} setInterval={setInterval} marginRight={24} />
+        </Grid>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
             ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : liquidityVolume)}

@@ -99,7 +99,8 @@ import {
   POSITIONS_PER_PAGE,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   BITZ_MAIN,
-  PRICE_API_URL
+  PRICE_API_URL,
+  Intervals
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -2076,6 +2077,18 @@ export const getFullSnap = async (name: string): Promise<FullSnap> => {
   const { data } = await axios.get<FullSnap>(
     `https://stats.invariant.app/svm/full_snap/eclipse-${name}`
   )
+
+  return data
+}
+
+export const getIntervalsFullSnap = async (
+  name: string,
+  interval: Intervals
+): Promise<FullSnap> => {
+  const { data } = await axios.get<FullSnap>(
+    `https://stats.invariant.app/eclipse/intervals/eclipse-${name}?interval=${interval}`
+  )
+  console.log("Fetched intervals full snap")
 
   return data
 }

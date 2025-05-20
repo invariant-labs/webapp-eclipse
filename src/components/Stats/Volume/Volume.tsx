@@ -9,6 +9,8 @@ import { Box } from '@mui/system'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
 import { formatLargeNumber } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
+import Intervals from '../Intervals/Intervals'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 interface StatsInterface {
   percentVolume: number | null
@@ -16,6 +18,8 @@ interface StatsInterface {
   data: TimeData[]
   className?: string
   isLoading: boolean
+  interval: string
+  setInterval: (interval: IntervalsKeys) => void
 }
 
 const Volume: React.FC<StatsInterface> = ({
@@ -23,7 +27,9 @@ const Volume: React.FC<StatsInterface> = ({
   volume,
   data,
   className,
-  isLoading
+  isLoading,
+  interval,
+  setInterval
 }) => {
   const { classes, cx } = useStyles()
 
@@ -52,7 +58,10 @@ const Volume: React.FC<StatsInterface> = ({
         [classes.loadingOverlay]: isLoading
       })}>
       <Box className={classes.volumeContainer}>
-        <Typography className={classes.volumeHeader}>Volume</Typography>
+        <Grid container justifyContent={'space-between'} alignItems='center'>
+          <Typography className={classes.volumeHeader}>Volume</Typography>
+          <Intervals interval={interval} setInterval={setInterval} />
+        </Grid>
         <div className={classes.volumePercentContainer}>
           <Typography className={classes.volumePercentHeader}>
             ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : volume)}
