@@ -1,4 +1,4 @@
-import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Box, Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
 import { linearGradientDef } from '@nivo/core'
 import { Layer, ResponsiveLine } from '@nivo/line'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
@@ -14,6 +14,7 @@ import { Button } from '@common/Button/Button'
 import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import ArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import VerticalAlignCenterIcon from '@mui/icons-material/VerticalAlignCenter'
+import loader from '@static/gif/loader.gif'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
@@ -330,7 +331,12 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
 
   return (
     <Grid container className={cx(classes.container, className)} style={style} ref={containerRef}>
-      {loading ? <Skeleton variant='rectangular' className={classes.skeleton} /> : null}
+      {loading ? (
+        <Box width={'100%'} height={'100%'} position={'relative'}>
+          <Skeleton variant='rectangular' className={classes.skeleton} />
+          <img src={loader} className={classes.loader} alt='Loader' />
+        </Box>
+      ) : null}
       {!loading && hasError ? (
         <Grid container className={classes.cover}>
           <Grid className={classes.errorWrapper} container>

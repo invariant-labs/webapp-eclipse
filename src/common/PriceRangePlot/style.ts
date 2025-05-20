@@ -89,7 +89,18 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     zIndex: 111,
     borderRadius: 10,
     width: '100%',
-    height: '100%'
+    height: '100%',
+    display: 'flex',
+    maxWidth: 'none'
+  },
+  loader: {
+    position: 'absolute',
+    top: 'calc(50% - 50px)',
+    left: 'calc(50% - 50px)',
+    height: 100,
+    width: 100,
+    margin: 'auto',
+    zIndex: 1122
   }
 }))
 
