@@ -15,6 +15,7 @@ import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import ArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import VerticalAlignCenterIcon from '@mui/icons-material/VerticalAlignCenter'
 import { centerToRangeIcon } from '@static/icons'
+import loader from '@static/gif/loader.gif'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
@@ -333,7 +334,11 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
 
   return (
     <Grid container className={cx(classes.container, className)} style={style} ref={containerRef}>
-      {loading ? <Skeleton variant='rectangular' className={classes.skeleton} /> : null}
+      {loading ? (
+        <Grid container className={classes.cover}>
+          <img src={loader} className={classes.loader} alt='Loader' />
+        </Grid>
+      ) : null}
       {!loading && hasError ? (
         <Grid container className={classes.cover}>
           <Grid className={classes.errorWrapper} container>
@@ -344,191 +349,190 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           </Grid>
         </Grid>
       ) : null}
-      {!loading && (
-        <>
-          <Grid className={classes.zoomButtonsWrapper}>
-            <Button
-              scheme='green'
-              width={isMd ? 28 : 36}
-              height={isMd ? 28 : 36}
-              borderRadius={10}
-              padding={0}
-              onClick={zoomPlus}>
-              <img src={ZoomInIcon} className={classes.zoomIcon} alt='Zoom in' />
-            </Button>
-            <Button
-              scheme='green'
-              width={isMd ? 28 : 36}
-              height={isMd ? 28 : 36}
-              borderRadius={10}
-              padding={0}
-              onClick={zoomMinus}>
-              <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
-            </Button>
-            <Button
-              scheme='pink'
-              width={isMd ? 28 : 36}
-              height={isMd ? 28 : 36}
-              borderRadius={10}
-              padding={0}
-              onClick={centerChart}>
-              <VerticalAlignCenterIcon
-                sx={{
-                  width: isMd ? 28 : 32,
-                  height: isMd ? 28 : 32,
-                  transform: 'rotate(90deg)'
-                }}
-              />
-            </Button>
-            {centerToRange && (
+
+      <>
+        <Grid className={classes.zoomButtonsWrapper}>
+          <Button
+            scheme='green'
+            width={isMd ? 28 : 36}
+            height={isMd ? 28 : 36}
+            borderRadius={10}
+            padding={0}
+            onClick={zoomPlus}>
+            <img src={ZoomInIcon} className={classes.zoomIcon} alt='Zoom in' />
+          </Button>
+          <Button
+            scheme='green'
+            width={isMd ? 28 : 36}
+            height={isMd ? 28 : 36}
+            borderRadius={10}
+            padding={0}
+            onClick={zoomMinus}>
+            <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
+          </Button>
           <Button
             scheme='pink'
             width={isMd ? 28 : 36}
             height={isMd ? 28 : 36}
             borderRadius={10}
             padding={0}
-            onClick={centerToRange}>
-            <img
-              src={centerToRangeIcon}
-              alt='Center to range'
-              width={isMd ? 24 : 30}
-              height={isMd ? 24 : 30}
+            onClick={centerChart}>
+            <VerticalAlignCenterIcon
+              sx={{
+                width: isMd ? 28 : 32,
+                height: isMd ? 28 : 32,
+                transform: 'rotate(90deg)'
+              }}
             />
           </Button>
-        )}
-      </Grid>
-
-          <Grid className={classes.leftArrow}>
+          {centerToRange && (
             <Button
               scheme='pink'
               width={isMd ? 28 : 36}
               height={isMd ? 28 : 36}
               borderRadius={10}
               padding={0}
-              onClick={moveLeft}>
-              <ArrowLeftIcon
-                sx={{
-                  width: isMd ? 28 : 32,
-                  height: isMd ? 28 : 32
-                }}
+              onClick={centerToRange}>
+              <img
+                src={centerToRangeIcon}
+                alt='Center to range'
+                width={isMd ? 24 : 30}
+                height={isMd ? 24 : 30}
               />
             </Button>
-          </Grid>
-          <Grid className={classes.rightArrow}>
-            <Button
-              scheme='pink'
-              width={isMd ? 28 : 36}
-              height={isMd ? 28 : 36}
-              borderRadius={10}
-              padding={0}
-              onClick={moveRight}>
-              <ArrowRightIcon
-                sx={{
-                  width: isMd ? 28 : 32,
-                  height: isMd ? 28 : 32
-                }}
-              />
-            </Button>
-          </Grid>
+          )}
+        </Grid>
 
-          <ResponsiveLine
-            sliceTooltip={() => <></>}
-            tooltip={() => <></>}
-            useMesh={false}
-            enableCrosshair={false}
-            enablePointLabel={false}
-            debugSlices={false}
-            enableSlices={false}
-            debugMesh={false}
-            areaBaselineValue={0}
-            pointBorderWidth={0}
-            areaBlendMode='normal'
-            crosshairType='x'
-            pointLabel=''
-            pointBorderColor=''
-            pointColor=''
-            lineWidth={2}
-            pointSize={2}
-            areaOpacity={0.2}
-            data={[
-              {
-                id: 'less than range',
-                data: currentLessThanRange.length ? currentLessThanRange : [{ x: plotMin, y: 0 }]
-              },
-              {
-                id: 'range',
-                data: currentRange
-              },
-              {
-                id: 'greater than range',
-                data: currentGreaterThanRange.length
-                  ? currentGreaterThanRange
-                  : [{ x: plotMax, y: 0 }]
-              }
-            ]}
-            curve={isXtoY ? 'stepAfter' : 'stepBefore'}
-            margin={{ top: isSmDown ? 55 : 25, bottom: 15 }}
-            colors={[
-              colors.invariant.chartDisabled,
-              colors.invariant.green,
-              colors.invariant.chartDisabled
-            ]}
-            axisTop={null}
-            axisRight={null}
-            axisLeft={null}
-            axisBottom={{
-              tickSize: 0,
-              tickPadding: 0,
-              tickRotation: 0,
-              tickValues: 5,
-              format: value => (value < 0 ? '' : formatNumberWithSuffix(value.toString()))
-            }}
-            xScale={{
-              type: 'linear',
-              min: plotMin,
-              max: plotMax
-            }}
-            yScale={{
-              type: 'linear',
-              min: 0,
-              max: isNoPositions ? 1 : maxVal
-            }}
-            enableGridX={false}
-            enableGridY={false}
-            enablePoints={false}
-            enableArea={true}
-            legends={[]}
-            isInteractive={false}
-            animate={false}
-            role='application'
-            layers={[
-              bottomLineLayer,
-              'grid',
-              'markers',
-              'areas',
-              'lines',
-              currentLayer,
-              brushLayer,
-              'axes',
-              'legends',
-              highlightLayer
-            ]}
-            defs={[
-              linearGradientDef('gradient', [
-                { offset: 0, color: 'inherit' },
-                { offset: 50, color: 'inherit' },
-                { offset: 100, color: 'inherit', opacity: 0 }
-              ])
-            ]}
-            fill={[
-              {
-                match: '*',
-                id: 'gradient'
-              }
-            ]}
-          />
-        </>
-      )}
+        <Grid className={classes.leftArrow}>
+          <Button
+            scheme='pink'
+            width={isMd ? 28 : 36}
+            height={isMd ? 28 : 36}
+            borderRadius={10}
+            padding={0}
+            onClick={moveLeft}>
+            <ArrowLeftIcon
+              sx={{
+                width: isMd ? 28 : 32,
+                height: isMd ? 28 : 32
+              }}
+            />
+          </Button>
+        </Grid>
+        <Grid className={classes.rightArrow}>
+          <Button
+            scheme='pink'
+            width={isMd ? 28 : 36}
+            height={isMd ? 28 : 36}
+            borderRadius={10}
+            padding={0}
+            onClick={moveRight}>
+            <ArrowRightIcon
+              sx={{
+                width: isMd ? 28 : 32,
+                height: isMd ? 28 : 32
+              }}
+            />
+          </Button>
+        </Grid>
+
+        <ResponsiveLine
+          sliceTooltip={() => <></>}
+          tooltip={() => <></>}
+          useMesh={false}
+          enableCrosshair={false}
+          enablePointLabel={false}
+          debugSlices={false}
+          enableSlices={false}
+          debugMesh={false}
+          areaBaselineValue={0}
+          pointBorderWidth={0}
+          areaBlendMode='normal'
+          crosshairType='x'
+          pointLabel=''
+          pointBorderColor=''
+          pointColor=''
+          lineWidth={2}
+          pointSize={2}
+          areaOpacity={0.2}
+          data={[
+            {
+              id: 'less than range',
+              data: currentLessThanRange.length ? currentLessThanRange : [{ x: plotMin, y: 0 }]
+            },
+            {
+              id: 'range',
+              data: currentRange
+            },
+            {
+              id: 'greater than range',
+              data: currentGreaterThanRange.length
+                ? currentGreaterThanRange
+                : [{ x: plotMax, y: 0 }]
+            }
+          ]}
+          curve={isXtoY ? 'stepAfter' : 'stepBefore'}
+          margin={{ top: isSmDown ? 55 : 25, bottom: 15 }}
+          colors={[
+            colors.invariant.chartDisabled,
+            colors.invariant.green,
+            colors.invariant.chartDisabled
+          ]}
+          axisTop={null}
+          axisRight={null}
+          axisLeft={null}
+          axisBottom={{
+            tickSize: 0,
+            tickPadding: 0,
+            tickRotation: 0,
+            tickValues: 5,
+            format: value => (value < 0 ? '' : formatNumberWithSuffix(value.toString()))
+          }}
+          xScale={{
+            type: 'linear',
+            min: plotMin,
+            max: plotMax
+          }}
+          yScale={{
+            type: 'linear',
+            min: 0,
+            max: isNoPositions ? 1 : maxVal
+          }}
+          enableGridX={false}
+          enableGridY={false}
+          enablePoints={false}
+          enableArea={true}
+          legends={[]}
+          isInteractive={false}
+          animate={false}
+          role='application'
+          layers={[
+            bottomLineLayer,
+            'grid',
+            'markers',
+            'areas',
+            'lines',
+            currentLayer,
+            brushLayer,
+            'axes',
+            'legends',
+            highlightLayer
+          ]}
+          defs={[
+            linearGradientDef('gradient', [
+              { offset: 0, color: 'inherit' },
+              { offset: 50, color: 'inherit' },
+              { offset: 100, color: 'inherit', opacity: 0 }
+            ])
+          ]}
+          fill={[
+            {
+              match: '*',
+              id: 'gradient'
+            }
+          ]}
+        />
+      </>
     </Grid>
   )
 }

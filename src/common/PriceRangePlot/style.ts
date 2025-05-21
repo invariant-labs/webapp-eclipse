@@ -83,13 +83,12 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     position: 'absolute',
     zIndex: 11,
     borderRadius: 10,
-    backdropFilter: 'blur(16px)'
+    backdropFilter: 'blur(1px)'
   },
-  skeleton: {
-    zIndex: 111,
-    borderRadius: 10,
-    width: '100%',
-    height: '100%'
+  loader: {
+    height: 100,
+    width: 100,
+    margin: 'auto'
   }
 }))
 
