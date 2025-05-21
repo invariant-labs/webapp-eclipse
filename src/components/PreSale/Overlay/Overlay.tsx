@@ -20,7 +20,7 @@ export const OverlayWrapper = () => {
             <Box
                 sx={{
                     position: 'absolute',
-                    top: '0px',
+                    top: '20px',
                     left: 'calc(50% - 600px)',
                     width: '900px',
                     height: '700px',
