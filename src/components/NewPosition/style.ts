@@ -149,31 +149,6 @@ const useStyles = makeStyles()(theme => {
           filter: 'none'
         }
       }
-    },
-    refreshIconBtn: {
-      padding: 0,
-      margin: 0,
-      minWidth: 'auto',
-      background: 'none',
-      marginRight: 7,
-      '&:hover': {
-        background: 'none'
-      },
-      '&:disabled': {
-        opacity: 0.5
-      },
-      [theme.breakpoints.down('sm')]: {
-        // marginRight: 16
-      }
-    },
-    refreshIcon: {
-      width: 26,
-      height: 21,
-      cursor: 'pointer',
-      transition: 'filter 300ms',
-      '&:hover': {
-        filter: 'brightness(1.5)'
-      }
     }
   }
 })
