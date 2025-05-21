@@ -920,6 +920,26 @@ export enum AutoswapCustomError {
   FetchError = 0
 }
 
+export enum ErrorCodeExtractionKeys {
+  ErrorNumber = 'Error Number:',
+  Custom = 'Custom":',
+  ApprovalDenied = 'Approval Denied',
+  UndefinedOnSplit = "Cannot read properties of undefined (reading 'split')",
+  RightBracket = '}',
+  Dot = '.'
+}
+export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
+  0x1778: 'Price changed – increase slippage or retry',
+  0x1773: 'Price changed – increase slippage or retry',
+  0x1795: 'Price changed – increase slippage or retry',
+  0x1796: 'Price changed – increase slippage or retry',
+  0x1775: 'Price changed – increase slippage or retry',
+  0x1785: 'Price changed – increase slippage or retry'
+}
+
+export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
+export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected.'
+
 export const ECLIPSE_MAINNET_GENESIS_HASH = 'EAQLJCV2mh23BsK2P9oYpV5CHVLDNHTxYss3URrNmg3s'
 export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'
 

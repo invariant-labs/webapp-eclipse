@@ -11,12 +11,16 @@ import {
   Keypair,
   PublicKey,
   sendAndConfirmRawTransaction,
+  SendTransactionError,
   Transaction,
   TransactionExpiredTimeoutError,
   TransactionInstruction,
   VersionedTransaction
 } from '@solana/web3.js'
 import {
+  APPROVAL_DENIED_MESSAGE,
+  COMMON_ERROR_MESSAGE,
+  ErrorCodeExtractionKeys,
   LEADERBOARD_DECIMAL,
   MAX_CROSSES_IN_SINGLE_TX,
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
@@ -30,8 +34,12 @@ import { closeSnackbar } from 'notistack'
 import {
   calculatePoints,
   createLoaderKey,
+  ensureApprovalDenied,
   ensureError,
+  extractErrorCode,
+  extractRuntimeErrorCode,
   formatNumberWithoutSuffix,
+  mapErrorCodeToMessage,
   printBN
 } from '@utils/utils'
 import { getMarketProgram } from '@utils/web3/programs/amm'
@@ -328,20 +336,46 @@ export function* handleSwapWithETH(): Generator {
     //     })
     //   )
     // } else {
-    yield put(
-      snackbarsActions.add({
-        message: 'Tokens swapped successfully',
-        variant: 'success',
-        persist: false,
-        txid: initialTxid
-      })
-    )
 
     const txDetails = yield* call([connection, connection.getParsedTransaction], initialTxid, {
       maxSupportedTransactionVersion: 0
     })
 
     if (txDetails) {
+      if (txDetails.meta?.err) {
+        if (txDetails.meta.logMessages) {
+          const errorLog = txDetails.meta.logMessages.find(log =>
+            log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+          )
+          const errorCode = errorLog
+            ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+            .split(ErrorCodeExtractionKeys.Dot)[0]
+            .trim()
+          const message = mapErrorCodeToMessage(Number(errorCode))
+          yield put(swapActions.setSwapSuccess(false))
+
+          closeSnackbar(loaderSwappingTokens)
+          yield put(snackbarsActions.remove(loaderSwappingTokens))
+
+          yield put(
+            snackbarsActions.add({
+              message,
+              variant: 'error',
+              persist: false
+            })
+          )
+          return
+        }
+      }
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid: initialTxid
+        })
+      )
+
       const meta = txDetails.meta
       if (meta?.innerInstructions && meta.innerInstructions) {
         try {
@@ -417,6 +451,15 @@ export function* handleSwapWithETH(): Generator {
           // Should never be triggered
         }
       }
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid: initialTxid
+        })
+      )
     }
     // }
 
@@ -455,7 +498,25 @@ export function* handleSwapWithETH(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -478,7 +539,7 @@ export function* handleSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -718,14 +779,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
     //     })
     //   )
     // } else {
-    yield put(
-      snackbarsActions.add({
-        message: 'Tokens swapped successfully',
-        variant: 'success',
-        persist: false,
-        txid
-      })
-    )
+
     // }
 
     const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
@@ -733,6 +787,41 @@ export function* handleTwoHopSwapWithETH(): Generator {
     })
 
     if (txDetails) {
+      if (txDetails.meta?.err) {
+        if (txDetails.meta.logMessages) {
+          const errorLog = txDetails.meta.logMessages.find(log =>
+            log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+          )
+          const errorCode = errorLog
+            ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+            .split(ErrorCodeExtractionKeys.Dot)[0]
+            .trim()
+          const message = mapErrorCodeToMessage(Number(errorCode))
+          yield put(swapActions.setSwapSuccess(false))
+
+          closeSnackbar(loaderSwappingTokens)
+          yield put(snackbarsActions.remove(loaderSwappingTokens))
+          closeSnackbar(loaderSigningTx)
+          yield put(snackbarsActions.remove(loaderSigningTx))
+
+          yield put(
+            snackbarsActions.add({
+              message,
+              variant: 'error',
+              persist: false
+            })
+          )
+          return
+        }
+      }
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid
+        })
+      )
       const meta = txDetails.meta
       if (meta?.innerInstructions && meta.innerInstructions) {
         try {
@@ -848,6 +937,15 @@ export function* handleTwoHopSwapWithETH(): Generator {
           // Should never be triggered
         }
       }
+    } else {
+      yield put(
+        snackbarsActions.add({
+          message: 'Tokens swapped successfully',
+          variant: 'success',
+          persist: false,
+          txid
+        })
+      )
     }
 
     // const unwrapTxid = yield* call(
@@ -885,7 +983,26 @@ export function* handleTwoHopSwapWithETH(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -908,7 +1025,7 @@ export function* handleTwoHopSwapWithETH(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1091,19 +1208,48 @@ export function* handleTwoHopSwap(): Generator {
         })
       )
     } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapped successfully',
-          variant: 'success',
-          persist: false,
-          txid
-        })
-      )
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
 
       if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(swapActions.setSwapSuccess(false))
+
+            closeSnackbar(loaderSwappingTokens)
+            yield put(snackbarsActions.remove(loaderSwappingTokens))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
+
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
+
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+
         const meta = txDetails.meta
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           const accountInPredicate = entry =>
@@ -1230,6 +1376,15 @@ export function* handleTwoHopSwap(): Generator {
             }
           }
         }
+      } else {
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
       }
     }
 
@@ -1237,7 +1392,25 @@ export function* handleTwoHopSwap(): Generator {
     yield put(snackbarsActions.remove(loaderSwappingTokens))
   } catch (e: unknown) {
     const error = ensureError(e)
-    console.log(error)
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -1260,7 +1433,7 @@ export function* handleTwoHopSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
@@ -1475,18 +1648,48 @@ export function* handleSwap(): Generator {
         })
       )
     } else {
-      yield put(
-        snackbarsActions.add({
-          message: 'Tokens swapped successfully',
-          variant: 'success',
-          persist: false,
-          txid
-        })
-      )
       const txDetails = yield* call([connection, connection.getParsedTransaction], txid, {
         maxSupportedTransactionVersion: 0
       })
+
       if (txDetails) {
+        if (txDetails.meta?.err) {
+          if (txDetails.meta.logMessages) {
+            const errorLog = txDetails.meta.logMessages.find(log =>
+              log.includes(ErrorCodeExtractionKeys.ErrorNumber)
+            )
+            const errorCode = errorLog
+              ?.split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+              .split(ErrorCodeExtractionKeys.Dot)[0]
+              .trim()
+            const message = mapErrorCodeToMessage(Number(errorCode))
+            yield put(swapActions.setSwapSuccess(false))
+
+            closeSnackbar(loaderSwappingTokens)
+            yield put(snackbarsActions.remove(loaderSwappingTokens))
+            closeSnackbar(loaderSigningTx)
+            yield put(snackbarsActions.remove(loaderSigningTx))
+
+            yield put(
+              snackbarsActions.add({
+                message,
+                variant: 'error',
+                persist: false
+              })
+            )
+            return
+          }
+        }
+
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
+
         const meta = txDetails.meta
         if (meta?.preTokenBalances && meta.postTokenBalances) {
           const accountXPredicate = entry =>
@@ -1568,6 +1771,15 @@ export function* handleSwap(): Generator {
             }
           }
         }
+      } else {
+        yield put(
+          snackbarsActions.add({
+            message: 'Tokens swapped successfully',
+            variant: 'success',
+            persist: false,
+            txid
+          })
+        )
       }
     }
 
@@ -1576,6 +1788,26 @@ export function* handleSwap(): Generator {
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
+
+    let msg: string = ''
+    if (error instanceof SendTransactionError) {
+      const err = error.transactionError
+      try {
+        const errorCode = extractRuntimeErrorCode(err)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      }
+    } else {
+      try {
+        const errorCode = extractErrorCode(error)
+        msg = mapErrorCodeToMessage(errorCode)
+      } catch (e: unknown) {
+        const error = ensureError(e)
+        msg = ensureApprovalDenied(error) ? APPROVAL_DENIED_MESSAGE : COMMON_ERROR_MESSAGE
+      }
+    }
 
     yield put(swapActions.setSwapSuccess(false))
 
@@ -1598,7 +1830,7 @@ export function* handleSwap(): Generator {
     } else {
       yield put(
         snackbarsActions.add({
-          message: 'Failed to send. Please try again',
+          message: msg,
           variant: 'error',
           persist: false
         })
