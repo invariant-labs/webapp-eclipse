@@ -1,7 +1,7 @@
 import SinglePositionInfo from '@components/PositionDetails/SinglePositionInfo/SinglePositionInfo'
 import SinglePositionPlot from '@components/PositionDetails/SinglePositionPlot/SinglePositionPlot'
 import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
-import { Box, useMediaQuery } from '@mui/material'
+import { Box, Fade, useMediaQuery } from '@mui/material'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
   NetworkType,
@@ -290,17 +290,23 @@ const PositionDetails: React.FC<IProps> = ({
         </Box>
       </Information>
       <Box position='relative'>
-        {(previousPosition || nextPosition) && !isMd && (
-          <DesktopNavigation
-            position={previousPosition}
-            direction='left'
-            onClick={() => {
-              if (!previousPosition) return
-              navigate(ROUTES.getPositionRoute(previousPosition.id))
-            }}
-            disabled={!previousPosition}
-          />
-        )}
+        <Fade
+          in={(!!nextPosition || !!previousPosition) && !isMd}
+          timeout={300}
+          unmountOnExit
+          mountOnEnter>
+          <Box>
+            <DesktopNavigation
+              position={previousPosition}
+              direction='left'
+              onClick={() => {
+                if (!previousPosition) return
+                navigate(ROUTES.getPositionRoute(previousPosition.id))
+              }}
+              disabled={!previousPosition}
+            />
+          </Box>
+        </Fade>
         <Box className={classes.mainContainer}>
           <ClosePositionWarning
             open={isModalOpen}
@@ -439,19 +445,25 @@ const PositionDetails: React.FC<IProps> = ({
             </Box>
           </Box>
         </Box>
-        {(nextPosition || previousPosition) && !isMd && (
-          <DesktopNavigation
-            position={nextPosition}
-            direction='right'
-            onClick={() => {
-              if (!nextPosition) return
-              navigate(ROUTES.getPositionRoute(nextPosition.id))
-            }}
-            disabled={!nextPosition}
-          />
-        )}
+        <Fade
+          in={(!!nextPosition || !!previousPosition) && !isMd}
+          timeout={300}
+          unmountOnExit
+          mountOnEnter>
+          <Box>
+            <DesktopNavigation
+              position={nextPosition}
+              direction='right'
+              onClick={() => {
+                if (!nextPosition) return
+                navigate(ROUTES.getPositionRoute(nextPosition.id))
+              }}
+              disabled={!nextPosition}
+            />
+          </Box>
+        </Fade>
       </Box>
-      {(previousPosition || nextPosition) && (
+      <Fade in={!!(previousPosition || nextPosition)}>
         <Box className={classes.paginationWrapper}>
           <PaginationList
             pages={paginationData.totalPages}
@@ -461,7 +473,7 @@ const PositionDetails: React.FC<IProps> = ({
             page={paginationData.currentPage}
           />
         </Box>
-      )}
+      </Fade>
     </Box>
   )
 }

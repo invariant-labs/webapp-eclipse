@@ -278,7 +278,9 @@ function* handleInitPositionAndPoolWithETH(action: PayloadAction<InitPositionDat
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                 },
                 persist: false
               })
@@ -575,7 +577,9 @@ function* handleInitPositionWithETH(action: PayloadAction<InitPositionData>): Ge
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                 },
                 persist: false
               })
@@ -898,6 +902,8 @@ export function* handleSwapAndInitPositionWithETH(
                   tokenYAmount: formatNumberWithoutSuffix(printBN(tokenYDeposit, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString(),
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
                     printBN(fromExchangeAmount, tokenX.decimals)
                   ),
@@ -1208,6 +1214,8 @@ export function* handleSwapAndInitPosition(
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenYDecimal)),
                   tokenXIcon: tokenX.logoURI,
                   tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString(),
                   tokenXAmountAutoSwap: formatNumberWithoutSuffix(
                     printBN(tokenXExchange, tokenX.decimals)
                   ),
@@ -1491,7 +1499,9 @@ export function* handleInitPosition(action: PayloadAction<InitPositionData>): Ge
                     tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                     tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI
+                    tokenYIcon: tokenY.logoURI,
+                    tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                    tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                   },
                   persist: false
                 })
@@ -1959,7 +1969,9 @@ export function* handleClaimFeeWithETH({ index, isLocked }: { index: number; isL
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                 },
                 persist: false
               })
@@ -2174,7 +2186,9 @@ export function* handleClaimFee(action: PayloadAction<{ index: number; isLocked:
                     tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                     tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI
+                    tokenYIcon: tokenY.logoURI,
+                    tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                    tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                   },
                   persist: false
                 })
@@ -2339,12 +2353,15 @@ export function* handleClaimAllFees() {
               let tokenYAmount = '0'
               let tokenXIcon = unknownTokenIcon
               let tokenYIcon = unknownTokenIcon
+              let tokenXSymbol = 'Unknown'
+              let tokenYSymbol = 'Unknown'
 
               if (nativeTransfer) {
                 tokenXAmount = formatNumberWithoutSuffix(
                   printBN(nativeAmount, allTokens[NATIVE_MINT.toString()].decimals)
                 )
                 tokenXIcon = allTokens[NATIVE_MINT.toString()].logoURI
+                tokenXSymbol = allTokens[NATIVE_MINT.toString()].symbol ?? NATIVE_MINT.toString()
               }
 
               splTransfers.map((transfer, index) => {
@@ -2356,6 +2373,7 @@ export function* handleClaimAllFees() {
                 } else if (index === 1 && !nativeTransfer) {
                   tokenXAmount = formatNumberWithoutSuffix(printBN(amount, token.decimals))
                   tokenXIcon = token.logoURI
+                  tokenYSymbol = token.symbol ?? token.address.toString()
                 }
               })
 
@@ -2366,7 +2384,9 @@ export function* handleClaimAllFees() {
                     tokenXAmount: tokenXAmount,
                     tokenYAmount: tokenYAmount,
                     tokenXIcon: tokenXIcon,
-                    tokenYIcon: tokenYIcon
+                    tokenYIcon: tokenYIcon,
+                    tokenXSymbol: tokenXSymbol,
+                    tokenYSymbol: tokenYSymbol
                   },
                   persist: false
                 })
@@ -2600,7 +2620,9 @@ export function* handleClosePositionWithETH(data: ClosePositionData) {
                   tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                   tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                   tokenXIcon: tokenX.logoURI,
-                  tokenYIcon: tokenY.logoURI
+                  tokenYIcon: tokenY.logoURI,
+                  tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                  tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                 },
                 persist: false
               })
@@ -2800,7 +2822,9 @@ export function* handleClosePosition(action: PayloadAction<ClosePositionData>) {
                     tokenXAmount: formatNumberWithoutSuffix(printBN(amountX, tokenX.decimals)),
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountY, tokenY.decimals)),
                     tokenXIcon: tokenX.logoURI,
-                    tokenYIcon: tokenY.logoURI
+                    tokenYIcon: tokenY.logoURI,
+                    tokenXSymbol: tokenX.symbol ?? tokenX.address.toString(),
+                    tokenYSymbol: tokenY.symbol ?? tokenY.address.toString()
                   },
                   persist: false
                 })
