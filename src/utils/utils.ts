@@ -100,6 +100,9 @@ import {
   MAX_CROSSES_IN_SINGLE_TX_WITH_LUTS,
   BITZ_MAIN,
   PRICE_API_URL,
+  ERROR_CODE_TO_MESSAGE,
+  COMMON_ERROR_MESSAGE,
+  ErrorCodeExtractionKeys,
   TUSD_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
@@ -1435,7 +1438,6 @@ export const handleSimulateWithHop = async (
     simulations[best][1].swapHopOne.status === SimulationStatus.Ok &&
     simulations[best][1].swapHopTwo.status === SimulationStatus.Ok
   ) {
-    console.log(simulations[best][1], routeCandidates[simulations[best][0]])
     return {
       simulation: simulations[best][1],
       route: routeCandidates[simulations[best][0]],
@@ -2364,4 +2366,32 @@ export const calculatePercentageRatio = (
     tokenXPercentage,
     tokenYPercentage: 100 - tokenXPercentage
   }
+}
+
+export const extractErrorCode = (error: Error): number => {
+  const errorCode = error.message
+    .split(ErrorCodeExtractionKeys.ErrorNumber)[1]
+    .split(ErrorCodeExtractionKeys.Dot)[0]
+    .trim()
+  return Number(errorCode)
+}
+
+export const extractRuntimeErrorCode = (error: Omit<Error, 'name'>): number => {
+  const errorCode = error.message
+    .split(ErrorCodeExtractionKeys.Custom)[1]
+    .split(ErrorCodeExtractionKeys.RightBracket)[0]
+    .trim()
+  return Number(errorCode)
+}
+
+// may better to use regex
+export const ensureApprovalDenied = (error: Error): boolean => {
+  return (
+    error.message.includes(ErrorCodeExtractionKeys.ApprovalDenied) ||
+    error.message.includes(ErrorCodeExtractionKeys.UndefinedOnSplit)
+  )
+}
+
+export const mapErrorCodeToMessage = (errorNumber: number): string => {
+  return ERROR_CODE_TO_MESSAGE[errorNumber] || COMMON_ERROR_MESSAGE
 }
