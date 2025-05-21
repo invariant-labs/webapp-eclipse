@@ -398,7 +398,7 @@ export const PreSaleWrapper = () => {
             userDepositedAmount={deposited}
             isActive={isActive}
             progress={progress}
-            isLoading={false}
+            isLoading={isLoadingSaleStats}
             targetAmount={targetAmount}
             currentAmount={currentAmount}
             mintDecimals={mintDecimals}
