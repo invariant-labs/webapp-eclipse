@@ -104,6 +104,7 @@ import withdrawIcon from './svg/withdrawIcon.svg'
 import centerToRangeIcon from './svg/centerToRange.svg'
 import virtualCardIcon from './svg/virtualCard.svg'
 import greenInfoIcon from './svg/greenInfo.svg'
+import swapArrowClean from './svg/swapArrowClean.svg'
 import saleIcon from './svg/saleIcon.svg'
 
 export {
@@ -213,7 +214,8 @@ export {
   withdrawIcon,
   centerToRangeIcon,
   auditByLogoIcon,
-  greenInfoIcon
+  greenInfoIcon,
+  swapArrowClean
 }
 
 export const chainIcons = {

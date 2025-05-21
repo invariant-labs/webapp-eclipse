@@ -15,7 +15,11 @@ import {
   getRound,
   getTierPrices,
   getCurrentTierLimit,
-  PERCENTAGE_DENOMINATOR
+  PERCENTAGE_DENOMINATOR,
+  TIER1,
+  TIER2,
+  TIER3,
+  TIER4
 } from '@invariant-labs/sale-sdk'
 import { balanceLoading, status, poolTokens, balance } from '@store/selectors/solanaWallet'
 import {
@@ -50,7 +54,7 @@ import { useEffect, useState, useRef, useMemo, useCallback } from 'react'
 import { OverlayWrapper } from '@components/PreSale/Overlay/Overlay'
 import { getEclipseWallet } from '@utils/web3/wallet'
 import { DEFAULT_PUBLICKEY } from '@store/consts/static'
-import { auditByLogoIcon } from '@static/icons'
+import { auditByLogoIcon, swapArrowClean } from '@static/icons'
 
 function SampleNextArrow(props) {
   const { className, style, onClick } = props
@@ -190,6 +194,7 @@ export const PreSaleWrapper = () => {
   const [progress, setProgress] = useState<ProgressState>('none')
   const [tokenIndex, setTokenIndex] = useState<number | null>(null)
   const [currentTimestamp, setCurrentTimestamp] = useState<BN>(getTimestampSeconds())
+  const [reversedPrices, setReversedPrices] = useState(false);
 
   const slidesToShow = useMemo(() => {
     if (isSmallMobile) return 1
@@ -197,6 +202,11 @@ export const PreSaleWrapper = () => {
     if (isTablet) return 2
     return 3
   }, [isMobile, isTablet, isSmallMobile])
+
+
+  const togglePriceDirection = useCallback(() => {
+    setReversedPrices(prev => !prev);
+  }, []);
 
   const { targetAmount, currentAmount, whitelistWalletLimit, startTimestamp, duration, mint } =
     useMemo(
@@ -349,6 +359,37 @@ export const PreSaleWrapper = () => {
       clearTimeout(timeoutId2)
     }
   }, [success, inProgress])
+
+
+  const displayPrices = useMemo(() => {
+    if (reversedPrices) {
+      return [TIER1, TIER2, TIER3, TIER4].map(tier => tier);
+    }
+    return tierPrices;
+  }, [tierPrices, reversedPrices]);
+
+  const displayPriceInfo = useMemo(() => {
+    if (reversedPrices) {
+      const tierIndex = round - 1;
+      const currentTierPrice = tierIndex >= 0 ?
+        [TIER1, TIER2, TIER3, TIER4][Math.min(tierIndex, 3)] : price;
+      const nextTierPrice = tierIndex > 0 ?
+        [TIER1, TIER2, TIER3, TIER4][Math.min(tierIndex + 1, 3)] : nextPrice;
+
+      return {
+        currentPrice: currentTierPrice,
+        nextPrice: nextTierPrice
+      };
+    }
+
+    return {
+      currentPrice: price,
+      nextPrice: nextPrice
+    };
+  }, [price, nextPrice, round, reversedPrices]);
+
+
+
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
       <Hidden lgDown>
@@ -360,8 +401,12 @@ export const PreSaleWrapper = () => {
             <SaleStepper
               isLoading={isLoadingSaleStats}
               currentStep={round - 1}
-              steps={tierPrices.map((price, idx) => {
-                return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 4)}` }
+              steps={displayPrices.map((price, idx) => {
+                if (reversedPrices) {
+                  return { id: idx + 1, label: `${printBNandTrimZeros(price, mintDecimals, 4)} $INVT` }
+                } else {
+                  return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 4)}` }
+                }
               })}
             />
             <Box className={classes.roundComponentContainer}>
@@ -372,19 +417,29 @@ export const PreSaleWrapper = () => {
                 amountDeposited={currentAmount}
                 amountNeeded={amountNeeded}
                 amountLeft={amountLeft}
-                currentPrice={price}
+                currentPrice={displayPriceInfo.currentPrice}
                 walletStatus={walletStatus}
-                nextPrice={nextPrice}
+                nextPrice={displayPriceInfo.nextPrice}
                 proofOfInclusion={proofOfInclusion}
                 percentageFilled={filledPercentage}
                 userDepositedAmount={deposited}
                 userRemainingAllocation={remainingAmount}
+                isReversed={reversedPrices}
                 mintDecimals={mintDecimals}
                 roundNumber={round}
                 isLoadingSaleStats={isLoadingSaleStats}
                 isLoadingUserStats={isLoadingUserStats}
               />
+              <Grid sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+
+                <div className={classes.arrowIcon} onClick={togglePriceDirection}>
+                  <span className={`${classes.reverseText} reverseText`}>Reverse token</span>
+                  <img src={swapArrowClean} alt='swap' />
+                </div>
+
+              </Grid>
             </Box>
+
           </Grid>
           <BuyComponent
             nativeBalance={nativeBalance}

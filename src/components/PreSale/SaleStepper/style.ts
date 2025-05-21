@@ -87,6 +87,8 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     color: colors.invariant.text,
     ...typography.body1,
     position: 'static',
+    whiteSpace: 'nowrap',
+
     marginLeft: '16px',
     [theme.breakpoints.down('lg')]: {
       marginLeft: 0,
