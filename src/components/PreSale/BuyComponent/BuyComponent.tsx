@@ -141,7 +141,7 @@ export const BuyComponent: React.FC<IProps> = ({
       return 'Enter token amount'
     }
 
-    return 'Buy $INV'
+    return 'Buy $INVT'
   }, [tokenIndex, tokens, isLoading, value])
 
 
@@ -197,7 +197,7 @@ export const BuyComponent: React.FC<IProps> = ({
           <Typography className={classes.titleText}>
             <Typography className={classes.pinkText}>INVARIANT</Typography>
             <Typography className={classes.headingText}>TOKEN PRESALE</Typography>
-            <Typography className={classes.greenText}>$INV</Typography>
+            <Typography className={classes.greenText}>$INVT</Typography>
           </Typography>
           <Typography className={classes.raisedInfo}>
             <Typography className={classes.greyText}>Raised:</Typography>
@@ -284,7 +284,7 @@ export const BuyComponent: React.FC<IProps> = ({
             <Skeleton variant='rounded' width={80} height={24} sx={{ ml: 1 }} />
           ) : (
             <Typography className={classes.tokenAmount}>
-              {printBNandTrimZeros(receive, REWARD_SCALE)} $INV
+              {printBNandTrimZeros(receive, REWARD_SCALE)} $INVT
             </Typography>
           )}
         </Box>
@@ -308,7 +308,7 @@ export const BuyComponent: React.FC<IProps> = ({
                 onBuyClick(convertBalanceToBN(value, mintDecimals))
               }
             }}
-            disabled={getButtonMessage() !== 'Buy $INV' || !isActive}
+            disabled={getButtonMessage() !== 'Buy $INVT' || !isActive}
             content={getButtonMessage()}
             progress={progress}
           />
