@@ -180,7 +180,7 @@ export const BuyComponent: React.FC<IProps> = ({
                   </Typography>
                   <ChangeWalletButton
                     width={'40%'}
-                    height={48}
+                    height={36}
                     name='Check eligibility'
                     onConnect={onConnectWallet}
                     connected={false}
@@ -213,21 +213,24 @@ export const BuyComponent: React.FC<IProps> = ({
             )}
           </Typography>
         </Box>
-        <Box>
+        <Box sx={{ height: '49px' }}>
 
           <>
             {isLoading ? (
-              <Skeleton variant='rounded' width={'100%'} height={20} sx={{ marginTop: '16px' }} />
+              <Skeleton variant='rounded' width={'100%'} height={49} sx={{ marginTop: '8px' }} />
             ) : (
-              <Box className={classes.darkBackground}>
-                <Box className={classes.gradientProgress} />
-              </Box>
+              <>
+
+                <Box className={classes.darkBackground}>
+                  <Box className={classes.gradientProgress} />
+                </Box>
+                <Grid container className={classes.barWrapper}>
+                  <Typography className={classes.sliderLabel}>0%</Typography>
+                  <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
+                  <Typography className={classes.sliderLabel}>100%</Typography>
+                </Grid>
+              </>
             )}
-            <Grid container className={classes.barWrapper}>
-              <Typography className={classes.sliderLabel}>0%</Typography>
-              <Typography className={classes.sliderLabel}>{filledPercentage}%</Typography>
-              <Typography className={classes.sliderLabel}>100%</Typography>
-            </Grid>
           </>
         </Box>
 

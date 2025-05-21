@@ -155,7 +155,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
 
         <Box className={classes.infoRow}>
           <Typography className={classes.secondaryLabel}>Your deposit: </Typography>
-          {!isLoadingUserStats && !saleDidNotStart && walletStatus === Status.Initialized ? (
+          {!isLoadingUserStats && !saleDidNotStart && walletStatus === Status.Initialized && proofOfInclusion ? (
             <Typography className={classes.value}>
               {renderFormattedNumberWithSkeleton(userDepositedAmount, mintDecimals, "$", "80px", isLoadingUserStats)}
             </Typography>
@@ -174,7 +174,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <Typography className={classes.value}>
               {renderFormattedNumberWithSkeleton(userRemainingAllocation, mintDecimals, "$", "80px", isLoadingUserStats)}
             </Typography>
-          ) : isLoadingUserStats && walletStatus === Status.Initialized ? (
+          ) : isLoadingUserStats && walletStatus === Status.Initialized && !!proofOfInclusion ? (
             <Skeleton variant="text" width="80px" height={24} />
           ) : (
             <Typography className={classes.value}>-</Typography>
