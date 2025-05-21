@@ -482,6 +482,17 @@ export const KYSOL_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const TUSD_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'tUSD',
+  address: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ'),
+  decimals: 6,
+  name: 'Turbo USD',
+  logoURI:
+    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/85fc184f345916356f0d1ad73fb89ea2f15b95d7/deployments/warp_routes/tUSD/logo.svg',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -704,7 +715,8 @@ export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
   TIA_MAIN.address.toString(),
-  BITZ_MAIN.address.toString()
+  BITZ_MAIN.address.toString(),
+  TUSD_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
@@ -766,7 +778,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
       KYSOL_MAIN: KYSOL_MAIN.address.toString(),
-      EZSOL_MAIN: EZSOL_MAIN.address.toString()
+      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
+      TUSD_MAIN: TUSD_MAIN.address.toString()
     }
   }
 }
