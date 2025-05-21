@@ -25,34 +25,34 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
     customAddress
   )
 
-  const networks = [NetworkType.Mainnet, NetworkType.Testnet]
+  const networks = [
+    NetworkType.Mainnet,
+    ...(process.env.NODE_ENV === 'development' ? [NetworkType.Testnet] : [])
+  ]
 
   return (
     <>
-      {process.env.NODE_ENV === 'development' && (
-        <>
-          <Box className={classes.container}>
-            <Typography className={classes.title}>Select a network</Typography>
-            <Box className={classes.networkContainer}>
-              {networks.map(network => (
-                <Box
-                  className={cx(classes.network, {
-                    [classes.networkActive]: network === activeNetwork
-                  })}
-                  key={network}
-                  onClick={() => {
-                    setCustomAddress('')
-                    onNetworkChange(network, '')
-                  }}>
-                  <img src={netowrkIcons[`${network.toLowerCase()}Glow`]} alt={`${network} icon`} />
-                  <Typography className={classes.name}>{network}</Typography>
-                </Box>
-              ))}
+      <Box className={classes.container}>
+        <Typography className={classes.title}>Select a network</Typography>
+        <Box className={classes.networkContainer}>
+          {networks.map(network => (
+            <Box
+              className={cx(classes.network, {
+                [classes.networkActive]: network === activeNetwork
+              })}
+              key={network}
+              onClick={() => {
+                setCustomAddress('')
+                onNetworkChange(network, '')
+              }}>
+              <img src={netowrkIcons[`${network.toLowerCase()}Glow`]} alt={`${network} icon`} />
+              <Typography className={classes.name}>{network}</Typography>
             </Box>
-          </Box>
-          <Separator isHorizontal />
-        </>
-      )}
+          ))}
+        </Box>
+      </Box>
+      <Separator isHorizontal />
+
       <Box className={classes.container}>
         <Typography className={classes.title}>
           Select a {activeNetwork.toLowerCase()} RPC to use
