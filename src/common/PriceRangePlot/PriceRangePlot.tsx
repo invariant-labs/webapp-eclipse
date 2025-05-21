@@ -1,7 +1,6 @@
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { linearGradientDef } from '@nivo/core'
 import { Layer, ResponsiveLine } from '@nivo/line'
-import loader from '@static/gif/loader.gif'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
 import ZoomOutIcon from '@static/svg/zoom-out-icon.svg'
 import { colors, theme } from '@static/theme'
@@ -16,22 +15,24 @@ import ArrowRightIcon from '@mui/icons-material/KeyboardArrowRight'
 import ArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import VerticalAlignCenterIcon from '@mui/icons-material/VerticalAlignCenter'
 import { centerToRangeIcon } from '@static/icons'
+import loader from '@static/gif/loader.gif'
+import { chartPlaceholder } from '@store/consts/static'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
 export type InitMidPrice = TickPlotPositionData & { sqrtPrice: BN }
 
 export interface IPriceRangePlot {
-  data: PlotTickData[]
-  midPrice?: TickPlotPositionData
-  leftRange: TickPlotPositionData
-  rightRange: TickPlotPositionData
+  plotData: PlotTickData[]
+  midPriceData?: TickPlotPositionData
+  leftRangeData: TickPlotPositionData
+  rightRangeData: TickPlotPositionData
   onChangeRange?: (left: number, right: number) => void
   style?: React.CSSProperties
   className?: string
   disabled?: boolean
-  plotMin: number
-  plotMax: number
+  plotMinData: number
+  plotMaxData: number
   zoomMinus: () => void
   zoomPlus: () => void
   moveLeft: () => void
@@ -42,23 +43,22 @@ export interface IPriceRangePlot {
   isXtoY: boolean
   xDecimal: number
   yDecimal: number
-  tickSpacing: number
-  coverOnLoading?: boolean
+  spacing: number
   hasError?: boolean
   reloadHandler: () => void
 }
 
 export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
-  data,
-  leftRange,
-  rightRange,
-  midPrice,
+  plotData,
+  leftRangeData,
+  rightRangeData,
+  midPriceData,
   onChangeRange,
   style,
   className,
   disabled = false,
-  plotMin,
-  plotMax,
+  plotMinData,
+  plotMaxData,
   zoomMinus,
   zoomPlus,
   moveLeft,
@@ -69,11 +69,18 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   isXtoY,
   xDecimal,
   yDecimal,
-  tickSpacing,
-  coverOnLoading = false,
+  spacing,
   hasError = false,
   reloadHandler
 }) => {
+  const data = loading ? chartPlaceholder.tickmaps : plotData
+  const leftRange = loading ? chartPlaceholder.leftRange : leftRangeData
+  const rightRange = loading ? chartPlaceholder.rightRange : rightRangeData
+  const plotMin = loading ? chartPlaceholder.plotMin : plotMinData
+  const plotMax = loading ? chartPlaceholder.plotMax : plotMaxData
+  const midPrice = loading ? chartPlaceholder.midPrice : midPriceData
+  const tickSpacing = loading ? chartPlaceholder.tickSpacing : spacing
+
   const { classes, cx } = useStyles()
 
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
@@ -270,33 +277,6 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
     return <rect x={0} y={bottomLine} width={innerWidth} height={1} fill={colors.invariant.light} />
   }
 
-  const lazyLoadingLayer: Layer = ({ innerWidth, innerHeight }) => {
-    if (!loading || coverOnLoading) {
-      return null
-    }
-
-    return (
-      <svg
-        width={innerWidth}
-        height={innerHeight + 5}
-        viewBox={`0 0 ${innerWidth} ${innerHeight + 5}`}
-        fill='none'
-        xmlns='http://www.w3.org/2000/svg'
-        x={0}
-        y={-5}>
-        <rect x={0} y={0} width='100%' height='100%' fill={`${colors.white.main}10`} />
-        <text
-          x='50%'
-          y='50%'
-          dominantBaseline='middle'
-          textAnchor='middle'
-          className={classes.loadingText}>
-          Loading liquidity data...
-        </text>
-      </svg>
-    )
-  }
-
   const brushLayer = Brush(
     leftRange?.x,
     rightRange?.x,
@@ -363,7 +343,7 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
 
   return (
     <Grid container className={cx(classes.container, className)} style={style} ref={containerRef}>
-      {loading && coverOnLoading ? (
+      {loading ? (
         <Grid container className={classes.cover}>
           <img src={loader} className={classes.loader} alt='Loader' />
         </Grid>
@@ -378,186 +358,190 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           </Grid>
         </Grid>
       ) : null}
-      <Grid className={classes.zoomButtonsWrapper}>
-        <Button
-          scheme='green'
-          width={isMd ? 28 : 36}
-          height={isMd ? 28 : 36}
-          borderRadius={10}
-          padding={0}
-          onClick={zoomPlus}>
-          <img src={ZoomInIcon} className={classes.zoomIcon} alt='Zoom in' />
-        </Button>
-        <Button
-          scheme='green'
-          width={isMd ? 28 : 36}
-          height={isMd ? 28 : 36}
-          borderRadius={10}
-          padding={0}
-          onClick={zoomMinus}>
-          <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
-        </Button>
-        <Button
-          scheme='pink'
-          width={isMd ? 28 : 36}
-          height={isMd ? 28 : 36}
-          borderRadius={10}
-          padding={0}
-          onClick={centerChart}>
-          <VerticalAlignCenterIcon
-            sx={{
-              width: isMd ? 28 : 32,
-              height: isMd ? 28 : 32,
-              transform: 'rotate(90deg)'
-            }}
-          />
-        </Button>
-        {centerToRange && (
+
+      <>
+        <Grid className={classes.zoomButtonsWrapper}>
+          <Button
+            scheme='green'
+            width={isMd ? 28 : 36}
+            height={isMd ? 28 : 36}
+            borderRadius={10}
+            padding={0}
+            onClick={zoomPlus}>
+            <img src={ZoomInIcon} className={classes.zoomIcon} alt='Zoom in' />
+          </Button>
+          <Button
+            scheme='green'
+            width={isMd ? 28 : 36}
+            height={isMd ? 28 : 36}
+            borderRadius={10}
+            padding={0}
+            onClick={zoomMinus}>
+            <img src={ZoomOutIcon} className={classes.zoomIcon} alt='Zoom out' />
+          </Button>
           <Button
             scheme='pink'
             width={isMd ? 28 : 36}
             height={isMd ? 28 : 36}
             borderRadius={10}
             padding={0}
-            onClick={centerToRange}>
-            <img
-              src={centerToRangeIcon}
-              alt='Center to range'
-              width={isMd ? 24 : 30}
-              height={isMd ? 24 : 30}
+            onClick={centerChart}>
+            <VerticalAlignCenterIcon
+              sx={{
+                width: isMd ? 28 : 32,
+                height: isMd ? 28 : 32,
+                transform: 'rotate(90deg)'
+              }}
             />
           </Button>
-        )}
-      </Grid>
+          {centerToRange && (
+            <Button
+              scheme='pink'
+              width={isMd ? 28 : 36}
+              height={isMd ? 28 : 36}
+              borderRadius={10}
+              padding={0}
+              onClick={centerToRange}>
+              <img
+                src={centerToRangeIcon}
+                alt='Center to range'
+                width={isMd ? 24 : 30}
+                height={isMd ? 24 : 30}
+              />
+            </Button>
+          )}
+        </Grid>
 
-      <Grid className={classes.leftArrow}>
-        <Button
-          scheme='pink'
-          width={isMd ? 28 : 36}
-          height={isMd ? 28 : 36}
-          borderRadius={10}
-          padding={0}
-          onClick={moveLeft}>
-          <ArrowLeftIcon
-            sx={{
-              width: isMd ? 28 : 32,
-              height: isMd ? 28 : 32
-            }}
-          />
-        </Button>
-      </Grid>
-      <Grid className={classes.rightArrow}>
-        <Button
-          scheme='pink'
-          width={isMd ? 28 : 36}
-          height={isMd ? 28 : 36}
-          borderRadius={10}
-          padding={0}
-          onClick={moveRight}>
-          <ArrowRightIcon
-            sx={{
-              width: isMd ? 28 : 32,
-              height: isMd ? 28 : 32
-            }}
-          />
-        </Button>
-      </Grid>
+        <Grid className={classes.leftArrow}>
+          <Button
+            scheme='pink'
+            width={isMd ? 28 : 36}
+            height={isMd ? 28 : 36}
+            borderRadius={10}
+            padding={0}
+            onClick={moveLeft}>
+            <ArrowLeftIcon
+              sx={{
+                width: isMd ? 28 : 32,
+                height: isMd ? 28 : 32
+              }}
+            />
+          </Button>
+        </Grid>
+        <Grid className={classes.rightArrow}>
+          <Button
+            scheme='pink'
+            width={isMd ? 28 : 36}
+            height={isMd ? 28 : 36}
+            borderRadius={10}
+            padding={0}
+            onClick={moveRight}>
+            <ArrowRightIcon
+              sx={{
+                width: isMd ? 28 : 32,
+                height: isMd ? 28 : 32
+              }}
+            />
+          </Button>
+        </Grid>
 
-      <ResponsiveLine
-        sliceTooltip={() => <></>}
-        tooltip={() => <></>}
-        useMesh={false}
-        enableCrosshair={false}
-        enablePointLabel={false}
-        debugSlices={false}
-        enableSlices={false}
-        debugMesh={false}
-        areaBaselineValue={0}
-        pointBorderWidth={0}
-        areaBlendMode='normal'
-        crosshairType='x'
-        pointLabel=''
-        pointBorderColor=''
-        pointColor=''
-        lineWidth={2}
-        pointSize={2}
-        areaOpacity={0.2}
-        data={[
-          {
-            id: 'less than range',
-            data: currentLessThanRange.length ? currentLessThanRange : [{ x: plotMin, y: 0 }]
-          },
-          {
-            id: 'range',
-            data: currentRange
-          },
-          {
-            id: 'greater than range',
-            data: currentGreaterThanRange.length ? currentGreaterThanRange : [{ x: plotMax, y: 0 }]
-          }
-        ]}
-        curve={isXtoY ? 'stepAfter' : 'stepBefore'}
-        margin={{ top: isSmDown ? 55 : 25, bottom: 15 }}
-        colors={[
-          colors.invariant.chartDisabled,
-          colors.invariant.green,
-          colors.invariant.chartDisabled
-        ]}
-        axisTop={null}
-        axisRight={null}
-        axisLeft={null}
-        axisBottom={{
-          tickSize: 0,
-          tickPadding: 0,
-          tickRotation: 0,
-          tickValues: 5,
-          format: value => (value < 0 ? '' : formatNumberWithSuffix(value.toString()))
-        }}
-        xScale={{
-          type: 'linear',
-          min: plotMin,
-          max: plotMax
-        }}
-        yScale={{
-          type: 'linear',
-          min: 0,
-          max: isNoPositions ? 1 : maxVal
-        }}
-        enableGridX={false}
-        enableGridY={false}
-        enablePoints={false}
-        enableArea={true}
-        legends={[]}
-        isInteractive={false}
-        animate={false}
-        role='application'
-        layers={[
-          bottomLineLayer,
-          'grid',
-          'markers',
-          'areas',
-          'lines',
-          lazyLoadingLayer,
-          currentLayer,
-          brushLayer,
-          'axes',
-          'legends',
-          highlightLayer
-        ]}
-        defs={[
-          linearGradientDef('gradient', [
-            { offset: 0, color: 'inherit' },
-            { offset: 50, color: 'inherit' },
-            { offset: 100, color: 'inherit', opacity: 0 }
-          ])
-        ]}
-        fill={[
-          {
-            match: '*',
-            id: 'gradient'
-          }
-        ]}
-      />
+        <ResponsiveLine
+          sliceTooltip={() => <></>}
+          tooltip={() => <></>}
+          useMesh={false}
+          enableCrosshair={false}
+          enablePointLabel={false}
+          debugSlices={false}
+          enableSlices={false}
+          debugMesh={false}
+          areaBaselineValue={0}
+          pointBorderWidth={0}
+          areaBlendMode='normal'
+          crosshairType='x'
+          pointLabel=''
+          pointBorderColor=''
+          pointColor=''
+          lineWidth={2}
+          pointSize={2}
+          areaOpacity={0.2}
+          data={[
+            {
+              id: 'less than range',
+              data: currentLessThanRange.length ? currentLessThanRange : [{ x: plotMin, y: 0 }]
+            },
+            {
+              id: 'range',
+              data: currentRange
+            },
+            {
+              id: 'greater than range',
+              data: currentGreaterThanRange.length
+                ? currentGreaterThanRange
+                : [{ x: plotMax, y: 0 }]
+            }
+          ]}
+          curve={isXtoY ? 'stepAfter' : 'stepBefore'}
+          margin={{ top: isSmDown ? 55 : 25, bottom: 15 }}
+          colors={[
+            colors.invariant.chartDisabled,
+            colors.invariant.green,
+            colors.invariant.chartDisabled
+          ]}
+          axisTop={null}
+          axisRight={null}
+          axisLeft={null}
+          axisBottom={{
+            tickSize: 0,
+            tickPadding: 0,
+            tickRotation: 0,
+            tickValues: 5,
+            format: value => (value < 0 ? '' : formatNumberWithSuffix(value.toString()))
+          }}
+          xScale={{
+            type: 'linear',
+            min: plotMin,
+            max: plotMax
+          }}
+          yScale={{
+            type: 'linear',
+            min: 0,
+            max: isNoPositions ? 1 : maxVal
+          }}
+          enableGridX={false}
+          enableGridY={false}
+          enablePoints={false}
+          enableArea={true}
+          legends={[]}
+          isInteractive={false}
+          animate={false}
+          role='application'
+          layers={[
+            bottomLineLayer,
+            'grid',
+            'markers',
+            'areas',
+            'lines',
+            currentLayer,
+            brushLayer,
+            'axes',
+            'legends',
+            highlightLayer
+          ]}
+          defs={[
+            linearGradientDef('gradient', [
+              { offset: 0, color: 'inherit' },
+              { offset: 50, color: 'inherit' },
+              { offset: 100, color: 'inherit', opacity: 0 }
+            ])
+          ]}
+          fill={[
+            {
+              match: '*',
+              id: 'gradient'
+            }
+          ]}
+        />
+      </>
     </Grid>
   )
 }
