@@ -404,6 +404,8 @@ export function* handleSwapWithETH(): Generator {
                 tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                 tokenXIcon: tokenIn.logoURI,
                 tokenYIcon: tokenOut.logoURI,
+                tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
                 earnedPoints: points.eqn(0)
                   ? undefined
                   : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -833,6 +835,8 @@ export function* handleTwoHopSwapWithETH(): Generator {
                 tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                 tokenXIcon: tokenIn.logoURI,
                 tokenYIcon: tokenOut.logoURI,
+                tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
                 earnedPoints: points.eqn(0)
                   ? undefined
                   : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -1212,6 +1216,8 @@ export function* handleTwoHopSwap(): Generator {
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                     tokenXIcon: tokenIn.logoURI,
                     tokenYIcon: tokenOut.logoURI,
+                    tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                    tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
                     earnedPoints: points.eqn(0)
                       ? undefined
                       : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
@@ -1548,6 +1554,8 @@ export function* handleSwap(): Generator {
                     tokenYAmount: formatNumberWithoutSuffix(printBN(amountOut, tokenOut.decimals)),
                     tokenXIcon: tokenIn.logoURI,
                     tokenYIcon: tokenOut.logoURI,
+                    tokenXSymbol: tokenIn.symbol ?? tokenIn.address.toString(),
+                    tokenYSymbol: tokenOut.symbol ?? tokenOut.address.toString(),
                     earnedPoints: points.eqn(0)
                       ? undefined
                       : formatNumberWithoutSuffix(printBN(points, LEADERBOARD_DECIMAL))
