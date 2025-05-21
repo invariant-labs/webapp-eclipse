@@ -1,4 +1,4 @@
-import { Grid, Skeleton, Typography, useMediaQuery } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { linearGradientDef } from '@nivo/core'
 import { Layer, ResponsiveLine } from '@nivo/line'
 import ZoomInIcon from '@static/svg/zoom-in-icon.svg'
@@ -16,22 +16,23 @@ import ArrowLeftIcon from '@mui/icons-material/KeyboardArrowLeft'
 import VerticalAlignCenterIcon from '@mui/icons-material/VerticalAlignCenter'
 import { centerToRangeIcon } from '@static/icons'
 import loader from '@static/gif/loader.gif'
+import { chartPlaceholder } from '@store/consts/static'
 
 export type TickPlotPositionData = Omit<PlotTickData, 'y'>
 
 export type InitMidPrice = TickPlotPositionData & { sqrtPrice: BN }
 
 export interface IPriceRangePlot {
-  data: PlotTickData[]
-  midPrice?: TickPlotPositionData
-  leftRange: TickPlotPositionData
-  rightRange: TickPlotPositionData
+  plotData: PlotTickData[]
+  midPriceData?: TickPlotPositionData
+  leftRangeData: TickPlotPositionData
+  rightRangeData: TickPlotPositionData
   onChangeRange?: (left: number, right: number) => void
   style?: React.CSSProperties
   className?: string
   disabled?: boolean
-  plotMin: number
-  plotMax: number
+  plotMinData: number
+  plotMaxData: number
   zoomMinus: () => void
   zoomPlus: () => void
   moveLeft: () => void
@@ -42,22 +43,22 @@ export interface IPriceRangePlot {
   isXtoY: boolean
   xDecimal: number
   yDecimal: number
-  tickSpacing: number
+  spacing: number
   hasError?: boolean
   reloadHandler: () => void
 }
 
 export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
-  data,
-  leftRange,
-  rightRange,
-  midPrice,
+  plotData,
+  leftRangeData,
+  rightRangeData,
+  midPriceData,
   onChangeRange,
   style,
   className,
   disabled = false,
-  plotMin,
-  plotMax,
+  plotMinData,
+  plotMaxData,
   zoomMinus,
   zoomPlus,
   moveLeft,
@@ -68,10 +69,18 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
   isXtoY,
   xDecimal,
   yDecimal,
-  tickSpacing,
+  spacing,
   hasError = false,
   reloadHandler
 }) => {
+  const data = loading ? chartPlaceholder.tickmaps : plotData
+  const leftRange = loading ? chartPlaceholder.leftRange : leftRangeData
+  const rightRange = loading ? chartPlaceholder.rightRange : rightRangeData
+  const plotMin = loading ? chartPlaceholder.plotMin : plotMinData
+  const plotMax = loading ? chartPlaceholder.plotMax : plotMaxData
+  const midPrice = loading ? chartPlaceholder.midPrice : midPriceData
+  const tickSpacing = loading ? chartPlaceholder.tickSpacing : spacing
+
   const { classes, cx } = useStyles()
 
   const isSmDown = useMediaQuery(theme.breakpoints.down('sm'))
