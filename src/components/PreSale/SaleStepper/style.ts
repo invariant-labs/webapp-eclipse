@@ -10,11 +10,12 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     overflow: 'hidden',
     alignItems: 'flex-start',
     minHeight: '440px',
-    width: '120px',
+    width: '160px',
     padding: theme.spacing(2.5),
     [theme.breakpoints.down('lg')]: {
       flexDirection: 'row',
-      minHeight: 'unset',
+      height: '80px',
+      minHeight: '20px',
       alignItems: 'center',
       width: '100%',
       overflowX: 'auto',
@@ -93,9 +94,13 @@ const useStyles = makeStyles<{ connectorHeight: number }>()((theme, { connectorH
     [theme.breakpoints.down('lg')]: {
       marginLeft: 0,
       textAlign: 'center',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
       whiteSpace: 'nowrap',
       position: 'absolute',
-      top: '110%',
+      top: '120%',
       transform: 'translate(-50%,-50%)',
       left: '49%'
     }

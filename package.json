@@ -15,12 +15,12 @@
     "update-mainnet-list": "node ./src/fetchMainnetList.js"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.29.0",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
-    "@coral-xyz/anchor": "^0.29.0",
     "@invariant-labs/locker-eclipse-sdk": "^0.0.23",
     "@invariant-labs/points-sdk": "^0.0.5",
-    "@invariant-labs/sale-sdk": "^0.0.15",
+    "@invariant-labs/sale-sdk": "^0.0.17",
     "@invariant-labs/sdk-eclipse": "^0.0.121",
     "@irys/web-upload": "*",
     "@irys/web-upload-solana": "^0.1.7",

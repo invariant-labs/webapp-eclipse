@@ -224,6 +224,8 @@ export const PreSaleWrapper = () => {
       [saleStats]
     )
 
+
+
   useEffect(() => {
     const index = tokens.findIndex(token => token.assetAddress.equals(mint))
     if (index !== -1) setTokenIndex(index)
@@ -239,6 +241,7 @@ export const PreSaleWrapper = () => {
         },
     [userStats]
   )
+
 
   const round = useMemo(() => getRound(currentAmount, targetAmount), [saleStats])
 
@@ -272,10 +275,12 @@ export const PreSaleWrapper = () => {
 
   const tierPrices = useMemo(() => getTierPrices(mintDecimals), [mintDecimals])
 
+
   const { price, nextPrice } = useMemo(
     () => getPrice(currentAmount, targetAmount, mintDecimals),
     [currentAmount, targetAmount, mintDecimals]
   )
+
   const endtimestamp = useMemo(() => startTimestamp.add(duration), [startTimestamp, duration])
 
   const saleSoldOut = useMemo(
@@ -361,12 +366,7 @@ export const PreSaleWrapper = () => {
   }, [success, inProgress])
 
 
-  const displayPrices = useMemo(() => {
-    if (reversedPrices) {
-      return [TIER1, TIER2, TIER3, TIER4].map(tier => tier);
-    }
-    return tierPrices;
-  }, [tierPrices, reversedPrices]);
+
 
   const displayPriceInfo = useMemo(() => {
     if (reversedPrices) {
@@ -389,6 +389,27 @@ export const PreSaleWrapper = () => {
   }, [price, nextPrice, round, reversedPrices]);
 
 
+  const displayPrices = useMemo(() => {
+    return tierPrices;
+  }, [tierPrices]);
+
+  const stepLabels = useMemo(() => {
+    return displayPrices.map((price, idx) => {
+      if (reversedPrices) {
+        const baseValue = new BN(10).pow(new BN(mintDecimals));
+        const inverted = baseValue.mul(baseValue).div(price);
+        return {
+          id: idx + 1,
+          label: `1$ = ${printBNandTrimZeros(inverted, mintDecimals, 2)} INVT`
+        };
+      } else {
+        return {
+          id: idx + 1,
+          label: `1 INVT = ${printBNandTrimZeros(price, mintDecimals, 4)}$`
+        };
+      }
+    });
+  }, [displayPrices, reversedPrices, mintDecimals]);
 
   return (
     <Grid className={classes.pageWrapper} sx={{ position: 'relative' }}>
@@ -401,13 +422,7 @@ export const PreSaleWrapper = () => {
             <SaleStepper
               isLoading={isLoadingSaleStats}
               currentStep={round - 1}
-              steps={displayPrices.map((price, idx) => {
-                if (reversedPrices) {
-                  return { id: idx + 1, label: `${printBNandTrimZeros(price, mintDecimals, 4)} $INVT` }
-                } else {
-                  return { id: idx + 1, label: `$${printBNandTrimZeros(price, mintDecimals, 4)}` }
-                }
-              })}
+              steps={stepLabels}
             />
             <Box className={classes.roundComponentContainer}>
               <RoundComponent
@@ -429,6 +444,8 @@ export const PreSaleWrapper = () => {
                 roundNumber={round}
                 isLoadingSaleStats={isLoadingSaleStats}
                 isLoadingUserStats={isLoadingUserStats}
+                priceFormat={reversedPrices ? 'usdc-to-token' : 'token-to-usdc'}
+
               />
               <Grid sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
 

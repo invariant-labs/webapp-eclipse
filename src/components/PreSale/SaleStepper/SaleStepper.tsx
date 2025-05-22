@@ -6,22 +6,35 @@ import { typography } from '@static/theme';
 export interface StepItem {
     id: number;
     label: string;
+    tokenPart?: string;
+    pricePart?: string;
 }
 
 interface SaleStepperProps {
     steps: StepItem[];
     currentStep: number;
     isLoading?: boolean;
-
 }
 
 export const SaleStepper: React.FC<SaleStepperProps> = ({ steps, currentStep, isLoading = false
 }) => {
     const theme = useTheme();
-    const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+    const isMobile = useMediaQuery(theme.breakpoints.down('lg'));
 
     const connectorHeight = Math.round(720 / steps.length - 60);
     const { classes } = useStyles({ connectorHeight });
+
+    const splitLabel = (label: string) => {
+        if (label.includes('INVT =')) {
+            const [tokenPart, pricePart] = label.split(' = ');
+            return { tokenPart, pricePart };
+        }
+        else if (label.includes('$ =')) {
+            const [pricePart, tokenPart] = label.split(' = ');
+            return { tokenPart, pricePart };
+        }
+        return { tokenPart: label, pricePart: '' };
+    };
 
     const getVerticalConnectorClass = (index: number, steps: StepItem[], currentStep: number): string => {
         const isLast = index === steps.length - 1;
@@ -107,6 +120,8 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({ steps, currentStep, is
                 const nodeClass = getNodeClass(index, isFirst);
                 const labelClass = getStepLabelClass(index);
 
+                const { tokenPart, pricePart } = splitLabel(step.label);
+
                 return (
                     <Box
                         key={step.id}
@@ -134,12 +149,38 @@ export const SaleStepper: React.FC<SaleStepperProps> = ({ steps, currentStep, is
                                     className={classes.labelSkeleton}
                                 />
                             ) : (
-                                <Typography
-                                    variant="body2"
-                                    className={labelClass}
-                                >
-                                    {step.label}
-                                </Typography>
+                                isMobile ? (
+                                    <Box
+                                        className={labelClass}
+                                        sx={{
+                                            marginTop: '4px',
+                                            display: 'flex',
+                                            flexDirection: 'column',
+                                            alignItems: 'flex-start',
+                                            justifyContent: 'center'
+                                        }}
+                                    >
+                                        <Typography
+                                            variant="body2"
+                                            sx={{ textAlign: 'center', ...typography.body1 }}
+                                        >
+                                            {tokenPart}
+                                        </Typography>
+                                        <Typography
+                                            variant="body2"
+                                            sx={{ textAlign: 'center', ...typography.body1 }}
+                                        >
+                                            {pricePart}
+                                        </Typography>
+                                    </Box>
+                                ) : (
+                                    <Typography
+                                        variant="body2"
+                                        className={labelClass}
+                                    >
+                                        {step.label}
+                                    </Typography>
+                                )
                             )}
                         </Box>
 

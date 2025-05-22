@@ -26,6 +26,7 @@ interface RoundComponentProps {
   isReversed: boolean
   isLoadingSaleStats: boolean
   walletStatus: Status
+  priceFormat: 'token-to-usdc' | 'usdc-to-token'
 }
 
 export const RoundComponent: React.FC<RoundComponentProps> = ({
@@ -44,37 +45,40 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
   mintDecimals,
   proofOfInclusion,
   roundNumber,
-  isReversed,
   isLoadingSaleStats,
-  isLoadingUserStats
+  isLoadingUserStats,
+  priceFormat
 }) => {
   const { classes } = useStyles({
     percentage: Number(printBNandTrimZeros(percentageFilled, PERCENTAGE_SCALE, 3)),
     isActive
   })
 
-  // ...existing code...
-  // ...existing code...
+  const calculateInversePrice = (price: BN): string => {
+    if (price.isZero()) return "0";
 
-  const renderPriceWithSkeleton = (amount, decimals, prefix = "$", suffix = '', width = "80px", isLoading = isLoadingSaleStats, applyReverse = false) => {
-    if (isLoading) {
-      return <Skeleton variant="text" width={width} height={24} />
-    }
+    const baseValue = new BN(10).pow(new BN(mintDecimals));
+    const inverted = baseValue.mul(baseValue).div(price);
 
-    if (isReversed && applyReverse) {
-      return <>{printBNandTrimZeros(amount, decimals, 3)} $INVT</>
-    }
-
-    return <>{prefix}{printBNandTrimZeros(amount, decimals, 3)}{suffix}</>
+    return printBNandTrimZeros(inverted, mintDecimals, 3);
   }
 
-  const renderFormattedNumberWithSkeleton = (amount, decimals, prefix = "$", suffix = '', width = "100px", isLoading = isLoadingSaleStats, applyReverse = false) => {
+  const renderPriceWithSkeleton = (amount: BN, decimals: number, width = "80px", isLoading = isLoadingSaleStats) => {
     if (isLoading) {
       return <Skeleton variant="text" width={width} height={24} />
     }
 
-    if (isReversed && applyReverse) {
-      return <Typography>{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))} $INVT</Typography>
+    if (priceFormat === 'usdc-to-token') {
+      const invertedAmount = calculateInversePrice(amount);
+      return <>1$ = {invertedAmount} INVT</>
+    } else {
+      return <>1 INVT = {printBNandTrimZeros(amount, decimals, 3)}$</>
+    }
+  }
+
+  const renderFormattedNumberWithSkeleton = (amount: BN, decimals: number, prefix = "$", suffix = '', width = "100px", isLoading = isLoadingSaleStats) => {
+    if (isLoading) {
+      return <Skeleton variant="text" width={width} height={24} />
     }
 
     return <Typography>{prefix}{formatNumberWithCommas(printBNandTrimZeros(amount, decimals, 3))}{suffix}</Typography>
@@ -88,7 +92,7 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
         <Box className={classNames(classes.infoRow)} marginTop={'24px'}>
           <Typography className={classes.infoLabelBigger}>Current price: </Typography>
           <Typography className={classes.currentPriceBigger}>
-            {renderPriceWithSkeleton(currentPrice, mintDecimals, "$", '', "80px", isLoadingSaleStats, true)}
+            {renderPriceWithSkeleton(currentPrice, mintDecimals, "160px", isLoadingSaleStats)}
           </Typography>
         </Box>
       )}
@@ -132,7 +136,6 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
               <Box className={classes.infoRow}>
                 <Typography className={classes.infoLabel}>
                   Maximal deposit:
-
                 </Typography>
                 {renderFormattedNumberWithSkeleton(targetAmount.mul(EFFECTIVE_TARGET_MULTIPLIER), mintDecimals, "$", '', "100px")}
               </Box>
@@ -155,13 +158,13 @@ export const RoundComponent: React.FC<RoundComponentProps> = ({
             <Box className={classes.infoRow}>
               <Typography className={classes.infoLabel}>Current price: </Typography>
               <Typography className={classes.currentPrice}>
-                {renderFormattedNumberWithSkeleton(currentPrice, mintDecimals, "$", '', "80px", isLoadingSaleStats, true)}
+                {renderPriceWithSkeleton(currentPrice, mintDecimals, "160px", isLoadingSaleStats)}
               </Typography>
             </Box>
             <Box className={classes.infoRow}>
               <Typography className={classes.infoLabel}>Next price: </Typography>
               <Typography className={classes.nextPrice}>
-                {renderFormattedNumberWithSkeleton(nextPrice, mintDecimals, "$", '', "80px", isLoadingSaleStats, true)}
+                {renderPriceWithSkeleton(nextPrice, mintDecimals, "160px", isLoadingSaleStats)}
               </Typography>
             </Box>
             <Box className={classes.divider} />
