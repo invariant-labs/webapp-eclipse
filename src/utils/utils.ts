@@ -2088,8 +2088,6 @@ export const getIntervalsFullSnap = async (
   const { data } = await axios.get<FullSnap>(
     `https://stats.invariant.app/eclipse/intervals/eclipse-${name}?interval=${interval}`
   )
-  console.log("Fetched intervals full snap")
-
   return data
 }
 export const isValidPublicKey = (keyString?: string | null) => {

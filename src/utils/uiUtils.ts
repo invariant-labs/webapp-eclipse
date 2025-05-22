@@ -2,7 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { formatDate, printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
 import { FormatNumberThreshold } from '@store/consts/types'
-import { Intervals } from '@store/consts/static'
+import { Intervals, MONTH_NAMES } from '@store/consts/static'
 
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
@@ -178,8 +178,8 @@ export const mapIntervalToPrecision = (interval: Intervals): string => {
       return 'every 1 week'
     case Intervals.Monthly:
       return 'every 1 month'
-    case Intervals.Yearly:
-      return 'every 1 year'
+    // case Intervals.Yearly:
+    //   return 'every 1 year'
   }
 }
 
@@ -191,15 +191,16 @@ export const mapIntervalToString = (interval: Intervals): string => {
       return '1W'
     case Intervals.Monthly:
       return '1M'
-    case Intervals.Yearly:
-      return '1Y'
+    // case Intervals.Yearly:
+    //   return '1Y'
   }
 }
 
 export const formatPlotDataLabels = (
   time: number,
   entries: number,
-  interval: Intervals
+  interval: Intervals,
+  isMobile: boolean = false
 ): string => {
   const date = new Date(time)
   const day = date.getDate()
@@ -207,36 +208,33 @@ export const formatPlotDataLabels = (
 
   switch (interval) {
     case Intervals.Monthly: {
-      const monthNames = [
-        'Jan',
-        'Feb',
-        'Mar',
-        'Apr',
-        'May',
-        'Jun',
-        'Jul',
-        'Aug',
-        'Sep',
-        'Oct',
-        'Nov',
-        'Dec'
-      ]
-      const monthName = monthNames[month - 1]
+      const monthName = MONTH_NAMES[month - 1].slice(0, 3)
       return monthName
     }
-    case Intervals.Yearly: {
-      const year = date.getFullYear()
-      return `${year}`
-    }
-    case Intervals.Daily: {
-      const dayMod = Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? 2 : 1)
-
-      return dayMod === 0 ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}` : ''
-    }
+    case Intervals.Daily:
     case Intervals.Weekly: {
-      const dayMod = Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? 2 : 1)
+      const dayMod =
+        Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? (isMobile ? 4 : 2) : 1)
 
       return dayMod === 0 ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}` : ''
     }
+
+    // case Intervals.Yearly: {
+    //   const year = date.getFullYear()
+    //   return `${year}`
+    // }
+  }
+}
+
+export const getLabelDate = (interval: Intervals, timestamp: number): string => {
+  const date = new Date(timestamp)
+  const day = date.getDate()
+  const month = date.getMonth() + 1
+  const year = date.getFullYear()
+  const monthName = MONTH_NAMES[month - 1]
+  if (interval === Intervals.Monthly) {
+    return monthName + ' ' + year
+  } else {
+    return `${day < 10 ? '0' : ''}${day} ${monthName}`
   }
 }

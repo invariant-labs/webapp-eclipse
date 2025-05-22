@@ -6,6 +6,7 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   fees24,
   isLoading,
+  lastInterval,
   liquidityPlot,
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails,
@@ -43,7 +44,11 @@ export const WrappedStats: React.FC = () => {
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
-  const [interval, setInterval] = useState<IntervalsKeys>(IntervalsKeys.Daily)
+
+  const lastFetchedInterval = useSelector(lastInterval)
+  const [interval, setInterval] = useState<IntervalsKeys>(
+    (lastFetchedInterval as IntervalsKeys) || IntervalsKeys.Daily
+  )
   const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>([])
   const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>([])
 
@@ -152,6 +157,7 @@ export const WrappedStats: React.FC = () => {
               feesVolume={fees24h.value}
               percentFees={fees24h.change}
               isLoading={isLoadingStats}
+              interval={interval}
             />
           </Grid>
           <Grid className={classes.rowContainer}>
@@ -168,6 +174,7 @@ export const WrappedStats: React.FC = () => {
           <Grid container className={classes.row}>
             <PoolList
               initialLength={poolsList.length}
+              interval={interval}
               data={filteredPoolsList.map(poolData => ({
                 symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
                 symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
@@ -235,6 +242,7 @@ export const WrappedStats: React.FC = () => {
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}
             isLoading={isLoadingStats}
+            interval={interval}
           />
         </>
       )}

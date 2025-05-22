@@ -67,7 +67,7 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRigh
         1M
       </Button>
 
-      <Button
+      {/* <Button
         onClick={() => handleIntervalChange(IntervalsKeys.Yearly)}
         scheme='normal'
         width={36}
@@ -76,7 +76,7 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRigh
         borderRadius={8}
         style={getButtonStyle(IntervalsKeys.Yearly)}>
         1Y
-      </Button>
+      </Button> */}
     </Box>
   )
 }

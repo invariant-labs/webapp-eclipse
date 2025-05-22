@@ -925,6 +925,21 @@ export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc1
 export enum Intervals {
   Daily = 'daily',
   Weekly = 'weekly',
-  Monthly = 'monthly',
-  Yearly = 'yearly'
+  Monthly = 'monthly'
+  // Yearly = 'yearly' Don't show year in UI
 }
+
+export const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]

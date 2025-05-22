@@ -6,7 +6,12 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
-import { formatLargeNumber, formatPlotDataLabels, mapIntervalToPrecision } from '@utils/uiUtils'
+import {
+  formatLargeNumber,
+  formatPlotDataLabels,
+  getLabelDate,
+  mapIntervalToPrecision
+} from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 import Intervals from '../Intervals/Intervals'
@@ -95,7 +100,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            format: time => formatPlotDataLabels(time, data.length, interval),
+            format: time => formatPlotDataLabels(time, data.length, interval, isMobile),
             tickValues: mapIntervalToPrecision(interval)
           }}
           axisLeft={{
@@ -155,15 +160,11 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           crosshairType='bottom'
           tooltip={({ point }) => {
-            const date = point.data.x as Date
-            const day = date.getDate()
-            const month = date.getMonth() + 1
+            const date = getLabelDate(interval, (point.data.x as Date).getTime())
 
             return (
               <Grid className={classes.tooltip}>
-                <Typography className={classes.tooltipDate}>{`${day < 10 ? '0' : ''}${day}/${
-                  month < 10 ? '0' : ''
-                }${month}`}</Typography>
+                <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
                   ${formatNumberWithSuffix(point.data.y as number)}
                 </Typography>

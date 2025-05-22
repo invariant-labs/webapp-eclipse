@@ -7,7 +7,7 @@ import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
-import { formatLargeNumber, formatPlotDataLabels } from '@utils/uiUtils'
+import { formatLargeNumber, formatPlotDataLabels, getLabelDate } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
 import Intervals from '../Intervals/Intervals'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
@@ -94,7 +94,7 @@ const Volume: React.FC<StatsInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            format: time => formatPlotDataLabels(time, data.length, interval)
+            format: time => formatPlotDataLabels(time, data.length, interval, isMobile)
           }}
           axisLeft={{
             tickSize: 0,
@@ -131,15 +131,11 @@ const Volume: React.FC<StatsInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           colors={colors.invariant.pink}
           tooltip={({ data }) => {
-            const date = new Date(data.timestamp)
-            const day = date.getDate()
-            const month = date.getMonth() + 1
+            const date = getLabelDate(interval, data.timestamp)
 
             return (
               <Grid className={classes.tooltip}>
-                <Typography className={classes.tooltipDate}>{`${day < 10 ? '0' : ''}${day}/${
-                  month < 10 ? '0' : ''
-                }${month}`}</Typography>
+                <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
                   ${formatNumberWithSuffix(data.value)}
                 </Typography>

@@ -90,8 +90,12 @@ export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>
       }))
     }
 
+    const payload = {
+      ...parsedFullSnap,
+      lastInterval: action.payload.interval
+    }
     // @ts-expect-error FIXME: Interface missmatch.
-    yield* put(actions.setCurrentStats(parsedFullSnap, action.payload.interval))
+    yield* put(actions.setCurrentStats(payload))
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
