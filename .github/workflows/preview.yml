@@ -23,6 +23,8 @@ jobs:
   upload:
     runs-on: ubuntu-latest
     permissions: write-all
+    env:
+      REACT_APP_NODE_ENV: 'development'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -36,5 +38,4 @@ jobs:
           VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_SCOPE: ${{ secrets.VERCEL_ORG_ID }}
           VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
-          NODE_ENV: 'development'
           PRODUCTION: false
