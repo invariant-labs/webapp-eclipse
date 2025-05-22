@@ -1,8 +1,10 @@
-import { Theme } from '@mui/material/styles/createTheme'
-import { colors, typography } from '@static/theme'
+import { colors, theme, typography } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
-export const useStyles = makeStyles()((theme: Theme) => ({
+export const useStyles = makeStyles<{
+  isMobile: boolean
+  borderTop: boolean
+}>()((_theme, { isMobile, borderTop }) => ({
   root: {
     display: 'flex',
     alignItems: 'center',
@@ -89,10 +91,19 @@ export const useStyles = makeStyles()((theme: Theme) => ({
 
   pagination: {
     display: 'flex',
+    justifyContent: 'space-between',
     gap: 8,
     alignItems: 'center',
     color: colors.invariant.text,
-    margin: '16px 0'
+    borderTop: `${borderTop ? 1 : 0}px solid ${colors.invariant.light}`,
+    padding: '20px 24px 10px 24px',
+    maxWidth: '100%',
+    borderBottomLeftRadius: '24px',
+    borderBottomRightRadius: '24px',
+    [theme.breakpoints.down('lg')]: {
+      padding: '20px 12px',
+      flexDirection: 'column'
+    }
   },
 
   input: {
@@ -151,5 +162,11 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     fontSize: 20,
     fontWeight: 700,
     height: 1
+  },
+  labelText: {
+    ...(isMobile ? {} : { right: 24 }),
+    color: colors.invariant.textGrey,
+    whiteSpace: 'nowrap',
+    textAlign: isMobile ? 'center' : 'right'
   }
 }))

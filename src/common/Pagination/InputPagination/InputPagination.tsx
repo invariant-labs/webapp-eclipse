@@ -1,6 +1,7 @@
-import { Button } from '@mui/material'
+import { Box, Pagination, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
 import { useLayoutEffect, useState } from 'react'
+import { theme } from '@static/theme'
 
 export interface IPaginationList {
   pages: number
@@ -9,71 +10,134 @@ export interface IPaginationList {
   variant: string
   squeeze?: boolean
   page?: number
+  borderTop?: boolean
+  pagesNumeration?: {
+    lowerBound: number
+    totalItems: number
+    upperBound: number
+  }
+  activeInput?: boolean
 }
 
 export const InputPagination: React.FC<IPaginationList> = ({
   pages,
   defaultPage,
-  handleChangePage
+  handleChangePage,
+  borderTop = false,
+  squeeze = false,
+  pagesNumeration,
+  variant,
+  activeInput = true
 }) => {
-  const { classes } = useStyles()
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
+  const isMobile = useMediaQuery(theme.breakpoints.down('lg'))
 
-  const [currentPage, setCurrentPage] = useState(defaultPage)
+  const matches = useMediaQuery(theme.breakpoints.down('lg'))
 
-  const [inputWidth, setInputWidth] = useState(0)
+  const { classes } = useStyles({ borderTop, isMobile })
+  const [currentPage, setCurrentPage] = useState<number | string>(defaultPage)
 
-  const changePage = (page: number) => {
-    if (page < 1) {
+  const [inputWidth, setInputWidth] = useState<number | string>(0)
+
+  const changePage = (value: string) => {
+    const num = parseInt(value)
+    if (isNaN(num)) {
+      setCurrentPage('')
+      handleChangePage(1)
+      return
+    }
+
+    if (num < 1 || !value) {
       setCurrentPage(1)
       handleChangePage(1)
       return
     }
 
-    if (page > pages) {
+    if (num > pages) {
       setCurrentPage(pages)
       handleChangePage(pages)
       return
     }
 
-    setCurrentPage(page)
-    handleChangePage(page)
+    setCurrentPage(num)
+    handleChangePage(num)
   }
 
   useLayoutEffect(() => {
     if (currentPage) {
       setInputWidth(currentPage.toString().length * 12 + 16)
+    } else {
+      setInputWidth(1 * 12 + 16)
     }
   }, [currentPage])
 
   return (
     <>
-      <div className={classes.pagination}>
-        <Button
-          className={classes.controlButton}
-          onClick={() => changePage(currentPage - 1)}
-          disabled={currentPage === 1}>
-          <svg viewBox='0 0 24 24' width='44' height='44'>
-            <path d='M15.41 7.41L14 6l-6 6 6 6 1.41-1.41L10.83 12z'></path>
-          </svg>
-        </Button>
-        Page
-        <input
-          className={classes.input}
-          style={{ width: inputWidth }}
-          value={currentPage}
-          onChange={e => changePage(+e.target.value)}
-          type='number'
+      <Box className={classes.pagination}>
+        {!isMobile && activeInput && (
+          <Box
+            display='flex'
+            alignItems='center'
+            justifyContent={isMobile ? 'center' : 'flex-start'}
+            gap={1}
+            width={240}>
+            <Typography className={classes.labelText}> Go to</Typography>
+            <input
+              className={classes.input}
+              style={{ width: inputWidth }}
+              value={currentPage}
+              onChange={e => changePage(e.target.value)}
+              type='number'
+              onBlur={() => {
+                if (!currentPage) {
+                  setCurrentPage(1)
+                }
+              }}
+            />
+            <Typography className={classes.labelText}> page</Typography>
+          </Box>
+        )}
+        <Pagination
+          style={{
+            justifyContent: isSm ? 'center' : `${variant}`
+          }}
+          className={classes.root}
+          count={pages}
+          shape='rounded'
+          siblingCount={squeeze ? 0 : matches ? 0 : 1}
+          page={typeof currentPage === 'number' ? currentPage : 1}
+          onChange={(_e, newPage) => {
+            setCurrentPage(newPage)
+            handleChangePage(newPage)
+          }}
         />
-        of {pages}
-        <Button
-          className={classes.controlButton}
-          onClick={() => changePage(currentPage + 1)}
-          disabled={currentPage === pages}>
-          <svg viewBox='0 0 24 24' width='44' height='44'>
-            <path d='M10 6L8.59 7.41 13.17 12l-4.58 4.59L10 18l6-6z'></path>
-          </svg>
-        </Button>
-      </div>
+        {isMobile && activeInput && (
+          <Box
+            display='flex'
+            alignItems='center'
+            justifyContent={isMobile ? 'center' : 'flex-start'}
+            gap={1}
+            width={240}>
+            <Typography className={classes.labelText}> Go to</Typography>
+            <input
+              className={classes.input}
+              style={{ width: inputWidth }}
+              value={currentPage}
+              onChange={e => changePage(e.target.value)}
+              type='number'
+            />
+            <Typography className={classes.labelText}> page</Typography>
+          </Box>
+        )}
+        {pagesNumeration ? (
+          <Typography className={classes.labelText} width={240}>
+            Showing {pagesNumeration.lowerBound}-{pagesNumeration.upperBound} of{' '}
+            {pagesNumeration.totalItems}
+          </Typography>
+        ) : (
+          <Box width={240} />
+        )}
+      </Box>
     </>
   )
 }

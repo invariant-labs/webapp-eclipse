@@ -15,7 +15,6 @@ import { InputPagination } from '@common/Pagination/InputPagination/InputPaginat
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
-import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 export interface ITokensListData {
   icon: string
@@ -196,19 +195,19 @@ const TokensList: React.FC<ITokensList> = ({
             height: height
           }}>
           {pages > 0 && (
-            <TableBoundsLabel
-              lowerBound={lowerBound}
-              totalItems={totalItems}
-              upperBound={upperBound}
-              borderTop={false}>
-              <InputPagination
-                pages={pages}
-                defaultPage={1}
-                handleChangePage={handleChangePagination}
-                variant='center'
-                page={page}
-              />
-            </TableBoundsLabel>
+            <InputPagination
+              pages={pages}
+              defaultPage={1}
+              handleChangePage={handleChangePagination}
+              variant='center'
+              page={page}
+              borderTop={false}
+              pagesNumeration={{
+                lowerBound: lowerBound,
+                totalItems: totalItems,
+                upperBound: upperBound
+              }}
+            />
           )}
         </Grid>
       </>
