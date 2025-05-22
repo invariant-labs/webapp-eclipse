@@ -25,7 +25,10 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
     customAddress
   )
 
-  const networks = [NetworkType.Mainnet, NetworkType.Testnet]
+  const networks = [
+    NetworkType.Mainnet,
+    ...(process.env.NODE_ENV === 'development' ? [NetworkType.Testnet] : [])
+  ]
 
   return (
     <>
@@ -49,6 +52,7 @@ export const SelectNetworkAndRPC = ({ rpcs, activeNetwork, activeRPC, onNetworkC
         </Box>
       </Box>
       <Separator isHorizontal />
+
       <Box className={classes.container}>
         <Typography className={classes.title}>
           Select a {activeNetwork.toLowerCase()} RPC to use
