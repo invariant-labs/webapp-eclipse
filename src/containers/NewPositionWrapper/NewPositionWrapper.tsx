@@ -876,7 +876,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
     return poolIndex !== -1
       ? calcPriceBySqrtPrice(allPools[poolIndex].sqrtPrice, isXtoY, xDecimal, yDecimal)
       : 0
-  }, [tokenAIndex, tokenBIndex, allPools, isFetchingNewPool, currentPairReversed])
+  }, [tokenAIndex, tokenBIndex, allPools.length, currentPairReversed])
 
   return (
     <NewPosition
@@ -1136,7 +1136,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
       feeTiersWithTvl={feeTiersWithTvl}
       totalTvl={totalTvl}
       isLoadingStats={isLoadingStats}
-      autoSwapPoolData={!!autoSwapPoolData ? autoSwapPoolData ?? null : null}
+      autoSwapPoolData={!!autoSwapPoolData ? (autoSwapPoolData ?? null) : null}
       autoSwapTickmap={autoSwapTickMap}
       autoSwapTicks={autoSwapTicks}
       initialMaxPriceImpact={initialMaxPriceImpact}
