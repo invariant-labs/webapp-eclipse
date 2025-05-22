@@ -102,7 +102,8 @@ import {
   PRICE_API_URL,
   ERROR_CODE_TO_MESSAGE,
   COMMON_ERROR_MESSAGE,
-  ErrorCodeExtractionKeys
+  ErrorCodeExtractionKeys,
+  TUSD_MAIN
 } from '@store/consts/static'
 import { PoolWithAddress } from '@store/reducers/pools'
 import { bs58 } from '@coral-xyz/anchor/dist/cjs/utils/bytes'
@@ -947,7 +948,8 @@ export const getNetworkTokensList = (networkType: NetworkType): Record<string, T
         [ORCA_MAIN.address.toString()]: ORCA_MAIN,
         [SOLAR_MAIN.address.toString()]: SOLAR_MAIN,
         [KYSOL_MAIN.address.toString()]: KYSOL_MAIN,
-        [EZSOL_MAIN.address.toString()]: EZSOL_MAIN
+        [EZSOL_MAIN.address.toString()]: EZSOL_MAIN,
+        [TUSD_MAIN.address.toString()]: TUSD_MAIN
       }
     case NetworkType.Devnet:
       return {
