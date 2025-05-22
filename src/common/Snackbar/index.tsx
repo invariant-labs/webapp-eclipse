@@ -14,12 +14,12 @@ export type IkonType = 'swap' | 'deposit' | 'withdraw' | 'claim'
 export interface TokensDetailsProps {
   ikonType: IkonType
   tokenXAmount: string
-  tokenYAmount: string
+  tokenYAmount?: string
   tokenXIcon: string
-  tokenYIcon: string
-  tokenXSymbol: string
-  tokenYSymbol: string
+  tokenYIcon?: string
   earnedPoints?: string
+  tokenXSymbol?: string
+  tokenYSymbol?: string
   tokenXIconAutoSwap?: string
   tokenYIconAutoSwap?: string
   tokenXAmountAutoSwap?: string
@@ -37,14 +37,14 @@ export interface CustomProps {
   closePosition?: object
 }
 
-export interface SnackbarSnackbarProps extends CustomContentProps, CustomProps {}
+export interface SnackbarSnackbarProps extends CustomContentProps, CustomProps { }
 
 declare module 'notistack' {
   interface VariantOverrides {
     pending: true
     custom: true
   }
-  interface OptionsObject extends CustomProps {}
+  interface OptionsObject extends CustomProps { }
 }
 
 interface ISnackbarProps {

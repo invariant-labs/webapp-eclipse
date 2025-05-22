@@ -10,6 +10,8 @@ import closeIcon from './svg/closeIcon.svg'
 import docsIcon from './svg/docsCircle.svg'
 import closeSmallIcon from './svg/closeSmall.svg'
 import closeSmallGreenIcon from './svg/closeSmallGreen.svg'
+import closeSmallRedIcon from './svg/closeSmallRed.svg'
+import closeSmallYellowIcon from './svg/closeSmallYellow.svg'
 import successIcon from './svg/successIcon.svg'
 import xIcon from './svg/xCircle.svg'
 import unknownTokenIcon from './svg/unknownToken.svg'
@@ -42,6 +44,7 @@ import airdropIcon from './svg/airdrop.svg'
 import nightlyIcon from './svg/nightly.svg'
 import airdropRainbowIcon from './svg/airdropRainbow.svg'
 import auditIcon from './svg/audit.svg'
+import auditByLogoIcon from './svg/auditbylogo.svg'
 import warning2Icon from './svg/warning2.svg'
 import closeWarningIcon from './svg/closeWarning.svg'
 import dropdownIcon from './svg/dropdown.svg'
@@ -99,6 +102,10 @@ import circleDolarIcon from './svg/circleDolar.svg'
 import depositIcon from './svg/depositIcon.svg'
 import withdrawIcon from './svg/withdrawIcon.svg'
 import centerToRangeIcon from './svg/centerToRange.svg'
+import virtualCardIcon from './svg/virtualCard.svg'
+import greenInfoIcon from './svg/greenInfo.svg'
+import swapArrowClean from './svg/swapArrowClean.svg'
+import saleIcon from './svg/saleIcon.svg'
 
 export {
   logoTitleIcon,
@@ -112,7 +119,10 @@ export {
   closeIcon,
   docsIcon,
   closeSmallIcon,
+  closeSmallRedIcon,
+  saleIcon,
   closeSmallGreenIcon,
+  closeSmallYellowIcon,
   successIcon,
   xIcon,
   unknownTokenIcon,
@@ -200,8 +210,12 @@ export {
   snackbarSwapIcon,
   circleDolarIcon,
   depositIcon,
+  virtualCardIcon,
   withdrawIcon,
-  centerToRangeIcon
+  centerToRangeIcon,
+  auditByLogoIcon,
+  greenInfoIcon,
+  swapArrowClean
 }
 
 export const chainIcons = {
