@@ -869,15 +869,6 @@ export const NewPositionWrapper: React.FC<IProps> = ({
                   pool.tokenY.equals(tokens[tokenA].assetAddress)))
           )
 
-          const pool = allPools.find(
-            pool =>
-              pool.fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee) &&
-              ((pool.tokenX.equals(tokens[tokenA].assetAddress) &&
-                pool.tokenY.equals(tokens[tokenB].assetAddress)) ||
-                (pool.tokenX.equals(tokens[tokenB].assetAddress) &&
-                  pool.tokenY.equals(tokens[tokenA].assetAddress)))
-          )
-
           if (
             index !== poolIndex &&
             !(
@@ -900,7 +891,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
             }
           }
 
-          if (index !== -1 && index !== poolIndex && !pool?.address) {
+          let poolExists = false
+          if (currentPoolAddress) {
+            poolExists = allPools.some(pool => pool.address.equals(currentPoolAddress))
+          }
+
+          if (index !== -1 && index !== poolIndex) {
             dispatch(
               actions.getCurrentPlotTicks({
                 poolIndex: index,
@@ -908,12 +904,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               })
             )
             setPoolIndex(index)
-          } else if (
-            !(
-              tokenAIndex === tokenB &&
-              tokenBIndex === tokenA &&
-              fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)
-            )
+          }
+
+          if (
+            ((tokenAIndex !== tokenB && tokenBIndex !== tokenA) ||
+              !fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)) &&
+            (!poolExists || index === -1)
           ) {
             dispatch(
               poolsActions.getPoolData(
