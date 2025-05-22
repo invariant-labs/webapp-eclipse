@@ -482,6 +482,17 @@ export const KYSOL_MAIN: Token = {
   coingeckoId: ''
 }
 
+export const TUSD_MAIN: Token = {
+  tokenProgram: TOKEN_PROGRAM_ID,
+  symbol: 'tUSD',
+  address: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ'),
+  decimals: 6,
+  name: 'Turbo USD',
+  logoURI:
+    'https://raw.githubusercontent.com/hyperlane-xyz/hyperlane-registry/85fc184f345916356f0d1ad73fb89ea2f15b95d7/deployments/warp_routes/tUSD/logo.svg',
+  coingeckoId: ''
+}
+
 const DEFAULT_PUBLICKEY = new PublicKey(0)
 const MAX_U64 = new BN('18446744073709551615')
 
@@ -696,14 +707,16 @@ export const SIGNING_SNACKBAR_CONFIG: Omit<ISnackbar, 'open'> = {
 }
 
 export const ADDRESSES_TO_REVERT_TOKEN_PAIRS: string[] = [
-  USDT_MAIN.address.toString(),
   USDC_MAIN.address.toString(),
+  USDT_MAIN.address.toString(),
+  TUSD_MAIN.address.toString(),
   WETH_MAIN.address.toString(),
   TETH_MAIN.address.toString(),
   SOL_MAIN.address.toString(),
   KYSOL_MAIN.address.toString(),
   EZSOL_MAIN.address.toString(),
-  TIA_MAIN.address.toString()
+  TIA_MAIN.address.toString(),
+  BITZ_MAIN.address.toString()
 ]
 
 export const FormatConfig = {
@@ -765,7 +778,8 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
       KYSOL_MAIN: KYSOL_MAIN.address.toString(),
-      EZSOL_MAIN: EZSOL_MAIN.address.toString()
+      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
+      TUSD_MAIN: TUSD_MAIN.address.toString()
     }
   }
 }
@@ -919,6 +933,26 @@ export enum AutoswapCustomError {
   FetchError = 0
 }
 
+export enum ErrorCodeExtractionKeys {
+  ErrorNumber = 'Error Number:',
+  Custom = 'Custom":',
+  ApprovalDenied = 'Approval Denied',
+  UndefinedOnSplit = "Cannot read properties of undefined (reading 'split')",
+  RightBracket = '}',
+  Dot = '.'
+}
+export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
+  0x1778: 'Price changed – increase slippage or retry',
+  0x1773: 'Price changed – increase slippage or retry',
+  0x1795: 'Price changed – increase slippage or retry',
+  0x1796: 'Price changed – increase slippage or retry',
+  0x1775: 'Price changed – increase slippage or retry',
+  0x1785: 'Price changed – increase slippage or retry'
+}
+
+export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
+export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected.'
+
 export const ECLIPSE_MAINNET_GENESIS_HASH = 'EAQLJCV2mh23BsK2P9oYpV5CHVLDNHTxYss3URrNmg3s'
 export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'
 
@@ -943,3 +977,40 @@ export const MONTH_NAMES = [
   'November',
   'December'
 ]
+
+export const chartPlaceholder = {
+  tickmaps: [
+    { x: 2.33021324081296e-7, y: 0, index: -221810 },
+    { x: 0.9686056247049151, y: 0, index: -69400 },
+    { x: 0.9695746662960968, y: 6188.340066945488, index: -69390 },
+    { x: 0.9881717681706338, y: 6188.340066945488, index: -69200 },
+    { x: 0.9891603846976637, y: 20119.790531945488, index: -69190 },
+    { x: 0.9911405860036346, y: 20119.790531945488, index: -69170 },
+    { x: 0.9921321727081341, y: 28142.450909473402, index: -69160 },
+    { x: 0.9931247514617308, y: 28142.450909473402, index: -69150 },
+    { x: 0.9941183232608597, y: 30289.879997489374, index: -69140 },
+    { x: 0.9951128890397407, y: 30289.879997489374, index: -69130 },
+    { x: 0.9961084498595902, y: 38407.97691696376, index: -69120 },
+    { x: 0.9971050066563205, y: 40591.04743422989, index: -69110 },
+    { x: 0.9981025604929676, y: 57249.16422040085, index: -69100 },
+    { x: 1.0011012140019244, y: 57249.16422040085, index: -69070 },
+    { x: 1.002102765825214, y: 55066.09370313472, index: -69060 },
+    { x: 1.0031053196378097, y: 46947.99678366034, index: -69050 },
+    { x: 1.00410887650822, y: 44800.567695644364, index: -69040 },
+    { x: 1.0071255750875803, y: 44800.567695644364, index: -69010 },
+    { x: 1.00813315394147, y: 36777.90731811645, index: -69000 },
+    { x: 1.0091417408922565, y: 22846.45685311645, index: -68990 },
+    { x: 1.011161942873156, y: 22846.45685311645, index: -68970 },
+    { x: 1.0121735599903756, y: 6188.340066945488, index: -68960 },
+    { x: 1.0254170502871547, y: 6188.340066945488, index: -68830 },
+    { x: 1.0264429288718113, y: 0, index: -68820 },
+    { x: 1.0274698338137271, y: 0, index: -68810 },
+    { x: 4291452183844.2334, y: 0, index: 221810 }
+  ],
+  midPrice: { x: 1, index: -69090 },
+  leftRange: { index: -69160, x: 0.9921321727081341 },
+  rightRange: { index: -69000, x: 1.00813315394147 },
+  plotMin: 0.988931976461467,
+  plotMax: 1.0113333501881372,
+  tickSpacing: 10
+}

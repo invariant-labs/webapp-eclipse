@@ -890,6 +890,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               setCurrentPairReversed(currentPairReversed === null ? true : !currentPairReversed)
             }
           }
+
+          let poolExists = false
+          if (currentPoolAddress) {
+            poolExists = allPools.some(pool => pool.address.equals(currentPoolAddress))
+          }
+
           if (index !== -1 && index !== poolIndex) {
             dispatch(
               actions.getCurrentPlotTicks({
@@ -898,12 +904,12 @@ export const NewPositionWrapper: React.FC<IProps> = ({
               })
             )
             setPoolIndex(index)
-          } else if (
-            !(
-              tokenAIndex === tokenB &&
-              tokenBIndex === tokenA &&
-              fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)
-            )
+          }
+
+          if (
+            ((tokenAIndex !== tokenB && tokenBIndex !== tokenA) ||
+              !fee.eq(ALL_FEE_TIERS_DATA[feeTierIndex].tier.fee)) &&
+            (!poolExists || index === -1)
           ) {
             dispatch(
               poolsActions.getPoolData(

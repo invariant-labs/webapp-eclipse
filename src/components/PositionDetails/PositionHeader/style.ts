@@ -19,7 +19,6 @@ export const useStyles = makeStyles()(() => ({
     display: 'flex',
     justifyContent: 'space-between',
     gap: 8,
-    height: 28,
     flexDirection: 'row',
     [theme.breakpoints.down(432)]: {
       flexDirection: 'column',

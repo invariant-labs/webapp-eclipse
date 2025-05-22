@@ -220,6 +220,14 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
     setPlotMax(midPrice.x + diff / 2)
   }
 
+  const centerToRange = () => {
+    const diff = plotMax - plotMin
+    const rangeCenter = (leftRange.x + rightRange.x) / 2
+
+    setPlotMin(rangeCenter - diff / 2)
+    setPlotMax(rangeCenter + diff / 2)
+  }
+
   const minPercentage = (min / currentPrice - 1) * 100
   const maxPercentage = (max / currentPrice - 1) * 100
   const concentration = calculateConcentration(leftRange.index, rightRange.index)
@@ -255,25 +263,25 @@ const SinglePositionPlot: React.FC<ISinglePositionPlot> = ({
         </Grid>
       </Box>
       <PriceRangePlot
-        data={data}
-        plotMin={plotMin}
-        plotMax={plotMax}
+        plotData={data}
+        plotMinData={plotMin}
+        plotMaxData={plotMax}
         zoomMinus={zoomMinus}
         zoomPlus={zoomPlus}
         moveLeft={moveLeft}
         moveRight={moveRight}
         centerChart={centerChart}
+        centerToRange={centerToRange}
         disabled
-        leftRange={leftRange}
-        rightRange={rightRange}
-        midPrice={midPrice}
+        leftRangeData={leftRange}
+        rightRangeData={rightRange}
+        midPriceData={midPrice}
         className={classes.plot}
         loading={ticksLoading}
         isXtoY={xToY}
-        tickSpacing={tickSpacing}
+        spacing={tickSpacing}
         xDecimal={tokenX.decimal}
         yDecimal={tokenY.decimal}
-        coverOnLoading
         hasError={hasTicksError}
         reloadHandler={reloadHandler}
       />
