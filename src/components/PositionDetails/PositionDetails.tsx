@@ -147,7 +147,7 @@ const PositionDetails: React.FC<IProps> = ({
   const [xToY, setXToY] = useState<boolean>(
     initialXtoY(tokenXAddress.toString(), tokenYAddress.toString())
   )
-
+  console.log(positionId)
   const [isLockPositionModalOpen, setIsLockPositionModalOpen] = useState(false)
 
   const [refresherTime, setRefresherTime] = useState<number>(REFRESHER_INTERVAL)

@@ -170,7 +170,6 @@ export interface INewPosition {
   initialMaxSlippageToleranceCreatePosition: string
   updateLiquidity: (lq: BN) => void
   suggestedPrice: number
-  getPoolsError: boolean
 }
 
 export const NewPosition: React.FC<INewPosition> = ({
@@ -247,8 +246,7 @@ export const NewPosition: React.FC<INewPosition> = ({
   initialMaxSlippageToleranceSwap,
   onMaxSlippageToleranceCreatePositionChange,
   initialMaxSlippageToleranceCreatePosition,
-  suggestedPrice,
-  getPoolsError
+  suggestedPrice
 }) => {
   const { classes } = useStyles()
   const navigate = useNavigate()
@@ -579,7 +577,7 @@ export const NewPosition: React.FC<INewPosition> = ({
     if (positionOpeningMethod === 'range') {
       onChangeRange(leftRange, rightRange)
     }
-  }, [midPrice.index, leftRange, rightRange, currentPriceSqrt.toString()])
+  }, [midPrice.index, leftRange, rightRange, currentPriceSqrt])
 
   const handleClickSettings = (event: React.MouseEvent<HTMLButtonElement>) => {
     setAnchorEl(event.currentTarget)
@@ -1376,7 +1374,6 @@ export const NewPosition: React.FC<INewPosition> = ({
             setOnlyUserPositions={setOnlyUserPositions}
             usdcPrice={usdcPrice}
             suggestedPrice={suggestedPrice}
-            getPoolsError={getPoolsError}
           />
         ) : (
           <PoolInit

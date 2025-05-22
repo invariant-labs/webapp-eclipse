@@ -20,8 +20,7 @@ export const {
   isLoadingTokens,
   isLoadingPathTokens,
   isLoadingTokensError,
-  isLoadingAutoSwapPoolTicksOrTickMap,
-  getPoolsError
+  isLoadingAutoSwapPoolTicksOrTickMap
 } = keySelectors(store, [
   'pools',
   'tokens',
@@ -38,8 +37,7 @@ export const {
   'isLoadingTokens',
   'isLoadingPathTokens',
   'isLoadingTokensError',
-  'isLoadingAutoSwapPoolTicksOrTickMap',
-  `getPoolsError`
+  'isLoadingAutoSwapPoolTicksOrTickMap'
 ])
 
 export const poolsArraySortedByFees = createSelector(pools, allPools =>
@@ -70,8 +68,7 @@ export const poolsSelectors = {
   isLoadingTokens,
   isLoadingPathTokens,
   isLoadingTokensError,
-  isLoadingAutoSwapPoolTicksOrTickMap,
-  getPoolsError
+  isLoadingAutoSwapPoolTicksOrTickMap
 }
 
 export default poolsSelectors

@@ -120,7 +120,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
     return data[currentIndex - 1] ?? null
   }, [position?.isLocked, lockedNavigationData, navigationData, id])
-
+  console.log(previousPosition)
   const nextPosition = useMemo(() => {
     const data = position?.isLocked ? lockedNavigationData : navigationData
 

@@ -56,7 +56,7 @@ export function* fetchPoolData(action: PayloadAction<Pair>) {
     )
   } catch (e: unknown) {
     const error = ensureError(e)
-    yield* put(actions.setAddPoolsError(true))
+    console.log(error)
 
     yield* call(handleRpcError, error.message)
   }
@@ -101,7 +101,6 @@ export function* fetchAllPoolsForPairData(action: PayloadAction<PairTokens>) {
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)
-    yield* put(actions.setAddPoolsError(true))
 
     yield* call(handleRpcError, error.message)
   }
