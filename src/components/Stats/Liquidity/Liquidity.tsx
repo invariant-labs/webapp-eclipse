@@ -75,12 +75,14 @@ const Liquidity: React.FC<LiquidityInterface> = ({
       </Grid>
       <Grid className={classes.barContainer}>
         <ResponsiveLine
+          animate
           data={[
             {
               id: 'liquidity',
               // data: data as Array<{ timestamp: number; value: number }>
               data: data.map(({ timestamp, value }) => ({
-                x: new Date(timestamp).toLocaleDateString('en-GB'),
+                // x: new Date(timestamp).toLocaleDateString('en-GB'),
+                x: new Date(timestamp),
                 y: value
               }))
             }
@@ -92,7 +94,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           }
           xScale={{
             type: 'time',
-            format: '%d/%m/%Y',
+            format: 'native',
             precision: 'day',
             useUTC: false
           }}
