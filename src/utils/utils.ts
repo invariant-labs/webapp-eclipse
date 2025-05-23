@@ -1845,7 +1845,6 @@ export const addressToTicker = (network: NetworkType, address: string): string =
 
 export const initialXtoY = (tokenXAddress?: string | null, tokenYAddress?: string | null) => {
   if (!tokenXAddress || !tokenYAddress) {
-    console.log('revert other tokens')
     return true
   }
 
