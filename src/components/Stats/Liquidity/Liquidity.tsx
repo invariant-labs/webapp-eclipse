@@ -6,8 +6,15 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
-import { formatLargeNumber } from '@utils/uiUtils'
+import {
+  formatLargeNumber,
+  formatPlotDataLabels,
+  getLabelDate,
+  mapIntervalToPrecision
+} from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
+import Intervals from '../Intervals/Intervals'
 
 interface LiquidityInterface {
   liquidityPercent: number | null
@@ -15,6 +22,8 @@ interface LiquidityInterface {
   data: TimeData[]
   className?: string
   isLoading: boolean
+  interval: IntervalsKeys
+  setInterval: (interval: IntervalsKeys) => void
 }
 
 const Liquidity: React.FC<LiquidityInterface> = ({
@@ -22,7 +31,9 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   liquidityVolume,
   data,
   className,
-  isLoading
+  isLoading,
+  interval,
+  setInterval
 }) => {
   const { classes, cx } = useStyles()
 
@@ -36,7 +47,10 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   return (
     <Grid className={cx(classes.container, className, { [classes.loadingOverlay]: isLoading })}>
       <Grid className={classes.liquidityContainer}>
-        <Typography className={classes.liquidityHeader}>Liquidity</Typography>
+        <Grid container justifyContent={'space-between'} alignItems='center'>
+          <Typography className={classes.liquidityHeader}>Liquidity</Typography>
+          <Intervals interval={interval} setInterval={setInterval} marginRight={24} />
+        </Grid>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
             ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : liquidityVolume)}
@@ -59,13 +73,20 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           </Grid>
         </Grid>
       </Grid>
-      <Grid className={classes.barContainer}>
+      <Grid
+        className={classes.barContainer}
+        style={{
+          transform: isLoading ? 'scaleY(0)' : 'scaleY(1)',
+          transformOrigin: 'bottom',
+          transition: 'transform 600ms ease-out'
+        }}>
         <ResponsiveLine
+          animate={false}
           data={[
             {
               id: 'liquidity',
               data: data.map(({ timestamp, value }) => ({
-                x: new Date(timestamp).toLocaleDateString('en-GB'),
+                x: new Date(timestamp),
                 y: value
               }))
             }
@@ -77,7 +98,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           }
           xScale={{
             type: 'time',
-            format: '%d/%m/%Y',
+            format: 'native',
             precision: 'day',
             useUTC: false
           }}
@@ -85,9 +106,10 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            tickValues:
-              data.length >= 24 ? 'every 4 days' : data.length >= 8 ? 'every 2 days' : 'every day',
-            format: '%d/%m'
+            format: time =>
+              isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile),
+            tickValues: isLoading ? [] : mapIntervalToPrecision(interval),
+            legendPosition: 'middle'
           }}
           axisLeft={{
             tickSize: 0,
@@ -117,7 +139,6 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           enableArea={true}
           isInteractive
           useMesh
-          animate
           colors={colors.invariant.green}
           theme={{
             axis: {
@@ -146,15 +167,11 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           crosshairType='bottom'
           tooltip={({ point }) => {
-            const date = point.data.x as Date
-            const day = date.getDate()
-            const month = date.getMonth() + 1
+            const date = getLabelDate(interval, (point.data.x as Date).getTime())
 
             return (
               <Grid className={classes.tooltip}>
-                <Typography className={classes.tooltipDate}>{`${day < 10 ? '0' : ''}${day}/${
-                  month < 10 ? '0' : ''
-                }${month}`}</Typography>
+                <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
                   ${formatNumberWithSuffix(point.data.y as number)}
                 </Typography>

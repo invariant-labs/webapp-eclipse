@@ -4,6 +4,7 @@ import { useStyles } from './style'
 import { Grid, useMediaQuery } from '@mui/material'
 import {
   BTC_TEST,
+  Intervals,
   ITEMS_PER_PAGE,
   NetworkType,
   SortTypePoolList,
@@ -53,6 +54,7 @@ export interface PoolListInterface {
   isLoading: boolean
   showAPY: boolean
   filteredTokens: ISearchToken[]
+  interval: Intervals
 }
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
@@ -92,7 +94,8 @@ const PoolList: React.FC<PoolListInterface> = ({
   isLoading,
   showAPY,
   initialLength,
-  filteredTokens
+  filteredTokens,
+  interval = Intervals.Daily
 }) => {
   const navigate = useNavigate()
 
@@ -187,6 +190,7 @@ const PoolList: React.FC<PoolListInterface> = ({
         sortType={sortType}
         network={network}
         showAPY={showAPY}
+        interval={interval}
       />
       {data.length > 0 || isLoading ? (
         <>
@@ -220,6 +224,7 @@ const PoolList: React.FC<PoolListInterface> = ({
               showAPY={showAPY}
               points={new BN(element.pointsPerSecond, 'hex').muln(24).muln(60).muln(60)}
               isPromoted={element.isPromoted}
+              interval={interval}
             />
           ))}
           {getEmptyRowsCount() > 0 &&

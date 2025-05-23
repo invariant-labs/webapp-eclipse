@@ -7,8 +7,10 @@ import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
-import { formatLargeNumber } from '@utils/uiUtils'
+import { formatLargeNumber, formatPlotDataLabels, getLabelDate } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
+import Intervals from '../Intervals/Intervals'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 interface StatsInterface {
   percentVolume: number | null
@@ -16,6 +18,8 @@ interface StatsInterface {
   data: TimeData[]
   className?: string
   isLoading: boolean
+  interval: IntervalsKeys
+  setInterval: (interval: IntervalsKeys) => void
 }
 
 const Volume: React.FC<StatsInterface> = ({
@@ -23,7 +27,9 @@ const Volume: React.FC<StatsInterface> = ({
   volume,
   data,
   className,
-  isLoading
+  isLoading,
+  interval,
+  setInterval
 }) => {
   const { classes, cx } = useStyles()
 
@@ -52,7 +58,10 @@ const Volume: React.FC<StatsInterface> = ({
         [classes.loadingOverlay]: isLoading
       })}>
       <Box className={classes.volumeContainer}>
-        <Typography className={classes.volumeHeader}>Volume</Typography>
+        <Grid container justifyContent={'space-between'} alignItems='center'>
+          <Typography className={classes.volumeHeader}>Volume</Typography>
+          <Intervals interval={interval} setInterval={setInterval} />
+        </Grid>
         <div className={classes.volumePercentContainer}>
           <Typography className={classes.volumePercentHeader}>
             ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : volume)}
@@ -75,8 +84,17 @@ const Volume: React.FC<StatsInterface> = ({
           </Box>
         </div>
       </Box>
-      <div className={classes.barContainer}>
+      <div
+        className={classes.barContainer}
+        style={{
+          transform: isLoading ? 'scaleY(0)' : 'scaleY(1)',
+          transformOrigin: 'bottom',
+          transition: 'transform 600ms ease-out'
+        }}>
         <ResponsiveBar
+          layout='vertical'
+          key={`${interval}-${isLoading}`}
+          // animate={false}
           margin={{ top: 30, bottom: 30, left: 30 }}
           data={data as Array<{ timestamp: number; value: number }>}
           keys={['value']}
@@ -85,36 +103,27 @@ const Volume: React.FC<StatsInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            format: time => {
-              const date = new Date(time)
-              const day = date.getDate()
-              const month = date.getMonth() + 1
-
-              const dayMod =
-                Math.floor(time / (1000 * 60 * 60 * 24)) %
-                (data.length >= 24 ? 4 : data.length >= 8 ? 2 : 1)
-
-              return dayMod === 0
-                ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}`
-                : ''
-            }
+            format: time =>
+              isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile)
           }}
           axisLeft={{
             tickSize: 0,
             tickPadding: 2,
             tickRotation: 0,
             tickValues: 5,
-            renderTick: ({ x, y, value }) => (
-              <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
-                {' '}
-                <text
-                  style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
-                  textAnchor='start'
-                  dominantBaseline='center'>
-                  {trimZeros(formatLargeNumber(value))}
-                </text>
-              </g>
-            )
+            renderTick: isLoading
+              ? () => <text></text>
+              : ({ x, y, value }) => (
+                  <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
+                    {' '}
+                    <text
+                      style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
+                      textAnchor='start'
+                      dominantBaseline='center'>
+                      {trimZeros(formatLargeNumber(value))}
+                    </text>
+                  </g>
+                )
           }}
           gridYValues={5}
           theme={Theme}
@@ -134,15 +143,11 @@ const Volume: React.FC<StatsInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           colors={colors.invariant.pink}
           tooltip={({ data }) => {
-            const date = new Date(data.timestamp)
-            const day = date.getDate()
-            const month = date.getMonth() + 1
+            const date = getLabelDate(interval, data.timestamp)
 
             return (
               <Grid className={classes.tooltip}>
-                <Typography className={classes.tooltipDate}>{`${day < 10 ? '0' : ''}${day}/${
-                  month < 10 ? '0' : ''
-                }${month}`}</Typography>
+                <Typography className={classes.tooltipDate}>{date}</Typography>
                 <Typography className={classes.tooltipValue}>
                   ${formatNumberWithSuffix(data.value)}
                 </Typography>

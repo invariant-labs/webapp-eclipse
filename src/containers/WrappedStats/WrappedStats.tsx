@@ -6,6 +6,7 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   fees24,
   isLoading,
+  lastInterval,
   liquidityPlot,
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails,
@@ -26,6 +27,7 @@ import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -42,13 +44,22 @@ export const WrappedStats: React.FC = () => {
   const isLoadingStats = useSelector(isLoading)
   const currentNetwork = useSelector(network)
   const promotedPools = useSelector(getPromotedPools)
+
+  const lastFetchedInterval = useSelector(lastInterval)
+  const [interval, setInterval] = useState<IntervalsKeys>(
+    (lastFetchedInterval as IntervalsKeys) || IntervalsKeys.Daily
+  )
   const [searchTokensValue, setSearchTokensValue] = useState<ISearchToken[]>([])
   const [searchPoolsValue, setSearchPoolsValue] = useState<ISearchToken[]>([])
 
   useEffect(() => {
-    dispatch(actions.getCurrentStats())
+    dispatch(actions.getCurrentIntervalStats({ interval }))
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
+
+  useEffect(() => {
+    dispatch(actions.getCurrentIntervalStats({ interval }))
+  }, [interval])
 
   const filteredTokenList = useMemo(() => {
     if (searchTokensValue.length === 0) {
@@ -124,6 +135,8 @@ export const WrappedStats: React.FC = () => {
               data={volumePlotData}
               className={classes.plot}
               isLoading={isLoadingStats}
+              interval={interval}
+              setInterval={setInterval}
             />
             <Liquidity
               liquidityVolume={tvl24h.value}
@@ -131,6 +144,8 @@ export const WrappedStats: React.FC = () => {
               data={liquidityPlotData}
               className={classes.plot}
               isLoading={isLoadingStats}
+              interval={interval}
+              setInterval={setInterval}
             />
           </Grid>
           <Grid className={classes.row}>
@@ -142,6 +157,7 @@ export const WrappedStats: React.FC = () => {
               feesVolume={fees24h.value}
               percentFees={fees24h.change}
               isLoading={isLoadingStats}
+              interval={interval}
             />
           </Grid>
           <Grid className={classes.rowContainer}>
@@ -158,6 +174,7 @@ export const WrappedStats: React.FC = () => {
           <Grid container className={classes.row}>
             <PoolList
               initialLength={poolsList.length}
+              interval={interval}
               data={filteredPoolsList.map(poolData => ({
                 symbolFrom: poolData.tokenXDetails?.symbol ?? poolData.tokenX.toString(),
                 symbolTo: poolData.tokenYDetails?.symbol ?? poolData.tokenY.toString(),
@@ -225,6 +242,7 @@ export const WrappedStats: React.FC = () => {
             network={currentNetwork}
             copyAddressHandler={copyAddressHandler}
             isLoading={isLoadingStats}
+            interval={interval}
           />
         </>
       )}

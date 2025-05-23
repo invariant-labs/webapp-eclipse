@@ -2,6 +2,7 @@ import { BN } from '@coral-xyz/anchor'
 import { formatDate, printBN, trimDecimalZeros, trimZeros } from './utils'
 import { PublicKey } from '@solana/web3.js'
 import { FormatNumberThreshold } from '@store/consts/types'
+import { Intervals, MONTH_NAMES } from '@store/consts/static'
 
 export const toBlur = 'global-blur'
 export const addressTickerMap: { [key: string]: string } = {
@@ -167,4 +168,125 @@ export const shortenDate = (timestamp: number | string): string => {
     const [day, month, year] = formatedDate.split('.')
     return `${day}.${month}.${year.slice(-2)}`
   }
+}
+
+export const mapIntervalToPrecision = (interval: Intervals): string => {
+  switch (interval) {
+    case Intervals.Daily:
+      return 'every 1 day'
+    case Intervals.Weekly:
+      return 'every 1 week'
+    case Intervals.Monthly:
+      return 'every 1 month'
+    // case Intervals.Yearly:
+    //   return 'every 1 year'
+  }
+}
+
+export const mapIntervalToString = (interval: Intervals): string => {
+  switch (interval) {
+    case Intervals.Daily:
+      return '1D'
+    case Intervals.Weekly:
+      return '1W'
+    case Intervals.Monthly:
+      return '1M'
+    // case Intervals.Yearly:
+    //   return '1Y'
+  }
+}
+
+export const formatPlotDataLabels = (
+  time: number,
+  entries: number,
+  interval: Intervals,
+  isMobile: boolean = false
+): string => {
+  const date = new Date(time)
+  const day = date.getDate()
+  const month = date.getMonth() + 1
+
+  switch (interval) {
+    case Intervals.Monthly: {
+      const monthName = MONTH_NAMES[month - 1].slice(0, 3)
+      return monthName
+    }
+    case Intervals.Daily:
+    case Intervals.Weekly: {
+      const dayMod =
+        Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? (isMobile ? 4 : 2) : 1)
+
+      return dayMod === 0 ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}` : ''
+    }
+
+    // case Intervals.Yearly: {
+    //   const year = date.getFullYear()
+    //   return `${year}`
+    // }
+  }
+}
+
+export const getLabelDate = (interval: Intervals, timestamp: number): string => {
+  const date = new Date(timestamp)
+  const now = new Date()
+  const day = date.getDate()
+  const month = date.getMonth() + 1
+  const year = date.getFullYear()
+  const monthName = MONTH_NAMES[month - 1].slice(0, 3)
+
+  const formatDay = (d: number) => `${d < 10 ? '0' : ''}${d}`
+
+  if (interval === Intervals.Daily) {
+    return `${day < 10 ? '0' : ''}${day} ${monthName}`
+  } else if (interval === Intervals.Weekly) {
+    // Calculate start of week (Monday-based)
+    const dayOfWeek = date.getDay() // 0 = Sunday, 1 = Monday, etc.
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+
+    const weekStart = new Date(date)
+    weekStart.setDate(date.getDate() + mondayOffset)
+
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekStart.getDate() + 6)
+
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const weekStartDate = new Date(
+      weekStart.getFullYear(),
+      weekStart.getMonth(),
+      weekStart.getDate()
+    )
+    const weekEndDate = new Date(weekEnd.getFullYear(), weekEnd.getMonth(), weekEnd.getDate())
+
+    if (weekStartDate <= todayStart && todayStart <= weekEndDate) {
+      weekEnd.setTime(now.getTime())
+    }
+
+    const startDay = weekStart.getDate()
+    const startMonth = weekStart.getMonth()
+    const startMonthName = MONTH_NAMES[startMonth].slice(0, 3)
+
+    const endDay = weekEnd.getDate()
+    const endMonth = weekEnd.getMonth()
+    const endMonthName = MONTH_NAMES[endMonth].slice(0, 3)
+
+    if (startMonth === endMonth) {
+      return `${formatDay(startDay)} ${startMonthName} - ${formatDay(endDay)} ${endMonthName}`
+    } else {
+      return `${formatDay(startDay)} ${startMonthName} - ${formatDay(endDay)} ${endMonthName}`
+    }
+  } else if (interval === Intervals.Monthly) {
+    const monthEnd = new Date(year, date.getMonth() + 1, 0)
+
+    if (date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) {
+      monthEnd.setTime(now.getTime())
+      const startDay = 1
+      const endDay = monthEnd.getDate()
+
+      return `${formatDay(startDay)} ${monthName} - ${formatDay(endDay)} ${monthName}`
+    } else {
+      return MONTH_NAMES[month - 1] + ' ' + year
+    }
+  }
+
+  return `${day < 10 ? '0' : ''}${day} ${monthName}`
 }
