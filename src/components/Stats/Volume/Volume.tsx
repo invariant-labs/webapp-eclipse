@@ -84,11 +84,18 @@ const Volume: React.FC<StatsInterface> = ({
           </Box>
         </div>
       </Box>
-      <div className={classes.barContainer}>
+      <div
+        className={classes.barContainer}
+        style={{
+          overflow: 'hidden',
+          transform: isLoading ? 'scaleY(0)' : 'scaleY(1)',
+          transformOrigin: 'bottom',
+          transition: 'transform 600ms ease-out'
+        }}>
         <ResponsiveBar
           layout='vertical'
-          key={`${interval}-${isLoading}`}
-          animate={!isLoading}
+          // key={`${interval}-${isLoading}`}
+          // animate={false}
           margin={{ top: 30, bottom: 30, left: 30 }}
           data={data as Array<{ timestamp: number; value: number }>}
           keys={['value']}

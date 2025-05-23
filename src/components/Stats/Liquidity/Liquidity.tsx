@@ -73,15 +73,20 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           </Grid>
         </Grid>
       </Grid>
-      <Grid className={classes.barContainer}>
+      <Grid
+        className={classes.barContainer}
+        style={{
+          overflow: 'hidden',
+          transform: isLoading ? 'scaleY(0)' : 'scaleY(1)',
+          transformOrigin: 'bottom',
+          transition: 'transform 600ms ease-out'
+        }}>
         <ResponsiveLine
-          animate
+          animate={false}
           data={[
             {
               id: 'liquidity',
-              // data: data as Array<{ timestamp: number; value: number }>
               data: data.map(({ timestamp, value }) => ({
-                // x: new Date(timestamp).toLocaleDateString('en-GB'),
                 x: new Date(timestamp),
                 y: value
               }))
@@ -104,7 +109,8 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickRotation: 0,
             format: time =>
               isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile),
-            tickValues: mapIntervalToPrecision(interval)
+            tickValues: isLoading ? [] : mapIntervalToPrecision(interval),
+            legendPosition: 'middle'
           }}
           axisLeft={{
             tickSize: 0,
