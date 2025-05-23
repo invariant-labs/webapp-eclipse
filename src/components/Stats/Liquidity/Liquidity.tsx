@@ -76,7 +76,6 @@ const Liquidity: React.FC<LiquidityInterface> = ({
       <Grid
         className={classes.barContainer}
         style={{
-          overflow: 'hidden',
           transform: isLoading ? 'scaleY(0)' : 'scaleY(1)',
           transformOrigin: 'bottom',
           transition: 'transform 600ms ease-out'

@@ -279,12 +279,13 @@ export const getLabelDate = (interval: Intervals, timestamp: number): string => 
 
     if (date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) {
       monthEnd.setTime(now.getTime())
+      const startDay = 1
+      const endDay = monthEnd.getDate()
+
+      return `${formatDay(startDay)} ${monthName} - ${formatDay(endDay)} ${monthName}`
+    } else {
+      return MONTH_NAMES[month - 1] + ' ' + year
     }
-
-    const startDay = 1
-    const endDay = monthEnd.getDate()
-
-    return `${formatDay(startDay)} ${monthName} - ${formatDay(endDay)} ${monthName}`
   }
 
   return `${day < 10 ? '0' : ''}${day} ${monthName}`

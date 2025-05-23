@@ -87,14 +87,13 @@ const Volume: React.FC<StatsInterface> = ({
       <div
         className={classes.barContainer}
         style={{
-          overflow: 'hidden',
           transform: isLoading ? 'scaleY(0)' : 'scaleY(1)',
           transformOrigin: 'bottom',
           transition: 'transform 600ms ease-out'
         }}>
         <ResponsiveBar
           layout='vertical'
-          // key={`${interval}-${isLoading}`}
+          key={`${interval}-${isLoading}`}
           // animate={false}
           margin={{ top: 30, bottom: 30, left: 30 }}
           data={data as Array<{ timestamp: number; value: number }>}
@@ -112,17 +111,19 @@ const Volume: React.FC<StatsInterface> = ({
             tickPadding: 2,
             tickRotation: 0,
             tickValues: 5,
-            renderTick: ({ x, y, value }) => (
-              <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
-                {' '}
-                <text
-                  style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
-                  textAnchor='start'
-                  dominantBaseline='center'>
-                  {trimZeros(formatLargeNumber(value))}
-                </text>
-              </g>
-            )
+            renderTick: isLoading
+              ? () => <text></text>
+              : ({ x, y, value }) => (
+                  <g transform={`translate(${x - (isMobile ? 22 : 30)},${y + 4})`}>
+                    {' '}
+                    <text
+                      style={{ fill: colors.invariant.textGrey, ...typography.tiny2 }}
+                      textAnchor='start'
+                      dominantBaseline='center'>
+                      {trimZeros(formatLargeNumber(value))}
+                    </text>
+                  </g>
+                )
           }}
           gridYValues={5}
           theme={Theme}
