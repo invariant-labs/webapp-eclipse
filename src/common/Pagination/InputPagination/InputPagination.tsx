@@ -1,6 +1,6 @@
 import { Box, Pagination, Typography, useMediaQuery } from '@mui/material'
 import { useStyles } from './style'
-import { useLayoutEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { theme } from '@static/theme'
 
 export interface IPaginationList {
@@ -70,6 +70,13 @@ export const InputPagination: React.FC<IPaginationList> = ({
       setInputWidth(1 * 12 + 16)
     }
   }, [currentPage])
+
+  useEffect(() => {
+    if (defaultPage) {
+      setCurrentPage(defaultPage)
+      handleChangePage(defaultPage)
+    }
+  }, [pages])
 
   return (
     <>
