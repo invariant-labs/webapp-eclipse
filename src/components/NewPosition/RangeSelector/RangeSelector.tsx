@@ -524,7 +524,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
               <Box className={classes.priceWarningContainer}>
                 <img className={classes.priceWarningIcon} src={warning3} alt='warning icon' />
                 <Typography className={classes.priceWarning}>
-                  Price might differ from actual price
+                  The current pool's price might differ from the actual price
                 </Typography>
               </Box>
             )}
