@@ -86,6 +86,8 @@ const Volume: React.FC<StatsInterface> = ({
       </Box>
       <div className={classes.barContainer}>
         <ResponsiveBar
+          layout='vertical'
+          animate
           margin={{ top: 30, bottom: 30, left: 30 }}
           data={data as Array<{ timestamp: number; value: number }>}
           keys={['value']}

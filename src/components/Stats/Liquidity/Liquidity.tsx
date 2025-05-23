@@ -131,7 +131,6 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           enableArea={true}
           isInteractive
           useMesh
-          animate
           colors={colors.invariant.green}
           theme={{
             axis: {
