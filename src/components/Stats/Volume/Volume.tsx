@@ -97,7 +97,8 @@ const Volume: React.FC<StatsInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            format: time => formatPlotDataLabels(time, data.length, interval, isMobile)
+            format: time =>
+              isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile)
           }}
           axisLeft={{
             tickSize: 0,

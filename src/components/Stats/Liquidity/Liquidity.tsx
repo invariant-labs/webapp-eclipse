@@ -102,7 +102,8 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            format: time => formatPlotDataLabels(time, data.length, interval, isMobile),
+            format: time =>
+              isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile),
             tickValues: mapIntervalToPrecision(interval)
           }}
           axisLeft={{
