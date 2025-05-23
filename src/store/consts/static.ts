@@ -951,7 +951,7 @@ export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
 }
 
 export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
-export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected.'
+export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected'
 
 export const ECLIPSE_MAINNET_GENESIS_HASH = 'EAQLJCV2mh23BsK2P9oYpV5CHVLDNHTxYss3URrNmg3s'
 export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'
