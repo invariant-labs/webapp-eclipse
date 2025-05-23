@@ -164,7 +164,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   useEffect(() => {
     setPage(1)
   }, [data, pages])
-  console.log(pages)
+
   return (
     <Grid
       container
