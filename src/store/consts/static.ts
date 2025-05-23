@@ -941,13 +941,16 @@ export enum ErrorCodeExtractionKeys {
   RightBracket = '}',
   Dot = '.'
 }
+
+const SLIPPAGE_ERROR_MESSAGE = 'Price changed – increase slippage or retry'
+
 export const ERROR_CODE_TO_MESSAGE: Record<number, string> = {
-  0x1778: 'Price changed – increase slippage or retry',
-  0x1773: 'Price changed – increase slippage or retry',
-  0x1795: 'Price changed – increase slippage or retry',
-  0x1796: 'Price changed – increase slippage or retry',
-  0x1775: 'Price changed – increase slippage or retry',
-  0x1785: 'Price changed – increase slippage or retry'
+  0x1778: SLIPPAGE_ERROR_MESSAGE,
+  0x1773: SLIPPAGE_ERROR_MESSAGE,
+  0x1795: SLIPPAGE_ERROR_MESSAGE,
+  0x1796: SLIPPAGE_ERROR_MESSAGE,
+  0x1775: SLIPPAGE_ERROR_MESSAGE,
+  0x1785: SLIPPAGE_ERROR_MESSAGE
 }
 
 export const COMMON_ERROR_MESSAGE: string = 'Failed to send. Please try again'
