@@ -228,13 +228,64 @@ export const formatPlotDataLabels = (
 
 export const getLabelDate = (interval: Intervals, timestamp: number): string => {
   const date = new Date(timestamp)
+  const now = new Date()
   const day = date.getDate()
   const month = date.getMonth() + 1
   const year = date.getFullYear()
-  const monthName = MONTH_NAMES[month - 1]
-  if (interval === Intervals.Monthly) {
-    return monthName + ' ' + year
-  } else {
+  const monthName = MONTH_NAMES[month - 1].slice(0, 3)
+
+  const formatDay = (d: number) => `${d < 10 ? '0' : ''}${d}`
+
+  if (interval === Intervals.Daily) {
     return `${day < 10 ? '0' : ''}${day} ${monthName}`
+  } else if (interval === Intervals.Weekly) {
+    // Calculate start of week (Monday-based)
+    const dayOfWeek = date.getDay() // 0 = Sunday, 1 = Monday, etc.
+    const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+
+    const weekStart = new Date(date)
+    weekStart.setDate(date.getDate() + mondayOffset)
+
+    const weekEnd = new Date(weekStart)
+    weekEnd.setDate(weekStart.getDate() + 6)
+
+    const todayStart = new Date(now.getFullYear(), now.getMonth(), now.getDate())
+    const weekStartDate = new Date(
+      weekStart.getFullYear(),
+      weekStart.getMonth(),
+      weekStart.getDate()
+    )
+    const weekEndDate = new Date(weekEnd.getFullYear(), weekEnd.getMonth(), weekEnd.getDate())
+
+    if (weekStartDate <= todayStart && todayStart <= weekEndDate) {
+      weekEnd.setTime(now.getTime())
+    }
+
+    const startDay = weekStart.getDate()
+    const startMonth = weekStart.getMonth()
+    const startMonthName = MONTH_NAMES[startMonth].slice(0, 3)
+
+    const endDay = weekEnd.getDate()
+    const endMonth = weekEnd.getMonth()
+    const endMonthName = MONTH_NAMES[endMonth].slice(0, 3)
+
+    if (startMonth === endMonth) {
+      return `${formatDay(startDay)} ${startMonthName} - ${formatDay(endDay)} ${endMonthName}`
+    } else {
+      return `${formatDay(startDay)} ${startMonthName} - ${formatDay(endDay)} ${endMonthName}`
+    }
+  } else if (interval === Intervals.Monthly) {
+    const monthEnd = new Date(year, date.getMonth() + 1, 0)
+
+    if (date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()) {
+      monthEnd.setTime(now.getTime())
+    }
+
+    const startDay = 1
+    const endDay = monthEnd.getDate()
+
+    return `${formatDay(startDay)} ${monthName} - ${formatDay(endDay)} ${monthName}`
   }
+
+  return `${day < 10 ? '0' : ''}${day} ${monthName}`
 }
