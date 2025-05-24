@@ -168,7 +168,7 @@ export const PositionHeader = ({
       </Box>
     </TooltipHover>
   )
-  console.log(!isMdDown && isLgDown && (previousPosition || nextPosition))
+
   return (
     <Box className={classes.headerContainer}>
       <Box className={classes.navigation}>
