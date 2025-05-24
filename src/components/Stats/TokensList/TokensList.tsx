@@ -11,11 +11,10 @@ import {
   USDC_TEST,
   WETH_TEST
 } from '@store/consts/static'
-import { PaginationList } from '@common/Pagination/Pagination'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import NotFoundPlaceholder from '../NotFoundPlaceholder/NotFoundPlaceholder'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
-import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 
 export interface ITokensListData {
   icon: string
@@ -136,7 +135,7 @@ const TokensList: React.FC<ITokensList> = ({
   const pages = useMemo(() => Math.ceil(data.length / ITEMS_PER_PAGE), [data])
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = useMemo(
-    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69),
+    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69),
     [initialDataLength, isCenterAligment]
   )
 
@@ -196,19 +195,19 @@ const TokensList: React.FC<ITokensList> = ({
             height: height
           }}>
           {pages > 0 && (
-            <TableBoundsLabel
-              lowerBound={lowerBound}
-              totalItems={totalItems}
-              upperBound={upperBound}
-              borderTop={false}>
-              <PaginationList
-                pages={pages}
-                defaultPage={1}
-                handleChangePage={handleChangePagination}
-                variant='center'
-                page={page}
-              />
-            </TableBoundsLabel>
+            <InputPagination
+              pages={pages}
+              defaultPage={1}
+              handleChangePage={handleChangePagination}
+              variant='center'
+              page={page}
+              borderTop={false}
+              pagesNumeration={{
+                lowerBound: lowerBound,
+                totalItems: totalItems,
+                upperBound: upperBound
+              }}
+            />
           )}
         </Grid>
       </>
