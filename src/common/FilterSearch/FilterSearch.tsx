@@ -213,7 +213,11 @@ export const FilterSearch: React.FC<IFilterSearch> = memo(
         _ownerState: AutocompleteOwnerState<ISearchToken, true, false, false, 'div'>
       ): React.ReactNode => {
         return (
-          <Box component='li' {...optionProps} sx={{ padding: '0 !important' }}>
+          <Box
+            component='li'
+            {...optionProps}
+            key={option.address.toString()}
+            sx={{ padding: '0 !important' }}>
             <TokenOption option={option} networkUrl={networkUrl} isSmall={isSmall} />
           </Box>
         )

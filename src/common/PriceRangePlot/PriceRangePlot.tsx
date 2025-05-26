@@ -469,17 +469,18 @@ export const PriceRangePlot: React.FC<IPriceRangePlot> = ({
           data={[
             {
               id: 'less than range',
-              data: currentLessThanRange.length ? currentLessThanRange : [{ x: plotMin, y: 0 }]
+              data: currentLessThanRange.length > 0 ? currentLessThanRange : [{ x: plotMin, y: 0 }]
             },
             {
               id: 'range',
-              data: currentRange
+              data: currentRange.length > 0 ? currentRange : [{ x: plotMin, y: plotMax }]
             },
             {
               id: 'greater than range',
-              data: currentGreaterThanRange.length
-                ? currentGreaterThanRange
-                : [{ x: plotMax, y: 0 }]
+              data:
+                currentGreaterThanRange.length > 0
+                  ? currentGreaterThanRange
+                  : [{ x: plotMax, y: 0 }]
             }
           ]}
           curve={isXtoY ? 'stepAfter' : 'stepBefore'}
