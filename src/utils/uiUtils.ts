@@ -211,18 +211,26 @@ export const formatPlotDataLabels = (
       const monthName = MONTH_NAMES[month - 1].slice(0, 3)
       return monthName
     }
-    case Intervals.Daily:
-    case Intervals.Weekly: {
+    case Intervals.Daily: {
       const dayMod =
         Math.floor(time / (1000 * 60 * 60 * 24)) % (entries >= 8 ? (isMobile ? 4 : 2) : 1)
-
       return dayMod === 0 ? `${day < 10 ? '0' : ''}${day}/${month < 10 ? '0' : ''}${month}` : ''
     }
+    case Intervals.Weekly: {
+      const dayOfWeek = date.getDay() // 0 = Sunday, 1 = Monday, etc.
+      const mondayOffset = dayOfWeek === 0 ? -6 : 1 - dayOfWeek
+      const weekStart = new Date(date)
+      weekStart.setDate(date.getDate() + mondayOffset)
 
-    // case Intervals.Yearly: {
-    //   const year = date.getFullYear()
-    //   return `${year}`
-    // }
+      const weekNumber = Math.floor(weekStart.getTime() / (1000 * 60 * 60 * 24 * 7))
+      const weekMod = weekNumber % (entries >= 8 ? (isMobile ? 4 : 2) : 1)
+
+      if (weekMod !== 0) return ''
+
+      const startDay = weekStart.getDate()
+      const startMonth = weekStart.getMonth() + 1
+      return `${startDay < 10 ? '0' : ''}${startDay}/${startMonth < 10 ? '0' : ''}${startMonth}`
+    }
   }
 }
 

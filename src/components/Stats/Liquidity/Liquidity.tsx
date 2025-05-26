@@ -81,7 +81,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           transition: 'transform 600ms ease-out'
         }}>
         <ResponsiveLine
-          animate={false}
+          // animate={false}
           data={[
             {
               id: 'liquidity',
@@ -108,8 +108,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickRotation: 0,
             format: time =>
               isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile),
-            tickValues: isLoading ? [] : mapIntervalToPrecision(interval),
-            legendPosition: 'middle'
+            tickValues: isLoading ? [] : mapIntervalToPrecision(interval)
           }}
           axisLeft={{
             tickSize: 0,
