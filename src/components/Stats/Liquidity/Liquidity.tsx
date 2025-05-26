@@ -85,6 +85,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           transition: 'transform 600ms ease-out'
         }}>
         <ResponsiveLine
+          key={`${interval}-${isLoading}`}
           // animate={false}
           data={[
             {
