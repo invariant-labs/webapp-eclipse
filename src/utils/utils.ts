@@ -1484,14 +1484,18 @@ export const getPoolsFromAddresses = async (
       addresses
     )) as Array<RawPoolStructure | null>
 
-    return pools
-      .filter(pool => !!pool)
-      .map((pool, index) => {
-        return {
+    const parsedPools: Array<PoolWithAddress> = []
+
+    pools.map((pool, index) => {
+      if (pool) {
+        parsedPools.push({
           ...parsePool(pool),
           address: addresses[index]
-        }
-      }) as PoolWithAddress[]
+        })
+      }
+    })
+
+    return parsedPools
   } catch (e: unknown) {
     const error = ensureError(e)
     console.log(error)

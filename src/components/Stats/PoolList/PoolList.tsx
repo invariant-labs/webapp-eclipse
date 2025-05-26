@@ -11,7 +11,7 @@ import {
   USDC_TEST,
   WETH_TEST
 } from '@store/consts/static'
-import { PaginationList } from '@common/Pagination/Pagination'
+import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
 import { Keypair } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
@@ -19,7 +19,6 @@ import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@utils/utils'
 import { colors, theme } from '@static/theme'
-import { TableBoundsLabel } from '@common/TableBoundsLabel/TableBoundsLabel'
 import { ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { shortenAddress } from '@utils/uiUtils'
 
@@ -171,7 +170,7 @@ const PoolList: React.FC<PoolListInterface> = ({
   const pages = useMemo(() => Math.ceil(data.length / ITEMS_PER_PAGE), [data])
   const isCenterAligment = useMediaQuery(theme.breakpoints.down(1280))
   const height = useMemo(
-    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 120 : 90) : 69),
+    () => (initialDataLength > ITEMS_PER_PAGE ? (isCenterAligment ? 176 : 90) : 69),
     [initialDataLength, isCenterAligment]
   )
 
@@ -269,19 +268,19 @@ const PoolList: React.FC<PoolListInterface> = ({
           height: height
         }}>
         {pages > 0 && (
-          <TableBoundsLabel
+          <InputPagination
+            pages={pages}
+            defaultPage={1}
+            handleChangePage={handleChangePagination}
+            variant='center'
+            page={page}
             borderTop={false}
-            lowerBound={lowerBound}
-            totalItems={totalItems}
-            upperBound={upperBound}>
-            <PaginationList
-              pages={pages}
-              defaultPage={1}
-              handleChangePage={handleChangePagination}
-              variant='center'
-              page={page}
-            />
-          </TableBoundsLabel>
+            pagesNumeration={{
+              lowerBound: lowerBound,
+              totalItems: totalItems,
+              upperBound: upperBound
+            }}
+          />
         )}
       </Grid>
     </Grid>
