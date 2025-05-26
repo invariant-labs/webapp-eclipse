@@ -11,7 +11,7 @@ export const useStyles = makeStyles()(() => ({
       background: `${colors.invariant.componentDark}`
     },
 
-    '&:first-child': {
+    '&:first-of-type': {
       padding: '12px 24px',
       background: colors.invariant.component
     },

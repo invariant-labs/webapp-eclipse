@@ -38,14 +38,14 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   plot: {
     width: 605,
 
-    '&:first-child': {
+    '&:first-of-type': {
       marginRight: 24
     },
 
     [theme.breakpoints.down('sm')]: {
       width: '100%',
 
-      '&:first-child': {
+      '&:first-of-type': {
         marginRight: 0,
         marginBottom: 24
       }
