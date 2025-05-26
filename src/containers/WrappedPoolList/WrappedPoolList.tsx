@@ -30,9 +30,7 @@ export const WrappedPoolList: React.FC = () => {
   const { classes } = useStyles({ isXs })
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
   const lastFetchedInterval = useSelector(lastInterval)
-  // const [interval, setInterval] = useState<IntervalsKeys>(
-  //   (lastFetchedInterval as IntervalsKeys) || IntervalsKeys.Daily
-  // )
+
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
       const isTokenXSelected = selectedFilters.some(
