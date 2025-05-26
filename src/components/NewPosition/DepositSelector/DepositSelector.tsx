@@ -1142,25 +1142,27 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             connected={false}
             onDisconnect={onDisconnectWallet}
           />
-        ) : getButtonMessage() === 'Insufficient ETH' ? (
+        ) : getButtonMessage() !== 'Insufficient ETH' ? (
           <TooltipHover
             fullSpan
             title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
             top={-10}>
-            <AnimatedButton
-              className={cx(
-                classes.addButton,
-                progress === 'none' ? classes.hoverButton : undefined
-              )}
-              onClick={() => {
-                if (progress === 'none') {
-                  onAddLiquidity()
-                }
-              }}
-              disabled={getButtonMessage() !== 'Add Position'}
-              content={getButtonMessage()}
-              progress={progress}
-            />
+            <Box width={'100%'}>
+              <AnimatedButton
+                className={cx(
+                  classes.addButton,
+                  progress === 'none' ? classes.hoverButton : undefined
+                )}
+                onClick={() => {
+                  if (progress === 'none') {
+                    onAddLiquidity()
+                  }
+                }}
+                disabled={getButtonMessage() !== 'Add Position'}
+                content={getButtonMessage()}
+                progress={progress}
+              />
+            </Box>
           </TooltipHover>
         ) : (
           <AnimatedButton
