@@ -1144,7 +1144,7 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
             connected={false}
             onDisconnect={onDisconnectWallet}
           />
-        ) : getButtonMessage() !== 'Insufficient ETH' ? (
+        ) : getButtonMessage() === 'Insufficient ETH' ? (
           <TooltipHover
             fullSpan
             title='More ETH is required to cover the transaction fee. Obtain more ETH to complete this transaction.'
