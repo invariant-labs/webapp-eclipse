@@ -49,7 +49,11 @@ const Liquidity: React.FC<LiquidityInterface> = ({
       <Grid className={classes.liquidityContainer}>
         <Grid container justifyContent={'space-between'} alignItems='center'>
           <Typography className={classes.liquidityHeader}>Liquidity</Typography>
-          <Intervals interval={interval} setInterval={setInterval} marginRight={24} />
+          <Intervals
+            interval={interval}
+            setInterval={setInterval}
+            marginRight={isMobile ? 8 : 24}
+          />
         </Grid>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
@@ -93,7 +97,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           ]}
           margin={
             isMobile
-              ? { top: 24, bottom: 24, left: 30, right: 12 }
+              ? { top: 24, bottom: 24, left: 30, right: 18 }
               : { top: 24, bottom: 24, left: 30, right: 24 }
           }
           xScale={{
