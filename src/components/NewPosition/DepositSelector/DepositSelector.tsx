@@ -653,17 +653,19 @@ export const DepositSelector: React.FC<IDepositSelector> = ({
               : ''
           }
           classes={{ tooltip: classes.tooltip }}>
-          <Button
-            onClick={handleClickDepositOptions}
-            className={classes.optionsIconBtn}
-            disableRipple
-            disabled={!isAutoswapOn}>
-            <img
-              src={settingIcon}
-              className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
-              alt='options'
-            />
-          </Button>
+          <div>
+            <Button
+              onClick={handleClickDepositOptions}
+              className={classes.optionsIconBtn}
+              disableRipple
+              disabled={!isAutoswapOn}>
+              <img
+                src={settingIcon}
+                className={!isAutoswapOn ? classes.grayscaleIcon : classes.whiteIcon}
+                alt='options'
+              />
+            </Button>
+          </div>
         </Tooltip>
       </>
     ),

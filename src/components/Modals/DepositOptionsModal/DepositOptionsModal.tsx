@@ -372,7 +372,9 @@ const DepoSitOptionsModal: React.FC<Props> = ({
             </Box>
           </Grid>
           <Divider className={classes.divider} />
-          <Box className={classes.optionsContainer}>{availableSettings.map(item => item)}</Box>
+          {availableSettings.map((item, index) => (
+            <React.Fragment key={index}>{item}</React.Fragment>
+          ))}
           <Divider className={classes.divider} />
           <Button
             className={classes.setAsDefaultBtn}
