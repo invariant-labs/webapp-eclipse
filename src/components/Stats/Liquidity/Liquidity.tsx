@@ -61,6 +61,36 @@ const Liquidity: React.FC<LiquidityInterface> = ({
       </Grid>
       <Grid className={classes.barContainer}>
         <ResponsiveLine
+          sliceTooltip={() => <></>}
+          enableCrosshair={false}
+          enablePointLabel={false}
+          debugSlices={false}
+          enableSlices={false}
+          debugMesh={false}
+          areaBaselineValue={0}
+          pointBorderWidth={0}
+          areaBlendMode='normal'
+          pointLabel=''
+          pointBorderColor=''
+          pointColor=''
+          areaOpacity={0.2}
+          pointSize={2}
+          yScale={{
+            min: 0,
+            max: 'auto',
+            type: 'linear'
+          }}
+          layers={[
+            'grid',
+            'markers',
+            'areas',
+            'lines',
+            'points',
+            'slices',
+            'mesh',
+            'legends',
+            'axes'
+          ]}
           data={[
             {
               id: 'liquidity',
