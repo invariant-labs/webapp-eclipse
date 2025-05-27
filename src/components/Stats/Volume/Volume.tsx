@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { ResponsiveBar } from '@nivo/bar'
 import { colors, theme, typography } from '@static/theme'
 import { linearGradientDef } from '@nivo/core'
@@ -7,7 +7,12 @@ import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { Box } from '@mui/system'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
-import { formatLargeNumber, formatPlotDataLabels, getLabelDate } from '@utils/uiUtils'
+import {
+  getLimitingTimestamp,
+  formatLargeNumber,
+  formatPlotDataLabels,
+  getLabelDate
+} from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
 import Intervals from '../Intervals/Intervals'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
@@ -35,6 +40,15 @@ const Volume: React.FC<StatsInterface> = ({
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
   const isMobile = useIsMobile()
+  const latestTimestamp = useMemo(
+    () =>
+      Math.max(
+        ...data
+          .map(d => d.timestamp)
+          .concat(interval !== IntervalsKeys.Daily ? getLimitingTimestamp() : 0)
+      ),
+    [data, interval]
+  )
 
   const Theme = {
     axis: {
@@ -115,7 +129,7 @@ const Volume: React.FC<StatsInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           colors={colors.invariant.pink}
           tooltip={({ data }) => {
-            const date = getLabelDate(interval, data.timestamp)
+            const date = getLabelDate(interval, data.timestamp, latestTimestamp)
 
             return (
               <Grid className={classes.tooltip}>
