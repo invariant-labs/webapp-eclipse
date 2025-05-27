@@ -29,6 +29,7 @@ import { checkDataDelay, ensureError, hexToDate } from '@utils/utils'
 import {
   BANNER_HIDE_DURATION,
   BANNER_STORAGE_KEY,
+  Intervals,
   LEADERBOARD_DECIMAL,
   LeaderBoardType,
   SNAP_TIME_DELAY,
@@ -169,7 +170,7 @@ export const LeaderboardWrapper: React.FC<LeaderboardWrapperProps> = () => {
   useEffect(() => {
     dispatch(actions.getLeaderboardData({ page: 1, itemsPerPage }))
     dispatch(actions.getLeaderboardConfig())
-    dispatch(statsActions.getCurrentStats())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
 
     dispatch(positionListActions.getPositionsList())
   }, [dispatch, itemsPerPage])
