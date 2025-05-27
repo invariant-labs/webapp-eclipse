@@ -5,7 +5,6 @@ import useStyles from './style'
 import { Grid, useMediaQuery } from '@mui/material'
 import {
   BTC_TEST,
-  Intervals,
   ITEMS_PER_PAGE,
   NetworkType,
   SortTypeTokenList,
@@ -34,7 +33,6 @@ export interface ITokensList {
   network: NetworkType
   copyAddressHandler: (message: string, variant: VariantType) => void
   isLoading: boolean
-  interval: Intervals
 }
 
 const tokens = [BTC_TEST, USDC_TEST, WETH_TEST]
@@ -57,8 +55,7 @@ const TokensList: React.FC<ITokensList> = ({
   initialLength,
   network,
   copyAddressHandler,
-  isLoading,
-  interval
+  isLoading
 }) => {
   const [initialDataLength, setInitialDataLength] = useState(initialLength)
   const { classes, cx } = useStyles()
@@ -152,12 +149,7 @@ const TokensList: React.FC<ITokensList> = ({
       classes={{ root: classes.container }}
       className={cx({ [classes.loadingOverlay]: isLoading })}>
       <>
-        <TokenListItem
-          displayType='header'
-          onSort={setSortType}
-          sortType={sortType}
-          interval={interval}
-        />
+        <TokenListItem displayType='header' onSort={setSortType} sortType={sortType} />
         {data.length > 0 || isLoading ? (
           <>
             {paginator(page).data.map((token, index) => {
@@ -177,7 +169,6 @@ const TokensList: React.FC<ITokensList> = ({
                   isUnknown={token.isUnknown}
                   network={network}
                   copyAddressHandler={copyAddressHandler}
-                  interval={interval}
                 />
               )
             })}

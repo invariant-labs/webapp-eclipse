@@ -4,7 +4,6 @@ import { TickPlotPositionData } from '@common/PriceRangePlot/PriceRangePlot'
 import { Box, Fade, useMediaQuery } from '@mui/material'
 import {
   ADDRESSES_TO_REVERT_TOKEN_PAIRS,
-  Intervals,
   NetworkType,
   REFRESHER_INTERVAL,
   USDC_MAIN,
@@ -89,7 +88,6 @@ interface IProps {
     totalPages: number
     currentPage: number
   }
-  interval: Intervals
   handleChangePagination: (page: number) => void
 }
 
@@ -139,7 +137,6 @@ const PositionDetails: React.FC<IProps> = ({
   nextPosition,
   positionId,
   paginationData,
-  interval,
   handleChangePagination
 }) => {
   const { classes } = useStyles()
@@ -412,7 +409,6 @@ const PositionDetails: React.FC<IProps> = ({
                 isPreview={showPreviewInfo}
                 isPromotedLoading={isPromotedLoading}
                 isClosing={shouldDisable}
-                interval={interval}
               />
             </Box>
             <Box className={classes.rightSide}>
