@@ -40,6 +40,7 @@ export const WrappedStats: React.FC = () => {
   const tokensList = useSelector(tokensStatsWithTokensDetails)
   const volumeInterval = useSelector(volume)
   const tvlInterval = useSelector(tvl)
+
   const volume24h = useSelector(volume24)
   const tvl24h = useSelector(tvl24)
   const fees24h = useSelector(fees24)
