@@ -67,7 +67,7 @@ export const useStyles = makeStyles()(() => ({
     background: colors.invariant.component,
     border: `1px solid ${colors.invariant.lightGrey}`,
     borderRadius: 5,
-    width: 100,
+    width: 120,
     padding: 8
   },
   tooltipDate: {
