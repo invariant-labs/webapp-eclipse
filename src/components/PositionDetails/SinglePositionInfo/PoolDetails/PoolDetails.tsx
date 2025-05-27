@@ -1,20 +1,16 @@
 import { Box, Skeleton, Typography } from '@mui/material'
 import { useStyles } from './style'
 import { formatNumberWithSuffix } from '@utils/utils'
-import { Intervals } from '@store/consts/static'
-import { mapIntervalToString } from '@utils/uiUtils'
 
 type Props = {
   tvl: number
   volume24: number
   fee24: number
   showPoolDetailsLoader: boolean
-  interval: Intervals
 }
 
-export const PoolDetails = ({ tvl, volume24, fee24, showPoolDetailsLoader, interval }: Props) => {
+export const PoolDetails = ({ tvl, volume24, fee24, showPoolDetailsLoader }: Props) => {
   const { classes } = useStyles()
-  const intervalSuffix = mapIntervalToString(interval)
 
   return (
     <Box className={classes.container}>
@@ -34,7 +30,7 @@ export const PoolDetails = ({ tvl, volume24, fee24, showPoolDetailsLoader, inter
         </Typography>
       </Box>
       <Box className={classes.stat}>
-        <Typography className={classes.statTitle}>{intervalSuffix} Volume</Typography>
+        <Typography className={classes.statTitle}>24H Volume</Typography>
         <Typography className={classes.statDescription}>
           {showPoolDetailsLoader ? (
             <Skeleton variant='rounded' width={40} height={17} />
@@ -49,7 +45,7 @@ export const PoolDetails = ({ tvl, volume24, fee24, showPoolDetailsLoader, inter
         </Typography>
       </Box>
       <Box className={classes.stat}>
-        <Typography className={classes.statTitle}>{intervalSuffix} Fee</Typography>
+        <Typography className={classes.statTitle}>24H Fee</Typography>
         <Typography className={classes.statDescription}>
           {showPoolDetailsLoader ? (
             <Skeleton variant='rounded' width={40} height={17} />

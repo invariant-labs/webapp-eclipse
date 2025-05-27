@@ -1,5 +1,5 @@
 import { Box, Typography, useMediaQuery } from '@mui/material'
-import { isLoading, lastInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
@@ -15,7 +15,6 @@ import { getPromotedPools } from '@store/selectors/leaderboard'
 
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { theme } from '@static/theme'
-import { Intervals } from '@store/consts/static'
 
 export const WrappedPoolList: React.FC = () => {
   const dispatch = useDispatch()
@@ -29,8 +28,6 @@ export const WrappedPoolList: React.FC = () => {
 
   const { classes } = useStyles({ isXs })
   const [selectedFilters, setSelectedFilters] = useState<ISearchToken[]>([])
-  const lastFetchedInterval = useSelector(lastInterval)
-
   const filteredPoolsList = useMemo(() => {
     return poolsList.filter(poolData => {
       const isTokenXSelected = selectedFilters.some(
@@ -67,11 +64,7 @@ export const WrappedPoolList: React.FC = () => {
   }
 
   useEffect(() => {
-    dispatch(
-      actions.getCurrentIntervalStats({
-        interval: (lastFetchedInterval as Intervals) || Intervals.Daily
-      })
-    )
+    dispatch(actions.getCurrentStats())
     dispatch(leaderboardActions.getLeaderboardConfig())
   }, [])
 
@@ -124,7 +117,6 @@ export const WrappedPoolList: React.FC = () => {
         isLoading={isLoadingStats}
         showAPY={showAPY}
         filteredTokens={selectedFilters}
-        interval={lastFetchedInterval || Intervals.Daily}
       />
     </div>
   )

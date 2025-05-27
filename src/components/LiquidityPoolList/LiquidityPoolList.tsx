@@ -2,14 +2,7 @@ import React, { useMemo, useEffect, useState } from 'react'
 import PoolListItem from '@components/Stats/PoolListItem/PoolListItem'
 import { useStyles } from './style'
 import { Grid, useMediaQuery } from '@mui/material'
-import {
-  BTC_TEST,
-  Intervals,
-  NetworkType,
-  SortTypePoolList,
-  USDC_TEST,
-  WETH_TEST
-} from '@store/consts/static'
+import { BTC_TEST, NetworkType, SortTypePoolList, USDC_TEST, WETH_TEST } from '@store/consts/static'
 import { InputPagination } from '@common/Pagination/InputPagination/InputPagination'
 import { VariantType } from 'notistack'
 import { useNavigate } from 'react-router-dom'
@@ -45,7 +38,6 @@ export interface PoolListInterface {
   isLoading: boolean
   showAPY: boolean
   filteredTokens: ISearchToken[]
-  interval: Intervals
 }
 
 import { Keypair } from '@solana/web3.js'
@@ -95,8 +87,7 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
   copyAddressHandler,
   isLoading,
   showAPY,
-  filteredTokens,
-  interval
+  filteredTokens
 }) => {
   const [page, setPage] = React.useState(1)
   const [sortType, setSortType] = React.useState(SortTypePoolList.VOLUME_DESC)
@@ -185,13 +176,11 @@ const LiquidityPoolList: React.FC<PoolListInterface> = ({
         sortType={sortType}
         network={network}
         showAPY={showAPY}
-        interval={interval}
       />
       {data.length > 0 || isLoading ? (
         <>
           {paginator(page).map((element, index) => (
             <PoolListItem
-              interval={interval}
               itemNumber={index + 1 + (page - 1) * ITEMS_PER_PAGE}
               displayType='token'
               tokenIndex={index + 1 + (page - 1) * ITEMS_PER_PAGE}

@@ -42,11 +42,11 @@ import { calculateClaimAmount } from '@invariant-labs/sdk-eclipse/lib/utils'
 import { lockerState } from '@store/selectors/locker'
 import { theme } from '@static/theme'
 import { actions as statsActions } from '@store/reducers/stats'
-import { isLoading, lastInterval, poolsStatsWithTokensDetails } from '@store/selectors/stats'
+import { isLoading, poolsStatsWithTokensDetails } from '@store/selectors/stats'
 import { getPromotedPools, isLoading as promotedLoading } from '@store/selectors/leaderboard'
 import { actions as leaderboardActions } from '@store/reducers/leaderboard'
 import { BN } from '@coral-xyz/anchor'
-import { Intervals, LEADERBOARD_DECIMAL } from '@store/consts/static'
+import { LEADERBOARD_DECIMAL } from '@store/consts/static'
 import { poolsArraySortedByFees } from '@store/selectors/pools'
 import { estimatePointsForUserPositions } from '@invariant-labs/points-sdk'
 
@@ -94,7 +94,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
 
   const navigationData = useSelector(positionsNavigationData)
   const lockedNavigationData = useSelector(lockedPositionsNavigationData)
-  const poolStatsInterval = useSelector(lastInterval)
   const isTimeoutError = useSelector(timeoutError)
 
   const [showFeesLoader, setShowFeesLoader] = useState(true)
@@ -541,7 +540,6 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
         tokenXAddress={position.tokenX.assetAddress}
         tokenYAddress={position.tokenY.assetAddress}
         poolAddress={position.poolData.address}
-        interval={poolStatsInterval || Intervals.Daily}
         copyPoolAddressHandler={copyPoolAddressHandler}
         detailsData={data}
         midPrice={midPrice}

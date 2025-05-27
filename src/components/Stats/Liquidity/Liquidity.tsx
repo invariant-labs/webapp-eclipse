@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React from 'react'
 import { ResponsiveLine } from '@nivo/line'
 import { linearGradientDef } from '@nivo/core'
 import { colors, typography } from '@static/theme'
@@ -6,87 +6,78 @@ import { useStyles } from './style'
 import { TimeData } from '@store/reducers/stats'
 import { Grid, Typography } from '@mui/material'
 import { formatNumberWithSuffix, trimZeros } from '@utils/utils'
-import {
-  formatLargeNumber,
-  formatPlotDataLabels,
-  getLabelDate,
-  getLimitingTimestamp,
-  mapIntervalToPrecision
-} from '@utils/uiUtils'
+import { formatLargeNumber } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
-import { Intervals as IntervalsKeys } from '@store/consts/static'
-import Intervals from '../Intervals/Intervals'
 
 interface LiquidityInterface {
+  liquidityPercent: number | null
   liquidityVolume: number | null
   data: TimeData[]
   className?: string
   isLoading: boolean
-  interval: IntervalsKeys
-  setInterval: (interval: IntervalsKeys) => void
 }
 
 const Liquidity: React.FC<LiquidityInterface> = ({
+  liquidityPercent,
   liquidityVolume,
   data,
   className,
-  isLoading,
-  interval,
-  setInterval
+  isLoading
 }) => {
   const { classes, cx } = useStyles()
 
+  liquidityPercent = liquidityPercent ?? 0
   liquidityVolume = liquidityVolume ?? 0
 
+  const isLower = liquidityPercent < 0
   const isMobile = useIsMobile()
-  const latestTimestamp = useMemo(
-    () =>
-      Math.max(
-        ...data
-          .map(d => d.timestamp)
-          .concat(interval !== IntervalsKeys.Daily ? getLimitingTimestamp() : 0)
-      ),
-    [data, interval]
-  )
+  const percentage = isLoading ? Math.random() * 200 - 100 : liquidityPercent
 
   return (
     <Grid className={cx(classes.container, className, { [classes.loadingOverlay]: isLoading })}>
       <Grid className={classes.liquidityContainer}>
-        <Grid container justifyContent={'space-between'} alignItems='center'>
-          <Typography className={classes.liquidityHeader}>Liquidity</Typography>
-          <Intervals
-            interval={interval}
-            setInterval={setInterval}
-            marginRight={isMobile ? 8 : 24}
-          />
-        </Grid>
+        <Typography className={classes.liquidityHeader}>Liquidity</Typography>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
             ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : liquidityVolume)}
           </Typography>
+          <Grid className={classes.volumeStatusContainer}>
+            <Grid
+              className={cx(
+                classes.volumeStatusColor,
+                isLower ? classes.backgroundVolumeLow : classes.backgroundVolumeUp
+              )}>
+              <Typography
+                component='p'
+                className={cx(
+                  classes.volumeStatusHeader,
+                  isLower ? classes.volumeLow : classes.volumeUp
+                )}>
+                {percentage < 0 ? percentage.toFixed(2) : `+${percentage.toFixed(2)}`}%
+              </Typography>
+            </Grid>
+          </Grid>
         </Grid>
       </Grid>
       <Grid className={classes.barContainer}>
         <ResponsiveLine
-          key={`${interval}-${isLoading}`}
-          animate={false}
           data={[
             {
               id: 'liquidity',
               data: data.map(({ timestamp, value }) => ({
-                x: new Date(timestamp),
+                x: new Date(timestamp).toLocaleDateString('en-GB'),
                 y: value
               }))
             }
           ]}
           margin={
             isMobile
-              ? { top: 24, bottom: 24, left: 30, right: 18 }
+              ? { top: 24, bottom: 24, left: 30, right: 12 }
               : { top: 24, bottom: 24, left: 30, right: 24 }
           }
           xScale={{
             type: 'time',
-            format: 'native',
+            format: '%d/%m/%Y',
             precision: 'day',
             useUTC: false
           }}
@@ -94,9 +85,9 @@ const Liquidity: React.FC<LiquidityInterface> = ({
             tickSize: 0,
             tickPadding: 10,
             tickRotation: 0,
-            format: time =>
-              isLoading ? '' : formatPlotDataLabels(time, data.length, interval, isMobile),
-            tickValues: isLoading ? [] : mapIntervalToPrecision(interval)
+            tickValues:
+              data.length >= 24 ? 'every 4 days' : data.length >= 8 ? 'every 2 days' : 'every day',
+            format: '%d/%m'
           }}
           axisLeft={{
             tickSize: 0,
@@ -126,6 +117,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           enableArea={true}
           isInteractive
           useMesh
+          animate
           colors={colors.invariant.green}
           theme={{
             axis: {
@@ -154,11 +146,15 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           fill={[{ match: '*', id: 'gradient' }]}
           crosshairType='bottom'
           tooltip={({ point }) => {
-            const date = getLabelDate(interval, (point.data.x as Date).getTime(), latestTimestamp)
+            const date = point.data.x as Date
+            const day = date.getDate()
+            const month = date.getMonth() + 1
 
             return (
               <Grid className={classes.tooltip}>
-                <Typography className={classes.tooltipDate}>{date}</Typography>
+                <Typography className={classes.tooltipDate}>{`${day < 10 ? '0' : ''}${day}/${
+                  month < 10 ? '0' : ''
+                }${month}`}</Typography>
                 <Typography className={classes.tooltipValue}>
                   ${formatNumberWithSuffix(point.data.y as number)}
                 </Typography>
