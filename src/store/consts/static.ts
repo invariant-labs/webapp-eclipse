@@ -959,6 +959,28 @@ export const APPROVAL_DENIED_MESSAGE: string = 'Transaction approval rejected'
 export const ECLIPSE_MAINNET_GENESIS_HASH = 'EAQLJCV2mh23BsK2P9oYpV5CHVLDNHTxYss3URrNmg3s'
 export const SOLANA_MAINNET_GENESIS_HASH = '5eykt4UsFv8P8NJdTREpY1vzqKqZKvdpKuc147dw2N9d'
 
+export enum Intervals {
+  Daily = 'daily',
+  Weekly = 'weekly',
+  Monthly = 'monthly'
+  // Yearly = 'yearly' Don't show year in UI
+}
+
+export const MONTH_NAMES = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+  'August',
+  'September',
+  'October',
+  'November',
+  'December'
+]
+
 export const chartPlaceholder = {
   tickmaps: [
     { x: 2.33021324081296e-7, y: 0, index: -221810 },
