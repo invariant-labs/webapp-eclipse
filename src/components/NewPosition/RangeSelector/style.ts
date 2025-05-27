@@ -299,6 +299,9 @@ const useStyles = makeStyles()(theme => {
         minWidth: 82,
         textAlign: 'center'
       }
+    },
+    boldedText: {
+      fontWeight: 800
     }
   }
 })

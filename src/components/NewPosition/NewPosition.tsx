@@ -48,6 +48,7 @@ import { InitMidPrice } from '@common/PriceRangePlot/PriceRangePlot'
 import { PublicKey } from '@solana/web3.js'
 import { BN } from '@coral-xyz/anchor'
 import {
+  DECIMAL,
   fromFee,
   getConcentrationArray,
   getMaxTick,
@@ -299,6 +300,15 @@ export const NewPosition: React.FC<INewPosition> = ({
       +initialConcentration < 2 ? 2 : initialConcentration ? +initialConcentration : 34
     )
   )
+
+  const bestFeeIndex = useMemo(() => {
+    const feeTiersTVLValues = Object.values(feeTiersWithTvl)
+    const bestFee = feeTiersTVLValues.length > 0 ? Math.max(...feeTiersTVLValues) : 0
+    const bestTierIndex = ALL_FEE_TIERS_DATA.findIndex(tier => {
+      return feeTiersWithTvl[+printBN(tier.tier.fee, DECIMAL - 2)] === bestFee && bestFee > 0
+    })
+    return bestTierIndex
+  }, [ALL_FEE_TIERS_DATA, feeTiersWithTvl])
 
   const rangeConcentrationArray = useMemo(() => {
     const leftMinTick = isXtoY ? getMinTick(tickSpacing) : getMaxTick(tickSpacing)
@@ -1374,6 +1384,8 @@ export const NewPosition: React.FC<INewPosition> = ({
             setOnlyUserPositions={setOnlyUserPositions}
             usdcPrice={usdcPrice}
             suggestedPrice={suggestedPrice}
+            currentFeeIndex={currentFeeIndex}
+            bestFeeIndex={bestFeeIndex}
           />
         ) : (
           <PoolInit
