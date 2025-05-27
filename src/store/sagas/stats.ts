@@ -1,49 +1,49 @@
 import { actions } from '@store/reducers/stats'
-import { call, put, select, takeLatest, takeLeading } from 'typed-redux-saga'
+import { call, put, select, takeLatest } from 'typed-redux-saga'
 import { network } from '@store/selectors/solanaConnection'
 import { PublicKey } from '@solana/web3.js'
 import { handleRpcError } from './connection'
-import { ensureError, getFullSnap, getIntervalsFullSnap } from '@utils/utils'
+import { ensureError, getIntervalsFullSnap } from '@utils/utils'
 import { lastInterval, lastTimestamp } from '@store/selectors/stats'
 import { Intervals, STATS_CACHE_TIME } from '@store/consts/static'
 import { PayloadAction } from '@reduxjs/toolkit'
 
-export function* getStats(): Generator {
-  try {
-    const lastFetchTimestamp = yield* select(lastTimestamp)
+// export function* getStats(): Generator {
+//   try {
+//     const lastFetchTimestamp = yield* select(lastTimestamp)
 
-    if (+Date.now() < lastFetchTimestamp + STATS_CACHE_TIME) {
-      return yield* put(actions.setLoadingStats(false))
-    }
+//     if (+Date.now() < lastFetchTimestamp + STATS_CACHE_TIME) {
+//       return yield* put(actions.setLoadingStats(false))
+//     }
 
-    const currentNetwork = yield* select(network)
+//     const currentNetwork = yield* select(network)
 
-    const fullSnap = yield* call(getFullSnap, currentNetwork.toLowerCase())
-    const parsedFullSnap = {
-      ...fullSnap,
-      tokensData: fullSnap.tokensData.map(token => ({
-        ...token,
-        address: new PublicKey(token.address)
-      })),
-      poolsData: fullSnap.poolsData.map(pool => ({
-        ...pool,
-        poolAddress: new PublicKey(pool.poolAddress),
-        tokenX: new PublicKey(pool.tokenX),
-        tokenY: new PublicKey(pool.tokenY)
-      }))
-    }
+//     const fullSnap = yield* call(getFullSnap, currentNetwork.toLowerCase())
+//     const parsedFullSnap = {
+//       ...fullSnap,
+//       tokensData: fullSnap.tokensData.map(token => ({
+//         ...token,
+//         address: new PublicKey(token.address)
+//       })),
+//       poolsData: fullSnap.poolsData.map(pool => ({
+//         ...pool,
+//         poolAddress: new PublicKey(pool.poolAddress),
+//         tokenX: new PublicKey(pool.tokenX),
+//         tokenY: new PublicKey(pool.tokenY)
+//       }))
+//     }
 
-    // @ts-expect-error FIXME: Interface missmatch.
-    yield* put(actions.setCurrentStats(parsedFullSnap, Intervals.Daily))
-  } catch (e: unknown) {
-    const error = ensureError(e)
-    console.log(error)
+//     // @ts-expect-error FIXME: Interface missmatch.
+//     yield* put(actions.setCurrentStats(parsedFullSnap, Intervals.Daily))
+//   } catch (e: unknown) {
+//     const error = ensureError(e)
+//     console.log(error)
 
-    yield* put(actions.setLoadingStats(false))
+//     yield* put(actions.setLoadingStats(false))
 
-    yield* call(handleRpcError, error.message)
-  }
-}
+//     yield* call(handleRpcError, error.message)
+//   }
+// }
 
 export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>): Generator {
   try {
@@ -99,10 +99,6 @@ export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>
 
     yield* call(handleRpcError, error.message)
   }
-}
-
-export function* statsHandler(): Generator {
-  yield* takeLeading(actions.getCurrentStats, getStats)
 }
 
 export function* intervalStatsHandler(): Generator {
