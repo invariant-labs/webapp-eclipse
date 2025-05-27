@@ -480,7 +480,7 @@ export const SinglePositionWrapper: React.FC<IProps> = ({ id }) => {
   }, [isLoadingList])
 
   useEffect(() => {
-    dispatch(statsActions.getCurrentStats())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const poolDetails = useMemo(() => {
