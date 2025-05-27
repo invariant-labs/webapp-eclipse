@@ -532,7 +532,8 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 <TooltipHover
                   title={
                     bestFeeIndex !== -1 ? (
-                      <span className={classes.tooltipText}>
+                      <>
+                        {' '}
                         <p>
                           The price on the{' '}
                           <span className={classes.boldedText}>
@@ -572,7 +573,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                           </span>
                           pool, which is the most liquid market.
                         </p>
-                      </span>
+                      </>
                     ) : (
                       ''
                     )

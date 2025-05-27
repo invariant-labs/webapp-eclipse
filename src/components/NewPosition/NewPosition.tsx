@@ -1419,6 +1419,7 @@ export const NewPosition: React.FC<INewPosition> = ({
             suggestedPrice={suggestedPrice}
             wasRefreshed={wasRefreshed}
             setWasRefreshed={setWasRefreshed}
+            bestFeeIndex={bestFeeIndex}
           />
         )}
       </Grid>

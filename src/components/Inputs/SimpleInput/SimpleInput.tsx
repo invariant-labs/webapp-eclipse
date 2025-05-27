@@ -1,7 +1,8 @@
-import React, { CSSProperties, useRef } from 'react'
+import React, { CSSProperties, ReactNode, useRef } from 'react'
 import useStyles from './style'
 import { Input } from '@mui/material'
 import { Button } from '@common/Button/Button'
+import { TooltipHover } from '@common/TooltipHover/TooltipHover'
 
 interface IProps {
   setValue: (value: string) => void
@@ -14,6 +15,7 @@ interface IProps {
   onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>
   suggestedPrice: number
   formatterFunction: (value: string) => string
+  tooltipTitle?: ReactNode
 }
 
 export const SimpleInput: React.FC<IProps> = ({
@@ -26,7 +28,8 @@ export const SimpleInput: React.FC<IProps> = ({
   style,
   onBlur,
   suggestedPrice,
-  formatterFunction
+  formatterFunction,
+  tooltipTitle = ''
 }) => {
   const { classes, cx } = useStyles()
 
@@ -87,14 +90,16 @@ export const SimpleInput: React.FC<IProps> = ({
       }}
       endAdornment={
         suggestedPrice ? (
-          <Button
-            scheme='green'
-            height={40}
-            onClick={() => {
-              setValue(formatterFunction(suggestedPrice.toString()))
-            }}>
-            <p className={classes.suggestedPriceText}>Suggested price</p>
-          </Button>
+          <TooltipHover title={tooltipTitle}>
+            <Button
+              scheme='green'
+              height={40}
+              onClick={() => {
+                setValue(formatterFunction(suggestedPrice.toString()))
+              }}>
+              <p className={classes.suggestedPriceText}>Suggested price</p>
+            </Button>
+          </TooltipHover>
         ) : null
       }
     />
