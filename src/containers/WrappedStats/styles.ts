@@ -22,7 +22,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     flexWrap: 'nowrap',
     marginBottom: 24,
     flexDirection: 'row',
-
+    background: colors.invariant.component,
+    borderRadius: 24,
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column'
     }

@@ -4,7 +4,6 @@ import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
-    backgroundColor: colors.invariant.component,
     borderRadius: 24,
     padding: 24,
     boxSizing: 'border-box',

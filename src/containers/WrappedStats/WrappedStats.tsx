@@ -26,6 +26,8 @@ import { actions as snackbarActions } from '@store/reducers/snackbars'
 import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
+import { Separator } from '@common/Separator/Separator'
+import { colors } from '@static/theme'
 
 export const WrappedStats: React.FC = () => {
   const { classes } = useStyles()
@@ -125,6 +127,7 @@ export const WrappedStats: React.FC = () => {
               className={classes.plot}
               isLoading={isLoadingStats}
             />
+            <Separator color={colors.invariant.light} margin='24px 0' width={2} />
             <Liquidity
               liquidityVolume={tvl24h.value}
               liquidityPercent={tvl24h.change}
