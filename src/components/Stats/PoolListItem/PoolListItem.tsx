@@ -147,7 +147,7 @@ const PoolListItem: React.FC<IProps> = ({
         liquidity: liquidityX,
         isUnknown: isUnknownFrom
       }
-  console.log('test')
+
   const handleOpenPosition = () => {
     const tokenA = addressToTicker(network, tokenAData.address ?? '')
     const tokenB = addressToTicker(network, tokenBData.address ?? '')
@@ -163,7 +163,6 @@ const PoolListItem: React.FC<IProps> = ({
   }
 
   const handleOpenSwap = () => {
-    console.log
     navigate(
       ROUTES.getExchangeRoute(
         addressToTicker(network, tokenAData.address ?? ''),
