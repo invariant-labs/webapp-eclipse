@@ -1,4 +1,5 @@
 import {
+  Intervals,
   NetworkType,
   POSITIONS_PER_PAGE,
   WETH_CLOSE_POSITION_LAMPORTS_MAIN,
@@ -85,7 +86,7 @@ const PortfolioWrapper = () => {
   }
 
   useEffect(() => {
-    dispatch(actionsStats.getCurrentStats())
+    dispatch(actionsStats.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const handleLockPosition = (index: number) => {
