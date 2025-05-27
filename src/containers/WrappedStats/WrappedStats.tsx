@@ -133,7 +133,14 @@ export const WrappedStats: React.FC = () => {
               className={classes.plot}
               isLoading={isLoadingStats}
             />
-            {!isSm && <Separator color={colors.invariant.light} margin='24px 0' width={1} />}
+            {
+              <Separator
+                color={colors.invariant.light}
+                margin={isSm ? '0 24px' : '24px 0'}
+                width={1}
+                isHorizontal={isSm}
+              />
+            }
             <Liquidity
               liquidityVolume={tvl24h.value}
               liquidityPercent={tvl24h.change}
