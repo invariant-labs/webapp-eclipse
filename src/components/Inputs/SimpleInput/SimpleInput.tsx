@@ -90,7 +90,7 @@ export const SimpleInput: React.FC<IProps> = ({
       }}
       endAdornment={
         suggestedPrice ? (
-          <TooltipHover title={tooltipTitle}>
+          <TooltipHover title={tooltipTitle} placement='bottom'>
             <Button
               scheme='green'
               height={40}

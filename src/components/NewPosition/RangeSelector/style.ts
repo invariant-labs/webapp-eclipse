@@ -300,6 +300,11 @@ const useStyles = makeStyles()(theme => {
         textAlign: 'center'
       }
     },
+    suggestedPriceTooltipText: {
+      color: colors.invariant.text,
+      ...typography.caption2,
+      fontWeight: 200
+    },
     boldedText: {
       fontWeight: 800
     }

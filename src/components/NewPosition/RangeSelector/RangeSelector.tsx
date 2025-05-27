@@ -530,10 +530,10 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
             {showPriceWarning && !blocked && !isLoadingTicksOrTickmap && (
               <Box className={classes.priceWarningContainer}>
                 <TooltipHover
+                  placement='bottom'
                   title={
                     bestFeeIndex !== -1 ? (
-                      <>
-                        {' '}
+                      <span className={classes.suggestedPriceTooltipText}>
                         <p>
                           The price on the{' '}
                           <span className={classes.boldedText}>
@@ -573,7 +573,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                           </span>
                           pool, which is the most liquid market.
                         </p>
-                      </>
+                      </span>
                     ) : (
                       ''
                     )
