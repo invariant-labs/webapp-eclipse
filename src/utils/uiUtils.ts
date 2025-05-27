@@ -281,8 +281,8 @@ export const getLabelDate = (
     const endMonth = weekEnd.getMonth()
     const endMonthName = MONTH_NAMES[endMonth].slice(0, 3)
 
-    if (startMonth === endMonth) {
-      return `${formatDay(startDay)} ${startMonthName} - ${formatDay(endDay)} ${endMonthName}`
+    if (startMonth === endMonth && startDay === endDay) {
+      return `${formatDay(startDay)} ${startMonthName}`
     } else {
       return `${formatDay(startDay)} ${startMonthName} - ${formatDay(endDay)} ${endMonthName}`
     }
@@ -293,6 +293,9 @@ export const getLabelDate = (
       monthEnd.setTime(now.getTime())
       const startDay = 1
       const endDay = monthEnd.getDate()
+      if (startDay === endDay) {
+        return `${formatDay(startDay)} ${monthName}`
+      }
 
       return `${formatDay(startDay)} ${monthName} - ${formatDay(endDay)} ${monthName}`
     } else {
