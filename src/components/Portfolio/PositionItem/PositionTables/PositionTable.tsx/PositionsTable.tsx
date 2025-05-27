@@ -24,6 +24,7 @@ interface IPositionsTableProps {
   handleLockPosition: (index: number) => void
   handleClosePosition: (index: number) => void
   handleClaimFee: (index: number, isLocked: boolean) => void
+  createNewPosition: (element: IPositionItem) => void
   shouldDisable: boolean
 }
 
@@ -35,6 +36,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
   handleLockPosition,
   handleClosePosition,
   handleClaimFee,
+  createNewPosition,
   shouldDisable
 }) => {
   const { classes } = usePositionTableStyle({ isScrollHide: positions.length <= 5 || isLoading })
@@ -98,6 +100,7 @@ export const PositionsTable: React.FC<IPositionsTableProps> = ({
                   handleLockPosition={handleLockPosition}
                   handleClosePosition={handleClosePosition}
                   handleClaimFee={handleClaimFee}
+                  createNewPosition={() => createNewPosition(position)}
                 />
               </TableRow>
             ))}

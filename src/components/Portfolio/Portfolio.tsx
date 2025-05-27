@@ -18,7 +18,7 @@ import {
 } from '@mui/material'
 import { theme } from '@static/theme'
 import { NetworkType, OverviewSwitcher } from '@store/consts/static'
-import { ROUTES } from '@utils/utils'
+import { addressToTicker, initialXtoY, parseFeeToPathFee, ROUTES } from '@utils/utils'
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useStyles } from './style'
@@ -225,6 +225,21 @@ const Portfolio: React.FC<IProps> = ({
     })
   }, [currentData, selectedFilters])
 
+  const createNewPosition = (element: IPositionItem) => {
+    const address1 = addressToTicker(currentNetwork, element.tokenXName)
+    const address2 = addressToTicker(currentNetwork, element.poolData.tokenY.toString())
+    const parsedFee = parseFeeToPathFee(element.poolData.fee)
+    const isXtoY = initialXtoY(
+      element.poolData.tokenX.toString(),
+      element.poolData.tokenY.toString()
+    )
+
+    const tokenA = isXtoY ? address1 : address2
+    const tokenB = isXtoY ? address2 : address1
+
+    navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
+  }
+
   const [allowPropagation, setAllowPropagation] = useState(true)
   const renderContent = () => {
     if (showNoConnected) {
@@ -242,6 +257,7 @@ const Portfolio: React.FC<IProps> = ({
           handleLockPosition={handleLockPosition}
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
+          createNewPosition={createNewPosition}
         />
       )
     } else if (isLg && loading) {
@@ -282,6 +298,10 @@ const Portfolio: React.FC<IProps> = ({
           handleLockPosition={handleLockPosition}
           handleClosePosition={handleClosePosition}
           handleClaimFee={handleClaimFee}
+          createNewPosition={() => {
+            console.log(element)
+            createNewPosition(element)
+          }}
         />
       </Grid>
     ))

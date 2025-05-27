@@ -10,6 +10,7 @@ export interface IPositionViewActionPopover {
   claimFee: () => void
   handleClose: () => void
   onLockPosition: () => void
+  createPosition: () => void
   isLocked: boolean
   shouldDisable: boolean
 }
@@ -22,6 +23,7 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
   claimFee,
   closePosition,
   onLockPosition,
+  createPosition,
   unclaimedFeesInUSD,
   shouldDisable
 }) => {
@@ -74,6 +76,9 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             handleClose()
           }}>
           <Typography className={classes.name}>Lock position</Typography>
+        </Button>
+        <Button className={cx(classes.listItem)} onClick={createPosition}>
+          <Typography className={classes.name}>Create position</Typography>
         </Button>
       </Grid>
     </Popover>
