@@ -30,7 +30,7 @@ import { Separator } from '@common/Separator/Separator'
 import { colors } from '@static/theme'
 
 export const WrappedStats: React.FC = () => {
-  const { classes } = useStyles()
+  const { classes, cx } = useStyles()
 
   const dispatch = useDispatch()
 
@@ -119,7 +119,11 @@ export const WrappedStats: React.FC = () => {
       ) : (
         <>
           <Typography className={classes.subheader}>Overview</Typography>
-          <Grid container className={classes.plotsRow}>
+          <Grid
+            container
+            className={cx(classes.plotsRow, {
+              [classes.loadingOverlay]: isLoadingStats
+            })}>
             <Volume
               volume={volume24h.value}
               percentVolume={volume24h.change}

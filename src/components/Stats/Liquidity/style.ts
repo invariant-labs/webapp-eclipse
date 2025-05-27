@@ -1,4 +1,3 @@
-import { alpha } from '@mui/material'
 import { typography, colors, theme } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
@@ -105,18 +104,5 @@ export const useStyles = makeStyles()(() => ({
     ...typography.caption1,
     color: colors.invariant.green,
     textAlign: 'center'
-  },
-  loadingOverlay: {
-    position: 'relative',
-    '&::after': {
-      content: '""',
-      position: 'absolute',
-      inset: 0,
-      backgroundColor: alpha(colors.invariant.newDark, 0.7),
-      backdropFilter: 'blur(4px)',
-      zIndex: 1,
-      pointerEvents: 'none',
-      borderRadius: '24px'
-    }
   }
 }))

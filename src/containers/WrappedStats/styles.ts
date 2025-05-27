@@ -1,4 +1,4 @@
-import { Theme } from '@mui/material'
+import { alpha, Theme } from '@mui/material'
 import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
@@ -77,6 +77,21 @@ export const useStyles = makeStyles()((theme: Theme) => ({
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column',
       alignItems: 'flex-start'
+    }
+  },
+  loadingOverlay: {
+    position: 'relative',
+    width: '100%',
+    height: '100%',
+    '&::after': {
+      content: '""',
+      position: 'absolute',
+      inset: 0,
+      backgroundColor: alpha(colors.invariant.newDark, 0.7),
+      backdropFilter: 'blur(4px)',
+      zIndex: 1,
+      pointerEvents: 'none',
+      borderRadius: '24px'
     }
   }
 }))

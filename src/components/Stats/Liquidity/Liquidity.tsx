@@ -34,7 +34,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   const percentage = isLoading ? Math.random() * 200 - 100 : liquidityPercent
 
   return (
-    <Grid className={cx(classes.container, className, { [classes.loadingOverlay]: isLoading })}>
+    <Grid className={cx(classes.container, className)}>
       <Grid className={classes.liquidityContainer}>
         <Typography className={classes.liquidityHeader}>Liquidity</Typography>
         <Grid className={classes.volumePercentHeader}>
