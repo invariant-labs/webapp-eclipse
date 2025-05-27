@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 import useStyles from './styles'
-import { Grid, Typography } from '@mui/material'
+import { Grid, Typography, useMediaQuery } from '@mui/material'
 import { EmptyPlaceholder } from '@common/EmptyPlaceholder/EmptyPlaceholder'
 import {
   fees24,
@@ -27,10 +27,12 @@ import { VariantType } from 'notistack'
 import { getPromotedPools } from '@store/selectors/leaderboard'
 import { FilterSearch, ISearchToken } from '@common/FilterSearch/FilterSearch'
 import { Separator } from '@common/Separator/Separator'
-import { colors } from '@static/theme'
+import { colors, theme } from '@static/theme'
 
 export const WrappedStats: React.FC = () => {
   const { classes, cx } = useStyles()
+
+  const isSm = useMediaQuery(theme.breakpoints.down('sm'))
 
   const dispatch = useDispatch()
 
@@ -131,7 +133,7 @@ export const WrappedStats: React.FC = () => {
               className={classes.plot}
               isLoading={isLoadingStats}
             />
-            <Separator color={colors.invariant.light} margin='24px 0' width={2} />
+            {!isSm && <Separator color={colors.invariant.light} margin='24px 0' width={1} />}
             <Liquidity
               liquidityVolume={tvl24h.value}
               liquidityPercent={tvl24h.change}

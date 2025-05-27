@@ -39,17 +39,8 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   plot: {
     width: 605,
 
-    '&:first-child': {
-      marginRight: 24
-    },
-
     [theme.breakpoints.down('sm')]: {
-      width: '100%',
-
-      '&:first-child': {
-        marginRight: 0,
-        marginBottom: 24
-      }
+      width: '100%'
     }
   },
   searchBar: {
