@@ -319,6 +319,7 @@ const DepoSitOptionsModal: React.FC<Props> = ({
           vertical: isSm ? 'top' : 'center',
           horizontal: 'center'
         }}
+        anchorEl={document.body}
         transformOrigin={{
           vertical: isSm ? 'top' : 'center',
           horizontal: 'center'
