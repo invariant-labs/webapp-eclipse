@@ -34,7 +34,10 @@ const Intervals: React.FC<IntervalsProps> = ({ interval, setInterval, marginRigh
   }
 
   return (
-    <Box className={classes.container} style={{ marginRight: marginRight ?? 0 }}>
+    <Box
+      className={classes.container}
+      style={{ marginRight: marginRight ?? 0 }}
+      width={'fit-content'}>
       <Button
         onClick={() => handleIntervalChange(IntervalsKeys.Daily)}
         scheme='normal'

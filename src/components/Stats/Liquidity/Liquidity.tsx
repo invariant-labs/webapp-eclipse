@@ -15,15 +15,12 @@ import {
 } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
-import Intervals from '../Intervals/Intervals'
-
 interface LiquidityInterface {
   liquidityVolume: number | null
   data: TimeData[]
   className?: string
   isLoading: boolean
   interval: IntervalsKeys
-  setInterval: (interval: IntervalsKeys) => void
 }
 
 const Liquidity: React.FC<LiquidityInterface> = ({
@@ -31,8 +28,7 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   data,
   className,
   isLoading,
-  interval,
-  setInterval
+  interval
 }) => {
   const { classes, cx } = useStyles()
 
@@ -50,15 +46,10 @@ const Liquidity: React.FC<LiquidityInterface> = ({
   )
 
   return (
-    <Grid className={cx(classes.container, className, { [classes.loadingOverlay]: isLoading })}>
+    <Grid className={cx(classes.container, className)}>
       <Grid className={classes.liquidityContainer}>
         <Grid container justifyContent={'space-between'} alignItems='center'>
           <Typography className={classes.liquidityHeader}>Liquidity</Typography>
-          <Intervals
-            interval={interval}
-            setInterval={setInterval}
-            marginRight={isMobile ? 8 : 24}
-          />
         </Grid>
         <Grid className={classes.volumePercentHeader}>
           <Typography className={classes.volumeLiquidityHeader}>
