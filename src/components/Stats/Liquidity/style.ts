@@ -5,12 +5,7 @@ export const useStyles = makeStyles()(() => ({
   container: {
     color: 'white',
     borderRadius: 24,
-    paddingBlock: 24,
-    paddingLeft: 24,
-    boxSizing: 'border-box',
-    [theme.breakpoints.down('sm')]: {
-      paddingLeft: 8
-    }
+    boxSizing: 'border-box'
   },
   liquidityContainer: {
     dispaly: 'flex',

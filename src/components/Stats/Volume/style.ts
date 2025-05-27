@@ -1,14 +1,10 @@
-import { typography, colors, theme } from '@static/theme'
+import { typography, colors } from '@static/theme'
 import { makeStyles } from 'tss-react/mui'
 
 export const useStyles = makeStyles()(() => ({
   container: {
     borderRadius: 24,
-    padding: 24,
-    boxSizing: 'border-box',
-    [theme.breakpoints.down('sm')]: {
-      padding: '24px 8px'
-    }
+    boxSizing: 'border-box'
   },
   volumeContainer: {
     display: 'flex',

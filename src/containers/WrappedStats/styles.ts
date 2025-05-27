@@ -21,9 +21,10 @@ export const useStyles = makeStyles()((theme: Theme) => ({
   plotsRow: {
     flexWrap: 'nowrap',
     marginBottom: 24,
-    flexDirection: 'row',
+    flexDirection: 'column',
     background: colors.invariant.component,
     borderRadius: 24,
+    padding: 24,
     [theme.breakpoints.down('sm')]: {
       flexDirection: 'column'
     }
