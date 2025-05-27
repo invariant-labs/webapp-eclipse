@@ -7,6 +7,7 @@ import {
   DEFAULT_AUTOSWAP_MAX_SLIPPAGE_TOLERANCE_SWAP,
   DEFAULT_AUTOSWAP_MIN_UTILIZATION,
   DEFAULT_NEW_POSITION_SLIPPAGE,
+  Intervals,
   LEADERBOARD_DECIMAL,
   autoSwapPools,
   commonTokensForNetworks
@@ -773,7 +774,7 @@ export const NewPositionWrapper: React.FC<IProps> = ({
   const isLoadingStats = useSelector(isLoading)
 
   useEffect(() => {
-    dispatch(statsActions.getCurrentStats())
+    dispatch(statsActions.getCurrentIntervalStats({ interval: Intervals.Daily }))
   }, [])
 
   const { feeTiersWithTvl, totalTvl } = useMemo(() => {

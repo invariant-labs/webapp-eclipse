@@ -14,7 +14,6 @@ import {
   getLabelDate
 } from '@utils/uiUtils'
 import useIsMobile from '@store/hooks/isMobile'
-import Intervals from '../Intervals/Intervals'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 interface StatsInterface {
@@ -23,17 +22,9 @@ interface StatsInterface {
   className?: string
   isLoading: boolean
   interval: IntervalsKeys
-  setInterval: (interval: IntervalsKeys) => void
 }
 
-const Volume: React.FC<StatsInterface> = ({
-  volume,
-  data,
-  className,
-  isLoading,
-  interval,
-  setInterval
-}) => {
+const Volume: React.FC<StatsInterface> = ({ volume, data, className, isLoading, interval }) => {
   const { classes, cx } = useStyles()
 
   volume = volume ?? 0
@@ -61,14 +52,10 @@ const Volume: React.FC<StatsInterface> = ({
   }
 
   return (
-    <Grid
-      className={cx(classes.container, className, {
-        [classes.loadingOverlay]: isLoading
-      })}>
+    <Grid className={cx(classes.container, className)}>
       <Box className={classes.volumeContainer}>
         <Grid container justifyContent={'space-between'} alignItems='center'>
           <Typography className={classes.volumeHeader}>Volume</Typography>
-          <Intervals interval={interval} setInterval={setInterval} />
         </Grid>
         <div className={classes.volumePercentContainer}>
           <Typography className={classes.volumePercentHeader}>
