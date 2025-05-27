@@ -108,7 +108,6 @@ const PoolListItem: React.FC<IProps> = ({
   const isMd = useMediaQuery(theme.breakpoints.down(1160))
   const lockIconRef = useRef<HTMLButtonElement>(null)
   const airdropIconRef = useRef<HTMLDivElement>(null)
-  const [isLockPopoverOpen, setLockPopoverOpen] = useState(false)
   const [isPromotedPoolPopoverOpen, setIsPromotedPoolPopoverOpen] = useState(false)
   const intervalSuffix = mapIntervalToString(interval)
 
@@ -202,13 +201,7 @@ const PoolListItem: React.FC<IProps> = ({
         copyAddressHandler('Failed to copy Market ID to Clipboard', 'error')
       })
   }
-  const handlePointerEnter = () => {
-    setLockPopoverOpen(true)
-  }
 
-  const handlePointerLeave = () => {
-    setLockPopoverOpen(false)
-  }
   useEffect(() => {
     if (!isSmd) {
       setShowInfo(false)
@@ -218,26 +211,15 @@ const PoolListItem: React.FC<IProps> = ({
   const { convertedApy, convertedApr } = calculateAPYAndAPR(apy, poolAddress, volume, fee, TVL)
   const ActionsButtons = (
     <Box className={classes.action}>
-      <button
-        className={classes.actionButton}
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation()
-          handleOpenSwap
-        }}>
+      <button className={classes.actionButton} onClick={handleOpenSwap}>
         <img width={28} src={horizontalSwapIcon} alt={'Exchange'} />
       </button>
-      <button
-        className={classes.actionButton}
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation()
-          handleOpenPosition
-        }}>
+      <button className={classes.actionButton} onClick={handleOpenPosition}>
         <img width={28} src={plusIcon} alt={'Open'} />
       </button>
       <button
         className={classes.actionButton}
-        onClick={(e: React.MouseEvent) => {
-          e.stopPropagation()
+        onClick={() => {
           window.open(
             `https://eclipsescan.xyz/account/${poolAddress}${networkUrl}`,
             '_blank',
@@ -247,29 +229,25 @@ const PoolListItem: React.FC<IProps> = ({
         <img width={28} src={newTabBtnIcon} alt={'Exchange'} />
       </button>
       {isLocked && (
-        <>
+        <TooltipHover
+          title={
+            <LockStatsPopover
+              anchorEl={lockIconRef.current}
+              lockedX={tokenAData.locked}
+              lockedY={tokenBData.locked}
+              symbolX={shortenAddress(tokenAData.symbol ?? '')}
+              symbolY={shortenAddress(tokenBData.symbol ?? '')}
+              liquidityX={tokenAData.liquidity}
+              liquidityY={tokenBData.liquidity}
+            />
+          }>
           <button
             onClick={(e: React.MouseEvent) => e.stopPropagation()}
             className={classes.actionButton}
-            ref={lockIconRef}
-            onPointerLeave={handlePointerLeave}
-            onPointerEnter={handlePointerEnter}>
+            ref={lockIconRef}>
             <img width={28} src={lockIcon} alt={'Lock info'} />
           </button>
-          <LockStatsPopover
-            anchorEl={lockIconRef.current}
-            open={isLockPopoverOpen}
-            lockedX={tokenAData.locked}
-            lockedY={tokenBData.locked}
-            symbolX={shortenAddress(tokenAData.symbol ?? '')}
-            symbolY={shortenAddress(tokenBData.symbol ?? '')}
-            liquidityX={tokenAData.liquidity}
-            liquidityY={tokenBData.liquidity}
-            onClose={() => {
-              setLockPopoverOpen(false)
-            }}
-          />
-        </>
+        </TooltipHover>
       )}
     </Box>
   )
@@ -376,28 +354,22 @@ const PoolListItem: React.FC<IProps> = ({
           {!isMd && (
             <Box className={classes.action}>
               {isLocked && (
-                <>
-                  <button
-                    className={classes.actionButton}
-                    ref={lockIconRef}
-                    onPointerLeave={handlePointerLeave}
-                    onPointerEnter={handlePointerEnter}>
+                <TooltipHover
+                  title={
+                    <LockStatsPopover
+                      anchorEl={lockIconRef.current}
+                      lockedX={tokenAData.locked}
+                      lockedY={tokenBData.locked}
+                      symbolX={shortenAddress(tokenAData.symbol ?? '')}
+                      symbolY={shortenAddress(tokenBData.symbol ?? '')}
+                      liquidityX={tokenAData.liquidity}
+                      liquidityY={tokenBData.liquidity}
+                    />
+                  }>
+                  <button className={classes.actionButton} ref={lockIconRef}>
                     <img width={32} height={32} src={lockIcon} alt={'Lock info'} />
                   </button>
-                  <LockStatsPopover
-                    anchorEl={lockIconRef.current}
-                    open={isLockPopoverOpen}
-                    lockedX={tokenAData.locked}
-                    lockedY={tokenBData.locked}
-                    symbolX={shortenAddress(tokenAData.symbol ?? '')}
-                    symbolY={shortenAddress(tokenBData.symbol ?? '')}
-                    liquidityX={tokenAData.liquidity}
-                    liquidityY={tokenBData.liquidity}
-                    onClose={() => {
-                      setLockPopoverOpen(false)
-                    }}
-                  />
-                </>
+                </TooltipHover>
               )}
 
               <TooltipHover title='Exchange'>
