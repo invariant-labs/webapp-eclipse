@@ -17,7 +17,6 @@ import { Intervals as IntervalsKeys } from '@store/consts/static'
 import Intervals from '../Intervals/Intervals'
 
 interface LiquidityInterface {
-  liquidityPercent: number | null
   liquidityVolume: number | null
   data: TimeData[]
   className?: string
@@ -27,7 +26,6 @@ interface LiquidityInterface {
 }
 
 const Liquidity: React.FC<LiquidityInterface> = ({
-  liquidityPercent,
   liquidityVolume,
   data,
   className,
@@ -37,12 +35,9 @@ const Liquidity: React.FC<LiquidityInterface> = ({
 }) => {
   const { classes, cx } = useStyles()
 
-  liquidityPercent = liquidityPercent ?? 0
   liquidityVolume = liquidityVolume ?? 0
 
-  const isLower = liquidityPercent < 0
   const isMobile = useIsMobile()
-  const percentage = isLoading ? Math.random() * 200 - 100 : liquidityPercent
 
   return (
     <Grid className={cx(classes.container, className, { [classes.loadingOverlay]: isLoading })}>
@@ -59,34 +54,12 @@ const Liquidity: React.FC<LiquidityInterface> = ({
           <Typography className={classes.volumeLiquidityHeader}>
             ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : liquidityVolume)}
           </Typography>
-          <Grid className={classes.volumeStatusContainer}>
-            <Grid
-              className={cx(
-                classes.volumeStatusColor,
-                isLower ? classes.backgroundVolumeLow : classes.backgroundVolumeUp
-              )}>
-              <Typography
-                component='p'
-                className={cx(
-                  classes.volumeStatusHeader,
-                  isLower ? classes.volumeLow : classes.volumeUp
-                )}>
-                {percentage < 0 ? percentage.toFixed(2) : `+${percentage.toFixed(2)}`}%
-              </Typography>
-            </Grid>
-          </Grid>
         </Grid>
       </Grid>
-      <Grid
-        className={classes.barContainer}
-        style={{
-          transform: isLoading ? 'scaleY(0)' : 'scaleY(1)',
-          transformOrigin: 'bottom',
-          transition: 'transform 600ms ease-out'
-        }}>
+      <Grid className={classes.barContainer}>
         <ResponsiveLine
           key={`${interval}-${isLoading}`}
-          // animate={false}
+          animate={false}
           data={[
             {
               id: 'liquidity',

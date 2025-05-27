@@ -41,6 +41,9 @@ export interface IStatsStore {
   volume24: Value24H
   tvl24: Value24H
   fees24: Value24H
+  volume: Value24H
+  tvl: Value24H
+  fees: Value24H
   tokensData: TokenStatsData[]
   poolsData: PoolStatsData[]
   isLoading: boolean
@@ -60,6 +63,18 @@ export const defaultState: IStatsStore = {
     change: 0
   },
   fees24: {
+    value: 0,
+    change: 0
+  },
+  volume: {
+    value: 0,
+    change: 0
+  },
+  tvl: {
+    value: 0,
+    change: 0
+  },
+  fees: {
     value: 0,
     change: 0
   },

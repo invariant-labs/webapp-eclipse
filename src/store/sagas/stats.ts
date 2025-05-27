@@ -66,12 +66,7 @@ export function* getIntervalStats(action: PayloadAction<{ interval: Intervals }>
     )
 
     const parsedFullSnap = {
-      // @ts-expect-error FIXME: Interface missmatch.
-      volume24: fullSnap.volume,
-      // @ts-expect-error FIXME: Interface missmatch.
-      tvl24: fullSnap.tvl,
-      //@ts-expect-error FIXME: Interface missmatch.
-      fees24: fullSnap.fees,
+      ...fullSnap,
       volumePlot: fullSnap.volumePlot.reverse(),
       liquidityPlot: fullSnap.liquidityPlot.reverse(),
       tokensData: fullSnap.tokensData.map(token => ({

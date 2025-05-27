@@ -11,6 +11,8 @@ import {
   poolsStatsWithTokensDetails,
   tokensStatsWithTokensDetails,
   tvl24,
+  volume,
+  tvl,
   volume24,
   volumePlot
 } from '@store/selectors/stats'
@@ -36,6 +38,8 @@ export const WrappedStats: React.FC = () => {
 
   const poolsList = useSelector(poolsStatsWithTokensDetails)
   const tokensList = useSelector(tokensStatsWithTokensDetails)
+  const volumeInterval = useSelector(volume)
+  const tvlInterval = useSelector(tvl)
   const volume24h = useSelector(volume24)
   const tvl24h = useSelector(tvl24)
   const fees24h = useSelector(fees24)
@@ -130,8 +134,7 @@ export const WrappedStats: React.FC = () => {
           <Typography className={classes.subheader}>Overview</Typography>
           <Grid container className={classes.plotsRow}>
             <Volume
-              volume={volume24h.value}
-              percentVolume={volume24h.change}
+              volume={volumeInterval.value}
               data={volumePlotData}
               className={classes.plot}
               isLoading={isLoadingStats}
@@ -139,8 +142,7 @@ export const WrappedStats: React.FC = () => {
               setInterval={setInterval}
             />
             <Liquidity
-              liquidityVolume={tvl24h.value}
-              liquidityPercent={tvl24h.change}
+              liquidityVolume={tvlInterval.value}
               data={liquidityPlotData}
               className={classes.plot}
               isLoading={isLoadingStats}
@@ -157,7 +159,7 @@ export const WrappedStats: React.FC = () => {
               feesVolume={fees24h.value}
               percentFees={fees24h.change}
               isLoading={isLoadingStats}
-              interval={interval}
+              interval={IntervalsKeys.Daily}
             />
           </Grid>
           <Grid className={classes.rowContainer}>

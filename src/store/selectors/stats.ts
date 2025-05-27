@@ -15,6 +15,9 @@ export const {
   tokensData,
   poolsData,
   isLoading,
+  volume,
+  fees,
+  tvl,
   lastTimestamp,
   lastInterval
 } = keySelectors(store, [
@@ -26,6 +29,9 @@ export const {
   'tokensData',
   'poolsData',
   'isLoading',
+  'volume',
+  'fees',
+  'tvl',
   'lastTimestamp',
   'lastInterval'
 ])

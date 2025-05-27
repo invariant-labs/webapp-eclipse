@@ -13,7 +13,6 @@ import Intervals from '../Intervals/Intervals'
 import { Intervals as IntervalsKeys } from '@store/consts/static'
 
 interface StatsInterface {
-  percentVolume: number | null
   volume: number | null
   data: TimeData[]
   className?: string
@@ -23,7 +22,6 @@ interface StatsInterface {
 }
 
 const Volume: React.FC<StatsInterface> = ({
-  percentVolume,
   volume,
   data,
   className,
@@ -33,7 +31,6 @@ const Volume: React.FC<StatsInterface> = ({
 }) => {
   const { classes, cx } = useStyles()
 
-  percentVolume = percentVolume ?? 0
   volume = volume ?? 0
 
   const isXsDown = useMediaQuery(theme.breakpoints.down('xs'))
@@ -49,9 +46,6 @@ const Volume: React.FC<StatsInterface> = ({
     grid: { line: { stroke: colors.invariant.light } }
   }
 
-  const isLower = percentVolume < 0
-  const percentage = isLoading ? Math.random() * 200 - 100 : percentVolume
-
   return (
     <Grid
       className={cx(classes.container, className, {
@@ -66,35 +60,13 @@ const Volume: React.FC<StatsInterface> = ({
           <Typography className={classes.volumePercentHeader}>
             ${formatNumberWithSuffix(isLoading ? Math.random() * 10000 : volume)}
           </Typography>
-          <Box className={classes.volumeStatusContainer}>
-            <Box
-              className={cx(
-                classes.volumeStatusColor,
-                isLower ? classes.backgroundVolumeLow : classes.backgroundVolumeUp
-              )}>
-              <Typography
-                component='p'
-                className={cx(
-                  classes.volumeStatusHeader,
-                  isLower ? classes.volumeLow : classes.volumeUp
-                )}>
-                {percentage < 0 ? percentage.toFixed(2) : `+${percentage.toFixed(2)}`}%
-              </Typography>
-            </Box>
-          </Box>
         </div>
       </Box>
-      <div
-        className={classes.barContainer}
-        style={{
-          transform: isLoading ? 'scaleY(0)' : 'scaleY(1)',
-          transformOrigin: 'bottom',
-          transition: 'transform 600ms ease-out'
-        }}>
+      <div className={classes.barContainer}>
         <ResponsiveBar
           layout='vertical'
           key={`${interval}-${isLoading}`}
-          // animate={false}
+          animate={false}
           margin={{ top: 30, bottom: 30, left: 30, right: 4 }}
           data={data as Array<{ timestamp: number; value: number }>}
           keys={['value']}
