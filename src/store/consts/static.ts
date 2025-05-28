@@ -483,7 +483,7 @@ export const KYSOL_MAIN: Token = {
 export const TUSD_MAIN: Token = {
   tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tUSD',
-  address: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ'),
+  address: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R'),
   decimals: 6,
   name: 'Turbo USD',
   logoURI:
@@ -597,11 +597,11 @@ export const autoSwapPools = [
   // {
   //   pair: {
   //     tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
-  //     tokenY: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ')
+  //     tokenY: new PublicKey('27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R')
   //   },
   //   swapPool: {
-  //     address: new PublicKey('Hz5PHqUVPAQKHAV5NSB1JdyGb36qz2c25qv2wAUWpS89'),
-  //     feeIndex: 1
+  //     address: new PublicKey('1Zxv7bYYzMuK8eey85ZSowa24S8B7QNfDx3GQpKQ4Bf'),
+  //     feeIndex: 0
   //   }
   // }
 ]
@@ -634,7 +634,7 @@ export const promotedTiers = [
   {
     tokenX: USDC_MAIN.address,
     tokenY: TUSD_MAIN.address,
-    index: 1
+    index: 0
   }
 ]
 
@@ -908,9 +908,9 @@ export const getPopularPools = (network: NetworkType) => {
           fee: '0.01'
         },
         {
-          tokenX: 'GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ',
+          tokenX: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R',
           tokenY: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          fee: '0.02'
+          fee: '0.01'
         }
       ]
     default:
