@@ -35,6 +35,7 @@ import { PositionItemMobile } from './PositionItem/PositionMobileCard/PositionIt
 import { refreshIcon } from '@static/icons'
 import { PositionListSwitcher } from './PositionListSwitcher/PositionListSwitcher'
 import { LiquidityPools } from '@store/reducers/positions'
+import { unblurContent } from '@utils/uiUtils'
 
 interface IProps {
   initialPage: number
@@ -236,6 +237,8 @@ const Portfolio: React.FC<IProps> = ({
 
     const tokenA = isXtoY ? address1 : address2
     const tokenB = isXtoY ? address2 : address1
+
+    unblurContent()
 
     navigate(ROUTES.getNewPositionRoute(tokenA, tokenB, parsedFee))
   }
