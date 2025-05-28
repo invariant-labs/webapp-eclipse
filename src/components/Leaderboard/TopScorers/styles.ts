@@ -10,7 +10,14 @@ const useStyles = makeStyles()(() => {
       alignItems: 'center',
       flexDirection: 'row',
       gap: 24,
-      [theme.breakpoints.down('lg')]: {
+      [theme.breakpoints.down('md')]: {
+        flexDirection: 'column'
+      }
+    },
+    innerSectionContent: {
+      display: 'flex',
+      gap: 24,
+      [theme.breakpoints.down('sm')]: {
         flexDirection: 'column'
       }
     },
@@ -18,7 +25,7 @@ const useStyles = makeStyles()(() => {
       ...typography.heading1,
       color: colors.invariant.text,
       [theme.breakpoints.down('lg')]: {
-        ...typography.heading2
+        ...typography.heading3
       }
     },
     headerWrapper: {
@@ -26,7 +33,7 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'center',
       alignItems: 'center',
       flexDirection: 'column',
-      width: '100%',
+      width: 'fit-content',
       textWrap: 'nowrap'
     },
     headerSmallText: {
@@ -43,7 +50,7 @@ const useStyles = makeStyles()(() => {
       marginTop: '24px'
     },
     topScorersItem: {
-      width: '100%',
+      width: 288,
       display: 'flex',
       alignItems: 'center',
       flexDirection: 'column',
@@ -55,12 +62,12 @@ const useStyles = makeStyles()(() => {
       justifyContent: 'center',
       gap: 8,
       borderRadius: 12,
-      width: 267,
+      width: 248,
       border: '2px solid #EF84F580',
       paddingTop: 12,
       paddingBottom: 12,
-      paddingLeft: 24,
-      paddingRight: 24,
+      paddingLeft: 18,
+      paddingRight: 18,
       background: colors.invariant.component,
       [theme.breakpoints.down('sm')]: {
         boxSizing: 'border-box',
