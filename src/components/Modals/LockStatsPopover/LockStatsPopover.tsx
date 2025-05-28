@@ -1,12 +1,11 @@
 import useStyles from './style'
-import { Popover, Typography, LinearProgress, Box, useMediaQuery } from '@mui/material'
+import { Typography, LinearProgress, Box, useMediaQuery } from '@mui/material'
 import { ResponsivePie } from '@nivo/pie'
 import { colors, theme, typography } from '@static/theme'
 import { formatNumberWithSuffix } from '@utils/utils'
 import { useState, useEffect, useMemo } from 'react'
 
 export interface ILockStatsPopover {
-  open: boolean
   lockedX: number
   lockedY: number
   liquidityX: number
@@ -14,12 +13,9 @@ export interface ILockStatsPopover {
   symbolX: string
   symbolY: string
   anchorEl: HTMLElement | null
-  onClose: () => void
 }
 
 export const LockStatsPopover = ({
-  open,
-  onClose,
   anchorEl,
   lockedX,
   lockedY,
@@ -92,7 +88,7 @@ export const LockStatsPopover = ({
   }, [percentagesAndValues, symbolX, symbolY])
 
   useEffect(() => {
-    if (open && !animationTriggered) {
+    if (!animationTriggered) {
       const ANIM_TIME = 500
 
       const timer = setTimeout(() => {
@@ -101,7 +97,7 @@ export const LockStatsPopover = ({
 
       return () => clearTimeout(timer)
     }
-  }, [open])
+  }, [])
 
   if (!anchorEl) return null
 
@@ -118,186 +114,161 @@ export const LockStatsPopover = ({
   }
 
   return (
-    <Popover
-      open={open}
-      anchorEl={anchorEl}
-      classes={{
-        paper: classes.paper,
-        root: classes.popover
-      }}
-      onClose={onClose}
-      anchorOrigin={{
-        vertical: 'bottom',
-        horizontal: 'center'
-      }}
-      disableRestoreFocus
-      slotProps={{
-        paper: {
-          onMouseLeave: onClose
-        }
-      }}
-      transformOrigin={{
-        vertical: 'top',
-        horizontal: 'center'
-      }}
-      marginThreshold={16}>
-      <div className={classes.backgroundContainer}>
-        <div className={classes.statsContainer}>
-          <div className={classes.leftWrapper}>
-            <div className={classes.leftInnerWrapper}>
-              <Typography className={classes.chartTitle}>Lock Liquidity Distribution</Typography>
+    <div className={classes.backgroundContainer}>
+      <div className={classes.statsContainer}>
+        <div className={classes.leftWrapper}>
+          <div className={classes.leftInnerWrapper}>
+            <Typography className={classes.chartTitle}>Lock Liquidity Distribution</Typography>
 
-              <Typography
-                className={classes.description}
-                style={{
-                  flex: 1,
-                  display: 'flex'
-                }}>
-                Percentage breakdown of total locked liquidity between token pair in the pool.
-              </Typography>
-              <div style={{ width: 300, height: 130, overflow: 'visible' }}>
-                <ResponsivePie
-                  data={data.filter(d => d.value > 0)}
-                  colors={[colors.invariant.pink, colors.invariant.green]}
-                  margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
-                  startAngle={-45}
-                  endAngle={315}
-                  borderWidth={1}
-                  borderColor='white'
-                  enableArcLabels={false}
-                  enableArcLinkLabels={true}
-                  arcLinkLabelsTextColor='#ffffff'
-                  arcLinkLabelsThickness={1}
-                  arcLinkLabelsColor={{ from: 'color' }}
-                  arcLinkLabelsOffset={3}
-                  arcLinkLabelsDiagonalLength={0}
-                  arcLinkLabelsStraightLength={0}
-                  arcLinkLabelsSkipAngle={1}
-                  arcLinkLabel={d => `${d.label} (${d.value}%)`}
-                  theme={{
-                    labels: {
-                      text: {
-                        fontFamily: 'Mukta',
-                        ...typography.body2
-                      }
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-
-          <Box className={classes.separator} />
-
-          <div className={classes.rightWrapper}>
             <Typography
-              className={classes.chartTitle}
-              style={{ width: 'fit-content', alignSelf: 'center' }}>
-              Positions Liquidity Share
+              className={classes.description}
+              style={{
+                flex: 1,
+                display: 'flex'
+              }}>
+              Percentage breakdown of total locked liquidity between token pair in the pool.
             </Typography>
-            <Typography className={classes.description}>
-              Represents the ratio of locked liquidity to the total TVL in the pool.
-            </Typography>
-            <div className={classes.chartsWrapper}>
-              <div className={classes.chartWrapper}>
-                <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
-                  {symbolX}:{' '}
-                  <span style={{ color: colors.invariant.pink }}>
-                    ${formatNumberWithSuffix(percentagesAndValues.xStandardVal)}{' '}
-                  </span>
-                  of
-                  <span style={{ color: colors.invariant.pink }}>
-                    {' '}
-                    ${formatNumberWithSuffix(liquidityX)}
-                  </span>{' '}
-                  <span style={{ color: colors.invariant.textGrey }}>
-                    (
-                    {percentagesAndValues.xStandard >= '0.01' ||
-                    percentagesAndValues.xLocked === '0.0'
-                      ? +percentagesAndValues.xStandard
-                      : '<0.01'}
-                    %)
-                  </span>
-                </Typography>
-                {!isSm && (
-                  <Box className={classes.barWrapper}>
-                    <LinearProgress
-                      variant='determinate'
-                      value={animationTriggered ? +percentagesAndValues.xStandard : 0}
-                      sx={{
-                        ...progressStyles,
-                        width: '100%',
-                        ml: 0,
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: colors.invariant.pink
-                        }
-                      }}
-                    />
-                    <Box
-                      className={classes.progress}
-                      sx={{
-                        width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%',
-                        boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
-                      }}
-                    />
-                  </Box>
-                )}
-              </div>
-
-              <div className={classes.chartWrapper}>
-                <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
-                  {symbolY}:{' '}
-                  <span style={{ color: colors.invariant.green }}>
-                    ${formatNumberWithSuffix(percentagesAndValues.yStandardVal)}{' '}
-                  </span>
-                  of{' '}
-                  <span style={{ color: colors.invariant.green }}>
-                    ${formatNumberWithSuffix(liquidityY)}
-                  </span>{' '}
-                  <span style={{ color: colors.invariant.textGrey }}>
-                    (
-                    {percentagesAndValues.yStandard >= '0.01' ||
-                    percentagesAndValues.yLocked == '0.0'
-                      ? +percentagesAndValues.yStandard
-                      : '<0.01'}
-                    %)
-                  </span>
-                </Typography>
-
-                {!isSm && (
-                  <Box className={classes.barWrapper}>
-                    <LinearProgress
-                      variant='determinate'
-                      value={animationTriggered ? +percentagesAndValues.yStandard : 0}
-                      sx={{
-                        ...progressStyles,
-                        width: '100%',
-                        ml: 0,
-                        '& .MuiLinearProgress-bar': {
-                          backgroundColor: colors.invariant.green
-                        }
-                      }}
-                    />
-                    <Box
-                      className={classes.progress}
-                      sx={{
-                        width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
-
-                        boxShadow: `0 0 6px 1px ${colors.invariant.green}`
-                      }}
-                    />
-                  </Box>
-                )}
-              </div>
+            <div style={{ width: 300, height: 130, overflow: 'visible' }}>
+              <ResponsivePie
+                data={data.filter(d => d.value > 0)}
+                colors={[colors.invariant.pink, colors.invariant.green]}
+                margin={{ top: 20, right: 80, bottom: 20, left: 80 }}
+                startAngle={-45}
+                endAngle={315}
+                borderWidth={1}
+                borderColor='white'
+                enableArcLabels={false}
+                enableArcLinkLabels={true}
+                arcLinkLabelsTextColor='#ffffff'
+                arcLinkLabelsThickness={1}
+                arcLinkLabelsColor={{ from: 'color' }}
+                arcLinkLabelsOffset={3}
+                arcLinkLabelsDiagonalLength={0}
+                arcLinkLabelsStraightLength={0}
+                arcLinkLabelsSkipAngle={1}
+                arcLinkLabel={d => `${d.label} (${d.value}%)`}
+                theme={{
+                  labels: {
+                    text: {
+                      fontFamily: 'Mukta',
+                      ...typography.body2
+                    }
+                  }
+                }}
+              />
             </div>
-            <Typography className={classes.description}>
-              A higher locked liquidity share helps stabilize prices, reduces volatility, and
-              minimizes slippage for swaps.
-            </Typography>
           </div>
         </div>
+
+        <Box className={classes.separator} />
+
+        <div className={classes.rightWrapper}>
+          <Typography
+            className={classes.chartTitle}
+            style={{ width: 'fit-content', alignSelf: 'center' }}>
+            Positions Liquidity Share
+          </Typography>
+          <Typography className={classes.description}>
+            Represents the ratio of locked liquidity to the total TVL in the pool.
+          </Typography>
+          <div className={classes.chartsWrapper}>
+            <div className={classes.chartWrapper}>
+              <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
+                {symbolX}:{' '}
+                <span style={{ color: colors.invariant.pink }}>
+                  ${formatNumberWithSuffix(percentagesAndValues.xStandardVal)}{' '}
+                </span>
+                of
+                <span style={{ color: colors.invariant.pink }}>
+                  {' '}
+                  ${formatNumberWithSuffix(liquidityX)}
+                </span>{' '}
+                <span style={{ color: colors.invariant.textGrey }}>
+                  (
+                  {percentagesAndValues.xStandard >= '0.01' ||
+                  percentagesAndValues.xLocked === '0.0'
+                    ? +percentagesAndValues.xStandard
+                    : '<0.01'}
+                  %)
+                </span>
+              </Typography>
+              {!isSm && (
+                <Box className={classes.barWrapper}>
+                  <LinearProgress
+                    variant='determinate'
+                    value={animationTriggered ? +percentagesAndValues.xStandard : 0}
+                    sx={{
+                      ...progressStyles,
+                      width: '100%',
+                      ml: 0,
+                      '& .MuiLinearProgress-bar': {
+                        backgroundColor: colors.invariant.pink
+                      }
+                    }}
+                  />
+                  <Box
+                    className={classes.progress}
+                    sx={{
+                      width: animationTriggered ? `${percentagesAndValues.xStandard}%` : '0%',
+                      boxShadow: `0 0 6px 1px ${colors.invariant.pink}`
+                    }}
+                  />
+                </Box>
+              )}
+            </div>
+
+            <div className={classes.chartWrapper}>
+              <Typography style={{ textWrap: 'nowrap', width: '300px' }}>
+                {symbolY}:{' '}
+                <span style={{ color: colors.invariant.green }}>
+                  ${formatNumberWithSuffix(percentagesAndValues.yStandardVal)}{' '}
+                </span>
+                of{' '}
+                <span style={{ color: colors.invariant.green }}>
+                  ${formatNumberWithSuffix(liquidityY)}
+                </span>{' '}
+                <span style={{ color: colors.invariant.textGrey }}>
+                  (
+                  {percentagesAndValues.yStandard >= '0.01' || percentagesAndValues.yLocked == '0.0'
+                    ? +percentagesAndValues.yStandard
+                    : '<0.01'}
+                  %)
+                </span>
+              </Typography>
+
+              {!isSm && (
+                <Box className={classes.barWrapper}>
+                  <LinearProgress
+                    variant='determinate'
+                    value={animationTriggered ? +percentagesAndValues.yStandard : 0}
+                    sx={{
+                      ...progressStyles,
+                      width: '100%',
+                      ml: 0,
+                      '& .MuiLinearProgress-bar': {
+                        backgroundColor: colors.invariant.green
+                      }
+                    }}
+                  />
+                  <Box
+                    className={classes.progress}
+                    sx={{
+                      width: animationTriggered ? `${percentagesAndValues.yStandard}%` : '0%',
+
+                      boxShadow: `0 0 6px 1px ${colors.invariant.green}`
+                    }}
+                  />
+                </Box>
+              )}
+            </div>
+          </div>
+          <Typography className={classes.description}>
+            A higher locked liquidity share helps stabilize prices, reduces volatility, and
+            minimizes slippage for swaps.
+          </Typography>
+        </div>
       </div>
-    </Popover>
+    </div>
   )
 }
 
