@@ -520,7 +520,7 @@ export const RangeSelector: React.FC<IRangeSelector> = ({
                 {usdcPrice.token} ${formatNumberWithoutSuffix(usdcPrice.price)}
               </Typography>
             )}
-            {showPriceWarning && !blocked && !isLoadingTicksOrTickmap && (
+            {suggestedPrice !== 0 && showPriceWarning && !blocked && !isLoadingTicksOrTickmap && (
               <Box className={classes.priceWarningContainer}>
                 <img className={classes.priceWarningIcon} src={warning3} alt='warning icon' />
                 <Typography className={classes.priceWarning}>
