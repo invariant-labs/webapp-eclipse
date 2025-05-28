@@ -307,12 +307,11 @@ const PoolListItem: React.FC<IProps> = ({
             <Grid className={classes.row} sx={{ justifyContent: 'space-between' }}>
               <Grid sx={{ display: 'flex', gap: '4px' }}>
                 <Typography>
-                  {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                  {`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}
                 </Typography>{' '}
-                <Typography
-                  className={
-                    classes.apyLabel
-                  }>{`${convertedApy > 1000 ? '>1000%' : convertedApy === 0 ? '' : Math.abs(convertedApy).toFixed(2) + '%'}`}</Typography>
+                <Typography className={classes.apyLabel}>
+                  {`${convertedApr > 1000 ? '>1000%' : convertedApr === 0 ? '-' : Math.abs(convertedApr).toFixed(2) + '%'}`}
+                </Typography>
               </Grid>
               {isPromoted && (
                 <PromotedPoolPopover apr={convertedApr} apy={convertedApy} points={points}>
@@ -407,7 +406,6 @@ const PoolListItem: React.FC<IProps> = ({
                   </span>
                 </Typography>
                 <Typography>{''}</Typography>
-
                 <Typography component='h5' className={classes.extendedRowTitle}>
                   APY{' '}
                   <span className={classes.extendedRowContent}>
@@ -478,7 +476,7 @@ const PoolListItem: React.FC<IProps> = ({
                   onSort?.(SortTypePoolList.APY_DESC)
                 }
               }}>
-              APR <span className={classes.apy}>APY</span>
+              APY <span className={classes.apy}>APR</span>
               {sortType === SortTypePoolList.APY_ASC ? (
                 <ArrowDropUpIcon className={classes.icon} />
               ) : sortType === SortTypePoolList.APY_DESC ? (

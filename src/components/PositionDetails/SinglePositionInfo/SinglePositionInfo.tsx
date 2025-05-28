@@ -67,7 +67,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
       className={classes.overlay}
     />
   )
-  const { convertedApr } = calculateAPYAndAPR(
+  const { convertedApy } = calculateAPYAndAPR(
     poolDetails?.apy ?? 0,
     poolAddress.toString(),
     poolDetails?.volume24 ?? 0,
@@ -89,7 +89,7 @@ const SinglePositionInfo: React.FC<IProp> = ({
             tokenX.claimValue * (tokenXPriceData?.price ?? 0) +
             tokenY.claimValue * (tokenYPriceData?.price ?? 0)
           }
-          poolApr={convertedApr}
+          poolApy={convertedApy}
           points24={points24}
           arePointsDistributed={arePointsDistributed}
           isLoading={showPositionLoader}
