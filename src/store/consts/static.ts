@@ -906,12 +906,12 @@ export const getPopularPools = (network: NetworkType) => {
           tokenX: 'GU7NS9xCwgNPiAdJ69iusFrRfawjDDPjeMBovhV1d4kn',
           tokenY: 'So11111111111111111111111111111111111111112',
           fee: '0.01'
-        },
-        {
-          tokenX: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R',
-          tokenY: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
-          fee: '0.01'
         }
+        // {
+        //   tokenX: 'AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE',
+        //   tokenY: '27Kkn8PWJbKJsRZrxbsYDdedpUQKnJ5vNfserCxNEJ3R',
+        //   fee: '0.01'
+        // }
       ]
     default:
       return []

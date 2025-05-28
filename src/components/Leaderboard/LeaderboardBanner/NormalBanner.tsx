@@ -28,7 +28,7 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
         className={classes.text}
         onClick={() => {
           navigate(
-            ROUTES.getNewPositionRoute(TUSD_MAIN.symbol.toUpperCase(), USDC_MAIN.symbol, '0_02')
+            ROUTES.getNewPositionRoute(TUSD_MAIN.symbol.toUpperCase(), USDC_MAIN.symbol, '0_01')
           )
 
           if (isSmallDevice) {

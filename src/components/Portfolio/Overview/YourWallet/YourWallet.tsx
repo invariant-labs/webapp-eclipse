@@ -60,7 +60,6 @@ export const YourWallet: React.FC<YourWalletProps> = ({
       const tickerB = s.tokenAddressB ? addressToTicker(currentNetwork, s.tokenAddressB) : undefined
       return tickerA === poolTicker || tickerB === poolTicker
     })
-
     if (!strategy) {
       strategy = {
         tokenAddressA: poolAddress,
