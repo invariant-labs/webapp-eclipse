@@ -593,17 +593,17 @@ export const autoSwapPools = [
       address: new PublicKey('HG7iQMk29cgs74ZhSwrnye3C6SLQwKnfsbXqJVRi1x8H'),
       feeIndex: 6
     }
-  },
-  {
-    pair: {
-      tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
-      tokenY: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ')
-    },
-    swapPool: {
-      address: new PublicKey('Hz5PHqUVPAQKHAV5NSB1JdyGb36qz2c25qv2wAUWpS89'),
-      feeIndex: 1
-    }
   }
+  // {
+  //   pair: {
+  //     tokenX: new PublicKey('AKEWE7Bgh87GPp171b4cJPSSZfmZwQ3KaqYqXoKLNAEE'),
+  //     tokenY: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ')
+  //   },
+  //   swapPool: {
+  //     address: new PublicKey('Hz5PHqUVPAQKHAV5NSB1JdyGb36qz2c25qv2wAUWpS89'),
+  //     feeIndex: 1
+  //   }
+  // }
 ]
 export const promotedTiers = [
   {

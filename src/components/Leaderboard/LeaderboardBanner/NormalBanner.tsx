@@ -22,12 +22,14 @@ export const NormalBanner = ({ onClose, isHiding }: INormalBannerProps) => {
 
   const text = (
     <span>
-      {!isSmallDevice && `Invariant Points are live!`} TUSD/USDC is now the next pool distributing
+      {!isSmallDevice && `Invariant Points are live!`} tUSD/USDC is now the next pool distributing
       points! Check it out
       <span
         className={classes.text}
         onClick={() => {
-          navigate(ROUTES.getNewPositionRoute(TUSD_MAIN.symbol, USDC_MAIN.symbol, '0_02'))
+          navigate(
+            ROUTES.getNewPositionRoute(TUSD_MAIN.symbol.toUpperCase(), USDC_MAIN.symbol, '0_02')
+          )
 
           if (isSmallDevice) {
             onClose()
