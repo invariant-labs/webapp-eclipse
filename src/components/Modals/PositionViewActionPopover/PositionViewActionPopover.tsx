@@ -49,6 +49,9 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
       }}>
       <Grid className={classes.root}>
         <Grid className={classes.list} container alignContent='space-around' direction='column'>
+          <Button className={cx(classes.listItem)} onClick={createPosition}>
+            <Typography className={classes.name}>Create position</Typography>
+          </Button>
           <Button
             disabled={unclaimedFeesInUSD <= 0 || shouldDisable}
             className={cx(classes.listItem)}
@@ -76,9 +79,6 @@ export const PositionViewActionPopover: React.FC<IPositionViewActionPopover> = (
             handleClose()
           }}>
           <Typography className={classes.name}>Lock position</Typography>
-        </Button>
-        <Button className={cx(classes.listItem)} onClick={createPosition}>
-          <Typography className={classes.name}>Create position</Typography>
         </Button>
       </Grid>
     </Popover>
