@@ -991,9 +991,6 @@ export function* handleSwapAndInitPositionWithETH(
               (depositInstructions[xToY ? 1 : 0] as ParsedInstruction).parsed?.info?.tokenAmount
                 ?.amount
 
-            console.log(tokenXDeposit)
-            console.log(tokenYDeposit)
-
             const match = autoSwapPools.find(
               ({ pair }) =>
                 (pair.tokenX.equals(tokenX.address) && pair.tokenY.equals(tokenY.address)) ||

@@ -351,8 +351,7 @@ export const BRICK_MAIN: Token = {
   address: new PublicKey('3Q5RQRTKCH4RWGFVFht1RtM1fx3SSxNGAk1sTuVank6w'),
   decimals: 9,
   name: 'Brick',
-  logoURI:
-    'https://beige-random-platypus-427.mypinata.cloud/ipfs/QmQqSjag5q4nQTDcAnqkGrxp5Y2DzBqWB4L6FMM38cszbm',
+  logoURI: 'https://ipfs.io/ipfs/QmQqSjag5q4nQTDcAnqkGrxp5Y2DzBqWB4L6FMM38cszbm',
   coingeckoId: ''
 }
 
@@ -382,8 +381,7 @@ export const DOGW_MAIN: Token = {
   address: new PublicKey('Ev6go111sv39uMrAQeWsatFWgSYdfENuQGtBmr5QRwbJ'),
   decimals: 9,
   name: 'dog wif meat',
-  logoURI:
-    'https://lime-peculiar-eel-621.mypinata.cloud/ipfs/QmVYxFNgSnVFXrbaxTh7Pz6iQ9AJU8e7BLBMcyWiE476mU',
+  logoURI: 'https://ipfs.io/ipfs/QmVYxFNgSnVFXrbaxTh7Pz6iQ9AJU8e7BLBMcyWiE476mU',
   coingeckoId: ''
 }
 
@@ -483,7 +481,7 @@ export const KYSOL_MAIN: Token = {
 }
 
 export const TUSD_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tUSD',
   address: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ'),
   decimals: 6,
@@ -792,9 +790,9 @@ export const getAddressTickerMap = (network: NetworkType): { [k: string]: string
       TURBO_AI: TURBO_AI_MAIN.address.toString(),
       ORCA: ORCA_MAIN.address.toString(),
       SOLAR: SOLAR_MAIN.address.toString(),
-      KYSOL_MAIN: KYSOL_MAIN.address.toString(),
-      EZSOL_MAIN: EZSOL_MAIN.address.toString(),
-      TUSD_MAIN: TUSD_MAIN.address.toString()
+      KYSOL: KYSOL_MAIN.address.toString(),
+      EZSOL: EZSOL_MAIN.address.toString(),
+      TUSD: TUSD_MAIN.address.toString()
     }
   }
 }
