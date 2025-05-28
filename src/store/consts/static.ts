@@ -483,7 +483,7 @@ export const KYSOL_MAIN: Token = {
 }
 
 export const TUSD_MAIN: Token = {
-  tokenProgram: TOKEN_PROGRAM_ID,
+  tokenProgram: TOKEN_2022_PROGRAM_ID,
   symbol: 'tUSD',
   address: new PublicKey('GKJFjUts7QWb29g3h5P6Pw8hBECh2tsHrVzasjvCYtGJ'),
   decimals: 6,
