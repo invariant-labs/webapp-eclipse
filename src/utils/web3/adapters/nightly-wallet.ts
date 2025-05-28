@@ -96,6 +96,7 @@ export class NightlyAdapter implements WalletAdapter {
       return
     }
 
+    console.log(provider?.features)
     if (provider.accounts.length === 0) {
       await provider?.features['standard:connect'].connect()
       await provider.changeNetwork({
